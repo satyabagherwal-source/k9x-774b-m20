@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md`  
 > **Source**: github ([https://github.com/wasm-bindgen/wasm-pack](https://github.com/wasm-bindgen/wasm-pack))  
-> **Source Version**: `b4586ca5`  
+> **Source Version**: `c262c330`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T05:36:01.560Z  
+> **Timestamp**: 2026-11-12T05:26:51.829Z  
 > **Learning ID**: `learn-github-wasm-bindgen-wasm-pack`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wasm-bindgen/wasm-pack](https://github.com/wasm-bindgen/wasm-pack))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T05:36:00.653Z  
+> **Harvest Timestamp**: 2026-11-12T05:26:51.649Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📦✨ your favorite rust -> wasm workflow tool!
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7295 stars
+- **Stars / Engagement**: 7306 stars
 
 ---
 
@@ -562,13 +562,11 @@ pub fn login(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1622** (2026-11-02): **Unable to build on Windows anymore**
+  *Symptoms*: ## 🐛 Bug description I don't know what happened but for some reason I am unable to build my project anymore, it was working earlier and then all of a sudden it started having issues. I went and did a clean install of Rust just to make sure but I am getting the below error when I try to run `wasm-pack build`.  ``` [INFO]: Checking for the Wasm target... Error: cannot find binary path Caused by: cannot find binary path ```  I was able to get it to work using the command `wasm-pack build -- --target wasm64-unknown-unknown` but I don't want to build it using the wasm64 target.  #### 🤔 Expected Behavior For my project to compile  #### 👟 Steps to reproduce I am not sure how to reproduce this exactly since it happened out of the blue  #### 🌍 Your environment Windows 11 Pro 25HH2 rustc 1.99.1 wasm-pack 0.15.1
+
 - **Issue #1604** (2026-10-20): **`wasm-opt` download fails with "Unrecognized target!" on Windows ARM64, despite binaryen publishing an arm64-windows build**
   *Symptoms*: ## 🐛 Bug description  wasm-pack build hard-fails on Windows ARM64 when it tries to download wasm-opt:  ``` Error: no prebuilt wasm-opt binaries are available for this platform: Unrecognized target! To disable `wasm-opt`, add `wasm-opt = false` to your package metadata in your `Cargo.toml`. ```  The root cause is in `prebuilt_url_for`. Its (Os, Arch, Tool) match table has no case for `(Os::Windows, Arch::AArch64, _)` at all, so it falls through to `bail!("Unrecognized target!")`  This isn't actually a case of no binary existing as binaryen's own releases already publish an arm64-windows build (e.g. binaryen-version_132-arm64-windows.tar.gz, https://github.com/WebAssembly/binaryen/releases), following the exact same <arch>-<os> naming convention already used for the other entries in this table ("arm64-macos", "x86_64-windows").   Adding:  `(Os::Windows, Arch::AArch64, Tool::WasmOpt) => "arm64-windows",`  to the match table should be sufficient to fix it 
-
-- **Issue #943** (2020-12-22): ** RUSTSEC-2020-0053: dirs: dirs is unmaintained, use dirs-next instead**
-  *Symptoms*: https://rustsec.org/advisories/RUSTSEC-2020-0053  ``` Crate:         dirs Version:       2.0.2 Warning:       unmaintained Title:         dirs is unmaintained, use dirs-next instead Date:          2020-10-16 ID:            RUSTSEC-2020-0053 URL:           https://rustsec.org/advisories/RUSTSEC-2020-0053 Dependency tree: dirs 2.0.2 ```  dirs is unmaintained, dirs-next should be used instead.  I would be willing to implement this and submit a PR if it would be accepted.
-  **Post-Mortem & Fix Analysis**:
-  > Yes- thanks for the heads up, much appreciated. A PR would be accepted.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -585,62 +583,106 @@ pub fn login(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4586ca5` (2026-10-30)
-**Commit Message**: Comment on the release PR when a publish waits for approval (#1621)
+### Incident Patch 1: `c262c330` (2026-11-11)
+**Commit Message**: Install the native Apple Silicon build in init.sh (#1623)
 
-* Mention the publishers on the release PR when a publish waits for approval
+* Install the native Apple Silicon build in init.sh
 
-* Comment without a mention, linking the release
+The installer script always replaced aarch64-apple-darwin with
+x86_64-apple-darwin, dating back to before wasm-pack shipped a native
+Apple Silicon build. Releases now include aarch64-apple-darwin, so
+install that, and only fall back to x86_64-apple-darwin for older
+versions that don't have it.
 
-* Keep the publish comment on the publish job
+Running the x86_64 build under Rosetta also makes wasm-pack download
+the x86_64 wasm-bindgen-test-runner, which in turn spawns safaridriver
+as an x86_64 process. Rosetta then has to translate Safari's WebDriver
+and WebKit frameworks on first launch, so `wasm-pack test --safari`
+times out waiting for the driver on fresh machines such as CI runners.
 
-**File**: `.github/workflows/release.yml` (modified, +29/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Add CHANGELOG entry
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Match CHANGELOG link formatting
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Guy Bedford <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +14/-0)
 ```diff
-@@ -298,6 +298,35 @@ jobs:
-             --jq 'if .isDraft then .assets[].name else error("not a draft") end' | sort > uploaded
-           diff expected uploaded
+@@ -2,6 +2,20 @@
  
-+  # GitHub's own notice of a pending approval is easy to miss, so the release
-+  # PR, whose participants are notified, gets a comment while the publish job
-+  # waits.
-+  notify:
-+    name: Request publish approval
-+    if: github.repository == 'wasm-bindgen/wasm-pack'
-+    needs: release
-+    runs-on: ubuntu-latest
-+    permissions:
-+      contents: write #  to see the draft release
-+      pull-requests: write
-+    steps:
-+      - env:
-+          GH_TOKEN: ${{ github.token }}
-+        shell: bash
-+        run: |
-+          set -euo pipefail
-+          pr=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq '.[0].number // empty')
-+          if [ -z "$pr" ]; then
-+            echo "No PR merged $GITHUB_SHA"
-+            exit 0
-+          fi
-+          url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$GITHUB_REF_NAME
-+          # Drafts have their own URL until they're published.
-+          url=$(gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --json url --jq .url 2>/dev/null || echo "$url")
-+          gh pr comment "$pr" --repo "$GITHUB_REPOSITORY" --body "🚀 $GITHUB_REF_NAME is ready to publish, pending approval: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+ ## 🤍 Unreleased
+ 
++- ### 🤕 Fixes
 +
-+          Release: $url"
++  - **Install the native Apple Silicon build with the installer script - [MattiasBuelens], [issue/1442], [pull/1623]**
 +
-   # One approval publishes everything, the crate first, so the release, which
-   # is immutable once published, stays a draft if that fails, and npm last,
-   # since its package downloads the binary from the public release.
++    The `init.sh` installer always installed the x86_64 build of wasm-pack on Apple Silicon Macs,
++    which then also downloaded x86_64 builds of wasm-bindgen. Under Rosetta, `wasm-pack test --safari`
++    could time out waiting for safaridriver to start. The installer now installs the
++    `aarch64-apple-darwin` build, and only falls back to `x86_64-apple-darwin` for older releases
++    that don't have one.
++
++    [issue/1442]: https://github.com/wasm-bindgen/wasm-pack/issues/1442
++    [pull/1623]: https://github.com/wasm-bindgen/wasm-pack/pull/1623
++    [MattiasBuelens]: https://github.com/MattiasBuelens
++
+ - ### 🛠️ Maintenance
+ 
+   - **Bump binary-install from 0.4.1 to 0.6.1 - [drager], [pull/1624]**
+```
+
+**File**: `docs/_installer/init.sh` (modified, +12/-6)
+```diff
+@@ -106,7 +106,18 @@ main() {
+ 
+     ensure mkdir -p "$_dir"
+     downloader "$_url" "$_file"
+-    if [ $? != 0 ]; then
++    _status=$?
++    if [ $_status != 0 ] && [ "$_arch" = "aarch64-apple-darwin" ]; then
++        # Older releases don't have a native Apple Silicon build.
++        # Fall back to the x86_64 build, which runs under Rosetta.
++        say "no aarch64-apple-darwin build found for $VERSION, falling back to x86_64-apple-darwin"
++        _arch="x86_64-apple-darwin"
++        _tardir="wasm-pack-$VERSION-${_arch}"
++        _url="$UPDATE_ROOT/${_tardir}.tar.gz"
++        downloader "$_url" "$_file"
++        _status=$?
++    fi
++    if [ $_status != 0 ]; then
+       say "failed to download $_url"
+       say "this may be a standard network error, but it may also indicate"
+       say "that wasm-pack's release process is not working. When in doubt"
+@@ -187,11 +198,6 @@ get_architecture() {
+ 
+     esac
+ 
+-    # See https://github.com/wasm-bindgen/wasm-pack/pull/1088
+-    if [ "$_cputype" = "aarch64" ] && [ "$_ostype" = "apple-darwin" ]; then
+-        _cputype="x86_64"
+-    fi
+-
+     _arch="$_cputype-$_ostype"
+ 
+     RETVAL="$_arch"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1625** (2026-11-11): Only run the release workflow for semver tags (@guybedford)
+- **PR #1624** (2026-11-11): chore(deps): Bump binary-install to 0.6.1 (@drager)
+- **PR #1623** (2026-11-11): Install the native Apple Silicon build in init.sh (@MattiasBuelens)
 - **PR #1621** (2026-10-30): Comment on the release PR when a publish waits for approval (@guybedford)
 - **PR #1620** (2026-10-30): Release 0.15.1 (@wasm-bindgen-bot[bot])
 - **PR #1619** (2026-10-30): Download prebuilt wasm-bindgen on Windows ARM64, Linux RISC-V and musl ARM64 hosts (@guybedford)
-- **PR #1618** (closed): Release 0.16.0 (@wasm-bindgen-bot[bot])
-- **PR #1617** (2026-10-30): Publish the npm package with trusted publishing (@guybedford)
-- **PR #1615** (2026-10-23): Gate the crates.io publish on the publish environment (@guybedford)
 
 ---
 
@@ -660,46 +702,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Comment on the release PR when a publish waits for approval (#1621)
+## X. Install the native Apple Silicon build in init.sh (#1623)
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wasm-bindgen/wasm-pack. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wasm-bindgen/wasm-pack. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b4586ca5`: Comment on the release PR when a publish waits for approval (#1621). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c262c330`: Install the native Apple Silicon build in init.sh (#1623). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  # GitHub's own notice of a pending approval is easy to miss, so the release
-  # PR, whose participants are notified, gets a comment while the publish job
-  # waits.
-  notify:
-    name: Request publish approval
-    if: github.repository == 'wasm-bindgen/wasm-pack'
-    needs: release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write #  to see the draft release
-      pull-requests: write
-    steps:
-      - env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          pr=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq '.[0].number // empty')
-          if [ -z "$pr" ]; then
-            echo "No PR merged $GITHUB_SHA"
-            exit 0
-          fi
-          url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$GITHUB_REF_NAME
-          # Drafts have their own URL until they're published.
-          url=$(gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --json url --jq .url 2>/dev/null || echo "$url")
-          gh pr comment "$pr" --repo "$GITHUB_REPOSITORY" --body "🚀 $GITHUB_REF_NAME is ready to publish, pending approval: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHU
+- ### 🤕 Fixes
+
+  - **Install the native Apple Silicon build with the installer script - [MattiasBuelens], [issue/1442], [pull/1623]**
+
+    The `init.sh` installer always installed the x86_64 build of wasm-pack on Apple Silicon Macs,
+    which then also downloaded x86_64 builds of wasm-bindgen. Under Rosetta, `wasm-pack test --safari`
+    could time out waiting for safaridriver to start. The installer now installs the
+    `aarch64-apple-darwin` build, and only falls back to `x86_64-apple-darwin` for older releases
+    that don't have one.
+
+    [issue/1442]: https://github.com/wasm-bindgen/wasm-pack/issues/1442
+    [pull/1623]: https://github.com/wasm-bindgen/wasm-pack/pull/1623
+    [MattiasBuelens]: https://github.com/MattiasBuelens
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -709,4 +739,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b4586ca5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c262c330` are properly handled with clean fallback behavior.

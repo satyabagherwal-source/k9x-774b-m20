@@ -4,12 +4,12 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T18:03:45.960Z",
-    "lastVerified": "2026-11-11T18:03:45.960Z",
+    "lastChecked": "2026-11-12T10:52:39.814Z",
+    "lastVerified": "2026-11-12T10:52:39.814Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
+    "contentHash": "11e4d485f61841a281b14a07ca5518946433f6add2308035775253e1ba557de4",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T03:10:50.864Z",
-    "lastVerified": "2026-11-12T03:10:50.864Z",
+    "lastChecked": "2026-11-12T14:08:51.044Z",
+    "lastVerified": "2026-11-12T14:08:51.044Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -114,36 +114,35 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T18:11:50.634Z",
-    "lastVerified": "2026-11-11T18:11:50.634Z",
+    "lastChecked": "2026-11-12T11:00:58.924Z",
+    "lastVerified": "2026-11-12T11:00:58.924Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
+    "contentHash": "cfe55aa32d7a35a09fee3e61002bd4ac8d5ca049313266c6316b374f7f3af52b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4d495c64"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-10T02:44:01.443Z",
-    "lastVerified": "2026-11-10T02:44:01.443Z",
+    "lastChecked": "2026-11-12T11:18:32.642Z",
+    "lastVerified": "2026-11-12T11:18:32.642Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "ac64b1969812ac6466c57f592f8cc2edbe120373665ce21e519a75b7ee60999d",
+    "contentHash": "024dc9aed457d25bcd6eb839f20cf6ecac30ba4e0750172fe97f7c5bc457defc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -153,8 +152,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T03:10:31.082Z",
-    "lastVerified": "2026-11-12T03:10:31.082Z",
+    "lastChecked": "2026-11-12T13:33:12.021Z",
+    "lastVerified": "2026-11-12T13:33:12.021Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -228,44 +227,43 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-11T18:23:37.573Z",
+    "lastChecked": "2026-11-12T11:18:25.067Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-11T18:23:37.573Z"
+    "lastVerified": "2026-11-12T11:18:25.067Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
     "officialUrl": "https://github.com/meilisearch/meilisearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T02:59:39.433Z",
-    "lastVerified": "2026-11-10T02:59:39.433Z",
+    "lastChecked": "2026-11-12T11:37:22.789Z",
+    "lastVerified": "2026-11-12T11:37:22.789Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "943f67d848fdb9df7650c9bcf04ca9d6aed2c0a574d6252ab45041fe28157a58",
+    "contentHash": "db48414cfdbdbfb2fea0af6e924e4b4a664db95993bcf4de81acb803a05a89a2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T02:33:28.489Z",
-    "lastVerified": "2026-11-12T02:33:28.489Z",
+    "lastChecked": "2026-11-12T13:40:56.945Z",
+    "lastVerified": "2026-11-12T13:40:56.945Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "9b528acf20fb32445c34c22b88594334e0f9a4cf820f87a8045fc32b97a4f370",
-    "promotedRulesCount": 3,
+    "contentHash": "560bde33cd9597e1326a7aa59b03e7fdb8c12564992631578874686d42766f11",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "84c85c1f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -331,43 +329,42 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T18:35:38.349Z",
-    "lastVerified": "2026-11-11T18:35:38.349Z",
+    "lastChecked": "2026-11-12T11:37:16.598Z",
+    "lastVerified": "2026-11-12T11:37:16.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "0ffc8c9afee3e3e40c4b6dda9449d5e627985cbfd5e1729a211fbe971d4aad8e",
+    "contentHash": "2e35bc62e1de7e050f450a5e6fdfefba79f14961af7ebe34015707c99b9f4071",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "81a399b8"
+    "revisionIdentifier": "b9a7b08e"
   },
   "pathwaycom-llm-app": {
-    "name": "llm-app",
+    "name": "pathwaycom/serviette",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T04:36:55.545Z",
-    "lastVerified": "2026-11-10T04:36:55.545Z",
+    "lastChecked": "2026-11-12T11:50:59.044Z",
+    "lastVerified": "2026-11-12T11:50:59.044Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette",
-    "contentHash": "4c45326c8a0fcf9fb7d81352f2fa910c6a7c9ae85eab5416e3733ac38ba62e9f",
+    "contentHash": "220506085089ff8c221140e63063e44c9de92471ed514df3fc2b9e5be60bcacf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "84e92a33"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T02:48:41.351Z",
+    "lastChecked": "2026-11-12T14:08:29.998Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T02:48:41.351Z"
+    "lastVerified": "2026-11-12T14:08:29.998Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -422,8 +419,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T18:54:51.880Z",
-    "lastVerified": "2026-11-11T18:54:51.880Z",
+    "lastChecked": "2026-11-12T11:50:51.062Z",
+    "lastVerified": "2026-11-12T11:50:51.062Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -436,40 +433,39 @@
     "revisionIdentifier": "fea58ae4"
   },
   "run-llama-llama_index": {
-    "name": "llama_index",
+    "name": "run-llama/llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T04:44:28.714Z",
-    "lastVerified": "2026-11-10T04:44:28.714Z",
+    "lastChecked": "2026-11-12T12:15:03.206Z",
+    "lastVerified": "2026-11-12T12:15:03.206Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-run-llama-llama_index",
-    "contentHash": "41404ce11f8f936806ade39ca792045e88e5139133ffca3125545a10e71a4dba",
+    "contentHash": "2ee32cd7bc534bd583978466a870409c0ec69134ca6591a8c32a1d212c3b61b4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fe107aab"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T02:56:24.736Z",
-    "lastVerified": "2026-11-12T02:56:24.736Z",
+    "lastChecked": "2026-11-12T13:10:21.059Z",
+    "lastVerified": "2026-11-12T13:10:21.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f837496e5a1478d6d5298a1414714e2048238e524961a60956569f9657c85dd5",
-    "promotedRulesCount": 0,
+    "contentHash": "d500403ec0d1d2401c3c0645cd3f3c6c3561dd617981c574c13fb0a329b1697d",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b9fd2de0"
+    "revisionIdentifier": "cc21315a"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -535,8 +531,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T19:15:10.604Z",
-    "lastVerified": "2026-11-11T19:15:10.604Z",
+    "lastChecked": "2026-11-12T12:14:54.730Z",
+    "lastVerified": "2026-11-12T12:14:54.730Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -553,14 +549,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T04:51:54.771Z",
-    "lastVerified": "2026-11-10T04:51:54.771Z",
+    "lastChecked": "2026-11-12T12:32:49.342Z",
+    "lastVerified": "2026-11-12T12:32:49.342Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "e36b0f0a10cc4867d3a03bbce67ff91e62aeeb247e7f12269096f296ef6c65dd",
+    "contentHash": "b900481f95d6bd141c1cd4f7adcceb165b3e01cddef2c4142d3303520a5451c2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -570,8 +566,8 @@
     "officialUrl": "https://github.com/surrealdb/surrealdb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T04:59:18.072Z",
-    "lastVerified": "2026-11-10T04:59:18.072Z",
+    "lastChecked": "2026-11-12T12:45:22.579Z",
+    "lastVerified": "2026-11-12T12:45:22.579Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-surrealdb-surrealdb",
@@ -640,14 +636,14 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T19:28:27.377Z",
-    "lastVerified": "2026-11-11T19:28:27.377Z",
+    "lastChecked": "2026-11-12T12:32:45.838Z",
+    "lastVerified": "2026-11-12T12:32:45.838Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "5addd5440ec9a1ad64707f9e64a9b1ec55ce1cf12caded425f0320ff2024cc81",
+    "contentHash": "ba9b9eac7c07a97734bfd4103e6cd333bafdc5e71d2e67bdd5e17f438b5677bf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -657,8 +653,8 @@
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T05:06:24.302Z",
-    "lastVerified": "2026-11-10T05:06:24.302Z",
+    "lastChecked": "2026-11-12T12:58:00.969Z",
+    "lastVerified": "2026-11-12T12:58:00.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
@@ -741,16 +737,16 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-11T19:46:08.961Z",
+    "lastChecked": "2026-11-12T12:45:20.078Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-11T19:46:08.961Z"
+    "lastVerified": "2026-11-12T12:45:20.078Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-10T05:14:22.357Z",
+    "lastChecked": "2026-11-12T13:10:18.621Z",
     "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-11-10T05:14:22.357Z"
+    "lastVerified": "2026-11-12T13:10:18.621Z"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -808,8 +804,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T19:53:35.074Z",
-    "lastVerified": "2026-11-11T19:53:35.074Z",
+    "lastChecked": "2026-11-12T12:57:58.461Z",
+    "lastVerified": "2026-11-12T12:57:58.461Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -826,8 +822,8 @@
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T05:21:55.629Z",
-    "lastVerified": "2026-11-10T05:21:55.629Z",
+    "lastChecked": "2026-11-12T13:33:09.545Z",
+    "lastVerified": "2026-11-12T13:33:09.545Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
@@ -927,17 +923,17 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-11T20:18:25.625Z",
+    "lastChecked": "2026-11-12T13:10:16.072Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-11T20:18:25.625Z"
+    "lastVerified": "2026-11-12T13:10:16.072Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
     "sourceType": "github",
     "technology": "Jupyter Notebook",
-    "lastChecked": "2026-11-10T06:05:14.500Z",
-    "lastVerified": "2026-11-10T06:05:14.500Z",
+    "lastChecked": "2026-11-12T13:40:48.374Z",
+    "lastVerified": "2026-11-12T13:40:48.374Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nirdiamant-rag_techniques",
@@ -1002,8 +998,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T23:56:56.410Z",
-    "lastVerified": "2026-11-11T23:56:56.410Z",
+    "lastChecked": "2026-11-12T13:33:06.987Z",
+    "lastVerified": "2026-11-12T13:33:06.987Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -1020,12 +1016,12 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T06:12:48.341Z",
-    "lastVerified": "2026-11-10T06:12:48.341Z",
+    "lastChecked": "2026-11-12T14:08:33.751Z",
+    "lastVerified": "2026-11-12T14:08:33.751Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "7446a3dd617fd9c1fd3ed40e5d7705b4038a3e6a7917a44c4fa5c46538bdb820",
+    "contentHash": "3d31d133095b03314ff760a87e62ce7358ddc8f6fba9e7d9702c349a7d827de0",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
@@ -1105,9 +1101,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-12T00:23:02.731Z",
+    "lastChecked": "2026-11-12T13:40:45.960Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-12T00:23:02.731Z"
+    "lastVerified": "2026-11-12T13:40:45.960Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -1189,8 +1185,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T00:45:27.918Z",
-    "lastVerified": "2026-11-12T00:45:27.918Z",
+    "lastChecked": "2026-11-12T14:08:25.074Z",
+    "lastVerified": "2026-11-12T14:08:25.074Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1283,14 +1279,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T00:58:31.320Z",
-    "lastVerified": "2026-11-12T00:58:31.320Z",
+    "lastChecked": "2026-11-12T06:56:11.691Z",
+    "lastVerified": "2026-11-12T06:56:11.691Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "1bf2cab605ca8e61df295726eadda3dd6774e328bd05a1262be275a8fd0771a4",
+    "contentHash": "3186e47c62c7a4785af26c5f924752925907221f9156f4fa8fd9782f58a6fc8b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1385,8 +1381,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T01:11:51.262Z",
-    "lastVerified": "2026-11-12T01:11:51.262Z",
+    "lastChecked": "2026-11-12T07:15:30.402Z",
+    "lastVerified": "2026-11-12T07:15:30.402Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -1479,8 +1475,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T01:23:17.320Z",
-    "lastVerified": "2026-11-12T01:23:17.320Z",
+    "lastChecked": "2026-11-12T07:37:53.214Z",
+    "lastVerified": "2026-11-12T07:37:53.214Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -1571,9 +1567,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-12T01:31:13.399Z",
+    "lastChecked": "2026-11-12T07:46:18.296Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-12T01:31:13.399Z"
+    "lastVerified": "2026-11-12T07:46:18.296Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -1644,9 +1640,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-12T01:44:25.165Z",
+    "lastChecked": "2026-11-12T07:54:11.712Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-12T01:44:25.165Z"
+    "lastVerified": "2026-11-12T07:54:11.712Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -1737,9 +1733,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-12T01:51:51.033Z",
+    "lastChecked": "2026-11-12T08:04:29.545Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-12T01:51:51.033Z"
+    "lastVerified": "2026-11-12T08:04:29.545Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -1822,8 +1818,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T02:03:38.277Z",
-    "lastVerified": "2026-11-12T02:03:38.277Z",
+    "lastChecked": "2026-11-12T08:14:37.060Z",
+    "lastVerified": "2026-11-12T08:14:37.060Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1905,14 +1901,14 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T02:16:41.954Z",
-    "lastVerified": "2026-11-12T02:16:41.954Z",
+    "lastChecked": "2026-11-12T08:27:51.331Z",
+    "lastVerified": "2026-11-12T08:27:51.331Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "36f9ed2d92a680c8a73cf9f31e64b2d9ec4778a1cfe56a51b1bc9c4646479c5c",
+    "contentHash": "aff8deff4f3be5920ef997fa235c7da816a8af61b7385d14554d4068c0c886c1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2009,14 +2005,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T02:33:28.884Z",
-    "lastVerified": "2026-11-12T02:33:28.884Z",
+    "lastChecked": "2026-11-12T08:52:46.992Z",
+    "lastVerified": "2026-11-12T08:52:46.992Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "8b37cf3393503a562711200dc6861cbcb747602b4597b2bfec8b50761c1636d2",
+    "contentHash": "2ca6ca3bde9a9fb19c249f5913529bcb849c8ca681d27d549be9d2c1a82f97b3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2111,8 +2107,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T02:48:36.238Z",
-    "lastVerified": "2026-11-12T02:48:36.238Z",
+    "lastChecked": "2026-11-12T09:19:13.456Z",
+    "lastVerified": "2026-11-12T09:19:13.456Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2204,14 +2200,14 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T02:56:24.084Z",
-    "lastVerified": "2026-11-12T02:56:24.084Z",
+    "lastChecked": "2026-11-12T09:45:53.679Z",
+    "lastVerified": "2026-11-12T09:45:53.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
+    "contentHash": "05b7cec8c60762388b494b56a431f3f0f9256ad534b9711b13b08a1aa87205a3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2303,22 +2299,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T03:10:26.128Z",
-    "lastVerified": "2026-11-12T03:10:26.128Z",
+    "lastChecked": "2026-11-12T09:55:04.633Z",
+    "lastVerified": "2026-11-12T09:55:04.633Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
+    "contentHash": "9551251464208ecda3150bdd50117abd223313e62cf22361a096e8b2ea0ac2a0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7b2c32b9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -2380,8 +2375,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T17:13:04.657Z",
-    "lastVerified": "2026-11-11T17:13:04.657Z",
+    "lastChecked": "2026-11-12T10:07:17.758Z",
+    "lastVerified": "2026-11-12T10:07:17.758Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2464,8 +2459,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T17:46:07.214Z",
-    "lastVerified": "2026-11-11T17:46:07.214Z",
+    "lastChecked": "2026-11-12T10:42:52.849Z",
+    "lastVerified": "2026-11-12T10:42:52.849Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -3705,22 +3700,21 @@
     "revisionIdentifier": "e3084ac5"
   },
   "okteto-okteto": {
-    "name": "okteto",
+    "name": "okteto/okteto",
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T17:43:55.549Z",
-    "lastVerified": "2026-11-09T17:43:55.549Z",
+    "lastChecked": "2026-11-12T03:23:42.507Z",
+    "lastVerified": "2026-11-12T03:23:42.507Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
-    "contentHash": "accdc0cef8f4987f6300bf46e07b0844671a992b0bce256cf4db4674e1bf7121",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "1403f6b6db9ec1c67e802ca0eced1e557614dc0fb95aa0a6bcdbfc144f78db8c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a2043817"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
     "name": "neuron-ai",
@@ -3783,22 +3777,21 @@
     "revisionIdentifier": "3a9b151d"
   },
   "dragonflyoss-dragonfly": {
-    "name": "dragonfly",
+    "name": "dragonflyoss/dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T17:56:49.639Z",
-    "lastVerified": "2026-11-09T17:56:49.639Z",
+    "lastChecked": "2026-11-12T03:30:40.550Z",
+    "lastVerified": "2026-11-12T03:30:40.550Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "97a889dda53042a60821bdf4d7e9c105acfc7ca37568eb8a89fafcd77a75833d",
+    "contentHash": "fae37663eee5110a7bf3f64de9d04d32fce15e9fdd235bfdad670d8602273b13",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "afb8bc2e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -3874,14 +3867,14 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T18:11:16.359Z",
-    "lastVerified": "2026-11-09T18:11:16.359Z",
+    "lastChecked": "2026-11-12T03:48:36.102Z",
+    "lastVerified": "2026-11-12T03:48:36.102Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "ccd13871933ab6ba2dfc8aaaa1f76963834423c15c00f880d24640441dd168d7",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "0422ac875b0a36d147229fb091d7187c98f40dbf867df9f77b2a2111daaf3616",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3946,22 +3939,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "koderover-zadig": {
-    "name": "zadig",
+    "name": "koderover/zadig",
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T21:05:50.437Z",
-    "lastVerified": "2026-11-09T21:05:50.437Z",
+    "lastChecked": "2026-11-12T03:56:12.036Z",
+    "lastVerified": "2026-11-12T03:56:12.036Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
-    "contentHash": "8e516164a8110a56d61e3cd2679b04cea24dae9ec39f39c9336418adb498f18a",
+    "contentHash": "76f6fe6fa387325c55ea2c867206b68d2cd8d253cf29e083e209cf75b2304261",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2a25eecd"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "doobidoo-mcp-memory-service": {
     "name": "doobidoo/mcp-memory-service",
@@ -4026,8 +4018,8 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T21:55:35.130Z",
-    "lastVerified": "2026-11-09T21:55:35.131Z",
+    "lastChecked": "2026-11-12T04:32:00.376Z",
+    "lastVerified": "2026-11-12T04:32:00.376Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-graphjin",
@@ -4060,9 +4052,9 @@
   "pemistahl-grex": {
     "name": "grex",
     "officialUrl": "https://github.com/pemistahl/grex",
-    "lastChecked": "2026-11-09T08:03:17.691Z",
+    "lastChecked": "2026-11-12T03:23:29.705Z",
     "revisionIdentifier": "99cc3477",
-    "lastVerified": "2026-11-09T08:03:17.691Z"
+    "lastVerified": "2026-11-12T03:23:29.705Z"
   },
   "hf-baai-bge-m3": {
     "name": "BAAI/bge-m3",
@@ -4091,9 +4083,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-11-09T22:14:49.750Z",
+    "lastChecked": "2026-11-12T04:50:17.106Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-11-09T22:14:49.750Z"
+    "lastVerified": "2026-11-12T04:50:17.106Z"
   },
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
@@ -4105,9 +4097,9 @@
   "fujiapple852-trippy": {
     "name": "trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
-    "lastChecked": "2026-11-09T08:37:45.232Z",
+    "lastChecked": "2026-11-12T03:30:28.422Z",
     "revisionIdentifier": "54c8f399",
-    "lastVerified": "2026-11-09T08:37:45.232Z"
+    "lastVerified": "2026-11-12T03:30:28.422Z"
   },
   "hf-qwen-qwen3-0.6b": {
     "name": "Qwen/Qwen3-0.6B",
@@ -4147,9 +4139,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-09T22:26:59.944Z",
+    "lastChecked": "2026-11-12T05:13:10.155Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-09T22:26:59.945Z"
+    "lastVerified": "2026-11-12T05:13:10.155Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -4163,8 +4155,8 @@
     "officialUrl": "https://github.com/svenstaro/miniserve",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T09:09:48.073Z",
-    "lastVerified": "2026-11-09T09:09:48.073Z",
+    "lastChecked": "2026-11-12T03:48:24.312Z",
+    "lastVerified": "2026-11-12T03:48:24.312Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-svenstaro-miniserve",
@@ -4203,9 +4195,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-09T22:34:11.858Z",
+    "lastChecked": "2026-11-12T05:26:56.609Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-09T22:34:11.858Z"
+    "lastVerified": "2026-11-12T05:26:56.609Z"
   },
   "llphant-llphant": {
     "name": "LLPhant/LLPhant",
@@ -4229,8 +4221,8 @@
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T10:02:36.159Z",
-    "lastVerified": "2026-11-09T10:02:36.159Z",
+    "lastChecked": "2026-11-12T03:55:59.030Z",
+    "lastVerified": "2026-11-12T03:55:59.030Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mufeedvh-code2prompt",
@@ -4269,9 +4261,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-09T22:40:58.309Z",
+    "lastChecked": "2026-11-12T05:34:53.541Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-09T22:40:58.309Z"
+    "lastVerified": "2026-11-12T05:34:53.541Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -4283,9 +4275,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-09T10:28:17.875Z",
+    "lastChecked": "2026-11-12T04:23:43.812Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-09T10:28:17.875Z"
+    "lastVerified": "2026-11-12T04:23:43.812Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -4326,8 +4318,8 @@
     "officialUrl": "https://github.com/argoproj/argo-events",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T22:48:20.700Z",
-    "lastVerified": "2026-11-09T22:48:20.700Z",
+    "lastChecked": "2026-11-12T05:47:39.005Z",
+    "lastVerified": "2026-11-12T05:47:39.005Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-events",
@@ -4349,9 +4341,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-09T10:59:22.116Z",
+    "lastChecked": "2026-11-12T04:31:52.850Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-09T10:59:22.116Z"
+    "lastVerified": "2026-11-12T04:31:52.850Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -4392,8 +4384,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T22:55:28.100Z",
-    "lastVerified": "2026-11-09T22:55:28.100Z",
+    "lastChecked": "2026-11-12T05:57:08.182Z",
+    "lastVerified": "2026-11-12T05:57:08.182Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -4427,14 +4419,14 @@
     "officialUrl": "https://github.com/pimalaya/himalaya",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T11:16:16.876Z",
-    "lastVerified": "2026-11-09T11:16:16.876Z",
+    "lastChecked": "2026-11-12T04:50:14.022Z",
+    "lastVerified": "2026-11-12T04:50:14.022Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "8acab0b29b8568a29f837e151b64fef067e5f6c2041af2cbfcb918628a781d2a",
+    "contentHash": "00802509ab3b862ab6ff456d7a0fce89f1aaff9069d217f963f2cda0f9e49511",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4477,9 +4469,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-09T23:07:21.569Z",
+    "lastChecked": "2026-11-12T06:19:34.855Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-09T23:07:21.569Z"
+    "lastVerified": "2026-11-12T06:19:34.855Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -4499,22 +4491,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wasm-bindgen-wasm-pack": {
-    "name": "wasm-pack",
+    "name": "wasm-bindgen/wasm-pack",
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T11:30:55.946Z",
-    "lastVerified": "2026-11-09T11:30:55.946Z",
+    "lastChecked": "2026-11-12T05:26:51.649Z",
+    "lastVerified": "2026-11-12T05:26:51.649Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wasm-bindgen-wasm-pack",
-    "contentHash": "cad842dd19948f15a62fa6a08c79fdcbc2fac298344d1aff564684f1536f64ee",
+    "contentHash": "3c0a9e088ed9a5519f168579e337cc367e4db523ecb55147696df5b4599bc524",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b4586ca5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-hexgrad-kokoro-82m": {
     "name": "hexgrad/Kokoro-82M",
@@ -4556,14 +4547,14 @@
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T23:17:47.736Z",
-    "lastVerified": "2026-11-09T23:17:47.736Z",
+    "lastChecked": "2026-11-12T06:26:57.958Z",
+    "lastVerified": "2026-11-12T06:26:57.958Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "1289b8bafa0e5a8ff0d67dda0c9126eb751fda86b5910d56fdc0a5c7070d2f4d",
+    "contentHash": "79121a7d041b95e27ba7973c20604e034c372e57ecedc5c1740e14248da3c6ef",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4580,8 +4571,8 @@
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T11:49:50.982Z",
-    "lastVerified": "2026-11-09T11:49:50.982Z",
+    "lastChecked": "2026-11-12T05:34:45.969Z",
+    "lastVerified": "2026-11-12T05:34:45.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -4631,9 +4622,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-09T23:35:36.174Z",
+    "lastChecked": "2026-11-12T06:41:29.285Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-09T23:35:36.174Z"
+    "lastVerified": "2026-11-12T06:41:29.285Z"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -4645,9 +4636,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-09T12:12:52.715Z",
+    "lastChecked": "2026-11-12T05:47:31.507Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-09T12:12:52.715Z"
+    "lastVerified": "2026-11-12T05:47:31.507Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -4676,9 +4667,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-11-09T23:52:37.621Z",
+    "lastChecked": "2026-11-12T06:56:05.191Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-11-09T23:52:37.621Z"
+    "lastVerified": "2026-11-12T06:56:05.191Z"
   },
   "materializeinc-materialize": {
     "name": "MaterializeInc/materialize",
@@ -4698,12 +4689,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mtkennerly-ludusavi": {
-    "name": "mtkennerly/ludusavi",
+    "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T12:29:36.105Z",
-    "lastVerified": "2026-11-09T12:29:36.105Z",
+    "lastChecked": "2026-11-12T05:57:00.654Z",
+    "lastVerified": "2026-11-12T05:57:00.654Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mtkennerly-ludusavi",
@@ -4712,7 +4703,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c4c2ca99"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -4752,9 +4744,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-10T00:10:11.833Z",
+    "lastChecked": "2026-11-12T07:15:27.916Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-10T00:10:11.833Z"
+    "lastVerified": "2026-11-12T07:15:27.916Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -4774,22 +4766,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kucherenko-jscpd": {
-    "name": "jscpd",
+    "name": "kucherenko/jscpd",
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T12:42:01.196Z",
-    "lastVerified": "2026-11-09T12:42:01.196Z",
+    "lastChecked": "2026-11-12T06:19:30.261Z",
+    "lastVerified": "2026-11-12T06:19:30.261Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "495c2bb61ad4a9946d7ea51860f55f529ab399964e9089f78c00ea2e40ce9f8e",
+    "contentHash": "637610b57cf531ad29597ce3255d97fe999594d4e41de20ccf59cc8d17573adf",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b82d8418"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-minimaxai-minimax-h3": {
     "name": "MiniMaxAI/MiniMax-H3",
@@ -4820,14 +4811,14 @@
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T00:31:54.628Z",
-    "lastVerified": "2026-11-10T00:31:54.628Z",
+    "lastChecked": "2026-11-12T07:37:57.551Z",
+    "lastVerified": "2026-11-12T07:37:57.551Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "dc9d9b74c2c0379d3890f43eac013e14f7cf7d1e7469de00dc81fd129dd13cbb",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "e25c771ba2b73f66bae3775bd502590e7624ea8ac9b12c77c951e6266c751bdb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4854,14 +4845,14 @@
     "officialUrl": "https://github.com/actix/actix-web",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T12:49:26.930Z",
-    "lastVerified": "2026-11-09T12:49:26.930Z",
+    "lastChecked": "2026-11-12T06:26:50.916Z",
+    "lastVerified": "2026-11-12T06:26:50.916Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actix-actix-web",
-    "contentHash": "960e37fd10091aab83bafd5757051a2e37f533bfe4863994c95e09cdbaa06ecd",
+    "contentHash": "14713634de47c67d8614b2e636afc603fe8326270000c1313617d8ebfe95e522",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4893,9 +4884,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-10T00:44:56.129Z",
+    "lastChecked": "2026-11-12T07:46:15.793Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-10T00:44:56.129Z"
+    "lastVerified": "2026-11-12T07:46:15.793Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -4907,9 +4898,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-09T13:09:52.105Z",
+    "lastChecked": "2026-11-12T06:41:21.810Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-09T13:09:52.105Z"
+    "lastVerified": "2026-11-12T06:41:21.810Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -4950,14 +4941,14 @@
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T00:59:42.403Z",
-    "lastVerified": "2026-11-10T00:59:42.403Z",
+    "lastChecked": "2026-11-12T07:54:13.183Z",
+    "lastVerified": "2026-11-12T07:54:13.183Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "3b19e3cc17f4d134094fc5f731ca0099a68870e5041dc28f65a29745ca902a29",
+    "contentHash": "8808a67e82e75809bb09629b8454cf971c7f13c4cf5cbd93d734e08e06676fec",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4984,12 +4975,12 @@
     "officialUrl": "https://github.com/transact-rs/sqlx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T13:21:42.939Z",
-    "lastVerified": "2026-11-09T13:21:42.939Z",
+    "lastChecked": "2026-11-12T06:56:01.360Z",
+    "lastVerified": "2026-11-12T06:56:01.360Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-transact-rs-sqlx",
-    "contentHash": "12579a9eb5624c1f909f1b3777da98146027801d0c654381a903692b256eb6c9",
+    "contentHash": "5a8ffc2eb5da6ce435bb444cacaa541e522927260dba74bf29148b7890b97579",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
@@ -5023,9 +5014,9 @@
   "nitrictech-nitric": {
     "name": "nitric",
     "officialUrl": "https://github.com/nitrictech/nitric",
-    "lastChecked": "2026-11-10T01:19:19.535Z",
+    "lastChecked": "2026-11-12T08:04:27.115Z",
     "revisionIdentifier": "8b1be250",
-    "lastVerified": "2026-11-10T01:19:19.535Z"
+    "lastVerified": "2026-11-12T08:04:27.115Z"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -5035,22 +5026,21 @@
     "lastVerified": "2026-11-11T19:53:37.494Z"
   },
   "grpc-grpc-rust": {
-    "name": "grpc-rust",
+    "name": "grpc/grpc-rust",
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T13:34:11.660Z",
-    "lastVerified": "2026-11-09T13:34:11.660Z",
+    "lastChecked": "2026-11-12T07:15:25.825Z",
+    "lastVerified": "2026-11-12T07:15:25.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "7aff3811260ea31f0320f917668fd8fadd12ae252633f87a121b4ef0a1294647",
+    "contentHash": "cba6b2c9f69c379e19c8ec156a503ab615a27f1ca1bd623a9848c8caa3b57ea2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d140e69f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openai-gpt-oss-120b": {
     "name": "openai/gpt-oss-120b",
@@ -5079,9 +5069,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-10T01:41:26.208Z",
+    "lastChecked": "2026-11-12T08:14:34.424Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-10T01:41:26.208Z"
+    "lastVerified": "2026-11-12T08:14:34.424Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -5106,14 +5096,14 @@
     "officialUrl": "https://github.com/embassy-rs/embassy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T13:46:45.363Z",
-    "lastVerified": "2026-11-09T13:46:45.363Z",
+    "lastChecked": "2026-11-12T07:37:48.552Z",
+    "lastVerified": "2026-11-12T07:37:48.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "42f115cb8dfdcdf06d7d0157487fd107e924555c0abdf16f79dcd7da21d37641",
+    "contentHash": "18882c2567cc4000d4948aacdb171511069343ef782d6cfc88ad1b088f52f91c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5158,14 +5148,14 @@
     "officialUrl": "https://github.com/openyurtio/openyurt",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T01:58:31.334Z",
-    "lastVerified": "2026-11-10T01:58:31.334Z",
+    "lastChecked": "2026-11-12T08:27:49.873Z",
+    "lastVerified": "2026-11-12T08:27:49.873Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openyurtio-openyurt",
-    "contentHash": "4491deafb264fb0fe67524d1beb33e830430d17350c55137dbe6655a078bfecf",
+    "contentHash": "50002d7471fb876dc766417a4578f13681b99ea3d48d7673e26190a2cb5aa499",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5182,14 +5172,14 @@
     "officialUrl": "https://github.com/telemt/telemt",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T14:04:31.988Z",
-    "lastVerified": "2026-11-09T14:04:31.988Z",
+    "lastChecked": "2026-11-12T07:46:12.479Z",
+    "lastVerified": "2026-11-12T07:46:12.479Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-telemt-telemt",
-    "contentHash": "e32a44c64f750585bdc29326c15caccd594fc3bf26b99ae23a829c816589805b",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "37ef238c6ebdcbb22a6e86aef5c33d0d157bb76a9ff141f198b86ac63fd0587d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5233,14 +5223,14 @@
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T02:06:42.154Z",
-    "lastVerified": "2026-11-10T02:06:42.154Z",
+    "lastChecked": "2026-11-12T08:52:43.742Z",
+    "lastVerified": "2026-11-12T08:52:43.742Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
+    "contentHash": "29dd9c9c6f3bf4601acc5e53e1820f6f0aed8cade79ec21a09e4bd250e91b361",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5257,8 +5247,8 @@
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T14:12:50.864Z",
-    "lastVerified": "2026-11-09T14:12:50.864Z",
+    "lastChecked": "2026-11-12T07:54:01.691Z",
+    "lastVerified": "2026-11-12T07:54:01.691Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webrtc-rs-webrtc",
@@ -5299,14 +5289,14 @@
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T02:19:05.474Z",
-    "lastVerified": "2026-11-10T02:19:05.474Z",
+    "lastChecked": "2026-11-12T09:19:16.464Z",
+    "lastVerified": "2026-11-12T09:19:16.464Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
+    "contentHash": "ae8e3e7f483f58123a1a5df26f4c8650a5256ee0951d16bfe11f949222d2d1ac",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5321,9 +5311,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-11-09T14:35:22.012Z",
+    "lastChecked": "2026-11-12T08:04:19.578Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-11-09T14:35:22.012Z"
+    "lastVerified": "2026-11-12T08:04:19.578Z"
   },
   "hf-bigscience-bloom": {
     "name": "bigscience/bloom",
@@ -5354,14 +5344,14 @@
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T02:31:46.893Z",
-    "lastVerified": "2026-11-10T02:31:46.893Z",
+    "lastChecked": "2026-11-12T09:45:54.975Z",
+    "lastVerified": "2026-11-12T09:45:54.975Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "39f2d45fd17ac83a43ea09502087419de6bca2bc86cdec1b08e51ff5695788ad",
+    "contentHash": "d4a545056fa7833e31ef17d2115022c4ed70b035b4a43ec408d7bf6a7e18cc83",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5386,9 +5376,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-11-09T14:52:53.223Z",
+    "lastChecked": "2026-11-12T08:14:26.937Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-11-09T14:52:53.223Z"
+    "lastVerified": "2026-11-12T08:14:26.937Z"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",
@@ -5415,22 +5405,21 @@
     "lastVerified": "2026-11-10T04:44:21.194Z"
   },
   "saltstack-salt": {
-    "name": "salt",
+    "name": "saltstack/salt",
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T02:43:51.025Z",
-    "lastVerified": "2026-11-10T02:43:51.025Z",
+    "lastChecked": "2026-11-12T09:55:03.387Z",
+    "lastVerified": "2026-11-12T09:55:03.387Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
-    "contentHash": "f4e6fa92353ce1498de532bb3420cdbd6e8f1b33d71877b25a86acbdb0bd8920",
+    "contentHash": "dbf431369fb03ddc394db25b2eb7a0b4ce4d735cec41524b6c004577caa6eb09",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "944a95d5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tako8ki-gobang": {
     "name": "gobang",
@@ -5444,14 +5433,14 @@
     "officialUrl": "https://github.com/salvo-rs/salvo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T15:12:36.729Z",
-    "lastVerified": "2026-11-09T15:12:36.729Z",
+    "lastChecked": "2026-11-12T08:27:41.710Z",
+    "lastVerified": "2026-11-12T08:27:41.710Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "8669bf52cac49c93fa0c71d5bb73fed220f9872e2986bd5eb25e38e76e2c0ea7",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "29eef3136107920eb42cd39f5609682b99121bfe0d2fe542cf46541962533503",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 10,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5495,14 +5484,14 @@
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T02:59:34.992Z",
-    "lastVerified": "2026-11-10T02:59:34.992Z",
+    "lastChecked": "2026-11-12T10:07:20.306Z",
+    "lastVerified": "2026-11-12T10:07:20.306Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "96fec4b5c1f124ce23952f0a6209f3e9ae510b9898c19ff52808e71bacb3cde0",
+    "contentHash": "bdd6fd2c9487e5a2b97f76226df1f52fd9f304bd90caa71a6b8604c1190a4846",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5527,9 +5516,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-11-09T15:28:47.497Z",
+    "lastChecked": "2026-11-12T08:52:31.063Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-11-09T15:28:47.497Z"
+    "lastVerified": "2026-11-12T08:52:31.063Z"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -5556,22 +5545,21 @@
     "lastVerified": "2026-11-10T04:59:10.542Z"
   },
   "infracost-infracost": {
-    "name": "infracost",
+    "name": "infracost/infracost",
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T04:36:50.565Z",
-    "lastVerified": "2026-11-10T04:36:50.565Z",
+    "lastChecked": "2026-11-12T10:42:55.671Z",
+    "lastVerified": "2026-11-12T10:42:55.671Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
-    "contentHash": "7c1f97c508a15554850f7865bc663d054bdf819c8075087113a268557645601e",
+    "contentHash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "93b9a2d9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -5583,9 +5571,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-09T15:51:20.741Z",
+    "lastChecked": "2026-11-12T09:19:03.461Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-09T15:51:20.741Z"
+    "lastVerified": "2026-11-12T09:19:03.461Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -5616,14 +5604,14 @@
     "officialUrl": "https://github.com/encoredev/encore",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T04:44:26.792Z",
-    "lastVerified": "2026-11-10T04:44:26.792Z",
+    "lastChecked": "2026-11-12T10:52:37.027Z",
+    "lastVerified": "2026-11-12T10:52:37.027Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-encoredev-encore",
-    "contentHash": "057cd7a8b6cc2b30c6a8f9b441b1ec03dcfecd5dc641d4585571f7e4c887bb82",
+    "contentHash": "4325fd9e34857af151d30061db21ec01c9d8c1ab82ed88d3f26c5d0545857a3f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5638,9 +5626,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-09T16:04:10.853Z",
+    "lastChecked": "2026-11-12T09:45:39.036Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-09T16:04:10.853Z"
+    "lastVerified": "2026-11-12T09:45:39.036Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -5677,12 +5665,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "crossplane-crossplane": {
-    "name": "crossplane/crossplane",
+    "name": "crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T04:51:48.404Z",
-    "lastVerified": "2026-11-10T04:51:48.404Z",
+    "lastChecked": "2026-11-12T11:00:50.322Z",
+    "lastVerified": "2026-11-12T11:00:50.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -5691,7 +5679,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6899c191"
   },
   "sfu-db-connector-x": {
     "name": "connector-x",
@@ -5716,14 +5705,14 @@
     "officialUrl": "https://github.com/NVIDIA/cuda-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:10:55.100Z",
-    "lastVerified": "2026-11-09T16:10:55.100Z",
+    "lastChecked": "2026-11-12T09:54:55.890Z",
+    "lastVerified": "2026-11-12T09:54:55.890Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
+    "contentHash": "a36ddf30b7a12fdfeae45501cad65413bf096d6ba0de02f7945887a6c9571ddf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5757,14 +5746,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T04:59:17.899Z",
-    "lastVerified": "2026-11-10T04:59:17.899Z",
+    "lastChecked": "2026-11-12T11:18:28.819Z",
+    "lastVerified": "2026-11-12T11:18:28.819Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "e3df3a0aea1a1c27e6dd3362df1b446416cb2f3b7b9e0393d8600665131ffe0d",
+    "contentHash": "2048c481b74ec9918eaf4b013438548a3c57a8c31d57b23126708ac36ac6c9a1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 24,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5791,8 +5780,8 @@
     "officialUrl": "https://github.com/mlua-rs/mlua",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:18:15.372Z",
-    "lastVerified": "2026-11-09T16:18:15.372Z",
+    "lastChecked": "2026-11-12T10:07:07.757Z",
+    "lastVerified": "2026-11-12T10:07:07.757Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mlua-rs-mlua",
@@ -5829,22 +5818,21 @@
     "lastVerified": "2026-11-10T06:05:07.024Z"
   },
   "bridgecrewio-checkov": {
-    "name": "checkov",
+    "name": "bridgecrewio/checkov",
     "officialUrl": "https://github.com/bridgecrewio/checkov",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T05:06:19.458Z",
-    "lastVerified": "2026-11-10T05:06:19.458Z",
+    "lastChecked": "2026-11-12T11:37:18.869Z",
+    "lastVerified": "2026-11-12T11:37:18.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bridgecrewio-checkov",
-    "contentHash": "180b8d084778eaecf307ba736696e24d3be46da33cd0dd0c1c4e1f447fd38b9f",
+    "contentHash": "fafee00dc6f00f4108047b765995e220d451b88cc9c09a094257ae68f81c92b0",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "47986461"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "etcd-io-etcd": {
     "name": "etcd-io/etcd",
@@ -5868,8 +5856,8 @@
     "officialUrl": "https://github.com/cloudwego/volo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:25:47.933Z",
-    "lastVerified": "2026-11-09T16:25:47.933Z",
+    "lastChecked": "2026-11-12T10:42:42.787Z",
+    "lastVerified": "2026-11-12T10:42:42.787Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cloudwego-volo",
@@ -5908,9 +5896,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-10T05:14:17.291Z",
+    "lastChecked": "2026-11-12T11:50:48.526Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-10T05:14:17.291Z"
+    "lastVerified": "2026-11-12T11:50:48.526Z"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -5948,12 +5936,12 @@
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-10T05:21:54.675Z",
-    "lastVerified": "2026-11-10T05:21:54.675Z",
+    "lastChecked": "2026-11-12T12:14:56.377Z",
+    "lastVerified": "2026-11-12T12:14:56.377Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "197e4103c65da590216a02206945b16f2618fd5a303bff2d0cc3c9e4f3c27a65",
+    "contentHash": "16df7d6253ac81de19da60ec6b60facfa61f5fcd59bbb8ccc282f2919fc1e79a",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
@@ -5999,14 +5987,14 @@
     "officialUrl": "https://github.com/ntex-rs/ntex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:33:25.075Z",
-    "lastVerified": "2026-11-09T16:33:25.075Z",
+    "lastChecked": "2026-11-12T10:52:28.509Z",
+    "lastVerified": "2026-11-12T10:52:28.509Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "012c2baefb2c5b8a40129e788ab31b50ba84ea83dac261c66d45e698e0df91ad",
+    "contentHash": "66f63764a50b634dde410cb827a0f1252a10ddf59eb2fb60dd8ea8325f4ea299",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 3,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6038,9 +6026,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-10T06:05:09.556Z",
+    "lastChecked": "2026-11-12T12:32:38.600Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-10T06:05:09.556Z"
+    "lastVerified": "2026-11-12T12:32:38.600Z"
   },
   "rqlite-rqlite": {
     "name": "rqlite/rqlite",
@@ -6064,14 +6052,14 @@
     "officialUrl": "https://github.com/Xudong-Huang/may",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:40:17.780Z",
-    "lastVerified": "2026-11-09T16:40:17.780Z",
+    "lastChecked": "2026-11-12T11:00:49.033Z",
+    "lastVerified": "2026-11-12T11:00:49.033Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xudong-huang-may",
-    "contentHash": "b3f699fe649fc4b6b3dff592849d93937994da0f8c3c5b8439f3ff58f8802a5c",
+    "contentHash": "59d3cf139775170cb72b792e7c9b1658eeae49646df3da672b63ee2b8fc37eed",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 15,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6115,8 +6103,8 @@
     "officialUrl": "https://github.com/goss-org/goss",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T06:12:37.841Z",
-    "lastVerified": "2026-11-10T06:12:37.841Z",
+    "lastChecked": "2026-11-12T12:45:17.506Z",
+    "lastVerified": "2026-11-12T12:45:17.506Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goss-org-goss",
@@ -6148,9 +6136,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-11-09T17:11:59.404Z",
+    "lastChecked": "2026-11-12T11:37:06.627Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-11-09T17:11:59.404Z"
+    "lastVerified": "2026-11-12T11:37:06.627Z"
   },
   "hf-naiveai-naive-n0.5-flash": {
     "name": "NaiveAI/Naive-N0.5-Flash",
@@ -6179,23 +6167,23 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-11T06:04:39.432Z",
+    "lastChecked": "2026-11-12T12:57:55.928Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-11-11T06:04:39.432Z"
+    "lastVerified": "2026-11-12T12:57:55.928Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
     "officialUrl": "https://github.com/arangodb/arangodb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-09T16:33:39.202Z",
-    "lastVerified": "2026-11-09T16:33:39.202Z",
+    "lastChecked": "2026-11-12T03:23:48.360Z",
+    "lastVerified": "2026-11-12T03:23:48.360Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
+    "contentHash": "a969464ff12cfdca9d298a10fe24aa3222965e443c74fd5454592907225012ee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6205,8 +6193,8 @@
     "officialUrl": "https://github.com/nezhahq/nezha",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T17:34:47.772Z",
-    "lastVerified": "2026-11-09T17:34:47.772Z",
+    "lastChecked": "2026-11-12T11:50:41.007Z",
+    "lastVerified": "2026-11-12T11:50:41.007Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nezhahq-nezha",
@@ -6256,23 +6244,23 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-11T06:23:40.705Z",
+    "lastChecked": "2026-11-12T13:10:13.561Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-11T06:23:40.705Z"
+    "lastVerified": "2026-11-12T13:10:13.561Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T16:40:32.529Z",
-    "lastVerified": "2026-11-09T16:40:32.529Z",
+    "lastChecked": "2026-11-12T03:30:46.368Z",
+    "lastVerified": "2026-11-12T03:30:46.368Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "a0d2067540c08d269d1ca3d9b241c4a41aab6cd239e769d81d3d67de08e15938",
+    "contentHash": "9f910c029e50e15a847bbcbb99ab96f10643384e78c2bd7331f8af7222b643e0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6282,14 +6270,14 @@
     "officialUrl": "https://github.com/u-root/u-root",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T17:43:52.349Z",
-    "lastVerified": "2026-11-09T17:43:52.349Z",
+    "lastChecked": "2026-11-12T12:14:48.818Z",
+    "lastVerified": "2026-11-12T12:14:48.818Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-u-root-u-root",
-    "contentHash": "f2b18b9c0da435050fb621ad72c29ecbd92518e08a887f17e897d95b7c5852bc",
+    "contentHash": "7e5f8c54fc06f9049ad6e6aa461e6ad49a1f53053b245f28e045e785d98cbcd2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6333,43 +6321,42 @@
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T06:33:19.159Z",
-    "lastVerified": "2026-11-11T06:33:19.159Z",
+    "lastChecked": "2026-11-12T13:33:09.467Z",
+    "lastVerified": "2026-11-12T13:33:09.467Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
+    "contentHash": "c2420d1344f4f18bf6fc3ac89a13ab695fc6005e7279f0eb45f460494d6664b2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-zookeeper": {
-    "name": "zookeeper",
+    "name": "apache/zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T16:59:48.316Z",
-    "lastVerified": "2026-11-09T16:59:48.316Z",
+    "lastChecked": "2026-11-12T03:48:40.861Z",
+    "lastVerified": "2026-11-12T03:48:40.861Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "35a7ef7e08a86d5d263726aa8ac854a4d56464e990c95193fdb02fe1d2052ba7",
+    "contentHash": "41bdfc7fc9fc362553fb53aa0be7f5521aa257012d23b7a4ef0d00c3889ef72d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "61f8849c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubearmor-kubearmor": {
     "name": "KubeArmor",
     "officialUrl": "https://github.com/kubearmor/KubeArmor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T17:56:42.116Z",
-    "lastVerified": "2026-11-09T17:56:42.116Z",
+    "lastChecked": "2026-11-12T12:32:31.125Z",
+    "lastVerified": "2026-11-12T12:32:31.125Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubearmor-kubearmor",
@@ -6410,8 +6397,8 @@
     "officialUrl": "https://github.com/octodns/octodns",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T07:03:13.193Z",
-    "lastVerified": "2026-11-11T07:03:13.193Z",
+    "lastChecked": "2026-11-12T13:40:43.391Z",
+    "lastVerified": "2026-11-12T13:40:43.391Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-octodns-octodns",
@@ -6424,12 +6411,12 @@
     "revisionIdentifier": "439ea266"
   },
   "citusdata-citus": {
-    "name": "citusdata/citus",
+    "name": "citus",
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-09T17:12:18.835Z",
-    "lastVerified": "2026-11-09T17:12:18.835Z",
+    "lastChecked": "2026-11-12T03:56:11.550Z",
+    "lastVerified": "2026-11-12T03:56:11.550Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -6438,15 +6425,16 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "08479aca"
   },
   "dicklesworthstone-destructive_command_guard": {
-    "name": "Dicklesworthstone/destructive_command_guard",
+    "name": "destructive_command_guard",
     "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T18:11:09.431Z",
-    "lastVerified": "2026-11-09T18:11:09.431Z",
+    "lastChecked": "2026-11-12T12:45:10.025Z",
+    "lastVerified": "2026-11-12T12:45:10.025Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
@@ -6455,7 +6443,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "acbe0665"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
     "name": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -6482,12 +6471,12 @@
     "lastVerified": "2026-11-11T07:56:54.538Z"
   },
   "checkmarx-kics": {
-    "name": "Checkmarx/kics",
+    "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-11T07:27:38.962Z",
-    "lastVerified": "2026-11-11T07:27:38.962Z",
+    "lastChecked": "2026-11-12T14:08:22.513Z",
+    "lastVerified": "2026-11-12T14:08:22.513Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
@@ -6496,21 +6485,22 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "150910f8"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
     "officialUrl": "https://github.com/StarRocks/starrocks",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T17:35:06.851Z",
-    "lastVerified": "2026-11-09T17:35:06.851Z",
+    "lastChecked": "2026-11-12T04:24:00.258Z",
+    "lastVerified": "2026-11-12T04:24:00.258Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "8dbbfe7c719ba0b1e5b4ddaa0274f92667053c5c48a51bd77e073e02861be13d",
+    "contentHash": "e2ca9c5f2f2cd4d90128a33b256a6fb837a225eba5305106a90e41fd36c30aee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6518,9 +6508,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-11-09T21:05:42.762Z",
+    "lastChecked": "2026-11-12T12:57:48.342Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-11-09T21:05:42.762Z"
+    "lastVerified": "2026-11-12T12:57:48.342Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -6568,8 +6558,8 @@
     "officialUrl": "https://github.com/pingcap/talent-plan",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T17:44:00.417Z",
-    "lastVerified": "2026-11-09T17:44:00.417Z",
+    "lastChecked": "2026-11-12T04:32:05.395Z",
+    "lastVerified": "2026-11-12T04:32:05.395Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-talent-plan",
@@ -6586,14 +6576,14 @@
     "officialUrl": "https://github.com/yvgude/lean-ctx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T22:14:47.575Z",
-    "lastVerified": "2026-11-09T22:14:47.575Z",
+    "lastChecked": "2026-11-12T13:10:11.559Z",
+    "lastVerified": "2026-11-12T13:10:11.559Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "cce419abe5983bcb417ea5aab779e1eb34ac9f27aef07318adeff0f74fe92995",
+    "contentHash": "8e6f0e6191946d471dd56d6030d08491d01d98cc03155ee4c704e5f3cfb8ef8f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6644,14 +6634,14 @@
     "officialUrl": "https://github.com/yugabyte/yugabyte-db",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-09T18:11:25.661Z",
-    "lastVerified": "2026-11-09T18:11:25.661Z",
+    "lastChecked": "2026-11-12T05:13:21.634Z",
+    "lastVerified": "2026-11-12T05:13:21.634Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "748f7dc9d2aff27981a15f57a9b0619a5e6edbd2757c0b266df525db9d476f4a",
+    "contentHash": "cc5dca54cc99e6cac5510523e4013cae95c294c130f30769f2eb3db3eea2f5e6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6659,9 +6649,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-09T22:26:52.528Z",
+    "lastChecked": "2026-11-12T13:32:57.006Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-09T22:26:52.528Z"
+    "lastVerified": "2026-11-12T13:32:57.006Z"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -6699,14 +6689,14 @@
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T21:06:01.345Z",
-    "lastVerified": "2026-11-09T21:06:01.345Z",
+    "lastChecked": "2026-11-12T05:27:05.466Z",
+    "lastVerified": "2026-11-12T05:27:05.466Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
+    "contentHash": "66775b3009776caebd919003873c234b50d7764be90b55457162069910c8539f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6716,12 +6706,12 @@
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T22:34:12.402Z",
-    "lastVerified": "2026-11-09T22:34:12.402Z",
+    "lastChecked": "2026-11-12T13:40:41.598Z",
+    "lastVerified": "2026-11-12T13:40:41.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "95fc660679c1d6db0fd5805c5cff4ab3660e0a872c26c5a6b00cab8cf28ddb36",
+    "contentHash": "69f11793433213e9a220cd1ea1cf38bb51cabbf7efcbdba365a9c2679bb11fcf",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -6775,14 +6765,14 @@
     "officialUrl": "https://github.com/ydb-platform/ydb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-09T21:27:03.132Z",
-    "lastVerified": "2026-11-09T21:27:03.132Z",
+    "lastChecked": "2026-11-12T05:35:05.355Z",
+    "lastVerified": "2026-11-12T05:35:05.355Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "824aa60c496f24ce14acef416efe6e27d43a284fc4ac26a1e511b1c220a455ab",
+    "contentHash": "9afea8a9017f1173ace93ee5a2dfd9d855c0f7627c2a6d880b8d30140550b0d1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6790,9 +6780,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-09T22:40:50.721Z",
+    "lastChecked": "2026-11-12T14:08:14.926Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-09T22:40:50.721Z"
+    "lastVerified": "2026-11-12T14:08:14.926Z"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "name": "google/gemma-4-26B-A4B-it",
@@ -6828,9 +6818,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-09T21:55:40.134Z",
+    "lastChecked": "2026-11-12T05:47:43.930Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-09T21:55:40.134Z"
+    "lastVerified": "2026-11-12T05:47:43.930Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -6875,8 +6865,8 @@
     "officialUrl": "https://github.com/olric-data/olric",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T22:14:54.694Z",
-    "lastVerified": "2026-11-09T22:14:54.694Z",
+    "lastChecked": "2026-11-12T05:57:13.154Z",
+    "lastVerified": "2026-11-12T05:57:13.154Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-olric-data-olric",
@@ -6950,9 +6940,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-09T22:27:05.094Z",
+    "lastChecked": "2026-11-12T06:19:39.822Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-09T22:27:05.094Z"
+    "lastVerified": "2026-11-12T06:19:39.822Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -7018,14 +7008,14 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-09T22:34:26.744Z",
-    "lastVerified": "2026-11-09T22:34:26.744Z",
+    "lastChecked": "2026-11-12T06:27:04.296Z",
+    "lastVerified": "2026-11-12T06:27:04.296Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "921fcbbce477064cd686bfe9eec4a5d4ef49335113d0e68072a8d0113ef650df",
+    "contentHash": "c8616073b9ad62fa8882f4002ebe24c2bacdf3fedd73d46e6cf2ad361dcacdb4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7103,9 +7093,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-11-09T22:41:03.405Z",
+    "lastChecked": "2026-11-12T06:41:34.280Z",
     "revisionIdentifier": "75015467",
-    "lastVerified": "2026-11-09T22:41:03.405Z"
+    "lastVerified": "2026-11-12T06:41:34.280Z"
   },
   "dalance-procs": {
     "name": "dalance/procs",
@@ -7180,8 +7170,8 @@
     "officialUrl": "https://github.com/StarTrail-org/LEANN",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-09T22:48:25.544Z",
-    "lastVerified": "2026-11-09T22:48:25.544Z",
+    "lastChecked": "2026-11-12T06:56:10.228Z",
+    "lastVerified": "2026-11-12T06:56:10.228Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-startrail-org-leann",
@@ -7234,9 +7224,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-09T22:55:33.087Z",
+    "lastChecked": "2026-11-12T07:15:32.923Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-09T22:55:33.087Z"
+    "lastVerified": "2026-11-12T07:15:32.923Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -7301,14 +7291,14 @@
     "officialUrl": "https://github.com/MariaDB/server",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-09T23:07:31.785Z",
-    "lastVerified": "2026-11-09T23:07:31.785Z",
+    "lastChecked": "2026-11-12T07:38:01.584Z",
+    "lastVerified": "2026-11-12T07:38:01.584Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mariadb-server",
-    "contentHash": "0b117dd733524b19ef0ff111c57c9228d9732eeb6e8d754d089c50d4d91bd9b2",
+    "contentHash": "e57571ca8efac2b915ab5d65b5670689615fc834d8825ab6e67e53f7703b1b26",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7356,14 +7346,14 @@
     "officialUrl": "https://github.com/vespa-engine/vespa",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T23:17:53.416Z",
-    "lastVerified": "2026-11-09T23:17:53.416Z",
+    "lastChecked": "2026-11-12T07:46:25.529Z",
+    "lastVerified": "2026-11-12T07:46:25.529Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "34313097b1a1a3583cbdf0dd571cd9f47efee32f0fb20f45d44e360943d16b6f",
+    "contentHash": "1f852059955f4a3b98812afc98e6ba4327953694b1e7985bba7bccbbda268507",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7441,9 +7431,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-09T23:35:41.206Z",
+    "lastChecked": "2026-11-12T07:54:14.311Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-09T23:35:41.206Z"
+    "lastVerified": "2026-11-12T07:54:14.311Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -7518,14 +7508,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T23:52:46.923Z",
-    "lastVerified": "2026-11-09T23:52:46.923Z",
+    "lastChecked": "2026-11-12T08:04:37.744Z",
+    "lastVerified": "2026-11-12T08:04:37.744Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "92fe3126c4bda76281396026a2b2de25c97d86c5d8955ee1499824c22b34b5f6",
+    "contentHash": "85e5a69ced15b20fab77b0bfc9e6f949e86e63d8aed1f7d40a8650bde97f7d5a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7593,14 +7583,14 @@
     "officialUrl": "https://github.com/RediSearch/RediSearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T00:10:20.919Z",
-    "lastVerified": "2026-11-10T00:10:20.919Z",
+    "lastChecked": "2026-11-12T08:14:44.317Z",
+    "lastVerified": "2026-11-12T08:14:44.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "71a906d828d40ab8d38bae761aad27d958055531dc2a98be31f0de0687570566",
+    "contentHash": "4f26d34544aa2dfd14a7c8c179a12a3773dbbb0020caff252b0603e09278f726",
     "promotedRulesCount": 3,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7678,14 +7668,14 @@
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-10T00:31:57.185Z",
-    "lastVerified": "2026-11-10T00:31:57.185Z",
+    "lastChecked": "2026-11-12T08:27:53.871Z",
+    "lastVerified": "2026-11-12T08:27:53.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "0b5225805030a68d284dcb74196b72fcc80f06f3b7870cd5fd1c53abd68c86c8",
+    "contentHash": "e354c9d4ea476e7d5b918f30b932583474763842e9712254b922db154aff6772",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7764,12 +7754,12 @@
     "officialUrl": "https://github.com/duckdb/duckdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-10T00:45:07.366Z",
-    "lastVerified": "2026-11-10T00:45:07.366Z",
+    "lastChecked": "2026-11-12T08:52:50.078Z",
+    "lastVerified": "2026-11-12T08:52:50.078Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "4b6af69b1a862c7b3fa9dc4114bdbdef847c192cf3c6dc546c53674b4e26c75b",
+    "contentHash": "eb04bd8559a6eeec47705f555abf5eee736042d62115ab548c8e6e0926b1d17f",
     "promotedRulesCount": 1,
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
@@ -7839,14 +7829,14 @@
     "officialUrl": "https://github.com/ClickHouse/ClickHouse",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-10T00:59:49.068Z",
-    "lastVerified": "2026-11-10T00:59:49.068Z",
+    "lastChecked": "2026-11-12T09:19:23.007Z",
+    "lastVerified": "2026-11-12T09:19:23.007Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
+    "contentHash": "5f3970b022f015561639893582677110f3bec653160184dd13bf280049b8bd0f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7887,8 +7877,8 @@
     "officialUrl": "https://github.com/libsql/libsql",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-10T01:19:24.394Z",
-    "lastVerified": "2026-11-10T01:19:24.394Z",
+    "lastChecked": "2026-11-12T09:45:51.564Z",
+    "lastVerified": "2026-11-12T09:45:51.564Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-libsql",
@@ -7956,14 +7946,14 @@
     "officialUrl": "https://github.com/tursodatabase/limbo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T01:41:38.225Z",
-    "lastVerified": "2026-11-10T01:41:38.225Z",
+    "lastChecked": "2026-11-12T09:55:11.698Z",
+    "lastVerified": "2026-11-12T09:55:11.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
+    "contentHash": "fca586e8119109f6d6af9a4127f0eb896be38bbdbdb9cecea7da90b47c8c3070",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8010,12 +8000,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-source-legal-opencontracts": {
-    "name": "Open-Source-Legal/OpenContracts",
+    "name": "OpenContracts",
     "officialUrl": "https://github.com/Open-Source-Legal/OpenContracts",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T01:58:36.412Z",
-    "lastVerified": "2026-11-10T01:58:36.412Z",
+    "lastChecked": "2026-11-12T10:07:20.225Z",
+    "lastVerified": "2026-11-12T10:07:20.225Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-source-legal-opencontracts",
@@ -8024,7 +8014,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "01dd8500"
   },
   "bgreenwell-doxx": {
     "name": "doxx",
@@ -8068,12 +8059,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tickernelz-opencode-mem": {
-    "name": "tickernelz/opencode-mem",
+    "name": "opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T02:06:46.963Z",
-    "lastVerified": "2026-11-10T02:06:46.963Z",
+    "lastChecked": "2026-11-12T10:42:55.236Z",
+    "lastVerified": "2026-11-12T10:42:55.236Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
@@ -8082,7 +8073,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "040b27f4"
   },
   "str4d-rage": {
     "name": "rage",
@@ -8126,22 +8118,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-serviette": {
-    "name": "serviette",
+    "name": "pathwaycom/serviette",
     "officialUrl": "https://github.com/pathwaycom/serviette",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T02:19:06.071Z",
-    "lastVerified": "2026-11-10T02:19:06.071Z",
+    "lastChecked": "2026-11-12T10:52:40.869Z",
+    "lastVerified": "2026-11-12T10:52:40.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pathwaycom-serviette",
-    "contentHash": "ef83f42c72f4cbd8d730d1f6a2b4167e6bb250a7dc9a7909ccc1961a6f5c99b2",
+    "contentHash": "4edefa749f9d24c1f97d1695a3447e877f4c47bc6fb8fe3f46e2f6f893cb9a93",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "84e92a33"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "railwayapp-nixpacks": {
     "name": "nixpacks",
@@ -8179,14 +8170,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T02:31:50.945Z",
-    "lastVerified": "2026-11-10T02:31:50.945Z",
+    "lastChecked": "2026-11-12T11:01:02.642Z",
+    "lastVerified": "2026-11-12T11:01:02.642Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "018e53a38bc5e584be924df1fad0806524961859820546a5dd0296c11eda6361",
+    "contentHash": "aa703bb2421db91084a561af3a6c5a79efd5e46abbd52e30e0a93cb6c58220d0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9587,9 +9578,9 @@
   "nalexn-clean-architecture-swiftui": {
     "name": "clean-architecture-swiftui",
     "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
-    "lastChecked": "2026-11-08T03:43:13.144Z",
+    "lastChecked": "2026-11-12T03:23:34.642Z",
     "revisionIdentifier": "9eca97b8",
-    "lastVerified": "2026-11-08T03:43:13.144Z"
+    "lastVerified": "2026-11-12T03:23:34.642Z"
   },
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",
@@ -9601,9 +9592,9 @@
   "siteline-swiftui-introspect": {
     "name": "swiftui-introspect",
     "officialUrl": "https://github.com/siteline/swiftui-introspect",
-    "lastChecked": "2026-11-08T03:54:13.820Z",
+    "lastChecked": "2026-11-12T03:30:33.387Z",
     "revisionIdentifier": "7f32b29d",
-    "lastVerified": "2026-11-08T03:54:13.820Z"
+    "lastVerified": "2026-11-12T03:30:33.387Z"
   },
   "melnixdev-seo-crawl-audit": {
     "name": "seo-crawl-audit",
@@ -9615,9 +9606,9 @@
   "github-copilotforxcode": {
     "name": "CopilotForXcode",
     "officialUrl": "https://github.com/github/CopilotForXcode",
-    "lastChecked": "2026-11-08T04:02:47.318Z",
+    "lastChecked": "2026-11-12T03:48:29.252Z",
     "revisionIdentifier": "258d4577",
-    "lastVerified": "2026-11-08T04:02:47.318Z"
+    "lastVerified": "2026-11-12T03:48:29.252Z"
   },
   "istifano-seo-auditor": {
     "name": "seo-auditor",
@@ -9631,14 +9622,14 @@
     "officialUrl": "https://github.com/TableProApp/TablePro",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T04:09:59.969Z",
-    "lastVerified": "2026-11-08T04:09:59.969Z",
+    "lastChecked": "2026-11-12T03:56:12.978Z",
+    "lastVerified": "2026-11-12T03:56:12.978Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "7e9adbf97599ebdef0576a3b0d86e0859d74a128d1416b0192045ad626f6f349",
+    "contentHash": "72ca180511be4fe2bf6ba6081bf2fd8c85a41631e90c35a829271cccbabc6fe9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 24,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9653,9 +9644,9 @@
   "twostraws-controlroom": {
     "name": "ControlRoom",
     "officialUrl": "https://github.com/twostraws/ControlRoom",
-    "lastChecked": "2026-11-08T04:19:20.662Z",
+    "lastChecked": "2026-11-12T04:23:48.807Z",
     "revisionIdentifier": "1764564f",
-    "lastVerified": "2026-11-08T04:19:20.662Z"
+    "lastVerified": "2026-11-12T04:23:48.807Z"
   },
   "hartemyaakoub-seo-toolkit": {
     "name": "seo-toolkit",
@@ -9669,14 +9660,14 @@
     "officialUrl": "https://github.com/jacklandrin/OnlySwitch",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T04:33:51.562Z",
-    "lastVerified": "2026-11-08T04:33:51.562Z",
+    "lastChecked": "2026-11-12T04:50:18.897Z",
+    "lastVerified": "2026-11-12T04:50:18.897Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jacklandrin-onlyswitch",
-    "contentHash": "10fd17ab2d50d6f64c90216ac89b45a940d8d7c167265e0e8dd3aa7061951668",
+    "contentHash": "07a847cc25fbaa6b7f724aa2b9511506a879fe42245f1ef9f9a09e5e5ad72dfc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9691,9 +9682,9 @@
   "alin23-lunar": {
     "name": "Lunar",
     "officialUrl": "https://github.com/alin23/Lunar",
-    "lastChecked": "2026-11-08T04:42:21.254Z",
+    "lastChecked": "2026-11-12T05:13:07.665Z",
     "revisionIdentifier": "06950e25",
-    "lastVerified": "2026-11-08T04:42:21.254Z"
+    "lastVerified": "2026-11-12T05:13:07.665Z"
   },
   "davo20019-seo-analysis": {
     "name": "seo-analysis",
@@ -9705,23 +9696,23 @@
   "amosgyamfi-open-swiftui-animations": {
     "name": "open-swiftui-animations",
     "officialUrl": "https://github.com/amosgyamfi/open-swiftui-animations",
-    "lastChecked": "2026-11-08T04:54:45.948Z",
+    "lastChecked": "2026-11-12T05:26:54.061Z",
     "revisionIdentifier": "abc1d4ce",
-    "lastVerified": "2026-11-08T04:54:45.948Z"
+    "lastVerified": "2026-11-12T05:26:54.061Z"
   },
   "fabio-rovai-open-ontologies": {
     "name": "fabio-rovai/open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T21:26:58.223Z",
-    "lastVerified": "2026-11-09T21:26:58.223Z",
+    "lastChecked": "2026-11-12T04:23:54.710Z",
+    "lastVerified": "2026-11-12T04:23:54.710Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 2,
+    "contentHash": "504c49a1dca0ae1cf5119060ac9b2c19c67c8da13834e65156888d4c4275db1e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 25,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9736,9 +9727,9 @@
   "apppear-chartview": {
     "name": "ChartView",
     "officialUrl": "https://github.com/AppPear/ChartView",
-    "lastChecked": "2026-11-08T05:02:01.168Z",
+    "lastChecked": "2026-11-12T05:34:50.925Z",
     "revisionIdentifier": "df0b2641",
-    "lastVerified": "2026-11-08T05:02:01.168Z"
+    "lastVerified": "2026-11-12T05:34:50.925Z"
   },
   "hf-liquidai-lfm3-vl-2b": {
     "name": "LiquidAI/LFM3-VL-2B",
@@ -9767,9 +9758,9 @@
   "lottie-react-native-lottie-react-native": {
     "name": "lottie-react-native",
     "officialUrl": "https://github.com/lottie-react-native/lottie-react-native",
-    "lastChecked": "2026-11-08T05:11:25.099Z",
+    "lastChecked": "2026-11-12T05:47:36.546Z",
     "revisionIdentifier": "7ac5e96c",
-    "lastVerified": "2026-11-08T05:11:25.099Z"
+    "lastVerified": "2026-11-12T05:47:36.546Z"
   },
   "serpapi-google-search-results-ruby": {
     "name": "google-search-results-ruby",
@@ -9781,9 +9772,9 @@
   "react-native-maps-react-native-maps": {
     "name": "react-native-maps",
     "officialUrl": "https://github.com/react-native-maps/react-native-maps",
-    "lastChecked": "2026-11-08T05:18:00.794Z",
+    "lastChecked": "2026-11-12T05:57:05.675Z",
     "revisionIdentifier": "39c6fd17",
-    "lastVerified": "2026-11-08T05:18:00.794Z"
+    "lastVerified": "2026-11-12T05:57:05.675Z"
   },
   "seo-skills-seo-audit-skill": {
     "name": "seo-audit-skill",
@@ -9797,12 +9788,12 @@
     "officialUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T05:26:21.798Z",
-    "lastVerified": "2026-11-08T05:26:21.798Z",
+    "lastChecked": "2026-11-12T06:19:35.683Z",
+    "lastVerified": "2026-11-12T06:19:35.683Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-    "contentHash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
+    "contentHash": "c1f8f509eb9a0dcd25b674857a0297a5d4c7a5f12d75e6477a744b6c4cc55c89",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -9817,12 +9808,12 @@
     "lastVerified": "2026-11-10T00:44:51.050Z"
   },
   "gitliveapp-firebase-kotlin-sdk": {
-    "name": "GitLiveApp/firebase-kotlin-sdk",
+    "name": "firebase-kotlin-sdk",
     "officialUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T05:33:09.180Z",
-    "lastVerified": "2026-11-08T05:33:09.180Z",
+    "lastChecked": "2026-11-12T06:26:50.036Z",
+    "lastVerified": "2026-11-12T06:26:50.036Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk",
@@ -9831,7 +9822,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "888384d7"
   },
   "jeffli1993-seo-audit-skill": {
     "name": "seo-audit-skill",
@@ -9841,11 +9833,21 @@
     "lastVerified": "2026-11-10T00:59:34.183Z"
   },
   "mohamedrejeb-calf": {
-    "name": "Calf",
+    "name": "MohamedRejeb/Calf",
     "officialUrl": "https://github.com/MohamedRejeb/Calf",
-    "lastChecked": "2026-11-08T05:40:40.432Z",
-    "revisionIdentifier": "af388bd3",
-    "lastVerified": "2026-11-08T05:40:40.432Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-12T06:41:30.661Z",
+    "lastVerified": "2026-11-12T06:41:30.661Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mohamedrejeb-calf",
+    "contentHash": "7f05058b84d7480e2dbb6b50f1ca75c32e092919ee089c351592f87b95f16958",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "anonymousaak-seo-skills": {
     "name": "seo-skills",
@@ -9857,9 +9859,9 @@
   "igorescodro-alkaa": {
     "name": "alkaa",
     "officialUrl": "https://github.com/igorescodro/alkaa",
-    "lastChecked": "2026-11-08T05:48:03.243Z",
+    "lastChecked": "2026-11-12T06:56:02.778Z",
     "revisionIdentifier": "8524e062",
-    "lastVerified": "2026-11-08T05:48:03.243Z"
+    "lastVerified": "2026-11-12T06:56:02.778Z"
   },
   "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {
     "name": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -9888,9 +9890,9 @@
   "vanniktech-emoji": {
     "name": "Emoji",
     "officialUrl": "https://github.com/vanniktech/Emoji",
-    "lastChecked": "2026-11-08T05:56:57.851Z",
+    "lastChecked": "2026-11-12T07:15:25.419Z",
     "revisionIdentifier": "69e998da",
-    "lastVerified": "2026-11-08T05:56:57.851Z"
+    "lastVerified": "2026-11-12T07:15:25.419Z"
   },
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",
@@ -9902,9 +9904,9 @@
   "zacharee-bifrost": {
     "name": "Bifrost",
     "officialUrl": "https://github.com/zacharee/Bifrost",
-    "lastChecked": "2026-11-08T06:05:01.019Z",
+    "lastChecked": "2026-11-12T07:37:48.307Z",
     "revisionIdentifier": "ed73a034",
-    "lastVerified": "2026-11-08T06:05:01.019Z"
+    "lastVerified": "2026-11-12T07:37:48.307Z"
   },
   "liketrek-trek": {
     "name": "liketrek/TREK",
@@ -9924,12 +9926,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vinceglb-filekit": {
-    "name": "vinceglb/FileKit",
+    "name": "FileKit",
     "officialUrl": "https://github.com/vinceglb/FileKit",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T06:12:22.802Z",
-    "lastVerified": "2026-11-08T06:12:22.802Z",
+    "lastChecked": "2026-11-12T07:46:13.347Z",
+    "lastVerified": "2026-11-12T07:46:13.347Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vinceglb-filekit",
@@ -9938,7 +9940,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5f8ac2e9"
   },
   "hf-mistralai-mistral-large-4-1t-a52b": {
     "name": "mistralai/Mistral-Large-4-1T-A52B",
@@ -9965,11 +9968,21 @@
     "lastVerified": "2026-11-10T02:31:34.588Z"
   },
   "nsh07-tomato": {
-    "name": "Tomato",
+    "name": "nsh07/Tomato",
     "officialUrl": "https://github.com/nsh07/Tomato",
-    "lastChecked": "2026-11-08T06:18:51.266Z",
-    "revisionIdentifier": "98fa69ed",
-    "lastVerified": "2026-11-08T06:18:51.266Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-12T07:54:09.901Z",
+    "lastVerified": "2026-11-12T07:54:09.901Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nsh07-tomato",
+    "contentHash": "0061fbcd3beac8249bb8a851d1ec129ffcb175154f644513e1c3a8adb758f0a0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "jakeschincariol-arena-skill": {
     "name": "Jakeschincariol/arena-skill",
@@ -10000,14 +10013,14 @@
     "officialUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T06:25:36.907Z",
-    "lastVerified": "2026-11-08T06:25:36.907Z",
+    "lastChecked": "2026-11-12T08:04:31.666Z",
+    "lastVerified": "2026-11-12T08:04:31.666Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-    "contentHash": "926952b65d00a977709eff52b3b2cc52399762fa5b28e5dc69393f7ce57e3827",
+    "contentHash": "7f32221795f349b6551a0fcc24be9fe0b7eb5d78a23940566989cf0792c5258c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10022,9 +10035,9 @@
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",
     "officialUrl": "https://github.com/ivanvorobei/SwiftUI",
-    "lastChecked": "2026-11-08T06:32:50.346Z",
+    "lastChecked": "2026-11-12T08:14:31.926Z",
     "revisionIdentifier": "b6cfb6d0",
-    "lastVerified": "2026-11-08T06:32:50.346Z"
+    "lastVerified": "2026-11-12T08:14:31.926Z"
   },
   "yuripinto-xseo": {
     "name": "xseo",
@@ -10036,9 +10049,9 @@
   "jinxiansen-swiftui": {
     "name": "SwiftUI",
     "officialUrl": "https://github.com/Jinxiansen/SwiftUI",
-    "lastChecked": "2026-11-08T06:42:14.256Z",
+    "lastChecked": "2026-11-12T08:27:42.444Z",
     "revisionIdentifier": "d8192c12",
-    "lastVerified": "2026-11-08T06:42:14.256Z"
+    "lastVerified": "2026-11-12T08:27:42.444Z"
   },
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",
@@ -10052,14 +10065,14 @@
     "officialUrl": "https://github.com/maziyarpanahi/openmed",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-08T06:49:16.829Z",
-    "lastVerified": "2026-11-08T06:49:16.829Z",
+    "lastChecked": "2026-11-12T08:52:41.217Z",
+    "lastVerified": "2026-11-12T08:52:41.217Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-maziyarpanahi-openmed",
-    "contentHash": "9fac6036ce24b02769c275fbf51dafa75251b2375e852324a98f4b8f5c82061d",
+    "contentHash": "24c39041d34b09597145e2ddb18cd8a8a027c8dc55a4b5c7785939872d138c34",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10074,9 +10087,9 @@
   "bernaferrari-figmatocode": {
     "name": "FigmaToCode",
     "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
-    "lastChecked": "2026-11-08T06:59:30.793Z",
+    "lastChecked": "2026-11-12T09:19:08.389Z",
     "revisionIdentifier": "f5c4831d",
-    "lastVerified": "2026-11-08T06:59:30.793Z"
+    "lastVerified": "2026-11-12T09:19:08.389Z"
   },
   "hf-diffuspace-clover-35b-a3b-preview": {
     "name": "Diffuspace/Clover-35B-A3B-Preview",
@@ -10122,9 +10135,9 @@
   "productdevbook-port-killer": {
     "name": "port-killer",
     "officialUrl": "https://github.com/productdevbook/port-killer",
-    "lastChecked": "2026-11-08T07:08:51.145Z",
+    "lastChecked": "2026-11-12T09:45:43.990Z",
     "revisionIdentifier": "2209b0fd",
-    "lastVerified": "2026-11-08T07:08:51.145Z"
+    "lastVerified": "2026-11-12T09:45:43.990Z"
   },
   "lokoe-mehdi-scouter": {
     "name": "scouter",
@@ -10134,22 +10147,21 @@
     "lastVerified": "2026-11-10T06:05:04.572Z"
   },
   "buresdv-cork": {
-    "name": "Cork",
+    "name": "buresdv/Cork",
     "officialUrl": "https://github.com/buresdv/Cork",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T07:15:19.578Z",
-    "lastVerified": "2026-11-08T07:15:19.578Z",
+    "lastChecked": "2026-11-12T09:55:00.042Z",
+    "lastVerified": "2026-11-12T09:55:00.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-buresdv-cork",
-    "contentHash": "bd72db1bf5af3ceee8c6607af1e32a49536c44d30d1e7599b1057def6d64cc34",
+    "contentHash": "a12df921033e3399b063613336a3440d4b5dcc6a1531daeb7a661409f51a589c",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2fb27615"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "crawlseo-crawlseo": {
     "name": "crawlseo",
@@ -10172,9 +10184,9 @@
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
     "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
-    "lastChecked": "2026-11-08T07:21:58.107Z",
+    "lastChecked": "2026-11-12T10:07:12.744Z",
     "revisionIdentifier": "6157c77e",
-    "lastVerified": "2026-11-08T07:21:58.107Z"
+    "lastVerified": "2026-11-12T10:07:12.744Z"
   },
   "kaiopiola-seocheck": {
     "name": "SEOCheck",
@@ -10186,9 +10198,9 @@
   "kudoleh-ios-clean-architecture-mvvm": {
     "name": "iOS-Clean-Architecture-MVVM",
     "officialUrl": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
-    "lastChecked": "2026-11-08T07:30:47.053Z",
+    "lastChecked": "2026-11-12T10:42:47.718Z",
     "revisionIdentifier": "a68da3e3",
-    "lastVerified": "2026-11-08T07:30:47.053Z"
+    "lastVerified": "2026-11-12T10:42:47.718Z"
   },
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
@@ -10200,9 +10212,9 @@
   "emergetools-pow": {
     "name": "Pow",
     "officialUrl": "https://github.com/EmergeTools/Pow",
-    "lastChecked": "2026-11-08T08:00:15.158Z",
+    "lastChecked": "2026-11-12T10:52:28.080Z",
     "revisionIdentifier": "1b4b1dda",
-    "lastVerified": "2026-11-08T08:00:15.158Z"
+    "lastVerified": "2026-11-12T10:52:28.080Z"
   },
   "codetot-web-schema-test": {
     "name": "schema-test",
@@ -10212,12 +10224,12 @@
     "lastVerified": "2026-11-11T06:33:08.465Z"
   },
   "swiftwebui-swiftwebui": {
-    "name": "SwiftWebUI/SwiftWebUI",
+    "name": "SwiftWebUI",
     "officialUrl": "https://github.com/SwiftWebUI/SwiftWebUI",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T08:22:15.320Z",
-    "lastVerified": "2026-11-08T08:22:15.320Z",
+    "lastChecked": "2026-11-12T11:00:47.575Z",
+    "lastVerified": "2026-11-12T11:00:47.576Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-swiftwebui-swiftwebui",
@@ -10226,7 +10238,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b0b6be06"
   },
   "logiover-website-seo-audit-crawler": {
     "name": "website-seo-audit-crawler",
@@ -10238,9 +10251,9 @@
   "leetcode-mafia-cheetah": {
     "name": "cheetah",
     "officialUrl": "https://github.com/leetcode-mafia/cheetah",
-    "lastChecked": "2026-11-08T08:44:59.482Z",
+    "lastChecked": "2026-11-12T11:18:20.017Z",
     "revisionIdentifier": "e66db5be",
-    "lastVerified": "2026-11-08T08:44:59.482Z"
+    "lastVerified": "2026-11-12T11:18:20.017Z"
   },
   "janreges-siteone-crawler": {
     "name": "siteone-crawler",
@@ -10254,13 +10267,13 @@
     "officialUrl": "https://github.com/jellyfin/Swiftfin",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T09:27:10.993Z",
-    "lastVerified": "2026-11-08T09:27:10.993Z",
+    "lastChecked": "2026-11-12T11:37:15.518Z",
+    "lastVerified": "2026-11-12T11:37:15.518Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "33297e04a3b367c29f67e22b91b35cc80315e6e6ecd09d0ad3539a6e3db98bb9",
-    "promotedRulesCount": 2,
+    "contentHash": "66d3eef4921b5ef73c39bb16073e9e5a4f169ced659e93dc1a1c54fb9f38f1ed",
+    "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -10276,9 +10289,9 @@
   "sergdort-moderncleanarchitectureswiftui": {
     "name": "ModernCleanArchitectureSwiftUI",
     "officialUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
-    "lastChecked": "2026-11-08T09:51:51.087Z",
+    "lastChecked": "2026-11-12T11:50:46.044Z",
     "revisionIdentifier": "4fd07daa",
-    "lastVerified": "2026-11-08T09:51:51.087Z"
+    "lastVerified": "2026-11-12T11:50:46.044Z"
   },
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",
@@ -10288,12 +10301,12 @@
     "lastVerified": "2026-11-11T08:17:48.509Z"
   },
   "exyte-popupview": {
-    "name": "exyte/PopupView",
+    "name": "PopupView",
     "officialUrl": "https://github.com/exyte/PopupView",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T10:20:30.811Z",
-    "lastVerified": "2026-11-08T10:20:30.811Z",
+    "lastChecked": "2026-11-12T12:14:49.706Z",
+    "lastVerified": "2026-11-12T12:14:49.706Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-exyte-popupview",
@@ -10302,7 +10315,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f8769ffd"
   },
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",
@@ -10314,9 +10328,9 @@
   "sayaka-sh-spmp": {
     "name": "spmp",
     "officialUrl": "https://github.com/sayaka-sh/spmp",
-    "lastChecked": "2026-11-08T10:47:09.788Z",
+    "lastChecked": "2026-11-12T12:32:36.092Z",
     "revisionIdentifier": "2fb03e84",
-    "lastVerified": "2026-11-08T10:47:09.788Z"
+    "lastVerified": "2026-11-12T12:32:36.092Z"
   },
   "kaimodev-trivium": {
     "name": "trivium",
@@ -10326,11 +10340,21 @@
     "lastVerified": "2026-11-11T09:27:28.682Z"
   },
   "touchlab-xcode-kotlin": {
-    "name": "xcode-kotlin",
+    "name": "touchlab/xcode-kotlin",
     "officialUrl": "https://github.com/touchlab/xcode-kotlin",
-    "lastChecked": "2026-11-08T11:04:06.088Z",
-    "revisionIdentifier": "56560d20",
-    "lastVerified": "2026-11-08T11:04:06.088Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-12T12:45:18.963Z",
+    "lastVerified": "2026-11-12T12:45:18.963Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-touchlab-xcode-kotlin",
+    "contentHash": "98cef32dc031a5b576f483ce3235b584953e068498e4cce0c6b517ebd88aeb39",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",
@@ -10342,9 +10366,9 @@
   "touchlab-skie": {
     "name": "SKIE",
     "officialUrl": "https://github.com/touchlab/SKIE",
-    "lastChecked": "2026-11-08T11:30:24.089Z",
+    "lastChecked": "2026-11-12T12:57:53.385Z",
     "revisionIdentifier": "25bb2b91",
-    "lastVerified": "2026-11-08T11:30:24.089Z"
+    "lastVerified": "2026-11-12T12:57:53.385Z"
   },
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
@@ -10356,9 +10380,9 @@
   "dimillian-redditos": {
     "name": "RedditOS",
     "officialUrl": "https://github.com/Dimillian/RedditOS",
-    "lastChecked": "2026-11-08T11:55:32.443Z",
+    "lastChecked": "2026-11-12T13:10:11.001Z",
     "revisionIdentifier": "525cd241",
-    "lastVerified": "2026-11-08T11:55:32.443Z"
+    "lastVerified": "2026-11-12T13:10:11.001Z"
   },
   "melbahja-seo": {
     "name": "seo",
@@ -10370,9 +10394,9 @@
   "ehpanda-team-ehpanda": {
     "name": "EhPanda",
     "officialUrl": "https://github.com/EhPanda-Team/EhPanda",
-    "lastChecked": "2026-11-08T12:21:36.448Z",
+    "lastChecked": "2026-11-12T13:33:02.008Z",
     "revisionIdentifier": "37b97996",
-    "lastVerified": "2026-11-08T12:21:36.448Z"
+    "lastVerified": "2026-11-12T13:33:02.008Z"
   },
   "hf-liconstudio-minimax-h3-vbvr": {
     "name": "LiconStudio/Minimax-H3-VBVR",
@@ -10414,8 +10438,8 @@
     "officialUrl": "https://github.com/thebaselab/codeapp",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T13:06:08.561Z",
-    "lastVerified": "2026-11-08T13:06:08.561Z",
+    "lastChecked": "2026-11-12T13:40:40.867Z",
+    "lastVerified": "2026-11-12T13:40:40.867Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-thebaselab-codeapp",
@@ -10454,9 +10478,9 @@
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",
     "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
-    "lastChecked": "2026-11-08T13:40:16.899Z",
+    "lastChecked": "2026-11-12T14:08:19.998Z",
     "revisionIdentifier": "c637ad7d",
-    "lastVerified": "2026-11-08T13:40:16.899Z"
+    "lastVerified": "2026-11-12T14:08:19.998Z"
   },
   "adobe-structured-data-validator": {
     "name": "structured-data-validator",
@@ -11459,9 +11483,9 @@
   "unifiedjs-unified": {
     "name": "unified",
     "officialUrl": "https://github.com/unifiedjs/unified",
-    "lastChecked": "2026-11-07T04:29:31.587Z",
+    "lastChecked": "2026-11-12T03:23:32.202Z",
     "revisionIdentifier": "dfaf172e",
-    "lastVerified": "2026-11-07T04:29:31.587Z"
+    "lastVerified": "2026-11-12T03:23:32.202Z"
   },
   "relatedcode-progresshud": {
     "name": "ProgressHUD",
@@ -11473,9 +11497,9 @@
   "rehypejs-rehype": {
     "name": "rehype",
     "officialUrl": "https://github.com/rehypejs/rehype",
-    "lastChecked": "2026-11-07T04:36:53.108Z",
+    "lastChecked": "2026-11-12T03:30:30.840Z",
     "revisionIdentifier": "cae74c7f",
-    "lastVerified": "2026-11-07T04:36:53.108Z"
+    "lastVerified": "2026-11-12T03:30:30.840Z"
   },
   "hmlongco-factory": {
     "name": "hmlongco/Factory",
@@ -11495,12 +11519,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "syntax-tree-hast-util-from-html": {
-    "name": "syntax-tree/hast-util-from-html",
+    "name": "hast-util-from-html",
     "officialUrl": "https://github.com/syntax-tree/hast-util-from-html",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T04:44:18.597Z",
-    "lastVerified": "2026-11-07T04:44:18.597Z",
+    "lastChecked": "2026-11-12T03:48:26.754Z",
+    "lastVerified": "2026-11-12T03:48:26.754Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-syntax-tree-hast-util-from-html",
@@ -11509,7 +11533,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3bf56434"
   },
   "kitlangton-hex": {
     "name": "Hex",
@@ -11523,8 +11548,8 @@
     "officialUrl": "https://github.com/syntax-tree/hast-util-to-html",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T04:51:36.466Z",
-    "lastVerified": "2026-11-07T04:51:36.466Z",
+    "lastChecked": "2026-11-12T03:56:01.529Z",
+    "lastVerified": "2026-11-12T03:56:01.529Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-syntax-tree-hast-util-to-html",
@@ -11546,9 +11571,9 @@
   "remarkjs-remark": {
     "name": "remark",
     "officialUrl": "https://github.com/remarkjs/remark",
-    "lastChecked": "2026-11-07T05:08:59.120Z",
+    "lastChecked": "2026-11-12T04:23:46.317Z",
     "revisionIdentifier": "1146b3a2",
-    "lastVerified": "2026-11-07T05:08:59.120Z"
+    "lastVerified": "2026-11-12T04:23:46.317Z"
   },
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
@@ -11560,9 +11585,9 @@
   "wooorm-parse-entities": {
     "name": "parse-entities",
     "officialUrl": "https://github.com/wooorm/parse-entities",
-    "lastChecked": "2026-11-07T05:16:34.141Z",
+    "lastChecked": "2026-11-12T04:31:55.352Z",
     "revisionIdentifier": "07f0abed",
-    "lastVerified": "2026-11-07T05:16:34.141Z"
+    "lastVerified": "2026-11-12T04:31:55.352Z"
   },
   "sparrowcode-alertkit": {
     "name": "AlertKit",
@@ -11587,8 +11612,8 @@
     "officialUrl": "https://github.com/sindresorhus/got",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T05:28:08.808Z",
-    "lastVerified": "2026-11-07T05:28:08.808Z",
+    "lastChecked": "2026-11-12T04:50:12.083Z",
+    "lastVerified": "2026-11-12T04:50:12.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sindresorhus-got",
@@ -11612,14 +11637,14 @@
     "officialUrl": "https://github.com/nodejs/undici",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T05:36:59.750Z",
-    "lastVerified": "2026-11-07T05:36:59.750Z",
+    "lastChecked": "2026-11-12T05:13:10.934Z",
+    "lastVerified": "2026-11-12T05:13:10.934Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nodejs-undici",
-    "contentHash": "8013e05035a4564ef8ab57c7636cb9e5b9fdce96af82f2c2dd1e93517e4454ee",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 18,
+    "contentHash": "4678d5af2d3b162a06a5577229ea2eabeef43a2bc5616ff8b2c007c4fc1f8a93",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11636,14 +11661,14 @@
     "officialUrl": "https://github.com/axios/axios",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T05:44:16.757Z",
-    "lastVerified": "2026-11-07T05:44:16.757Z",
+    "lastChecked": "2026-11-12T05:26:55.146Z",
+    "lastVerified": "2026-11-12T05:26:55.146Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-axios-axios",
-    "contentHash": "6ff7dec79de4a9b3cabf4f046d106a522e818e96bb4e7ee779e1924fe4bf4c4c",
+    "contentHash": "0211fbae1cecfa5f63610e69e1a9ab1b4c5ccbdc039a4dad9862ca6b8b5e2333",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11668,9 +11693,9 @@
   "psf-requests": {
     "name": "requests",
     "officialUrl": "https://github.com/psf/requests",
-    "lastChecked": "2026-11-07T05:50:44.409Z",
+    "lastChecked": "2026-11-12T05:34:48.588Z",
     "revisionIdentifier": "3c7baaa0",
-    "lastVerified": "2026-11-07T05:50:44.409Z"
+    "lastVerified": "2026-11-12T05:34:48.588Z"
   },
   "superhighfives-pika": {
     "name": "pika",
@@ -11691,22 +11716,21 @@
     "revisionIdentifier": "1e16dfd2"
   },
   "urllib3-urllib3": {
-    "name": "urllib3",
+    "name": "urllib3/urllib3",
     "officialUrl": "https://github.com/urllib3/urllib3",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T06:04:58.198Z",
-    "lastVerified": "2026-11-07T06:04:58.198Z",
+    "lastChecked": "2026-11-12T05:57:07.201Z",
+    "lastVerified": "2026-11-12T05:57:07.201Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-urllib3-urllib3",
-    "contentHash": "ac3415559fffc34f5577f474f46acda9aac8bd014c39c73afb39aefcf6933b8a",
+    "contentHash": "fff051ed7e74cce05151125c11a1260bfe45d4cfa9a4086e76ec3501581f0366",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c5347bbd"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ming1016-swiftpamphletapp": {
     "name": "SwiftPamphletApp",
@@ -11718,9 +11742,9 @@
   "encode-httpx": {
     "name": "httpx",
     "officialUrl": "https://github.com/encode/httpx",
-    "lastChecked": "2026-11-07T06:17:38.690Z",
+    "lastChecked": "2026-11-12T06:19:29.819Z",
     "revisionIdentifier": "b5addb64",
-    "lastVerified": "2026-11-07T06:17:38.690Z"
+    "lastVerified": "2026-11-12T06:19:29.819Z"
   },
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",
@@ -11734,12 +11758,12 @@
     "officialUrl": "https://github.com/aio-libs/aiohttp",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T06:24:20.764Z",
-    "lastVerified": "2026-11-07T06:24:20.764Z",
+    "lastChecked": "2026-11-12T06:26:52.455Z",
+    "lastVerified": "2026-11-12T06:26:52.455Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aio-libs-aiohttp",
-    "contentHash": "47d0aa1997f034bee0afff4b4655aa128b60507a9ecd18795d154e496aff9fbe",
+    "contentHash": "6734bdbf4a043028bdf93e08583b0772107500aadf90f18cda1e63b2a60b9890",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -11756,9 +11780,9 @@
   "digitalbazaar-jsonld.js": {
     "name": "jsonld.js",
     "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
-    "lastChecked": "2026-11-07T17:22:23.286Z",
+    "lastChecked": "2026-11-12T06:41:24.294Z",
     "revisionIdentifier": "7a93609e",
-    "lastVerified": "2026-11-07T17:22:23.286Z"
+    "lastVerified": "2026-11-12T06:41:24.294Z"
   },
   "jasonjmcghee-rem": {
     "name": "rem",
@@ -11785,22 +11809,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "rdfjs-n3.js": {
-    "name": "N3.js",
+    "name": "rdfjs/N3.js",
     "officialUrl": "https://github.com/rdfjs/N3.js",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T17:47:51.214Z",
-    "lastVerified": "2026-11-07T17:47:51.214Z",
+    "lastChecked": "2026-11-12T07:46:14.576Z",
+    "lastVerified": "2026-11-12T07:46:14.576Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rdfjs-n3-js",
-    "contentHash": "b92faee293b003b6491ab909240c418b3ac868cd0b9b4bb96166a0ad1b22dde6",
+    "contentHash": "05762807bcc591f8012100bbfd29b5d754e9d9de45b3cd51aae3534392316f1d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f551cfec"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "simibac-confettiswiftui": {
     "name": "ConfettiSwiftUI",
@@ -11814,8 +11837,8 @@
     "officialUrl": "https://github.com/RDFLib/rdflib",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T17:57:35.030Z",
-    "lastVerified": "2026-11-07T17:57:35.030Z",
+    "lastChecked": "2026-11-12T07:54:04.199Z",
+    "lastVerified": "2026-11-12T07:54:04.199Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rdflib-rdflib",
@@ -11839,8 +11862,8 @@
     "officialUrl": "https://github.com/RDFLib/pySHACL",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T18:09:33.865Z",
-    "lastVerified": "2026-11-07T18:09:33.865Z",
+    "lastChecked": "2026-11-12T08:04:22.056Z",
+    "lastVerified": "2026-11-12T08:04:22.056Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rdflib-pyshacl",
@@ -11862,9 +11885,9 @@
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",
     "officialUrl": "https://github.com/jsonld-java/jsonld-java",
-    "lastChecked": "2026-11-07T18:16:58.167Z",
+    "lastChecked": "2026-11-12T08:14:29.445Z",
     "revisionIdentifier": "4a7305f2",
-    "lastVerified": "2026-11-07T18:16:58.167Z"
+    "lastVerified": "2026-11-12T08:14:29.445Z"
   },
   "iplug2-iplug2": {
     "name": "iPlug2/iPlug2",
@@ -11884,22 +11907,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "digitalbazaar-pyld": {
-    "name": "pyld",
+    "name": "digitalbazaar/pyld",
     "officialUrl": "https://github.com/digitalbazaar/pyld",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T18:24:39.150Z",
-    "lastVerified": "2026-11-07T18:24:39.150Z",
+    "lastChecked": "2026-11-12T08:27:44.076Z",
+    "lastVerified": "2026-11-12T08:27:44.076Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-digitalbazaar-pyld",
-    "contentHash": "ffe51820f636e2f1d17f3b01cb8514084a83dd42ae7b7288803883ab85ebc65f",
-    "promotedRulesCount": 0,
+    "contentHash": "6810c558f2f5ef27323167fad03fa8492984fe61e578460f95e64206be87aac2",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bcdc7103"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "jtrivedi-wave": {
     "name": "Wave",
@@ -11911,9 +11933,9 @@
   "rdfjs-namespace": {
     "name": "namespace",
     "officialUrl": "https://github.com/rdfjs/namespace",
-    "lastChecked": "2026-11-07T18:57:02.987Z",
+    "lastChecked": "2026-11-12T09:19:05.968Z",
     "revisionIdentifier": "b7efbf00",
-    "lastVerified": "2026-11-07T18:57:02.987Z"
+    "lastVerified": "2026-11-12T09:19:05.968Z"
   },
   "iziz-libphonenumber-ios": {
     "name": "iziz/libPhoneNumber-iOS",
@@ -11937,13 +11959,13 @@
     "officialUrl": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T18:42:21.044Z",
-    "lastVerified": "2026-11-07T18:42:21.044Z",
+    "lastChecked": "2026-11-12T08:52:33.752Z",
+    "lastVerified": "2026-11-12T08:52:33.752Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-    "contentHash": "6e6193672a940f8a4ba08cb66e0ab6f8334f885a328c92a7bb2dde714a62ec7f",
-    "promotedRulesCount": 3,
+    "contentHash": "37069d5effcf331b2dcff1e456b50e4ad6f70d0024c30edfd8e86669666fe035",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -11954,8 +11976,8 @@
     "officialUrl": "https://github.com/AndyTheFactory/newspaper4k",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T19:04:23.920Z",
-    "lastVerified": "2026-11-07T19:04:23.920Z",
+    "lastChecked": "2026-11-12T09:45:41.480Z",
+    "lastVerified": "2026-11-12T09:45:41.480Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-andythefactory-newspaper4k",
@@ -11977,9 +11999,9 @@
   "goose3-goose3": {
     "name": "goose3",
     "officialUrl": "https://github.com/goose3/goose3",
-    "lastChecked": "2026-11-07T19:16:39.076Z",
+    "lastChecked": "2026-11-12T10:07:10.261Z",
     "revisionIdentifier": "87b6003d",
-    "lastVerified": "2026-11-07T19:16:39.076Z"
+    "lastVerified": "2026-11-12T10:07:10.261Z"
   },
   "sozercan-kaset": {
     "name": "kaset",
@@ -12002,9 +12024,9 @@
   "mozilla-readability": {
     "name": "readability",
     "officialUrl": "https://github.com/mozilla/readability",
-    "lastChecked": "2026-11-07T19:23:33.912Z",
+    "lastChecked": "2026-11-12T10:42:45.253Z",
     "revisionIdentifier": "ab4027a8",
-    "lastVerified": "2026-11-07T19:23:33.912Z"
+    "lastVerified": "2026-11-12T10:42:45.253Z"
   },
   "aheze-popovers": {
     "name": "Popovers",
@@ -12016,9 +12038,9 @@
   "miso-belica-justext": {
     "name": "justext",
     "officialUrl": "https://github.com/miso-belica/justext",
-    "lastChecked": "2026-11-07T19:30:32.125Z",
+    "lastChecked": "2026-11-12T10:52:25.611Z",
     "revisionIdentifier": "5fadda90",
-    "lastVerified": "2026-11-07T19:30:32.125Z"
+    "lastVerified": "2026-11-12T10:52:25.611Z"
   },
   "alexdrone-render": {
     "name": "Render",
@@ -12028,12 +12050,12 @@
     "lastVerified": "2026-11-09T00:53:58.103Z"
   },
   "scrapinghub-dateparser": {
-    "name": "scrapinghub/dateparser",
+    "name": "dateparser",
     "officialUrl": "https://github.com/scrapinghub/dateparser",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T19:37:15.910Z",
-    "lastVerified": "2026-11-07T19:37:15.910Z",
+    "lastChecked": "2026-11-12T11:00:45.170Z",
+    "lastVerified": "2026-11-12T11:00:45.170Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapinghub-dateparser",
@@ -12042,7 +12064,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "90544c0b"
   },
   "wzh4869-appports": {
     "name": "wzh4869/AppPorts",
@@ -12066,14 +12089,14 @@
     "officialUrl": "https://github.com/google/closure-compiler",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T19:55:17.510Z",
-    "lastVerified": "2026-11-07T19:55:17.510Z",
+    "lastChecked": "2026-11-12T11:37:13.389Z",
+    "lastVerified": "2026-11-12T11:37:13.389Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "467cbedf5cb94913b48ff5a19fca21a4b78b1e817029ad80f3ada02be63a0978",
+    "contentHash": "5c42ceff373a8868b09f7ba49fd1f2f787cb3b0cf6aa6b1031b7d2b2a90f6569",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12100,14 +12123,14 @@
     "officialUrl": "https://github.com/sveltejs/svelte",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T20:02:02.496Z",
-    "lastVerified": "2026-11-07T20:02:02.496Z",
+    "lastChecked": "2026-11-12T11:50:48.253Z",
+    "lastVerified": "2026-11-12T11:50:48.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sveltejs-svelte",
-    "contentHash": "e64b427856964b8f98b87f4ea5b1424ec3bae448f89823b1be9023842e0094cb",
+    "contentHash": "9970d4870c80da71bd728283ce35035c7eaa3d25e02115b59d8dbc3bc78d0b02",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12120,22 +12143,21 @@
     "lastVerified": "2026-11-09T01:19:18.651Z"
   },
   "solidjs-solid": {
-    "name": "solid",
+    "name": "solidjs/solid",
     "officialUrl": "https://github.com/solidjs/solid",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T20:09:14.951Z",
-    "lastVerified": "2026-11-07T20:09:14.951Z",
+    "lastChecked": "2026-11-12T12:14:51.036Z",
+    "lastVerified": "2026-11-12T12:14:51.036Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-solidjs-solid",
-    "contentHash": "ef02bdc03299045193f7abbe1f8663bdf1e668085cb79f2fcc9b0d5ffbdd7aec",
+    "contentHash": "0921c86130f3eace1f4cd4e4e9f0ea10ede8fa8ec9fa53bdea2a446f5600fe8c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bc50fe56"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dodo-reach-hermes-desktop": {
     "name": "hermes-desktop",
@@ -12149,14 +12171,14 @@
     "officialUrl": "https://github.com/vitejs/vite",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T20:16:24.783Z",
-    "lastVerified": "2026-11-07T20:16:24.783Z",
+    "lastChecked": "2026-11-12T12:32:38.713Z",
+    "lastVerified": "2026-11-12T12:32:38.713Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vitejs-vite",
-    "contentHash": "5613a3206eacce9994be57af93933c0f827d99c5b6e350f14e3b66a49f4a0b59",
+    "contentHash": "52beee9c918e96e27d718431a04d0cbf1cd96f6a2375d142ce0678ac7ba09021",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12173,14 +12195,14 @@
     "officialUrl": "https://github.com/webpack/webpack",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T20:22:57.624Z",
-    "lastVerified": "2026-11-07T20:22:57.624Z",
+    "lastChecked": "2026-11-12T12:45:18.098Z",
+    "lastVerified": "2026-11-12T12:45:18.098Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webpack-webpack",
-    "contentHash": "9a722d14572323be1a64e74e990fcb13968f072840b7548584b7dd85d144bfc4",
+    "contentHash": "e4e2dc2708de500861458c06a43de149cb9b542639ae762dad3b4d520c371266",
     "promotedRulesCount": 1,
-    "recentFixesCount": 26,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12207,14 +12229,14 @@
     "officialUrl": "https://github.com/rollup/rollup",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-07T20:39:22.578Z",
-    "lastVerified": "2026-11-07T20:39:22.578Z",
+    "lastChecked": "2026-11-12T12:57:56.176Z",
+    "lastVerified": "2026-11-12T12:57:56.176Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rollup-rollup",
-    "contentHash": "342e8014ab0b93f1f0ada0bc7e9f5d31bed19d93790f7f0b571383cad37e4c48",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 2,
+    "contentHash": "5e8eb1101fba84d45ad7abef4d5bf4621606b530b8da2f48e00511487f2e9b0e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12229,9 +12251,9 @@
   "evanw-esbuild": {
     "name": "esbuild",
     "officialUrl": "https://github.com/evanw/esbuild",
-    "lastChecked": "2026-11-07T20:55:55.009Z",
+    "lastChecked": "2026-11-12T13:32:59.500Z",
     "revisionIdentifier": "f6058f83",
-    "lastVerified": "2026-11-07T20:55:55.009Z"
+    "lastVerified": "2026-11-12T13:32:59.500Z"
   },
   "zekunyan-ttgtagcollectionview": {
     "name": "TTGTagCollectionView",
@@ -12245,24 +12267,34 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T20:48:55.968Z",
-    "lastVerified": "2026-11-07T20:48:55.968Z",
+    "lastChecked": "2026-11-12T13:10:08.774Z",
+    "lastVerified": "2026-11-12T13:10:08.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-    "contentHash": "9c5582158ff6d28e28e53ce6189b0e43d5073f9621e81cda69c97fc5dd7cc781",
-    "promotedRulesCount": 2,
+    "contentHash": "29866816d6d8b7d60348718039781b0fd03bfe562979d1774eea7b34737adc95",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "parcel-bundler-parcel": {
-    "name": "parcel",
+    "name": "parcel-bundler/parcel",
     "officialUrl": "https://github.com/parcel-bundler/parcel",
-    "lastChecked": "2026-11-07T21:03:13.237Z",
-    "revisionIdentifier": "59484858",
-    "lastVerified": "2026-11-07T21:03:13.237Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-12T13:40:45.480Z",
+    "lastVerified": "2026-11-12T13:40:45.480Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-parcel-bundler-parcel",
+    "contentHash": "9db2e988d823fa591772a64cf9c795090379ff61e8f9b0cd5ed2365138ea0bca",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mikeroyal-apple-silicon-guide": {
     "name": "Apple-Silicon-Guide",
@@ -12276,14 +12308,14 @@
     "officialUrl": "https://github.com/TanStack/query",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T21:10:20.571Z",
-    "lastVerified": "2026-11-07T21:10:20.571Z",
+    "lastChecked": "2026-11-12T14:08:23.582Z",
+    "lastVerified": "2026-11-12T14:08:23.582Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tanstack-query",
-    "contentHash": "05e52b2b0e968b65298a096a13f2b304f46cc6a9f50be9777b8bd1422c75151e",
+    "contentHash": "ebd533e916b9cad71a9b3593974865df9ca16741b837754ae17c6dc16963bb5d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13631,22 +13663,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vercel-labs-agent-desktop": {
-    "name": "agent-desktop",
+    "name": "vercel-labs/agent-desktop",
     "officialUrl": "https://github.com/vercel-labs/agent-desktop",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T16:59:35.874Z",
-    "lastVerified": "2026-11-09T16:59:35.874Z",
+    "lastChecked": "2026-11-12T11:18:20.062Z",
+    "lastVerified": "2026-11-12T11:18:20.062Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vercel-labs-agent-desktop",
-    "contentHash": "60d4e7803863a1edcffe1aed95d63bda7f69ec430d7b9e979c58be0bd70cde4f",
+    "contentHash": "e924ac6473db9f0c0be8848a56e7c37fdb3142e6f8410297f9f228970f6032b5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
-    "closedIssuesCount": 2,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b43ac4f6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {
     "name": "Efficient-Large-Model/Open-H3-Regenerate-2K",
@@ -13959,12 +13990,12 @@
     "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T05:58:05.854Z",
-    "lastVerified": "2026-11-07T05:58:05.854Z",
+    "lastChecked": "2026-11-12T05:47:34.201Z",
+    "lastVerified": "2026-11-12T05:47:34.201Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-    "contentHash": "2220770e0dfaa044b2a12cc1b9c4216a5a3fe36ebcb38abd31058b0c72421665",
+    "contentHash": "08974c3bd711aa2d89357c8af8edac40a97a280c59a786bc8d5c46204e47cd63",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -13993,13 +14024,13 @@
     "officialUrl": "https://huggingface.co/microsoft/Mage-VL-Cowork",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T19:47:41.406Z",
-    "lastVerified": "2026-11-07T19:47:41.406Z",
+    "lastChecked": "2026-11-12T11:18:19.729Z",
+    "lastVerified": "2026-11-12T11:18:19.729Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-    "contentHash": "8befd3d5f8e816ba96ad97736408e229520188fae5db8e64367d0de1e3cf2493",
-    "promotedRulesCount": 2,
+    "contentHash": "4a1a7f61529e9901abf9e151b6244b5dafa044bd4737e84cde591b5bfc35a73d",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -14126,12 +14157,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "jarvis322-macos-sysdata": {
-    "name": "Jarvis322/macos-sysdata",
+    "name": "macos-sysdata",
     "officialUrl": "https://github.com/Jarvis322/macos-sysdata",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T04:26:47.554Z",
-    "lastVerified": "2026-11-08T04:26:47.554Z",
+    "lastChecked": "2026-11-12T04:31:57.865Z",
+    "lastVerified": "2026-11-12T04:31:57.865Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jarvis322-macos-sysdata",
@@ -14140,7 +14171,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bcfd205a"
   },
   "hf-nvidia-nvidia-nemotronlabs-re-use": {
     "name": "nvidia/NVIDIA-NemotronLabs-RE-USE",
@@ -14181,14 +14213,14 @@
     "officialUrl": "https://github.com/apache/pinot",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T17:57:01.969Z",
-    "lastVerified": "2026-11-09T17:57:01.969Z",
+    "lastChecked": "2026-11-12T04:50:26.930Z",
+    "lastVerified": "2026-11-12T04:50:26.930Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-pinot",
-    "contentHash": "9ed37abde3a361feb02dc36e3927ae13f69970ef5befa82d77b3094d0728d7d9",
+    "contentHash": "32c85bdaf3d088fd7b9cf07f0b42214cdf260496f312bade3b20ad6deae0052d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14436,12 +14468,12 @@
     "officialUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T17:40:34.006Z",
-    "lastVerified": "2026-11-07T17:40:34.006Z",
+    "lastChecked": "2026-11-12T06:56:00.274Z",
+    "lastVerified": "2026-11-12T06:56:00.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
-    "contentHash": "41e83055c47f23e0775717b1622d7e979845101a5a35299b745c82f15ec41111",
+    "contentHash": "77a8eaccb0819c2934c53c701be3ee9ab2516c73b87f67d6346f19cd8b949421",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -14453,12 +14485,12 @@
     "officialUrl": "https://huggingface.co/PrunaAI/P-H3-Image",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T17:40:39.021Z",
-    "lastVerified": "2026-11-07T17:40:39.021Z",
+    "lastChecked": "2026-11-12T07:37:45.940Z",
+    "lastVerified": "2026-11-12T07:37:45.940Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-prunaai-p-h3-image",
-    "contentHash": "e28d3e570354bb0e61af36e3cbf6fcbf35a044675c63947f2df4f843bf0b4682",
+    "contentHash": "76c24eeaf82fb55fb7feb1c86642d2e777eedadd15df152d7bab463de89cc4ca",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -14470,13 +14502,13 @@
     "officialUrl": "https://huggingface.co/NousResearch/Arete-27B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T17:40:36.459Z",
-    "lastVerified": "2026-11-07T17:40:36.459Z",
+    "lastChecked": "2026-11-12T07:15:23.232Z",
+    "lastVerified": "2026-11-12T07:15:23.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nousresearch-arete-27b",
-    "contentHash": "1af954c8966d9b0fe7d924a0c957b9d59f0a1982d8c550476019194dec39dbdc",
-    "promotedRulesCount": 3,
+    "contentHash": "f288ffdf6dbdeaec0c75b725893045c570d816125576bda34d04a0968ffa6305",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -14487,13 +14519,13 @@
     "officialUrl": "https://huggingface.co/Viggle/Viggle-Remake",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T19:16:36.665Z",
-    "lastVerified": "2026-11-07T19:16:36.665Z",
+    "lastChecked": "2026-11-12T09:54:49.526Z",
+    "lastVerified": "2026-11-12T09:54:49.526Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-viggle-viggle-remake",
-    "contentHash": "f9fc6692b7eee36093d4edcb72ec185becd2742042e879d83929fbc8c0f74c35",
-    "promotedRulesCount": 2,
+    "contentHash": "9a90003a80949cbeeb1890223456f11b54a48a7cd5d2005227f8c5b6f7c893cc",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -14887,6 +14919,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 25,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-facebook-dinov3-vitl16-pretrain-lvd1689m": {
+    "name": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "officialUrl": "https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-12T05:13:02.699Z",
+    "lastVerified": "2026-11-12T05:13:02.699Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
+    "contentHash": "25dac713a24cea0c0d42073676ee7a715a4fb3c5878193dfdf249699547242fb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

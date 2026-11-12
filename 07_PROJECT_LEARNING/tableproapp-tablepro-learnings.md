@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `0e554abd`  
+> **Source Version**: `9f7bb87b`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T04:09:59.975Z  
+> **Timestamp**: 2026-11-12T03:56:12.984Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T04:09:59.969Z  
+> **Harvest Timestamp**: 2026-11-12T03:56:12.978Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free, open-source native database client for macOS, Linux, iPhone and iPad.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6411 stars
+- **Stars / Engagement**: 6452 stars
 
 ---
 
@@ -193,19 +193,27 @@ func rowsAffected(result sql.Result) int64 {
 }
 
 func readFirstResultSet(rows *sql.Rows, op *operation, rowLimit int) (*resultEnvelope, error) {
+	found, err := moveToFirstResultSet(rows)
+	if err != nil {
+		return nil, err
+	}
+	if !found {
+		return affectedRowsEnvelope(0), nil
+	}
+	return readResultSet(rows, op, rowLimit)
+}
+
+func moveToFirstResultSet(rows *sql.Rows) (bool, error) {
 	for {
 		columns, err := rows.Columns()
 		if err != nil {
-			return nil, err
+			return false, err
 		}
 		if len(columns) > 0 {
-			return readResultSet(rows, op, rowLimit)
+			return true, nil
 		}
 		if !rows.NextResultSet() {
-			if err := rows.Err(); err != nil {
-				return nil, err
-			}
-			return affectedRowsEnvelope(0), nil
+			return false, rows.Err()
 		}
 	}
 }
@@ -216,25 +224,68 @@ func readResultSet(rows *sql.Rows, op *operation, rowLimit int) (*resultEnvelope
 		return nil, err
 	}
 	envelope := tabularEnvelope(columns)
-	for rows.Next() {
-		if op.stopped() {
-			return nil, errOperationStopped
-		}
-		if rowLimit > 0 && len(envelope.rows) >= rowLimit {
-			envelope.isTruncated = true
-			break
-		}
-		row, truncatedLobs, err := scanRow(rows, columns, op)
-		if err != nil {
-			return nil, err
-		}
-		envelope.rows = append(envelope.rows, row)
-		envelope.truncatedLobCount += truncatedLobs
-	}
-	if err := rows.Err(); err != nil {
+	reader := &resultReader{rows: rows, columns: columns, op: op}
+	collected := &collectedRows{limit: rowLimit}
+	ended, err := reader.read(collected)
+	if err != nil {
 		return nil, err
 	}
+	envelope.rows = collected.rows
+	envelope.isTruncated = !ended
+	envelope.truncatedLobCount = collected.truncatedLobs
 	return envelope, nil
+}
+
+type rowSink interface {
+	full() bool
+	add(row []cell, truncatedLobs int)
+}
+
+type resultReader struct {
+	rows    *sql.Rows
+	columns []columnInfo
+	op      *operation
+	// Next has moved to a row that no sink has taken yet, so the next read starts with it.
+	pending bool
+}
+
+// The bool is true once the result set has no rows left.
+func (r *resultReader) read(sink rowSink) (bool, error) {
+	for {
+		if !r.pending {
+			if !r.rows.Next() {
+				return true, r.rows.Err()
+			}
+			r.pending = true
+		}
+		if r.op.stopped() {
+			return false, errOperationStopped
+		}
+		if sink.full() {
+			return false, nil
+		}
+		row, truncatedLobs, err := scanRow(r.rows, r.columns, r.op)
+		if err != nil {
+			return false, err
+		}
+		r.pending = false
+		sink.add(row, truncatedLobs)
+	}
+}
+
+type collectedRows struct {
+	limit         int
+	rows          [][]cell
+	truncatedLobs int
+}
+
+func (c *collectedRows) full() bool {
+	return c.limit > 0 && len(c.rows) >= c.limit
+}
+
+func (c *collectedRows) add(row []cell, truncatedLobs int) {
+	c.rows = append(c.rows, row)
+	c.truncatedLobs += truncatedLobs
 }
 
 func describeColumns(rows *sql.Rows) (columns []columnInfo, err error) {
@@ -1242,6 +1293,7 @@ struct SQLTokenStream {
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAutocomplete/KeywordUppercaseHelper.swift`
 ```
 import Foundation
+import TableProSQLGrammar
 
 public enum KeywordUppercaseHelper {
     public static func isWordBoundary(_ string: String) -> Bool {
@@ -1254,99 +1306,39 @@ public enum KeywordUppercaseHelper {
         }
     }
 
-    /// Checks if a UTF-16 character is part of a SQL identifier (a-z, A-Z, 0-9, _).
     static func isWordCharacter(_ ch: unichar) -> Bool {
         (ch >= 0x41 && ch <= 0x5A) || (ch >= 0x61 && ch <= 0x7A) ||
         (ch >= 0x30 && ch <= 0x39) || ch == 0x5F
     }
 
-    /// Scans backwards up to 2,000 characters to determine if `position` is inside
-    /// a protected context (string literal, comment, backtick identifier, dollar-quote).
-    /// Keywords inside protected contexts should NOT be uppercased.
-    static func isInsideProtectedContext(_ text: NSString, at position: Int) -> Bool {
-        let scanStart = max(0, position - 2_000)
-        var inSingleQuote = false
-        var inDoubleQuote = false
-        var inBacktick = false
-        var inLineComment = false
-        var inBlockComment = false
-        var inDollarQuote = false
-        var i = scanStart
-
-        while i < position {
-            let ch = text.character(at: i)
-
-            if inBlockComment {
-                if ch == 0x2A && i + 1 < position && text.character(at: i + 1) == 0x2F {
-                    inBlockComment = false
-                    i += 2
-                    continue
-                }
-                i += 1
+    // Read from the start of the text with the session's grammar: a literal can open any distance back, and where it
+    // ends is the engine's rule.
+    static func isInsideProtectedContext(_ text: NSString, at position: Int, grammar: SQLLexicalGrammar) -> Bool {
+        let length = text.length
+        let runsExecutableComments = grammar.contains(.executableComments)
+        var index = 0
+        while index < position {
+            // The server runs the body of `/*! ... */`, so it is code.
+            if runsExecutableComments, let opener = SqlLexer.executableCommentOpenerLength(text, at: index, length: length) {
+                index += opener
                 continue
             }
-            if inLineComment {
-                if ch == 0x0A { inLineComment = false }
-                i += 1
+            guard let span = SQLNonCodeSpan.span(at: index, in: text, grammar: grammar) else {
+                index += 1
                 continue
             }
-            if inDollarQuote {
-                if ch == 0x24 && i + 1 < position && text.character(at: i + 1) == 0x24 {
-                    inDollarQuote = false
-                    i += 2
-                    continue
-                }
-                i += 1
-                continue
-            }
-
-            if ch == 0x5C && (inSingleQuote || inDoubleQuote) {
-                i += 2
-                continue
-            }
-
-            switch ch {
-            case 0x27: if !inDoubleQuote && !inBacktick { inSingleQuote.toggle() }
-            case 0x22: if !inSingleQuote && !inBacktick { inDoubleQuote.toggle() }
-            case 0x60: if !inSingleQuote && !inDoubleQuote { inBacktick.toggle() }
-            case 0x23:
-                if !inSingleQuote && !inDoubleQuote && !inBacktick {
-                    inLineComment = true
-                }
-            case 0x2D:
-                if !inSingleQuote && !inDoubleQuote && !inBacktick &&
-                   i + 1 < position && text.character(at: i + 1) == 0x2D {
-                    inLineComment = true
-                    i += 2
-                    continue
-                }
-            case 0x2F:
-                if !inSingleQuote && !inDoubleQuote && !inBacktick &&
-                   i + 1 < position && text.character(at: i + 1) == 0x2A {
-                    inBlockComment = true
-                    i += 2
-                    continue
-                }
-            case 0x24:
-                if !inSingleQuote && !inDoubleQuote && !inBacktick &&
-                   i + 1 < position && text.character(at: i + 1) == 0x24 {
-                    inDollarQuote.toggle()
-                    i += 2
-                    continue
-                }
-            default: break
-            }
-            i += 1
+            if SQLContextAnalyzer.holds(span, cursor: position) { return true }
+            index = max(span.end, index + 1)
         }
-
-        return inSingleQuote || inDoubleQuote || inBacktick || inLineComment || inBlockComment || inDollarQuote
+        return false
     }
 
-    /// Nil when the word is not a keyword, sits in a protected context, or is already in the target case.
+    // Nil when the word is not a keyword, sits in a comment, a literal or a quoted name, or is already in the target case.
     public static func keywordBeforePosition(
         _ text: NSString,
         at position: Int,
-        uppercase: Bool = true
+        uppercase: Bool = true,
+        grammar: SQLLexicalGrammar
     ) -> (word: String, folded: String, range: NSRange)? {
         var wordStart = position
         while wordStart > 0 {
@@ -1360,7 +1352,7 @@ public enum KeywordUppercaseHelper {
 
         let word = text.substring(with: NSRange(location: wordStart, length: wordLength))
         guard SQLKeywords.keywordSet.contains(word.lowercased()) else { return nil }
-        guard !isInsideProtectedContext(text, at: wordStart) else { return nil }
+        guard !isInsideProtectedContext(text, at: wordStart, grammar: grammar) else { return nil }
 
         let folded = uppercase ? word.uppercased() : word.lowercased()
         guard folded != word else { return nil }
@@ -1806,11 +1798,14 @@ public enum MongoVocabulary {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3841** (2026-10-26): **Tables do not stay in cache for very long anymore**
-  *Symptoms*: ### What happened?  I have a few tables open all the time. I used to be able to move through them and they would have the last run sitting there. If I hit command + R then I'd get the new data but otherwise I'd get what I already had. I liked this setup. Now, pretty much every time I switch tabs, the tab reloads. This causes me to miss entries in the DB  ### Steps to reproduce  _No response_  ### Expected behavior  The tables should stay where they are unless I manually refresh them  ### Database type  PostgreSQL  ### TablePro version  Version 0.82.0 (820099)  ### Platform  macOS  ### OS version & hardware  M4 Air, 26.6.2  ### Installed from (Linux)  None  ### Debugging information (Linux)  ```text  ```  ### Screenshots / Logs  _No response_
+- **Issue #4100** (2026-11-08): **Linux: the first launch after a Flatpak update took about 40 s**
+  *Symptoms*: The first launch after a Flatpak update took about 40 s to start.  - Seen once on the beta.3 smoke pass: Fedora 44 Workstation VM (aarch64, QEMU), `flatpak update` from beta.1 to beta.3, then launch from the overview. D-Bus activation at 20:58:59, process start at 20:59:41. Later launches were normal. - Not yet known whether this is Flatpak's first-run work after a deploy (for example fontconfig or ld cache), the VM's disk, or TablePro's own startup. - Next: time `flatpak run` right after an update on real hardware, with `G_MESSAGES_DEBUG` and `systemd-analyze`-style timestamps. If it is TablePro's own startup, look at what runs once after a version change. - Found by the beta.3 smoke pass (#4089). 
+  **Post-Mortem & Fix Analysis**:
+  > Not TablePro's startup. The 42 s are inside `flatpak run`, before it creates the app's scope (unit 20:58:59, scope 20:59:41). TablePro logged `starting tablepro` 2 s after the scope. The only work Flatpak does there once per update is rebuilding the app's ld.so.cache (`regenerate_ld_cache` in `common/flatpak-run.c`, 1.18.4, keyed on the app and runtime commits). In a Fedora 44 container with Flatpak 1.18.4 and the same beta.1 to beta.3 update, the whole `flatpak run` took 0.04 s, and 0.73 s with a cold page cache. So it did not reproduce. The slow launch was most likely the VM under load: gnome-software was refreshing remotes after the same update. If it shows up on real hardware, `flatpak run -v app.tablepro.TablePro 2>&1 | ts -s` right after an update shows which step is slow. 
+  > Closing: the 42 s were inside flatpak run before the app started (the ld.so cache rebuild after an update, flatpak-run.c), and a Fedora 44 container measured that step at 0.04 s, 0.73 s cold. Most likely VM load at the time. Reopen if it shows up on real hardware.
 
-- **Issue #3835** (2026-10-26): **[Bug/Performance] App freezes indefinitely when listing Stored Procedures & Functions on MySQL instances with many routines**
-  *Symptoms*: ### What happened?  ### Environment - **OS:** macOS - **TablePro Version:** Latest - **Database Engine:** MySQL 5.6.51 (legacy) - **Schema Context:** Server hosting multiple databases with a high volume of Stored Procedures and Functions.  ### Description When connected to a MySQL database that contains a large number of Stored Procedures and Functions, clicking on or attempting to expand/search the Routines (SPs/Functions) section causes TablePro to hang or freeze indefinitely. The list of routines never loads, and the application becomes unresponsive.  Other clients (such as Navicat or DBeaver) are able to inspect the schema without freezing because they use lightweight metadata queries and lazy loading.  ### Steps to reproduce  ### Steps to Reproduce 1. Establish a connection to a MySQL instance (e.g., MySQL 5.6.x) containing a database with several hundred Stored Procedures and Functions. 2. Select or enter the specific database. 3. Attempt to expand the Stored Procedures / Functions list in the sidebar or search routines. 4. **Result:** The UI enters a perpetual loading state or freezes completely; routines are never returned.  ### Expected behavior  ### Expected Behavior - The schema browser should quickly display the routine names and types (e.g., in a virtualized list). - Routine bodies/definitions should only be fetched on demand (lazy loaded) when the user clicks to open or edit a specific procedure. - The UI thread should remain responsive while metadata queries ar
+- **Issue #4098** (2026-11-08): **Linux: Remember Password fails silently when there is no default keyring**
+  *Symptoms*: With no default keyring, Remember Password does nothing and says nothing.  - Seen on the beta.3 Flatpak, Fedora 44 Workstation, GNOME 50.6, automatic login with no "login" keyring yet. - Connect with Remember Password connects, but the password is not stored. Only the log says so ("a secret was not stored … the keyring is locked"). The next launch asks for the password again. - Expected: tell the user the password was not saved and why, with the same recovery as the locked-keyring message (troubleshooting.md, Flatpak connections: create a default keyring). - Found by the beta.3 smoke pass (#4089, known issue 6). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1827,423 +1822,1469 @@ public enum MongoVocabulary {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fecd3bd2` (2026-11-07)
-**Commit Message**: docs(security): send vulnerability reports to [REDACTED_EMAIL] (#4097)
+### Incident Patch 1: `9c553f2b` (2026-11-11)
+**Commit Message**: fix(macos): finish the audit wave 5 data items: find and Run All off the main thread, edit order, schema-free pool, lost session state, Local only secrets, PostgreSQL system trust (#4200)
 
-**File**: `SECURITY.md` (modified, +1/-1)
+**File**: `.claude/rules/data-sync-storage.md` (modified, +1/-0)
 ```diff
-@@ -2,7 +2,7 @@
- 
- ## Reporting a vulnerability
- 
--Report it privately through [Report a vulnerability](https://github.com/TableProApp/TablePro/security/advisories/new), or email **hello@tablepro.app**. Do not open a public issue, discussion or pull request for a vulnerability.
-+Report it privately through [Report a vulnerability](https://github.com/TableProApp/TablePro/security/advisories/new), or email **security@tablepro.app**. Do not open a public issue, discussion or pull request for a vulnerability.
- 
- Include:
- 
+@@ -181,6 +181,7 @@ This path holds user data. A silent wrong answer here looks exactly like an empt
+ | Snowflake SSO and MFA tokens, per host and user. A bare account's `NAME.USER` item stays for 0.83.1, which reads only that key | Keychain, device-local | `SnowflakeTokenCache` |
+ | Whether `connections.json` was ever given an integrity tag, so a deleted tag reads as modified | Keychain `com.TablePro.connectionStoreStamped.<sha256 of path>`, device-local | `ConnectionStoreIntegrity` |
+ | Whether Local only connections' secrets were copied to device-only items | UserDefaults `com.TablePro.localOnlySecretsKeptOnDevice`, device-local, never synced | `ConnectionStorage` |
++| iCloud Keychain copies of Local only secrets the keychain refused to remove, retried at launch | UserDefaults `com.TablePro.localOnlySyncedCopiesPendingRemoval`, device-local, never synced | `ConnectionStorage` |
+ | Whether plugin secure fields moved out of `connections.json` into the Keychain, set only when every field moved and the save succeeded | UserDefaults `com.TablePro.pluginSecureFieldsMovedToKeychain`, device-local, never synced | `ConnectionStorage` |
+ | Whether a saved-queries store replaced a damaged file and waits for a full fetch, so push treats it as unreadable | Table `sync_refill` in the saved-queries SQLite store, dropped once a full fetch applied | `SQLFavoriteStorage` |
+ | Deletions the server reported for a sync category that is off, applied when the category is next read | UserDefaults, device-local, never synced | `SyncMetadataStorage.deferredDeletions` |
 ```
 
----
-
-### Incident Patch 2: `3432d238` (2026-11-06)
-**Commit Message**: fix(linux): lint the release Flatpak manifest with its sandbox exceptions (#4079)
-
-**File**: `.github/workflows/linux-packages.yml` (modified, +3/-1)
+**File**: `.claude/rules/tests.md` (modified, +1/-1)
 ```diff
-@@ -344,7 +344,9 @@ jobs:
-           if-no-files-found: error
-       - name: Lint the manifest
-         if: runner.arch == 'X64'
--        run: flatpak-builder-lint manifest linux/build-aux/flatpak/app.tablepro.TablePro.json
-+        run: |
-+          flatpak-builder-lint --exceptions --user-exceptions linux/build-aux/flatpak/lint-exceptions.json \
-+            manifest linux/build-aux/flatpak/app.tablepro.TablePro.json
+@@ -73,7 +73,7 @@ UI flows: `.claude/rules/ui-tests.md`. Running tests and reading verdicts: `.cla
+ Use one before writing a local helper.
  
-   # Signed with a throwaway key, for http://127.0.0.1:8080, by the same
-   # flatpak-repo.sh release-linux.yml publishes with, on both branches
-```
-
-**File**: `linux/build-aux/flatpak/lint-exceptions.json` (modified, +4/-0)
-```diff
-@@ -1,4 +1,8 @@
- {
-+    "app.tablepro.TablePro": [
-+        "finish-args-home-filesystem-access",
-+        "finish-args-has-socket-ssh-auth"
-+    ],
-     "app.tablepro.TablePro.Devel": [
-         "finish-args-home-filesystem-access",
-         "finish-args-has-socket-ssh-auth"
-```
-
----
-
-### Incident Patch 3: `15fff061` (2026-11-07)
-**Commit Message**: fix(linux): stop a refused Secret portal request from hanging the connect (#4091)
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -7978,6 +7978,7 @@ dependencies = [
-  "thiserror 2.0.20",
-  "tokio",
-  "uuid",
-+ "zeroize",
- ]
+ - `TableProTestSupport` (TableProCore): `waitUntil`, `AsyncGate`, `ManualClock` (production code takes `clock: any Clock<Duration> = ContinuousClock()`), `BoundedCall`, `HeldOpenWriter`, `BackgroundPipeWriter`, `BackgroundPipeReader`.
+-- `apple/TableProTests/Helpers/`: `GlobalStateSuites`, `EphemeralDefaults`, `.appSettings { }`, `.recordingClipboard`, `CoordinatorFixture`, `OfflineRegistry`, `InMemoryColumnLayoutStore`, `InMemoryKeychain`, `PluginDriverStub`, `TestFixtures`, `AlwaysAllowGate`, `AlwaysDenyGate`, `MCPInMemoryApprovalStore`, `MCPFixedApprovalReader`, `ArrayRowProvider`, `ScopeRecordingKeychain`.
++- `apple/TableProTests/Helpers/`: `GlobalStateSuites`, `EphemeralDefaults`, `.appSettings { }`, `.recordingClipboard`, `CoordinatorFixture`, `OfflineRegistry`, `InMemoryColumnLayoutStore`, `InMemoryKeychain`, `PluginDriverStub`, `TestFixtures`, `AlwaysAllowGate`, `AlwaysDenyGate`, `CountingOpener`, `MCPInMemoryApprovalStore`, `MCPFixedApprovalReader`, `ArrayRowProvider`, `ScopeRecordingKeychain`.
+ - `TableProMCPTestSupport` (TableProMacCore): `MCPTestClock`, `MockHttpServer`, `RecordingBridgeLogger`. `TableProTLSTestFixtures` (TableProCore), also for the iOS tests.
  
- [[package]]
+ ## Known failures and flakes
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `apple/Packages/TableProCore/Package.swift` (modified, +1/-1)
 ```diff
-@@ -191,7 +191,7 @@ winapi-util = "0.1"
- tempfile = "3"
- testcontainers = { version = "0.27", default-features = false, features = ["aws-lc-rs"] }
- testcontainers-modules = { version = "0.15", default-features = false, features = ["aws-lc-rs"] }
--oo7 = { version = "0.6", default-features = false, features = ["tokio", "native_crypto"] }
-+oo7 = { version = "0.6", default-features = false, features = ["tokio", "native_crypto", "unstable"] }
- 
- [workspace.lints.rust]
- unsafe_op_in_unsafe_fn = "deny"
+@@ -541,7 +541,7 @@ let package = Package(
+         ),
+         .testTarget(
+             name: "TableProTLSClientIdentityTests",
+-            dependencies: ["TableProTLSClientIdentity", "TableProTLSTestFixtures"],
++            dependencies: ["TableProTLSClientIdentity", "TableProTLSTestFixtures", "TableProTestSupport"],
+             path: "Tests/TableProTLSClientIdentityTests"
+         ),
+         .testTarget(
 ```
 
-**File**: `linux/changelog.d/4091.fixed.md` (added, +1/-0)
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLSessionStateClassifier.swift` (added, +708/-0)
 ```diff
-@@ -0,0 +1 @@
-+Connecting with a saved password in the Flatpak no longer hangs when the keyring is locked or missing.
-```
-
-**File**: `linux/crates/platform/Cargo.toml` (modified, +3/-2)
-```diff
-@@ -15,12 +15,13 @@ glib.workspace = true
- oo7.workspace = true
- secrecy.workspace = true
- thiserror.workspace = true
--tokio = { workspace = true, features = ["sync"] }
-+tokio = { workspace = true, features = ["io-util", "net", "sync", "time"] }
- uuid.workspace = true
-+zeroize.workspace = true
- 
- [dev-dependencies]
- tempfile.workspace = true
--tokio = { workspace = true, features = ["rt"] }
-+tokio = { workspace = true, features = ["rt", "test-util"] }
- 
- [lints]
- workspace = true
-```
-
-**File**: `linux/crates/platform/src/secrets/backend.rs` (added, +134/-0)
-```diff
-@@ -0,0 +1,134 @@
-+use std::path::Path;
+@@ -0,0 +1,708 @@
++import Foundation
 +
-+use oo7::AsAttributes;
-+use oo7::file::{Item as FileItem, UnlockedKeyring};
-+use tokio::sync::Mutex;
++public struct SQLSessionStateKinds: OptionSet, Sendable, Hashable {
++    public let rawValue: Int
 +
-+use super::portal;
++    public init(rawValue: Int) {
++        self.rawValue = rawValue
++    }
 +
-+// Boxed: oo7::Error is large enough that clippy refuses it as an Err variant.
-+pub(super) type Result<T> = std::result::Result<T, Box<oo7::Error>>;
++    public static let temporaryObjects = SQLSessionStateKinds(rawValue: 1 << 0)
++    public static let sessionSettings = SQLSessionStateKinds(rawValue: 1 << 1)
++    public static let userVariables = SQLSessionStateKinds(rawValue: 1 << 2)
++    public static let preparedStatements = SQLSessionStateKinds(rawValue: 1 << 3)
++    public static let heldCursors = SQLSessionStateKinds(rawValue: 1 << 4)
++    public static let sessionLocks = SQLSessionStateKinds(rawValue: 1 << 5)
++    public static let listeners = SQLSessionStateKinds(rawValue: 1 << 6)
 +
-+// The two backends oo7's Keyring::new picks between. Inside a sandbox the store opens the file keyring
-+// itself, since oo7 0.6 gets the portal's key through ashpd's retrieve, which hangs on a refused request.
-+pub(super) enum Backend {
-+    Service(oo7::Keyring),
-+    File {
-+        keyring: UnlockedKeyring,
-+        // A relabel rewrites the item with the secret it read, so a store landing in between would be
-+        // undone. The file is local, so holding this never waits on the user.
-+        writes: Mutex<()>,
-+    },
++    public static let all: SQLSessionStateKinds = [
++        .temporaryObjects, .sessionSettings, .userVariables, .preparedStatements, .heldCursors, .sessionLocks,
++        .listeners,
++    ]
 +}
 +
-+impl Backend {
-+    pub(super) async fn open() -> Result<Self> {
-+        if !oo7::ashpd::is_sandboxed() {
-+            return Ok(Self::Service(oo7::Keyring::new().await?));
-+        }
-+        let secret = portal::retrieve_secret()
-+            .await
-+            .map_err(|error| file_error(error.into()))?;
-+        // The same file and key oo7's Keyring::new opens, so the passwords earlier builds saved still read.
-+        let path = oo7::file::api::Keyring::default_path().map_err(file_error)?;
-+        Self::open_file(path, secret).await
++public struct SQLSessionStateEffect: Sendable, Equatable {
++    public let creates: SQLSessionStateKinds
++    public let clears: SQLSessionStateKinds
++
++    public init(creates: SQLSessionStateKinds = [], clears: SQLSessionStateKinds = []) {
++        self.creates = creates
++        self.clears = clears
 +    }
 +
-+    pub(super) async fn open_file(path: impl AsRef<Path>, secret: oo7::Secret) -> Result<Self> {
-+        Ok(Self::File {
-+            keyring: UnlockedKeyring::load(path, secret).await.map_err(file_error)?,
-+            writes: Mutex::new(()),
-+        })
++    public static let none = SQLSessionStateEffect()
++
++    public var isEmpty: Bool {
++        creates.isEmpty && clears.isEmpty
 +    }
 +
-+    // Unlocking before the read is what turns a silent empty result into a prompt the user can answer.
-+    // A file keyring opened with the portal's key is already unlocked.
-+    pub(super) async fn unlock(&self) -> Result<()> {
-+        if let Self::Service(keyring) = self
-+            && keyring.is_locked().await?
-+        {
-+            keyring.unlock().await?;
-+        }
-+        Ok(())
++    public func followed(by next: SQLSessionStateEffect) -> SQLSessionStateEffect {
++        SQLSessionStateEffect(
++            creates: creates.subtracting(next.clears).union(next.creates),
++            clears: clears.union(next.clears)
++        )
 +    }
 +
-+    pub(super) async fn find_secret(&self, attributes: &impl AsAttributes) -> Result<Option<oo7::Secret>> {
-+        match self {
-+            Self::Service(keyring) => {
-+                let Some(item) = keyring.search_items(attributes).await?.into_iter().next() else {
-+                    return Ok(None);
-+                };
-+                // An item can be locked even when the collection is not.
-+                if item.is_locked().await? {
-+                    item.unlock().await?;
-+                }
-+                Ok(Some(item.secret().await?))
-+            }
-+            Self::File { keyring, .. } => match keyring
-+                .search_items(attributes)
-+                .await
-+                .map_err(file_error)?
-+                .into_iter()
-+                .next()
-+            {
-+                None => Ok(None),
-+                Some(FileItem::Unlocked(item)) => Ok(Some(item.secret())),
-+                Some(FileItem::Locked(_)) => Err(file_error(oo7::file::Error::Locked)),
-+            },
-+        }
++    public func applied(to kinds: SQLSessionStateKinds) -> SQLSessionStateKinds {
++        kinds.subtracting(clears).union(creates)
 +    }
++}
 +
-+    pub(super) async fn store(&self, label: &str, attributes: &impl AsAttributes, secret: oo7::Secret) -> Result<()> {
-+        match self {
-+            Self::Service(keyring) => Ok(keyring.create_item(label, attributes, secret, true).await?),
-+            Self::File { keyring, writes } => {
-+                let _writing = writes.lock().await;
-+                keyring
-+                    .create_item(label, attributes, secret, true)
-+                    .await
-+                    .map_err(file_error)?;
-+                Ok(())
++public enum SQLSessionDialect: Sendable, Hashable {
++    case postgres
++    case mySQL
++    case sqlServer
++    case oracle
++    case sqlite
++    case duckDB
++}
++
++// No engine reports a session's temporary tables, settings or variables, and a dead connection answers nothing, so
++// the text decides. A `CALL`, `DO`, `EXEC proc` or PL/SQL block is not read: what it sets up is out of sight.
++public enum SQLSessionStateClassifier: Sendable {
++    // Past this a text is data, an INSERT's VALUES, and reading it all would cost a pass per run. Each text is cut before
++    // it is split, so a setup past this point in one long text, such as a T-SQL batch with no `;`, is not seen.
++    private static let classifiedPrefixLength = 65_536
++    private static let modifierLookahead = 5
++
++    private static let period = UInt16(UnicodeScalar(".").value)
++    private static let atSign = UInt16(UnicodeScalar("@").value)
++    private static let colon = UInt16(UnicodeScalar(":").value)
++    private static let equals = UInt16(UnicodeScalar("=").value)
++
++    // What `skipping` names runs again on every new connection, such as a startup command, so it is never lost.
++    public static func effect(
++        ofStatements statements: [String],
++        dialect: SQLSessionDialect,
++        grammar: SQLLexicalGrammar,
++        skipping skipped: [String] = []
++    ) -> SQLSessionStateEffect {
++        let skippedTexts = Set(skipped.map(comparableText))
++        var effect = SQLSessionStateEffect.none
++        for text in statements {
++            let head = classifiedHead(of: text)
++            guard SQLSessionStateQuickCheck.mayChangeSession(head, dialect: dialect) else { continue }
++            for statement in SQLStatementClassifier.statements(of: head, grammar: grammar)
++            where SQLSessionStateQuickCheck.mayChangeSession(statement, dialect: dialect)
++                && !skippedTexts.contains(comparableText(statement)) {
++                effect = effect.followed(by: statementEffect(of: statement, dialect: dialect, grammar: grammar))
 +            }
 +        }
++        return effect
 +    }
 +
-+    pub(super) async fn relabel(&self, attributes: &impl AsAttributes, label: &str) -> Result<()> {
-+        match self {
-+            Self::Service(keyring) => {
-+                for item in keyring.search_items(attributes).await? {
-+                    item.set_label(label).await?;
-+                }
-+            }
-+            // As oo7's Item::set_label does for a file item: the keyring is written whole, so the item
-+            // is replaced with its new label.
-+            Self::File { keyring, writes } => {
-+                let _writing = writes.lock().await;
-+                for item in keyring.search_items(attributes).await.map_err(file_error)? {
-+                    let FileItem::Unlocked(mut item) = item else {
-+                        return Err(file_error(oo7::file::Error::Locked));
-+                    };
-+                    item.set_label(label);
-+                    keyring
-+                        .create_item(item.label(), item.attributes(), item.secret(), true)
-+                        .await
-+                        .map_err(file_error)?;
-+                }
-+            }
++    public static func effect(of sql: String, dialect: SQLSessionDialect, grammar: SQLLexicalGrammar) -> SQLSessionStateEffect {
++        effect(ofStatements: [sql], dialect: dialect, grammar: grammar)
++    }
++
++    static func comparableText(_ statement: String) -> String {
++        var text = statement.trimmingCharacters(in: .whitespacesAndNewlines)
++        while text.hasSuffix(";") {
++            text = String(text.dropLast()).trimmingCharacters(in: .whitespacesAndNewlines)
 +        }
-+        Ok(())
++        return text
 +    }
 +
-+    pub(super) async fn delete(&self, attributes: &impl AsAttributes) -> Result<()> {
-+        match self {
-+            Self::Service(keyring)
++    // Every server reading of a `/*!` comment counts what it sets up, and only what all of them clear is cleared.
++    private static func statementEffect(
++        of statement: String,
++        dialect: SQLSessionDialect,
++        grammar: SQLLexicalGrammar
++    ) -> SQLSessionStateEffect {
++        // More versions than a reader takes one by one leaves the text as written, its executable comments unread.
++        let texts = SQLExecutableCommentReadings.texts(of: statement, grammar: grammar).map { Array($0) } ?? [statement]
++
 ```
 
-**File**: `linux/crates/platform/src/secrets/keyring_error.rs` (modified, +41/-1)
+**File**: `apple/Packages/TableProCore/Sources/TableProTLSClientIdentity/LibPQSystemTrustRule.swift` (added, +32/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+use oo7::ashpd::desktop::ResponseError;
- use tablepro_core::credentials::SecretError;
- 
- /// Where in the flow the failure happened. Opening the keyring and using
-@@ -24,7 +25,13 @@ pub(super) fn map_error(error: oo7::Error, stage: Stage) -> SecretError {
-         ) if stage == Stage::Open => SecretError::ServiceUnavailable {
-             detail: error.to_string(),
-         },
--        // Under Flatpak, Keyring::new asks the Secret portal first, so a
-+        // The portal's backend shows the unlock prompt inside the request. Its Response carries no reason,
-+        // and GNOME Keyring answers 2 both for a dismissed prompt and for a missing login keyring.
-+        oo7::Error::File(oo7::file::Error::Portal(oo7::ashpd::Error::Response(response))) => match response {
-+            ResponseError::Cancelled => SecretError::UnlockDismissed,
-+            ResponseError::Other => SecretError::Locked,
-+        },
-+        // Inside a sandbox the store asks the Secret portal first, so a
-         // missing portal surfaces here rather than as a D-Bus failure.
-         oo7::Error::File(error @ oo7::file::Error::Portal(_)) => SecretError::PortalUnavailable {
-             detail: error.to_string(),
-@@ -192,6 +199,39 @@ mod tests {
-         assert!(matches!(mapped, SecretError::PortalUnavailable { .. }), "{mapped:?}");
+@@ -0,0 +1,32 @@
++//
++//  LibPQSystemTrustRule.swift
++//  TableProTLSClientIdentity
++//
++
++import Foundation
++
++// One rule for the driver and for pg_dump and pg_restore, so a session and its backup trust the same roots.
++public enum LibPQSystemTrustRule {
++    // Verify Identity with no CA file, over TCP, with no root file the user named for libpq.
++    public static func usesSystemTrustAnchors(
++        verifiesHostname: Bool,
++        caCertificatePath: String,
++        host: String,
++        environment: [String: String],
++        fileExists: (String) -> Bool
++    ) -> Bool {
++        // libpq opens no TLS on a socket, and an empty host is its default socket.
++        guard verifiesHostname, caCertificatePath.isEmpty, !host.isEmpty, !host.hasPrefix("/") else { return false }
++        if let named = environment["PGSSLROOTCERT"], !named.isEmpty { return false }
++        return !fileExists(defaultRootCertificatePath(environment: environment))
++    }
++
++    // libpq reads HOME first and the password database only when it is unset or empty.
++    public static func defaultRootCertificatePath(environment: [String: String]) -> String {
++        let home = environment["HOME"].flatMap { $0.isEmpty ? nil : $0 } ?? NSHomeDirectory()
++        return URL(fileURLWithPath: home, isDirectory: true)
++            .appendingPathComponent(".postgresql", isDirectory: true)
++            .appendingPathComponent("root.crt")
++            .path
++    }
++}
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProTLSClientIdentity/SystemTrustAnchors.swift` (added, +284/-0)
+```diff
+@@ -0,0 +1,284 @@
++#if os(macOS)
++import Foundation
++import os
++import Security
++
++public enum SystemTrustDomain: Sendable {
++    case user
++    case admin
++    case system
++
++    var securityDomain: SecTrustSettingsDomain {
++        switch self {
++        case .user: .user
++        case .admin: .admin
++        case .system: .system
++        }
++    }
++}
++
++public enum SystemTrustResult: Sendable, Equatable {
++    case trustRoot
++    case trustAsRoot
++    case deny
++    case unspecified
++}
++
++public struct SystemTrustSetting: Sendable, Equatable {
++    public var appliesToSSL: Bool
++    public var namesApplication: Bool
++    public var hostname: String?
++    // Nil when the entry carries no result, which Apple reads as TrustRoot.
++    public var result: SystemTrustResult?
++
++    public init(
++        appliesToSSL: Bool = true,
++        namesApplication: Bool = false,
++        hostname: String? = nil,
++        result: SystemTrustResult? = nil
++    ) {
++        self.appliesToSSL = appliesToSSL
++        self.namesApplication = namesApplication
++        self.hostname = hostname
++        self.result = result
++    }
++}
++
++public protocol SystemTrustSource {
++    // Empty when the domain has no trust settings.
++    func certificates(in domain: SystemTrustDomain) throws -> [SecCertificate]
++    // Nil when the domain holds no settings for the certificate.
++    func settings(for certificate: SecCertificate, in domain: SystemTrustDomain) throws -> [SystemTrustSetting]?
++    func anchorCertificates() throws -> [SecCertificate]
++}
++
++public enum SystemTrustAnchorsError: Error, Sendable, Equatable {
++    case settingsUnreadable(OSStatus)
++    case noTrustedRoots
++    case exportFailed(OSStatus)
++    case fileUnwritable
++}
++
++extension SystemTrustAnchorsError: LocalizedError {
++    public var message: String {
++        String(
++            localized: """
++                Could not read this Mac's trusted certificates to verify the server. Choose the server's CA \
++                certificate under SSL, then connect again.
++                """
++        )
++    }
++
++    public var errorDescription: String? {
++        message
++    }
++}
++
++// For a TLS library with no trust store of its own, such as the bundled OpenSSL. The roots come from the trust
++// settings, never from evaluating each root alone: a SHA-1 self-signed root fails as a leaf and still anchors chains.
++public enum SystemTrustAnchors {
++    public static let shared = SystemTrustAnchorCache(source: SecuritySystemTrustSource(), clock: ContinuousClock())
++
++    static let logger = Logger(subsystem: "com.TablePro", category: "SystemTrustAnchors")
++
++    // Per-user settings override admin ones, which override the system's. The first domain with a result decides.
++    public static func trustedRoots(from source: any SystemTrustSource) throws -> [SecCertificate] {
++        var results: [Data: SystemTrustResult] = [:]
++        var decided: [(der: Data, certificate: SecCertificate)] = []
++        for domain in [SystemTrustDomain.user, .admin, .system] {
++            let (certificates, fromAnchorList) = try certificates(in: domain, from: source)
++            for certificate in certificates {
++                let der = SecCertificateCopyData(certificate) as Data
++                guard results[der] == nil else { continue }
++                let result: SystemTrustResult? = fromAnchorList ? .trustRoot : decision(for: certificate, in: domain, from: source)
++                guard let result else { continue }
++                results[der] = result
++                decided.append((der, certificate))
++            }
++        }
++        return decided.filter { results[$0.der] == .trustRoot || results[$0.der] == .trustAsRoot }.map(\.certificate)
++    }
++
++    public static func pem(from source: any SystemTrustSource) throws -> Data {
++        let roots = try trustedRoots(from: source)
++        guard !roots.isEmpty else { throw SystemTrustAnchorsError.noTrustedRoots }
++        var exported: CFData?
++        let status = SecItemExport(roots as CFArray, .formatPEMSequence, [], nil, &exported)
++        guard status == errSecSuccess, let exported, CFDataGetLength(exported) > 0 else {
++            logger.error("Exporting the trusted roots failed: \(status, privacy: .public)")
++            throw SystemTrustAnchorsError.exportFailed(status)
++        }
++        return exported as Data
++    }
++
++    static func effectiveResult(of settings: [SystemTrustSetting]) -> SystemTrustResult? {
++        guard !settings.isEmpty else { return .trustRoot }
++        for setting in settings where setting.appliesToSSL && !setting.namesApplication {
++            let result = setting.result ?? .trustRoot
++            // A PEM cannot carry a hostname limit, so a scoped trust is left out and a scoped deny covers every host.
++            if setting.hostname != nil {
++                if result == .deny { return .deny }
++                continue
++            }
++            if result != .unspecified { return result 
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/SQLSessionStateClassifierTests.swift` (added, +409/-0)
+```diff
+@@ -0,0 +1,409 @@
++import Foundation
++@testable import TableProSQLGrammar
++import Testing
++
++struct SQLSessionStateClassifierTests {
++    private static func grammar(_ engine: String) -> SQLLexicalGrammar {
++        SQLLexicalReadings.resolve(databaseTypeId: engine, declared: nil, session: nil).execution
++    }
++
++    private static let engines: [SQLSessionDialect: String] = [
++        .postgres: "PostgreSQL", .mySQL: "MySQL", .sqlServer: "SQL Server", .oracle: "Oracle", .sqlite: "SQLite",
++        .duckDB: "DuckDB",
++    ]
++
++    private func effect(_ sql: String, _ dialect: SQLSessionDialect) -> SQLSessionStateEffect {
++        SQLSessionStateClassifier.effect(of: sql, dialect: dialect, grammar: Self.grammar(Self.engines[dialect] ?? ""))
++    }
++
++    private func creates(_ sql: String, _ dialect: SQLSessionDialect) -> SQLSessionStateKinds {
++        effect(sql, dialect).creates
++    }
++
++    // MARK: - PostgreSQL
++
++    @Test("PostgreSQL temporary objects, by marker, by pg_temp and by SELECT INTO", arguments: [
++        "CREATE TEMP TABLE t (id int)",
++        "create temporary table t (id int)",
++        "CREATE GLOBAL TEMPORARY TABLE t (id int)",
++        "CREATE OR REPLACE TEMP VIEW v AS SELECT 1",
++        "CREATE TEMP SEQUENCE s",
++        "CREATE TEMP TABLE t (id int) ON COMMIT DELETE ROWS",
++        "CREATE TABLE pg_temp.t (id int)",
++        "CREATE TABLE IF NOT EXISTS pg_temp.t (id int)",
++        "CREATE FUNCTION pg_temp.f() RETURNS int AS $$ SELECT 1 $$ LANGUAGE sql",
++        "SELECT * INTO TEMP t FROM orders",
++        "SELECT * INTO TEMPORARY TABLE t FROM orders",
++    ])
++    func postgresTemporaryObjects(sql: String) {
++        #expect(creates(sql, .postgres) == .temporaryObjects)
++    }
++
++    @Test("PostgreSQL tables that outlive the session or end with the transaction are not session state", arguments: [
++        "CREATE TABLE t (id int)",
++        "CREATE TABLE temp (id int)",
++        "CREATE UNLOGGED TABLE t (id int)",
++        "CREATE TEMP TABLE t (id int) ON COMMIT DROP",
++        "SELECT * INTO archive FROM orders",
++    ])
++    func postgresLastingTables(sql: String) {
++        #expect(creates(sql, .postgres).isEmpty)
++    }
++
++    @Test("PostgreSQL SET, SET SESSION and a session set_config are session settings", arguments: [
++        "SET search_path TO app",
++        "SET SESSION statement_timeout = 0",
++        "SET ROLE reporting",
++        "SET SESSION AUTHORIZATION alice",
++        "SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY",
++        "SET app.key = 'secret'",
++        "SELECT set_config('app.user', '42', false)",
++        "SELECT pg_catalog.set_config('app.user', '42', false)",
++    ])
++    func postgresSettings(sql: String) {
++        #expect(creates(sql, .postgres) == .sessionSettings)
++    }
++
++    @Test("PostgreSQL settings that last one transaction are not session state", arguments: [
++        "SET LOCAL search_path TO app",
++        "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE",
++        "SET CONSTRAINTS ALL DEFERRED",
++        "SELECT set_config('app.user', '42', true)",
++    ])
++    func postgresTransactionSettings(sql: String) {
++        #expect(creates(sql, .postgres).isEmpty)
++    }
++
++    @Test("PostgreSQL prepared statements, held cursors, session advisory locks and LISTEN")
++    func postgresOtherKinds() {
++        #expect(creates("PREPARE q (int) AS SELECT $1", .postgres) == .preparedStatements)
++        #expect(creates("PREPARE TRANSACTION 'tx1'", .postgres).isEmpty)
++        #expect(creates("DECLARE c CURSOR WITH HOLD FOR SELECT 1", .postgres) == .heldCursors)
++        #expect(creates("DECLARE c CURSOR FOR SELECT 1", .postgres).isEmpty)
++        #expect(creates("DECLARE c CURSOR WITHOUT HOLD FOR SELECT 1", .postgres).isEmpty)
++        #expect(creates("SELECT pg_advisory_lock(1)", .postgres) == .sessionLocks)
++        #expect(creates("SELECT pg_try_advisory_lock_shared(1, 2)", .postgres) == .sessionLocks)
++        #expect(creates("SELECT pg_advisory_xact_lock(1)", .postgres).isEmpty)
++        #expect(creates("LISTEN jobs", .postgres) == .listeners)
++    }
++
++    @Test("DISCARD ALL clears every kind; DISCARD TEMP, DEALLOCATE ALL and UNLISTEN * clear their own")
++    func postgresClears() {
++        #expect(effect("DISCARD ALL", .postgres).clears == .all)
++        #expect(effect("DISCARD TEMP", .postgres).clears == .temporaryObjects)
++        #expect(effect("discard temporary", .postgres).clears == .temporaryObjects)
++        #expect(effect("DEALLOCATE ALL", .postgres).clears == .preparedStatements)
++        #expect(effect("DEALLOCATE PREPARE ALL", .postgres).clears == .preparedStatements)
++        #expect(effect("UNLISTEN *", .postgres).clears == .listeners)
++        #expect(effect("UNLISTEN jobs", .postgres) == .none)
++        #expect(effect("RESET search_path", .postgres) == .none)
++        #expect(effect("RESET ALL", .postgres) == .none)
++        #expect(effect("DISCARD PLANS", .postgres) == .none)
++    }
++
++    @Test("RESET ALL keeps the rol
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProTLSClientIdentityTests/SystemTrustAnchorsTests.swift` (added, +288/-0)
+```diff
+@@ -0,0 +1,288 @@
++#if os(macOS)
++import Foundation
++import Security
++import TableProTestSupport
++import TableProTLSClientIdentity
++import TableProTLSTestFixtures
++import Testing
++
++private final class FixtureTrustSource: SystemTrustSource {
++    struct Entry {
++        let certificate: SecCertificate
++        let settings: [SystemTrustSetting]?
++        var unreadable = false
++    }
++
++    var domains: [SystemTrustDomain: [Entry]] = [:]
++    var unreadableDomains: Set<SystemTrustDomain> = []
++    var anchors: [SecCertificate] = []
++    private(set) var userDomainReads = 0
++
++    func add(_ certificate: SecCertificate, to domain: SystemTrustDomain, _ settings: [SystemTrustSetting]?) {
++        domains[domain, default: []].append(Entry(certificate: certificate, settings: settings))
++    }
++
++    func certificates(in domain: SystemTrustDomain) throws -> [SecCertificate] {
++        if domain == .user { userDomainReads += 1 }
++        guard !unreadableDomains.contains(domain) else { throw SystemTrustAnchorsError.settingsUnreadable(-1) }
++        return domains[domain, default: []].map(\.certificate)
++    }
++
++    func settings(for certificate: SecCertificate, in domain: SystemTrustDomain) throws -> [SystemTrustSetting]? {
++        let der = SecCertificateCopyData(certificate) as Data
++        guard let entry = domains[domain, default: []].first(where: { SecCertificateCopyData($0.certificate) as Data == der })
++        else { return nil }
++        guard !entry.unreadable else { throw SystemTrustAnchorsError.settingsUnreadable(-1) }
++        return entry.settings
++    }
++
++    func anchorCertificates() throws -> [SecCertificate] {
++        anchors
++    }
++}
++
++struct SystemTrustAnchorsTests {
++    private let rootA: SecCertificate
++    private let rootB: SecCertificate
++
++    init() throws {
++        rootA = try #require(SecCertificateCreateWithData(nil, TLSTestFixtures.der(TLSTestFixtures.caCertificate) as CFData))
++        rootB = try #require(
++            SecCertificateCreateWithData(nil, TLSTestFixtures.der(TLSTestFixtures.serverNameCACertificate) as CFData)
++        )
++    }
++
++    private func ders(_ certificates: [SecCertificate]) -> Set<Data> {
++        Set(certificates.map { SecCertificateCopyData($0) as Data })
++    }
++
++    private func exported(_ source: FixtureTrustSource) throws -> Set<Data> {
++        ders(try SystemTrustAnchors.trustedRoots(from: source))
++    }
++
++    @Test("A certificate whose trust settings are empty is trusted as a root")
++    func emptySettingsTrustTheRoot() throws {
++        let source = FixtureTrustSource()
++        source.add(rootA, to: .system, [])
++
++        #expect(try exported(source) == ders([rootA]))
++    }
++
++    @Test("A user Deny removes a root the system trusts")
++    func aUserDenyRemovesASystemRoot() throws {
++        let source = FixtureTrustSource()
++        source.add(rootA, to: .system, [])
++        source.add(rootB, to: .system, [])
++        source.add(rootA, to: .user, [SystemTrustSetting(result: .deny)])
++
++        #expect(try exported(source) == ders([rootB]))
++    }
++
++    @Test("A root trusted in the admin domain joins the system roots")
++    func anAdminTrustAddsARoot() throws {
++        let source = FixtureTrustSource()
++        source.add(rootA, to: .system, [])
++        source.add(rootB, to: .admin, [SystemTrustSetting(result: .trustRoot)])
++
++        #expect(try exported(source) == ders([rootA, rootB]))
++    }
++
++    @Test("User settings override admin settings in both directions")
++    func userSettingsOverrideAdminSettings() throws {
++        let source = FixtureTrustSource()
++        source.add(rootA, to: .admin, [SystemTrustSetting(result: .deny)])
++        source.add(rootA, to: .user, [SystemTrustSetting(result: .trustRoot)])
++        source.add(rootB, to: .admin, [SystemTrustSetting(result: .trustRoot)])
++        source.add(rootB, to: .user, [SystemTrustSetting(result: .deny)])
++
++        #expect(try exported(source) == ders([rootA]))
++    }
++
++    @Test("A setting for another policy or for one application does not apply")
++    func anEntryForAnotherPolicyDoesNotApply() throws {
++        let source = FixtureTrustSource()
++        source.add(rootA, to: .system, [])
++        source.add(rootA, to: .user, [SystemTrustSetting(appliesToSSL: false, result: .deny)])
++        source.add(rootB, to: .user, [SystemTrustSetting(namesApplication: true, result: .trustRoot)])
++
++        #expect(try exported(source) == ders([rootA]))
++    }
++
++    @Test("A trust limited to one hostname is left out, because a PEM file cannot carry the limit")
++    func aHostnameScopedTrustIsNotExported() throws {
++        let source = FixtureTrustSource()
++        source.add(rootA, to: .system, [])
++        source.add(rootB, to: .user, [SystemTrustSetting(hostname: "db.example.com", result: .trustRoot)])
++
++        #expect(try exported(source) == ders([rootA]))
++    }
++
++    @Test("A Deny limited to one hostname removes the root for every host")
++    func aHostnameScopedDen
+```
+
+---
+
+### Incident Patch 2: `c778863c` (2026-11-11)
+**Commit Message**: fix(macos): keep T-SQL blocks and rewinds whole, stop CSV sanitizing by default, and fix Stop, defaults and gate cancels across drivers (#4185)
+
+**File**: `apple/Configs/PluginKit.xcconfig` (modified, +1/-1)
+```diff
+@@ -1,3 +1,3 @@
+ // When to raise each, and how the build stamps them: .claude/rules/plugin-system.md, ABI.
+-TABLEPRO_PLUGINKIT_VERSION = 43
++TABLEPRO_PLUGINKIT_VERSION = 44
+ TABLEPRO_PLUGINKIT_MINIMUM_VERSION = 19
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProCassandraCore/CassandraConditionalWrite.swift` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++//
++//  CassandraConditionalWrite.swift
++//  TableProCassandraCore
++//
++
++import Foundation
++
++// A grid write names its row by key and is conditioned on it: an INSERT is an upsert, and an UPDATE writes its cells
++// whether or not the row is there, so either would otherwise replace or recreate a row the grid never showed.
++// A condition that fails answers one row whose `[applied]` is false, which the server reports as a success.
++public enum CassandraConditionalWrite {
++    public static let appliedColumn = "[applied]"
++    public static let insertCondition = "IF NOT EXISTS"
++    public static let updateCondition = "IF EXISTS"
++
++    public enum Refusal: Sendable, Equatable {
++        case keyTaken
++        case rowMissing
++    }
++
++    public static func insertStatement(target: String, names: [String], values: [String]) -> String {
++        "INSERT INTO \(target) (\(names.joined(separator: ", "))) VALUES (\(values.joined(separator: ", "))) "
++            + insertCondition
++    }
++
++    public static func updateStatement(target: String, assignments: [String], keyCondition: String) -> String {
++        "UPDATE \(target) SET \(assignments.joined(separator: ", ")) WHERE \(keyCondition) \(updateCondition)"
++    }
++
++    public static func refusal(statement: String, firstColumn: String?, firstValue: String?) -> Refusal? {
++        guard firstColumn == appliedColumn, firstValue?.lowercased() == "false" else { return nil }
++        let normalized = statement.uppercased()
++        if normalized.hasPrefix("INSERT"), normalized.hasSuffix(" " + insertCondition) {
++            return .keyTaken
++        }
++        if normalized.hasPrefix("UPDATE"), normalized.hasSuffix(" " + updateCondition) {
++            return .rowMissing
++        }
++        return nil
++    }
++}
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProRedisCore/RedisCommandSplitter.swift` (modified, +11/-0)
+```diff
+@@ -32,6 +32,17 @@ public enum RedisCommandSplitter {
+         return nil
      }
  
-+    #[test]
-+    fn a_dismissed_portal_request_is_unlock_dismissed() {
-+        let mapped = map_error(
-+            oo7::file::Error::Portal(oo7::ashpd::Error::Response(ResponseError::Cancelled)).into(),
-+            Stage::Open,
-+        );
-+
-+        assert_eq!(mapped, SecretError::UnlockDismissed);
++    // Every command with the last caret offset `command(at:in:)` gives it, for a caller that keeps them between
++    // caret moves.
++    public static func commandsWithCaretReach(in text: String) -> [(command: Command, reach: Int)] {
++        var lexer = RedisCommandLexer(text, endsCommands: true, decodesArguments: false)
++        var commands: [(command: Command, reach: Int)] = []
++        while let found = lexer.next() {
++            commands.append((command: command(found, in: text), reach: found.reach))
++        }
++        return commands
 +    }
 +
-+    // GNOME Keyring's answer when its unlock prompt is cancelled.
-+    #[test]
-+    fn a_refused_portal_request_is_locked() {
-+        let mapped = map_error(
-+            oo7::file::Error::Portal(oo7::ashpd::Error::Response(ResponseError::Other)).into(),
-+            Stage::Open,
-+        );
-+
-+        assert_eq!(mapped, SecretError::Locked);
-+        assert!(mapped.is_retryable());
-+    }
-+
-+    #[test]
-+    fn a_portal_that_never_answers_is_portal_unavailable() {
-+        let timed_out = std::io::Error::new(std::io::ErrorKind::TimedOut, "the Secret portal did not answer");
-+        let mapped = map_error(
-+            oo7::file::Error::Portal(oo7::ashpd::Error::IO(timed_out)).into(),
-+            Stage::Open,
-+        );
-+
-+        assert!(matches!(mapped, SecretError::PortalUnavailable { .. }), "{mapped:?}");
-+    }
-+
-     #[test]
-     fn only_a_wire_error_invalidates_the_handle() {
-         assert!(!invalidates_handle(&oo7::dbus::Error::Dismissed.into()));
+     private static func command(_ found: RedisCommandLexer.Command, in text: String) -> Command {
+         let range = NSRange(location: found.start, length: found.end - found.start)
+         return Command(text: (text as NSString).substring(with: range), range: range)
 ```
 
-**File**: `linux/crates/platform/src/secrets/mod.rs` (modified, +2/-0)
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLParenthesizedSemicolons.swift` (added, +42/-0)
 ```diff
-@@ -1,4 +1,6 @@
-+mod backend;
- mod keyring_error;
-+mod portal;
- mod secret_attributes;
- mod secret_store;
+@@ -0,0 +1,42 @@
++import Foundation
++
++// The scanner keeps the `;`s of a PostgreSQL rule's `DO ALSO (...; ...)` in its statement. A client that cuts at every
++// `;` runs each piece, so a gate tiers them too: `DO ALSO (SELECT 1; DELETE FROM t)` by its `DELETE`.
++enum SQLParenthesizedSemicolons {
++    static func pieces(in statement: String, grammar: SQLLexicalGrammar) -> [String] {
++        guard statement.utf16.contains(SqlLexer.semicolon) else { return [] }
++        let text = statement as NSString
++        let length = text.length
++        var cuts: [Int] = []
++        var depth = 0
++        var index = 0
++        while index < length {
++            if let span = SQLNonCodeSpan.span(at: index, in: text, grammar: grammar) {
++                index = max(span.end, index + 1)
++                continue
++            }
++            switch text.character(at: index) {
++            case SqlLexer.openParen:
++                depth += 1
++            case SqlLexer.closeParen:
++                depth = max(0, depth - 1)
++            case SqlLexer.semicolon where depth > 0:
++                cuts.append(index)
++            default:
++                break
++            }
++            index += 1
++        }
++        guard !cuts.isEmpty else { return [] }
++        var pieces: [String] = []
++        var start = 0
++        for cut in cuts + [length] {
++            let piece = StatementBlank.trimming(text.substring(with: NSRange(location: start, length: cut - start)))
++            if !piece.isEmpty {
++                pieces.append(piece)
++            }
++            start = cut + 1
++        }
++        return pieces
++    }
++}
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLRoutineBodyTracker.swift` (modified, +109/-15)
+```diff
+@@ -2,13 +2,26 @@ import Foundation
  
+ /// Statement boundaries for the dialects whose only `;`-holding construct is a routine body written `BEGIN ... END`.
+ ///
+-/// A `BEGIN` opens a body only inside a statement that defines a routine, for the safety reason recorded on
++/// Outside T-SQL a `BEGIN` opens a body only inside a statement that defines a routine, for the safety reason recorded on
+ /// ``SqlBlockStructure/opensRoutineDefinition(_:)``. The `;` belongs to the statement only after a T-SQL `MERGE`, which
+ /// ``SQLLexicalGrammar/terminatedMergeStatements`` asks for: these engines accept every other statement without it.
+ ///
+ /// `BEGIN`, `CASE` and `END` count only where a keyword can stand: an engine that does not reserve them takes them as
+-/// names, and a block a name opened would never close. A text left inside one is refused by the external gate.
++/// names, and a block a name opened would never close. T-SQL reserves all three, so there a block also opens outside
++/// a routine, as in `IF @x = 1 BEGIN ... END` and `BEGIN TRY ... END TRY BEGIN CATCH ... END CATCH`. A text left
++/// inside one is refused by the external gate.
++///
++/// A `;` inside parentheses ends the statement, so a stray `(` cannot swallow what follows it, except in a PostgreSQL
++/// rule's action list, `DO ALSO (INSERT ...; INSERT ...)`, which holds its commands together.
+ public struct SQLRoutineBodyTracker: SQLStatementBoundaryTracking {
++    // A PostgreSQL `CREATE RULE`: its header, the `DO [ALSO | INSTEAD]` before the action list, and the list itself.
++    private enum RuleAction: Equatable {
++        case none
++        case header
++        case afterDo
++        case list(depth: Int)
++    }
++
+     private enum Header {
+         case opener
+         /// After `CREATE`, `ALTER` or `REPLACE`. `accountWords` is what is left of an unquoted `DEFINER = user@host`.
+@@ -25,6 +38,11 @@ public struct SQLRoutineBodyTracker: SQLStatementBoundaryTracking {
+     private static let statementIntroducers: Set<String> = ["THEN", "ELSE", "DO", "LOOP", "REPEAT"]
+ 
+     private let grammar: SQLLexicalGrammar
++    private let readsBlocksEverywhere: Bool
++    // T-SQL outside a routine: where a block's `BEGIN` can stand, as the statement's first word, after `IF`, `WHILE`
++    // or `ELSE`, or after a block the statement already opened. Anywhere else `begin` is in a name's place.
++    private var followsControlFlow = false
++    private var pendingBeginMayOpen = false
+     private var header = Header.opener
+     private var definesRoutine = false
+     private var openedBlockBody = false
+@@ -34,6 +52,8 @@ public struct SQLRoutineBodyTracker: SQLStatementBoundaryTracking {
+     /// whatever word follows it.
+     private var openCaseExpressions = 0
+     private var parenDepth = 0
++    private var ruleAction = RuleAction.none
++    private var ruleActionHeldSemicolon = false
+     private var pendingBegin = false
+     private var pendingEnd = false
+     private var followsName = false
+@@ -50,12 +70,15 @@ public struct SQLRoutineBodyTracker: SQLStatementBoundaryTracking {
+ 
+     public init(grammar: SQLLexicalGrammar) {
+         self.grammar = grammar
++        self.readsBlocksEverywhere = grammar.contains(.unterminatedStatements)
+         self.merge = grammar.contains(.terminatedMergeStatements) ? SQLMergeStatementTracker() : nil
+     }
+ 
+     public var needsWords: Bool {
++        // Inside parentheses no word opens or closes a block, and a `MERGE` there needs no `;`.
++        if readsBlocksEverywhere { return parenDepth == 0 }
+         if case .read = header {
+-            return definesRoutine || merge?.needsWords == true
++            return definesRoutine || ruleAction == .header || ruleAction == .afterDo || merge?.needsWords == true
+         }
+         return true
+     }
+@@ -70,7 +93,7 @@ public struct SQLRoutineBodyTracker: SQLStatementBoundaryTracking {
+ 
+     // An `END` still waiting for the word after it closes a block when the text ends.
+     public var holdsOpenBlock: Bool {
+-        depth > (pendingEnd ? 1 : 0)
++        depth > (pendingEnd ? 1 : 0) || ruleActionHeldSemicolon
+     }
+ 
+     public mutating func observeWord(_ word: String) {
+@@ -87,10 +110,27 @@ public struct SQLRoutineBodyTracker: SQLStatementBoundaryTracking {
+         startsBodyStatement = false
+         let statementPosition = atStatementPosition
+         observeStatementPosition(after: word, wasAtStatementPosition: statementPosition)
+-        guard !isMember, readHeader(word), definesRoutine, parenDepth == 0 else { return }
++        guard !isMember else { return }
++        var isFirstWord = false
++        if case .opener = header {
++            isFirstWord = true
++        }
++        let pastHeader = readHeader(word)
++        if pastHeader, parenDepth == 0 {
++            observeRuleWord(word)
++        }
++        guard parenDepth == 0, readsBlocksEverywhere || (pastHeader && definesRoutine) else { return }
+         switch word {
+-        case "BEGIN" where opensNestedBloc
 ```
 
-**File**: `linux/crates/platform/src/secrets/portal.rs` (added, +97/-0)
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLUnterminatedStatements.swift` (modified, +24/-1)
 ```diff
-@@ -0,0 +1,97 @@
-+use std::time::Duration;
+@@ -20,18 +20,41 @@ public enum SQLUnterminatedStatements {
+     /// Every text a gate has to tier for `statement`: the statement itself, then, when `grammar` needs no terminator,
+     /// the text of each statement that begins inside it, less the statements nested in that one, which come on their
+     /// own. A grammar that takes a statement in place of a value or a table adds what ``SQLEmbeddedStatements`` finds,
+-    /// and one with a pipe operator each statement ``SQLPipeOperatorChain`` finds.
++    /// and one with a pipe operator each statement ``SQLPipeOperatorChain`` finds. A grammar that needs a terminator
++    /// also adds the pieces a `;` inside the statement's parentheses separates, from ``SQLParenthesizedSemicolons``.
+     public static func runnable(in statement: String, grammar: SQLLexicalGrammar) -> [String] {
+         guard grammar.contains(.unterminatedStatements) else {
+             return [statement] + SQLEmbeddedStatements.texts(in: statement, grammar: grammar)
+                 + SQLPipeOperatorChain.statements(in: statement, grammar: grammar)
++                + SQLParenthesizedSemicolons.pieces(in: statement, grammar: grammar)
+         }
+         let text = statement as NSString
+         let tokens = TSQLTokens.read(text, grammar: grammar)
+         guard !definesRoutine(tokens) else { return [statement] }
+         return [statement] + ownTexts(of: statementSpans(in: tokens, length: text.length), in: text)
+     }
+ 
++    // A scanner statement on T-SQL keeps a `;` outside parentheses only when a block holds it, so anything after one but
++    // the block's `END`, an `ELSE` or another `;` is a second statement the block runs. A stored routine runs nothing.
++    public static func blockHoldsSeveralStatements(_ statement: String, grammar: SQLLexicalGrammar) -> Bool {
++        guard grammar.contains(.unterminatedStatements) else { return false }
++        let tokens = TSQLTokens.read(statement as NSString, grammar: grammar)
++        guard !definesRoutine(tokens) else { return false }
++        return tokens.indices.dropLast().contains { index in
++            guard tokens[index].kind == .terminator, tokens[index].depth == 0 else { return false }
++            let next = tokens[index + 1]
++            guard next.kind != .terminator else { return false }
++            switch next.word {
++            case "ELSE":
++                return false
++            case "END":
++                return tokens.indices.contains(index + 2) && tokens[index + 2].word == "CONVERSATION"
++            default:
++                return true
++            }
++        }
++    }
 +
-+use oo7::ashpd;
-+use tokio::io::AsyncReadExt;
-+use tokio::net::UnixStream;
-+use zeroize::Zeroizing;
+     /// The reserved keywords that begin a T-SQL statement. `ELSE` and `FETCH` are left out because they also continue
+     /// a `CASE` and an `OFFSET` clause, and the statement after an `ELSE` begins with a keyword of its own. `WITH` is
+     /// left out because a common table expression cannot follow a statement without a `;`, and the word also opens
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SqlBlockStructure.swift` (modified, +33/-4)
+```diff
+@@ -23,7 +23,8 @@ public enum SqlBlockStructure {
+ 
+     /// What an `END` means, given the word after it.
+     public enum EndFollower: Equatable, Sendable {
+-        /// `END IF`, `END LOOP` and their kin close a construct that never opened a block, and the word is theirs.
++        /// `END IF`, `END LOOP` and their kin close a construct that never opened a block, and T-SQL's
++        /// `END CONVERSATION` is a statement that closes nothing. Either way the word is theirs.
+         case closesControlFlow
+         /// `END CASE` closes the `CASE` that opened a block, and the word is theirs.
+         case closesCaseStatement
+@@ -48,6 +49,10 @@ public enum SqlBlockStructure {
+     /// second opener.
+     private static let controlFlowFollowers: Set<String> = ["IF", "LOOP", "WHILE", "FOR", "REPEAT"]
+ 
++    // T-SQL's `BEGIN DIALOG`, `BEGIN CONVERSATION TIMER` and `END CONVERSATION` are statements, not a block's ends.
++    private static let serviceBrokerFollowers: Set<String> = ["DIALOG", conversationKeyword]
++    private static let conversationKeyword = "CONVERSATION"
 +
-+// xdg-desktop-portal waits on its backend with no limit, since the backend may be showing an unlock
-+// prompt. This only ends a request whose backend never answers; nobody types a password this long.
-+const ANSWER_LIMIT: Duration = Duration::from_secs(300);
-+// The backend writes the secret before it answers, so the read only drains a local socket. The limit
-+// is the one oo7 puts on every Secret Service call.
-+const READ_LIMIT: Duration = Duration::from_secs(30);
+     /// The keywords a statement has to open with before a `BEGIN` inside it is read as a routine body.
+     ///
+     /// Only ``SQLRoutineBodyTracker`` consults this, and the reason is safety rather than grammar. An anonymous
+@@ -56,7 +61,9 @@ public enum SqlBlockStructure {
+     /// single statement whose first word is `BEGIN`, and `QueryClassifier` tiers a statement by its leading keyword,
+     /// so a swallowed `DROP` would be tiered a plain write and skip the destructive confirmation. Folding cannot
+     /// execute anything, so it takes every block. Oracle, whose anonymous blocks are the everyday form, has its own
+-    /// grammar in ``PLSQLUnitTracker`` and a classifier that reads the whole block.
++    /// grammar in ``PLSQLUnitTracker`` and a classifier that reads the whole block. T-SQL reserves `BEGIN`, so its
++    /// blocks open outside a routine too, and the gate tiers every statement inside one through
++    /// ``SQLUnterminatedStatements``.
+     private static let routineDefinitionOpeners: Set<String> = ["CREATE", "ALTER", "REPLACE"]
+ 
+     /// What such a statement has to define, for the same reason. `BEGIN` is not reserved on PostgreSQL, MySQL or
+@@ -111,6 +118,28 @@ public enum SqlBlockStructure {
+         return transactionFollowers.contains(keyword)
+     }
+ 
++    public static func beginStartsStatement(followedBy keyword: String?, grammar: SQLLexicalGrammar) -> Bool {
++        if beginStartsTransaction(followedBy: keyword) { return true }
++        return readsTSQLBlocks(grammar) && keyword.map(serviceBrokerFollowers.contains) == true
++    }
 +
-+// ashpd's own secret::retrieve reads the socket without checking the Response, so a refused request
-+// leaves it waiting on a socket GNOME Keyring never closes.
-+pub(super) async fn retrieve_secret() -> Result<oo7::Secret, ashpd::Error> {
-+    let (reader, writer) = UnixStream::pair()?;
-+    let answer = tokio::time::timeout(ANSWER_LIMIT, async {
-+        let portal = ashpd::desktop::secret::Secret::new().await?;
-+        portal.retrieve(&writer, Default::default()).await?.response()
-+    })
-+    .await
-+    .unwrap_or_else(|_| Err(timed_out("the Secret portal did not answer")));
-+    drop(writer);
-+    read_secret(answer, reader).await
++    // T-SQL closes every block with a bare `END`: in `END IF @x = 1 ...` the `IF` begins the next statement.
++    public static func endingFollowedBy(
++        _ keyword: String,
++        closesCaseExpression: Bool,
++        grammar: SQLLexicalGrammar
++    ) -> EndFollower {
++        guard readsTSQLBlocks(grammar) else {
++            return endingFollowedBy(keyword, closesCaseExpression: closesCaseExpression)
++        }
++        return !closesCaseExpression && keyword == conversationKeyword ? .closesControlFlow : .closesBlock
++    }
++
++    // The grammar whose statements need no `;` between them is T-SQL's, which reserves `BEGIN`, `CASE` and `END`.
++    private static func readsTSQLBlocks(_ grammar: SQLLexicalGrammar) -> Bool {
++        grammar.contains(.unterminatedStatements)
++    }
++
+     /// What an `END` followed by `keyword` closes.
+     ///
+     /// - Parameter closesCaseExpression: whether a `CASE` is open that has held no `;`. Only the statement form can
+@@ -260,7 +289,7 @@ public enum SqlBlockStructure {
+         let cursor = skipTrivia(from: offset, in: text, length: length, grammar: grammar)
+         guard cursor < length else { return true }
+         guard text.character(at: cursor) != SqlLexer.semicolon else { return true }
+-        return beginStartsTransaction(followedBy: readKeyword(text, at: cursor, length: length).text)
++        return beginStartsStatement(followedBy: readKeyword(text, at: cursor, length: length).text, grammar: grammar)
+     }
+ 
+     /// Goes by the word after the `END` alone: only folding asks, and it keeps no record of which `CASE` is open.
+@@ -273,7 +302,7 @@ public enum SqlBlockStructure {
+         let cursor = skipTrivia(from: offset, in: text, length: length, grammar: grammar)
+         guard cursor < length else { return .closesBlock(resumeAt: offset) }
+         let follower = readKeyword(text, at: cursor, length: length)
+-        switch endingFollowedBy(follower.text, closesCaseExpression: false) {
++        switch endingFollowedBy(follower.text, closesCaseExpression: false, grammar: grammar) {
+         case .closesControlFlow:
+             return .none
+         case .closesCaseStatement:
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProTeradataCore/Parcel.swift` (modified, +2/-0)
+```diff
+@@ -4,6 +4,8 @@ import TableProWireIO
+ enum ParcelFlavor: UInt16 {
+     case request = 1
+     case response = 4
++    case abort = 6
++    case cancel = 7
+     case success = 8
+     case failure = 9
+     case record = 10
+```
+
+---
+
+### Incident Patch 3: `8d6ff697` (2026-11-11)
+**Commit Message**: fix(macos): refuse plugins when the signing requirement fails, keep data through damaged stores and sync gaps, and harden sign-in callbacks (#4184)
+
+**File**: `.claude/rules/data-sync-storage.md` (modified, +2/-0)
+```diff
+@@ -181,6 +181,8 @@ This path holds user data. A silent wrong answer here looks exactly like an empt
+ | Snowflake SSO and MFA tokens, per host and user. A bare account's `NAME.USER` item stays for 0.83.1, which reads only that key | Keychain, device-local | `SnowflakeTokenCache` |
+ | Whether `connections.json` was ever given an integrity tag, so a deleted tag reads as modified | Keychain `com.TablePro.connectionStoreStamped.<sha256 of path>`, device-local | `ConnectionStoreIntegrity` |
+ | Whether Local only connections' secrets were copied to device-only items | UserDefaults `com.TablePro.localOnlySecretsKeptOnDevice`, device-local, never synced | `ConnectionStorage` |
++| Whether plugin secure fields moved out of `connections.json` into the Keychain, set only when every field moved and the save succeeded | UserDefaults `com.TablePro.pluginSecureFieldsMovedToKeychain`, device-local, never synced | `ConnectionStorage` |
++| Whether a saved-queries store replaced a damaged file and waits for a full fetch, so push treats it as unreadable | Table `sync_refill` in the saved-queries SQLite store, dropped once a full fetch applied | `SQLFavoriteStorage` |
+ | Deletions the server reported for a sync category that is off, applied when the category is next read | UserDefaults, device-local, never synced | `SyncMetadataStorage.deferredDeletions` |
+ | Where a connection came from (`origin`): this Mac, imported, iCloud | `connections.json`, never synced or exported | `ConnectionStorage` |
+ | Table load timings (no identifying data, never uploaded) | JSON lines | `TableLoadHistoryStore` |
+```
+
+**File**: `.claude/rules/tests.md` (modified, +1/-1)
+```diff
+@@ -73,7 +73,7 @@ UI flows: `.claude/rules/ui-tests.md`. Running tests and reading verdicts: `.cla
+ Use one before writing a local helper.
+ 
+ - `TableProTestSupport` (TableProCore): `waitUntil`, `AsyncGate`, `ManualClock` (production code takes `clock: any Clock<Duration> = ContinuousClock()`), `BoundedCall`, `HeldOpenWriter`, `BackgroundPipeWriter`, `BackgroundPipeReader`.
+-- `apple/TableProTests/Helpers/`: `GlobalStateSuites`, `EphemeralDefaults`, `.appSettings { }`, `.recordingClipboard`, `CoordinatorFixture`, `OfflineRegistry`, `InMemoryColumnLayoutStore`, `InMemoryKeychain`, `PluginDriverStub`, `TestFixtures`, `AlwaysAllowGate`, `AlwaysDenyGate`.
++- `apple/TableProTests/Helpers/`: `GlobalStateSuites`, `EphemeralDefaults`, `.appSettings { }`, `.recordingClipboard`, `CoordinatorFixture`, `OfflineRegistry`, `InMemoryColumnLayoutStore`, `InMemoryKeychain`, `PluginDriverStub`, `TestFixtures`, `AlwaysAllowGate`, `AlwaysDenyGate`, `MCPInMemoryApprovalStore`, `MCPFixedApprovalReader`, `ArrayRowProvider`, `ScopeRecordingKeychain`.
+ - `TableProMCPTestSupport` (TableProMacCore): `MCPTestClock`, `MockHttpServer`, `RecordingBridgeLogger`. `TableProTLSTestFixtures` (TableProCore), also for the iOS tests.
+ 
+ ## Known failures and flakes
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProHTTP/LoopbackRedirectListener.swift` (added, +499/-0)
+```diff
+@@ -0,0 +1,499 @@
++import Darwin
++import Foundation
++import Network
++import os
++
++public enum LoopbackRedirectListenerError: Error, Equatable, Sendable {
++    case portInUse
++    case timedOut
 +}
 +
-+async fn read_secret(answer: Result<(), ashpd::Error>, mut reader: UnixStream) -> Result<oo7::Secret, ashpd::Error> {
-+    answer?;
-+    let mut secret = Zeroizing::new(Vec::with_capacity(256));
-+    tokio::time::timeout(READ_LIMIT, reader.read_to_end(&mut secret))
-+        .await
-+        .map_err(|_| timed_out("the Secret portal did not close the secret's socket"))??;
-+    Ok(oo7::Secret::blob(secret.as_slice()))
++public enum LoopbackRedirectAnswer<Outcome: Sendable>: Sendable {
++    case ignore(Data)
++    case settle(Data, Result<Outcome, any Error>)
 +}
 +
-+fn timed_out(what: &str) -> ashpd::Error {
-+    ashpd::Error::IO(std::io::Error::new(std::io::ErrorKind::TimedOut, what))
++// Waits on loopback for one browser redirect (RFC 8252 section 7.3). `answer` sees each complete request head;
++// a request it ignores gets its reply and changes nothing, so a page probing the port cannot end the wait.
++public final class LoopbackRedirectListener<Outcome: Sendable>: @unchecked Sendable {
++    public typealias Answer = @Sendable (_ requestHead: Data) -> LoopbackRedirectAnswer<Outcome>
++
++    private struct Admission {
++        let connection: NWConnection
++        let order: UInt64
++        var awaitingHead: Bool
++    }
++
++    private struct Teardown {
++        let listener: NWListener?
++        let connections: [NWConnection]
++        let ipv6Hold: Int32
++        let readyContinuation: CheckedContinuation<UInt16, any Error>?
++        let readyTimeout: DispatchWorkItem?
++        let outcomeContinuation: CheckedContinuation<Outcome, any Error>?
++        let outcomeTimeout: DispatchWorkItem?
++    }
++
++    private let port: UInt16
++    private let headTimeout: TimeInterval
++    private let answer: Answer
++    private let holdIPv6: @Sendable (UInt16) -> LoopbackPortHold
++    private let queue = DispatchQueue(label: "com.TablePro.LoopbackRedirectListener")
++    private let lock = NSLock()
++    private var listener: NWListener?
++    private var ipv6Hold: Int32 = -1
++    private var portAttempts = 1
++    private var connections: [ObjectIdentifier: Admission] = [:]
++    private var admissions: UInt64 = 0
++    private var readyContinuation: CheckedContinuation<UInt16, any Error>?
++    private var readyTimeout: DispatchWorkItem?
++    private var outcomeContinuation: CheckedContinuation<Outcome, any Error>?
++    private var outcomeTimeout: DispatchWorkItem?
++    private var settled: Result<Outcome, any Error>?
++
++    // Port 0 lets the kernel pick one.
++    public convenience init(port: UInt16, headTimeout: TimeInterval = 5, answer: @escaping Answer) {
++        self.init(port: port, headTimeout: headTimeout, holdIPv6: { LoopbackPortHold.ipv6(port: $0) }, answer: answer)
++    }
++
++    init(
++        port: UInt16,
++        headTimeout: TimeInterval,
++        holdIPv6: @escaping @Sendable (UInt16) -> LoopbackPortHold,
++        answer: @escaping Answer
++    ) {
++        self.port = port
++        self.headTimeout = headTimeout
++        self.holdIPv6 = holdIPv6
++        self.answer = answer
++    }
++
++    @discardableResult
++    public func start(readyTimeout: TimeInterval = 10) async throws -> UInt16 {
++        let listener: NWListener
++        do {
++            listener = try makeListener()
++        } catch {
++            LoopbackRedirectLimits.logger.error("Could not create the loopback redirect listener")
++            throw LoopbackRedirectListenerError.portInUse
++        }
++        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<UInt16, any Error>) in
++            let refusal = lock.withLock { () -> (any Error)? in
++                if let settled {
++                    guard case .failure(let error) = settled else { return CancellationError() }
++                    return error
++                }
++                self.listener = listener
++                readyContinuation = continuation
++                let item = DispatchWorkItem { [weak self] in
++                    self?.finish(.failure(LoopbackRedirectListenerError.timedOut))
++                }
++                self.readyTimeout = item
++                queue.asyncAfter(deadline: .now() + readyTimeout, execute: item)
++                return nil
++            }
++            guard let refusal else {
++                listener.start(queue: queue)
++                return
++            }
++            listener.cancel()
++            continuation.resume(throwing: refusal)
++        }
++    }
++
++    public func outcome(timeout: TimeInterval, timeoutError: any Error) async throws -> Outcome {
++        try await withTaskCancellationHandler {
++            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Outcome, any Error>) in
++                let early = lock.withLock { () -> Result<Outcome, any Error>? in
++                    if let settled { return settled }
++                    outcomeContinuation = continuation
++                    let item = DispatchWorkItem { [weak self] in
++                        self?.finish(.failure(timeoutError))
++                    }
++                    outcomeTimeout = item
++                    queue.asyncAfter(deadline: .now() + timeout, execute: item)
++                    return nil
++                }
++                if let early {
++                    continuation.resume(with: early)
++                }
++            }
++      
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSnowflakeCore/SnowflakeBrowserCallback.swift` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++import Foundation
++import TableProHTTP
++
++// The identity provider sends the SAML token to http://localhost:<port>/?token=..., with no state to check,
++// so only that exact shape ends the wait and anything else is answered and ignored.
++public enum SnowflakeBrowserCallback: Sendable, Equatable {
++    case token(String)
++    case ignore
++
++    public static func parse(requestHead: Data) -> SnowflakeBrowserCallback {
++        guard LoopbackRedirectRequest.isComplete(requestHead),
++              let target = LoopbackRedirectRequest.getTarget(LoopbackRedirectRequest.text(of: requestHead)),
++              let components = URLComponents(string: target),
++              components.host == nil,
++              components.path == "/",
++              let token = LoopbackRedirectRequest.singleValue(named: "token", in: components.queryItems ?? []),
++              !token.isEmpty
++        else {
++            return .ignore
++        }
++        return .token(token)
++    }
 +}
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSyncTransport/CloudKitSyncEngine.swift` (modified, +87/-9)
+```diff
+@@ -7,6 +7,7 @@ public struct PullResult: Sendable {
+     public let deletedRecordIDs: [CKRecord.ID]
+     public let newToken: CKServerChangeToken?
+     // Records the zone holds that the fetch could not read, so their absence from `changedRecords` proves nothing.
++    // Until `UnreadRecordLedger` releases one, `newToken` stops before it, so the next pull lists it again.
+     public let unreadRecordIDs: [CKRecord.ID]
+ 
+     public init(
+@@ -34,6 +35,11 @@ public actor CloudKitSyncEngine {
+ 
+     private static let maxRetries = 3
+ 
++    // Under the 400 items per operation CloudKit's limitExceeded documentation gives as its guideline.
++    private static let refetchBatchSize = 200
 +
-+#[cfg(test)]
-+mod tests {
-+    use oo7::ashpd::desktop::ResponseError;
-+    use tokio::io::AsyncWriteExt;
++    private var unreadLedger = UnreadRecordLedger()
 +
-+    use super::*;
+     /// What a build without the iCloud entitlement reports, in CloudKit's own terms, so it is
+     /// classified like the server's answer to the same fault.
+     private static var unavailable: CKError { CKError(.missingEntitlement) }
+@@ -236,7 +242,7 @@ public actor CloudKitSyncEngine {
+     public func pull(since token: CKServerChangeToken?) async throws -> PullResult {
+         var changedRecords: [CKRecord] = []
+         var deletedRecordIDs: [CKRecord.ID] = []
+-        var unreadRecordIDs: [CKRecord.ID] = []
++        var pages: [PullAcknowledgement.Page<CKServerChangeToken>] = []
+         var cursor = token
+ 
+         while true {
+@@ -246,17 +252,89 @@ public actor CloudKitSyncEngine {
+ 
+             changedRecords.append(contentsOf: page.result.changedRecords)
+             deletedRecordIDs.append(contentsOf: page.result.deletedRecordIDs)
+-            unreadRecordIDs.append(contentsOf: page.result.unreadRecordIDs)
++            pages.append(PullAcknowledgement.Page(
++                startToken: cursor,
++                changed: Set(page.result.changedRecords.map(\.recordID)),
++                deleted: Set(page.result.deletedRecordIDs),
++                unread: page.result.unreadRecordIDs
++            ))
+             cursor = page.result.newToken ?? cursor
+ 
+-            guard page.moreComing, page.result.newToken != nil else {
+-                return PullResult(
+-                    changedRecords: changedRecords,
+-                    deletedRecordIDs: deletedRecordIDs,
+-                    newToken: cursor,
+-                    unreadRecordIDs: unreadRecordIDs
+-                )
++            guard page.moreComing, page.result.newToken != nil else { break }
++        }
 +
-+    const WAIT: Duration = Duration::from_secs(5);
-+
-+    #[tokio::test]
-+    async fn a_refused_request_returns_without_reading() {
-+        let (reader, writer) = UnixStream::pair().expect("a socket pair");
-+
-+        // GNOME Keyring keeps its copy of the write end open after it fails.
-+        let result = tokio::time::timeout(
-+            WAIT,
-+            read_secret(Err(ashpd::Error::Response(ResponseError::Other)), reader),
++        let unread = Set(PullAcknowledgement.settle(pages, finalToken: cursor).unread).union(unreadLedger.released)
++        let refetched = await refetchByID(Array(unread))
++        changedRecords.append(contentsOf: refetched.records)
++        unreadLedger.forget(refetched.resolved)
++        var settled = PullAcknowledgement.settle(
++            pages, finalToken: cursor, resolved: refetched.resolved.union(unreadLedger.released)
 +        )
-+        .await
-+        .expect("a refused request must not wait on the socket");
-+
-+        assert!(
-+            matches!(result, Err(ashpd::Error::Response(ResponseError::Other))),
-+            "{result:?}"
-+        );
-+        drop(writer);
++        let releasing = unreadLedger.countPull(holding: settled.unread)
++        if !releasing.isEmpty {
++            let names = releasing.map(\.recordName).sorted().joined(separator: ", ")
++            Self.logger.error(
++                "Released \(releasing.count, privacy: .public) records unread after \(UnreadRecordLedger.heldPulls, privacy: .public) pulls; fetching them by ID: \(names, privacy: .private)"
++            )
++            settled = PullAcknowledgement.settle(
++                pages, finalToken: cursor, resolved: refetched.resolved.union(unreadLedger.released)
++            )
++        }
++        if !settled.unread.isEmpty {
++            Self.logger.error(
++                "\(settled.unread.count, privacy: .public) changed records could not be read; the change token stays before them"
++            )
++        }
++        return PullResult(
++            changedRecords: changedRecords,
++            deletedRecordIDs: deletedRecordIDs,
++            newToken: settled.token,
++            unreadRecordIDs: settled.unread + unreadLedger.released.sorted { $0.recordName < $1.recordName }
++        )
 +    }
 +
-+    #[tokio::test]
-+    async fn an_answered_request_reads_the_secret() {
-+        let (reader, mut writer) = UnixStream::pair().expect("a socket pair");
-+        writer.write_all(&[7; 64]).await.expect("the secret is written");
-+        drop(writer);
-+
-+        let secret = tokio::time::timeout(WAIT, read_secret(Ok(()), reader))
-+            .await
-+            .expect("the read ends once the writer closes")
-+            .expect("the secret");
-+
-+        assert_eq!(secret.as_bytes(), &[7; 64]);
++    private struct Refetch {
++        var records: [CKRecord] = []
++        // Read, or gone from the zone, so it holds the token no longer.
++        var resolved: Set<CKRecord.ID> = []
 +    }
 +
-+    #[tokio::test(start_paused = true)]
-+    async fn an_answer_that_keeps_the_socket_open_times_out() {
-+        let (reader, mut writer) = UnixStream::pair().expect("a socket pair");
-+        writer.write_all(&[7; 64]).await.expect("the secret is written");
++    // A failed batch leaves its records unread, which holds the token rather than failing the pages already read.
++    private func refetchByID(_ recordIDs: [CKRecord.ID]) async -> Refetch {
++        var outcome = Refetch()
++        var start = 0
++        while start < recordIDs.count {
++            let end = min(start + Self.refetchBatchSize, recordIDs.count)
++            await refetch(Array(recordIDs[start..<end]), into: &outcome)
++            start = end
++        }
++        return outcome
++    }
 +
-+        let result = read_secret(Ok(()), reader).await;
++    // CloudKit asks a request it finds too large to be split in half and sent again.
++    private func refetch(_ batch: [CKRecord.ID], into outcome: inout Refetch) async {
++        guard let database else { return }
++        do {
++            let results = try await w
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSyncTransport/PullAcknowledgement.swift` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++import CloudKit
++import Foundation
 +
-+        let Err(ashpd::Error::IO(error)) = result else {
-+            panic!("expected a timed-out read, got {result:?}");
-+        };
-+        assert_eq!(error.kind(), std::io::ErrorKind::TimedOut);
-+        drop(writer);
++// CloudKit ends each page of a zone fetch with a token past every change the page listed, read or not, so a delta
++// never lists an unread record again. A pull acknowledges only up to the start of the first page holding a record
++// that nothing after it read.
++enum PullAcknowledgement {
++    struct Page<Token> {
++        let startToken: Token?
++        let changed: Set<CKRecord.ID>
++        let deleted: Set<CKRecord.ID>
++        let unread: [CKRecord.ID]
++    }
++
++    struct Settled<Token> {
++        let token: Token?
++        let unread: [CKRecord.ID]
++    }
++
++    // A record a later page changed or deleted was read at a state no older than its failure. One in `resolved`
++    // holds nothing either: it was read by ID, is gone, or was released by `UnreadRecordLedger`.
++    static func settle<Token>(
++        _ pages: [Page<Token>],
++        finalToken: Token?,
++        resolved: Set<CKRecord.ID> = []
++    ) -> Settled<Token> {
++        var token = finalToken
++        var unread: [CKRecord.ID] = []
++        var readLater = resolved
++        for page in pages.reversed() {
++            let stillUnread = page.unread.filter { !readLater.contains($0) }
++            if !stillUnread.isEmpty {
++                token = page.startToken
++                unread.insert(contentsOf: stillUnread, at: 0)
++            }
++            readLater.formUnion(page.changed)
++            readLater.formUnion(page.deleted)
++        }
++        var listed: Set<CKRecord.ID> = []
++        return Settled(token: token, unread: unread.filter { listed.insert($0).inserted })
++    }
++}
++
++// A record CloudKit keeps failing to deliver holds the token for `heldPulls` pulls in a row. Then it is released: the
++// token moves past it, so sync and the full-fetch deletion check go on, and each later pull fetches it by ID until it
++// reads or is gone. Kept for the life of the engine.
++struct UnreadRecordLedger {
++    static let heldPulls = 3
++
++    private var pullsHeld: [CKRecord.ID: Int] = [:]
++    private(set) var released: Set<CKRecord.ID> = []
++
++    mutating func forget(_ recordIDs: Set<CKRecord.ID>) {
++        released.subtract(recordIDs)
++    }
++
++    // Counts one more pull for each record that still holds the token; a record that stopped holding starts over.
++    // Returns the records this pull releases.
++    mutating func countPull(holding recordIDs: [CKRecord.ID]) -> Set<CKRecord.ID> {
++        let holding = Set(recordIDs)
++        pullsHeld = pullsHeld.filter { holding.contains($0.key) }
++        var releasing: Set<CKRecord.ID> = []
++        for recordID in holding {
++            let pulls = (pullsHeld[recordID] ?? 0) + 1
++            if pulls >= Self.heldPulls {
++                releasing.insert(recordID)
++                pullsHeld[recordID] = nil
++            } else {
++                pullsHeld[recordID] = pulls
++            }
++        }
++        released.formUnion(releasing)
++        return releasing
++    }
++}
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProHTTPTests/LoopbackRedirectListenerTests.swift` (added, +305/-0)
+```diff
+@@ -0,0 +1,305 @@
++import Darwin
++import Foundation
++@testable import TableProHTTP
++import Testing
++
++private enum LoopbackProbe {
++    static func status(of target: String, port: UInt16) async -> Int? {
++        guard let url = URL(string: "http://127.0.0.1:\(port)\(target)") else { return nil }
++        let session = URLSession(configuration: .ephemeral)
++        defer { session.finishTasksAndInvalidate() }
++        let request = URLRequest(url: url, timeoutInterval: 5)
++        guard let (_, response) = try? await session.data(for: request),
++              let httpResponse = response as? HTTPURLResponse
++        else {
++            return nil
++        }
++        return httpResponse.statusCode
++    }
++
++    static func connectIPv4(port: UInt16) -> Int32? {
++        let descriptor = socket(AF_INET, SOCK_STREAM, 0)
++        guard descriptor >= 0 else { return nil }
++        var address = sockaddr_in()
++        address.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
++        address.sin_family = sa_family_t(AF_INET)
++        address.sin_port = port.bigEndian
++        _ = inet_pton(AF_INET, "127.0.0.1", &address.sin_addr)
++        let result = withUnsafePointer(to: &address) { pointer in
++            pointer.withMemoryRebound(to: sockaddr.self, capacity: 1) { generic in
++                connect(descriptor, generic, socklen_t(MemoryLayout<sockaddr_in>.size))
++            }
++        }
++        guard result == 0 else {
++            close(descriptor)
++            return nil
++        }
++        return descriptor
++    }
++
++    // The descriptor bound to [::1]:port, or the errno the bind failed with.
++    static func bindIPv6(port: UInt16, listening: Bool = false) -> Result<Int32, POSIXError> {
++        let descriptor = socket(AF_INET6, SOCK_STREAM, 0)
++        guard descriptor >= 0 else { return .failure(POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)) }
++        var address = sockaddr_in6()
++        address.sin6_len = UInt8(MemoryLayout<sockaddr_in6>.size)
++        address.sin6_family = sa_family_t(AF_INET6)
++        address.sin6_port = port.bigEndian
++        _ = inet_pton(AF_INET6, "::1", &address.sin6_addr)
++        let result = withUnsafePointer(to: &address) { pointer in
++            pointer.withMemoryRebound(to: sockaddr.self, capacity: 1) { generic in
++                bind(descriptor, generic, socklen_t(MemoryLayout<sockaddr_in6>.size))
++            }
++        }
++        guard result == 0 else {
++            let failure = errno
++            close(descriptor)
++            return .failure(POSIXError(POSIXErrorCode(rawValue: failure) ?? .EIO))
++        }
++        if listening {
++            _ = listen(descriptor, 4)
++        }
++        return .success(descriptor)
++    }
++
++    static func boundPort(of descriptor: Int32) -> UInt16 {
++        var address = sockaddr_in6()
++        var length = socklen_t(MemoryLayout<sockaddr_in6>.size)
++        _ = withUnsafeMutablePointer(to: &address) { pointer in
++            pointer.withMemoryRebound(to: sockaddr.self, capacity: 1) { generic in
++                getsockname(descriptor, generic, &length)
++            }
++        }
++        return UInt16(bigEndian: address.sin6_port)
++    }
++
++    // True once the peer closed or reset the connection; false when nothing happened before the timeout.
++    static func waitForClose(_ descriptor: Int32, seconds: Int) async -> Bool {
++        await withCheckedContinuation { continuation in
++            DispatchQueue.global().async {
++                var timeout = timeval(tv_sec: seconds, tv_usec: 0)
++                setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
++                var byte: UInt8 = 0
++                let received = recv(descriptor, &byte, 1, 0)
++                let failure = errno
++                continuation.resume(returning: received == 0 || (received < 0 && failure != EAGAIN && failure != EWOULDBLOCK))
++            }
++        }
++    }
++
++    static func listener(port: UInt16 = 0, headTimeout: TimeInterval = 5) -> LoopbackRedirectListener<String> {
++        LoopbackRedirectListener(port: port, headTimeout: headTimeout, answer: answer)
++    }
++
++    // Settles on a GET to /done and ignores every other request.
++    static let answer: LoopbackRedirectListener<String>.Answer = { head in
++        let text = LoopbackRedirectRequest.text(of: head)
++        guard let target = LoopbackRedirectRequest.getTarget(text), target.hasPrefix("/done") else {
++            return .ignore(LoopbackRedirectPage.badRequest)
++        }
++        return .settle(LoopbackRedirectPage.response(status: "200 OK", title: "Done", message: ""), .success(target))
++    }
++
++    static func freeIPv4Port() -> UInt16? {
++        let descriptor = socket(AF_INET, SOCK_STREAM, 0)
++        guard descriptor >= 0 else { return nil }
++        defer { close(descriptor) }
++        var address = sockaddr_in()
++        address.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
++        address.sin_family = sa_family_t
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProSnowflakeCoreTests/SnowflakeBrowserCallbackTests.swift` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++import Foundation
++import TableProSnowflakeCore
++import Testing
++
++struct SnowflakeBrowserCallbackTests {
++    private static func head(_ target: String, method: String = "GET") -> Data {
++        Data("\(method) \(target) HTTP/1.1\r\nHost: localhost:49152\r\n\r\n".utf8)
++    }
++
++    @Test("The identity provider's redirect yields its SAML token")
++    func redirectYieldsTheToken() {
++        #expect(SnowflakeBrowserCallback.parse(requestHead: Self.head("/?token=ver%3A1-hint%3A2")) == .token("ver:1-hint:2"))
++    }
++
++    @Test("A request that is not the token redirect is ignored", arguments: [
++        "/favicon.ico",
++        "/",
++        "/?token=",
++        "/?token=a&token=b",
++        "/?error=access_denied",
++        "/other?token=abc"
++    ])
++    func strayRequestIsIgnored(target: String) {
++        #expect(SnowflakeBrowserCallback.parse(requestHead: Self.head(target)) == .ignore)
++    }
++
++    @Test("Only a complete GET head in origin form is read")
++    func otherRequestShapesAreIgnored() {
++        #expect(SnowflakeBrowserCallback.parse(requestHead: Self.head("/?token=abc", method: "POST")) == .ignore)
++        #expect(SnowflakeBrowserCallback.parse(requestHead: Data("GET /?token=abc HTTP/1.1\r\nHost: loc".utf8)) == .ignore)
++        #expect(SnowflakeBrowserCallback.parse(requestHead: Data("GET http://localhost/?token=abc HTTP/1.1\r\n\r\n".utf8)) == .ignore)
++        #expect(SnowflakeBrowserCallback.parse(requestHead: Data()) == .ignore)
 +    }
 +}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4102** (2026-11-07): docs: bring back the README's Why TablePro for every platform (@datlechin)
-- **PR #4097** (2026-11-07): docs(security): send vulnerability reports to security@tablepro.app (@datlechin)
-- **PR #4096** (2026-11-07): docs: refresh the README and community files for every platform (@datlechin)
-- **PR #4095** (2026-11-07): ci: fit the Rust caches in the 10 GB Actions cache (@datlechin)
-- **PR #4093** (2026-11-07): fix(linux): recreate ostree's empty directories after pulling the Flatpak repository (@datlechin)
-- **PR #4092** (2026-11-07): chore(release): note the keyring fix in linux-v0.1.0-beta.3 (@datlechin)
+- **PR #4217** (2026-11-12): fix(macos): keep the last results of a SQL Server batch and fix the tests #4200 left red (@datlechin)
+- **PR #4215** (2026-11-12): fix(ios): follow a typed USE and schema, qualify MySQL table writes, order pages by key, type JSON by column (@datlechin)
+- **PR #4213** (2026-11-12): feat(windows): filter tables, show structure and definitions, export results and keep query history (@datlechin)
+- **PR #4208** (2026-11-11): fix(linux-mongodb): keep NULL apart from a missing field, export number fields as numbers, write mongosh constructors (@datlechin)
+- **PR #4207** (2026-11-11): fix(macos): keep value colors readable on every row and fix masking and sort for boolean columns (@datlechin)
+- **PR #4206** (closed): docs(linux): disclose AI-translated catalogues in po/LINGUAS (@datlechin)
 
 ---
 
@@ -2263,28 +3304,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(security): send vulnerability reports to [REDACTED_EMAIL] (#4097)
+## X. macos): finish the audit wave 5 data items: find and Run All off the main thread
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/data-sync-storage.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fecd3bd2`: docs(security): send vulnerability reports to [REDACTED_EMAIL] (#4097). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c553f2b`: macos): finish the audit wave 5 data items: find and Run All off the main thread, edit order, schema-free pool, lost session state, Local only secrets, PostgreSQL system trust (#4200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/data-sync-storage.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-Report it privately through [Report a vulnerability](https://github.com/TableProApp/TablePro/security/advisories/new), or email **security@tablepro.app**. Do not open a public issue, discussion or pull request for a vulnerability.
+| iCloud Keychain copies of Local only secrets the keychain refused to remove, retried at launch | UserDefaults `com.TablePro.localOnlySyncedCopiesPendingRemoval`, device-local, never synced | `ConnectionStorage` |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-Report it privately through [Report a vulnerability](https://github.com/TableProApp/TablePro/security/advisories/new), or email **hello@tablepro.app**. Do not open a public issue, discussion or pull request for a vulnerability.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fecd3bd2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c553f2b` are properly handled with clean fallback behavior.

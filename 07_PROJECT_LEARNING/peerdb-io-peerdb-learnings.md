@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `f7f8b7e5`  
+> **Source Version**: `ca8ac478`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T18:11:16.402Z  
+> **Timestamp**: 2026-11-12T03:48:59.141Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T18:11:16.359Z  
+> **Harvest Timestamp**: 2026-11-12T03:48:36.102Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3316 stars
+- **Stars / Engagement**: 3320 stars
 
 ---
 
@@ -70,7 +70,6 @@ import (
 	"github.com/PeerDB-io/peerdb/flow/model"
 	"github.com/PeerDB-io/peerdb/flow/otel_metrics"
 	"github.com/PeerDB-io/peerdb/flow/shared"
-	"github.com/PeerDB-io/peerdb/flow/shared/concurrency"
 	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
 )
 
@@ -103,70 +102,14 @@ func (a *FlowableActivity) getTableNameSchemaMapping(ctx context.Context, flowNa
 	return tableNameSchemaMapping, nil
 }
 
-func (a *FlowableActivity) applySchemaDeltas(
-	ctx context.Context,
-	config *protos.FlowConnectionConfigsCore,
-	schemaDeltas []*protos.TableSchemaDelta,
-) error {
-	logger := internal.LoggerFromCtx(ctx)
-
-	dstTableNamesInDeltas := make([]string, 0, len(schemaDeltas))
-	for _, schemaDelta := range schemaDeltas {
-		dstTableNamesInDeltas = append(dstTableNamesInDeltas, schemaDelta.DstTableName)
-	}
-
-	if err := internal.ReadModifyWriteTableSchemasToCatalog(
-		ctx,
-		a.CatalogPool,
-		logger,
-		config.FlowJobName,
-		dstTableNamesInDeltas,
-		func(schemas map[string]*protos.TableSchema) (map[string]*protos.TableSchema, error) {
-			// deep copy to avoid mutating input
-			schemasCopy := make(map[string]*protos.TableSchema, len(schemas))
-			for tableName, schema := range schemas {
-				if schema == nil {
-					return nil, fmt.Errorf("failed to deep copy table schema from catalog: table %s has nil schema", tableName)
-				}
-				schemasCopy[tableName] = proto.CloneOf(schema)
-			}
-
-			for _, schemaDelta := range schemaDeltas {
-				if schema, exists := schemasCopy[schemaDelta.DstTableName]; exists {
-					columnNames := make(map[string]struct{}, len(schema.GetColumns()))
-					for _, col := range schema.GetColumns() {
-						columnNames[col.Name] = struct{}{}
-					}
-					for _, newCol := range schemaDelta.GetAddedColumns() {
-						// only add columns that don't already exist
-						if _, exists := columnNames[newCol.Name]; !exists {
-							schema.Columns = append(schema.Columns, newCol)
-							columnNames[newCol.Name] = struct{}{}
-						} else {
-							logger.Warn(fmt.Sprintf("skip adding duplicated column '%s' (type '%s') in table %s",
-								newCol.Name, newCol.Type, schemaDelta.DstTableName))
-						}
-					}
-				} else {
-					logger.Warn(fmt.Sprintf("skip adding columns for table '%s' because it's not in catalog", schemaDelta.DstTableName))
-				}
-			}
-			return schemasCopy, nil
-		},
-	); err != nil {
-		return fmt.Errorf("failed to update table schemas in catalog: %w", err)
-	}
-	return nil
-}
-
 func pullAndSyncCore[TPull connectors.CDCPullConnectorCore, TSync connectors.CDCSyncConnectorCore, Items model.Items](
 	ctx context.Context,
 	a *FlowableActivity,
 	config *protos.FlowConnectionConfigsCore,
+	sourceType protos.DBType,
 	options *protos.SyncFlowOptions,
 	srcConn TPull,
-	normRequests *concurrency.LastChan,
-	normResponses *concurrency.LastChan,
+	progress *syncNormalizeProgress,
 	normBufferSize int64,
 	idleTimeout time.Duration,
 	syncingBatchID *atomic.Int64,
@@ -309,7 +252,61 @@ func pullAndSyncCore[TPull connectors.CDCPullConnectorCore, TSync connectors.CDC
 		// wait for the pull goroutine to finish
 		if err := errGroup.Wait(); err != nil {
 			// don't log flow error for "replState changed" and "slot is already active"
-			_, isDesync := errors.AsType[*exceptions.ReplState
+			_, isDesync := errors.AsType[*exceptions.ReplStateDesyncError](err)
+			if !(isDesync || shared.IsSQLStateError(err, pgerrcode.ObjectInUse)) {
+				_ = a.Alerter.LogFlowError(ctx, flowName, err)
+			}
+			return nil, fmt.Errorf("failed in pull records when: %w", err)
+		}
+		logger.Info("no records to push")
+
+		dstConn, dstClose, err := connectors.GetByNameAs[TSync](ctx, config.Env, a.CatalogPool, config.DestinationName)
+		if err != nil {
+			return nil, fmt.Errorf("failed to recreate destination connector: %w", err)
+		}
+		defer dstClose(ctx)
+
+		syncState.Store(new("updating schema"))
+		if err := dstConn.ReplayTableSchemaDeltas(
+			ctx, config.Env, flowName, options.TableMappings, recordBatchSync.SchemaDeltas, config.Flags, config.Version, sourceType,
+		); err != nil {
+			return nil, fmt.Errorf("failed to sync schema: %w", err)
+		}
+
+		return nil, internal.ApplySchemaDeltasToCatalog(ctx, a.CatalogPool, flowName, recordBatchSync.SchemaDeltas)
+	}
+
+	var res *model.SyncResponse
+	errGroup.Go(func() error {
+		syncCtx, syncSpan := a.OtelManager.Tracer.Start(errCtx, "cdc.sync", trace.WithAttributes(
+			attribute.String(otel_metrics.FlowNameKey, flowName),
+			attribute.Int(otel_metrics.TableCountKey, len(options.TableMappings)),
+			attribute.Int64(otel_metrics.BatchIdKey, syncBatchID),
+		))
+		defer syncSpan.End()
+		syncingBatchID.Store(syncBatchID)
+		logger.Info("begin pulling records for batch", slog.Int64("syncBatchID", syncBatchID))
+
+		if err := monitoring.AddCDCBatchForFlow(syncCtx, a.CatalogPool, flowName, monitoring.CDCBatchInfo{
+			BatchID:     syncBatchID,
+			RowsInBatch: 0,
+			BatchEndlSN: 0,
+			StartTime:   startTime,
+		}); err != nil {
+			syncSpan.RecordError(err)
+			syncSpan.SetStatus(codes.Error, err.Error())
+			return a.Alerter.LogFlowError(ctx, flowName, err)
+		}
+
+		dstConn, dstClose, err := connectors.GetByNameAs[TSync](syncCtx, config.Env, a.CatalogPool, config.DestinationName)
+		if err != nil {
+			syncSpan.RecordError(err)
+			syncSpan.SetStatus(codes.Error, err.Error())
+			return fmt.Errorf("failed to get destination connector: %w", err)
+		}
+		defer dstClose(ctx)
+
+		res, err = sync(d
 ```
 
 ### Core Architecture Module: `flow/cmd/snapshot_worker.go`
@@ -809,6 +806,13 @@ type MirrorDestinationValidationConnector interface {
 	ValidateMirrorDestination(context.Context, *protos.FlowConnectionConfigsCore, map[string]*protos.TableSchema) error
 }
 
+type DestinationTableValidationConnector interface {
+	Connector
+
+	// ValidateDestinationTables checks table mapping settings that need neither the server nor source schemas.
+	ValidateDestinationTables(context.Context, []*protos.TableMapping) error
+}
+
 type StatActivityConnector interface {
 	Connector
 
@@ -958,6 +962,7 @@ type NormalizedTablesConnector interface {
 		config *protos.SetupNormalizedTableBatchInput,
 		destinationTableIdentifier string,
 		sourceTableSchema *protos.TableSchema,
+		sourceType protos.DBType,
 	) (bool, error)
 }
 
@@ -983,7 +988,8 @@ type CDCSyncConnectorCore interface {
 	// This could involve adding multiple columns.
 	// Connectors which are non-normalizing should implement this as a nop.
 	ReplayTableSchemaDeltas(ctx context.Context, env map[string]string, flowJobName string,
-		tableMappings []*protos.TableMapping, schemaDeltas []*protos.TableSchemaDelta, flags []string,
+		tableMappings []*protos.TableMapping, schemaDeltas []*protos.TableSchemaDelta, flags []string, version uint32,
+		sourceType protos.DBType,
 	) error
 }
 
@@ -992,16 +998,7 @@ type CDCSyncConnector interface {
 
 	// SyncRecords pushes RecordItems to the destination peer and stores it in PeerDB specific tables.
 	// This method should be idempotent, and should be able to be called multiple times with the same request.
-	SyncRecords(ctx context.Context, req *model.SyncRecordsRequest[model.RecordItems]) (*model.SyncResponse, error)
-}
-
-// QueryCDCSyncConnector is implemented by destinations that can stage one
-// table's CDC records (SyncQueryCDC), to be inserted into the final destination
-// table later by QueryCDCNormalizeConnector, skipping any raw-table hop.
-type QueryCDCSyncConnector interface {
-	Connector
-
-	// SyncQueryCDC should 
+	SyncRecords(ctx context.Context, req *model.SyncRecordsRequest[model.RecordItems]) (*model.SyncRe
 ```
 
 ### Core Architecture Module: `flow/connectors/external_metadata/query_cdc_replication_state.go`
@@ -1861,730 +1858,768 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f7f8b7e5` (2026-11-09)
-**Commit Message**: Add signal handling and schema changes to tricky areas doc, organize helpers a bit (#5033)
+### Incident Patch 1: `6951b76b` (2026-11-09)
+**Commit Message**: fix(snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5044)
 
-Add review guidance for Temporal signal handling and schema changes,
-with examples from existing good handling and PR discussions.
+Fixes
+[DBI-1316](https://linear.app/clickhouse/issue/DBI-1316/classify-unhandled-postgres-qrep-error-child-table-block-count-null)
 
-Move shared code out of postgres.go so that references are not awkward
-(mechanical change).
+## Problem
 
-Closes DBI-1302
+CTID partitioning of partitioned/inherited tables lists children through
+the exported snapshot, then reads each child's size with
+`pg_relation_size(oid)`. That function checks the current catalog and
+returns NULL for a relation that no longer exists. A child dropped after
+the snapshot was exported (e.g. by partition retention during a long
+initial load) is still listed, its size comes back NULL, and the scan
+into `int64` fails:
 
-**File**: `docs/tricky-areas.md` (modified, +58/-0)
-```diff
-@@ -13,6 +13,8 @@ repeating them.
- |---|---|
- | [Mirror config vs workflow state](#mirror-config-vs-workflow-state) | `flow/workflows/`, `flow/activities/flowable.go`, `flow/activities/flowable_core.go`, `protos/flow.proto` |
- | [Per-mirror behaviour: versions, flags, settings](#per-mirror-behaviour-versions-flags-settings) | `flow/shared/constants.go`, `flow/internal/dynamicconf.go`, `flow/cmd/handler.go`, `flow/cmd/validate_mirror.go`, `flow/connectors/clickhouse/validate.go` |
-+| [Temporal signal handling](#temporal-signal-handling) | `flow/workflows/cdc_flow.go`, `flow/workflows/drop_flow.go`, `flow/model/signals.go` |
-+| [Schema changes](#schema-changes) | `flow/activities/flowable_core.go`, `flow/model/cdc_stream.go`, `flow/internal/catalog_schema.go`, `flow/connectors/postgres/cdc.go`, `flow/connectors/mysql/cdc.go`, `flow/connectors/clickhouse/` |
- 
- ---
- 
-@@ -51,3 +53,59 @@ A decision taken from the mechanism with the wrong lifetime changes the output o
- - Carefully thread all transformations the column value goes through, as it can change at different layers.
-   Changes that are bugfixes (replacing nonsensical data with something more reasonable) are okay without a bump.
- - Version or flags re-detected outside creation, or a flag that stores a decision rather than a capability.
-+
-+---
-+
-+## Temporal signal handling
-+
-+**Why it is tricky.** Pause, resume, terminate and resync requests can arrive while a workflow waits for an
-+activity or child workflow. The workflow must continue to handle the requests that it supports in that phase.
-+An interrupting request needs the correct state, even if the current operation is only partly complete.
-+For this guidance, small catalog interactions such as status updates or logging do not count as long waits.
-+
-+**What to watch for in a PR.**
-+
-+- When you add or move a long-running activity or child workflow, check which requests need handling during the wait.
-+  For example, snapshot and table-edit operations handle terminate/resync requests while they wait for completion.
-+  A direct `.Get()` on new work can delay those requests until the work finishes.
-+- Before continuing as new, wait for cancellation to finish. Then process pending signals for the last time.
-+  For example, `startCDC` cancels `SyncFlow`, waits for it, then drains pending signals.
-+  Draining means processing the signals that are already waiting.
-+  Put new long waits before that drain. This order lets the workflow handle requests that arrive during the wait.
-+- If an operation changes state that may be used by termination or resync, check that state before the operation completes.
-+  For example, table edits prepare the intended mappings before they handle signals.
-+  Thus, an interrupting resync includes added tables and excludes removed tables.
-+- If you add work between a decision and its action, check whether signals can change that decision.
-+  For example, during resync cleanup, a terminate request means the workflow must fully remove the mirror instead of restarting it.
-+  `DropFlowWorkflow` checks for this request again and completes the necessary catalog cleanup.
-+- When you add state changes through signals, prevent pause/resume requests from overriding termination or resync.
-+  For example, `FlowSignalHandler` applies pause only to a running signal state. It applies resume only to a paused signal state.
-+
-+---
-+
-+## Schema changes
-+
-+**Why it is tricky.** PeerDB passes schema changes from the source connector through Pull, Sync, catalog updates,
-+and Normalize. These stages overlap and keep different views of schema and progress. Receiving a change,
-+applying destination DDL, updating the catalog, and saving a checkpoint are separate steps. Review the complete
-+path when changing one of them.
-+
-+**What to watch for in a PR.**
-+
-+- When changing how schema changes are detected or passed between stages, follow them through to destination DDL
-+  and catalog updates. Check batches with no rows, excluded columns, and repeated changes. For example, MySQL
-+  can emit DDL without row changes to carry it through the usual batch path.
-+- When reading schema information, check which stage produced it and which records will use it. The latest
-+  source schema can be ahead of Pull. Sync can update the catalog while Normalize uses an earlier copy of the
-+  schema. Writing that copy back can erase Sync's changes. A refresh must not make an unprocessed change appear
-+  complete or overwrite another stage's changes.
-+- When moving a schema update or checkpoint, trace what happens if the next step fails. Check what the retry
-+  reads, repeats, and skips. For example, one table can finish Normalize and save its progress while another
-+  table in the batch fails. Any associated schema update must remain recoverable.
-+- When changing catalog schemas, apply the specific change to the current catalog state.
-+  `ReadModifyWriteTableSchemasToCatalog` provides this pattern. Pass the columns to add or remov
+```
+failed to get child partitioned tables: failed to scan child table: can't scan into dest[3] (col: int8): cannot scan NULL into *int64
 ```
 
-**File**: `flow/internal/catalog_schema.go` (added, +161/-0)
-```diff
-@@ -0,0 +1,161 @@
-+package internal
-+
-+import (
-+	"context"
-+	"fmt"
-+	"log/slog"
-+	"strings"
-+
-+	"github.com/jackc/pgx/v5"
-+	"go.temporal.io/sdk/log"
-+	"google.golang.org/protobuf/proto"
-+
-+	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	"github.com/PeerDB-io/peerdb/flow/shared"
-+)
-+
-+func LoadTableSchemaFromCatalog(
-+	ctx context.Context,
-+	pool shared.CatalogPool,
-+	flowName string,
-+	tableName string,
-+) (*protos.TableSchema, error) {
-+	var tableSchemaBytes []byte
-+	if err := pool.Pool.QueryRow(
-+		ctx,
-+		"select table_schema from table_schema_mapping where flow_name = $1 and table_name = $2",
-+		flowName,
-+		tableName,
-+	).Scan(&tableSchemaBytes); err != nil {
-+		return nil, err
-+	}
-+	tableSchema := &protos.TableSchema{}
-+	return tableSchema, proto.Unmarshal(tableSchemaBytes, tableSchema)
-+}
-+
-+func ReadModifyWriteTableSchemasToCatalog(
-+	ctx context.Context,
-+	catalogPool shared.CatalogPool,
-+	logger log.Logger,
-+	flowName string,
-+	tableNames []string,
-+	modifyFn func(map[string]*protos.TableSchema) (map[string]*protos.TableSchema, error),
-+) error {
-+	tx, err := catalogPool.Pool.Begin(ctx)
-+	if err != nil {
-+		return fmt.Errorf("failed to begin transaction: %w", err)
-+	}
-+	defer shared.RollbackTx(tx, logger)
-+
-+	// read
-+	tableSchemas, err := LoadTableSchemasFromCatalog(ctx, tx, flowName, tableNames)
-+	if err != nil {
-+		return fmt.Errorf("failed to load table schemas from catalog: %w", err)
-+	}
-+	if len(tableSchemas) != len(tableNames) {
-+		filteredTableNames := make([]string, 0, len(tableSchemas))
-+		for name := range tableSchemas {
-+			filteredTableNames = append(filteredTableNames, name)
-+		}
-+		logger.Warn("not all tables are found in catalog",
-+			slog.String("expected", strings.Join(tableNames, ", ")),
-+			slog.String("actual", strings.Join(filteredTableNames, ", ")))
-+	}
-+
-+	// modify
-+	modifiedTableSchemas, err := modifyFn(tableSchemas)
-+	if err != nil {
-+		return fmt.Errorf("failed to modify table schemas from catalog: %w", err)
-+	}
-+
-+	// write (in batch)
-+	batch := &pgx.Batch{}
-+	for tableName, tableSchema := range modifiedTableSchemas {
-+		tableSchemaBytes, err := proto.Marshal(tableSchema)
-+		if err != nil {
-+			return fmt.Errorf("unable to marshal table schema for %s: %w", tableName, err)
-+		}
-+		batch.Queue(
-+			"UPDATE table_schema_mapping SET table_schema=$1 WHERE flow_name=$2 AND table_name=$3",
-+			tableSchemaBytes, flowName, tableName,
-+		)
-+		logger.Info("queued schema delta update",
-+			slog.String("flowName", flowName),
-+			slog.String("tableName", tableName))
-+	}
-+	results := tx.SendBatch(ctx, batch)
-+	defer results.Close() // Ensure resources are freed in case of early return
-+
-+	for tableName := range modifiedTableSchemas {
-+		if _, err := results.Exec(); err != nil {
-+			logger.Error("failed to update table schema in catalog",
-+				slog.Any("error", err),
-+				slog.String("flowName", flowName),
-+				slog.String("tableName", tableName))
-+			return fmt.Errorf("failed to update table schema in catalog: %w", err)
-+		}
-+	}
-+
-+	// Close results before committing
-+	if err := results.Close(); err != nil {
-+		logger.Error("failed to close batch results",
-+			slog.Any("error", err),
-+			slog.String("flowName", flowName))
-+		return fmt.Errorf("failed to close batch results: %w", err)
-+	}
-+
-+	if err := tx.Commit(ctx); err != nil {
-+		return fmt.Errorf("failed to commit transaction: %w", err)
-+	}
-+	return nil
-+}
-+
-+// support both catalog pool and pgx.Tx
-+type CatalogQuerier interface {
-+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
-+}
-+
-+func LoadTableSchemasFromCatalog(
-+	ctx context.Context,
-+	querier CatalogQuerier,
-+	flowName string,
-+	tableNames []string,
-+) (map[string]*protos.TableSchema, error) {
-+	if len(tableNames) == 0 {
-+		return make(map[string]*protos.TableSchema), nil
-+	}
-+
-+	rows, err := querier.Query(
-+		ctx,
-+		"SELECT table_name, table_schema FROM table_schema_mapping WHERE flow_name = $1 AND table_name = ANY($2)",
-+		flowName,
-+		tableNames,
-+	)
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to query table schemas: %w", err)
-+	}
-+	defer rows.Close()
-+
-+	schemas := make(map[string]*protos.TableSchema)
-+
-+	for rows.Next() {
-+		var tableName string
-+		var tableSchemaBytes []byte
-+
-+		if err := rows.Scan(&tableName, &tableSchemaBytes); err != nil {
-+			return nil, fmt.Errorf("failed to scan table schema row: %w", err)
-+		}
-+
-+		tableSchema := &protos.TableSchema{}
-+		if err := proto.Unmarshal(tableSchemaBytes, tableSchema); err != nil {
-+			return nil, fmt.Errorf("failed to unmarshal table schema for %s: %w", tableName, err)
-+		}
-+
-+		schemas[tableName] = tableSchema
-+	}
-+	if err := rows.Err(); err != nil {
-+		return nil, fmt.Errorf("error iterating table schema rows: %w", err)
-+	}
-+
-+	return schemas, nil
-+}
-```
+The snapshot is fixed, so every retry fails the same way.
 
-**File**: `flow/internal/flow_configuration_helpers.go` (modified, +21/-0)
+## Fix
+
+`COALESCE` the block count to 0 in the child discovery queries. A
+dropped child is treated as empty and skipped, matching what a `SELECT`
+from the parent returns today.
+
+## Testing
+
+`TestCTIDPartitioningSkipsChildDroppedAfterSnapshot` (partitioned and
+inherited): export a snapshot, drop a child, run `GetQRepPartitions`
+wi
+
+**File**: `flow/connectors/postgres/qrep_partition.go` (modified, +6/-3)
 ```diff
-@@ -4,7 +4,9 @@ import (
- 	"context"
- 	"database/sql"
- 	"fmt"
-+	"log/slog"
- 
-+	"go.temporal.io/sdk/log"
- 	"google.golang.org/protobuf/proto"
- 
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-@@ -27,6 +29,25 @@ func FetchConfigFromDB(ctx context.Context, catalogPool shared.CatalogPool, flow
- 	return &cfgFromDB, nil
+@@ -338,13 +338,16 @@ type tableBlockStats struct {
+ 	blockCount   int64
  }
  
-+func UpdateCDCConfigInCatalog(ctx context.Context, pool shared.CatalogPool,
-+	logger log.Logger, cfg *protos.FlowConnectionConfigsCore,
-+) error {
-+	logger.Info("syncing state to catalog: updating config_proto in flows", slog.String("flowName", cfg.FlowJobName))
++// pg_relation_size is NULL for a child dropped after the snapshot, which pg_inherits still lists; count it as empty.
++const childBlockCountExpr = `COALESCE(pg_relation_size(c.oid) / current_setting('block_size')::int, 0)::bigint`
 +
-+	cfgBytes, err := proto.Marshal(cfg)
-+	if err != nil {
-+		return fmt.Errorf("unable to marshal flow config: %w", err)
-+	}
-+
-+	if _, err := pool.Exec(ctx, "UPDATE flows SET config_proto=$1,updated_at=now() WHERE name=$2", cfgBytes, cfg.FlowJobName); err != nil {
-+		logger.Error("failed to update catalog", slog.Any("error", err), slog.String("flowName", cfg.FlowJobName))
-+		return fmt.Errorf("failed to update catalog: %w", err)
-+	}
-+
-+	logger.Info("synced state to catalog: updated config_proto in flows", slog.String("flowName", cfg.FlowJobName))
-+	return nil
-+}
-+
- func ApplySnapshotConfigOverrides(config *protos.FlowConnectionConfigsCore, update *protos.CDCFlowConfigUpdate) {
- 	if update == nil {
- 		return
+ // getPartitionedTables returns a map of partitioned child table names to their block stats,
+ // recursively handle multi-level partitioned tables.
+ // Uses OID-based join to avoid to_regclass which lowercases unquoted mixed-case identifiers.
+ func getPartitionedTables(ctx context.Context, tx pgx.Tx, parentOID uint32) (map[string]tableBlockStats, error) {
+ 	rows, err := tx.Query(ctx, `
+ 		SELECT c.oid, format('%s.%s', n.nspname, c.relname), c.relkind::text,
+-			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
++			`+childBlockCountExpr+`,
+ 			(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
+ 		FROM pg_inherits i
+ 		JOIN pg_class c ON i.inhrelid = c.oid
+@@ -410,7 +413,7 @@ func getInheritedTables(
+ 	var numBlocks int64
+ 	var blockDensity float64
+ 	if err := tx.QueryRow(ctx, `
+-			SELECT (pg_relation_size($1) / current_setting('block_size')::int)::bigint,
++			SELECT `+childBlockCountExpr+`,
+ 				(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
+ 			FROM pg_class c WHERE c.oid = $1
+ 		`, parentOID).Scan(&numBlocks, &blockDensity); err != nil {
+@@ -425,7 +428,7 @@ func getInheritedTables(
+ 
+ 	rows, err := tx.Query(ctx, `
+ 		SELECT c.oid, format('%s.%s', n.nspname, c.relname), c.relhassubclass,
+-			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
++			`+childBlockCountExpr+`,
+ 			(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
+ 		FROM pg_inherits i
+ 		JOIN pg_class c ON i.inhrelid = c.oid
 ```
 
-**File**: `flow/internal/postgres.go` (modified, +0/-172)
+**File**: `flow/connectors/postgres/qrep_partition_test.go` (modified, +82/-0)
 ```diff
-@@ -1,16 +1,9 @@
- package internal
+@@ -3,6 +3,7 @@
+ package connpostgres
  
  import (
--	"context"
--	"fmt"
--	"log/slog"
- 	"net/url"
++	"context"
+ 	"fmt"
+ 	"log/slog"
  	"strings"
- 
--	"github.com/jackc/pgx/v5"
--	"go.temporal.io/sdk/log"
--	"google.golang.org/protobuf/proto"
--
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
- 	"github.com/PeerDB-io/peerdb/flow/shared"
- )
-@@ -91,168 +84,3 @@ func GetPGConnectionString(pgConfig *protos.PostgresConfig, flowName string) str
- 
- 	return u.String()
+@@ -735,6 +736,87 @@ func TestCTIDPartitioningOnEmptyInheritedTable(t *testing.T) {
+ 	require.Empty(t, partitions)
  }
--
--func UpdateCDCConfigInCatalog(ctx context.Context, pool shared.CatalogPool,
--	logger log.Logger, cfg *protos.FlowConnectionConfigsCore,
--) error {
--	logger.Info("syncing state to catalog: updating config_proto in flows", slog.String("flowName", cfg.FlowJobName))
--
--	cfgBytes, err := proto.Marshal(cfg)
--	if err != nil {
--		return fmt.Errorf("unable to marshal flow config: %w", err)
--	}
--
--	if _, err := pool.Exec(ctx, "UPDATE flows SET config_proto=$1,updated_at=now() WHERE name=$2", cfgBytes, cfg.FlowJobName); err != nil {
--		logger.Error("failed to update catalog", slog.Any("error", err), slog.String("flowName", cfg.FlowJobName))
--		return fmt.Errorf("failed to update catalog: %w", err)
--	}
--
--	logger.Info("synced state to catalog: updated config_proto in flows", slog.String("flowName", cfg.FlowJobName))
--	return nil
--}
--
--func LoadTableSchemaFromCatalog(
--	ctx context.Context,
--	pool shared.CatalogPool,
--	flowName string,
--	tableName string,
--) (*protos.TableSchema, error) {
--	var tableSchemaBytes []byte
--	if err := pool.Pool.QueryRow(
--		ctx,
--		"select table_schema from table_schema_mapping where flow_name = $1 and table_name = $2",
--		flowName,
--		tableName,
--	).Scan(&tableSchemaBytes); err != nil {
--		return nil, err
--	}
--	tableSchema := &protos.TableSchema{}
--	return tableSchema, proto.Unmarshal(tableSchemaBytes, tableSchema)
--}
--
--func ReadModifyWriteTableSchemasToCatalog(
--	ctx context.Context,
--	catalogPool shared.CatalogPool,
--	logger log.Logger,
--	flowName string,
--	tableNames []string,
--	modifyFn func(map[string]*protos.TableSchema) (map[string]*protos.TableSchema, error),
--) error {
--	tx, err := catalogPool.Pool.Begin(ctx)
--	if err != nil {
--		return fmt.Errorf("failed to begin transaction: %w", err)
--	}
--	defer shared.RollbackTx(tx, logger)
--
--	// read
--	tableSchemas, err := LoadTableSchemasFromCatalog(ctx, tx, flowName, tableNames)
--	if err != nil {
--		return fmt.Errorf("failed to load table schemas from catalog: %w", err)
--	}
--	if len(tableSchemas) != len(tableNames) {
--		filteredTableNames := make([]string, 0, len(tableSchemas))
--		for name := range tableSchemas {
--			filteredTableNames = append(filteredTableNames, name)
--		}
--		logger.Warn("not all tables are found in catalog",
--			slog.String("expected", strings.Join(tableNames, ", ")),
--			slog.String("actual", strings.Join(filteredTableNames, ", ")))
--	}
--
--	// modify
--	modifiedTableSchemas, err := modifyFn(tableSchemas)
--	if err != nil {
--		return fmt.Errorf("failed to modify table schemas from catalog: %w", err)
--	}
--
--	// write (in batch)
--	batch := &pgx.Batch{}
--	for tableName, tableSchema := range modifiedTableSchemas {
--		tableSchemaBytes, err := proto.Marshal(tableSchema)
--		if err != nil {
--			return fmt.Errorf("unable to marshal table schema for %s: %w", tableName, err)
--		}
--		batch.Queue(
--			"UPDATE table_schema_mapping SET table_schema=$1 WHERE flow_name=$2 AND table_name=$3",
--			tableSchemaBytes, flowName, tableName,
--		)
--		logger.Info("queued schema delta update",
--			slog.String("flowName", flowName),
--			slog.String("tableName", tableName))
--	}
--	results := tx.SendBatch(ctx, batch)
--	defer results.Close() // Ensure resources are freed in case of early return
--
--	for tableName := range modifiedTableSchemas {
--		if _, err := results.Exec(); err != nil {
--			logger.Error("failed to update table schema in catalog",
--				slog.Any("error", err),
--				slog.String("flowName", flowName),
--				slog.String("tableName", tableName))
--			return fmt.Errorf("failed to update table schema in catalog: %w", err)
--		}
--	}
--
--	// Close results before committing
--	if err := results.Close(); err != nil {
--		logger.Error("failed to close batch results",
--			slog.Any("error", err),
--			slog.String("flowName", flowName))
--		return fmt.Errorf("failed to close batch results: %w", err)
--	}
--
--	if err := tx.Commit(ctx); err != nil {
--		return fmt.Errorf("failed to commit transaction: %w", err)
--	}
--	return nil
--}
--
--// support both catalog pool and pgx.Tx
--type CatalogQuerier interface {
--	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
--}
--
--func LoadTableSchemasFromCatalog(
--	ctx context.Context,
--	querier CatalogQuerier,
--	flowName string,
--	tableNames []string,
--) (map[string]*protos.TableSchema, error) {
--	if len(tableNames) == 0 {
--		return make(map[string]*protos.TableSchema), nil
--	}
--
--	rows, err := querier.Query(
--		ctx,
--		"SELECT table_name, table_schema FROM table_schema_mapping WHERE flow_name = $1 AND table_name = ANY($2)",
--		flowName,
--		tableNames,
--	)
--	if err != nil {
--		return nil, f
+ 
++// A child dropped after the snapshot was exported is still listed by the snapshot's
++// pg_inherits, but pg_relation_size of it is NULL; it must be skipped, not fail the scan.
++func TestCTIDPartitioningSkipsChildDroppedAfterSnapshot(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		name        string
++		createChild string
++	}{
++		{name: "partitioned", createChild: `CREATE TABLE %[1]s PARTITION OF %[2]s FOR VALUES FROM (%[3]d) TO (%[3]d + 100)`},
++		{name: "inherited", createChild: `CREATE TABLE %[1]s () INHERITS (%[2]s)`},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			ctx := t.Context()
++			schemaName, conn, connStr := setupTestSchema(t)
++
++			parentTable := schemaName + ".parent"
++			createParent := `CREATE TABLE %s (id SERIAL, partition_key INT NOT NULL, value TEXT)`
++			if tc.name == "partitioned" {
++				createParent += ` PARTITION BY RANGE (partition_key)`
++			}
++			_, err := conn.Exec(ctx, fmt.Sprintf(createParent, parentTable))
++			require.NoError(t, err)
++
++			childTables := make([]string, 3)
++			for i := range childTables {
++				childTables[i] = fmt.Sprintf("%s.child_%d", schemaName, i)
++				_, err = conn.Exec(ctx, fmt.Sprintf(tc.createChild, childTables[i], parentTable, i*100))
++				require.NoError(t, err)
++				_, err = conn.Exec(ctx, fmt.Sprintf(
++					`INSERT INTO %s (partition_key, value) SELECT %d + g, 'v' FROM generate_series(0, 49) g`,
++					childTables[i], i*100))
++				require.NoError(t, err)
++			}
++
++			exporter, err := NewPostgresConnector(ctx, nil, internal.GetCatalogPostgresConfigFromEnv(ctx))
++			require.NoError(t, err)
++			t.Cleanup(func() { exporter.Close() })
++			exportTx, err := exporter.conn.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.RepeatableRead})
++			require.NoError(t, err)
++			t.Cleanup(func() { _ = exportTx.Rollback(context.Background()) })
++			var snapshot string
++			require.NoError(t, exportTx.QueryRow(ctx, "SELECT pg_export_snapshot()").Scan(&snapshot))
++
++			_, err = conn.Exec(ctx, "DROP TABLE "+childTables[1])
++			require.NoError(t, err)
++
++			c := &PostgresConnector{
++				connStr: connStr,
++				Config:  &protos.PostgresConfig{},
++				conn:    conn,
++				logger:  log.NewStructuredLogger(slog.With(slog.String(string(shared.FlowNameKey), "testDroppedChild"))),
++			}
++			// NumPartitionsOverride exercises CTIDBlockPartitioningFunc directly; without it,
++			// ComputeNumPartitions sums per-child estimates first.
++			for _, numPartitionsOverride := range []uint32{4, 0} {
++				partitions, err := c.GetQRepPartitions(ctx, &protos.QRepConfig{
++					FlowJobName:           "test_ctid_dropped_child",
++					NumRowsPerPartition:   10,
++					NumPartitionsOverride: numPartitionsOverride,
++					WatermarkTable:        parentTable,
++					WatermarkColumn:       "ctid",
++					SnapshotName:          snapshot,
++					Env:                   map[string]string{"PEERDB_POSTGRES_APPLY_CTID_BLOCK_PARTITIONING_OVERRIDE": "true"},
++				}, nil)
++				require.NoError(t, err)
++
++				covered := make(map[string]bool)
++				for _, p := range partitions {
++					for _, ctr := range p.ChildTableRanges {
++						covered[ctr.Table] = true
++					}
++				}
++				require.Equal(t, map[string]bool{childTables[0]: true, childTables[2]: true}, covered,
++					"numPartitionsOverride=%d", numPartitionsOverride)
++			}
++		})
++	}
++}
++
+ // analyzeTables runs ANALYZE on each table so that pg_class.reltuples/relpages are
+ // populated; without this the density-based row estimate is 0 and ComputeNumPartitions
+ // falls back to a precise COUNT(*) instead of exercising the estimation path.
 ```
 
 ---
 
-### Incident Patch 2: `ea3f0748` (2026-11-09)
-**Commit Message**: Classify Google token errors in BigQuery/GCS as retryable (#5017)
+### Incident Patch 2: `c9627d46` (2026-11-11)
+**Commit Message**: fix(clickhouse) DBI-1323: validate column types and key expressions structurally (#5068)
 
-`downscope: unable to exchange token, 503: ...` from the BigQuery →
-ClickHouse object sync header provider was classified as `ErrorOther`.
+DBI-1323
 
-- **Downscope token exchange:** the library returns an untyped string.
-Parse the status into a `googleapi.Error` and wrap as `GCSError`, so the
-existing GCS rules retry 408/429/5xx.
-- **Root token refresh (`*auth.Error`):** classify in the BigQuery and
-GCS branches with code `AUTH_<status>`. 5xx retries (GCS also 408/429);
-BigQuery 401/403 notify as connectivity.
+Custom column types (`destination_type`), `partition_by_expr` and
+`sharding_key` are written into ClickHouse's `CREATE TABLE` as SQL.
+Column types were checked with a regex when a mirror was created or
+resynced, but not when tables were added to it, and the content of the
+two expressions was not checked.
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+This adds two validators to `flow/pkg/clickhouse`:
+- `ValidateColumnType` parses a single type made of names, parentheses,
+commas and integers, like `Decimal(38,10)` or `Array(Nullable(String))`.
+It rejects whitespace and column-option keywords such as `DEFAULT`.
+- `ValidateExpression` accepts names, numbers, arithmetic, commas and
+parentheses, and checks that parentheses never close more than they
+open. It rejects string literals, comments, statement separators,
+subqueries and aliases.
 
----------
+They run:
+- in the API, when a mirror is created or resynced and when tables are
+added to it. Destination-specific checks go through a new
+`DestinationTableValidationConnector`;
+- when ClickHouse destination tables are created, since stored configs
+may have skipped API validation. Failures are class
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `flow/alerting/classifier.go` (modified, +25/-5)
+**File**: `flow/alerting/classifier.go` (modified, +23/-36)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"strings"
- 	"syscall"
+@@ -154,6 +154,10 @@ type ErrorInfo struct {
+ 	Code                 string
+ }
  
-+	"cloud.google.com/go/auth"
- 	"cloud.google.com/go/bigquery"
- 	chproto "github.com/ClickHouse/ch-go/proto"
- 	"github.com/ClickHouse/clickhouse-go/v2"
-@@ -1181,6 +1182,16 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 			if _, ok := bigQueryTransientReasons[bqErr.Reason]; ok {
- 				return ErrorRetryRecoverable, bqErrorInfo
++func unknownErrorInfo(source ErrorSource) ErrorInfo {
++	return ErrorInfo{Source: source, Code: "UNKNOWN"}
++}
++
+ type ErrorClass struct {
+ 	Class  string
+ 	action ErrorAction
+@@ -399,10 +403,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 			if pgErr != nil {
+ 				return errorClass, pgErrorInfo
  			}
-+		} else if authErr, ok := errors.AsType[*auth.Error](err); ok && authErr.Response != nil {
-+			// token refresh failure, before the API call
-+			statusCode := authErr.Response.StatusCode
-+			bqErrorInfo.Code = "AUTH_" + strconv.Itoa(statusCode)
-+			switch {
-+			case statusCode == 401 || statusCode == 403:
-+				return ErrorNotifyConnectivity, bqErrorInfo
-+			case statusCode >= 500:
-+				return ErrorRetryRecoverable, bqErrorInfo
-+			}
- 		}
- 		return ErrorOther, bqErrorInfo
- 	}
-@@ -1190,13 +1201,22 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 			Source: ErrorSourceGCS,
- 			Code:   "UNKNOWN",
- 		}
-+		// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
-+		gcsStatusErrorClass := func(statusCode int) ErrorClass {
-+			if statusCode == 408 || statusCode == 429 || statusCode >= 500 {
-+				return ErrorRetryRecoverable
-+			}
-+			return ErrorOther
-+		}
- 		if apiErr, ok := errors.AsType[*googleapi.Error](err); ok {
- 			gcsErrorInfo.Code = strconv.Itoa(apiErr.Code)
--			// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
--			if apiErr.Code == 408 || apiErr.Code == 429 || apiErr.Code >= 500 {
--				return ErrorRetryRecoverable, gcsErrorInfo
+-			return errorClass, ErrorInfo{
+-				Source: ErrorSourcePostgresCatalog,
+-				Code:   "UNKNOWN",
 -			}
--			return ErrorOther, gcsErrorInfo
-+			return gcsStatusErrorClass(apiErr.Code), gcsErrorInfo
-+		}
-+		if authErr, ok := errors.AsType[*auth.Error](err); ok && authErr.Response != nil {
-+			// token refresh failure, before the API call
-+			statusCode := authErr.Response.StatusCode
-+			gcsErrorInfo.Code = "AUTH_" + strconv.Itoa(statusCode)
-+			return gcsStatusErrorClass(statusCode), gcsErrorInfo
++			return errorClass, unknownErrorInfo(ErrorSourcePostgresCatalog)
  		}
- 		// A lost transport connection never reaches the API layer, so it carries no googleapi.Error
- 		// and is retried by dialing a new connection.
+ 
+ 		if _, ok := errors.AsType[*exceptions.DropFlowError](err); ok {
+@@ -411,21 +412,15 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 				return errorClass, pgErrorInfo
+ 			}
+ 			// For now we are not making it as verbose, will take this up later
+-			return errorClass, ErrorInfo{
+-				Source: ErrorSourceOther,
+-				Code:   "UNKNOWN",
+-			}
++			return errorClass, unknownErrorInfo(ErrorSourceOther)
+ 		}
+ 
+ 		if _, ok := errors.AsType[*exceptions.PostgresSetupError](err); ok {
+ 			errorClass := ErrorNotifyConnectivity
+ 			if pgErr != nil {
+ 				return errorClass, pgErrorInfo
+ 			}
+-			return errorClass, ErrorInfo{
+-				Source: pgErrSource,
+-				Code:   "UNKNOWN",
+-			}
++			return errorClass, unknownErrorInfo(pgErrSource)
+ 		}
+ 	}
+ 
+@@ -588,10 +583,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 	}
+ 
+ 	if _, ok := errors.AsType[*exceptions.SSHTunnelSetupError](err); ok {
+-		return ErrorNotifyConnectivity, ErrorInfo{
+-			Source: ErrorSourceSSH,
+-			Code:   "UNKNOWN",
+-		}
++		return ErrorNotifyConnectivity, unknownErrorInfo(ErrorSourceSSH)
+ 	}
+ 
+ 	if _, ok := errors.AsType[*net.DNSError](err); ok {
+@@ -645,10 +637,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 	}
+ 
+ 	if _, ok := errors.AsType[*pgconn.ConnectError](err); ok {
+-		return ErrorNotifyConnectivity, ErrorInfo{
+-			Source: pgErrSource,
+-			Code:   "UNKNOWN",
+-		}
++		return ErrorNotifyConnectivity, unknownErrorInfo(pgErrSource)
+ 	}
+ 
+ 	// Consolidated PostgreSQL error handling
+@@ -1166,10 +1155,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 	}
+ 
+ 	if _, ok := errors.AsType[*exceptions.BigQueryError](err); ok {
+-		bqErrorInfo := ErrorInfo{
+-			Source: ErrorSourceBigQuery,
+-			Code:   "UNKNOWN",
+-		}
++		bqErrorInfo := unknownErrorInfo(ErrorSourceBigQuery)
+ 		if apiErr, ok := errors.AsType[*googleapi.Error](err); ok {
+ 			if apiErr.Code == 400 && strings.Contains(apiErr.Message, bigQueryChangeHistoryBeforeTimeTravel) {
+ 				bqErrorInfo.Code = "CHANGE_HISTORY_BEFORE_TIME_TRAVEL"
+@@ -1210,10 +1196,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 	}
+ 
+ 	if _, ok := errors.AsType[*exceptions.GCSError](err); ok {
+-		gcsErrorInfo := ErrorInfo{
+-			Source: ErrorSourceGCS,
+-			Code:   "UNKNOWN",
+-		}
++		gcsErrorInfo := unknownErrorInfo(ErrorSourceGCS)
+ 		// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
+ 		gcsStatusErrorClass := func(statusCode int) ErrorClass {
+ 			if statusCode == 408 || statusCode == 429 || statusCode >= 500 {
+@@ -1242,10 +1225,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 
+ 	if s3Err, ok := errors.AsType[*exceptions.S3Error](err); ok {
+ 		s3ErrorClass := ErrorOther
+-		s3ErrorInfo := ErrorInfo{
+-			Source: ErrorSourceS3,
+-			Code:   "UNKNOWN",
+-		}
++		s3ErrorInfo := unknownErrorInfo(ErrorSourceS3)
+ 		if respErr, ok := errors.AsType[*awshttp.ResponseError](s3Err); ok {
+ 			if _, ok := retry.DefaultRetryableHTTPStatusCodes[respErr.HTTPStatusCode()]; ok {
+ 				s3ErrorClass = ErrorRetryRecoverable
+@@ -1434,6 +1414,16 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 		return ErrorOther, chErrorInfo
+ 	}
+ 
++	if _, ok := errors.AsType[*peerdb_clickhouse.InvalidFragmentError](err); ok {
++		errInfo := unknownErrorInfo(ErrorSourceOther)
++		if tableCreationErr, ok := errors.AsType[*exceptions.ClickHouseNormalizedTableCreationError](err); ok {
++			errInfo.AdditionalAttributes = map[AdditionalErrorAttributeKey]string{
++				ErrorAttributeKeyTable: tableCreationErr.DestinationTable,
++			}
++		}
++		return ErrorNotifyInvalidDestinationTableDefinition, errInfo
++	}
++
+ 	if numericOutOfRangeError, ok := errors.AsType[*exceptions.NumericOutOfRangeError](err); ok {
+ 		return ErrorLossyConversion, ErrorInfo{
+ 			Source: "typeConversion",
+@@ -1612,8 +1602,5 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 		}
+ 	}
+ 
+-	return ErrorOther, ErrorInfo{
+-		Source: ErrorSourceOther,
+-		Code:   "UNKNOWN",
+-	}
++	return ErrorOther, unknownErrorInfo(ErrorSourceOther)
+ }
 ```
 
-**File**: `flow/alerting/classifier_test.go` (modified, +56/-0)
+**File**: `flow/alerting/classifier_test.go` (modified, +15/-0)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"testing"
- 	"time"
- 
-+	"cloud.google.com/go/auth"
- 	"cloud.google.com/go/bigquery"
- 	"cloud.google.com/go/storage"
- 	chproto "github.com/ClickHouse/ch-go/proto"
-@@ -2012,6 +2013,61 @@ func TestGCSUploadHTTP2ConnectionLostShouldBeRecoverable(t *testing.T) {
+@@ -1789,6 +1789,21 @@ func TestClickHouseTooManyTablesDuringTableCreationShouldNotifyUser(t *testing.T
  	}, errInfo)
  }
  
-+func TestGCSAuthErrorClassification(t *testing.T) {
++func TestInvalidRawSQLSettingDuringTableCreationShouldNotifyUser(t *testing.T) {
 +	t.Parallel()
 +
-+	for _, tc := range []struct {
-+		expectedClass ErrorClass
-+		code          int
-+	}{
-+		{code: 502, expectedClass: ErrorRetryRecoverable},
-+		{code: 504, expectedClass: ErrorRetryRecoverable},
-+		{code: 429, expectedClass: ErrorRetryRecoverable},
-+		{code: 401, expectedClass: ErrorOther},
-+	} {
-+		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
-+			t.Parallel()
-+
-+			authErr := &auth.Error{Response: &http.Response{StatusCode: tc.code}}
-+			err := exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w",
-+				fmt.Errorf("downscope: unable to obtain root token: %w", authErr)))
-+			errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to get headers: %w", err))
-+			assert.Equal(t, tc.expectedClass, errorClass)
-+			assert.Equal(t, ErrorInfo{
-+				Source: ErrorSourceGCS,
-+				Code:   "AUTH_" + strconv.Itoa(tc.code),
-+			}, errInfo)
-+		})
-+	}
++	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("error while generating create table sql: %w",
++		exceptions.NewClickHouseNormalizedTableCreationError(peerdb_clickhouse.ValidateExpression("id) --"), "test")))
++	assert.Equal(t, ErrorNotifyInvalidDestinationTableDefinition, errorClass)
++	assert.Equal(t, ErrorInfo{
++		Source: ErrorSourceOther,
++		Code:   "UNKNOWN",
++		AdditionalAttributes: map[AdditionalErrorAttributeKey]string{
++			ErrorAttributeKeyTable: "test",
++		},
++	}, errInfo)
 +}
 +
-+func TestBigQueryAuthErrorClassification(t *testing.T) {
-+	t.Parallel()
-+
-+	for _, tc := range []struct {
-+		expectedClass ErrorClass
-+		code          int
-+	}{
-+		{code: 503, expectedClass: ErrorRetryRecoverable},
-+		{code: 401, expectedClass: ErrorNotifyConnectivity},
-+		{code: 403, expectedClass: ErrorNotifyConnectivity},
-+		{code: 400, expectedClass: ErrorOther},
-+	} {
-+		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
-+			t.Parallel()
-+
-+			authErr := &auth.Error{Response: &http.Response{StatusCode: tc.code}}
-+			err := exceptions.NewBigQueryError(fmt.Errorf("Post \"https://bigquery.googleapis.com\": %w", authErr))
-+			errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("export job failed: %w", err))
-+			assert.Equal(t, tc.expectedClass, errorClass)
-+			assert.Equal(t, ErrorInfo{
-+				Source: ErrorSourceBigQuery,
-+				Code:   "AUTH_" + strconv.Itoa(tc.code),
-+			}, errInfo)
-+		})
-+	}
-+}
-+
- func TestBigQueryUnclassifiedCodeShouldBeOther(t *testing.T) {
- 	t.Parallel()
- 
+ func TestClickHouseTooManyPartsWithoutTableName(t *testing.T) {
+ 	err := &clickhouse.Exception{
+ 		Code: int32(chproto.ErrTooManyParts),
 ```
 
-**File**: `flow/connectors/bigquery/gcp.go` (modified, +23/-1)
+**File**: `flow/cmd/handler.go` (modified, +11/-0)
 ```diff
-@@ -5,13 +5,20 @@ import (
- 	"errors"
- 	"fmt"
- 	"net/url"
-+	"regexp"
-+	"strconv"
- 	"strings"
- 
- 	"cloud.google.com/go/auth"
- 	"cloud.google.com/go/auth/credentials/downscope"
- 	"google.golang.org/api/googleapi"
-+
-+	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
- )
- 
-+// downscope returns token exchange failures as an untyped string.
-+var downscopeExchangeErrorRe = regexp.MustCompile(`(?s)^downscope: unable to exchange token, (\d{3}): (.*)$`)
-+
- func (c *BigQueryConnector) storageDownScopedToken(ctx context.Context, bucketName string, prefix string) (*auth.Token, error) {
- 	accessBoundary := []downscope.AccessBoundaryRule{
- 		{
-@@ -30,11 +37,26 @@ func (c *BigQueryConnector) storageDownScopedToken(ctx context.Context, bucketNa
- 
- 	token, err := tp.Token(ctx)
- 	if err != nil {
--		return nil, fmt.Errorf("failed to generate downscoped token: %w", err)
-+		return nil, exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w", wrapDownscopeError(err)))
+@@ -476,6 +476,17 @@ func (h *FlowRequestHandler) FlowStateChange(
+ 		for _, tm := range tablesToNormalize {
+ 			structured.NormalizeStructuredIngestionTypes(tm.StructuredIngestionConfig, tm.Columns)
+ 		}
++		if len(cdcUpdate.AdditionalTables) > 0 {
++			config, err := h.getFlowConfigFromCatalog(ctx, req.FlowJobName)
++			if err != nil {
++				return nil, NewInternalApiError(fmt.Errorf("unable to get flow config: %w", err))
++			}
++			additionConfig := pconv.FlowConnectionConfigsToCore(config)
++			additionConfig.TableMappings = cdcUpdate.AdditionalTables
++			if apiErr := h.checkAdditionalTables(ctx, additionConfig); apiErr != nil {
++				return nil, apiErr
++			}
++		}
+ 		if len(cdcUpdate.ResyncTables) > 0 {
+ 			if currState != protos.FlowStatus_STATUS_PAUSED {
+ 				return nil, NewInvalidArgumentApiError(fmt.Errorf("table-level resync requires the mirror to be paused"))
+```
+
+**File**: `flow/cmd/validate_mirror.go` (modified, +33/-2)
+```diff
+@@ -13,6 +13,7 @@ import (
+ 	"github.com/PeerDB-io/peerdb/flow/connectors/utils/structured"
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+ 	"github.com/PeerDB-io/peerdb/flow/internal"
++	chvalidate "github.com/PeerDB-io/peerdb/flow/pkg/clickhouse"
+ 	"github.com/PeerDB-io/peerdb/flow/pkg/common"
+ 	"github.com/PeerDB-io/peerdb/flow/proto_conversions"
+ 	"github.com/PeerDB-io/peerdb/flow/shared"
+@@ -170,6 +171,12 @@ func (h *FlowRequestHandler) validateCDCMirrorImpl(
  	}
- 	return token, nil
+ 	defer dstClose(ctx)
+ 
++	if tableValidationConn, ok := dstConn.(connectors.DestinationTableValidationConnector); ok {
++		if err := tableValidationConn.ValidateDestinationTables(ctx, connectionConfigs.TableMappings); err != nil {
++			return nil, NewInvalidArgumentApiError(err)
++		}
++	}
++
+ 	var tableSchemaMap map[string]*protos.TableSchema
+ 	if validateTableSettings {
+ 		var getTableSchemaError error
+@@ -222,6 +229,27 @@ func (h *FlowRequestHandler) checkTableMappings(
+ 	return nil
  }
  
-+// wrapDownscopeError extracts the HTTP status into a googleapi.Error for classification.
-+func wrapDownscopeError(err error) error {
-+	m := downscopeExchangeErrorRe.FindStringSubmatch(err.Error())
-+	if m == nil {
-+		return err
++// checkAdditionalTables validates the tables being added to a mirror, given as cfg's table mappings.
++func (h *FlowRequestHandler) checkAdditionalTables(ctx context.Context, cfg *protos.FlowConnectionConfigsCore) APIError {
++	if apiErr := h.checkTableMappings(ctx, cfg); apiErr != nil {
++		return apiErr
 +	}
-+	code, convErr := strconv.Atoi(m[1])
-+	if convErr != nil {
-+		return err
++	dstConn, dstClose, err := connectors.GetByNameAs[connectors.DestinationTableValidationConnector](
++		ctx, cfg.Env, h.pool, cfg.DestinationName,
++	)
++	if err != nil {
++		if errors.Is(err, errors.ErrUnsupported) {
++			return nil
++		}
++		return NewFailedPreconditionApiError(fmt.Errorf("failed to create destination connector: %w", err))
 +	}
-+	apiErr := &googleapi.Error{Code: code, Body: m[2]}
-+	apiErr.Wrap(err)
-+	return apiErr
++	defer dstClose(ctx)
++	if err := dstConn.ValidateDestinationTables(ctx, cfg.TableMappings); err != nil {
++		return NewInvalidArgumentApiError(err)
++	}
++	return nil
 +}
 +
- func (c *BigQueryConnector) isApiErrorWithStatusCode(err error, code int) bool {
- 	if apiErr, ok := errors.AsType[*googleapi.Error](err); ok && apiErr.Code == code {
- 		return true
+ // checkSourceTableConfig validates one table's columns.
+ // If maybeStructuredIngestionConfig is non-nil, column types are validated too.
+ func checkSourceTableConfig(
+@@ -244,8 +272,11 @@ func checkSourceTableConfig(
+ 		return nil
+ 	}
+ 	for _, col := range columns {
+-		if !structured.ColumnTypeRegex.MatchString(col.DestinationType) {
+-			return NewInvalidArgumentApiError(fmt.Errorf("invalid custom column type %s", col.DestinationType))
++		if col.DestinationType == "" {
++			continue
++		}
++		if err := chvalidate.ValidateColumnType(col.DestinationType); err != nil {
++			return NewInvalidArgumentApiError(fmt.Errorf("table %s: column %s: %w", tableIdentifier, col.SourceName, err))
+ 		}
+ 	}
+ 	return nil
 ```
 
-**File**: `flow/connectors/bigquery/gcp_test.go` (added, +58/-0)
+**File**: `flow/connectors/clickhouse/normalize.go` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,58 @@
-+package connbigquery
-+
-+import (
-+	"errors"
-+	"fmt"
-+	"strconv"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/api/googleapi"
-+
-+	"github.com/PeerDB-io/peerdb/flow/alerting"
+@@ -104,6 +104,9 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
+ 	if tableMapping != nil {
+ 		tmEngine = tableMapping.Engine
+ 	}
++	if err := validateRawSQLSettings(tableMapping); err != nil {
++		return nil, exceptions.NewClickHouseNormalizedTableCreationError(err, tableIdentifier)
++	}
+ 
+ 	isDeletedColumn := defaultIsDeletedColName
+ 	isDeletedColumnPart := ""
+@@ -270,8 +273,7 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
+ 				peerdb_clickhouse.QuoteIdentifier(tableIdentifier+shardSuffix),
+ 			)
+ 			if tableMapping.ShardingKey != "" {
+-				stmtBuilderDistributed.WriteByte(',')
+-				stmtBuilderDistributed.WriteString(tableMapping.ShardingKey)
++				fmt.Fprintf(&stmtBuilderDistributed, ",(%s)", tableMapping.ShardingKey)
+ 				if tableMapping.PolicyName != "" {
+ 					stmtBuilderDistributed.WriteByte(',')
+ 					stmtBuilderDistributed.WriteString(peerdb_clickhouse.QuoteLiteral(tableMapping.PolicyName))
+@@ -737,7 +739,6 @@ func resolveClickHouseColumnType(
+ 		return qvalue.ToDWHColumnType(ctx, colType, env, protos.DBType_CLICKHOUSE, chVersion, column, nullableEnabled, flags, version,
+ 			sourceType)
+ 	}
+-	// TODO basic validation to avoid injection
+ 	if nullableEnabled && column.Nullable && !colType.IsArray() && !strings.HasPrefix(clickHouseType, "Nullable(") {
+ 		// a nullable-enabled column must be Nullable(...), or JSON nulls turn into the type's default value
+ 		return fmt.Sprintf("Nullable(%s)", clickHouseType), nil
+```
+
+**File**: `flow/connectors/clickhouse/normalize_test.go` (modified, +84/-0)
+```diff
+@@ -7,7 +7,9 @@ import (
+ 	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
++	peerdb_clickhouse "github.com/PeerDB-io/peerdb/flow/pkg/clickhouse"
+ 	"github.com/PeerDB-io/peerdb/flow/shared"
 +	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
-+)
+ 	"github.com/PeerDB-io/peerdb/flow/shared/types"
+ )
+ 
+@@ -522,6 +524,88 @@ func TestGenerateCreateTableSQLForNormalizedTable(t *testing.T) {
+ 	}
+ }
+ 
++func TestGenerateCreateTableSQLForNormalizedTableRawSQLSettings(t *testing.T) {
++	tableIdentifier := "tbl"
++	tableSchema := &protos.TableSchema{
++		Columns: []*protos.FieldDescription{
++			{Name: "id", Type: string(types.QValueKindInt64)},
++			{Name: "doc", Type: string(types.QValueKindJSON)},
++		},
++		PrimaryKeyColumns: []string{"id"},
++	}
++	chVersion := &chproto.Version{Major: 25, Minor: 8, Patch: 0}
 +
-+func TestDownscopeTokenExchangeErrorClassification(t *testing.T) {
-+	t.Parallel()
++	generate := func(t *testing.T, cluster string, tableMapping *protos.TableMapping) ([]string, error) {
++		t.Helper()
++		tableMapping.SourceTableIdentifier = tableIdentifier
++		tableMapping.DestinationTableIdentifier = tableIdentifier
++		c := &ClickHouseConnector{
++			Config:    &protos.ClickhouseConfig{Database: "db", Cluster: cluster},
++			chVersion: chVersion,
++		}
++		config := &protos.SetupNormalizedTableBatchInput{
++			Env:           map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false"},
++			TableMappings: []*protos.TableMapping{tableMapping},
++		}
++		return c.generateCreateTableSQLForNormalizedTable(t.Context(), config, tableIdentifier, tableSchema, chVersion, nil,
++			protos.DBType_DBTYPE_UNKNOWN)
++	}
++
++	t.Run("valid settings are written as is", func(t *testing.T) {
++		result, err := generate(t, "cluster", &protos.TableMapping{
++			Columns:         []*protos.ColumnSetting{{SourceName: "doc", DestinationType: "Nullable(String)"}},
++			PartitionByExpr: "id % 4",
++			ShardingKey:     "cityHash64(id)",
++		})
++		require.NoError(t, err)
++		require.Len(t, result, 2)
++		require.Contains(t, result[0], "`doc` Nullable(String),")
++		require.Contains(t, result[0], "PARTITION BY (id % 4)")
++		require.Contains(t, result[1], ",(cityHash64(id)))")
++	})
 +
 +	for _, tc := range []struct {
-+		expectedClass alerting.ErrorClass
-+		code          int
++		name         string
++		tableMapping *protos.TableMapping
++		wantErr      string
 +	}{
-+		{code: 503, expectedClass: alerting.ErrorRetryRecoverable},
-+		{code: 429, expectedClass: alerting.ErrorRetryRecoverable},
-+		{code: 400, expectedClass: alerting.ErrorOther},
++		{
++			name:    "column type with extra column",
++			wantErr: "column doc: invalid column type",
++			tableMapping: &protos.TableMapping{Columns: []*protos.ColumnSetting{
++				{SourceName: "doc", DestinationType: "JSON, extra String DEFAULT 'x'"},
++			}},
++		},
++		{
++			name:    "column type with column option",
++			wantErr: "column doc: invalid column type",
++			tableMapping: &protos.TableMapping{Columns: []*protos.ColumnSetting{
++				{SourceName: "doc", DestinationType: "Nullable(String)DEFAULT(hostName())"},
++			}},
++		},
++		{
++			name:         "partition expression closing the clause",
++			tableMapping: &protos.TableMapping{PartitionByExpr: "id) SETTINGS index_granularity = 1 --"},
++			wantErr:      "partition_by_expr: invalid expression",
++		},
++		{
++			name:         "sharding key with a string literal",
++			tableMapping: &protos.TableMapping{ShardingKey: "rand(), 'policy'"},
++			wantErr:      "sharding_key: invalid expression",
++		},
 +	} {
-+		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
-+			t.Parallel()
-+
-+			body := fmt.Sprintf("{\n  \"error\": {\n    \"code\": %d\n  }\n}", tc.code)
-+			rawErr := fmt.Errorf("downscope: unable to exchange token, %d: %s", tc.code, body)
-+
-+			wrapped := wrapDownscopeError(rawErr)
-+			apiErr, ok := errors.AsType[*googleapi.Error](wrapped)
-+			require.True(t, ok)
-+			assert.Equal(t, tc.code, apiErr.Code)
-+			assert.Equal(t, body, apiErr.Body)
-+			require.ErrorIs(t, wrapped, rawErr)
-+
-+			err := fmt.Errorf("failed to sync records: failed to insert batch: failed to get headers: %w",
-+				exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w", wrapped)))
-+			errorClass, errInfo := alerting.GetErrorClass(t.Context(), err)
-+			assert.Equal(t, tc.expectedClass, errorClass)
-+			assert.Equal(t, alerting.ErrorInfo{
-+				Source: alerting.ErrorSourceGCS,
-+				Code:   strconv.Itoa(tc.code),
-+			}, errInfo)
++		t.Run(tc.name, func(t *testing.T) {
++			_, err := generate(t, "cluster", tc.tableMapping)
++			require.ErrorContains(t, err, tc.wantErr)
++			var tableCreationErr *exceptions.ClickHouseNormalizedTableCreationError
++			require.ErrorAs(t, err, &tableCreationErr)
++			require.Equal(t, tableIdentifier, tableCreationErr.DestinationTable)
++			var fragmentErr *peerdb_clickhouse.InvalidFragmentError
++			require.ErrorAs(t, err, &fragmentErr)
 +		})
 +	}
 +}
 +
-+func TestWrapDownscopeErrorLeavesOtherErrorsUntouched(t *testing.T) {
-+	t.Parallel()
-+
-+	rawErr := errors.New("dial tcp: connection refused")
-+	assert.Same(t, rawErr, wrapDownscopeError(rawErr))
+ func TestResolveClickHouseColumnType(t *testing.T) {
+ 	nullableInt := &protos.FieldDescription{Name: "id", Type: string(types.QValueKindInt64), Nullable: true}
+ 	notNullInt := &protos.FieldDescription{Name: "id", Type: string(types.QValueKindInt64)}
+```
+
+**File**: `flow/connectors/clickhouse/validate.go` (modified, +36/-3)
+```diff
+@@ -83,9 +83,6 @@ func (c *ClickHouseConnector) ValidateMirrorDestination(
+ 
+ 	for _, tableMapping := range cfg.TableMappings {
+ 		dstTableName := tableMapping.DestinationTableIdentifier
+-		if dstTableName == "" {
+-			return fmt.Errorf("destination table identifier is empty")
+-		}
+ 		processedSchema, ok := processedMapping[dstTableName]
+ 		if !ok {
+ 			// if destination table is not a key, that means source table was not a key in the original schema mapping(?)
+@@ -180,6 +177,42 @@ func (c *ClickHouseConnector) ValidateMirrorDestination(
+ 	return nil
+ }
+ 
++func (c *ClickHouseConnector) ValidateDestinationTables(_ context.Context, tableMappings []*protos.TableMapping) error {
++	for _, tableMapping := range tableMappings {
++		if tableMapping.DestinationTableIdentifier == "" {
++			return fmt.Errorf("destination table identifier is empty for table %s", tableMapping.SourceTableIdentifier)
++		}
++		if err := validateRawSQLSettings(tableMapping); err != nil {
++			return fmt.Errorf("table %s: %w", tableMapping.SourceTableIdentifier, err)
++		}
++	}
++	return nil
 +}
++
++// validateRawSQLSettings checks the settings written unquoted into CREATE TABLE.
++// Table creation checks them again, as stored configs may have skipped API validation.
++func validateRawSQLSettings(tableMapping *protos.TableMapping) error {
++	for _, col := range tableMapping.GetColumns() {
++		if col.DestinationType == "" {
++			continue
++		}
++		if err := chvalidate.ValidateColumnType(col.DestinationType); err != nil {
++			return fmt.Errorf("column %s: %w", col.SourceName, err)
++		}
++	}
++	if partitionByExpr := tableMapping.GetPartitionByExpr(); partitionByExpr != "" {
++		if err := chvalidate.ValidateExpression(partitionByExpr); err != nil {
++			return fmt.Errorf("partition_by_expr: %w", err)
++		}
++	}
++	if shardingKey := tableMapping.GetShardingKey(); shardingKey != "" {
++		if err := chvalidate.ValidateExpression(shardingKey); err != nil {
++			return fmt.Errorf("sharding_key: %w", err)
++		}
++	}
++	return nil
++}
++
+ // checkNativeJSONSetting rejects a mirror that turns PEERDB_CLICKHOUSE_ENABLE_JSON on against a ClickHouse
+ // without the native JSON type, which would otherwise silently fall back to String columns.
+ func checkNativeJSONSetting(ctx context.Context, env map[string]string, chVersion *chproto.Version) error {
+```
+
+**File**: `flow/connectors/core.go` (modified, +9/-0)
+```diff
+@@ -57,6 +57,13 @@ type MirrorDestinationValidationConnector interface {
+ 	ValidateMirrorDestination(context.Context, *protos.FlowConnectionConfigsCore, map[string]*protos.TableSchema) error
+ }
+ 
++type DestinationTableValidationConnector interface {
++	Connector
++
++	// ValidateDestinationTables checks table mapping settings that need neither the server nor source schemas.
++	ValidateDestinationTables(context.Context, []*protos.TableMapping) error
++}
++
+ type StatActivityConnector interface {
+ 	Connector
+ 
+@@ -887,6 +894,8 @@ var (
+ 	_ MirrorDestinationValidationConnector = &connpostgres.PostgresConnector{}
+ 	_ MirrorDestinationValidationConnector = &connbigquery.BigQueryConnector{}
+ 
++	_ DestinationTableValidationConnector = &connclickhouse.ClickHouseConnector{}
++
+ 	_ GetFlagsConnector = &connclickhouse.ClickHouseConnector{}
+ 
+ 	_ GetVersionConnector = &connclickhouse.ClickHouseConnector{}
+```
+
+---
+
+### Incident Patch 3: `1805bda7` (2026-11-11)
+**Commit Message**: Update temporalio/ui Docker tag to v2.58.0 (#5056)
+
+This PR contains the following updates:
+
+| Package | Update | Change | Pending |
+|---|---|---|---|
+| [temporalio/ui](https://redirect.github.com/temporalio/ui-server) |
+minor | `2.57.0` → `2.58.0` | `2.58.1` |
+
+---
+
+### Release Notes
+
+<details>
+<summary>temporalio/ui-server (temporalio/ui)</summary>
+
+###
+[`v2.58.0`](https://redirect.github.com/temporalio/ui-server/releases/tag/v2.58.0)
+
+[Compare
+Source](https://redirect.github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0)
+
+Release synced from
+[ui@v2.58.0](https://redirect.github.com/temporalio/ui/releases/tag/v2.58.0)
+
+##### What's Changed
+
+- Read the Node version from the synced UI's package.json by
+[@&#8203;rossnelson](https://redirect.github.com/rossnelson) in
+[#&#8203;344](https://redirect.github.com/temporalio/ui-server/pull/344)
+
+**Full Changelog**:
+<https://github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0>
+
+</details>
+
+---
+
+### Configuration
+
+📅 **Schedule**: (in timezone Etc/UTC)
+
+- Branch creation
+  - "after 5pm on monday"
+- Automerge
+  - At any time (no schedule defined)
+
+🚦 **Automerge**: Enabled.
+
+♻ **Rebasing**: Whenever PR is behind base branch, or you
+
+**File**: `docker-compose-dev.yml` (modified, +1/-1)
+```diff
+@@ -144,7 +144,7 @@ services:
+       - TEMPORAL_ADDRESS=temporal:7233
+       - TEMPORAL_CORS_ORIGINS=http://localhost:3030
+       - TEMPORAL_CSRF_COOKIE_INSECURE=true
+-    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
++    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
+     ports:
+       - *temporal-ui-port
+ 
+```
+
+**File**: `docker-compose.yml` (modified, +1/-1)
+```diff
+@@ -108,7 +108,7 @@ services:
+       - TEMPORAL_ADDRESS=temporal:7233
+       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+       - TEMPORAL_CSRF_COOKIE_INSECURE=true
+-    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
++    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
+     ports:
+       - 8085:8080
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5053** (2026-11-09): ci: raise MariaDB max_connections to 1000 (@gheorghepucea)
-- **PR #5051** (closed): skip partitions dropped after snapshot export in CTID partitioning (@dtunikov)
-- **PR #5037** (closed): [WIP, DO NOT MERGE] Fault-injection tests on main (CI shakedown) (@ilidemi)
-- **PR #5034** (2026-11-07): Make normalize start on pending batches after a SyncFlow restart (@ilidemi)
-- **PR #5033** (2026-11-09): Add signal handling and schema changes to tricky areas doc, organize helpers a bit (@ilidemi)
-- **PR #5032** (2026-11-07): fix(snapshot): add NULL partition when partition key is excluded (@ilidemi)
+- **PR #5077** (closed): Reshape mirror edit and overview screens (@jonathan-dualtech)
+- **PR #5070** (2026-11-11): ci: raise MySQL/MariaDB test max_connections to 1000 (@gheorghepucea)
+- **PR #5068** (2026-11-11): fix(clickhouse) DBI-1323: validate column types and key expressions structurally (@ilidemi)
+- **PR #5066** (2026-11-11): Drain pending state changes before setup/snapshot ContinueAsNew (@dtunikov)
+- **PR #5065** (2026-11-10): Renovate config: Enable self healing PRs on all updates (@pfcoperez)
+- **PR #5064** (closed): TEST DO NOT MERGE: Remove newline and add 'banana!' to flowable.go (@pfcoperez)
 
 ---
 
@@ -2604,45 +2639,35 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add signal handling and schema changes to tricky areas doc, organize helpers a b
+## X. snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5
 
 **RULE**:
-When implementing operations in `docs/tricky-areas.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/postgres/qrep_partition.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f7f8b7e5`: Add signal handling and schema changes to tricky areas doc, organize helpers a bit (#5033). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6951b76b`: snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5044). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tricky-areas.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/qrep_partition.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| [Temporal signal handling](#temporal-signal-handling) | `flow/workflows/cdc_flow.go`, `flow/workflows/drop_flow.go`, `flow/model/signals.go` |
-| [Schema changes](#schema-changes) | `flow/activities/flowable_core.go`, `flow/model/cdc_stream.go`, `flow/internal/catalog_schema.go`, `flow/connectors/postgres/cdc.go`, `flow/connectors/mysql/cdc.go`, `flow/connectors/clickhouse/` |
+// pg_relation_size is NULL for a child dropped after the snapshot, which pg_inherits still lists; count it as empty.
+const childBlockCountExpr = `COALESCE(pg_relation_size(c.oid) / current_setting('block_size')::int, 0)::bigint`
 
----
-
-## Temporal signal handling
-
-**Why it is tricky.** Pause, resume, terminate and resync requests can arrive while a workflow waits for an
-activity or child workflow. The workflow must continue to handle the requests that it supports in that phase.
-An interrupting request needs the correct state, even if the current operation is only partly complete.
-For this guidance, small catalog interactions such as status updates or logging do not count as long waits.
-
-**What to watch for in a PR.**
-
-- When you add or move a long-running activity or child workflow, check which requests need handling during the wait.
-  For example, snapshot and table-edit operations handle terminate/resync requests while they wait for completion.
-  A direct `.Get()` on new work can delay those requests until the work finishes.
-- Befo
+			`+childBlockCountExpr+`,
+			SELECT `+childBlockCountExpr+`,
+			`+childBlockCountExpr+`,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
+			SELECT (pg_relation_size($1) / current_setting('block_size')::int)::bigint,
+			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f7f8b7e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6951b76b` are properly handled with clean fallback behavior.

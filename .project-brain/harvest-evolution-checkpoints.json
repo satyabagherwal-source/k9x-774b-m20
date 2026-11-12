@@ -1,19 +1,19 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:10:59.813Z",
+  "last_updated": "2026-11-12T14:08:51.306Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-12T01:44:30.411Z",
+      "processed_at": "2026-11-12T11:51:15.265Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-12T02:03:51.166Z",
+      "processed_at": "2026-11-12T14:08:51.266Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-12T01:44:30.443Z",
+      "processed_at": "2026-11-12T12:58:09.378Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-12T01:31:31.275Z",
+      "processed_at": "2026-11-12T10:43:12.746Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -103,7 +103,7 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-12T02:57:07.491Z",
+      "processed_at": "2026-11-12T09:46:27.816Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -163,7 +163,7 @@
       "staged_for_review": 1
     },
     "rustls-rustls-learnings.md": {
-      "processed_at": "2026-11-11T18:04:07.354Z",
+      "processed_at": "2026-11-12T10:53:03.298Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -178,7 +178,7 @@
       "staged_for_review": 1
     },
     "gravitl-netmaker-learnings.md": {
-      "processed_at": "2026-11-11T10:35:34.167Z",
+      "processed_at": "2026-11-12T11:01:20.403Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -203,7 +203,7 @@
       "staged_for_review": 1
     },
     "microsoft-agent-governance-toolkit-learnings.md": {
-      "processed_at": "2026-11-11T10:52:42.163Z",
+      "processed_at": "2026-11-12T04:32:23.462Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-11T23:57:11.647Z",
+      "processed_at": "2026-11-12T13:33:26.528Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-12T01:52:12.660Z",
+      "processed_at": "2026-11-12T13:15:27.363Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-12T02:33:49.102Z",
+      "processed_at": "2026-11-12T08:53:59.706Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -543,7 +543,7 @@
       "staged_for_review": 1
     },
     "nolabs-ai-nono-learnings.md": {
-      "processed_at": "2026-11-11T19:28:51.294Z",
+      "processed_at": "2026-11-12T12:33:11.494Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-12T00:58:53.177Z",
+      "processed_at": "2026-11-12T06:56:30.433Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -736,9 +736,434 @@
       "processed_at": "2026-11-12T03:10:59.806Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "okteto-okteto-learnings.md": {
+      "processed_at": "2026-11-12T03:24:10.789Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "arangodb-arangodb-learnings.md": {
+      "processed_at": "2026-11-12T03:24:10.848Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "dathere-qsv-learnings.md": {
+      "processed_at": "2026-11-12T13:51:03.196Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "dragonflyoss-dragonfly-learnings.md": {
+      "processed_at": "2026-11-12T03:30:59.262Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "trinodb-trino-learnings.md": {
+      "processed_at": "2026-11-12T03:30:59.297Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "peerdb-io-peerdb-learnings.md": {
+      "processed_at": "2026-11-12T03:49:14.392Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "apache-zookeeper-learnings.md": {
+      "processed_at": "2026-11-12T03:49:14.433Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "nucleoidai-nucleoid-learnings.md": {
+      "processed_at": "2026-11-12T03:49:14.467Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tableproapp-tablepro-learnings.md": {
+      "processed_at": "2026-11-12T03:56:31.366Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "koderover-zadig-learnings.md": {
+      "processed_at": "2026-11-12T03:56:31.402Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "fabio-rovai-open-ontologies-learnings.md": {
+      "processed_at": "2026-11-12T04:24:41.331Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "starrocks-starrocks-learnings.md": {
+      "processed_at": "2026-11-12T04:24:41.391Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "pimalaya-himalaya-learnings.md": {
+      "processed_at": "2026-11-12T04:50:46.910Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "jacklandrin-onlyswitch-learnings.md": {
+      "processed_at": "2026-11-12T04:50:47.061Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "apache-pinot-learnings.md": {
+      "processed_at": "2026-11-12T04:50:47.079Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md": {
+      "processed_at": "2026-11-12T05:13:50.798Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "nodejs-undici-learnings.md": {
+      "processed_at": "2026-11-12T05:13:50.810Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "yugabyte-yugabyte-db-learnings.md": {
+      "processed_at": "2026-11-12T05:13:50.883Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "wasm-bindgen-wasm-pack-learnings.md": {
+      "processed_at": "2026-11-12T05:27:35.956Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "axios-axios-learnings.md": {
+      "processed_at": "2026-11-12T05:27:36.005Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "greptimeteam-greptimedb-learnings.md": {
+      "processed_at": "2026-11-12T05:27:36.104Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "ydb-platform-ydb-learnings.md": {
+      "processed_at": "2026-11-12T05:35:19.756Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md": {
+      "processed_at": "2026-11-12T05:47:56.937Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "urllib3-urllib3-learnings.md": {
+      "processed_at": "2026-11-12T05:57:23.670Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "kucherenko-jscpd-learnings.md": {
+      "processed_at": "2026-11-12T06:20:28.221Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "vanniktech-gradle-maven-publish-plugin-learnings.md": {
+      "processed_at": "2026-11-12T06:20:28.256Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "actix-actix-web-learnings.md": {
+      "processed_at": "2026-11-12T06:28:57.402Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "aio-libs-aiohttp-learnings.md": {
+      "processed_at": "2026-11-12T06:28:57.528Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "agent-field-agentfield-learnings.md": {
+      "processed_at": "2026-11-12T06:28:57.584Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "mohamedrejeb-calf-learnings.md": {
+      "processed_at": "2026-11-12T06:41:50.159Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "transact-rs-sqlx-learnings.md": {
+      "processed_at": "2026-11-12T06:56:30.388Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md": {
+      "processed_at": "2026-11-12T06:56:30.418Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "grpc-grpc-rust-learnings.md": {
+      "processed_at": "2026-11-12T07:15:44.983Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-nousresearch-arete-27b-learnings.md": {
+      "processed_at": "2026-11-12T07:16:00.760Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "embassy-rs-embassy-learnings.md": {
+      "processed_at": "2026-11-12T07:38:23.793Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-prunaai-p-h3-image-learnings.md": {
+      "processed_at": "2026-11-12T07:38:38.948Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "zarf-dev-zarf-learnings.md": {
+      "processed_at": "2026-11-12T07:38:38.962Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "telemt-telemt-learnings.md": {
+      "processed_at": "2026-11-12T07:46:43.420Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rdfjs-n3.js-learnings.md": {
+      "processed_at": "2026-11-12T07:46:43.478Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "vespa-engine-vespa-learnings.md": {
+      "processed_at": "2026-11-12T07:46:43.605Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "nsh07-tomato-learnings.md": {
+      "processed_at": "2026-11-12T07:54:33.747Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "clastix-kamaji-learnings.md": {
+      "processed_at": "2026-11-12T07:54:33.809Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "modelcontextprotocol-kotlin-sdk-learnings.md": {
+      "processed_at": "2026-11-12T08:07:22.757Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "genkit-ai-genkit-learnings.md": {
+      "processed_at": "2026-11-12T08:07:22.784Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "redisearch-redisearch-learnings.md": {
+      "processed_at": "2026-11-12T08:19:36.670Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
+    },
+    "salvo-rs-salvo-learnings.md": {
+      "processed_at": "2026-11-12T08:35:03.648Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
+    },
+    "digitalbazaar-pyld-learnings.md": {
+      "processed_at": "2026-11-12T08:35:03.673Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "openyurtio-openyurt-learnings.md": {
+      "processed_at": "2026-11-12T08:35:03.911Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "maziyarpanahi-openmed-learnings.md": {
+      "processed_at": "2026-11-12T08:53:59.620Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hashicorp-terraform-learnings.md": {
+      "processed_at": "2026-11-12T08:53:59.671Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "aquasecurity-trivy-learnings.md": {
+      "processed_at": "2026-11-12T09:25:54.320Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "clickhouse-clickhouse-learnings.md": {
+      "processed_at": "2026-11-12T09:25:54.398Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "pulumi-pulumi-learnings.md": {
+      "processed_at": "2026-11-12T09:46:27.563Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "nvidia-cuda-rust-learnings.md": {
+      "processed_at": "2026-11-12T09:55:37.951Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-viggle-viggle-remake-learnings.md": {
+      "processed_at": "2026-11-12T09:55:51.213Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "buresdv-cork-learnings.md": {
+      "processed_at": "2026-11-12T09:55:51.227Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "aws-aws-cdk-learnings.md": {
+      "processed_at": "2026-11-12T10:17:38.596Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "infracost-infracost-learnings.md": {
+      "processed_at": "2026-11-12T10:43:12.655Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "ntex-rs-ntex-learnings.md": {
+      "processed_at": "2026-11-12T10:53:03.203Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "encoredev-encore-learnings.md": {
+      "processed_at": "2026-11-12T10:53:03.259Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "xudong-huang-may-learnings.md": {
+      "processed_at": "2026-11-12T11:01:20.387Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "volcengine-openviking-learnings.md": {
+      "processed_at": "2026-11-12T11:01:33.162Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
+    },
+    "vercel-labs-agent-desktop-learnings.md": {
+      "processed_at": "2026-11-12T11:18:53.132Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-microsoft-mage-vl-cowork-learnings.md": {
+      "processed_at": "2026-11-12T11:19:08.436Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "meshery-meshery-learnings.md": {
+      "processed_at": "2026-11-12T11:19:08.452Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "google-closure-compiler-learnings.md": {
+      "processed_at": "2026-11-12T11:38:00.745Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "jellyfin-swiftfin-learnings.md": {
+      "processed_at": "2026-11-12T11:38:00.893Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "bridgecrewio-checkov-learnings.md": {
+      "processed_at": "2026-11-12T11:38:00.981Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "sveltejs-svelte-learnings.md": {
+      "processed_at": "2026-11-12T11:51:15.138Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "pathwaycom-llm-app-learnings.md": {
+      "processed_at": "2026-11-12T11:51:15.204Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "u-root-u-root-learnings.md": {
+      "processed_at": "2026-11-12T12:20:20.302Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "solidjs-solid-learnings.md": {
+      "processed_at": "2026-11-12T12:20:20.378Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "gocd-gocd-learnings.md": {
+      "processed_at": "2026-11-12T12:20:20.443Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "vitejs-vite-learnings.md": {
+      "processed_at": "2026-11-12T12:33:11.409Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "milvus-io-milvus-learnings.md": {
+      "processed_at": "2026-11-12T12:33:11.617Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 0
+    },
+    "webpack-webpack-learnings.md": {
+      "processed_at": "2026-11-12T12:50:51.248Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "touchlab-xcode-kotlin-learnings.md": {
+      "processed_at": "2026-11-12T12:50:51.297Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rollup-rollup-learnings.md": {
+      "processed_at": "2026-11-12T12:58:09.320Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "yvgude-lean-ctx-learnings.md": {
+      "processed_at": "2026-11-12T13:15:12.695Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-liquidai-lfm3-1.7b-gguf-learnings.md": {
+      "processed_at": "2026-11-12T13:15:27.334Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "dnscontrol-dnscontrol-learnings.md": {
+      "processed_at": "2026-11-12T13:33:26.305Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "ataraxy-labs-sem-learnings.md": {
+      "processed_at": "2026-11-12T13:51:03.057Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "parcel-bundler-parcel-learnings.md": {
+      "processed_at": "2026-11-12T13:51:03.099Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tanstack-query-learnings.md": {
+      "processed_at": "2026-11-12T14:08:51.169Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "weaviate-weaviate-learnings.md": {
+      "processed_at": "2026-11-12T14:08:51.229Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 189,
-  "total_canonical_promoted": 24,
-  "total_staged_for_review": 162
+  "total_dossiers_evaluated": 315,
+  "total_canonical_promoted": 39,
+  "total_staged_for_review": 275
 }

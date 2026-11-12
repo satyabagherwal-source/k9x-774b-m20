@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `f97f122a`  
+> **Source Version**: `013ddb1c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T22:14:47.804Z  
+> **Timestamp**: 2026-11-12T13:10:11.760Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T22:14:47.575Z  
+> **Harvest Timestamp**: 2026-11-12T13:10:11.559Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3937 stars
+- **Stars / Engagement**: 3940 stars
 
 ---
 
@@ -1938,6 +1938,7 @@ use std::collections::HashSet;
 
 use serde_json::Value;
 
+use crate::capture::conflicts::Kind;
 use crate::replica::fold::{Graph, Node};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -2025,25 +2026,55 @@ pub struct Index {
 }
 
 impl Index {
+    /// From the folded edges alone.
     pub fn new(graph: &Graph) -> Self {
-        let superseded: HashSet<String> = graph
+        Self::build(graph, &[])
+    }
+
+    /// From the folded edges and the links of each fact's values the save
+    /// history resolves ([`crate::capture::conflicts::derived`]): two
+    /// Instances' concurrent values of one shared fact are `conflicting`
+    /// as soon as both are folded here, not only once the conflict edge has
+    /// travelled through the Hive (#286).
+    pub fn with_saves(
+        graph: &Graph,
+        saves: &std::collections::BTreeMap<String, crate::replica::log::Save>,
+    ) -> Self {
+        Self::build(graph, &crate::capture::conflicts::derived(graph, saves))
+    }
+
+    fn build(graph: &Graph, links: &[(Kind, String, String)]) -> Self {
+        let mut superseded: HashSet<String> = graph
             .edges
             .values()
             .filter(|e| e.kind == "supersedes" && !e.retracted && live(graph, &e.from))
             .map(|e| e.to.clone())
             .collect();
+        superseded.extend(
+            links
+                .iter()
+                .filter(|(kind, from, _)| *kind == Kind::Supersedes && live(graph, from))
+                .map(|(_, _, to)| to.clone()),
+        );
         let open = |id: &str| live(graph, id) && !superseded.contains(id);
         let mut contradicted = HashSet::new();
-        for e in graph
+        let pairs = graph
             .edges
             .values()
             .filter(|e| e.kind == "contradicts" && !e.retracted)
-        {
-            if open(&e.to) {
-                contradicted.insert(e.from.clone());
+            .map(|e| (e.from.as_str(), e.to.as_str()))
+            .chain(
+                links
+                    .iter()
+                    .filter(|(kind, _, _)| *kind == Kind::Contradicts)
+                    .map(|(_, from, to)| (from.as_str(), to.as_str())),
+            );
+        for (from, to) in pairs {
+            if open(to) {
+                contradicted.insert(from.to_owned());
             }
-            if open(&e.from) {
-                contradicted.insert(e.to.clone());
+            if open(from) {
+                contradicted.insert(to.to_owned());
             }
         }
         Self {
@@ -2182,35 +2213,7 @@ mod tests {
     /// Retrieval never serves outdated, conflicting or rejected knowledge
     /// as current truth: rejected and superseded leave delivery, the rest
     /// come last with a label.
-    #[test]
-    fn delivery_marks_or_drops_what_is_not_current_truth() {
-        use crate::delivery::{Bucket, items, render};
-        let mut g = Graph::default();
-        let mut add = |id: &str, statement: &str, extra: Value| {
-            let mut f = json!({"statement": statement, "evidence": "observed"});
-            for (k, v) in extra.as_object().unwrap() {
-                f[k] = v.clone();
-            }
-            let mut n = node(&f);
-            n.provenance = Some("workspace".into());
-            g.nodes.insert(id.into(), n);
-        };
-        add("n_ok", "Retries back off with jitter.", json!({}));
-        add("n_old", "Retries use a fixed delay.", json!({}));
-        add("n_new", "Retries back off with full jitter.", json!({}));
-        add(
-            "n_moved",
-            "The retry cap lives in retry.rs.",
-            json!({"anchor_state": "to_verify"}),
-        );
-        add("n_x", "Retries are unlimited.", json!({}));
-        add("n_y", "Retries stop after five tries.", json!({}));
-        g.edges
-            .insert("e_s".into(), edge("supersedes", "n_new", "n_old"));
-        g.edges
-            .insert("e_c".into(), edge("contradicts", "n_x", "n_y"));
-        let no_trust = |_: &str| -> Option<String> { None };
-        let list = items(&g
+    #[
 ```
 
 ### Core Architecture Module: `rust/crates/lean-ctx-hive/src/state.rs`
@@ -2511,1273 +2514,561 @@ impl HiveStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1172309` (2026-11-09)
-**Commit Message**: fix(deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI
+### Incident Patch 1: `c5299b02` (2026-11-11)
+**Commit Message**: release: 3.12.3 — linux-gnu binary budget 110 MB
 
-Security Check (Dependency audit) and CI (Licensing, cargo-deny) fail on
-main because of three advisories:
+Exported from the private source 61a53a1ee8edda775f7d3a90a78ada96a743aa18 (integration/3.12.3, MR 294): the v3.12.3 tag run measured the stripped x86_64-unknown-linux-gnu binary at 101,999,384 bytes (3.12.2: 96,853,528), over the 100 MB ceiling; the ceiling rises with a CHANGELOG line naming the cause.
 
-- RUSTSEC-2026-0459: bundled SQLite in libsqlite3-sys. rusqlite 0.39 ->
-  0.41 (libsqlite3-sys 0.39.1).
-- RUSTSEC-2026-0457: rmcp OAuth discovery follows metadata URLs to
-  private/loopback addresses (fixed in rmcp >= 3.7).
-- RUSTSEC-2026-0462: rmcp HTTP client reads response bodies unbounded
-  (fixed in rmcp >= 3.9).
-
-lean-ctx uses both rmcp paths (mcp_catalog OAuth login and streamable
-HTTP client), so the advisories are fixed, not ignored: the vendored
-rmcp/rmcp-macros move from 2.0.0 to upstream 3.9.0.
-
-Of the four lean-ctx patches on 2.0.0, three are upstream in 3.x (the
-JoinSet drain #1161, the #1391 status-page discovery fix, the
-SseStream rename). One stays: a one-shot transport releases its
-service even when the caller disconnected. The #1391 regression test is
-ported to the 3.9 API.
-
-API migration in lean-ctx: Meta -> RequestMetaObject (request _meta)
-and MetaObject (result/content _meta); ServerHandler call_tool,
-get_prompt and read_resource return the *Response types;
-with_stateful_mode -> with_lega
-
-**File**: `CHANGELOG.md` (modified, +8/-0)
+**File**: `CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -62,6 +62,14 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   from its automatic reviewer both refuse the command and name `lean-ctx allow`; an accept without
-   a choice runs nothing.
+@@ -342,6 +342,12 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
  
-+- **Dependencies with published advisories are updated.** The bundled SQLite moves to the
-+  release `rusqlite` 0.41 ships, fixing RUSTSEC-2026-0459. The vendored MCP SDK `rmcp` moves
-+  from 2.0 to 3.9, which bounds HTTP response bodies an MCP server sends to `lean-ctx`
-+  (RUSTSEC-2026-0462) and stops OAuth discovery for HTTP MCP servers from following metadata
-+  URLs to private or loopback addresses (RUSTSEC-2026-0457). The lean-ctx patches on top of
-+  `rmcp` shrink to one, since 3.9 contains the other fixes; `lean-ctx-embed` now declares the
-+  Rust 1.89 its dependencies need.
+ ### Changed
+ 
++- **The `x86_64-unknown-linux-gnu` binary budget is 110 MB.** The 3.12.3 release
++  binary measures 101,999,384 bytes (3.12.2: 96,853,528) after this release's
++  additions — the Hive G6 gate on Windows and macOS, the shell-policy and symlink
++  hardening, the change-envelope contract and classifier — and crossed the 100 MB
++  ceiling set on 2026-10-15; `product/binary-budget.json` records the new measurement.
 +
- ## [3.12.2] — 2026-11-04
+ - **Changelog entries are fragments, so merge requests stop conflicting on
+   `CHANGELOG.md`.** A merge request adds its entry as one file in `changelog.d/`
+   (front matter `section`, optional `version`, then the bullet) instead of editing
+```
+
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +8/-8)
+```diff
+@@ -331,11 +331,11 @@
+    "size": 1033
+   },
+   {
+-   "blob": "fae48f18741e39faaa3ce4867a05223e419e86a5",
++   "blob": "3b18c6e600a28d639dc8147fadad16bcce42e098",
+    "mode": "100644",
+    "path": "CHANGELOG.md",
+-   "sha256": "c06077b55ffa7342e907f835e16e799ae89c3c735995ab0d4e79c6ef82aa55f2",
+-   "size": 1268998
++   "sha256": "32f337259c460e0cd57e984f26bb7f5feff73b4167ee721c940773880cb2ad42",
++   "size": 1269413
+   },
+   {
+    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
+@@ -4643,11 +4643,11 @@
+    "size": 272
+   },
+   {
+-   "blob": "b1f1861632988b685bbeaa7a64c9b00ad5470ad9",
++   "blob": "5b8999a68a4b63d7824fe6279ab1e123ab42fbe5",
+    "mode": "100644",
+    "path": "product/binary-budget.json",
+-   "sha256": "e362aa2aafdfba44653016381f465ceb8cd9254e06cb5231bc248d99e2a36bb9",
+-   "size": 513
++   "sha256": "890da29de9711e8b32f1efcd5146d365e11335134997b271619079fc1e7312c4",
++   "size": 556
+   },
+   {
+    "blob": "e6157bd6595e8d7a3280363d3e7ab7fdb5c12bb2",
+@@ -36603,7 +36603,7 @@
+  ],
+  "manifest_sha256": "c229a578887eba9d41607f9a767234d1cb2a72dcb8889aba47507b38e549362d",
+  "schema": 1,
+- "source_commit": "04909d16f75deda223f610f9474ace20c5c4195f",
++ "source_commit": "61a53a1ee8edda775f7d3a90a78ada96a743aa18",
+  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
+- "tree_sha256": "ae1553bea164ae0acfac78027aa6c4169333c669a0c75d01a28d59b9b987d9e7"
++ "tree_sha256": "94f67cdcab205a530d7e99e8bc1fceae96ba351ca287727ceaa8322383b94cac"
+ }
+```
+
+**File**: `product/binary-budget.json` (modified, +3/-3)
+```diff
+@@ -2,9 +2,9 @@
+   "_comment": "Ceilings for the stripped release binary, in bytes, per release artifact (focus plan item 15, 2026-10-15). Only measured artifacts carry a ceiling; the others are reported, not gated, until measured. Raise a ceiling only together with a CHANGELOG line that names the cause.",
+   "artifacts": {
+     "x86_64-unknown-linux-gnu": {
+-      "max_bytes": 100000000,
+-      "measured_bytes": 95300000,
+-      "measured": "2026-10-15, default features without grammars-long-tail, release profile"
++      "max_bytes": 110000000,
++      "measured_bytes": 101999384,
++      "measured": "2026-11-11, v3.12.3 release build (3.12.2: 96853528), default features without grammars-long-tail, release profile"
+     }
+   }
+ }
+```
+
+---
+
+### Incident Patch 2: `5d824a5b` (2026-11-11)
+**Commit Message**: test: session readset fixture uses platform-absolute paths (Windows)
+
+Exported from the private source 6934c8e50d1fafd2360ad4ddcf88a5cc12addce4 (integration/3.12.3).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +5/-5)
+```diff
+@@ -30543,11 +30543,11 @@
+    "size": 10080
+   },
+   {
+-   "blob": "9da14276e40a7679c1e9be2d6f0f978344f50ca4",
++   "blob": "51223ec1ff356d1f6cc1f71e1d018671d782855d",
+    "mode": "100644",
+    "path": "rust/src/core/session_readset.rs",
+-   "sha256": "4c90c84db546252fa323b9d3aa5e7e0396bdd1aa6ad499e7dd59e3a7d85d649b",
+-   "size": 8162
++   "sha256": "9b25440d66e4e20b0c29277a5c386082b5320544c3365aa24097c33c377ec0a4",
++   "size": 8605
+   },
+   {
+    "blob": "f299cfd67003d9ec72a386f8eff995c2bd901787",
+@@ -36673,7 +36673,7 @@
+  ],
+  "manifest_sha256": "f93d33787261d859fd35f4d7039d448f1888b67b2163accf818519e27aa33880",
+  "schema": 1,
+- "source_commit": "bbab4d44321ff9aabac0dfd588b41faca35b3bb3",
++ "source_commit": "6934c8e50d1fafd2360ad4ddcf88a5cc12addce4",
+  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
+- "tree_sha256": "2d150be676e1db20fae1d27188fbee42994b30cbceef9732c03ccb84c33ed493"
++ "tree_sha256": "2feb7f24ffd8c3c420896f60c64b38e9544f84aa0e1511942d066c47f639a91b"
+ }
+```
+
+**File**: `rust/src/core/session_readset.rs` (modified, +21/-6)
+```diff
+@@ -180,19 +180,34 @@ mod tests {
+         s
+     }
+ 
++    /// An absolute path on this platform: on Windows a path without a drive
++    /// prefix is not absolute, so the fixture would count as relative there.
++    fn abs(p: &str) -> String {
++        if cfg!(windows) {
++            format!("C:{}", p.replace('/', "\\"))
++        } else {
++            p.to_string()
++        }
++    }
++
+     #[test]
+     fn read_set_is_relative_merged_and_sorted() {
+-        let root = Path::new("/nonexistent-readset-root/repo");
++        let root = PathBuf::from(abs("/nonexistent-readset-root/repo"));
++        let (b_rs, a_rs) = (
++            abs("/nonexistent-readset-root/repo/src/b.rs"),
++            abs("/nonexistent-readset-root/repo/src/a.rs"),
++        );
++        let other = abs("/nonexistent-readset-root/repo/../other/x.rs");
+         let mut a = session(
+             "a",
+             &[
+-                ("/nonexistent-readset-root/repo/src/b.rs", "full"),
+-                ("/nonexistent-readset-root/repo/src/a.rs", "map"),
++                (b_rs.as_str(), "full"),
++                (a_rs.as_str(), "map"),
+                 ("/etc/hosts", "full"),
+-                ("/nonexistent-readset-root/repo/../other/x.rs", "full"),
++                (other.as_str(), "full"),
+             ],
+         );
+-        a.mark_modified("/nonexistent-readset-root/repo/src/a.rs");
++        a.mark_modified(&a_rs);
+         let b = session(
+             "b",
+             &[
+@@ -202,7 +217,7 @@ mod tests {
+             ],
+         );
+ 
+-        let set = from_sessions(root, &[a, b]);
++        let set = from_sessions(&root, &[a, b]);
+         assert_eq!(set.schema, SCHEMA);
+         assert_eq!(set.sessions, vec!["a", "b"]);
+         assert_eq!(set.outside_root, 3);
+```
+
+---
+
+### Incident Patch 3: `57843125` (2026-11-10)
+**Commit Message**: release: 3.12.3 — public CI fixes, round 4
+
+Exported from the private source a903b11dfeac77166e57c5eb09e378cd05ea211f (integration/3.12.3 with lane runners and Hive D4 #86 merged in; MR 265 round 4: the G6 gate run tests are Unix-only).
+
+**File**: `CHANGELOG.md` (modified, +12/-0)
+```diff
+@@ -6,6 +6,18 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ 
+ ## [Unreleased]
+ 
++### Added
++
++- **Policy enforcement acknowledged to Hive (D4).** The bus hello now names the features
++  `policy_advanced` and `policy_applied`, so Hive delivers its `policy.advanced` nudge (it
++  sends that nudge only to Instances that name the feature). Once per version and digest of a
++  verified policy that is in force and that Hive acknowledged, the Instance sends one
++  `policy.applied` frame: `version`, `digest`, `key_id`, `applied_at` and `sessions` (the live
++  app sessions enforcing it). It sends the frame only when Hive's `hello.ack.features` names
++  `policy_applied`. An expired, outdated or unverified policy is never reported. Local Read
++  `policy.sessions` adds `installed.enforcement` (`applied_version`, `acknowledged_at`,
++  `sessions`, `reported_at`), additively.
++
+ ## [3.12.3] — 2026-11-10
  
  ### Added
 ```
 
-**File**: `rust/Cargo.lock` (modified, +27/-22)
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +43/-43)
 ```diff
-@@ -929,36 +929,36 @@ dependencies = [
- 
- [[package]]
- name = "darling"
--version = "0.23.0"
-+version = "0.24.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "25ae13da2f202d56bd7f91c25fba009e7717a1e4a1cc98a76d844b65ae912e9d"
-+checksum = "ed17f5901b6630b993ca003def43f2f8ef4014fc13b047b57aad617ff32bc2ec"
- dependencies = [
-  "darling_core",
-  "darling_macro",
- ]
- 
- [[package]]
- name = "darling_core"
--version = "0.23.0"
-+version = "0.24.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9865a50f7c335f53564bb694ef660825eb8610e0a53d3e11bf1b0d3df31e03b0"
-+checksum = "6837e2cf7485aaae18f86181d2f0e9a7ed297a025e220aeabf63fdebd3a2ddff"
- dependencies = [
-  "ident_case",
-  "proc-macro2",
-  "quote",
-  "strsim",
-- "syn 2.0.119",
-+ "syn 3.0.3",
- ]
- 
- [[package]]
- name = "darling_macro"
--version = "0.23.0"
-+version = "0.24.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ac3984ec7bd6cfa798e62b4a642426a5be0e68f9401cfc2a01e3fa9ea2fcdb8d"
-+checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
- dependencies = [
-  "darling_core",
-  "quote",
-- "syn 2.0.119",
-+ "syn 3.0.3",
- ]
- 
- [[package]]
-@@ -1656,11 +1656,11 @@ dependencies = [
- 
- [[package]]
- name = "hashlink"
--version = "0.11.1"
-+version = "0.12.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "824e001ac4f3012dd16a264bec811403a67ca9deb6c102fc5049b32c4574b35f"
-+checksum = "a596f1b20ed2cc5ecac41a164aaebc7258057060f06c0cf7a2ba3991ee7990fb"
- dependencies = [
-- "hashbrown 0.16.1",
-+ "hashbrown 0.17.1",
- ]
- 
- [[package]]
-@@ -1978,6 +1978,8 @@ checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
- dependencies = [
-  "equivalent",
-  "hashbrown 0.17.1",
-+ "serde",
-+ "serde_core",
- ]
- 
- [[package]]
-@@ -2709,9 +2711,9 @@ dependencies = [
- 
- [[package]]
- name = "libsqlite3-sys"
--version = "0.37.0"
-+version = "0.39.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b1f111c8c41e7c61a49cd34e44c7619462967221a6443b0ec299e0ac30cfb9b1"
-+checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
- dependencies = [
-  "cc",
-  "pkg-config",
-@@ -3453,9 +3455,9 @@ dependencies = [
- 
- [[package]]
- name = "process-wrap"
--version = "9.1.0"
-+version = "10.0.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2e842efad9119158434d193c6682e2ebee4b44d6ad801d7b349623b3f57cdf55"
-+checksum = "1f21b97672d2dc848e7b25701ab4535618b92f4861c13cc3f7f7bed52ad3c8da"
- dependencies = [
-  "futures",
-  "indexmap",
-@@ -3864,16 +3866,18 @@ dependencies = [
- 
- [[package]]
- name = "rmcp"
--version = "2.0.0"
-+version = "3.9.0"
- dependencies = [
-  "async-trait",
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "bytes",
-  "chrono",
-  "futures",
-  "http",
-  "http-body",
-  "http-body-util",
-+ "indexmap",
-+ "libc",
-  "oauth2",
-  "pastey",
-  "pin-project-lite",
-@@ -3884,6 +3888,7 @@ dependencies = [
-  "schemars",
-  "serde",
-  "serde_json",
-+ "sha2 0.11.0",
-  "sse-stream",
-  "thiserror 2.0.20",
-  "tokio",
-@@ -3897,13 +3902,13 @@ dependencies = [
- 
- [[package]]
- name = "rmcp-macros"
--version = "2.0.0"
-+version = "3.9.0"
- dependencies = [
-  "darling",
-  "proc-macro2",
-  "quote",
-  "serde_json",
-- "syn 2.0.119",
-+ "syn 3.0.3",
- ]
- 
- [[package]]
-@@ -3939,9 +3944,9 @@ dependencies = [
- 
- [[package]]
- name = "rusqlite"
--version = "0.39.0"
-+version = "0.41.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a0d2b0146dd9661bf67bb107c0bb2a55064d556eeb3fc314151b957f313bcd4e"
-+checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
- dependencies = [
-  "bitflags 2.13.1",
-  "fallible-iterator",
-@@ -4643,7 +4648,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.3.4",
-+ "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-  "windows-sys 0.61.2",
+@@ -331,11 +331,11 @@
+    "size": 1033
+   },
+   {
+-   "blob": "808fa3665c9507d0d31795416f7324ba00e2d177",
++   "blob": "728adaa81e8016ee004dd87f0934cd6ee3307354",
+    "mode": "100644",
+    "path": "CHANGELOG.md",
+-   "sha256": "b63750409d5556f85b44fd4c193437e16d1bdb2011aa35be5be1be668a4b7001",
+-   "size": 1267801
++   "sha256": "0dbe1dfca5979f219218f41f8334cd2794cfeb552198e7c8a7665b964a0c4913",
++   "size": 1268583
+   },
+   {
+    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
+@@ -527,11 +527,11 @@
+    "size": 6789
+   },
+   {
+-   "blob": "729b65bad756d447d3ca4e0bb16215a1e3685a9d",
++   "blob": "abd8f1e234c5ade04a1daa7079211e205a3e638c",
+    "mode": "100644",
+    "path": "ci/gitlab-ci.yml",
+-   "sha256": "1b8826827152e016b648c3f45337cc6f12400492b8e1942143b4402cc22dab4d",
+-   "size": 29580
++   "sha256": "5e31a1a92209fe4d210785b51cd59369c7486a7137ef3b293b0a78ef9c6f1b66",
++   "size": 30403
+   },
+   {
+    "blob": "102f24e836104cc226bf24b5a5ce582ec184eb39",
+@@ -1892,11 +1892,11 @@
+    "size": 3785
+   },
+   {
+-   "blob": "d82e035d1e0935af08bb847ca5d92ab7b61abb07",
++   "blob": "c06fa87cf8584e825795a26bcc251ff24dc42419",
+    "mode": "100644",
+    "path": "docs/contracts/local-read-v1.md",
+-   "sha256": "2ed3dbd27344728743f3da1f8567d6aaf94107d222dda193a2ea1905fa8b448c",
+-   "size": 98877
++   "sha256": "017da7e3d07c3814e8014286a1162546daebb9752709220b66e17773adff77cc",
++   "size": 100104
+   },
+   {
+    "blob": "ca8a33f8c31a647aa8f50837cd73ab37b9c9dcba",
+@@ -2466,10 +2466,10 @@
+    "size": 671
+   },
+   {
+-   "blob": "2e083ee2622e32b7ec5473b04b04607d5bbf8a9a",
++   "blob": "ad0976c4016071ba8026b0a8feb111e3157d16bb",
+    "mode": "100644",
+    "path": "docs/contracts/team-seat-value-v1/frozen-hashes.json",
+-   "sha256": "61556b4c9626d82a24c1f05a1de60e90fbae874da1a2b916957d09a98dc490c9",
++   "sha256": "061504c8e73b362bcaad8445051926bb5933238fa7fc149bcb1361bcfb803f7f",
+    "size": 3887
+   },
+   {
+@@ -2760,11 +2760,11 @@
+    "size": 8615
+   },
+   {
+-   "blob": "46fe05aa8e13234a28f2f800b1159d46f8a33bb6",
++   "blob": "3a9fe17d6924c24ea0d15da4e6ff89fa7b8d044d",
+    "mode": "100644",
+    "path": "docs/guides/hive-background-sync.md",
+-   "sha256": "1f59347ce44d71fddd9bd678c284b0f63cab029619b1ba8abf87d809870b9ebb",
+-   "size": 4144
++   "sha256": "4ce83a84ba33e760eff8cc8be5c875559ce3805d46392e1afce640a8b81a423b",
++   "size": 4512
+   },
+   {
+    "blob": "d05cf870ace29f6619fc0164b92e063e8b70754c",
+@@ -5294,18 +5294,18 @@
+    "size": 13340
+   },
+   {
+-   "blob": "21a43809e40c1696cfa1da2820f1d97e64792f8e",
++   "blob": "fda67db27945c2405cff3aef1e103a55c8c92d93",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-hive/src/bus/relay_v2.rs",
+-   "sha256": "8af34b7bdc04618e2aa04b3cfacf5c57ea0c72a12395ab9c5e56704150e389e6",
+-   "size": 34331
++   "sha256": "20ef2f4e74f721d37e86abe8cdc042eec39266d50d1fa577c19983b195a1fbc3",
++   "size": 35081
+   },
+   {
+-   "blob": "34ddc427cb70d2109f3e648701c5497a022f4726",
++   "blob": "3381ab57bad96521363a50847c4e95c72a18c1d7",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-hive/src/bus/relay_v2_tests.rs",
+-   "sha256": "5a7d5ca2b3ef27839278cae6df134a5a9e0f5a5171f4942540c1b405f68ea3e4",
+-   "size": 36200
++   "sha256": "489820c208ddf5a9731174579dc4535890ee1d9a98b27c637a4bd477104afd48",
++   "size": 36368
+   },
+   {
+    "blob": "abfc0a33c9d2048b924e4c1396199f763caa846b",
+@@ -5350,11 +5350,11 @@
+    "size": 20758
+   },
+   {
+-   "blob": "e3e13a56a585a3a67e53bbf28e6093a7156f61ed",
++   "blob": "ca018f44b912b5996cb8f98536217cc7ba54fe8d",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-hive/src/bus/ws/session.rs",
+-   "sha256": "fb4dab3940dd38de891b68bd37c1c43c1727c50ff4ed707716403aac1817862f",
+-   "size": 45730
++   "sha256": "b1883e42476fb19798b6502b1b02fbfc77338a19ebe4eed25003a3f23e6e778c",
++   "size": 46511
+   },
+   {
+    "blob": "a84cd0edf1cc76389c2d6a8556aeee66222b4dac",
+@@ -5910,18 +5910,18 @@
+    "size": 15796
+   },
+   {
+-   "blob": "09f5850a593d64c685fa877778c4e010d380aeb6",
++   "blob": "9d48aa9f794493c1fdff312f7f676b7a5ebaaea5",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-hive/src/policy_sessions.rs",
+-   "sha256": "098c37a48ca1420edc376b40ba06bc570ba81af7a01f980d0edcd26f99b14d2c",
+-   "size": 9288
++   "sha256": "2e87be9b60c96ac60cc67af22ec52d08bfcc88d8033ed3f20e9f7c33e2764e60",
++   "size": 12818
+   },
+   {
+-   "blob": "0a209cab0e99531bb2b3a5e7dbbf1d2aa6295448",
++   "blob": "46fadc95bc4dd4bb424550626eaee1ae8b1bbcdb",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx-hive/src/policy_sessions_tests.rs",
+-   "sha256": "e501216b8b24744e6dc6b24d08f204925dac45da5b46ba68750c0c5cd0df00c9",
+-   "size": 5094
++   "sha256": "d6a3b090a2f12381fa6055b1c133dec4e53815a4b937bee2bbd9e2e64a7d182e",
++   "size": 8175
+   },
+   {
+    "blob": "704131d4803834369afa8099b469f896e2eaf279",
+@@ -6274,11 +6274,11 @@
+    "size": 32088
+   },
+   {
+-   "blob": "bfc67ee4247457b0a646ad90797f35d8ccc7beca",
++   "blob": "9ddf82befec172ecd39f5a63f3936e945251ecf8",
+    "mode": "100644",
+    "path": "rust/crates/
 ```
 
-**File**: `rust/Cargo.toml` (modified, +6/-7)
+**File**: `ci/gitlab-ci.yml` (modified, +16/-0)
 ```diff
-@@ -147,7 +147,7 @@ lean-ctx-compress = { path = "crates/lean-ctx-compress", version = "0.1.0" }
- lean-ctx-fs = { path = "crates/lean-ctx-fs", version = "0.1.0" }
- lean-ctx-syntax = { path = "crates/lean-ctx-syntax", version = "0.1.0" }
- lean-ctx-doc = { path = "crates/lean-ctx-doc", version = "0.1.0" }
--rmcp = { version = "2", features = [
-+rmcp = { version = "3", features = [
-   "server",
-   "client",
-   "transport-io",
-@@ -200,7 +200,7 @@ toml = "1.1"
- toml_edit = "0.25"
- similar = "3.1"
- flate2 = "1.1"
--rusqlite = { version = "0.39", features = ["bundled"] }
-+rusqlite = { version = "0.41", features = ["bundled"] }
- tree-sitter = { version = "0.26", optional = true }
- # platform-verifier: validate TLS against the OS trust store (corp proxy CAs),
- # not just compiled-in webpki-roots. Opt-in per-agent via RootCerts::PlatformVerifier.
-@@ -503,11 +503,10 @@ harness = false
- # Protocol 0.5.0 is the in-tree migration release; keep workspace/root builds
- # on these exact local bytes until that release is published to crates.io.
- # Remove this entry only after publication and registry-version verification.
--# rmcp 2.0.0 keeps completed response-send tasks in a JoinSet until shutdown,
--# which grows RSS for long-lived MCP sessions. Keep this vendored patch until
--# modelcontextprotocol/rust-sdk ships the continuous drain fix.
--# Also patched: OAuth discovery ignores a 200 status page on the MCP endpoint
--# instead of reading it as resource metadata (#1391, transport/auth.rs).
-+# rmcp 3.9.0 with one lean-ctx patch: a one-shot transport releases its service
-+# even when the caller has disconnected (transport.rs). The JoinSet drain
-+# (#1161) and the status-page fix for OAuth discovery (#1391) are upstream
-+# since 3.x; the #1391 regression test stays in transport/auth.rs.
- [patch.crates-io]
- lean-ctx-protocol = { path = "crates/lean-ctx-protocol" }
- rmcp = { path = "crates/vendor/rmcp" }
+@@ -8,7 +8,15 @@ workflow:
+   auto_cancel:
+     on_new_commit: interruptible
+   rules:
++    # CI_LANE_TAG picks the project's runner lane (see `variables` below):
++    # merge trains test what lands, so they take the main lane; every other
++    # merge request pipeline takes the MR lane.
++    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_EVENT_TYPE == "merge_train"'
++      variables:
++        CI_LANE_TAG: lane-p5-main
+     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
++      variables:
++        CI_LANE_TAG: lane-p5-mr
+     # Post-merge pipelines: merges land as pushed merge commits, so the
+     # combined result is only tested here. Every merge keeps its own verdict,
+     # so a later push never cancels the previous post-merge run.
+@@ -31,6 +39,11 @@ include:
+           - ee/ci/scope-register.yml
+ 
+ variables:
++  # Per-project runner lane for the heavy jobs (owner 10.11.): lane-p5-main
++  # for integration/*, default-branch and merge-train pipelines, lane-p5-mr
++  # for merge requests (workflow rules above). The lane runners take only
++  # their own tag; the light jobs stay on `light`.
++  CI_LANE_TAG: lane-p5-main
+   # Checkout (measured 09.11. over 20 green pipelines: get_sources median
+   # 2-6 s per job, of which the fetch itself is under 1 s). The runner keeps
+   # one clone per concurrent slot in a persistent volume and only fetches new
+@@ -101,6 +114,9 @@ v4-runtime:
+   image:
+     name: lean-ctx-ci-rust:65e3bbf776c5
+     pull_policy: if-not-present
++  # The project's lane runner (CI_LANE_TAG above); mr-quick and mr-lint
++  # inherit it.
++  tags: ["$CI_LANE_TAG"]
+   timeout: 3 hours
+   interruptible: true
+   # Start only after the fast provenance gate passed: a red provenance makes
 ```
 
-**File**: `rust/crates/lean-ctx-embed/Cargo.toml` (modified, +1/-1)
+**File**: `docs/contracts/local-read-v1.md` (modified, +21/-2)
 ```diff
-@@ -2,7 +2,7 @@
- name = "lean-ctx-embed"
- version = "0.1.0"
- edition = "2024"
--rust-version = "1.87"
-+rust-version = "1.89"
- license = "Apache-2.0"
- description = "Experimental Apache Rust facade for embedding LeanCTX | OSS in-process. Not an SDK: LeanCTX | SDK is thinkery-leanctx-sdk (Python)."
- repository = "https://github.com/yvgude/lean-ctx"
-```
-
-**File**: `rust/crates/lean-ctx-hive/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ futures = "0.3"
- dirs = "6.0"
- chrono = { version = "0.4", features = ["serde"] }
- toml = "1.1"
--rusqlite = { version = "0.39", features = ["bundled"] }
-+rusqlite = { version = "0.41", features = ["bundled"] }
- ureq = { version = "3.3", features = ["platform-verifier"] }
- tokio-tungstenite = { version = "0.29", default-features = false, features = [
-   "connect",
-```
-
-**File**: `rust/crates/lean-ctx-proxy/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ shape-xlat = ["lean-ctx-engine/shape-xlat"]
- [dependencies]
- lean-ctx-engine = { path = "../..", version = "=3.12.2", default-features = false }
- lean-ctx-protocol = { path = "../lean-ctx-protocol", version = "0.5.0" }
--rmcp = { version = "2", features = [
-+rmcp = { version = "3", features = [
-   "server",
-   "client",
-   "transport-io",
-```
-
-**File**: `rust/crates/lean-ctx-server/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -67,7 +67,7 @@ lean-ctx-hive = { path = "../lean-ctx-hive", version = "=3.12.2", default-featur
- lean-ctx-ocla = { path = "../lean-ctx-ocla", version = "5.0.0" }
- lean-ctx-protocol = { path = "../lean-ctx-protocol", version = "0.5.0" }
- lean-ctx-doc = { path = "../lean-ctx-doc", version = "0.1.0" }
--rmcp = { version = "2", features = [
-+rmcp = { version = "3", features = [
-   "server",
-   "client",
-   "transport-io",
-@@ -106,7 +106,7 @@ dirs = "6.0"
- chrono = { version = "0.4", features = ["serde"] }
- toml = "1.1"
- similar = "3.1"
--rusqlite = { version = "0.39", features = ["bundled"] }
-+rusqlite = { version = "0.41", features = ["bundled"] }
- tree-sitter = { version = "0.26", optional = true }
- base64 = "0.22"
- sha2 = "0.11"
-```
-
-**File**: `rust/crates/lean-ctx-server/src/server/call_identity.rs` (modified, +20/-10)
-```diff
-@@ -36,7 +36,7 @@ tokio::task_local! {
- ///
- /// The same read takes the presenter capability the host showed, if any
- /// ([`HOST_PRESENTER_META_KEY`]); see [`HostCall`].
--pub(super) fn host_call_id(meta: Option<&rmcp::model::Meta>) -> HostCall {
-+pub(super) fn host_call_id(meta: Option<&rmcp::model::RequestMetaObject>) -> HostCall {
-     HostCall {
-         call_id: meta_text(meta, HOST_CALL_ID_META_KEY)
-             .filter(|call_id| delivered::valid_call_id(call_id))
-@@ -46,7 +46,10 @@ pub(super) fn host_call_id(meta: Option<&rmcp::model::Meta>) -> HostCall {
- }
- 
- /// The string under exactly `key`; no other key, no other value form.
--fn meta_text<'meta>(meta: Option<&'meta rmcp::model::Meta>, key: &str) -> Option<&'meta str> {
-+fn meta_text<'meta>(
-+    meta: Option<&'meta rmcp::model::RequestMetaObject>,
-+    key: &str,
-+) -> Option<&'meta str> {
-     meta?.0.get(key)?.as_str()
- }
- 
-@@ -108,8 +111,8 @@ pub(super) fn record_delivery(
- mod tests {
-     use super::{HOST_CALL_ID_META_KEY, delivered, host_call_id, scoped};
- 
--    fn meta(value: &serde_json::Value) -> rmcp::model::Meta {
--        let mut meta = rmcp::model::Meta::new();
-+    fn meta(value: &serde_json::Value) -> rmcp::model::RequestMetaObject {
-+        let mut meta = rmcp::model::RequestMetaObject::new();
-         meta.0
-             .insert(HOST_CALL_ID_META_KEY.to_owned(), value.clone());
-         meta
-@@ -121,13 +124,17 @@ mod tests {
-     fn only_a_well_formed_string_under_the_one_key_is_an_id() {
-         let id = serde_json::json!("toolu_01AbC-9");
-         // The call id is one part of what the host says about a call.
--        let host_call_id = |meta: Option<&rmcp::model::Meta>| super::host_call_id(meta).call_id;
-+        let host_call_id =
-+            |meta: Option<&rmcp::model::RequestMetaObject>| super::host_call_id(meta).call_id;
-         assert_eq!(
-             host_call_id(Some(&meta(&id))).as_deref(),
-             Some("toolu_01AbC-9")
-         );
-         assert_eq!(host_call_id(None), None);
--        assert_eq!(host_call_id(Some(&rmcp::model::Meta::new())), None);
-+        assert_eq!(
-+            host_call_id(Some(&rmcp::model::RequestMetaObject::new())),
-+            None
-+        );
-         for refused in [
-             serde_json::json!(""),
-             serde_json::json!("has space"),
-@@ -138,14 +145,14 @@ mod tests {
-         ] {
-             assert_eq!(host_call_id(Some(&meta(&refused))), None, "{refused}");
-         }
--        let mut other_key = rmcp::model::Meta::new();
-+        let mut other_key = rmcp::model::RequestMetaObject::new();
-         other_key.0.insert("toolUseId".to_owned(), id);
-         assert_eq!(host_call_id(Some(&other_key)), None);
- 
-         // The presenter capability: its own key, a well-formed value, and
-         // never visible in what the read formats to.
-         let wire = format!("lcp1_{}", "5a".repeat(32));
--        let mut shown = rmcp::model::Meta::new();
-+        let mut shown = rmcp::model::RequestMetaObject::new();
-         shown.0.insert(
-             super::HOST_PRESENTER_META_KEY.to_owned(),
-             serde_json::json!(wire),
-@@ -191,12 +198,15 @@ mod tests {
-         let wire: rmcp::model::CallToolRequest =
-             serde_json::from_value(serde_json::json!({"method": "tools/call", "params": params}))
-                 .expect("a tools/call request");
--        let transported = wire.extensions.get::<rmcp::model::Meta>().cloned();
-+        let transported = wire
-+            .extensions
-+            .get::<rmcp::model::RequestMetaObject>()
-+            .cloned();
-         let mut request = wire.params;
-         if let Some(transported) = transported {
-             request
-                 .meta
--                .get_or_insert_with(rmcp::model::Meta::new)
-+                .get_or_insert_with(rmcp::model::RequestMetaObject::new)
-                 .extend(transported);
-         }
-         let call_id = host_call_id(request.meta.as_ref());
-```
-
----
-
-### Incident Patch 2: `f317ac93` (2026-11-08)
-**Commit Message**: fix(shell): read a PowerShell tool call as PowerShell, accept its member calls, gate its call operator (#2216)
-
-* fix(hooks): check a PowerShell tool call under the PowerShell host
-
-A host that launches its hooks through Git Bash (Claude Code on Windows
-does) hands the hook SHELL=/usr/bin/bash and MSYSTEM=MINGW64.
-host_mode() picked the POSIX Strict mode from that environment and
-refused ordinary PowerShell tool lines
-(`Get-ChildItem | Select-Object @{n='kb'; e={ $_.Length / 1kb }}`,
-`$f = "C:\x\y"; Test-Path $f`, `foreach ($c in 'a','b') { … }`).
-
-HostGuard and its thread-local leave #[cfg(test)]; the new
-check_shell_allowlist_in_powershell() holds the PowerShell host for one
-check, and the PowerShell-tool hook path uses it. ctx_shell, ctx_execute
-and the shell aliases keep environment-based detection.
-
-* fix(shell): accept a PowerShell member call's attached paren under the PowerShell host
-
-The lexer refused every `(` attached to a word because zsh reads
-`*(e:…:)` as code-running glob qualifiers. That check ignored the host,
-so `[Math]::Max(1,2)` and
-`[Environment]::GetEnvironmentVariable('Path','User')` were refused even
-when PowerShell runs the line.
-
-Under the PowerShell host 
-
-**File**: `CHANGELOG.md` (modified, +9/-0)
-```diff
-@@ -35,6 +35,15 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   `-e`/`--execute`, are judged as write targets in every spelling. A config file the call reads
-   (`curl -K`, `curl -w @FILE`, `wget --config`) may name any file and is refused wherever the call
-   runs. ctx_shell's download guard uses the same list instead of its own copy.
-+- **A PowerShell tool call is checked as PowerShell (#2215).** A host that launches its hooks through
-+  Git Bash (Claude Code on Windows does) hands the hook a POSIX `SHELL`/`MSYSTEM`, so ordinary
-+  PowerShell lines such as `$f = "C:\x"; Test-Path $f` were denied as POSIX. The PowerShell tool
-+  hook now reads its line under the PowerShell host whatever the environment says. Under that host
-+  a .NET member call's attached `(` (`[Math]::Max(1,2)`) is accepted at statement start or as a
-+  local assignment value, and the reader still decides whether the member is safe. The call
-+  operator `&` no longer hides its target: a literal is checked against the allowlist, a run-time
-+  target is refused, a script block is walked, a trailing redirect is allowed, and nesting is
-+  depth-bounded. A quoted call-operator target used to pass unchecked under the PowerShell host.
- 
- ## [3.12.2] — 2026-11-04
- 
-```
-
-**File**: `rust/crates/lean-ctx-hooks/src/hook_handlers/powershell_rewrite.rs` (modified, +129/-1)
-```diff
-@@ -80,7 +80,9 @@ pub(super) fn allowlist_denial(cmd: &str, binary: &str) -> Option<String> {
-     {
-         return Some(msg);
-     }
--    shell_allowlist::check_shell_allowlist(&as_read)
-+    // Read as PowerShell, not as the shell lean-ctx detects: the hook may
-+    // run under Git Bash (`SHELL=/usr/bin/bash`, `MSYSTEM`).
-+    shell_allowlist::check_shell_allowlist_in_powershell(&as_read)
-         .err()
-         .map(|msg| msg.to_string())
- }
-@@ -400,6 +402,132 @@ mod tests {
-         }
-     }
- 
-+    /// Asserts each `(command, denied)` decision, with the allowlist `git`,
-+    /// both under Git Bash's environment and with no shell named at all.
-+    ///
-+    /// A host that launches its hooks through Git Bash (Claude Code on
-+    /// Windows does) hands the hook `SHELL=/usr/bin/bash` and
-+    /// `MSYSTEM=MINGW64`. A PowerShell tool call still runs in PowerShell and
-+    /// is read as PowerShell, whatever the environment names.
-+    fn assert_decisions_under_any_hook_shell(cases: &[(&str, bool)]) {
-+        const SHELL_VARS: [&str; 4] = ["LEAN_CTX_SHELL", "SHELL", "MSYSTEM", "MINGW_PREFIX"];
-+        let git_bash = [
-+            ("SHELL", "/usr/bin/bash"),
-+            ("MSYSTEM", "MINGW64"),
-+            ("MINGW_PREFIX", "/mingw64"),
-+        ];
-+        for env in [&git_bash[..], &[]] {
-+            let decisions: Vec<_> = with_security("enforce", || {
-+                // Each guard restores its variable on drop, inside the lock.
-+                let _allowlist =
-+                    lean_ctx::test_env::VarGuard::set("LEAN_CTX_SHELL_ALLOWLIST_OVERRIDE", "git");
-+                let _guards: Vec<_> = SHELL_VARS
-+                    .iter()
-+                    .map(|key| {
-+                        let guard = lean_ctx::test_env::VarGuard::set(key, "");
-+                        match env.iter().find(|(k, _)| k == key) {
-+                            Some((_, value)) => lean_ctx::test_env::set_var(key, value),
-+                            None => lean_ctx::test_env::remove_var(key),
-+                        }
-+                        guard
-+                    })
-+                    .collect();
-+                cases
-+                    .iter()
-+                    .map(|&(cmd, denied)| (cmd, denied, decide(cmd, BIN)))
-+                    .collect()
-+            });
-+            for (cmd, denied, decision) in decisions {
-+                assert_eq!(
-+                    matches!(decision, PowerShellDecision::Deny(_)),
-+                    denied,
-+                    "env {env:?}: {cmd}: {decision:?}"
-+                );
-+                if !denied {
-+                    assert_eq!(decision, PowerShellDecision::Passthrough, "{cmd}");
-+                }
-+            }
-+        }
+@@ -6,7 +6,9 @@ Changes in 3.12.3 (additive unless marked):
+ - Policy and sync (§23): `hive.sync`, `policy.sessions` and `policy.session` are served on
+   the local service (`/v1/local/hive/sync`, `/v1/local/hive/policy/sessions[/{id}]`) and
+   listed in capabilities. `policy.sessions` `installed` adds `vaults`: one row per vault the
+-  policy reaches here, with its `vault_id` and which policy applies.
++  policy reaches here, with its `vault_id` and which policy applies. `installed` adds
++  `enforcement`: the version enforced here, when Hive acknowledged it, the live sessions
++  under it and when this Instance reported it to Hive (§23.2).
+ - Local tasks (§3c): a project linked to no vault keeps its tasks on this Instance;
+   `lean-ctx tasks list|show|propose|decide|claim|update|submit|amend|release|verify|stop --json`
+   (`tasks.list`, `tasks.task`, `tasks.ack`), the same on the local service under
+@@ -1681,7 +1683,13 @@ matches on). They are different strings for the same vault: do not join the two
+       {"vault_id": "v_…", "ns": "acme", "name": "web",
+        "roots": ["/home/me/web"], "policy": "default"},
+       {"vault_id": "v_…", "ns": null, "name": null, "roots": [], "policy": "vault"}
+-    ]
++    ],
++    "enforcement": {
++      "applied_version": 7,
++      "acknowledged_at": "2026-11-09T08:00:00Z",
++      "sessions": ["app-1"],
++      "reported_at": "2026-11-09T08:00:02Z"
 +    }
-+
-+    #[test]
-+    fn powershell_lines_are_read_as_powershell_under_any_hook_shell() {
-+        assert_decisions_under_any_hook_shell(&[
-+            (
-+                "Get-ChildItem | Select-Object @{n='kb'; e={ $_.Length / 1kb }}",
-+                false,
-+            ),
-+            ("$f = \"C:\\x\\y\"; Test-Path $f", false),
-+            ("foreach ($c in 'a','b') { Write-Output $c }", false),
-+            ("$env:PATH = \"x\"; calc", true),
-+            ("Invoke-Expression 'calc'", true),
-+            ("iex 'calc'", true),
-+            (". ./x.ps1", true),
-+            ("Start-Process calc", true),
-+            ("[IO.File]::Delete('x')", true),
-+            ("[Diagnostics.Process]::Start('calc')", true),
-+            ("$p.Kill(1)", true),
-+            ("Write-Output x.y(calc)", true),
-+            ("Write-Output $x.ToString((calc))", true),
-+            ("$n = $x.ToString((calc))", true),
-+        ]);
-+    }
-+
-+    /// A .NET member call at statement start or as a local assignment's
-+    /// value is read by the PowerShell reader; one inside an argument is not.
-+    #[test]
-+    fn member_calls_pass_only_where_the_powershell_reader_sees_them() {
-+        assert_decisions_under_any_hook_shell(&[
-+            ("[Math]::Max(1,2)", false),
-+            (
-+                "[Environment]::GetEnvironmentVariable('Path','User') -split ';'",
-+                false,
-+            ),
-+            (
-+                "$p = [Environment]::GetEnvironmentVariable('Path','User')",
-+                false,
-+            ),
-+            ("$env:X = $x.ToString((calc))", true),
-+            ("ForEach-Object { $x.ToString((calc)) }", true),
-+            ("echo =$x.y(calc)", true),
-+            ("git log --format=$x.y(calc)", true),
-+            ("Get-ChildItem a=[Math]::Max(calc)", true),
-+        ]);
-+    }
-+
-+    /// The call operator `&` runs its target: only a literal name or path
-+    /// that the allowlist accepts may pass.
-+    #[test]
-+    fn call_operator_targets_meet_the_allowlist() {
-+        assert_decisions_under_any_hook_shell(&[
-+            ("& git status", false),
-+            ("& 'evil_binary'", true),
-+            ("& 'cmd' ,'/c','evil_binary'", true),
-+            ("& $env:ComSpec", true),
-+            ("& (Get-Comman
-```
-
-**File**: `rust/src/core/shell_allowlist/compound.rs` (modified, +135/-30)
-```diff
-@@ -41,9 +41,7 @@ pub(super) fn expand_to_leaf_segments(command: &str) -> Result<Vec<String>, Shel
-         .into());
-     }
-     let mut leaves = Vec::new();
--    for seg in extract_all_commands(&command) {
--        resolve_segment_leaves(&seg, 0, &mut leaves)?;
--    }
-+    resolve_commands(&command, 0, &mut leaves)?;
-     Ok(leaves)
- }
- 
-@@ -73,9 +71,7 @@ fn resolve_segment_leaves(
-     // neither walk below can claim it.
-     if let Some(expr) = arithmetic_command_expr(strip_body_intro_keywords(s)) {
-         for inner in arithmetic_substitutions(expr, segment)? {
--            for inner_seg in extract_all_commands(inner) {
--                resolve_segment_leaves(&inner_seg, depth + 1, out)?;
--            }
-+            resolve_commands(inner, depth + 1, out)?;
-         }
-         return Ok(());
-     }
-@@ -121,20 +117,14 @@ fn resolve_segment_leaves(
-         return resolve_segment_leaves(assignment_rhs, depth + 1, out);
-     }
-     if let Some(inner) = balanced_paren_inner(s) {
--        for inner_seg in extract_all_commands(inner) {
--            resolve_segment_leaves(&inner_seg, depth + 1, out)?;
--        }
--        return Ok(());
-+        return resolve_commands(inner, depth + 1, out);
-     }
-     // #1514: PowerShell commonly wraps a read-only cmdlet before selecting a
-     // property: `(Get-Item 'x').VersionInfo`. Validate the inner command and
-     // accept only a conservative property chain. Method calls, indexers and
-     // operators fall through to deny-by-default as an unrecognized command.
-     if let Some(inner) = powershell_property_expression_inner(s) {
--        for inner_seg in extract_all_commands(inner) {
--            resolve_segment_leaves(&inner_seg, depth + 1, out)?;
--        }
--        return Ok(());
-+        return resolve_commands(inner, depth + 1, out);
-     }
-     // #968: a `{ cmd1; cmd2; }` brace group must be recursed into exactly like
-     // a `( … )` subshell above — otherwise every command after the first
-@@ -156,10 +146,7 @@ fn resolve_segment_leaves(
-         if !suffix.trim().is_empty() && !is_redirect_only_suffix(suffix) {
-             return Err(zsh_only_form(segment));
-         }
--        for inner_seg in extract_all_commands(inner) {
--            resolve_segment_leaves(&inner_seg, depth + 1, out)?;
--        }
--        return Ok(());
-+        return resolve_commands(inner, depth + 1, out);
-     }
-     // #855: a segment that is *entirely* env-var assignments (`VAR=$(cmd …)`,
-     // nothing left over — `out=$(gh pr view …)` is a common, legitimate idiom
-@@ -171,9 +158,7 @@ fn resolve_segment_leaves(
-     // as its own leaf so `gh`, not the assignment wrapper, is what actually
-     // gets checked against the allowlist.
-     for inner in assignment_substitution_leaves(s) {
--        for inner_seg in extract_all_commands(inner) {
--            resolve_segment_leaves(&inner_seg, depth + 1, out)?;
--        }
-+        resolve_commands(inner, depth + 1, out)?;
-     }
-     // Anything else (incl. `( … ) trailing`, leftover delimiters) is pushed
-     // verbatim: base-extraction below sees a first token like `(ls)` that
-@@ -186,11 +171,24 @@ fn resolve_segment_leaves(
-     // the real base command inside — no recursion needed like subshells get,
-     // since `cd`/env changes inside `{ }` must persist to the caller (#939,
-     // agent_wrapper::rebuild's cwd-tracking wrapper).
--    //
--    // #1930: a cmdlet runs the script blocks it is handed
--    // (`ForEach-Object { Remove-Item $_ }`), so each block body is resolved
--    // into leaves of its own, after the cmdlet itself so its verdict comes
--    // first.
-+    resolve_command_leaf(s, segment, depth, out)
-+}
-+
-+/// Push the simple command `s` as a leaf, then resolve the script blocks it
-+/// runs. Shared by an ordinary segment and the literal target of a call
-+/// operator (`& ForEach-Object { … }`), so neither skips these checks.
-+/// `segment` is the text an error shows.
-+///
-+/// #1930: a cmdlet runs the script blocks it is handed
-+/// (`ForEach-Object { Remove-Item $_ }`), so each block body is resolved
-+/// into leaves of its own, after the cmdlet itself so its verdict comes
-+/// first.
-+fn resolve_command_leaf(
-+    s: &str,
-+    segment: &str,
-+    depth: usize,
-+    out: &mut Vec<String>,
-+) -> Result<(), ShellError> {
-     let base = extract_base_from_segment(s);
-     let bodies = super::ps_statements::script_block_bodies(s, &base);
-     // zsh runs brace bodies without `do`/`then`: `while true { cmd }`,
-@@ -236,20 +234,127 @@ fn zsh_only_form(segment: &str) -> ShellError {
-     .into()
- }
- 
--/// Resolve every segment of a command text found inside PowerShell syntax.
-+/// Resolve every segment of a command text.
- fn resolve_commands(text: &str, depth: usize, out: &mut Vec<String>) -> Result<(), ShellError> {
--    for segment in extract_all_commands(text) {
--        resolve_segment_leaves(&segment, depth, out)?;
-+    for (segment, call_target) in call_operator_segments(text)? {
-+        if call_target {
-+        
-```
-
-**File**: `rust/src/core/shell_allowlist/enforcement.rs` (modified, +9/-0)
-```diff
-@@ -66,6 +66,15 @@ pub fn check_shell_allowlist(command: &str) -> Result<(), ShellError> {
-     decided
- }
- 
-+/// [`check_shell_allowlist`] for a host's PowerShell tool call, which the hook
-+/// checks but does not wrap. Not the detected shell: a host that runs hooks
-+/// through Git Bash (Claude Code on Windows) passes `SHELL=/usr/bin/bash` and
-+/// `MSYSTEM=MINGW64`, and PowerShell read under POSIX rules is refused.
-+pub fn check_shell_allowlist_in_powershell(command: &str) -> Result<(), ShellError> {
-+    let _host = super::ps_statements::HostGuard::powershell(true);
-+    check_shell_allowlist(command)
-+}
-+
- /// Refuses code that contains a redaction marker such as
- /// `[REDACTED:Database credentials]`. Redaction applies only to what an agent
- /// is shown, never to what runs; an agent that copies a marker out of a
-```
-
-**File**: `rust/src/core/shell_allowlist/lexer.rs` (modified, +63/-0)
-```diff
-@@ -352,6 +352,8 @@ impl<'a> Lexer<'a> {
-                         && !starts_word(bytes, i, start, bare_close_at)
-                         && bytes[i - 1] != b'='
-                         && bytes.get(i + 1) != Some(&b')')
-+                        && !(powershell_member_call(bytes, i, start)
-+                            && super::ps_statements::host_is_powershell())
-                     {
-                         // `*(e:…:)`, `x(+cmd)`, `@(a|b)`: only a function
-                         // head `f()` or an array `a=(…)` may touch a word.
-@@ -522,6 +524,67 @@ fn starts_word(bytes: &[u8], i: usize, start: usize, bare_close_at: usize) -> bo
-     }
- }
- 
-+/// Is the `(` at `i` the argument list of a PowerShell member call —
-+/// `[Math]::Max(`, `$p.WaitForExit(`, `(Get-Date).ToString(` — on a word that
-+/// opens an expression (`$`, `[`, `(`) at the start of a statement or as the
-+/// value of a local assignment (`$n = …`, `$n += …`)? No shell glob runs in
-+/// PowerShell, and `ps_statements` reads such a statement and decides which
-+/// members are inert. Not one: a bare word (`x.y(` — in argument mode its `(`
-+/// starts another argument), a call in a command's arguments
-+/// (`echo $x.ToString((cmd))`, `git log --format=$x.y((cmd))`) and the value
-+/// of a scoped assignment (`$env:X = …`), none of which a reader looks into.
-+fn powershell_member_call(bytes: &[u8], i: usize, start: usize) -> bool {
-+    let mut j = i;
-+    while j > start && (bytes[j - 1].is_ascii_alphanumeric() || bytes[j - 1] == b'_') {
-+        j -= 1;
-+    }
-+    let accessed = j < i
-+        && j > start
-+        && (bytes[j - 1] == b'.' && (j - 1 == start || bytes[j - 2] != b'.')
-+            || bytes[j - 1] == b':' && j - 1 > start && bytes[j - 2] == b':');
-+    if !accessed {
-+        return false;
-+    }
-+    while j > start
-+        && !matches!(
-+            bytes[j - 1],
-+            b' ' | b'\t' | b'\n' | b';' | b'&' | b'|' | b'{' | b'}' | b'=' | b','
-+        )
-+    {
-+        j -= 1;
-+    }
-+    if !matches!(bytes[j], b'$' | b'[' | b'(') {
-+        return false;
-+    }
-+    j = skip_blanks_back(bytes, j, start);
-+    if j > start && bytes[j - 1] == b'=' {
-+        // Only `$name =` or `$name <op>=` at statement start: an `=` inside
-+        // an argument (`--format=`, `a=`) belongs to that argument.
-+        let mut k = j - 1;
-+        if k > start && matches!(bytes[k - 1], b'+' | b'-' | b'*' | b'/' | b'%') {
-+            k -= 1;
-+        }
-+        k = skip_blanks_back(bytes, k, start);
-+        let name_end = k;
-+        while k > start && (bytes[k - 1].is_ascii_alphanumeric() || bytes[k - 1] == b'_') {
-+            k -= 1;
-+        }
-+        if k == name_end || k == start || bytes[k - 1] != b'$' {
-+            return false;
-+        }
-+        j = skip_blanks_back(bytes, k - 1, start);
-+    }
-+    j == start || matches!(bytes[j - 1], b'\n' | b';' | b'{')
-+}
-+
-+/// `at` moved back over the spaces and tabs before it, not past `start`.
-+fn skip_blanks_back(bytes: &[u8], mut at: usize, start: usize) -> usize {
-+    while at > start && matches!(bytes[at - 1], b' ' | b'\t') {
-+        at -= 1;
-+    }
-+    at
-+}
-+
- /// Index of the backtick closing a substitution opened before `from`,
- /// skipping backslash escapes. `None` when it is unterminated.
- fn closing_backtick(bytes: &[u8], from: usize) -> Option<usize> {
-```
-
-**File**: `rust/src/core/shell_allowlist/lexer_tests.rs` (modified, +43/-0)
-```diff
-@@ -195,3 +195,46 @@ fn ordinary_commands_keep_passing() {
-         ],
-     );
- }
-+
-+/// A `(` attached to a member name is a .NET call, not a glob qualifier, only
-+/// when PowerShell runs the line; which members are inert is decided by the
-+/// PowerShell reader, and a bare word keeps the refusal on every host.
-+#[test]
-+fn attached_paren_of_a_member_call_passes_only_under_powershell() {
-+    use crate::core::shell_allowlist::ps_statements::HostGuard;
-+    let member_calls = [
-+        "[Math]::Max(1,2)",
-+        "[Environment]::GetEnvironmentVariable('Path','User') -split ';'",
-+        "$s.Substring(1)",
-+        "$p = [Environment]::GetEnvironmentVariable('Path','User')",
-+        "if ($x) { $n += $s.IndexOf('x') }",
-+    ];
-+    {
-+        let _host = HostGuard::powershell(true);
-+        assert_all_pass("echo", &member_calls);
-+        assert_all_block(
-+            "echo",
-+            &[
-+                "[IO.File]::Delete('x')",
-+                "[Diagnostics.Process]::Start('calc')",
-+                "$p.Kill(1)",
-+                "echo x.y(evil_binary)",
-+                "echo $x.ToString((evil_binary))",
-+                "$n = $x.ToString((evil_binary))",
-+                "$env:X = $x.ToString((evil_binary))",
-+                "ForEach-Object { $x.ToString((evil_binary)) }",
-+                // An `=` inside an argument is no assignment: PowerShell
-+                // runs the `( … )` there as another argument.
-+                "echo =$x.y(evil_binary)",
-+                "git log --format=$x.y(evil_binary)",
-+                "Get-ChildItem a=[Math]::Max(evil_binary)",
-+                "[Math]::Max((evil_binary), 1)",
-+                "echo *(e:evil_binary:)",
-+                "echo x(+evil_binary)",
-+            ],
-+        );
-+    }
-+    let _host = HostGuard::powershell(false);
-+    assert_all_block("echo", &member_calls);
-+    assert_all_block("echo", &["echo x(+evil_binary)"]);
-+}
-```
-
-**File**: `rust/src/core/shell_allowlist/ps_statements.rs` (modified, +24/-10)
-```diff
-@@ -237,18 +237,21 @@ pub(crate) enum Mode {
-     PowerShell,
- }
- 
--#[cfg(test)]
- thread_local! {
-     static FORCED_HOST: std::cell::Cell<Option<bool>> = const { std::cell::Cell::new(None) };
- }
- 
--/// Test-only override of the executing shell for this thread.
--#[cfg(test)]
-+/// Overrides the executing shell for checks on this thread until dropped.
-+///
-+/// A host's PowerShell tool runs its line in PowerShell whatever shell
-+/// lean-ctx would detect for itself: a host that launches its hooks through
-+/// Git Bash (Claude Code on Windows does) hands the hook
-+/// `SHELL=/usr/bin/bash` and `MSYSTEM=MINGW64` (see
-+/// [`super::check_shell_allowlist_in_powershell`]).
- pub(super) struct HostGuard {
-     prev: Option<bool>,
- }
- 
--#[cfg(test)]
- impl HostGuard {
-     pub(super) fn powershell(on: bool) -> Self {
-         Self {
-@@ -257,17 +260,16 @@ impl HostGuard {
-     }
- }
- 
--#[cfg(test)]
- impl Drop for HostGuard {
-     fn drop(&mut self) {
-         FORCED_HOST.with(|host| host.set(self.prev));
-     }
- }
- 
- /// The mode for the shell that runs the checked line: the one `ctx_shell`,
--/// `ctx_execute` and the shell aliases execute with.
-+/// `ctx_execute` and the shell aliases execute with, unless a [`HostGuard`]
-+/// names it.
- fn host_mode() -> Mode {
--    #[cfg(test)]
-     if let Some(forced) = FORCED_HOST.with(std::cell::Cell::get) {
-         return if forced {
-             Mode::PowerShell
-@@ -283,6 +285,12 @@ fn host_mode() -> Mode {
-     }
- }
- 
-+/// Does PowerShell run the checked line? For the lexer, which otherwise reads
-+/// only POSIX shells.
-+pub(super) fn host_is_powershell() -> bool {
-+    host_mode() == Mode::PowerShell
-+}
-+
- /// Commands a PowerShell control-flow statement runs — its conditions, loop
- /// sources and block bodies — as text for the walker to validate.
- ///
-@@ -429,11 +437,17 @@ fn local_assignment_value(statement: &str) -> Option<&str> {
- 
- /// Is every top-level segment of `command` a PowerShell statement or
- /// expression this module reads? Then an empty leaf list means the line runs
--/// no command, not that the walker found nothing to check.
-+/// no command, not that the walker found nothing to check. The target of a
-+/// call operator (`& 'x'`) is a command, never inert.
- pub(super) fn is_inert_powershell(command: &str) -> bool {
--    let segments = super::extract_all_commands(command);
-+    let Ok(segments) = super::compound::call_operator_segments(command) else {
-+        return false;
-+    };
-     !segments.is_empty()
--        && segments.iter().all(|segment| {
-+        && segments.iter().all(|(segment, call_target)| {
-+            if *call_target {
-+                return false;
-+            }
-             let statement = super::skip_powershell_assignment(segment);
-             matches!(statement_commands(statement), Some(Ok(_)))
-                 || expression_commands(statement).is_some()
-```
-
-**File**: `rust/src/core/shell_allowlist/substitution.rs` (modified, +11/-4)
-```diff
-@@ -1,6 +1,6 @@
- use super::heredoc::strip_for_analysis;
- use super::lexer::{Expansion, lex};
--use super::{ShellError, effective_allowlist, extract_all_commands, extract_base_from_segment};
-+use super::{ShellError, effective_allowlist, extract_base_from_segment};
- 
- /// $(), backticks, <() in arguments: a substituted command runs like any other,
- /// so it is gated like one (GHSA-rxv5-4c3x-g4q6 E, owner decision 26.10.;
-@@ -91,9 +91,16 @@ fn extract_substitution_commands(command: &str) -> Result<Vec<String>, ShellErro
-             if trimmed.is_empty() {
-                 continue;
-             }
--            results.extend(extract_all_commands(&strip_for_analysis(
--                trimmed, false, true,
--            )));
-+            // Split like a top-level line, so a PowerShell call operator
-+            // keeps its target a command (`$(& 'x')`), never an inert string.
-+            let stripped = strip_for_analysis(trimmed, false, true);
-+            for (segment, call) in super::compound::call_operator_segments(&stripped)? {
-+                results.push(if call {
-+                    format!("& {segment}")
-+                } else {
-+                    segment
-+                });
-+            }
-             results.extend(extract_substitution_commands(trimmed)?);
-         }
-     }
-```
-
----
-
-### Incident Patch 3: `436db5e1` (2026-11-08)
-**Commit Message**: ci(test): test PathJail on GitHub, fix the tests it exposed (#2214)
-
-* ci(test): unit tests on nextest, test features without no-jail
-
-The Windows lib part was the critical path of the PR run (32 min,
-424 s for the engine lib under libtest). Unit tests now run on
-nextest's ci profile, which gives each test its own data dir;
-integration binaries and doctests stay on libtest (#1206).
-
-Tests build with every feature except no-jail (and what enables it),
-computed by .github/scripts/test_features.py with the same rule as
-GitLab's mr_quick.py: --all-features compiled PathJail and its tests
-out, so the jail was never tested here. The wall-clock gates use the
-same set so they reuse the build.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ci(nextest): Windows data-dir wrapper, wrappers split by platform
-
-Port of the nextest config from GitLab 5!213 (6c48d920f9):
-nextest-data-dir.cmd is the batch counterpart of the per-test data-dir
-wrapper, the wrapper scripts are split by cfg(unix) / cfg(windows) in
-the default and ci profiles, and the ci profile drops the
-solution_integration retry. The .cmd is named in PUBLISH_MANIFEST.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ci: 
-
-**File**: `.github/scripts/test_features.py` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: Apache-2.0
-+"""Print the `--features` list the Test job builds with.
-+
-+Every feature of every default workspace member, except those that enable
-+`no-jail` directly or through other features. `no-jail` compiles PathJail
-+and its tests out, so `--all-features` never tested the jail at all. This is
-+the same rule as GitLab's `scripts/ci/mr_quick.py --print-test-features`.
-+
-+Run from `rust/`.
-+"""
-+
-+import json
-+import subprocess
-+
-+UNTESTED_FEATURES = {"no-jail"}
-+
-+
-+def main() -> None:
-+    meta = json.loads(
-+        subprocess.run(
-+            ["cargo", "metadata", "--format-version", "1", "--no-deps"],
-+            check=True,
-+            capture_output=True,
-+            text=True,
-+        ).stdout
-+    )
-+    packages = meta["packages"]
-+    names = {p["name"] for p in packages}
-+    edges: dict[str, set[str]] = {}
-+    for p in packages:
-+        for feature, values in p["features"].items():
-+            out = edges.setdefault(f"{p['name']}/{feature}", set())
-+            for value in values:
-+                if value.startswith("dep:"):
-+                    continue
-+                if "/" in value:
-+                    dep, sub = value.split("/", 1)
-+                    dep = dep.rstrip("?")
-+                    if dep in names:
-+                        out.add(f"{dep}/{sub}")
-+                else:
-+                    out.add(f"{p['name']}/{value}")
-+    bad = {n for n in edges if n.split("/", 1)[1] in UNTESTED_FEATURES}
-+    changed = True
-+    while changed:
-+        changed = False
-+        for node, outs in edges.items():
-+            if node not in bad and outs & bad:
-+                bad.add(node)
-+                changed = True
-+    selected = set(meta["workspace_default_members"])
-+    print(
-+        ",".join(
-+            f"{p['name']}/{f}"
-+            for p in sorted(packages, key=lambda p: p["name"])
-+            if p["id"] in selected
-+            for f in sorted(p["features"])
-+            if f != "default" and f"{p['name']}/{f}" not in bad
-+        )
-+    )
-+
-+
-+if __name__ == "__main__":
-+    main()
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +18/-6)
-```diff
-@@ -307,6 +307,17 @@ jobs:
-                      /etc/apt/sources.list.d/*microsoft*
-           sudo apt-get update
-           sudo apt-get install -y mold
-+      # Every feature except no-jail (and what enables it): no-jail compiles
-+      # PathJail and its tests out, so `--all-features` never tested the jail.
-+      # Same set as GitLab's mr_quick.py --print-test-features.
-+      - name: Select test features
-+        working-directory: rust
-+        shell: bash
-+        run: |
-+          if [[ "${{ runner.os }}" == "Windows" ]]; then PY=python; else PY=python3; fi
-+          features=$("$PY" ../.github/scripts/test_features.py)
-+          [[ -n "$features" ]]
-+          echo "TEST_FEATURES=$features" >> "$GITHUB_ENV"
-       - name: Run tests
-         working-directory: rust
-         shell: bash
-@@ -329,14 +340,14 @@ jobs:
-             fi
-             JEMALLOC_OVERRIDE="${{ steps.jemalloc.outputs.jemalloc-override }}" \
-             CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS="-L ${{ steps.jemalloc.outputs.dummy-dir }}" \
--            "$CARGO" test --target x86_64-pc-windows-gnu --all-features "${SELECT[@]}"
-+            "$CARGO" test --target x86_64-pc-windows-gnu --features "$TEST_FEATURES" "${SELECT[@]}"
-           elif [[ "${{ runner.os }}" == "Linux" ]]; then
-             # `mold -run` redirects child linker invocations to mold without
-             # touching RUSTFLAGS (which is pinned to `-Dwarnings` job-wide and
-             # would override any .cargo/config.toml rustflags).
--            mold -run "$CARGO" test --all-features
-+            mold -run "$CARGO" test --features "$TEST_FEATURES"
-           else
--            "$CARGO" test --all-features
-+            "$CARGO" test --features "$TEST_FEATURES"
-           fi
- 
-       # Wall-clock gates: #581's parallel BM25 rebuild win, the context-kernel
-@@ -372,9 +383,10 @@ jobs:
-             (( idle * 10 >= (busy + idle) * 9 )) && break
-           done
-           ps -eo pid,pcpu,etime,args --sort=-pcpu | head -4
--          cargo test --all-features --lib -- --test-threads=1 parallel_incremental_rebuild_perf_gate --nocapture
--          cargo test --all-features --lib -- --test-threads=1 context_kernel::perf_benchmark
--          cargo test --all-features --test main -- --test-threads=1 performance_stress
-+          cargo test --features "$TEST_FEATURES" --lib -- --test-threads=1 parallel_incremental_rebuild_perf_gate --nocapture
-+          cargo test --features "$TEST_FEATURES" --lib -- --test-threads=1 context_kernel::perf_benchmark
-+          cargo test --features "$TEST_FEATURES" --test main -- --test-threads=1 performance_stress
-+          cargo test --features "$TEST_FEATURES" --test main -- --test-threads=1 context_radar_perf
- 
-   clippy:
-     name: Clippy
+   },
+   "sessions": [
+     {"session_id": "app-1", "version": 7, "digest": "sha256:…", "signature": "verified",
+@@ -1718,6 +1726,17 @@ matches on). They are different strings for the same vault: do not join the two
+   - The linked vaults come from the vault map (`projects.json`). A vault map that cannot be
+     read is taken as empty, the same as "no checkout linked here": `vaults` then lists only
+     the policy's vault-level entries.
++  - `enforcement`: the installed policy as enforced on this machine.
++    - `applied_version`: the version enforced, only when `signature` is `verified`, `state`
++      is `in_force` and `acked` is `true`; `null` otherwise (an expired, unverified or
++      unacknowledged policy is never shown as enforced).
++    - `acknowledged_at`: when Hive acknowledged `applied_version` (`null` with it).
++    - `sessions`: the live app sessions enforcing the installed policy, sorted: those whose
++      newest receipt (within the last 15 minutes) was made under this version and digest,
++      verified and in force. Empty for an expired or invalid policy.
++    - `reported_at`: when this Instance reported `applied_version` to Hive on the bus
++      (frame `policy.applied`, once per version and digest, sent only when Hive's
++      `hello.ack.features` names `policy_applied`); `null` until then.
+ - `sessions[]`, sorted by `session_id`: one row per app session with recorded evidence
+   (at most 256 sessions, the most recently written). The row names the policy of the
+   session's newest receipt: `session_id`, `version`, `digest`, `signature`, `state` (as in
 ```
 
 **File**: `docs/contracts/team-seat-value-v1/frozen-hashes.json` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- {
+@@ -2,7 +2,7 @@
    "contract": "team-seat-value-v1",
    "sha256": {
--    ".github/workflows/ci.yml": "adfe71e30bd19082d30c369c2cb8219912741951413c29e206029546b64ac14e",
-+    ".github/workflows/ci.yml": "797956ec6f0ea25f8ddd5799368ca79922cdeabfe8e6032cc961097eeac4e3a5",
-     "ci/gitlab-ci.yml": "5a1251f812a03c6ab97df01feda26942dc22d406b0e79374e4ff97c5c279178b",
+     ".github/workflows/ci.yml": "0f40a888a0bf8c0228bc59638ce05a2e112cc7dc257057277f4d73b9a0039efd",
+-    "ci/gitlab-ci.yml": "1b8826827152e016b648c3f45337cc6f12400492b8e1942143b4402cc22dab4d",
++    "ci/gitlab-ci.yml": "5e31a1a92209fe4d210785b51cd59369c7486a7137ef3b293b0a78ef9c6f1b66",
      "docs/contracts/README.md": "e7012341f0448efe8570ed93d20772558f0245566b333b962f9dfabc1c1ff08a",
      "docs/contracts/team-seat-value-v1/README.md": "caecd3e67f1e9c0adacc272a9dae892ac0cddef42c5e17066c069d17a83505d6",
+     "docs/contracts/team-seat-value-v1/common.schema.json": "ed7778ce53b4d17922f8d8b1c1fb36837bd0bee62d195c2c074bf849d78542a4",
 ```
 
-**File**: `rust/src/core/artifacts.rs` (modified, +6/-4)
+**File**: `docs/guides/hive-background-sync.md` (modified, +6/-1)
 ```diff
-@@ -229,12 +229,14 @@ mod tests {
-         std::fs::create_dir_all(&vault).unwrap();
-         std::fs::write(vault.join("note.md"), "# Vault note\nrotation policy").unwrap();
- 
-+        // serde_json escapes the path: a Windows path's backslashes are not
-+        // valid JSON escapes when formatted into the string verbatim.
-         write_registry(
-             project.path(),
--            &format!(
--                r#"{{"artifacts":[{{"name":"vault","path":"{}","description":"notes"}}]}}"#,
--                vault.display()
--            ),
-+            &serde_json::json!({
-+                "artifacts": [{"name": "vault", "path": vault, "description": "notes"}]
-+            })
-+            .to_string(),
-         );
- 
-         // Without an allow-list entry the external path is rejected by the jail.
+@@ -76,4 +76,9 @@ Hive signs the policy in force. The Instance pulls it every
+ the bus reconnects; it verifies the signature, applies it and acknowledges
+ it. `lean-ctx hive policy sessions --json` (kind `policy.sessions`) shows the
+ installed version and which version each app session
+-(`LEAN_CTX_SESSION_ID`) ran under, with its receipts.
++(`LEAN_CTX_SESSION_ID`) ran under, with its receipts. Its
++`installed.enforcement` names the version enforced here (verified, in force
++and acknowledged), the live sessions enforcing it, and when the Instance
++reported it to Hive: once per version, the bus frame `policy.applied`
++carries the version, digest, acknowledgement time and the number of live
++sessions. An expired or unverified policy is never reported as applied.
 ```
 
-**File**: `rust/src/core/pathjail_tests.rs` (modified, +6/-0)
+**File**: `rust/crates/lean-ctx-hive/src/bus/relay_v2.rs` (modified, +21/-4)
 ```diff
-@@ -585,6 +585,10 @@ fn harness_auto_memory_path_is_allowed_without_extra_roots() {
-     let old_home = std::env::var_os("HOME");
-     crate::test_env::set_var("HOME", tmp.path());
-     crate::test_env::remove_var("CLAUDE_CONFIG_DIR");
-+    // `dirs::home_dir()` ignores HOME on Windows (it asks the shell for the
-+    // profile folder), so name the harness config dir there instead.
-+    #[cfg(windows)]
-+    crate::test_env::set_var("CLAUDE_CONFIG_DIR", tmp.path().join(".claude"));
-     let root = tmp.path().join("project");
-     let memory = tmp
-         .path()
-@@ -633,6 +637,8 @@ fn harness_auto_memory_path_is_allowed_without_extra_roots() {
-         Some(h) => crate::test_env::set_var("HOME", h),
-         None => crate::test_env::remove_var("HOME"),
-     }
-+    #[cfg(windows)]
-+    crate::test_env::remove_var("CLAUDE_CONFIG_DIR");
- }
+@@ -114,13 +114,28 @@ pub const PERSON_SENDER: &str = "hive-person";
+ /// The `hello.ack` feature that says the Hive accepts a person's publish.
+ pub const PERSON_PUBLISH: &str = "person_publish";
  
- /// #820: lean-ctx state dir (tee files) is implicitly allowed by the jail.
-```
-
-**File**: `rust/tests/suite/context_radar_perf.rs` (modified, +33/-14)
-```diff
-@@ -3,6 +3,15 @@ use std::time::Instant;
- 
- use lean_ctx::core::context_radar::{ContextRadar, RadarEvent, default_window_for_client};
- 
-+/// The timing half of each perf test is opt-in, as in `performance_stress`:
-+/// under the multi-threaded suite, CPU contention alone pushed a 150 ms bound
-+/// to 409 ms on a green ubuntu runner. CI's perf-gate step sets
-+/// `LEAN_CTX_PERF_GATE=1` and runs these serialized; the functional
-+/// assertions run always.
-+fn timing_enforced() -> bool {
-+    std::env::var("LEAN_CTX_PERF_GATE").as_deref() == Ok("1")
+-/// Whether a `hello.ack` names [`PERSON_PUBLISH`] among its `features`.
+-pub fn acks_person_publish(ack: &Value) -> bool {
++/// The hello feature that asks Hive for `hello.ack.policy_version` and the
++/// `policy.advanced` nudge.
++pub const POLICY_ADVANCED: &str = "policy_advanced";
++/// The hello feature for the `policy.applied` frame: the Instance sends it
++/// only when `hello.ack.features` names it too.
++pub const POLICY_APPLIED: &str = "policy_applied";
++/// The features this Instance names in its hello (Hive answers with the
++/// ones it speaks too).
++pub const HELLO_FEATURES: &[&str] = &[POLICY_ADVANCED, POLICY_APPLIED];
++
++/// Whether a `hello.ack` names `feature` among its `features`.
++pub fn acks_feature(ack: &Value, feature: &str) -> bool {
+     ack["features"]
+         .as_array()
+         .into_iter()
+         .flatten()
+-        .any(|f| f.as_str() == Some(PERSON_PUBLISH))
++        .any(|f| f.as_str() == Some(feature))
 +}
 +
- fn make_event(event_type: &str, tokens: usize, tool_name: Option<&str>) -> RadarEvent {
-     RadarEvent {
-         ts: 1700000000,
-@@ -44,7 +53,9 @@ fn perf_radar_load_100_events() {
-     assert_eq!(radar.events.len(), 100);
-     let b = radar.budget_breakdown();
-     assert!(b.lean_ctx_tool_tokens > 0);
--    assert!(elapsed.as_millis() < 100, "100 events took {elapsed:?}");
-+    if timing_enforced() {
-+        assert!(elapsed.as_millis() < 100, "100 events took {elapsed:?}");
-+    }
++/// Whether a `hello.ack` names [`PERSON_PUBLISH`] among its `features`.
++pub fn acks_person_publish(ack: &Value) -> bool {
++    acks_feature(ack, PERSON_PUBLISH)
  }
  
- #[test]
-@@ -71,10 +82,12 @@ fn perf_radar_load_10k_events() {
-     assert_eq!(radar.events.len(), 10_000);
-     let b = radar.budget_breakdown();
-     assert!(b.tracked_total > 0);
--    assert!(
--        elapsed.as_millis() < 500,
--        "10k events took {elapsed:?} — should be <500ms"
--    );
-+    if timing_enforced() {
-+        assert!(
-+            elapsed.as_millis() < 500,
-+            "10k events took {elapsed:?} — should be <500ms"
-+        );
-+    }
+ impl StateV2 {
+@@ -502,7 +517,8 @@ pub(crate) fn subscriptions(map: &VaultMap, agents: &[&AgentEntry]) -> Vec<Strin
  }
  
- #[test]
-@@ -90,10 +103,12 @@ fn perf_radar_load_50k_events() {
-     let elapsed = start.elapsed();
- 
-     assert_eq!(radar.events.len(), 50_000);
--    assert!(
--        elapsed.as_millis() < 2000,
--        "50k events took {elapsed:?} — should be <2s"
--    );
-+    if timing_enforced() {
-+        assert!(
-+            elapsed.as_millis() < 2000,
-+            "50k events took {elapsed:?} — should be <2s"
-+        );
-+    }
+ /// The C0 2.0 hello: subscriptions, their cursors, and the presence of the
+-/// local workers (`held` while a control holds them).
++/// local workers (`held` while a control holds them), and the
++/// [`HELLO_FEATURES`] this Instance speaks.
+ pub fn hello(subscribe: &[String], state: &StateV2, presence: &[PresenceEntry]) -> Value {
+     let cursors: BTreeMap<&String, u64> = subscribe
+         .iter()
+@@ -514,6 +530,7 @@ pub fn hello(subscribe: &[String], state: &StateV2, presence: &[PresenceEntry])
+         "subscribe": subscribe,
+         "cursors": cursors,
+         "presence": presence,
++        "features": HELLO_FEATURES,
+     })
  }
  
- // ---------------------------------------------------------------------------
-@@ -278,7 +293,9 @@ fn introspect_anthropic_large_request() {
-     assert_eq!(b.tool_definition_count, 60);
-     assert!(b.tool_definition_tokens > 0);
-     assert!(b.total_input_tokens > 7000);
--    assert!(elapsed.as_millis() < 150, "introspect took {elapsed:?}");
-+    if timing_enforced() {
-+        assert!(elapsed.as_millis() < 150, "introspect took {elapsed:?}");
-+    }
- }
- 
- #[test]
-@@ -487,8 +504,10 @@ fn perf_budget_breakdown_100k_events() {
-     let elapsed = start.elapsed();
- 
-     assert!(b.tracked_total > 0);
--    assert!(
--        elapsed.as_millis() < 150,
--        "budget_breakdown on 100k events took {elapsed:?}"
--    );
-+    if timing_enforced() {
-+        assert!(
-+            elapsed.as_millis() < 150,
-+            "budget_breakdown on 100k events took {elapsed:?}"
-+        );
-+    }
- }
+```
+
+**File**: `rust/crates/lean-ctx-hive/src/bus/relay_v2_tests.rs` (modified, +4/-1)
+```diff
+@@ -521,13 +521,16 @@ fn the_hello_matches_the_contract_shape() {
+         json!({"t": "hello", "protocol": "2.0", "subscribe": ["#acme/payments"],
+             "cursors": {"#acme/payments": 41},
+             "presence": [{"worker_id": WORKER, "role": "backend", "state": "active",
+-                "display_name": "Backend", "instance_id": "ins_a", "instance_name": "Laptop"}]})
++                "display_name": "Backend", "instance_id": "ins_a", "instance_name": "Laptop"}],
++            "features": ["policy_advanced", "policy_applied"]})
+     );
++    // The 2.0 sample predates the optional `features` member.
+     let sample = fixture("bus/frame.hello.json");
+     let keys = |v: &Value| {
+         v.as_object()
+             .unwrap()
+             .keys()
++            .filter(|k| *k != "features")
+             .cloned()
+             .collect::<BTreeSet<_>>()
+     };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2221** (2026-11-09): fix(deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI (@yvgude)
-- **PR #2220** (2026-11-09): fix(shell): close PowerShell gate gaps and Codex auto-approval (@yvgude)
-- **PR #2219** (2026-11-09): ci: speed up GitHub Actions CI (O0 engine, path filter, sccache, split docs) (@yvgude)
-- **PR #2218** (2026-11-09): test(shell): hold the env lock in cwd-reading allowlist tests (@RobinNorberg)
-- **PR #2216** (2026-11-08): fix(shell): read a PowerShell tool call as PowerShell, accept its member calls, gate its call operator (@RobinNorberg)
-- **PR #2214** (2026-11-08): ci(test): test PathJail on GitHub, fix the tests it exposed (@yvgude)
+- **PR #2235** (2026-11-11): release: LeanCTX 3.12.3 (final export, GitHub issues) (@yvgude)
+- **PR #2234** (closed): release: LeanCTX 3.12.3 (final export) (@yvgude)
+- **PR #2233** (2026-11-11): release: 3.12.3 — quote hook binaries whose path contains a space (@yvgude)
+- **PR #2226** (closed): release: 3.12.3 — quote hook binaries whose path contains a space (@yvgude)
+- **PR #2225** (2026-11-11): release: 3.12.3 — linux-gnu binary budget 110 MB (@yvgude)
+- **PR #2224** (2026-11-11): release: 3.12.3 — G6 gate on Windows and macOS, test follow-ups (@yvgude)
 
 ---
 
@@ -3797,13 +3088,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI
+## X. release: 3.12.3 — linux-gnu binary budget 110 MB
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1172309`: deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5299b02`: release: 3.12.3 — linux-gnu binary budget 110 MB. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -3811,13 +3102,11 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Dependencies with published advisories are updated.** The bundled SQLite moves to the
-  release `rusqlite` 0.41 ships, fixing RUSTSEC-2026-0459. The vendored MCP SDK `rmcp` moves
-  from 2.0 to 3.9, which bounds HTTP response bodies an MCP server sends to `lean-ctx`
-  (RUSTSEC-2026-0462) and stops OAuth discovery for HTTP MCP servers from following metadata
-  URLs to private or loopback addresses (RUSTSEC-2026-0457). The lean-ctx patches on top of
-  `rmcp` shrink to one, since 3.9 contains the other fixes; `lean-ctx-embed` now declares the
-  Rust 1.89 its dependencies need.
+- **The `x86_64-unknown-linux-gnu` binary budget is 110 MB.** The 3.12.3 release
+  binary measures 101,999,384 bytes (3.12.2: 96,853,528) after this release's
+  additions — the Hive G6 gate on Windows and macOS, the shell-policy and symlink
+  hardening, the change-envelope contract and classifier — and crossed the 100 MB
+  ceiling set on 2026-10-15; `product/binary-budget.json` records the new measurement.
 
 ```
 
@@ -3828,4 +3117,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1172309` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5299b02` are properly handled with clean fallback behavior.

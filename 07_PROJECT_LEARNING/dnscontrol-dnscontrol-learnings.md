@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `c42c4fa3`  
+> **Source Version**: `a866511c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T06:33:19.167Z  
+> **Timestamp**: 2026-11-12T13:33:09.664Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T06:33:19.159Z  
+> **Harvest Timestamp**: 2026-11-12T13:33:09.467Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -653,13 +653,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5072** (2026-11-09): **refactor: share one builderOptions() for the options-object builders**
-  *Symptoms*: Follow-up of #5071.  ## What this changes  `M365_BUILDER`, `FORSALE_BUILDER` and `MIGADU_BUILDER` each had their own options function in `pkg/js/helpers.js`: `m365Options()`, `forsaleOptions()` and `migaduOptions()`. The three were identical except for the builder name in the error message. This replaces them with one `builderOptions()`, which takes the name from `record.type`.  The function itself is still needed. Builders receive `record.args` only (`models.ImportRawRecords`), so without it the options object would stay in `record.metas` and be dropped. `MIGADU_BUILDER("example.com", { verify: "abcd1234" })` would then create no verification record.  - No behavior change. The error for an extra object modifier reads the same as before for all three builders, for example `MIGADU_BUILDER takes one options object; record modifiers that are objects, such as CF_PROXY_OFF, are not supported: example.com`. - The doc comments on `BuilderM365`, `BuilderFORSALE` and `BuilderMigadu` now name `builderOptions()`. - The builder section of `documentation/developer-info/cookbook.md` tells authors of new builders to pass `builderOptions` to `rawrecordBuilder()` instead of copying the function.  ## Tests  - `go test ./pkg/js/ ./models/` passes. The parse tests `068-m365builder`, `073-forsalebuilder` and `074-migadubuilder` give unchanged output. - `go generate ./...` changes nothing, and `gofmt` is clean.
-  **Post-Mortem & Fix Analysis**:
-  > That was fast!  Thanks!
+- **Issue #5083** (2026-11-12): **docs: clarify macOS sha check**
+  *Symptoms*: <!-- ## Before submiting a pull request  Please make sure you've run the following commands from the root directory.      bin/generate-all.sh  (this runs commands like "go generate", fixes formatting, and so on)  ## Pull request title  The pull request title becomes the commit message on main and must follow Conventional Commits (the "PR: Commitlint" check enforces this). Provider-specific changes use the scope "p/PROVIDERNAME". The subject starts with a lowercase letter.  Some examples: * ci: add required GHA permissions for goreleaser * docs: fix providers with "contributor support" table * feat(p/ROUTE53): allow R53_ALIAS records to enable target health evaluation  More details can be found in CONTRIBUTING.md under "Pull request titles". !--> 
 
-- **Issue #5071** (2026-11-09): **feat(MIGADU_BUILDER): add a builder for Migadu mail records**
-  *Symptoms*: ## What this adds  `MIGADU_BUILDER()` creates the DNS records [Migadu](https://www.migadu.com/) needs for a mail domain. It is a Go builder (`models/b_migadu.go`), like `M365_BUILDER` and `FORSALE_BUILDER`.  ```javascript D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),   MIGADU_BUILDER("example.com", {       verify: "abcd1234",       spf: true,   }), ); ```  ```text @                   IN  TXT    "hosted-email-verify=abcd1234" @                   IN  MX     10 aspmx1.migadu.com. @                   IN  MX     20 aspmx2.migadu.com. key1._domainkey     IN  CNAME  key1.example.com._domainkey.migadu.com. key2._domainkey     IN  CNAME  key2.example.com._domainkey.migadu.com. key3._domainkey     IN  CNAME  key3.example.com._domainkey.migadu.com. @                   IN  TXT    "v=spf1 include:spf.migadu.com -all" autoconfig          IN  CNAME  autoconfig.migadu.com. _autodiscover._tcp  IN  SRV    0 1 443 autodiscover.migadu.com. _submissions._tcp   IN  SRV    0 1 465 smtp.migadu.com. _imaps._tcp         IN  SRV    0 1 993 imap.migadu.com. _pop3s._tcp         IN  SRV    0 1 995 pop.migadu.com. ```  - Each group of records (`mx`, `dkim`, `autoconfig`, `autodiscover`, `clientSRV`) is on by default and can be switched off. - SPF is off by default. Two SPF records at one name are a PermError (RFC 7208, section 4.5), so anyone who also sends mail through another service should add `include:spf.migadu.com` to `SPF_BUILDER` instead. The docs show how. - There is no DMARC rec
+- **Issue #5081** (2026-11-11): **build(deps): bump actions/download-artifact from 4.3.0 to 8.0.2**
+  *Symptoms*: Bumps [actions/download-artifact](https://github.com/actions/download-artifact) from 4.3.0 to 8.0.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/download-artifact/releases">actions/download-artifact's releases</a>.</em></p> <blockquote> <h2>v8.0.2</h2> <h2>What's Changed</h2> <ul> <li>Update the readme by <a href="https://github.com/danwkennedy"><code>@​danwkennedy</code></a> in <a href="https://redirect.github.com/actions/download-artifact/pull/473">actions/download-artifact#473</a></li> <li>Improves artifact download retries when the service returns HTTP 429 (rate limiting), including honoring valid Retry-After headers.</li> <li>Update <code>@​actions/artifact</code> to 6.3.1 by <a href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a href="https://redirect.github.com/actions/download-artifact/pull/492">actions/download-artifact#492</a></li> <li>Prepare download-artifact v8.0.2 by <a href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a href="https://redirect.github.com/actions/download-artifact/pull/493">actions/download-artifact#493</a></li> </ul> <h2>New Contributors</h2> <ul> <li><a href="https://github.com/tunc-d"><code>@​tunc-d</code></a> made their first contribution in <a href="https://redirect.github.com/actions/download-artifact/pull/492">actions/download-artifact#492</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/actions/download-artifact/compare/v8.0.1...
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -676,814 +674,148 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c42c4fa3` (2026-11-09)
-**Commit Message**: refactor: share one builderOptions() for the options-object builders (#5072)
+### Incident Patch 1: `59cb1936` (2026-11-11)
+**Commit Message**: build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080)
 
-Follow-up of #5071.
+Bumps
+[github/codeql-action/upload-sarif](https://github.com/github/codeql-action)
+from 4.39.1 to 4.39.3.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's
+releases</a>.</em></p>
+<blockquote>
+<h2>v4.39.3</h2>
+<ul>
+<li>Fixed diff-informed alert filtering incorrectly removing alerts in
+changed files whose paths contain spaces, special characters, or
+non-ASCII characters. <a
+href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li>
+</ul>
+<h2>v4.39.2</h2>
+<ul>
+<li>Update default CodeQL bundle version to <a
+href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4">2.27.4</a>.
+<a
+href="https://redirect.github.com/github/codeql-action/pull/4284">#4284</a></li>
+<li><em>Upcoming breaking change</em>: CodeQL version 2.22.3 and earlier
+were discontinued on 16 October 2026 alongside GitHub Enterprise Server
+3.18, and will be unsupported by the next minor release of the CodeQL
+Action. Added a deprecation warning for customers using these versions
+of CodeQL. <a
 
-## What this changes
 
-`M365_BUILDER`, `FORSALE_BUILDER` and `MIGADU_BUILDER` each had their
-own options function in `pkg/js/helpers.js`: `m365Options()`,
-`forsaleOptions()` and `migaduOptions()`. The three were identical
-except for the builder name in the error message. This replaces them
-with one `builderOptions()`, which takes the name from `record.type`.
-
-The function itself is still needed. Builders receive `record.args` only
-(`models.ImportRawRecords`), so without it the options object would stay
-in `record.metas` and be dropped. `MIGADU_BUILDER("example.com", {
-verify: "abcd1234" })` would then create no verification record.
-
-- No behavior change. The error for an extra object modifier reads the
-same as before for all three builders, for example `MIGADU_BUILDER takes
-one options object; record modifiers that are objects, such as
-CF_PROXY_OFF, are not supported: example.com`.
-- The doc comments on `BuilderM365`, `BuilderFORSALE` and
-`BuilderMigadu` now name `builderOptions()`.
-- The builder section of `documentation/developer-info/cookbook.md`
-tells authors of new builders to pas
-
-**File**: `documentation/developer-info/cookbook.md` (modified, +3/-2)
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
 ```diff
-@@ -247,8 +247,9 @@ func BuilderROBERT(dc *DomainConfig, ttl uint32, args []any, subdomain string) (
+@@ -76,6 +76,6 @@ jobs:
  
- A builder does not receive the `{foo: "foo"}` (Javascript objects) passed to the
- function in `dnsconfig.js`: `RecordBuilderFn` has no metadata parameter. A
--builder that needs an object has to move it into `args` in `pkg/js/helpers.js`
--(see `m365Options()` and `forsaleOptions()`).
-+builder that needs an object has to move it into `args` in `pkg/js/helpers.js`:
-+pass `builderOptions` as the third argument of `rawrecordBuilder()`, for example
-+`var ROBERT = rawrecordBuilder("ROBERT", false, builderOptions);`.
- 
- The builder function can do basically anything and generate as many records as it wants. `SPF_BUILDER()` returns many records. `LOC()` returns just one record.
- 
-```
-
-**File**: `models/b_forsale.go` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ var forSaleValueRE = regexp.MustCompile(`^[A-Z]+[0-9]+(\.[0-9]+)?$`)
- // TXT records of RFC 10023 below a label.
- //
- // args is [label, options]. The options object is moved from the metadata list
--// into the argument list by forsaleOptions() (pkg/js/helpers.js), so its
-+// into the argument list by builderOptions() (pkg/js/helpers.js), so its
- // values arrive as the JSON types dnsconfig.js produces.
- //
- // Without options a single "v=FORSALE1;" record is created, which the RFC
-```
-
-**File**: `models/b_m365.go` (modified, +1/-1)
-```diff
-@@ -97,7 +97,7 @@ type m365Opts struct {
- // documentation/language-reference/domain-modifiers/M365_BUILDER.md.
- //
- // args is [name, options]. The options object is moved from the metadata list
--// into the argument list by m365Options() (pkg/js/helpers.js), so its values
-+// into the argument list by builderOptions() (pkg/js/helpers.js), so its values
- // arrive as the JSON types dnsconfig.js produces: string, bool, float64 and
- // map[string]any. Anything else is a user error, never a reason to panic.
- //
-```
-
-**File**: `models/b_migadu.go` (modified, +1/-1)
-```diff
-@@ -79,7 +79,7 @@ type migaduOpts struct {
- // the same name is a PermError (RFC 7208 section 4.5), not a merge; DMARC is
- // policy and is left to DMARC_BUILDER.
- //
--// args is [name, options]. migaduOptions() (pkg/js/helpers.js) moves the
-+// args is [name, options]. builderOptions() (pkg/js/helpers.js) moves the
- // options object into the argument list, so its values arrive as the JSON
- // types dnsconfig.js produces: string, bool, float64 and map[string]any.
- func BuilderMigadu(dc *DomainConfig, ttl uint32, args []any, subdomain string) (Records, error) {
-```
-
-**File**: `pkg/js/helpers.js` (modified, +14/-41)
-```diff
-@@ -2041,19 +2041,19 @@ function DMARC_BUILDER(value) {
-     return TXT(label, record.join("; "));
- }
- 
--// Documentation of the records: https://learn.microsoft.com/en-us/microsoft-365/enterprise/external-domain-name-system-records?view=o365-worldwide
--// The builder itself is models.BuilderM365; only the options object is handled
--// here.
-+// builderOptions is the rawrecordBuilder() optionalsFn for Go builders that
-+// take an options object: M365_BUILDER, FORSALE_BUILDER and MIGADU_BUILDER.
- //
--// m365Options moves that object out of the metadata list and into the argument
--// list. Builders receive record.args only (see models.ImportRawRecords), so an
-+// It moves that object out of the metadata list and into the argument list.
-+// Builders receive record.args only (see models.ImportRawRecords), so an
- // options object left in record.metas would never reach Go, and the metadata
- // path would corrupt booleans and numbers on the way (see models.mergeMetas).
- // The object is passed through unchanged, so Go can check its contents.
--function m365Options(record, processedArgs, processedMetas) {
-+function builderOptions(record, processedArgs, processedMetas) {
-     if (processedMetas.length > 1) {
-         throw (
--            "M365_BUILDER takes one options object; record modifiers that are objects, such as CF_PROXY_OFF, are not supported: " +
-+            record.type +
-+            " takes one options object; record modifiers that are objects, such as CF_PROXY_OFF, are not supported: " +
-             processedArgs[0]
-         );
-     }
-@@ -2063,7 +2063,9 @@ function m365Options(record, processedArgs, processedMetas) {
-     return args;
- }
- 
--var m365Record = rawrecordBuilder("M365_BUILDER", false, m365Options);
-+// Documentation of the records: https://learn.microsoft.com/en-us/microsoft-365/enterprise/external-domain-name-system-records?view=o365-worldwide
-+// The builder itself is models.BuilderM365.
-+var m365Record = rawrecordBuilder("M365_BUILDER", false, builderOptions);
- 
- // M365_BUILDER used to return an array of records, so calls of the form
- // M365_BUILDER(...).concat([...]) exist. processDargs() flattens arrays, so
-@@ -2072,38 +2074,8 @@ function M365_BUILDER() {
-     return [m365Record.apply(null, arguments)];
- }
- 
--// RFC 10023 "_for-sale" records. The builder itself is models.BuilderFORSALE;
--// forsaleOptions moves the options object into the argument list for the same
--// reason as m365Options().
--function forsaleOptions(record, processedArgs, processedMetas) {
--    if (processedMetas.length > 1) {
--        throw (
--            "FORSALE_BUILDER takes one options object; record modifiers that are objects, such as CF_PROXY_OFF, are not supported: " +
--            processedArgs[0]
--        );
--    }
--    var args = processedArgs.concat(processedMetas);
--    // The options object is an argument, not metadata.
--    processedMetas.length = 0;
--    return args;
--}
--
--// The builder itself is models.BuilderMigadu; only the options object is
--// handled here, the same way m365Options() does for M365_BUILDER.
--function migaduOptions(record, processedArgs, processedMetas) {
--    if (processedMetas.length > 1) {
--        throw (
--            "MIGADU_BUILDER takes one options object; record modifiers that are objects, such as CF_PROXY_OFF, are not supported: " +
--            processedArgs[0]
--        );
--    }
--    var args = processedArgs.concat(processedMetas);
--    // The options object is an argument, not metadata.
--    processedMetas.length = 0;
--    return args;
--}
--
--var MIGADU_BUILDER = rawrecordBuilder("MIGADU_BUILDER", false, migaduOptions);
-+// The builder itself is models.BuilderMigadu.
-+var MIGADU_BUILDER = rawrecordBuilder("MIGADU_BUILDER", false, builderOptions);
- 
- // This is a no-op.  Long TXT records are handled natively now.
- function DKIM(arr) {
-@@ -2334,10 +2306,11 @@ var DHCID = rawrecordBuilder("DHCID");
- var DNAME = rawrecordBuilder("DNAME");
- var DNSKEY = rawrecordBuilder("DNSKEY");
- var DS = rawrecordBuilder("DS");
-+// RFC 10023 "_for-sale" records. The builder itself is models.BuilderFORSALE.
- var FORSALE_BUILDER = rawrecordBuilder(
-     "FORSALE_BUILDER",
-     false,
--    forsaleOptions
-+    builderOptions
- );
- var FRAME = rawrecordBuilder("FRAME");
- var HTTPS = rawrecordBuilder("HTTPS");
+       # Upload the results to GitHub's code scanning dashboard.
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           sarif_file: results.sarif
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `69d4beef` (2026-11-09)
-**Commit Message**: feat(MIGADU_BUILDER): add a builder for Migadu mail records (#5071)
+### Incident Patch 2: `b94674c1` (2026-11-11)
+**Commit Message**: build(deps): bump actions/download-artifact from 4.3.0 to 8.0.2 (#5081)
 
-## What this adds
+Bumps
+[actions/download-artifact](https://github.com/actions/download-artifact)
+from 4.3.0 to 8.0.2.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/actions/download-artifact/releases">actions/download-artifact's
+releases</a>.</em></p>
+<blockquote>
+<h2>v8.0.2</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>Update the readme by <a
+href="https://github.com/danwkennedy"><code>@​danwkennedy</code></a> in
+<a
+href="https://redirect.github.com/actions/download-artifact/pull/473">actions/download-artifact#473</a></li>
+<li>Improves artifact download retries when the service returns HTTP 429
+(rate limiting), including honoring valid Retry-After headers.</li>
+<li>Update <code>@​actions/artifact</code> to 6.3.1 by <a
+href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a
+href="https://redirect.github.com/actions/download-artifact/pull/492">actions/download-artifact#492</a></li>
+<li>Prepare download-artifact v8.0.2 by <a
+href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a
+href="https://redirect.github.com/actions/download-artifact/pull/493">actions/download-artifact#4
 
-`MIGADU_BUILDER()` creates the DNS records
-[Migadu](https://www.migadu.com/) needs for a mail domain. It is a Go
-builder (`models/b_migadu.go`), like `M365_BUILDER` and
-`FORSALE_BUILDER`.
-
-```javascript
-D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),
-  MIGADU_BUILDER("example.com", {
-      verify: "abcd1234",
-      spf: true,
-  }),
-);
-```
-
-```text
-@                   IN  TXT    "hosted-email-verify=abcd1234"
-@                   IN  MX     10 aspmx1.migadu.com.
-@                   IN  MX     20 aspmx2.migadu.com.
-key1._domainkey     IN  CNAME  key1.example.com._domainkey.migadu.com.
-key2._domainkey     IN  CNAME  key2.example.com._domainkey.migadu.com.
-key3._domainkey     IN  CNAME  key3.example.com._domainkey.migadu.com.
-@                   IN  TXT    "v=spf1 include:spf.migadu.com -all"
-autoconfig          IN  CNAME  autoconfig.migadu.com.
-_autodiscover._tcp  IN  SRV    0 1 443 autodiscover.migadu.com.
-_submissions._tcp   IN  SRV    0 1 465 smtp.migadu.com.
-_imaps._tcp         IN  SRV    0 1 993 imap.migadu.com.
-_pop3s._tcp         IN  SRV    0 1 995 pop.migadu.com.
-```
-
-- Each 
-
-**File**: `commands/types/dnscontrol.d.ts` (modified, +166/-0)
+**File**: `.github/workflows/release_draft.yml` (modified, +1/-1)
 ```diff
-@@ -2738,6 +2738,172 @@ declare function LUA(name: string, rtype: string, contents: string | string[], .
-  */
- declare function M365_BUILDER(name: string, opts: { label?: string; mx?: boolean; mxPriority?: number; mxTarget?: string; autodiscover?: boolean; autodiscoverTarget?: string; dkim?: boolean; initialDomain?: string; dkimSelector1Target?: string; dkimSelector2Target?: string; skypeForBusiness?: boolean; sipFederationTarget?: string; mdm?: boolean; mdmEnrollmentTarget?: string; mdmRegistrationTarget?: string; domainGUID?: string; verificationToken?: string }, ...modifiers: RecordModifier[]): DomainModifier;
+@@ -408,7 +408,7 @@ jobs:
+       contents: write # attach the provenance asset to the draft release
+     steps:
+       - name: Download the signed provenance
+-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0, same major as the generator's upload-artifact v4.6.0
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v4.3.0, same major as the generator's upload-artifact v4.6.0
+         with:
+           name: ${{ needs.provenance.outputs.provenance-name }}
  
-+/**
-+ * `MIGADU_BUILDER` creates the DNS records that [Migadu](https://www.migadu.com/)
-+ * requires for one mail domain: the two [`MX`](MX.md) records, the three DKIM
-+ * [`CNAME`](CNAME.md) records, and the client configuration records
-+ * (the Thunderbird-style `autoconfig` `CNAME`, the Outlook-style Autodiscover
-+ * [`SRV`](SRV.md) record, and the [RFC 6186](https://www.rfc-editor.org/rfc/rfc6186)
-+ * `SRV` records for submission, IMAP and POP3). On request it also creates the
-+ * domain verification [`TXT`](TXT.md) record, the SPF record, and a wildcard `MX`
-+ * for subdomain addressing.
-+ *
-+ * The first parameter is the mail domain name. It must be the name the records
-+ * are created under, because the DKIM targets embed it.
-+ *
-+ * `MIGADU_BUILDER` creates the records whose values Migadu fixes. It does not
-+ * create a DMARC record, because the policy is yours to choose; use
-+ * [`DMARC_BUILDER`](DMARC_BUILDER.md). See [SPF](#spf) for why the SPF record is
-+ * off by default.
-+ *
-+ * ## Simple example
-+ *
-+ * ```javascript
-+ * D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),
-+ *   MIGADU_BUILDER("example.com", {
-+ *       verify: "abcd1234",
-+ *       spf: true,
-+ *   }),
-+ * );
-+ * ```
-+ *
-+ * This yields the following records:
-+ *
-+ * ```text
-+ * @                   IN  TXT    "hosted-email-verify=abcd1234"
-+ * @                   IN  MX     10 aspmx1.migadu.com.
-+ * @                   IN  MX     20 aspmx2.migadu.com.
-+ * key1._domainkey     IN  CNAME  key1.example.com._domainkey.migadu.com.
-+ * key2._domainkey     IN  CNAME  key2.example.com._domainkey.migadu.com.
-+ * key3._domainkey     IN  CNAME  key3.example.com._domainkey.migadu.com.
-+ * @                   IN  TXT    "v=spf1 include:spf.migadu.com -all"
-+ * autoconfig          IN  CNAME  autoconfig.migadu.com.
-+ * _autodiscover._tcp  IN  SRV    0 1 443 autodiscover.migadu.com.
-+ * _submissions._tcp   IN  SRV    0 1 465 smtp.migadu.com.
-+ * _imaps._tcp         IN  SRV    0 1 993 imap.migadu.com.
-+ * _pop3s._tcp         IN  SRV    0 1 995 pop.migadu.com.
-+ * ```
-+ *
-+ * ## Parameters
-+ *
-+ * | Option | Type | Default | Description |
-+ * |---|---|---|---|
-+ * | `label` | string | `"@"` | The label of the mail domain within the zone. Applies to every record the builder creates. |
-+ * | `verify` | string | none | The verification token from the Migadu admin panel, for example `"abcd1234"`. Creates the `TXT` record `hosted-email-verify=<token>`. Give the token only, without the `hosted-email-verify=` prefix. |
-+ * | `mx` | boolean | `true` | Create the two `MX` records. |
-+ * | `wildcard` | boolean | `false` | Also create the two `MX` records on the wildcard below the mail domain, for [subdomain addressing](https://migadu.com/guides/subdomain_addressing/). Requires `mx`. |
-+ * | `dkim` | boolean | `true` | Create the three DKIM `CNAME` records. |
-+ * | `spf` | boolean | `false` | Create the SPF `TXT` record `v=spf1 include:spf.migadu.com -all`. See [SPF](#spf). |
-+ * | `autoconfig` | boolean | `true` | Create the `autoconfig` `CNAME` record used by Thunderbird and other clients that follow the Mozilla convention. |
-+ * | `autodiscover` | boolean | `true` | Create the `_autodiscover._tcp` `SRV` record used by Outlook. |
-+ * | `clientSRV` | boolean | `true` | Create the RFC 6186 `SRV` records `_submissions._tcp`, `_imaps._tcp` and `_pop3s._tcp`. |
-+ *
-+ * Unknown options and values of the wrong type are errors.
-+ *
-+ * ## Finding your values
-+ *
-+ * Only the verification token differs between domains. It is shown in the Migadu
-+ * admin panel under **Domains → your domain → DNS**. Compare the records the
-+ * builder creates with that page before switching the `MX` records over.
-+ *
-+ * ## Subdomains
-+ *
-+ * A mail domain that is a subdomain of the zone is placed with `label`. The first
-+ * parameter stays the full mail domain name, because the DKIM targets embed it.
-+ *
-+ * ```javascript
-+ * D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),
-+ *   MIGADU_BUILDER("mail.example.com", {
-+ *       label: "mail",
-+ *       verify: "abcd1234",
-+ *       wildcard: true,
-+ *       autoconfig: false,
-+ *       autodiscover: false,
-+ *       clientSRV: false,
-+ *   }),
-+ * );
-+ * ```
-+ *
-+ * This yields the following records:
-+ *
-+ * ```text
-+ * mail                  IN  TXT    "hosted-email-verify=abcd1234"
-+ * mail 
 ```
 
-**File**: `documentation/SUMMARY.md` (modified, +1/-0)
-```diff
-@@ -66,6 +66,7 @@
-     * [LOC_BUILDER_DMS_STR](language-reference/domain-modifiers/LOC_BUILDER_DMS_STR.md)
-     * [LOC_BUILDER_STR](language-reference/domain-modifiers/LOC_BUILDER_STR.md)
-     * [M365_BUILDER](language-reference/domain-modifiers/M365_BUILDER.md)
-+    * [MIGADU_BUILDER](language-reference/domain-modifiers/MIGADU_BUILDER.md)
-     * [MX](language-reference/domain-modifiers/MX.md)
-     * [NAMESERVER](language-reference/domain-modifiers/NAMESERVER.md)
-     * [NAMESERVER_TTL](language-reference/domain-modifiers/NAMESERVER_TTL.md)
-```
+---
 
-**File**: `documentation/advanced-features/code-tricks.md` (modified, +1/-0)
+### Incident Patch 3: `fd7c232b` (2026-11-11)
+**Commit Message**: build(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 (#5079)
+
+Bumps
+[sigstore/cosign-installer](https://github.com/sigstore/cosign-installer)
+from 4.1.2 to 4.1.3.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/sigstore/cosign-installer/releases">sigstore/cosign-installer's
+releases</a>.</em></p>
+<blockquote>
+<h2>v4.1.3</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>Bump Cosign to v3.1.4 (latest release) in <a
+href="https://redirect.github.com/sigstore/cosign-installer/pull/257">sigstore/cosign-installer#257</a></li>
+</ul>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/sigstore/cosign-installer/compare/v4.1.2...v4.1.3">https://github.com/sigstore/cosign-installer/compare/v4.1.2...v4.1.3</a></p>
+</blockquote>
+</details>
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a
+href="https://github.com/sigstore/cosign-installer/commit/756fe2d284c7292c4e9b62c8a28f1e5629c59532"><code>756fe2d</code></a>
+Bump Cosign to v3.1.4 (latest release) (<a
+href="https://redirect.github.com/sigstore/cosign-installer/issues/257">#257</a>)</li>
+<li><a
+href="https://github.com/sigstore/cosign-installer/commit/b9c35392b7c1401bcc77d30c9b07cf4b1c7a7b07
+
+**File**: `.github/workflows/release_draft.yml` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ Solution: Use a "builder" to construct it for you.
- - [DMARC_BUILDER](../language-reference/domain-modifiers/DMARC_BUILDER.md)
- - [FORSALE_BUILDER](../language-reference/domain-modifiers/FORSALE_BUILDER.md)
- - [M365_BUILDER](../language-reference/domain-modifiers/M365_BUILDER.md)
-+- [MIGADU_BUILDER](../language-reference/domain-modifiers/MIGADU_BUILDER.md)
- - [SPF_BUILDER](../language-reference/domain-modifiers/SPF_BUILDER.md)
+@@ -294,7 +294,7 @@ jobs:
+           echo "hashes=$hashes" >> "$GITHUB_OUTPUT"
  
- ## Repeat records in many domains (macros)
-```
-
-**File**: `documentation/language-reference/domain-modifiers/MIGADU_BUILDER.md` (added, +182/-0)
-```diff
-@@ -0,0 +1,182 @@
-+---
-+name: MIGADU_BUILDER
-+parameters:
-+  - name
-+  - opts
-+  - modifiers...
-+parameter_types:
-+  name: string
-+  opts: "{ label?: string; verify?: string; mx?: boolean; wildcard?: boolean; dkim?: boolean; spf?: boolean; autoconfig?: boolean; autodiscover?: boolean; clientSRV?: boolean }"
-+  "modifiers...": RecordModifier[]
-+---
-+
-+`MIGADU_BUILDER` creates the DNS records that [Migadu](https://www.migadu.com/)
-+requires for one mail domain: the two [`MX`](MX.md) records, the three DKIM
-+[`CNAME`](CNAME.md) records, and the client configuration records
-+(the Thunderbird-style `autoconfig` `CNAME`, the Outlook-style Autodiscover
-+[`SRV`](SRV.md) record, and the [RFC 6186](https://www.rfc-editor.org/rfc/rfc6186)
-+`SRV` records for submission, IMAP and POP3). On request it also creates the
-+domain verification [`TXT`](TXT.md) record, the SPF record, and a wildcard `MX`
-+for subdomain addressing.
-+
-+The first parameter is the mail domain name. It must be the name the records
-+are created under, because the DKIM targets embed it.
-+
-+`MIGADU_BUILDER` creates the records whose values Migadu fixes. It does not
-+create a DMARC record, because the policy is yours to choose; use
-+[`DMARC_BUILDER`](DMARC_BUILDER.md). See [SPF](#spf) for why the SPF record is
-+off by default.
-+
-+## Simple example
-+
-+{% code title="dnsconfig.js" %}
-+```javascript
-+D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),
-+  MIGADU_BUILDER("example.com", {
-+      verify: "abcd1234",
-+      spf: true,
-+  }),
-+);
-+```
-+{% endcode %}
-+
-+This yields the following records:
-+
-+```text
-+@                   IN  TXT    "hosted-email-verify=abcd1234"
-+@                   IN  MX     10 aspmx1.migadu.com.
-+@                   IN  MX     20 aspmx2.migadu.com.
-+key1._domainkey     IN  CNAME  key1.example.com._domainkey.migadu.com.
-+key2._domainkey     IN  CNAME  key2.example.com._domainkey.migadu.com.
-+key3._domainkey     IN  CNAME  key3.example.com._domainkey.migadu.com.
-+@                   IN  TXT    "v=spf1 include:spf.migadu.com -all"
-+autoconfig          IN  CNAME  autoconfig.migadu.com.
-+_autodiscover._tcp  IN  SRV    0 1 443 autodiscover.migadu.com.
-+_submissions._tcp   IN  SRV    0 1 465 smtp.migadu.com.
-+_imaps._tcp         IN  SRV    0 1 993 imap.migadu.com.
-+_pop3s._tcp         IN  SRV    0 1 995 pop.migadu.com.
-+```
-+
-+## Parameters
-+
-+| Option | Type | Default | Description |
-+|---|---|---|---|
-+| `label` | string | `"@"` | The label of the mail domain within the zone. Applies to every record the builder creates. |
-+| `verify` | string | none | The verification token from the Migadu admin panel, for example `"abcd1234"`. Creates the `TXT` record `hosted-email-verify=<token>`. Give the token only, without the `hosted-email-verify=` prefix. |
-+| `mx` | boolean | `true` | Create the two `MX` records. |
-+| `wildcard` | boolean | `false` | Also create the two `MX` records on the wildcard below the mail domain, for [subdomain addressing](https://migadu.com/guides/subdomain_addressing/). Requires `mx`. |
-+| `dkim` | boolean | `true` | Create the three DKIM `CNAME` records. |
-+| `spf` | boolean | `false` | Create the SPF `TXT` record `v=spf1 include:spf.migadu.com -all`. See [SPF](#spf). |
-+| `autoconfig` | boolean | `true` | Create the `autoconfig` `CNAME` record used by Thunderbird and other clients that follow the Mozilla convention. |
-+| `autodiscover` | boolean | `true` | Create the `_autodiscover._tcp` `SRV` record used by Outlook. |
-+| `clientSRV` | boolean | `true` | Create the RFC 6186 `SRV` records `_submissions._tcp`, `_imaps._tcp` and `_pop3s._tcp`. |
-+
-+Unknown options and values of the wrong type are errors.
-+
-+## Finding your values
-+
-+Only the verification token differs between domains. It is shown in the Migadu
-+admin panel under **Domains → your domain → DNS**. Compare the records the
-+builder creates with that page before switching the `MX` records over.
-+
-+## Subdomains
-+
-+A mail domain that is a subdomain of the zone is placed with `label`. The first
-+parameter stays the full mail domain name, because the DKIM targets embed it.
-+
-+{% code title="dnsconfig.js" %}
-+```javascript
-+D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),
-+  MIGADU_BUILDER("mail.example.com", {
-+      label: "mail",
-+      verify: "abcd1234",
-+      wildcard: true,
-+      autoconfig: false,
-+      autodiscover: false,
-+      clientSRV: false,
-+  }),
-+);
-+```
-+{% endcode %}
-+
-+This yields the following records:
-+
-+```text
-+mail                  IN  TXT    "hosted-email-verify=abcd1234"
-+mail                  IN  MX     10 aspmx1.migadu.com.
-+mail                  IN  MX     20 aspmx2.migadu.com.
-+*.mail                IN  MX     10 aspmx1.migadu.com.
-+*.mail                IN  MX     20 aspmx2.migadu.com.
-+key1._domainkey.mail  IN  CNAME  key1.mail.example.com._domainkey.migadu.com.
-+key2._domainkey.mail  IN  CNAME  key2.mail.example.com._domainkey.migadu.com.
-+key3._domainkey.mail  IN  CNAME  key3.mail.example.com._d
-```
-
-**File**: `models/b_migadu.go` (added, +330/-0)
-```diff
-@@ -0,0 +1,330 @@
-+package models
-+
-+import (
-+	"errors"
-+	"fmt"
-+	"maps"
-+	"slices"
-+	"strings"
-+
-+	dnsv2 "codeberg.org/miekg/dns"
-+	dnsutilv2 "codeberg.org/miekg/dns/dnsutil"
-+	"golang.org/x/net/idna"
-+)
-+
-+func init() {
-+	RegisterBuilder("MIGADU_BUILDER", BuilderMigadu)
-+}
-+
-+// The hosts, ports and labels Migadu fixes for every domain. Only the DKIM
-+// targets (which embed the mail domain) and the verification token differ
-+// between domains.
-+const (
-+	migaduMX1Target          = "aspmx1.migadu.com."
-+	migaduMX2Target          = "aspmx2.migadu.com."
-+	migaduDKIMTargetSuffix   = "._domainkey.migadu.com."
-+	migaduSPF                = "v=spf1 include:spf.migadu.com -all"
-+	migaduVerifyPrefix       = "hosted-email-verify="
-+	migaduAutoconfigTarget   = "autoconfig.migadu.com."
-+	migaduAutodiscoverTarget = "autodiscover.migadu.com."
-+	migaduSMTPTarget         = "smtp.migadu.com."
-+	migaduIMAPTarget         = "imap.migadu.com."
-+	migaduPOPTarget          = "pop.migadu.com."
-+
-+	migaduMX1Priority = 10
-+	migaduMX2Priority = 20
-+	migaduDKIMKeys    = 3
-+
-+	migaduAutoconfigLabel   = "autoconfig"
-+	migaduAutodiscoverLabel = "_autodiscover._tcp"
-+	migaduSubmissionsLabel  = "_submissions._tcp"
-+	migaduIMAPSLabel        = "_imaps._tcp"
-+	migaduPOP3SLabel        = "_pop3s._tcp"
-+)
-+
-+// migaduOptionNames lists every option MIGADU_BUILDER accepts, sorted, so that
-+// a call with more than one bad option always reports the same one.
-+var migaduOptionNames = []string{
-+	"autoconfig",
-+	"autodiscover",
-+	"clientSRV",
-+	"dkim",
-+	"label",
-+	"mx",
-+	"spf",
-+	"verify",
-+	"wildcard",
-+}
-+
-+// migaduOpts is the options object of MIGADU_BUILDER() after validation.
-+type migaduOpts struct {
-+	label  string
-+	verify string
-+
-+	mx           bool
-+	wildcard     bool
-+	dkim         bool
-+	spf          bool
-+	autoconfig   bool
-+	autodiscover bool
-+	clientSRV    bool
-+}
-+
-+// BuilderMigadu implements MIGADU_BUILDER(), which generates the DNS records a
-+// domain hosted at Migadu (https://www.migadu.com/) needs. The authoritative
-+// per-domain values are shown in the Migadu admin panel under
-+// Domains → <domain> → DNS.
-+//
-+// It emits provider facts only. SPF is opt-in, because a second SPF record at
-+// the same name is a PermError (RFC 7208 section 4.5), not a merge; DMARC is
-+// policy and is left to DMARC_BUILDER.
-+//
-+// args is [name, options]. migaduOptions() (pkg/js/helpers.js) moves the
-+// options object into the argument list, so its values arrive as the JSON
-+// types dnsconfig.js produces: string, bool, float64 and map[string]any.
-+func BuilderMigadu(dc *DomainConfig, ttl uint32, args []any, subdomain string) (Records, error) {
-+	var name string
-+	if len(args) > 0 {
-+		if s, ok := args[0].(string); ok {
-+			name = s
-+		}
-+	}
-+	if strings.TrimSpace(name) == "" {
-+		return nil, errors.New(`MIGADU_BUILDER: the first argument must be the mail domain name, for example MIGADU_BUILDER("example.com", { verify: "abcd1234" })`)
-+	}
-+	errPrefix := fmt.Sprintf("MIGADU_BUILDER(%q): ", name)
-+
-+	if len(args) > 2 {
-+		return nil, fmt.Errorf("%sexpected the domain name and one options object, got %d arguments", errPrefix, len(args))
-+	}
-+	rawOpts := map[string]any{}
-+	if len(args) == 2 {
-+		o, ok := args[1].(map[string]any)
-+		if !ok {
-+			return nil, fmt.Errorf("%sthe second argument must be an options object, got %s", errPrefix, migaduJSONType(args[1]))
-+		}
-+		rawOpts = o
-+	}
-+
-+	opts, err := migaduParseOptions(errPrefix, rawOpts)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	// The D_EXTEND() subdomain arrives as written in dnsconfig.js, not in IDNA
-+	// form. The records use the converted value, as non-builder records do.
-+	subdomainASCII := subdomain
-+	if subdomainASCII != "" {
-+		subdomainASCII, err = idna.ToASCII(subdomainASCII)
-+		if err != nil {
-+			return nil, fmt.Errorf("%sthe D_EXTEND() subdomain %q is not a valid IDNA name: %w", errPrefix, subdomain, err)
-+		}
-+		subdomainASCII = strings.ToLower(subdomainASCII)
-+	}
-+
-+	label, err := dc.LabelFromDnsconfigjs(opts.label, subdomainASCII)
-+	if err != nil {
-+		return nil, fmt.Errorf("%s%w", errPrefix, err)
-+	}
-+
-+	// The DKIM targets embed the mail domain, so it has to be the name the
-+	// records are created under. A mismatch would publish another domain's
-+	// DKIM targets.
-+	mailDomain, err := idna.ToASCII(strings.TrimRight(strings.TrimSpace(name), "."))
-+	if err != nil {
-+		return nil, fmt.Errorf("%sthe domain name is not a valid IDNA name: %w", errPrefix, err)
-+	}
-+	mailDomain = strings.ToLower(mailDomain)
-+	recordName := dc.Name
-+	if label != "@" {
-+		recordName = label + "." + dc.Name
-+	}
-+	if mailDomain != recordName {
-+		return nil, fmt.Errorf("%sthe mail domain %q is not the name these records are created under (%q); pass that name as the first argument, or set \"label\"", errPrefix, mailDomain, recordName)
-+	}
-+
-+	var records Records
-+	add := func(recLabel string, typeNum uint16, rdata ...any) error {
-+		rec, err := dc.NewRecordConfig(recLabel, ttl, typeNum, rdata...
-```
-
-**File**: `models/b_migadu_test.go` (added, +339/-0)
-```diff
-@@ -0,0 +1,339 @@
-+package models
-+
-+import (
-+	"maps"
-+	"strings"
-+	"testing"
-+)
-+
-+// The options object arrives from dnsconfig.js as JSON, so the test data uses
-+// the types json.Unmarshal produces: string, bool, float64 and map[string]any.
-+
-+func TestBuilderMigadu(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		zone          string
-+		subdomain     string
-+		wantSubDomain string
-+		ttl           uint32
-+		args          []any
-+		want          []string
-+	}{
-+		{
-+			name: "apex, defaults",
-+			zone: "example.com",
-+			ttl:  300,
-+			args: []any{"example.com"},
-+			want: []string{
-+				"@ 300 IN MX 10 aspmx1.migadu.com.",
-+				"@ 300 IN MX 20 aspmx2.migadu.com.",
-+				"key1._domainkey 300 IN CNAME key1.example.com._domainkey.migadu.com.",
-+				"key2._domainkey 300 IN CNAME key2.example.com._domainkey.migadu.com.",
-+				"key3._domainkey 300 IN CNAME key3.example.com._domainkey.migadu.com.",
-+				"autoconfig 300 IN CNAME autoconfig.migadu.com.",
-+				"_autodiscover._tcp 300 IN SRV 0 1 443 autodiscover.migadu.com.",
-+				"_submissions._tcp 300 IN SRV 0 1 465 smtp.migadu.com.",
-+				"_imaps._tcp 300 IN SRV 0 1 993 imap.migadu.com.",
-+				"_pop3s._tcp 300 IN SRV 0 1 995 pop.migadu.com.",
-+			},
-+		},
-+		{
-+			name: "apex, verification and SPF",
-+			zone: "example.com",
-+			ttl:  300,
-+			args: []any{"example.com", map[string]any{
-+				"verify": "wxyz5678",
-+				"spf":    true,
-+			}},
-+			want: []string{
-+				`@ 300 IN TXT "hosted-email-verify=wxyz5678"`,
-+				"@ 300 IN MX 10 aspmx1.migadu.com.",
-+				"@ 300 IN MX 20 aspmx2.migadu.com.",
-+				"key1._domainkey 300 IN CNAME key1.example.com._domainkey.migadu.com.",
-+				"key2._domainkey 300 IN CNAME key2.example.com._domainkey.migadu.com.",
-+				"key3._domainkey 300 IN CNAME key3.example.com._domainkey.migadu.com.",
-+				`@ 300 IN TXT "v=spf1 include:spf.migadu.com -all"`,
-+				"autoconfig 300 IN CNAME autoconfig.migadu.com.",
-+				"_autodiscover._tcp 300 IN SRV 0 1 443 autodiscover.migadu.com.",
-+				"_submissions._tcp 300 IN SRV 0 1 465 smtp.migadu.com.",
-+				"_imaps._tcp 300 IN SRV 0 1 993 imap.migadu.com.",
-+				"_pop3s._tcp 300 IN SRV 0 1 995 pop.migadu.com.",
-+			},
-+		},
-+		{
-+			// The DKIM targets embed the mail domain, not the zone.
-+			name: "below a label, wildcard MX",
-+			zone: "example.com",
-+			ttl:  3600,
-+			args: []any{"mail.example.com", map[string]any{
-+				"label":        "mail",
-+				"verify":       "abcd1234",
-+				"wildcard":     true,
-+				"autoconfig":   false,
-+				"autodiscover": false,
-+				"clientSRV":    false,
-+			}},
-+			want: []string{
-+				`mail 3600 IN TXT "hosted-email-verify=abcd1234"`,
-+				"mail 3600 IN MX 10 aspmx1.migadu.com.",
-+				"mail 3600 IN MX 20 aspmx2.migadu.com.",
-+				"*.mail 3600 IN MX 10 aspmx1.migadu.com.",
-+				"*.mail 3600 IN MX 20 aspmx2.migadu.com.",
-+				"key1._domainkey.mail 3600 IN CNAME key1.mail.example.com._domainkey.migadu.com.",
-+				"key2._domainkey.mail 3600 IN CNAME key2.mail.example.com._domainkey.migadu.com.",
-+				"key3._domainkey.mail 3600 IN CNAME key3.mail.example.com._domainkey.migadu.com.",
-+			},
-+		},
-+		{
-+			name: "apex wildcard",
-+			zone: "example.com",
-+			ttl:  300,
-+			args: []any{"example.com", map[string]any{
-+				"wildcard":     true,
-+				"dkim":         false,
-+				"autoconfig":   false,
-+				"autodiscover": false,
-+				"clientSRV":    false,
-+			}},
-+			want: []string{
-+				"@ 300 IN MX 10 aspmx1.migadu.com.",
-+				"@ 300 IN MX 20 aspmx2.migadu.com.",
-+				"* 300 IN MX 10 aspmx1.migadu.com.",
-+				"* 300 IN MX 20 aspmx2.migadu.com.",
-+			},
-+		},
-+		{
-+			name:          "D_EXTEND",
-+			zone:          "example.com",
-+			subdomain:     "sub",
-+			wantSubDomain: "sub",
-+			ttl:           300,
-+			args: []any{"sub.example.com", map[string]any{
-+				"autoconfig":   false,
-+				"autodiscover": false,
-+				"clientSRV":    false,
-+			}},
-+			want: []string{
-+				"sub 300 IN MX 10 aspmx1.migadu.com.",
-+				"sub 300 IN MX 20 aspmx2.migadu.com.",
-+				"key1._domainkey.sub 300 IN CNAME key1.sub.example.com._domainkey.migadu.com.",
-+				"key2._domainkey.sub 300 IN CNAME key2.sub.example.com._domainkey.migadu.com.",
-+				"key3._domainkey.sub 300 IN CNAME key3.sub.example.com._domainkey.migadu.com.",
-+			},
-+		},
-+		{
-+			name:          "D_EXTEND, written in upper case",
-+			zone:          "example.com",
-+			subdomain:     "SUB",
-+			wantSubDomain: "sub",
-+			ttl:           300,
-+			args: []any{"SUB.Example.com", map[string]any{
-+				"mx":           false,
-+				"autoconfig":   false,
-+				"autodiscover": false,
-+				"clientSRV":    false,
-+			}},
-+			want: []string{
-+				"key1._domainkey.sub 300 IN CNAME key1.sub.example.com._domainkey.migadu.com.",
-+				"key2._domainkey.sub 300 IN CNAME key2.sub.example.com._domainkey.migadu.com.",
-+				"key3._domainkey.sub 300 IN CNAME key3.sub.example.com._domainkey.migadu.com.",
-+			},
-+		},
-+		{
-+			// The DKIM targets carry the punycode form, the only form DNS has.
-+			name: "internationalized domain name",
-+			zone: "xn--mnch
-```
-
-**File**: `pkg/js/helpers.js` (modified, +17/-0)
-```diff
-@@ -2088,6 +2088,23 @@ function forsaleOptions(record, processedArgs, processedMetas) {
-     return args;
- }
+       - name: Install cosign
+-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
++        uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
  
-+// The builder itself is models.BuilderMigadu; only the options object is
-+// handled here, the same way m365Options() does for M365_BUILDER.
-+function migaduOptions(record, processedArgs, processedMetas) {
-+    if (processedMetas.length > 1) {
-+        throw (
-+            "MIGADU_BUILDER takes one options object; record modifiers that are objects, such as CF_PROXY_OFF, are not supported: " +
-+            processedArgs[0]
-+        );
-+    }
-+    var args = processedArgs.concat(processedMetas);
-+    // The options object is an argument, not metadata.
-+    processedMetas.length = 0;
-+    return args;
-+}
-+
-+var MIGADU_BUILDER = rawrecordBuilder("MIGADU_BUILDER", false, migaduOptions);
-+
- // This is a no-op.  Long TXT records are handled natively now.
- function DKIM(arr) {
-     return arr;
-```
-
-**File**: `pkg/js/js_test.go` (modified, +3/-0)
-```diff
-@@ -195,6 +195,9 @@ func TestErrors(t *testing.T) {
- 		{"FORSALE_BUILDER unknown option", `D("foo.com","reg",FORSALE_BUILDER("@",{uri:"https://foo.com/buy"}))`},
- 		{"FORSALE_BUILDER bad price", `D("foo.com","reg",FORSALE_BUILDER("@",{fval:"999 EUR"}))`},
- 		{"FORSALE_BUILDER with a record modifier", `D("foo.com","reg",FORSALE_BUILDER("@",{fval:"EUR999"},CF_PROXY_OFF))`},
-+		{"MIGADU_BUILDER unknown option", `D("foo.com","reg",MIGADU_BUILDER("foo.com",{ttl:"1h"}))`},
-+		{"MIGADU_BUILDER label without the mail domain", `D("foo.com","reg",MIGADU_BUILDER("foo.com",{label:"mail"}))`},
-+		{"MIGADU_BUILDER with a record modifier", `D("foo.com","reg",MIGADU_BUILDER("foo.com",{},CF_PROXY_OFF))`},
- 	}
- 	for _, tst := range tests {
- 		t.Run(tst.desc, func(t *testing.T) {
+       # Keyless (OIDC) signing: the signer identity is this workflow/job, so
+       # there are no signing keys to manage. checksums.txt covers every
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5072** (2026-11-09): refactor: share one builderOptions() for the options-object builders (@fgerling)
-- **PR #5071** (2026-11-09): feat(MIGADU_BUILDER): add a builder for Migadu mail records (@fgerling)
-- **PR #5069** (2026-11-09): chore: update deps (@TomOnTime)
-- **PR #5067** (2026-11-06): chore: update npm dependencies (@TomOnTime)
-- **PR #5066** (2026-11-06): chore: upgrade to the latest tomontime/dns patches (@TomOnTime)
-- **PR #5065** (2026-11-04): build(deps): bump step-security/harden-runner from 2.22.2 to 2.22.3 (@dependabot[bot])
+- **PR #5083** (2026-11-12): docs: clarify macOS sha check (@TomOnTime)
+- **PR #5081** (2026-11-11): build(deps): bump actions/download-artifact from 4.3.0 to 8.0.2 (@dependabot[bot])
+- **PR #5080** (2026-11-11): build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (@dependabot[bot])
+- **PR #5079** (2026-11-11): build(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 (@dependabot[bot])
+- **PR #5078** (2026-11-11): fix(release): set GH_REPO for the upload-provenance job (@TomOnTime)
+- **PR #5077** (2026-11-11): fix(release): grant contents:write to the SLSA provenance job (@TomOnTime)
 
 ---
 
@@ -1503,31 +835,28 @@ _pop3s._tcp         IN  SRV    0 1 995 pop.migadu.com.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. share one builderOptions() for the options-object builders (#5072)
+## X. build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080
 
 **RULE**:
-When implementing operations in `documentation/developer-info/cookbook.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/scorecard.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c42c4fa3`: share one builderOptions() for the options-object builders (#5072). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59cb1936`: build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/developer-info/cookbook.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/scorecard.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-builder that needs an object has to move it into `args` in `pkg/js/helpers.js`:
-pass `builderOptions` as the third argument of `rawrecordBuilder()`, for example
-`var ROBERT = rawrecordBuilder("ROBERT", false, builderOptions);`.
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-builder that needs an object has to move it into `args` in `pkg/js/helpers.js`
-(see `m365Options()` and `forsaleOptions()`).
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c42c4fa3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59cb1936` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `d140e69f`  
+> **Source Version**: `766683fe`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T22:06:24.081Z  
+> **Timestamp**: 2026-11-12T07:15:25.832Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T22:06:24.078Z  
+> **Harvest Timestamp**: 2026-11-12T07:15:25.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12529 stars
+- **Stars / Engagement**: 12543 stars
 
 ---
 
@@ -680,8 +680,6 @@ mod tests {
 use crate::StatusCodeError;
 use crate::StatusError;
 use crate::client::CallOptions;
-use crate::client::DynRecvStream;
-use crate::client::DynSendStream;
 use crate::client::InvokeOnce;
 use crate::client::RecvStream;
 use crate::client::RequestHeaders;
@@ -689,6 +687,8 @@ use crate::client::ResponseStreamItem;
 use crate::client::SendOptions;
 use crate::client::SendStream;
 use crate::client::Trailers;
+use crate::client::boxed::BoxRecvStream;
+use crate::client::boxed::BoxSendStream;
 use crate::client::interceptor::Intercept;
 use crate::core::ConnectionInfo;
 use crate::core::RecvMessage;
@@ -858,10 +858,10 @@ impl FailingRecvStream {
     pub(crate) fn new_stream_pair(
         status: StatusError,
         connection_info: Option<ConnectionInfo>,
-    ) -> (Box<dyn DynSendStream>, Box<dyn DynRecvStream>) {
+    ) -> (BoxSendStream, BoxRecvStream) {
         (
-            Box::new(NopSendStream),
-            Box::new(Self {
+            BoxSendStream::new(NopSendStream),
+            BoxRecvStream::new(Self {
                 status: Some(status),
                 connection_info,
             }),
@@ -948,7 +948,7 @@ mod test {
                     crate::core::test_connection_info(),
                 )),
                 ResponseStreamItem::Message,
-                ResponseS
+         
 ```
 
 ### Core Architecture Module: `grpc/src/core/mod.rs`
@@ -1265,7 +1265,7 @@ use pin_project_lite::pin_project;
 use tower::Service;
 use tower::load::Load;
 
-use crate::client::endpoint::{Connector, EndpointAddress};
+use crate::client::endpoint::{Connector, EndpointAddress, XdsEndpoint};
 use crate::client::loadbalance::outlier_detection::OutlierStatsRegistry;
 use crate::common::async_util::BoxFuture;
 
@@ -1462,21 +1462,21 @@ pub(crate) enum UnejectedChannel<S> {
 // IdleChannel
 // ---------------------------------------------------------------------------
 
-/// An idle channel that only stores an address. It is the entry point for
+/// An idle channel that only stores its endpoint. It is the entry point for
 /// starting a connection attempt.
 pub(crate) struct IdleChannel {
-    addr: EndpointAddress,
+    endpoint: Arc<XdsEndpoint>,
 }
 
 impl IdleChannel {
-    pub(crate) fn new(addr: EndpointAddress) -> Self {
-        Self { addr }
+    #[cfg(test)]
+    pub(crate) fn new(endpoint: impl Into<XdsEndpoint>) -> Self {
+        Arc::new(endpoint.into()).into()
     }
 
     /// Start connecting to the endpoint. Consumes the idle channel.
     /// The resolved [`ReadyChannel`] will carry the
-    /// `Arc<OutlierChannelState>` from `registry.add_channel(addr)` —
-    /// idempotent, so a re-
+    /// `Arc<OutlierChannelState
 ```
 
 ### Core Architecture Module: `tonic-xds/src/common/async_util.rs`
@@ -1509,6 +1509,11 @@ impl IdleChannel {
 
 use std::future::Future;
 use std::pin::Pin;
+use std::task::{Context, Poll};
+
+use futures_core::Stream;
+use tokio::sync::mpsc;
+use tokio_stream::wrappers::ReceiverStream;
 
 /// A pinned, boxed, `Send` future.
 ///
@@ -1524,6 +1529,43 @@ pub(crate) struct AbortOnDrop(pub(crate) tokio::task::JoinHandle<()>);
 impl Drop for AbortOnDrop {
     fn drop(&mut self) {
         self.0.abort();
+    }
+}
+
+/// A stream fed by a spawned producer task that the stream owns.
+///
+/// Dropping the stream aborts the producer.
+pub(crate) struct TaskStream<T> {
+    rx: ReceiverStream<T>,
+    _task: AbortOnDrop,
+}
+
+impl<T> TaskStream<T> {
+    /// Spawns `producer` with the sending half of a channel of `capacity`
+    /// and returns the stream of what it sends.
+    pub(crate) fn spawn<P, F>(capacity: usize, producer: P) -> Self
+    where
+        P: FnOnce(mpsc::Sender<T>) -> F,
+        F: Future<Output = ()> + Send + 'static,
+    {
+        let (tx, rx) = mpsc::channel(capacity);
+        let task = tokio::spawn(producer(tx));
+        Self {
+            rx: ReceiverStream::new(rx),
+            _task: AbortOnDrop(task),
+        }
+    }
+}
+
+impl<T> Stream for TaskStream<T> {
+    type Item = T;
+
+    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<T>> {
+        Pin::new(&mut self.rx).poll_next(cx)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.rx.size_hint()
     }
 }
 
@@ -1909,11 +1951,11 @@ enum SubscriptionMode {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3004** (2026-11-05): **tonic-prost-build: Propagate with_extended_rust_types via ServiceGenerator**
-  *Symptoms*: ## Motivation  When `Builder::with_extended_rust_types` was added in #2544, the `NON_PATH_TYPE_ALLOWLIST` update and its reset drop guard were placed in `Builder::compile_with_config` rather than in `ServiceGenerator`. As a result, `Builder::compile_fds`, `Builder::compile_fds_with_config`, and `Builder::service_generator` did not respect `with_extended_rust_types`.  ## Solution  Pass `with_extended_rust_types` into `ServiceGenerator` from `compile_with_config`, `compile_fds_with_config`, and `service_generator`, and manage the `NON_PATH_TYPE_ALLOWLIST` setting and drop guard inside `ServiceGenerator::generate`.
+- **Issue #3021** (2026-11-10): **grpc-xds: Fix import for new protobuf-generated module**
+  *Symptoms*: 4b61ef94a (adding grpc crate xds-client transport) raced with 950fa06960 (swapping to protobuf-generated module).
 
-- **Issue #3003** (2026-11-05): **gprx-xds/load_balancing: Make test utilities available to grpc-xds crate.**
-  *Symptoms*:  ## Motivation  Make the load balancer test utilities available to the `grpc-xds` crate.  ## Solution  There are a number of ways to solve this, but the feature flag path allows us to most cleanly get access to the same functionality without copy-pasting or suffering dead code annotations, externs and/or other nonsense.  ## Notes  In a follow up we will be replacing the queuing/failing pickers with a fixed picker, similar to Java's.
+- **Issue #3019** (2026-11-11): **tonic-xds: stop per-cluster tasks when the channel is dropped**
+  *Symptoms*: ## Motivation  The per-cluster CDS watch (`ClusterConnector`) and EDS diff loop (`EndpointManager`) tasks outlived their channel. The CDS task held an `Arc<XdsCache>` that could keep the cache alive forever, and the diff loop only noticed a dropped receiver on its next send.  ``` runtime ──owns──▶ task ──Arc──▶ XdsCache ──holds──▶ watch::Sender                    ▲                                     │                    └────────── waits on receiver ────────┘ ```  (_The task can't exit until the sender drops, and the sender can't drop until the task releases the cache. Since the runtime owns the task, dropping the channel doesn't break the loop._)  This leak so far manifests only when the `XdsChannel` is dropped, so the impact is memory growth on apps creating and discarding channels. But because we plan to address #2939 cluster removal bug soon, this leak will create a race window that the discovery task may subscribe to orphaned cache entry and wait forever, thus leaking even when channel is still alive. To simplify the upcoming cluster removal PR, I'm addressing it separately first.  ## Solution  - `ClusterConnector` aborts its task on drop and subscribes before spawning, handing the task a `CacheWatch` instead of the cache. - Add `TaskStream<T>`, an mpsc stream that aborts its producer task on drop, and run the EDS diff loop on it.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1930,523 +1972,84 @@ enum SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d140e69f` (2026-11-05)
-**Commit Message**: interop: update client.rs to run in interop test harness (#2993)
+### Incident Patch 1: `70d1dfd3` (2026-11-11)
+**Commit Message**: grpc/credentials: Canonicalize IPs in security level check. (#3017)
 
 ## Motivation
 
-`grpc-rust` clients should support vanilla interop tests.
+IPs should get normalized/canonicalized so that IPv4-mapped IPv6 IPs
+behave the same. The vanilla interop server client also requires this.
 
 ## Solution
 
-This PR is all the plumbing required to get the `client.rs` able to run
-in the interop test harness. This is primarily plumbing through various
-command flags and fixing credentials.
+Add a `to_canonical()` call and tests to ensure it going forward.
 
-Note that previously a locally generated set of credentials existed.
-This PR changes this pattern to utilize the credentials in the grpc
-repo, per the instructions there around interop tests. The old
-generation code has been yanked.
-
-Also, this PR is not including any of the tests that need to be
-implemented for test parity with other clients - that will be in a
-separate follow up that can come after the harness is working.
-
-**File**: `interop/Cargo.toml` (modified, +1/-1)
+**File**: `grpc/src/credentials/local.rs` (modified, +11/-0)
 ```diff
-@@ -23,7 +23,7 @@ http-body-util = "0.1"
- prost = "0.14"
- tokio = {version = "1.0", features = ["rt-multi-thread", "time", "macros"]}
- tokio-stream = "0.1"
--tonic = {path = "../tonic", features = ["tls-ring"]}
-+tonic = {path = "../tonic", features = ["tls-ring", "tls-native-roots"]}
- tonic-prost = {path = "../tonic-prost"}
- tower = "0.5"
- tracing-subscriber = {version = "0.3"}
-```
-
-**File**: `interop/data/README.md` (modified, +13/-14)
-```diff
-@@ -1,17 +1,16 @@
--# Tonic Testing Certificates
-+# Interop Testing Certificates
+@@ -91,6 +91,7 @@ fn security_level_for_endpoint(
+         && SocketAddr::from_str(peer_addr)
+             .map_err(|e| e.to_string())?
+             .ip()
++            .to_canonical()
+             .is_loopback()
+     {
+         return Ok(SecurityLevel::NoSecurity);
+@@ -206,6 +207,13 @@ mod test {
+             security_level_for_endpoint("[::1]:8080", TCP_IP_NETWORK_TYPE),
+             Ok(SecurityLevel::NoSecurity)
+         );
++        // Local TCP credentials assign NoSecurity to loopback connections,
++        // including IPv4-mapped IPv6 loopback addresses observed on dual-stack
++        // (`[::]`) listeners.
++        assert_eq!(
++            security_level_for_endpoint("[::ffff:127.0.0.1]:8080", TCP_IP_NETWORK_TYPE),
++            Ok(SecurityLevel::NoSecurity)
++        );
+         assert_eq!(
+             security_level_for_endpoint("/file/path/name.sock", UNIX_NETWORK_TYPE),
+             Ok(SecurityLevel::PrivacyAndIntegrity)
+@@ -219,6 +227,9 @@ mod test {
+     #[test]
+     fn test_security_level_for_endpoint_failure() {
+         assert!(security_level_for_endpoint("192.168.1.1:8080", TCP_IP_NETWORK_TYPE).is_err());
++        assert!(
++            security_level_for_endpoint("[::ffff:192.168.1.1]:8080", TCP_IP_NETWORK_TYPE).is_err()
++        );
+         assert!(security_level_for_endpoint("invalid", TCP_IP_NETWORK_TYPE).is_err());
+     }
  
--This directory contains certificates used for testing interop between Tonic's
--implementation of gRPC and the Go implementation. Certificates are generated
--using [`terraform`][tf].
-+These files are copies of gRPC's shared interop test credentials, from
-+[`src/core/tsi/test_creds`](https://github.com/grpc/grpc/tree/master/src/core/tsi/test_creds)
-+in the grpc/grpc repository. Every gRPC implementation ships the same set, which
-+lets grpc-rust run TLS interop tests against any other implementation.
- 
--To regenerate certificates for some reason, do the following:
-+| File | Used by |
-+|---|---|
-+| `ca.pem` | The interop client trusts this CA when run with `--use_test_ca` (default `--ca_file`). |
-+| `server1.pem`, `server1.key` | Interop servers present this certificate when run with `--use_tls`. It is valid for `*.test.google.fr`, `waterzooi.test.google.be`, `*.test.youtube.com` and `192.168.1.3`, so clients pass e.g. `--server_host_override=foo.test.google.fr`. |
- 
--1. Install Terraform 0.12 (or higher)
--1. From the `cert-generator` directory, run:
--    1. `terraform init`
--    1. `terraform apply`
--
--This will generate certificates and write them to the filesystem. The effective
--version should be committed to git.
--
--[tf]: https://terraform.io
-+Do not regenerate these files: a locally generated CA is not trusted by the
-+other implementations' interop clients and servers. Keep them byte-identical to
-+the grpc/grpc copies. The current set expires in March 2030; when gRPC rotates
-+it, copy the new files here.
-```
-
-**File**: `interop/data/ca.pem` (modified, +18/-18)
-```diff
-@@ -1,20 +1,20 @@
- -----BEGIN CERTIFICATE-----
--MIIDRjCCAi6gAwIBAgIQd5pnuFdwgGxb4RiClYEPMTANBgkqhkiG9w0BAQsFADA9
--MQ4wDAYDVQQKEwVUb2tpbzEQMA4GA1UECxMHVGVzdGluZzEZMBcGA1UEAxMQVG9u
--aWMgVGVzdGluZyBDQTAeFw0yNTA1MDExNzQyNThaFw0zNTA0MjkxNzQyNThaMD0x
--DjAMBgNVBAoTBVRva2lvMRAwDgYDVQQLEwdUZXN0aW5nMRkwFwYDVQQDExBUb25p
--YyBUZXN0aW5nIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2C37
--LVCs4RfNdwv8NMZfIdFNqrUdwzXZ+a5B7Pee1nOL+JD9feOGn1qGZI1ZgFMqVygN
--ejSkzlbouN9RAGgyBmOFFo3oEc+nz7kPrezBLoM3oVgNzhEixz2IQoafoZX3j48Y
--fpGYmrTHUp4MAwUAt6Zb+kD7YGqD8//I5OMM4Y5R8yuYGsJHUUSZqYfgXCk0ZvVG
--EX7zyr31cVLqto1vpuv5Uvp6WX5oGgbZVB0wvlqs9Ak+dblWBZQIsrUPU8kn/6kx
--HilF8Lw24dRXr5oveFDMdD/n4sIh7Gr/O+VGH83gP/PawXy0WWn5qGAhdx+P99jI
--UGAWNetu4vGgASLFkwIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAgQwDwYDVR0TAQH/
--BAUwAwEB/zAdBgNVHQ4EFgQU4AI0rUoGKFxe0gXIYujrhnuNsocwDQYJKoZIhvcN
--AQELBQADggEBAEtSrTgz+suVMDRsdvxG7+BAcXfVc8pmou3KIFbDtIyog2BEU5nU
--Z+zBqrVgbGv9B4D7XLcZgTShY17cvJP8QpUwT/gzI9uR8Lig9JGF7n1K43+aiAk9
--s7H8e74rwyPX6mRmuznd1sJdDsc5lohUPpZVI+7pRywedQw+QG6/n2cVvR0k0Txh
--pF1XBpzuFA5t5uqW/v/QFqfGEuIDDMdW2JQSEB7UyH4V2yWswoYb/uf/xoNXWWqs
--Y6RVSp6qVW8748rPPwmLaN8hHGIUNUnilQIXr67bX8i3FjoLHhQvKqUEKciXJWj9
--ssGOvq0QoVZNPltcZp9yID3W2kyxv6Hq8VA=
-+MIIDWjCCAkKgAwIBAgIUWrP0VvHcy+LP6UuYNtiL9gBhD5owDQYJKoZIhvcNAQEL
-+BQAwVjELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM
-+GEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEPMA0GA1UEAwwGdGVzdGNhMB4XDTIw
-+MDMxNzE4NTk1MVoXDTMwMDMxNTE4NTk1MVowVjELMAkGA1UEBhMCQVUxEzARBgNV
-+BAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0
-+ZDEPMA0GA1UEAwwGdGVzdGNhMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-+AQEAsGL0oXflF0LzoM+Bh+qUU9yhqzw2w8OOX5mu/iNCyUOBrqaHi7mGHx73GD01
-+diNzCzvlcQqdNIH6NQSL7DTpBjca66jYT9u73vZe2MDrr1nVbuLvfu9850cdxiUO
-+Inv5xf8+sTHG0C+a+VAvMhsLiRjsq+lXKRJyk5zkbbsETybqpxoJ+K7CoSy3yc/k
-+QIY3TipwEtwkKP4hzyo6KiGd/DPexie4nBUInN3bS1BUeNZ5zeaIC2eg3bkeeW7c
-+qT55b+Yen6CxY0TEkzBK6AKt/WUialKMgT0wbTxRZO7kUCH3Sq6e/wXeFdJ+HvdV
-+LPlAg5TnMaNpRdQih/8nRFpsdwIDAQABoyAwHjAMBgNVHRMEBTADAQH/MA4GA1Ud
-+DwEB/wQEAwICBDANBgkqhkiG9w0BAQsFAAOCAQEAkTrKZjBrJXHps/HrjNCFPb5a
-+THuGPCSsepe1wkKdSp1h4HGRpLoCgcLysCJ5hZhRpHkRihhef+rFHEe60UePQO3S
-+CVTtdJB4CYWpcNyXOdqefrbJW5QNljxgi6Fhvs7JJkBqdXIkWXtFk2eRgOIP2Eo9
-+/OHQHlYnwZFrk6sp4wPyR+A95S0toZBcyDVz7u+hOW0pGK3wviOe9lvRgj/H3Pwt
-+bewb0l+MhRig0/DVHamyVxrDRbqInU1/GTNCwcZkXKYFWSf92U+kIcTth24Q1gcw
-+eZiLl5FfrWokUNytFElXob0V0a5/kbhiLc3yWmvWqHTpqCALbVyF+rKJo2f5Kw==
- -----END CERTIFICATE-----
-```
-
-**File**: `interop/data/cert-generator/.gitignore` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--.terraform/
--*.tfstate
--*.tfstate.backup
-```
-
-**File**: `interop/data/cert-generator/ca.tf` (removed, +0/-26)
-```diff
-@@ -1,26 +0,0 @@
--resource "tls_private_key" "root" {
--  algorithm = "RSA"
--  rsa_bits = "2048"
--}
--
--resource "tls_self_signed_cert" "root" {
--  private_key_pem = tls_private_key.root.private_key_pem
--
--  validity_period_hours = 87600
--  early_renewal_hours = 8760
--
--  is_ca_certificate = true
--
--  allowed_uses = ["cert_signing"]
--
--  subject {
--    common_name = "Tonic Testing CA"
--    organization = "Tokio"
--    organizational_unit = "Testing"
--  }
--}
--
--resource "local_file" "ca_cert" {
--  filename = "../ca.pem"
--  content = tls_self_signed_cert.root.cert_pem
--}
-```
-
-**File**: `interop/data/cert-generator/server_certs.tf` (removed, +0/-38)
-```diff
-@@ -1,38 +0,0 @@
--resource "tls_private_key" "server" {
--  algorithm = "RSA"
--  rsa_bits = "2048"
--}
--
--resource "tls_cert_request" "server" {
--  private_key_pem = tls_private_key.server.private_key_pem
--
--  subject {
--    common_name = "Tonic Test Server Cert"
--  }
--
--  dns_names = [
--    "*.test.google.fr",
--  ]
--}
--
--resource "tls_locally_signed_cert" "server" {
--  cert_request_pem = tls_cert_request.server.cert_request_pem
--
--  ca_private_key_pem = tls_private_key.root.private_key_pem
--  ca_cert_pem = tls_self_signed_cert.root.cert_pem
--
--  validity_period_hours = 43800
--  early_renewal_hours = 8760
--
--  allowed_uses = ["server_auth"]
--}
--
--resource "local_file" "server_cert" {
--  filename = "../server1.pem"
--  content = tls_locally_signed_cert.server.cert_pem
--}
--
--resource "local_file" "server_key" {
--  filename = "../server1.key"
--  content = tls_private_key.server.private_key_pem
--}
-```
-
-**File**: `interop/data/server1.key` (modified, +28/-27)
-```diff
-@@ -1,27 +1,28 @@
-------BEGIN RSA PRIVATE KEY-----
--MIIEpAIBAAKCAQEA7iJJ8gLlKsp+r15CR15Iz2rmi3f3OZmA8FZ0hpB5hNkQHfVA
--RlC2yawIfHiLO4tpUmjtX8iq3RXPkKPYP5Zfd1BDLdR/2qhd3vFJnRVfoiqTMNOV
--3R3+tIm04gDbtGxIDuWL+No/r/KldFxwbLqYTXDOaa145YI2aZ3GZ3P6GFYls6h7
--PeUqlXv7yWx1jfcMIZPeupHwWESYCCLkpvBHFZftWhc/FChUmgr417vmQC2eGwuX
--LyRdu+Lv9NmSzsO6A+w8ss62ewC02LXkXAG2Prd1GYuScsq94GcE5lguC5TVkdTm
--tQMDmET/KvitG3vLB9AIkKnjZdi1Ml7Ow6dByQIDAQABAoIBAFo7ketrH2z8d855
--mAG0/z/hEOSuG3au7MWk7NiEbBdjrJC9epJqSSjX0AtiHdf9NnZsne2aeuv1NMZo
--3ysRDrGGLz5xc9Tl0VQF98/W5nrrSQTKV9IGaJn+SBUPIDEYiqFiZ4xvHozME9eo
--o0z/03Acm4o9mj7U/Us95o0SzCRl3QKgAWeSS36Ks0OmDJfNuYBWf+WA7Fte9NUp
--yOOm2fGejoge9eMcJY3/7HckrESscMECZMUL1hBbVD939d4S4AvM6YWTErAa9uq9
--APsXdu5IYglonqw6oc4TtN9bI9gbHKTyiFgi42gM6qcN2ixpQ78ufktLcJLBTLzi
--jP5f5cUCgYEA7whtTRG+KN3nAaRy5gU3JDdOIM1tlAVjwtvUIre3sf6p6Bzs0+RL
--DVdOidJB+8wnV6hF64+juHS27Y7t4ONt2VRFNmY3yRlb9MwqOYlqGaOOewgY+Gab
--ZC4GBKmMRKW0LpeRHghpCeyeRRKr5tkYalyU9/C+mxIFpb0/NZZXh6sCgYEA/wmG
--s+npJH2Xs17Yd3wwroZpFAlG2wRCd0IS14brKr+w5czbGis8Pz/LCVrNH+6ZkvoI
--gUpTDwY7egt9O2iCIeSeq82Ov+g9WiDa150YTq8av09N7AZ13Na+SU5aNpPwIOEZ
--WX8dygNloSh4JDjOhrwigRtcMmYCtpKVS792GFsCgYEA6QEB6rp870E/ya4QAoDa
--+4adtgQJ6NxIHs5Cv4Tun6dq4EQx52sGbf7JJDe88kJTp3L0lWbzZP8AwhktcKbB
--kbQ/s4N4paL+rGXIU0XMEyoH3Y5LKPh8SO9EFo9fmBsexLwiTXBNU8s/jH1i7Ch7
--UFLnM7mNU4QB1Ungr8/ZivkCgYA6sA2ATz5oOEJ1c0jqzfhB4QpDIxNcCPHmkZzW
--XeS11KC3cNmmfvaBM4PcZjm3tGdArCrS3bCZT3zWS9iImDcB56Mfs9C6lo2vtMnH
--Pg4+5QqJpY0v2Bi9NelZ4x7dWlOyrTnxH1BSkU+Ms0xaQXw9AwQJo6smqdTMAJU8
--dhWN6wKBgQDRAjpfV77FE32XsBkHyGlaIanxu+gSJVLaHStZLV8qTvn//lnmr5Be
--abK4smlwHp5ZnTwqP3gMh/b8vfyPYHdK/2rCKSCEPf/JHtoABsw9Hvkr/N99MZQd
--S2l3PYQoQ8smUVYNWhdYvdRER8WFTk5rPX6fEoVne/sArxlwk8+8nw==
-------END RSA PRIVATE KEY-----
-+-----BEGIN PRIVATE KEY-----
-+MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDnE443EknxvxBq
-+6+hvn/t09hl8hx366EBYvZmVM/NC+7igXRAjiJiA/mIaCvL3MS0Iz5hBLxSGICU+
-+WproA3GCIFITIwcf/ETyWj/5xpgZ4AKrLrjQmmX8mhwUajfF3UvwMJrCOVqPp67t
-+PtP+2kBXaqrXdvnvXR41FsIB8V7zIAuIZB6bHQhiGVlc1sgZYsE2EGG9WMmHtS86
-+qkAOTjG2XyjmPTGAwhGDpYkYrpzp99IiDh4/Veai81hn0ssQkbry0XRD/Ig3jcHh
-+23WiriPNJ0JsbgXUSLKRPZObA9VgOLy2aXoN84IMaeK3yy+cwSYG/99w93fUZJte
-+MXwz4oYZAgMBAAECggEBAIVn2Ncai+4xbH0OLWckabwgyJ4IM9rDc0LIU368O1kU
-+koais8qP9dujAWgfoh3sGh/YGgKn96VnsZjKHlyMgF+r4TaDJn3k2rlAOWcurGlj
-+1qaVlsV4HiEzp7pxiDmHhWvp4672Bb6iBG+bsjCUOEk/n9o9KhZzIBluRhtxCmw5
-+nw4Do7z00PTvN81260uPWSc04IrytvZUiAIx/5qxD72bij2xJ8t/I9GI8g4FtoVB
-+8pB6S/hJX1PZhh9VlU6Yk+TOfOVnbebG4W5138LkB835eqk3Zz0qsbc2euoi8Hxi
-+y1VGwQEmMQ63jXz4c6g+X55ifvUK9Jpn5E8pq+pMd7ECgYEA93lYq+Cr54K4ey5t
-+sWMa+ye5RqxjzgXj2Kqr55jb54VWG7wp2iGbg8FMlkQwzTJwebzDyCSatguEZLuB
-+gRGroRnsUOy9vBvhKPOch9bfKIl6qOgzMJB267fBVWx5ybnRbWN/I7RvMQf3k+9y
-+biCIVnxDLEEYyx7z85/5qxsXg/MCgYEA7wmWKtCTn032Hy9P8OL49T0X6Z8FlkDC
-+Rk42ygrc/MUbugq9RGUxcCxoImOG9JXUpEtUe31YDm2j+/nbvrjl6/bP2qWs0V7l
-+dTJl6dABP51pCw8+l4cWgBBX08Lkeen812AAFNrjmDCjX6rHjWHLJcpS18fnRRkP
-+V1d/AHWX7MMCgYEA6Gsw2guhp0Zf2GCcaNK5DlQab8OL4Hwrpttzo4kuTlwtqNKp
-+Q9H4al9qfF4Cr1TFya98+EVYf8yFRM3NLNjZpe3gwYf2EerlJj7VLcahw0KKzoN1
-+QBENfwgPLRk5sDkx9VhSmcfl/diLroZdpAwtv3vo4nEoxeuGFbKTGx3Qkf0CgYEA
-+xyR+dcb05Ygm3w4klHQTowQ10s1H80iaUcZBgQuR1ghEtDbUPZHsoR5t1xCB02ys
-+DgAwLv1bChIvxvH/L6KM8ovZ2LekBX4AviWxoBxJnfz/EVau98B0b1auRN6eSC83
-+FRuGldlSOW1z/nSh8ViizSYE5H5HX1qkXEippvFRE88CgYB3Bfu3YQY60ITWIShv
-+nNkdcbTT9eoP9suaRJjw92Ln+7ZpALYlQMKUZmJ/5uBmLs4RFwUTQruLOPL4yLTH
-+awADWUzs3IRr1fwn9E+zM8JVyKCnUEM3w4N5UZskGO2klashAd30hWO+knRv/y0r
-+uGIYs9Ek7YXlXIRVrzMwcsrt1w==
-+-----END PRIVATE KEY-----
-```
-
-**File**: `interop/data/server1.pem` (modified, +20/-18)
-```diff
-@@ -1,20 +1,22 @@
- -----BEGIN CERTIFICATE-----
--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
- -----END CERTIFICATE-----
 ```
 
 ---
 
-### Incident Patch 2: `ddb478d7` (2026-11-05)
-**Commit Message**: gprx-xds/load_balancing: Make test utilities available to grpc-xds crate. (#3003)
+### Incident Patch 2: `224a4c96` (2026-11-10)
+**Commit Message**: grpc-xds: Fix import for new protobuf-generated module (#3021)
 
-## Motivation
+4b61ef94a (adding grpc crate xds-client transport) raced with 950fa06960
+(swapping to protobuf-generated module).
 
-Make the load balancer test utilities available to the `grpc-xds` crate.
-
-## Solution
-
-There are a number of ways to solve this, but the feature flag path
-allows us to most cleanly get access to the same functionality without
-copy-pasting or suffering dead code annotations, externs and/or other
-nonsense.
-
-## Notes
-
-In a follow up we will be replacing the queuing/failing pickers with a
-fixed picker, similar to Java's.
-
-**File**: `grpc-xds/Cargo.toml` (modified, +1/-1)
+**File**: `grpc-xds/src/transport.rs` (modified, +2/-2)
 ```diff
-@@ -30,7 +30,7 @@ regex = "1"
- rand = { version = "0.10", default-features = false, features = ["thread_rng"] }
+@@ -224,8 +224,8 @@ mod tests {
+     use xds_test_util::config::build_inline_listener;
  
- [dev-dependencies]
--grpc = { version = "0.10.0", path = "../grpc" }
-+grpc = { version = "0.10.0", path = "../grpc", features = ["__internal-test-utils"] }
- rustls = { version = "0.23", default-features = false, features = ["ring"] }
- tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
- xds-client = { version = "0.1.0-alpha.4", path = "../xds-client", default-features = false, features = ["rt-tokio", "codegen-prost"] }
-```
-
-**File**: `grpc/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -47,6 +47,7 @@ _runtime-tokio = [
- tower = ["_runtime-tokio"]
- __unstable = []
- __internal = []
-+__internal-test-utils = []
- gzip = ["dep:flate2"]
+     use super::*;
+-    use crate::generated::envoy::service::discovery::v3::DiscoveryRequest;
+-    use crate::generated::envoy::service::discovery::v3::DiscoveryResponse;
++    use crate::generated::envoy_service_discovery_v3_discovery_proto::DiscoveryRequest;
++    use crate::generated::envoy_service_discovery_v3_discovery_proto::DiscoveryResponse;
+     use crate::resource::ListenerResource;
  
- [dependencies]
-```
-
-**File**: `grpc/src/client/load_balancing/mod.rs` (modified, +7/-7)
-```diff
-@@ -58,8 +58,8 @@ pub mod round_robin;
- pub mod subchannel;
- pub use registry::GLOBAL_LB_REGISTRY;
- 
--#[cfg(test)]
--pub(crate) mod test_utils;
-+#[cfg(any(test, feature = "__internal-test-utils"))]
-+pub mod test_utils;
- 
- static START: Once = Once::new();
- 
-@@ -524,7 +524,7 @@ impl Debug for Pick {
- /// QueuingPicker always returns Queue.  LB policies that are not actively
- /// Connecting should not use this picker.
- #[derive(Debug)]
--pub(crate) struct QueuingPicker;
-+pub struct QueuingPicker;
- 
- impl Picker for QueuingPicker {
-     fn pick(&self, _options: PickOptions<'_>) -> PickResult {
-@@ -533,7 +533,7 @@ impl Picker for QueuingPicker {
- }
- 
- #[derive(Debug)]
--pub(crate) struct FailingPicker {
-+pub struct FailingPicker {
-     pub error: String,
- }
- 
-@@ -548,13 +548,13 @@ impl Picker for FailingPicker {
- 
- /// A dynamic LB policy config implementation that can be downcast to a specific
- /// config as needed.
--pub(crate) type DynLbConfig = Arc<dyn Any + Send + Sync>;
-+pub type DynLbConfig = Arc<dyn Any + Send + Sync>;
- 
- /// A builder of dynamic LB policies.
--pub(crate) type DynLbPolicyBuilder = dyn LbPolicyBuilder<LbPolicy = Box<DynLbPolicy>>;
-+pub type DynLbPolicyBuilder = dyn LbPolicyBuilder<LbPolicy = Box<DynLbPolicy>>;
- 
- /// An LB policy that accepts dynamic configs.
--pub(crate) type DynLbPolicy = dyn LbPolicy<LbConfig = DynLbConfig>;
-+pub type DynLbPolicy = dyn LbPolicy<LbConfig = DynLbConfig>;
- 
- impl<T: LbPolicy + ?Sized> LbPolicy for Box<T> {
-     type LbConfig = T::LbConfig;
-```
-
-**File**: `grpc/src/client/load_balancing/test_utils.rs` (modified, +37/-40)
-```diff
-@@ -56,13 +56,13 @@ use crate::client::name_resolution::ResolverUpdate;
- use crate::core::Address;
- use crate::status::StatusCodeError;
- 
--pub(crate) fn new_request_headers() -> RequestHeaders {
-+pub fn new_request_headers() -> RequestHeaders {
-     RequestHeaders::default()
- }
- 
- // A test subchannel that forwards connect calls to a channel.
- // This allows tests to verify when a subchannel is asked to connect.
--pub(crate) struct TestSubchannel {
-+pub struct TestSubchannel {
-     address: Address,
-     tx_connect: mpsc::Sender<TestEvent>,
-     // The work scheduler provided by the policy that created this subchannel,
-@@ -100,7 +100,7 @@ impl TestSubchannel {
- /// `subchannel` must have been created by a [`TestChannelController`].  The
- /// resulting work is observable via [`TestEnv::expect_schedule_work`], and
- /// the data it contains should be passed to the policy's `work` method.
--pub(crate) fn schedule_subchannel_update(subchannel: &Arc<dyn Subchannel>, state: SubchannelState) {
-+pub fn schedule_subchannel_update(subchannel: &Arc<dyn Subchannel>, state: SubchannelState) {
-     let sc = subchannel
-         .downcast_ref::<TestSubchannel>()
-         .expect("subchannel was not created by a TestChannelController");
-@@ -145,7 +145,7 @@ impl PartialEq for TestSubchannel {
- impl Eq for TestSubchannel {}
- 
- /// Events created by LB policies by calling the channel controller.
--pub(crate) enum TestEvent {
-+pub enum TestEvent {
-     NewSubchannel(Arc<dyn Subchannel>),
-     UpdatePicker(LbState),
-     RequestResolution,
-@@ -167,8 +167,8 @@ impl Debug for TestEvent {
- /// A test channel controller that forwards calls to a channel.  This allows
- /// tests to verify when a channel controller is asked to create subchannels or
- /// update the picker.
--pub(crate) struct TestChannelController {
--    pub(crate) tx_events: mpsc::Sender<TestEvent>,
-+pub struct TestChannelController {
-+    pub tx_events: mpsc::Sender<TestEvent>,
- }
- 
- impl ChannelController for TestChannelController {
-@@ -200,8 +200,8 @@ impl ChannelController for TestChannelController {
- }
- 
- #[derive(Debug)]
--pub(crate) struct TestWorkScheduler {
--    pub(crate) tx_work: mpsc::Sender<Option<WorkData>>,
-+pub struct TestWorkScheduler {
-+    pub tx_work: mpsc::Sender<Option<WorkData>>,
- }
- 
- impl WorkScheduler for TestWorkScheduler {
-@@ -219,7 +219,7 @@ impl WorkScheduler for TestWorkScheduler {
- /// Prefer [`TestEnv::run_work`].  This is for tests that use a channel
- /// controller other than [`TestChannelController`] and so cannot use
- /// [`TestEnv`].
--pub(crate) fn run_pending_work<P: LbPolicy + ?Sized>(
-+pub fn run_pending_work<P: LbPolicy + ?Sized>(
-     policy: &mut P,
-     rx_work: &mpsc::Receiver<Option<WorkData>>,
-     channel_controller: &mut dyn ChannelController,
-@@ -237,17 +237,17 @@ pub(crate) fn run_pending_work<P: LbPolicy + ?Sized>(
- /// `expect_*` methods consume events from the appropriate source.  Methods to
- /// actually control the policy are available if `P` implements [`LbPolicy`].
- /// Others can still use this type for assertions, but call the policy manually.
--pub(crate) struct TestEnv<P> {
--    pub(crate) policy: P,
--    pub(crate) tcc: TestChannelController,
--    pub(crate) rx_events: mpsc::Receiver<TestEvent>,
--    pub(crate) rx_work: mpsc::Receiver<Option<WorkData>>,
-+pub struct TestEnv<P> {
-+    pub policy: P,
-+    pub tcc: TestChannelController,
-+    pub rx_events: mpsc::Receiver<TestEvent>,
-+    pub rx_work: mpsc::Receiver<Option<WorkData>>,
- }
- 
- impl<P> TestEnv<P> {
-     /// Creates the test environment using a LbPolicyBuilder-like closure for
-     /// policies that don't implement LbPolicyBuilder.
--    pub(crate) fn new(build_policy: impl FnOnce(Arc<dyn WorkScheduler>) -> P) -> Self {
-+    pub fn new(build_policy: impl FnOnce(Arc<dyn WorkScheduler>) -> P) -> Self {
-         let (tx_events, rx_events) = mpsc::channel::<TestEvent>();
-         let (tx_work, rx_work) = mpsc::channel::<Option<WorkData>>();
-         let work_scheduler = Arc::new(TestWorkScheduler { tx_work });
-@@ -268,7 +268,7 @@ impl<P> TestEnv<P> {
-     }
- 
-     /// Verifies that the policy created a subchannel, and returns it.
--    pub(crate) fn expect_new_subchannel(&mut self) -> Arc<dyn Subchannel> {
-+    pub fn expect_new_subchannel(&mut self) -> Arc<dyn Subchannel> {
-         match self.next_event() {
-             TestEvent::NewSubchannel(sc) => sc,
-             other => panic!("expected NewSubchannel event, got {other:?}"),
-@@ -277,15 +277,15 @@ impl<P> TestEnv<P> {
- 
-     /// Calls [`Self::expect_new_subchannel`], verifies that the created
-     /// subchannel's address equals `addr`, and returns the subchannel.
--    pub(crate) fn expect_new_subchannel_for(&mut self, addr: &str) -> Arc<dyn Subchannel> {
-+    pub fn expect_new_subchannel_for(&mut self, addr: &str) -> Arc<dyn Subchannel> {
-         let sc = self.expect_new_subchannel();
-         assert_eq!(&*sc.address().address, addr);
-         sc
-     }
- 
-     /// Verifies that the policy asked a subch
+     #[test]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3004** (closed): tonic-prost-build: Propagate with_extended_rust_types via ServiceGenerator (@nathanielford)
-- **PR #3003** (2026-11-05): gprx-xds/load_balancing: Make test utilities available to grpc-xds crate. (@nathanielford)
-- **PR #2998** (2026-11-04): Move grpc-proto files to third_party dirs (@ejona86)
-- **PR #2997** (2026-11-03): xds-client: drop stale `.await` on now-synchronous `watch` in retry test (@YutaoMa)
-- **PR #2996** (closed): fix(transport): start graceful shutdown at max_connection_age when a grace is set (@lukekim)
-- **PR #2995** (2026-11-03): xds-client: retry the ADS stream indefinitely and fix backoff overflow panic (@arjan-bal)
+- **PR #3021** (2026-11-10): grpc-xds: Fix import for new protobuf-generated module (@ejona86)
+- **PR #3019** (2026-11-11): tonic-xds: stop per-cluster tasks when the channel is dropped (@YutaoMa)
+- **PR #3017** (2026-11-11): grpc/credentials: Canonicalize IPs in security level check. (@nathanielford)
+- **PR #3015** (2026-11-11): grpc: un-pub Dyn* traits; use explicit wrapper types instead (@dfawley)
+- **PR #3012** (2026-11-11): xds-client: add LRS message types, LrsCodec and its prost implementation (@arjan-bal)
+- **PR #3011** (2026-11-11): xds-client: add Runtime::now() (@arjan-bal)
 
 ---
 
@@ -2466,28 +2069,38 @@ fixed picker, similar to Java's.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. interop: update client.rs to run in interop test harness (#2993)
+## X. grpc/credentials: Canonicalize IPs in security level check. (#3017)
 
 **RULE**:
-When implementing operations in `interop/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `grpc/src/credentials/local.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d140e69f`: interop: update client.rs to run in interop test harness (#2993). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70d1dfd3`: grpc/credentials: Canonicalize IPs in security level check. (#3017). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `interop/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/credentials/local.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-tonic = {path = "../tonic", features = ["tls-ring", "tls-native-roots"]}
+            .to_canonical()
+        // Local TCP credentials assign NoSecurity to loopback connections,
+        // including IPv4-mapped IPv6 loopback addresses observed on dual-stack
+        // (`[::]`) listeners.
+        assert_eq!(
+            security_level_for_endpoint("[::ffff:127.0.0.1]:8080", TCP_IP_NETWORK_TYPE),
+            Ok(SecurityLevel::NoSecurity)
+        );
+        assert!(
+            security_level_for_endpoint("[::ffff:192.168.1.1]:8080", TCP_IP_NETWORK_TYPE).is_err()
+        );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-tonic = {path = "../tonic", features = ["tls-ring"]}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d140e69f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70d1dfd3` are properly handled with clean fallback behavior.

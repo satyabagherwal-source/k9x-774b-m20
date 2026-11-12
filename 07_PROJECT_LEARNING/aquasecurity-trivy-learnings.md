@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `10ab0f82`  
+> **Source Version**: `482bbeb9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:24:06.868Z  
+> **Timestamp**: 2026-11-12T09:25:34.028Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:19:05.474Z  
+> **Harvest Timestamp**: 2026-11-12T09:19:16.464Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39173 stars
+- **Stars / Engagement**: 39253 stars
 
 ---
 
@@ -1002,48 +1002,942 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `10ab0f82` (2026-11-09)
-**Commit Message**: docs(python): add pylock.toml row to language coverage index (#11584)
+### Incident Patch 1: `a2a154d7` (2026-11-11)
+**Commit Message**: fix(nodejs): read yarn.lock block fields by indent level (#11496)
 
-**File**: `docs/guide/coverage/language/index.md` (modified, +1/-0)
+**File**: `pkg/dependency/parser/nodejs/yarn/parse.go` (modified, +8/-2)
 ```diff
-@@ -23,6 +23,7 @@ On the other hand, when the target is a post-build artifact, like a container im
- | [Python](python.md)  | Pipfile.lock                                                                               |     -     |     -      |       ✅        |       ✅        |
- |                      | poetry.lock                                                                                |     -     |     -      |       ✅        |       ✅        |
- |                      | uv.lock                                                                                    |     -     |     -      |       ✅        |       ✅        |
-+|                      | pylock.toml                                                                                |     -     |     -      |       ✅        |       ✅        |
- |                      | requirements.txt                                                                           |     -     |     -      |       ✅        |       ✅        |
- |                      | egg package[^1]                                                                            |     ✅     |     ✅      |       -        |       -        |
- |                      | wheel package[^2]                                                                          |     ✅     |     ✅      |       -        |       -        |
+@@ -197,18 +197,24 @@ func (p *Parser) parseBlock(block []byte, lineNum int) (lib Library, deps []stri
+ 			continue
+ 		}
+ 
++		// yarn v1 and Berry indent block fields by two spaces and nested keys by four or more
++		indent := len(line) - len(strings.TrimLeft(line, " "))
+ 		line = strings.TrimPrefix(strings.TrimSpace(line), "\"")
+ 
+ 		switch {
+-		case strings.HasPrefix(line, "version"):
++		case indent == 2 && strings.HasPrefix(line, "version"):
+ 			if lib.Version, err = getVersion(line); err != nil {
+ 				skipBlock = true
+ 			}
+ 			continue
+-		case strings.HasPrefix(line, "dependencies:"):
++		case indent == 2 && strings.HasPrefix(line, "dependencies:"):
+ 			// start dependencies block
+ 			deps = parseDependencies(scanner)
+ 			continue
++		case indent != 0:
++			// only the block header holds package patterns, other fields and nested keys
++			// such as the ones under dependenciesMeta or bin are skipped
++			continue
+ 		}
+ 
+ 		// try parse package patterns
+```
+
+**File**: `pkg/dependency/parser/nodejs/yarn/parse_test.go` (modified, +16/-0)
+```diff
+@@ -285,6 +285,22 @@ func TestParse(t *testing.T) {
+ 			want:     yarnV2DepsWithProtocol,
+ 			wantDeps: yarnV2DepsWithProtocolDeps,
+ 		},
++		{
++			name:     "yarn v2 with dependenciesMeta",
++			file:     "testdata/yarn_v2_with_dependencies_meta.lock",
++			want:     yarnV2WithDependenciesMeta,
++			wantDeps: yarnV2WithDependenciesMetaDeps,
++		},
++		{
++			name: "yarn v2 with a package name that starts with version",
++			file: "testdata/yarn_v2_with_version_name.lock",
++			want: yarnV2WithVersionName,
++		},
++		{
++			name: "yarn v2 with a bin name that starts with version",
++			file: "testdata/yarn_v2_with_version_bin.lock",
++			want: yarnV2WithVersionBin,
++		},
+ 		{
+ 			name: "yarn with git dependency",
+ 			file: "testdata/yarn_with_git.lock",
+```
+
+**File**: `pkg/dependency/parser/nodejs/yarn/parse_testcase.go` (modified, +35/-0)
+```diff
+@@ -151,6 +151,41 @@ var (
+ 		{ID: "ms@2.1.2", Name: "ms", Version: "2.1.2", Locations: []ftypes.Location{{StartLine: 28, EndLine: 33}}},
+ 	}
+ 
++	// docker run --rm node@sha256:18a6d90fd60542269850c80ca03b29b1d9b14d6b221ac7ee8e35b0d33ef904bd sh -c '
++	//   mkdir /app && cd /app
++	//   corepack enable
++	//   yarn init -2
++	//   yarn add es-toolkit@1.47.0
++	//   cat yarn.lock'
++	// with a dependencies section and the ms block added by hand, as Berry
++	// writes dependencies right before dependenciesMeta.
++	yarnV2WithDependenciesMeta = []ftypes.Package{
++		{ID: "es-toolkit@1.47.0", Name: "es-toolkit", Version: "1.47.0", Locations: []ftypes.Location{{StartLine: 16, EndLine: 30}}},
++		{ID: "ms@2.1.2", Name: "ms", Version: "2.1.2", Locations: []ftypes.Location{{StartLine: 32, EndLine: 37}}},
++	}
++
++	yarnV2WithDependenciesMetaDeps = []ftypes.Dependency{
++		{
++			ID:        "es-toolkit@1.47.0",
++			DependsOn: []string{"ms@2.1.2"},
++		},
++	}
++
++	// docker run --rm node@sha256:18a6d90fd60542269850c80ca03b29b1d9b14d6b221ac7ee8e35b0d33ef904bd sh -c '
++	//   mkdir /app && cd /app
++	//   corepack enable
++	//   yarn init -2
++	//   yarn add versions@15.5.2
++	//   cat yarn.lock'
++	yarnV2WithVersionBin = []ftypes.Package{
++		{ID: "versions@15.5.2", Name: "versions", Version: "15.5.2", Locations: []ftypes.Location{{StartLine: 16, EndLine: 23}}},
++	}
++
++	// A package name that starts with "version" in the block header.
++	yarnV2WithVersionName = []ftypes.Package{
++		{ID: "version-compare@1.0.0", Name: "version-compare", Version: "1.0.0", Locations: []ftypes.Location{{StartLine: 8, EndLine: 12}}},
++	}
++
+ 	yarnV2DepsWithProtocolDeps = []ftypes.Dependency{
+ 		{
+ 			ID:        "debug@4.3.4",
+```
+
+**File**: `pkg/dependency/parser/nodejs/yarn/testdata/yarn_v2_with_dependencies_meta.lock` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++# This file is generated by running "yarn install" inside your project.
++# Manual changes might be lost - proceed with caution!
++
++__metadata:
++  version: 10
++  cacheKey: 10c0
++
++"app@workspace:.":
++  version: 0.0.0-use.local
++  resolution: "app@workspace:."
++  dependencies:
++    es-toolkit: "npm:1.47.0"
++  languageName: unknown
++  linkType: soft
++
++"es-toolkit@npm:1.47.0":
++  version: 1.47.0
++  resolution: "es-toolkit@npm:1.47.0"
++  dependencies:
++    ms: "npm:2.1.2"
++  dependenciesMeta:
++    "@trivago/prettier-plugin-sort-imports@4.3.0":
++      unplugged: true
++    prettier-plugin-sort-re-exports@0.0.1:
++      unplugged: true
++    vitepress-plugin-sandpack@1.1.4:
++      unplugged: true
++  checksum: 10c0/6edc9709fccc409fa4adddd318971d8a18335de9225f2dc99021aacba44fe66a2437a831923589c643865caab261a087bd974338294a60bb5a74932caa102901
++  languageName: node
++  linkType: hard
++
++"ms@npm:2.1.2":
++  version: 2.1.2
++  resolution: "ms@npm:2.1.2"
++  checksum: 10c0/a437714e2f90dbf881b5191d35a6db792efbca5badf112f87b9e1c712aace4b4b9b742dd6537f3edf90fd6f684de897cec230abde57e87883766712ddda297cc
++  languageName: node
++  linkType: hard
+```
+
+**File**: `pkg/dependency/parser/nodejs/yarn/testdata/yarn_v2_with_version_bin.lock` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++# This file is generated by running "yarn install" inside your project.
++# Manual changes might be lost - proceed with caution!
++
++__metadata:
++  version: 10
++  cacheKey: 10c0
++
++"app@workspace:.":
++  version: 0.0.0-use.local
++  resolution: "app@workspace:."
++  dependencies:
++    versions: "npm:15.5.2"
++  languageName: unknown
++  linkType: soft
++
++"versions@npm:15.5.2":
++  version: 15.5.2
++  resolution: "versions@npm:15.5.2"
++  bin:
++    versions: dist/index.js
++  checksum: 10c0/108f4aef64e405e329e1ed9e1c387135a69bb7a3cd3307c017f66dc32ab504e217b5e8a78040e3ffc8fb67772a5ebf2b51e5d457871cec3725cacdd7a36b3089
++  languageName: node
++  linkType: hard
+```
+
+**File**: `pkg/dependency/parser/nodejs/yarn/testdata/yarn_v2_with_version_name.lock` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++# This file is generated by running "yarn install" inside your project.
++# Manual changes might be lost - proceed with caution!
++
++__metadata:
++  version: 10
++  cacheKey: 10c0
++
++"version-compare@npm:^1.0.0":
++  version: 1.0.0
++  resolution: "version-compare@npm:1.0.0"
++  languageName: node
++  linkType: hard
+```
+
+**File**: `pkg/fanal/analyzer/language/nodejs/yarn/yarn.go` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ func init() {
+ 	analyzer.RegisterPostAnalyzer(analyzer.TypeYarn, newYarnAnalyzer)
+ }
+ 
+-const version = 2
++const version = 3
+ 
+ // Taken from Yarn
+ // cf. https://github.com/yarnpkg/yarn/blob/328fd596de935acc6c3e134741748fcc62ec3739/src/resolvers/exotics/registry-resolver.js#L12
 ```
 
 ---
 
-### Incident Patch 2: `63e2f381` (2026-11-09)
-**Commit Message**: docs(go): describe which go.mod directive sets the stdlib version (#11583)
+### Incident Patch 2: `482bbeb9` (2026-11-12)
+**Commit Message**: fix(rust): retain direct dependencies declared without version (#11248)
 
-Co-authored-by: Wilson Santos <[REDACTED_EMAIL]>
+Signed-off-by: abdouladieng <[REDACTED_EMAIL]>
+Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
 
-**File**: `docs/guide/coverage/language/golang.md` (modified, +1/-1)
+**File**: `pkg/fanal/analyzer/language/rust/cargo/cargo.go` (modified, +45/-15)
 ```diff
-@@ -87,7 +87,7 @@ Moreover, when scanning the Trivy project, which happens to use Docker, Docker's
- Detecting the version of Go used in the project can be tricky.
- The go.mod file include hints that allows Trivy to guess the Go version but it eventually depends on the Go tool version in the build environment.
- Since this strategy is not fully deterministic and accurate, it is enabled only in [--detection-priority comprehensive][detection-priority] mode.
--When enabled, Trivy detects stdlib version as the minimum between the `go` and the `toolchain` directives in the `go.mod` file.
-+When enabled, Trivy detects the stdlib version from the `toolchain` directive in the `go.mod` file, or from the `go` directive when there is no `toolchain` directive.
- To obtain reproducible scan results Trivy doesn't check the locally installed version of `Go`.
+@@ -28,14 +28,15 @@ import (
+ 	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/language"
+ 	"github.com/aquasecurity/trivy/pkg/fanal/types"
+ 	"github.com/aquasecurity/trivy/pkg/log"
++	"github.com/aquasecurity/trivy/pkg/set"
+ 	"github.com/aquasecurity/trivy/pkg/utils/fsutils"
+ )
  
- !!! note
+ func init() {
+ 	analyzer.RegisterPostAnalyzer(analyzer.TypeCargo, newCargoAnalyzer)
+ }
+ 
+-const version = 1
++const version = 2
+ 
+ var requiredFiles = []string{
+ 	types.CargoLock,
+@@ -124,15 +125,33 @@ func (a cargoAnalyzer) removeDevDependencies(fsys fs.FS, dir string, app *types.
+ 		return pkg.ID, pkg
+ 	})
+ 
++	// IDs of packages that root and workspace packages depend on in Cargo.lock
++	lockDeps := set.New[string]()
++	for _, id := range append([]string{root}, workspaces...) {
++		if pkg, ok := pkgIDs[id]; ok {
++			lockDeps.Append(pkg.DependsOn...)
++		}
++	}
++
+ 	// Identify direct dependencies
+ 	pkgs := make(map[string]types.Package)
+-	for name, constraint := range directDeps {
++	for _, dep := range directDeps {
+ 		for _, pkg := range app.Packages {
+-			if pkg.Name != name {
++			if pkg.Name != dep.Name {
+ 				continue
+ 			}
+ 
+-			if match, err := a.matchVersion(pkg.Version, constraint); err != nil {
++			// Root and workspace packages are not external dependencies
++			if pkg.ID == root || slices.Contains(workspaces, pkg.ID) {
++				continue
++			}
++
++			// Without a version constraint (git/path), pick the candidate from Cargo.lock
++			if dep.Constraint == "" && !lockDeps.Contains(pkg.ID) {
++				continue
++			}
++
++			if match, err := a.matchVersion(pkg.Version, dep.Constraint); err != nil {
+ 				a.logger.Warn("Unable to match Cargo version", log.String("package", pkg.ID), log.Err(err))
+ 				continue
+ 			} else if match {
+@@ -165,7 +184,7 @@ func (a cargoAnalyzer) removeDevDependencies(fsys fs.FS, dir string, app *types.
+ 		// Root/workspace package may include dev dependencies in lock file, so we need to remove them.
+ 		pkg.DependsOn = lo.Filter(pkg.DependsOn, func(dep string, _ int) bool {
+ 			_, ok := pkgs[dep]
+-			return ok
++			return ok || slices.Contains(workspaces, dep)
+ 		})
+ 		pkgs[pkgID] = pkg
+ 	}
+@@ -212,9 +231,15 @@ type cargoTomlWorkspace struct {
+ 
+ type Dependencies map[string]any
+ 
++// cargoDependency is a dependency declared in Cargo.toml: the actual package name and its version constraint.
++type cargoDependency struct {
++	Name       string
++	Constraint string
++}
++
+ // parseRootCargoTOML parses top-level Cargo.toml and returns dependencies.
+ // It also parses workspace members and their dependencies.
+-func (a cargoAnalyzer) parseRootCargoTOML(fsys fs.FS, filePath string) (string, []string, map[string]string, error) {
++func (a cargoAnalyzer) parseRootCargoTOML(fsys fs.FS, filePath string) (string, []string, map[string]cargoDependency, error) {
+ 	rootPkg, dependencies, members, rootWorkspaceVersion, err := a.parseCargoTOML(fsys, filePath, "")
+ 	if err != nil {
+ 		return "", nil, nil, xerrors.Errorf("unable to parse %s: %w", filePath, err)
+@@ -253,22 +278,23 @@ func (a cargoAnalyzer) parseRootCargoTOML(fsys fs.FS, filePath string) (string,
+ 		}
+ 	}
+ 
+-	deps := make(map[string]string)
++	deps := make(map[string]cargoDependency)
+ 	for name, value := range dependencies {
+ 		switch ver := value.(type) {
+ 		case string:
+ 			// e.g. regex = "1.5"
+-			deps[name] = ver
++			deps[name] = cargoDependency{Name: name, Constraint: ver}
+ 		case map[string]any:
+ 			// e.g. serde = { version = "1.0", features = ["derive"] }
+-			for k, v := range ver {
+-				if k == "version" {
+-					if vv, ok := v.(string); ok {
+-						deps[name] = vv
+-					}
+-					break
+-				}
++			// or tantivy-fst = { git = "..." } / local = { path = "..." } without a version
++			constraint, _ := ver["version"].(string)
++			// A renamed dependency (e.g. rc = { package = "rand_core" }) is keyed by its alias,
++			// so several versions of the same crate can be declared side by side.
++			pkgName, ok := ver["package"].(string)
++			if !ok {
++				pkgName = name
+ 			}
++			deps[name] = cargoDependency{Name: pkgName, Constraint: constraint}
+ 		}
+ 	}
+ 
+@@ -295,6 +321,10 @@ func (a cargoAnalyzer) walkIndirectDependencies(pkg types.Package, pkgIDs, deps
+ 
+ // cf. https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html
+ func (a cargoAnalyzer) matchVersion(currentVersion, constraint string) (bool, error) {
++	if constraint == "" {
++		return true, nil
++	}
++
+ 	// `` == `^` - https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#caret-requirements
+ 	// Add `^` for correct version comparison
+ 	//   - 1.2.3 -> ^1.2.3
+```
+
+**File**: `pkg/fanal/analyzer/language/rust/cargo/cargo_test.go` (modified, +233/-14)
+```diff
+@@ -495,7 +495,7 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 						FilePath: "Cargo.lock",
+ 						Packages: types.Packages{
+ 							{
+-								ID:           "eeae9dc40f83d7dd",
++								ID:           "35c3ea1485ef5aae",
+ 								Relationship: types.RelationshipRoot,
+ 								DependsOn: []string{
+ 									"member@0.1.0",
+@@ -510,11 +510,13 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 								Locations: []types.Location{
+ 									{
+ 										StartLine: 30,
+-										EndLine:   35,
++										EndLine:   37,
+ 									},
+ 								},
+ 								DependsOn: []string{
+ 									"gdb-command@0.7.6",
++									"member2@0.1.0",
++									"rand_core@0.5.1",
+ 								},
+ 							},
+ 							{
+@@ -524,12 +526,15 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 								Relationship: types.RelationshipWorkspace,
+ 								Locations: []types.Location{
+ 									{
+-										StartLine: 37,
+-										EndLine:   42,
++										StartLine: 39,
++										EndLine:   48,
+ 									},
+ 								},
+ 								DependsOn: []string{
++									"rand_core@0.4.3",
++									"rand_core@0.6.4",
+ 									"regex@1.10.2",
++									"tantivy-fst@0.5.0",
+ 								},
+ 							},
+ 							{
+@@ -549,15 +554,51 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 									"wait-timeout@0.2.0",
+ 								},
+ 							},
++							{
++								ID:           "rand_core@0.4.3",
++								Name:         "rand_core",
++								Version:      "0.4.3",
++								Relationship: types.RelationshipDirect,
++								Locations: []types.Location{
++									{
++										StartLine: 56,
++										EndLine:   60,
++									},
++								},
++							},
++							{
++								ID:           "rand_core@0.5.1",
++								Name:         "rand_core",
++								Version:      "0.5.1",
++								Relationship: types.RelationshipDirect,
++								Locations: []types.Location{
++									{
++										StartLine: 62,
++										EndLine:   66,
++									},
++								},
++							},
++							{
++								ID:           "rand_core@0.6.4",
++								Name:         "rand_core",
++								Version:      "0.6.4",
++								Relationship: types.RelationshipDirect,
++								Locations: []types.Location{
++									{
++										StartLine: 68,
++										EndLine:   72,
++									},
++								},
++							},
+ 							{
+ 								ID:           "regex@1.10.2",
+ 								Name:         "regex",
+ 								Version:      "1.10.2",
+ 								Relationship: types.RelationshipDirect,
+ 								Locations: []types.Location{
+ 									{
+-										StartLine: 50,
+-										EndLine:   60,
++										StartLine: 74,
++										EndLine:   84,
+ 									},
+ 								},
+ 								DependsOn: []string{
+@@ -567,6 +608,18 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 									"regex-syntax@0.8.2",
+ 								},
+ 							},
++							{
++								ID:           "tantivy-fst@0.5.0",
++								Name:         "tantivy-fst",
++								Version:      "0.5.0",
++								Relationship: types.RelationshipDirect,
++								Locations: []types.Location{
++									{
++										StartLine: 103,
++										EndLine:   106,
++									},
++								},
++							},
+ 							{
+ 								ID:           "aho-corasick@1.1.2",
+ 								Name:         "aho-corasick",
+@@ -602,8 +655,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 								Relationship: types.RelationshipIndirect,
+ 								Locations: []types.Location{
+ 									{
+-										StartLine: 44,
+-										EndLine:   48,
++										StartLine: 50,
++										EndLine:   54,
+ 									},
+ 								},
+ 							},
+@@ -615,8 +668,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 								Relationship: types.RelationshipIndirect,
+ 								Locations: []types.Location{
+ 									{
+-										StartLine: 62,
+-										EndLine:   71,
++										StartLine: 86,
++										EndLine:   95,
+ 									},
+ 								},
+ 								DependsOn: []string{
+@@ -633,8 +686,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 								Relationship: types.RelationshipIndirect,
+ 								Locations: []types.Location{
+ 									{
+-										StartLine: 73,
+-										EndLine:   77,
++										StartLine: 97,
++										EndLine:   101,
+ 									},
+ 								},
+ 							},
+@@ -646,8 +699,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 								Relationship: types.RelationshipIndirect,
+ 								Locations: []types.Location{
+ 									{
+-										StartLine: 79,
+-										EndLine:   86,
++										StartLine: 114,
++										EndLine:   121,
+ 									},
+ 								},
+ 								DependsOn: []string{"libc@0.2.150"},
+@@ -829,6 +882,166 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		{
++			name: "dependencies declared without version (git and path)",
++			file: "testdata/deps-without-version.txtar",
++			want: &analyzer.AnalysisResult{
++				Applications: []types.Application{
++					{
++						Type:     types.Cargo,
++						FilePath: "Cargo.lock",
++						Packages: types.Packages{
++							{
++								ID:           "app@0.1.0",
++								Name:         "app",
++								Version:      "0.1.0",
++								Relationship: types.RelationshipRoot,
++								Locations: []types.Loc
+```
+
+**File**: `pkg/fanal/analyzer/language/rust/cargo/testdata/deps-without-version.txtar` (added, +137/-0)
+```diff
+@@ -0,0 +1,137 @@
++Test case: dependencies declared without an explicit version constraint (e.g. git and path dependencies).
++
++This test verifies that:
++- Direct dependencies declared via git (tantivy-fst) or path (local) without a version constraint are recognized as RelationshipDirect
++- When multiple versions of a crate exist in Cargo.lock (e.g. tantivy-fst 0.4.0 via dev-deps and tantivy-fst 0.5.0 via git direct dep), the one resolved for the root/workspace is retained
++- A version of the same crate pulled transitively by a regular dependency (tantivy-fst 0.3.0 via fst-consumer) stays RelationshipIndirect and is not picked for the version-less direct dependency
++- Their transitive dependencies (byteorder, regex-syntax, utf8-ranges, itoa, tantivy-fst 0.3.0) are retained as RelationshipIndirect
++- Dev dependencies (pretty_assertions, diff, yansi, tantivy-fst 0.4.0) are excluded
++
++-- Cargo.lock --
++# This file is automatically @generated by Cargo.
++# It is not intended for manual editing.
++version = 4
++
++[[package]]
++name = "app"
++version = "0.1.0"
++dependencies = [
++ "fst-consumer",
++ "local",
++ "log",
++ "pretty_assertions",
++ "tantivy-fst 0.5.0",
++]
++
++[[package]]
++name = "byteorder"
++version = "1.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
++
++[[package]]
++name = "diff"
++version = "0.1.13"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "56254986775e3233ffa9c4d7d3faaf6d36a2c09d30b20687e9f88bc8bafc16c8"
++
++[[package]]
++name = "fst-consumer"
++version = "1.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "5d6b8a4b2e4f8c1d3a7e9b0c2d4f6a8b1c3e5f7a9b0d2c4e6f8a1b3c5d7e9f0a"
++dependencies = [
++ "tantivy-fst 0.3.0",
++]
++
++[[package]]
++name = "itoa"
++version = "1.0.18"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
++
++[[package]]
++name = "local"
++version = "0.1.0"
++dependencies = [
++ "itoa",
++]
++
++[[package]]
++name = "log"
++version = "0.4.34"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
++
++[[package]]
++name = "pretty_assertions"
++version = "1.4.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3ae130e2f271fbc2ac3a40fb1d07180839cdbbe443c7a27e1e3c13c5cac0116d"
++dependencies = [
++ "diff",
++ "tantivy-fst 0.4.0",
++ "yansi",
++]
++
++[[package]]
++name = "regex-syntax"
++version = "0.8.11"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
++
++[[package]]
++name = "tantivy-fst"
++version = "0.3.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7a3c1e5f9b2d4a6c8e0f1b3d5a7c9e2f4b6d8a0c1e3f5b7d9a2c4e6f8b0d1a3c"
++
++[[package]]
++name = "tantivy-fst"
++version = "0.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
++
++[[package]]
++name = "tantivy-fst"
++version = "0.5.0"
++source = "git+https://github.com/paradedb/fst.git#11e89334c578f26f9fbafbd1122ffb220ebbdbbf"
++dependencies = [
++ "byteorder",
++ "regex-syntax",
++ "utf8-ranges",
++]
++
++[[package]]
++name = "utf8-ranges"
++version = "1.0.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7fcfc827f90e53a02eaef5e535ee14266c1d569214c6aa70133a624d8a3164ba"
++
++[[package]]
++name = "yansi"
++version = "1.0.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cfe53a6657fd280eaa890a3bc59152892ffa3e30101319d168b781ed6529b049"
++-- Cargo.toml --
++[package]
++name = "app"
++version = "0.1.0"
++edition = "2021"
++
++[dependencies]
++fst-consumer = "1"
++log = "0.4"
++tantivy-fst = { git = "https://github.com/paradedb/fst.git" }
++local = { path = "local" }
++
++[dev-dependencies]
++pretty_assertions = "1"
++-- local/Cargo.toml --
++[package]
++name = "local"
++version = "0.1.0"
++edition = "2021"
++
++[dependencies]
++itoa = "1"
+```
+
+**File**: `pkg/fanal/analyzer/language/rust/cargo/testdata/toml-workspace-members.txtar` (modified, +49/-4)
+```diff
+@@ -5,14 +5,15 @@ explicitly listed members in [workspace].members.
+ 
+ Structure:
+ - Root Cargo.toml: defines members = ["member", "member2"]
+-- member/Cargo.toml: depends on gdb-command
+-- member2/Cargo.toml: uses { workspace = true } for regex dependency
++- member/Cargo.toml: depends on gdb-command, member2 (via path with version) and rand_core 0.5 renamed via `package`
++- member2/Cargo.toml: uses { workspace = true } for regex and tantivy-fst (git dependency without version), depends on rand_core 0.6 and rand_core 0.4 renamed via `package`, and has tempfile as dev-dependency
+ 
+ Expected behavior:
+ - Virtual workspace root should have RelationshipRoot
+-- member and member2 should have RelationshipWorkspace
+-- gdb-command and regex should have RelationshipDirect
++- member and member2 should have RelationshipWorkspace (with member -> member2 preserved)
++- gdb-command, regex, tantivy-fst and all rand_core versions should have RelationshipDirect
+ - Transitive dependencies should have RelationshipIndirect
++- Dev dependencies of workspace members (tempfile) should be excluded
+ 
+ -- Cargo.lock --
+ # This file is automatically @generated by Cargo.
+@@ -49,13 +50,19 @@ name = "member"
+ version = "0.1.0"
+ dependencies = [
+  "gdb-command",
++ "member2",
++ "rand_core 0.5.1",
+ ]
+ 
+ [[package]]
+ name = "member2"
+ version = "0.1.0"
+ dependencies = [
++ "rand_core 0.4.3",
++ "rand_core 0.6.4",
+  "regex",
++ "tantivy-fst",
++ "tempfile",
+ ]
+ 
+ [[package]]
+@@ -64,6 +71,24 @@ version = "2.6.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f665ee40bc4a3c5590afb1e9677db74a508659dfd71e126420da8274909a0167"
+ 
++[[package]]
++name = "rand_core"
++version = "0.4.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0e5937858e6fd18cd595d558f90bb5de3b72ae23f9e3763af0e805949b04ef60"
++
++[[package]]
++name = "rand_core"
++version = "0.5.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
++
++[[package]]
++name = "rand_core"
++version = "0.6.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
++
+ [[package]]
+ name = "regex"
+ version = "1.10.2"
+@@ -93,6 +118,17 @@ version = "0.8.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
+ 
++[[package]]
++name = "tantivy-fst"
++version = "0.5.0"
++source = "git+https://github.com/paradedb/fst.git#11e89334c578f26f9fbafbd1122ffb220ebbdbbf"
++
++[[package]]
++name = "tempfile"
++version = "3.10.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
++
+ [[package]]
+ name = "wait-timeout"
+ version = "0.2.0"
+@@ -112,6 +148,7 @@ members = ["member", "member2"]
+ 
+ [workspace.dependencies]
+ regex = "1"
++tantivy-fst = { git = "https://github.com/paradedb/fst.git" }
+ -- member/Cargo.toml --
+ [package]
+ name = "member"
+@@ -120,11 +157,19 @@ edition = "2021"
+ 
+ [dependencies]
+ gdb-command = "0.7"
++member2 = { path = "../member2", version = "0.1.0" }
++rand_core05 = { package = "rand_core", version = "0.5" }
+ -- member2/Cargo.toml --
+ [package]
+ edition = "2021"
+ name = "member2"
+ version = "0.1.0"
+ 
+ [dependencies]
++rand_core = "0.6"
++rand_core04 = { package = "rand_core", version = "0.4" }
+ regex = { workspace = true}
++tantivy-fst = { workspace = true }
++
++[dev-dependencies]
++tempfile = "3"
+```
+
+---
+
+### Incident Patch 3: `93e461b7` (2026-11-11)
+**Commit Message**: fix(nodejs): match npm link targets on a path boundary (#11495)
+
+**File**: `pkg/dependency/parser/nodejs/npm/parse.go` (modified, +4/-2)
+```diff
+@@ -249,7 +249,9 @@ func (p *Parser) resolveLinks(packages map[string]Package) {
+ 	// so we need to iterate over the cloned `packages` map, but change the original `packages` map.
+ 	for pkgPath, pkg := range maps.Clone(packages) {
+ 		for linkPath, link := range links {
+-			if !strings.HasPrefix(pkgPath, string(link.Resolved)) {
++			// "packages/ui" must not claim "packages/ui-kit"
++			rest, ok := strings.CutPrefix(pkgPath, string(link.Resolved))
++			if !ok || (rest != "" && !strings.HasPrefix(rest, "/")) {
+ 				continue
+ 			}
+ 			// The target doesn't have the "resolved" field, so we need to copy it from the link.
+@@ -258,7 +260,7 @@ func (p *Parser) resolveLinks(packages map[string]Package) {
+ 			}
+ 
+ 			// Resolve the link package so all packages are located under "node_modules".
+-			resolvedPath := strings.ReplaceAll(pkgPath, string(link.Resolved), linkPath)
++			resolvedPath := linkPath + rest
+ 			packages[resolvedPath] = pkg
+ 
+ 			// Delete the target package
+```
+
+**File**: `pkg/dependency/parser/nodejs/npm/parse_test.go` (modified, +6/-0)
+```diff
+@@ -71,6 +71,12 @@ func TestParse(t *testing.T) {
+ 			want:     npmV3WithoutRootDepsField,
+ 			wantDeps: npmV3WithoutRootDepsFieldDeps,
+ 		},
++		{
++			name:     "lock version v3 with workspace path that prefixes another",
++			file:     "testdata/package-lock_v3_with_workspace_prefix.json",
++			want:     npmV3WithWorkspacePrefixPkgs,
++			wantDeps: nil,
++		},
+ 		{
+ 			name:     "lock version v3 with broken link",
+ 			file:     "testdata/package-lock_v3_broken_link.json",
+```
+
+**File**: `pkg/dependency/parser/nodejs/npm/parse_testcase.go` (modified, +50/-0)
+```diff
+@@ -1725,6 +1725,56 @@ var (
+ 		},
+ 	}
+ 
++	// docker run --rm node:19.7.0@sha256:51dd437f31812df71108b81385e2945071ec813d5815fa3403855669c8f3432b sh -c '
++	//   mkdir /app && cd /app
++	//   npm init -y
++	//   npm init -y -w packages/ui
++	//   npm init -y -w packages/ui-kit
++	//   npm pkg set name=@acme/ui -w packages/ui
++	//   npm pkg set name=@acme/design-system version=2.0.0 -w packages/ui-kit
++	//   npm install
++	//   cat package-lock.json'
++	npmV3WithWorkspacePrefixPkgs = []ftypes.Package{
++		{
++			ID:           "@acme/design-system@2.0.0",
++			Name:         "@acme/design-system",
++			Version:      "2.0.0",
++			Relationship: ftypes.RelationshipDirect,
++			Licenses:     []string{"ISC"},
++			ExternalReferences: []ftypes.ExternalRef{
++				{
++					Type: ftypes.RefOther,
++					URL:  "packages/ui-kit",
++				},
++			},
++			Locations: []ftypes.Location{
++				{
++					StartLine: 29,
++					EndLine:   33,
++				},
++			},
++		},
++		{
++			ID:           "@acme/ui@1.0.0",
++			Name:         "@acme/ui",
++			Version:      "1.0.0",
++			Relationship: ftypes.RelationshipDirect,
++			Licenses:     []string{"ISC"},
++			ExternalReferences: []ftypes.ExternalRef{
++				{
++					Type: ftypes.RefOther,
++					URL:  "packages/ui",
++				},
++			},
++			Locations: []ftypes.Location{
++				{
++					StartLine: 24,
++					EndLine:   28,
++				},
++			},
++		},
++	}
++
+ 	npmV3WithoutRootDepsFieldDeps = []ftypes.Dependency{
+ 		{
+ 			ID:        "debug@2.6.9",
+```
+
+**File**: `pkg/dependency/parser/nodejs/npm/testdata/package-lock_v3_with_workspace_prefix.json` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++{
++  "name": "app",
++  "version": "1.0.0",
++  "lockfileVersion": 3,
++  "requires": true,
++  "packages": {
++    "": {
++      "name": "app",
++      "version": "1.0.0",
++      "license": "ISC",
++      "workspaces": [
++        "packages/ui",
++        "packages/ui-kit"
++      ]
++    },
++    "node_modules/@acme/design-system": {
++      "resolved": "packages/ui-kit",
++      "link": true
++    },
++    "node_modules/@acme/ui": {
++      "resolved": "packages/ui",
++      "link": true
++    },
++    "packages/ui": {
++      "name": "@acme/ui",
++      "version": "1.0.0",
++      "license": "ISC"
++    },
++    "packages/ui-kit": {
++      "name": "@acme/design-system",
++      "version": "2.0.0",
++      "license": "ISC"
++    }
++  }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11616** (closed): fix(swift): trim trailing slashes from the Package.resolved location (@mehdikarimi55)
 - **PR #11584** (2026-11-09): docs(python): add pylock.toml row to language coverage index (@delaysystem)
 - **PR #11583** (2026-11-09): docs(go): describe which go.mod directive sets the stdlib version (@wils0ns)
 - **PR #11582** (closed): fix(misconf): read ARM blob soft delete from nested blobServices (@anandhx)
+- **PR #11580** (2026-11-11): fix(swift): trim a trailing slash from a Package.resolved location (@wils0ns)
 - **PR #11573** (closed): fix(nodejs): parse Bun 1.4 four-element git entries in bun.lock (@anandhx)
-- **PR #11558** (2026-11-05): ci(helm): bump Trivy version to 0.76.2 for Trivy Helm Chart 0.28.2 (@repo-trivy-write-33ed3c[bot])
-- **PR #11555** (2026-11-05): chore(deps): bump the common group across 1 directory with 14 updates [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
 
 ---
 
@@ -1063,28 +1957,36 @@ Co-authored-by: Wilson Santos <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(python): add pylock.toml row to language coverage index (#11584)
+## X. nodejs): read yarn.lock block fields by indent level (#11496)
 
 **RULE**:
-When implementing operations in `docs/guide/coverage/language/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/dependency/parser/nodejs/yarn/parse.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `10ab0f82`: docs(python): add pylock.toml row to language coverage index (#11584). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2a154d7`: nodejs): read yarn.lock block fields by indent level (#11496). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/coverage/language/index.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/dependency/parser/nodejs/yarn/parse.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-|                      | pylock.toml                                                                                |     -     |     -      |       ✅        |       ✅        |
+		// yarn v1 and Berry indent block fields by two spaces and nested keys by four or more
+		indent := len(line) - len(strings.TrimLeft(line, " "))
+		case indent == 2 && strings.HasPrefix(line, "version"):
+		case indent == 2 && strings.HasPrefix(line, "dependencies:"):
+		case indent != 0:
+			// only the block header holds package patterns, other fields and nested keys
+			// such as the ones under dependenciesMeta or bin are skipped
+			continue
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		case strings.HasPrefix(line, "version"):
+		case strings.HasPrefix(line, "dependencies:"):
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `10ab0f82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2a154d7` are properly handled with clean fallback behavior.

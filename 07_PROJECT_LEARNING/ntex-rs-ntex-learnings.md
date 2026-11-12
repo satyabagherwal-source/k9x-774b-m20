@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `c1668355`  
+> **Source Version**: `ac4f4442`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:33:27.108Z  
+> **Timestamp**: 2026-11-12T10:52:28.737Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:33:25.075Z  
+> **Harvest Timestamp**: 2026-11-12T10:52:28.509Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2547 stars
+- **Stars / Engagement**: 2548 stars
 
 ---
 
@@ -1065,7 +1065,9 @@ pub(crate) struct RunnableQueue {
 #[repr(align(128))]
 struct CacheLine;
 
+// SAFETY: Non-owner threads use only immutable or synchronized fields; the owner drains all local state.
 unsafe impl Send for RunnableQueue {}
+// SAFETY: Local queues and cells are accessed only by the owner; cross-thread operations use synchronization.
 unsafe impl Sync for RunnableQueue {}
 
 impl RunnableQueue {
@@ -1112,6 +1114,7 @@ impl RunnableQueue {
         future: F,
         location: SpawnLocation,
     ) -> JoinHandle<F::Output> {
+        // SAFETY: The caller guarantees owner-thread access and the captured data's required lifetime.
         JoinHandle::new(unsafe { task::spawn(future, self, location) })
     }
 
@@ -1127,6 +1130,7 @@ impl RunnableQueue {
         future: F,
         location: SpawnLocation,
     ) {
+        // SAFETY: The caller guarantees the captured lifetime and owner locality or a `Send` submission.
         unsafe { task::spawn_detached::<_, LOCAL>(future, self, location) }
     }
 
@@ -1209,20 +1213,7 @@ impl RunnableQueue {
                     return Some(RemotePermit {
                         queue: Some(if owned {
                             Cow::Owned(self.clone())
-                        } else {
-                            Cow::Borrowed(self)
-                        }),
-                    });
-                }
-                Err(v) => state = v,
-            }
-        }
-    }
-
-    /// Runs bounded local, submission, and wake batches; returns whether work remains.
-    pub(super) fn run(&self) -> bool {
-        // cleared before draining the sync queues, a task enqueued after the
-        // drain notifies the d
+                        } el
 ```
 
 ### Core Architecture Module: `ntex-server/src/state.rs`
@@ -1374,14 +1365,14 @@ mod tests;
 
 ### Core Architecture Module: `ntex-service/src/pl_state.rs`
 ```
-use std::{fmt, marker::PhantomPinned, ptr, rc::Rc, task::Context, task::Poll};
+use std::{fmt, marker::PhantomPinned, rc::Rc, task::Context, task::Poll};
 
 use crate::{
     BindCtx, Ctx, IntoService, ReadyCallback, ReadyLink, Service, ctx::WaitersRef, util::BoxFuture,
 };
 
 use crate::pipeline::PipelineBinding;
-use crate::pl_inner::{PipelineApi, PipelineInternalApi, PipelineReadiness};
+use crate::pl_inner::{PipelineApi, PipelineInternalApi, PipelineReadiness, detach};
 use crate::readiness::ReadyScope;
 
 /// Execution container for a service whose state is supplied per operation.
@@ -1665,8 +1656,7 @@ where
     /// Returns the shared pipeline's readiness endpoint.
     ///
     /// See [`PipelineState::readiness_link`] and [`ReadyLink`].
-    pub fn readiness_link(&self) -> ReadyLink {
- 
+    pub fn readiness_link(&self) -> ReadyLink 
 ```
 
 ### Core Architecture Module: `ntex-service/src/state.rs`
@@ -2211,550 +2201,1030 @@ pub(crate) mod testing {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9eb2d0e0` (2026-11-09)
-**Commit Message**: Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifies server certificates
+### Incident Patch 1: `800c901d` (2026-11-09)
+**Commit Message**: Readiness example link to guide
 
-* Security: the default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now
-  verifies server certificates against the system trust store and checks the hostname;
-  previously it accepted any certificate. To trust a private root or a self-signed test
-  certificate, pass your own `SslConnector` to `ClientBuilder::openssl()`
-
-**File**: `docs/10-tls.md` (modified, +4/-3)
+**File**: `docs/1-service.md` (modified, +4/-0)
 ```diff
-@@ -505,9 +505,10 @@ fn client() -> ntex::client::Client {
- Do not confuse this with `ClientBuilder::connector`: that method configures
- **unsecured** connections and leaves the HTTPS connector unchanged.
+@@ -177,6 +177,10 @@ is ready, so a slow step at the end holds back new work at the front. Readiness
+ can also fail, which tells the caller that the service cannot accept requests
+ at all.
  
--> **Configure verification explicitly.** The built-in default OpenSSL HTTP
--> connector currently disables certificate verification. Supply a verifying
--> configuration, such as the OpenSSL configuration above, instead.
-+The built-in default OpenSSL connector verifies server certificates against
-+OpenSSL's default trust store (the system roots) and checks the request host.
-+To trust a private root, supply your own configuration, such as the OpenSSL
-+configuration above.
- 
- The default rustls configuration uses webpki roots and sends no client identity.
- If you enable both backend features, the default HTTP client selects OpenSSL.
-```
-
-**File**: `docs/13-client.md` (modified, +7/-5)
-```diff
-@@ -218,9 +218,10 @@ does depends on the backend:
- 
- - **rustls** checks server certificates against the webpki root
-   certificates, as you would expect.
--- **OpenSSL** does **not** verify certificates by default. That is handy
--  when testing against a server with a self-signed certificate, but it is not
--  safe in production. Give the client your own configuration instead.
-+- **OpenSSL** checks server certificates against OpenSSL's default trust
-+  store (the system roots) and checks that the certificate matches the
-+  request host. To trust a private root, or to accept a self-signed
-+  certificate while testing, give the client your own configuration.
- 
- If both features are enabled, OpenSSL wins. If neither is, `https` requests
- fail with `ConnectError::SslIsNotSupported`.
-@@ -728,8 +729,9 @@ simply build the request again.
-   connection pools.
- - Tune the client with `ClientConfig`, `IoConfig`, and friends in a
-   `SharedCfg`. Always set a connect timeout.
--- With OpenSSL, provide your own TLS configuration so certificates are
--  verified, and set ALPN if you want HTTP/2.
-+- The default secure connector verifies certificates. Provide your own TLS
-+  configuration for private roots or testing, and set ALPN on it if you want
-+  HTTP/2.
- - Pick the body format by picking the method: `send`, `send_body`,
-   `send_json`, `send_form`, or `send_stream`.
- - Buffer small bodies with `body()` or `json()`, and stream large ones.
-```
-
-**File**: `docs/llms.txt` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ Rules for generated code:
- - Service factories for `server::test_server`, `http::test::server`, and `web::test::server` take `async |_| service_or_app`, with `&()` as the argument. `server::TestServerBuilder::with(cfg, factory)` passes `&Cfg::State` to the service factory. State-initialization closures remain zero-argument: `async || Ok(state)`. Use the test server's address, not a fixed port.
- - Client send/body errors do not automatically convert into `std::io::Error`. Use a concrete application error or `Result<_, Box<dyn std::error::Error>>` to preserve them with `?`. If only a message is needed, explicitly use `.map_err(|err| std::io::Error::other(err.to_string()))?`; this loses the original error and diagnostic context. Do not require `Send + Sync` on the boxed error: client errors can be worker-local.
- - TLS belongs in connection setup, not protocol logic. Compose acceptors/connectors with services over `Io`; use generic filters, `seal()`, or `boxed()` to keep protocol code independent of TLS backends.
--- HTTP clients use `openssl`, `rustls`, or `secure_connector` for HTTPS; `ClientBuilder::connector` configures unsecured connections. Supply verifying TLS configurations explicitly: the built-in OpenSSL HTTP-client default currently disables certificate verification.
-+- HTTP clients use `openssl`, `rustls`, or `secure_connector` for HTTPS; `ClientBuilder::connector` configures unsecured connections. The built-in defaults verify certificates (OpenSSL: system trust store plus hostname; rustls: `webpki-roots`). Never disable verification with `SslVerifyMode::NONE` outside tests; trust private roots with `set_ca_file` instead.
- - `WsClient` needs an explicit TLS connector even for `wss://`: use `openssl`, `rustls`, or `connector`, and offer HTTP/1.1 rather than h2. Server-side WebSocket handlers work unchanged behind an HTTPS listener.
- - Read peer certificates with `PeerCertDer` / `PeerCertChainDer`, then parse with `x509::PeerCerts`. Certificate presence or parsing is not trust verification or authorization. Schannel's `request_client_cert(true)` neither requires a certificate nor validates its trust; reject missing/untrusted identities before protected handling.
- - See the [TLS guide](https://docs.ntex.rs/10-tls.html) and [runnable TLS examples](https://github.com/ntex-rs/examples/tree/main/tls) for backend, component, identity, and mutual-authentication configuration.
-```
-
-**File**: `ntex/CHANGES.md` (modified, +5/-0)
-```diff
-@@ -2,6 +2,11 @@
- 
- ## [4.7.0] - 2026-11-xx
- 
-+* Security: the default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now
-+  verifies server certificates against the system trust store and checks the hostname;
-+  previously it accepted any certificate. To trust a private root or a self-signed test
-+  certificate, pass your own `SslConnector` to `ClientBuilder::openssl()`
++The [readiness example](https://github.com/ntex-rs/examples/tree/main/service/readiness)
++shows both cases with console output: a concurrency limit that holds back new
++work and a gate whose readiness fails while it is closed.
 +
- * Document that `HttpService` application and control factories are
-   instantiated per connection; build expensive or shared state per worker
+ ### Services Come from Factories
  
+ Services often need some setup before the first request. They may need to read
 ```
 
-**File**: `ntex/src/client/builder.rs` (modified, +17/-1)
+**File**: `docs/2-pipeline.md` (modified, +5/-0)
 ```diff
-@@ -36,6 +36,18 @@ impl Default for ClientBuilder<Identity> {
- impl ClientBuilder<Identity> {
-     #[must_use]
-     /// Creates a client builder with default connectors.
-+    ///
-+    /// # TLS defaults
-+    ///
-+    /// With the `openssl` feature enabled (it takes precedence over `rustls`),
-+    /// HTTPS connections verify the peer certificate against OpenSSL's default
-+    /// trust store (the system roots) and check that it matches the request
-+    /// host. With only the `rustls` feature, peers are verified against the
-+    /// bundled `webpki-roots`. Without either feature, HTTPS is unavailable.
-+    ///
-+    /// To trust private roots, or to skip verification for testing, pass your
-+    /// own configuration to [`openssl`](Self::openssl),
-+    /// [`rustls`](Self::rustls) or [`secure_connector`](Self::secure_connector).
-     pub fn new() -> Self {
-         let svc = ConnectorPipeline::new(
-             apply_fn(TcpConnector::new(), async move |msg: Connect, svc| {
-@@ -59,7 +71,6 @@ impl ClientBuilder<Identity> {
-             let _ = ssl
-                 .set_alpn_protos(b"\x02h2\x08http/1.1")
-                 .map_err(|e| log::error!("Cannot set ALPN protocol: {e:?}"));
--            ssl.set_verify(tls_openssl::ssl::SslVerifyMode::NONE);
- 
-             builder.openssl(ssl.build())
-         }
-@@ -89,6 +100,11 @@ impl<M> ClientBuilder<M> {
-     #[must_use]
-     #[cfg(feature = "openssl")]
-     /// Uses an OpenSSL connector for secure connections.
-+    ///
-+    /// The connector's verification settings are used as given. Hostname
-+    /// verification follows the connector's `configure()` defaults, so it is
-+    /// enabled unless `set_verify(SslVerifyMode::NONE)` disables verification
-+    /// altogether.
-     pub fn openssl(self, config: OpensslConnector) -> Self {
-         use crate::connect::openssl::SslConnector;
- 
-```
-
-**File**: `ntex/src/client/mod.rs` (modified, +3/-0)
-```diff
-@@ -108,6 +108,9 @@ impl Default for Client {
- 
- impl Client {
-     /// Creates a client with default settings.
-+    ///
-+    /// HTTPS peers are verified by default; see the TLS defaults of
-+    /// [`ClientBuilder::new`].
-     pub fn new() -> Client {
-         ClientBuilder::new().build(SharedCfg::default())
-     }
-```
-
-**File**: `ntex/tests/http_client_openssl.rs` (modified, +107/-0)
-```diff
-@@ -400,3 +400,110 @@ async fn test_h2_request_body_dropped_after_response_is_reset() {
-     .await
-     .expect("request body upload is not stopped");
+@@ -434,6 +434,11 @@ fn release(&self) {
  }
+ ```
+ 
++The [readiness example](https://github.com/ntex-rs/examples/tree/main/service/readiness)
++builds a concurrency limit and a gate on top of `ReadyNotifier`, and prints
++each readiness change so you can follow the scope being invalidated and
++re-checked.
 +
-+fn verify_server() -> http::test::TestServer {
-+    test_server(async |_| {
-+        http::openssl(
-+            ssl_acceptor(),
-+            HttpService::h2(
-+                App::new().service(web::resource("/").route(web::to(async || HttpResponse::Ok()))),
-+            ),
-+        )
-+    })
-+}
-+
-+/// Connector that trusts the self-signed test certificate (`CN=www.example.com`).
-+fn trusting_connector() -> SslConnector {
-+    let mut builder = SslConnector::builder(SslMethod::tls()).unwrap();
-+    builder.set_ca_file("./tests/cert.pem").unwrap();
-+    builder.set_alpn_protos(b"\x02h2\x08http/1.1").unwrap();
-+    builder.build()
-+}
-+
-+/// STATEMENT: The default OpenSSL HTTP client verifies peer certificates and
-+/// rejects an untrusted one.
-+///
-+/// HOW:
-+/// - Serve HTTPS with the self-signed test certificate.
-+/// - Send a request with `Client::new()` and assert it fails with a certificate
-+///   verification error.
-+#[ntex::test]
-+async fn test_default_client_rejects_untrusted_certificate() {
-+    let srv = verify_server();
-+
-+    let err = Client::new().get(srv.surl("/")).send().await.unwrap_err();
-+    assert!(
-+        format!("{err:?}").contains("certificate verify failed"),
-+        "{err:?}"
-+    );
-+}
-+
-+/// STATEMENT: An OpenSSL client that trusts the peer's certificate connects
-+/// when the request host matches it.
-+///
-+/// HOW:
-+/// - Trust the self-signed test certificate as a root.
-+/// - Request `https://www.example.com` routed to the test server with
-+///   `address()` and assert a successful HTTP/2 response.
-+#[ntex::test]
-+async fn test_trusted_peer_is_verified() {
-+    let srv = verify_server();
-+    let client = Client::builder()
-+        .openssl(trusting_connector())
-+        .build(SharedCfg::default());
-+
-+    let url = format!("https://www.example.com:{}/", srv.addr().port());
-+    let response = client.get(url).address(srv.addr()).send().await.unwrap();
-+    assert!(response.status().is_success());
-+    assert_eq!(response.version(), Version::HTTP_2);
-+}
-+
-+/// STATEMENT: An OpenSSL client rejects a trusted certificate issued for a
-+/// different host.
-+///
-+/// HOW:
-+/// - Trust the self-signed `www.example.com` test certificate as a root.
-+/// - Request `https://localhost` on the test server and assert it fails with a
-+///   certificate verification error.
-+#[ntex::test]
-+async fn test_hostname_mismatch_is_rejected() {
-+    let srv = verify_server();
-+    let client = Client::builder()
-+        .openssl(trusting_connector())
-+        .build(SharedCfg::default());
-+
-+    let url = format!("https://localhost:{}/", srv.addr().port());
-+    let err = client
-+        .get(url)
-+        .address(srv.addr())
-+        .send()
-+        .await
-+        .unwrap_err();
-+    assert!(
-+        format!("{err:?}").contains("certificate verify failed"),
-+        "{err:?}"
-+    );
-+}
-+
-+/// STATEMENT: Certificate verification is skipped only through an explicitly
-+/// insecure connector.
-+///
-+/// HOW:
-+/// - Build a connector with `SslVerifyMode::NONE` and pass it to
-+///   `ClientBuilder::openssl`.
-+/// - Request the self-signed test server through a mismatched host and assert
-+///   success.
-+#[ntex::test]
-+async fn test_explicit_insecure_connector() {
-+    let srv = verify_server();
-+    let mut builder = SslConnector::builder(SslMethod::tls()).unwrap();
-+    builder.set_verify(SslVerifyMode::NONE);
-+    builder.set_alpn_protos(b"\x02h2\x08http/1.1").unwrap();
-+    let client = Client::builder()
-+        .openssl(builder.build())
-+        .build(SharedCfg::default());
-+
-+    let url = format!("https://localhost:{}/", srv.addr().port());
-+    let response = client.get(url).address(srv.addr()).send().await.unwrap();
-+    assert!(response.status().is_success());
-+}
+ ### Observing Readiness Notifications
+ 
+ Use a reusable
 ```
 
 ---
 
-### Incident Patch 2: `771e089b` (2026-11-09)
-**Commit Message**: Fix urly escape normalization
+### Incident Patch 2: `2a385103` (2026-11-09)
+**Commit Message**: Service intro for guide
 
-* Requoting decodes only unreserved escapes (`A-Z a-z 0-9 - . _ ~`); escapes of
-  reserved characters such as `%2F` and `%3B` are kept, so decoding can no longer
-  change how a path or query is split
-
-* Normalization removes the scheme's default port, so `https://h:443/` and
-  `https://h/` are equal. `Url::parse_target()` keeps the port as received
-
-* `Url::push_segments()` and `Url / segment` resolve `.` and `..` only within the
-  appended segments, so they can no longer escape the base path
-
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `docs/1-service.md` (modified, +256/-159)
 ```diff
-@@ -64,7 +64,7 @@ ntex-server = "4.5.0"
- ntex-service = "5.8.0"
- ntex-tls = "4.8.0"
- ntex-util = "4.9.0"
--urly = "1.2.2"
-+urly = "1.3.0"
+@@ -1,18 +1,23 @@
+ # Component and Service Model
  
- ntex-io-uring = "1.0.0"
- ntex-httparse = "2.3.0"
-```
-
-**File**: `ntex/CHANGES.md` (modified, +4/-0)
-```diff
-@@ -2,6 +2,10 @@
+-The term *component model* can make a simple idea sound more complicated than it
+-really is. It often brings to mind IoC containers, layers of dependency
+-injection, and plenty of indirection. That is not what we are trying to build.
++ntex is built from small pieces called *services*. A service takes a request,
++does some work, and eventually returns either a response or an error. The
++request is whatever input the service expects: an HTTP request, a TCP
++connection, a decoded MQTT packet, or a value from your own domain. Almost
++everything in ntex, from accepting connections to routing web requests, is a
++service or is built from services.
  
- ## [4.7.0] - 2026-11-xx
+-Our goal is much simpler: reusable components that are easy to understand and,
+-most importantly, easy to combine.
++This chapter explains the idea and the reasoning behind it. The exact API comes
++in the next chapters.
  
-+* With request-target normalization enabled, absolute-form targets lose the
-+  scheme's default port (`https://h:443/` becomes `https://h/`) and escapes of
-+  reserved characters such as `%3B` are no longer decoded (urly 1.3.0)
+-Imagine a service that receives an operation, performs some work, and returns a
+-result. Its implementation might be quite complex, but callers should not need
+-to know about any of that. From the outside, the service should have a small,
+-predictable interface.
++## Start with a Function
+ 
+-In Rust, the most natural way to express this is with a function:
++Imagine a component that receives an operation, performs some work, and returns
++a result. Its implementation might be complex, but callers should not need to
++know about any of that. From the outside, it should have a small, predictable
++interface.
 +
- * `middleware::DefaultHeaders` no longer implements `Clone`, and configuring it
-   after creating a middleware from it no longer panics. A header set several
-   times now emits all its values when the response lacks that name; previously
-```
-
-**File**: `ntex/src/http/h1/decoder.rs` (modified, +1/-1)
-```diff
-@@ -1507,7 +1507,7 @@ mod tests {
-         assert!(reader.decode(&mut buf).unwrap().is_none());
-         buf.extend_from_slice(b"%74est?q=%7e HTTP/1.1\r\n\r\n");
-         let (req, _) = reader.decode(&mut buf).unwrap().unwrap();
--        assert_eq!(req.uri().as_str(), "https://example.com:443/test?q=~");
-+        assert_eq!(req.uri().as_str(), "https://example.com/test?q=~");
++In Rust, the most natural way to express this is an async function:
  
-         let target = format!("/{}", "[".repeat(22000));
-         let mut buf = BytesMut::from(format!("GET {target} HTTP/1.1\r\n\r\n").as_str());
-```
-
-**File**: `ntex/tests/http_server.rs` (modified, +1/-1)
-```diff
-@@ -167,7 +167,7 @@ async fn test_h1_request_target_normalization() {
-                         .filter(async move |req: WebRequest<()>| {
-                             assert_eq!(req.uri().path_and_query(), expected);
-                             if req.uri().authority().is_some() {
--                                assert_eq!(req.connection_info().host(), "example.com:443");
-+                                assert_eq!(req.connection_info().host(), "example.com");
-                                 assert_eq!(req.connection_info().scheme(), "https");
-                             }
-                             Ok::<_, Infallible>(req)
-```
-
-**File**: `urly/CHANGES.md` (modified, +11/-1)
-```diff
-@@ -1,6 +1,16 @@
- # Changes
+ ```rust,ignore
+ async fn execute(op: Operation) -> Result<OperationResult, Error> {
+@@ -23,26 +28,15 @@ async fn execute(op: Operation) -> Result<OperationResult, Error> {
  
--## [1.2.2] - 2026-11-09
-+## [1.3.0] - 2026-11-xx
-+
-+* Requoting decodes only unreserved escapes (`A-Z a-z 0-9 - . _ ~`); escapes of
-+  reserved characters such as `%2F` and `%3B` are kept, so decoding can no longer
-+  change how a path or query is split
-+
-+* Normalization removes the scheme's default port, so `https://h:443/` and
-+  `https://h/` are equal. `Url::parse_target()` keeps the port as received
-+
-+* `Url::push_segments()` and `Url / segment` resolve `.` and `..` only within the
-+  appended segments, so they can no longer escape the base path
+ That is all the caller needs to see. Give the function an `Operation`, and it
+ either returns an `OperationResult` or reports an `Error`. How it produces that
+-result is an implementation detail.
+-
+-This small abstraction already gives us almost everything we need: one input,
+-one output, and a clear contract. There is no hidden framework behavior or
+-unnecessary ceremony.
+-
+-It is also easy to understand, straightforward to test, and naturally
+-composable.
++result is an implementation detail. One input, one output, and a clear
++contract: the function is easy to understand, easy to test, and easy to
++combine with others.
  
- * Return `ErrorKind::TooLong` from `Builder::build` instead of panicking when
-   the path, query or fragment makes the URL longer than 65535 bytes
+ ## Building an HTTP Endpoint
+ 
+-Suppose we want to expose our execution service through an HTTP endpoint. What
+-else do we need?
+-
+-At a minimum, we need a thin layer to handle the HTTP-specific details. It must
+-deserialize the incoming request, call the execution service, and serialize the
+-result into an HTTP response.
+-
+-Once again, the shape can stay simple. The endpoint can be just another
+-function:
++Suppose we want to expose `execute` through an HTTP endpoint. We need a thin
++layer for the HTTP details: read an operation from the request, run it, and
++turn the result into a response. That layer can be another function:
+ 
+ ```rust,ignore
+ async fn endpoint(req: HttpRequest) -> Result<HttpResponse, Error> {
+@@ -57,39 +51,15 @@ async fn endpoint(req: HttpRequest) -> Result<HttpResponse, Error> {
+ }
+ ```
+ 
+-There is nothing particularly fancy happening here. The endpoint is simply
+-glue code:
+-
+-1. Turn the HTTP request into a domain value—an `Operation`.
+-2. Pass the operation to the execution service.
+-3. Turn the resulting `OperationResult` into an HTTP response.
+-
+-Each part has a single responsibility, and the boundaries are explicit. The
+-execution engine knows nothing about HTTP, while the HTTP layer does not need to
+-know how the operation is executed.
+-
+-More importantly, these pieces do not depend on one another directly. Each one
+-simply transforms one type into another.
+-
+-That is the key idea.
++The endpoint is only glue. The execution code knows nothing about HTTP, and the
++HTTP layer does not know how operations are executed. Neither depends on the
++other directly; each step turns one type into another.
+ 
+ ## Composing Services
+ 
+-To compose two services, the output of one simply needs to match the input of
+-the next. When the types line up, the services naturally form a transformation
+-chain.
+-
+-In this example, the overall transformation is from an HTTP request to an HTTP
+-response:
+-
+-```text
+-HttpRequest -> HttpResponse
+-```
+-
+-Everything that happens in between is an implementation detail.
+-
+-We can add more steps, such as authentication and authorization, without
+-changing the overall shape of the system:
++To connect two steps, the output of one only has to match the input of the
++next. That makes it easy to add steps, such as authentication and
++authorization, without changing the overall shape:
+ 
+ ```rust,ignore
+ async fn endpoint(req: HttpRequest) -> Result<HttpResponse, Error> {
+@@ -122,133 +92,260 @@ HttpRequest
+     -> HttpResponse
+ ```
+ 
+-Each step is small and focused. It receives a value, performs its work
 ```
 
-**File**: `urly/Cargo.toml` (modified, +1/-1)
+**File**: `docs/2-pipeline.md` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
- [package]
- name = "urly"
--version = "1.2.2"
-+version = "1.3.0"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "Yet another URL library"
- keywords = ["ntex", "url", "uri"]
-```
-
-**File**: `urly/README.md` (modified, +2/-1)
-```diff
-@@ -65,7 +65,8 @@ URL is normalized and parsing a normalized URL returns it unchanged:
+ # Service Pipelines
  
- * valid `%XX` escapes are kept and their hex digits are uppercased
- * escapes of unreserved characters (`A-Z a-z 0-9 - . _ ~`) are decoded
--* `%2F` in a path is kept encoded, so it doesn't become a path separator
-+* escapes of reserved characters are kept, so `%2F` in a path doesn't become a
-+  path separator and `%3B` doesn't become `;`
- * any other character that isn't allowed in the component is percent-encoded,
-   including non-ASCII characters (as UTF-8) and a `%` that doesn't start a
-   valid escape
+-In the previous section, we described what a `Service` is and how to define one.
++In the previous section, we introduced the idea of a service.
+ Consider the HTTP endpoint from our earlier example:
+ 
+ ```rust
 ```
 
-**File**: `urly/src/builder.rs` (modified, +1/-1)
+**File**: `docs/3-state.md` (modified, +3/-3)
 ```diff
-@@ -26,7 +26,7 @@ use crate::{parse, path::PathAndQuery, query::Fragment, scheme::Scheme, url::Url
- /// assert_eq!(url, "https://user:p%40ss@example.com:8443/search?q=a+b#top");
- ///
- /// let url = urly::Builder::from(url).port(443).fragment("").build().unwrap();
--/// assert_eq!(url, "https://user:p%40ss@example.com:443/search?q=a+b#");
-+/// assert_eq!(url, "https://user:p%40ss@example.com/search?q=a+b#");
- /// ```
- #[derive(Debug, Default, Clone)]
- pub struct Builder {
+@@ -210,9 +210,9 @@ Readiness checks and their wake sources must run on the pipeline's thread.
+ A child receives the same `&St` as its parent unless you explicitly substitute
+ state. A generic wrapper that does not read it can implement `Service<St, Req>`
+ for any compatible `St`; it should not hard-code `()` and accidentally exclude
+-stateful children. The `Trimmed` wrapper in
+-[Wrapping a Child Service](./1-service.md#wrapping-a-child-service) shows the
+-complete pattern with `forward!`.
++stateful children. The `ResponseHeaderService` middleware in
++[Writing a Middleware Service](./8.3-web-app.md#writing-a-middleware-service)
++shows the complete pattern with `forward!`.
+ 
+ If constructing a child needs state, its factory receives `&St` too. A factory
+ can use that reference to configure a new service, but a service stored in an
+```
+
+**File**: `urly/CHANGES.md` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ # Changes
+ 
+-## [1.3.0] - 2026-11-xx
++## [1.3.0] - 2026-11-09
+ 
+ * Requoting decodes only unreserved escapes (`A-Z a-z 0-9 - . _ ~`); escapes of
+   reserved characters such as `%2F` and `%3B` are kept, so decoding can no longer
 ```
 
 ---
 
-### Incident Patch 3: `d9083a18` (2026-11-09)
-**Commit Message**: Fix client dropping header values when merging
+### Incident Patch 3: `f45f8d70` (2026-11-09)
+**Commit Message**: Update framework guide
 
-every value of a multi-value `ClientConfig::set_header()` default is now sent (previously
-only the first), and `ClientRequest::cookie()` merges all raw `Cookie`
-headers into the single `Cookie` header instead of keeping only the first
-
-**File**: `ntex/CHANGES.md` (modified, +5/-0)
+**File**: `docs/10-tls.md` (modified, +325/-303)
 ```diff
-@@ -12,6 +12,11 @@
-   with another address (or none) no longer reuses a connection to a
-   different server
+@@ -1,43 +1,38 @@
+ # Securing Connections with TLS
  
-+* Fix client dropping header values when merging: every value of a
-+  multi-value `ClientConfig::set_header()` default is now sent (previously
-+  only the first), and `ClientRequest::cookie()` merges all raw `Cookie`
-+  headers into the single `Cookie` header instead of keeping only the first
+-Sooner or later, almost every service has to leave `localhost`. When it does,
+-its traffic crosses networks you do not control, and you want two guarantees:
+-nobody in between can read or alter the data, and each side is talking to the
+-peer it expects. TLS provides both.
+-
+-The good news is that adding TLS to an ntex application changes how you set up
+-a connection, not how you handle its messages. TLS encrypts the traffic and
+-lets peers authenticate each other, while your HTTP handlers, WebSocket
+-services, and custom protocols continue to work with ordinary application
++When your service leaves `localhost`, its traffic crosses networks you do not
++control. TLS protects that traffic from being read or altered in transit. It
++also lets peers authenticate each other so they can check who they are talking
++to.
 +
- * HTTP/1 client requests now honor settings that were silently ignored:
-   `version(Version::HTTP_10)` is sent as `HTTP/1.0` (other versions are sent
-   as `HTTP/1.1`; HTTP/2 connections always use `HTTP/2`); the `close`,
++In ntex, you configure TLS when setting up a connection. Your HTTP handlers,
++WebSocket services, and custom protocols still work with ordinary application
+ bytes.
+ 
+-TLS does not depend on the runtime's I/O implementation either. All ntex TLS
+-backends work on in-memory byte streams through the I/O filter layer; they do
+-not read from or write to sockets themselves. You can use them with any
+-ntex-supported I/O or runtime backend, as long as the TLS backend supports your
+-platform.
+-
+-ntex also provides a platform-independent way to work with X.509 certificates
+-and identities through its [`x509`] module. You use a common API for loading
+-identities, inspecting certificates, and checking trust, while ntex uses the
+-appropriate platform or backend functionality underneath.
+-
+-This chapter starts with a small HTTPS server you can run in a few minutes. It
+-then walks through choosing a backend, configuring connections, and working
+-with certificates. Depending on where you are starting from:
+-
+-- **New to TLS in ntex?** Read the [quick start](#quick-start-an-https-server)
+-  and the [certificate primer](#certificates-in-a-nutshell).
+-- **Already have a TLS configuration?** Go straight to
+-  [configuring ntex components](#configuring-ntex-components).
+-- **Need to identify your clients?** Start with
+-  [client-certificate authentication](#client-certificate-authentication).
+-- **Preparing for production?** Finish with the
+-  [checklist](#production-checklist).
++All ntex TLS backends work on in-memory byte streams through the I/O filter
++layer. They do not read from or write to sockets themselves. You can use them
++with any ntex-supported I/O or runtime backend, provided the TLS backend
++supports your platform.
++
++The [`x509`] module gives you a platform-independent API for certificates and
++identities. You use the same API to load identities, inspect certificates, and
++check trust. ntex uses the appropriate platform or backend functionality
++underneath.
++
++If you are new to TLS, start with the
++[HTTPS server](#quick-start-an-https-server), then read the
++[certificate primer](#certificates-in-a-nutshell). If you already have a TLS
++configuration, skip to [connecting it to ntex](#configuring-ntex-components).
++
++For services that identify clients by certificate, the
++[client-authentication section](#client-certificate-authentication) separates
++TLS verification from application access checks. Use the
++[production checklist](#production-checklist) before deploying either kind of
++service.
+ 
+ The snippets focus on configuration. For complete programs, use the
+-[ntex examples repository][examples]; each example's README includes dependencies,
+-certificate setup, and run commands.
++[ntex examples repository][examples]. Each example's README includes its
++dependencies, certificate setup, and run commands.
+ 
+ ## Supported backends
+ 
+@@ -50,9 +45,9 @@ or directly from `ntex_tls`.
+ | rustls | `ntex/rustls` or `ntex-tls/rustls` | Configured with rustls `ClientConfig` and `ServerConfig`; choose a crypto provider |
+ | Schannel | Available automatically on Windows | Windows-native identities, trust policy, protocol versions and cipher suites |
+ 
+-Choose OpenSSL or rustls by enabling the corresponding feature; neither is
+-enabled by default in `ntex-tls`. Schannel is already available on Windows, so
+-you do not need to enable its compatibility-only `schannel` feature.
++Enable the corresponding feature to use OpenSSL or rustls. Neither is enabled
++by default in `ntex-tls`. Schannel is available automatically on Windows; you do
++not need its compatibility-only `schannel` feature.
+ 
+ For an OpenSSL application, start with:
+ 
+@@ -62,8 +57,8 @@ ntex = { version = "4", features = ["tokio", "openssl"] }
+ openssl = "0.10"
+ ```
+ 
+-For rustls, you also need a crypto provider: the implementation of the
+-cryptographic algorithms. The examples in this chapter use ring:
++For rustls, you also need a crypto provider to implement the cryptographic
++algorithms. The examples in this chapter use ring:
+ 
+ ```toml
+ [dependencies]
+@@ -81,43 +76,46 @@ without changing the TLS configurat
 ```
 
-**File**: `ntex/src/client/cfg.rs` (modified, +4/-1)
+**File**: `docs/11-grpc.md` (modified, +440/-457)
 ```diff
-@@ -263,7 +263,10 @@ impl ClientConfig {
+@@ -1,54 +1,34 @@
+ # Building gRPC Services and Clients
  
-     /// Adds a header to every request.
-     ///
--    /// A request-specific header with the same name takes precedence.
-+    /// Repeated calls with the same name add values; every value is sent. A
-+    /// request replaces the default values with
-+    /// [`ClientRequest::set_header()`](super::ClientRequest::set_header), while
-+    /// [`ClientRequest::header()`](super::ClientRequest::header) appends to them.
-     pub fn set_header<K, V>(mut self, key: K, value: V) -> Result<Self, HttpError>
-     where
-         HeaderName: TryFrom<K>,
+-Once a system grows past a single process, its parts need a way to call each
+-other. [gRPC] is one of the most common answers. You describe an API once, in
+-a `.proto` file, and clients and servers written in any language can talk to
+-each other through it. Messages are compact Protocol Buffers, calls travel
+-over HTTP/2, and one connection carries many calls at the same time.
+-
+-[ntex-grpc] brings gRPC to ntex. It is a separate crate, built on the
+-[service model](1-service.md) you already know and on [`ntex-h2`], the ntex
+-HTTP/2 implementation. A gRPC client is a service you call, and a gRPC server
+-is a service the ntex [server](5-server.md) runs for every connection.
+-
+-ntex-grpc takes a different route from most gRPC libraries: **it does not use
+-derive macros or build scripts.** The protocol is described with ordinary
+-traits, and Rust's type system does the wiring. A message knows how to encode
+-itself because each of its fields does. A method is a type that knows its
+-request path and its input and output messages. A client is generic over the
+-transport that carries its calls. What remains is boilerplate: one struct per
+-message, one type per method, a typed client per service. A code generator,
+-`ntex-grpc-codegen`, writes that for you once. You commit its output and read
+-it like the rest of your code. Nothing is generated during the build. The only
+-macro you will meet is the `#[server]` attribute, a thin layer that connects
++[gRPC] lets processes call each other through an API described in a `.proto`
++file. Clients and servers written in any language can use that API. Calls
++carry compact Protocol Buffers messages over HTTP/2, with many calls sharing
++one connection.
++
++[ntex-grpc] is a separate crate built on the ntex
++[service model](1-service.md). It uses [`ntex-h2`] for HTTP/2. A gRPC client
++is a service you call. A gRPC server is a service that the ntex
++[server](5-server.md) runs for each connection.
++
++ntex-grpc describes the protocol with ordinary traits. It does not use
++derive macros or build scripts. Each message field knows how to encode
++itself, and the message uses those implementations. A method type defines
++its request path and its input and output messages. A client is generic
++over the transport that carries its calls.
++
++The `ntex-grpc-codegen` generator writes the boilerplate: a struct for each
++message, a type for each method, and a typed client for each service. You
++commit the output and read it like the rest of your code. Nothing is
++generated during the build. The only macro is `#[server]`, which connects
+ the methods of a `.proto` service to the methods of your type.
+ 
+-Because every piece is a trait, every piece can be replaced. You can use your
+-own Rust types for message fields, put your own transport between a client
+-and the network, or handle raw, undecoded calls on the server.
+-
+-This chapter starts with a running example, then follows a call from the
+-`.proto` file through the client to the server. Depending on where you are
+-starting from:
+-
+-- **New to ntex-grpc?** Run the [quick start](#quick-start-hello-grpc), skim
+-  [gRPC in a nutshell](#grpc-in-a-nutshell), then read
+-  [from .proto to Rust](#from-proto-to-rust) and
+-  [implementing a service](#implementing-a-service).
+-- **Want stricter types in your messages?** Read
+-  [using your own field types](#using-your-own-field-types).
+-- **Calling gRPC services from ntex?** Start with
+-  [calling services](#calling-services) and
+-  [errors, deadlines and retries](#errors-deadlines-and-retries).
+-- **Running a server in production?** Read
+-  [tuning the server](#tuning-the-server) and
+-  [running over TLS](#running-over-tls), then go through the
+-  [checklist](#production-checklist).
+-- **Something does not work?** See [troubleshooting](#troubleshooting).
++These traits let you replace each part. You can use your own Rust types for
++message fields, put a custom transport between a client and the network,
++or handle raw, undecoded calls on the server.
+ 
+ The snippets come from the [gRPC examples][examples]. Each example is a
+-complete program, and its README has the run commands and a `grpcurl`
+-session to try:
++complete program. Its README includes run commands and a `grpcurl` session
++you can try.
+ 
+ | Example | What it shows |
+ | --- | --- |
+@@ -60,8 +40,8 @@ session to try:
+ 
+ ## Quick start: hello, gRPC
+ 
+-The helloworld example is a greeting service with a single method. Clone the
+-examples repository and start the server:
++The helloworld example gives you a greeting service with one method. Clone
++the examples repository and start the server:
+ 
+ ```sh
+ git clone https://github.com/ntex-rs/examples
+@@ -75,15 +55,15 @@ In a second terminal, call it:
+ cargo run --bin grpc-helloworld-client -- ntex
+ ```
+ 
+-The client prints `Hello ntex!`. The server speaks standard gRPC, so other
+-tools can call it too. With [grpcurl] it looks like this:
++The client
 ```
 
-**File**: `ntex/src/client/mod.rs` (modified, +2/-1)
+**File**: `docs/12-time.md` (modified, +228/-224)
 ```diff
-@@ -147,8 +147,9 @@ impl Client {
-         <Url as TryFrom<U>>::Error: Into<InvalidUrl>,
-     {
-         let mut req = ClientRequest::new(method, url, self.cfg.clone(), self.svc.bind());
-+        // the request has no headers yet, every value of a multi-value default is copied
-         for (key, value) in self.cfg.headers() {
--            req = req.set_header_if_none(key.clone(), value.clone());
-+            req.headers_mut().append(key.clone(), value.clone());
-         }
-         req
-     }
+@@ -1,52 +1,51 @@
+ # Timers and Time Utilities
+ 
+-A network server is full of deadlines. A connection must finish its TLS
+-handshake in time, a client that stops sending must eventually be dropped,
+-an idle keep-alive connection must be closed, and an upstream request must
+-not wait forever. Almost none of these timers ever fire: the handshake
+-completes, the next request arrives, the upstream answers. Each one is armed,
+-then cancelled or pushed further into the future, thousands of times per
+-second.
+-
+-`ntex-util` provides the timer functionality for ntex. The `ntex` crate
+-re-exports it as [`ntex::time`], and it works the same with every runtime
+-backend. It contains:
+-
+-- [`Millis`] and [`Seconds`], compact duration types used throughout the ntex
+-  configuration APIs;
+-- asynchronous utilities: [`sleep`], [`deadline`], [`timeout`],
+-  [`timeout_checked`] and [`interval`];
+-- [`CallbackTimer`], which runs a short closure on expiry without a task;
+-- [`now`] and [`system_time`], cheap cached clocks.
++A network server needs deadlines for TLS handshakes and clients that stop
++sending. It must also close idle keep-alive connections and limit waits for
++upstream requests.
++
++Almost none of these timers fire. The handshake completes, the next request
++arrives, or the upstream answers. Timers are armed, then cancelled or pushed
++further into the future, thousands of times per second.
++
++`ntex-util` provides ntex's timer utilities. The `ntex` crate re-exports them as
++[`ntex::time`], with the same behavior on every runtime backend. Use [`sleep`]
++to delay a task, [`timeout`] to put a limit on another future, or [`interval`]
++for periodic work. Their shared timer design explains the trade-off between
++precision and cost.
+ 
+ ## How the timer works
+ 
+-The ntex timer implementation is ported from the Linux kernel
++ntex's timer design makes it cheap to cancel timers before they expire. It is
++ported from the Linux kernel
+ [timer wheel](https://github.com/torvalds/linux/blob/master/kernel/time/timer.c).
+-The kernel faces the same problem as a network server: most of its timers
+-are timeouts for events that are expected to arrive, such as a network packet
+-or an I/O completion, and are cancelled long before they expire.
+-[Reinventing the timer wheel](https://lwn.net/Articles/646950/) on LWN
+-describes the design and the reasoning behind it.
++
++The kernel faces the same problem as a network server. Most timers wait for an
++expected event, such as a network packet or an I/O completion. They are
++cancelled long before they expire.
++[Reinventing the timer wheel](https://lwn.net/Articles/646950/) on LWN explains
++the design and its reasoning.
+ 
+ ### A wheel of buckets
+ 
+-Keeping timers in a sorted list or a binary heap gives exact ordering, but
+-every insert and cancel costs `O(log n)` or more. A **timer wheel** works
+-more like a clock face. It is an array of buckets, and each bucket collects
+-all timers that expire during the same slice of time. Adding a timer means
+-computing a bucket index and pushing an entry; cancelling it means removing
+-that entry. Both are `O(1)`, however many timers there are.
++A **timer wheel** groups timers by expiry time, so adding and cancelling timers
++costs `O(1)` regardless of their number. A sorted list or binary heap gives
++exact ordering, but every insert and cancel costs `O(log n)` or more.
+ 
+-The wheel doesn't count time in milliseconds but in *units*, and by default
+-**one unit is 16 milliseconds**. Every delay is converted to units before it
+-is stored, so one unit is the finest resolution an ntex timer can have. The
+-unit can be made smaller, see [Choosing the resolution](#choosing-the-resolution).
++The wheel is an array of buckets, like a clock face. Each bucket holds timers
++that expire during the same slice of time. To add a timer, the wheel computes
++a bucket index and pushes an entry. To cancel it, the wheel removes that entry.
+ 
+-Each bucket on the first level covers one unit, so 64 buckets reach only
+-about one second ahead. To cover longer delays, ntex stacks 8 levels of 64
+-buckets, and each level is 8 times coarser than the one below it. With the
+-default 16 ms unit:
++The wheel counts time in *units*. By default, **one unit is 16 milliseconds**.
++Every delay is converted to units before storage. One unit is therefore the
++finest resolution an ntex timer can have. You can make the unit smaller; see
++[Choosing the resolution](#choosing-the-resolution).
++
++Each bucket on the first level covers one unit. Its 64 buckets reach only
++about one second ahead. To cover longer delays, ntex uses 8 levels of 64
++buckets. Each level is 8 times coarser than the one below it.
++
++With the default 16 ms unit, the levels cover these ranges:
+ 
+ | Level | Granularity | Range            |
+ |-------|-------------|------------------|
+@@ -59,68 +58,78 @@ default 16 ms unit:
+ | 6     | ~70 m       | ~9.2 h .. ~3 d   |
+ | 7     | ~9.3 h      | ~3 d .. ~24.5 d  |
+ 
+-A timer goes on the first level 
 ```
 
-**File**: `ntex/src/client/request.rs` (modified, +49/-6)
+**File**: `docs/13-client.md` (modified, +208/-147)
 ```diff
-@@ -330,6 +330,9 @@ impl ClientRequest {
-     #[cfg(feature = "cookie")]
-     /// Set a cookie.
-     ///
-+    /// When the request is sent, all cookies and every raw `Cookie` header
-+    /// value are merged into a single `Cookie` header.
-+    ///
-     /// ```rust
-     /// use coo_kie as cookie;
-     /// use ntex::client::Client;
-@@ -504,15 +507,20 @@ impl ClientRequest {
-             None => return Err(ClientError::from(InvalidUrl::MissingScheme).into()),
-         }
+@@ -1,18 +1,16 @@
+ # Making HTTP Requests
  
--        // set cookies, appended to an existing `Cookie` header
-+        // set cookies, merged with all existing `Cookie` headers into a single header
-         #[cfg(feature = "cookie")]
-         {
-             if let Some(ref jar) = self.cookies {
-                 let headers = &mut self.request.head.headers;
--                let mut cookie = headers
--                    .get(header::COOKIE)
--                    .map(|v| v.as_bytes().to_vec())
--                    .unwrap_or_default();
-+                let mut cookie = Vec::new();
-+                for v in headers.get_all(header::COOKIE) {
-+                    if !v.is_empty() {
-+                        if !cookie.is_empty() {
-+                            cookie.extend_from_slice(b"; ");
-+                        }
-+                        cookie.extend_from_slice(v.as_bytes());
-+                    }
-+                }
-                 for c in jar.iter() {
-                     crate::http::helpers::push_cookie(&mut cookie, c.name(), c.value());
-                 }
-@@ -622,10 +630,11 @@ mod tests {
-         let _ = req.send_body("").await;
-     }
+-Very few services live alone. Sooner or later yours will need to talk to a
+-payment provider, an internal API, an object store, or someone's webhook.
+-`ntex::client` is the tool for that job.
++Use `ntex::client` when your service needs to call a payment provider, an
++internal API, an object store, or a webhook.
  
--    /// STATEMENT: Request cookies combine with one another and extend a preexisting cookie header.
-+    /// STATEMENT: Request cookies combine with one another and with every preexisting `Cookie` header into a single header.
-     ///
-     /// HOW:
-     /// - Prepare requests with two builder cookies and with a raw header plus one cookie, then compare header entries.
-+    /// - Add three raw `Cookie` headers, one empty, plus a builder cookie, and check that a single header joins all non-empty values in order.
-     #[cfg(feature = "cookie")]
-     #[crate::rt_test]
-     async fn cookies_extend_cookie_header() {
-@@ -651,6 +660,40 @@ mod tests {
-             .header(header::COOKIE, "c0=v0")
-             .cookie(Cookie::build(("c1", "v1")));
-         assert_eq!(cookie_header(&mut req), "c0=v0; c1=v1");
-+
-+        let mut req = Client::new()
-+            .get("http://localhost/")
-+            .header(header::COOKIE, "a=1")
-+            .header(header::COOKIE, "")
-+            .header(header::COOKIE, "b=2; c=3")
-+            .cookie(Cookie::build(("c1", "v1")));
-+        assert_eq!(cookie_header(&mut req), "a=1; b=2; c=3; c1=v1");
-+        assert_eq!(req.headers().get_all(header::COOKIE).count(), 1);
-+    }
-+
-+    /// STATEMENT: Every value of a multi-value client default header is copied into new requests.
-+    ///
-+    /// HOW:
-+    /// - Configure two default `Accept` values and check that a new request carries both, in order.
-+    /// - Replace them with `set_header` and check that only the request value remains.
-+    #[crate::rt_test]
-+    async fn test_client_multi_value_default_header() {
-+        let client = Client::builder().build(
-+            SharedCfg::new("H").add(
-+                ClientConfig::new()
-+                    .set_header(header::ACCEPT, "text/html")
-+                    .unwrap()
-+                    .set_header(header::ACCEPT, "text/plain")
-+                    .unwrap(),
-+            ),
-+        );
-+        let req = client.get("/");
-+        let accept: Vec<_> = req.headers().get_all(header::ACCEPT).collect();
-+        assert_eq!(accept, ["text/html", "text/plain"]);
-+
-+        let req = client.get("/").set_header(header::ACCEPT, "*/*");
-+        let accept: Vec<_> = req.headers().get_all(header::ACCEPT).collect();
-+        assert_eq!(accept, ["*/*"]);
-     }
+-If you have built a server with ntex, the client will feel familiar. It is
+-made of the same pieces: [services](1-service.md), the
+-[I/O layer](7-io.md), and shared configuration. It speaks HTTP/1.1 and HTTP/2,
+-keeps connections open and reuses them, and supports TLS through OpenSSL or
+-rustls. Optional features add response decompression and cookies, and
+-middleware lets you hook your own logic into every request.
++If you have built a server with ntex, the client will feel familiar. It uses
++the same [services](1-service.md), [I/O layer](7-io.md), and shared
++configuration. It speaks HTTP/1.1 and HTTP/2, keeps connections open for
++reuse, and supports TLS through OpenSSL or rustls.
  
-     /// STATEMENT: Client-wide default headers are copied into new requests.
+-Making a request comes down to three steps: build it, send it, and read what
+-comes back.
++Optional features add response decompression and cookies. Middleware lets
++you run your own logic on every request. To make a request, start with a
++`Client`:
+ 
+ ```rust,no_run
+ use ntex::client::Client;
+@@ -34,16 +32,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
+ }
+ ```
+ 
+-That is all you need for simple cases. The rest of this chapter looks at each
+-step more closely, starting with what happens inside the client.
+-
+ ## How the client works
+ 
+-A `Client` is not meant to be created per request. It owns connection pools
+-and configuration, and its value comes from reusing them. An application
+-usually creates one client for each kind of outgoing traffic, such as one for
+-the payment provider and another for an internal API, each with its own
+-timeouts and limits. It then keeps those clients for its whole lifetime.
++Create a `Client` once and reuse it across requests. It owns connection
++pools and configuration. An application usually keeps one client for each
++kind of outgoing traffic throughout its lifetime. For example, a payment
++provider and an internal API may need different timeouts and limits.
+ 
+ A `Client` is a lightweight handle. Cloning it is cheap, and all clones share
+ the same connection pools, so you can hand copies to every part of your code
+@@ -59,12 +53,14 @@ ClientRequest ─► middleware ─► Sender ─► Connector ─┬─► plai
+                                                     └─► TLS pool   ─► HTTP/1.1 or HTTP/2 connections
+ ```
+ 
+-It starts as a `ClientRequest`, the builder you get from `client.get(...)`
+-and friends, which collects the method, URL, headers, and body. Next comes
+-any [middleware](#middleware) you installed; it can inspect or change the
+-request on its way out and the response on its way back. Then the `Sender`
+-takes over. It asks the `Connector` for a connection, writes the request, and
+-waits for the response head.
++A request starts as a `ClientRequest`. This is the builder you get from
++`client.get(...)` and similar methods. It collects the method, URL, headers,
++and body.
++
++Next comes any [middleware](#middleware) you installed. It can inspect or
++change the outgoing request and the incoming response. Then the `Sender`
++asks the `Connector` for a connection, writes the request, and waits for the
++response head.
+ 
+ The `Connector` chooses a pool based on the URL scheme: `http` goes to
+ the plain pool, `https` to the TLS pool. Each pool keeps
+@@ -76,11 +72,11 @@ You don't pick the HTTP version yourself. For `https` URLs, client and server
+ settle it during the TLS handshake using ALPN: the client offers `h2` and
+ `http/1.1`, and the server chooses. Plain `http` URLs always use HTTP/1.1.
+ 
+-One detail is worth remembering. An HTTP/1.1 connection goes back to the
+-pool only after its response body has been read to the end. If you drop a
+-response without reading the body, the client can't tell what is left on the
+-wire, so it closes the connection instead. If you want connections reused,
+-read the body, even when you don't care what's in it.
++An HTTP/1.1 connection goes back to the pool only after you read its response
++body to the end. If you drop a response without reading the body, the
++client can't tell what is left on the wire, so it closes the connection
++instead. Read the body to reuse the connection, even when you don't care
++what's in it.
+ 
+ You don't have to shut the client down explicitly. Once the last clone and
+ every request made with it are dropped, the pools close idle connections in
+@@ -93,8 +89,8 @@ The client is for requests and responses. WebSockets have their own client,
+ 
+ ## Configuration
+ 
+-`Client::new()` uses sensible defaults, and for a quick script they are
+-fine. For a real service you will want to tune at least the timeouts.
++`Client::new()` uses defaults that work for a quick script. For a service,
++yo
+```
+
+**File**: `docs/14-h2.md` (modified, +338/-335)
+```diff
+@@ -1,29 +1,26 @@
+ # HTTP/2 with ntex-h2
+ 
+-HTTP/2 in ntex lives in a separate crate, [ntex-h2]. `ntex::http` and
+-`ntex::web` use it behind the scenes: when a connection negotiates HTTP/2,
+-ntex hands it to ntex-h2, which takes care of frames, header compression,
+-streams and flow control, and ntex turns each stream back into the familiar
+-requests and responses. Most applications never notice the crate is there.
+-
+-Sometimes, though, you want HTTP/2 itself rather than the general HTTP layer
+-on top of it. Perhaps you only ever speak HTTP/2, you need trailers or
+-long-lived bidirectional streams, or you want to control flow control
+-yourself. gRPC is the classic case: [ntex-grpc](11-grpc.md) uses ntex-h2
+-directly for both its client and its server, and you can do the same.
+-ntex-h2 gives you three building blocks:
+-
+-- **`client::Client`**, a connection pool that opens and reuses connections
+-  to one server.
+-- **`client::SimpleClient`**, a client for a single connection that you
+-  manage yourself.
+-- **`server::Server`**, an ntex service that handles HTTP/2 connections.
+-
+-ntex-h2 speaks only HTTP/2 and does not negotiate the protocol, so any
+-transport you give it must already be committed to HTTP/2. Over TLS, that
+-means ALPN has selected `h2`. Over plain TCP (h2c), both sides must simply
+-know in advance. The HTTP/1.1 `Upgrade` mechanism and server push are not
+-supported.
++[ntex-h2] is a separate crate that implements HTTP/2 for ntex. Most
++applications use it indirectly through `ntex::http` or `ntex::web`. When a
++connection negotiates HTTP/2, ntex-h2 handles frames, header compression,
++streams, and flow control. ntex turns each stream into requests and
++responses.
++
++Use ntex-h2 directly when you only need HTTP/2, need trailers or long-lived
++bidirectional streams, or want to manage flow control yourself.
++[ntex-grpc](11-grpc.md) uses it this way for both its client and its server.
++
++For outgoing requests, `client::Client` opens and reuses a pool of connections
++to one server. Choose `client::SimpleClient` instead when you want to manage
++one connection yourself. On the receiving side, `server::Server` is an ntex
++service that handles HTTP/2 connections.
++
++ntex-h2 speaks only HTTP/2 and does not negotiate the protocol. Any
++transport you give it must already be committed to HTTP/2. Over TLS, ALPN
++must have selected `h2`. Over plain TCP (h2c), both sides must know in
++advance that they will use HTTP/2.
++
++The HTTP/1.1 `Upgrade` mechanism and server push are not supported.
+ 
+ Here is a client that sends a `GET` request over plain TCP and prints the
+ response:
+@@ -53,22 +50,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
+ }
+ ```
+ 
+-This is a lower-level API than [`ntex::client`](13-client.md). There are no
+-URLs, body helpers or `Response` type, only HTTP/2 streams and what travels
+-on them. The rest of this chapter explains that model first, then covers the
+-client and the server.
++This API works with HTTP/2 streams and messages. Unlike
++[`ntex::client`](13-client.md), it has no URLs, body helpers, or `Response`
++type.
+ 
+ ## Streams and messages
+ 
+-An HTTP/2 connection carries many independent streams at once, and each
+-request shares a stream with its response. The client opens a stream by
+-sending request headers. Both sides then send data on it, and each closes its
+-own half when it is done. Either side can also cut a stream short with a
+-reset, which leaves the connection and its other streams untouched.
++Each HTTP/2 stream carries one request and its response. Many independent
++streams can share a connection. The client opens a stream by sending
++request headers. Both sides can then send data, and each closes its own
++half when it is done.
++
++Either side can cut a stream short with a reset. The connection and its
++other streams stay open.
+ 
+-In ntex-h2, a stream is represented by a `StreamRef`: a cheap, cloneable
+-handle that identifies the stream and lets you send on it. Everything that
+-arrives on a stream reaches you as a `Message`:
++A `StreamRef` identifies a stream and lets you send on it. It is cheap to
++clone. Everything that arrives on a stream reaches you as a `Message`:
+ 
+ ```rust,ignore
+ pub struct Message {
+@@ -77,29 +74,32 @@ pub struct Message {
+ }
+ ```
+ 
+-A client and a server see the same kinds of messages:
++A client and a server see the same sequence. It begins with
++`Headers { pseudo, headers, eof }`, the request or response head. The `pseudo`
++field holds HTTP/2's pseudo-headers: `method`, `scheme`, `authority`, and `path`
++on requests, and `status` on responses. If `eof` is `true`, there is no body
++and this is the only message.
+ 
+-| `MessageKind` | Meaning |
+-|---|---|
+-| `Headers { pseudo, headers, eof }` | A request or response head. `pseudo` holds the pseudo-headers: `method`, `scheme`, `authority`, and `path` on requests, and `status` on responses. If `eof` is `true`, there is no body. |
+-| `Data(Bytes, Capacity)` | A chunk of the body. `Capacity`
+```
+
+**File**: `docs/15-mqtt.md` (modified, +523/-535)
+```diff
+@@ -1,19 +1,17 @@
+ # MQTT with ntex-mqtt
+ 
+-[MQTT] is a lightweight publish/subscribe protocol. It is common in IoT,
+-telemetry and messaging systems, where many small devices keep long-lived
+-connections to a broker. [ntex-mqtt] brings MQTT to ntex. It provides both a
+-client and a server, and both speak the two versions of the protocol still in
+-use, MQTT 3.1.1 and MQTT 5.0. A single server can even accept clients of both
+-versions on the same port.
++[MQTT] is a lightweight publish/subscribe protocol used in IoT, telemetry
++and messaging systems. Small devices often use it to keep long-lived
++connections to a broker. [ntex-mqtt] provides an MQTT client and server for
++ntex. Both support the two protocol versions in use, MQTT 3.1.1 and
++MQTT 5.0. A single server can accept both versions on the same port.
+ 
+-ntex-mqtt is built from the same pieces as the rest of ntex. Connections are
+-ntex I/O objects, handlers are ntex services, settings travel in a
+-[`SharedCfg`], and a server runs inside the ordinary
+-[ntex server](5-server.md). If you know how to write an ntex web service,
+-most of this chapter will feel familiar.
++ntex-mqtt uses the same building blocks as the rest of ntex. Connections are
++ntex I/O objects, and handlers are ntex services. You pass settings through a
++[`SharedCfg`] and run MQTT servers inside the [ntex server](5-server.md).
++These pieces will be familiar if you have written an ntex web service.
+ 
+-Add the crate next to ntex:
++Add the crate alongside ntex:
+ 
+ ```toml
+ [dependencies]
+@@ -69,53 +67,57 @@ async fn main() -> std::io::Result<()> {
+ ```
+ 
+ Most server examples in this chapter use an error type like `ServerError`.
+-Its `TryFrom` implementation answers one question: can this error be turned
+-into a `PUBACK` that refuses the message, or must it close the connection?
+-Returning `Err` means "close". [Handling publishes](#handling-publishes)
+-shows the other choice.
+-
+-The rest of the chapter explains how the crate is organized, how to
+-configure it, and then covers the client and the server in turn.
++Its `TryFrom` implementation decides how to handle an error. It can turn
++the error into a `PUBACK` that refuses the message, or close the connection.
++Returning `Err` closes it. [Handling publishes](#handling-publishes) shows
++how to return a negative ack instead.
+ 
+ ## How ntex-mqtt is organized
+ 
+-The two protocol versions live in two modules, `ntex_mqtt::v3` and
+-`ntex_mqtt::v5`. They have the same shape: each has a server builder
+-(`MqttServer`), a client connector (`client::MqttConnector`), a `Publish`
+-message, a `Router`, a `MqttSink` and a `codec` module with the packet types.
+-Code written for one version translates to the other almost line by line.
+-MQTT 5 adds reason codes, properties and a few new packets, so its types carry
+-more information.
+-
+-The crate root holds what the versions share: the combined `MqttServer`, the
+-`MqttServiceConfig` settings, and the `Control` messages that report what
+-happens to a connection.
+-
+-Every connection, on either side, is handled by up to three services:
+-
+-- The **publish service** receives `PUBLISH` packets from the peer. This is
+-  where your application logic lives. On the client, this role is filled by
+-  router handlers and the protocol service.
+-- The **protocol service** receives the other packets that need an answer:
+-  `SUBSCRIBE`, `UNSUBSCRIBE`, `PINGREQ`, `DISCONNECT`, `PUBREL` and, in MQTT 5,
+-  `AUTH`. It returns the response to send back.
+-- The **control service** is told about events in the connection's life,
+-  such as write backpressure or the connection stopping, and why it stopped.
+-
+-The protocol and control services have sensible defaults, so you only
+-replace them when you need to.
+-
+-Two more types show up everywhere. A **sink** (`MqttSink`) is a cheap,
+-cloneable handle for sending packets to the peer: publishes, subscriptions,
+-and the final `DISCONNECT`. A **session** (`v3::Session<St>` or
+-`v5::Session<St>`) bundles the sink with your own per-connection state `St`.
+-It dereferences to `St`, and its `sink()` method returns the sink.
++Choose `ntex_mqtt::v3` for MQTT 3.1.1 or `ntex_mqtt::v5` for MQTT 5.
++The modules have the same structure, so code for one version translates to
++the other almost line by line. MQTT 5 adds reason codes, properties and a
++few new packets, so its types carry more information.
++
++Within either module, start with `MqttServer` to accept connections or
++`client::MqttConnector` to open one. Incoming messages arrive as `Publish`
++values; a `Router` can dispatch them by topic. Use `MqttSink` to send
++packets back, and look in `codec` when you need the packet types themselves.
++The crate root holds the combined `MqttServer`, the shared
++`MqttServiceConfig` settings, and the `Control` messages for connection
++events.
++
++Once connected, your application splits its work between up to three
++services. The publish service handles incoming `PUBLISH` packets. On a
++server, this is where most a
+```
+
+**File**: `docs/3-state.md` (modified, +208/-82)
+```diff
+@@ -1,10 +1,15 @@
+ # Service State
+ 
+-Services often need access to information that is not part of an individual
+-request. Examples include connection metadata, a database pool, application
+-configuration, or a channel to another subsystem.
++Services often need information beyond the request they are handling. This
++might be connection metadata, a database pool, application configuration, or a
++channel to another subsystem.
+ 
+-The `Service` trait represents this information with its `St` type parameter:
++Putting these dependencies into every request would mix long-lived resources
++with the data for one operation. Storing a copy in every service can work, but
++then each wrapper has to carry dependencies it does not itself use. Pipeline
++state gives the service graph one place to obtain this shared context.
++
++The `St` type parameter on `Service` represents this information:
+ 
+ ```rust,ignore
+ trait Service<St, Req> {
+@@ -19,9 +24,9 @@ trait Service<St, Req> {
+ }
+ ```
+ 
+-A service borrows the pipeline state through [`Ctx`] instead of owning it. The
+-service can still own its own fields, such as configuration or inner services.
+-The pipeline state is available during calls, readiness checks, and shutdown:
++A service borrows pipeline state through [`Ctx`]. It can still own fields,
++such as configuration or inner services. You can access pipeline state during
++calls, readiness checks, and shutdown:
+ 
+ ```rust,ignore
+ async fn call(&self, req: Req, ctx: Ctx<'_, Self, AppState>) -> Result<Self::Res, Self::Error> {
+@@ -30,14 +35,26 @@ async fn call(&self, req: Req, ctx: Ctx<'_, Self, AppState>) -> Result<Self::Res
+ }
+ ```
+ 
+-Because the state type is part of `Service<St, Req>`, Rust verifies that a
+-service is used with compatible state. A service requiring `AppState` cannot be
+-placed directly in a pipeline that supplies an unrelated type.
++Rust checks that the pipeline supplies a compatible state type because that
++type is part of `Service<St, Req>`. You cannot place a service that requires
++`AppState` directly in a pipeline with an unrelated state type.
++
++Keep the three kinds of data separate. The request is the input consumed by
++one call. A service's fields belong to that service instance: its configuration,
++children, or a cache used only by that component. `St` is the context supplied
++to the service graph, so several components can borrow the same database pool
++or connection metadata without embedding it in each request.
++
++For example, `Service<AppState, String>` processes a `String` using `AppState`;
++`Service<(), String>` has no additional state. The order matters: `St` comes
++first. It is an ordinary Rust type, not a string-keyed container, so dependency
++requirements appear in trait bounds and the compiler checks them. Low-level
++service state does not require the web framework's `web::State` trait.
+ 
+ ## State-aware functions
+ 
+-An asynchronous function whose first argument is `&St` can be converted into a
+-state-aware service. This is the simplest way to define one:
++You can turn an asynchronous function into a state-aware service by making
++`&St` its first argument:
+ 
+ ```rust
+ use std::convert::Infallible;
+@@ -60,86 +77,155 @@ async fn main() {
+ }
+ ```
+ 
+-The function receives `&AppState` for each call. The [`IntoService`]
+-implementation performs this conversion automatically. You can call
+-[`fn_service_st`] explicitly when the service value must be named or passed
+-through an API before creating the pipeline.
++The function receives `&AppState` on each call. The [`IntoService`]
++implementation converts it into a service automatically.
++
++Use [`fn_service_st`] explicitly if you need to name the service value or pass
++it through an API before creating the pipeline. Use `fn_service` instead when
++the function only takes a request; it does not receive pipeline state.
++
++The state is borrowed, not cloned for every call. `Pipeline::new` owns both the
++state and service, and requires them to be `'static`. An owned `String` or `Rc`
++can meet that bound; `'static` does not mean you must leak memory or use a global
++variable. A reference to a local stack value generally cannot be stored there.
++The state type itself need not implement `Clone` for `Pipeline::new`.
+ 
+ ## Testing state-aware function services
+ 
+-A state-aware function service can be tested without starting a server. Create
+-the service with [`fn_service_st`], place it and the test state in a
+-[`Pipeline::new`], then call it with the request value. This exercises the same
+-state access and readiness handling used in production.
++You can test a state-aware function service without starting a server. Create
++the service with [`fn_service_st`]. Put it and the test state in a pipeline
++using [`Pipeline::new`], then call it with the request value.
++
++This exercises the same state access and readiness handling used in production.
+ 
+-When the state contains external dependencies, a mocking library can verify how
+-the service uses them:
++If the stat
+```
+
+**File**: `docs/4-runtime.md` (modified, +328/-299)
+```diff
+@@ -1,34 +1,35 @@
+ # Runtime
+ 
+-Each ntex runtime thread runs its own single-threaded event loop. A task stays
+-on the thread where it was started, so services and futures can freely use
+-`Rc`, `Cell`, `RefCell`, and other types that are not `Send` or `Sync`.
++Each ntex runtime thread runs its own single-threaded event loop. Tasks stay
++on the thread where they started. Your services and futures can use `Rc`,
++`Cell`, `RefCell`, and other types that are not `Send` or `Sync`.
+ 
+-This does not limit an application to one CPU core. A server normally starts
++Your application can still use several CPU cores. A server normally starts
+ several worker threads, each with its own single-threaded runtime. State shared
+-between workers still needs thread-safe types such as `Arc`, atomics, or locks.
++between workers needs thread-safe types such as `Arc`, atomics, or locks.
+ 
+-Most applications only need `#[ntex::main]`, `#[ntex::test]`, and
+-`ntex::rt::spawn`. The lower-level `System` and `Arbiter` APIs are there for
+-explicit startup, shutdown, and cross-thread coordination.
++For most applications, use `#[ntex::main]` as the entry point and
++`#[ntex::test]` for async tests. Start tasks with `ntex::rt::spawn`. Use
++`System` and `Arbiter` when you need explicit control over startup, shutdown,
++or cross-thread coordination.
+ 
+ ## Choosing a runtime backend
+ 
+-[`DefaultRuntime`] picks the async runtime and the matching ntex network
+-reactor together. Cargo features decide which backend it uses:
++Choose a backend through Cargo features. [`DefaultRuntime`] selects both the
++async runtime and its matching ntex network reactor:
+ 
+ * `tokio` uses Tokio. If a Tokio runtime handle is already entered on the
+-  current thread, ntex uses it; otherwise it creates a current-thread Tokio
++  current thread, ntex uses it. Otherwise, ntex creates a current-thread Tokio
+   runtime. ntex tasks run inside a Tokio `LocalSet`.
+ * `compio` creates a Compio runtime on each runtime thread. Compio chooses the
+   I/O driver for the platform and configuration.
+ * With neither feature, ntex uses its [native runtime](#native-runtime). On
+   Linux it tries io_uring and falls back to polling; other Unix platforms use
+   polling, and Windows uses IOCP.
+ 
+-If both `tokio` and `compio` are enabled, Tokio wins. With the native backend,
+-`neon-polling` forces polling on Unix and `neon-uring` requires io_uring on
+-Linux. Do not enable both.
++Tokio takes precedence if you enable both `tokio` and `compio`. With the native
++backend, `neon-polling` forces polling on Unix. The `neon-uring` feature
++requires io_uring on Linux. Do not enable both native features.
+ 
+ For example:
+ 
+@@ -37,13 +38,13 @@ For example:
+ ntex = { version = "4", features = ["tokio"] }
+ ```
+ 
+-Tokio and Compio are convenient when an application also uses libraries from
+-those ecosystems. The native backend avoids running a second general-purpose
+-runtime and lets ntex use the platform reactor directly.
++Tokio and Compio are useful when your application uses libraries from those
++ecosystems. The native backend uses the platform reactor directly, without
++running a second general-purpose runtime.
+ 
+-`SystemRunner::block_on` blocks the current thread. Do not call it from inside
+-an async Tokio task in an attempt to nest one runtime inside another. The
+-cleanest setup is usually to let `#[ntex::main]` own the process entry point.
++Let `#[ntex::main]` own the process entry point unless you need another setup.
++`SystemRunner::block_on` blocks the current thread. Do not call it inside an
++async Tokio task to nest one runtime inside another.
+ 
+ [`DefaultRuntime`]: https://docs.ntex.rs/api/ntex/rt/struct.DefaultRuntime.html
+ 
+@@ -63,27 +64,32 @@ async fn main() {
+ }
+ ```
+ 
+-Neither the future nor its result needs to be `Send`, but the future must be
+-`'static`, so use `async move` when it captures owned values. `spawn()` panics
+-if it is called outside a running ntex runtime.
++Neither the future nor its result needs to be `Send`. The future must be
++`'static`, so use `async move` when it captures owned values. Calling `spawn()`
++outside a running ntex runtime panics.
+ 
+-The returned [`JoinHandle`] can be awaited, canceled with `cancel()`, detached
+-with `detach()`, or checked with `is_finished()`. It is **neither `Send` nor
+-`Sync`**, even when the result is `Send`, and must stay on the thread that
+-created it. If the task panics or is canceled, awaiting the handle returns a
+-`JoinError` instead of the task's output.
++Await the returned [`JoinHandle`] when you need the task's output. If you no
++longer need the work, call `cancel()`. Use `is_finished()` to check whether it
++has finished without awaiting it.
+ 
+-Dropping a `JoinHandle` detaches the task; it does not cancel it. Keep the
+-handle and await it when you need the result. A detached task is not
+-guaranteed to finish before its arbiter or the whole system shuts down.
++The handle is **neither `Send` nor `Sync`**, even when the result is `Send`.
+
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1199** (2026-11-09): Add bytes storage cache fallback (@fafhrd91)
-- **PR #1198** (2026-11-09): More api fixes (@fafhrd91)
-- **PR #1197** (2026-11-09): Add `Ordered` service (@fafhrd91)
-- **PR #1196** (2026-11-09): Various api consistency fixes (@fafhrd91)
-- **PR #1195** (2026-11-07): Update server version (@fafhrd91)
-- **PR #1194** (2026-11-07): Allow to spawn multiple accept threads (@fafhrd91)
+- **PR #1211** (2026-11-12): polling: Rearm a pending connect with a modify instead of re-adding its registered socket, which failed the connect on epoll (@fafhrd91)
+- **PR #1210** (2026-11-12): Cleanup uring reactor (@fafhrd91)
+- **PR #1209** (2026-11-11): Refactor polling reactor events handling (@fafhrd91)
+- **PR #1208** (2026-11-11): reactor backends cleanups (@fafhrd91)
+- **PR #1207** (2026-11-11): Add server-side permessage-deflate support (@enisdenjo)
+- **PR #1206** (closed): iocp: Run tasks after every 16 completions instead of after the whole batch of up to 512, within one runtime turn (@fafhrd91)
 
 ---
 
@@ -2774,33 +3244,31 @@ headers into the single `Cookie` header instead of keeping only the first
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifi
+## X. Readiness example link to guide
 
 **RULE**:
-When implementing operations in `docs/10-tls.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/1-service.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9eb2d0e0`: Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifies server certificates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `800c901d`: Readiness example link to guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/10-tls.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/1-service.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-The built-in default OpenSSL connector verifies server certificates against
-OpenSSL's default trust store (the system roots) and checks the request host.
-To trust a private root, supply your own configuration, such as the OpenSSL
-configuration above.
+The [readiness example](https://github.com/ntex-rs/examples/tree/main/service/readiness)
+shows both cases with console output: a concurrency limit that holds back new
+work and a gate whose readiness fails while it is closed.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-> **Configure verification explicitly.** The built-in default OpenSSL HTTP
-> connector currently disables certificate verification. Supply a verifying
-> configuration, such as the OpenSSL configuration above, instead.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9eb2d0e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `800c901d` are properly handled with clean fallback behavior.

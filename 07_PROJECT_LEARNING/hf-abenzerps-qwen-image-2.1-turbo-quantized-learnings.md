@@ -3,7 +3,7 @@
 > **Source Version**: `hf-abenzerps`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:58:06.790Z  
+> **Timestamp**: 2026-11-12T05:47:34.482Z  
 > **Learning ID**: `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized](https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:58:05.854Z  
+> **Harvest Timestamp**: 2026-11-12T05:47:34.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 135850 downloads | 5691 likes
+- **Stars / Engagement**: 112002 downloads | 5870 likes
 
 ---
 

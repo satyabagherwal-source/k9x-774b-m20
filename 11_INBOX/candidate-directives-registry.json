@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T03:10:50.955Z",
+  "last_updated": "2026-11-12T14:08:51.265Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5965,6 +5965,1045 @@
       "source_repo": "cheeriojs-dom-serializer",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9BDB9D-build-deps-bump-github-codeql-action-fro.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EFEC88",
+      "directive_title": "build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (#5255)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "okteto-okteto",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EFEC88-build-deps-bump-rack-from-3-2-6-to-3-2-8.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-DD910F",
+      "directive_title": "Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arangodb-arangodb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DD910F-merge-pull-request-23635-from-arangodb-b.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0847EF",
+      "directive_title": "luau): date.lua clobbering, filter-after-error, insertrecord width & more (#5036",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0847EF-luau-date-lua-clobbering-filter-after-er.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-297AAE",
+      "directive_title": "Enhance multi-platform image preheat and deduplication process (#5112)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dragonflyoss-dragonfly",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-297AAE-enhance-multi-platform-image-preheat-and.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-AA5E72",
+      "directive_title": "short decimal cast overflow when increasing scale",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trinodb-trino",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AA5E72-short-decimal-cast-overflow-when-increas.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-E95373",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E95373-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D3C420",
+      "directive_title": "snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "peerdb-io-peerdb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D3C420-snapshot-skip-child-tables-dropped-after.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-02CF89",
+      "directive_title": "Revert \"ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigExcepti",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-zookeeper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-02CF89-revert-zookeeper-4966-decouple-zkconfig-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C4C7F9",
+      "directive_title": "Draft NUC 106 Intersect and Except Reasoning Selections",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4C7F9-draft-nuc-106-intersect-and-except-reaso.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D5EB60",
+      "directive_title": "macos): finish the audit wave 5 data items: find and Run All off the main thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tableproapp-tablepro",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D5EB60-macos-finish-the-audit-wave-5-data-items.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F764D5",
+      "directive_title": "workflow): honor runtime commit source for builds (#5053)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "koderover-zadig",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F764D5-workflow-honor-runtime-commit-source-for.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0AF7AC",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0AF7AC-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-NG1X",
+      "directive_title": "Merge PR #374 (dajiaohuang): fix: avoid max cardinality negation overflow",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "fabio-rovai/open-ontologies",
+      "source_commit": "fe1e32b8",
+      "date_staged": "2026-11-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule title references repository-specific PR/issue rather than a universal engineering principle",
+      "learning_id": "learn-github-fabio-rovai-open-ontologies"
+    },
+    {
+      "id": "CD-REV-C68B04",
+      "directive_title": "Merge PR #374 (dajiaohuang): fix: avoid max cardinality negation overflow",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fabio-rovai-open-ontologies",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C68B04-merge-pr-374-dajiaohuang-fix-avoid-max-c.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4A6D33",
+      "directive_title": "[BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "starrocks-starrocks",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4A6D33--bugfix-add-the-fractional-seconds-of-an.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-7D1DAB",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7D1DAB-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-392BF3",
+      "directive_title": "agent-os): refuse run_tool before executing when post_tool_call is unbound (#442",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microsoft-agent-governance-toolkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-392BF3-agent-os-refuse-run-tool-before-executin.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BB4F45",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB4F45-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-39FC47",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-39FC47-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B3D88C",
+      "directive_title": "config)!: fix the flag glyphs, ignore the envelope.list.table block",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pimalaya-himalaya",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B3D88C-config-fix-the-flag-glyphs-ignore-the-en.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B63120",
+      "directive_title": "Read Claude Code credential via security tool to avoid Keychain prompts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jacklandrin-onlyswitch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B63120-read-claude-code-credential-via-security.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-296862",
+      "directive_title": "Evaluate user filters only on the rows that row-level security allows (#20183)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-pinot",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-296862-evaluate-user-filters-only-on-the-rows-t.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5686BE",
+      "directive_title": "build(deps-dev): bump node-forge from 1.4.2 to 1.4.3 (#6190)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nodejs-undici",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5686BE-build-deps-dev-bump-node-forge-from-1-4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BBA5D2",
+      "directive_title": "[#35476,#36130] YSQL: Fix single-row UPDATE/DELETE when the WHERE value's type d",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yugabyte-yugabyte-db",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BBA5D2--35476-36130-ysql-fix-single-row-update-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-565AC5",
+      "directive_title": "fetch): close source streams after size-limit errors (#11239)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "axios-axios",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-565AC5-fetch-close-source-streams-after-size-li.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BAF4A6",
+      "directive_title": "log-store): close raft-engine engines on shutdown (#9518)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "greptimeteam-greptimedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BAF4A6-log-store-close-raft-engine-engines-on-s.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-AB29D4",
+      "directive_title": "Post-commit review fixes for bridge and BSC changes (#59012)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ydb-platform-ydb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AB29D4-post-commit-review-fixes-for-bridge-and-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9C09F2",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9C09F2-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-CB82EF",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB82EF-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-39B167",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-39B167-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-8EBE75",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8EBE75-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F72D96",
+      "directive_title": "Upgrade dev dependencies to fix alerts (#5360)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "urllib3-urllib3",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F72D96-upgrade-dev-dependencies-to-fix-alerts-5.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-72E615",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-72E615-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4A698A",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4A698A-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-35B8F9",
+      "directive_title": "Merge pull request #1288 from abrahamguo/get-jscpd-report",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kucherenko-jscpd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-35B8F9-merge-pull-request-1288-from-abrahamguo-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EAE998",
+      "directive_title": "Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vanniktech-gradle-maven-publish-plugin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EAE998-update-dependency-org-jetbrains-kotlin-j.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2EFD1D",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2EFD1D-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C22949",
+      "directive_title": "build(deps): bump actions-rust-lang/setup-rust-toolchain from 2.0.0 to 2.0.1 (#4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "actix-actix-web",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C22949-build-deps-bump-actions-rust-lang-setup-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2F73AE",
+      "directive_title": "actions lock file for codeql-action and cibuildwheel bumps (#14366)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aio-libs-aiohttp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2F73AE-actions-lock-file-for-codeql-action-and-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-956993",
+      "directive_title": "storage): create the relay and approval tables with the schema, never cache a fa",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "agent-field-agentfield",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-956993-storage-create-the-relay-and-approval-ta.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-A03A80",
+      "directive_title": "file-picker): follow-ups from reviewing the review fixes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mohamedrejeb-calf",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A03A80-file-picker-follow-ups-from-reviewing-th.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-035CDC",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-035CDC-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-82B529",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-82B529-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4947B9",
+      "directive_title": "postgres): keep draining resolved type dependencies in fill_cache. (#4498)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "transact-rs-sqlx",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4947B9-postgres-keep-draining-resolved-type-dep.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5410CB",
+      "directive_title": "Forensic Learning Record (Deep Inspection): xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5410CB-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-064708",
+      "directive_title": "transport): report the QUIC endpoint state in telemetry; deprecate transport-qui",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-064708-transport-report-the-quic-endpoint-state.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-654A4C",
+      "directive_title": "grpc/credentials: Canonicalize IPs in security level check. (#3017)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "grpc-grpc-rust",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-654A4C-grpc-credentials-canonicalize-ips-in-sec.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-6D0FCE",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6D0FCE-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-341EBA",
+      "directive_title": "usb: minor fixes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "embassy-rs-embassy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-341EBA-usb-minor-fixes.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4501E7",
+      "directive_title": "update agent mutation policy handling helm schema validation (#5644)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zarf-dev-zarf",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4501E7-update-agent-mutation-policy-handling-he.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-UO4E",
+      "directive_title": "Merge pull request #974 from telemt/docs/3.5.17",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "telemt/telemt",
+      "source_commit": "5c3dabee",
+      "date_staged": "2026-11-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-telemt-telemt"
+    },
+    {
+      "id": "CD-REV-D69F37",
+      "directive_title": "Merge pull request #974 from telemt/docs/3.5.17",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "telemt-telemt",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D69F37-merge-pull-request-974-from-telemt-docs-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F6007F",
+      "directive_title": "ci): refetch upstream spec suites (#874)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rdfjs-n3.js",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F6007F-ci-refetch-upstream-spec-suites-874-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EACDFE",
+      "directive_title": "Merge pull request #38498 from vespa-engine/arnej/add-deadlock-monitor",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vespa-engine-vespa",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EACDFE-merge-pull-request-38498-from-vespa-engi.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FC0AC9",
+      "directive_title": "deps): migrate to latest compose version",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nsh07-tomato",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FC0AC9-deps-migrate-to-latest-compose-version.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-76FC5F",
+      "directive_title": "datastore): schedule and securitycontext migration jobs from the DataStore (#140",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clastix-kamaji",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-76FC5F-datastore-schedule-and-securitycontext-m.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-1C9882",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1C9882-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B179DA",
+      "directive_title": "core,server): keep StdioServerTransport running when a handler is cancelled (#11",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "modelcontextprotocol-kotlin-sdk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B179DA-core-server-keep-stdioservertransport-ru.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2B99F6",
+      "directive_title": "py/plugins/mcp): say which server failed and why (#6930)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "genkit-ai-genkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2B99F6-py-plugins-mcp-say-which-server-failed-a.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-7A223B",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7A223B-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2D0C77",
+      "directive_title": "Duplicate Cursor Rows in FT.AGGREGATE During Backfill Deletions (BUG-IDX-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "redisearch-redisearch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2D0C77-duplicate-cursor-rows-in-ft-aggregate-du.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-1C7B8B",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1C7B8B-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FB50D3",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FB50D3-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F14327",
+      "directive_title": "Bump cachetools from 7.2.5 to 7.2.8",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "digitalbazaar-pyld",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F14327-bump-cachetools-from-7-2-5-to-7-2-8.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EBC88C",
+      "directive_title": "test(yurthub): fix pool scope metadata key format in multiplexer tests (#2873)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "openyurtio-openyurt",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EBC88C-test-yurthub-fix-pool-scope-metadata-key.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5EC936",
+      "directive_title": "Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "maziyarpanahi-openmed",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5EC936-merge-pull-request-5545-from-maziyarpana.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-818DB6",
+      "directive_title": "Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hashicorp-terraform",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-818DB6-ensure-fmt-s-fallback-output-is-skipped-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-71C192",
+      "directive_title": "bpf:tests: add encrypt_host_masq suite for encrypted packets",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-71C192-bpf-tests-add-encrypt-host-masq-suite-fo.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B8B431",
+      "directive_title": "nodejs): read yarn.lock block fields by indent level (#11496)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aquasecurity-trivy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B8B431-nodejs-read-yarn-lock-block-fields-by-in.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-3D1E51",
+      "directive_title": "Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-w",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clickhouse-clickhouse",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3D1E51-merge-pull-request-130697-from-groeneai-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C32D68",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C32D68-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C615FA",
+      "directive_title": "pulumi import code generation for indexed modules (#25616)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pulumi-pulumi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C615FA-pulumi-import-code-generation-for-indexe.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-501910",
+      "directive_title": "Update module pault.ag/go/debian to v0.21.3 (#5546)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trufflesecurity-trufflehog",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-501910-update-module-pault-ag-go-debian-to-v0-2.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0D0B0C",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0D0B0C-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-8FB668",
+      "directive_title": "cutile)!: remove unsupported load validity checking (#1772)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nvidia-cuda-rust",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8FB668-cutile-remove-unsupported-load-validity-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-6496A9",
+      "directive_title": "+ Appearance override",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "buresdv-cork",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6496A9--appearance-override.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BD4795",
+      "directive_title": "docs: fix README images that do not render on the API reference site (#38862)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aws-aws-cdk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BD4795-docs-fix-readme-images-that-do-not-rende.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-42B4DB",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-42B4DB-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-8309E5",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8309E5-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-555E1C",
+      "directive_title": "deps): bump brotli, go-jose and klauspost/compress (#3641)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "infracost-infracost",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-555E1C-deps-bump-brotli-go-jose-and-klauspost-c.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-194312",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-194312-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-091CBC",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-091CBC-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B73AA2",
+      "directive_title": "Readiness example link to guide",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ntex-rs-ntex",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B73AA2-readiness-example-link-to-guide.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B8D7F3",
+      "directive_title": "tsparser: match tsc for null conditions and pattern choice",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "encoredev-encore",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B8D7F3-tsparser-match-tsc-for-null-conditions-a.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9F6F94",
+      "directive_title": "Test `Display` for remaining error variants",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rustls-rustls",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9F6F94-test-display-for-remaining-error-variant.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-43701A",
+      "directive_title": "cqueue): keep selector panics from poisoning or aborting",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "xudong-huang-may",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-43701A-cqueue-keep-selector-panics-from-poisoni.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BC5399",
+      "directive_title": "NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gravitl-netmaker",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BC5399-nm-356-keep-static-wireguard-configs-on-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-3C4886",
+      "directive_title": "react): improve directory guidance and file preview (#7472)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "volcengine-openviking",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3C4886-react-improve-directory-guidance-and-fil.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-41EBAF",
+      "directive_title": "close reachable invalid state transitions in sessions, refs, trace, mcp and wait",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vercel-labs-agent-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-41EBAF-close-reachable-invalid-state-transition.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-894877",
+      "directive_title": "[Docs] Fix broken help-wanted search links in README.md (#23289)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshery-meshery",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-894877--docs-fix-broken-help-wanted-search-link.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-6751CB",
+      "directive_title": "tvOS Various Fixes (#2425)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jellyfin-swiftfin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6751CB-tvos-various-fixes-2425-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BA6F6C",
+      "directive_title": "bicep): resolve references within the declaring file (#7794)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "bridgecrewio-checkov",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BA6F6C-bicep-resolve-references-within-the-decl.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5A3487",
+      "directive_title": "render the same `<title>` on the server as on the client and ignore titles insid",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sveltejs-svelte",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5A3487-render-the-same-title-on-the-server-as-o.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-252574",
+      "directive_title": "missed short values in document comparisons",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pathwaycom-llm-app",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-252574-missed-short-values-in-document-comparis.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-514F52",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-514F52-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-157541",
+      "directive_title": ".circle: Add dockerfile to build RISC-V 64 kernel",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "u-root-u-root",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-157541--circle-add-dockerfile-to-build-risc-v-6.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-E8E51A",
+      "directive_title": "solid): release disposed transition sources during pending Suspense (#4744)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "solidjs-solid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E8E51A-solid-release-disposed-transition-source.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FFFBA7",
+      "directive_title": "build(deps-ui-dev): bump rspec-rails (#14731)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gocd-gocd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FFFBA7-build-deps-ui-dev-bump-rspec-rails-14731.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-573FB0",
+      "directive_title": "client): fallback to waiting on main thread for server start when trusted types",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vitejs-vite",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-573FB0-client-fallback-to-waiting-on-main-threa.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-32F9A6",
+      "directive_title": "proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (#2302)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nolabs-ai-nono",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-32F9A6-proxy-accept-aws-govcloud-regions-and-s3.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D65899",
+      "directive_title": "Bump version to 2.2.2.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "touchlab-xcode-kotlin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D65899-bump-version-to-2-2-2-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-342C15",
+      "directive_title": "invalid output for exported destructuring declarations with defaults (#6648)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rollup-rollup",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-342C15-invalid-output-for-exported-destructurin.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2B0017",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2B0017-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-12C225",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-12C225-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-504048",
+      "directive_title": "release: 3.12.3 — linux-gnu binary budget 110 MB",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yvgude-lean-ctx",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-504048-release-3-12-3-linux-gnu-binary-budget-1.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-16EA67",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-16EA67-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5F843B",
+      "directive_title": "build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dnscontrol-dnscontrol",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F843B-build-deps-bump-github-codeql-action-upl.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-72A12A",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-72A12A-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F6E93D",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F6E93D-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-EB6668",
+      "directive_title": "sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ataraxy-labs-sem",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EB6668-sem-starts-on-debian-12-and-ubuntu-22-04.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-837046",
+      "directive_title": "Generate JS code at transform time in development builds",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "parcel-bundler-parcel",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-837046-generate-js-code-at-transform-time-in-de.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0D7050",
+      "directive_title": "docs: Correct jsonschema version in changelog",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0D7050-docs-correct-jsonschema-version-in-chang.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-783A23",
+      "directive_title": "ci: apply automated fixes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tanstack-query",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-783A23-ci-apply-automated-fixes.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D06EE0",
+      "directive_title": "lsmkv): return an error for damaged RoaringSet WAL record lengths",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "weaviate-weaviate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D06EE0-lsmkv-return-an-error-for-damaged-roarin.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D646C7",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D646C7-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

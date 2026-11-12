@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md`  
 > **Source**: github ([https://github.com/vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop))  
-> **Source Version**: `b43ac4f6`  
+> **Source Version**: `54855b62`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:23:07.616Z  
+> **Timestamp**: 2026-11-12T11:18:20.071Z  
 > **Learning ID**: `learn-github-vercel-labs-agent-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:23:06.421Z  
+> **Harvest Timestamp**: 2026-11-12T11:18:20.062Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Computer use CLI for AI agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 16018 stars
+- **Stars / Engagement**: 22434 stars
 
 ---
 
@@ -1173,13 +1173,8 @@ pub(super) fn occluded(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #573** (2026-11-05): **perf(macos): read the app process inventory with libproc instead of spawning ps**
-  *Symptoms*: ## Problem  The macOS app inventory spawned `/bin/ps -axo pid=,comm=` on every capture, and `stabilize_apps_until` captures at least twice. `list-apps`, `list-apps --app`, `snapshot --app` on apps without a regular window, `press --app` and process-owned refs waited on two to four `ps` processes before doing any accessibility work.  A process could also break the inventory through its `argv[0]`: a non-UTF-8 value, or one containing `.app/Contents/MacOS` with no app name, made `list-apps` time out.  ## Changes  - Read each process's `argv[0]` in process with `proc_listpids` and `KERN_PROCARGS2`, the same field `ps -o comm` prints, instead of spawning `ps`. Name filtering, process-instance enrichment and the cross-uid skip are unchanged. - Reuses the `KERN_PROCARGS2` reader from #330: the pid listing and argument reading move from `legacy_host.rs` to a new `process_arguments.rs`, shared by both callers. - Processes whose `argv[0]` is not UTF-8 or yields no app name are skipped instead of failing the inventory. - The inventory source label in `details.failures[].source` is now `libproc` instead of `ps`. - Tests for rewritten `argv[0]`, spaces, invalid argc, missing terminators, non-UTF-8 commands, failed listings and expired deadlines.  ## Visual proof  `list-apps` from main and from this branch at the same moment return the same 136 apps:  ![list-apps identical on main and this branch](https://github.com/user-attachments/assets/a4a95bac-691a-4d31-a2a8-92d1f997c4c8)  
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #iF0bCoprl5c9MUMKEHsMghSEpAi7gFuxuCygXDo0ii0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJhZ2VudC1kZXNrdG9wIiwicHJvamVjdElkIjoicHJqX3AzcjZsVEFIU3VZYXZza2ZTVEwwUzNETzE0VlIiLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWxhYnMvYWdlbnQtZGVza3RvcC82czdQU2VRQXJYUEJWZVhyUFJUY3V0YXpNN05mIiwicHJldmlld1VybCI6ImFnZW50LWRlc2t0b3AtZ2l0LXJhaWxseS1uYXRpdmUtYXBwLWludmVudG9yeS5sYWJzLnZlcmNlbC5kZXYvZGVza3RvcCIsIm5leHRDb21taXRTdGF0dXMiOiJJR05PUkVEIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6IiJ9LCJyb290RGlyZWN0b3J5IjoiYXBwcy9kb2NzIn1dfQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).   <details><summary>1 Skipped Deployment</summary>  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/vercel-labs/agent-desktop"><sup><img src="https://vercel.com/api/www/avatar?projectId=prj_p3r6lTAHSuYavskfST
-
-- **Issue #572** (2026-11-05): **fix: find the owning window of out-of-process sheet content through its parents**
-  *Symptoms*: ## Problem  Actions on controls inside a macOS Open/Save panel (NSOpenPanel shown as a sheet) time out with `visibility unknown (live offscreen state unavailable)`.  The panel's controls are hosted by the `openAndSavePanelService` XPC process. Elements such as the "Where:" `AXPopUpButton` expose no `AXWindow` and no `AXTopLevelUIElement`, so `owning_window_bounds` finds no window. With no viewport, `offscreen` is `None`, and the visibility gate refuses the action.  Their parent chain still reaches a window: `AXPopUpButton → AXSplitGroup → AXSheet (has AXWindow) → AXWindow`.  ## Fix  When `first_owning_container` returns `None`, `owning_window_bounds` now walks `AXParent` (bounded by `ABSOLUTE_MAX_DEPTH`, same operation deadline). It stops at the first ancestor that is an `AXWindow` or names an `AXWindow`, and gives up at `AXApplication` or a missing role.  ## Testing  - 3 unit tests for the walk: owner found through a sheet, window ancestor used directly, walk ends at the application. - `cargo test` (macOS + core crates): 2,948 pass. Clippy clean with `-D warnings`. `cargo fmt --check` clean. - Live: in a Chromium browser, opened "Load unpacked" and drove the NSOpenPanel sheet with `click` only: "Where:" pop-up, a parent folder in its menu, a folder, then "Select". The extension loaded. Before the fix, each click timed out at the visibility gate.  Independent of #415. 
+- **Issue #554** (2026-11-05): **[Bug]: MCP stdio server does not support an "mcp" arg**
+  *Symptoms*: ### agent-desktop version  agent-desktop 1.1.0  ### Operating system  Linux  ### OS version  Fedora 44  ### Installation method  npm  ### Command run and full JSON output  ```shell thawkins@TimWorkFed01:~/Projects/ragent$ agent-desktop mcp {"version":"2.6","ok":false,"command":"unknown","error":{"code":"INVALID_ARGS","message":"error: unrecognized subcommand 'mcp'","disposition":{"delivery":"not_delivered","retry":"safe"}}} thawkins@TimWorkFed01:~/Projects/ragent$   Install instructions provide an mcp.json snippet that runs the agent-desktop binary with an "mcp" argument, this does not seem to exist. ```  ### Steps to reproduce  thawkins@TimWorkFed01:~/Projects/ragent$ agent-desktop mcp {"version":"2.6","ok":false,"command":"unknown","error":{"code":"INVALID_ARGS","message":"error: unrecognized subcommand 'mcp'","disposition":{"delivery":"not_delivered","retry":"safe"}}} thawkins@TimWorkFed01:~/Projects/ragent$    ### Expected behavior  agent-desktop initializes a stdio mcp connection  ### Actual behavior  thawkins@TimWorkFed01:~/Projects/ragent$ agent-desktop mcp {"version":"2.6","ok":false,"command":"unknown","error":{"code":"INVALID_ARGS","message":"error: unrecognized subcommand 'mcp'","disposition":{"delivery":"not_delivered","retry":"safe"}}} thawkins@TimWorkFed01:~/Projects/ragent$    ### macOS Accessibility permission (macOS only)  - [ ] I have granted Accessibility permission in **System Settings > Privacy & Security > Accessibility**  ### Logs / additional context  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1196,561 +1191,334 @@ pub(super) fn occluded(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d83bfafd` (2026-11-05)
-**Commit Message**: fix: start the macos cursor overlay outside the caller's directory (#381)
+### Incident Patch 1: `ab7dfb21` (2026-11-09)
+**Commit Message**: fix: close reachable invalid state transitions in sessions, refs, trace, mcp and waits (#602)
 
-* fix: keep the command host out of the caller's directory between requests
+* fix: close reachable invalid state transitions in sessions, refs, trace, mcp and waits
 
-The macOS command host switches to each caller's working directory to run a request and stayed there until it exited, up to 15 idle minutes later. Tools that check whether a directory is in use saw the caller's directory as busy for that long.
+- hold refstore.lock across session manifest read-modify-writes and take the liveness lease before reading the manifest (#601)
+- discard ref scaffolding only when the trace copy is byte-identical (#597)
+- write the trace usage ledger atomically (#600)
+- keep a cancelled MCP call id occupied until its call finishes (#599)
+- mark dispatch-preflight refusals not_delivered and confirm every matching app-terminated event (#598)
+- add docs/state-machines.md with states, invariants, transition tables and a findings register
 
-The host now starts in / and returns to / after each accepted request. Rejected requests still leave the working directory alone. Tests that read or change the process working directory share a lock that restores it.
+Each regression test fails without its fix. Not verified on macOS or Windows.
 
-Co-Authored-By: Shah <[REDACTED_EMAIL]>
+* test: drop state machines doc and trim regression tests
 
-* fix: start the cursor overlay outside the caller's directory
-
-The overlay child is spawned during a request, while the command host is in the caller's directory, and runs for the whole overlay session. It inherited that directory and kept it busy after the host returned to /. It reads no relative paths, since the image path is canonicalized before dispatch.
-
-The working-directory test guard is now unix-only, because only unix tests use it and Windows clippy failed on it as dead code. The accepted-request test uses the temp directory as 
-
-**File**: `crates/macos/src/system/cursor_overlay/spawn.rs` (modified, +1/-0)
+**File**: `crates/core/src/commands/wait_event.rs` (modified, +11/-11)
 ```diff
-@@ -114,6 +114,7 @@ fn spawn(
-         .env(MARKER, super::endpoint::PROTOCOL_VERSION)
-         .env(SOCKET_ENV, socket)
-         .process_group(0)
-+        .current_dir("/")
-         .stdin(Stdio::piped())
-         .stdout(Stdio::null())
-         .stderr(Stdio::null())
+@@ -109,15 +109,15 @@ pub(crate) fn wait_for_event(
+                             input.window_id.as_deref(),
+                             input.window_title.as_deref(),
+                             filter.process.as_ref().map(|process| process.pid),
+-                        ) {
+-                            if confirm_app_terminated(adapter, found, diff_base, deadline) {
+-                                let elapsed = start.elapsed().as_millis();
+-                                return Ok(json!({
+-                                    "found": true,
+-                                    "event": serde_json::to_value(found)?,
+-                                    "elapsed_ms": elapsed,
+-                                }));
+-                            }
++                        )
++                        .find(|found| confirm_app_terminated(adapter, found, diff_base, deadline))
++                        {
++                            let elapsed = start.elapsed().as_millis();
++                            return Ok(json!({
++                                "found": true,
++                                "event": serde_json::to_value(found)?,
++                                "elapsed_ms": elapsed,
++                            }));
+                         }
+                         if disappearance {
+                             seen = Some(merge_signal_baseline(diff_base, &current));
+@@ -211,8 +211,8 @@ fn find_match<'a>(
+     window_id: Option<&str>,
+     window_title: Option<&str>,
+     pinned_pid: Option<crate::ProcessId>,
+-) -> Option<&'a UiEvent> {
+-    events.iter().find(|event| {
++) -> impl Iterator<Item = &'a UiEvent> {
++    events.iter().filter(move |event| {
+         if !requested.same_variant(&event.kind) {
+             return false;
+         }
 ```
 
----
-
-### Incident Patch 2: `5e0491ae` (2026-11-05)
-**Commit Message**: fix(macos): resolve native menus and verify lifecycle transitions (#376)
-
-* fix(macos): resolve native menus and verify lifecycle transitions
-
-Give app-owned menus process identity without a document window. Verify
-activation with fresh target AX focus and retain exact process generations.
-Reconcile caller waits after uncertain delivery without repeating the action.
-
-BREAKING CHANGE: JSON envelopes use 2.6; macOS app-owned menu snapshots omit data.window.
-
-* fix: keep headed preflight lookup inside the macos adapter
-
-Avoid an extra ref resolution on Linux and Windows while preserving
-strict native menu classification on macOS. Update the native inventory
-test to pass the bridge's explicit full-inventory argument.
-
-* fix: preserve native menu ownership through actions and waits
-
-* fix: preserve window identity across title changes
-
-Reuse the stored window identity check so a renamed window cannot satisfy a disappearance wait. Keep process-generation checks and return the current title.
-
-* refactor: share post-action observation and bound native recovery
-
-Observe window-owned refs through their original window so waits survive a closing sheet. Preserve partial Linux window reads unti
-
-**File**: `AGENTS.md` (modified, +10/-0)
+**File**: `crates/core/src/commands/wait_event_liveness_tests.rs` (modified, +26/-0)
 ```diff
-@@ -7,6 +7,15 @@ accessibility trees and returns structured JSON with ref-based element ids. The
- calling agent. It never embeds an LLM and has no GUI or interactive prompt. It does not automate web pages (use
- agent-browser). It cannot see UIs that expose no accessibility tree.
- 
-+## Critical: fixes must be application-agnostic
-+
-+Every fix must work through the platform's shared accessibility and lifecycle contracts across applications.
-+Never add app-specific branches keyed by app names, bundle IDs, executables, window titles, or a known app's UI layout.
-+Use observed capabilities, roles, ownership, and process identity in the shared platform adapter. Preserve safe failure
-+when the platform cannot establish the required identity or capability. Verify changed behavior against multiple real
-+apps and relevant UI toolkits; one app passing does not establish platform-wide correctness. App-specific names belong
-+in examples and verification scenarios, never in runtime special cases.
-+
- ## Commands
- 
- Each platform adapter compiles only on its own OS and the workspace names all three, so an unscoped `cargo build`,
-@@ -209,6 +218,7 @@ Every command prints one envelope. `docs/json-output.md` holds the full contract
- ```
- 
- - Omit `None` fields and empty arrays. Compact mode omits bounds. `ref_count` and `tree` live inside `data`.
-+- Snapshot `data.window` is present for window-owned surfaces. macOS `menu` and `menubar` snapshots are application-owned and omit it.
- - Every snapshot carries `data.complete`. A snapshot that runs out of observation budget succeeds with
-   `"complete": false`, `"truncated": true`, `"nodes_observed"` and the tree it saw; each cut node carries
-   `"subtree_truncated": true`. A `--root` drill-down returns `TIMEOUT` instead of a partial tree.
-```
-
-**File**: `CONCEPTS.md` (modified, +2/-2)
-```diff
-@@ -75,7 +75,7 @@ Windows supplies UIA's `AutomationId`, macOS `AXIdentifier` or `AXDOMIdentifier`
- ### Window Identity
- The durable identity of a window, used when observation resolves a snapshot root or a stored ref.
- 
--Window handles can be recycled: after a window is destroyed, the OS may hand its handle to a different window. A handle alone therefore names the wrong window after churn. Identity is the handle corroborated by a process-generation token (a value derived from the owning process's creation time), so a recycled handle whose process generation no longer matches fails closed rather than resolving to the new occupant. The corroboration is strict for a window freshly listed in the same invocation, and tolerant of title drift for a stored ref (titles legitimately change under a live window), per platform: Windows pairs the HWND with a creation-time token, macOS the window number with a process start-time token, Linux the X11 client id with a boot-id-qualified process start-time token.
-+Window handles can be recycled: after a window is destroyed, the OS may hand its handle to a different window. A handle alone therefore names the wrong window after churn. Identity is the handle corroborated by a process-generation token (a value derived from the owning process's creation time), so a recycled handle whose process generation no longer matches fails closed rather than resolving to the new occupant. The title is descriptive and may change under a live window, so it is not part of the shared identity contract. macOS and Linux ignore title drift when resolving either a fresh listing or a stored ref. Windows may require a matching nonempty title for fresh-list verification, while stored-ref resolution tolerates drift. The platform tokens are: Windows pairs the HWND with a creation-time token, macOS the window number with a process start-time token, Linux the X11 client id with a boot-id-qualified process start-time token.
- 
- A handle's identity can be invalidated at any point between an observation and a later action on it, and checking it once at the start of that gap only proves it was valid then. Where the check and the act cannot be a single atomic operation, the corroboration has to be repeated immediately before each write the action performs, and the action's own success check must itself be identity-qualified, confirming the responding resource is still the expected occupant and not merely that some resource at the expected handle responded, or a recycle occurring late in the gap reports success over the wrong resource.
- 
-@@ -225,7 +225,7 @@ Each adapter maps native primitives into this shared vocabulary before core eval
- ### Interaction Policy
- The side-effect contract attached to an action request, controlling whether the command may steal focus, move the cursor, or use physical input. The CLI exposes two: **headless** (the default; accessibility-only, no cursor, fails closed when the semantic path is unavailable) and **headed** (opt-in via the global `--headed` flag; authorizes the action's declared focus and cursor preconditions). A third, **focus fallback**, sits between them: it permits focus but not cursor movement. It is not reachable from the CLI flag. It is the base policy of an explicit key press, and language bindings may select it directly.
- 
--Core owns the precondition each action declares: a focused window for keyboard or focus-sensitive work, a focused window plus a verified cursor target for pointer delivery. Core satisfies it before dispatch. For ref actions core focuses the exact source window, not merely the owning application; the platform adapter owns the OS-specific focus primitive and delivery mechanism. Raw coordinate input has no ref identity, so it never infers or focuses a window. Which actions a headed policy makes physical rather than semantic is per-action and per-platform, and is settled by that action's own chain rather than by the policy. On Windows, `type` has no semantic headless path, because UIA offers no insert-at-selection write. Strict-headless `type` therefore fails at policy, and `set-value` is the headless text path. Headed `type` synthesizes keys physically (A4-1).
-+Core owns the precondition each action declares: a focused window for keyboard or focus-sensitive work, a focused window plus a verified cursor target for pointer delivery. Core satisfies it before dispatch. For a window-owned ref action, core focuses the exact source window, not merely the owning application. For an application-owned target, core can focus the app and still verify any pointer target. macOS native application-menu items use that application-level path for click, right-click, double-click, and triple-click. `hover` and `drag` remain window-owned and fail when the ref has no source window. The platform adapter owns the OS-specific focus primitive and delivery mechanism. Raw coordinate input has no ref identity, so it never infers or focuses a window. Which actions a headed po
-```
-
-**File**: `README.md` (modified, +14/-4)
-```diff
-@@ -61,11 +61,21 @@ Each command prints one JSON envelope. A trimmed snapshot:
+@@ -6,6 +6,7 @@ struct LivenessAdapter {
+     snapshots: Vec<SignalBaseline>,
+     calls: std::sync::Mutex<usize>,
+     process_state: Result<ProcessState, ()>,
++    running: Vec<crate::ProcessId>,
+     process_state_calls: std::sync::Mutex<Vec<crate::ProcessIdentity>>,
  }
- ```
  
--- Refs carry their snapshot id. A bare `@e8` fails with `INVALID_ARGS`.
--- If the UI changed, an action returns `STALE_REF` or `AMBIGUOUS_TARGET`. Take a new snapshot and use its refs.
--- Actions are headless by default: no pointer movement, no focus change. Pass `--headed` for physical input.
-+- **Refs belong to their snapshot.** A bare `@e8` is rejected with `INVALID_ARGS`. When the UI changes, an action
-+  returns `STALE_REF` or `AMBIGUOUS_TARGET`: take a new snapshot and use its refs.
-+- **Several windows** give `AMBIGUOUS_TARGET`; `snapshot` lists the candidate window ids in `error.details`. Pass one
-+  with `--window-id`.
-+- **Dense apps:** map first with `snapshot --skeleton --app Slack -i --compact`, then drill into one region with
-+  `snapshot --root @s8f3k2p9:e3 -i --compact`.
-+- **Headless by default.** Ref actions use the accessibility API without moving the pointer or taking focus. The global
-+  `--headed` flag allows physical input.
-+- **Post-action waits** observe the ref's original process. Window-owned refs stay pinned to their original window,
-+  including refs captured from a sheet, alert, popover, focused view, or Linux menu. macOS application menus keep
-+  their application-owned surface and need no document window. The wait reads the whole pinned window, so overlay
-+  selectors share its scope. [Wait scope and results](https://agent-browser.dev/desktop/configuration#post-action-wait-flags)
-+  describe the selector limits.
- - `type`, `set-value`, and `clipboard-set` accept `--stdin` for piped text, keeping it out of process arguments. Run secret steps as separate commands; batch JSON text appears in process arguments.
--- In PowerShell, quote every ref (`'@s8f3k2p9:e8'`), because a bare `@token` is the splatting operator.
-+- **PowerShell.** Quote every ref (`'@s8f3k2p9:e8'`), because a bare `@token` is the splatting operator.
+@@ -15,6 +16,7 @@ impl LivenessAdapter {
+             snapshots,
+             calls: std::sync::Mutex::new(0),
+             process_state,
++            running: Vec::new(),
+             process_state_calls: std::sync::Mutex::new(Vec::new()),
+         }
+     }
+@@ -41,7 +43,11 @@ impl SystemOps for LivenessAdapter {
+         process: crate::ProcessIdentity,
+         _deadline: crate::Deadline,
+     ) -> Result<ProcessState, AdapterError> {
++        let running = self.running.contains(&process.pid);
+         self.process_state_calls.lock().unwrap().push(process);
++        if running {
++            return Ok(ProcessState::Running);
++        }
+         self.process_state
+             .map_err(|()| AdapterError::not_supported("process_state"))
+     }
+@@ -92,6 +98,26 @@ fn close_to_tray_is_suppressed_but_a_genuine_exit_still_fires() {
+     );
+ }
  
- The full walkthrough is in the [quick start](https://agent-browser.dev/desktop/quick-start).
- 
-```
-
-**File**: `apps/docs/content/docs/commands/observation.mdx` (modified, +7/-8)
-```diff
-@@ -10,7 +10,7 @@ Concepts behind the flags are explained in [Skeleton and drill-down](/desktop/sk
- 
- ## snapshot
- 
--Captures an app window's accessibility tree as JSON. Interactive elements get qualified refs that later commands accept.
-+Captures an application's accessibility tree as JSON. Window-owned surfaces are read from a window; on macOS, `menu` and `menubar` are application-owned and need no document window. Interactive elements get qualified refs that later commands accept.
- 
- ```bash
- agent-desktop snapshot [--app NAME] [--window-id ID] [-i] [--compact] [--skeleton] \
-@@ -23,24 +23,23 @@ agent-desktop snapshot [--app NAME] [--window-id ID] [-i] [--compact] [--skeleto
-     <tr><th>Flag</th><th>Default</th><th>Meaning</th></tr>
-   </thead>
-   <tbody>
--    <tr><td><code>--app NAME</code></td><td>focused window</td><td>Application to read. See <a href="/desktop/snapshots-and-refs#choose-the-window">Choose the window</a>.</td></tr>
--    <tr><td><code>--window-id ID</code></td><td>none</td><td>Read one window by id from <code>list-windows</code>.</td></tr>
-+    <tr><td><code>--app NAME</code></td><td>focused app or window</td><td>Application to read. The selected surface determines whether a window is required. See <a href="/desktop/snapshots-and-refs#choose-the-window">Choose the window</a>.</td></tr>
-+    <tr><td><code>--window-id ID</code></td><td>none</td><td>Read one window by id from <code>list-windows</code>. For macOS <code>menu</code> and <code>menubar</code>, it selects the owning app.</td></tr>
-     <tr><td><code>-i</code>, <code>--interactive-only</code></td><td>off</td><td>Drop leaves without a ref. See <a href="/desktop/snapshots-and-refs#what-a-snapshot-contains">What a snapshot contains</a>.</td></tr>
-     <tr><td><code>--compact</code></td><td>off</td><td>Collapse single-child unnamed wrappers.</td></tr>
-     <tr><td><code>--include-bounds</code></td><td>off</td><td>Add <code>bounds</code> to each node.</td></tr>
-     <tr><td><code>--skeleton</code></td><td>off</td><td>Clamp depth to 3 and mark cut containers with <code>children_count</code>. See <a href="/desktop/skeleton-and-drill-down#take-a-skeleton">Take a skeleton</a>.</td></tr>
-     <tr><td><code>--root REF</code></td><td>none</td><td>Drill into one ref's subtree and replace that region's refs. Cannot combine with <code>--surface</code> or <code>--wait-for</code>. See <a href="/desktop/skeleton-and-drill-down#drill-into-a-region">Drill into a region</a>.</td></tr>
-     <tr><td><code>--max-depth N</code></td><td><code>10</code></td><td>Maximum depth, up to 50. See <a href="/desktop/skeleton-and-drill-down#depth-with-max-depth">Depth with max-depth</a>.</td></tr>
-     <tr><td><code>--timeout-ms MS</code></td><td><code>3000</code></td><td>Observation deadline. A full snapshot that runs out succeeds with <code>complete: false</code>. See <a href="/desktop/skeleton-and-drill-down#partial-observations">Partial observations</a>.</td></tr>
--    <tr><td><code>--surface KIND</code></td><td><code>window</code></td><td>Read an overlay instead of the window. See <a href="/desktop/surfaces#surface-kinds">Surface kinds</a>.</td></tr>
-+    <tr><td><code>--surface KIND</code></td><td><code>window</code></td><td>Read the selected UI surface. On macOS, <code>menu</code> and <code>menubar</code> are application-owned. See <a href="/desktop/surfaces#surface-kinds">Surface kinds</a>.</td></tr>
-     <tr><td><code>--force-electron-a11y</code></td><td>off</td><td>Assume Chromium renderer accessibility is already forced, which skips the activation guidance.</td></tr>
-   </tbody>
- </table>
- 
--`data` carries `app`, `window` (left out when macOS reads a windowless app through its process, see [Surfaces](/desktop/surfaces)), `snapshot_id`, `ref_count`, `complete`, and `tree`; [Snapshots and refs](/desktop/snapshots-and-refs) shows a full example. With a post-action `--wait-for` ([Configuration](/desktop/configuration#post-action-wait-flags)), the result adds `elapsed_ms` and `matched_selector`.
--
--Errors specific to `snapshot`: `INVALID_ARGS` for `--root` with `--surface` or `--wait-for`, a bare ref, or `--max-depth` above 50; `WINDOW_NOT_FOUND` when there is no window to read; `AMBIGUOUS_TARGET` when the app has several candidate windows; `INVALID_ARGS` for a `--surface` kind this OS does not have; `STALE_REF`, `SNAPSHOT_NOT_FOUND`, or `TIMEOUT` for a `--root` drill. See [What a drill refuses](/desktop/skeleton-and-drill-down#what-a-drill-refuses).
-+`data` carries `app`, `snapshot_id`, `ref_count`, `complete`, and `tree`. Window-owned snapshots also carry `window`; macOS application-owned `menu` and `menubar` snapshots, and process-owned snapshots of a background app with no window, omit it. [Snapshots and refs](/desktop/snapshots-and-refs) shows the window-owned shape. With a post-action `--wait-for` ([Configuration](/desktop/configuration#post-action-wait-flags)), a successful snapshot adds `elapsed_ms` and `matched_selector`.
- 
-+Errors specific to `snaps
-```
-
-**File**: `apps/docs/content/docs/configuration.mdx` (modified, +3/-1)
-```diff
-@@ -37,13 +37,15 @@ Global flags work before or after the command name, so `agent-desktop --headed c
- 
- **Commands that accept them.** `snapshot`, `press`, `hover`, `drag`, and every ref action (`click`, `double-click`, `triple-click`, `right-click`, `type`, `set-value`, `clear`, `focus`, `select`, `toggle`, `check`, `uncheck`, `expand`, `collapse`, `scroll`, `scroll-to`). Every other command returns `INVALID_ARGS`. `snapshot --root` cannot combine with them, and a `batch` entry never inherits them.
- 
--**Which window is polled.** For `snapshot`, the window it reads. For a ref action, the window of the element you acted on. For `press`, the `--app` or `--window-id` window, else the focused one. For `drag`, the destination window, or the source with `--wait-for-scope from`.
-+**Which owner is polled.** For `snapshot`, the selected surface owner. For a ref action, the original process. Application-owned refs keep their source surface; a macOS `menu` or `menubar` ref is observed through its application without requiring a document window. Window-owned refs observe their original pinned window, even when captured from `sheet`, `alert`, `popover`, `focused`, or a window-owned `menu` such as a Linux menu. The wait reads the whole window, so a selector elsewhere in the parent can satisfy `--wait-for` early or keep `--wait-for-gone` from succeeding. On Linux, GTK3 context menus and Chromium popups can be exposed outside that window tree, so a gone wait cannot establish that a popup outside the observed scope was dismissed. To observe the overlay itself, run a separate `snapshot` with the desired `--surface` and wait selector. For `press`, the `--app` or `--window-id` window, else the focused one. For `drag`, the destination window, or the source with `--wait-for-scope from`.
- 
- **Results.**
- 
- - `--wait-for` succeeds with snapshot data (`snapshot_id`, `ref_count`, `tree`, and so on) plus `elapsed_ms` and `matched_selector`. For an action, the action's own report moves under `data.after_action`.
- - `--wait-for-gone` succeeds with `matched_selector`, `gone: true`, `target_absent: true`, and `elapsed_ms`, with the action's report under `after_action`.
- - On expiry the command fails with `TIMEOUT`, `details.kind: "wait_timeout"`, `details.selector`, and `details.timeout_ms`. After an action, `details.after_action` holds its report, and the error keeps the action's own delivery disposition, so a timeout does not make the action safe to repeat.
-+- If a ref action returns `delivery_uncertain`, `error.details.post_action_observation` records read-only evidence from the original process and its application-owned source surface or pinned window. Its [fields and outcomes](/desktop/json-output#post-action-observation) do not change the original error or unsafe retry disposition. The wait uses `--wait-timeout` separately from the action timeout.
-+- A temporary `ACTION_NOT_SUPPORTED` error with `details.kind: "window_without_accessibility_element"` is retried during wait polling. For `--wait-for-gone`, that error does not count as absence; the wait succeeds only after a complete selector read finds no match or the app/window lookup confirms the target is gone.
- 
- ```bash
- agent-desktop click @s8f3k2p9:e5 --wait-for ":Saved" --wait-timeout 5000
-```
-
-**File**: `apps/docs/content/docs/errors-and-recovery.mdx` (modified, +7/-3)
-```diff
-@@ -38,7 +38,7 @@ A failed command prints an envelope with `ok: false` and exits `1` (or `2` for a
-     <tr><td><code>suggestion</code></td><td>when set</td><td>A hint for a person or an agent. Check any command it names before you run it.</td></tr>
-     <tr><td><code>recovery</code></td><td>only when retry is safe</td><td>A declared recovery plan. See <a href="#recovery-strategies">Recovery strategies</a>.</td></tr>
-     <tr><td><code>platform_detail</code></td><td>when set</td><td>The native platform's own error text.</td></tr>
--    <tr><td><code>details</code></td><td>when set</td><td>Structured context. <code>details.kind</code> names the cause for many codes, for example <code>actionability_timeout</code>, <code>wait_timeout</code>, <code>session_ended</code>, or <code>post_action_verification</code>.</td></tr>
-+    <tr><td><code>details</code></td><td>when set</td><td>Structured context. <code>details.kind</code> names the cause for many codes, for example <code>actionability_timeout</code>, <code>focus_verification</code>, <code>surface_absent</code>, <code>wait_timeout</code>, <code>session_ended</code>, or <code>post_action_verification</code>.</td></tr>
-   </tbody>
- </table>
- 
-@@ -50,8 +50,8 @@ A failed command prints an envelope with `ok: false` and exits `1` (or `2` for a
-   </thead>
-   <tbody>
-     <tr><td><code>PERM_DENIED</code></td><td>A required operating system permission is missing, such as Accessibility or Screen Recording.</td><td>Run <code>agent-desktop permissions</code> and grant it. See the <a href="/desktop/platforms/macos">macOS</a>, <a href="/desktop/platforms/windows">Windows</a>, and <a href="/desktop/platforms/linux">Linux</a> pages.</td></tr>
--    <tr><td><code>ELEMENT_NOT_FOUND</code></td><td>No element matched the ref or query.</td><td>Take a fresh snapshot or run <code>find</code> again, then use the new ref.</td></tr>
--    <tr><td><code>APP_NOT_FOUND</code></td><td>The application is not running, or it has no windows.</td><td>Check the name with <code>list-apps</code>. Run <code>launch</code> if it is not running.</td></tr>
-+    <tr><td><code>ELEMENT_NOT_FOUND</code></td><td>No element matched the ref or query, or a requested surface is absent.</td><td>Read <code>details.kind</code> and <code>details.surface</code>. For an absent menu, open the menu first; otherwise check the UI before refreshing a ref.</td></tr>
-+    <tr><td><code>APP_NOT_FOUND</code></td><td>No matching application process exists.</td><td>Check the name with <code>list-apps</code>. Run <code>launch</code> if it is not running.</td></tr>
-     <tr><td><code>ACTION_FAILED</code></td><td>The action was rejected or blocked, or its observed result contradicted the request.</td><td>Read <code>details</code> and <code>disposition.retry</code>. It never carries <code>recovery</code>.</td></tr>
-     <tr><td><code>ACTION_NOT_SUPPORTED</code></td><td>The target, or this platform for this input, does not expose the requested action.</td><td>Use a different command or element. Repeating it fails the same way.</td></tr>
-     <tr><td><code>STALE_REF</code></td><td>The ref no longer matches a live element.</td><td>Take a fresh snapshot and use the new ref. See <a href="/desktop/snapshots-and-refs">Snapshots and refs</a>.</td></tr>
-@@ -68,6 +68,10 @@ A failed command prints an envelope with `ok: false` and exits `1` (or `2` for a
-   </tbody>
- </table>
- 
-+For <code>ELEMENT_NOT_FOUND</code>, read <code>details.kind</code>, <code>details.surface</code>, and <code>details.complete</code>. A macOS lookup with <code>kind: "surface_absent"</code> and <code>complete: true</code> has confirmed that the requested surface is absent. An absent <code>menubar</code> can mean the app exposes no menu bar. For <code>surface: "menu"</code>, open the application menu first: snapshot <code>menubar</code> when it exists, click its menu-bar item without <code>--headed</code>, then snapshot <code>--surface menu</code>. Missing <code>complete</code>, <code>complete: false</code>, a timeout, or an incomplete read is unknown. If the command followed an action with <code>disposition.retry: unsafe</code>, inspect the current UI before another action; do not repeat the action because the snapshot failed.
++#[test]
++fn an_unscoped_wait_reports_an_exit_behind_an_app_that_closed_to_tray() {
++    let seed = baseline_with_apps(vec![
++        terminating_app(41, "tray"),
++        terminating_app(42, "exited"),
++    ]);
++    let mut adapter = LivenessAdapter::new(
++        vec![empty_baseline()],
++        Ok(ProcessState::Exited { code: None }),
++    );
++    adapter.running.push(crate::ProcessId::new(41));
++    let mut request = input("app-terminated", None);
++    request.timeout_ms = 300;
 +
-+A macOS <code>TIMEOUT</code> with <code>details.kind: "focus_verification"</code> means the app never reported <code>AXFrontmost</code>, or the target window never reported <code>AXMain</code>, before the bounded focus readback ended. <code>details.physical_delivery_started: false</code> means target input had not started; it does not mean a prior focus or window-raise request was never dispatched. Read <code>disposition</code>, which can still be <code>delivered_unverified</code>.
++    let result = wait_for_event(request, &adapter, Some(Ok(seed))).unwrap();
 +
- ## Disposition
- 
- `disposition` says whether input reached the application, and from that, whether repeating the command is safe. Every error carries it. Commands that act on a target also carry it on success, as `data.disposition`.
++    assert_eq!(result["found"], true);
++    assert_eq!(result["event"]["pid"], 42);
++}
++
+ #[test]
+ fn not_supported_process_state_still_reports_a_genuine_termination() {
+     let seed = baseline_with_apps(vec![terminating_app(42, "unsupported-check")]);
 ```
 
-**File**: `apps/docs/content/docs/ffi/api.mdx` (modified, +1/-1)
+**File**: `crates/core/src/context/context_scope_tests.rs` (modified, +23/-0)
 ```diff
-@@ -69,7 +69,7 @@ AdResult ad_check_permissions(const struct AdAdapter *adapter);
- Each writes an owned JSON envelope into `*out`; free it with `ad_free_string`, including an `"ok": false` envelope. `*out` is null only on an argument or infrastructure failure.
- 
- ```c
--// Snapshots an app's focused window; surface is an AdSnapshotSurface.
-+// Snapshots the app surface selected by AdSnapshotSurface.
- AdResult ad_snapshot(const struct AdAdapter *adapter,
-                      const char *app,
-                      int32_t surface,
-```
-
-**File**: `apps/docs/content/docs/ffi/build-and-link.mdx` (modified, +2/-3)
-```diff
-@@ -83,11 +83,10 @@ cc -std=c11 -I crates/ffi/include main.c \
- ./snapshot_demo gnome-calculator
- ```
- 
--On Linux against GNOME Calculator it printed this envelope, shown here with `tree` elided:
-+On Linux against GNOME Calculator it printed this envelope, shown here with the window metadata and `tree` elided:
- 
- ```json
--{"version":"2.6","ok":true,"command":"snapshot","data":{"app":"gnome-calculator","complete":true,"ref_count":2,"snapshot_id":"s18ekeexjf5trb","tree":{"...":"..."}}}
--```
-+{"version":"2.6","ok":true,"command":"snapshot","data":{"app":"gnome-calculator","complete":true,"ref_count":2,"snapshot_id":"s18ekeexjf5trb","window":{"id":"...","title":"..."},"tree":{"...":"..."}}}```
- 
- The macOS install name is `@rpath/libagent_desktop_ffi.dylib`, so a program that links the library needs an rpath to its directory; `dlopen` and `ctypes` callers load by path and need nothing. On Windows, an MSVC program links `agent_desktop_ffi.dll.lib` and loads the DLL at run time. On Linux the program must run inside the user's graphical session to see apps; see [Linux](/desktop/platforms/linux).
- 
-```
-
----
-
-### Incident Patch 3: `53e072dc` (2026-11-04)
-**Commit Message**: fix: preserve partial snapshots after observation expires (#372)
-
-* fix: preserve partial snapshots after observation expires
-
-* test: isolate trace quota checks from lock timing
-
-**File**: `crates/core/src/commands/wait.rs` (modified, +1/-1)
-```diff
-@@ -230,7 +230,7 @@ fn wait_for_text(
-                 };
-                 if matched {
-                     let store = RefStore::for_session(context.session_id())?;
--                    let snapshot_id = store.save_new_snapshot(&result.refmap)?;
-+                    let snapshot_id = result.save_refmap(&store)?;
-                     trace_artifacts::copy_refmap_if_full(
-                         context,
-                         &store,
-```
-
-**File**: `crates/core/src/commands/wait_scenario_count_tests.rs` (modified, +25/-0)
-```diff
-@@ -96,6 +96,10 @@ text_tree_adapter!(
-     IncompleteTextTreeAdapter,
-     doc_window(vec![ready_button("ready one"), truncated_container(2)])
- );
-+text_tree_adapter!(ExpiringIncompleteTextTreeAdapter, {
-+    crate::wait::deadline::sleep(std::time::Duration::from_millis(31));
-+    doc_window(vec![ready_button("ready one"), truncated_container(2)])
-+});
- text_tree_adapter!(
-     AllHiddenIncompleteAdapter,
-     doc_window(vec![truncated_container(2)])
-@@ -202,3 +206,24 @@ fn text_wait_with_count_on_complete_observation_times_out_when_count_differs() {
-     assert_eq!(details["kind"], "wait_timeout");
-     assert_eq!(details["expected_count"], 1);
+@@ -252,3 +252,26 @@ fn command_end_omits_secret_and_huge_error_messages() {
+     assert!(body.len() < 4096);
+     std::fs::remove_file(path).unwrap();
  }
 +
 +#[test]
-+fn text_wait_persists_a_partial_match_after_the_inherited_deadline() {
-+    let _guard = crate::refs::refs_test_support::HomeGuard::new();
-+    let _clock = crate::wait::deadline::VirtualClock::freeze();
-+    let inherited = crate::Deadline::detached_after(30).unwrap();
-+    let deadline_scope = crate::wait::deadline::enter_scope(Some(inherited));
++fn a_command_does_not_trace_into_a_session_reaped_while_it_waited_for_its_lease() {
++    let guard = crate::refs::refs_test_support::HomeGuard::new();
++    let home = guard.path().to_path_buf();
++    let manifest = start_session(StartSessionOptions {
++        trace: SessionTraceMode::On,
++        ..Default::default()
++    })
++    .expect("session starts");
++    let dir = crate::session::session_dir(&manifest.id).unwrap();
++    let lock = crate::refs::refs_lock::RefStoreLock::acquire(&dir.join("refstore.lock")).unwrap();
++    let id = manifest.id.clone();
++    let command = std::thread::spawn(move || {
++        crate::refs::set_home_override(Some(home));
++        CommandContext::new(Some(id), None, false)
++    });
++    std::thread::sleep(std::time::Duration::from_millis(200));
++    std::fs::remove_dir_all(&dir).unwrap();
++    drop(lock);
 +
-+    let value = execute(
-+        text_wait_args("ready", None, 30_000),
-+        &ExpiringIncompleteTextTreeAdapter,
-+        &CommandContext::default(),
-+    )
-+    .expect("a visible text match must survive the expired inherited deadline");
-+    assert!(inherited.is_expired());
-+    assert_eq!(value["found"], true);
-+    let ref_id = value["ref"].as_str().unwrap();
-+    drop(deadline_scope);
-+    let entry = RefStore::new().unwrap().load_ref(ref_id).unwrap();
-+    assert_eq!(entry.identity.name.as_deref(), Some("ready one"));
++    assert!(!command.join().unwrap().unwrap().trace_enabled());
 +}
 ```
 
-**File**: `crates/core/src/commands/wait_selector.rs` (modified, +1/-1)
+**File**: `crates/core/src/context/mod.rs` (modified, +6/-6)
 ```diff
-@@ -233,7 +233,7 @@ fn materialized_response(
-     elapsed_ms: u128,
- ) -> Result<Value, AppError> {
-     let store = RefStore::for_session(context.session_id())?;
--    let snapshot_id = store.save_new_snapshot(&result.refmap)?;
-+    let snapshot_id = result.save_refmap(&store)?;
-     trace_artifacts::copy_refmap_if_full(context, &store, &snapshot_id, &result.refmap)?;
-     result.bind_snapshot_id(snapshot_id);
-     emit_snapshot_saved(context, &result)?;
+@@ -89,9 +89,9 @@ impl CommandContext {
+         if let Some(id) = session_id.as_deref() {
+             validate_session_id(id)?;
+         }
++        let session = acquire_session_scope(session_id.clone(), None)?;
+         let (segment_dir, artifacts_full) =
+             session_trace_state(session_id.as_deref(), trace_path.is_some())?;
+-        let session = acquire_session_scope(session_id, None)?;
+         let cursor_overlay =
+             session::cursor_overlay_for_session(session.as_ref().map(|scope| scope.id.as_str()))?;
+         Ok(Self {
+@@ -243,6 +243,11 @@ impl CommandContext {
+         let reuses_parent_session = session_id.as_deref() == self.session_id();
+         let reuses_parent_trace = reuses_parent_session
+             || (self.trace.pending_file_path().is_some() && self.trace.has_sink());
++        let session = if reuses_parent_session {
++            self.session.clone()
++        } else {
++            acquire_session_scope(session_id.clone(), self.inherited_deadline)?
++        };
+         let (trace, artifacts_full) = if reuses_parent_trace {
+             (self.trace.clone(), self.artifacts_full)
+         } else {
+@@ -252,11 +257,6 @@ impl CommandContext {
+                 artifacts_full,
+             )
+         };
+-        let session = if reuses_parent_session {
+-            self.session.clone()
+-        } else {
+-            acquire_session_scope(session_id, self.inherited_deadline)?
+-        };
+         let cursor_overlay = if reuses_parent_session {
+             self.options.cursor_overlay.clone()
+         } else {
 ```
 
-**File**: `crates/core/src/commands/wait_selector_inherited_deadline_tests.rs` (modified, +33/-0)
+**File**: `crates/core/src/ref_action/mod.rs` (modified, +1/-1)
 ```diff
-@@ -85,3 +85,36 @@ fn expired_inherited_deadline_without_a_snapshot_still_emits_wait_timeout() {
-     );
-     assert_eq!(details["last_error"]["code"], "APP_NOT_FOUND");
+@@ -91,7 +91,7 @@ pub(crate) fn dispatch_resolved_landing(
+     let preflight = match stable_preflight(&initial_target, &request) {
+         Ok(preflight) => preflight,
+         Err(error) => {
+-            let error = into_adapter_error(error);
++            let error = mark_pre_dispatch_resolution_failure(into_adapter_error(error));
+             if !crate::ref_action::ref_action_wait_evidence::should_scroll_after_preflight(
+                 &request, &error,
+             ) {
+```
+
+**File**: `crates/core/src/ref_action/ref_action_wait_unresponsive_tests.rs` (modified, +59/-0)
+```diff
+@@ -59,3 +59,62 @@ fn auto_wait_retries_a_transiently_unresponsive_accessibility_service() {
+     assert_eq!(result.action, "click");
+     assert!(adapter.resolve_calls.load(Ordering::SeqCst) >= 2);
  }
 +
++struct BusyAtDispatchPreflightAdapter(AtomicU32);
++
++impl ObservationOps for BusyAtDispatchPreflightAdapter {
++    fn resolve_element_strict(
++        &self,
++        _entry: &RefEntry,
++        _deadline: crate::Deadline,
++    ) -> Result<NativeHandle, AdapterError> {
++        Ok(NativeHandle::null())
++    }
++
++    crate::adapter::complete_live_observation!("button", "Run", [capability::CLICK], adapter => {
++        if adapter.0.fetch_add(1, Ordering::SeqCst) == 1 {
++            return Err(AdapterError::timeout("busy").with_details(serde_json::json!({ "retryable": true })));
++        }
++        crate::ElementState {
++            role: "button".into(),
++            states: Vec::new(),
++            value: None,
++            enabled: Some(true),
++            hidden: Some(false),
++            offscreen: Some(false),
++        }
++    });
++    crate::adapter::saved_ref_scope!("button", Some("Run"));
++}
++
++impl ActionOps for BusyAtDispatchPreflightAdapter {
++    fn execute_action(
++        &self,
++        _handle: &NativeHandle,
++        _request: ActionRequest,
++        _lease: &crate::InteractionLease,
++    ) -> Result<crate::actions::action_result::ActionResult, AdapterError> {
++        Ok(crate::actions::action_result::ActionResult::delivered_unverified("click"))
++    }
++}
++
++impl InputOps for BusyAtDispatchPreflightAdapter {}
++impl SystemOps for BusyAtDispatchPreflightAdapter {
++    crate::adapter::guarded_interaction_lease!();
++}
++
 +#[test]
-+fn matched_partial_snapshot_is_persisted_after_the_inherited_deadline() {
++fn auto_wait_retries_a_live_read_timeout_in_the_dispatch_preflight() {
++    let result = execute_with_auto_wait(
++        RefActionWaitCtx {
++            adapter: &BusyAtDispatchPreflightAdapter(AtomicU32::new(0)),
++            entry: &entry(),
++            ref_id: "@e1",
++            context: &CommandContext::default(),
++        },
++        ActionRequest::headless(Action::Click).with_timeout_ms(Some(2_000)),
++        crate::ref_action::ref_action_single::dispatch_resolved,
++    );
++
++    assert_eq!(result.unwrap().action, "click");
++}
+```
+
+**File**: `crates/core/src/refs/refs_store_prune.rs` (modified, +4/-2)
+```diff
+@@ -36,7 +36,7 @@ impl RefStore {
+         );
+     }
+ 
+-    /// Drops only the refmaps the trace already holds a copy of, leaving every
++    /// Drops only the refmaps the trace holds a byte-identical copy of, leaving every
+     /// other artifact in place. Being in `ArtifactsMode::Full` is not on its own
+     /// proof that a copy exists: the artifact budget and a serialisation failure
+     /// both skip a copy and report success, so a session that recorded more
+@@ -57,7 +57,9 @@ impl RefStore {
+             if validate_snapshot_id(&id).is_err() {
+                 continue;
+             }
+-            if duplicates.join(format!("{id}.json")).is_file() {
++            let copy = std::fs::read(duplicates.join(format!("{id}.json")));
++            let original = std::fs::read(entry.path().join("refmap.json"));
++            if copy.is_ok_and(|copy| original.is_ok_and(|original| copy == original)) {
+                 let _ = std::fs::remove_dir_all(entry.path());
+             }
+         }
+```
+
+**File**: `crates/core/src/refs/refs_store_tests.rs` (modified, +24/-0)
+```diff
+@@ -288,3 +288,27 @@ mod pruning_tests;
+ 
+ #[path = "refs_store_session_tests.rs"]
+ mod session_tests;
++
++#[test]
++fn discarding_scaffolding_keeps_a_snapshot_drilled_after_its_trace_copy() {
 +    let _guard = HomeGuard::new();
-+    let clock = crate::wait::deadline::VirtualClock::freeze();
-+    let inherited = crate::Deadline::detached_after(30).unwrap();
-+    let deadline_scope = crate::wait::deadline::enter_scope(Some(inherited));
-+    let mut tree = window_node(vec![button_node("saved")]);
-+    tree.subtree_truncated = true;
-+    let input = base_input("button:saved", false);
-+    let result = snapshot::build(
-+        &StaticTreeAdapter { tree },
-+        &input.opts,
-+        input.app.as_deref(),
-+        None,
-+        inherited,
++    let store = RefStore::for_session(Some("drilled")).unwrap();
++    let snapshot_id = store.save_new_snapshot(&map_with("Root")).unwrap();
++    let refmaps = crate::trace::trace_artifacts::refmap_artifact_dir(&store.trace_dir());
++    std::fs::create_dir_all(&refmaps).unwrap();
++    std::fs::copy(
++        store.snapshot_path(&snapshot_id),
++        refmaps.join(format!("{snapshot_id}.json")),
 +    )
 +    .unwrap();
-+    assert!(!result.complete);
-+    clock.advance(std::time::Duration::from_millis(31));
++    store
++        .update_existing_snapshot(&snapshot_id, "@e1", &entry("Root"), |map| {
++            map.allocate(entry("Drilled"));
++            Ok(())
++        })
++        .unwrap();
 +
-+    let value = materialized_response(result, &CommandContext::default(), &input, 31)
-+        .expect("a matched partial snapshot must survive the expired inherited deadline");
-+    assert_eq!(value["matched_selector"], "button:saved");
-+    assert_eq!(value["complete"], false);
-+    let snapshot_id = value["snapshot_id"].as_str().unwrap();
-+    drop(deadline_scope);
-+    let refmap = RefStore::new().unwrap().load(Some(snapshot_id)).unwrap();
-+    assert_eq!(
-+        refmap.get("@e1").unwrap().identity.name.as_deref(),
-+        Some("saved")
-+    );
-+}
-```
-
-**File**: `crates/core/src/refs/refs_lock.rs` (modified, +3/-5)
-```diff
-@@ -14,11 +14,9 @@ impl RefStoreLock {
-         Self::acquire_with_deadline(path, deadline)
-     }
- 
--    /// Recovery-path lock: the budget is detached from the (possibly already
--    /// expired) inherited command deadline. Use ONLY for post-deadline
--    /// diagnostic work — e.g. persisting the last built snapshot after a wait
--    /// timeout — which must run after the operation's own deadline has expired
--    /// and must not collapse to an immediate `lock_timeout`.
-+    /// Recovery-path lock: the budget is detached from an inherited command
-+    /// deadline so an already-built partial snapshot or wait result can still
-+    /// be persisted.
-     pub(crate) fn acquire_detached(path: &Path) -> Result<Self, AppError> {
-         let deadline = Deadline::detached_after(LOCK_TIMEOUT_MS)?;
-         Self::acquire_with_deadline(path, deadline)
-```
-
-**File**: `crates/core/src/refs/refs_store.rs` (modified, +3/-5)
-```diff
-@@ -48,11 +48,9 @@ impl RefStore {
-     }
- 
-     /// Recovery-path variant of [`save_new_snapshot`]: the ref-store write
--    /// lock is acquired with a deadline detached from any inherited (and
--    /// possibly already-expired) command deadline. Used by post-timeout
--    /// diagnostic persistence, which runs after the operation's own deadline
--    /// has expired and must not collapse to an immediate `lock_timeout` that
--    /// would replace the intended `wait_timeout` envelope.
-+    /// lock is acquired with a deadline detached from any inherited command
-+    /// deadline. Use it to persist an already-built partial snapshot or a
-+    /// post-timeout wait result after its command deadline expires.
-     pub(crate) fn save_new_snapshot_detached(&self, refmap: &RefMap) -> Result<String, AppError> {
-         self.with_write_lock_detached(|| self.save_new_snapshot_unlocked_with_id(refmap))
-     }
-```
-
-**File**: `crates/core/src/snapshot/mod.rs` (modified, +13/-1)
-```diff
-@@ -26,6 +26,14 @@ pub struct SnapshotResult {
- }
- 
- impl SnapshotResult {
-+    pub(crate) fn save_refmap(&self, store: &RefStore) -> Result<String, AppError> {
-+        if self.complete {
-+            store.save_new_snapshot(&self.refmap)
-+        } else {
-+            store.save_new_snapshot_detached(&self.refmap)
-+        }
-+    }
++    store.discard_duplicated_ref_scaffolding();
 +
-     pub(crate) fn bind_snapshot_id(&mut self, snapshot_id: String) {
-         crate::refs::ref_token::qualify_tree_refs(&mut self.tree, &snapshot_id);
-         self.snapshot_id = Some(snapshot_id);
-@@ -345,7 +353,7 @@ pub fn run_with_context(
-         crate::Deadline::after(timeout_ms)?,
-     )?;
-     let store = RefStore::for_session(context.session_id())?;
--    let snapshot_id = store.save_new_snapshot(&result.refmap)?;
-+    let snapshot_id = result.save_refmap(&store)?;
-     trace_artifacts::copy_refmap_if_full(context, &store, &snapshot_id, &result.refmap)?;
-     result.bind_snapshot_id(snapshot_id);
-     emit_snapshot_saved(context, &result)?;
-@@ -391,6 +399,10 @@ mod tokenless_capture_tests;
- #[path = "tokenless_drill_tests.rs"]
- mod tokenless_drill_tests;
- 
-+#[cfg(test)]
-+#[path = "snapshot_deadline_tests.rs"]
-+mod deadline_tests;
-+
- #[cfg(test)]
- #[path = "snapshot_window_tests.rs"]
- mod window_tests;
-```
-
-**File**: `crates/core/src/snapshot/snapshot_deadline_tests.rs` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+use super::*;
-+use crate::adapter::{ActionOps, InputOps, ObservationOps, SystemOps, WindowFilter};
-+use crate::locator::live_locator::{ObservationRequest, ObservationRoot, ObservedTree};
-+use crate::refs::refs_test_support::HomeGuard;
-+use std::time::Duration;
-+
-+struct PartialSnapshotAdapter;
-+
-+impl ObservationOps for PartialSnapshotAdapter {
-+    fn observe_tree(
-+        &self,
-+        root: ObservationRoot<'_>,
-+        _request: &ObservationRequest,
-+    ) -> Result<ObservedTree, crate::AdapterError> {
-+        crate::wait::deadline::sleep(Duration::from_millis(31));
-+        let tree = crate::AccessibilityNode {
-+            ref_id: None,
-+            role: "window".into(),
-+            identity: Default::default(),
-+            presentation: Default::default(),
-+            children_count: None,
-+            subtree_truncated: true,
-+            children: Vec::new(),
-+        };
-+        crate::adapter::observed_tree(&root, tree)
-+    }
-+
-+    fn list_windows(
-+        &self,
-+        _filter: &WindowFilter,
-+        _deadline: crate::Deadline,
-+    ) -> Result<Vec<crate::WindowInfo>, crate::AdapterError> {
-+        Ok(vec![crate::WindowInfo {
-+            id: "w-1".into(),
-+            title: "Test".into(),
-+            app: "TestApp".into(),
-+            pid: crate::ProcessId::new(42),
-+            process_instance: Some("test-instance".into()),
-+            bounds: None,
-+            state: Default::default(),
-+        }])
-+    }
-+}
-+
-+impl ActionOps for PartialSnapshotAdapter {}
-+impl InputOps for PartialSnapshotAdapter {}
-+impl SystemOps for PartialSnapshotAdapter {}
-+
-+#[test]
-+fn expired_snapshot_deadline_persists_partial_tree_and_releases_the_store_lock() {
-+    let _home = HomeGuard::new();
-+    let _clock = crate::wait::deadline::VirtualClock::freeze();
-+    let inherited = crate::Deadline::detached_after(30).unwrap();
-+    let deadline_scope = crate::wait::deadline::enter_scope(Some(inherited));
-+    let context = crate::CommandContext::default();
-+    let adapter = PartialSnapshotAdapter;
-+
-+    let result = run_with_context(
-+        &adapter,
-+        &TreeOptions::default(),
-+        &SnapshotTarget {
-+            app_name: Some("TestApp"),
-+            window_id: None,
-+        },
-+        &context,
-+        30,
-+    )
-+    .expect("a partial snapshot should persist after its observation deadline");
-+
-+    assert!(!result.complete);
-+    let snapshot_id = result.snapshot_id.expect("snapshot id");
-+    drop(deadline_scope);
-+    let store = RefStore::new().unwrap();
-+    assert_eq!(store.latest_snapshot_id().unwrap(), Some(snapshot_id));
-+
-+    let next = run_with_context(
-+        &adapter,
-+        &TreeOptions::default(),
-+        &SnapshotTarget {
-+            app_name: Some("TestApp"),
-+            window_id: None,
-+        },
-+        &context,
-+        1_000,
-+    )
-+    .expect("a later snapshot should acquire the released ref-store lock");
-+    assert!(next.snapshot_id.is_some());
++    assert!(store.snapshot_path(&snapshot_id).is_file());
 +}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #573** (2026-11-05): perf(macos): read the app process inventory with libproc instead of spawning ps (@Railly)
-- **PR #572** (closed): fix: find the owning window of out-of-process sheet content through its parents (@marvtub)
-- **PR #568** (2026-11-05): chore: release 1.2.0 with mcp support (@lahfir)
-- **PR #564** (2026-11-05): fix(macos): let close verify the live process when an AppKit launch date is skewed (@lahfir)
-- **PR #546** (closed): fix(core): disambiguate screenshot app instances by window id (@catPaw-s)
-- **PR #526** (2026-11-03): fix(sandbox): run the macOS install on the main actor and report its progress (@roboeve[bot])
+- **PR #642** (2026-11-11): test: run the post-action settle budget tests on the virtual clock (@lahfir)
+- **PR #626** (closed): fix(cli): name the window size unit in resize-window help (@argszero)
+- **PR #624** (closed): fix(mcp): keep a cancelled call id occupied until its call finishes (@princejain756)
+- **PR #622** (2026-11-10): Upgrade the docs to TypeScript 7 (@ctate)
+- **PR #621** (closed): fix(jev): read detached macOS dialogs and follow replaced windows (@datasciencerule)
+- **PR #602** (2026-11-09): fix: close reachable invalid state transitions in sessions, refs, trace, mcp and waits (@lahfir)
 
 ---
 
@@ -1770,28 +1538,48 @@ Observe window-owned refs through their original window so waits survive a closi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. start the macos cursor overlay outside the caller's directory (#381)
+## X. close reachable invalid state transitions in sessions, refs, trace, mcp and wait
 
 **RULE**:
-When implementing operations in `crates/macos/src/system/cursor_overlay/spawn.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/commands/wait_event.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d83bfafd`: start the macos cursor overlay outside the caller's directory (#381). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab7dfb21`: close reachable invalid state transitions in sessions, refs, trace, mcp and waits (#602). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/macos/src/system/cursor_overlay/spawn.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/commands/wait_event.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        .current_dir("/")
+                        )
+                        .find(|found| confirm_app_terminated(adapter, found, diff_base, deadline))
+                        {
+                            let elapsed = start.elapsed().as_millis();
+                            return Ok(json!({
+                                "found": true,
+                                "event": serde_json::to_value(found)?,
+                                "elapsed_ms": elapsed,
+                            }));
+) -> impl Iterator<Item = &'a UiEvent> {
+    events.iter().filter(move |event| {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                        ) {
+                            if confirm_app_terminated(adapter, found, diff_base, deadline) {
+                                let elapsed = start.elapsed().as_millis();
+                                return Ok(json!({
+                                    "found": true,
+                                    "event": serde_json::to_value(found)?,
+                                    "elapsed_ms": elapsed,
+                                }));
+                            }
+) -> Option<&'a UiEvent> {
+    events.iter().find(|event| {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d83bfafd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab7dfb21` are properly handled with clean fallback behavior.

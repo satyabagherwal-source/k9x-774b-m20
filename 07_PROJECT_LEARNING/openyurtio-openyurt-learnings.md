@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source**: github ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
-> **Source Version**: `bfaf2f37`  
+> **Source Version**: `552dac7a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:58:31.340Z  
+> **Timestamp**: 2026-11-12T08:28:12.408Z  
 > **Learning ID**: `learn-github-openyurtio-openyurt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:58:31.334Z  
+> **Harvest Timestamp**: 2026-11-12T08:27:49.873Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenYurt - Extending your native Kubernetes to edge(project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2009 stars
+- **Stars / Engagement**: 2010 stars
 
 ---
 
@@ -1282,14 +1282,14 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2859** (2026-11-09): **Fix CSR approver unit-test failures**
-  *Symptoms*: The `unit-tests` job failed because coordinator CSRs were not recognized, administrator-submitted node serving CSRs could be approved, and v1beta1 conversion dropped requester identity.  - **Approval rules:** Recognize coordinator CSRs only when their certificate template and requesting service account match. Require node serving CSR usernames to match the certificate’s node identity. - **API conversion:** Preserve requester usernames when converting between v1 and v1beta1 CSRs. - **Regression coverage:** Test valid coordinator and node requests, unauthorized requesters, and both API versions.  ```go if csr.Spec.Username != x509cr.Subject.CommonName {     return false } ```
+- **Issue #2873** (2026-11-11): **test(yurthub): fix pool scope metadata key format in multiplexer tests**
+  *Symptoms*: poolScopeMetadata is keyed by schema.GroupVersionResource.String() (e.g. "apps/v1, Resource=deployments"), but the tests used the raw ConfigMap value "apps/v1/deployments", so TombstoneAndNilHandling failed its assertion. The concurrent update test also seeded the wrong key format, which triggered GVR cleanup and a nil pointer panic because filterStoreManager was not initialized.  Use gvr.String() keys consistently in the tests, initialize filterStoreManager in the concurrent test, and fix gofmt alignment.  <!--  Thanks for sending a pull request!  Here are some tips for you: https://github.com/openyurtio/openyurt/blob/master/CONTRIBUTING.md  -->  #### What type of PR is this? > Uncomment only one `/kind <>` line, hit enter to put that in a new line, and remove leading whitespace from that line: > /kind bug > /kind documentation > /kind enhancement > /kind good-first-issue > /kind feature > /kind question > /kind design > /sig ai > /sig iot > /sig network > /sig storage  #### What this PR does / why we need it:  #### Which issue(s) this PR fixes: <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. --> Fixes #  #### Special notes for your reviewer: <!-- use this label to assign your reviewer /assign @your_reviewer -->  #### Does this PR introduce a user-facing change? <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the 
 
-- **Issue #2858** (2026-11-09): **fix(raven): 限制证书自动审批的申请者身份**
-  *Symptoms*: 在通用审批路径前保护 Raven 证书 CN，防止未授权申请者或跨模板匹配获得批准，并保留 v1beta1 申请者信息。补充双版本安全回归测试。  <!--  Thanks for sending a pull request!  Here are some tips for you: https://github.com/openyurtio/openyurt/blob/master/CONTRIBUTING.md  -->  #### What type of PR is this? > /kind enhancement   --> ```release-note None ```  
+- **Issue #2871** (2026-11-10): **[WIP] Fix failing GitHub Actions job golangci-lint**
+  *Symptoms*: Thanks for asking me to work on this. I will get started on it and keep this PR's description up to date as I form a plan and make progress.  > Fix the failing GitHub Actions job "golangci-lint" > Analyze the Actions logs, identify the root cause of the failure, and implement a fix. > Check run ID: 129605691827 > Job URL: https://github.com/openyurtio/openyurt/actions/runs/42748330255/job/129605691827 
   **Post-Mortem & Fix Analysis**:
-  > ## [![Quality Gate Passed](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/checks/QualityGateBadge/qg-passed-20px.png 'Quality Gate Passed')](https://sonarcloud.io/dashboard?id=openyurtio_openyurt&pullRequest=2858) **Quality Gate passed**   Issues   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 New issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2858&issueStatuses=OPEN,CONFIRMED&sinceLeakPeriod=true)   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/accepted-16px.png '') [0 Accepted issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2858&issueStatuses=ACCEPTED)  Measures   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 Security Hotspots](https://sonarcloud.io/project/security_hotspots?id=openyurtio_openyurt&pullRequest=2858&issueStatuses=OPEN,CONFIRMED&sinceLeakPerio
-  > ## [Codecov](https://app.codecov.io/gh/openyurtio/openyurt/pull/2858?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 46.67%. Comparing base ([`9a5a72e`](https://app.codecov.io/gh/openyurtio/openyurt/commit/9a5a72ec69bea7d5893699a8f315aff772b34a8d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)) to head ([`7f4430d`](https://app.codecov.io/gh/openyurtio/openyurt/commit/7f4430dad89cb84fceb4181416dbecdad9a0a5c7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)). :warning: Report is 3 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff          
+  > ## [![Quality Gate Passed](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/checks/QualityGateBadge/qg-passed-20px.png 'Quality Gate Passed')](https://sonarcloud.io/dashboard?id=openyurtio_openyurt&pullRequest=2871) **Quality Gate passed**   Issues   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 New issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=OPEN,CONFIRMED&sinceLeakPeriod=true)   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/accepted-16px.png '') [0 Accepted issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=ACCEPTED)  Measures   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 Security Hotspots](https://sonarcloud.io/project/security_hotspots?id=openyurtio_openyurt&pullRequest=2871&issueStatuses=OPEN,CONFIRMED&sinceLeakPerio
+  > ## [Codecov](https://app.codecov.io/gh/openyurtio/openyurt/pull/2871?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 46.67%. Comparing base ([`cdcd715`](https://app.codecov.io/gh/openyurtio/openyurt/commit/cdcd71515c046387cfc619f19a00c274d087a787?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)) to head ([`a0d396c`](https://app.codecov.io/gh/openyurtio/openyurt/commit/a0d396c3e53901d4c7dab8405a5f5edd2c2b6b56?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #2871   +/-   ## ==========
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1306,353 +1306,629 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bfaf2f37` (2026-11-09)
-**Commit Message**: fix(raven): 限制证书自动审批的申请者身份 (#2858)
+### Incident Patch 1: `552dac7a` (2026-11-11)
+**Commit Message**: test(yurthub): fix pool scope metadata key format in multiplexer tests (#2873)
 
-在通用审批路径前保护 Raven 证书 CN，防止未授权申请者或跨模板匹配获得批准，并保留 v1beta1 申请者信息。补充双版本安全回归测试。
+poolScopeMetadata is keyed by schema.GroupVersionResource.String()
+(e.g. "apps/v1, Resource=deployments"), but the tests used the raw
+ConfigMap value "apps/v1/deployments", so TombstoneAndNilHandling failed
+its assertion. The concurrent update test also seeded the wrong key
+format, which triggered GVR cleanup and a nil pointer panic because
+filterStoreManager was not initialized.
 
+Use gvr.String() keys consistently in the tests, initialize
+filterStoreManager in the concurrent test, and fix gofmt alignment.
+
+Signed-off-by: bingchang.tbc <[REDACTED_EMAIL]>
 Co-authored-by: bingchang.tbc <[REDACTED_EMAIL]>
 
-**File**: `pkg/yurtmanager/controller/csrapprover/csr_approver_controller.go` (modified, +57/-2)
+**File**: `pkg/yurthub/multiplexer/multiplexer_test.go` (modified, +27/-14)
 ```diff
-@@ -45,6 +45,11 @@ import (
- 	"github.com/openyurtio/openyurt/pkg/yurttunnel/constants"
- )
+@@ -27,6 +27,7 @@ import (
+ 	"github.com/stretchr/testify/assert"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/apimachinery/pkg/util/sets"
+ 	apirequest "k8s.io/apiserver/pkg/endpoints/request"
+ 	"k8s.io/client-go/tools/cache"
+@@ -36,11 +37,11 @@ import (
  
-+const (
-+	ravenAgentUsername        = "system:serviceaccount:kube-system:raven-agent-account"
-+	ravenServerCertCommonName = "system:node:tunnel-proxy-server"
-+)
-+
- var (
- 	csrV1Resource = certificatesv1.SchemeGroupVersion.WithResource("certificatesigningrequests")
+ type dummyHealthChecker struct{}
  
-@@ -60,6 +65,21 @@ var (
- 		string(certificatesv1.UsageKeyEncipherment),
- 		string(certificatesv1.UsageServerAuth))
+-func (d *dummyHealthChecker) RenewKubeletLeaseTime()                   {}
+-func (d *dummyHealthChecker) IsHealthy() bool                          { return true }
+-func (d *dummyHealthChecker) BackendIsHealthy(server *url.URL) bool     { return true }
+-func (d *dummyHealthChecker) PickOneHealthyBackend() *url.URL          { return nil }
+-func (d *dummyHealthChecker) UpdateBackends(servers []*url.URL)        {}
++func (d *dummyHealthChecker) RenewKubeletLeaseTime()                {}
++func (d *dummyHealthChecker) IsHealthy() bool                       { return true }
++func (d *dummyHealthChecker) BackendIsHealthy(server *url.URL) bool { return true }
++func (d *dummyHealthChecker) PickOneHealthyBackend() *url.URL       { return nil }
++func (d *dummyHealthChecker) UpdateBackends(servers []*url.URL)     {}
  
-+	ravenRecognizers = map[string]csrRecognizer{
-+		constants.YurtTunnelProxyClientCSRCN: {
-+			recognize:  isYurtTunnelProxyClientCert,
-+			successMsg: "Auto approving tunnel-server proxy client certificate",
-+		},
-+		constants.YurtTunnelAgentCSRCN: {
-+			recognize:  isYurtTunnelAgentCert,
-+			successMsg: "Auto approving tunnel-agent client certificate",
-+		},
-+		ravenServerCertCommonName: {
-+			recognize:  isYurtTLSServerCert,
-+			successMsg: "Auto approving openyurt tls server certificate",
-+		},
-+	}
-+
- 	recognizers = []csrRecognizer{
- 		{
- 			recognize:  isYurtHubNodeCert,
-@@ -221,6 +241,21 @@ func isYurtCSR(csr *certificatesv1.CertificateSigningRequest) (bool, string) {
- 		return false, successMsg
- 	}
+ type dummyLoadBalancer struct{}
  
-+	// Reserve Raven identities before generic recognizers to prevent approval through another template.
-+	if r, protected := ravenRecognizers[x509cr.Subject.CommonName]; protected {
-+		if csr.Spec.Username != ravenAgentUsername {
-+			klog.InfoS("Leaving Raven CSR pending: unauthorized requester",
-+				"csr", csr.Name, "commonName", x509cr.Subject.CommonName, "username", csr.Spec.Username)
-+			return false, ""
-+		}
-+		if !r.recognize(csr, x509cr) {
-+			klog.InfoS("Leaving Raven CSR pending: certificate template mismatch",
-+				"csr", csr.Name, "commonName", x509cr.Subject.CommonName, "username", csr.Spec.Username)
-+			return false, ""
-+		}
-+		return true, r.successMsg
-+	}
-+
- 	for _, r := range recognizers {
- 		if r.recognize(csr, x509cr) {
- 			successMsg = r.successMsg
-@@ -252,12 +287,22 @@ func v1Csr2v1beta1Csr(csr *certificatesv1.CertificateSigningRequest) *certificat
- 			Request:    csr.Spec.Request,
- 			SignerName: &csr.Spec.SignerName,
- 			Usages:     make([]certificatesv1beta1.KeyUsage, 0),
-+			Username:   csr.Spec.Username,
-+			UID:        csr.Spec.UID,
-+			Groups:     csr.Spec.Groups,
- 		},
- 		Status: certificatesv1beta1.CertificateSigningRequestStatus{
- 			Conditions: make([]certificatesv1beta1.CertificateSigningRequestCondition, 0),
- 		},
- 	}
- 
-+	if csr.Spec.Extra != nil {
-+		v1beata1Csr.Spec.Extra = make(map[string]certificatesv1beta1.ExtraValue, len(csr.Spec.Extra))
-+		for key, value := range csr.Spec.Extra {
-+			v1beata1Csr.Spec.Extra[key] = certificatesv1beta1.ExtraValue(value)
-+		}
-+	}
-+
- 	for _, usage := range csr.Spec.Usages {
- 		v1beata1Csr.Spec.Usages = append(v1beata1Csr.Spec.Usages, certificatesv1beta1.KeyUsage(usage))
- 	}
-@@ -283,14 +328,24 @@ func v1beta1Csr2v1Csr(csr *certificatesv1beta1.CertificateSigningRequest) *certi
- 	v1Csr := &certificatesv1.CertificateSigningRequest{
- 		ObjectMeta: csr.ObjectMeta,
- 		Spec: certificatesv1.CertificateSigningRequestSpec{
--			Request: csr.Spec.Request,
--			Usages:  make([]certificatesv1.KeyUsage, 0),
-+			Request:  csr.Spec.Request,
-+			Usages:   make([]certificatesv1.KeyUsage, 0),
-+			Username: csr.Spec.Username,
-+			UID:      csr.Spec.UID,
-+			Groups:   csr.Spec.Groups,
- 		},
- 		Status: certificatesv1.CertificateSigningRequestStatus{
- 			Conditions: make([]certificatesv1.CertificateSigningRequestCondition, 0),
- 		},
- 	}
- 
-+	if csr.Spec.Extra != nil {
-+		v1Csr.Spec.Extra = make(map[string]certificatesv1.ExtraValue, len(csr.Spec.Extra))
-+		for key, value := range csr.Spec.Extra {
-+			v1Csr.Spec.Extra[key] = certificatesv1.ExtraValue(value)
-+		}
-+	}
-+
- 	if csr.Spec.SignerName != nil {
- 		v1Csr.Spec.SignerName = *csr.Spec.SignerName
- 	}
-```
-
-**File**: `pkg/yurtmanager/controller/csrapprover/csr_approver_controller_test.go` (modified, +466/-2)
-```diff
-@@ -24,6 +24,7 @@ import (
- 	"crypto/x509"
- 	"crypto/x509/pkix"
- 	"encoding/pem"
-+	"fmt"
- 	"net"
- 	"reflect"
- 	"testing"
-@@ -41,6 +42,7 @@ import (
- 	"k8s.io/klog/v2"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	fakeclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
- 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
- 
- 	"github.com/openyurtio/openyurt/pkg/yurthub/certificate/token"
-@@ -210,13 +212,14 @@ func TestReconcile(t *testing.T) {
- 				},
- 			},
- 		},
--		"yurt-tunnel-server related proxy client certificate request": {
-+		"raven proxy user certificate request": {
- 			obj: &certificatesv1.CertificateSigningRequest{
- 				ObjectMeta: metav1.ObjectMeta{
- 					Name:      "tunnel-server-proxy-client-csr",
- 					Namespace: "default",
- 				},
- 				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:serviceaccount:kube-system:raven-agent-account",
- 					SignerName: certificatesv1.KubeAPIServerClientSignerName,
- 					Usages: []certificatesv1.KeyUsage{
- 						certificatesv1.UsageDigitalSignature,
-@@ -235,6 +238,7 @@ func TestReconcile(t *testing.T) {
- 					Namespace: "default",
- 				},
- 				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:serviceaccount:kube-system:raven-agent-account",
- 					SignerName: certificatesv1.KubeAPIServerClientSignerName,
- 					Usages: []certificatesv1.KeyUsage{
- 						certificatesv1.UsageDigitalSignature,
-@@ -256,13 +260,14 @@ func TestReconcile(t *testing.T) {
- 				},
- 			},
- 		},
--		"yurt-tunnel-agent related certificate request": {
-+		"raven proxy client certificate request": {
- 			obj: &certificatesv1.CertificateSigningRequest{
- 				ObjectMeta: metav1.ObjectMeta{
- 					Name:      "tunnel-agent-client-csr",
- 					Namespace: "default",
- 				},
- 				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:serviceaccount:kube-system:raven-agent-account",
- 					SignerName: certificatesv1.KubeAPIServerClientSignerName,
- 					Usages: []certificatesv1.KeyUsage{
- 						certificatesv1.UsageDigitalSignature,
-@@ -281,6 +286,7 @@ func TestReconcile(t *testing.T) {
- 					Namespace: "default",
- 				},
- 				Spec: certificatesv1.CertificateSigningRequestSpec{
-+					Username:   "system:serviceaccount:kube-system:raven-agent-account",
- 					SignerName: certificatesv1.KubeAPIServerClientSignerName,
- 					Usages: []certificatesv1.KeyUsage{
- 						certificatesv1.UsageDigitalSignature,
-@@ -573,6 +579,289 @@ func TestReconcile(t *testing.T) {
- 	}
+@@ -92,20 +93,24 @@ func TestMultiplexerManager_TombstoneAndNilHandling(t *testing.T) {
+ 		m.addConfigmap(tombstone)
+ 	})
+ 	assert.Equal(t, 1, m.poolScopeMetadata.Len())
+-	assert.True(t, m.poolScopeMetadata.Has("apps/v1/deployments"))
++	// poolScopeMetadata is keyed by schema.GroupVersionResource.String(),
++	// e.g. "apps/v1, Resource=deployments", not the raw configmap value.
++	deploymentsGVR := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
++	assert.True(t, m.poolScopeMetadata.Has(deploymentsGVR.String()))
  }
  
-+func TestReconcileRavenCSRRequester(t *testing.T) {
-+	requesters := []struct {
-+		name         string
-+		username     string
-+		wantApproved bool
-+	}{
-+		{"raven serviceaccount", "system:serviceaccount:kube-system:raven-agent-account", true},
-+		{"wrong namespace", "system:serviceaccount:default:raven-agent-account", false},
-+		{"wrong serviceaccount", "system:serviceaccount:kube-system:other-agent", false},
-+		{"username suffix", "system:serviceaccount:kube-system:raven-agent-account-extra", false},
-+		{"missing identity", "", false},
-+		{"certificate subject is not requester", "tunnel-agent-client", false},
-+		{"legacy tunnel agent", "system:serviceaccount:kube-system:yurt-tunnel-agent", false},
-+		{"legacy tunnel server", "system:serviceaccount:kube-system:yurt-tunnel-server", false},
-+		{"admin has no exemption", "kubernetes-admin", false},
+ func TestMultiplexerManager_FilterStoreCleanupOnGVRDeletion(t *testing.T) {
++	deploymentsKey := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}.String()
+ 	fsm := &filterStoreManager{
+ 		filterStores: make(map[string]*filterStore),
+ 	}
+-	fsm.filterStores["apps/v1/deployments"] = &filterStore{}
++	fsm.filterStores[deploymentsKey] = &filterStore{}
+ 
+ 	m := &MultiplexerManager{
+ 		filterStoreManager:            fsm,
+ 		lazyLoadedGVRCache:            make(map[string]Interface),
+ 		lazyLoadedGVRCacheDestroyFunc: make(map[string]func()),
+-		poolScopeMetadata:             sets.New("apps/v1/deployments"),
++		poolScopeMetadata:             sets.New(deploymentsKey),
+ 		leaderAddresses:               sets.New[string](),
+ 		healthCheckerForLeaders:       &dummyHealthChecker{},
+ 		loadBalancerForLeaders:        &dummyLoadBalancer{},
+@@ -121,21 +126,29 @@ func TestMultiplexerManager_FilterStoreCleanupOnGVRDeletion(t *testing.T) {
+ 	m.updateLeaderHubConfiguration(cm)
+ 
+ 	// Verify filterStore for apps/v1/deployments was purged
+-	assert.False(t, m.poolScopeMetadata.Has("apps/v1/deployments"))
++	assert.False(t, m.poolScopeMetadata.Has(deploymentsKey))
+ 	fsm.RLock()
+-	_, exists := fsm.filterStores["apps/v1/deployments"]
++	_, exists := fsm.filterStores[deploymentsKey]
+ 	fsm.RUnlock()
+ 	assert.False(t, exists, "filterStore for removed GVR should be purged from filterStoreManager")
+ }
+ 
+ func TestMultiplexerManager_ConcurrentConfigMapUpdateAndResolution(t *testing.T) {
+ 	m := &MultiplexerManager{
++		// updateLeaderHubConfiguration purges filter stores of removed GVRs,
++		// so filterStoreManager must be initialized as NewRequestMultiplexerManager does.
++		filterStoreManager: &filterStoreManager{
++			filterStores: make(map[string]*filterStore),
++		},
+ 		lazyLoadedGVRCache:            make(map[string]Interface),
+ 		lazyLoadedGVRCacheDestroyFunc: make(map[string]func()),
+-		poolScopeMetadata:             sets.New("apps/v1/deployments", "core/v1/services"),
+-		leaderAddresses:               sets.New[string](),
+-		healthCheckerForLeaders:       &dummyHealthChecker{},
+-		loadBalancerForLeaders:        &dummyLoadBalancer{},
++		poolScopeMetadata: sets.New(
++			schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}.String(),
++			schema.GroupVersionResource{Group: "", Version: "v1", Resource: "services"}.String(),
++		),
++		leaderAddresses:         sets.New[string](),
++		healthCheckerForLeaders: &dummyHealthChecker{},
++		loadBalancerForLeaders:  &dummyLoadBalancer{},
+ 	}
+ 
+ 	var wg sync.WaitGroup
+```
+
+---
+
+### Incident Patch 2: `47ea2144` (2026-11-10)
+**Commit Message**: Bugfix: do not panic when a yurthub serving port is disabled (#2744)
+
+ApplyTo leaves SecureServingInfo nil when BindPort <= 0, but prepareServerServing dereferenced it, so --proxy-secure-port=0 or --multiplexer-port=0 panicked at startup. Guard both serving blocks with a nil check; default ports stay positive so normal startup is unchanged.
+
+Signed-off-by: Rolando Medina Rosner <[REDACTED_EMAIL]>
+
+**File**: `cmd/yurthub/app/config/config.go` (modified, +22/-4)
+```diff
+@@ -452,8 +452,22 @@ func prepareServerServing(
+ 	}).ApplyTo(&cfg.YurtHubSecureProxyServerServing); err != nil {
+ 		return err
+ 	}
+-	cfg.YurtHubSecureProxyServerServing.ClientCA = caBundleProvider
+-	cfg.YurtHubSecureProxyServerServing.DisableHTTP2 = true
++	// SecureServingOptions.ApplyTo returns without populating the SecureServingInfo when
++	// BindPort is not positive, which is how a port is switched off. Guard the follow-up
++	// configuration so that disabling the port leaves the listener unconfigured instead of
++	// panicking here, which would stop yurthub from starting at all.
++	//
++	// This one is warned about rather than merely noted: in-cluster clients reach the
++	// apiserver through the secure proxy port, so switching it off keeps the node running
++	// while silently cutting every pod's access to the apiserver. Not starting at all was
++	// worse, but this must not be a quiet consequence of a stray flag either.
++	if cfg.YurtHubSecureProxyServerServing != nil {
++		cfg.YurtHubSecureProxyServerServing.ClientCA = caBundleProvider
++		cfg.YurtHubSecureProxyServerServing.DisableHTTP2 = true
++	} else {
++		klog.Warningf("secure proxy port is %d, so the secure proxy server is disabled and in-cluster clients will not be able to reach the apiserver through %s",
++			options.YurtHubProxySecurePort, projectinfo.GetHubName())
 +	}
-+	for _, commonName := range []string{
-+		"tunnel-agent-client", "tunnel-proxy-client", "system:node:tunnel-proxy-server",
-+	} {
-+		t.Run(commonName, func(t *testing.T) {
-+			csr := newRavenCSR(t, commonName)
-+			for _, requester := range requesters {
-+				t.Run(requester.name, func(t *testing.T) {
-+					request := csr.DeepCopy()
-+					request.Spec.Username = requester.username
-+					// Groups and other requester metadata must not substitute for username.
-+					request.Spec.UID = "test-serviceaccount-uid"
-+					request.Spec.Groups = []string{"system:serviceaccounts:kube-system", "system:authenticated"}
-+					request.Spec.Extra = map[string]certificatesv1.ExtraValue{
-+						"authentication.kubernetes.io/pod-name": {"raven-agent-test"},
-+					}
-+					for _, v1Supported := range []bool{true, false} {
-+						t.Run(fmt.Sprintf("v1Supported=%t", v1Supported), func(t *testing.T) {
-+							assertCSRReconcile(t, request, v1Supported, requester.wantApproved)
-+						})
-+					}
-+				})
+ 
+ 	if err := (&apiserveroptions.SecureServingOptions{
+ 		BindAddress: net.ParseIP(options.NodeIP),
+@@ -468,8 +482,12 @@ func prepareServerServing(
+ 	}).ApplyTo(&cfg.YurtHubMultiplexerServerServing); err != nil {
+ 		return err
+ 	}
+-	cfg.YurtHubMultiplexerServerServing.ClientCA = caBundleProvider
+-	cfg.YurtHubMultiplexerServerServing.DisableHTTP2 = true
++	if cfg.YurtHubMultiplexerServerServing != nil {
++		cfg.YurtHubMultiplexerServerServing.ClientCA = caBundleProvider
++		cfg.YurtHubMultiplexerServerServing.DisableHTTP2 = true
++	} else {
++		klog.Infof("multiplexer port is %d, so the multiplexer server is disabled", options.PortForMultiplexer)
++	}
+ 	return nil
+ }
+ 
+```
+
+**File**: `cmd/yurthub/app/config/serving_disabled_port_test.go` (added, +211/-0)
+```diff
+@@ -0,0 +1,211 @@
++/*
++Copyright 2026 The OpenYurt Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package config
++
++import (
++	"crypto/rand"
++	"crypto/rsa"
++	"crypto/tls"
++	"crypto/x509"
++	"crypto/x509/pkix"
++	"encoding/pem"
++	"math/big"
++	"os"
++	"path/filepath"
++	"testing"
++	"time"
++
++	"github.com/openyurtio/openyurt/cmd/yurthub/app/options"
++)
++
++// fakeCertManager serves a real self-signed certificate file, which is all
++// prepareServerServing needs: a server cert/key pair path and a CA bundle path.
++type fakeCertManager struct {
++	certFile string
++}
++
++func (f *fakeCertManager) Start()                                   {}
++func (f *fakeCertManager) Stop()                                    {}
++func (f *fakeCertManager) Ready() bool                              { return true }
++func (f *fakeCertManager) UpdateBootstrapConf(_ string) error       { return nil }
++func (f *fakeCertManager) GetHubConfFile() string                   { return "" }
++func (f *fakeCertManager) GetCAData() []byte                        { return nil }
++func (f *fakeCertManager) GetCaFile() string                        { return f.certFile }
++func (f *fakeCertManager) GetAPIServerClientCert() *tls.Certificate { return nil }
++func (f *fakeCertManager) GetHubServerCert() *tls.Certificate       { return nil }
++func (f *fakeCertManager) GetHubServerCertFile() string             { return f.certFile }
++
++func writeSelfSignedCert(t *testing.T, dir string) string {
++	t.Helper()
++	key, err := rsa.GenerateKey(rand.Reader, 2048)
++	if err != nil {
++		t.Fatalf("could not generate key: %v", err)
++	}
++	tmpl := &x509.Certificate{
++		SerialNumber:          big.NewInt(1),
++		Subject:               pkix.Name{CommonName: "yurthub-test-ca"},
++		NotBefore:             time.Now().Add(-time.Hour),
++		NotAfter:              time.Now().Add(24 * time.Hour),
++		IsCA:                  true,
++		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
++		BasicConstraintsValid: true,
++	}
++	der, err := x509.CreateCertificate(rand.Reader, tmpl, tmpl, &key.PublicKey, key)
++	if err != nil {
++		t.Fatalf("could not create certificate: %v", err)
++	}
++	path := filepath.Join(dir, "yurthub-server-current.pem")
++	f, err := os.Create(path)
++	if err != nil {
++		t.Fatalf("could not create cert file: %v", err)
++	}
++	defer f.Close()
++	if err := pem.Encode(f, &pem.Block{Type: "CERTIFICATE", Bytes: der}); err != nil {
++		t.Fatalf("could not encode certificate: %v", err)
++	}
++	if err := pem.Encode(f, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)}); err != nil {
++		t.Fatalf("could not encode key: %v", err)
++	}
++	return path
++}
++
++// A non-positive port is how a listener is switched off: SecureServingOptions.ApplyTo
++// returns early without populating the SecureServingInfo. Configuring the returned
++// (nil) SecureServingInfo unconditionally used to panic here, so setting
++// --multiplexer-port=0 or --proxy-secure-port=0 stopped yurthub from starting at all —
++// which on an edge node means it never comes back from a reboot.
++func TestPrepareServerServingWithDisabledPorts(t *testing.T) {
++	dir, err := os.MkdirTemp("", "yurthub-serving")
++	if err != nil {
++		t.Fatalf("could not create temp dir: %v", err)
++	}
++	defer os.RemoveAll(dir)
++	certMgr := &fakeCertManager{certFile: writeSelfSignedCert(t, dir)}
++
++	testcases := map[string]struct {
++		multiplexerPort int
++		secureProxyPort int
++		wantMultiplexer bool
++		wantSecureProxy bool
++	}{
++		"multiplexer port disabled": {
++			multiplexerPort: 0, secureProxyPort: 0, wantMultiplexer: false, wantSecureProxy: false,
++		},
++		"negative ports are disabled too": {
++			multiplexerPort: -1, secureProxyPort: -1, wantMultiplexer: false, wantSecureProxy: false,
++		},
++		// The realistic mitigation: close the routable multiplexer listener while the
++		// secure proxy that pods talk to keeps serving. A positive port really binds, so
++		// use one that will not collide with a yurthub running on this machine.
++		"only the multiplexer port disabled": {
++			multiplexerPort: 0, secureProxyPort: 34681, wantMultiplexer: false, wantSecureProxy: true,
++		},
++	}
++
++	for name, tt := range testcases {
++		t.Run(name, func(t *testing.T) {
++			opts := options.NewYurtHubOptions()
++			opts.NodeIP = "127.0.0.1"
++			opts.YurtHubHost = "127.0.0.1"
++			opts.YurtHubProxyHost = "127.0.0.1"
++			// Insecure listeners actually bind, so keep them off in the unit test.
++			opts.YurtHubPort = 0
++			opts.
+```
+
+---
+
+### Incident Patch 3: `6cdfd1e4` (2026-11-10)
+**Commit Message**: Security/csr approver identity binding audit logging (#2738)
+
+* fix(yurtmanager): prevent nil map panic in hubleader controller when LeaderNodeLabelSelector is nil
+
+* fix(yurthub): add missing Version in pod GC key construction causing key mismatch in enhancement mode
+
+In gcPodsWhenRestart, KeyBuildInfo for pods fetched from the apiserver
+was missing the Version field. In enhancement mode, this produced keys
+like 'pods..core' instead of 'pods.v1.core', causing them to never
+match the cached keys from ListResourceKeysOfComponent. As a result,
+all cached pods appeared deleted, triggering the safety guard that
+skips GC entirely — making pod GC silently non-functional on restart.
+
+Added Version: 'v1' to the KeyBuildInfo and created gc_test.go with
+unit tests that prove the mismatch and verify the fix.
+
+* fix(yurthub): use uint64 parsing for resourceVersion in completeListObjWithObjs to prevent overflow
+
+In completeListObjWithObjs, resourceVersion was parsed using strconv.Atoi into a signed Go int, ignoring parsing errors. On 32-bit platforms (such as ARM32 linux/arm/v7 edge devices), signed int is 32-bit (max 2147483647). Any resourceVersion above 2^31-1 caused strconv.Atoi to return E
+
+**File**: `pkg/yurthub/cachemanager/cache_manager.go` (modified, +13/-8)
+```diff
+@@ -325,23 +325,28 @@ func (cm *cacheManager) prepareGvkForListObj(gvr schema.GroupVersionResource) (s
+ }
+ 
+ func completeListObjWithObjs(listObj runtime.Object, objs []runtime.Object) error {
+-	listRv := 0
+-	rvStr := ""
+-	rvInt := 0
++	var listRv uint64
+ 	accessor := meta.NewAccessor()
+ 	for i := range objs {
+-		rvStr, _ = accessor.ResourceVersion(objs[i])
+-		rvInt, _ = strconv.Atoi(rvStr)
+-		if rvInt > listRv {
+-			listRv = rvInt
++		rvStr, err := accessor.ResourceVersion(objs[i])
++		if err != nil || len(rvStr) == 0 {
++			continue
++		}
++		rvUint, err := strconv.ParseUint(rvStr, 10, 64)
++		if err != nil {
++			klog.Warningf("failed to parse resourceVersion %q: %v", rvStr, err)
++			continue
++		}
++		if rvUint > listRv {
++			listRv = rvUint
+ 		}
+ 	}
+ 
+ 	if err := meta.SetList(listObj, objs); err != nil {
+ 		return fmt.Errorf("could not meta set list with %d objects, %v", len(objs), err)
+ 	}
+ 
+-	return accessor.SetResourceVersion(listObj, strconv.Itoa(listRv))
++	return accessor.SetResourceVersion(listObj, strconv.FormatUint(listRv, 10))
+ }
+ 
+ func generateEmptyListObjOfGVK(listGvk schema.GroupVersionKind) (runtime.Object, error) {
+```
+
+**File**: `pkg/yurthub/cachemanager/cache_manager_test.go` (modified, +57/-0)
+```diff
+@@ -3774,3 +3774,60 @@ func TestCacheWatchResponseKeepsInMemoryCacheConsistentWithDiskOnAccessConflict(
+ }
+ 
+ // TODO: in-memory cache unit tests
++
++func Test_completeListObjWithObjs(t *testing.T) {
++	testcases := map[string]struct {
++		objs       []runtime.Object
++		expectedRv string
++	}{
++		"normal resourceVersion numbers": {
++			objs: []runtime.Object{
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod1", ResourceVersion: "100"}},
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", ResourceVersion: "250"}},
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod3", ResourceVersion: "150"}},
++			},
++			expectedRv: "250",
++		},
++		"large uint64 resourceVersion exceeding 32-bit signed int max": {
++			objs: []runtime.Object{
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod1", ResourceVersion: "2147483647"}},
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", ResourceVersion: "3000000000"}},
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod3", ResourceVersion: "2500000000"}},
++			},
++			expectedRv: "3000000000",
++		},
++		"very large 64-bit unsigned int resourceVersion": {
++			objs: []runtime.Object{
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod1", ResourceVersion: "18446744073709551600"}},
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", ResourceVersion: "100"}},
++			},
++			expectedRv: "18446744073709551600",
++		},
++		"empty and invalid resourceVersions handled safely": {
++			objs: []runtime.Object{
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod1", ResourceVersion: ""}},
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", ResourceVersion: "invalid"}},
++				&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod3", ResourceVersion: "500"}},
++			},
++			expectedRv: "500",
++		},
++	}
++
++	for name, tc := range testcases {
++		t.Run(name, func(t *testing.T) {
++			listObj := &v1.PodList{}
++			err := completeListObjWithObjs(listObj, tc.objs)
++			if err != nil {
++				t.Fatalf("unexpected error: %v", err)
++			}
++			accessor := meta.NewAccessor()
++			rv, err := accessor.ResourceVersion(listObj)
++			if err != nil {
++				t.Fatalf("failed to get list object resourceVersion: %v", err)
++			}
++			if rv != tc.expectedRv {
++				t.Errorf("expected list resourceVersion %q, got %q", tc.expectedRv, rv)
 +			}
 +		})
 +	}
 +}
+```
+
+**File**: `pkg/yurthub/gc/gc.go` (modified, +1/-0)
+```diff
+@@ -141,6 +141,7 @@ func (m *GCManager) gcPodsWhenRestart() {
+ 			Namespace: ns,
+ 			Name:      name,
+ 			Resources: "pods",
++			Version:   "v1",
+ 		})
+ 		if err != nil {
+ 			klog.Errorf("could not get pod key for %s/%s, %v", ns, name, err)
+```
+
+**File**: `pkg/yurthub/gc/gc_test.go` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ /*
+-Copyright 2026 The OpenYurt Authors.
++Copyright 2025 The OpenYurt Authors.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+```
+
+**File**: `pkg/yurtmanager/controller/csrapprover/csr_approver_controller.go` (modified, +19/-0)
+```diff
+@@ -388,6 +388,10 @@ func isYurtTLSServerCert(csr *certificatesv1.CertificateSigningRequest, x509cr *
+ 		return false
+ 	}
+ 
++	if strings.HasPrefix(csr.Spec.Username, "system:node:") && csr.Spec.Username != x509cr.Subject.CommonName {
++		return false
++	}
 +
-+func TestRavenCSRTemplates(t *testing.T) {
-+	testcases := []struct {
-+		name         string
-+		mutate       func(*certificatesv1.CertificateSigningRequest, *x509.CertificateRequest)
-+		wantApproved bool
-+	}{
-+		{"valid template", func(_ *certificatesv1.CertificateSigningRequest, _ *x509.CertificateRequest) {}, true},
-+		{"DNS SAN only", func(_ *certificatesv1.CertificateSigningRequest, req *x509.CertificateRequest) {
-+			req.IPAddresses = nil
-+		}, true},
-+		{"IP SAN only", func(_ *certificatesv1.CertificateSigningRequest, req *x509.CertificateRequest) {
-+			req.DNSNames = nil
+ 	if !serverRequiredUsages.Equal(usagesToSet(csr.Spec.Usages)) {
+ 		return false
+ 	}
+@@ -415,6 +419,21 @@ func isYurtHubNodeCert(csr *certificatesv1.CertificateSigningRequest, x509cr *x5
+ 		return false
+ 	}
+ 
++	// SECURITY FIX: Bind the requester identity to the requested node identity.
++	// This prevents lateral movement where one node requests certs for another node.
++	// Exception: system:bootstrappers group is allowed for initial node certificate issuance.
++	if strings.HasPrefix(csr.Spec.Username, "system:node:") {
++		// An existing node is requesting a cert - the CN must match the requesting node's identity
++		if csr.Spec.Username != x509cr.Subject.CommonName {
++			klog.Warningf("CSR %s: requester username %q does not match requested CommonName %q",
++				csr.Name, csr.Spec.Username, x509cr.Subject.CommonName)
++			return false
++		}
++	}
++	// If username does not start with "system:node:", it should be a bootstrap token (system:bootstrappers).
++	// Bootstrap tokens are allowed to request node certs during initial join.
++	// We don't need additional checks here as the API server already validates bootstrap token permissions.
++
+ 	if !clientRequiredUsages.Equal(usagesToSet(csr.Spec.Usages)) {
+ 		return false
+ 	}
+```
+
+**File**: `pkg/yurtmanager/controller/csrapprover/csr_approver_controller_test.go` (modified, +135/-0)
+```diff
+@@ -308,6 +308,141 @@ func TestReconcile(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		"yurthub node client CSR with mismatched node username and commonName": {
++			obj: &certificatesv1.CertificateSigningRequest{
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      "mismatched-node-client-csr",
++					Namespace: "default",
++				},
++				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:node:attacker-node",
++					SignerName: certificatesv1.KubeAPIServerClientSignerName,
++					Usages: []certificatesv1.KeyUsage{
++						certificatesv1.UsageDigitalSignature,
++						certificatesv1.UsageKeyEncipherment,
++						certificatesv1.UsageClientAuth,
++					},
++					Request: newCSRData("system:node:victim-node", []string{token.YurtHubCSROrg, user.NodesGroup, "openyurt:tenant:xxx"}, []string{}, []net.IP{}),
++				},
++			},
++			csrV1Supported: true,
++			skipRequest:    true,
++			expectedObj: &certificatesv1.CertificateSigningRequest{
++				TypeMeta: metav1.TypeMeta{},
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      "mismatched-node-client-csr",
++					Namespace: "default",
++				},
++				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:node:attacker-node",
++					SignerName: certificatesv1.KubeAPIServerClientSignerName,
++					Usages: []certificatesv1.KeyUsage{
++						certificatesv1.UsageDigitalSignature,
++						certificatesv1.UsageKeyEncipherment,
++						certificatesv1.UsageClientAuth,
++					},
++					Request: []byte{},
++				},
++				// SECURITY: CSR should NOT be auto-approved - Status should remain empty
++				Status: certificatesv1.CertificateSigningRequestStatus{},
++			},
 +		},
-```
-
----
-
-### Incident Patch 2: `e1c26885` (2026-11-09)
-**Commit Message**: build(deps): bump github.com/go-errors/errors from 1.4.2 to 1.5.1 (#2832)
-
-Bumps [github.com/go-errors/errors](https://github.com/go-errors/errors) from 1.4.2 to 1.5.1.
-- [Release notes](https://github.com/go-errors/errors/releases)
-- [Commits](https://github.com/go-errors/errors/compare/v1.4.2...v1.5.1)
-
----
-updated-dependencies:
-- dependency-name: github.com/go-errors/errors
-  dependency-version: 1.5.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@ require (
- require (
- 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
- 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
--	github.com/go-errors/errors v1.4.2
-+	github.com/go-errors/errors v1.5.1
- 	github.com/google/btree v1.1.3 // indirect
- 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
- 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -755,8 +755,8 @@ github.com/gkampitakis/go-diff v1.3.2 h1:Qyn0J9XJSDTgnsgHRdz9Zp24RaJeKMUHg2+PDZZ
- github.com/gkampitakis/go-diff v1.3.2/go.mod h1:LLgOrpqleQe26cte8s36HTWcTmMEur6OPYerdAAS9tk=
- github.com/gkampitakis/go-snaps v0.5.15 h1:amyJrvM1D33cPHwVrjo9jQxX8g/7E2wYdZ+01KS3zGE=
- github.com/gkampitakis/go-snaps v0.5.15/go.mod h1:HNpx/9GoKisdhw9AFOBT1N7DBs9DiHo/hGheFGBZ+mc=
--github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
--github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
-+github.com/go-errors/errors v1.5.1 h1:ZwEMSLRCapFLflTpT7NKaAc7ukJ8ZPEjzlxt8rPN8bk=
-+github.com/go-errors/errors v1.5.1/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
- github.com/go-fonts/dejavu v0.1.0/go.mod h1:4Wt4I4OU2Nq9asgDCteaAaWZOV24E+0/Pwo0gppep4g=
- github.com/go-fonts/latin-modern v0.2.0/go.mod h1:rQVLdDMK+mK1xscDwsqM5J8U2jrRa3T0ecnM9pNujks=
- github.com/go-fonts/liberation v0.1.1/go.mod h1:K6qoJYypsmfVjWg8KOVDQhLc8UDgIK2HYqyqAO9z7GY=
-```
-
----
-
-### Incident Patch 3: `75c6bdfd` (2026-11-09)
-**Commit Message**: build(deps): bump github.com/spf13/pflag from 1.0.6 to 1.0.10 (#2833)
-
-Bumps [github.com/spf13/pflag](https://github.com/spf13/pflag) from 1.0.6 to 1.0.10.
-- [Release notes](https://github.com/spf13/pflag/releases)
-- [Commits](https://github.com/spf13/pflag/compare/v1.0.6...v1.0.10)
-
----
-updated-dependencies:
-- dependency-name: github.com/spf13/pflag
-  dependency-version: 1.0.10
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ require (
- 	github.com/projectcalico/api v0.0.0-20240708202104-e3f70b269c2c
- 	github.com/prometheus/client_golang v1.22.0
- 	github.com/spf13/cobra v1.9.1
--	github.com/spf13/pflag v1.0.6
-+	github.com/spf13/pflag v1.0.10
- 	github.com/stretchr/testify v1.11.1
- 	github.com/vishvananda/netlink v1.3.1
- 	golang.org/x/net v0.56.0
-```
-
-**File**: `go.sum` (modified, +2/-1)
-```diff
-@@ -1172,8 +1172,9 @@ github.com/spf13/cobra v1.9.1 h1:CXSaggrXdbHK9CF+8ywj8Amf7PBRmPCOJugH954Nnlo=
- github.com/spf13/cobra v1.9.1/go.mod h1:nDyEzZ8ogv936Cinf6g1RU9MRY64Ir93oCnqb9wxYW0=
- github.com/spf13/pflag v0.0.0-20170130214245-9ff6c6923cff/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
- github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
--github.com/spf13/pflag v1.0.6 h1:jFzHGLGAlb3ruxLB8MhbI6A8+AQX/2eW4qeyNZXNp2o=
- github.com/spf13/pflag v1.0.6/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-+github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
-+github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
- github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
- github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
- github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
++		"yurthub node client CSR with matching node username should be approved": {
++			obj: &certificatesv1.CertificateSigningRequest{
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      "matched-node-client-csr",
++					Namespace: "default",
++				},
++				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:node:mynode",
++					SignerName: certificatesv1.KubeAPIServerClientSignerName,
++					Usages: []certificatesv1.KeyUsage{
++						certificatesv1.UsageDigitalSignature,
++						certificatesv1.UsageKeyEncipherment,
++						certificatesv1.UsageClientAuth,
++					},
++					Request: newCSRData("system:node:mynode", []string{token.YurtHubCSROrg, user.NodesGroup, "openyurt:tenant:xxx"}, []string{}, []net.IP{}),
++				},
++			},
++			csrV1Supported: true,
++			skipRequest:    true,
++			expectedObj: &certificatesv1.CertificateSigningRequest{
++				TypeMeta: metav1.TypeMeta{},
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      "matched-node-client-csr",
++					Namespace: "default",
++				},
++				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:node:mynode",
++					SignerName: certificatesv1.KubeAPIServerClientSignerName,
++					Usages: []certificatesv1.KeyUsage{
++						certificatesv1.UsageDigitalSignature,
++						certificatesv1.UsageKeyEncipherment,
++						certificatesv1.UsageClientAuth,
++					},
++					Request: []byte{},
++				},
++				// SECURITY: CSR should be auto-approved because username matches CN
++				Status: certificatesv1.CertificateSigningRequestStatus{
++					Conditions: []certificatesv1.CertificateSigningRequestCondition{
++						{
++							Type:    certificatesv1.CertificateApproved,
++							Status:  corev1.ConditionTrue,
++							Reason:  "AutoApproved",
++							Message: "Auto approving yurthub node client certificate",
++						},
++					},
++				},
++			},
++		},
++		"yurthub node client CSR from bootstrap token should be approved": {
++			obj: &certificatesv1.CertificateSigningRequest{
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      "bootstrap-node-client-csr",
++					Namespace: "default",
++				},
++				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:bootstrap:abcdef",
++					SignerName: certificatesv1.KubeAPIServerClientSignerName,
++					Usages: []certificatesv1.KeyUsage{
++						certificatesv1.UsageDigitalSignature,
++						certificatesv1.UsageKeyEncipherment,
++						certificatesv1.UsageClientAuth,
++					},
++					Request: newCSRData("system:node:new-node", []string{token.YurtHubCSROrg, user.NodesGroup}, []string{}, []net.IP{}),
++				},
++			},
++			csrV1Supported: true,
++			skipRequest:    true,
++			expectedObj: &certificatesv1.CertificateSigningRequest{
++				TypeMeta: metav1.TypeMeta{},
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      "bootstrap-node-client-csr",
++					Namespace: "default",
++				},
++				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:bootstrap:abcdef",
++					SignerName: certificatesv1.KubeAPIServerClientSignerName,
++					Usages: []certificatesv1.KeyUsage{
++						certificatesv1.UsageDigitalSignature,
++						certificatesv1.UsageKeyEncipherment,
++						certificatesv1.UsageClientAuth,
++					},
++					Request: []byte{},
++				},
++				// SECURITY: Bootstrap tokens should be allowed for initial node join
++				Status: certificatesv1.CertificateSigningRequestStatus{
++					Conditions: []certificatesv1.Cer
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2859** (closed): Fix CSR approver unit-test failures (@Copilot)
-- **PR #2858** (2026-11-09): fix(raven): 限制证书自动审批的申请者身份 (@zyjhtangtang)
-- **PR #2846** (2026-11-05): fix(yurthub): update service env in init containers in serviceenvupdater filter (@RaphaelFakhri)
-- **PR #2844** (2026-11-05): feat(claude): add openyurt-deploy skill for cluster deployment (@Jonny-ee)
-- **PR #2842** (2026-11-05): build(deps): bump github/codeql-action from 4.38.2 to 4.39.1 (@dependabot[bot])
-- **PR #2840** (closed): build(deps): bump github/codeql-action from 4.38.2 to 4.39.0 (@dependabot[bot])
+- **PR #2873** (2026-11-11): test(yurthub): fix pool scope metadata key format in multiplexer tests (@zyjhtangtang)
+- **PR #2871** (closed): [WIP] Fix failing GitHub Actions job golangci-lint (@Copilot)
+- **PR #2870** (closed): Normalize kubelet EnvironmentFile paths (@Copilot)
+- **PR #2869** (closed): Normalize kubelet environment-file paths (@Copilot)
+- **PR #2867** (closed): Remove duplicate environment-file parser declaration (@Copilot)
+- **PR #2864** (2026-11-10): build(deps): bump github.com/onsi/gomega from 1.42.1 to 1.44.0 (@dependabot[bot])
 
 ---
 
@@ -1672,58 +1948,57 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. raven): 限制证书自动审批的申请者身份 (#2858)
+## X. test(yurthub): fix pool scope metadata key format in multiplexer tests (#2873)
 
 **RULE**:
-When implementing operations in `pkg/yurtmanager/controller/csrapprover/csr_approver_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/yurthub/multiplexer/multiplexer_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bfaf2f37`: raven): 限制证书自动审批的申请者身份 (#2858). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `552dac7a`: test(yurthub): fix pool scope metadata key format in multiplexer tests (#2873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/yurtmanager/controller/csrapprover/csr_approver_controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/yurthub/multiplexer/multiplexer_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-const (
-	ravenAgentUsername        = "system:serviceaccount:kube-system:raven-agent-account"
-	ravenServerCertCommonName = "system:node:tunnel-proxy-server"
-)
-
-	ravenRecognizers = map[string]csrRecognizer{
-		constants.YurtTunnelProxyClientCSRCN: {
-			recognize:  isYurtTunnelProxyClientCert,
-			successMsg: "Auto approving tunnel-server proxy client certificate",
-		},
-		constants.YurtTunnelAgentCSRCN: {
-			recognize:  isYurtTunnelAgentCert,
-			successMsg: "Auto approving tunnel-agent client certificate",
-		},
-		ravenServerCertCommonName: {
-			recognize:  isYurtTLSServerCert,
-			successMsg: "Auto approving openyurt tls server certificate",
-		},
-	}
-
-	// Reserve Raven identities before generic recognizers to prevent approval through another template.
-	if r, protected := ravenRecognizers[x509cr.Subject.CommonName]; protected {
-		if csr.Spec.Username != ravenAgentUsername {
-			klog.InfoS("Leaving Raven CSR pending: unauthorized requester",
-				"csr", csr.Name, "commonName", x509cr.Subject.CommonName, "username", csr.Spec.Username)
-			return false, ""
-		}
-		if !r.recognize(csr, x509cr) {
-			klog.InfoS("Leaving Raven CSR pending: certificate template mismatch",
-				"csr", csr.Name, "commonNa
+	"k8s.io/apimachinery/pkg/runtime/schema"
+func (d *dummyHealthChecker) RenewKubeletLeaseTime()                {}
+func (d *dummyHealthChecker) IsHealthy() bool                       { return true }
+func (d *dummyHealthChecker) BackendIsHealthy(server *url.URL) bool { return true }
+func (d *dummyHealthChecker) PickOneHealthyBackend() *url.URL       { return nil }
+func (d *dummyHealthChecker) UpdateBackends(servers []*url.URL)     {}
+	// poolScopeMetadata is keyed by schema.GroupVersionResource.String(),
+	// e.g. "apps/v1, Resource=deployments", not the raw configmap value.
+	deploymentsGVR := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
+	assert.True(t, m.poolScopeMetadata.Has(deploymentsGVR.String()))
+	deploymentsKey := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}.String()
+	fsm.filterStores[deploymentsKey] = &filterStore{}
+		poolScopeMetadata:             sets.New(deploymentsKey),
+	assert.False(t, m.poolScopeMetadata.Has(deploymentsKey))
+	_, exists := fsm.filterStores[deploymentsKey]
+		// updateLeaderHubConfiguration purges filter stores of removed GVRs,
+		// so filterStoreManager must be initialized as NewReq
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			Request: csr.Spec.Request,
-			Usages:  make([]certificatesv1.KeyUsage, 0),
+func (d *dummyHealthChecker) RenewKubeletLeaseTime()                   {}
+func (d *dummyHealthChecker) IsHealthy() bool                          { return true }
+func (d *dummyHealthChecker) BackendIsHealthy(server *url.URL) bool     { return true }
+func (d *dummyHealthChecker) PickOneHealthyBackend() *url.URL          { return nil }
+func (d *dummyHealthChecker) UpdateBackends(servers []*url.URL)        {}
+	assert.True(t, m.poolScopeMetadata.Has("apps/v1/deployments"))
+	fsm.filterStores["apps/v1/deployments"] = &filterStore{}
+		poolScopeMetadata:             sets.New("apps/v1/deployments"),
+	assert.False(t, m.poolScopeMetadata.Has("apps/v1/deployments"))
+	_, exists := fsm.filterStores["apps/v1/deployments"]
+		poolScopeMetadata:             sets.New("apps/v1/deployments", "core/v1/services"),
+		leaderAddresses:               sets.New[string](),
+		healthCheckerForLeaders:       &dummyHealthChecker{},
+		loadBalancerForLeaders:        &dummyLoadBalancer{},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bfaf2f37` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `552dac7a` are properly handled with clean fallback behavior.

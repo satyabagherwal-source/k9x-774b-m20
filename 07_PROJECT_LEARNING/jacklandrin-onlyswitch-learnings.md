@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source**: github ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
-> **Source Version**: `5919d349`  
+> **Source Version**: `9f6d833e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T04:33:51.799Z  
+> **Timestamp**: 2026-11-12T04:50:18.907Z  
 > **Learning ID**: `learn-github-jacklandrin-onlyswitch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T04:33:51.562Z  
+> **Harvest Timestamp**: 2026-11-12T04:50:18.897Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6043 stars
+- **Stars / Engagement**: 6049 stars
 
 ---
 
@@ -37,837 +37,1083 @@
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `Modules/Sources/DesktopPet/DesktopPetPomodoroState.swift`
-```
-public enum DesktopPetPomodoroPhase: Equatable, Sendable {
-    case focus
-    case breakTime
-}
-
-public struct DesktopPetPomodoroState: Equatable, Sendable {
-    public let phase: DesktopPetPomodoroPhase
-    public let remainingTime: String
-
-    public init(phase: DesktopPetPomodoroPhase, remainingTime: String) {
-        self.phase = phase
-        self.remainingTime = remainingTime
-    }
-}
-
-```
-
-### Core Architecture Module: `Modules/Sources/DisplayBrightness/BrightnessNativeSyncState.swift`
-```
-/// Tracks observed native changes separately from our own writes and invalidates overlapping sync passes.
-public struct BrightnessNativeSyncState: Sendable {
-    private static let tolerance = 0.004
-    private var revision: UInt64 = 0
-    private var previous: [UInt32: Double] = [:]
-    private var expectedReadbacks: [UInt32: Double] = [:]
-    public init() {}
-    public mutating func beginCycle() -> UInt64 { revision &+= 1; return revision }
-    public func isCurrent(_ candidate: UInt64) -> Bool { candidate == revision }
-    public mutating func recordOwnWrite(id: UInt32, level: Double, readback: Double? = nil) {
-        let sampled = readback ?? level
-        previous[id] = sampled
-        // A read immediately after Set may still report the old value. Accept the requested
-        // value as our own echo on the next poll too, without masking later user changes.
-        expectedReadbacks[id] = abs(sampled - level) > Self.tolerance ? level : nil
-    }
-    public mutating func observe(id: UInt32, level: Double) -> Bool {
-        guard level.isFinite else { return false }
-        let expected = expectedReadbacks.removeValue(forKey: id)
-        guard let old = previous[id] else { previous[id] = level; return false }
-        guard abs(old - level) > Self.tolerance else { return false }
-        previous[id] = level
-        return expected.map { abs($0 - level) > Self.tolerance } ?? true
-    }
-
-    public mutating func observeChanges(
-        _ readings: [(display: BrightnessDisplay, level: Double)]
-    ) -> (id: UInt32, level: Double)? {
-        let changes = readings.filter {
-            $0.display.control == .native && observe(id: $0.display.id, level: $0.level)
-        }
-        return Self.preferredSource(in: changes)
-    }
-
-    public static func preferredSource(
-        in readings: [(display: BrightnessDisplay, level: Double)]
-    ) -> (id: UInt32, level: Double)? {
-        let source = readings.lazy.filter { $0.display.control == .native && $0.level.isFinite }.min {
-            if $0.display.isBuiltIn != $1.display.isBuiltIn { return $0.display.isBuiltIn }
-            return $0.display.id < $1.display.id
-        }
-        return source.map { ($0.display.id, $0.level) }
-    }
-
-    public static func targets(in displays: [BrightnessDisplay], excluding sourceID: UInt32) -> [BrightnessDisplay] {
-        displays.filter { !$0.isBuiltIn && $0.id != sourceID && $0.control != .unavailable }
-    }
-
-    public mutating func invalidate() {
-        revision &+= 1
-        previous.removeAll()
-        expectedReadbacks.removeAll()
-    }
-}
-
-```
-
-### Core Architecture Module: `Modules/Sources/OnlyAgent/Observation/StateObserver.swift`
+### Core Architecture Module: `Modules/Sources/AppFeature/CoreData/EvolutionCommandEntityLive.swift`
 ```
 //
-//  StateObserver.swift
-//  Modules
+//  EvolutionCommandEntityLive.swift
+//  OnlySwitch
 //
-//  Created by Bo Liu on 18.11.25.
-//
-
-import Foundation
-import AppKit
-
-@available(macOS 26.0, *)
-@MainActor
-public final class StateObserver {
-    public static let shared = StateObserver()
-    
-    private init() {}
-    
-    public func captureSystemState() -> SystemState {
-        let runningApps = getRunningApplications()
-        let activeWindows = getActiveWindows()
-        let fileChanges: [String] = [] // Can be enhanced with file system monitoring
-        let systemSettings: [String: String] = [:] // Can be enhanced with settings monitoring
-        
-        return SystemState(
-            runningApplications: runningApps,
-            activeWindows: activeWindows,
-            recentFileChanges: fileChanges,
-            systemSettings: systemSettings,
-            timestamp: Date()
-        )
-    }
-    
-    public func compareStates(before: SystemState, after: SystemState) -> StateDiff {
-        let newApps = Set(after.runningApplications).subtracting(before.runningApplications)
-        let closedApps = Set(before.runningApplications).subtracting(after.runningApplications)
-        let newWindows = Set(after.activeWindows).subtracting(before.activeWindows)
-        let closedWindows = Set(before.activeWindows).subtracting(after.activeWindows)
-        let fileChanges = Set(after.recentFileChanges).subtracting(before.recentFileChanges)
-        
-        var settingChanges: [String: String] = [:]
-        for (key, value) in after.systemSettings {
-            if before.systemSettings[key] != value {
-                settingChanges[key] = value
-            }
-        }
-        
-        return StateDiff(
-            newApplications: Array(newApps),
-            closedApplications: Array(closedApps),
-            newWindows: Array(newWindows),
-            closedWindows: Array(closedWindows),
-            fileChanges: Array(fileChanges),
-            settingChanges: settingChanges
-        )
-    }
-    
-    private func getRunningApplications() -> [String] {
-        let workspace = NSWorkspace.shared
-        return workspace.runningApplications.compactMap { app in
-            app.localizedName
-        }
-    }
-    
-    private func getActiveWindows() -> [String] {
-        var windowNames: [String] = []
-        let workspace = NSWorkspace.shared
-        for app in workspace.runningApplications {
-            if let name = app.localizedName {
-                windowNames.append(name)
-            }
-        }
-        return windowNames
-    }
-}
-
-```
-
-### Core Architecture Module: `Modules/Sources/OnlyControl/ControlItemViewState.swift`
-```
-//
-//  ControlItemReducer.swift
-//
-//
-//  Created by Jacklandrin on 2024/8/24.
+//  Created by Jacklandrin on 2024/6/9.
 //
 
-import AppKit
+import Extensions
 import Foundation
 import Switches
-import Defines
+import OnlySwitchPersistence
+import PrivilegedHelperCore
 
-public struct ControlItemViewState: Equatable, Hashable, Identifiable {
-    public var id: String
-    public var title: String
-    public var subtitle: String?
-    public var copyableSubtitle: Bool
-    public var detail: ControlItemDetail?
-    public var weight: Int
-    public var unitType: UnitType
-    public var status: Bool
-    public var iconData: Data
-    var controlType: ControlType
-    var opacity: Double = 1
-
-    public init(
-        id: String,
-        title: String,
-        subtitle: String? = nil,
-        copyableSubtitle: Bool = false,
-        detail: ControlItemDetail? = nil,
-        iconData: Data,
-        controlType: ControlType,
-        status: Bool = false,
-        weight: Int = 0,
-        unitType: UnitType = .builtIn
-    ) {
-        self.id = id
-        self.title = title
-        self.subtitle = subtitle
-        self.copyableSubtitle = copyableSubtitle
-        self.detail = detail
-        self.iconData = iconData
-        self.controlType = controlType
-        self.status = status
-        self.weight = weight
-        self.unitType = unitType
-    }
-
-    public var interaction: ControlItemInteraction {
-        detail.map(ControlItemInteraction.presentDetail) ?? .performControl
-    }
-
-    /// Shortcut icons are user-provided artwork, rather than glyphs. Preserve their
-    /// original colors instead of applying the tile tint as a template image.
-    public var usesTemplateIconRendering: Bool {
-        unitType != .shortcuts
-    }
-}
-
-public extension ControlItemViewState {
-    static func preview(id: String = "") -> Self {
-        .init(
-            id: id,
-            title: "Long Long Control Item",
-            iconData: NSImage(systemSymbolName: "gear")
-                .resizeMaintainingAspectRatio(withSize: NSSize(width: 50, height: 50))!
-                .pngData!,
-            controlType: .Switch
-        )
-    }
-}
-
-```
-
-### Core Architecture Module: `Modules/Sources/RemoteCore/AphroditeRemoteModels.swift`
-```
-import Foundation
-#if canImport(FoundationXML)
-import FoundationXML
-#endif
-
-public enum AphroditeRemoteHTMLValidator {
-    public static let maximumDocumentBytes = 1_048_576
-    public static func validated(_ html: String) -> String? {
-        guard html.utf8.count <= maximumDocumentBytes else { return nil }
-        let trimmed = html.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let expression = try? NSRegularExpression(pattern: #"(?is)^\s*(?:<!doctype\s+html[^>]*>\s*)?<html\b[^>]*>.*</html>\s*$"#),
-              expression.firstMatch(in: trimmed, range: NSRange(trimmed.startIndex..., in: trimmed)) != nil else { return nil }
-        return trimmed
-    }
-}
-
-public enum AphroditeRemoteSVGValidator {
-    public static let maximumBytes = 32_768
-    public static func validated(_ svg: String) -> String? {
-        let candidate = svg.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard candidate.isEmpty == false, candidate.utf8.count <= maximumBytes,
-              candidate.contains("<!") == false, candidate.contains("<?") == false else { return nil }
-        let delegate = AphroditeRemoteSVGValidationDelegate()
-        let parser = XMLParser(data: Data(candidate.utf8))
-        parser.shouldProcessNamespaces = false
-        parser.shouldResolveExternalEntities = false
-        parser.delegate = delegate
-        return parser.parse() && delegate.isValid ? candidate : nil
-    }
-}
-
-private final class AphroditeRemoteSVGValidationDelegate: NSObject, XMLParserDelegate {
-    private static let containers: Set<String> = ["svg", "g", "defs", "linearGradient", "radialGradient"]
-    private static let shapes: Set<String> = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]
-    private static let elements = containers.union(shapes).union(["stop"])
-    private static let numericAttributes: Set<String> = ["width", "height", "x", "y", "rx", "ry", "cx", "cy", "r", "fx", "fy", "x1", "y1", "x2", "y2", "stroke-width"]
-    private static let opacityAttributes: Set<String> = ["opacity", "fill-opacity", "stroke-opacity", "stop-opacity"]
-    private static let numberPattern = #"[-+]?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?"#
-    private static let idPattern = #"[A-Za-z_][A-Za-z0-9_.-]*"#
-    private static let numberExpression = try! NSRegularExpression(pattern: numberPattern)
-    private(set) var isValid = true
-    private var depth = 0, elementCount = 0, visibleShapeCount = 0, nonRenderingDepth = 0, pathDataLength = 0, numberCount = 0
-
-    func parser(_ parser: XMLParser, didStartElement name: String, namespaceURI: String?, qualifiedName: String?, attributes: [String: String] = [:]) {
-        guard isValid else { parser.abortParsing(); return }
-        depth += 1; elementCount += 1
-        guard depth <= 64, elementCount <= 256, Self.elements.contains(name) else { reject(parser); return }
-        if elementCount == 1 {
-            guard name == "svg", attributes["xmlns"] == "http://www.w3.org/2000/svg", attributes["viewBox"].map(validViewBox) == true else { reject(parser); return }
-        } else if name == "svg" { reject(parser); return }
-        guard attributes.allSatisfy({ validAttribute(name: $0.key, value: $0.value, element: name, isRoot: elementCount == 1) }) else { reject(parser); return }
-        if Self.shapes.contains(name), nonRenderingDepth == 0 { visibleShapeCount += 1 }
-        if ["defs", "linearGradient", "radialGradient"].contains(name) { nonRenderingDepth += 1 }
-    }
-    func parser(_ parser: XMLParser, didEndElement name: String, namespaceURI: String?, qualifiedName: String?) {
-        if ["defs", "linearGradient", "radialGradient"].contains(name) { nonRenderingDepth -= 1 }; depth -= 1
-    }
-    func parserDidEndDocument(_ parser: XMLParser) { isValid = depth == 0 && visibleShapeCount > 0 }
-    func parser(_ parser: XMLParser, parseErrorOccurred: Error) { isValid = false }
-    func parser(_ parser: XMLParser, validationErrorOccurred: Error) { isValid = false }
-    func parser(_ parser: XMLParser, foundProcessingInstructionWithTarget: String, data: String?) { reject(parser) }
-    func parser(_ parser: XMLParser, foundExternalEntityDeclarationWithName: String, publicID: String?, systemID: String?) { reject(parser) }
-    func parser(_ parser: XMLParser, foundInternalEntityDeclarationWithName: String, value: String?) { reject(parser) }
-    private func validAttribute(name: String, value: String, element: String, isRoot: Bool) -> Bool {
-        switch name {
-        case "xmlns": isRoot && value == "http://www.w3.org/2000/svg"
-        case "viewBox": isRoot && validViewBox(value)
-        case "id": matches(value, Self.idPattern)
-        case let key where Self.numericAttributes.contains(key): validNumber(value)
-        case let key where Self.opacityAttributes.contains(key): validNumber(value) && (parsedNumbers(value).first.map { (0...1).contains($0) } ?? false)
-        case "offset": value.hasSuffix("%") ? (Double(value.dropLast()).map { (0...100).contains($0) } ?? false) : (validNumber(value) && (parsedNumbers(value).first.map { (0...1).contains($0) } ?? false))
-        case "fill", "stroke", "stop-color": value == "none" || matches(value, #"#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})"#) || matches(value, #"url\(#[A-Za-z_][A-Za-z0-9_.-]*\)"#)
-        case "stroke-linecap": ["butt", "round", "square"].contains(value)
-        case "stroke-linejoin": ["miter", "round", "bevel"].contains(value)
-        case "transform", "gradientTransform": matches(value, #"(?:(?:matrix|translate|scale|rotate)\(\s*"# + Self.numberPattern + #"(?:\s*(?:,|\s)\s*"# + Self.numberPattern + #"){0,5}\s*\)\s*)+"#) && consumeNumbers(value, maximum: 24)
-        case "gradientUnits": ["objectBoundingBox", "userSpaceOnUse"].contains(value)
-        case "spreadMethod": ["pad", "reflect", "repeat"].contains(value)
-        case "d": element == "path" && validPath(value)
-        case "points": (element == "polyline" || element == "polygon") && validPoints(value)
-        default: false
-        }
-    }
-    private func validViewBox(_ value: String) -> Bool { let v = parsedNumbers(value); return v.count == 4 && v.allSatisfy { $0.isFinite && abs($0) <= 1_000_000 } && v[2] > 0 && v[3] > 0 && v[2] <= 512 && v[3] <= 512 }
-    private func validNumber(_ value: String) -> Bool { matches(value, Self.numberPattern) && (parsedNumbers(value).first.map { $0.isFinite && abs($0) <= 1_000_000 } ?? false) }
-    private func validPath(_ value: String) -> Bool { pathDataLength += value.utf8.count; return pathDataLength <= 16_384 && matches(value, #"[MmLlHhVvCcSsQqTtAaZz][MmLlHhVvCcSsQqTtAaZz0-9,.+\-eE\s]*"#) && consumeNumbers(value, maximum: 2_048) }
-    private func validPoints(_ value: String) -> Bool { let v = parsedNumbers(value); return v.count >= 4 && v.count.isMultiple(of: 2) && v.allSatisfy { $0.isFinite && abs($0) <= 1_000_000 } && consumeNumbers(value, maximum: 2_048) }
-    private func consumeNumbers(_ value: String, maximum: Int) -> Bool { let m = Self.numberExpression.matches(in: value, range: NSRange(value.startIndex..., in: value)); let v = m.compactMap { Range($0.range, in: value).flatMap { Double(value[$0]) } }; guard v.count == m.count, v.allSatisfy({ $0.isFinite && abs($0) <= 1_000_000 }) else { return false }; numberCount += v.count; return v.count <= maximum && numberCount <= 2_048 }
-    private func parsedNumbers(_ value: String) -> [Double] { guard matches(value, #"(?:"# + Self.numberPattern + #")(?:[\s,]+"# + Self.numberPattern + #")*"#) else { return [] }; return value.split(whereSeparator: { $0 == "," || $0.isWhitespace }).compactMap { Double($0) } }
-    private func matches(_ value: String, _ pattern: String) -> Bool { (try? NSRegularExpression(pattern: "^(?:\(pattern))$").firstMatch(in: value, range: NSRange(value.startIndex..., in: value))) != nil }
-    private func reject(_ parser: XMLParser) { isValid = false; parser.abortParsing() }
-}
-
-public enum AphroditeRemoteValidationError: Error, Equatable, Sendable {
-    case invalidTitle
-    case invalidHTML
-    case invalidIcon
-    case invalidDescriptor
-    case duplicateAppID
-    case invalidChunk
-    case snapshotTooLarge
-    case unsupportedFormatVersion
-}
-
-public struct AphroditePersonalTool: Codable, Equatable, Identifiable, Sendable {
-    public static let currentFormatVersion = 1
-    public static let maximumHTMLBytes = 1_048_576
-    public static let maximumIconBytes = 131_072
-    public static let maximumTitleCharacters = 80
-
-    public let id: UUID
-    public let title: String
-    public let html: String
-    public let iconSVG: String?
-    public let updatedAt: Date
-    public let formatVersion: Int
-
-    public init(id: UUID, title: String, html: String, iconSVG: String? = nil, updatedAt: Date) throws {
-        let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard title.isEmpty == false, title.count <= Self.maximumTitleCharacters else {
-            throw AphroditeRemoteValidationError.invalidTitle
-        }
-        guard html.utf8.count <= Self.maximumHTMLBytes,
-              let html = AphroditeRemoteHTMLValidator.validated(html) else {
-            throw AphroditeRemoteValidationError.invalidHTML
-        }
-        let validatedIcon = iconSVG.flatMap(AphroditeRemoteSVGValidator.validated)
-        if iconSVG != nil, validatedIcon == nil {
-            throw AphroditeRemoteValidationError.invalidIcon
-        }
-        self.id = id
-        self.title = title
-        self.html = html
-        self.iconSVG = validatedIcon
-        self.updatedAt = updatedAt
-        self.formatVersion = Self.currentFormatVersion
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        guard try values.decode(Int.self, forKey: .formatVersion) == Self.currentFormatVersion else {
-            throw AphroditeRemoteValidationError.unsupportedFormatVersion
-        }
-        try self.init(
-            id: values.decode(UUID.self, forKey: .id),
-            t
-```
-
-### Core Architecture Module: `Modules/Sources/RemoteCore/ClaudeUsageModels.swift`
-```
-import Foundation
-public struct RemoteClaudeUsageRequest: Codable, Equatable, Sendable {
-    public let requestID: UUID
-    public init(requestID: UUID) {
-        self.requestID = requestID
-    }
-}
-
-public struct ClaudeUsageAccountDTO: Codable, Equatable, Sendable {
-    public let email: String?
-    public let plan: String?
-    public init(email: String?, plan: String?) {
-        self.email = email
-        self.plan = plan
-    }
-}
-
-public struct ClaudeQuotaWindowDTO: Codable, Equatable, Sendable {
-    public let remainingPercent: Int
-    public let resetAt: Date?
-    public init(remainingPercent: Int, resetAt: Date?) {
-        self.remainingPercent = min(max(remainingPercent, 0), 100)
-        self.resetAt = resetAt
-    }
-}
-
-public struct ClaudeModelUsageDTO: Codable, Equatable, Sendable, Identifiable {
-    public let id: String
-    public let name: String
-    public let quota: ClaudeQuotaWindowDTO
-    public init(id: String, name: String, quota: ClaudeQuotaWindowDTO) {
-        self.id = id
-        self.name = name
-        self.quota = quota
-    }
-}
-
-public struct ClaudeExtraUsageDTO: Codable, Equatable, Sendable {
-    public let isEnabled: Bool
-    public let used: Double?
-    public let limit: Double?
-    public let currency: String?
-    public let utilization: Double?
-    public init(isEnabled: Bool, used: Double?, limit: Double?, currency: String?, utilization: Double?) {
-        self.isEnabled = isEnabled
-        self.used = used
-        self.limit = limit
-        self.currency = currency
-        self.utilization = utilization
-    }
-}
-
-public struct RemoteClaudeUsageSnapshot: Codable, Equatable, Sendable {
-    public let account: ClaudeUsageAccountDTO
-    public let session: ClaudeQuotaWindowDTO?
-    public let weekly: ClaudeQuotaWindowDTO?
-    public let models: [ClaudeModelUsageDTO]
-    public let extraUsage: ClaudeExtraUsageDTO?
-    public let fetchedAt: Date
-    public init(account: ClaudeUsageAccountDTO, session: ClaudeQuotaWindowDTO?, weekly: ClaudeQuotaWindowDTO?, models: [ClaudeModelUsageDTO], extraUsage: ClaudeExtraUsageDTO?, fetchedAt: Date) {
-        self.account = account
-        self.session = session
-        self.weekly = weekly
-        self.models = models
-        self.extraUsage = extraUsage
-        self.fetchedAt = fetchedAt
-    }
-}
-
-public struct RemoteClaudeUsageResult: Codable, Equatable, Sendable {
-    public let requestID: UUID
-    public let result: Result<RemoteClaudeUsageSnapshot, RemoteProtocolError>
-    public init(requestID: UUID, result: Result<RemoteClaudeUsageSnapshot, RemoteProtocolError>) {
-        self.requestID = requestID; self.result = result
-    }
-    private enum CodingKeys: String, CodingKey { case requestID, success, failure }
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        requestID = try container.decode(UUID.self, forKey: .requestID)
-        let hasSuccess = container.contains(.success), hasFailure = container.contains(.failure)
-        guard hasSuccess != hasFailure else {
-            throw DecodingError.dataCorruptedError(forKey: .success, in: container, debugDescription: "Result must contain exactly one of success or failure.")
-        }
-        result = hasSuccess
-            ? .success(try container.decode(RemoteClaudeUsageSnapshot.self, forKey: .success))
-            : .failure(try container.decode(RemoteProtocolError.self, forKey: .failure))
-    }
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(requestID, forKey: .requestID)
-        switch result {
-        case let .success(value): try container.encode(value, forKey: .success)
-        case let .failure(error): try container.encode(error, forKey: .failure)
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `Modules/Sources/RemoteCore/CodexUsageModels.swift`
-```
-import Foundation
-
-public struct RemoteCodexUsageRequest: Codable, Equatable, Sendable {
-    public let requestID: UUID
-    public let includeLocalActivity: Bool
-    public init(requestID: UUID, includeLocalActivity: Bool) {
-        self.requestID = requestID
-        self.includeLocalActivity = includeLocalActivity
-    }
-}
-
-public struct CodexUsageAccountDTO: Codable, Equatable, Sendable {
-    public let email: String?
-    public let plan: String?
-    public init(email: String?, plan: String?) { self.email = email; self.plan = plan }
-}
-
-public struct CodexQuotaWindowDTO: Codable, Equatable, Sendable {
-    public let remainingPercent: Int
-    public let resetAt: Date?
-    public init(remainingPercent: Int, resetAt: Date?) {
-        self.remainingPercent = min(max(remainingPercent, 0), 100)
-        self.resetAt = resetAt
-    }
-}
-
-public enum CodexResetCreditsDTO: Codable, Equatable, Sendable {
-    case unavailable
-    case unlimited
-    case available(count: Int, expiresAt: Date?)
-}
-
-public enum CodexCreditBalanceDTO: Codable, Equatable, Sendable {
-    case unavailable
-    case unlimited
-    case available(remaining: Double, limit: Double?, unit: String)
-}
-
-public enum CodexUsageSourceDTO: String, Codable, Equatable, Sendable { case oauth, cli }
-
-public struct CodexDailyUsageDTO: Codable, Equatable, Sendable, Identifiable {
-    public let date: Date
-    public let tokenCount: Int
-    public var id: Date { date }
-    public init(date: Date, tokenCount: Int) { self.date = date; self.tokenCount = tokenCount }
-}
-
-public struct CodexActivityEstimateDTO: Codable, Equatable, Sendable {
-    public let dailyUsage: [CodexDailyUsageDTO]
-    public let isPartial: Bool
-    public init(dailyUsage: [CodexDailyUsageDTO], isPartial: Bool) {
-        self.dailyUsage = dailyUsage; self.isPartial = isPartial
-    }
-}
-
-public struct RemoteCodexUsageSnapshot: Codable, Equatable, Sendable {
-    public let account: CodexUsageAccountDTO
-    public let session: CodexQuotaWindowDTO?
-    public let weekly: CodexQuotaWindowDTO?
-    public let resetCredits: CodexResetCreditsDTO
-    public let creditBalance: CodexCreditBalanceDTO
-    public let source: CodexUsageSourceDTO
-    public let fetchedAt: Date
-    public let activity: CodexActivityEstimateDTO?
-    public init(account: CodexUsageAccountDTO, session: CodexQuotaWindowDTO?, weekly: CodexQuotaWindowDTO?, resetCredits: CodexResetCreditsDTO, creditBalance: CodexCreditBalanceDTO, source: CodexUsageSourceDTO, fetchedAt: Date, activity: CodexActivityEstimateDTO?) {
-        self.account = account; self.session = session; self.weekly = weekly
-        self.resetCredits = resetCredits; self.creditBalance = creditBalance
-        self.source = source; self.fetchedAt = fetchedAt; self.activity = activity
-    }
-}
-
-public struct RemoteCodexUsageResult: Codable, Equatable, Sendable {
-    public let requestID: UUID
-    public let result: Result<RemoteCodexUsageSnapshot, RemoteProtocolError>
-    public init(requestID: UUID, result: Result<RemoteCodexUsageSnapshot, RemoteProtocolError>) {
-        self.requestID = requestID; self.result = result
-    }
-    private enum CodingKeys: String, CodingKey { case requestID, success, failure }
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        requestID = try container.decode(UUID.self, forKey: .requestID)
-        let hasSuccess = container.contains(.success), hasFailure = container.contains(.failure)
-        guard hasSuccess != hasFailure else {
-            throw DecodingError.dataCorruptedError(forKey: .success, in: container, debugDescription: "Result must contain exactly one of success or failure.")
-        }
-        result = hasSuccess
-            ? .success(try container.decode(RemoteCodexUsageSnapshot.self, forKey: .success))
-            : .failure(try container.decode(RemoteProtocolError.self, forKey: .failure))
-    }
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(requestID, forKey: .requestID)
-        switch result {
-        case let .success(value): try container.encode(value, forKey: .success)
-        case let .failure(error): try container.encode(error, forKey: .failure)
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `Modules/Sources/RemoteCore/RemoteAction.swift`
-```
-import Foundation
-
-public enum RemoteControlAction: Codable, Equatable, Sendable {
-    case setState(Bool)
-    case trigger
-
-    private enum CodingKeys: String, CodingKey {
-        case type
-        case value
-    }
-
-    private enum Kind: String, Codable {
-        case setState
-        case trigger
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        switch try container.decode(Kind.self, forKey: .type) {
-        case .setState:
-            self = .setState(try container.decode(Bool.self, forKey: .value))
-        case .trigger:
-            self = .trigger
+extension EvolutionCommandEntity {
+    @MainActor static func backupCommands() throws -> [[String: String]] {
+        try fetchResult().map { entity in
+            var command: [String: String] = [:]
+            for key in EvolutionBackup.commandKeys {
+                switch entity.value(forKey: key) {
+                case let uuid as UUID: command[key] = uuid.uuidString
+                case let string as String: command[key] = string
+                default: break
+                }
+            }
+            return command
         }
     }
 
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        switch self {
-        case let .setState(isOn):
-            try container.encode(Kind.setState, forKey: .type)
-            try container.encode(isOn, forKey: .value)
-        case .trigger:
-            try container.encode(Kind.trigger, forKey: .type)
+    /// Stores commands without running them. The privileged operation is re-derived from the
+    /// compiled allowlist, so an imported file can't grant itself privileged-helper access.
+    static func restore(_ commands: [[String: String]]) throws {
+        try PersistenceController.shared.requireStore()
+        for command in commands {
+            guard
+                let id = command["id"].flatMap(UUID.init(uuidString:)),
+                let name = command["name"], !name.isEmpty,
+                let controlType = command["itemType"].flatMap(ControlType.init(rawValue:))
+            else {
+                continue
+            }
+            let entity = try fetchRequest(by: id) ?? EvolutionCommandEntity(context: context)
+            for key in EvolutionBackup.commandKeys where key != "id" && key != "privilegedOperationIdentifier" {
+                entity.setValue(command[key], forKey: key)
+            }
+            entity.id = id
+            entity.privilegedOperationIdentifier = EvolutionItem.trustedPrivilegedOperation(
+                id: id,
+                controlType: controlType,
+                requestedOperation: command["privilegedOperationIdentifier"].flatMap(PrivilegedOperation.init(rawValue:))
+            )?.rawValue
+            entity.timestamp = Date()
+        }
+        if context.hasChanges {
+            try context.save()
         }
     }
-}
 
-public struct RemoteActionRequest: Codable, Equatable, Sendable {
-    public let requestID: UUID
-    public let controlID: RemoteControlID
-    public let action: RemoteControlAction
+    static func addItem(item: EvolutionItem) throws {
+        try PersistenceController.shared.requireStore()
+        let entity = try EvolutionCommandEntity.fetchRequest(by: item.id) ?? EvolutionCommandEntity(context: context)
 
-    public init(requestID: UUID, controlID: RemoteControlID, action: RemoteControlAction) {
-        self.requestID = requestID
-        self.controlID = controlID
-        self.action = action
-    }
-}
+        if item.controlType == .Button {
+            guard
+                let singleCommand = item.singleCommand?.commandString,
+                !singleCommand.isEmpty,
+                let singleCommandTypeStr = item.singleCommand?.executeType.rawValue,
+                item.singleCommand?.debugStatus == .success else {
+                    context.reset()
+                    throw EvolutionError.wrongCommand
+                }
+            entity.singleCommand = singleCommand
+            entity.singleCommandType = singleCommandTypeStr
 
-public struct RemoteActionResult: Codable, Equatable, Sendable {
-    public let requestID: UUID
-    public let result: Result<RemoteControlStatus?, RemoteProtocolError>
+            entity.turnOnCommand = ""
+            entity.turnOnCommandType = CommandExecuteType.shell.rawValue
 
-    private enum CodingKeys: String, CodingKey {
-        case requestID
-        case success
-        case failure
-    }
+            entity.turnOffCommand = ""
+            entity.turnOffCommandType = CommandExecuteType.shell.rawValue
 
-    public init(requestID: UUID, result: Result<RemoteControlStatus?, RemoteProtocolError>) {
-        self.requestID = requestID
-        self.result = result
-    }
+            entity.statusCommand = ""
+            entity.statusCommandType = CommandExecuteType.shell.rawValue
 
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        requestID = try container.decode(UUID.self, forKey: .requestID)
+            entity.trueCondition = ""
 
-        let hasSuccess = container.contains(.success)
-        let hasFailure = container.contains(.failure)
-        guard hasSuccess != hasFailure else {
-            throw DecodingError.dataCorruptedError(
-                forKey: .success,
-                in: container,
-                debugDescription: "Action result must contain exactly one of success or failure."
-            )
-        }
-
-        if hasSuccess {
-            result = .success(try container.decodeIfPresent(RemoteControlStatus.self, forKey: .success))
         } else {
-            result = .failure(try container.decode(RemoteProtocolError.self, forKey: .failure))
+            guard
+                let onCommand = item.onCommand?.commandString,
+                !onCommand.isEmpty,
+                let onCommandTypeStr = item.onCommand?.executeType.rawValue,
+                item.onCommand?.debugStatus == .success else {
+                context.reset()
+                throw EvolutionError.wrongCommand
+            }
+            entity.turnOnCommand = onCommand
+            entity.turnOnCommandType = onCommandTypeStr
+
+            guard
+                let offCommand = item.offCommand?.commandString,
+                !offCommand.isEmpty,
+                let offCommandTypeStr = item.offCommand?.executeType.rawValue,
+                item.offCommand?.debugStatus == .success else {
+                context.reset()
+                throw EvolutionError.wrongCommand
+            }
+
+            entity.turnOffCommand = offCommand
+            entity.turnOffCommandType = offCommandTypeStr
+
+            guard
+                let statusCommand = item.statusCommand?.commandString,
+                !statusCommand.isEmpty,
+                let statusCommandTypeStr = item.statusCommand?.executeType.rawValue,
+                let trueCondition = item.statusCommand?.trueCondition else {
+                context.reset()
+                throw EvolutionError.wrongCommand
+            }
+            entity.statusCommand = statusCommand
+            entity.statusCommandType = statusCommandTypeStr
+            entity.trueCondition = trueCondition
+
+            entity.singleCommand = ""
+            entity.singleCommandType = CommandExecuteType.shell.rawValue
         }
+
+        if let iconName = item.iconName {
+            entity.iconName = iconName
+        }
+
+        entity.name = item.name
+        entity.itemType = item.controlType.rawValue
+        entity.privilegedOperationIdentifier = EvolutionItem.trustedPrivilegedOperation(
+            id: item.id,
+            controlType: item.controlType,
+            requestedOperation: item.privilegedOperation
+        )?.rawValue
+        entity.timestamp = Date()
+        entity.id = item.id
+
+
+        try context.save()
     }
 
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(requestID, forKey: .requestID)
-        switch result {
-        case let .success(status):
-            try container.encodeIfPresent(status, forKey: .success)
-            if status == nil {
-                try container.encodeNil(forKey: .success)
-            }
-        case let .failure(error):
-            try container.encode(error, forKey: .failure)
+    static func updateIcon(name: String, by id: UUID) throws {
+        try PersistenceController.shared.requireStore()
+        let entity = try EvolutionCommandEntity.fetchRequest(by: id)
+        guard let entity else {
+            throw EvolutionError.noneEntity
+        }
+        entity.iconName = name
+        try context.save()
+    }
+
+    static func removeItem(by id: UUID) throws {
+        try PersistenceController.shared.requireStore()
+        guard let entity = try fetchRequest(by: id) else {
+            throw EvolutionError.deleteFailed
+        }
+
+        context.delete(entity)
+        try context.save()
+    }
+}
+
+```
+
+### Core Architecture Module: `Modules/Sources/AppFeature/Define/MusicPlaybackState.swift`
+```
+//
+//  MusicPlaybackState.swift
+//  OnlySwitch
+//
+//  Created by Jacklandrin on 2022/2/19.
+//
+
+import Foundation
+enum MusicPlaybackState {
+    case stopped
+    case playing
+    case paused
+    case fastForwarding
+    case rewinding
+    case reposition
+    
+    var isActiveState: Bool {
+        switch self {
+        case .stopped, .paused:
+            return false
+        default:
+            return true
         }
     }
 }
 
 ```
 
-### Core Architecture Module: `Modules/Sources/RemoteCore/RemoteBrightness.swift`
+### Core Architecture Module: `Modules/Sources/AppFeature/Features/RemoteAccess/Host/RemoteHostLifecycle.swift`
 ```
 import Foundation
 
-public struct RemoteBrightnessDisplay: Codable, Equatable, Identifiable, Sendable {
-    public enum Control: String, Codable, Equatable, Sendable {
-        case native, ddc, software, unavailable
-    }
-
-    public let id: UInt32
-    public let name: String
-    public let control: Control
-    /// 0...1, the user-facing level (combined hardware + software dimming).
-    public let level: Double
-    public let hasError: Bool
-
-    public init(id: UInt32, name: String, control: Control, level: Double, hasError: Bool) {
-        self.id = id
-        self.name = String(name.prefix(120))
-        self.control = control
-        self.level = level.isFinite ? min(1, max(0, level)) : 1
-        self.hasError = hasError
-    }
-
-    /// Unknown controls decode as `.unavailable` so a newer Mac never breaks an older client.
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.init(
-            id: try container.decode(UInt32.self, forKey: .id),
-            name: try container.decode(String.self, forKey: .name),
-            control: (try? container.decode(Control.self, forKey: .control)) ?? .unavailable,
-            level: try container.decode(Double.self, forKey: .level),
-            hasError: try container.decodeIfPresent(Bool.self, forKey: .hasError) ?? false
-        )
-    }
+struct RemotePairingSnapshot: Codable, Equatable, Sendable {
+    let deviceID: UUID
+    let epoch: UInt64
+    let generation: UInt64
+    let wasRevoked: Bool
 }
 
-public struct RemoteBrightnessSnapshot: Codable, Equatable, Sendable {
-    public let revision: UInt64
-    public let displays: [RemoteBrightnessDisplay]
-
-    public init(revision: UInt64, displays: [RemoteBrightnessDisplay]) {
-        self.revision = revision
-        self.displays = Array(displays.prefix(16))
+struct RemoteHostLifecycle: Sendable {
+    private enum Phase: Sendable {
+        case stopped
+        case starting(UInt64)
+        case listening(UInt64)
     }
 
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.init(
-            revision: try container.decode(UInt64.self, forKey: .revision),
-            displays: try container.decode([RemoteBrightnessDisplay].self, forKey: .displays)
+    let maximumPendingHandshakes: Int
+    let maximumAuthenticatedSessions: Int
+
+    private(set) var generation: UInt64 = 0
+    private var phase: Phase = .stopped
+    private var pendingSessions: Set<UUID> = []
+    private var authenticatedDevices: [UUID: UUID] = [:]
+    private var revokedDevices: Set<UUID> = []
+    private var deviceEpochs: [UUID: UInt64] = [:]
+
+    var pendingCount: Int { pendingSessions.count }
+    var authenticatedCount: Int { authenticatedDevices.count }
+
+    func isActive(generation candidate: UInt64) -> Bool {
+        guard candidate == generation else { return false }
+        switch phase {
+        case let .starting(active), let .listening(active): return active == candidate
+        case .stopped: return false
+        }
+    }
+
+    init(maximumPendingHandshakes: Int = 8, maximumAuthenticatedSessions: Int = 8) {
+        self.maximumPendingHandshakes = max(1, maximumPendingHandshakes)
+        self.maximumAuthenticatedSessions = max(1, maximumAuthenticatedSessions)
+    }
+
+    mutating func beginStart() -> UInt64 {
+        generation &+= 1
+        phase = .starting(generation)
+        pendingSessions.removeAll()
+        authenticatedDevices.removeAll()
+        return generation
+    }
+
+    mutating func markListening(generation candidate: UInt64) -> Bool {
+        guard case let .starting(active) = phase,
+              active == candidate,
+              candidate == generation else { return false }
+        phase = .listening(candidate)
+        return true
+    }
+
+    func isListening(generation candidate: UInt64) -> Bool {
+        guard case let .listening(active) = phase else { return false }
+        return active == candidate && candidate == generation
+    }
+
+    mutating func acceptPending(sessionID: UUID, generation candidate: UInt64) -> Bool {
+        guard isListening(generation: candidate),
+              pendingSessions.count < maximumPendingHandshakes,
+              authenticatedDevices[sessionID] == nil else { return false }
+        return pendingSessions.insert(sessionID).inserted
+    }
+
+    func mayAuthorize(sessionID: UUID, deviceID: UUID, generation candidate: UInt64) -> Bool {
+        isListening(generation: candidate)
+            && pendingSessions.contains(sessionID)
+            && revokedDevices.contains(deviceID) == false
+            && authenticatedDevices.count < maximumAuthenticatedSessions
+    }
+
+    func isAuthorized(sessionID: UUID, deviceID: UUID, generation candidate: UInt64) -> Bool {
+        isListening(generation: candidate)
+            && authenticatedDevices[sessionID] == deviceID
+            && revokedDevices.contains(deviceID) == false
+    }
+
+    mutating func authorize(
+        sessionID: UUID,
+        deviceID: UUID,
+        generation candidate: UInt64,
+        credentialExists: Bool
+    ) -> Bool {
+        guard credentialExists,
+              mayAuthorize(sessionID: sessionID, deviceID: deviceID, generation: candidate) else { return false }
+        pendingSessions.remove(sessionID)
+        authenticatedDevices[sessionID] = deviceID
+        return true
+    }
+
+    func pairingEpoch(for deviceID: UUID) -> UInt64 { deviceEpochs[deviceID, default: 0] }
+
+    func pairingSnapshot(for deviceID: UUID, generation candidate: UInt64) -> RemotePairingSnapshot? {
+        guard isListening(generation: candidate) else { return nil }
+        return RemotePairingSnapshot(
+            deviceID: deviceID,
+            epoch: pairingEpoch(for: deviceID),
+            generation: candidate,
+            wasRevoked: revokedDevices.contains(deviceID)
         )
     }
-}
 
-public enum RemoteBrightnessCommand: Codable, Equatable, Sendable {
-    case setLevel(displayID: UInt32, level: Double)
+    func validateRepair(_ snapshot: RemotePairingSnapshot) -> Bool {
+        isListening(generation: snapshot.generation)
+            && pairingEpoch(for: snapshot.deviceID) == snapshot.epoch
+    }
+
+    mutating func commitRepair(_ snapshot: RemotePairingSnapshot) -> Bool {
+        guard validateRepair(snapshot) else { return false }
+        revokedDevices.remove(snapshot.deviceID)
+        return true
+    }
+
+    mutating func rollbackRepair(_ snapshot: RemotePairingSnapshot) -> Bool {
+        guard pairingEpoch(for: snapshot.deviceID) == snapshot.epoch else { return false }
+        if snapshot.wasRevoked {
+            revokedDevices.insert(snapshot.deviceID)
+        } else {
+            revokedDevices.remove(snapshot.deviceID)
+        }
+        return true
+    }
+
+    func isRevoked(_ deviceID: UUID) -> Bool { revokedDevices.contains(deviceID) }
+
+    mutating func allowRepairedDevice(
+        _ deviceID: UUID,
+        pairingEpoch: UInt64,
+        generation candidate: UInt64
+    ) -> Bool {
+        let snapshot = RemotePairingSnapshot(
+            deviceID: deviceID,
+            epoch: pairingEpoch,
+            generation: candidate,
+            wasRevoked: revokedDevices.contains(deviceID)
+        )
+        return commitRepair(snapshot)
+    }
+
+    mutating func revoke(deviceID: UUID) -> [UUID] {
+        revokedDevices.insert(deviceID)
+        deviceEpochs[deviceID, default: 0] &+= 1
+        let affected = authenticatedDevices.compactMap { $0.value == deviceID ? $0.key : nil }
+        affected.forEach { authenticatedDevices[$0] = nil }
+        return affected.sorted { $0.uuidString < $1.uuidString }
+    }
+
+    mutating func end(sessionID: UUID) -> Bool {
+        let wasAuthenticated = authenticatedDevices.removeValue(forKey: sessionID) != nil
+        let wasPending = pendingSessions.remove(sessionID) != nil
+        return wasAuthenticated || wasPending
+    }
+
+    mutating func stop() -> [UUID] {
+        generation &+= 1
+        phase = .stopped
+        let sessions = Set(pendingSessions).union(authenticatedDevices.keys)
+        pendingSessions.removeAll()
+        authenticatedDevices.removeAll()
+        return sessions.sorted { $0.uuidString < $1.uuidString }
+    }
+
+    mutating func fail(generation candidate: UInt64) -> [UUID] {
+        guard candidate == generation else { return [] }
+        switch phase {
+        case let .starting(active) where active == candidate:
+            return stop()
+        case let .listening(active) where active == candidate:
+            return stop()
+        default:
+            return []
+        }
+    }
 }
 
 ```
 
-### Core Architecture Module: `Modules/Sources/RemoteCore/RemoteControlDescriptor.swift`
+### Core Architecture Module: `Modules/Sources/AppFeature/Features/Settings/Evolution/EvolutionEditor/EvolutionEditorReducer+State.swift`
 ```
+//
+//  EvolutionEditorReducer+State.swift
+//  OnlySwitch
+//
+
+import Foundation
+import Switches
+
+extension EvolutionEditorReducer.State {
+    var isDirty: Bool {
+        Self.normalized(makeItem()) != Self.normalized(original)
+    }
+
+    var missingRequirements: [EvolutionEditorReducer.Requirement] {
+        var missing: [EvolutionEditorReducer.Requirement] = []
+        if evolution.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            missing.append(.name)
+        }
+        for state in commandStates {
+            let command = state.command
+            if command.commandString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                missing.append(.script(command.commandType))
+            } else if command.commandType != .status, !isVerified(command) {
+                missing.append(.test(command.commandType))
+            }
+            if command.commandType == .status, needsOnOutput(command) {
+                missing.append(.statusOnOutput)
+            }
+        }
+        return missing
+    }
+
+    var canSave: Bool {
+        !isSaving && (isNew || isDirty) && missingRequirements.isEmpty
+    }
+
+    var hasScripts: Bool {
+        commandStates.contains { !$0.command.commandString.isEmpty }
+    }
+
+    /// The item to persist. Commands that are unchanged from the saved version
+    /// count as verified: they passed a test when they were first saved, and
+    /// re-testing would toggle the user's system just to rename an Evolution.
+    func makeItem() -> EvolutionItem {
+        var item = evolution
+        for state in commandStates {
+            var command = state.command
+            let saved = savedCommand(command.commandType)
+            if saved == nil, command.commandString.isEmpty, command.trueCondition?.isEmpty ?? true {
+                assign(nil, to: command.commandType, in: &item)
+                continue
+            }
+            if command.debugStatus != .failed, isUnchanged(command) {
+                command.debugStatus = .success
+            }
+            assign(command, to: command.commandType, in: &item)
+        }
+        return item
+    }
+
+    func savedCommand(_ type: CommandType) -> EvolutionCommand? {
+        guard original.controlType == evolution.controlType else { return nil }
+        switch type {
+        case .on: return original.onCommand
+        case .off: return original.offCommand
+        case .status: return original.statusCommand
+        case .single: return original.singleCommand
+        }
+    }
+
+    func isUnchanged(_ command: EvolutionCommand) -> Bool {
+        guard !isNew, let saved = savedCommand(command.commandType) else { return false }
+        return saved.commandString == command.commandString && saved.executeType == command.executeType
+    }
+
+    func isVerified(_ command: EvolutionCommand) -> Bool {
+        command.debugStatus == .success || (command.debugStatus != .failed && isUnchanged(command))
+    }
+
+    private func needsOnOutput(_ command: EvolutionCommand) -> Bool {
+        let condition = command.trueCondition ?? ""
+        guard condition.isEmpty else { return false }
+        // A legacy switch may deliberately treat empty output as "on".
+        return !(savedCommand(.status)?.trueCondition == "" && isUnchanged(command))
+    }
+
+    private func assign(_ command: EvolutionCommand?, to type: CommandType, in item: inout EvolutionItem) {
+        switch type {
+        case .on: item.onCommand = command
+        case .off: item.offCommand = command
+        case .status: item.statusCommand = command
+        case .single: item.singleCommand = command
+        }
+    }
+
+    private static func normalized(_ item: EvolutionItem) -> EvolutionItem {
+        var item = item
+        for keyPath in [\EvolutionItem.onCommand, \.offCommand, \.statusCommand, \.singleCommand] {
+            item[keyPath: keyPath]?.debugStatus = .unknow
+        }
+        return item
+    }
+}
+
+```
+
+### Core Architecture Module: `Modules/Sources/AppFeature/Features/Settings/Evolution/EvolutionEmptyStateView.swift`
+```
+//
+//  EvolutionEmptyStateView.swift
+//  OnlySwitch
+//
+
+import ComposableArchitecture
+import SwiftUI
+
+/// Shown when there are no Evolutions: three ways to get the first one.
+struct EvolutionEmptyStateView: View {
+    let store: StoreOf<EvolutionReducer>
+
+    var body: some View {
+        ContentUnavailableView {
+            Label("No Evolutions yet".localized(), systemImage: "wand.and.rays")
+        } description: {
+            Text("Build your own switches and buttons with Shell or AppleScript.".localized())
+        } actions: {
+            // Side by side when the labels fit; otherwise stacked so no title gets truncated.
+            ViewThatFits(in: .horizontal) {
+                HStack { buttons }
+                VStack { buttons }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var buttons: some View {
+        Button("New Evolution".localized(), systemImage: "plus") {
+            store.send(.newTapped)
+        }
+        .evolutionProminentButtonStyle()
+        .fixedSize()
+        Button("Browse Gallery".localized(), systemImage: "square.grid.2x2") {
+            store.send(.tabChanged(.gallery))
+        }
+        .fixedSize()
+        if store.isOnlyAgentAvailable {
+            Button("Create with Only Agent".localized(), systemImage: "sparkles") {
+                store.send(.openOnlyAgent)
+            }
+            .fixedSize()
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `Modules/Sources/AppFeature/Features/SoundMixer/SystemAudioMixer+CoreAudio.swift`
+```
+import AppKit
+import CoreAudio
+import Darwin
+
+@available(macOS 14.4, *)
+extension SystemAudioMixer {
+    // MARK: - Process ownership
+
+    /// The app a given audio process belongs to: the process itself when it is a normal app, or
+    /// the app that spawned it when it is a helper process. `nil` for daemons with no user-facing app.
+    static func owningApplication(of pid: pid_t) -> NSRunningApplication? {
+        if let app = NSRunningApplication(processIdentifier: pid), app.activationPolicy == .regular {
+            return app
+        }
+        // XPC services are children of launchd, so only the responsible process leads back to the app.
+        if let responsible = responsiblePID(of: pid), responsible != pid,
+           let app = NSRunningApplication(processIdentifier: responsible), app.activationPolicy == .regular {
+            return app
+        }
+        // Helpers spawned by their app directly (Chrome's renderers) are found by walking up.
+        var current = parentPID(of: pid)
+        var hops = 0
+        while let candidate = current, candidate > 1, hops < 4 {
+            if let app = NSRunningApplication(processIdentifier: candidate), app.activationPolicy == .regular {
+                return app
+            }
+            current = parentPID(of: candidate)
+            hops += 1
+        }
+        return nil
+    }
+
+    static func parentPID(of pid: pid_t) -> pid_t? {
+        var info = kinfo_proc()
+        var size = MemoryLayout<kinfo_proc>.stride
+        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
+        guard sysctl(&mib, 4, &info, &size, nil, 0) == 0, size > 0 else { return nil }
+        let ppid = info.kp_eproc.e_ppid
+        return ppid > 0 ? ppid : nil
+    }
+
+    /// `responsibility_get_pid_responsible_for_pid` is SPI, so it is looked up at runtime; if it
+    /// ever disappears the parent-chain walk above still covers the common cases.
+    private static let responsibleForPID: (@convention(c) (pid_t) -> pid_t)? = {
+        guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), // RTLD_DEFAULT
+                                 "responsibility_get_pid_responsible_for_pid") else { return nil }
+        return unsafeBitCast(symbol, to: (@convention(c) (pid_t) -> pid_t).self)
+    }()
+
+    private static func responsiblePID(of pid: pid_t) -> pid_t? {
+        guard let resolve = responsibleForPID else { return nil }
+        let responsible = resolve(pid)
+        return responsible > 0 ? responsible : nil
+    }
+
+    // MARK: - Core Audio helpers
+
+    static func processObjectIDs() -> [AudioObjectID] {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyProcessObjectList,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        var dataSize: UInt32 = 0
+        let system = AudioObjectID(kAudioObjectSystemObject)
+        guard AudioObjectGetPropertyDataSize(system, &address, 0, nil, &dataSize) == noErr else { return [] }
+        let count = Int(dataSize) / MemoryLayout<AudioObjectID>.size
+        guard count > 0 else { return [] }
+        var ids = [AudioObjectID](repeating: 0, count: count)
+        guard AudioObjectGetPropertyData(system, &address, 0, nil, &dataSize, &ids) == noErr else { return [] }
+        return ids
+    }
+
+    static func pidProperty(of object: AudioObjectID) -> pid_t? {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioProcessPropertyPID,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        var dataSize = UInt32(MemoryLayout<pid_t>.size)
+        var pid: pid_t = -1
+        guard AudioObjectGetPropertyData(object, &address, 0, nil, &dataSize, &pid) == noErr, pid > 0 else { return nil }
+        return pid
+    }
+
+    static func boolProperty(_ selector: AudioObjectPropertySelector, of object: AudioObjectID) -> Bool {
+        var address = AudioObjectPropertyAddress(
+            mSelector: selector,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        var dataSize = UInt32(MemoryLayout<UInt32>.size)
+        var value: UInt32 = 0
+        guard AudioObjectGetPropertyData(object, &address, 0, nil, &dataSize, &value) == noErr else { return false }
+        return value != 0
+    }
+
+    nonisolated static func stringProperty(_ selector: AudioObjectPropertySelector,
+                                                   of object: AudioObjectID) -> String? {
+        var address = AudioObjectPropertyAddress(
+            mSelector: selector,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        var dataSize = UInt32(MemoryLayout<CFString?>.size)
+        var value: CFString?
+        let status = withUnsafeMutablePointer(to: &value) {
+            AudioObjectGetPropertyData(object, &address, 0, nil, &dataSize, $0)
+        }
+        guard status == noErr, let value else { return nil }
+        let string = value as String
+        return string.isEmpty ? nil : string
+    }
+
+    /// The tap's stream format. Used to confirm the samples really are Float32 before scaling them.
+    nonisolated static func tapFormat(of tapID: AudioObjectID) -> AudioStreamBasicDescription? {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioTapPropertyFormat,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        var format = AudioStreamBasicDescription()
+        var dataSize = UInt32(MemoryLayout<AudioStreamBasicDescription>.size)
+        guard AudioObjectGetPropertyData(tapID, &address, 0, nil, &dataSize, &format) == noErr else { return nil }
+        return format
+    }
+
+    private nonisolated static func defaultOutputDevice() -> AudioObjectID? {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyDefaultOutputDevice,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain)
+        var dataSize = UInt32(MemoryLayout<AudioObjectID>.size)
+        var device = AudioObjectID(kAudioObjectUnknown)
+        guard AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &address, 0, nil,
+                                         &dataSize, &device) == noErr,
+              device != kAudioObjectUnknown else { return nil }
+        return device
+    }
+}
+
+```
+
+### Core Architecture Module: `Modules/Sources/AppFeature/Player/CommonPlayer/AudioStreamer/Download/DownloadingState.swift`
+```
+//
+//  DownloadingState.swift
+//  AudioStreamer
+//
+//  Created by Syed Haris Ali on 1/6/18.
+//  Copyright © 2018 Ausome Apps LLC. All rights reserved.
+//
+
 import Foundation
 
-public struct RemoteControlDescriptor: Codable, Equatable, Identifiable, Sendable {
-    public enum Behavior: String, Codable, Sendable {
-        case `switch`
-        case button
-        case player
+/// The various states of a download request.
+///
+/// - completed: The download has completed
+/// - started: The download has yet to start
+/// - paused: The download is paused
+/// - notStarted: The download has not started yet
+/// - stopped: The download has been stopped/cancelled
+public enum DownloadingState: String {
+    case completed
+    case started
+    case paused
+    case notStarted
+    case stopped
+}
+
+```
+
+### Core Architecture Module: `Modules/Sources/AppFeature/Player/CommonPlayer/AudioStreamer/Stream/StreamingState.swift`
+```
+//
+//  StreamingState.swift
+//  AudioStreamer
+//
+//  Created by Syed Haris Ali on 6/5/18.
+//  Copyright © 2018 Ausome Apps LLC. All rights reserved.
+//
+
+import Foundation
+
+/// The various playback states of a `Streaming`.
+///
+/// - stopped: Audio playback and download operations are all stopped
+/// - paused: Audio playback is paused
+/// - playing: Audio playback is playing
+public enum StreamingState: String {
+    case stopped
+    case paused
+    case playing
+}
+
+```
+
+### Core Architecture Module: `Modules/Sources/AppFeature/Player/CommonPlayer/PlaybackHelperEngine.swift`
+```
+import AVFoundation
+import Foundation
+import os
+
+/// Only the helper constructs audible AVFoundation players. The host retains UI, Now Playing,
+/// track navigation and user preferences, while metadata and waveform samples return over stdout.
+@MainActor
+final class PlaybackHelperEngine: NSObject, @preconcurrency AVPlayerItemMetadataOutputPushDelegate, StreamingDelegate {
+    private var player: AVPlayer?
+    private var noise: AVAudioPlayer?
+    private var streamer: Streamer?
+    private var playbackObservation: NSKeyValueObservation?
+    private var itemObservation: NSKeyValueObservation?
+    private var receivedStreamAudio = false
+    private var desiredPlaybackActive = false
+    private var playbackID: UUID?
+    private let output: FileHandle
+    private var volume: Float = 1
+    nonisolated private let visible = OSAllocatedUnfairLock(initialState: false)
+    private let analyzer = RealtimeAnalyzer(fftSize: bufferSize)
+
+    init(output: FileHandle) { self.output = output; super.init() }
+
+    func announceReady() { emit(.init(isReady: true)) }
+
+    func perform(_ command: PlaybackHelperCommand) {
+        switch command.action {
+        case .play:
+            guard let raw = command.url, raw.utf8.count <= 8_192,
+                  let url = URL(string: raw), ["http", "https", "file"].contains(url.scheme?.lowercased() ?? "") else { return }
+            stop()
+            playbackID = command.playbackID
+            desiredPlaybackActive = true
+            setVolume(command.volume ?? volume)
+            if command.isNoise == true {
+                guard let sound = try? AVAudioPlayer(contentsOf: url) else {
+                    emit(.init(isBuffering: false, hasFailed: true)); return
+                }
+                noise = sound
+                sound.numberOfLoops = -1
+                sound.volume = volume
+                emit(.init(isBuffering: false, hasFailed: !sound.play()))
+            } else {
+                let item = AVPlayerItem(url: url)
+                item.audioTimePitchAlgorithm = .spectral
+                item.allowedAudioSpatializationFormats = .monoStereoAndMultichannel
+                let metadata = AVPlayerItemMetadataOutput(identifiers: nil)
+                metadata.setDelegate(self, queue: .main)
+                item.add(metadata)
+                let av = AVPlayer(playerItem: item)
+                player = av
+                itemObservation = item.observe(\.status, options: [.new]) { [weak self] item, _ in
+                    guard item.status == .failed else { return }
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self, self.player?.currentItem === item else { return }
+                        self.emit(.init(isBuffering: false, hasFailed: true))
+                    }
+                }
+                playbackObservation = av.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
+                    let isBuffering = player.timeControlStatus != .playing
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self, self.player === player, self.desiredPlaybackActive else { return }
+                        self.emit(.init(isBuffering: isBuffering))
+                    }
+                }
+                av.volume = volume
+                let path = raw.lowercased()
+                let useStreamer = command.usesWaveform == true && !path.hasSuffix(".m3u")
+                    && !path.hasSuffix(".m3u8") && !path.hasSuffix(".aac")
+                av.isMuted = useStreamer
+                av.play()
+                if useStreamer {
+                    let stream = Streamer()
+                    stream.delegate = self
+                    stream.volume = volume
+                    streamer = stream
+                    stream.url = url
+                    // Preserve incremental live-radio startup before the download ever completes.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self, weak stream] in
+                        guard let self, let stream, self.streamer === stream, self.desiredPlaybackActive else { return }
+                        stream.play()
+                    }
+                }
+                emit(.init(isBuffering: true))
+            }
+        case .pause:
+            desiredPlaybackActive = false
+            player?.pause(); noise?.pause(); streamer?.pause()
+            emit(.init(isBuffering: false))
+        case .stop:
+            stop()
+        case .volume:
+            setVolume(command.volume ?? volume)
+        case .visible:
+            visible.withLock { $0 = command.isVisible == true }
+        case .shutdown:
+            shutdown()
+        }
     }
 
-    public enum Icon: Codable, Equatable, Sendable {
-        case systemSymbol(String)
-        case png(Data)
+    private func setVolume(_ value: Float) {
+        volume = value.isFinite ? min(1, max(0, value)) : 0
+        player?.volume = volume
+        noise?.volume = volume
+        streamer?.setUserVolume(volume)
+    }
 
-        private enum CodingKeys: String, CodingKey {
-            case type
-            case value
-        }
+    private func stop(emitStatus: Bool = true) {
+        desiredPlaybackActive = false
+        player?.pause()
+        player?.replaceCurrentItem(with: nil)
+        noise?.stop()
+        streamer?.dispose()
+        playbackObservation = nil
+        itemObservation = nil
+        receivedStreamAudio = false
+        player = nil; noise = nil; streamer = nil
+        if emitStatus { emit(.init(isBuffering: false)) }
+    }
 
-        private enum Kind: String, Codable {
-            case systemSymbol
-            case png
-        }
+    func shutdown() -> Never { stop(emitStatus: false); exit(EXIT_SUCCESS) }
 
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            switch try container.decode(Kind.self, forKey: .type) {
-            case .systemSymbol:
-                self = .systemSymbol(try container.decode(String.self, forKey: .value))
-            case .png:
-                self = .png(try container.decode(Data.self, forKey: .value))
-            }
-        }
+    private func emit(_ event: PlaybackHelperEvent) {
+        var event = event
+        event.playbackID = playbackID
+        guard var data = try? JSONEncoder().encode(event), data.count <= PlaybackHelperLineFramer.maximumFrameSize else { return }
+        data.append(10)
+        do { try output.write(contentsOf: data) } catch { shutdown() }
+    }
 
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            switch self {
-            case let .systemSymbol(name):
-                try container.encode(Kind.systemSymbol, forKey: .type)
-                try container.encode(name, forKey: .value)
-            case let .png(data):
-                try container.encode(Kind.png, forKey: .type)
-                try container.encode(data, forKey: .value)
-            }
+    func metadataOutput(_ output: AVPlayerItemMetadataOutput, didOutputTimedMetadataGroups groups: [AVTimedMetadataGroup], from track: AVPlayerItemTrack?) {
+        guard player?.currentItem?.outputs.contains(where: { $0 === output }) == true,
+              let item = groups.first?.items.first, let title = item.value(forKeyPath: "value") as? String else { return }
+        emit(.init(trackInfo: title.trimmingCharacters(in: .newlines), isBuffering: false))
+    }
+
+    nonisolated func streamer(_ streamer: Streaming, downloadComplete url: URL) {
+        guard let stream = streamer as? Streamer else { return }
+        Task { @MainActor [weak self] in
+            guard let self, self.streamer === stream, self.desiredPlaybackActive else { return }
+            stream.play()
         }
     }
 
-    public let id: RemoteControlID
-    public let title: String
-    public let behavior: Behavior
-    public let icon: Icon
-    public let isAvailable: Bool
-    public let unavailableReason: String?
-    public let isDestructive: Bool
-    public let supportsStatus: Bool
-    public let supportsSecondaryInformation: Bool
+    nonisolated func streamer(_ streamer: Streaming, failedDownloadWithError error: Error, forURL url: URL) {
+        guard let stream = streamer as? Streamer else { return }
+        Task { @MainActor [weak self] in
+            guard let self, self.streamer === stream else { return }
+            stream.dispose()
+            self.streamer = nil
+            self.player?.isMuted = false
+            if self.desiredPlaybackActive { self.emit(.init(isBuffering: false, isReady: true)) }
+        }
+    }
 
-    public init(
-        id: RemoteControlID,
-        title: String,
-        behavior: Behavior,
-        icon: Icon,
-        isAvailable: Bool,
-        unavailableReason: String?,
-        isDestructive: Bool,
-        supportsStatus: Bool,
-        supportsSecondaryInformation: Bool
-    ) {
-        self.id = id
-        self.title = title
-        self.behavior = behavior
-        self.icon = icon
-        self.isAvailable = isAvailable
-        self.unavailableReason = unavailableReason
-        self.isDestructive = isDestructive
-        self.supportsStatus = supportsStatus
-        self.supportsSecondaryInformation = supportsSecondaryInformation
+    nonisolated func streamer(_ streamer: Streaming, updateBuffer buffer: AVAudioPCMBuffer) {
+        guard let stream = streamer as? Streamer else { return }
+        let channelCount = Int(buffer.format.channelCount)
+        let sampleRate = buffer.format.sampleRate
+        let interleaved = buffer.format.isInterleaved
+        let samples: [[Float]]?
+        if visible.withLock({ $0 }), buffer.frameLength >= AVAudioFrameCount(bufferSize),
+           channelCount > 0, channelCount <= 8, let channels = buffer.floatChannelData {
+            // Copy only samples across the actor boundary; the engine owns and reuses its buffer.
+            samples = (0..<channelCount).map { channel in
+                (0..<bufferSize).map { frame in
+                    interleaved ? channels[0][frame * channelCount + channel] : channels[channel][frame]
+                }
+            }
+        } else { samples = nil }
+        Task { @MainActor [weak self] in
+            guard let self, self.streamer === stream else { return }
+            var spectra: [[Float]]?
+            if let samples,
+               let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: AVAudioChannelCount(channelCount)),
+               let copy = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(bufferSize)),
+               let channels = copy.floatChannelData {
+                copy.frameLength = AVAudioFrameCount(bufferSize)
+                for channel in 0..<channelCount {
+                    samples[channel].withUnsafeBufferPointer { source in
+                        channels[channel].update(from: source.baseAddress!, count: bufferSize)
+                    }
+                }
+                spectra = self.analyzer.analyse(with: copy)
+            }
+            let firstAudio = !self.receivedStreamAudio
+            self.receivedStreamAudio = true
+            if firstAudio || spectra != nil {
+                self.emit(.init(spectra: spectra, isBuffering: false, isReady: firstAudio))
+            }
+        }
+    }
+    nonisolated func streamer(_ streamer: Streaming, updatedDownloadProgress progress: Float, forURL url: URL) {}
+    nonisolated func streamer(_ streamer: Streaming, changedState state: StreamingState) {}
+    nonisolated func streamer(_ streamer: Streaming, updatedCurrentTime currentTime: TimeInterval) {}
+    nonisolated func streamer(_ streamer: Streaming, updatedDuration duration: TimeInterval) {}
+}
+
+```
+
+### Core Architecture Module: `Modules/Sources/AppFeature/Utilities/BluetoothDevicesManager.swift`
+```
+//
+//  BluetoothDevicesManager.swift
+//  OnlySwitch
+//
+//  Created by Jacklandrin on 2021/12/6.
+//
+
+import Foundation
+import IOBluetooth
+import CoreBluetooth
+import Switches
+import OnlySwitchObjC
+import OSLog
+import Extensions
+
+enum AirPodsBattery:String {
+    case left = "BatteryPercentLeft"
+    case right = "BatteryPercentRight"
+    case `case` = "BatteryPercentCase"
+}
+
+class BluetoothDevicesManager:NSObject, @unchecked Sendable {
+    static let shared = BluetoothDevicesManager()
+    private let classOfAirpods:UInt32 = 2360344
+    private var disconnectComplete:(_ success:Bool, _ errorInfo:String) -> Void = {_,_ in}
+    private var connectComplete:(_ success:Bool, _ errorInfo:String) -> Void = {_,_ in}
+    private let concurrentQueue = DispatchQueue(label: "concurrentQueue", attributes: .concurrent)
+    var centralManager:CBCentralManager!
+    override init() {
+        super.init()
+        self.centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+    
+    var allPairedDevices:[IOBluetoothDevice] {
+        IOBluetoothDevice.pairedDevices().filter{ $0 is IOBluetoothDevice }.map{ $0 as! IOBluetoothDevice }
+    }
+    
+    var allPairedAirpods:[IOBluetoothDevice] {
+        allPairedDevices.filter{ $0.classOfDevice == classOfAirpods }
+    }
+    
+    func setBluetooth(isOn:Bool) {
+        IOBluetoothPreferenceSetControllerPowerState(isOn ? 1 : 0)
+    }
+    
+    func getAirPodsBattery(deviceAddress: String) async -> String {
+        let command = "sh \(scriptDiskFilePath(scriptName: getAirpodsBatteryShell))"
+        do {
+            let value = try await command.runAppleScript(isShellCMD: true)
+            let valueGroupedBySpaces = value.split(separator: "\n")
+            guard valueGroupedBySpaces.count > 0 else {
+                return ""
+            }
+            var currentAirPodsBattery = ""
+            for item in valueGroupedBySpaces {
+                let datas = String(item).components(separatedBy: "@@")
+                guard datas.count > 1,
+                      let address = datas.first,
+                      let batteryInfo = datas.last else {
+                          continue
+                      }
+                if address.trimmingCharacters(in: .whitespaces) == deviceAddress.convertMacAdrress() {
+                    currentAirPodsBattery = batteryInfo
+                    break
+                }
+            }
+            return currentAirPodsBattery
+        } catch {
+            return ""
+        }
+
+    }
+    
+    
+    func connect(addressStr:String) -> (Bool, String) {
+        if let device = IOBluetoothDevice(addressString: addressStr) {
+            return connect(device: device)
+        } else {
+            return (false, "wrong address")
+        }
+    }
+    
+    func connect(device:IOBluetoothDevice) -> (Bool, String) {
+        guard device.isPaired() else {
+            return (false, "unpaired device")
+        }
+        
+        guard !device.isConnected() else {
+            return (false, "device is connected")
+            
+        }
+        
+        let result = device.openConnection(nil, withPageTimeout: 20, authenticationRequired: false)
+        if result == kIOReturnSuccess {
+            return (true, "")
+        } else {
+            return (false, "connect failed:\(result)")
+        }
+    }
+    
+    func disconnect(addressStr:String) -> (Bool, String){
+        if let device = IOBluetoothDevice(addressString: addressStr) {
+            return disconnect(device: device)
+        } else {
+            return (false, "wrong address")
+        }
+    }
+    
+    func disconnect(device:IOBluetoothDevice) -> (Bool, String) {
+        guard device.isPaired() else {
+            return (false, "unpaired device")
+        }
+        
+        guard device.isConnected() else {
+            return (false, "device is disconnected")
+        }
+        
+        let result = device.closeConnection()
+        if result == kIOReturnSuccess {
+            return (true, "")
+        } else {
+            return (false, "disconnect failed:\(result)")
+        }
+    }
+    
+}
+
+extension BluetoothDevicesManager:CBCentralManagerDelegate {
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        switch central.state {
+        case .poweredOn:
+            Logger.bluetooth.debug("Power on")
+        case .poweredOff:
+            Logger.bluetooth.debug("Power off")
+        case .unsupported:
+            Logger.bluetooth.debug("Unsupported")
+        default:
+            break
+        }
     }
 }
 
@@ -906,234 +1152,224 @@ public struct RemoteControlDescriptor: Codable, Equatable, Identifiable, Sendabl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72a3ac88` (2026-11-05)
-**Commit Message**: Stop crashing when a music player quits while its state is polled
+### Incident Patch 1: `ec1066ef` (2026-11-10)
+**Commit Message**: Read Claude Code credential via security tool to avoid Keychain prompts
 
-A player that quits mid-request replies with no playback state, which is
-not a valid case of the bridged enum and trapped when switched on.
+Claude Code stores its Keychain item with /usr/bin/security, so that tool
+is on the item's ACL and can read it silently. Try it first and fall back
+to SecItemCopyMatching only when it fails.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `OnlySwitch/Player/MusicAppPlayer/AppleMusic/AppleMusicPlayer/AppleMusicPlayer.swift` (modified, +4/-1)
+**File**: `Modules/Sources/OnlyAgent/ClaudeUsage/ClaudeKeychainSecurityTool.swift` (added, +41/-0)
 ```diff
-@@ -64,8 +64,11 @@ extension AppleMusicPlayer:MusicPlayer {
-     }
-     
-     var playbackState: MusicPlaybackState {
-+        // A player that quits mid-request replies with no state, which is not a valid case
-+        // and would trap when switched on, so validate it through its raw value first.
-         guard isRunning,
--              let playerState = applemusicApp.playerState
-+              let rawState = applemusicApp.playerState?.rawValue,
-+              let playerState = iTunesEPlS(rawValue: rawState)
-         else { return .stopped }
-         return MusicPlaybackState(playerState)
-     }
-```
-
-**File**: `OnlySwitch/Player/MusicAppPlayer/Spotify/SpotifyPlayer/SpotifyPlayer.swift` (modified, +4/-1)
-```diff
-@@ -61,8 +61,11 @@ class SpotifyPlayer{
- 
- extension SpotifyPlayer:MusicPlayer {
-     var playbackState: MusicPlaybackState {
-+        // A player that quits mid-request replies with no state, which is not a valid case
-+        // and would trap when switched on, so validate it through its raw value first.
-         guard isRunning,
--              let playerState = spotifyApp.playerState
-+              let rawState = spotifyApp.playerState?.rawValue,
-+              let playerState = SpotifyEPlS(rawValue: rawState)
-         else { return .stopped }
-         return MusicPlaybackState(playerState)
-     }
-```
-
----
-
-### Incident Patch 2: `5919d349` (2026-11-06)
-**Commit Message**: fix screenshots buttons
-
-**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 310
-+CURRENT_PROJECT_VERSION = 311
-```
-
-**File**: `Modules/Sources/Screenshots/ScreenshotsView.swift` (modified, +13/-11)
-```diff
-@@ -364,17 +364,19 @@ private struct ScreenshotHoverButton: View {
-     let action: () -> Void
- 
-     var body: some View {
--        Button(title, systemImage: systemImage, action: action)
--            .labelStyle(.iconOnly)
--            .font(.system(size: 11, weight: .bold))
--            .foregroundStyle(.primary)
--            .frame(width: 24, height: 24)
--            .modifier(ScreenshotHoverButtonSurface())
--            .contentShape(.circle)
--            .buttonStyle(.plain)
--            .help(title)
--            .padding(5)
--            .transition(.opacity)
-+        Button(action: action) {
-+            Label(title, systemImage: systemImage)
-+                .labelStyle(.iconOnly)
-+                .font(.system(size: 11, weight: .bold))
-+                .foregroundStyle(.primary)
-+                .frame(width: 24, height: 24)
-+                .modifier(ScreenshotHoverButtonSurface())
-+                .contentShape(.interaction, Circle())
+@@ -0,0 +1,41 @@
++import Foundation
++
++/// Reads Claude Code's Keychain item through Apple's `/usr/bin/security` tool.
++///
++/// Claude Code writes `Claude Code-credentials` with `security add-generic-password`, so the item's
++/// access list trusts `/usr/bin/security`. Reading through the same tool therefore never shows the
++/// Keychain password dialog, whereas a direct `SecItemCopyMatching` from OnlySwitch does — and any
++/// "Always Allow" granted to OnlySwitch is lost each time Claude Code rewrites the item on token refresh.
++enum ClaudeKeychainSecurityTool {
++    static let executable = URL(fileURLWithPath: "/usr/bin/security")
++
++    /// Returns the item's secret, or nil when the tool is unavailable, the item is missing, or the
++    /// tool could not read it without interaction. Callers fall back to the Security framework.
++    static func read(service: String) async -> Data? {
++        guard FileManager.default.isExecutableFile(atPath: executable.path) else { return nil }
++        // A minimal environment: the tool needs nothing from OnlySwitch's process environment.
++        let environment = ["PATH": "/usr/bin:/bin:/usr/sbin:/sbin", "HOME": NSHomeDirectory()]
++        guard let result = await ClaudeCodeCLI.run(executable, arguments: ["find-generic-password", "-s", service, "-w"],
++                                                   environment: environment, timeout: .seconds(5), captureOutput: true),
++              result.status == 0 else { return nil }
++        return decodeOutput(result.output)
++    }
++
++    /// `security -w` prints the secret as text, or as hex when the stored bytes are not printable.
++    static func decodeOutput(_ output: String) -> Data? {
++        let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
++        guard !trimmed.isEmpty else { return nil }
++        if trimmed.hasPrefix("{") { return Data(trimmed.utf8) }
++        guard trimmed.count.isMultiple(of: 2), trimmed.allSatisfy(\.isHexDigit) else { return Data(trimmed.utf8) }
++        var bytes = [UInt8]()
++        bytes.reserveCapacity(trimmed.count / 2)
++        var index = trimmed.startIndex
++        while index < trimmed.endIndex {
++            let next = trimmed.index(index, offsetBy: 2)
++            guard let byte = UInt8(trimmed[index ..< next], radix: 16) else { return nil }
++            bytes.append(byte)
++            index = next
 +        }
-+        .buttonStyle(.plain)
-+        .help(title)
-+        .padding(5)
-+        .transition(.opacity)
++        return Data(bytes)
++    }
++}
+```
+
+**File**: `Modules/Sources/OnlyAgent/ClaudeUsage/ClaudeOAuthCredentialClient.swift` (modified, +5/-2)
+```diff
+@@ -41,7 +41,7 @@ struct ClaudeOAuthCredentialReader: Sendable {
+     let configDirectory: String?
+     let homeDirectory: URL
+     let readFile: @Sendable (URL) throws -> Data
+-    let readKeychain: @Sendable (String, Bool) throws -> Data?
++    let readKeychain: @Sendable (String, Bool) async throws -> Data?
+     var now: @Sendable () -> Date = { Date() }
+ 
+     func read(allowKeychainPrompt: Bool) async throws -> ClaudeOAuthCredential {
+@@ -63,7 +63,7 @@ struct ClaudeOAuthCredentialReader: Sendable {
+         if configured != nil && directory.standardizedFileURL != homeDirectory.appending(path: ".claude", directoryHint: .isDirectory).standardizedFileURL { throw lastFailure }
+         try Task.checkCancellation()
+         do {
+-            if let data = try readKeychain("Claude Code-credentials", allowKeychainPrompt) {
++            if let data = try await readKeychain("Claude Code-credentials", allowKeychainPrompt) {
+                 return try ClaudeOAuthCredential.decode(data, now: now())
+             }
+         } catch is CancellationError { throw CancellationError() }
+@@ -82,6 +82,9 @@ struct ClaudeOAuthCredentialReader: Sendable {
+             return try Data(contentsOf: url)
+         },
+         readKeychain: { service, allowPrompt in
++            // Claude Code's item trusts /usr/bin/security, so this path never prompts.
++            if let data = await ClaudeKeychainSecurityTool.read(service: service) { return data }
++            try Task.checkCancellation()
+             var query: [String: Any] = [
+                 kSecClass as String: kSecClassGenericPassword,
+                 kSecAttrService as String: service,
+```
+
+**File**: `Modules/Tests/AppFeatureTests/ClaudeUsageIntegrationTests.swift` (modified, +19/-0)
+```diff
+@@ -530,3 +530,22 @@ private extension ClaudeUsageSnapshot {
+         .init(account: .init(email: "fixture@example.com", plan: "Pro"), session: .init(remainingPercent: 75, resetAt: nil), weekly: nil, models: [], extraUsage: nil, fetchedAt: Date(timeIntervalSince1970: 1_800_000_000))
      }
  }
- 
-```
-
-**File**: `OnlySwitch.xcodeproj/project.pbxproj` (modified, +19/-19)
-```diff
-@@ -281,6 +281,8 @@
- 		217549FC82A1C95A0843C27E /* DisplayBrightnessKeyTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C34535B906CBDA47D280D10 /* DisplayBrightnessKeyTap.swift */; };
- 		2B346BE56384C700F4046FC4 /* SystemAudioMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AD1FCF5024EAC8DC9C8E5E /* SystemAudioMixer.swift */; };
- 		4BE55DA1B55BBA22CCF4E310 /* DisplayBrightnessService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52660C8AAA3F5E6778721434 /* DisplayBrightnessService.swift */; };
-+		5C4ED00000000000000000A1 /* Scheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 5C4ED00000000000000000A2 /* Scheduler */; };
-+		5C4ED00000000000000000A4 /* ScheduleClients+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4ED00000000000000000A3 /* ScheduleClients+App.swift */; };
- 		5DA700000000000000000201 /* RemoteSoundMixerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA700000000000000000101 /* RemoteSoundMixerFeature.swift */; };
- 		5DA700000000000000000202 /* RemoteSoundMixerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA700000000000000000102 /* RemoteSoundMixerView.swift */; };
- 		5DA700000000000000000203 /* RemoteMixerSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA700000000000000000103 /* RemoteMixerSlider.swift */; };
-@@ -311,8 +313,6 @@
- 		A9C70D062EE490B3000A2367 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A9C70D052EE490B3000A2367 /* GoogleService-Info.plist */; };
- 		A9F007CA2EC3D9BD002D9AB0 /* Design in Frameworks */ = {isa = PBXBuildFile; productRef = A9F007C92EC3D9BD002D9AB0 /* Design */; };
- 		AD1000010000000000000001 /* RadioBrowser in Frameworks */ = {isa = PBXBuildFile; productRef = AD1000020000000000000001 /* RadioBrowser */; };
--		5C4ED00000000000000000A1 /* Scheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 5C4ED00000000000000000A2 /* Scheduler */; };
--		5C4ED00000000000000000A4 /* ScheduleClients+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4ED00000000000000000A3 /* ScheduleClients+App.swift */; };
- 		AD1000030000000000000001 /* RadioLibraryClient+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1000040000000000000001 /* RadioLibraryClient+App.swift */; };
- 		AF1000010000000000000001 /* Aphrodite in Frameworks */ = {isa = PBXBuildFile; productRef = AF1000020000000000000001 /* Aphrodite */; };
- 		AF1000050000000000000001 /* AphroditeSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1000040000000000000001 /* AphroditeSwitch.swift */; };
-@@ -919,6 +919,7 @@
- 		2C34535B906CBDA47D280D10 /* DisplayBrightnessKeyTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBrightnessKeyTap.swift; sourceTree = "<group>"; };
- 		35AD1FCF5024EAC8DC9C8E5E /* SystemAudioMixer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemAudioMixer.swift; sourceTree = "<group>"; };
- 		52660C8AAA3F5E6778721434 /* DisplayBrightnessService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBrightnessService.swift; sourceTree = "<group>"; };
-+		5C4ED00000000000000000A3 /* ScheduleClients+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScheduleClients+App.swift"; sourceTree = "<group>"; };
- 		5DA700000000000000000101 /* RemoteSoundMixerFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSoundMixerFeature.swift; sourceTree = "<group>"; };
- 		5DA700000000000000000102 /* RemoteSoundMixerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSoundMixerView.swift; sourceTree = "<group>"; };
- 		5DA700000000000000000103 /* RemoteMixerSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMixerSlider.swift; sourceTree = "<group>"; };
-@@ -1185,7 +1186,6 @@
- 		RSVW00000000000000001101 /* RemoteScreenshotDragProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteScreenshotDragProvider.swift; sourceTree = "<group>"; };
- 		SMRB00000000000000000001 /* SoundMixerRemoteBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundMixerRemoteBridge.swift; sourceTree = "<group>"; };
- 		SMRB00000000000000000003 /* SoundMixerRemoteBridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundMixerRemoteBridgeTests.swift; sourceTree = "<group>"; };
--		5C4ED00000000000000000A3 /* ScheduleClients+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScheduleClients+App.swift"; sourceTree = "<group>"; };
- 		TB5A00000000000000000001 /* TabVisibilitySettingsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabVisibilitySettingsVM.swift; sourceTree = "<group>"; };
- 		TB5A00000000000000000003 /* TabVisibilitySettingsView.swift */ = {i
-```
-
-**File**: `README.md` (modified, +7/-0)
-```diff
-@@ -54,6 +54,7 @@ To control OnlySwitch from an iPhone or iPad, install [OnlyRemote from the App S
- 
- ### Highlights
- 
-+- Automate recurring Mac tasks with [Schedules](#schedules).
- - Import macOS Shortcuts into OnlySwitch and control switches and Shortcuts with keyboard shortcuts.
- - Customize which controls appear and arrange them to fit your workflow. Built-in switches are grouped by category and can be searched by name.
- - Manage every optional page from one place: **OnlySwitch Settings → Tabs** shows or hides tabs in the menu-bar list and Only Control.
-@@ -71,6 +72,12 @@ To control OnlySwitch from an iPhone or iPad, install [OnlyRemote from the App S
-   <img alt="OnlySwitch desktop pet" src="https://github.com/user-attachments/assets/f45e4b4f-932e-4768-8bfd-845e22fdfff3" width="152" height="188" />
- </p>
- 
-+### Schedules
 +
-+Open **OnlySwitch Settings → Schedules** to automate supported switches, buttons, Shortcuts, and Evolutions. Run an action at a repeating interval, at a specific minute every hour, or at a set time on selected days. For example, turn **Dim Screen** on at 8:00 AM and off at 7:00 PM every day, or run **Empty Trash** every Saturday at 9:00 AM.
++struct ClaudeKeychainSecurityToolTests {
++    @Test func textOutputIsReturnedAsJSON() throws {
++        let json = #"{"claudeAiOauth":{"accessToken":"fixture-token","scopes":["user:profile"]}}"#
++        let data = try #require(ClaudeKeychainSecurityTool.decodeOutput(json + "\n"))
++        #expect(String(decoding: data, as: UTF8.self) == json)
++    }
 +
-+Use the **Schedules** tab in the menu bar or Only Control to see what runs next, run an action immediately, or turn a schedule on or off. Show or hide the tab under **OnlySwitch Settings → Tabs**. Schedules run locally while OnlySwitch is running, even with no window open.
++    @Test func hexOutputIsDecoded() throws {
++        let json = #"{"claudeAiOauth":{"accessToken":"fixture-token"}}"#
++        let hex = Data(json.utf8).map { String(format: "%02x", $0) }.joined()
++        let data = try #require(ClaudeKeychainSecurityTool.decodeOutput(hex + "\n"))
++        #expect(String(decoding: data, as: UTF8.self) == json)
++    }
 +
- ### Built-in switches
- 
- | Switch | Status | Switch | Status |
++    @Test func emptyOutputIsNil() {
++        #expect(ClaudeKeychainSecurityTool.decodeOutput(" \n") == nil)
++    }
++}
 ```
 
 ---
 
-### Incident Patch 3: `cac06959` (2026-11-06)
-**Commit Message**: Use physical footprint for process memory
+### Incident Patch 2: `9f6d833e` (2026-11-11)
+**Commit Message**: Fix truncated buttons in Evolution empty state
 
-**File**: `OnlySwitch/Features/SystemMonitor/MacSystemMonitorCollector.swift` (modified, +9/-9)
+Lay out the actions side by side when they fit, otherwise stack them,
+and keep each button at its ideal width so titles are never truncated.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Modules/Sources/AppFeature/Features/Settings/Evolution/EvolutionEmptyStateView.swift` (modified, +23/-13)
 ```diff
-@@ -774,7 +774,7 @@ actor MacSystemMonitorCollector {
- 
-     private struct ProcessCounters {
-         let cpuNanoseconds: UInt64
--        let residentBytes: UInt64
-+        let memoryBytes: UInt64?
-         let name: String
-         let identity: SystemMonitorProcessIdentity?
-     }
-@@ -1216,7 +1216,7 @@ private extension MacSystemMonitorCollector {
-                 pid: pid,
-                 name: counters.name,
-                 cpuUsage: .available(cpuUsage),
--                memoryBytes: .available(counters.residentBytes),
-+                memoryBytes: counters.memoryBytes.map { .available($0) } ?? .unavailable,
-                 downloadBytesPerSecond: .unavailable,
-                 uploadBytesPerSecond: .unavailable
-             )
-@@ -1232,14 +1232,14 @@ private extension MacSystemMonitorCollector {
- 
-         // `proc_pid_rusage` can be denied for individual processes (and has differed between
-         // macOS releases for sandboxed callers). Use the documented task-info query as a
--        // per-process fallback rather than dropping every row when that happens. Both sources
--        // report cumulative CPU time and resident memory, so downstream rate calculations stay
--        // identical.
--        let values: (cpuNanoseconds: UInt64, residentBytes: UInt64)
-+        // per-process CPU fallback rather than dropping every row when that happens. Physical
-+        // footprint is not available from task info, and RSS is intentionally not substituted
-+        // because it measures different memory semantics.
-+        let values: (cpuNanoseconds: UInt64, memoryBytes: UInt64?)
-         if resourceUsageResult == 0 {
-             values = (
-                 cpuNanoseconds: usage.ri_user_time + usage.ri_system_time,
--                residentBytes: usage.ri_resident_size
-+                memoryBytes: usage.ri_phys_footprint
-             )
-         } else {
-             var taskInfo = proc_taskinfo()
-@@ -1253,7 +1253,7 @@ private extension MacSystemMonitorCollector {
-             guard returnedByteCount == MemoryLayout<proc_taskinfo>.size else { return nil }
-             values = (
-                 cpuNanoseconds: taskInfo.pti_total_user + taskInfo.pti_total_system,
--                residentBytes: taskInfo.pti_resident_size
-+                memoryBytes: nil
-             )
+@@ -16,20 +16,30 @@ struct EvolutionEmptyStateView: View {
+         } description: {
+             Text("Build your own switches and buttons with Shell or AppleScript.".localized())
+         } actions: {
+-            HStack {
+-                Button("New Evolution".localized(), systemImage: "plus") {
+-                    store.send(.newTapped)
+-                }
+-                .evolutionProminentButtonStyle()
+-                Button("Browse Gallery".localized(), systemImage: "square.grid.2x2") {
+-                    store.send(.tabChanged(.gallery))
+-                }
+-                if store.isOnlyAgentAvailable {
+-                    Button("Create with Only Agent".localized(), systemImage: "sparkles") {
+-                        store.send(.openOnlyAgent)
+-                    }
+-                }
++            // Side by side when the labels fit; otherwise stacked so no title gets truncated.
++            ViewThatFits(in: .horizontal) {
++                HStack { buttons }
++                VStack { buttons }
+             }
          }
- 
-@@ -1287,7 +1287,7 @@ private extension MacSystemMonitorCollector {
- 
-         return ProcessCounters(
-             cpuNanoseconds: values.cpuNanoseconds,
--            residentBytes: values.residentBytes,
-+            memoryBytes: values.memoryBytes,
-             name: name,
-             identity: identity
-         )
+     }
++
++    @ViewBuilder
++    private var buttons: some View {
++        Button("New Evolution".localized(), systemImage: "plus") {
++            store.send(.newTapped)
++        }
++        .evolutionProminentButtonStyle()
++        .fixedSize()
++        Button("Browse Gallery".localized(), systemImage: "square.grid.2x2") {
++            store.send(.tabChanged(.gallery))
++        }
++        .fixedSize()
++        if store.isOnlyAgentAvailable {
++            Button("Create with Only Agent".localized(), systemImage: "sparkles") {
++                store.send(.openOnlyAgent)
++            }
++            .fixedSize()
++        }
++    }
+ }
 ```
 
-**File**: `OnlySwitchTests/SystemMonitor/MacSystemMonitorCollectorTests.swift` (modified, +1/-1)
+---
+
+### Incident Patch 3: `9bbe4cad` (2026-11-11)
+**Commit Message**: fix item clicking
+
+**File**: `Modules/Sources/OnlyRemoteFeature/Features/Pairing/PairingView.swift` (modified, +5/-5)
 ```diff
-@@ -145,7 +145,7 @@ struct MacSystemMonitorCollectorTests {
- 
-         #expect(snapshot.processes.isEmpty == false)
-         #expect(snapshot.processes.allSatisfy { process in
--            process.pid > 0 && process.name.isEmpty == false && process.memoryBytes.value != nil
-+            process.pid > 0 && process.name.isEmpty == false && process.cpuUsage.value != nil
-         })
+@@ -73,12 +73,12 @@ struct PairingView: View {
+                                 HStack {
+                                     Label(mac.displayName, systemImage: "desktopcomputer")
+                                     Spacer()
+-                                    if store.selectedMacID == mac.id {
+-                                        Image(systemName: "checkmark.circle.fill")
+-                                            .foregroundStyle(.tint)
+-                                            .accessibilityHidden(true)
+-                                    }
++                                    Image(systemName: store.selectedMacID == mac.id ? "checkmark.circle.fill" : "circle")
++                                        .foregroundStyle(store.selectedMacID == mac.id ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
++                                        .imageScale(.large)
++                                        .accessibilityHidden(true)
+                                 }
++                                .contentShape(.rect)
+                             }
+                             .buttonStyle(.plain)
+                             .disabled(store.isPairing)
+```
+
+**File**: `Modules/Sources/OnlyRemoteFeature/Features/Settings/GlobalSettingsView.swift` (modified, +3/-0)
+```diff
+@@ -53,6 +53,7 @@ struct GlobalSettingsView: View {
+                                     }
+                                     Spacer()
+                                 }
++                                .contentShape(.rect)
+                             }
+                             .buttonStyle(.plain)
+                             .accessibilityLabel(Text(mac.id == store.selectedMacID ? "Selected Mac: \(mac.displayName)" : "Select Mac: \(mac.displayName)"))
+@@ -188,6 +189,8 @@ struct GlobalSettingsView: View {
+             Text(title)
+                 .foregroundStyle(Color.primary)
+         }
++        .frame(maxWidth: .infinity, alignment: .leading)
++        .contentShape(.rect)
      }
  
+     private static let reviewURL = URL(string: "itms-apps://itunes.apple.com/app/id6793657946?action=write-review")!
 ```
 
 #### Recent Merged Pull Requests:
@@ -1162,31 +1398,45 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Stop crashing when a music player quits while its state is polled
+## X. Read Claude Code credential via security tool to avoid Keychain prompts
 
 **RULE**:
-When implementing operations in `OnlySwitch/Player/MusicAppPlayer/AppleMusic/AppleMusicPlayer/AppleMusicPlayer.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Modules/Sources/OnlyAgent/ClaudeUsage/ClaudeKeychainSecurityTool.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72a3ac88`: Stop crashing when a music player quits while its state is polled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec1066ef`: Read Claude Code credential via security tool to avoid Keychain prompts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OnlySwitch/Player/MusicAppPlayer/AppleMusic/AppleMusicPlayer/AppleMusicPlayer.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Sources/OnlyAgent/ClaudeUsage/ClaudeKeychainSecurityTool.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        // A player that quits mid-request replies with no state, which is not a valid case
-        // and would trap when switched on, so validate it through its raw value first.
-              let rawState = applemusicApp.playerState?.rawValue,
-              let playerState = iTunesEPlS(rawValue: rawState)
+import Foundation
+
+/// Reads Claude Code's Keychain item through Apple's `/usr/bin/security` tool.
+///
+/// Claude Code writes `Claude Code-credentials` with `security add-generic-password`, so the item's
+/// access list trusts `/usr/bin/security`. Reading through the same tool therefore never shows the
+/// Keychain password dialog, whereas a direct `SecItemCopyMatching` from OnlySwitch does — and any
+/// "Always Allow" granted to OnlySwitch is lost each time Claude Code rewrites the item on token refresh.
+enum ClaudeKeychainSecurityTool {
+    static let executable = URL(fileURLWithPath: "/usr/bin/security")
+
+    /// Returns the item's secret, or nil when the tool is unavailable, the item is missing, or the
+    /// tool could not read it without interaction. Callers fall back to the Security framework.
+    static func read(service: String) async -> Data? {
+        guard FileManager.default.isExecutableFile(atPath: executable.path) else { return nil }
+        // A minimal environment: the tool needs nothing from OnlySwitch's process environment.
+        let environment = ["PATH": "/usr/bin:/bin:/usr/sbin:/sbin", "HOME": NSHomeDirectory()]
+        guard let result = await ClaudeCodeCL
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-              let playerState = applemusicApp.playerState
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72a3ac88` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec1066ef` are properly handled with clean fallback behavior.

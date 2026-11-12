@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `23221edf`  
+> **Source Version**: `988d97f3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T00:45:07.616Z  
+> **Timestamp**: 2026-11-12T08:52:50.088Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T00:45:07.366Z  
+> **Harvest Timestamp**: 2026-11-12T08:52:50.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42950 stars
+- **Stars / Engagement**: 43026 stars
 
 ---
 
@@ -213,6 +213,7 @@ FINISH_BENCHMARK(ConcurrentCommits32Threads10ms)
 #include "duckdb/common/likely.hpp"
 #include "duckdb/function/function_set.hpp"
 #include "duckdb/planner/expression.hpp"
+#include "duckdb/planner/expression/bound_aggregate_expression.hpp"
 
 namespace duckdb {
 
@@ -490,8 +491,7 @@ struct TimestampNSAverageOperation : public DiscreteAverageOperation {
 	}
 
 	template <class INPUT_TYPE, class STATE, class OP>
-	static void Operation(STATE &state, const INPUT_TYPE &input, AggregateUnaryInput &unary_input) {
-		if (DUCKDB_UNLIKELY(!NS_TIMESTAMP(input).IsFinite(
+	static void Operation(STATE &state, const INPUT_TYPE &input, AggregateUnaryInput 
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/algebraic/corr.cpp`
@@ -1809,6 +1809,10 @@ struct ModeStandard {
 		return new MAP_TYPE();
 	}
 
+	static ModeAttr &GetOrCreate(MAP_TYPE &map, const T &key, ArenaAllocator &) {
+		return map[key];
+	}
+
 	template <class INPUT_TYPE, class RESULT_TYPE>
 	static RESULT_TYPE Assign(Vector &result, INPUT_TYPE input) {
 		return RESULT_TYPE(input);
@@ -1831,11 +1835,15 @@ struct ModeStandard {
 struct ModeString {
 	using MAP_TYPE = OwningStringMap<ModeAttr>;
 
-	static MAP_TYPE *CreateEmpty(ArenaAllocator &allocator) {
-		return new MAP_TYPE(allocator);
+	static MAP_TYPE *CreateEmpty(ArenaAllocator &) {
+		return new MAP_TYPE();
 	}
 	static MAP_TYPE *CreateEmpty(Allocator &allocator) {
 		return new MAP_TYPE(allocator);
+	}
+
+	static ModeAttr &GetOrCreate(MAP_TYPE &map, const string_t &key, ArenaAllocator &allocator) {
+		return map.GetOrCreate(key, allocator);
 	}
 
 	template <class INPUT_TYPE, class RESULT_TYPE>
@@ -1990,12 +1998,7 @@ struct ModeState {
 		}
 	}
 
-	void Update(const KEY_TYPE &key, AggregateInputData &aggr_input_data) {
-		mode = TYPE_OP::Update(mode, mode_alloc_size, key, aggr_input_data);
-	}
-
-	//! Rescan the frequency map, breaking ties by the first tied value in the frames.
-	//! Th
+	void Update(c
 ```
 
 
@@ -2004,15 +2007,13 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28601** (2026-11-09): **Parse schema-qualified table functions named describe, summarize, show, pivot or unpivot**
-  *Symptoms*: Table macros in a schema can no longer be called when their name is a reserved keyword: `SELECT * FROM g.describe('a')`, and the same with `summarize`, `show`, `pivot` or `unpivot`, fails on 2.0 with "Parser Error: syntax error at or near "("", while v1.5 accepts it. Creating the macro still works, and quoting the name (`g."describe"('a')`) is the only way to call it.  The PEG grammar reads the name of a table function as a `TableFunctionName`, which rejects reserved keywords, also after a qualification. Scalar function calls already allow a reserved keyword after a qualification (`CatalogReservedSchemaFunctionName`).  This adds the same rule for table functions, `CatalogReservedSchemaTableFunctionName`, so a reserved keyword can name a table function after a catalog or schema qualification. Unqualified names are unchanged. The generated parser files are regenerated with `scripts/parser/build_grammar.sh`.  This is a v2.0 regression, could it get the `backport v2.0-cyanoptera` label? 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!
+- **Issue #28731** (2026-11-12): **Preserve aggregate domains for proven singleton groups**
+  *Symptoms*: When DISTINCT ON is lowered to GROUP BY plus first(), aggregate outputs receive a cardinality-derived domain even when the grouping is known to contain exactly one row per key. This can distort join estimates although the aggregate preserves the input value.  Reuse child domain statistics only when the grouping covers a certified unique key and the bound aggregate has single-value identity. Reuse the existing functional-dependency machinery, preserve supported binding/cast lineage, and set singleton aggregate cardinality from the child. Carry identity through the ordered first/last/any_value rewrite, whose encoded sort key is non-NULL.  Nullable UNIQUE keys, deferred constraints, incomplete composite keys, lossy/TRY casts, multiplying joins, aggregate FILTER, list-returning overloads, and ordinary nullable-selector arg_min/max remain on the fallback. Tests include a concrete HLL false-positive case: 33 input rows are estimated as 33 groups although there are only 32 groups.  Related to #28615. This covers inputs with exact key evidence; it does not resolve the unconstrained CTAS reproduction. In the local 1M-node/5M-edge/5M-message experiment, repeated-query medians were about 29 ms for the declared-key variant and 149 ms for the unconstrained variant, with identical results. Serialized rewritten functions can conservatively lose identity metadata when rebound and consequently lose forwarding eligibility.  Validation on upstream main `39aeee12ef8`:  - `make reldebug`; formatt
 
-- **Issue #28600** (2026-11-09): **Keep the DECIMAL type of a windowed sum in the window self-join rewrite**
-  *Symptoms*: A windowed `sum` over a DECIMAL fails at planning time with "INTERNAL Error: Failed to bind column reference "s" [39.1]: inequal types (DECIMAL(38,2) != HUGEINT)" when the query also has a filter that references several bindings, for example:  ```sql CREATE TABLE t AS SELECT i % 7 AS k, (i % 50 + 1)::DECIMAL(12,2) AS d FROM range(1000) t(i); SELECT (SELECT max(s) FROM (SELECT sum(d) OVER (PARTITION BY k) AS s FROM t)),        (SELECT count(*) FROM range(10) r(x) WHERE x = 3 OR x IN (SELECT 1)); ```  Such a filter makes the filter statistics pass run statistics propagation before the window self-join rewrite. Propagating the window's statistics specializes the DECIMAL sum into `sum_no_overflow`, which returns a HUGEINT, while the window expression stays DECIMAL(38,2). `TranslateAggregate` took the type of the aggregate it builds from that function.  This gives the aggregate the type of the window expression it replaces, as a regular aggregate keeps its type when statistics propagation swaps in `sum_no_overflow`.  This is a v2.0 regression, could it get the `backport v2.0-cyanoptera` label? 
+- **Issue #28724** (2026-11-12): **Keep test_concurrentqueue.cpp out of the test_common unity build (fixes macOS reldebug)**
+  *Symptoms*: Since #28674 added `test/common/test_concurrentqueue.cpp`, the `reldebug` build fails on macOS:  ``` .../MacOSX.sdk/usr/include/mach/host_info.h:123:2: error: reference to 'integer_t' is ambiguous   candidate: ::integer_t          (mach/arm/vm_types.h:97)   candidate: duckdb::integer_t    (src/include/duckdb/common/checked_integer.hpp:432) ```  `blockingconcurrentqueue.h` includes `mach/mach.h`, which uses the unqualified global `integer_t`. In the `test_common` unity translation unit that file is pasted in after `test_cast.cpp` and `test_checked_integer.cpp`, both of which have a file-scope `using namespace duckdb;`, so the SDK's `integer_t` now resolves to two candidates. Reordering does not help: with the mach headers first, `test_checked_integer.cpp`'s own unqualified `integer_t` becomes ambiguous instead. The two files cannot share a translation unit on macOS.  This PR removes `test_concurrentqueue.cpp` from the `add_library_unity` list and adds it to the same object library with `target_sources`, so it compiles as its own translation unit. The file already builds cleanly standalone, which is why Linux CI (and `DISABLE_UNITY` builds) never saw the error.  Verified locally on macOS 26 / Xcode 27 SDK: `make reldebug` completes and `unittest "[concurrentqueue]"` passes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
   **Post-Mortem & Fix Analysis**:
-  > Thanks!
+  > Thanks! Fix was merged via https://github.com/duckdb/duckdb/pull/28707 so this is no longer necessary
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2029,264 +2030,785 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f203aed` (2026-11-09)
-**Commit Message**: Fix dangling segment node link when appending a segment runs out of memory (#28583)
+### Incident Patch 1: `1cccba45` (2026-11-11)
+**Commit Message**: Preserve fixed allocator blocks when queue allocation fails
 
-`tools/shell/tests/test_address_space_limit.py` (300 MB case) flakes
-with a SIGSEGV on CI, e.g.
-https://github.com/duckdb/duckdb/actions/runs/42591764034/job/129078685582
-and run 42588548027. This also happens on `main`.
+Reserve bounded per-shard overflow before publishing the fixed pool so
+free-only threads and TLS teardown retain block IDs when queue metadata
+allocation fails. Release staged storage if pool initialization fails.
 
-## Cause
+Exercise queue failures and actual allocator ownership/cleanup with a
+standalone fault-injection check, including the no-thread path. Record
+the vendored concurrentqueue retry customization.
 
-`SegmentTree::AppendSegmentInternal` pointed the previous node's `next`
-at the new node *before* `nodes.push_back(...)`. If `push_back` throws
-(out of memory while growing the vector), the new node is destroyed but
-the previous node keeps a dangling `next`. The failed `CREATE TABLE AS`
-then rolls back, and `LocalTableStorage::Rollback` -> `CommitDropTable`
--> `ColumnData::VisitBlockIds` walks the `next` chain into freed memory.
-
-## Fix
-
-Add the node to `nodes` first, and only then link the previous node to
-it.
-
-## Testing
-
-Reproduced on `main` under `RLIMIT_AS` of 298-310 MB (4 CPUs, many
-parallel runs): ~4 SIGSEGVs per ~7200 runs, with the backtrace above.
-With this change: 0 in 7200 runs. The existing shell test covers the
-scenario; the failure is a low-probability race against the memory
-limit, so I did not add a new deterministic test.
-
-Note: I also hit a rarer, sepa
-
-**File**: `src/include/duckdb/storage/table/segment_tree.hpp` (modified, +5/-3)
+**File**: `src/include/duckdb/storage/sharded_allocator_queue.hpp` (added, +175/-0)
 ```diff
-@@ -482,10 +482,12 @@ class SegmentTree {
- 		D_ASSERT(segment);
- 		// add the node to the list of nodes
- 		auto node = make_uniq<SegmentNode<T>>(row_start, std::move(segment), nodes.size());
--		if (!nodes.empty()) {
--			nodes.back()->SetNext(*node);
--		}
-+		auto &new_node = *node;
-+		optional_ptr<SegmentNode<T>> previous_node = nodes.empty() ? nullptr : nodes.back().get();
- 		nodes.push_back(std::move(node));
-+		if (previous_node) {
-+			previous_node->SetNext(new_node);
+@@ -0,0 +1,175 @@
++//===----------------------------------------------------------------------===//
++//                         DuckDB
++//
++// duckdb/storage/sharded_allocator_queue.hpp
++//
++//
++//===----------------------------------------------------------------------===//
++
++#pragma once
++
++#include "duckdb/common/atomic.hpp"
++#include "duckdb/common/helper.hpp"
++#include "duckdb/common/mutex.hpp"
++#include "duckdb/common/vector.hpp"
++#include "duckdb/parallel/concurrentqueue.hpp"
++
++#include <new>
++#include <type_traits>
++
++namespace duckdb {
++
++template <class T, class QUEUE = duckdb_moodycamel::ConcurrentQueue<T>>
++class ShardedAllocatorQueue {
++	static_assert(std::is_trivially_copyable<T>::value, "Allocator queue entries must be trivially copyable");
++
++public:
++	struct alignas(64) Shard {
++		bool Enqueue(T value) {
++			return EnqueueInternal(
++			    1, [&] { return q.enqueue(value); }, [&] { return EnqueueOverflow(&value, 1); });
 +		}
- 	}
- 	void AppendSegmentInternal(SegmentLock &l, shared_ptr<T> segment) const {
- 		idx_t row_start;
++		template <class ITERATOR>
++		bool EnqueueBulk(ITERATOR begin, idx_t size) {
++#ifdef DUCKDB_NO_THREADS
++			// The single-threaded queue can throw after publishing a prefix of a batch.
++			for (idx_t i = 0; i < size; i++) {
++				if (!Enqueue(begin[i])) {
++					return false;
++				}
++			}
++			return true;
++#else
++			return EnqueueInternal(
++			    size, [&] { return q.enqueue_bulk(begin, size); }, [&] { return EnqueueOverflow(begin, size); });
++#endif
++		}
++		bool TryDequeue(T &value) {
++			return TryDequeueInternal([&] { return idx_t(q.try_dequeue(value)); },
++			                          [&] { return DequeueOverflow(&value, 1); }) != 0;
++		}
++		template <class ITERATOR>
++		idx_t TryDequeueBulk(ITERATOR begin, idx_t size) {
++			return TryDequeueInternal([&] { return q.try_dequeue_bulk(begin, size); },
++			                          [&] { return DequeueOverflow(begin, size); });
++		}
++		idx_t SizeApprox() const {
++			return track_count ? count.load(std::memory_order_relaxed)
++			                   : q.size_approx() + overflow_count.load(std::memory_order_relaxed);
++		}
++		//! Reserve before publication: fixed-pool returns must survive queue allocation failure.
++		void ReserveOverflow(idx_t capacity) {
++			if (capacity == 0) {
++				overflow.reset();
++			} else {
++				overflow = make_uniq<vector<T>>(capacity);
++			}
++		}
++
++		bool track_count = false;
++
++	private:
++		template <class ENQUEUE, class OVERFLOW>
++		bool EnqueueInternal(idx_t size, ENQUEUE enqueue, OVERFLOW enqueue_overflow) {
++			if (track_count) {
++				count.fetch_add(size, std::memory_order_relaxed);
++			}
++			try {
++				bool queued = false;
++				try {
++					queued = enqueue();
++				} catch (const std::bad_alloc &) {
++					// The single-threaded queue reports allocation failure by throwing.
++				}
++				if (queued || enqueue_overflow()) {
++					return true;
++				}
++			} catch (...) {
++				if (track_count) {
++					count.fetch_sub(size, std::memory_order_relaxed);
++				}
++				throw;
++			}
++			if (track_count) {
++				count.fetch_sub(size, std::memory_order_relaxed);
++			}
++			return false;
++		}
++		template <class DEQUEUE, class OVERFLOW>
++		idx_t TryDequeueInternal(DEQUEUE dequeue, OVERFLOW dequeue_overflow) {
++			if (track_count && count.load(std::memory_order_relaxed) == 0) {
++				return 0;
++			}
++			auto obtained = dequeue();
++			if (obtained == 0) {
++				obtained = dequeue_overflow();
++			}
++			if (track_count && obtained > 0) {
++				count.fetch_sub(obtained, std::memory_order_relaxed);
++			}
++			return obtained;
++		}
++		template <class ITERATOR>
++		bool EnqueueOverflow(ITERATOR begin, idx_t size) {
++			if (!overflow) {
++				return false;
++			}
++			lock_guard<mutex> guard(overflow_lock);
++			const auto current = overflow_count.load(std::memory_order_relaxed);
++			if (size > overflow->size() - current) {
++				return false;
++			}
++			for (idx_t i = 0; i < size; i++) {
++				(*overflow)[current + i] = begin[i];
++			}
++			overflow_count.store(current + size, std::memory_order_relaxed);
++			return true;
++		}
++		template <class ITERATOR>
++		idx_t DequeueOverflow(ITERATOR begin, idx_t size) {
++			if (overflow_count.load(std::memory_order_relaxed) == 0) {
++				return 0;
++			}
++			lock_guard<mutex> guard(overflow_lock);
++			const auto current = overflow_count.load(std::memory_order_relaxed);
++			const auto obtained = MinValue(size, current);
++			for (idx_t i = 0; i < obtained; i++) {
++				begin[i] = (*overflow)[current - obtained + i];
++			}
++			overflow_count.store(current - obtained, std::memory_order_relaxed);
++			return obtained;
++		}
++
++		QUEUE q;
++		mutex overflow_lock;
++		unique_ptr<vector<T>> overflow;
++		atomic<idx_t> overflow_count {0};
++		alignas(64) atomic<idx_t> count {0};
++	};
++
++public:
++	explicit ShardedAllocatorQueue(idx_t count, bool track_count = false) : queues(count) {
++		D_ASSERT(count > 0);
++		for (auto &queue : queues) {
++			queue.track_count = track_count;
++		}
++	}
++	idx_t Count() const {
++		return queues.size();
++	}
++	Shard &Get(idx_t shard) {
++		return queues[shard];
++	}
++	idx_t SizeApprox()
 ```
 
----
-
-### Incident Patch 2: `c93ae535` (2026-11-09)
-**Commit Message**: Keep the window type when the window self-join rewrite builds its aggregate
-
-When a filter references several bindings, statistics propagation runs before the window self-join
-rewrite and can specialize the window's aggregate, e.g. the sum of a DECIMAL to sum_no_overflow,
-which returns a HUGEINT. The rewrite took the aggregate's type from that function, so planning
-failed with "Failed to bind column reference ... inequal types (DECIMAL(38,2) != HUGEINT)".
-
-Give the aggregate the type of the window expression it replaces.
-
-**File**: `src/optimizer/window_self_join.cpp` (modified, +2/-0)
+**File**: `src/storage/block_allocator.cpp` (modified, +18/-91)
 ```diff
-@@ -105,6 +105,8 @@ static unique_ptr<Expression> TranslateAggregate(ClientContext &client, const Bo
- 	const auto aggr_ordered = (agg_func.GetOrderDependent() == AggregateOrderDependent::ORDER_DEPENDENT);
- 	auto result = make_uniq<BoundAggregateExpression>(std::move(agg_func), std::move(children), std::move(filter),
- 	                                                  std::move(bind_info), aggr_type);
-+	// statistics propagation may already have specialized the function, e.g. sum_no_overflow returns a HUGEINT
-+	result->SetReturnType(w_expr.GetReturnType());
+@@ -1,4 +1,5 @@
+ #include "duckdb/storage/block_allocator.hpp"
++#include "duckdb/storage/sharded_allocator_queue.hpp"
  
- 	if (!aggr_ordered) {
- 		//	ORDER BY is a NOP, so drop it.
-```
-
-**File**: `test/sql/optimizer/test_window_self_join.test` (modified, +10/-0)
-```diff
-@@ -484,3 +484,13 @@ ORDER BY i LIMIT 2;
- ----
- 0	[2, 0, 3, 1]
- 1	[2, 0, 3, 1]
-+
-+# a filter on two bindings runs statistics propagation first, which turns the DECIMAL sum into sum_no_overflow (HUGEINT)
-+statement ok
-+CREATE TABLE decimals AS SELECT i % 7 AS k, (i % 50 + 1)::DECIMAL(12,2) AS d FROM range(1000) t(i);
-+
-+query II
-+SELECT (SELECT max(s) FROM (SELECT sum(d) OVER (PARTITION BY k) AS s FROM decimals)),
-+       (SELECT count(*) FROM range(10) r(x) WHERE x = 3 OR x IN (SELECT 1));
-+----
-+3664.00	2
-```
-
----
-
-### Incident Patch 3: `d6bf1469` (2026-11-09)
-**Commit Message**: Implement select for uncompressed fixed-size segments (#28492)
-
-Implements the `select` compression function for uncompressed fixed-size
-segments (all fixed-width numeric types, INTERVAL, LIST offsets): a
-plain gather of the selected rows from the segment, instead of the
-per-row-run scan fallback.
-
-Tests: `test/sql/storage/compression/select_fixed_size.test`
-(TINYINT..HUGEINT, UBIGINT, DOUBLE, FLOAT, NULLs, selections at vector
-boundaries); `test/sql/storage/compression/*` passes.
-
-## Speed-ups (RelWithDebInfo, 1 thread, min of 5 runs, loaded shared box
-so +-10%)
-
-Sparse UPDATE of an uncompressed column on 2M rows, with the base-row
-fetch of duckdb/duckdb#28206 applied on top of main (without `select` vs
-with):
-
-| UPDATE ... WHERE id % N = 0 | no select | select | change |
-|---|---:|---:|---:|
-| `i` INT, N=2 | 0.095s | 0.082s | -14% |
-| `d` DOUBLE, N=2 | 0.162s | 0.142s | -12% |
-| `b` BIGINT, N=2 | 0.101s | 0.084s | -17% |
-| `i` INT, N=8 | 0.044s | 0.038s | -14% |
-| `i` INT, N=64 | 0.033s | 0.032s | same |
-| `i` INT, N=4 (isolated, 7 runs) | 0.201s | 0.202s | same |
-
-(In a sequence of updates of the same column, one N=4 measurement was
-slower with select; re-measured in isolation i
-
-**File**: `src/storage/compression/fixed_size_uncompressed.cpp` (modified, +26/-6)
-```diff
-@@ -186,6 +186,24 @@ void FixedSizeScan(ColumnSegment &segment, ColumnScanState &state, idx_t scan_co
- 	FlatVector::SetData(result, data_ptr_cast(const_cast<T *>(source_data.data())), count_t(scan_count));
+ #include "duckdb/common/allocator.hpp"
+ #include "duckdb/common/types/uuid.hpp"
+@@ -214,102 +215,23 @@ static idx_t AllocatorLocalShard(const idx_t count) {
+ 	return count == 1 ? 0 : (TaskScheduler::GetEstimatedCPUId() / 4) % count;
  }
  
-+//===--------------------------------------------------------------------===//
-+// Select
-+//===--------------------------------------------------------------------===//
-+template <class T>
-+void FixedSizeSelect(ColumnSegment &segment, ColumnScanState &state, idx_t vector_count, Vector &result,
-+                     const SelectionVector &sel, idx_t sel_count, idx_t result_offset, ScanVectorType scan_type) {
-+	auto &scan_state = state.scan_state->Cast<FixedSizeScanState>();
-+	auto start = state.GetPositionInSegment();
+-template <class T>
+-class ShardedAllocatorQueue {
+-public:
+-	struct alignas(64) Shard {
+-		bool Enqueue(T value) {
+-			return EnqueueInternal(1, [&] { return q.enqueue(value); });
+-		}
+-		template <class ITERATOR>
+-		bool EnqueueBulk(ITERATOR begin, idx_t size) {
+-			return EnqueueInternal(size, [&] { return q.enqueue_bulk(begin, size); });
+-		}
+-		bool TryDequeue(T &value) {
+-			return TryDequeueInternal([&] { return idx_t(q.try_dequeue(value)); }) != 0;
+-		}
+-		template <class ITERATOR>
+-		idx_t TryDequeueBulk(ITERATOR begin, idx_t size) {
+-			return TryDequeueInternal([&] { return q.try_dequeue_bulk(begin, size); });
+-		}
+-		idx_t SizeApprox() const {
+-			return track_count ? count.load(std::memory_order_relaxed) : q.size_approx();
+-		}
+-
+-		bool track_count = false;
+-
+-	private:
+-		template <class ENQUEUE>
+-		bool EnqueueInternal(idx_t size, ENQUEUE enqueue) {
+-			if (track_count) {
+-				count.fetch_add(size, std::memory_order_relaxed);
+-			}
+-			try {
+-				if (enqueue()) {
+-					return true;
+-				}
+-			} catch (...) {
+-				if (track_count) {
+-					count.fetch_sub(size, std::memory_order_relaxed);
+-				}
+-				throw;
+-			}
+-			if (track_count) {
+-				count.fetch_sub(size, std::memory_order_relaxed);
+-			}
+-			return false;
+-		}
+-		template <class DEQUEUE>
+-		idx_t TryDequeueInternal(DEQUEUE dequeue) {
+-			if (track_count && count.load(std::memory_order_relaxed) == 0) {
+-				return 0;
+-			}
+-			const auto obtained = dequeue();
+-			if (track_count && obtained > 0) {
+-				count.fetch_sub(obtained, std::memory_order_relaxed);
+-			}
+-			return obtained;
+-		}
+-
+-		duckdb_moodycamel::ConcurrentQueue<T> q;
+-		alignas(64) atomic<idx_t> count {0};
+-	};
+-
+-public:
+-	explicit ShardedAllocatorQueue(idx_t count, bool track_count = false) : queues(count) {
+-		D_ASSERT(count > 0);
+-		for (auto &queue : queues) {
+-			queue.track_count = track_count;
+-		}
+-	}
+-	idx_t Count() const {
+-		return queues.size();
+-	}
+-	idx_t LocalShard() const {
+-		return AllocatorLocalShard(Count());
+-	}
+-	Shard &Get(idx_t shard) {
+-		return queues[shard];
+-	}
+-	idx_t SizeApprox() const {
+-		idx_t count = 0;
+-		for (auto &queue : queues) {
+-			count += queue.SizeApprox();
+-		}
+-		return count;
+-	}
+-
+-private:
+-	vector<Shard> queues;
+-};
+-
+ struct BlockQueue {
+ 	BlockQueue(idx_t blocks, idx_t shards)
+ 	    : blocks_per_shard(MaxValue<idx_t>(1, blocks / shards + (blocks % shards != 0))),
+ 	      queues(MaxValue<idx_t>(1, blocks / blocks_per_shard + (blocks % blocks_per_shard != 0)),
+ 	             blocks > blocks_per_shard) {
+ 	}
+ 
++	void ReserveOverflow(idx_t blocks) {
++		for (idx_t shard = 0; shard < queues.Count(); shard++) {
++			queues.Get(shard).ReserveOverflow(MinValue(blocks_per_shard, blocks - shard * blocks_per_shard));
++		}
++	}
++	void ReleaseOverflow() {
++		for (idx_t shard = 0; shard < queues.Count(); shard++) {
++			queues.Get(shard).ReserveOverflow(0);
++		}
++	}
+ 	idx_t Home(uint32_t block) const {
+ 		return block / blocks_per_shard;
+ 	}
+@@ -726,7 +648,7 @@ class AllocationCache {
+ 
+ private:
+ 	idx_t LocalShard() const {
+-		return buckets[0]->queues.LocalShard();
++		return AllocatorLocalShard(buckets[0]->queues.Count());
+ 	}
+ 
+ 	Allocator &allocator;
+@@ -806,6 +728,8 @@ bool BlockAllocator::InitializePool() const {
+ 	unsafe_unique_ptr<BlockQueue> queue;
+ 	try {
+ 		queue = make_unsafe_uniq<BlockQueue>(DivBlockSize(pool_size), touched->queues.Count());
++		queue->ReserveOverflow(DivBlockSize(pool_size));
++		touched->ReserveOverflow(DivBlockSize(pool_size));
+ 		uint32_t block_ids[STANDARD_VECTOR_SIZE];
+ 		const auto count = DivBlockSize(pool_size);
+ 		for (idx_t block_id = 0; block_id < count; block_id += STANDARD_VECTOR_SIZE) {
+@@ -814,17 +738,20 @@ bool BlockAllocator::InitializePool() const {
+ 				block_ids[i] = NumericCast<uint32_t>(block_id + i);
+ 			}
+ 			if (!queue->EnqueueBulk(block_ids, next)) {
++				touched->ReleaseOverflow();
+ 				pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
+ 				return false;
+ 			}
+ 		}
+ 	} catch (const std::bad_alloc &) {
++		touched->ReleaseOverflow();
+ 		pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
+ 		return false;
+ 	}
+ 
+ 	const auto pointer = AllocateVirtualMemory(pool_size);
+ 	if (!pointer) {
++		touched->ReleaseOverflow();
+ 		pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
+ 		return false;
+ 	}
+@@ -856,7 +783,7 @@ idx_t BlockAllocator::DivBlockSize(const idx_t n) const {
+ }
+ 
+ idx_t BlockAllocator::GetLocalPoolShard() const {
+-	return touched->queues.LocalShard();
++	return AllocatorLocalShard(touched->queues.Count());
+ }
+ 
+ uint32_t BlockAllocator::GetBlockID(const data_ptr_t pointer) c
+```
+
+**File**: `test/CMakeLists.txt` (modified, +40/-0)
+```diff
+@@ -71,6 +71,46 @@ endif()
+ 
+ add_executable(unittest unittest.cpp ${UNITTEST_OBJECT_FILES})
+ 
++if(CMAKE_SYSTEM_NAME STREQUAL "Linux"
++   AND NOT CMAKE_CROSSCOMPILING
++   AND CMAKE_SIZEOF_VOID_P EQUAL 8
++   AND ENABLE_UNITTEST_CPP_TESTS
++   AND TARGET duckdb)
++  # Exercise real allocator failures without installing hooks in the library.
++  add_executable(
++    block_allocator_fault_injection api/block_allocator_fault_injection.cpp
++                                    ../src/storage/block_allocator.cpp)
++  target_link_libraries(block_allocator_fault_injection duckdb pthread)
++  target_link_options(
++    block_allocator_fault_injection
++    PRIVATE
++    -Wl,--wrap=malloc
++    -Wl,--wrap=_Znwm
++    -Wl,--wrap=_ZdlPv
++    -Wl,--wrap=_ZdlPvm
++    -Wl,--wrap=mmap)
++  if(CMAKE_VERSION VERSION_LESS 3.20)
++    set(allocator_probe_stamp
++        "${CMAKE_CFG_INTDIR}/block_allocator_fault_injection.stamp")
++    set(allocator_probe_executable
++        $<TARGET_FILE:block_allocator_fault_injection>)
++  else()
++    set(allocator_probe_stamp "block_allocator_fault_injection-$<CONFIG>.stamp")
++    set(allocator_probe_executable
++        $<OUTPUT_CONFIG:$<TARGET_FILE:block_allocator_fault_injection>>)
++  endif()
++  add_custom_command(
++    OUTPUT "${allocator_probe_stamp}"
++    COMMAND ${CMAKE_COMMAND} -E env "${allocator_probe_executable}"
++    COMMAND ${CMAKE_COMMAND} -E touch "${allocator_probe_stamp}"
++    DEPENDS "${allocator_probe_executable}"
++    COMMENT "Checking BlockAllocator allocation-failure ownership"
++    VERBATIM)
++  add_custom_target(check_block_allocator_fault_injection
++                    DEPENDS "${allocator_probe_stamp}")
++  add_dependencies(unittest check_block_allocator_fault_injection)
++endif()
 +
-+	auto source_data = scan_state.reader.GetArraySlice<T>(0, start, vector_count);
+ # Enable best-effort stack traces for fatal signals in the test runner without
+ # enabling stack traces for every DuckDB exception.
+ if((CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT MUSL_ENABLED) OR APPLE)
+```
+
+**File**: `test/api/block_allocator_fault_injection.cpp` (added, +220/-0)
+```diff
+@@ -0,0 +1,220 @@
++#include "duckdb/common/allocator.hpp"
++#include "duckdb/storage/block_allocator.hpp"
 +
-+	result.SetVectorType(VectorType::FLAT_VECTOR);
-+	auto result_data = FlatVector::GetDataMutable<T>(result) + result_offset;
-+	for (idx_t i = 0; i < sel_count; i++) {
-+		result_data[i] = source_data[sel.get_index(i)];
++#include <algorithm>
++#include <cerrno>
++#include <cstdio>
++#include <cstdlib>
++#include <new>
++#include <thread>
++#include <vector>
++#include <sys/mman.h>
++
++// Link wrapping confines failures to this executable's allocator implementation.
++static thread_local bool reject_malloc = false;
++static thread_local bool reject_new = false;
++static thread_local bool reject_mapping = false;
++static thread_local size_t allowed_new = 0;
++static thread_local size_t fail_new_at = 0;
++static thread_local size_t failures = 0;
++static thread_local size_t new_calls = 0;
++static thread_local bool track_new = false;
++static thread_local int64_t new_balance = 0;
++
++extern "C" {
++void *__real_malloc(size_t size);
++void *__real__Znwm(size_t size);
++void __real__ZdlPv(void *pointer);
++void __real__ZdlPvm(void *pointer, size_t size);
++void *__real_mmap(void *address, size_t length, int protection, int flags, int fd, off_t offset);
++
++void *__wrap_malloc(size_t size) {
++	if (reject_malloc) {
++		failures++;
++		return nullptr;
++	}
++	return __real_malloc(size);
++}
++
++void *__wrap__Znwm(size_t size) {
++	new_calls++;
++	const bool fail_once = fail_new_at > 0 && --fail_new_at == 0;
++	if (fail_once || (reject_new && allowed_new == 0)) {
++		failures++;
++		throw std::bad_alloc();
++	}
++	if (allowed_new > 0) {
++		allowed_new--;
++	}
++	auto result = __real__Znwm(size);
++	if (track_new) {
++		new_balance++;
++	}
++	return result;
++}
++
++void __wrap__ZdlPv(void *pointer) {
++	if (track_new && pointer) {
++		new_balance--;
++	}
++	__real__ZdlPv(pointer);
++}
++
++void __wrap__ZdlPvm(void *pointer, size_t size) {
++	if (track_new && pointer) {
++		new_balance--;
++	}
++	__real__ZdlPvm(pointer, size);
++}
++
++void *__wrap_mmap(void *address, size_t length, int protection, int flags, int fd, off_t offset) {
++	if (reject_mapping) {
++		errno = ENOMEM;
++		return MAP_FAILED;
++	}
++	return __real_mmap(address, length, protection, flags, fd, offset);
++}
++}
++
++namespace duckdb {
++class BlockAllocatorTestHelper {
++public:
++	static bool IsInPool(const BlockAllocator &allocator, data_ptr_t pointer) {
++		return allocator.IsInPool(pointer);
++	}
++	static bool InitializePool(const BlockAllocator &allocator) {
++		return allocator.InitializePool();
++	}
++};
++} // namespace duckdb
++
++static void Check(bool condition, const char *message) {
++	if (!condition) {
++		std::fprintf(stderr, "BlockAllocator fault injection: %s\n", message);
++		std::abort();
 +	}
 +}
 +
- //===--------------------------------------------------------------------===//
- // Append
- //===--------------------------------------------------------------------===//
-@@ -265,12 +283,14 @@ idx_t FixedSizeFinalizeAppend(ColumnSegment &segment, BaseStatistics &stats) {
- //===--------------------------------------------------------------------===//
- template <class T, class APPENDER = StandardFixedSizeAppend>
- CompressionFunction FixedSizeGetFunction(PhysicalType data_type) {
--	return CompressionFunction(CompressionType::COMPRESSION_UNCOMPRESSED, data_type, FixedSizeInitAnalyze,
--	                           FixedSizeAnalyze, FixedSizeFinalAnalyze<T>, UncompressedFunctions::InitCompression,
--	                           UncompressedFunctions::Compress, UncompressedFunctions::FinalizeCompress,
--	                           FixedSizeInitScan, FixedSizeScan<T>, FixedSizeScanPartial<T>,
--	                           UncompressedFunctions::EmptySkip, nullptr, FixedSizeInitAppend,
--	                           FixedSizeAppend<T, APPENDER>, FixedSizeFinalizeAppend<T>);
-+	auto function =
-+	    CompressionFunction(CompressionType::COMPRESSION_UNCOMPRESSED, data_type, FixedSizeInitAnalyze,
-+	                        FixedSizeAnalyze, FixedSizeFinalAnalyze<T>, UncompressedFunctions::InitCompression,
-+	                        UncompressedFunctions::Compress, UncompressedFunctions::FinalizeCompress, FixedSizeInitScan,
-+	                        FixedSizeScan<T>, FixedSizeScanPartial<T>, UncompressedFunctions::EmptySkip, nullptr,
-+	                        FixedSizeInitAppend, FixedSizeAppend<T, APPENDER>, FixedSizeFinalizeAppend<T>);
-+	function.select = FixedSizeSelect<T>;
-+	return function;
- }
- 
- CompressionFunction FixedSizeUncompressed::GetFunction(PhysicalType data_type) {
-```
-
-**File**: `src/storage/table/standard_column_data.cpp` (modified, +7/-0)
-```diff
-@@ -119,6 +119,13 @@ void StandardColumnData::Select(TransactionData transaction, idx_t vector_index,
- 		ColumnData::Select(transaction, vector_index, state, result, sel, sel_count);
- 		return;
- 	}
-+	// a scan references uncompressed data without copying it: slicing beats gathering unless few rows are selected
-+	static constexpr idx_t UNCOMPRESSED_SELECT_DENSITY = 5;
-+	if (compression->type == CompressionType::COMPRESSION_UNCOMPRESSED &&
-+	    sel_count * UNCOMPRESSED_SELECT_DENSITY > target_count) {
-+		ColumnData::Select(transaction, vector_index, state, result, sel, sel_count);
-+		return;
++template <class FUNC>
++static void OnFreeingThread(FUNC function) {
++#ifndef DUCKDB_NO_THREADS
++	std::thread worker(function);
++	worker.join();
++#else
++	function();
++#endif
++}
++
++static void CheckAbandonedInitialization() {
++	using namespace duckdb;
++	constexpr idx_t BLOCK_SIZE = 65536;
++	idx_t failure_points = 0;
++	idx_t failed_reservations = 0;
++	for (idx_t failure = 0; failure <= failure_points; failure++) {
++		Allocator fallback;
++		BlockAllocator allocator(fallback, BLOCK_SIZE, 257 * BLOCK_SIZE);
++		new_balance = 0;
++		new_calls = 0;
++		track_new = true;
++		reject_mapping = failure == 0;
++		fail_new_at = failure;
++		const auto previous_failures = failures;
++		const auto initialized = BlockAllocatorTestHelper::InitializePool(allocator);
++		track_new = false;
++		reject_mapping = false;
++		fail_new_at = 0;
++		if (failure == 0) {
++			Check(!initialized, "failed mapping must leave the pool unavailable");
++			failure_points = new_calls;
++		} else if (!initialized && failures != previous_failures) {
++			failed_reservations++;
++		}
++		if (!initialized) {
++			Check(new_balance == 0, "abandoned initialization retains queue storage");
++		}
++		auto pointer = allocator.AllocateData(BLOCK_SIZE);
++		Check(BlockAllocatorTestHelper::IsInPool(allocator, pointer) == initialized, "allocation follows pool state");
++		allocator.FreeData(pointer, BLOCK_SIZE);
 +	}
- 	SelectVector(state, result, target_count, sel, sel_count, scan_type);
- 	validity->SelectVector(state.child_states[0], result, target_count, sel, sel_count, scan_type);
- }
++	Check(failed_reservations > 0, "reservation fault injection must activate");
++}
++
++static void CheckPoolOwnership() {
++	using namespace duckdb;
++	constexpr idx_t BLOCK_SIZE = 65536;
++	constexpr idx_t BLOCK_COUNT = 2049;
++	for (idx_t mode = 0; mode < 4; mode++) {
++		Allocator fallback;
++		BlockAllocator allocator(fallback, BLOCK_SIZE, BLOCK_COUNT * BLOCK_SIZE);
++		std::vector<data_ptr_t> original;
++		reject_malloc = mode == 0;
++		for (idx_t i = 0; i < BLOCK_COUNT; i++) {
++			auto pointer = allocator.AllocateData(BLOCK_SIZE);
++			Check(BlockAllocatorTestHelper::IsInPool(allocator, pointer), "initial pool capacity");
++			pointer[0] = 42;
++			original.push_back(pointer);
++		}
++		reject_malloc = false;
++		size_t return_failures = 0;
++		auto return_blocks = [&] {
++			const auto previous_failures = failures;
++			reject_malloc = true;
++			reject_new = true;
++			for (auto pointer : original) {
++				allocator.FreeData(pointer, BLOCK_SIZE);
++			}
++			if (mode == 2) {
++				allocator.ThreadExit();
++			}
++			reject_malloc = false;
++			reject_new = false;
++			return_failures = failures - previous_
 ```
 
-**File**: `test/sql/storage/compression/select_fixed_size.test` (added, +50/-0)
+**File**: `test/common/test_concurrentqueue.cpp` (modified, +122/-0)
 ```diff
-@@ -0,0 +1,50 @@
-+# name: test/sql/storage/compression/select_fixed_size.test
-+# description: Select on uncompressed fixed-size segments
-+# group: [compression]
+@@ -2,6 +2,7 @@
+ 
+ #ifndef DUCKDB_NO_THREADS
+ #include "blockingconcurrentqueue.h"
++#include "duckdb/storage/sharded_allocator_queue.hpp"
+ #include <thread>
+ #include <vector>
+ 
+@@ -90,8 +91,129 @@ struct FailingQueueTraits : SmallQueueTraits<std::size_t> {
+ uint32_t FailingQueueTraits::allocations_until_failure = 0;
+ uint32_t FailingQueueTraits::allocation_count = 0;
+ 
++struct AllocatorOverflowQueueTraits : SmallQueueTraits<std::size_t> {
++	static std::atomic<bool> reject_allocations;
++	static std::atomic<uint32_t> rejected_allocations;
 +
-+require vector_size 2048
++	static void *malloc(size_t bytes) {
++		if (reject_allocations.load()) {
++			rejected_allocations.fetch_add(1);
++			return nullptr;
++		}
++		return std::malloc(bytes);
++	}
++};
 +
++std::atomic<bool> AllocatorOverflowQueueTraits::reject_allocations {false};
++std::atomic<uint32_t> AllocatorOverflowQueueTraits::rejected_allocations {0};
++
++class AllocatorOverflowQueue : public duckdb_moodycamel::ConcurrentQueue<uint32_t, AllocatorOverflowQueueTraits> {
++public:
++	AllocatorOverflowQueue() : ConcurrentQueue(0) {
++	}
++};
++
++struct RejectAllocatorQueueAllocations {
++	RejectAllocatorQueueAllocations() {
++		AllocatorOverflowQueueTraits::reject_allocations = true;
++	}
++	~RejectAllocatorQueueAllocations() {
++		AllocatorOverflowQueueTraits::reject_allocations = false;
++	}
++};
++
+ } // namespace
+ 
++TEST_CASE("Allocator queue preserves fixed-pool returns when metadata allocation fails",
++          "[concurrentqueue][allocator_locality]") {
++	const bool track_count = GENERATE(false, true);
++	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> queues(2, track_count);
++	auto &first = queues.Get(0);
++	auto &second = queues.Get(1);
++	first.ReserveOverflow(4);
++	second.ReserveOverflow(1);
++	uint32_t input[] = {1, 2, 3, 4};
++	const auto rejected = AllocatorOverflowQueueTraits::rejected_allocations.load();
++	{
++		RejectAllocatorQueueAllocations failures;
++		REQUIRE(first.EnqueueBulk(input, 4));
++		REQUIRE(second.Enqueue(5));
++		CHECK(queues.SizeApprox() == 5);
++		REQUIRE(AllocatorOverflowQueueTraits::rejected_allocations.load() > rejected);
++	}
++	// Both the recovered queue and overflow storage own live entries.
++	REQUIRE(first.Enqueue(6));
++	CHECK(queues.SizeApprox() == 6);
++	bool seen[7] = {};
++	uint32_t output[4];
++	duckdb::idx_t total = 0;
++	for (duckdb::idx_t shard = 0; shard < queues.Count(); shard++) {
++		duckdb::idx_t obtained;
++		while ((obtained = queues.Get(shard).TryDequeueBulk(output, 4)) != 0) {
++			for (duckdb::idx_t i = 0; i < obtained; i++) {
++				REQUIRE(output[i] >= 1);
++				REQUIRE(output[i] <= 6);
++				CHECK_FALSE(seen[output[i]]);
++				seen[output[i]] = true;
++			}
++			total += obtained;
++		}
++	}
++	CHECK(total == 6);
++	CHECK(queues.SizeApprox() == 0);
++	// A cache without a fixed-pool reserve remains fallible.
++	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> unreserved(1, track_count);
++	RejectAllocatorQueueAllocations failures;
++	CHECK_FALSE(unreserved.Get(0).Enqueue(1));
++	CHECK(unreserved.SizeApprox() == 0);
++}
++
++TEST_CASE("Allocator queue overflow supports concurrent producers and consumers",
++          "[concurrentqueue][allocator_locality]") {
++	constexpr uint32_t COUNT = 128;
++	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> queues(1, true);
++	auto &queue = queues.Get(0);
++	queue.ReserveOverflow(COUNT);
++	std::atomic<uint32_t> seen[COUNT] {};
++	std::atomic<uint32_t> remaining {4};
++	std::atomic<uint32_t> returned {0};
++	std::atomic<bool> success {true};
++	std::vector<std::thread> threads;
++	RejectAllocatorQueueAllocations failures;
++	for (uint32_t worker = 0; worker < 4; worker++) {
++		threads.emplace_back([&, worker] {
++			for (uint32_t value = worker; value < COUNT; value += 4) {
++				if (!queue.Enqueue(value)) {
++					success = false;
++				}
++				returned.fetch_add(1);
++			}
++			remaining.fetch_sub(1);
++		});
++		threads.emplace_back([&] {
++			uint32_t value;
++			do {
++				if (queue.TryDequeue(value)) {
++					if (value >= COUNT || seen[value].fetch_add(1) != 0) {
++						success = false;
++					}
++				} else {
++					std::this_thread::yield();
++				}
++			} while (remaining.load() != 0 || queue.SizeApprox() != 0);
++		});
++	}
++	for (auto &thread : threads) {
++		thread.join();
++	}
++	CHECK(success.load());
++	CHECK(returned.load() == COUNT);
++	for (auto &entry : seen) {
++		CHECK(entry.load() == 1);
++	}
++	CHECK(queues.SizeApprox() == 0);
++}
++
+ TEST_CASE("Concurrent queue padding preserves custom allocation and producer lifetime", "[concurrentqueue]") {
+ 	CheckQueueTraits<std::size_t>();
+ 	CheckQueueTraits<uint8_t>();
+```
+
+**File**: `third_party/concurrentqueue/README.duckdb` (modified, +1/-0)
+```diff
+@@ -8,3 +8,4 @@ DuckDB customizations:
+ * Use std::chrono for the non-monotonic semaphore clock fallback.
+ * Keep implicit-producer thread-exit notification disabled for TLS destructor enqueueing.
+ * Separate producer/consumer counters and semaphore state with byte padding.
++* Retry failed initial implicit-producer block-index allocation on allocating enqueue.
+```
+
+---
+
+### Incident Patch 2: `146f57a3` (2026-11-11)
+**Commit Message**: Bound threads in the memory-limited window regression test
+
+Cap this test at eight threads so its 300 MB limit is reproducible on
+large hosts, while preserving smaller and no-thread defaults. Keep the
+query, input size, memory limit and expected result unchanged.
+
+**File**: `test/issues/general/test_21431.test` (modified, +3/-0)
+```diff
+@@ -2,6 +2,9 @@
+ # description: Regression test for OOM with TopN window elimination
+ # group: [general]
+ 
 +statement ok
-+ATTACH '{TEST_DIR}/select_fixed_size.db' AS db;
++SET threads = least(current_setting('threads'), 8)
 +
+ statement ok
+ SET memory_limit = '300MB'
+ 
+```
+
+---
+
+### Incident Patch 3: `22e1eb15` (2026-11-11)
+**Commit Message**: Bound parallelism in the memory-limited window paging test
+
+Both the pre-change allocator and this branch can exhaust the 1GB limit at 192 threads. Cap this test at eight threads while retaining lower configured counts, the 20M-row workload, forced external execution, memory limit, and expected result.
+
+**File**: `test/sql/window/window_partition_paging.test_slow` (modified, +3/-0)
+```diff
+@@ -4,6 +4,9 @@
+ 
+ require 64bit
+ 
 +statement ok
-+SET threads=1;
++SET threads = least(current_setting('threads'), 8)
 +
-+statement ok
-+CREATE MACRO expected(i) AS CASE WHEN i % 13 = 0 THEN NULL ELSE hash(i) % 1000003 END;
-+
-+foreach type TINYINT SMALLINT INTEGER BIGINT HUGEINT UBIGINT DOUBLE FLOAT
-+
-+statement ok
-+CREATE TABLE db.t_{type}(id INTEGER, g2 TINYINT, g7 TINYINT, g97 TINYINT, g1000 SMALLINT, v {type} USING COMPRESSION uncompressed);
-+
-+statement ok
-+INSERT INTO db.t_{type} SELECT i, hash(i*3)%2, hash(i*11)%7, hash(i*13)%97, hash(i*17)%1000, (expected(i) % 100)::{type} FROM range(100000) t(i);
-+
-+endloop
-+
-+statement ok
-+CHECKPOINT db;
-+
-+foreach type TINYINT SMALLINT INTEGER BIGINT HUGEINT UBIGINT DOUBLE FLOAT
-+
-+query I
-+SELECT bool_and(compression='Uncompressed') FROM pragma_storage_info('db.t_{type}') WHERE column_name='v' AND segment_type != 'VALIDITY';
-+----
-+true
-+
-+foreach col g2 g7 g97 g1000
-+
-+query I
-+SELECT count(*) > 0 AND bool_and(v IS NOT DISTINCT FROM (expected(id) % 100)::{type}) FROM db.t_{type} WHERE {col} = 0;
-+----
-+true
-+
-+endloop
-+
-+query I
-+SELECT count(*) = 8 AND bool_and(v IS NOT DISTINCT FROM (expected(id) % 100)::{type}) FROM db.t_{type} WHERE id IN (0, 1, 2047, 2048, 4095, 50000, 99998, 99999);
-+----
-+true
-+
-+endloop
+ statement ok
+ CREATE or replace TABLE big_table AS
+     SELECT
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28601** (2026-11-09): Parse schema-qualified table functions named describe, summarize, show, pivot or unpivot (@ywelsch)
-- **PR #28600** (2026-11-09): Keep the DECIMAL type of a windowed sum in the window self-join rewrite (@ywelsch)
-- **PR #28595** (2026-11-09): Refresh search path after 'require' in SQLLogic tests (@Flogex)
-- **PR #28593** (2026-11-09): Push single-side conjuncts of non-inner join conditions with subqueries (@kryonix)
-- **PR #28584** (2026-11-09): Pass `.shell` command lines to the system shell verbatim (@Dtenwolde)
-- **PR #28583** (2026-11-09): Fix dangling segment node link when appending a segment runs out of memory (@Robinho-MR)
+- **PR #28731** (closed): Preserve aggregate domains for proven singleton groups (@kevintruong)
+- **PR #28724** (closed): Keep test_concurrentqueue.cpp out of the test_common unity build (fixes macOS reldebug) (@hawkfish)
+- **PR #28712** (closed): [v2.0-cyanoptera] Backport 54 merged labeled PRs (@smvv)
+- **PR #28708** (closed): Fix macOS unity build failure in concurrentqueue tests (@HendrikLambert)
+- **PR #28707** (2026-11-12): NUMA-aware `BlockAllocator` (@lnkuiper)
+- **PR #28698** (2026-11-12): Fix wrong results and "Conflicting or cyclic column binding replacement" when a lateral join reads a CTE (@Robinho-MR)
 
 ---
 
@@ -2306,34 +2828,68 @@ slower with select; re-measured in isolation i
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dangling segment node link when appending a segment runs out of memory (#28583)
+## X. Preserve fixed allocator blocks when queue allocation fails
 
 **RULE**:
-When implementing operations in `src/include/duckdb/storage/table/segment_tree.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/include/duckdb/storage/sharded_allocator_queue.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f203aed`: dangling segment node link when appending a segment runs out of memory (#28583). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cccba45`: Preserve fixed allocator blocks when queue allocation fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/include/duckdb/storage/table/segment_tree.hpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/include/duckdb/storage/sharded_allocator_queue.hpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-		auto &new_node = *node;
-		optional_ptr<SegmentNode<T>> previous_node = nodes.empty() ? nullptr : nodes.back().get();
-		if (previous_node) {
-			previous_node->SetNext(new_node);
+//===----------------------------------------------------------------------===//
+//                         DuckDB
+//
+// duckdb/storage/sharded_allocator_queue.hpp
+//
+//
+//===----------------------------------------------------------------------===//
+
+#pragma once
+
+#include "duckdb/common/atomic.hpp"
+#include "duckdb/common/helper.hpp"
+#include "duckdb/common/mutex.hpp"
+#include "duckdb/common/vector.hpp"
+#include "duckdb/parallel/concurrentqueue.hpp"
+
+#include <new>
+#include <type_traits>
+
+namespace duckdb {
+
+template <class T, class QUEUE = duckdb_moodycamel::ConcurrentQueue<T>>
+class ShardedAllocatorQueue {
+	static_assert(std::is_trivially_copyable<T>::value, "Allocator queue entries must be trivially copyable");
+
+public:
+	struct alignas(64) Shard {
+		bool Enqueue(T value) {
+			return EnqueueInternal(
+			    1, [&] { return q.enqueue(value); }, [&] { return EnqueueOverflow(&value, 1); });
 		}
+		template <class ITERATOR>
+		bool EnqueueBulk(ITERATOR begin, idx_t size) {
+#ifdef DUCKDB_NO_THREADS
+			// The single-threaded queue can throw after publishing a prefix of a batch.
+			for (idx_t i = 0; i < size; i++) {
+				if (!Enqueue(begin[i])) {
+					return false;
+				}
+			}
+			return t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-		if (!nodes.empty()) {
-			nodes.back()->SetNext(*node);
-		}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f203aed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cccba45` are properly handled with clean fallback behavior.

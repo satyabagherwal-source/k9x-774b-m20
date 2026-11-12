@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `77157716`  
+> **Source Version**: `86c191ba`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T00:31:58.671Z  
+> **Timestamp**: 2026-11-12T08:28:05.318Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T00:31:57.185Z  
+> **Harvest Timestamp**: 2026-11-12T08:27:53.871Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31854 stars
+- **Stars / Engagement**: 31883 stars
 
 ---
 
@@ -2300,11 +2300,11 @@ class Segment {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8754** (2026-11-10): **IoLoopV2 stalls a pipelined connection over pipeline_buffer_limit (debug: Check failed: is_deferred_reply_)**
+  *Symptoms*: Found by fuzz-pr on #8752; pre-existing on main and in v2.1.0: https://github.com/dragonflydb/dragonfly/actions/runs/42001650757/job/127158081546  Repro (the commands must arrive in one packet; interactive redis-cli does not trigger it):  ``` printf 'CONFIG SET pipeline_buffer_limit 1\r\nFT.SEARCH idx *\r\nCLIENT GETNAME\r\nSET a b\r\nPING\r\n' | nc 127.0.0.1 6379 ```  - Debug: `Check failed: is_deferred_reply_` (parsed_command.cc:113) in `ParsedCommand::CanReply()`   <- `Connection::HasControlEvent()` <- `ParkOnBackpressure()` <- `IoLoopV2()`. - Release (v2.1.0): no crash, but the connection stalls: PING gets no reply for 30+ s (4/4 runs on a fresh server). - Does not reproduce with `--enable_resp_io_loop_v2=false`, without the FT.SEARCH, or with INFO instead of CLIENT.  Likely cause: the sync CLIENT command waits behind the in-flight FT.SEARCH. Over the limit, the connection parks in `ParkOnBackpressure()`, whose wake predicate calls `parsed_head_->CanReply()` on a head that was never dispatched. The other `CanReply()` call sites check `IsDeferredReply()` first. 
+
 - **Issue #8647** (2026-10-23): **WAIT crashes the primary (SIGSEGV, exit 139) when a replica stream is throttled**
   *Symptoms*: ### Bug: `WAIT` crashes the primary (SIGSEGV, exit 139) when a replica stream is throttled  If `WAIT` runs while a replica's journal stream is at or over `replication_stream_output_limit` (1 MB default), the primary logs `Should not preempt dispatcher` and segfaults. Under the same backlog, normal writes are throttled safely; only `WAIT` crashes.  ### Repro (~1 min, Docker)  ```bash docker network create df docker run -d --name m --network df -p 6379:6379 docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2 --proactor_threads=2 docker run -d --name r --network df -p 6380:6379 docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2 --proactor_threads=2 redis-cli -p 6380 REPLICAOF m 6379 redis-cli -p 6379 WAIT 1 1000 # -> 1 docker pause r # replica stops reading python3 - <<'PYEOF' & # ~200 MiB of pipelined SETs, replies not read import socket s = socket.create_connection(("127.0.0.1", 6379)); v = b"x" * (1 << 20) for i in range(200):     k = b"k%d" % i     s.sendall(b"*3\r\n$3\r\nSET\r\n$%d\r\n%s\r\n$%d\r\n%s\r\n" % (len(k), k, len(v), v)) PYEOF sleep 3 redis-cli -p 6379 WAIT 1 2000 # -> "Server closed the connection" docker inspect -f '{{.State.ExitCode}}' m # -> 139 ```  Without the final `WAIT`, the primary stays up, and replication recovers after `docker unpause r`.  ### Stack  ``` E scheduler.cc:206] Should not preempt dispatcher: util::fb2::detail::Scheduler::WaitUntil() util::fb2::EventCount::wait_until() dfly::JournalStreamer::ThrottleIfNeeded() dfly::journal::JournalSlice::C
-
-- **Issue #8629** (2026-10-21): **'*' is accepted as a stream ID outside XADD and the ID is then read uninitialized; XTRIM MINID * deletes the whole stream**
-  *Symptoms*: **Describe the bug**  `ParseID` accepts `*` for any stream ID and returns success **without writing the output ID**, so the caller proceeds with whatever was on the stack. `*` is only meaningful as `XADD`'s auto-generated-ID request; every other command that takes a concrete ID should reject it, and every other implementation does.  The worst case destroys data: `XTRIM key MINID *` trims against an indeterminate threshold, which in practice removes every entry.  ``` XADD s 1-0 a 1       ->  "1-0" XADD s 2-0 b 2       ->  "2-0" XTRIM s MINID *      ->  (integer) 2     every reference: ERR Invalid stream ID ... XLEN s               ->  (integer) 0     the stream is empty ```  The same parse is reached from `XADD`'s own trim options, where it deletes the entry the command just acknowledged:  ``` XADD s MINID * 3-0 c 3   ->  "3-0"       the client is told 3-0 was added XLEN s                   ->  (integer) 0 and the stream, including 3-0, is empty ```  and from the read and write paths, where the indeterminate ID shows up as results that depend on whatever the uninitialized value happened to be:  ``` XRANGE s * +             ->  (empty array)      expected an error XRANGE s - *             ->  both entries       expected an error XREVRANGE s + *          ->  (empty array)      expected an error XDEL s *                 ->  (integer) 0        expected an error XREAD STREAMS s *        ->  (nil)              expected an error XSETID s *               ->  OK                 expecte
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2321,457 +2321,397 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77157716` (2026-11-09)
-**Commit Message**: chore(search): Make alter critical path non-yielding (#8764)
+### Incident Patch 1: `bebdf055` (2026-11-10)
+**Commit Message**: fix(tests): lift rss_oom_deny_ratio during populate in flaky test_rss_oom_ratio (#8762)
 
-chore(search): Make alter safe for alias consistency
+fix(tests): lift rss_oom_deny_ratio during populate
 
-During alter, first cancel the builder while the index is still there,
-and extract it later. So the yield point is done before the extract.
+DEBUG POPULATE writes go through the same RSS deny check the test verifies, so the populate was cut off at the threshold and any small RSS dip failed the test. This sets the ratio to 0 during populate and restores it afterward.
 
-The index and alias definitions are always consistently available in
-this way, we do not yield in a place where index is missing and aliases
-are present, to snapshot code.
+Fixes #8677
 
-Signed-off-by: Abhijat Malviya <[REDACTED_EMAIL]>
+Signed-off-by: Hoang Nguyen Bich Ngoc <[REDACTED_EMAIL]>
 
-**File**: `src/server/rdb_test.cc` (modified, +38/-0)
+**File**: `tests/dragonfly/memory_test.py` (modified, +4/-0)
 ```diff
-@@ -1037,6 +1037,44 @@ TEST_F(RdbTest, SearchAliasesRoundTrip) {
-   expect_aliases(expected_aliases);
- }
+@@ -138,7 +138,11 @@ async def test_rss_oom_ratio(df_factory: DflyInstanceFactory, admin_port):
+     df_server.start()
  
-+TEST_F(RdbTest, SearchAliasAndAlterConsistency) {
-+  absl::FlagSaver flags;
-+  SetFlag(&FLAGS_num_shards, 1);
-+  ResetService();
-+
-+  ASSERT_EQ(Run({"DEBUG", "POPULATE", "15000", "doc", "32", "TYPE", "HASH", "ELEMENTS", "1"}),
-+            "OK");
-+
-+  // DEBUG POPULATE uses a field and value of 16 'x' characters for these hashes.
-+  ASSERT_EQ(Run({"FT.CREATE", "idx", "ON", "HASH", "SCHEMA", string(16, 'x'), "TEXT"}), "OK");
-+  ASSERT_EQ(Run({"FT.ALIASADD", "idx-alias", "idx"}), "OK");
-+
-+  const auto aliases = pp_->at(0)->Await(
-+      [&] { return RdbSaver::GetGlobalData(service_.get(), true).search_aliases; });
-+  ASSERT_EQ(aliases.size(), 1);
-+
-+  atomic done{false};
-+  bool consistent = true;
-+  size_t samples = 0;
-+  auto collector = pp_->at(1)->LaunchFiber([&] {
-+    while (!done.load(memory_order_relaxed)) {
-+      auto data = RdbSaver::GetGlobalData(service_.get(), true);
-+      if (data.search_indices.size() != 1 || data.search_aliases != aliases)
-+        consistent = false;
-+      ++samples;
-+    }
-+  });
-+
-+  // Repeatedly restart the build to give metadata collection chances to observe cancellation.
-+  for (unsigned i = 0; i < 20; ++i)
-+    EXPECT_EQ(Run({"FT.ALTER", "idx", "SCHEMA", "ADD", StrCat("field", i), "TEXT"}), "OK");
-+  done.store(true, memory_order_relaxed);
-+  collector.Join();
-+
-+  EXPECT_GT(samples, 0);
-+  EXPECT_TRUE(consistent);
-+}
-+
- // Users choose names, prefixes, stop words, separators and synonym terms, spaces and tabs included.
- TEST_F(RdbTest, SearchDefinitionsWithSpacesSurviveReload) {
-   ASSERT_EQ(Run({"FT.CREATE", "my idx", "ON",        "JSON", "PREFIX",    "2",
-```
-
-**File**: `src/server/search/doc_index.h` (modified, +3/-3)
-```diff
-@@ -446,6 +446,9 @@ class ShardDocIndex {
-   // Possibly blocking to stop indexing job
-   ~ShardDocIndex();
+     client = df_server.client()
++    # Populate writes are subject to the rss deny check too, so disable it while populating
++    ratio = (await client.config_get("rss_oom_deny_ratio"))["rss_oom_deny_ratio"]
++    await client.config_set("rss_oom_deny_ratio", 0)
+     await client.execute_command("DEBUG POPULATE 10100 key 40000 RAND")
++    await client.config_set("rss_oom_deny_ratio", ratio)
  
-+  // Waits for the builder to stop and may yield.
-+  void CancelBuilder();
-+
-   // Perform search on all indexed documents and return results.
-   // When global_stats is non-null, scorers see cluster-wide counts.
-   SearchResult Search(const OpArgs& op_args, const SearchParams& params,
-@@ -631,9 +634,6 @@ class ShardDocIndex {
-   // Clears internal data. Traverses all matching documents and assigns ids.
-   void Rebuild(const OpArgs& op_args, PMR_NS::memory_resource* mr, bool is_restored = false);
+     await asyncio.sleep(1)  # Wait for another RSS heartbeat update in Dragonfly
  
--  // Cancel builder if in progress
--  void CancelBuilder();
--
-   using LoadedEntry = std::pair<std::string_view, std::unique_ptr<BaseAccessor>>;
-   std::optional<LoadedEntry> LoadEntry(search::DocId id, const OpArgs& op_args) const;
- 
-```
-
-**File**: `src/server/search/search_family.cc` (modified, +4/-3)
-```diff
-@@ -2873,11 +2873,12 @@ void CmdFtAlter(CmdArgParser parser, CommandContext* cmd_cntx) {
-   // TODO: Introduce partial rebuild
-   const bool is_journal = cmd_cntx->server_conn_cntx()->journal_emulated;
-   auto upd_cb = [canonical_name, index_info, is_journal](Transaction* tx, EngineShard* es) {
-+    auto* index = es->search_indices()->GetIndex(canonical_name);
-+    DCHECK(index);
-+    index->CancelBuilder();
-+
-     unique_ptr<ShardDocIndex> old_index = es->search_indices()->ExtractIndex(canonical_name);
-     Synonyms synonyms = old_index ? old_index->GetSynonyms() : Synonyms{};
--    // Destroying the old index waits for its builder, so the replacement builder never runs next
--    // to it on the same global vector index. The old index is already unregistered, so no new
--    // caller can reach that builder meanwhile.
-     old_index.reset();
-     es->search_indices()->InitIndex(tx->GetOpArgs(es), canonical_name, index_info, is_journal,
-                                     std::move(synonyms));
 ```
 
 ---
 
-### Incident Patch 2: `8bd35ca2` (2026-11-09)
-**Commit Message**: feat: add slot migration DB index (#8654)
+### Incident Patch 2: `c882f31e` (2026-11-10)
+**Commit Message**: fix(facade): prevent V2 pipeline stalls under backpressure (#8771)
 
-**File**: `docs/cluster-mode.md` (modified, +4/-0)
-```diff
-@@ -366,6 +366,10 @@ Mutations to migrating slots that arrive while the snapshot walk is still runnin
- streamed as ordinary write commands over the same connection, so the target catches
- up incrementally with no separate journal channel.
- 
-+Every command keeps the database ID of its source key, and the target creates the
-+database if it doesn't exist yet. As in replication, the ID must be below the target's
-+`--dbnum`.
-+
- The target executes every decoded command through its normal transaction framework,
- exactly as if it had arrived from a client. The writes therefore appear on the
- target's outbound replication stream like any other write, so target-side replicas
-```
+* fix(facade): prevent V2 pipeline stalls under backpressure
 
-**File**: `docs/replication.md` (modified, +13/-3)
-```diff
-@@ -188,6 +188,10 @@ Per shard, starting full sync:
- - Once all buckets are traversed, the snapshot writes a "full sync cut" marker into the RDB
-   stream.
- 
-+The RDB snapshot preserves logical database IDs with `SELECTDB` opcodes. Each opcode carries a
-+database ID and selects the database for subsequent key/value entries, until the next `SELECTDB`.
-+The replica loads those entries into the selected database.
-+
- On the replica, each flow feeds its socket into an RDB loader with a callback that decrements a
- shared counter the first time the cut marker is observed. The replica blocks until every flow has
- hit its cut - this is how the replica knows the RDB "photo" portion is done on all shards
-@@ -314,12 +318,18 @@ no clean way to leave stable sync; the *only* way out is via an error after canc
- 
- ### Wire format & command grouping
- 
--Each journal entry carries an opcode (`SELECT`, `EXPIRED`, `COMMAND`, `PING`, `LSN`) plus, for
--`COMMAND`/`EXPIRED`, a transaction id, database index, and the backed command arguments. The
--replica turns the raw stream into per-transaction records one at a time and (when tracking LSNs)
-+Each journal entry starts with an opcode (`SELECT`, `EXPIRED`, `COMMAND`, `PING`, `LSN`).
-+`COMMAND`/`EXPIRED` entries carry a transaction id and command arguments, and use the database
-+selected on that flow. The replica reads records in stream order and (when tracking LSNs)
- cross-checks the LSN opcode's embedded value against its own running counter, logging (not
- failing) on mismatch.
- 
-+Each journal flow maintains its own selected database. A `SELECT` record carries a database ID
-+and sets the database for subsequent commands, until the next `SELECT` record. The master sends
-+a selection record before the first command and whenever its database changes. The replica
-+replays commands in the selected database. These records also preserve database selection during
-+partial sync and for journal data embedded in full-sync snapshots.
-+
- Multi-shard transactions (global commands `FLUSHALL`/`FLUSHDB`/`DFLYCLUSTER FLUSHSLOTS`, and
- ordinary cross-shard multi-commands identified by a shared transaction id) are re-synchronized
- across flow workers: each flow inserts its transaction id into a shared map and waits until all
-```
+Allow already-parsed commands to progress above the pipeline limit and
+check reply readiness only for in-flight commands. Subscribe to the
+current async head before waiting to avoid losing completion wakeups.
 
-**File**: `docs/shard-serialization.md` (modified, +1/-1)
-```diff
-@@ -235,7 +235,7 @@ it and miss the bucket entirely.
- 
- `SerializeBucket` (in `serializer_base.cc`) iterates the occupied slots of a physical bucket and
- calls `SerializeEntry` for each entry accepted by the virtual `ShouldSerialize` hook (all entries
--by default; slot migration keeps db 0 and its owned slots). No lock is held for the whole bucket:
-+by default; slot migration keeps its owned slots in every db). No lock is held for the whole bucket:
- `SerializeEntry` takes `stream_mu_` per entry.
- 
- `SerializeEntry` (in `serializer_base.cc`) dispatches based on value location:
-```
+Add regressions for queued commands and consecutive pending replies.
 
-**File**: `src/server/cluster/cluster_family_test.cc` (modified, +1/-1)
-```diff
-@@ -1532,7 +1532,7 @@ TEST_F(ClusterFamilyTest, FlushSlotsNonDefaultDb) {
-     ASSERT_TRUE(res.ok());
-     EXPECT_TRUE(res->is_new);
- 
--    util::ThisFiber::SleepFor(50ms);  // let the flush fiber finish
-+    ASSERT_TRUE(WaitUntilCondition([&] { return !db_slice.HasRegisteredCallbacks(); }, 1s));
- 
-     // Only the entry written after FlushSlots stays.
-     EXPECT_EQ(db_slice.DbSize(1), 1u);
-```
+Fixes #8754
 
-**File**: `src/server/cluster/incoming_slot_migration.cc` (modified, +11/-7)
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+* fix: review comments
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+* fix: review comments
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+**File**: `src/facade/dragonfly_connection.cc` (modified, +24/-20)
 ```diff
-@@ -169,19 +169,23 @@ class ClusterShardMigration {
-       return {};
+@@ -3355,8 +3355,9 @@ Connection::ExecuteBatchResult Connection::ExecuteBatch() {
+     //   mid-flight waits for this command. A lone V2 command sets no other flag, so without it the
+     //   write can slip past CLIENT PAUSE.
+     // - async_dispatch (flush-before-block): makes MainService::DispatchCommand flush the buffered
+-    //   pipeline replies before a blocking command (e.g. BLPOP) parks the fiber. Gating it avoids a
+-    //   bogus flush / blocking-in-pipeline stat bump for a lone blocking command.
++    //   pipeline replies before a blocking command (e.g. BLPOP) parks the fiber. Buffered replies
++    //   can outlive their commands, so a lone tail still needs this flag until the prefix flushes.
++    //   A standalone blocking command with no buffered replies keeps the flag clear.
+     // V1 sets these flags elsewhere (DispatchSingle / the AsyncFiber paths), hence the ioloop_v2_
+     // guard.
+     //
+@@ -3370,7 +3371,7 @@ Connection::ExecuteBatchResult Connection::ExecuteBatch() {
+       DCHECK(!cc_->sync_dispatch);
+       DCHECK(!cc_->async_dispatch);
+       cc_->sync_dispatch = true;
+-      cc_->async_dispatch = is_true_pipeline;
++      cc_->async_dispatch = is_true_pipeline || reply_builder_->HasBufferedOutput();
+       fiber_park_spot_ = FiberParkSpot::kSimpleHop;
      }
+     // parse-in-proactor can append commands while we are parked in DispatchCommandSimple. We might
+@@ -4175,7 +4176,7 @@ bool Connection::HasControlEvent() const {
+   // a reply became ready, control-plane messages are queued (dispatch_q_), the socket errored or
+   // closed (io_ec_), or a thread migration is pending and actionable.
  
-+    std::string error;
-     if (!tx_data.IsGlobalCmd()) {
-       facade::DispatchResult res = executor_.Execute(tx_data.dbid, tx_data.command);
--      return res == facade::DispatchResult::OOM ? make_error_code(errc::not_enough_memory)
--                                                : error_code();
-+      if (res == facade::DispatchResult::OK)
-+        return {};
-+      if (res == facade::DispatchResult::OOM)
-+        return make_error_code(errc::not_enough_memory);
-+      error = absl::StrCat("Failed to replay migration command in db ", tx_data.dbid);
-     } else {
-       // TODO check which global commands should be supported
--      std::string error = absl::StrCat("We don't support command: ", tx_data.command[0],
--                                       " in cluster migration process.");
--      LOG(ERROR) << error;
--      cntx->ReportError(error);
--      in_migration_->ReportError(error);
-+      error = absl::StrCat("We don't support command: ", tx_data.command[0],
-+                           " in cluster migration process.");
-     }
- 
-+    LOG(ERROR) << error;
-+    cntx->ReportError(error);
-+    in_migration_->ReportError(error);
-     return {};
-   }
- 
-```
-
-**File**: `src/server/journal/cmd_serializer.cc` (modified, +32/-30)
-```diff
-@@ -76,32 +76,32 @@ CmdSerializer::CmdSerializer(FlushSerialized cb, size_t max_serialization_buffer
-   serializer_ = std::make_unique<RdbSerializer>(GetDefaultCompressionMode());
+-  return (parsed_head_ && parsed_head_->CanReply()) || !dispatch_q_.empty() || io_ec_ ||
++  return (HasInFlightCommands() && parsed_head_->CanReply()) || !dispatch_q_.empty() || io_ec_ ||
+          IsReadyToMigrate();
  }
  
--size_t CmdSerializer::SerializeEntry(string_view key, const PrimeKey& pk, const PrimeValue& pv,
--                                     uint64_t expire_ms) {
-+size_t CmdSerializer::SerializeEntry(DbIndex db_index, string_view key, const PrimeKey& pk,
-+                                     const PrimeValue& pv, uint64_t expire_ms) {
-   DCHECK(!pv.IsExternal());  // Delayed entries are handled separately
- 
-   // We send RESTORE commands objects we don't support breaking.
-   bool use_restore_serialization = true;
-   size_t commands = 1;
-   switch (pv.ObjType()) {
-     case OBJ_SET:
--      commands = SerializeSet(key, pv);
-+      commands = SerializeSet(db_index, key, pv);
-       use_restore_serialization = false;
-       break;
-     case OBJ_ZSET:
--      commands = SerializeZSet(key, pv);
-+      commands = SerializeZSet(db_index, key, pv);
-       use_restore_serialization = false;
-       break;
-     case OBJ_HASH:
--      commands = SerializeHash(key, pv);
-+      commands = SerializeHash(db_index, key, pv);
-       use_restore_serialization = false;
-       break;
-     case OBJ_LIST:
--      commands = SerializeList(key, pv);
-+      commands = SerializeList(db_index, key, pv);
-       use_restore_serialization = false;
-       break;
-     case OBJ_STRING:
--      commands = SerializeString(key, pv, expire_ms);
-+      commands = SerializeString(db_index, key, pv, expire_ms);
-       use_restore_serialization = false;
-       // reset expire_ms to skip it in SerializeExpireIfNeeded
-       expire_ms = 0;
-@@ -117,18 +117,19 @@ size_t CmdSerializer::SerializeEntry(string_view key, const PrimeKey& pk, const
- 
-   if (use_restore_serialization) {
-     // RESTORE sets STICK and EXPIRE as part of the command.
--    SerializeRestore(key, pk, pv, expire_ms);
-+    SerializeRestore(db_index, key, pk, pv, expire_ms);
-   } else {
--    SerializeStickIfNeeded(key, pk);
--    SerializeExpireIfNeeded(key, expire_ms);
-+    SerializeStickIfNeeded(db_index, key, pk);
-+    SerializeExpireIfNeeded(db_index, key, expire_ms);
-   }
-   return commands;
+@@ -4239,9 +4240,12 @@ void Connection::DrainQueuedCommands() {
  }
  
--void CmdSerializer::SerializeCommand(string_view cmd, absl::Span<const string_view> args) {
-+void CmdSerializer::SerializeCommand(DbIndex db_index, string_view cmd,
-+                                     absl::Span<const string_view> args) {
-   journal::Entry entry(0,                     // txid
-                        journal::Op::COMMAND,  // single command
--                       0,                     // db index
-+                       db_index,              // db index
-                        0,                     // slot-id, but it is ignored at this level
-                        journal::Entry::Payload(cmd, ArgSlice(args)));
- 
-@@ -140,30 +141,30 @@ void CmdSerializer::SerializeCommand(string_view cmd, absl::Span<const string_vi
-   cb_(std::move(cmd_sink).str());
- }
- 
--void CmdSerializer::SerializeStickIfNeeded(string_view key, const PrimeKey& pk) {
-+void CmdSerializer::SerializeStickIfNeeded(DbIndex db_index, string_view key, const PrimeKey& pk) {
-   if (!pk.IsSticky()) {
+ void Connection::ParkOnBackpressure(util::fb2::detail::Waiter* backpressure_waiter) {
+-  // Draining (by the caller) may have freed enough memory; only park if still over the limit, to
+-  // prevent a busy-spin.
+-  if (!IsOverPipelineLimit())
++  // Draining may expose a command ready to execute even while the queue remains over the limit.
++  // Let already-parsed work free memory, but keep new input subject to parse throttling.
++  auto should_wake = [this] {
++    return !IsOverPipelineLimit() || HasCommandToExecute() || HasControlEvent();
++  };
++  if (should_wake())
      return;
-   }
  
--  SerializeCommand("STICK", {key});
-+  SerializeCommand(db_index, "STICK", {key});
- }
- 
--void CmdSerializer::SerializeExpireIfNeeded(string_view key, uint64_t expire_ms) {
-+void CmdSerializer::SerializeExpireIfNeeded(DbIndex db_index, string_view key, uint64_t expire_ms) {
-   if (expire_ms == 0) {
+   auto& conn_stats = GetLocalConnStats();
+@@ -4266,13 +4270,7 @@ void Connection::ParkOnBackpressure(util::fb2::detail::Waiter* backpressure_wait
+   if (auto ec = FlushReplies(); ec)
      return;
-   }
  
--  SerializeCommand("PEXPIREAT", {key, absl::StrCat(expire_ms)});
-+  SerializeCommand(db_index, "PEXPIREAT", {key, absl::StrCat(expire_ms)});
+-  io_event_.await([this]() {
+-    // Leave the backpressure wait once our own pipeline pressure clears, or on any control event
+-    // (the latter lets a terminating/migrating connection escape the park).
+-    bool under_limit = !GetQueueBackpressure().IsPipelineBufferOverLimit(
+-        GetLocalConnStats().pipeline_queue_bytes, parsed_cmd_q_len_);
+-    return under_limit || HasControlEvent();
+-  });
++  io_event_.await(should_wake);
  }
  
--size_t CmdSerializer::SerializeSet(string_view key, const PrimeValue& pv) {
-+size_t CmdSerializer::SerializeSet(DbIndex db_index, string_view key, const PrimeValue& pv) {
-   // Disable lazy expiry during serialization (same as rdb_save.cc).
-   // We are called under bucket lock so DeleteIfEmpty is not possible.
-   const uint32_t prev_time = pv.MemberTime();
-   pv.SetMemberTime(0);
+ auto Connection::FinalizeV2ParserError() -> IoLoopResult {
+@@ -4325,6 +4323,14 @@ auto Connection::IoLoopV2() -> IoLoopResult {
+   util::fb2::detail::Waiter cmd_completion_waiter{ioevent_cb};
+   absl::Cleanup waiter_cleanup = [this] { current_wait_.reset(); };
  
-   CommandAggregator aggregator(
--      key, [&](absl::Span<const string_view> args) { SerializeCommand("SADD", args); },
-+      key, [&](absl::Span<const string_view> args) { SerializeCommand(db_index, "SADD", args); },
-       max_serialization_buffer_size_);
++  // ReplyBatch can advance the head and clear its subscription during this iteration. Subscribe
++  // before either park, and only for a pending reply: a ready captured payload has no blocker.
++  auto subscribe_to_head_completion = [this, &cmd_completion_waiter] {
++    if (HasInFlightCommands() && !current_wait_ && !parsed_head_->CanReply()) {
++      current_wait_.emplace(parsed_head_, &cmd_completion_waiter);
++    }
++  };
++
+   // Waiter used for transient, conditional subscriptions (via check_or_subscribe)
+   // to global pipeline-backpressure relief notifications.
+   util::fb2::detail::Waiter backpressure_waiter{ioevent_cb};
+@@ -4334,11 +4340,6 @@ auto Connection::IoLoopV2() -> IoLoopResult {
+   do {
+     HandleMigrateRequest();
  
-   size_t commands = 0;
-@@ -181,9 +182,9 @@ size_t CmdSerializer::SerializeSet(string_view key, const PrimeValue& pv) {
-   return commands;
- }
- 
--size_t CmdSerializer::SerializeZSet(string_view key, const PrimeValue& pv) {
-+size_t CmdSerializer::SerializeZSet(DbIndex db_index, string_view key, const PrimeValue& pv) {
-   CommandAggregator aggregator(
--      key, [&](absl::Span<const string_view> args) { SerializeCommand("ZADD", args); },
-+      key, [&](absl::Span<const string_view> args) { SerializeCommand(db_index, "ZADD", args); },
-       max_serialization_buffer_size_);
- 
-   size_t commands = 0;
-@@ -198,13 +199,13 @@ size_t
-```
-
-**File**: `src/server/journal/cmd_serializer.h` (modified, +15/-13)
-```diff
-@@ -28,21 +28,23 @@ class CmdSerializer {
-   explicit CmdSerializer(FlushSerialized cb, size_t max_serialization_buffer_size);
- 
-   // Returns how many commands we broke this entry into (like multiple HSETs etc)
--  size_t SerializeEntry(std::string_view key, const PrimeKey& pk, const PrimeValue& pv,
--                        uint64_t expire_ms);
-+  size_t SerializeEntry(DbIndex db_index, std::string_view key, const PrimeKey& pk,
-+                        const PrimeValue& pv, uint64_t expire_ms);
- 
-  private:
--  void SerializeCommand(std::string_view cmd, absl::Span<const std::string_view> args);
--  void SerializeStickIfNeeded(std::string_view key, const PrimeKey& pk);
--  void SerializeExpireIfNeeded(std::string_view key, uint64_t expire_ms);
+-    // Register completion for current head if its pending and we don't wait on current_wait_.
+-    if (HasInFlightCommands() && !current_wait_.has_value()) {
+-      current_wait_.emplace(parsed_head_, &cmd_completion_waiter);
+-    }
 -
--  size_t SerializeSet(std::string_view key, const PrimeValue& pv);
--  size_t SerializeZSet(std::string_view key, const PrimeValue& pv);
--  size_t SerializeHash(std::string_view key, const PrimeValue& pv);
--  size_t SerializeList(std::string_view key, const PrimeValue& pv);
--  size_t SerializeString(std::string_view key, const PrimeValue& pv, uint64_t expire_ms);
--  void SerializeRestore(std::string_view key, const PrimeKey& pk, const PrimeValue& pv,
--                        uint64_t expire_ms);
-+  void SerializeCommand(DbIndex db_index, std::string_view cmd,
-+                        absl::Span<const std::string_view> args);
-+  void SerializeStickIfNeeded(DbIndex db_index, std::string_view key, const PrimeKey& pk);
-+  void SerializeExpireIfNeeded(DbIndex db_index, std::string_view key, uint64_t expire_ms);
-+
-+  size_t SerializeSet(DbIndex db_index, std::string_view key, const PrimeValue& pv);
-+  size_t SerializeZSet(DbIndex db_index, std::string_view key, const PrimeValue& pv);
-+  size_t SerializeHash(DbIndex db_index, std::string_view key, const PrimeValue& pv);
-+  size_t SerializeList(DbIndex db_index, std::string_view key, const PrimeValue& pv);
-+  size_t SerializeString(DbIndex db_index, std::string_view key, const PrimeValue& pv,
-+                         uint64_t expire_ms);
-+  void SerializeRestore(DbIndex db_index, std::string_view key, const PrimeKey& pk,
-+                        const PrimeValue& pv, uint64_t expire_ms);
+     if (!parser_error_draining_) {
+       if (shared_read_buf_enabled_) {
+         parse_status = ReadAndParseShared(/*from_proactor_callback=*/false);
+@@ -4367,6 +4368,7 @@ auto Connection::IoLoopV2() -> IoLoopResult {
+       const bool wait_for_reply = HasInFlightCommands();
+       const uint64_t idle_wait_start = CycleClock::Now();
  
-   FlushSerialized cb_;
-   size_t max_serialization_buffer_size_;
++      subscribe_to_head_completion();
+       fiber_park_spot_ = FiberParkSpot::kIdleAwait;
+       const bool parked = io_event_.await([this] { return ShouldWakeIdle(); });
+       fiber_park_spot_ = FiberParkSpot::kNone;
+@@ -4408,8 +4410,10 @@
 ```
 
-**File**: `src/server/journal/executor.cc` (modified, +16/-10)
+**File**: `src/facade/dragonfly_connection.h` (modified, +2/-2)
 ```diff
-@@ -10,12 +10,18 @@
- #include <algorithm>
- #include <memory>
+@@ -683,8 +683,8 @@ class Connection : public util::Connection {
+   // replies, freeing pipeline memory without growing the queue.
+   void DrainQueuedCommands();
  
-+#include "base/flags.h"
- #include "base/logging.h"
- #include "facade/reply_capture.h"
- #include "facade/service_interface.h"
-+#include "server/db_slice.h"
-+#include "server/engine_shard.h"
-+#include "server/engine_shard_set.h"
- #include "server/main_service.h"
- #include "server/namespaces.h"
+-  // IoLoopV2 backpressure park: if still over the pipeline limit (draining may have relieved it),
+-  // subscribe to global memory-relief notifications, flush, and park until pressure clears.
++  // IoLoopV2 backpressure park: if still over the pipeline limit and queued work cannot progress,
++  // subscribe to global memory-relief notifications, flush, and park until either changes.
+   void ParkOnBackpressure(util::fb2::detail::Waiter* backpressure_waiter);
  
-+ABSL_DECLARE_FLAG(uint32_t, dbnum);
-+
- using namespace std;
+   // Guard of the current subscription to a parsed commands async task blocker
+```
+
+**File**: `src/facade/reply_builder.h` (modified, +5/-0)
+```diff
+@@ -99,6 +99,11 @@ class SinkReplyBuilder {
+   // `additional_bytes` hints how many bytes did not fit into the buffer to possibly grow it
+   void Flush(size_t additional_bytes = 0);
  
- namespace dfly {
-@@ -44,6 +50,11 @@ JournalExecutor::~JournalExecutor() {
- }
- 
- facade::DispatchResult JournalExecutor::Execute(DbIndex dbid, journal::ParsedEntry::CmdData& cmd) {
-+  if (dbid >= absl::GetFlag(FLAGS_dbnum)) {
-+    LOG(ERROR) << "Database index out of range in journal: " << dbid;
-+    return facade::DispatchResult::ERROR;
++  // True if reply bytes are waiting to be flushed.
++  bool HasBufferedOutput() const {
++    return total_size_ != 0;
 +  }
 +
-   SelectDb(dbid);
-   CommandContext cntx_cmd;
-   cntx_cmd.Init(reply_builder_.get(), &conn_context_);
-@@ -78,18 +89,13 @@ void JournalExecutor::SelectDb(DbIndex dbid) {
-     ensured_dbs_.resize(dbid + 1);
- 
-   if (!ensured_dbs_[dbid]) {
--    CommandContext cmd;
--
--    cmd.Init(reply_builder_.get(), &conn_context_);
--    BuildFromParts(&cmd, "SELECT", dbid);
--    facade::DispatchResult result = Execute(&cmd);
--    if (result != facade::DispatchResult::OK) {
--      LOG(DFATAL) << "Failed to select DB: " << dbid;
--    }
-+    // Journal replay can target nonzero databases even when client SELECT is disabled.
-+    shard_set->RunBriefInParallel([ns = conn_context_.ns, dbid](EngineShard* shard) {
-+      ns->GetDbSlice(shard->shard_id()).ActivateDb(dbid);
-+    });
-     ensured_dbs_[dbid] = true;
--  } else {
--    conn_context_.conn_state.db_index = dbid;
+   std::error_code GetError() const {
+     return ec_;
    }
-+  conn_context_.conn_state.db_index = dbid;
+```
+
+**File**: `src/server/dragonfly_connection_test.cc` (modified, +132/-1)
+```diff
+@@ -3,6 +3,7 @@
+ 
+ #include "facade/dragonfly_connection.h"
+ 
++#include <absl/cleanup/cleanup.h>
+ #include <absl/strings/match.h>
+ #include <absl/strings/str_split.h>
+ #include <arpa/inet.h>
+@@ -23,18 +24,22 @@
+ #include "facade/dragonfly_listener.h"
+ #include "facade/facade_test.h"
+ #include "server/conn_context.h"
++#include "server/engine_shard_set.h"
+ #include "server/test_utils.h"
+ #include "util/accept_server.h"
+ 
+ ABSL_DECLARE_FLAG(bool, enable_resp_io_loop_v2);
+ ABSL_DECLARE_FLAG(bool, enable_shared_read_buffer);
++ABSL_DECLARE_FLAG(bool, enable_pipeline_squashing_v2);
+ ABSL_DECLARE_FLAG(bool, multi_exec_squash);
+ 
+ namespace dfly {
+ namespace {
+ 
+ using namespace std::chrono_literals;
+ using testing::HasSubstr;
++using testing::Optional;
++using testing::StartsWith;
+ 
+ // Some if the tests in this test suite must send malformed RESP bytes and verify the ordered raw
+ // replies followed by EOF. We won't use ProtocolClient (protocol_client.cc) here - it does not
+@@ -203,7 +208,7 @@ class DragonflyConnectionTest : public BaseFamilyTest {
+   absl::FlagSaver flag_saver_;
+ };
+ 
+-// Run every V2 parser-error test with private and shared read buffers.
++// Run V2 connection tests with private and shared read buffers.
+ class DragonflyV2ConnectionTest : public DragonflyConnectionTest,
+                                   public testing::WithParamInterface<bool> {
+  protected:
+@@ -212,6 +217,132 @@ class DragonflyV2ConnectionTest : public DragonflyConnectionTest,
+   }
+ };
+ 
++// A drained batch can expose an undispatched head while the queue remains over its byte limit.
++TEST_P(DragonflyV2ConnectionTest, DrainsQueuedCommandsOverPipelineLimit) {
++  const std::string original_limit =
++      Run({"CONFIG", "GET", "pipeline_buffer_limit"}).GetVec()[1].GetString();
++  for (bool squash : {true, false}) {
++    SCOPED_TRACE(squash);
++    absl::SetFlag(&FLAGS_enable_pipeline_squashing_v2, squash);
++    absl::Cleanup restore_limit = [&] {
++      EXPECT_EQ(Run({"CONFIG", "SET", "pipeline_buffer_limit", original_limit}), "OK");
++    };
++
++    RawRespClient client{port_};
++    ASSERT_TRUE(client.valid());
++
++    // Each PING ends a squash batch.
++    ASSERT_TRUE(
++        client.SendAll("CLIENT INFO\r\nCONFIG SET pipeline_buffer_limit 1\r\n"
++                       "SET a b\r\nPING\r\nSET c d\r\nPING\r\n"));
++
++    // Verify the whole pipeline was parsed before CONFIG lowers the limit, counting CLIENT INFO.
++    ASSERT_THAT(client.ReadLine(), Optional(StartsWith("$")));
++    ASSERT_THAT(client.ReadLine(), Optional(HasSubstr(" pipeline=6 ")));
++    for (std::string_view reply : {"+OK\r\n", "+OK\r\n", "+PONG\r\n", "+OK\r\n", "+PONG\r\n"}) {
++      ASSERT_EQ(client.ReadLine(), reply);
++    }
++
++    // The connection stays usable and both writes are visible without raising the limit.
++    ASSERT_TRUE(client.SendAll("GET a\r\nGET c\r\nPING\r\n"));
++    for (std::string_view reply : {"$1\r\n", "b\r\n", "$1\r\n", "d\r\n", "+PONG\r\n"}) {
++      ASSERT_EQ(client.ReadLine(), reply);
++    }
++  }
++}
++
++// Completing one async reply must leave a completion subscription for the next pending head.
++TEST_P(DragonflyV2ConnectionTest, WakesForNextAsyncReplyOverPipelineLimit) {
++  absl::SetFlag(&FLAGS_enable_pipeline_squashing_v2, false);
++  const std::string original_limit =
++      Run({"CONFIG", "GET", "pipeline_buffer_limit"}).GetVec()[1].GetString();
++
++  ASSERT_GE(shard_set->size(), 2u);
++  const std::string first_key = "pipeline-async-first";
++  std::string second_key = "pipeline-async-second";
++  while (Shard(first_key, shard_set->size()) == Shard(second_key, shard_set->size()))
++    second_key += "x";
++
++  auto* exec_cid = service_->FindCmd("EXEC");
++  boost::intrusive_ptr<Transaction> first_lock(new Transaction{exec_cid});
++  boost::intrusive_ptr<Transaction> second_lock(new Transaction{exec_cid});
++  absl::Cleanup restore_state = [&] {
++    pp_->at(0)->Await([&] {
++      first_lock->UnlockMulti(true);
++      second_lock->UnlockMulti(true);
++    });
++    EXPECT_EQ(Run({"CONFIG", "SET", "pipeline_buffer_limit", original_limit}), "OK");
++  };
++  pp_->at(0)->Await([&] {
++    std::string_view first_keys[] = {first_key};
++    std::string_view second_keys[] = {second_key};
++    auto* ns = &namespaces->GetDefaultNamespace();
++    first_lock->StartMultiLockedAhead(ns, 0, CmdArgList{first_keys}, 1);
++    second_lock->StartMultiLockedAhead(ns, 0, CmdArgList{second_keys}, 1);
++  });
++
++  RawRespClient client{port_};
++  ASSERT_TRUE(client.valid());
++  ASSERT_TRUE(client.SendAll("CLIENT INFO\r\nCONFIG SET pipeline_buffer_limit 1\r\nSET " +
++                             first_key + " a\r\nSET " + second_key + " b\r\n"));
++
++  // Verify both SETs were parsed before CONFIG lowers the limit; the count includes CLIENT INFO.
++  ASSERT_THAT(client.ReadLine(), Optional(StartsWith("$")));
++  ASSERT_THAT(client.ReadLine(), Optional(HasSubstr(" pipeline=4 ")));
++
++  // CONFIG's batched reply flushes when backpressure parks behind the first locked SET.
++  ASSERT_
+```
+
+---
+
+### Incident Patch 3: `bdb177fc` (2026-11-11)
+**Commit Message**: test: fix remaining queued sink writer capacity assertions on macOS (#8789)
+
+test: fix capacity assumptions in queued sink writer headroom tests
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+**File**: `src/server/detail/queued_sink_writer_test.cc` (modified, +10/-7)
+```diff
+@@ -55,6 +55,8 @@ string Chunk(char c) {
+   return Chunk(c, 1000);
  }
  
- }  // namespace dfly
++const size_t kChunkBytes = Chunk('a').capacity();
++
+ }  // namespace
+ 
+ class QueuedSinkWriterTest : public testing::Test {
+@@ -185,7 +187,7 @@ TEST_F(QueuedSinkWriterTest, LowerLimitDoesNotWaitForBacklog) {
+   writer_.Stop();
+ }
+ 
+-// Each write while LowerLimit runs lowers the limit by half of its size, so a small push right
++// Each write while LowerLimit runs lowers the limit by half of its capacity, so a small push right
+ // after a write fits in the other half and does not wait for the next write, however slow.
+ TEST_F(QueuedSinkWriterTest, LowerLimitKeepsHeadroom) {
+   StartWriter(1 << 20);
+@@ -194,12 +196,12 @@ TEST_F(QueuedSinkWriterTest, LowerLimitKeepsHeadroom) {
+ 
+   fb2::Fiber lowerer([&] { writer_.LowerLimit(0, 0); });
+   ThisFiber::SleepFor(1ms);
+-  EXPECT_EQ(writer_.limit(), 4000u);
++  EXPECT_EQ(writer_.limit(), 4 * kChunkBytes);
+ 
+   sink_.Allow(1);
+   ThisFiber::SleepFor(1ms);
+-  EXPECT_EQ(writer_.pending_bytes(), 3000u);
+-  EXPECT_EQ(writer_.limit(), 3500u);
++  EXPECT_EQ(writer_.pending_bytes(), 3 * kChunkBytes);
++  EXPECT_EQ(writer_.limit(), 4 * kChunkBytes - kChunkBytes / 2);
+ 
+   bool pushed = false;
+   fb2::Fiber producer([&] {
+@@ -220,13 +222,14 @@ TEST_F(QueuedSinkWriterTest, LowerLimitKeepsHeadroom) {
+ // LowerLimit starts `headroom` above the backlog, so a small push before the first write
+ // completes does not wait for it.
+ TEST_F(QueuedSinkWriterTest, LowerLimitStartsWithHeadroom) {
++  constexpr size_t kHeadroom = 500;
+   StartWriter(1 << 20);
+   for (char c : {'a', 'b', 'c', 'd'})
+     writer_.Push(Chunk(c));
+ 
+-  fb2::Fiber lowerer([&] { writer_.LowerLimit(0, 500); });
++  fb2::Fiber lowerer([&] { writer_.LowerLimit(0, kHeadroom); });
+   ThisFiber::SleepFor(1ms);
+-  EXPECT_EQ(writer_.limit(), 4500u);
++  EXPECT_EQ(writer_.limit(), 4 * kChunkBytes + kHeadroom);
+ 
+   bool pushed = false;
+   fb2::Fiber producer([&] {
+@@ -339,7 +342,7 @@ TEST_F(QueuedSinkWriterTest, WaitBelowIgnoresLaterPushes) {
+   sink_.Allow(2);
+   ThisFiber::SleepFor(1ms);
+   EXPECT_TRUE(waited);
+-  EXPECT_EQ(writer_.pending_bytes(), 1000u);
++  EXPECT_EQ(writer_.pending_bytes(), kChunkBytes);
+ 
+   sink_.Open();
+   waiter.Join();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8775** (2026-11-08): fix(ci): update chart-testing and add Silo download fallback (@vyavdoshenko)
-- **PR #8772** (2026-11-07): fix: remove unused code and obsolete test helpers (@vyavdoshenko)
-- **PR #8770** (2026-11-07): test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (@vyavdoshenko)
-- **PR #8764** (2026-11-09): chore(search): Make alter critical path non-yielding (@abhijat)
-- **PR #8763** (2026-11-06): fix: resolve sanitizer UB and extend nightly test timeouts (@vyavdoshenko)
-- **PR #8761** (2026-11-06): test: fix queued sink writer tests on libc++ (macOS) (@vyavdoshenko)
+- **PR #8797** (2026-11-12): chore(tests): Temporarily set snapshot limit to 0 (@abhijat)
+- **PR #8789** (2026-11-11): test: fix remaining queued sink writer capacity assertions on macOS (@vyavdoshenko)
+- **PR #8785** (2026-11-10): refactor: drop extra ascii codecs (@BorysTheDev)
+- **PR #8784** (closed): Perf/consolidate ascii codecs (@BorysTheDev)
+- **PR #8783** (2026-11-10): chore(tests): Introduce common parser for info stats (@abhijat)
+- **PR #8782** (2026-11-10): feat: Support numbered databases in cluster mode (@BorysTheDev)
 
 ---
 
@@ -2791,51 +2731,24 @@ Signed-off-by: Abhijat Malviya <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): Make alter critical path non-yielding (#8764)
+## X. tests): lift rss_oom_deny_ratio during populate in flaky test_rss_oom_ratio (#87
 
 **RULE**:
-When implementing operations in `src/server/rdb_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/dragonfly/memory_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77157716`: search): Make alter critical path non-yielding (#8764). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bebdf055`: tests): lift rss_oom_deny_ratio during populate in flaky test_rss_oom_ratio (#8762). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/rdb_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/dragonfly/memory_test.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-TEST_F(RdbTest, SearchAliasAndAlterConsistency) {
-  absl::FlagSaver flags;
-  SetFlag(&FLAGS_num_shards, 1);
-  ResetService();
-
-  ASSERT_EQ(Run({"DEBUG", "POPULATE", "15000", "doc", "32", "TYPE", "HASH", "ELEMENTS", "1"}),
-            "OK");
-
-  // DEBUG POPULATE uses a field and value of 16 'x' characters for these hashes.
-  ASSERT_EQ(Run({"FT.CREATE", "idx", "ON", "HASH", "SCHEMA", string(16, 'x'), "TEXT"}), "OK");
-  ASSERT_EQ(Run({"FT.ALIASADD", "idx-alias", "idx"}), "OK");
-
-  const auto aliases = pp_->at(0)->Await(
-      [&] { return RdbSaver::GetGlobalData(service_.get(), true).search_aliases; });
-  ASSERT_EQ(aliases.size(), 1);
-
-  atomic done{false};
-  bool consistent = true;
-  size_t samples = 0;
-  auto collector = pp_->at(1)->LaunchFiber([&] {
-    while (!done.load(memory_order_relaxed)) {
-      auto data = RdbSaver::GetGlobalData(service_.get(), true);
-      if (data.search_indices.size() != 1 || data.search_aliases != aliases)
-        consistent = false;
-      ++samples;
-    }
-  });
-
-  // Repeatedly restart the build to give metadata collection chances to observe cancellation.
-  for (unsigned i = 0; i < 20; ++i)
-    EXPECT_EQ(Run({"FT.ALTER", "idx", "SCHEMA", "ADD", StrCat(
+    # Populate writes are subject to the rss deny check too, so disable it while populating
+    ratio = (await client.config_get("rss_oom_deny_ratio"))["rss_oom_deny_ratio"]
+    await client.config_set("rss_oom_deny_ratio", 0)
+    await client.config_set("rss_oom_deny_ratio", ratio)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2845,4 +2758,4 @@ TEST_F(RdbTest, SearchAliasAndAlterConsistency) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77157716` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bebdf055` are properly handled with clean fallback behavior.

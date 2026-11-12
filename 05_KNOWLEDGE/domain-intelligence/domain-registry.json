@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T03:10:59.805Z",
-  "total_records": 57,
+  "last_updated": "2026-11-12T13:15:27.331Z",
+  "total_records": 72,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 27,
+      "total": 34,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -52,7 +52,14 @@
         "DOM-D-66B0E6DD",
         "DOM-D-1866CC44",
         "DOM-D-3429AF3D",
-        "DOM-D-E8885F06"
+        "DOM-D-E8885F06",
+        "DOM-D-5F13CAC2",
+        "DOM-D-0C67C5DB",
+        "DOM-D-2EFB96C5",
+        "DOM-D-91EB11DA",
+        "DOM-D-78355AEC",
+        "DOM-D-E7997468",
+        "DOM-D-A3AABF62"
       ]
     },
     "E": {
@@ -75,7 +82,7 @@
       ]
     },
     "H": {
-      "total": 13,
+      "total": 18,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -89,7 +96,12 @@
         "DOM-H-A79F59EB",
         "DOM-H-32FEBC73",
         "DOM-H-57AD88EF",
-        "DOM-H-03EB2317"
+        "DOM-H-03EB2317",
+        "DOM-H-0AA4F6ED",
+        "DOM-H-F56DBC84",
+        "DOM-H-7D775901",
+        "DOM-H-EE08D822",
+        "DOM-H-B173C8F8"
       ]
     },
     "I": {
@@ -100,24 +112,27 @@
       ]
     },
     "J": {
-      "total": 2,
+      "total": 3,
       "record_ids": [
         "DOM-J-C14FC2D6",
-        "DOM-J-B305372A"
+        "DOM-J-B305372A",
+        "DOM-J-5650848D"
       ]
     },
     "K": {
-      "total": 3,
+      "total": 4,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
-        "DOM-K-232F5AD4"
+        "DOM-K-232F5AD4",
+        "DOM-K-AE91E0B9"
       ]
     },
     "L": {
-      "total": 1,
+      "total": 2,
       "record_ids": [
-        "DOM-L-1B851132"
+        "DOM-L-1B851132",
+        "DOM-L-80D1F65C"
       ]
     },
     "M": {
@@ -2306,6 +2321,604 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-12T03:10:59.804Z"
+    },
+    "DOM-D-5F13CAC2": {
+      "record_id": "DOM-D-5F13CAC2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m))  \n> **Source Version**: `",
+      "content_hash": "d83b1160f18b2f4c6034fef328afaf8659057dbcc4475a2e403c4b2dee0cd22f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-facebook-dinov3-vitl16-pretrain-lvd1689m/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T05:13:38.557Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-facebook-dinov3-vitl16-pretrain-lvd1689m)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-facebook-dinov3-vitl16-pretrain-lvd1689m"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T05:13:50.795Z"
+    },
+    "DOM-H-0AA4F6ED": {
+      "record_id": "DOM-H-0AA4F6ED",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Install the native Apple Silicon build in init.sh (#1623)",
+      "content": "When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wasm-bindgen/wasm-pack. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "a7342d587c925b4064ce85d1e15f9ffe3b5627eabc9970f71819c5e889817fa2",
+      "summary": "Prevents defects observed in production commit `c262c330`: Install the native Apple Silicon build in init.sh (#1623). Unvalidated execution  -> When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/conc",
+      "provenance": {
+        "source_uri": "project://wasm-bindgen-wasm-pack/wasm-bindgen-wasm-pack-learnings.md",
+        "source_version": "c262c330",
+        "observed_at": "2026-11-12T05:26:51.829Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wasm-bindgen-wasm-pack)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of wasm-bindgen-wasm-pack"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T05:27:35.953Z"
+    },
+    "DOM-D-0C67C5DB": {
+      "record_id": "DOM-D-0C67C5DB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized](https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized))  \n> **Source Version**: `",
+      "content_hash": "f87d27bb41cfcc69b49e19d5bf0110700ab08767c7cad7380eefb229c59c49bb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-abenzerps-qwen-image-2.1-turbo-quantized/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T05:47:46.594Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-abenzerps-qwen-image-2.1-turbo-quantized)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-abenzerps-qwen-image-2.1-turbo-quantized"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T05:47:56.933Z"
+    },
+    "DOM-D-2EFB96C5": {
+      "record_id": "DOM-D-2EFB96C5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): NousResearch/Arete-27B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/NousResearch/Arete-27B](https://huggingface.co/NousResearch/Arete-27B))  \n> **Source Version**: `hf-nousresea`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "893c037365243406375a0ad3446e6e4707b1ae7ee6328efa4a0599725be0cd8b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-nousresearch-arete-27b/hf-nousresearch-arete-27b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T07:15:44.997Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nousresearch-arete-27b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nousresearch-arete-27b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T07:16:00.745Z"
+    },
+    "DOM-D-91EB11DA": {
+      "record_id": "DOM-D-91EB11DA",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): PrunaAI/P-H3-Image",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/PrunaAI/P-H3-Image](https://huggingface.co/PrunaAI/P-H3-Image))  \n> **Source Version**: `hf-prunaai-p`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "c5f923202cf543d6ec4ece0e62c933d8901603699e48149d98f3831f9d4f8c52",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-prunaai-p-h3-image/hf-prunaai-p-h3-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T07:38:23.810Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prunaai-p-h3-image)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-prunaai-p-h3-image"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T07:38:38.944Z"
+    },
+    "DOM-J-5650848D": {
+      "record_id": "DOM-J-5650848D",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "FLOAT32 COSINE Search Emits Invalid Distance -1 for Subnormal Vectors (BUG-VEC-01)",
+      "content": "High-dimensional vector calculations in single precision must accumulate intermediate vector norms in double precision (`double`), with strict checks for norm underflow before computing normalization reciprocals.",
+      "content_hash": "9f09357daa127b8043e833d9caf56f5aa0bf67b5ddc47d0bad952e7255486e59",
+      "summary": "The distance computation squared each vector element to compute the Euclidean norm $\\|u\\|_2 = \\sqrt{\\sum u_i^2}$. Because the smallest subno -> High-dimensional vector calculations in single precision must accumulate intermediate vector norms in double precision (`double`), with stri",
+      "provenance": {
+        "source_uri": "project://redisearch-redisearch/redisearch-redisearch-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:19:23.696Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (redisearch-redisearch)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "GitHub Issue #12186: *\"[BUG] FLOAT32 COSINE search returns distance -1 for an identical nonzero subnormal vector\"*. Reproducible with bit pattern `0x00000001` on index with `DISTANCE_METRIC COSINE`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T08:19:36.663Z"
+    },
+    "DOM-K-AE91E0B9": {
+      "record_id": "DOM-K-AE91E0B9",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Flawed CI Dependency Installer Invariant (BUG-SALVO-01)",
+      "content": "Meta-testing CI/CD workflows using an in-repo unit testing harness (`test_workflow_policy.py`) guarantees that dependency updater bots cannot alter workflow invariants, omit mandatory security flags, or introduce duplicate keys.",
+      "content_hash": "4af49fd091eccfe706abfb6c17237f1cbd3c804cddc75c9c919cf8ea3179416b",
+      "summary": "The custom Python policy verification script (`test_workflow_policy.py`) asserts that every step using `taiki-e/install-action@*` must inclu -> Meta-testing CI/CD workflows using an in-repo unit testing harness (`test_workflow_policy.py`) guarantees that dependency updater bots canno",
+      "provenance": {
+        "source_uri": "project://salvo-rs-salvo/salvo-rs-salvo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:34:31.634Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (salvo-rs-salvo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `8adf9959`, PR #1871."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.94,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T08:34:44.455Z"
+    },
+    "DOM-H-F56DBC84": {
+      "record_id": "DOM-H-F56DBC84",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Router Macro & Lifetime Compilation Breakage in Example Code (BUG-SALVO-02)",
+      "content": "Avoid monad-style chaining closures (`.then(|r| ...)`) in Rust builder APIs when simple conditional ownership reassignment (`if cond { router = router.push(...) }`) eliminates lifetime capture hazards entirely.",
+      "content_hash": "313c3abef3637555062703449959250ee31af947fe016c902bd7e6df03372469",
+      "summary": "Macro attributes originally failed to generate proper async trait implementations for function handlers when mixed with combinators that alt -> Avoid monad-style chaining closures (`.then(|r| ...)`) in Rust builder APIs when simple conditional ownership reassignment (`if cond { route",
+      "provenance": {
+        "source_uri": "project://salvo-rs-salvo/salvo-rs-salvo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:34:31.634Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (salvo-rs-salvo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Bug Issue #24 (\"master/examples/routing.rs Compilation fails\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T08:35:03.644Z"
+    },
+    "DOM-D-78355AEC": {
+      "record_id": "DOM-D-78355AEC",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Viggle/Viggle-Remake",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Viggle/Viggle-Remake](https://huggingface.co/Viggle/Viggle-Remake))  \n> **Source Version**: `hf-viggle-vi`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "bc03315290c7ae73fb6df509234a8156ecfa016c16c1d4f6d75524ee543933c6",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-viggle-viggle-remake/hf-viggle-viggle-remake-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T09:55:38.028Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-viggle-viggle-remake)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-viggle-viggle-remake"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T09:55:51.210Z"
+    },
+    "DOM-L-80D1F65C": {
+      "record_id": "DOM-L-80D1F65C",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [],
+      "title": "Allowed Azure DevOps hosts: devazurecom sshdevazurecom vs-sshvisualstudiocom",
+      "content": "`[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]`",
+      "content_hash": "aa8e98bb599cf0ee08c2e473b1f0b6bf557616a20d31c7332521a413e4db915c",
+      "summary": "`[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]` -> `[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]`",
+      "provenance": {
+        "source_uri": "project://volcengine-openviking/volcengine-openviking-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`azure_devops_domains`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (volcengine-openviking)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of volcengine-openviking"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T11:01:33.158Z"
+    },
+    "DOM-D-E7997468": {
+      "record_id": "DOM-D-E7997468",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/Mage-VL-Cowork",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/microsoft/Mage-VL-Cowork](https://huggingface.co/microsoft/Mage-VL-Cowork))  \n> **Source Version**: `hf-microsoft`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "425f97f141c65a7a4bd9cad1d2054b6c05f75ea908c214e95a4d6685ea957d05",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-microsoft-mage-vl-cowork/hf-microsoft-mage-vl-cowork-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T11:18:53.146Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-mage-vl-cowork)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-microsoft-mage-vl-cowork"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T11:19:08.431Z"
+    },
+    "DOM-H-7D775901": {
+      "record_id": "DOM-H-7D775901",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Eliminate avoidable dead work in multi-stage JSCompiler builds.",
+      "content": "When implementing operations in `src/com/google/javascript/jscomp/Compiler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "687df25b7bf8c4c6ae38a0f33ae4ed92fe8c4841f9ec7e2cb04a2174d988f13b",
+      "summary": "Prevents defects observed in production commit `17db1536`: Eliminate avoidable dead work in multi-stage JSCompiler builds.. Unvalidated exec -> When implementing operations in `src/com/google/javascript/jscomp/Compiler.java`, engineers MUST enforce rigorous boundary validation, safe ",
+      "provenance": {
+        "source_uri": "project://google-closure-compiler/google-closure-compiler-learnings.md",
+        "source_version": "0d7d62cf",
+        "observed_at": "2026-11-12T11:37:13.594Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (google-closure-compiler)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of google-closure-compiler"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T11:38:00.741Z"
+    },
+    "DOM-H-EE08D822": {
+      "record_id": "DOM-H-EE08D822",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "javascript): call evaluateDefinedIdentifier with the name it is keyed by (#23273",
+      "content": "When implementing operations in `.changeset/265-javascript-evaluate-defined-identifier.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webpack/webpack. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "c62c37cbbac983cee3c38b4ec50a50972f3337af7a8940fb04ff6f3d2470f015",
+      "summary": "Prevents defects observed in production commit `0a3413c2`: javascript): call evaluateDefinedIdentifier with the name it is keyed by (#23273) -> When implementing operations in `.changeset/265-javascript-evaluate-defined-identifier.md`, engineers MUST enforce rigorous boundary validat",
+      "provenance": {
+        "source_uri": "project://webpack-webpack/webpack-webpack-learnings.md",
+        "source_version": "39b7c8a8",
+        "observed_at": "2026-11-12T12:50:18.859Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (webpack-webpack)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of webpack-webpack"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T12:50:51.244Z"
+    },
+    "DOM-H-B173C8F8": {
+      "record_id": "DOM-H-B173C8F8",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037)",
+      "content": "When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "d42b1d925bb101ba416caff87ea4fb96e5edbbb59cd54547c94cd2661ab1c442",
+      "summary": "Prevents defects observed in production commit `58854051`: build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037).  -> When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "58854051",
+        "observed_at": "2026-11-12T12:45:28.731Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of dathere-qsv"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T12:51:11.108Z"
+    },
+    "DOM-D-A3AABF62": {
+      "record_id": "DOM-D-A3AABF62",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-1.7B-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF](https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "2896f36ca01249dc1d5c33c95171f4ee5b3f64273d23139ef7f1fa83d5416f9b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-1.7b-gguf/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T13:15:12.716Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-1.7b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-lfm3-1.7b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T13:15:27.329Z"
     }
   }
 }

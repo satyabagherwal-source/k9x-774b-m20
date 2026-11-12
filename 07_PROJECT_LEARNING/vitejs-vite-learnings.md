@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source**: github ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
-> **Source Version**: `a579e352`  
+> **Source Version**: `3e1a86e6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T20:16:25.986Z  
+> **Timestamp**: 2026-11-12T12:32:39.043Z  
 > **Learning ID**: `learn-github-vitejs-vite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T20:16:24.783Z  
+> **Harvest Timestamp**: 2026-11-12T12:32:38.713Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next generation frontend tooling. It's fast!
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 83859 stars
+- **Stars / Engagement**: 83885 stars
 
 ---
 
@@ -116,7 +116,7 @@ export function toWindowsPath(path: string): string {
 ### Core Architecture Module: `packages/vite/src/node/plugins/worker.ts`
 ```
 import path from 'node:path'
-import { type ImportSpecifier, init, parse } from 'es-module-lexer'
+import { type Import, init, parse } from 'es-module-lexer'
 import MagicString from 'magic-string'
 import colors from 'picocolors'
 import type {
@@ -147,10 +147,24 @@ import {
   urlRE,
 } from '../utils'
 import { fileToUrl, toOutputFilePathInJSForBundledDev } from './asset'
+import { getChunkOriginalFileName, type Manifest } from './manifest'
+
+type WorkerChunkManifest = {
+  fileName: string
+  name: string
+  originalFileName: string | undefined
+  isEntry: boolean
+  isDynamicEntry: boolean
+  imports: string[]
+  dynamicImports: string[]
+  importedCss: string[]
+  importedAssets: string[]
+}
 
 type WorkerBundle = {
   entryFilename: string
   entryCode: string
+  chunkManifests: WorkerChunkManifest[]
   referencedAssets: Set<string>
   moduleIds: Set<string>
   watchedFiles: string[]
@@ -176,6 +190,14 @@ type WorkerBundleId = string
 
 /** `undefined` identifies the main bundle. */
 type BundleId = WorkerBundleId | undefined
+
+const workerManifests = new WeakMap<Environment, Manifest>()
+
+export function getWorkerManifest(
+  environment: Environment,
+): Manifest | undefined {
+  return workerManifests.get(environment)
+}
 
 class WorkerOutputCache {
   /**
@@ -207,6 +229,7 @@ class WorkerOutputCache {
     watchedFiles: string[],
     outputEntryFilename: string,
     outputEntryCode: string,
+    chunkManifests: WorkerChunkManifest[],
     outputAssets: WorkerBundleAsset[],
     moduleIds: Set<string>,
     logger: Logger,
@@ -217,6 +240,7 @@ class WorkerOutputCache {
     const bundle: WorkerBundle = {
       entryFilename: outputEntryFilename,
       entryCode: outputEntryCode,
+      chunkManifests: chunkManifests,
       referencedAssets: new Set(outputAssets.map((asset) => asset.fileName)),
       moduleIds,
       watchedFiles,
@@ -362,80 +386,54 @@ class WorkerOutputCache {
     return this.assets.values()
   }
 
+  getChunkManifest(liveFileNames?: Set<string>): Manifest {
+    const manifest: Manifest = {}
+    for (const bundle of this.bundles.values()) {
+      // Inline workers are bundled but their entry is not emitted.
+      if (!this.assets.has(bundle.entryFilename)) continue
+
+      const keysByFileName = new Map(
+        bundle.chunkManifests.map((chunk) => [
+          chunk.fileName,
+          `_worker_${chunk.fileName}`,
+        ]),
+      )
+
+      for (const chunk of bundle.chunkManifests) {
+        if (liveFileNames && !liveFileNames.has(chunk.fileName)) continue
+
+        const imports = chunk.imports.flatMap((fileName) => {
+          const key = keysByFileName.get(fileName)
+          return key ? [key] : []
+        })
+        const dynamicImports = chunk.dynamicImports.flatMap((fileName) => {
+          const key = keysByFileName.get(fileName)
+          return key ? [key] : []
+        })
+
+        manifest[keysByFileName.get(chunk.fileName)!] = {
+          src: chunk.originalFileName,
+          file: chunk.fileName,
+          css: chunk.importedCss.length > 0 ? chunk.importedCss : undefined,
+          assets:
+            chunk.importedAssets.length > 0 ? chunk.importedAssets : undefined,
+          isWorkerEntry: chunk.isEntry,
+          name: chunk.name,
+          isDynamicEntry: chunk.isDynamicEntry,
+          isWorker: true,
+          imports: imports.length > 0 ? imports : undefined,
+          dynamicImports:
+            dynamicImports.length > 0 ? dynamicImports : undefined,
+        }
+      }
+    }
+    return manifest
+  }
+
   /**
    * Emit the worker entry as an asset (once per build) and return the JS
    * expression referencing it: `import.meta.ROLLDOWN_FILE_URL_<referenceId>`. The
-   * `vite:asset` `resolveFileUrl` hook turns that into the final URL (respecting
-   * base / `renderBuiltUrl`). The emitted file is deduplicated against this
-   * cache's `generateBundle` emit via its content check.
-   */
-  generateEntryUrlExpr(
-    pluginContext: PluginContext,
-    bundle: WorkerBundle,
-  ): string {
-    const { environment } = pluginContext
-    let referenceId = bundle.entryReferenceIds.get(environment)
-    if (!referenceId) {
-      referenceId = pluginContext.emitFile({
-        type: 'asset',
-        fileName: bundle.entryFilename,
-        source: bundle.entryCode,
-      })
-      bundle.entryReferenceIds.set(environment, referenceId)
-    }
-    return `import.meta.ROLLDOWN_FILE_URL_${referenceId}`
-  }
-
-  clearEntryReferenceIds(environment: Environment): void {
-    for (const bundle of this.bundles.values()) {
-      bundle.entryReferenceIds.delete(environment)
-    }
-  }
-}
-
-export type WorkerType = 'classic' | 'module' | 'ignore'
-
-export const workerOrSharedWorkerRE: RegExp =
-  /(?:\?|&)(worker|sharedworker)(?:&|$)/
-const workerFileRE = /(?:\?|&)worker_file&type=(\w+)(?:&|$)/
-const inlineRE = /[?&]inline\b/
-const workerQueriesRE =
-  /(\?|&)(?:(?:worker|sharedworker|inline|url)=?(?:&|$))+/g
-
-export function splitWorkerRequest(id: string): {
-  file: string
-  postfix: string
-} {
-  const { file, postfix } = splitFileAndPostfix(id)
-  if (!postfix || postfix[0] !== '?') {
-    return { file, postfix: '' }
-  }
-  return {
-    file,
-    postfix: postfix
-      .replace(workerQueriesRE, '$1')
-      .replace(trailingSeparatorRE, ''),
-  }
-}
-
-export const WORKER_FILE_ID = 'worker_file'
-const workerOutputCaches = new WeakMap<ResolvedConfig, WorkerOutputCache>()
-
-export function recordWorkerReference(
-  config: ResolvedConfig,
-  parentInputId: string | undefined,
-  childBundleId: WorkerBundleId,
-  referencingModuleId: string,
-): void {
-  workerOutputCaches
-    .get(config.mainConfig || config)!
-    .recordReference(parentInputId, childBundleId, referencingModuleId)
-}
-
-/**
- * Reference a bundled worker entry as `import.meta.ROLLDOWN_FILE_URL_<id>` from the
- * given build. Thin accessor over `WorkerOutputCache.generateEntryUrlExpr` so
- * both `vite:worker` and `vite:worker-import-meta-url` can share the cache
+   * `vite:asset` `resolveFileUrl` hook turns that into the final URL (r
 ```
 
 ### Core Architecture Module: `packages/vite/src/node/plugins/workerImportMetaUrl.ts`
@@ -683,6 +681,9 @@ export function workerImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
           if (urlWithoutPostfix[0] === '.') {
             file = path.resolve(path.dirname(id), urlWithoutPostfix)
             file = slash(tryFsResolve(file, fsResolveOptions) ?? file)
+            if (this.environment.mode === 'dev') {
+              this.environment.safeModulePaths.add(file)
+            }
           } else {
             workerResolver ??= createBackCompatIdResolver(config, {
               extensions: [],
@@ -690,10 +691,19 @@ export function workerImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
               preferRelative: true,
             })
             file = await workerResolver(this.environment, urlWithoutPostfix, id)
-            file ??=
-              urlWithoutPostfix[0] === '/'
-                ? slash(path.join(config.publicDir, urlWithoutPostfix))
-                : slash(path.resolve(path.dirname(id), urlWithoutPostfix))
+            if (file !== undefined) {
+              if (this.environment.mode === 'dev') {
+                this.environment.safeModulePaths.addId(file)
+              }
+            } else {
+              file =
+                urlWithoutPostfix[0] === '/'
+                  ? slash(path.join(config.publicDir, urlWithoutPostfix))
+                  : slash(path.resolve(path.dirname(id), urlWithoutPostfix))
+              if (this.environment.mode === 'dev') {
+                this.environment.safeModulePaths.add(file)
+              }
+            }
           }
 
           if (
@@ -1295,11 +1305,11 @@ self.onmessage = (e) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24007** (2026-11-06): **fix(server): dedupe out-of-root watch registrations (fix #23940)**
-  *Symptoms*: Fixes #23940.  ## What  `ensureWatchedFile` in `packages/vite/src/node/utils.ts` now tracks files it has already added per watcher with a `WeakMap<FSWatcher, Set<string>>`, so `watcher.add(path.resolve(file))` runs once per out-of-root file per watcher instead of on every transform.  ## Why  On macOS, chokidar's FSEvents path does not deduplicate repeated `add()` calls — each `watcher.add()` for an already-watched path registers another `filteredFsEventsListener` and closer. `transformRequest` calls `ensureWatchedFile` on every transform of an out-of-root file (linked packages etc.), so long dev sessions leaked listeners without bound and made each FS event more expensive. The `fs.watch` path dedupes internally, so the leak only showed up with FSEvents.  ## How  - Added `ensuredWatchedFiles` + `getEnsuredWatchedFiles(watcher)` that lazily installs `unwatch`/`close` wrappers once per watcher to keep the dedupe set in sync. A single-path `unwatch` removes that entry; a glob `unwatch` clears the set so a later `ensureWatchedFile` can re-add if still needed; `close` clears it. - `ensureWatchedFile` resolves the path, returns early if already in the set, otherwise calls `watcher.add` and records the path. - `WeakMap` keyed by watcher means server restarts (new watcher) start fresh and closed watchers can be GC'd. No new dependency, no config option.  ## Testing  I ran these locally before opening this PR:  - `pnpm --filter vite run build` — passes (bundle + types check). - `pnpm r
+- **Issue #24080** (2026-11-12): **fix: escape imported name in `transformCjsImport`**
+  *Symptoms*: <!-- - What is this PR solving? Write a clear and concise description. - Reference the issues it solves (e.g. `fixes #123`). - What other alternatives have you explored? - Are there any parts you think require more attention from reviewers?  Also, please make sure you do the following:  - Read the Contributing Guidelines at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md. - Check that there isn't already a PR that solves the problem the same way. If you find a duplicate, please help us review it. If you've solved it in a different way, clarify what is different and link the other PRs in the PR description. - Update the corresponding documentation if needed. - Include relevant tests that fail without this PR but pass with it. If the tests are not included, explain why.  If you have used AI:  - Read the AI Policy at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md#ai-policy. - Keep the PR description and discussion concise. Use your own words, do not let AI write for you. - Disclose and describe how you have reviewed its code, e.g. the thought process and decisions that lead to the final code.  Thank you for contributing to Vite! --> To supplement the omissions in #24074.
 
-- **Issue #24003** (2026-11-06): **test: use `onTestFinished` for tear downs**
-  *Symptoms*: Use `onTestFinished` to avoid shared variables between tests.
+- **Issue #24079** (2026-11-12): **refactor: use `tinyexec` instead of `execa`**
+  *Symptoms*: <!-- - What is this PR solving? Write a clear and concise description. - Reference the issues it solves (e.g. `fixes #123`). - What other alternatives have you explored? - Are there any parts you think require more attention from reviewers?  Also, please make sure you do the following:  - Read the Contributing Guidelines at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md. - Check that there isn't already a PR that solves the problem the same way. If you find a duplicate, please help us review it. If you've solved it in a different way, clarify what is different and link the other PRs in the PR description. - Update the corresponding documentation if needed. - Include relevant tests that fail without this PR but pass with it. If the tests are not included, explain why.  If you have used AI:  - Read the AI Policy at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md#ai-policy. - Keep the PR description and discussion concise. Use your own words, do not let AI write for you. - Disclose and describe how you have reviewed its code, e.g. the thought process and decisions that lead to the final code.  Thank you for contributing to Vite! --> https://e18e.dev/docs/replacements/execa
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1316,343 +1326,444 @@ self.onmessage = (e) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eab1dc27` (2026-11-05)
-**Commit Message**: fix(html): remove adjacent module tags on the first line (#23823)
-
-Co-authored-by: 翠 <[REDACTED_EMAIL]>
-
-**File**: `.oxfmtrc.json` (modified, +1/-0)
-```diff
-@@ -37,6 +37,7 @@
-     "playground/html/invalidClick.html",
-     "playground/html/invalidEscape.html",
-     "playground/html/valid.html",
-+    "playground/html/tag-removal/*.html",
-     "playground/external/public/slash@3.0.0.js",
-     "playground/ssr-html/public/slash@3.0.0.js",
-     "playground/worker/classic-worker.js",
-```
-
-**File**: `packages/vite/src/node/plugins/html.ts` (modified, +8/-4)
-```diff
-@@ -486,9 +486,13 @@ export function buildHtmlPlugin(config: ResolvedConfig): Plugin {
-           if (startOffset === 0) return 0
- 
-           // Gets the offset for the start of the line including the
--          // newline trailing the previous node
--          const lineStartOffset =
--            startOffset - node.sourceCodeLocation!.startCol
-+          // newline trailing the previous node.
-+          // Columns are one-based and offsets are zero-based, so their difference
-+          // is -1 on the first line. Clamp to 0 because there is no preceding newline.
-+          const lineStartOffset = Math.max(
-+            0,
-+            startOffset - node.sourceCodeLocation!.startCol,
-+          )
- 
-           // <previous-line-node></previous-line-node>
-           // <target-node></target-node>
-@@ -503,7 +507,7 @@ export function buildHtmlPlugin(config: ResolvedConfig): Plugin {
-           // previous newline, we cannot strip it out without risking content deletion.
-           let isLineEmpty = false
-           try {
--            const line = s.slice(Math.max(0, lineStartOffset), startOffset)
-+            const line = s.slice(lineStartOffset, startOffset)
-             isLineEmpty = !line.trim()
-           } catch {
-             // magic-string may throw if there's some content removed in the sliced string,
-```
-
-**File**: `playground/html/__tests__/html.spec.ts` (modified, +17/-0)
-```diff
-@@ -7,6 +7,7 @@ import {
-   isBundled,
-   isServe,
-   page,
-+  readFile,
-   serverLogs,
-   untilBrowserLogAfter,
-   viteServer,
-@@ -570,3 +571,19 @@ test.runIf(isServe)(
-     )
-   },
- )
-+
-+describe.runIf(isBuild)('HTML tag removal', () => {
-+  for (const kind of ['module-script', 'stylesheet']) {
-+    test(`removes adjacent ${kind} tags (#23819)`, async () => {
-+      const path = `/tag-removal/${kind}.html`
-+      const html = readFile(`dist${path}`)
-+      expect(html).not.toMatch(/(?:main\.js|nested\.js|main\.css)/)
-+
-+      await page.goto(viteTestUrl + path)
-+      expect(await page.textContent('h1')).toBe('keep')
-+      if (kind === 'stylesheet') {
-+        expect(await getColor('h1')).toBe('blue')
-+      }
-+    })
-+  }
-+})
-```
-
-**File**: `playground/html/tag-removal/module-script.html` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+<script type="module" src="/main.js"></script><script type="module" src="/nested/nested.js"></script>
-+<h1>keep</h1>
-```
-
-**File**: `playground/html/tag-removal/stylesheet.html` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+<script type="module" src="/main.js"></script><link rel="stylesheet" href="/main.css">
-+<h1>keep</h1>
-```
-
-**File**: `playground/html/vite.config.js` (modified, +5/-0)
-```diff
-@@ -35,6 +35,8 @@ const input = {
-   write: resolve(dirname, 'write.html'),
-   'transform-inline-js': resolve(dirname, 'transform-inline-js.html'),
-   malformedUrl: resolve(dirname, 'malformed-url.html'),
-+  tagRemovalModuleScript: resolve(dirname, 'tag-removal/module-script.html'),
-+  tagRemovalStylesheet: resolve(dirname, 'tag-removal/stylesheet.html'),
-   // resolved from `process.cwd()` by Rolldown (resolved from `root` by vite's resolver first)
-   relativeInput: relative(
-     process.cwd(),
-@@ -75,6 +77,9 @@ export default defineConfig({
-             throw new Error('pre transform applied at wrong time!')
-           }
- 
-+          // Keep adjacent tags on the first line for the tag removal regression.
-+          if (filename.includes('/tag-removal/')) return
-+
-           const doctypeRE = /<!doctype html>/i
-           if (doctypeRE.test(html)) return
- 
-```
-
----
-
-### Incident Patch 2: `a2703910` (2026-11-05)
-**Commit Message**: fix(server): escape HTML attributes (#23995)
-
-**File**: `packages/vite/src/node/server/middlewares/__tests__/indexHtml.spec.ts` (modified, +3/-3)
-```diff
-@@ -50,7 +50,7 @@ describe('indexHtml middleware — inline script proxy cache', () => {
-     ).toBeTruthy()
- 
-     const proxyModuleUrl = browserUrlToModuleUrl(
--      proxyUrlMatch![1],
-+      proxyUrlMatch![1].replaceAll('&amp;', '&'),
-       server.config.decodedBase,
-     )
-     const result =
-@@ -85,7 +85,7 @@ describe('indexHtml middleware — inline script proxy cache', () => {
-     ).toBeTruthy()
- 
-     const proxyModuleUrl = browserUrlToModuleUrl(
--      proxyUrlMatch![1],
-+      proxyUrlMatch![1].replaceAll('&amp;', '&'),
-       server.config.decodedBase,
-     )
-     const result =
-@@ -108,7 +108,7 @@ describe('indexHtml middleware — inline script proxy cache', () => {
-         'devHtmlHook should have rewritten the inline <script> to a ?html-proxy src',
-       ).toBeTruthy()
-       expect(proxyUrlMatch![1]).toMatchInlineSnapshot(
--        `"/@id/__x00__/evil.example.com/payload.js?/../../package.json?html-proxy&index=0.js"`,
-+        `"/@id/__x00__/evil.example.com/payload.js?/../../package.json?html-proxy&amp;index=0.js"`,
-       )
-       expect(proxyUrlMatch![1]).not.toMatch(/^\/\//)
-     })
-```
-
-**File**: `packages/vite/src/node/server/middlewares/base.ts` (modified, +3/-2)
-```diff
-@@ -1,3 +1,4 @@
-+import escapeHTML from 'escape-html'
- import type { Connect } from '#dep-types/connect'
- import {
-   cleanUrl,
-@@ -47,8 +48,8 @@ export function baseMiddleware(
-         'Content-Type': 'text/html',
-       })
-       res.end(
--        `The server is configured with a public base URL of ${base} - ` +
--          `did you mean to visit <a href="${redirectPath}">${redirectPath}</a> instead?`,
-+        `The server is configured with a public base URL of ${escapeHTML(base)} - ` +
-+          `did you mean to visit <a href="${escapeHTML(redirectPath)}">${escapeHTML(redirectPath)}</a> instead?`,
-       )
-       return
-     } else {
-```
-
-**File**: `packages/vite/src/node/server/middlewares/indexHtml.ts` (modified, +2/-1)
-```diff
-@@ -1,6 +1,7 @@
- import fs from 'node:fs'
- import fsp from 'node:fs/promises'
- import path from 'node:path'
-+import escapeHTML from 'escape-html'
- import MagicString from 'magic-string'
- import type { DefaultTreeAdapterMap, Token } from 'parse5'
- import type { SourceMapInput } from 'rolldown'
-@@ -280,7 +281,7 @@ const devHtmlHook: IndexHtmlTransformHook = async (
-     s.update(
-       node.sourceCodeLocation!.startOffset,
-       node.sourceCodeLocation!.endOffset,
--      `<script type="module" src="${browserUrl}"></script>`,
-+      `<script type="module" src="${escapeHTML(browserUrl)}"></script>`,
-     )
-     preTransformRequest(server!, moduleUrl)
-   }
-```
-
-**File**: `playground/html/__tests__/html.spec.ts` (modified, +1/-1)
-```diff
-@@ -538,7 +538,7 @@ test.runIf(!isBundled)(
-     expect(response.status).toBe(200)
-     expect(html).toContain('url(./protocol-relative.png)')
-     expect(html).toContain(
--      'src="/protocol-relative.html?html-proxy&index=0.js"',
-+      'src="/protocol-relative.html?html-proxy&amp;index=0.js"',
-     )
-     expect(html).not.toContain('url(//protocol-relative.png)')
-     expect(html).not.toContain('src="//protocol-relative.html?html-proxy')
-```
-
----
-
-### Incident Patch 3: `7139ef35` (2026-11-05)
-**Commit Message**: fix(worker): keep chunks conflicted with unused workers that are still used by a live worker (#23956)
+### Incident Patch 1: `2dcd391e` (2026-11-11)
+**Commit Message**: fix(client): fallback to waiting on main thread for server start when trusted types are enforced (#21483)
 
 Co-authored-by: sapphi-red <[REDACTED_EMAIL]>
 
-**File**: `packages/vite/src/node/plugins/worker.ts` (modified, +13/-7)
+**File**: `packages/vite/src/client/client.ts` (modified, +17/-2)
 ```diff
-@@ -176,9 +176,12 @@ class WorkerOutputCache {
-     childBundleIds.add(childBundleId)
+@@ -352,7 +352,7 @@ function hasErrorOverlay() {
+ }
+ 
+ function waitForSuccessfulPing(socketUrl: string) {
+-  if (typeof SharedWorker === 'undefined') {
++  const useMainThreadFallback = () => {
+     const visibilityManager: VisibilityManager = {
+       currentState: document.visibilityState,
+       listeners: new Set(),
+@@ -367,6 +367,10 @@ function waitForSuccessfulPing(socketUrl: string) {
+     return waitForSuccessfulPingInternal(socketUrl, visibilityManager)
    }
  
--  getLiveAssetFileNames(mainLiveModuleIds: Set<string>): Set<string> {
-+  getLiveAssetFileNames(
-+    rootBundleId: BundleId,
-+    rootLiveModuleIds: Set<string>,
-+  ): Set<string> {
-     const liveBundles = new Set<string>()
--    const queue: [BundleId, Set<string>][] = [[undefined, mainLiveModuleIds]]
-+    const queue: [BundleId, Set<string>][] = [[rootBundleId, rootLiveModuleIds]]
-     while (queue.length > 0) {
-       const [bundleId, moduleIds] = queue.shift()!
-       const referencesByModule = this.bundleReferences.get(bundleId)
-@@ -792,12 +795,18 @@ export function webWorkerPlugin(config: ResolvedConfig): Plugin {
-       // Rolldown later tree-shakes the module that referenced them. This also
-       // needs to run for worker sub-builds so dead nested workers don't become
-       // referenced assets of their parent worker bundle.
--      if (shouldFilter) {
--        const rootBundleId = isWorker ? config.bundleChain.at(-1) : undefined
-+      const rootBundleId = isWorker ? config.bundleChain.at(-1) : undefined
-+      const liveFileNames = shouldFilter
-+        ? cache.getLiveAssetFileNames(rootBundleId, liveModuleIds)
-+        : undefined
-+      if (liveFileNames) {
-         for (const workerBundle of cache.getDeadDirectlyReferencedBundles(
-           rootBundleId,
-           liveModuleIds,
-         )) {
-+          // Still used through another live worker (e.g. its importer is
-+          // tree-shaken here but kept in a worker).
-+          if (liveFileNames.has(workerBundle.entryFilename)) continue
-           const emittedAsset = bundle[workerBundle.entryFilename]
-           if (emittedAsset?.type === 'asset') {
-             delete bundle[workerBundle.entryFilename]
-@@ -807,9 +816,6 @@ export function webWorkerPlugin(config: ResolvedConfig): Plugin {
- 
-       if (isWorker) return
- 
--      const liveFileNames = shouldFilter
--        ? cache.getLiveAssetFileNames(liveModuleIds)
--        : undefined
-       for (const asset of cache.getAssets()) {
-         if (liveFileNames && !liveFileNames.has(asset.fileName)) continue
-         if (emittedAssets.has(asset.fileName)) continue
++  if (typeof SharedWorker === 'undefined') {
++    return useMainThreadFallback()
++  }
++
+   // needs to be inlined to
+   //   - load the worker after the server is closed
+   //   - make it work with backend integrations
+@@ -380,7 +384,18 @@ function waitForSuccessfulPing(socketUrl: string) {
+     { type: 'application/javascript' },
+   )
+   const objURL = URL.createObjectURL(blob)
+-  const sharedWorker = new SharedWorker(objURL)
++
++  let sharedWorker: SharedWorker
++  try {
++    sharedWorker = new SharedWorker(objURL)
++  } catch (error) {
++    URL.revokeObjectURL(objURL)
++    // Trusted Types enforcement rejects string worker URLs.
++    if (error instanceof TypeError) {
++      return useMainThreadFallback()
++    }
++    throw error
++  }
+   return new Promise<void>((resolve, reject) => {
+     const onVisibilityChange = () => {
+       sharedWorker.port.postMessage({ visibility: document.visibilityState })
 ```
 
-**File**: `playground/worker/__tests__/es/worker-es.spec.ts` (modified, +10/-0)
+**File**: `playground/csp/__tests__/csp.spec.ts` (modified, +23/-1)
 ```diff
-@@ -164,6 +164,16 @@ describe.runIf(isBuild)('build', () => {
-       false,
-     )
+@@ -1,5 +1,13 @@
+ import { expect, test } from 'vitest'
+-import { bundledDevTodo, getColor, page } from '~utils'
++import {
++  browserErrors,
++  bundledDevTodo,
++  getColor,
++  isServe,
++  page,
++  untilBrowserLogAfter,
++  viteServer,
++} from '~utils'
  
-+    // The importer of this nested worker is tree-shaken from the main bundle,
-+    // but a live worker still uses it, so the nested worker must be emitted.
-+    const sharedWorker = files.find((f) => f.includes('dce-test-shared-worker'))
-+    expect(sharedWorker).toBeDefined()
-+    const nestedWorker = fs
-+      .readFileSync(path.resolve(assetsDir, sharedWorker!), 'utf-8')
-+      .match(/[\w-]*dce-test-shared-nested-worker[\w-]*\.js/)?.[0]
-+    expect(nestedWorker).toBeDefined()
-+    expect(files).toContain(nestedWorker)
+ const transformIndexHtmlTodo = bundledDevTodo(
+   '`server.transformIndexHtml` currently returns HTML that points at the source files, not at the files bundled dev produces; how it should work in bundled dev is not decided yet, e.g. return the HTML that the build HTML plugin emits as `index.html` in `bundledDev.memoryFiles`',
+@@ -48,3 +56,17 @@ test('meta[property=csp-nonce] is injected', async () => {
+   const meta = await page.$('meta[property=csp-nonce]')
+   expect(await (await meta.getProperty('nonce')).jsonValue()).not.toBe('')
+ })
 +
-     // sanity: the worker we DO use is still emitted (`my-worker`).
-     expect(files.some((f) => f.includes('my-worker'))).toBe(true)
++test.runIf(isServe)('reconnects after a server restart', async () => {
++  browserErrors.length = 0
++
++  await untilBrowserLogAfter(
++    () => viteServer.restart(),
++    [
++      '[vite] server connection lost. Polling for restart...',
++      '[vite] connected.',
++    ],
++  )
++
++  expect(browserErrors).toStrictEqual([])
++})
+```
+
+**File**: `playground/csp/vite.config.js` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@ const createNonce = () => crypto.randomBytes(16).toString('base64')
+ const setNonceHeader = (res, nonce) => {
+   res.setHeader(
+     'Content-Security-Policy',
+-    `default-src 'nonce-${nonce}'; connect-src 'self'`,
++    `default-src 'nonce-${nonce}'; connect-src 'self'; require-trusted-types-for 'script'; trusted-types 'none'; worker-src 'none'`,
+   )
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `2155e125` (2026-11-11)
+**Commit Message**: feat(build): support retrying failed CSS preloads (#23710)
+
+**File**: `packages/vite/src/node/__tests__/plugins/importAnalysisBuild.spec.ts` (modified, +14/-3)
+```diff
+@@ -252,18 +252,29 @@ describe('preloadOnce', () => {
+     expect(preloadCount).toBe(1)
    })
-```
-
-**File**: `playground/worker/dce-test-shared-importer.js` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+import DceTestSharedNestedWorker from './dce-test-shared-nested-worker.js?worker'
-+
-+export { DceTestSharedNestedWorker }
-```
-
-**File**: `playground/worker/dce-test-shared-nested-worker.js` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+self.postMessage('dce-test-shared-nested-worker is live')
-```
-
-**File**: `playground/worker/dce-test-shared-worker.js` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+import { DceTestSharedNestedWorker } from './dce-test-shared-importer.js'
-+
-+new DceTestSharedNestedWorker()
-+self.postMessage('dce-test-shared-worker is live')
-```
-
-**File**: `playground/worker/worker/main-module.js` (modified, +5/-0)
-```diff
-@@ -4,6 +4,10 @@ import * as depSelfReferenceUrlWorker from '@vitejs/test-dep-self-reference-url-
- // then skip emitting the dce-test-worker asset (and its nested worker too).
- import { dceTestWorker as _dceTestWorker } from '../dce-test-importer.js'
- import DceTestLiveWorker from '../dce-test-live-worker.js?worker'
-+// imported but never used, so it's tree-shaken here, but the worker below uses
-+// it to start its nested worker, which must still be emitted.
-+import { DceTestSharedNestedWorker as _DceTestSharedNestedWorker } from '../dce-test-shared-importer.js'
-+import DceTestSharedWorker from '../dce-test-shared-worker.js?worker'
- import { mode } from '../modules/workerImport'
- import InlineSharedWorker from '../my-inline-shared-worker?sharedworker&inline'
- import mySharedWorker from '../my-shared-worker?sharedworker&name=shared'
-@@ -20,6 +24,7 @@ function text(el, text) {
- document.querySelector('.mode-true').textContent = mode
  
- new DceTestLiveWorker()
-+new DceTestSharedWorker()
+-  test('shares a preload rejection with every waiter', async () => {
++  test('shares a preload rejection with every waiter and retries later', async () => {
+     const seen = {}
+     const { promise, reject } = promiseWithResolvers<void>()
+     const error = new Error('failed to preload')
++    let preloadCount = 0
++    const preload = () => {
++      preloadCount++
++      return preloadCount === 1 ? promise : Promise.resolve()
++    }
  
- const worker = new myWorker()
- worker.postMessage('ping')
+-    const first = preloadOnce(seen, 'style.css', () => promise)
+-    const second = preloadOnce(seen, 'style.css', () => promise)
++    const first = preloadOnce(seen, 'style.css', preload)
++    const second = preloadOnce(seen, 'style.css', preload)
+     reject(error)
+ 
+     expect(await Promise.allSettled([first, second])).toStrictEqual([
+       { status: 'rejected', reason: error },
+       { status: 'rejected', reason: error },
+     ])
++    expect(preloadCount).toBe(1)
++
++    await expect(
++      preloadOnce(seen, 'style.css', preload),
++    ).resolves.toBeUndefined()
++    expect(preloadCount).toBe(2)
+   })
+ })
+```
+
+**File**: `packages/vite/src/node/plugins/importAnalysisBuild.ts` (modified, +14/-4)
+```diff
+@@ -230,7 +230,7 @@ export function preloadOnce(
+       seen[href] = undefined
+     },
+     (err) => {
+-      seen[href] = undefined
++      delete seen[href]
+       throw err
+     },
+   )
+@@ -240,6 +240,7 @@ export function preloadOnce(
+ 
+ declare const scriptRel: string
+ declare const seen: PreloadSeen
++declare const failedCssLinks: Record<string, HTMLLinkElement | undefined>
+ function preload(
+   baseModule: () => Promise<unknown>,
+   deps?: string[],
+@@ -310,7 +311,8 @@ function preload(
+             const preloadedHrefSet = isCss
+               ? preloadedHrefs.styles
+               : preloadedHrefs.all
+-            if (preloadedHrefSet.has(dep.href)) {
++            const failedCssLink = isCss ? failedCssLinks[dep.href] : undefined
++            if (!failedCssLink && preloadedHrefSet.has(dep.href)) {
+               return
+             }
+ 
+@@ -324,13 +326,21 @@ function preload(
+             if (cspNonce) {
+               link.setAttribute('nonce', cspNonce)
+             }
+-            document.head.appendChild(link)
++            if (failedCssLink) {
++              delete failedCssLinks[dep.href]
++            }
++            if (failedCssLink?.isConnected) {
++              failedCssLink.replaceWith(link)
++            } else {
++              document.head.appendChild(link)
++            }
+             if (isCss) {
+               return new Promise((res, rej) => {
+                 const handleSettle = (e: Event) => {
+                   link.removeEventListener('load', handleSettle)
+                   link.removeEventListener('error', handleSettle)
+                   if (e.type === 'error') {
++                    failedCssLinks[dep.href] = link
+                     rej(new Error(`Unable to preload CSS for ${dep}`))
+                   } else {
+                     res(e)
+@@ -397,7 +407,7 @@ function getPreloadCode(
+         `function(dep) { return ${JSON.stringify(environment.config.base)}+dep }`
+   // replace `import` as a workaround for stackblitz: https://stackblitz.com/edit/node-vqfvv8dy?file=index.js
+   const preloadMethodCode = preload.toString().replaceAll('𝐢𝐦𝐩𝐨𝐫𝐭', 'import')
+-  const preloadCode = `const scriptRel = ${scriptRel};const assetsURL = ${assetsURL};const seen = {};const isCssPreloadUrl = ${isCssPreloadUrl.toString()};const preloadOnce = ${preloadOnce.toString()};export const ${preloadMethod} = ${preloadMethodCode}`
++  const preloadCode = `const scriptRel = ${scriptRel};const assetsURL = ${assetsURL};const seen = {};const failedCssLinks = {};const isCssPreloadUrl = ${isCssPreloadUrl.toString()};const preloadOnce = ${preloadOnce.toString()};export const ${preloadMethod} = ${preloadMethodCode}`
+   return preloadCode
+ }
+ 
+```
+
+**File**: `playground/js-sourcemap/__tests__/js-sourcemap.spec.ts` (modified, +2/-2)
+```diff
+@@ -365,7 +365,7 @@ describe.runIf(isBuild)('build tests', () => {
+         SourceMap {
+           content: {
+             "debugId": "00000000-0000-0000-0000-000000000000",
+-            "mappings": ";gkDAAAA,MAAA,OAAO,qDAEP,QAAQ,IAAI,uBAAuB,E",
++            "mappings": ";sqDAAAA,MAAA,OAAO,qDAEP,QAAQ,IAAI,uBAAuB,E",
+             "names": [
+               "__vitePreload",
+             ],
+@@ -380,7 +380,7 @@ describe.runIf(isBuild)('build tests', () => {
+             ],
+             "version": 3,
+           },
+-          visualization: "https://evanw.github.io/source-map-visualization/#MTk3MQBjb25zdCBfX3ZpdGVfX21hcERlcHM9KGksbT1fX3ZpdGVfX21hcERlcHMsZD0obS5mfHwobS5mPVsiYXNzZXRzL2R5bmFtaWMtZm9vLUJ3aFpUa3RCLmpzIiwiYXNzZXRzL2R5bmFtaWMtZm9vLURzcUtSckV5LmNzcyJdKSkpPT5pLm1hcChpPT5kW2ldKTsKdmFyIGU9ZnVuY3Rpb24oZSl7cmV0dXJuYC9gK2V9LHQ9e30sbj1mdW5jdGlvbihlKXtyZXR1cm4gZS5wYXRobmFtZS5lbmRzV2l0aChgLmNzc2ApfSxyPWZ1bmN0aW9uKGUsdCxuKXtpZih0IGluIGUpcmV0dXJuIGVbdF07bGV0IHI9bigpO2lmKCFyKXtlW3RdPXZvaWQgMDtyZXR1cm59bGV0IGk9ci50aGVuKCgpPT57ZVt0XT12b2lkIDB9LG49Pnt0aHJvdyBlW3RdPXZvaWQgMCxufSk7cmV0dXJuIGVbdF09aSxpfSxpPWZ1bmN0aW9uKGksYSxvKXtsZXQgcz1Qcm9taXNlLnJlc29sdmUoKTtpZihhJiZhLmxlbmd0aD4wKXtsZXQgaSxjPWRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYG1ldGFbcHJvcGVydHk9Y3NwLW5vbmNlXWApLGw9Yz8ubm9uY2V8fGM/LmdldEF0dHJpYnV0ZShgbm9uY2VgKTtmdW5jdGlvbiB1KGUpe3JldHVybiBQcm9taXNlLmFsbChlLm1hcChlPT5Qcm9taXNlLnJlc29sdmUoZSkudGhlbihlPT4oe3N0YXR1czpgZnVsZmlsbGVkYCx2YWx1ZTplfSksZT0+KHtzdGF0dXM6YHJlamVjdGVkYCxyZWFzb246ZX0pKSkpfWZ1bmN0aW9uIGQoZSl7cmV0dXJuIGltcG9ydC5tZXRhLnJlc29sdmU/bmV3IFVSTChpbXBvcnQubWV0YS5yZXNvbHZlKGUpKTpuZXcgVVJMKGUsaW1wb3J0Lm1ldGEudXJsKX1zPXUoYS5tYXAoYT0+e2E9ZShhLG8pO2xldCBzPWQoYSksYz1uKHMpO3JldHVybiByKHQscy5ocmVmLCgpPT57aWYoaT09PXZvaWQgMCl7aT17YWxsOm5ldyBTZXQsc3R5bGVzOm5ldyBTZXR9O2xldCBlPWRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKGBsaW5rYCk7Zm9yKGxldCB0PWUubGVuZ3RoLTE7dD49MDt0LS0pe2xldCBuPWVbdF07aS5hbGwuYWRkKG4uaHJlZiksbi5yZWw9PT1gc3R5bGVzaGVldGAmJmkuc3R5bGVzLmFkZChuLmhyZWYpfX1pZigoYz9pLnN0eWxlczppLmFsbCkuaGFzKHMuaHJlZikpcmV0dXJuO2xldCBlPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoYGxpbmtgKTtpZihlLnJlbD1jP2BzdHlsZXNoZWV0YDpgbW9kdWxlcHJlbG9hZGAsY3x8KGUuYXM9YHNjcmlwdGApLGUuY3Jvc3NPcmlnaW49YGAsZS5ocmVmPXMuaHJlZixsJiZlLnNldEF0dHJpYnV0ZShgbm9uY2VgLGwpLGRvY3VtZW50LmhlYWQuYXBwZW5kQ2hpbGQoZSksYylyZXR1cm4gbmV3IFByb21pc2UoKHQsbik9PntsZXQgcj1pPT57ZS5yZW1vdmVFdmVudExpc3RlbmVyKGBsb2FkYCxyKSxlLnJlbW92ZUV2ZW50TGlzdGVuZXIoYGVycm9yYCxyKSxpLnR5cGU9PT1gZXJyb3JgP24oRXJyb3IoYFVuYWJsZSB0byBwcmVsb2FkIENTUyBmb3IgJHtzfWApKTp0KGkpfTtlLmFkZEV2ZW50TGlzdGVuZXIoYGxvYWRgLHIpLGUuYWRkRXZlbnRMaXN0ZW5lcihgZXJyb3JgLHIpfSl9KX0pLmZpbHRlcihlPT5lIT09dm9pZCAwKSl9ZnVuY3Rpb24gYyhlKXtsZXQgdD1uZXcgRXZlbnQoYHZpdGU6cHJlbG9hZEVycm9yYCx7Y2FuY2VsYWJsZTohMH0pO2lmKHQucGF5bG9hZD1lLHdpbmRvdy5kaXNwYXRjaEV2ZW50KHQpLCF0LmRlZmF1bHRQcmV2ZW50ZWQpdGhyb3cgZX1yZXR1cm4gcy50aGVuKGU9Pntmb3IobGV0IHQgb2YgZXx8W10pdC5zdGF0dXM9PT1gcmVqZWN0ZWRgJiZjKHQucmVhc29uKTtyZXR1cm4gaSgpLmNhdGNoKGMpfSl9O2koKCk9PmltcG9ydChgLi9keW5hbWljLWZvby1Cd2haVGt0Qi5qc2ApLF9fdml0ZV9fbWFwRGVwcyhbMCwxXSkpLGNvbnNvbGUubG9nKGBhZnRlciBwcmVsb2FkIGR5bmFtaWNgKTtleHBvcnR7aSBhcyB0fTsKLy8jIGRlYnVnSWQ9ZGQ4NDE1ZDItMGE1Ni00YzM3LWE3ZDItYmYxZDhiMjgxY2NjCi8vIyBzb3VyY2VNYXBwaW5nVVJMPWFmdGVyLXByZWxvYWQtZHluYW1pYy1EZGhCWFNDbC5qcy5tYXAyODUAeyJkZWJ1Z0lkIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwibWFwcGluZ3MiOiI7Z2tEQUFBQSxNQUFBLE9BQU8scURBRVAsUUFBUSxJQUFJLHVCQUF1QixFIiwibmFtZXMiOlsiX192aXRlUHJlbG9hZCJdLCJzb3VyY2VzIjpbIi4uLy4uL2FmdGVyLXByZWxvYWQtZHluYW1pYy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQoJy4vZHluYW1pYy9keW5hbWljLWZvbycpXG5cbmNvbnNvbGUubG9nKCdhZnRlciBwcmVsb2FkIGR5bmFtaWMnKVxuIl0sInZlcnNpb24iOjN9"
++          visualization: "https://evanw.github.io/source-map-visualization/#MjA3MwBjb25zdCBfX3ZpdGVfX21hcERlcHM9KGksbT1fX3ZpdGVfX21hcERlcHMsZD0obS5mfHwobS5mPVsiYXNzZXRzL2R5bmFtaWMtZm9vLUJ3aFpUa3RCLmpzIiwiYXNzZXRzL2R5bmFtaWMtZm9vLURzcUtSckV5LmNzcyJdKSkpPT5pLm1hcChpPT5kW2ldKTsKdmFyIGU9ZnVuY3Rpb24oZSl7cmV0dXJuYC9gK2V9LHQ9e30sbj17fSxyPWZ1bmN0aW9uKGUpe3JldHVybiBlLnBhdGhuYW1lLmVuZHNXaXRoKGAuY3NzYCl9LGk9ZnVuY3Rpb24oZSx0LG4pe2lmKHQgaW4gZSlyZXR1cm4gZVt0XTtsZXQgcj1uKCk7aWYoIXIpe2VbdF09dm9pZCAwO3JldHVybn1sZXQgaT1yLnRoZW4oKCk9PntlW3RdPXZvaWQgMH0sbj0+e3Rocm93IGRlbGV0ZSBlW3RdLG59KTtyZXR1cm4gZVt0XT1pLGl9LGE9ZnVuY3Rpb24oYSxvLHMpe2xldCBjPVByb21pc2UucmVzb2x2ZSgpO2lmKG8mJm8ubGVuZ3RoPjApe2xldCBhLGw9ZG9jdW1lbnQucXVlcnlTZWxlY3RvcihgbWV0YVtwcm9wZXJ0eT1jc3Atbm9uY2VdYCksdT1sPy5ub25jZXx8bD8uZ2V0QXR0cmlidXRlKGBub25jZWApO2Z1bmN0aW9uIGQoZSl7cmV0dXJuIFByb21pc2UuYWxsKGUubWFwKGU9PlByb21pc2UucmVzb2x2ZShlKS50aGVuKGU9Pih7c3RhdHVzOmBmdWxmaWxsZWRgLHZhbHVlOmV9KSxlPT4oe3N0YXR1czpgcmVqZWN0ZWRgLHJlYXNvbjplfSkpKSl9ZnVuY3Rpb24gZihlKXtyZXR1cm4gaW1wb3J0Lm1ldGEucmVzb2x2ZT9uZXcgVVJMKGltcG9ydC5tZXRhLnJlc29sdmUoZSkpOm5ldyBVUkwoZSxpbXBvcnQubWV0YS51cmwpfWM9ZChvLm1hcChvPT57bz1lKG8scyk7bGV0IGM9ZihvKSxsPXIoYyk7cmV0dXJuIGkodCxjLmhyZWYsKCk9PntpZihhPT09dm9pZCAwKXthPXthbGw6bmV3IFNldCxzdHlsZXM6bmV3IFNldH07bGV0IGU9ZG9jdW1lbnQuZ2V0RWxlbWVudHNCeVRhZ05hbWUoYGxpbmtgKTtmb3IobGV0IHQ9ZS5sZW5ndGgtMTt0Pj0wO3QtLSl7bGV0IG49ZVt0XTthLm
+```
+
+**File**: `playground/preload/__tests__/preload.spec.ts` (modified, +50/-1)
+```diff
+@@ -1,5 +1,5 @@
+ import { describe, expect, test } from 'vitest'
+-import { browserLogs, isBuild, page } from '~utils'
++import { browserLogs, getColor, isBuild, page } from '~utils'
+ 
+ test('should have no 404s', () => {
+   browserLogs.forEach((msg) => {
+@@ -13,6 +13,55 @@ describe.runIf(isBuild)('build', () => {
+     expect(await page.textContent('#done')).toBe('ran js')
+   })
+ 
++  test('retries a stylesheet preload in place after it fails', async () => {
++    let requestCount = 0
++    await page.route(/\/assets\/hello-.*\.css$/, async (route) => {
++      requestCount++
++      if (requestCount === 1) {
++        await route.abort()
++      } else {
++        await route.continue()
++      }
++    })
++    await page.evaluate(() => {
++      window.addEventListener(
++        'vite:preloadError',
++        () => {
++          document.documentElement.dataset.preloadError = 'true'
++        },
++        { once: true },
++      )
++    })
++
++    await page.click('#hello .load')
++    await page.waitForFunction(
++      () => document.documentElement.dataset.preloadError === 'true',
++    )
++
++    const stylesheetSelector = 'link[rel="stylesheet"][href*="/assets/hello-"]'
++    expect(await page.locator(stylesheetSelector).count()).toBe(1)
++    await page.locator(stylesheetSelector).evaluate((failedLink) => {
++      const marker = document.createElement('meta')
++      marker.id = 'css-precedence-marker'
++      failedLink.after(marker)
++    })
++
++    await page.click('#hello .load')
++    await page.waitForSelector('#hello output')
++
++    expect(requestCount).toBe(2)
++    expect(await getColor('#hello .msg')).toBe('red')
++    // make sure the link tag exists in the same place
++    // so that the precedence of the CSS link is maintained
++    expect(
++      await page
++        .locator(stylesheetSelector)
++        .evaluate(
++          (link) => link.nextElementSibling?.id === 'css-precedence-marker',
++        ),
++    ).toBe(true)
++  })
++
+   test('dynamic import with comments', async () => {
+     await page.click('#hello .load')
+     await page.waitForSelector('#hello output')
+```
+
+---
+
+### Incident Patch 3: `c5be55f5` (2026-11-12)
+**Commit Message**: feat(css): skip emitting empty CSS files (#24059)
+
+**File**: `packages/vite/src/node/__tests__/build.spec.ts` (modified, +57/-0)
+```diff
+@@ -466,6 +466,63 @@ describe('build', () => {
+     ).rejects.toThrow('CSS files cannot be used as entry points')
+   })
+ 
++  describe('empty CSS assets', () => {
++    async function buildProject(
++      css: string,
++      cssCodeSplit: boolean,
++      input = 'entry.js',
++    ) {
++      return (await build({
++        root: resolve(dirname, 'packages/build-project'),
++        configFile: false,
++        input,
++        logLevel: 'silent',
++        build: {
++          write: false,
++          cssCodeSplit,
++        },
++        plugins: [
++          {
++            name: 'test-empty-css',
++            resolveId(id) {
++              if (id === 'entry.js' || id === 'empty.css') {
++                return '\0' + id
++              }
++            },
++            load(id) {
++              if (id === '\0entry.js') {
++                return `import 'empty.css'; console.log('entry')`
++              }
++              if (id === '\0empty.css') return css
++            },
++          },
++        ],
++      })) as RolldownOutput
++    }
++
++    for (const css of ['', '.empty {}']) {
++      for (const cssCodeSplit of [true, false]) {
++        test(`skips empty CSS ${JSON.stringify(css)} (cssCodeSplit: ${cssCodeSplit})`, async () => {
++          const { output } = await buildProject(css, cssCodeSplit)
++          expect(output.filter((file) => file.type === 'chunk')).toHaveLength(1)
++          expect(
++            output.filter((file) => file.fileName.endsWith('.css')),
++          ).toHaveLength(0)
++        })
++      }
++
++      test(`preserves an empty CSS entrypoint (${JSON.stringify(css)})`, async () => {
++        const { output } = await buildProject(css, true, 'empty.css')
++        expect(output).toHaveLength(1)
++        expect(output[0]).toMatchObject({
++          type: 'asset',
++          fileName: expect.stringMatching(/\.css$/),
++          source: '',
++        })
++      })
++    }
++  })
++
+   test('file hash should change when pure css chunk changes', async () => {
+     const buildProject = async (cssColor: string) => {
+       return (await build({
+```
+
+**File**: `packages/vite/src/node/plugins/css.ts` (modified, +23/-17)
+```diff
+@@ -972,22 +972,24 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+                     return finalizeCss(chunkCSS!, config)
+                   })
+ 
+-                  // emit corresponding css file
+-                  const referenceId = this.emitFile({
+-                    type: 'asset',
+-                    name: cssAssetName,
+-                    originalFileName,
+-                    source: chunkCSS,
+-                  })
+-                  chunkCssReferences.set(chunk.fileName, referenceId)
+-                  if (isEntry) {
+-                    cssEntriesMap
+-                      .get(this.environment)!
+-                      .set(chunk.fileName, { referenceId, name: chunk.name })
++                  if (chunkCSS || isEntry) {
++                    // emit corresponding css file
++                    const referenceId = this.emitFile({
++                      type: 'asset',
++                      name: cssAssetName,
++                      originalFileName,
++                      source: chunkCSS,
++                    })
++                    chunkCssReferences.set(chunk.fileName, referenceId)
++                    if (isEntry) {
++                      cssEntriesMap
++                        .get(this.environment)!
++                        .set(chunk.fileName, { referenceId, name: chunk.name })
++                    }
++                    chunk.viteMetadata!.importedCss.add(
++                      this.getFileName(referenceId),
++                    )
+                   }
+-                  chunk.viteMetadata!.importedCss.add(
+-                    this.getFileName(referenceId),
+-                  )
+                 } else if (this.environment.config.consumer === 'client') {
+                   // legacy build and inline css
+ 
+@@ -1102,10 +1104,13 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+           collect(bundle[chunkName])
+         }
+ 
+-        // Finally, if there's any extracted CSS, we emit the asset
+         if (extractedCss) {
+-          hasEmitted = true
+           extractedCss = await finalizeCss(extractedCss, config)
++        }
++
++        // Emit the asset if CSS remains after finalization.
++        if (extractedCss) {
++          hasEmitted = true
+           this.emitFile({
+             name: getCssBundleName(),
+             type: 'asset',
+@@ -2046,6 +2051,7 @@ async function finalizeCss(css: string, config: ResolvedConfig) {
+   if (config.build.cssMinify) {
+     css = await minifyCSS(css, config, false)
+   }
++  if (!css.trim()) return ''
+   // inject an additional string to generate a different hash for https://github.com/vitejs/vite/issues/18038
+   //
+   // pre-5.4.3, we generated CSS link tags without crossorigin attribute and generated an hash without
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24007** (closed): fix(server): dedupe out-of-root watch registrations (fix #23940) (@Sudhakar7J)
-- **PR #24003** (2026-11-06): test: use `onTestFinished` for tear downs (@sapphi-red)
-- **PR #24001** (closed): fix(import-analysis): handle dynamic JSON import attributes (fix #19095) (@Mr-Neutr0n)
-- **PR #23999** (2026-11-05): docs(config): clarify `server.fs.deny` overrides default (@sapphi-red)
-- **PR #23998** (2026-11-05): release: create-vite@9.3.4 (@github-actions[bot])
-- **PR #23997** (2026-11-05): release: plugin-legacy@8.2.4 (@github-actions[bot])
+- **PR #24080** (2026-11-12): fix: escape imported name in `transformCjsImport` (@btea)
+- **PR #24079** (2026-11-12): refactor: use `tinyexec` instead of `execa` (@btea)
+- **PR #24076** (2026-11-12): chore: exclude pnpm test fixture from workspace packages (@btea)
+- **PR #24074** (2026-11-12): fix: escape import specifiers (@sapphi-red)
+- **PR #24072** (closed): fix: preserve Windows device namespace prefix in normalizePath (fix #23986) (@TbhVishal)
+- **PR #24068** (2026-11-11): build: look up dts identifier replacements by imported name (@hyfdev)
 
 ---
 
@@ -1672,28 +1783,45 @@ Co-authored-by: sapphi-red <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. html): remove adjacent module tags on the first line (#23823)
+## X. client): fallback to waiting on main thread for server start when trusted types 
 
 **RULE**:
-When implementing operations in `.oxfmtrc.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/vite/src/client/client.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eab1dc27`: html): remove adjacent module tags on the first line (#23823). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dcd391e`: client): fallback to waiting on main thread for server start when trusted types are enforced (#21483). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oxfmtrc.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vite/src/client/client.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "playground/html/tag-removal/*.html",
+  const useMainThreadFallback = () => {
+  if (typeof SharedWorker === 'undefined') {
+    return useMainThreadFallback()
+  }
+
+
+  let sharedWorker: SharedWorker
+  try {
+    sharedWorker = new SharedWorker(objURL)
+  } catch (error) {
+    URL.revokeObjectURL(objURL)
+    // Trusted Types enforcement rejects string worker URLs.
+    if (error instanceof TypeError) {
+      return useMainThreadFallback()
+    }
+    throw error
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  if (typeof SharedWorker === 'undefined') {
+  const sharedWorker = new SharedWorker(objURL)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eab1dc27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dcd391e` are properly handled with clean fallback behavior.

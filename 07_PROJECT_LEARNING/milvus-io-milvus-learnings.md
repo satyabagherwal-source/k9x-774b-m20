@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `de47e114`  
+> **Source Version**: `0ff3d233`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T04:51:55.027Z  
+> **Timestamp**: 2026-11-12T12:32:49.353Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T04:51:54.771Z  
+> **Harvest Timestamp**: 2026-11-12T12:32:49.342Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46623 stars
+- **Stars / Engagement**: 46649 stars
 
 ---
 
@@ -364,6 +364,7 @@ import (
 
 	"github.com/cockroachdb/errors"
 
+	"github.com/milvus-io/milvus/internal/util/sessionutil"
 	"github.com/milvus-io/milvus/pkg/v3/mlog"
 	"github.com/milvus-io/milvus/pkg/v3/util/conc"
 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
@@ -381,6 +382,7 @@ func exitWhenStopTimeout(stop func() error, timeout time.Duration) error {
 			mlog.FieldComponent(paramtable.GetRole()),
 			mlog.Duration("cost", time.Since(start)),
 			mlog.Err(err))
+		sessionutil.RevokeLeasesBeforeExit(time.Second)
 		mlog.Cleanup()
 		os.Exit(1)
 	}
@@ -513,21 +515,15 @@ package milvus
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"os"
 	"path"
 	"runtime"
-	"strconv"
-	"strings"
 	"time"
 
-	"github.com/cockroachdb/errors"
 	"github.com/gofrs/flock"
-	"github.com/samber/lo"
-	clientv3 "go.etcd.io/etcd/client/v3"
 
 	"github.com/milvus-io/milvus/cmd/roles"
 	"github.com/milvus-io/milvus/internal/util/sessionutil"
@@ -722,87 +718,19 @@ func CleanSession(metaPath string, etcdEndpoints []string, sessionSuffix []strin
 	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
 	defer cancel()
 
-	keys := getSessionPaths(ctx, etcdCli, metaPath, sessionSuffix)
-	if len(keys) == 0 {
-		return nil
+	targets, err := collectSessionCleanupTargets(ctx, etcdCli, path.Join(metaPath, sessionutil.DefaultServiceRoot), sessionSuffix)
+	if err != nil {
+		return err
 	}
-
-	for _, key := range keys {
-		_, _ = etcdCli.Delete(ctx, key)
+	if err := deleteSessionCleanupTargets(ctx, etcdCli, targets); err != nil {
+		return err
 	}
-	mlog.Info(ctx, "clean sessions from etcd", mlog.Any("keys", keys))
+	keys := make([]string, 0, len(targets))
+	for _, target := range targets {
+		keys = append(keys, target.key)
+	}
+	mlog.Info(ctx, "finished session cleanup", mlog.Strings("keys", keys))
 	return nil
-}
-
-func getSessionPaths(ctx context.Context, client *clientv3.Client, metaPath string, sessionSuffix []string) []string {
-	sessionKeys := make([]string, 0)
-	sessionPathPrefix := path.Join(metaPath, sessionutil.DefaultServiceRoot)
-	newSessionSuffixSet := addActiveKeySuffix(ctx, client, sessionPathPrefix, sessionSuffix)
-	for _, suffix := range newSessionSuffixSet {
-		key := path.Join(sessionPathPrefix, suffix)
-		sessionKeys = append(sessionKeys, key)
-	}
-	return sessionKeys
-}
-
-// filterUnmatchedKey skip active keys that don't match completed key, the latest active key may from standby server
-func addActiveKeySuffix(ctx context.Context, client *clientv3.Client, sessionPathPrefix string, sessionSuffix []string) []string {
-	suffixSet := lo.SliceToMap(sessionSuffix, func(t string) (string, struct{}) {
-		return t, struct{}{}
-	})
-
-	for _, suffix := range sessionSuffix {
-		if strings.Contains(suffix, "-") && (strings.HasPrefix(suffix, typeutil.MixCoordRole) ||
-			strings.HasPrefix(suffix, typeutil.QueryCoordRole) || strings.HasPrefix(suffix, typeutil.DataCoordRole)) {
-			res := strings.Split(suffix, "-")
-			if len(res) != 2 {
-				// skip illegal keys
-				mlog.Warn(ctx, "skip illegal key", mlog.String("suffix", suffix))
-				continue
-			}
-
-			serverType := res[0]
-			targetServerID, err := strconv.ParseInt(res[1], 10, 64)
-			if err != nil {
-				mlog.Warn(ctx, "get server id failed from key", mlog.String("suffix", suffix), mlog.Err(err))
-				continue
-			}
-
-			key := path.Join(sessionPathPrefix, serverType)
-			serverID, err := getServerID(ctx, client, key)
-			if err != nil {
-				mlog.Warn(ctx, "get server id failed from key", mlog.String("suffix", suffix), mlog.Err(err))
-				continue
-			}
-
-			if serverID == targetServerID {
-				mlog.Info(ctx, "add active serverID key", mlog.String("suffix", suffix), mlog.String("key", key))
-				suffixSet[serverType] = struct{}{}
-			}
-		}
-	}
-
-	return lo.MapToSlice(suffixSet, func(key string, v struct{}) string { return key })
-}
-
-func getServerID(ctx context.Context, client *clientv3.Client, key string) (int64, error) {
-	resp, err := client.Get(ctx, key)
-	if err != nil {
-		return 0, err
-	}
-
-	if len(resp.Kvs) == 0 {
-		return 0, errors.New("not found value")
-	}
-
-	value := resp.Kvs[0].Value
-	session := &sessionutil.SessionRaw{}
-	err = json.Unmarshal(value, &session)
-	if err != nil {
-		return 0, err
-	}
-
-	return session.ServerID, nil
 }
 
 ```
@@ -1310,7 +1238,7 @@ func IsReplicationRemovedByAlterReplicateConfigMessage(msg message.ImmutableMess
 
 ```
 
-### Core Architecture Module: `internal/core/benchmark/FastMemBenchmark.cpp`
+### Core Architecture Module: `internal/core/benchmark/BitmapRangeBenchmark.cpp`
 ```
 // Licensed to the LF AI & Data foundation under one
 // or more contributor license agreements. See the NOTICE file
@@ -1328,73 +1256,88 @@ func IsReplicationRemovedByAlterReplicateConfigMessage(msg message.ImmutableMess
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "common/FastMem.h"
-
+// Times BitmapIndexReader::Range over heap Roaring postings. Built with the
+// unit tests; run before and after a change to compare.
 #include <algorithm>
-#include <array>
 #include <cstddef>
 #include <cstdint>
-#include <cstring>
+#include <memory>
+#include <random>
+#include <utility>
 #include <vector>
 
 #include <benchmark/benchmark.h>
+#include <roaring/roaring.hh>
 
-namespace milvus::fastmem {
+#include "common/Types.h"
+#include "index/contracts/query/IScalarPredicateReader.h"
+#include "index/scalar/bitmap/BitmapIndexReader.h"
+
+namespace milvus::index {
 namespace {
 
-constexpr size_t kBufferSize = 4096;
+constexpr size_t kRows = 1'000'000;
+constexpr size_t kNullEvery = 10;
 
-std::vector<uint8_t>
-MakeBenchmarkSource() {
-    std::vector<uint8_t> source(kBufferSize);
-    for (size_t i = 0; i < source.size(); ++i) {
-        source[i] = static_cast<uint8_t>((i * 131 + 17) & 0xFF);
+struct Fixture {
+    std::unique_ptr<BitmapIndexReader<int64_t>> reader;
+    // Values of the valid rows, sorted, for selectivity thresholds.
+    std::vector<int64_t> sorted;
+};
+
+// distribution 0: uniform keys. 1: rows concentrated on the high keys, so
+// `<` ranges start in sparse postings and reach the heavy ones only when broad.
+Fixture
+MakeFixture(int64_t keys, int64_t distribution) {
+    std::mt19937_64 rng(42);
+    std::uniform_real_distribution<double> unit(0.0, 1.0);
+    BitmapRoaringPostingMap<int64_t> postings;
+    TargetBitmap valid(kRows, true);
+    Fixture fixture;
+    fixture.sorted.reserve(kRows);
+    for (size_t row = 0; row < kRows; ++row) {
+        if (row % kNullEvery == 0) {
+            valid.reset(row);
+            continue;
+        }
+        const double u = unit(rng);
+        const auto bucket =
+            std::min(static_cast<int64_t>((distribution == 0 ? u : u * u) *
+                                          static_cast<double>(keys)),
+                     keys - 1);
+        const auto key = distribution == 0 ? bucket : keys - 1 - bucket;
+        postings[key].add(static_cast<uint32_t>(row));
+        fixture.sorted.push_back(key);
     }
-    return source;
+    std::sort(fixture.sorted.begin(), fixture.sorted.end());
+    fixture.reader = CreateBitmapIndexReader<int64_t>(
+        std::move(postings),
+        BitmapStorageOptions{.valid_bitset = std::move(valid),
+                             .total_num_rows = kRows});
+    return fixture;
 }
 
+// Arguments: distinct keys, distribution, percent of valid rows matched.
 void
-StdMemcpyBenchmark(benchmark::State& state) {
-    auto source = MakeBenchmarkSource();
-    std::vector<uint8_t> destination(kBufferSize);
-    auto size = static_cast<size_t>(state.range(0));
+RangeLessThan(benchmark::State& state) {
+    const auto fixture = MakeFixture(state.range(0), state.range(1));
+    const auto percent = static_cast<size_t>(state.range(2));
+    const auto threshold =
+        fixture.sorted[fixture.sorted.size() * percent / 100];
+    state.counters["matched"] = static_cast<double>(
+        fixture.reader->Range(threshold, CompareOp::LessThan).count());
     for (auto _ : state) {
-        std::memcpy(destination.data(), source.data(), size);
-        benchmark::DoNotOptimize(destination.data());
-        benchmark::DoNotOptimize(source.data());
-        benchmark::ClobberMemory();
-    }
-    state.SetBytesProcessed(state.iterations() * static_cast<int64_t>(size));
-}
-
-void
-FastMemcpyBenchmark(benchmark::State& state) {
-    auto source = MakeBenchmarkSource();
-    std::vector<uint8_t> destination(kBufferSize);
-    auto size = static_cast<size_t>(state.range(0));
-    for (auto _ : state) {
-        FastMemcpy(destination.data(), source.data(), size);
-        benchmark::DoNotOptimize(destination.data());
-        benchmark::DoNotOptimize(source.data());
-        benchmark::ClobberMemory();
-    }
-    state.SetBytesProcessed(state.iterations() * static_cast<int64_t>(size));
-}
-
-void
-ApplyFastMemArgs(benchmark::internal::Benchmark* benchmark) {
-    for (auto size : std::array<int64_t, 9>{1, 2, 4, 8, 16, 32, 64, 128, 256}) {
-        benchmark->Arg(size);
+        auto result = fixture.reader->Range(threshold, CompareOp::LessThan);
+        benchmark::DoNotOptimize(result);
     }
 }
 
 }  // namespace
-}  // namespace milvus::fastmem
+}  // namespace milvus::index
 
-BENCHMARK(milvus::fastmem::StdMemcpyBenchmark)
-    ->Apply(milvus::fastmem::ApplyFastMemArgs);
-BENCHMARK(milvus::fastmem::FastMemcpyBenchmark)
-    ->Apply(milvus::fastmem::ApplyFastMemArgs);
+BENCHMARK(milvus::index::RangeLessThan)
+    ->ArgsProduct({{1000, 10000, 100000}, {0, 1}, {1, 10, 50, 90, 99}})
+    ->Unit(benchmark::kMicrosecond);
 
 BENCHMARK_MAIN();
 
@@ -1406,14 +1349,11 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55323** (2026-11-10): **test: Verify concurrent strong reads after delete**
-  *Symptoms*: ## Summary  - Add a Python SDK L1 regression for concurrent Strong Search and Query on a vector collection after a successful Delete. - Verify both calls see exactly the retained primary keys. Existing Delete cases cover sequential reads, and the concurrent workload checks operation success rates.  ## Validation  - Milvus master image at commit `30c7552`, Standalone. - Ran the selected test through the Python SDK E2E runner. Result: 1 passed, 72 deselected.  /kind improvement 
-  **Post-Mortem & Fix Analysis**:
-  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
-  > /lgtm /approve
+- **Issue #55464** (2026-11-12): **test: [cp 3.0] harden REST import correctness and completion polling**
+  *Symptoms*: ## Summary  Backport REST import testcase repairs to 3.0 for the release nightly. Use AutoID so repeated input files produce distinct rows, poll all distinct job IDs under one deadline, and verify exact query-visible row counts and source-value multiplicity.  Keep the 1,000-job / 20,000-row correctness case at L2 and the 4.8-million-row load scenario at L3. Add pytest timeouts and the REST query helpers needed by the repaired case. Missing rows remain hard failures.  Fix the ordinary import case's deadline handling without increasing its 360-second budget. A job finished at 356.5 seconds, but the old loop returned a stale pre-sleep state and failed. Observe the final state at a monotonic deadline and report terminal failures directly.  Align NumPy Struct Array import coverage with master: job admission succeeds, then asynchronous schema validation reports Failed. Verify the specific rejection reason and unchanged existing rows. Backup/snapshot rejection assertions remain unchanged.  Related to #55454; this changes regression coverage, not server behavior.  ## Validation  - Ruff 0.15.11 lint and formatting passed for all modified Python files; dependency and diff checks passed. - Three deterministic polling regressions passed; NumPy/backup/snapshot collection selects three cases. - Full regular-suite collection selected 960 instances using PyMilvus 3.0.4rc1. - The 1,000-job case passed in the unified six-worker full-suite run on server commit `10de5d3069`, including exactly 20
 
-- **Issue #55313** (2026-11-09): **Support mounting dedicated NVMe disks on QueryNode pods for DiskANN**
-  *Symptoms*: ## Description  I'm deploying Milvus on AKS using the official Helm chart and would like to use dedicated node-local NVMe disks for DiskANN QueryNode performance testing.  The configuration guide describes attaching and preparing NVMe disks on cloud VM instances: https://milvus.io/docs/configure-querynode-localdisk.md  From the Helm chart configuration, the local-disk option appears to use `emptyDir`. On AKS, this may place the data on the node's OS disk rather than on a dedicated NVMe device.  ## Questions  1. Does the Helm chart support selecting and mounting a dedicated NVMe device from the Kubernetes node into QueryNode pods? 2. If not, is the recommended approach to use a DaemonSet to initialize/format and mount the NVMe device on each node, then expose that mount to QueryNode pods through `hostPath` or another supported mechanism? 3. Could the chart expose a configurable host mount / volumeMount option (or document the recommended DaemonSet-based setup) for dedicated local NVMe storage?  ## Environment  - Kubernetes: AKS - Deployment method: Milvus Helm chart - Component: QueryNode - Use case: DiskANN local-disk performance testing  I'd appreciate guidance on the recommended and supported configuration, including any limitations around scheduling QueryNode pods onto nodes with the NVMe disk.  Thanks!
+- **Issue #55463** (2026-11-12): **test: harden REST import correctness and completion polling**
+  *Symptoms*: ## Summary  Concurrent REST import tests reused fixed primary keys across jobs, making their visible-row expectation unreliable. Generate primary keys with AutoID, verify distinct job IDs, poll all jobs on one deadline, and assert the exact query-visible row count and source-value multiplicity.  Keep the 1,000-job / 20,000-row correctness regression at L2 and classify the 48-job / 4.8-million-row load test as L3. Add bounded pytest timeouts. Missing rows remain hard failures.  Fix import polling at the deadline: a job that completed during the final sleep previously caused a false timeout. Use a monotonic deadline, read the final state, and retain the original 360-second budget in the ordinary import E2E case. Return immediately on a terminal failure and include the last response in assertion failures.  Related to #55454. This changes tests, not the server implementation.  ## Validation  - Ruff 0.15.11 lint and format checks passed for all modified Python files; dependency consistency and diff checks passed. - Three deterministic polling regressions passed: completion during the final interval, unfinished work at the deadline, and terminal failure. - Collection confirms the 1,000-job case is selected at L2 and the large-data case only at L3. - The repaired 1,000-job case passed with exactly 20,000 query-visible rows in the unified six-worker full-suite run on server commit `584004ae14` (642.57 seconds). - Full L0-L2 selection completed on the standard standalone profile: 1,14
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1430,1093 +1370,1018 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d463304` (2026-11-09)
-**Commit Message**: [automated] fix: bump klauspost/compress to v1.20.2 (CVE-2026-116591) (#55260)
+### Incident Patch 1: `34e03edc` (2026-11-12)
+**Commit Message**: test: add PyUDF search, lifecycle and runtime regression coverage (#55386)
 
-`github.com/klauspost/compress` is bumped from v1.18.7 to v1.20.2 to fix
-CVE-2026-116591 (HIGH, affected range <1.20.2).
+Add Python SDK and REST regression coverage for PyUDF search,
+resource/snapshot lifecycles, index combinations, admission,
+cancellation and worker pools. Preserve strict score and lifecycle
+assertions while sharing resource fixtures and independent workload
+oracles.
 
-No code change; `go.mod`/`go.sum` only. Applied across every module that
-lists the dependency:
+System workloads run through pytest in
+`tests/python_client/system_tests/pyudf/`, with combined `L3` and
+`pyudf` tags. Fixtures retain live clients and prepared inputs through
+each scenario and own cleanup, including partial setup failures. STOP
+guards cover preparation, baseline queries, audits and load. Probe
+cleanup attempts every owned resource and preserves the original failure
+alongside cleanup errors. Tests and custom environment definitions
+belong in Milvus; test-jobs owns orchestration.
 
-- root `go.mod` (covers all runtime images)
-- `pkg/go.mod` (`github.com/milvus-io/milvus/pkg/v3`, scanned by
-downstream dependency scanners)
-- `tests/go_client/go.mod` (indirect)
+ABBA and batch measurements are independently selectable for
+HNSW/DISKANN, so rerunning the six-minute batch matrix no longer
+requires the preceding fifty-minute instrumentation/ABBA phase. Worker
+counters use an explicit UDF subclass and atomic PID-bound snapshots,
+without source-text rewriting or unused mmap files. SDK cases use
+standard index types 
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Signed-off-by: Li Liu <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `tests/python_client/base/client_v2_pyudf_base.py` (added, +344/-0)
 ```diff
-@@ -18,7 +18,7 @@ require (
- 	github.com/golang/protobuf v1.5.4 // indirect
- 	github.com/google/btree v1.1.2
- 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
--	github.com/klauspost/compress v1.18.7
-+	github.com/klauspost/compress v1.20.2
- 	github.com/minio/minio-go/v7 v7.0.73
- 	github.com/panjf2000/ants/v2 v2.11.3 // indirect
- 	github.com/pingcap/log v1.1.1-0.20221110025148-ca232912c9f3 // indirect
+@@ -0,0 +1,344 @@
++"""Owned wheel, collection and permission lifecycles for PyUDF SDK cases."""
++
++import io
++import time
++from contextlib import ExitStack, contextmanager
++
++import grpc
++import pytest
++from base.client_v2_base import TestMilvusClientV2Base
++from common import common_func as cf
++from common.common_type import CheckTasks
++from common.pyudf_helpers import build_wheel
++from pymilvus import DataType, FunctionChain, FunctionChainStage, MilvusClient
++from pymilvus.function_chain import col
++from pymilvus.function_chain.chain import FunctionChainExpr
++
++
++class PyUDFClientBase(TestMilvusClientV2Base):
++    """Share fixture ownership without importing or inheriting collected tests."""
++
++    dim = 2
++    vector_field = "vector"
++    scalar_field = "ts"
++
++    @staticmethod
++    def _pyudf_management_config(request, key):
++        import requests
++
++        endpoint = request.config.getoption("--pyudf-management-endpoint")
++        assert endpoint, "requires --pyudf-management-endpoint pointing to the coordinator management service"
++        response = requests.get(
++            endpoint.rstrip("/") + "/management/config/get",
++            params={"keys": key},
++            timeout=10,
++        )
++        response.raise_for_status()
++        entry = response.json()["configs"][0]
++        assert entry["key"] == key and "value" in entry, entry
++        return entry["value"]
++
++    @staticmethod
++    def _build_wheel(tmp_path, package_name, module=None, entry_points=None):
++        wheel_path = tmp_path / f"{package_name}-0.0.1-py3-none-any.whl"
++        if module is None:
++            module = """import pyarrow as pa
++
++
++class UDF:
++    def __init__(self, context):
++        self.context = context
++
++    def transform_query(self, params, columns):
++        factor = float(params.get("factor", 1.0))
++        values = [float(value.as_py()) * factor for value in columns[1]]
++        return [pa.array(values, type=pa.float32())]
++
++
++def create_udf(context):
++    return UDF(context)
++"""
++        wheel_path.write_bytes(build_wheel(package_name, module, entry_points=entry_points))
++        return wheel_path
++
++    @staticmethod
++    def _hit_field(hit, field):
++        if field in hit:
++            return hit[field]
++        return hit.get("entity", {}).get(field)
++
++    @staticmethod
++    def _remove_file_resource(client, resource_name, timeout=30):
++        deadline = time.time() + timeout
++        while time.time() < deadline:
++            try:
++                client.remove_file_resource(name=resource_name)
++                return
++            except Exception as exc:
++                if "not found" in str(exc):
++                    return
++                time.sleep(1)
++        client.remove_file_resource(name=resource_name)
++
++    def _search_with_synced_resource(
++        self, client, collection_name, chain, timeout=30, data=None, limit=3, search_params=None, **kwargs
++    ):
++        deadline = time.time() + timeout
++        queries = [[0.0, 0.0]] if data is None else data
++        while True:
++            try:
++                return client.search(
++                    collection_name=collection_name,
++                    data=queries,
++                    anns_field=self.vector_field,
++                    search_params={"metric_type": "L2"} if search_params is None else search_params,
++                    limit=limit,
++                    output_fields=[self.scalar_field],
++                    function_chains=chain,
++                    **kwargs,
++                )
++            except Exception as exc:
++                message = str(exc)
++                transient = (
++                    "file resource snapshot is not ready" in message
++                    or "file resource" in message
++                    and "not found" in message
++                )
++                if not transient or time.time() >= deadline:
++                    raise
++                time.sleep(1)
++
++    def _wait_for_removed_pyudf(self, client, collection_name, chain, resource_name, timeout=30):
++        deadline = time.time() + timeout
++        while True:
++            try:
++                client.search(
++                    collection_name=collection_name,
++                    data=[[0.0, 0.0]],
++                    anns_field=self.vector_field,
++                    search_params={"metric_type": "L2"},
++                    limit=3,
++                    output_fields=[self.scalar_field],
++                    function_chains=chain,
++                )
++            except Exception as exc:
++                message = str(exc)
++                if "py_udf: file resource" in message and resource_name in message and "not found" in message:
++                    return
++                raise
++            if time.time() >= deadline:
++                raise AssertionError(f"removed PyUDF resource {resource_name!r} remains executable")
++            time.sleep(1)
++
++    @contextmanager
++    def _pyudf_test_environment(
++        self,
++ 
 ```
 
-**File**: `go.sum` (modified, +2/-0)
+**File**: `tests/python_client/common/pyudf_helpers.py` (modified, +15/-20)
 ```diff
-@@ -692,6 +692,8 @@ github.com/klauspost/compress v1.13.4/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8
- github.com/klauspost/compress v1.13.6/go.mod h1:/3/Vjq9QcHkK5uEr5lBEmyoZ1iFhe47etQ6QUkpK6sk=
- github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
- github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid/v2 v2.0.1/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
- github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
-```
-
-**File**: `pkg/go.mod` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ require (
- 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.174
- 	github.com/jolestar/go-commons-pool/v2 v2.1.2
- 	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12
--	github.com/klauspost/compress v1.18.7
-+	github.com/klauspost/compress v1.20.2
- 	github.com/milvus-io/milvus-proto/go-api/v3 v3.0.0-20261105020509-3c2afcbf9ce6
- 	github.com/minio/minio-go/v7 v7.0.73
- 	github.com/panjf2000/ants/v2 v2.11.3
-```
-
-**File**: `pkg/go.sum` (modified, +2/-0)
-```diff
-@@ -524,6 +524,8 @@ github.com/klauspost/compress v1.9.7/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0
- github.com/klauspost/compress v1.13.6/go.mod h1:/3/Vjq9QcHkK5uEr5lBEmyoZ1iFhe47etQ6QUkpK6sk=
- github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
- github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid v1.2.1/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
- github.com/klauspost/cpuid/v2 v2.0.1/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
-```
-
-**File**: `tests/go_client/go.mod` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ require (
- 	github.com/iskorotkov/avro/v2 v2.33.1 // indirect
- 	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12 // indirect
- 	github.com/klauspost/asmfmt v1.3.2 // indirect
--	github.com/klauspost/compress v1.18.7 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
- 	github.com/kr/pretty v0.3.1 // indirect
- 	github.com/kr/text v0.2.0 // indirect
-```
-
-**File**: `tests/go_client/go.sum` (modified, +2/-0)
-```diff
-@@ -189,6 +189,8 @@ github.com/klauspost/compress v1.8.2/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0
- github.com/klauspost/compress v1.9.7/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
- github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
- github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid v1.2.1/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
- github.com/klauspost/cpuid/v2 v2.0.1/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
-```
-
----
-
-### Incident Patch 2: `d5116830` (2026-11-09)
-**Commit Message**: fix: bound raw TEXT bytes retained by the import V3 writer (#54915)
-
-## Summary
-
-Import V3 final merge hands the storage writer a record whose TEXT
-columns are still raw UTF-8. The storage writer replaces each TEXT
-column with a small LOB reference and reuses the remaining columns
-as-is, and it decides its own flush from the batch it receives — i.e.
-after that conversion, where a TEXT value is 16-24 B. So the raw TEXT
-payload the writer is holding is invisible to that accounting,
-`writer.buffer_size` is never reached, and every processed batch stays
-resident: a ~10 GiB TEXT import could OOM the DataNode even with one
-worker per task.
-
-This change bounds the pre-conversion input a TEXT-aware writer keeps
-unflushed, and fixes the slot estimate that ignored the per-TEXT-column
-LOB writer buffers.
-
-**Related issue**: #54876
-
-## Changes
-
-- `internal/storage/record_writer.go`
-- `packedTextBatchWriter` accumulates the record's precise per-column
-size in `unflushedInput` — the same sliced, value-aware size
-(`serde.ActualSizeInBytes`, via `calculateActualDataSize`) it already
-reports as `writtenUncompressed` — and flushes the buffered column
-groups once the accumulated input reaches the wri
-
-**File**: `internal/datacoord/bulkimport/checker_v3_test.go` (modified, +18/-2)
-```diff
-@@ -87,7 +87,11 @@ func TestCalculateImportV3TaskSlots(t *testing.T) {
- 	// The import (final merge) charge uses the same model and expansion factor:
- 	// fanIn 16 readers at 2R each plus the 3R merge and the 32 MiB writer
- 	// buffer is 1.2 * 592 MiB, which charges ceil(710.4/160) = 5 slots.
--	require.Equal(t, int64(5), calculateImportTaskV3Slot(mem, 160*mib, 32*mib, 16))
-+	require.Equal(t, int64(5), calculateImportTaskV3Slot(mem, 160*mib, 32*mib, 0, 16))
-+	// TEXT columns stage their LOB writer buffers beside the converted batch.
-+	// 8 columns x the 16 MiB flush threshold raise the footprint to 1.2 * 720
-+	// MiB, which charges ceil(864/160) = 6 slots.
-+	require.Equal(t, int64(6), calculateImportTaskV3Slot(mem, 160*mib, 32*mib, 128*mib, 16))
- 	require.Equal(t, int64(1), calculateImportV3Slots(1, 160*mib))
- 	require.Equal(t, int64(2), calculateImportV3Slots(160*mib+1, 160*mib))
- 	// The slot helper must not divide by zero when the configured per-slot
-@@ -96,6 +100,18 @@ func TestCalculateImportV3TaskSlots(t *testing.T) {
- 	require.Equal(t, int64(1), calculateImportV3Slots(1, -1))
- }
+@@ -1,17 +1,17 @@
+ """Small PyUDF fixtures shared by CI tests."""
  
-+func TestTextWriterBuffer(t *testing.T) {
-+	cfg := importV3Config{textFlushThresholdBytes: 16 * 1024 * 1024}
-+	schema := &schemapb.CollectionSchema{Fields: []*schemapb.FieldSchema{
-+		{DataType: schemapb.DataType_Text},
-+		{DataType: schemapb.DataType_VarChar},
-+		{DataType: schemapb.DataType_Text},
-+	}}
-+	require.Equal(t, int64(2*16*1024*1024), textWriterBuffer(cfg, schema))
-+	require.Zero(t, textWriterBuffer(cfg, nil))
-+	require.Zero(t, textWriterBuffer(cfg, &schemapb.CollectionSchema{}))
-+}
-+
- func TestEffectiveImportV3FanIn(t *testing.T) {
- 	require.Equal(t, 16, getImportV3FanIn(16, 0))
- 	require.Equal(t, 16, getImportV3FanIn(16, 100))
-@@ -139,7 +155,7 @@ func TestCreateImportV3TaskWritesPendingWithoutSegment(t *testing.T) {
- 	require.Equal(t, int64(4), p.GetPartitionId())
- 	require.Len(t, p.GetFragments(), 1)
- 	require.Equal(t, "f0", p.GetFragments()[0].GetPath())
--	require.Equal(t, int64(1), importSlot(len(p.GetFragments()), getImportV3Config()))
-+	require.Equal(t, int64(1), importSlot(len(p.GetFragments()), getImportV3Config(), job.GetSchema()))
- 	// Planning creates no segment record.
- 	require.Nil(t, mt.GetSegment(ctx, 100))
- }
-```
-
-**File**: `internal/datacoord/bulkimport/task_import_v3.go` (modified, +1/-1)
-```diff
-@@ -85,7 +85,7 @@ func (t *importTaskV3) GetTaskState() taskcommon.State {
- func (t *importTaskV3) GetTaskNodeID() int64 { return t.GetNodeID() }
- func (t *importTaskV3) GetTaskSlot() int64 {
- 	if job := t.importMeta.GetJob(context.TODO(), t.GetJobID()); job != nil {
--		return importSlot(len(t.task.Load().GetFragments()), getImportV3Config())
-+		return importSlot(len(t.task.Load().GetFragments()), getImportV3Config(), job.GetSchema())
- 	}
- 	return 1
- }
-```
-
-**File**: `internal/datacoord/bulkimport/v3_plan.go` (modified, +22/-3)
-```diff
-@@ -191,7 +191,8 @@ func importPlan(job ImportJob, p *datapb.ImportTaskV3, cfg importV3Config) (*imp
- 	}
- 	fanIn := getImportV3FanIn(cfg.fragmentMergeFanIn, len(p.GetFragments()))
- 	slot := calculateImportTaskV3Slot(importSlotModel(cfg),
--		reshardmem.MemoryPerSlot(cfg.workerSlotUnit, cfg.buildParallel), packed.DefaultWriteBufferSize, fanIn)
-+		reshardmem.MemoryPerSlot(cfg.workerSlotUnit, cfg.buildParallel), packed.DefaultWriteBufferSize,
-+		textWriterBuffer(cfg, job.GetSchema()), fanIn)
- 	return &importv3pb.ImportTaskPlan{
- 		PartitionId:      p.GetPartitionId(),
- 		Fragments:        p.GetFragments(),
-@@ -243,10 +244,28 @@ func importSlotModel(cfg importV3Config) reshardmem.Model {
- // importSlot derives the ImportTaskV3 slot charge from the fan-in that
- // importPlan computes from the same fragment count under the same config, so
- // the charged slot and the merge that runs always agree.
--func importSlot(fragmentCount int, cfg importV3Config) int64 {
-+func importSlot(fragmentCount int, cfg importV3Config, schema *schemapb.CollectionSchema) int64 {
- 	fanIn := getImportV3FanIn(cfg.fragmentMergeFanIn, fragmentCount)
- 	return calculateImportTaskV3Slot(importSlotModel(cfg),
--		reshardmem.MemoryPerSlot(cfg.workerSlotUnit, cfg.buildParallel), packed.DefaultWriteBufferSize, fanIn)
-+		reshardmem.MemoryPerSlot(cfg.workerSlotUnit, cfg.buildParallel), packed.DefaultWriteBufferSize,
-+		textWriterBuffer(cfg, schema), fanIn)
-+}
-+
-+// textWriterBuffer is the LOB writer buffer the final merge keeps per TEXT
-+// column: each column stages up to textFlushThresholdBytes before flushing to
-+// its LOB file. The staged bytes live beside the converted batch, whose TEXT
-+// column is only a reference, so ImportWorkingSet has to charge them separately.
-+func textWriterBuffer(cfg importV3Config, schema *schemapb.CollectionSchema) int64 {
-+	if schema == nil {
-+		return 0
-+	}
-+	var columns int64
-+	for _, field := range typeutil.GetAllFieldSchemas(schema) {
-+		if field.GetDataType() == schemapb.DataType_Text {
-+			columns++
-+		}
-+	}
-+	return columns * cfg.textFlushThresholdBytes
- }
+-import errno
+ import io
+-import socket
+ import zipfile
  
- // validateImportV3StorageVersion fails a TEXT collection when the given storage
-```
-
-**File**: `internal/datacoord/bulkimport/v3_reshard.go` (modified, +6/-6)
-```diff
-@@ -228,10 +228,10 @@ func calculateReshardTaskSlot(mem reshardmem.Model, memoryPerSlot, buckets, buck
- // the node's own slot unit: the model's ImportWorkingSet -- one fragment reader
- // per merge input (2*ReadBuffer each, the buffer DataNode hands the reader via
- // storage.WithBufferSize), the merge's own output batch and final transform
--// (3*ReadBuffer, MergeExecutor.BatchSize == ImportBaseBufferSize) and the
--// segment writer's buffer (writerBuffer, WriterSpec.V2.BufferSize), all scaled
--// by the same expansion factor the reshard charge uses -- divided by the memory
--// one node slot represents.
-+// (3*ReadBuffer, MergeExecutor.BatchSize == ImportBaseBufferSize), the segment
-+// writer's buffer (writerBuffer, WriterSpec.V2.BufferSize) and the per-TEXT-column
-+// LOB writer buffers (textWriterBuffer), all scaled by the same expansion factor
-+// the reshard charge uses -- divided by the memory one node slot represents.
- //
- // The per-reader term is deliberately an over-estimate. The reader is handed
- // readBuffer, but its real footprint is bounded by milvus-storage's own
-@@ -245,6 +245,6 @@ func calculateReshardTaskSlot(mem reshardmem.Model, memoryPerSlot, buckets, buck
- // Import V3 can use directly because it never handles L0) so a high fan-in stops
- // charging more than one segment's worth of readers; re-measure and only then
- // decide whether to keep this conservative over-estimate.
--func calculateImportTaskV3Slot(mem reshardmem.Model, memoryPerSlot, writerBuffer int64, fanIn int) int64 {
--	return calculateImportV3Slots(mem.ImportWorkingSet(writerBuffer, fanIn), memoryPerSlot)
-+func calculateImportTaskV3Slot(mem reshardmem.Model, memoryPerSlot, writerBuffer, textWriterBuffer int64, fanIn int) int64 {
-+	return calculateImportV3Slots(mem.ImportWorkingSet(writerBuffer, textWriterBuffer, fanIn), memoryPerSlot)
- }
-```
-
-**File**: `internal/storage/record_writer.go` (modified, +33/-1)
-```diff
-@@ -517,6 +517,11 @@ type packedTextBatchWriter struct {
- 	columnGroupUncompressed map[typeutil.UniqueID]uint64
- 	columnGroupCompressed   map[typeutil.UniqueID]uint64
- 	storageConfig           *indexpb.StorageConfig
-+	// unflushedInput is the record bytes accepted since the last flush, measured
-+	// here because only this writer still sees the raw TEXT payload: the writer
-+	// below decides its own flush from the batch it receives, where a TEXT value
-+	// is already a 16-24 B LOB reference.
-+	unflushedInput uint64
- }
  
- func (pw *packedTextBatchWriter) Write(r Record) error {
-@@ -529,14 +534,41 @@ func (pw *packedTextBatchWriter) Write(r Record) error {
- 	for col, arr := range rec.Columns() {
- 		size := calculateActualDataSize(arr)
- 		pw.writtenUncompressed += size
-+		pw.unflushedInput += size
- 		for _, columnGroup := range pw.columnGroups {
- 			if lo.Contains(columnGroup.Columns, col) {
- 				pw.columnGroupUncompressed[columnGroup.GroupID] += size
- 				break
- 			}
- 		}
- 	}
--	return pw.writer.Write(rec)
-+
-+	if err := pw.writer.Write(rec); err != nil {
-+		return err
-+	}
-+	// Cap the input the writer keeps unflushed at the writer's own buffer size,
-+	// the cadence a plain writer gets from the storage writer's buffer
-+	// accounting: import and compaction each pass the write buffer size they
-+	// run with, and streaming flush passes 0 because every sync already closes
-+	// its writer, which disables the bound.
-+	if pw.bufferSize > 0 && pw.unflushedInput >= uint64(pw.bufferSize) {
-+		return pw.SyncBuffered()
-+	}
-+	return nil
-+}
-+
-+// SyncBuffered flushes the buffered column groups to storage without closing the
-+// writer. That includes the TEXT LOB column writers, which also flush on their
-+// own threshold between calls.
-+func (pw *packedTextBatchWriter) SyncBuffered() error {
-+	if pw.writer == nil {
-+		return nil
-+	}
-+	if err := pw.writer.SyncBuffered(); err != nil {
-+		return err
-+	}
-+	pw.unflushedInput = 0
-+	return nil
- }
+-def build_wheel(package, module):
++def build_wheel(package, module, *, entry_points=None):
+     """Build a wheel containing only the supplied UDF module and entry point."""
+     output = io.BytesIO()
+     files = {
+         f"{package}/__init__.py": module,
+-        f"{package}-0.0.1.dist-info/entry_points.txt": f"[milvus.pyudf]\nmain = {package}:create_udf\n",
++        f"{package}-0.0.1.dist-info/entry_points.txt": (
++            f"[milvus.pyudf]\nmain = {package}:create_udf\n" if entry_points is None else entry_points
++        ),
+         f"{package}-0.0.1.dist-info/METADATA": f"Metadata-Version: 2.1\nName: {package}\nVersion: 0.0.1\n",
+     }
+     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_STORED) as wheel:
+@@ -20,19 +20,14 @@ def build_wheel(package, module):
+     return output.getvalue()
  
- func (pw *packedTextBatchWriter) GetWrittenUncompressed() uint64 {
+ 
+-def probe_endpoint(host, public_port=19530, worker_port=19090):
+-    """Check only the supplied address; a Service address does not prove Pod isolation."""
+-    observed = {}
+-    for label, port in (("public_api", public_port), ("worker_rpc", worker_port)):
+-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as connection:
+-            connection.settimeout(2)
+-            observed[label] = {"port": port, "tcp_connect_code": connection.connect_ex((host, port))}
+-    assert observed["public_api"]["tcp_connect_code"] == 0, observed
+-    assert observed["worker_rpc"]["tcp_connect_code"] in {
+-        errno.ECONNREFUSED,
+-        errno.ETIMEDOUT,
+-        errno.EHOSTUNREACH,
+-        errno.ENETUNREACH,
+-        errno.EAGAIN,
+-    }, observed
+-    return {"observation": observed}
++def assert_pyudf_deadline(call):
++    import grpc
++    import pytest
++    from pymilvus import MilvusException
++
++    with pytest.raises((MilvusException, grpc.RpcError)) as caught:
++        call()
++    if isinstance(caught.value, grpc.RpcError):
++        assert caught.value.code() == grpc.StatusCode.DEADLINE_EXCEEDED, caught.value
++    else:
++        assert caught.value.code == 10001, caught.value
 ```
 
-**File**: `internal/storage/record_writer_flush_test.go` (added, +229/-0)
+**File**: `tests/python_client/conftest.py` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,229 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
+@@ -43,6 +43,11 @@
+ 
+ 
+ def pytest_addoption(parser):
++    parser.addoption(
++        "--pyudf-expected-commit",
++        default=None,
++        help="Optional deployed Git commit prefix for dedicated PyUDF profiles.",
++    )
+     parser.addoption(
+         "--struct-max-array-capacity",
+         type=int,
+```
+
+**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf.py` (modified, +37/-350)
+```diff
+@@ -3,11 +3,11 @@
+ import time
+ import zipfile
+ from concurrent.futures import ThreadPoolExecutor
+-from contextlib import ExitStack, contextmanager
++from contextlib import ExitStack
+ 
+ import grpc
+ import pytest
+-from base.client_v2_base import TestMilvusClientV2Base
++from base.client_v2_pyudf_base import PyUDFClientBase
+ from common import common_func as cf
+ from common.common_type import CaseLabel, CheckTasks
+ from google.protobuf.message import DecodeError
+@@ -30,115 +30,19 @@
+ prefix = "pyudf"
+ 
+ 
+-class TestMilvusClientPyUDF(TestMilvusClientV2Base):
++class TestMilvusClientPyUDF(PyUDFClientBase):
+     """End-to-end tests for PyUDF-backed FunctionChain reranking."""
+ 
+     dim = 2
+     vector_field = "vector"
+     scalar_field = "ts"
+ 
+-    @staticmethod
+-    def _pyudf_management_config(request, key):
+-        import requests
+-
+-        endpoint = request.config.getoption("--pyudf-management-endpoint")
+-        assert endpoint, "requires --pyudf-management-endpoint pointing to the coordinator management service"
+-        response = requests.get(
+-            endpoint.rstrip("/") + "/management/config/get",
+-            params={"keys": key},
+-            timeout=10,
+-        )
+-        response.raise_for_status()
+-        entry = response.json()["configs"][0]
+-        assert entry["key"] == key and "value" in entry, entry
+-        return entry["value"]
+-
+-    @staticmethod
+-    def _build_wheel(tmp_path, package_name, module=None, entry_points=None):
+-        wheel_path = tmp_path / f"{package_name}-0.0.1-py3-none-any.whl"
+-        if module is None:
+-            module = """import pyarrow as pa
+-
+-
+-class UDF:
+-    def __init__(self, context):
+-        self.context = context
+-
+-    def transform_query(self, params, columns):
+-        factor = float(params.get("factor", 1.0))
+-        values = [float(value.as_py()) * factor for value in columns[1]]
+-        return [pa.array(values, type=pa.float32())]
+-
+-
+-def create_udf(context):
+-    return UDF(context)
+-"""
+-        dist_info = f"{package_name}-0.0.1.dist-info"
+-        with zipfile.ZipFile(wheel_path, "w", compression=zipfile.ZIP_STORED) as wheel:
+-            wheel.writestr(f"{package_name}/__init__.py", module)
+-            wheel.writestr(
+-                f"{dist_info}/entry_points.txt",
+-                f"[milvus.pyudf]\nmain = {package_name}:create_udf\n" if entry_points is None else entry_points,
+-            )
+-            wheel.writestr(
+-                f"{dist_info}/METADATA",
+-                f"Metadata-Version: 2.1\nName: {package_name}\nVersion: 0.0.1\n",
+-            )
+-        return wheel_path
+-
+-    @staticmethod
+-    def _hit_field(hit, field):
+-        if field in hit:
+-            return hit[field]
+-        return hit.get("entity", {}).get(field)
+-
+     @staticmethod
+     def _assert_intermediate_field_absent(hits, field):
+         for hit in hits:
+             assert field not in hit, hit
+             assert field not in hit.get("entity", {}), hit
+ 
+-    @staticmethod
+-    def _remove_file_resource(client, resource_name, timeout=30):
+-        deadline = time.time() + timeout
+-        while time.time() < deadline:
+-            try:
+-                client.remove_file_resource(name=resource_name)
+-                return
+-            except Exception as exc:
+-                if "not found" in str(exc):
+-                    return
+-                time.sleep(1)
+-        client.remove_file_resource(name=resource_name)
+-
+-    def _search_with_synced_resource(
+-        self, client, collection_name, chain, timeout=30, data=None, limit=3, search_params=None, **kwargs
+-    ):
+-        deadline = time.time() + timeout
+-        queries = [[0.0, 0.0]] if data is None else data
+-        while True:
+-            try:
+-                return client.search(
+-                    collection_name=collection_name,
+-                    data=queries,
+-                    anns_field=self.vector_field,
+-                    search_params={"metric_type": "L2"} if search_params is None else search_params,
+-                    limit=limit,
+-                    output_fields=[self.scalar_field],
+-                    function_chains=chain,
+-                    **kwargs,
+-                )
+-            except Exception as exc:
+-                message = str(exc)
+-                transient = (
+-                    "file resource snapshot is not ready" in message
+-                    or "file resource" in message
+-                    and "not found" in message
+-                )
+-                if not transient or time.time() >= deadline:
+-                    raise
+-                time.sleep(1)
+-
+     def _wait_for_file_resource_absent(self, client, resource_name, timeout=30):
+         deadline = time.time() + timeout
+         while True:
+@@ -150,192 +54,6 @@ def _wait_for_file_resource_absent(self, client, resource_name, timeout=30):
+                 raise AssertionError(f"file resource {resource_name!r} was not removed")
+             time.sleep(1)
+ 
+-    def
+```
+
+**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf_concurrency.py` (added, +655/-0)
+```diff
+@@ -0,0 +1,655 @@
++"""Search admission, cancellation and worker-pool concurrency on dedicated profiles."""
 +
-+package storage
++import io
++import json
++import statistics
++import sys
++import threading
++import time
++import uuid
++from concurrent.futures import ThreadPoolExecutor, as_completed
++from functools import partial
 +
-+import (
-+	"context"
-+	"io"
-+	"path"
-+	"sort"
-+	"strings"
-+	"testing"
++import pyarrow as pa
++import pytest
++import requests
++from common import common_func as cf
++from common.pyudf_helpers import assert_pyudf_deadline, build_wheel
++from minio import Minio
++from pymilvus import FunctionChain, FunctionChainStage, MilvusClient, MilvusException
++from pymilvus.function_chain import col
++from pymilvus.function_chain.chain import FunctionChainExpr
++from workloads.pyudf.probe import pyudf_probe
 +
-+	"github.com/apache/arrow/go/v17/arrow/array"
-+	"github.com/apache/arrow/go/v17/arrow/memory"
-+	"github.com/bytedance/mockey"
-+	"github.com/cockroachdb/errors"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
 +
-+	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/internal/storagecommon"
-+	"github.com/milvus-io/milvus/internal/storagev2/packed"
-+	"github.com/milvus-io/milvus/pkg/v3/common"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/indexpb"
++@pytest.fixture
++def runtime_connection(minio_host, minio_bucket):
++    uri = cf.param_info.param_uri or f"http://{cf.param_info.param_host}:{cf.param_info.param_port}"
++    token = cf.param_info.param_token or f"{cf.param_info.param_user}:{cf.param_info.param_password}"
++    client = MilvusClient(uri, token=token)
++    storage = Minio(f"{minio_host}:9000", access_key="minioadmin", secret_key="minioadmin", secure=False)
++    try:
++        yield client, storage, minio_bucket
++    finally:
++        client.close()
++
++
++def require_config(request, expected):
++    endpoint = request.config.getoption("--pyudf-management-endpoint")
++    assert endpoint, "This L3 selection requires its isolated runtime management endpoint"
++    for key, value in expected.items():
++        response = requests.get(endpoint.rstrip("/") + "/management/config/get", params={"keys": key}, timeout=10)
++        response.raise_for_status()
++        assert response.json()["configs"][0]["value"] == str(value), response.json()
++
++
++def cleanup_runtime_resources(runtime_connection, registered, uploaded, observer_cleanup=None):
++    """Attempt every owned cleanup and retain any failure active in the caller's finally block."""
++    failure = sys.exception()
++    client, storage, bucket = runtime_connection
++    operations = []
++    if observer_cleanup is not None:
++        operations.append(("remove cancellation marker", observer_cleanup))
++    operations.extend(
++        (f"remove resource {name}", partial(client.remove_file_resource, name, timeout=30)) for name in registered
++    )
++    operations.extend(
++        (f"remove wheel object {path}", partial(storage.remove_object, bucket, path)) for path in uploaded
++    )
++    errors = []
++    for operation, remove in operations:
++        try:
++            remove()
++        except Exception as error:
++            error.add_note(operation)
++            errors.append(error)
++    if errors:
++        raise BaseExceptionGroup("PyUDF runtime cleanup failed", ([failure] if failure is not None else []) + errors)
++
++
++def wait_for_full_admission(futures):
++    """Observe a real capacity rejection without assuming which caller arrived first."""
++    rejected = next(as_completed(futures, timeout=3))
++    with pytest.raises(MilvusException) as error:
++        rejected.result()
++    assert error.value.code == 12, f"No full admission window observed: {error.value}"
++    assert "Concurrent RPC limit exceeded" in str(error.value), error.value
++    return [future for future in futures if future is not rejected]
++
++
++@pytest.mark.tags("L3", "pyudf")
++def test_pyudf_expired_active_call_retains_capacity_until_actual_completion(
++    request, runtime_connection, record_property
++):
++    """target: late admission; method: wait past deadline; expected: executing Python retains capacity."""
++    require_config(
++        request,
++        {
++            "function.pyUDF.server.workerCount": 1,
++            "function.pyUDF.server.grpcConcurrency": 1,
++            "function.pyUDF.server.maxConcurrentRPCs": 2,
++            "function.pyUDF.rpcTimeout": "5s",
++        },
++    )
++    with pyudf_probe(*runtime_connection) as probe:
++
++        def invoke(mode, timeout):
++            return probe.client.search(
++                probe.name,
++                data=[[0.0, 0.0]],
++                anns_field="vector",
++                limit=3,
++                search_params={"metric_type": "L2"},
++                function_chains=probe.chain(mode),
++                timeout=timeout,
++                retry_on_rate_limit=False,
++            )
++
++        begin = time.monotonic()
++        try:
++            with ThreadPoolExecutor(max_workers=2) as pool:
++                active = pool.submit(invoke, "server_timeout", 12)
++                assert_pyudf_deadline(lambda: active.result(timeout=7))
++                assert 4.5 < time.monotonic() - begin < 7, "Service deadline did not occur before Python completion"
++                # Either contender may take the remaining slot. Its peer's
++                # capacity rejection is the observable full-admission barrier.
++                contenders = [pool.submit(invoke, "normal", 1) for _ in range(2)]
++                pending = wait_for_full_admission(contenders)
++                with p
+```
+
+**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf_disabled.py` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ def require_disabled_profile(self, request):
+         if not request.config.getoption("--run-pyudf-disabled"):
+             pytest.skip("requires --run-pyudf-disabled and a dedicated PyUDF-disabled deployment")
+ 
+-    @pytest.mark.tags(CaseLabel.L3)
++    @pytest.mark.tags(CaseLabel.L3, "pyudf")
+     @pytest.mark.parametrize("nq", [1, 2])
+     def test_pyudf_disabled_rejects_nonempty_search_without_affecting_search(self, nq):
+         """
+```
+
+**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf_embedding_list.py` (modified, +1/-1)
+```diff
+@@ -261,7 +261,7 @@ def test_pyudf_embedding_list_preserves_scores_and_fields(self, minio_host, mini
+             control = self._synced_search(client, self._request(name, nq, chain=self._chain(resource)))
+             self._assert_results(control, nq, [1, 2, 3], reranked=True)
+ 
+-    @pytest.mark.tags(CaseLabel.L3)
++    @pytest.mark.tags(CaseLabel.L3, "pyudf")
+     @pytest.mark.parametrize("element_level", [False, True], ids=["embedding_list", "element"])
+     def test_pyudf_indexed_array_search_preserves_scores_and_fields(
+         self, minio_host, minio_bucket, request, record_property, element_level
+```
+
+**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf_runtime.py` (added, +203/-0)
+```diff
+@@ -0,0 +1,203 @@
++"""Search-level runtime contracts on a single enabled PyUDF worker."""
++
++import time
++
++import grpc
++import pytest
++from common import common_func as cf
++from minio import Minio
++from pymilvus import DataType, FunctionChain, FunctionChainStage, MilvusClient, MilvusException
++from pymilvus.function_chain import col, fn
++from pymilvus.function_chain.chain import FunctionChainExpr
++from workloads.pyudf.probe import pyudf_probe
++
++
++@pytest.fixture
++def probe_connection(minio_host, minio_bucket):
++    uri = cf.param_info.param_uri or f"http://{cf.param_info.param_host}:{cf.param_info.param_port}"
++    token = cf.param_info.param_token or f"{cf.param_info.param_user}:{cf.param_info.param_password}"
++    client = MilvusClient(uri, token=token)
++    storage = Minio(f"{minio_host}:9000", access_key="minioadmin", secret_key="minioadmin", secure=False)
++    try:
++        yield client, storage, minio_bucket
++    finally:
++        client.close()
++
++
++@pytest.fixture
++def owned_probe(probe_connection, request):
++    with pyudf_probe(*probe_connection, string_pk=True, metric=getattr(request, "param", "L2")) as probe:
++        yield probe
++
++
++@pytest.mark.tags("L1")
++def test_pyudf_unicode_primary_key_multiple_queries(owned_probe):
++    """Unicode primary keys and scalar payloads stay aligned for every query."""
++    owned_probe.check(with_udf=False, nq=4)
++    owned_probe.check(nq=4)
++
++
++@pytest.mark.tags("L1")
++def test_pyudf_map_preserves_candidate_order_without_sort(owned_probe):
++    chain = FunctionChain(FunctionChainStage.L2_RERANK).map(
++        "$score", FunctionChainExpr("py_udf", args=(col("ts"),), params={"resource_name": owned_probe.resource})
++    )
++    results = owned_probe.client.search(
++        owned_probe.name,
++        data=[[0.0, 0.0]],
++        anns_field="vector",
++        limit=3,
++        search_params={"metric_type": "L2"},
++        function_chains=chain,
++    )
++    assert [hit["id"] for hit in results[0]] == owned_probe.ids
++    assert [hit["distance"] for hit in results[0]] == [20, 40, 60]
++    owned_probe.check()
++
++
++@pytest.mark.tags("L2")
++@pytest.mark.parametrize("owned_probe", ["L2", "IP"], indirect=True)
++@pytest.mark.parametrize("order", [(0, 1, 2), (2, 0, 1), (1, 2, 0)])
++def test_pyudf_composes_with_builtin_l0_l1_in_stage_order(owned_probe, order):
++    l0 = FunctionChain(FunctionChainStage.L0_RERANK).map("$score", fn.num_combine(col("ts"), col("ts"), mode="sum"))
++    l1 = FunctionChain(FunctionChainStage.L1_RERANK).map("$score", fn.num_combine(col("$score"), col("ts"), mode="sum"))
++    l2 = (
++        FunctionChain(FunctionChainStage.L2_RERANK)
++        .map(
++            "$score", FunctionChainExpr("py_udf", args=(col("$score"),), params={"resource_name": owned_probe.resource})
++        )
++        .sort(col("$score"), desc=True, tie_break_col=col("$id"))
++    )
++    stages = [l0, l1, l2]
++    results = owned_probe.client.search(
++        owned_probe.name,
++        data=[[0.0, 0.0]] * 2,
++        anns_field="vector",
++        limit=3,
++        search_params={"metric_type": owned_probe.metric},
++        output_fields=["ts"],
++        function_chains=[stages[index] for index in order],
++    )
++    assert len(results) == 2, results
++    for hits in results:
++        assert [hit["id"] for hit in hits] == list(reversed(owned_probe.ids))
++        assert [hit["distance"] for hit in hits] == [180, 120, 60]
++        assert [hit["entity"]["ts"] for hit in hits] == [30, 20, 10]
++    owned_probe.check()
++
++
++@pytest.mark.tags("L1")
++@pytest.mark.parametrize("mode,code", [("system_exit", 5), ("os_error", 2400), ("memory_error", 3)])
++def test_pyudf_exception_origin_and_recovery(owned_probe, mode, code):
++    """User exception origins survive the entire worker-to-Search error path."""
++    with pytest.raises(MilvusException) as caught:
++        owned_probe.search(mode)
++    assert caught.value.code == code, caught.value
++    assert "qa_synthetic_" + mode in str(caught.value), caught.value
++    owned_probe.check(with_udf=False)
++    owned_probe.check()
++
++
++@pytest.mark.tags("L2")
++@pytest.mark.parametrize(
++    "kind,metric",
++    [
++        *[
++            (kind, metric)
++            for kind in (DataType.FLOAT_VECTOR, DataType.FLOAT16_VECTOR, DataType.BFLOAT16_VECTOR, DataType.INT8_VECTOR)
++            for metric in ("L2", "IP", "COSINE")
++        ],
++        (DataType.BINARY_VECTOR, "HAMMING"),
++        (DataType.BINARY_VECTOR, "JACCARD"),
++        (DataType.SPARSE_FLOAT_VECTOR, "IP"),
++    ],
 +)
-+
-+const flushTestTextFieldID = int64(101)
-+
-+// newTextFlushTestWriter builds a TEXT-aware writer whose unflushed-input bound
-+// is bufferSize. The TEXT column keeps every value out of line (inline
-+// threshold 1), so a flush has real LOB work to do.
-+func newTextFlushTestWriter(t *testing.T, bufferSize int64) (*packedTextBatchWriter, *schemapb.CollectionSchema, string, *indexpb.StorageConfig) {
-+	t.Helper()
-+	schema := &schemapb.CollectionSchema{Fields: []*schemapb.FieldSchema{
-+		{FieldID: common.RowIDField, Name: "row_id", DataType: schemapb.DataType_Int64},
-+		{FieldID: common.TimeStampField, Name: "timestamp", DataType: schemapb.DataType_Int64},
-+		{FieldID: 100, Name: "pk", DataType: schemapb.DataType_Int64, IsPrimaryKey: true},
-+		{FieldID: flushTestTextFieldID, Name: "text", DataType: schemapb.DataType_Text},
-+	}}
-+	rootPath := t.TempDir()
-+	segmentPath := SegmentManifestBasePath(rootPath, 1, 2, 3)
-+	config := &indexpb.StorageConfig{StorageType: "local", RootPath: rootPath}
-+	columnGroups := []storagecommon.ColumnGroup{{
-+		GroupID: 0,
-+		Columns: []int{0, 1, 2, 3},
-+		Fields:  []int64{common.RowIDField, common.TimeStampField, 100, flushTestTextFieldID},
-+	}}
-+	textConfig := []packed.TextColumnConfig{{
-+		FieldID:             flushTestTextFieldID,
-+		LobBasePath:         path.Join(SegmentPartitionBasePath(rootPath, 1, 2), "lobs", "101"),
-+		InlineThreshold:     1,
-+		MaxLobFileBytes:     1 << 20,
-+		FlushThresholdBytes: 1,
-+	}}
-+
-+	w, err := NewPackedTextBatchWriter("", segmentPath, schema, bufferSize, 0,
-+		columnGroups, config, textConfig, nil, "parquet", []string{"parquet"})
-+	require.NoError(t, err)
-+	return w, schema, segmentPath, config
-+}
-+
-+func newTextFlushTestRecord(t *testing.T, schema *schemapb.CollectionSchema, rowIDs []int64, texts []string) Record {
-+	t.Helper()
-+	arrowSchema, err := ConvertToArrowSchema(schema, true)
-+	require.NoError(t, err)
-+	builder := array.NewRecordBuilder(memory.DefaultAllocator, arrowSchema)
-+	defer builder.Release()
-+
-+	timestamps := make([]int64, len(rowIDs))
-+	for i := range timestamps {
-+		timestamps[i] = int64(i + 1)
-+	}
-+	builder.Field(0).(*array.Int64Builder).AppendValues(rowIDs, nil)
-+	builder.Field(1).(*array.Int64Builder).AppendValues(timestamps, nil)
-+	builder.Field(2).(*array.Int64Builder).AppendValues(rowIDs, nil)
-+	builder.Field(3).(*array.StringBuilder).AppendValues(texts, nil)
-+
-+	return NewSimpleArrowRecord(builder.NewRecord(), map[FieldID]int{
-+		common.RowIDField:     0,
-+		common.TimeStampField: 1,
-+		100:                   2,
-+		flushTestTextFieldID:  3,
-+	})
-+}
-+
-+// TestPackedTextBatchWriterFlushesUnflushedInput drives the mid-stream flush
-+// branch: a bound of one byte means every written record crosses it, so each
-+// Write must flush and the writer must keep accepting records afterwards.
-+func TestPackedTextBatchWriterFlushesUnflushedInput(t *testing.T) {
-+	w, schema, _, _ := newTextFlushTestWriter(t, 1)
-+
-+	flushes := 0
-+	patch := mockey.Mock((*packed.FFISegmentWriter).SyncBuffered).To(func(_ *packed.FFISegmentWriter) error {
-+		flushes++
-+		return nil
-+	}).Build()
-+	defer patch.UnPatch()
-+
-+	first := newTextFlushTestRecord(t, schema, []int64{1, 2}, []string{"first text", "second text"})
-+	defer first.Release()
-+	require.NoError(t, w.Write(first))
-+	assert.Equal(t, 1, flushes, "first record crosses the bound")
-+
-+	second := newTextFlushTestRecord(t, schema, []int64{3, 4}, []string{"third text", "fourth text"})
-+	defer second.Release()
-+	require.NoError(t, w.Write(second))
-+	assert.Equal(t, 2, flushes, "writer keeps working after 
-```
-
-**File**: `internal/util/importutilv2/reshardmem/reshardmem.go` (modified, +7/-2)
-```diff
-@@ -204,8 +204,13 @@ func (m Model) SortInput(memoryBudget int64) int64 {
- // batch and final transform at 3*ReadBuffer (MergeExecutor.BatchSize ==
- // ImportBaseBufferSize), and the segment writer's buffer. A merge never spills,
- // so FragmentTarget and FlushConcurrency do not participate.
--func (m Model) ImportWorkingSet(writerBuffer int64, fanIn int) int64 {
--	footprint := int64(fanIn)*2*m.ReadBuffer + 3*m.ReadBuffer + writerBuffer
-+//
-+// textWriterBuffer is the sum of the per-TEXT-column LOB writer buffers the
-+// DataNode keeps while the merge runs. Those buffers live beside the converted
-+// batch (the stored TEXT column is only a reference), so they are not covered by
-+// the batch terms above and must be charged explicitly.
-+func (m Model) ImportWorkingSet(writerBuffer, textWriterBuffer int64, fanIn int) int64 {
-+	footprint := int64(fanIn)*2*m.ReadBuffer + 3*m.ReadBuffer + writerBuffer + textWriterBuffer
- 	return int64(m.Expansion() * float64(footprint))
- }
- 
-```
-
-**File**: `internal/util/importutilv2/reshardmem/reshardmem_test.go` (modified, +17/-0)
-```diff
-@@ -99,3 +99,20 @@ func TestExpansionFactorFallback(t *testing.T) {
- 	require.Equal(t, DefaultExpansionFactor, Model{}.Expansion())
- 	require.Equal(t, 2.5, Model{ExpansionFactor: 2.5}.Expansion())
- }
-+
-+// TestImportWorkingSet pins the final-merge charge: one reader per merge input
-+// at 2R each, the merge output at 3R, the segment writer buffer, and the
-+// per-TEXT-column LOB writer buffers. Every term is scaled by the expansion
-+// factor, the same one the reshard charge uses.
-+func TestImportWorkingSet(t *testing.T) {
-+	const mib = int64(1024 * 1024)
-+	m := Model{ReadBuffer: 16 * mib, ExpansionFactor: 1.5}
-+	scaled := func(footprint int64) int64 { return int64(1.5 * float64(footprint)) }
-+
-+	// fanIn 2: 2 readers x 2R + 3R output + 32 MiB writer buffer.
-+	base := 2*2*16*mib + 3*16*mib + 32*mib
-+	require.Equal(t, scaled(base), m.ImportWorkingSet(32*mib, 0, 2))
-+	// Three TEXT columns at the 16 MiB flush threshold add 48 MiB.
-+	require.Equal(t, scaled(base+48*mib), m.ImportWorkingSet(32*mib, 48*mib, 2))
-+	require.Greater(t, m.ImportWorkingSet(32*mib, 48*mib, 2), m.ImportWorkingSet(32*mib, 0, 2))
-+}
++def test_pyudf_vector_recall_types_preserve_scalar_rerank(probe_connection, kind, metric, record_property):
++    """All candidates are retained; vector encoding must not alter scalar/ID alignment."""
++    with pyudf_probe(*probe_connection, vector_kind=kind, metric=metric) as probe:
++        probe.check(with_udf=False, nq=2)
++        probe.check(nq=2)
++        probe.client.release_collection(probe.name)
++        probe.client.load_collection(probe.name)
++        probe.check(wi
 ```
 
 ---
 
-### Incident Patch 3: `bb770c18` (2026-11-10)
-**Commit Message**: fix: preserve rewritten FunctionChain scores in reduction and fusion (#55232)
+### Incident Patch 2: `6666a559` (2026-11-12)
+**Commit Message**: test: fix snapshot checker drain and query pagination assumptions (#55270)
 
-Skip metric-based distance restoration when L0/L1 chains write `$score`.
-Use shared score metadata so aggregation, element collapse, and
-HybridSearch reranking follow the effective score direction while
-preserving existing behavior for untouched metric scores.
+Two independent test assumptions caused nightly failures: snapshot
+restore may poll for 300 seconds while checker teardown waits only 180
+seconds, and pagination over repeated price values assumes a
+deterministic order among equal keys.
 
-With `norm_score=true`, normalize rewritten scores using `0.5 +
-atan(score) / π`, regardless of the original metric. This also changes
-normalization for rewritten IP/COSINE/BM25 scores. With normalization
-disabled, preserve rewritten scores in their original scale.
+Allow a shared, bounded 600-second checker drain deadline for in-flight
+restore and cleanup. Use the unique primary key for the pagination case
+and verify the exact complete ordered ID sequence across all 3,200 rows.
+Keep operation success thresholds and the stuck-thread failure intact.
 
-Document the negative L2 distance supplied to L0/L1 and the return
-semantics after a score write. Add Go regressions and Python e2e
-coverage for score preservation, group-by, pagination, nested
-`top_hits`, element collapse, and hybrid fusion.
+Validation:
+- Python SDK E2E: pagination, ascending order, and descending order all
+pass (3/3).
+- Controlled clock validation reproduces the old 180-second failure for
+a 253-second operation, verifies successful draining, and verifies that
+hung threads still fail under one shared deadline.
+- Ruff 0.15.11 lint and format checks, Python compilation/collection,
+and git diff checks pass.
+- The repository license configuration covers internal Go files; no
+matching files are changed.
 
-Validation: targeted Go regression tests passed; 164 Python e2e cases
-passed against a locally built Milvus containing the fixes (0 failures,
-0 skips).
+The full chaos scenario has not been rerun. The drain check verifies
+harness behavior, not snapshot correctness u
 
-issue: #55212
-
-Signed-off-by: junjie.jiang <[REDACTED_EMAIL]>
-
-**File**: `docs/design-docs/design_docs/20260602-struct_hybrid_search.md` (modified, +4/-1)
+**File**: `tests/python_client/chaos/chaos_commons.py` (modified, +3/-1)
 ```diff
-@@ -282,7 +282,10 @@ rerank.
-    and search iterator.
- 8. `sum` and `topk_sum` collapse strategies are valid only for positively
-    related metrics such as `IP` and `COSINE`. Negative distance metrics such as
--   `L2` must use `max`, `avg`, or `topk_avg`.
-+   `L2` must use `max`, `avg`, or `topk_avg`. This restriction uses the original
-+   search metric, even if an L0/L1 chain rewrites `$score`. PreExecute checks
-+   known metrics; runtime applies the same check when the metric is resolved
-+   from search results.
+@@ -9,7 +9,9 @@
+ from utils.util_log import test_log as log
+ from yaml import full_load
  
- ## Result Semantics
+-DEFAULT_MONITOR_JOIN_TIMEOUT_SECONDS = 180
++# Snapshot restore can poll for 300 seconds before verification and cleanup.
++# Keep a bounded shared drain deadline that covers an in-flight restore.
++DEFAULT_MONITOR_JOIN_TIMEOUT_SECONDS = 600
  
+ 
+ def check_config(chaos_config):
 ```
 
-**File**: `docs/design-docs/design_docs/20260624-function-chain-api.md` (modified, +38/-1)
+**File**: `tests/python_client/milvus_client/test_milvus_client_query_order.py` (modified, +9/-13)
 ```diff
-@@ -286,13 +286,50 @@ physical fields:    [metadata.fieldID]
+@@ -464,9 +464,10 @@ def test_query_order_by_bool_field(self):
  
- Runtime behavior:
+     @pytest.mark.tags(CaseLabel.L2)
+     def test_query_order_by_pagination(self):
+-        """OB-020~023: Pagination with a single ORDER BY field."""
++        """OB-020~023: Pagination with a unique ORDER BY field."""
+         client = self._client()
+-        order_by = [{"field": "price", "order": "asc"}]
++        # Equal prices have no stable order across independent page requests.
++        order_by = [{"field": "id", "order": "asc"}]
  
--1. At rerank input construction, `$score` is initialized from the current search result score/distance.
-+1. At rerank input construction, `$score` is initialized from the current stage's search result. Its sign and meaning depend on the stage and earlier score writes, as specified below.
- 2. Functions can read `$score` through `col("$score")`.
- 3. `map("$score", expr)` overwrites the current score register.
- 4. `sort(col("$score"), desc=True)` sorts candidates by the current rewritten score.
- 5. The final `$score` is serialized through existing result score/distance fields.
- 6. SDK users observe it as the normal hit distance/score value.
+         # --- OB-020: Page 1 and Page 2 consistency ---
+         page1 = self.query(
+@@ -494,14 +495,14 @@ def test_query_order_by_pagination(self):
+         ids1 = {r["id"] for r in page1}
+         ids2 = {r["id"] for r in page2}
+         assert ids1.isdisjoint(ids2), f"Overlap between pages: {ids1 & ids2}"
+-        assert page1[-1]["price"] <= page2[0]["price"], (
+-            f"Pages not contiguous: page1 last {page1[-1]['price']} > page2 first {page2[0]['price']}"
++        assert page1[-1]["id"] <= page2[0]["id"], (
++            f"Pages not contiguous: page1 last {page1[-1]['id']} > page2 first {page2[0]['id']}"
+         )
  
-+#### L2 distance and score writes
-+
-+Here **L2 metric** means the distance metric, not the **L2 rerank stage**.
-+For an L2 metric distance `d >= 0`, segcore supplies `-d` to QueryNode so
-+internal reduction can consistently select larger scores first.
-+
-+- **L0 input:** `$score = -d`, not the positive distance `d`.
-+- **L1 input:** `$score` carries the output of L0 through cross-segment reduction.
-+  If L0 did not write `$score`, it is still `-d`; otherwise it is the value
-+  produced by L0. There is no distance restoration between L0 and L1.
-+- **Proxy reduction output:** if neither L0 nor L1 writes `$score`, Proxy
-+  restores `-d` to the positive distance `d`. If either stage writes `$score`,
-+  Proxy preserves the resulting value and treats it as a larger-is-better
-+  business score, regardless of the original metric.
-+- **L2 rerank input:** ordinary Search receives the Proxy reduction output
-+  described above. Further L2 operators can transform that value. HybridSearch
-+  consumes each sub-search's score through its configured fusion/rerank steps.
-+
-+Writing `$score` changes this contract even when the expression only scales
-+the existing value or leaves it numerically unchanged. Writing only a temporary
-+column, or only sorting/limiting candidates, does not count as a score write.
-+L0/L1 outputs must respect the larger-is-better convention used by downstream
-+reducers; QueryNode restores score-descending order after these chains.
-+
-+For an original L2 distance `d = 4`, the following ordinary Search results
-+assume no later score transformation:
-+
-+| L0/L1 operation | Score after L0/L1 | Returned hit distance/score |
-+|----------------|------------------|----------------------------|
-+| No write to `$score` | `-4` | `4` (distance restored) |
-+| Write `$score * 1.2` once | `-4.8` | `-4.8` (rewritten score preserved) |
-+| Write `$score` unchanged | `-4` | `-4` (still a score write) |
-+| Replace `$score` with `2 * ts`, where `ts = 10` | `20` | `20` |
-+
-+The result field may still be named `distance` in the SDK, but after a score
-+write it contains the rewritten score, not necessarily a metric distance.
-+
- Representation:
+         # --- OB-021: Multi-page full traversal ---
+         page_size = 100
+         all_ids = set()
+-        all_prices = []
++        ordered_ids = []
+         offset = 0
+         while True:
+             page = self.query(
+@@ -519,15 +520,12 @@ def test_query_order_by_pagination(self):
+             page_ids = {r["id"] for r in page}
+             assert page_ids.isdisjoint(all_ids), f"Duplicate ids at offset {offset}"
+             all_ids.update(page_ids)
+-            all_prices.extend([r["price"] for r in page])
++            ordered_ids.extend([r["id"] for r in page])
+             offset += page_size
+             if offset > default_nb + 1000:
+                 break
+         assert len(all_ids) == default_nb, f"Expected {default_nb} total rows, got {len(all_ids)}"
+-        for i in range(len(all_prices) - 1):
+-            assert all_prices[i] <= all_prices[i + 1], (
+-                f"Global sort broken at index {i}: {all_prices[i]} > {all_prices[i + 1]}"
+-            )
++        assert ordered_ids == list(range(default_nb)), "Pagination must return every ID exactly once in order"
  
- | Layer | Representation |
+         # --- OB-022: Offset exceeds total rows (but within topK cap 16384) ---
+         # Data has 3200 rows, offset=4000 is beyond data but offset+limit=4010 < 16384
+@@ -555,9 +553,7 @@ def test_query_order_by_pagination(self):
+             consistency_level="Strong",
+         )[0]
+         assert len(res) == default_nb
+-        prices = [r["price"] for r in res]
+-        for i in range(len(prices) - 1):
+-            assert prices[i] <= prices[i + 1]
++        assert [r["id"] for r in res] == list(range(default_nb))
+         log.info(f"OB-023: limit=16000, returned {len(res)} rows (total={default_nb})")
+ 
+     # ==================== 5.5 L1: Nullable Field Handling ====================
 ```
 
-**File**: `docs/design-docs/design_docs/20260818-hybrid-search-function-chain.md` (modified, +26/-0)
+---
+
+### Incident Patch 3: `584004ae` (2026-11-12)
+**Commit Message**: fix: restore TSan compatibility and enforce native GCC checks (#55129)
+
+## What changed
+
+Fix LLVM 20 TSan build and runtime compatibility after #53895.
+
+- Keep libomp and libarcher interceptor exclusions consistent to prevent
+false double-lock reports, while retaining Archer synchronization
+annotations.
+- Add distinct-lock and memcpy race controls to guard against missed
+application races.
+- Fix Clang list-initialization narrowing errors in bitmap and BSON
+index resource accounting.
+- Skip the shared precompiled header for VectorMemBuilder.cpp, whose
+source-specific definitions and SSE4.2 options differ from the PCH.
+
+- Treat narrowing conversions and invalid precompiled headers as errors
+for first-party Linux/GCC C++ targets, including unit tests and
+benchmarks. Exclude third-party targets and generated protobuf targets;
+keep TSan disabled in ordinary PR builds.
+- Run lightweight compiler regression fixtures through the existing
+cppcheck target, covering valid PCH use, both rejected error cases,
+nested targets, and C/generated/vendor exclusions.
+
+issue: #53763
+
+## Verification
+
+- GCC 12.3 compiler regression fixtures passed: six positive controls
+and two expected compilation failu
+
+**File**: `Makefile` (modified, +1/-0)
 ```diff
-@@ -505,6 +505,32 @@ score after that sub-search's L0 and L1 stages:
- ANN score_i -> L0_i -> reduce_i -> L1_i -> Proxy sub-result_i -> top-level fusion
- ```
+@@ -229,6 +229,7 @@ tools/bin/revive: tools/check/go.mod
+ cppcheck:
+ 	@#(env bash ${PWD}/scripts/core_build.sh -l)
+ 	@(env bash ${PWD}/scripts/check_cpp_fmt.sh)
++	@cmake -DWORK_DIR=$(PWD)/cmake_build/compile-checks -P $(PWD)/internal/core/unittest/check_compile_options.cmake
  
-+For the **L2 distance metric**, a sub-search's L0 input `$score` is the negated
-+distance `-d`. L1 reads L0's resulting score; if L0 did not write `$score`, this
-+is still `-d`. A chain that writes `$score * 1.2` therefore produces `-1.2d`,
-+which Proxy preserves as the sub-search's business score rather than flipping
-+it to `1.2d`. If neither L0 nor L1 writes `$score`, Proxy restores the raw L2
-+distance to `d`. These are inputs to subsequent collapse and fusion, not a
-+promise that HybridSearch returns them unchanged. See the ordinary Search
-+API's [L2 distance and score-write contract](20260624-function-chain-api.md#l2-distance-and-score-writes).
-+
-+Proxy derives whether each sub-search wrote `$score` from that sub-search's
-+L0/L1 outputs. Proxy reduce emits the original metric, the score-rewritten
-+flag, and the effective score direction together for each sub-search. Aggregation
-+uses this direction for default `top_hits` score ordering, and row-level element
-+collapse uses it to select the best elements. Rerank consumes the same metadata
-+and passes the rewritten state to Merge through runtime build context. Explicit
-+`top_hits` sort directions remain authoritative. Internal reduction continues to
-+compare larger-is-better scores before distance restoration.
-+Rewritten scores are larger-is-better business values. With `norm_score=true`,
-+Merge normalizes them with the IP-style formula `0.5 + atan(score) / pi`,
-+regardless of the original metric. With `norm_score=false`, Merge preserves
-+rewritten scores in their original scale; a mixture of raw
-+distances and business scores converts only the raw distances to the
-+larger-is-better direction. Untouched metric scores retain their existing
-+normalization and ordering rules. Legacy weighted fusion uses the same state;
-+RRF continues to use ranks. The original metric and public protobuf are unchanged.
-+
- L0 is segment-local. L1 sees the QueryNode worker's cross-segment reduced
- candidates; an L1 `limit` therefore changes that sub-search's candidate budget
- before Proxy-level distributed reduction and top-level fusion. Existing
+ rustfmt:
+ 	@echo  "Running cargo format"
 ```
 
-**File**: `internal/proxy/dql/search_aggregation_metric_test.go` (modified, +40/-7)
+**File**: `docs/design-docs/design_docs/20260928-native-thread-sanitizer.md` (modified, +9/-4)
 ```diff
-@@ -18,8 +18,22 @@ import (
- )
+@@ -124,10 +124,15 @@ CMake also installs `libomp.so.5`, `libarcher.so`, the shared compiler-rt and a
+ `milvus-archer` marker. Launchers activate OMPT through `OMP_TOOL=enabled` and
+ an absolute `OMP_TOOL_LIBRARIES` path.
  
- func TestSearchAggregationPipelineMetricDirection(t *testing.T) {
--	for _, metricType := range []string{metric.L2, metric.HAMMING, metric.IP, metric.COSINE} {
--		t.Run(metricType, func(t *testing.T) {
-+	for _, tc := range []struct {
-+		name       string
-+		metricType string
-+		rewritten  bool
-+		direction  string
-+	}{
-+		{name: "L2", metricType: metric.L2},
-+		{name: "HAMMING", metricType: metric.HAMMING},
-+		{name: "IP", metricType: metric.IP},
-+		{name: "COSINE", metricType: metric.COSINE},
-+		{name: "L2 rewritten", metricType: metric.L2, rewritten: true},
-+		{name: "L2 rewritten explicit asc", metricType: metric.L2, rewritten: true, direction: "asc"},
-+		{name: "L2 rewritten explicit desc", metricType: metric.L2, rewritten: true, direction: "desc"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			metricType := tc.metricType
- 			pk := &schemapb.FieldSchema{FieldID: 100, Name: "pk", DataType: schemapb.DataType_Int64, IsPrimaryKey: true}
- 			task := &SearchTask{
- 				ctx: context.Background(),
-@@ -44,6 +58,17 @@ func TestSearchAggregationPipelineMetricDirection(t *testing.T) {
- 					},
- 				}},
- 			}
-+			if tc.rewritten {
-+				task.request.FunctionChains = []*schemapb.FunctionChain{{
-+					Stage: schemapb.FunctionChainStage_FunctionChainStageL0Rerank,
-+					Ops:   []*schemapb.FunctionChainOp{{Op: "map", Outputs: []string{"$score"}}},
-+				}}
-+			}
-+			if tc.direction != "" {
-+				sort := []*commonpb.SortSpec{{FieldName: "_score", Direction: tc.direction}}
-+				task.request.SearchAggregation.TopHits.Sort = sort
-+				task.request.SearchAggregation.SubAggregation.TopHits.Sort = sort
-+			}
- 			require.NoError(t, task.initSearchAggregation())
- 			task.Topk = task.aggCtx.DerivedTopK
- 			task.queryInfos = []*planpb.QueryInfo{{
-@@ -54,13 +79,13 @@ func TestSearchAggregationPipelineMetricDirection(t *testing.T) {
- 			require.NoError(t, err)
+-The installed `tsan.supp` suppresses reports originating in uninstrumented
+-`libomp` internals by library name. Interceptor reports from Milvus and other
+-libraries remain enabled. A memcpy race probe checks this along with the
+-existing ordinary load/store and OpenMP probes.
++The installed `tsan.supp` ignores interceptor calls originating in uninstrumented
++`libomp` and `libarcher` internals by library name. Both libraries must be listed:
++Archer's mutex unlock can be tail-called, leaving a return address in `libomp`,
++while its matching lock has a return address in `libarcher`. Ignoring only one
++side leaves TSan with an incomplete lock history. Archer's explicit
++happens-before annotations remain active. Interceptor reports from Milvus and
++other libraries remain enabled. The probes check ordinary load/store and memcpy
++races, OpenMP synchronization, races under distinct OpenMP locks, and memcpy
++races inside OpenMP regions.
  
- 			rawScores := []float32{0.1, 0.2, 0.3, 0.9}
--			if metric.PositivelyRelated(metricType) {
-+			if tc.rewritten || metric.PositivelyRelated(metricType) {
- 				rawScores = []float32{0.9, 0.8, 0.3, 0.1}
- 			}
- 			shards := make([]*internalpb.SearchResults, 2)
- 			for i := range shards {
- 				scores := []float32{rawScores[i], rawScores[i+2]}
--				if !metric.PositivelyRelated(metricType) {
-+				if !tc.rewritten && !metric.PositivelyRelated(metricType) {
- 					// segcore normalizes distances to larger-is-better before reduce.
- 					for j := range scores {
- 						scores[j] = -scores[j]
-@@ -93,13 +118,21 @@ func TestSearchAggregationPipelineMetricDirection(t *testing.T) {
- 			require.Equal(t, int64(4), buckets[0].GetCount())
- 			hits := buckets[0].GetHits()
- 			require.Len(t, hits, 2)
-+			wantPKs := []int64{1, 2}
-+			if tc.direction == "asc" {
-+				wantPKs = []int64{4, 3}
-+			}
- 			for i, hit := range hits {
--				require.Equal(t, int64(i+1), hit.GetIntPk())
--				require.Equal(t, rawScores[i], hit.GetScore())
-+				require.Equal(t, wantPKs[i], hit.GetIntPk())
-+				require.Equal(t, rawScores[wantPKs[i]-1], hit.GetScore())
- 			}
- 			sub := buckets[0].GetSubGroups()
- 			require.Len(t, sub, 2)
--			for i, wantPK := range []int64{3, 1} { // blue, red
-+			leafPKs := []int64{3, 1} // blue, red
-+			if tc.direction == "asc" {
-+				leafPKs = []int64{4, 2}
-+			}
-+			for i, wantPK := range leafPKs {
- 				require.Len(t, sub[i].GetHits(), 1)
- 				require.Equal(t, wantPK, sub[i].GetHits()[0].GetIntPk())
- 				require.Equal(t, rawScores[wantPK-1], sub[i].GetHits()[0].GetScore())
+ External image builders must set `MILVUS_JEMALLOC_LIB` to an empty build
+ argument, `MILVUS_ARCHER_LIB=/milvus/lib/libarcher.so`, and `MILVUS_TSAN_OPTIONS`
 ```
 
-**File**: `internal/proxy/dql/search_pipeline.go` (modified, +85/-46)
+**File**: `internal/core/CMakeLists.txt` (modified, +9/-0)
 ```diff
-@@ -171,7 +171,24 @@ func NewNode(info *nodeDef, t *SearchTask) (*Node, error) {
- 	return &n, nil
+@@ -425,6 +425,15 @@ if ( BUILD_UNIT_TEST STREQUAL "ON" )
+     add_subdirectory(benchmark)
+ endif ()
+ 
++# Use the same checks in normal, verifier and coverage builds. These operate
++# on first-party targets only; no additional compiler or sanitizer build runs.
++include(CompileChecks)
++milvus_enable_cpp_compile_checks("${CMAKE_CURRENT_SOURCE_DIR}/src")
++if ( BUILD_UNIT_TEST STREQUAL "ON" )
++    milvus_enable_cpp_compile_checks("${CMAKE_CURRENT_SOURCE_DIR}/unittest")
++    milvus_enable_cpp_compile_checks("${CMAKE_CURRENT_SOURCE_DIR}/benchmark")
++endif ()
++
+ add_custom_target( Clean-All COMMAND ${CMAKE_BUILD_TOOL} clean )
+ 
+ # **************************** Install ****************************
+```
+
+**File**: `internal/core/cmake/CompileChecks.cmake` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++# Licensed to the LF AI & Data foundation under one
++# or more contributor license agreements. See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership. The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License. You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++include_guard(GLOBAL)
++
++# Apply after target creation so new first-party targets inherit the checks
++# without changing third-party build flags or generated protobuf sources.
++function(milvus_enable_cpp_compile_checks directory)
++    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR
++       NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
++        return()
++    endif()
++    if(directory STREQUAL "${MILVUS_SOURCE_DIR}/src/pb")
++        return()
++    endif()
++
++    get_property(targets DIRECTORY "${directory}" PROPERTY BUILDSYSTEM_TARGETS)
++    foreach(target IN LISTS targets)
++        get_target_property(type "${target}" TYPE)
++        if(type MATCHES "^(OBJECT_LIBRARY|STATIC_LIBRARY|SHARED_LIBRARY|MODULE_LIBRARY|EXECUTABLE)$")
++            target_compile_options("${target}" PRIVATE
++                "$<$<COMPILE_LANGUAGE:CXX>:-Werror=narrowing>"
++                "$<$<COMPILE_LANGUAGE:CXX>:-Werror=invalid-pch>")
++        endif()
++    endforeach()
++    get_property(children DIRECTORY "${directory}" PROPERTY SUBDIRECTORIES)
++    foreach(child IN LISTS children)
++        milvus_enable_cpp_compile_checks("${child}")
++    endforeach()
++endfunction()
+```
+
+**File**: `internal/core/src/index/CMakeLists.txt` (modified, +4/-1)
+```diff
+@@ -15,8 +15,11 @@ list(FILTER SOURCE_FILES EXCLUDE REGEX "^test_utils/")
+ 
+ # Match Knowhere's layout for the inline reservation release used by empty
+ # embedding lists, without changing unrelated consumers' header definitions.
++# Its source-specific definitions and target features differ from the target's
++# PCH, so compile this translation unit without the shared precompiled header.
+ set_source_files_properties(vector/VectorMemBuilder.cpp
+-    PROPERTIES COMPILE_DEFINITIONS NOT_COMPILE_FOR_SWIG)
++    PROPERTIES COMPILE_DEFINITIONS NOT_COMPILE_FOR_SWIG
++               SKIP_PRECOMPILE_HEADERS ON)
+ if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+     set_property(SOURCE vector/VectorMemBuilder.cpp APPEND
+         PROPERTY COMPILE_OPTIONS -msse4.2)
+```
+
+**File**: `internal/core/src/index/LoadResource.cpp` (modified, +3/-2)
+```diff
+@@ -619,8 +619,9 @@ LegacyScalarIndexLoadResourceAsync(
+                 .value_or(false)) {
+             resident = SaturatingAdd(
+                 resident,
+-                SaturatingMultiply(uint64_t{std::max<int64_t>(0, rows)},
+-                                   sizeof(void*)));
++                SaturatingMultiply(
++                    static_cast<uint64_t>(std::max<int64_t>(0, rows)),
++                    sizeof(void*)));
+         }
+         request.final_memory_cost =
+             std::max(request.final_memory_cost,
+```
+
+**File**: `internal/core/src/index/LoadResourceTest.cpp` (modified, +4/-4)
+```diff
+@@ -500,13 +500,13 @@ TEST(LegacyLoadResourceTest, SegmentMetadataPreservesFileAwareEstimates) {
+                 translator.EstimatedResources();
+             const auto transient = private_overhead + shared_overhead;
+             EXPECT_EQ(resident,
+-                      (cachinglayer::ResourceUsage{expected.final_memory_cost,
+-                                                   expected.final_disk_cost}));
++                      (cachinglayer::ResourceUsage(expected.final_memory_cost,
++                                                   expected.final_disk_cost)));
+             EXPECT_EQ(
+                 transient,
+-                (cachinglayer::ResourceUsage{
++                (cachinglayer::ResourceUsage(
+                     expected.max_memory_cost - expected.final_memory_cost,
+-                    2 * expected.max_disk_cost - expected.final_disk_cost}));
++                    2 * expected.max_disk_cost - expected.final_disk_cost)));
+         }
+     }
  }
- 
-+// searchScoreInfo describes scores after Proxy reduction and distance restoration.
-+// Internal reduction still compares larger-is-better scores before restoration.
-+type searchScoreInfo struct {
-+	MetricType     string
-+	Rewritten      bool
-+	LargerIsBetter bool
-+}
-+
-+func newSearchScoreInfo(metricType string, rewritten bool) searchScoreInfo {
-+	return searchScoreInfo{
-+		MetricType:     metricType,
-+		Rewritten:      rewritten,
-+		LargerIsBetter: rewritten || metric.PositivelyRelated(metricType),
-+	}
-+}
-+
- type searchReduceOperator struct {
-+	scoreRewritten      bool
- 	traceCtx            context.Context
- 	primaryFieldSchema  *schemapb.FieldSchema
- 	nq                  int64
-@@ -196,6 +213,7 @@ func newSearchReduceOperator(t *SearchTask, params map[string]any) (operator, er
- 		offset = v
- 	}
- 	return &searchReduceOperator{
-+		scoreRewritten:      chain.QueryNodeChainsWriteScore(t.request.GetFunctionChains()),
- 		traceCtx:            t.TraceCtx(),
- 		primaryFieldSchema:  pkField,
- 		nq:                  t.GetNq(),
-@@ -216,15 +234,16 @@ func (op *searchReduceOperator) run(ctx context.Context, span trace.Span, inputs
- 	metricType := getMetricType(toReduceResults)
- 	result, err := reduceResults(
- 		op.traceCtx, toReduceResults, op.nq, op.topK, op.offset,
--		metricType, op.primaryFieldSchema.GetDataType(), op.queryInfos[0], false, op.isSearchAggregation, op.collectionID, op.partitionIDs)
-+		metricType, op.primaryFieldSchema.GetDataType(), op.queryInfos[0], false, op.isSearchAggregation, op.collectionID, op.partitionIDs, op.scoreRewritten)
- 	if err != nil {
- 		return nil, err
- 	}
- 	fillFieldNames(op.collSchema, result.GetResults())
--	return []any{[]*milvuspb.SearchResults{result}, []string{metricType}}, nil
-+	return []any{[]*milvuspb.SearchResults{result}, []searchScoreInfo{newSearchScoreInfo(metricType, op.scoreRewritten)}}, nil
- }
- 
- type hybridSearchReduceOperator struct {
-+	scoresRewritten    []bool
- 	traceCtx           context.Context
- 	subReqs            []*internalpb.SubSearchRequest
- 	primaryFieldSchema *schemapb.FieldSchema
-@@ -240,6 +259,7 @@ func newHybridSearchReduceOperator(t *SearchTask, _ map[string]any) (operator, e
- 		return nil, err
- 	}
- 	return &hybridSearchReduceOperator{
-+		scoresRewritten:    t.subSearchScoresRewritten(),
- 		traceCtx:           t.TraceCtx(),
- 		subReqs:            t.GetSubReqs(),
- 		primaryFieldSchema: pkField,
-@@ -280,22 +300,22 @@ func (op *hybridSearchReduceOperator) run(ctx context.Context, span trace.Span,
- 	}
- 
- 	multipleMilvusResults := make([]*milvuspb.SearchResults, len(op.subReqs))
--	searchMetrics := []string{}
-+	scoreInfos := make([]searchScoreInfo, 0, len(op.subReqs))
- 	for index, internalResults := range multipleInternalResults {
- 		subReq := op.subReqs[index]
- 		// Since the metrictype in the request may be empty, it can only be obtained from the result
- 		subMetricType := getMetricType(internalResults)
- 		result, err := reduceResults(
- 			op.traceCtx, internalResults, subReq.GetNq(), subReq.GetTopk(), subReq.GetOffset(), subMetricType,
--			op.primaryFieldSchema.GetDataType(), op.queryInfos[index], true, false, op.collectionID, op.partitionIDs)
-+			op.primaryFieldSchema.GetDataType(), op.queryInfos[index], true, false, op.collectionID, op.partitionIDs, scoreRewrittenAt(op.scoresRewritten, index))
- 		if err != nil {
- 			return nil, err
- 		}
- 		fillFieldNames(op.collSchema, result.GetResults())
--		searchMetrics = append(searchMetrics, subMetricType)
-+		scoreInfos = append(scoreInfos, newSearchScoreInfo(subMetricType, scoreRewrittenAt(op.scoresRewritten, index)))
- 		multipleMilvusResults[index] = result
- 	}
--	return []any{multipleMilvusResults, searchMetrics}, nil
-+	return []any{multipleMilvusResults, scoreInfos}, nil
- }
- 
- type elementBestCollapseOperator struct {
-@@ -310,6 +330,18 @@ func newElementBestCollapseOperator(t *SearchTask, _ map[string]any) (operator,
- 	}, nil
- }
- 
-+func (t *SearchTask) subSearchScoresRewritten() []bool {
-+	rewritten := make([]bool, len(t.request.GetSubReqs()))
-+	for index, subReq := range t.request.GetSubReqs() {
-+		rewritten[index] = chain.QueryNodeChainsWriteScore(subReq.GetFunctionChains())
-+	}
-+	return rewritten
-+}
-+
-+func scoreRewrittenAt(rewritten []bool, index int) bool {
-+	return index < len(rewritten) && rewritten[index]
-+}
-+
- func (t *SearchTask) hybridCollapseConfigs() []elementCollapseConfig {
- 	if len(t.hybridSubSearchInfos) == 0 {
- 		return nil
-@@ -335,12 +367,12 @@ func (op *elementBestCollapseOperator) run(ctx context.Context, span trace.Span,
- 	if !ok {
- 		return nil, merr.WrapErrParameterInvalidMsg("element best collapse: inputs[0] must be []*SearchResults, got %T", inputs[0])
- 	}
--	metrics, ok := inputs[1].([]string)
-+	scoreInfos, ok := inputs[1].([]searchScoreInfo)
- 	if !ok {
--		return nil, merr.WrapErrParameterInvalidMsg("element best collapse: inputs[1] must be []string, got %T", inputs[1])
-+		return nil, m
 ```
 
-**File**: `internal/proxy/dql/search_pipeline_hybrid_function_chain_test.go` (modified, +11/-11)
+**File**: `internal/core/src/index/scalar/json/JsonProjectedHybridIndexBuilderTest.cpp` (modified, +12/-12)
 ```diff
-@@ -188,7 +188,7 @@ func (s *SearchPipelineSuite) TestHybridFunctionChainRequestLimitFallback() {
- 			}
- 			opFactory[hybridSearchReduceOp] = func(_ *SearchTask, _ map[string]any) (operator, error) {
- 				return searchPipelineTestOperator(func(context.Context, trace.Span, ...any) ([]any, error) {
--					return []any{queryResults, []string{metric.IP, metric.IP}}, nil
-+					return []any{queryResults, testSearchScoreInfos(metric.IP, metric.IP)}, nil
- 				}), nil
- 			}
- 			ops := append([]*schemapb.FunctionChainOp{{
-@@ -365,7 +365,7 @@ func (s *SearchPipelineSuite) TestHybridFunctionChainElementLevelPreservesNative
- 
- 			opFactory[hybridSearchReduceOp] = func(_ *SearchTask, _ map[string]any) (operator, error) {
- 				return searchPipelineTestOperator(func(context.Context, trace.Span, ...any) ([]any, error) {
--					return []any{reduced, []string{"IP", "IP"}}, nil
-+					return []any{reduced, testSearchScoreInfos("IP", "IP")}, nil
- 				}), nil
- 			}
- 
-@@ -423,7 +423,7 @@ func (s *SearchPipelineSuite) TestHybridFunctionChainUsesRuntimeMetricsInSubRequ
- 	}
- 	opFactory[hybridSearchReduceOp] = func(_ *SearchTask, _ map[string]any) (operator, error) {
- 		return searchPipelineTestOperator(func(context.Context, trace.Span, ...any) ([]any, error) {
--			return []any{reduced, []string{metric.IP, metric.L2}}, nil
-+			return []any{reduced, testSearchScoreInfos(metric.IP, metric.L2)}, nil
- 		}), nil
- 	}
- 
-@@ -505,7 +505,7 @@ func (s *SearchPipelineSuite) TestHybridFunctionChainOwnsSortOffsetAndRounding()
- 	}
- 	opFactory[hybridSearchReduceOp] = func(_ *SearchTask, _ map[string]any) (operator, error) {
- 		return searchPipelineTestOperator(func(context.Context, trace.Span, ...any) ([]any, error) {
--			return []any{reduced, []string{metric.IP, metric.IP}}, nil
-+			return []any{reduced, testSearchScoreInfos(metric.IP, metric.IP)}, nil
- 		}), nil
- 	}
- 
-@@ -595,7 +595,7 @@ func (s *SearchPipelineSuite) TestHybridFunctionChainGroupByDoesNotOverrideFinal
- 	}
- 	opFactory[hybridSearchReduceOp] = func(_ *SearchTask, _ map[string]any) (operator, error) {
- 		return searchPipelineTestOperator(func(context.Context, trace.Span, ...any) ([]any, error) {
--			return []any{reduced, []string{metric.IP, metric.IP}}, nil
-+			return []any{reduced, testSearchScoreInfos(metric.IP, metric.IP)}, nil
- 		}), nil
- 	}
- 
-@@ -687,9 +687,9 @@ func (s *SearchPipelineSuite) TestHybridFunctionChainRuntimeInvariantErrors() {
- 
- 	s.Run("runtime metric count mismatch is system error", func() {
- 		_, err := op.run(context.Background(), s.span,
--			[]*milvuspb.SearchResults{valid1, valid2}, []string{metric.IP})
-+			[]*milvuspb.SearchResults{valid1, valid2}, testSearchScoreInfos(metric.IP))
- 		s.ErrorIs(err, merr.ErrServiceInternal)
--		s.ErrorContains(err, "input count 2 != expected count 1")
-+		s.ErrorContains(err, "score info length (1) does not match results length (2)")
- 	})
- 
- 	s.Run("element index outside Int32 range is system error", func() {
-@@ -699,23 +699,23 @@ func (s *SearchPipelineSuite) TestHybridFunctionChainRuntimeInvariantErrors() {
- 			&schemapb.LongArray{Data: []int64{int64(math.MaxInt32) + 1}},
- 		)
- 		_, err := op.run(context.Background(), s.span,
--			[]*milvuspb.SearchResults{outOfRange, valid2}, []string{metric.IP, metric.IP})
-+			[]*milvuspb.SearchResults{outOfRange, valid2}, testSearchScoreInfos(metric.IP, metric.IP))
- 		s.ErrorIs(err, merr.ErrServiceInternal)
- 		s.ErrorContains(err, "out of Int32 range")
- 	})
- 
- 	s.Run("missing id inside chain input is function failure", func() {
- 		missingID := makeResult(nil, []float32{0.9}, nil)
- 		_, err := op.run(context.Background(), s.span,
--			[]*milvuspb.SearchResults{missingID, valid2}, []string{metric.IP, metric.IP})
-+			[]*milvuspb.SearchResults{missingID, valid2}, testSearchScoreInfos(metric.IP, metric.IP))
- 		s.ErrorIs(err, merr.ErrFunctionFailed)
- 		s.ErrorContains(err, "missing $id column")
- 	})
- 
- 	s.Run("missing score inside chain input is function failure", func() {
- 		missingScore := makeResult(testSearchResultIDs(1), nil, nil)
- 		_, err := op.run(context.Background(), s.span,
--			[]*milvuspb.SearchResults{missingScore, valid2}, []string{metric.IP, metric.IP})
-+			[]*milvuspb.SearchResults{missingScore, valid2}, testSearchScoreInfos(metric.IP, metric.IP))
- 		s.ErrorIs(err, merr.ErrFunctionFailed)
- 		s.ErrorContains(err, "missing $score column")
- 	})
-@@ -768,7 +768,7 @@ func (s *SearchPipelineSuite) TestHybridFunctionChainEmptyResultValidatesDownstr
- 	}
- 	opFactory[hybridSearchReduceOp] = func(_ *SearchTask, _ map[string]any) (operator, error) {
- 		return searchPipelineTestOperator(func(context.Context, trace.Span, ...any) ([]any, error) {
--			return []any{[]*milvuspb.SearchResults{emptyResult(), emptyResult()}, []string{metric.IP, metric.IP}}, nil
-+			return []any{[]*milvuspb.SearchResults{emptyResult(), emptyResult()}, testSearchScoreInfos(metric.IP, metric.IP)}, nil
- 		}), nil
- 	}
- 
-```
-
-**File**: `internal/proxy/dql/search_pipeline_test.go` (modified, +242/-28)
-```diff
-@@ -19,12 +19,14 @@ package dql
- import (
- 	"context"
- 	"fmt"
-+	"math"
- 	"slices"
- 	"testing"
- 	"time"
- 
- 	"github.com/apache/arrow/go/v17/arrow/memory"
- 	"github.com/bytedance/mockey"
-+	"github.com/stretchr/testify/require"
- 	"github.com/stretchr/testify/suite"
- 	"go.opentelemetry.io/otel"
- 	"go.opentelemetry.io/otel/trace"
-@@ -43,11 +45,106 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/proto/planpb"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
- 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-+	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
- 	"github.com/milvus-io/milvus/pkg/v3/util/testutils"
- 	"github.com/milvus-io/milvus/pkg/v3/util/timerecord"
- 	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
- )
- 
-+func TestProxyScorePipeline(t *testing.T) {
-+	paramtable.Init()
-+	makeChain := func(stage schemapb.FunctionChainStage) *schemapb.FunctionChain {
-+		return &schemapb.FunctionChain{Stage: stage, Ops: []*schemapb.FunctionChainOp{{
-+			Op: "map", Outputs: []string{"$score"},
-+			Expr: &schemapb.FunctionChainExpr{
-+				Name: "num_combine",
-+				Args: []*schemapb.FunctionChainExprArg{
-+					{Arg: &schemapb.FunctionChainExprArg_Column{Column: &schemapb.FunctionChainColumnArg{Name: "$score"}}},
-+					{Arg: &schemapb.FunctionChainExprArg_Column{Column: &schemapb.FunctionChainColumnArg{Name: "$score"}}},
-+				},
-+				Params: map[string]*schemapb.FunctionParamValue{"mode": {Value: &schemapb.FunctionParamValue_StringValue{StringValue: "sum"}}},
-+			},
-+		}}}
-+	}
-+	l0 := makeChain(schemapb.FunctionChainStage_FunctionChainStageL0Rerank)
-+	l2 := makeChain(schemapb.FunctionChainStage_FunctionChainStageL2Rerank)
-+	l2.Ops = append(l2.Ops, &schemapb.FunctionChainOp{
-+		Op: "sort", Inputs: []string{"$score", "$id"},
-+		Params: map[string]*schemapb.FunctionParamValue{"desc": {Value: &schemapb.FunctionParamValue_BoolValue{BoolValue: true}}},
-+	})
-+	task := &SearchTask{
-+		ctx: t.Context(), SearchRequest: &internalpb.SearchRequest{Nq: 1, Topk: 3},
-+		request: &milvuspb.SearchRequest{FunctionChains: []*schemapb.FunctionChain{l2, l0}},
-+		schema: mustNewSchemaInfo(&schemapb.CollectionSchema{Fields: []*schemapb.FieldSchema{
-+			{FieldID: 100, Name: "id", DataType: schemapb.DataType_Int64, IsPrimaryKey: true},
-+		}}), queryInfos: []*planpb.QueryInfo{{}},
-+	}
-+	reduceOp, err := newSearchReduceOperator(task, nil)
-+	require.NoError(t, err)
-+	require.True(t, reduceOp.(*searchReduceOperator).scoreRewritten)
-+	inputs := []*internalpb.SearchResults{
-+		{MetricType: "L2", ResultData: &schemapb.SearchResultData{NumQueries: 1, TopK: 3, Topks: []int64{2}, Ids: testSearchResultIDs(3, 1), Scores: []float32{90, 30}}},
-+		{MetricType: "L2", ResultData: &schemapb.SearchResultData{NumQueries: 1, TopK: 3, Topks: []int64{1}, Ids: testSearchResultIDs(2), Scores: []float32{60}}},
-+	}
-+	span := trace.SpanFromContext(t.Context())
-+	reduced, err := reduceOp.run(t.Context(), span, inputs)
-+	require.NoError(t, err)
-+	repr, err := chain.ProtoChainToRepr(l2)
-+	require.NoError(t, err)
-+	rerank := &rerankOperator{nq: 1, topK: 3, roundDecimal: -1, rerankMeta: &functionChainRerankMeta{repr: repr}}
-+	outputs, err := rerank.run(t.Context(), span, reduced...)
-+	require.NoError(t, err)
-+	result := outputs[0].(*milvuspb.SearchResults).GetResults()
-+	require.Equal(t, []int64{3, 2, 1}, result.GetIds().GetIntId().GetData())
-+	require.Equal(t, []float32{180, 120, 60}, result.GetScores())
-+
-+	task.request.SubReqs = []*milvuspb.SubSearchRequest{{FunctionChains: []*schemapb.FunctionChain{l0}}, {}}
-+	require.Equal(t, []bool{true, false}, task.subSearchScoresRewritten())
-+	task.SubReqs = []*internalpb.SubSearchRequest{{Nq: 1, Topk: 2}, {Nq: 1, Topk: 2}}
-+	task.queryInfos = []*planpb.QueryInfo{{}, {}}
-+	hybridOp, err := newHybridSearchReduceOperator(task, nil)
-+	require.NoError(t, err)
-+	subResults := make([]*internalpb.SubSearchResults, 2)
-+	for index := range subResults {
-+		subResults[index] = &internalpb.SubSearchResults{
-+			ReqIndex: int64(index), MetricType: "L2", NumQueries: 1, TopK: 2,
-+			ResultData: &schemapb.SearchResultData{NumQueries: 1, TopK: 2, Topks: []int64{2}, Ids: testSearchResultIDs(1, 2), Scores: []float32{-1, -2}},
-+		}
-+	}
-+	hybridOutput, err := hybridOp.run(t.Context(), span, []*internalpb.SearchResults{{IsAdvanced: true, SubResults: subResults}})
-+	require.NoError(t, err)
-+	hybridResults := hybridOutput[0].([]*milvuspb.SearchResults)
-+	require.Equal(t, []float32{-1, -2}, hybridResults[0].GetResults().GetScores())
-+	require.Equal(t, []float32{1, 2}, hybridResults[1].GetResults().GetScores())
-+	require.Equal(t, []searchScoreInfo{newSearchScoreInfo("L2", true), newSearchScoreInfo("L2", false)}, hybridOutput[1])
-+
-+	mergeRepr, err := chain.ProtoChainToRepr(&schemapb.FunctionChain{
-+		Stage: schemapb.FunctionChainStage_FunctionChainStageL2Rerank,
-+		Ops: []*schemapb.FunctionChainOp{{Op: "merge", Params: map[string]*schemapb.FunctionParamValue{
-+			"strategy":   {Value: &schemapb.FunctionParamValue_StringValue{StringValue: "sum"}},
-+			"nor
-```
-
-**File**: `internal/proxy/dql/search_reduce_multi_groupby_test.go` (modified, +5/-5)
-```diff
-@@ -61,7 +61,7 @@ func TestReduceMultiGroupBy_CrossShardSameComposite(t *testing.T) {
- 		context.Background(),
- 		[]*schemapb.SearchResultData{shardA, shardB},
- 		1, 5, metric.IP, schemapb.DataType_Int64,
--		0, 3, []int64{101, 102}, false,
-+		0, 3, []int64{101, 102}, false, false,
- 	)
- 	require.NoError(t, err)
- 	require.NotNil(t, ret.GetResults())
-@@ -89,7 +89,7 @@ func TestReduceMultiGroupBy_MultipleComposites(t *testing.T) {
- 		context.Background(),
- 		[]*schemapb.SearchResultData{shard},
- 		1, 10, metric.IP, schemapb.DataType_Int64,
--		0, 2, []int64{101, 102}, false,
-+		0, 2, []int64{101, 102}, false, false,
- 	)
- 	require.NoError(t, err)
- 	require.Equal(t, []int64{4}, ret.GetResults().GetTopks(), "two groups × 2 rows each = 4")
-@@ -112,7 +112,7 @@ func TestReduceMultiGroupBy_TopKTruncation(t *testing.T) {
- 		context.Background(),
- 		[]*schemapb.SearchResultData{shard},
- 		1, 2, metric.IP, schemapb.DataType_Int64,
--		0, 1, []int64{101}, false,
-+		0, 1, []int64{101}, false, false,
- 	)
- 	require.NoError(t, err)
- 	require.Equal(t, []int64{2}, ret.GetResults().GetTopks(), "topK=2 → only top 2 groups kept (scores 0.9, 0.8)")
-@@ -149,7 +149,7 @@ func TestReduceMultiGroupBy_RegroupByBucketWhenNotAggregation(t *testing.T) {
- 		context.Background(),
- 		[]*schemapb.SearchResultData{shard},
- 		1, 10, metric.IP, schemapb.DataType_Int64,
--		0, 2, []int64{101, 102}, false,
-+		0, 2, []int64{101, 102}, false, false,
- 	)
- 	require.NoError(t, err)
- 	ids := ret.GetResults().GetIds().GetIntId().GetData()
-@@ -180,7 +180,7 @@ func TestReduceMultiGroupBy_WalkOrderWhenAggregation(t *testing.T) {
- 		context.Background(),
- 		[]*schemapb.SearchResultData{shard},
- 		1, 10, metric.IP, schemapb.DataType_Int64,
--		0, 2, []int64{101, 102}, true,
-+		0, 2, []int64{101, 102}, true, false,
- 	)
- 	require.NoError(t, err)
- 	ids := ret.GetResults().GetIds().GetIntId().GetData()
+@@ -119,10 +119,10 @@ TEST(JsonProjectedHybridIndexBuilderTest, LowCardinalityStringsSelectBitmap) {
+     ASSERT_NO_FATAL_FAILURE(ExpectSelector(persisted, ScalarIndexType::BITMAP));
+     const auto& backend = ScalarReaderBackends().Get<std::string_view>(
+         "JsonProjectedHybridVarchar");
+-    auto reader = OpenV3(backend,
+-                         persisted,
+-                         {.row_count = static_cast<int64_t>(raw.size()),
+-                          .values = {{JSON_PATH, "/x"}}});
++    auto reader =
++        OpenV3(backend,
++               persisted,
++               {.row_count = raw.size(), .values = {{JSON_PATH, "/x"}}});
+     ASSERT_NE(reader, nullptr);
+     const auto* json = dynamic_cast<const IJsonIndexReader*>(reader.get());
+     ASSERT_NE(json, nullptr);
+@@ -151,10 +151,10 @@ TEST(JsonProjectedHybridIndexBuilderTest, HighCardinalityNumbersSelectSorted) {
+         ExpectSelector(persisted, ScalarIndexType::STLSORT));
+     const auto& backend =
+         ScalarReaderBackends().Get<double>("JsonProjectedHybridDouble");
+-    auto reader = OpenV3(backend,
+-                         persisted,
+-                         {.row_count = static_cast<int64_t>(raw.size()),
+-                          .values = {{JSON_PATH, "/n"}}});
++    auto reader =
++        OpenV3(backend,
++               persisted,
++               {.row_count = raw.size(), .values = {{JSON_PATH, "/n"}}});
+     ASSERT_NE(reader, nullptr);
+     const auto* json = dynamic_cast<const IJsonIndexReader*>(reader.get());
+     ASSERT_NE(json, nullptr);
+@@ -181,10 +181,10 @@ TEST(JsonProjectedHybridIndexBuilderTest,
+     ASSERT_NO_FATAL_FAILURE(ExpectSelector(persisted, ScalarIndexType::BITMAP));
+     const auto& backend =
+         ScalarReaderBackends().Get<double>("JsonProjectedHybridDouble");
+-    auto reader = OpenV3(backend,
+-                         persisted,
+-                         {.row_count = static_cast<int64_t>(raw.size()),
+-                          .values = {{JSON_PATH, "/v"}}});
++    auto reader =
++        OpenV3(backend,
++               persisted,
++               {.row_count = raw.size(), .values = {{JSON_PATH, "/v"}}});
+     ASSERT_NE(reader, nullptr);
+     const auto* json = dynamic_cast<const IJsonIndexReader*>(reader.get());
+     ASSERT_NE(json, nullptr);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55323** (2026-11-10): test: Verify concurrent strong reads after delete (@christinewang-zilliz)
-- **PR #55312** (2026-11-10): fix: [3.0] Defer MultiTarget planning while tasks are pending (@congqixia)
-- **PR #55311** (2026-11-10): fix: Stabilize the Flush rate-limit integration test (@congqixia)
-- **PR #55302** (2026-11-10): enhance: [3.0] stamp collection and database names on datacoord task properties (@xiaocai2333)
-- **PR #55293** (2026-11-09): enhance: Bump milvus & proto to v3.0.6 (@congqixia)
-- **PR #55286** (2026-11-10): fix: [cp3.0] return TopK 0 for empty hybrid search results (@yanliang567)
+- **PR #55464** (2026-11-12): test: [cp 3.0] harden REST import correctness and completion polling (@zhuwenxing)
+- **PR #55463** (2026-11-12): test: harden REST import correctness and completion polling (@zhuwenxing)
+- **PR #55453** (2026-11-12): fix: align 3.0 mixed E2E test label gates with CI routing (@zhikunyao)
+- **PR #55444** (2026-11-12): enhance: [3.0] Avoid redundant sealed worker PK candidates (@weiliu1031)
+- **PR #55442** (2026-11-12): enhance: Enable Storage V3 by default (@jiaqizho)
+- **PR #55440** (2026-11-12): enhance: [cp3.0] decode struct string sub-field into one buffer per row (@xaxys)
 
 ---
 
@@ -2536,28 +2401,63 @@ Signed-off-by: junjie.jiang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [automated] fix: bump klauspost/compress to v1.20.2 (CVE-2026-116591) (#55260)
+## X. test: add PyUDF search, lifecycle and runtime regression coverage (#55386)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/python_client/base/client_v2_pyudf_base.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d463304`: [automated] fix: bump klauspost/compress to v1.20.2 (CVE-2026-116591) (#55260). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34e03edc`: test: add PyUDF search, lifecycle and runtime regression coverage (#55386). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/python_client/base/client_v2_pyudf_base.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/klauspost/compress v1.20.2
+"""Owned wheel, collection and permission lifecycles for PyUDF SDK cases."""
+
+import io
+import time
+from contextlib import ExitStack, contextmanager
+
+import grpc
+import pytest
+from base.client_v2_base import TestMilvusClientV2Base
+from common import common_func as cf
+from common.common_type import CheckTasks
+from common.pyudf_helpers import build_wheel
+from pymilvus import DataType, FunctionChain, FunctionChainStage, MilvusClient
+from pymilvus.function_chain import col
+from pymilvus.function_chain.chain import FunctionChainExpr
+
+
+class PyUDFClientBase(TestMilvusClientV2Base):
+    """Share fixture ownership without importing or inheriting collected tests."""
+
+    dim = 2
+    vector_field = "vector"
+    scalar_field = "ts"
+
+    @staticmethod
+    def _pyudf_management_config(request, key):
+        import requests
+
+        endpoint = request.config.getoption("--pyudf-management-endpoint")
+        assert endpoint, "requires --pyudf-management-endpoint pointing to the coordinator management service"
+        response = requests.get(
+            endpoint.rstrip("/") + "/management/config/get",
+            params={"keys": key},
+            timeout=10,
+        )
+        response.raise_for_st
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/klauspost/compress v1.18.7
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d463304` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34e03edc` are properly handled with clean fallback behavior.

@@ -2,16 +2,20 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T03:10:59.806Z",
+  "updated_at": "2026-11-12T13:15:27.333Z",
   "statistics": {
-    "total_nodes": 9,
-    "total_edges": 3,
+    "total_nodes": 24,
+    "total_edges": 8,
     "domain_distribution": {
-      "D": 8,
-      "M": 1
+      "D": 15,
+      "M": 1,
+      "H": 5,
+      "J": 1,
+      "K": 1,
+      "L": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 3
+      "CONSTRAINED_BY_ARCHITECTURE": 8
     }
   },
   "nodes": {
@@ -206,6 +210,341 @@
       ],
       "created_at": "2026-11-12T03:10:59.806Z",
       "updated_at": "2026-11-12T03:10:59.806Z"
+    },
+    "DOM-D-5F13CAC2": {
+      "id": "DOM-D-5F13CAC2",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md`  \n> **Source**: huggingfac",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-facebook-dinov3-vitl16-pretrain-lvd1689m/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T05:13:38.557Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-facebook-dinov3-vitl16-pretrain-lvd1689m)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T05:13:50.798Z",
+      "updated_at": "2026-11-12T05:13:50.798Z"
+    },
+    "DOM-H-0AA4F6ED": {
+      "id": "DOM-H-0AA4F6ED",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Install the native Apple Silicon build in init.sh (#1623)",
+      "summary": "Prevents defects observed in production commit `c262c330`: Install the native Apple Silicon build in init.sh (#1623). Unvalidated execution  -> When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/conc",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://wasm-bindgen-wasm-pack/wasm-bindgen-wasm-pack-learnings.md",
+        "source_version": "c262c330",
+        "observed_at": "2026-11-12T05:26:51.829Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wasm-bindgen-wasm-pack)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-12T05:27:35.956Z",
+      "updated_at": "2026-11-12T05:27:35.956Z"
+    },
+    "DOM-D-0C67C5DB": {
+      "id": "DOM-D-0C67C5DB",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md`  \n> **Source**: huggingfac",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-abenzerps-qwen-image-2.1-turbo-quantized/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T05:47:46.594Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-abenzerps-qwen-image-2.1-turbo-quantized)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T05:47:56.936Z",
+      "updated_at": "2026-11-12T05:47:56.936Z"
+    },
+    "DOM-D-2EFB96C5": {
+      "id": "DOM-D-2EFB96C5",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): NousResearch/Arete-27B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-nousresearch-arete-27b/hf-nousresearch-arete-27b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T07:15:44.997Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nousresearch-arete-27b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T07:16:00.759Z",
+      "updated_at": "2026-11-12T07:16:00.759Z"
+    },
+    "DOM-D-91EB11DA": {
+      "id": "DOM-D-91EB11DA",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): PrunaAI/P-H3-Image",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-prunaai-p-h3-image/hf-prunaai-p-h3-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T07:38:23.810Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prunaai-p-h3-image)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T07:38:38.947Z",
+      "updated_at": "2026-11-12T07:38:38.947Z"
+    },
+    "DOM-J-5650848D": {
+      "id": "DOM-J-5650848D",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "FLOAT32 COSINE Search Emits Invalid Distance -1 for Subnormal Vectors (BUG-VEC-01)",
+      "summary": "The distance computation squared each vector element to compute the Euclidean norm $\\|u\\|_2 = \\sqrt{\\sum u_i^2}$. Because the smallest subno -> High-dimensional vector calculations in single precision must accumulate intermediate vector norms in double precision (`double`), with stri",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://redisearch-redisearch/redisearch-redisearch-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:19:23.696Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (redisearch-redisearch)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-12T08:19:36.666Z",
+      "updated_at": "2026-11-12T08:19:36.666Z"
+    },
+    "DOM-K-AE91E0B9": {
+      "id": "DOM-K-AE91E0B9",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Flawed CI Dependency Installer Invariant (BUG-SALVO-01)",
+      "summary": "The custom Python policy verification script (`test_workflow_policy.py`) asserts that every step using `taiki-e/install-action@*` must inclu -> Meta-testing CI/CD workflows using an in-repo unit testing harness (`test_workflow_policy.py`) guarantees that dependency updater bots canno",
+      "confidence": 0.94,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://salvo-rs-salvo/salvo-rs-salvo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:34:31.634Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (salvo-rs-salvo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-12T08:34:44.458Z",
+      "updated_at": "2026-11-12T08:34:44.458Z"
+    },
+    "DOM-H-F56DBC84": {
+      "id": "DOM-H-F56DBC84",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Router Macro & Lifetime Compilation Breakage in Example Code (BUG-SALVO-02)",
+      "summary": "Macro attributes originally failed to generate proper async trait implementations for function handlers when mixed with combinators that alt -> Avoid monad-style chaining closures (`.then(|r| ...)`) in Rust builder APIs when simple conditional ownership reassignment (`if cond { route",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://salvo-rs-salvo/salvo-rs-salvo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T08:34:31.634Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (salvo-rs-salvo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-12T08:35:03.647Z",
+      "updated_at": "2026-11-12T08:35:03.647Z"
+    },
+    "DOM-D-78355AEC": {
+      "id": "DOM-D-78355AEC",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Viggle/Viggle-Remake",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-viggle-viggle-remake/hf-viggle-viggle-remake-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T09:55:38.028Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-viggle-viggle-remake)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T09:55:51.213Z",
+      "updated_at": "2026-11-12T09:55:51.213Z"
+    },
+    "DOM-L-80D1F65C": {
+      "id": "DOM-L-80D1F65C",
+      "domain": "L",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Allowed Azure DevOps hosts: devazurecom sshdevazurecom vs-sshvisualstudiocom",
+      "summary": "`[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]` -> `[\"dev.azure.com\", \"ssh.dev.azure.com\", \"vs-ssh.visualstudio.com\"]`",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://volcengine-openviking/volcengine-openviking-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`azure_devops_domains`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (volcengine-openviking)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "L",
+        "Deployment & Operations Intelligence"
+      ],
+      "created_at": "2026-11-12T11:01:33.161Z",
+      "updated_at": "2026-11-12T11:01:33.161Z"
+    },
+    "DOM-D-E7997468": {
+      "id": "DOM-D-E7997468",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/Mage-VL-Cowork",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-microsoft-mage-vl-cowork/hf-microsoft-mage-vl-cowork-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T11:18:53.146Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-mage-vl-cowork)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T11:19:08.435Z",
+      "updated_at": "2026-11-12T11:19:08.435Z"
+    },
+    "DOM-H-7D775901": {
+      "id": "DOM-H-7D775901",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Eliminate avoidable dead work in multi-stage JSCompiler builds.",
+      "summary": "Prevents defects observed in production commit `17db1536`: Eliminate avoidable dead work in multi-stage JSCompiler builds.. Unvalidated exec -> When implementing operations in `src/com/google/javascript/jscomp/Compiler.java`, engineers MUST enforce rigorous boundary validation, safe ",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://google-closure-compiler/google-closure-compiler-learnings.md",
+        "source_version": "0d7d62cf",
+        "observed_at": "2026-11-12T11:37:13.594Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (google-closure-compiler)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-12T11:38:00.744Z",
+      "updated_at": "2026-11-12T11:38:00.744Z"
+    },
+    "DOM-H-EE08D822": {
+      "id": "DOM-H-EE08D822",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "javascript): call evaluateDefinedIdentifier with the name it is keyed by (#23273",
+      "summary": "Prevents defects observed in production commit `0a3413c2`: javascript): call evaluateDefinedIdentifier with the name it is keyed by (#23273) -> When implementing operations in `.changeset/265-javascript-evaluate-defined-identifier.md`, engineers MUST enforce rigorous boundary validat",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://webpack-webpack/webpack-webpack-learnings.md",
+        "source_version": "39b7c8a8",
+        "observed_at": "2026-11-12T12:50:18.859Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (webpack-webpack)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-12T12:50:51.247Z",
+      "updated_at": "2026-11-12T12:50:51.247Z"
+    },
+    "DOM-H-B173C8F8": {
+      "id": "DOM-H-B173C8F8",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037)",
+      "summary": "Prevents defects observed in production commit `58854051`: build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (#5037).  -> When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "58854051",
+        "observed_at": "2026-11-12T12:45:28.731Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-12T12:51:11.111Z",
+      "updated_at": "2026-11-12T12:51:11.111Z"
+    },
+    "DOM-D-A3AABF62": {
+      "id": "DOM-D-A3AABF62",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-1.7B-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-1.7b-gguf/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T13:15:12.716Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-1.7b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T13:15:27.333Z",
+      "updated_at": "2026-11-12T13:15:27.333Z"
     }
   },
   "edges": [
@@ -238,6 +577,56 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-66B0E6DD [D] with Domain M",
       "created_at": "2026-11-12T01:23:57.636Z"
+    },
+    {
+      "id": "EDGE-A5D113F2C934",
+      "sourceId": "DOM-D-2EFB96C5",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-2EFB96C5 [D] with Domain M",
+      "created_at": "2026-11-12T07:16:00.760Z"
+    },
+    {
+      "id": "EDGE-F985B8DBD2E5",
+      "sourceId": "DOM-D-91EB11DA",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-91EB11DA [D] with Domain M",
+      "created_at": "2026-11-12T07:38:38.947Z"
+    },
+    {
+      "id": "EDGE-AB81F7E42DE6",
+      "sourceId": "DOM-D-78355AEC",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-78355AEC [D] with Domain M",
+      "created_at": "2026-11-12T09:55:51.213Z"
+    },
+    {
+      "id": "EDGE-D78C5936AAC5",
+      "sourceId": "DOM-D-E7997468",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-E7997468 [D] with Domain M",
+      "created_at": "2026-11-12T11:19:08.435Z"
+    },
+    {
+      "id": "EDGE-7C796377DB29",
+      "sourceId": "DOM-D-A3AABF62",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-A3AABF62 [D] with Domain M",
+      "created_at": "2026-11-12T13:15:27.333Z"
     }
   ]
 }

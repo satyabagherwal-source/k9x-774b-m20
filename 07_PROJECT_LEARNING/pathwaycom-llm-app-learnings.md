@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md`  
 > **Source**: github ([https://github.com/pathwaycom/llm-app](https://github.com/pathwaycom/llm-app))  
-> **Source Version**: `84e92a33`  
+> **Source Version**: `53c6382b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:01:01.650Z  
+> **Timestamp**: 2026-11-12T11:50:59.050Z  
 > **Learning ID**: `learn-github-pathwaycom-serviette`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pathwaycom-llm-app-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pathwaycom/llm-app](https://github.com/pathwaycom/llm-app))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:01:00.464Z  
+> **Harvest Timestamp**: 2026-11-12T11:50:59.044Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A no-code RAG server that keeps answers in sync with your documents. Works with 8 vector databases. Built on Pathway.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 58724 stars
+- **Stars / Engagement**: 58705 stars
 
 ---
 
@@ -1385,367 +1385,223 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84e92a33` (2026-11-02)
-**Commit Message**: use fused order for MMR relevance after query decomposition
+### Incident Patch 1: `cb4c2c33` (2026-11-10)
+**Commit Message**: fix missed short values in document comparisons
 
-**File**: `README.md` (modified, +7/-1)
+**File**: `serviette/server/documents.py` (modified, +64/-4)
 ```diff
-@@ -351,7 +351,13 @@ answer is not found.
-   sub-queries, retrieves for each, and fuses — so chunks of different hops
-   stop competing for the same top-k slots (`rag.decompose`).
- - **MMR.** Diversifies the result set, trading relevance against redundancy
--  (`rag.mmr`).
-+  (`rag.mmr`). After query decomposition, relevance follows the interleaved
-+  order: positions are mapped linearly from 1 (first) to 0 (last). For a
-+  single query, or after a reranker, MMR uses min-max-normalized scores,
-+  preserving their relative gaps. This selection signal does not replace
-+  the `score` returned by the API. `diversity: 0` preserves the first `k`
-+  hits of the candidate pool; `candidates` still widens retrieval, so hybrid
-+  search or reranking can differ from a configuration without MMR.
- - **Document questions.** "How many documents do you have?", "What does
-   `journal.pdf` say?", "What changed between `law_2023.txt` and
-   `law_2024.txt`?" are questions about documents, not about a passage, and
+@@ -135,8 +135,8 @@
+ # Two documents sharing at least this fraction of their lines are compared
+ # as versions of one text (a diff); below it they are different documents.
+ _VERSION_OVERLAP = 0.3
+-# Lines shorter than this (after squashing) are not compared: codes and
+-# table cells repeat throughout a document and say nothing on their own.
++# Only lines at least this long (after squashing) establish that documents
++# are versions of one text. Short values still participate in the diff.
+ _MIN_LINE = 12
+ # From this many lines on, a chunk's first and last line are taken to be cut
+ # by the splitter and are not compared (shorter chunks are whole paragraphs).
+@@ -685,8 +685,14 @@ class _Lines:
+ 
+     def __init__(self, chunks: list[dict[str, Any]]) -> None:
+         self.chunks = chunks
+-        # squashed line -> index of the first chunk containing it
++        # Long lines establish version similarity and running headers;
++        # short values are kept separately for exact matching in the diff.
+         self.lines: dict[str, int] = {}
++        self.short_lines: set[str] = set()
++        # Adjacent lines can be one line in another PDF extraction. Only
++        # spans containing a short line need this extra exact-match index.
++        self.short_contexts: dict[str, set[str]] = {}
++        self.joined_short_lines: set[str] = set()
+         # per chunk: its lines as (squashed, raw), in order
+         self.by_chunk: list[list[tuple[str, str]]] = []
+         squashed_chunks = []
+@@ -702,7 +708,44 @@ def __init__(self, chunks: list[dict[str, Any]]) -> None:
+             for squashed, _raw in rows:
+                 if len(squashed) >= _MIN_LINE:
+                     self.lines.setdefault(squashed, index)
++                elif squashed:
++                    self.short_lines.add(squashed)
++            nonempty = [squashed for squashed, _raw in rows if squashed]
++            for width in (2, 3):
++                for start in range(len(nonempty) - width + 1):
++                    span = nonempty[start : start + width]
++                    short = [line for line in span if len(line) < _MIN_LINE]
++                    if short:
++                        joined = "".join(span)
++                        self.joined_short_lines.add(joined)
++                        for line in short:
++                            self.short_contexts.setdefault(line, set()).add(joined)
+             self.by_chunk.append(rows)
++        # Overlapping windows may end with a tiny chunk already covered by
++        # the previous window. Its cut-off first word is not a standalone
++        # short value. Check only short suffixes, keeping the work linear
++        # in the corpus size; do not confuse 100 with the suffix of 1100.
++        short_chunks: dict[str, set[int]] = {}
++        for index, text in enumerate(squashed_chunks):
++            if text and len(text) < _MIN_LINE:
++                short_chunks.setdefault(text, set()).add(index)
++        self.redundant_short_chunks: set[int] = set()
++        if short_chunks:
++            for covering_chunk, text in zip(chunks, squashed_chunks):
++                for size in range(1, min(len(text), _MIN_LINE)):
++                    suffix = text[-size:]
++                    if suffix[0].isdigit() and (
++                        text[-size - 1].isdigit() or text[-size - 1] in "+-.,"
++                    ):
++                        continue
++                    for index in short_chunks.get(suffix, ()):
++                        # Windows of one parsed document overlap verbatim.
++                        # Case/punctuation normalization alone is too weak
++                        # to establish that a chunk is redundant.
++                        raw = chunks[index]["text"].strip()
++                        covering = covering_chunk["text"].rstrip()
++                        if len(raw) < len(covering) and covering.endswith(raw):
++                            self.redundant_short_chunks.add(index)
+         # The whole text, for finding a line that the other file wraps
+         # differently (so it is no line of its own there).
+         self.text = "\x00".join(squashed_chunks)
+@@ -763,6 +806,21 @@ def contains_line(line: str) -> bool:
+             return False
+ 
+         def present(squashed: str) -> bool:
++            if len(squashed) < _MIN_LINE:
++                # A short value must match a whole line: "100" inside
++                # "1100", or "On" inside another word, is not unchanged.
++                # Joining neighbouring lines also permits wrapping changes,
++                # but the resulting span must still match a whole line.
++                return (
++                    squashed in other.short_lines
++                    or squashed in other.joined_short_lines
++                    or any(
++                        context in other.lines
++                        or context in other.short_lines
++                        or context in other.joined_short_lines
++                        for context in self.short_con
 ```
 
-**File**: `serviette/config/schema.py` (modified, +6/-4)
+**File**: `tests/test_documents.py` (modified, +122/-0)
 ```diff
-@@ -529,7 +529,7 @@ class DecomposeConfig(BaseModel):
-     One LLM call splits the question into standalone sub-queries ("mother of
-     the 15th first lady?", "second assassinated president?"); retrieval runs
-     for the original question and every sub-query, and the result lists are
--    fused with reciprocal-rank fusion. This keeps chunks of *different* hops
-+    interleaved round-robin by rank. This keeps chunks of *different* hops
-     from competing for the same top-k slots. Requires the ``llm`` section.
-     """
- 
-@@ -543,9 +543,11 @@ class MmrConfig(BaseModel):
- 
-     The server fetches ``candidates`` chunks and greedily selects ``k`` of
-     them, trading relevance against similarity to the already-selected set:
--    ``diversity`` is the weight of the redundancy penalty (0 = plain top-k,
--    1 = ignore relevance). Needs hit embeddings, so the backend must support
--    returning them (DuckDB for now).
-+    ``diversity`` is the weight of the redundancy penalty (0 = preserve the
-+    pool's top-k, 1 = ignore relevance). After decomposition, relevance comes
-+    from the interleaved order unless a reranker supplies common scores.
-+    ``candidates`` still widens the pool at zero diversity. Needs a backend
-+    that returns hit embeddings.
-     """
- 
-     model_config = ConfigDict(extra="forbid")
-```
-
-**File**: `serviette/server/main.py` (modified, +8/-1)
-```diff
-@@ -371,7 +371,14 @@ async def fetch(q: str) -> list[dict[str, Any]]:
-             keep = max(k, mmr.candidates) if mmr else k
-             hits = await reranker.rerank(query, hits, keep)
-         if mmr is not None:
--            hits = mmr_select(hits, k, mmr.diversity)
-+            relevance = None
-+            if len(queries) > 1 and reranker is None:
-+                # Round-robin defines relevance by order, retaining scores
-+                # from different queries. Map positions linearly from 1 to 0;
-+                # a later reranker instead supplies comparable scores itself.
-+                span = max(len(hits) - 1, 1)
-+                relevance = [1.0 - i / span for i in range(len(hits))]
-+            hits = mmr_select(hits, k, mmr.diversity, relevance=relevance)
-         hits = hits[:k]
-         # Embeddings are pipeline plumbing, not API surface.
-         return [{key: v for key, v in h.items() if key != "embedding"} for h in hits]
-```
-
-**File**: `serviette/server/ranking.py` (modified, +28/-12)
-```diff
-@@ -2,8 +2,8 @@
- 
- Hits are the accessor result dicts (``text`` / ``metadata`` / ``score``,
- plus ``embedding`` when the accessor was asked for it). Scores coming from
--different queries or different scorers are not comparable, so fusion here is
--rank-based (reciprocal-rank fusion) rather than score-based.
-+different queries or different scorers are not comparable, so fusion uses
-+ranks: RRF for hybrid search, round-robin for decomposed queries.
- """
- 
- from __future__ import annotations
-@@ -78,23 +78,39 @@ def _cosine(a: list[float], b: list[float]) -> float:
+@@ -397,6 +397,128 @@ def test_version_diff_preserves_numeric_meaning(old, new):
+     assert "1 passages changed" in built.notice
  
  
- def mmr_select(
--    hits: list[dict[str, Any]], k: int, diversity: float
-+    hits: list[dict[str, Any]],
-+    k: int,
-+    diversity: float,
-+    *,
-+    relevance: list[float] | None = None,
- ) -> list[dict[str, Any]]:
-     """Greedy maximal-marginal-relevance selection of ``k`` hits.
- 
--    Relevance is the incoming order's score min-max-normalized over the pool;
--    redundancy is the max cosine similarity to the already-selected set (via
--    each hit's ``embedding``). ``diversity`` weighs redundancy: 0 reduces to
--    plain top-k, 1 ignores relevance entirely. Hits missing an embedding are
--    treated as maximally novel rather than dropped.
-+    Hits arrive in relevance order. By default their scores must be comparable
-+    across the pool and are min-max-normalized. Callers with incomparable
-+    scores supply one ``relevance`` value in [0, 1] per hit, aligned with that
-+    order. This selection signal is independent of the returned hit scores.
-+
-+    Redundancy is the max cosine similarity to the already-selected set (via
-+    each hit's ``embedding``). ``diversity`` weighs redundancy: 0 preserves
-+    the incoming top-k, 1 ignores relevance entirely. When the whole pool
-+    fits, its incoming order is kept. Hits missing an embedding are treated
-+    as maximally novel rather than dropped.
-     """
- 
-+    if relevance is not None and len(relevance) != len(hits):
-+        raise ValueError("MMR relevance must have one value per hit")
-+    if k <= 0:
-+        return []
-+    if diversity == 0.0:
-+        return hits[:k]
-     if k >= len(hits) or not hits:
-         return list(hits)
--    lo = min(h["score"] for h in hits)
--    hi = max(h["score"] for h in hits)
--    span = (hi - lo) or 1.0
--    relevance = [(h["score"] - lo) / span for h in hits]
-+    if relevance is None:
-+        lo = min(h["score"] for h in hits)
-+        hi = max(h["score"] for h in hits)
-+        span = (hi - lo) or 1.0
-+        relevance = [(h["score"] - lo) / span for h in hits]
- 
-     selected: list[int] = []
-     remaining = list(range(len(hits)))
-```
-
-**File**: `tests/test_rag_quality.py` (modified, +119/-0)
-```diff
-@@ -3,6 +3,8 @@
- 
- from __future__ import annotations
- 
-+import math
-+
- import pytest
- from fastapi.testclient import TestClient
- 
-@@ -299,6 +301,123 @@ def test_mmr_select_prefers_novelty_over_near_duplicates():
-     assert [h["text"] for h in plain] == ["a", "a-dup"]
- 
- 
-+@pytest.mark.parametrize("k", [0, 1, 2, 3, 5])
-+def test_mmr_zero_preserves_incoming_order(k):
-+    hits = [{"text": "a", "score": 0.8}, {"text": "b", "score": 1.0}]
-+    assert mmr_select(hits, k, diversity=0.0) == hits[:k]
-+
-+
-+@pytest.mark.parametrize("diversity,expected", [(0.3, ["a", "a-dup"]), (0.5, ["a", "b"])])
-+def test_mmr_explicit_relevance_is_independent_of_hit_scores(diversity, expected):
-+    for scores in ([0.8, 1.0, 0.7], [0.98, 0.1, 0.9]):
-+        hits = [
-+            {"text": "a", "score": scores[0], "embedding": [1.0, 0.0]},
-+            {"text": "a-dup", "score": scores[1], "embedding": [1.0, 0.001]},
-+            {"text": "b", "score": scores[2], "embedding": [0.0, 1.0]},
-+        ]
-+        picked = mmr_select(hits, 2, diversity, relevance=[1.0, 0.9, 0.0])
-+        assert [h["text"] for h in picked] == expected
-+        assert [h["score"] for h in hits] == scores
-+        assert all(h in hits for h in picked)
-+
-+
-+def test_mmr_rejects_misaligned_relevance():
-+    with pytest.raises(ValueError, match="one value per hit"):
-+        mmr_select([{"score": 1.0}, {"score": 0.5}], 1, 0.3, relevance=[1.0])
-+
-+
-+@pytest.fixture
-+def mmr_store(tmp_path):
-+    path = tmp_path / "mmr.duckdb"
-+    # Each query finds two near duplicates. The A query has higher cosine
-+    # scores, but round-robin gives both queries' best hits a leading slot.
-+    rows = [
-+        ("A1", [0.95, 0.0, math.sqrt(1 - 0.95**2), 0.0]),
-+        ("A2", [0.9, 0.0, math.sqrt(1 - 0.9**2), 0.0]),
-+        ("B1", [0.0, 0.2, 0.0, math.sqrt(1 - 0.2**2)]),
-+        ("B2", [0.0, 0.1, 0.0, math.sqrt(1 - 0.1**2)]),
++def _compare_text_versions(old: str, new: str, window_size: int | None = None):
++    entries = [{"id": name, "metadata": {}, "chunks": 1} for name in ("old.txt", "new.txt")]
++    chunks = [
++        _windows(text, window_size) if window_size else [{"text": text, "metadata": {}}]
++        for text in (old, new)
 +    ]
-+    write_duckdb_rows(
-+        path, [{"id": text, "text": text, "embedding": emb} for text, emb in rows]
++    return docmode.compare_context(entries, chunks, fake_embedding("q"), budget=24_000)
++
++
++@pytest.mark.parametrize(
++    "old,new",
++    [
++        ("Rate: 10%", "Rate: 20%"),
++        ("100", "200"),
++        ("100", "1100"),
++        ("100", "-100"),
++        ("+100", "-100"),
++        ("1.5", "15"),
++        ("15%", "15"),
++        ("01.02.2026", "02.02.2026"),
++        ("Да", "Нет"),
++        ("On", "Off"),
++    ],
++)
++@pytest.mark.parametrize("window_size", [None, 160, 240])
++def test_version_diff_reports_short_value_changes(old, new, window_size):
++    before = "\n".join(SHARED[:3]) + "\n"
++    after = "\n" + "\n".join(SHARED[3:])
++    built = _compare_text_versions(before + old + after, before + new + after, window_size)
++    blocks = built.context[1:]
++    assert "share most of their text" in built.context[0]
++    assert any(f"old.txt: {old}" in b or f"[only in old.txt] {old}" in b for b in blocks)
++    assert any(f"new.txt: {new}" in b or f"[only in new.txt] {new}" in b for b in blocks)
++    assert "No differences were found" not in built.context[0]
++    assert not any("Unchanged provision" in b for b in blocks)
++
++
++@pytest.mark.parametrize("value", ["100", "Да", "Rate: 10%"])
++@pytest.mark.parametrize("added", [False, True])
++def test_version_diff_reports_short_line_additions_and_removals(value, added):
++    unchanged = "\n".join(SHARED)
++    changed = unchanged + "\n" + value
++    old, new = (unchanged, changed) if added else (changed, unchanged)
++    built = _compare_text_versions(old, new)
++    name = "new.txt" if added else "old.txt"
++    assert built.context[1:] == [f"[only in {name}] {value}"]
++
++
++@pytest.mark.parametrize(
++    "old,new",
++    [
++        ("Rate: 10%", " Rate : 10 % "),
++        ("Net: -100", "Net: − 100"),
++        ("Да", " ДА! "),
++        ("Café", "Cafe\u0301"),
++        ("office", "of\u00adfice"),
++        ("Rate: 10%", "Rate:\n10%"),
++        ("Rate:\n10%", "Rate: 10%"),
++        ("The status is Active", "The status is\nActive"),
++        ("The status is\nActive", "The status is Active"),
++        ("", "\n---\n...\n"),
++    ],
++)
++@pytest.mark.parametrize("window_size", [None, 160, 240])
++def test_version_diff_ignores_formatting_changes_around_short_lines(old, new, window_size):
++    before = "\n".join(SHARED[:3]) + "\n"
++    after = "\n" + "\n".join(SHARED[3:])
++    built = _compare_text_versions(before + old + after, before + new + after, window_size)
++    assert "share most of their text" in built.context[0]
++    assert built.context[1:] == []
++    assert "0 passages changed, 0 only in new.txt, 0 only in old.txt" in built.notice
++
++
++def test_short_common_values_do_not_make_unrelated_documents_versions():
++    common = "\n".join(f"Code {i}" for i in range(30))
++    old = common + "\n" + "\n".join(SHARED)
++    new = common + "\n" + "\n".join(
++        f"Chapter {i}. Instructions for preparing a vegetable soup." for i in range(6)
 +    )
-+    return path
++    built = _compare_text_versions(old, new)
++    assert built.system_prompt == docmode.EXCERPTS_SYSTEM_PROMPT
++    assert "share little or no identical text" in built.context[0]
 +
 +
-+class _MmrQueryEmbedder:
-+    async def embed(self, text):
-+        return [0.0, 1.0, 0.0, 0.0] if text == "second fact" else [1.0, 0.0, 0.0, 0.0]
-+
-+    async def close(self):
-+        pass
-+
-+
-+@pytest.mark.parametrize("diversity", [0.0, 1e-9, 0.3, 0.5, 1.0])
-+def test_mmr_uses_decomposed_order_for_relevance(mmr_store, diversity):
-+    app = _app(
-+        mmr_store,
-+        _MmrQueryEmbedder(),
-+        llm=_DecomposingLLM(["second fact"]),
-+        rag=RagConfig(decompose={"max_subqueries": 2}, mmr={"diversity": diversity}),
-+    )
-+    with TestClient(app) as client:
-+        response = client.post("/api/v1/retrieve", json={"query": "question", "k": 2})
-+    assert response.status_code == 200
-+    hits = response.json()["results"]
-+    assert [h["text"] for h in hits] == ["A1", "B1"]
-+    assert [h["score"] for h in hits] == pytest.approx([0.95, 0.2])
-+    assert all(set(h) == {"text", "score", "metadata"} for h in hits)
++@pytest.mark.parametrize(
++    "old,new,other",
++    [("100", "200", "1100"), ("On", "Off", "authentication.")],
++)
++def test_short_chunks_are_not_confused_with_other_value_suffixes(old, new, other):
++    entries = [{"id": name, "metadata": {}, "chunks": 8} for name in ("old.txt", "new.txt")]
++    common = [{"text": line, "metadata": {}} for line in SHARED]
++    common.append({"text": "A separate unchanged field contains " + other, "metadata": {}})
++    chunks = [[*common, {"text": value, "metadata": {}}] for value in (old, new)]
++    built = docmode.compare_context(entries, chunks, fake_embedding("q"), budget=24_000)
++    assert f"[only in old.txt] {old}" in built.context[1:]
++    assert f"[only in new.txt] {new}" in built.context[1:]
 +
 +
-+@pytest.mark.parametrize("decompose", [False, True])
-+def test_mmr_single_query_keeps_score_gaps(mmr_store, decompose):
-+    # An empty decomposition falls back to one query. Scores remain comparable;
-+    # replacing their large relevance gap with positions would select B1.
-+    app = _app(
-+        mmr_store,
-+        _MmrQueryEmbedder(),
-+        llm=_DecomposingLLM([]) if decompose else None,
-+        rag=RagConfig(decompose={} if decompose else None, mmr={"diversity": 0.4}),
-+    )
-+    with TestClient(app) as client:
-+        response = client.post("/api/v1/retrieve", json={"query": "question", "k": 2})
-+    assert response.status_code == 200
-+    assert [h["text"] for h in response.json()["results"]] == ["A1", "A2"]
-+
-+
-+@pytest.mark.parametrize("decompose", [False, True])
-+def test_mmr_uses_reranker_scores_after_fusion(mmr_store, decompose):
-+    class ScoringChat:
-+        async def raw(self, prompt):
-+            text = prompt.rsplit("Document: ", 1)[1]
-+            return {"A1": "4.9", "A2": "5", "B1": "0.2", "B2": "0"}[text]
-+
-+        async def close(self):
-+            pass
-+
-+    config = ServietteConfig(
-+        vector_db=DuckDbConfig(type="duckdb", path=str(mmr_store)),
-+        embedder=EmbedderConfig(type="openai"),
-+        rag=RagConfig(decompose={} if decompose else None, mmr={"diversity": 0.4}),
-+        reranker=RerankerConfig(type="llm", candidates=4),
-+        server=ServerConfig(serve_frontend=False),
-+    )
-+    app = create_app(
-+        config,
-+        embedder=_MmrQueryEmbedder(),
-+        accessor=DuckDbAccessor(config.vector_db),
-+        llm=_DecomposingLLM(["second fact"]) if decompose else None,
-+        reranker=LLMReranker(config.reranker, chat=ScoringChat()),
-+    )
-+    with TestClient(app) as client:
-+        response = client.post("/api/v1/retrieve", json={"query": "question", "k": 2})
-+    assert response.status_code == 200
-+    hits = response.json()["results"]
-+    # Reranking changes the leader and provides a strong common relevance g
-```
-
----
-
-### Incident Patch 2: `223f4a67` (2026-11-02)
-**Commit Message**: update demo gif
-
-**File**: `docs/generate_demos.py` (modified, +131/-90)
-```diff
-@@ -91,13 +91,15 @@ def save_gif(path: Path, frames: list[Image.Image], durations: list[int], colors
- T_FONT = 17
- T_FIRST_Y = 56
- 
--# Verbatim output of `serviette demo` (local embeddings, OPENAI_API_KEY set),
--# thinned: the heartbeat repeats every 5 s, three of them are kept.
-+# Verbatim output of `serviette demo --embedder openai` (the README quickstart,
-+# OPENAI_API_KEY set); only the working directory is replaced with
-+# /home/you/serviette-demo.
- _INFO = "INFO "
- SCRIPT_UP = [
--    ("cmd", "serviette demo"),
--    ("out", _INFO + "Using local sentence-transformers embeddings; answers are "
--            "generated with OpenAI (OPENAI_API_KEY is set).", T_OUT),
-+    ("cmd", "serviette demo --embedder openai"),
-+    ("out", _INFO + "Using OpenAI embeddings for indexing: fast to start, but every "
-+            "indexed token is billed — keep the corpus small. For large collections "
-+            'install "serviette[local]" and use the default local embedder.', T_OUT),
-     ("out", "", T_OUT),
-     ("out", "─" * 72, T_OUT),
-     ("out", " serviette demo — Lumina Coffee Systems", T_CMD),
-@@ -120,28 +122,24 @@ def save_gif(path: Path, frames: list[Image.Image], durations: list[int], colors
-     ("out", " Ctrl-C stops everything.", T_OUT),
-     ("out", "─" * 72, T_OUT),
-     ("out", "", T_OUT),
--    ("out", _INFO + "up: indexer started (pid 1986416)", T_OUT),
-+    ("out", _INFO + "up: indexer started (pid 366777)", T_OUT),
-     ("out", _INFO + "up: showing progress, warnings and errors only — run with --verbose "
-             "for the full indexer and server log", T_OUT),
--    ("out", _INFO + "up: indexing in progress — the chat/API server starts once the first "
--            "documents are ready (0s elapsed)", T_OUT),
--    ("out", _INFO + "up: indexing in progress — the chat/API server starts once the first "
--            "documents are ready (16s elapsed)", T_OUT),
--    ("out", _INFO + "up: indexing in progress — the chat/API server starts once the first "
--            "documents are ready (32s elapsed)", T_OUT),
--    ("out", _INFO + "up: index is ready — starting the server (pid 2019552)", T_OUT),
-+    ("out", _INFO + "up: indexing in progress — waiting for the first documents; the "
-+            "chat/API server starts once the first documents are ready (0s elapsed)", T_OUT),
-+    ("out", _INFO + "up: indexing in progress — 5 documents parsed; the chat/API server "
-+            "starts once the first documents are ready (6s elapsed)", T_OUT),
-+    ("out", _INFO + "up: index is ready — starting the server (pid 375748)", T_OUT),
-     ("out", _INFO + "up: server starting — loading the query embedder; the URL appears once "
--            "it answers (1s elapsed)", T_OUT),
--    ("out", _INFO + "up: server starting — loading the query embedder; the URL appears once "
--            "it answers (11s elapsed)", T_OUT),
-+            "it answers (0s elapsed)", T_OUT),
-     ("out", _INFO, T_OUT),
-     ("out", "  Ready — open http://localhost:8989", T_ACCENT),
-     ("out", "  (Ctrl-C stops the indexer and the server)", T_OUT),
- ]
- 
- # `demo` keeps the first terminal; the edit happens in a second one. `sed`
- # prints nothing, and in quiet mode neither does `up` — the change shows up
--# in the chat header ("indexed 3s ago") and in the answer.
-+# in the chat header ("indexed 8s ago") and in the answer.
- SCRIPT_EDIT = [
-     ("cmd", "sed -i 's/129 EUR/199 EUR/' serviette-demo/docs/pricing.md"),
- ]
-@@ -250,19 +248,25 @@ def build_terminal(
- F_TEXT = (31, 32, 35)
- F_SOFT = (107, 114, 128)
- F_ACCENT = (79, 70, 229)
-+F_VIOLET = (139, 92, 246)
- F_USER_BG = (31, 32, 35)
- F_ASSIST_BG = (244, 244, 246)
- F_SOFTBG = (247, 247, 248)
- 
--# What gpt-4o-mini answered on the bundled corpus, before and after the edit
--# (recorded with `serviette demo`, local embeddings, k=5).
-+# What the default OpenAI model answered on the bundled corpus, before and
-+# after the edit (recorded with `serviette demo --embedder openai`, k=5).
- QUESTION = "How much does the Team tier cost?"
- ANSWER_BEFORE = "The Team tier costs 129 EUR/month."
- ANSWER_AFTER = "The Team tier costs 199 EUR/month."
--# The header's live statistics line, as /api/v1/stats reported them.
--STATS_BEFORE = "duckdb · 5 chunks · 5 docs · indexed 2m ago"
--STATS_AFTER = "duckdb · 5 chunks · 5 docs · indexed 3s ago"
-+# The header's live statistics line as the chat page showed it in that run:
-+# (while the question is asked, once the answer is in).
-+STATS_BEFORE = ("duckdb · 5 chunks · 5 docs · indexed 28s ago",
-+                "duckdb · 5 chunks · 5 docs · indexed 35s ago · last answer 4.0s")
-+STATS_AFTER = ("duckdb · 5 chunks · 5 docs · indexed 8s ago · last answer 4.0s",
-+               "duckdb · 5 chunks · 5 docs · indexed 8s ago · last answer 1.4s")
- SOURCES_LABEL = "5 sources"
-+HINT = ("Enter to send · Shift+Enter for a new line · Each question is answered "
-+        "on its own — earlier messages are not taken into account")
- 
- 
- def _wrap(draw, text, fnt, max_w):
-@@ -279,132 +283,16
++def test_rag_compares_short_values_from_named_documents(tmp_path, mock_server_embedder):
++    path = tmp_path / "versions.duckdb"
++    write_duckdb_rows(path, [
++        {
++            "id": name,
++            "text": "\n".join([*SHARED, rate]),
++            "metadata": {"path": name},
++            "embedding": fake_embedding("rate"),
++        }
++        for name, rate in (("old.txt", "Rate: 10%"), ("new.txt", "Rate: 20%"))
++    ])
++    llm = _ScriptedLLM()
++    body = _ask(path, mock_server_embedder, llm, "Compare old.txt and new.txt")
++    assert body["mode"] == "compare"
++    assert "1 passages changed" in body["notice"]
++    assert any(
++        "Rate: 10%" in bloc
 ```
 
 #### Recent Merged Pull Requests:
@@ -1774,34 +1630,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use fused order for MMR relevance after query decomposition
+## X. missed short values in document comparisons
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pathwaycom/serviette. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `serviette/server/documents.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pathwaycom/serviette. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84e92a33`: use fused order for MMR relevance after query decomposition. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cb4c2c33`: missed short values in document comparisons. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `serviette/server/documents.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  (`rag.mmr`). After query decomposition, relevance follows the interleaved
-  order: positions are mapped linearly from 1 (first) to 0 (last). For a
-  single query, or after a reranker, MMR uses min-max-normalized scores,
-  preserving their relative gaps. This selection signal does not replace
-  the `score` returned by the API. `diversity: 0` preserves the first `k`
-  hits of the candidate pool; `candidates` still widens retrieval, so hybrid
-  search or reranking can differ from a configuration without MMR.
+# Only lines at least this long (after squashing) establish that documents
+# are versions of one text. Short values still participate in the diff.
+        # Long lines establish version similarity and running headers;
+        # short values are kept separately for exact matching in the diff.
+        self.short_lines: set[str] = set()
+        # Adjacent lines can be one line in another PDF extraction. Only
+        # spans containing a short line need this extra exact-match index.
+        self.short_contexts: dict[str, set[str]] = {}
+        self.joined_short_lines: set[str] = set()
+                elif squashed:
+                    self.short_lines.add(squashed)
+            nonempty = [squashed for squashed, _raw in rows if squashed]
+            for width in (2, 3):
+                for start in range(len(nonempty) - width + 1):
+                    span = nonempty[start : start + width]
+                    short = [line for line in span if len(line) < _MIN_LINE]
+                    if short:
+                        joined = "".join(span)
+                        self.joined_short_lines.add(joined)
+                        for line in short:
+                            self.short_contex
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-  (`rag.mmr`).
+# Lines shorter than this (after squashing) are not compared: codes and
+# table cells repeat throughout a document and say nothing on their own.
+        # squashed line -> index of the first chunk containing it
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84e92a33` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cb4c2c33` are properly handled with clean fallback behavior.

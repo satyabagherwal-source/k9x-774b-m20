@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `71457b66`  
+> **Source Version**: `e449c978`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:31:48.595Z  
+> **Timestamp**: 2026-11-12T09:46:09.208Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:31:46.893Z  
+> **Harvest Timestamp**: 2026-11-12T09:45:54.975Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25854 stars
+- **Stars / Engagement**: 25899 stars
 
 ---
 
@@ -479,6 +479,7 @@ import (
 	"github.com/pulumi/pulumi/pkg/v3/resource/stack/snapshot"
 	"github.com/pulumi/pulumi/pkg/v3/secrets"
 	"github.com/pulumi/pulumi/pkg/v3/util/nosleep"
+	"github.com/pulumi/pulumi/pkg/v3/util/terminalstatus"
 	pkgWorkspace "github.com/pulumi/pulumi/pkg/v3/workspace"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
@@ -697,9 +698,7 @@ func New(ctx context.Context, d diag.Sink,
 		if err != nil && !os.IsNotExist(err) {
 			return nil, fmt.Errorf("get Pulumi config: %w", err)
 		}
-		if beConfig, ok := config.BackendConfig[cloudURL]; ok {
-			if beConfig.DefaultOrg != "" {
-		
+		if beConfig, ok := config.BackendConf
 ```
 
 ### Core Architecture Module: `pkg/backend/httpstate/client/ai.go`
@@ -1689,13 +1688,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25610** (2026-11-06): **Workflow failure: Pull Request on #25608**
-  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25608  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-11-06T13:44:51.000Z](https://github.com/pulumi/pulumi/actions/runs/42218090981)
-
-- **Issue #25597** (2026-11-06): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-11-06T06:09:06.000Z](https://github.com/pulumi/pulumi/actions/runs/42168640496)
+- **Issue #25669** (2026-11-11): **Workflow failure: Pull Request on #25668**
+  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25668  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-11-11T10:11:09.000Z](https://github.com/pulumi/pulumi/actions/runs/42991764193)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-06T09:07:52.000Z](https://github.com/pulumi/pulumi/actions/runs/42168640496)
+  > This issue has been automatically closed because the associated PR #25668 was merged.  PR: https://github.com/pulumi/pulumi/pull/25668
+
+- **Issue #25658** (2026-11-10): **Workflow failure: On Push at dev-release / sign / sign**
+  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-11-10T14:08:41.000Z](https://github.com/pulumi/pulumi/actions/runs/42828741016)   - ❌ [dev-release / sign / sign](https://github.com/pulumi/pulumi/actions/runs/42828741016/job/129880044583): Sign binaries and checksums (failure)
+  **Post-Mortem & Fix Analysis**:
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-10T14:11:59.000Z](https://github.com/pulumi/pulumi/actions/runs/42829769689)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1712,722 +1713,256 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9c1940d` (2026-11-09)
-**Commit Message**: Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623)
+### Incident Patch 1: `6199fe78` (2026-11-10)
+**Commit Message**: Fix pulumi import code generation for indexed modules (#25616)
 
-This PR contains the following updates:
+`pulumi import --from hcl` imports resources in a module that uses
+`count` or `for_each`, then fails to generate code and exits 1:
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-|
-[github.com/klauspost/compress](https://redirect.github.com/klauspost/compress)
-| `v1.18.7` → `v1.20.2` |
-![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.7/v1.20.2?slim=true)
-|
+    error: internal error: Error: Missing newline after argument
+      on anonymous.pp line 76:
+      77: parent = m[0]_inner
 
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/21045) for more information.
-
----
-
-### Panic on two-block frames in github.com/klauspost/compress
-[CVE-2026-116591](https://nvd.nist.gov/vuln/detail/CVE-2026-116591) /
-[GHSA-fpmh-frq8-7rj8](https://redirect.github.com/advisories/GHSA-fpmh-frq8-7rj8)
-/ [GO-2026-6865](https://pkg.go.dev/vuln/GO-2026-6865)
-
-<details>
-<summary>More information</summary>
-
-#### Details
-Panic on two-block frames in github.com/klauspost/compress
-
-#### Severity
-Unknown
-
-#### References
--
-[htt
-
-**File**: `pkg/go.mod` (modified, +1/-1)
-```diff
-@@ -228,7 +228,7 @@ require (
- 	github.com/iwahbe/helpmakego v0.4.1 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/kevinburke/ssh_config v1.6.0 // indirect
--	github.com/klauspost/compress v1.18.7 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/kylelemons/godebug v1.1.0 // indirect
- 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
- 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
-```
-
-**File**: `pkg/go.sum` (modified, +2/-2)
-```diff
-@@ -381,8 +381,8 @@ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXw
- github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
--github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
- github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
- github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
-```
-
-**File**: `sdk/go.mod` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ require (
- 	github.com/hashicorp/hcl/v2 v2.22.0
- 	github.com/iancoleman/strcase v0.2.0
- 	github.com/iwdgo/sigintwindows v0.2.2
--	github.com/klauspost/compress v1.18.7
-+	github.com/klauspost/compress v1.20.2
- 	github.com/pgavlin/fx v0.1.6
- 	github.com/pgavlin/fx/v2 v2.0.12
- 	github.com/pkg/term v1.1.0
-```
-
-**File**: `sdk/go.sum` (modified, +2/-2)
-```diff
-@@ -147,8 +147,8 @@ github.com/kevinburke/ssh_config v1.6.0/go.mod h1:q2RIzfka+BXARoNexmF9gkxEX7Dmvb
- github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
--github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
- github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
- github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
-```
-
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ require (
- 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/kevinburke/ssh_config v1.2.0 // indirect
--	github.com/klauspost/compress v1.18.7 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
- 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
- 	github.com/mattn/go-isatty v0.0.22 // indirect
-```
-
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +2/-2)
-```diff
-@@ -119,8 +119,8 @@ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF
- github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
--github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
- github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
- github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
-```
-
-**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ require (
- 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/kevinburke/ssh_config v1.2.0 // indirect
--	github.com/klauspost/compress v1.18.7 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
- 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
- 	github.com/mattn/go-isatty v0.0.22 // indirect
-```
-
-**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +2/-2)
-```diff
-@@ -119,8 +119,8 @@ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF
- github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
--github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
- github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
- github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
-```
-
----
-
-### Incident Patch 2: `b2d6a55d` (2026-11-09)
-**Commit Message**: Fix panic in `pulumi package remove` without a version (#25626)
-
-Fixes #25628
-
-`pulumi package remove <name>` without an `@version` panics with a nil
-pointer dereference, even with `--yes`:
-
-```
-Panic: runtime error: invalid memory address or nil pointer dereference
-github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/packagecmd.newPackageDeleteCmd.func1(...)
-	pkg/cmd/pulumi/packagecmd/package_delete.go:130
-```
-
-The confirmation text and the success message used the version from the
-argument, which is nil when it is omitted. Both now use the version the
-registry resolved, so the command deletes the latest version as its
-usage (`<name>[@<version>]`) describes. The success message now names
-the full package (`source/publisher/name@version`).
-
-Added a test case for a package argument without a version; it panics
-before this change.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+`sanitizeName` only replaced dots, so an address like `m[0].inner` kept
+its brackets, and quotes for `for_each` keys, which aren't valid in a
+PCL name. Names containing `[` now have every invalid character
+replaced. Other names are unchanged, so existing generated code stays
+the same.
 
 ---------
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Fraser Ashyggton <[REDACTED_EMAIL]>
 
-**File**: `changelog/pending/20261109--cli-package--package-remove-no-version-panic.yaml` (added, +3/-0)
+**File**: `changelog/pending/cli-import-fix-20261106-121148.yaml` (added, +4/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+component: cli/package
+@@ -0,0 +1,4 @@
++component: cli/import
 +kind: fix
-+body: Fix a panic in `pulumi package remove` when no version is given
++body: Fix `pulumi import` failing to generate code for resources in indexed modules, such as those using `count` or `for_each`
++time: 2026-11-06T12:11:48.366604-08:00
 ```
 
-**File**: `pkg/cmd/pulumi/packagecmd/package_delete.go` (modified, +3/-3)
+**File**: `pkg/importer/hcl2_test.go` (modified, +3/-1)
 ```diff
-@@ -127,7 +127,7 @@ You must have publish permissions for the package to delete it.`,
- 				colors.SpecAttention, formatPkg(pkg), colors.Reset,
- 			))
- 			if err := ui.ConfirmDeletion(
--				yes, cmdutil.Interactive(), prompt, packageVersion.String(), cmd.ErrOrStderr(), opts,
-+				yes, cmdutil.Interactive(), prompt, pkg.Version.String(), cmd.ErrOrStderr(), opts,
- 			); err != nil {
- 				return err
+@@ -372,8 +372,10 @@ func TestGenerateHCL2Definition(t *testing.T) {
+ 				},
  			}
-@@ -143,15 +143,15 @@ You must have publish permissions for the package to delete it.`,
  
- 			fmt.Fprintln(cmd.ErrOrStderr(), opts.Color.Colorize(fmt.Sprintf(
- 				"%sPackage version '%s' has been deleted!%s",
--				colors.SpecAttention, packageVersion, colors.Reset,
-+				colors.SpecAttention, formatPkg(pkg), colors.Reset,
- 			)))
- 			return nil
- 		},
- 	}
++			nameTable := maps.Clone(names)
++			nameTable[state.URN] = sanitizeName(state.URN.Name())
+ 			importState := ImportState{
+-				Names:    maps.Clone(names),
++				Names:    nameTable,
+ 				Snapshot: snapshot,
+ 			}
  
- 	constrictor.AttachArguments(cmd, &constrictor.Arguments{
- 		Arguments: []constrictor.Argument{
--			{Name: "package", Usage: "<source>/<publisher>/<name>@<version>"},
-+			{Name: "package", Usage: "[[<source>/]<publisher>/]<name>[@<version>]"},
- 		},
- 		Required: 1,
- 	})
 ```
 
-**File**: `pkg/cmd/pulumi/packagecmd/package_delete_test.go` (modified, +15/-0)
+**File**: `pkg/importer/language.go` (modified, +4/-1)
 ```diff
-@@ -83,6 +83,21 @@ func TestPackageDeleteCmd_Run(t *testing.T) {
- 				version:   semver.MustParse("1.0.0"),
- 			},
- 		},
-+		{
-+			name:           "delete without version resolves latest",
-+			packageVersion: "private/myorg/my-package",
-+			expectedDeleteArg: struct {
-+				source    string
-+				publisher string
-+				name      string
-+				version   semver.Version
-+			}{
-+				source:    "private",
-+				publisher: "myorg",
-+				name:      "my-package",
-+				version:   semver.MustParse("1.0.0"),
-+			},
-+		},
- 		{
- 			name:           "delete fails with backend error",
- 			packageVersion: "private/myorg/my-package@1.0.0",
+@@ -19,6 +19,7 @@ import (
+ 	"encoding/base64"
+ 	"fmt"
+ 	"io"
++	"regexp"
+ 	"strings"
+ 
+ 	pkgresource "github.com/pulumi/pulumi/pkg/v3/resource"
+@@ -120,8 +121,10 @@ func createPathedValue(
+ 	return nil
+ }
+ 
++var invalidNameCharacters = regexp.MustCompile(`[^\p{L}\p{N}_-]`)
++
+ func sanitizeName(name string) string {
+-	return strings.ReplaceAll(name, ".", "_")
++	return invalidNameCharacters.ReplaceAllString(name, "_")
+ }
+ 
+ func createImportState(states []*pkgresource.State, snapshot []*pkgresource.State, names NameTable) ImportState {
+```
+
+**File**: `pkg/importer/language_test.go` (modified, +26/-0)
+```diff
+@@ -532,3 +532,29 @@ const randomPet = new random.RandomPet("randomPet", {}, {
+ `
+ 	assert.Equal(t, expectedTypeScript, generatedTypeScript)
+ }
++
++func TestSanitizeName(t *testing.T) {
++	t.Parallel()
++
++	tests := []struct {
++		name string
++		want string
++	}{
++		{"bucket", "bucket"},
++		{"my-bucket_1", "my-bucket_1"},
++		{"m.inner", "m_inner"},
++		{"m[0].inner", "m_0__inner"},
++		{`m["us-east"].inner`, "m__us-east___inner"},
++		{`m["a b"].inner`, "m__a_b___inner"},
++		{"default/nginx", "default_nginx"},
++		{"imported resource", "imported_resource"},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Parallel()
++
++			assert.Equal(t, tt.want, sanitizeName(tt.name))
++		})
++	}
++}
 ```
 
 ---
 
-### Incident Patch 3: `a1b17a9a` (2026-11-09)
-**Commit Message**: Fix circular import in Python SDKs when an object type references a resource in the same module (#25579)
+### Incident Patch 2: `cde91143` (2026-11-10)
+**Commit Message**: Centralize Survey prompts behind ui.AskOne (#25634)
 
-Fixes #25578
+This has no functional changes. Move all of our prompts from
+`survey.AskOne` to a shim in `ui.AskOne`. In the next PR
+https://github.com/pulumi/pulumi/pull/25635 we plugin the OSC 7501
+status code for "needs user input" into that shim.
 
-## Cause
-
-An object type can have a property that refers to a resource in the same
-module. In this case, the generated `_inputs.py` and `outputs.py` import
-the resource class at the top of the file. The resource module also
-imports `_inputs.py` with `from ._inputs import *`. Thus the two files
-import each other, and the result depends on which file loads first.
-
-## Fix
-
-This change affects only `_inputs.py` and `outputs.py`. It applies only
-to references to a resource in the same package and module.
-
-1. The types file imports the resource module, not the resource class.
-For example, it uses `from . import widget as _widget`. The annotation
-refers to the class through the module, as in `'_widget.Widget'`.
-References to resources in other modules already use this form.
-2. The types file puts these imports at the end of the file, after
-`__all__` and all classes.
-
-The file name logic is unchanged. It still handles the kubernetes20
-CamelCase names, the provider resource, and file names that conflict
-with a child module. Resource modules and function modules do not
-chan
-
-**File**: `changelog/pending/20261105--sdkgen-python--resource-reference-circular-import.yaml` (added, +4/-0)
+**File**: `pkg/cmd/pulumi/auth/login.go` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,4 @@
-+component: sdkgen/python
-+kind: fix
-+body: Fix a circular import when an object type references a resource in the same module
-+time: 2026-11-05T00:00:00Z
+@@ -162,7 +162,7 @@ func (c *loginCmd) newCommand(ws pkgWorkspace.Context, lm backend.LoginManager,
+ 					"warning: existing stored credentials can no longer be decrypted: %v\n", err)
+ 				if cmdutil.Interactive() {
+ 					replace := false
+-					if err := survey.AskOne(&survey.Confirm{
++					if err := ui.AskOne(&survey.Confirm{
+ 						Message: "Replace the stored credentials with the ones from this login?",
+ 						Default: false,
+ 					}, &replace, ui.SurveyIcons(displayOptions.Color)); err != nil || !replace {
+@@ -517,7 +517,7 @@ func chooseAccount(accounts map[string]workspace.Account, opts display.Options)
+ 	message = opts.Color.Colorize(colors.SpecPrompt + message + colors.Reset)
+ 
+ 	var option string
+-	if err := survey.AskOne(&survey.Select{
++	if err := ui.AskOne(&survey.Select{
+ 		Message:  message,
+ 		Options:  acts,
+ 		PageSize: pageSize,
 ```
 
-**File**: `pkg/codegen/python/gen.go` (modified, +51/-12)
+**File**: `pkg/cmd/pulumi/logs/decrypt.go` (modified, +1/-1)
 ```diff
-@@ -123,6 +123,10 @@ type modContext struct {
- 	extraSourceFiles []string
- 	isConfig         bool
+@@ -290,7 +290,7 @@ func chooseLog(stackName, prompt string) (string, error) {
+ 	options, optionMap := formatLogChoices(entries)
  
-+	// typesFile is true while generating _inputs.py or outputs.py. These files import resources
-+	// of their own module as modules, at the end of the file, to avoid a circular import.
-+	typesFile bool
-+
- 	// Name overrides set in PackageInfo
- 	modNameOverrides map[string]string // Optional overrides for Pulumi module names
- 	compatibility    string            // Toggle compatibility mode for a specified target.
-@@ -322,7 +326,12 @@ func (mod *modContext) enumType(enum *schema.EnumType) string {
+ 	var choice string
+-	if err := survey.AskOne(&survey.Select{
++	if err := ui.AskOne(&survey.Select{
+ 		Message:  prompt,
+ 		Options:  options,
+ 		PageSize: cmd.OptimalPageSize(cmd.OptimalPageSizeOpts{Nopts: len(options)}),
+```
+
+**File**: `pkg/cmd/pulumi/logs/remove.go` (modified, +1/-1)
+```diff
+@@ -192,7 +192,7 @@ func chooseLogToRemove(logsDir string) (logEntry, error) {
+ 	options, optionMap := formatLogRemovalChoices(entries)
  
- func (mod *modContext) resourceType(r *schema.ResourceType) string {
- 	if r.Resource == nil || codegen.PkgEquals(r.Resource.PackageReference, mod.pkg) {
--		return mod.tokenToResource(r.Token)
-+		name := mod.tokenToResource(r.Token)
-+		if mod.typesFile && mod.isLocalResource(r) {
-+			// importResourceType imports the module of this resource as `_<file>`.
-+			return "_" + mod.resourceFileName(r) + "." + name
-+		}
-+		return name
- 	}
- 
- 	// Is it a provider resource?
-@@ -336,6 +345,13 @@ func (mod *modContext) resourceType(r *schema.ResourceType) string {
- 	return fmt.Sprintf("%s.%s%s", PyPack(pkg.Namespace(), pkg.Name()), modName, name)
- }
- 
-+// isLocalResource returns true for a resource that this module imports from a relative path, as in
-+// `from .widget import Widget`, and refers to by its bare class name.
-+func (mod *modContext) isLocalResource(r *schema.ResourceType) bool {
-+	return (r.Resource == nil || codegen.PkgEquals(r.Resource.PackageReference, mod.pkg)) &&
-+		!strings.Contains(mod.tokenToResource(r.Token), ".")
-+}
-+
- func (mod *modContext) tokenToResource(tok string) string {
- 	// token := pkg : module : member
- 	// module := path/to/module
-@@ -1041,18 +1057,10 @@ func (mod *modContext) importResourceType(r *schema.ResourceType) string {
- 	if mod.mod == modName || modName == "" {
- 		// We want a relative import if we're in the same module: from .some_member import SomeMember
- 		importPath := mod.getRelImportFromRoot(modName)
-+		name := mod.resourceFileName(r)
- 
--		name := PyName(tokenToName(r.Token))
--		if mod.compatibility == kubernetes20 {
--			// To maintain backward compatibility for kubernetes, the file names
--			// need to be CamelCase instead of the standard snake_case.
--			name = tokenToName(r.Token)
--		}
--		if r.Resource != nil && r.Resource.IsProvider {
--			name = "provider"
--		}
--		if mod.conflictsWithChildModule(name) {
--			name = name + "_"
-+		if mod.typesFile {
-+			return fmt.Sprintf("from %s import %[2]s as _%[2]s", importPath, name)
+ 	var choice string
+-	if err := survey.AskOne(&survey.Select{
++	if err := ui.AskOne(&survey.Select{
+ 		Message:  "Select a log file to remove:",
+ 		Options:  options,
+ 		PageSize: cmd.OptimalPageSize(cmd.OptimalPageSizeOpts{Nopts: len(options)}),
+```
+
+**File**: `pkg/cmd/pulumi/operations/refresh.go` (modified, +3/-2)
+```diff
+@@ -34,6 +34,7 @@ import (
+ 	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/metadata"
+ 	cmdStack "github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/stack"
+ 	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/state"
++	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/ui"
+ 	"github.com/pulumi/pulumi/pkg/v3/engine"
+ 	pkgresource "github.com/pulumi/pulumi/pkg/v3/resource"
+ 	"github.com/pulumi/pulumi/pkg/v3/resource/deploy"
+@@ -622,7 +623,7 @@ func interactiveFixPendingCreate(op pkgresource.Operation) (*pkgresource.Operati
+ 			"skip (do nothing)",
+ 			"import (the CREATE succeeded; provide a resource ID and complete the CREATE operation)",
  		}
- 
- 		if strings.HasSuffix(importPath, ".") {
-@@ -1070,6 +1078,23 @@ func (mod *modContext) importResourceType(r *schema.ResourceType) string {
- 	return fmt.Sprintf("from %s import %[2]s as _%[2]s", mod.getRelImportFromRoot(""), components[0])
- }
- 
-+// resourceFileName returns the name of the file that defines a resource of this package.
-+func (mod *modContext) resourceFileName(r *schema.ResourceType) string {
-+	name := PyName(tokenToName(r.Token))
-+	if mod.compatibility == kubernetes20 {
-+		// To maintain backward compatibility for kubernetes, the file names
-+		// need to be CamelCase instead of the standard snake_case.
-+		name = tokenToName(r.Token)
-+	}
-+	if r.Resource != nil && r.Resource.IsProvider {
-+		name = "provider"
-+	}
-+	if mod.conflictsWithChildModule(name) {
-+		name = name + "_"
-+	}
-+	return name
-+}
-+
- // genConfig emits all config variables in the given module, returning the resulting file.
- func (mod *modContext) genConfig(variables []*schema.Property) (string, error) {
- 	w := &bytes.Buffer{}
-@@ -1197,6 +1222,9 @@ func allTypesAreOverlays(types []*schema.ObjectType) bool {
- }
- 
- func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
-+	mod.typesFile = true
-+	defer func() { mod.typesFile = false }()
-+
- 	genTypes := func(file string, input bool) error {
- 		w := &bytes.Buffer{}
- 
-@@ -1206,6 +1234,8 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
- 		}
- 
- 		imports := newImports()
-+		// Resource modules of this module import this file, so these imports go at the end of the file.
-+		resourceImports := newImports()
- 		var emitted [][]*schema.Property
- 		for _, t := range mod.types {
- 			if t.IsOverlay {
-@@ -1214,6 +1244,11 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
- 			}
- 			if (input && mod.details(t).inputType) || (!input && mod.details(t).outputType) {
- 				emitted = append(emitted, t.Properties)
-+				codegen.VisitTypeClosure(t.Properties, func(t schema.Type) {
-+					if r, ok := t.(*schema.ResourceType); ok && mod.isLocalResource(r) {
-+						resourceImports.addResource(mod, r)
-+					}
-+				})
- 			}
- 
- 			if input && mod.details(t).inputType {
-@@ -1238,6 +1273,7 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
- 		for _, e := range mod.enums {
- 			imports.addEnum(mod, e)
- 		}
-+		imports.Set = imports.Difference(resourceImports.Set)
- 
- 		mod.genHeader(w, true /*needsSDK*/
+-		if err := survey.AskOne(&survey.Select{
++		if err := ui.AskOne(&survey.Select{
+ 			Message: fmt.Sprintf("Options for pending CREATE of %s", op.Resource.URN),
+ 			Options: options,
+ 		}, &option, nil); err != nil {
+@@ -637,7 +638,7 @@ func interactiveFixPendingCreate(op pkgresource.Operation) (*pkgresource.Operati
+ 			return &op, nil
+ 		case options[2]:
+ 			var id string
+-			err = survey.AskOne(&survey.Input{
++			err = ui.AskOne(&survey.Input{
+ 				Message: "ID: ",
+ 			}, &id, nil)
+ 			if err == nil {
 ```
 
-**File**: `pkg/testing/pulumi-test-language/providers/object_ref_provider.go` (added, +156/-0)
+**File**: `pkg/cmd/pulumi/packagecmd/package_new.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,156 @@
-+// Copyright 2026, Pulumi Corporation.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package providers
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"fmt"
-+
-+	"github.com/blang/semver"
-+
-+	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
-+	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
-+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-+)
-+
-+// ObjectRefProvider has object types that reference a resource of the same module. Each module has a
-+// resource with an object-type input, and a second resource that references the first through an object
-+// type. In the module "referencingFirst" the referencing resource sorts first, and in the module
-+// "referencedFirst" the referenced resource sorts first.
-+type ObjectRefProvider struct {
-+	plugin.UnimplementedProvider
-+}
-+
-+var _ plugin.Provider = (*ObjectRefProvider)(nil)
-+
-+var objectRefResources = map[string]bool{
-+	"objectref:referencingFirst:Widget": true,
-+	"objectref:referencingFirst:Gadget": true,
-+	"objectref:referencedFirst:Alpha":   true,
-+	"objectref:referencedFirst:Beta":    true,
-+}
-+
-+func (p *ObjectRefProvider) Close() error { return nil }
-+
-+func (p *ObjectRefProvider) Configure(
-+	context.Context, plugin.ConfigureRequest,
-+) (plugin.ConfigureResponse, error) {
-+	return plugin.ConfigureResponse{}, nil
-+}
-+
-+func (p *ObjectRefProvider) GetPluginInfo(context.Context) (plugin.PluginInfo, error) {
-+	ver := semver.MustParse("62.0.0")
-+	return plugin.PluginInfo{Version: &ver}, nil
-+}
-+
-+func (p *ObjectRefProvider) GetSchema(
-+	context.Context, plugin.GetSchemaRequest,
-+) (plugin.GetSchemaResponse, error) {
-+	ref := func(token string) schema.PropertySpec {
-+		return schema.PropertySpec{TypeSpec: schema.TypeSpec{Ref: token}}
-+	}
-+	object := func(name, typ string) schema.ComplexTypeSpec {
-+		return schema.ComplexTypeSpec{ObjectTypeSpec: schema.ObjectTypeSpec{
-+			Type:       "object",
-+			Properties: map[string]schema.PropertySpec{name: ref(typ)},
-+			Required:   []string{name},
-+		}}
-+	}
-+	res := func(name, typ string) schema.ResourceSpec {
-+		return schema.ResourceSpec{
-+			ObjectTypeSpec: schema.ObjectTypeSpec{
-+				Type:       "object",
-+				Properties: map[string]schema.PropertySpec{name: ref(typ)},
-+				Required:   []string{name},
-+			},
-+			InputProperties: map[string]schema.PropertySpec{name: ref(typ)},
-+			RequiredInputs:  []string{name},
-+		}
-+	}
-+	settings := schema.ComplexTypeSpec{ObjectTypeSpec: schema.ObjectTypeSpec{
-+		Type:       "object",
-+		Properties: map[string]schema.PropertySpec{"name": {TypeSpec: schema.TypeSpec{Type: "string"}}},
-+		Required:   []string{"name"},
-+	}}
-+
-+	pkg := schema.PackageSpec{
-+		Name:    "objectref",
-+		Version: "62.0.0",
-+		Resources: map[string]schema.ResourceSpec{
-+			"objectref:referencingFirst:Widget": res("settings", "#/types/objectref:referencingFirst:WidgetSettings"),
-+			"objectref:referencingFirst:Gadget": res("widgetRef", "#/types/objectref:referencingFirst:WidgetRef"),
-+			"objectref:referencedFirst:Alpha":   res("settings", "#/types/objectref:referencedFirst:AlphaSettings"),
-+			"objectref:referencedFirst:Beta":    res("alphaRef", "#/types/objectref:referencedFirst:AlphaRef"),
-+		},
-+		Types: map[string]schema.ComplexTypeSpec{
-+			"objectref:referencingFirst:WidgetSettings": settings,
-+			"objectref:referencingFirst:WidgetRef": object(
-+				"widget", "#/resources/objectref:referencingFirst:Widget"),
-+			"objectref:referencedFirst:AlphaSettings": settings,
-+			"objectref:referencedFirst:AlphaRef": object(
-+				"alpha", "#/resources/objectref:referencedFirst:Alpha"),
-+		},
-+	}
-+	jsonBytes, err := json.Marshal(pkg)
-+	return plugin.GetSchemaResponse{Schema: jsonBytes}, err
-+}
-+
-+func (p *ObjectRefProvider) CheckConfig(
-+	_ context.Context, req plugin.CheckConfigRequest,
-+) (plugin.CheckConfigResponse, error) {
-+	return plugin.CheckConfigResponse{Properties: req.News}, nil
-+}
-+
-+func (p *ObjectRefProvider) Check(
-+	_ context.Context, req plugin.CheckRequest,
-+) (plugin.CheckResponse, error) {
-+	if !objectRefResources[string(req.URN.Type())] {
-+		return plugin.CheckResponse{
-+			Failures: makeCheckFailure("", fmt.Sprintf("invalid URN type: %s", req.URN.Type())),
-+		}, nil
-+	}
-+	return plugin.CheckResponse{Properties: req.NewInputs}, nil
-+}
-+
-+func (p *ObjectRefProvider) Create(
-+	_ context.Context, req plugin.CreateRequest,
-+) (plugin.CreateResponse, error) {
-+	if !objectRefResources[string(req.URN.Type())] {
-+		return plugin.CreateResponse{Status: resource.Stat
+@@ -330,7 +330,7 @@ func choosePackageTemplate(
+ 	options, optionToTemplateMap := packageTemplatesToOptions(templates)
+ 
+ 	var option string
+-	if err := survey.AskOne(&survey.Select{
++	if err := ui.AskOne(&survey.Select{
+ 		Message:  message,
+ 		Options:  options,
+ 		PageSize: cmd.OptimalPageSize(cmd.OptimalPageSizeOpts{Nopts: len(options)}),
 ```
 
-**File**: `pkg/testing/pulumi-test-language/tests/l2_resource_ref_in_object_type.go` (added, +54/-0)
+**File**: `pkg/cmd/pulumi/policy/policy_new.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,54 @@
-+// Copyright 2026, Pulumi Corporation.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package tests
-+
-+import (
-+	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
-+	"github.com/pulumi/pulumi/pkg/v3/testing/pulumi-test-language/providers"
-+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-+	"github.com/pulumi/pulumi/sdk/v3/go/property"
-+	"github.com/stretchr/testify/assert"
-+)
-+
-+func init() {
-+	LanguageTests["l2-resource-ref-in-object-type"] = LanguageTest{
-+		Providers: []func() plugin.Provider{
-+			func() plugin.Provider { return &providers.ObjectRefProvider{} },
-+		},
-+		Runs: []TestRun{{
-+			Assert: func(l *L, res AssertArgs) {
-+				RequireStackResource(l, res.Err, res.Changes)
-+				RequireSingleResource(l, res.Snap.Resources, "pulumi:providers:objectref")
-+
-+				for _, c := range []struct{ referenced, referencing, refProp, prop string }{
-+					{"widget", "gadget", "widgetRef", "widget"},
-+					{"alpha", "beta", "alphaRef", "alpha"},
-+				} {
-+					referenced := RequireSingleNamedResource(l, res.Snap.Resources, c.referenced)
-+					referencing := RequireSingleNamedResource(l, res.Snap.Resources, c.referencing)
-+					assert.Equal(l, property.NewMap(map[string]property.Value{
-+						"settings": property.New(map[string]property.Value{"name": property.New(c.referenced)}),
-+					}), resource.FromResourcePropertyMap(referenced.Inputs))
-+
-+					ref := resource.FromResourcePropertyValue(
-+						resource.MakeCustomResourceReference(referenced.URN, referenced.ID, ""))
-+					assert.Equal(l, property.NewMap(map[string]property.Value{
-+						c.refProp: property.New(map[string]property.Value{c.prop: ref}),
-+					}), resource.FromResourcePropertyMap(referencing.Inputs))
-+				}
-+			},
-+		}},
-+	}
-+}
+@@ -311,7 +311,7 @@ func choosePolicyPackTemplate(templates []cmdTemplates.PolicyPackTemplate,
+ 	options, optionToTemplateMap := policyTemplatesToOptionArrayAndMap(templates)
+ 
+ 	var option string
+-	if err := survey.AskOne(&survey.Select{
++	if err := ui.AskOne(&survey.Select{
+ 		Message:  message,
+ 		Options:  options,
+ 		PageSize: cmd.OptimalPageSize(cmd.OptimalPageSizeOpts{Nopts: len(options)}),
 ```
 
-**File**: `pkg/testing/pulumi-test-language/tests/testdata/l2-resource-ref-in-object-type/main.pp` (added, +15/-0)
+**File**: `pkg/cmd/pulumi/project/newcmd/new.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,15 @@
-+resource "widget" "objectref:referencingFirst:Widget" {
-+    settings = { name = "widget" }
-+}
-+
-+resource "gadget" "objectref:referencingFirst:Gadget" {
-+    widgetRef = { widget = widget }
-+}
-+
-+resource "alpha" "objectref:referencedFirst:Alpha" {
-+    settings = { name = "alpha" }
-+}
-+
-+resource "beta" "objectref:referencedFirst:Beta" {
-+    alphaRef = { alpha = alpha }
-+}
+@@ -800,7 +800,7 @@ func promptRuntimeOptions(ctx *plugin.Context, language plugin.LanguageRuntime,
+ 
+ 				var response string
+ 				message := opts.Color.Colorize(colors.SpecPrompt + "\r" + optionPrompt.Description + colors.Reset)
+-				if err := survey.AskOne(&survey.Select{
++				if err := ui.AskOne(&survey.Select{
+ 					Message: message,
+ 					Options: choices,
+ 				}, &response, ui.SurveyIcons(opts.Color), nil); err != nil {
 ```
 
-**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/Pulumi.yaml` (added, +2/-0)
+**File**: `pkg/cmd/pulumi/stack/io.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,2 @@
-+name: l2-resource-ref-in-object-type
-+runtime: go
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/go.mod` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+module l2-resource-ref-in-object-type
-+
-+go 1.25
-+
-+require (
-+	github.com/pulumi/pulumi/sdk/v3 v3.30.0
-+	example.com/pulumi-objectref/sdk/go/v62 v62.0.0
-+)
-+
-+replace example.com/pulumi-objectref/sdk/go/v62 => /ROOT/artifacts/example.com_pulumi-objectref_sdk_go_v62
-+
-+replace github.com/pulumi/pulumi/sdk/v3 => /ROOT/artifacts/github.com_pulumi_pulumi_sdk_v3
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/main.go` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+package main
-+
-+import (
-+	"example.com/pulumi-objectref/sdk/go/v62/objectref/referencedfirst"
-+	"example.com/pulumi-objectref/sdk/go/v62/objectref/referencingfirst"
-+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-+)
-+
-+func main() {
-+	pulumi.Run(func(ctx *pulumi.Context) error {
-+		widget, err := referencingfirst.NewWidget(ctx, "widget", &referencingfirst.WidgetArgs{
-+			Settings: &referencingfirst.WidgetSettingsArgs{
-+				Name: pulumi.String("widget"),
-+			},
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		_, err = referencingfirst.NewGadget(ctx, "gadget", &referencingfirst.GadgetArgs{
-+			WidgetRef: &referencingfirst.WidgetRefArgs{
-+				Widget: widget,
-+			},
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		alpha, err := referencedfirst.NewAlpha(ctx, "alpha", &referencedfirst.AlphaArgs{
-+			Settings: &referencedfirst.AlphaSettingsArgs{
-+				Name: pulumi.String("alpha"),
-+			},
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		_, err = referencedfirst.NewBeta(ctx, "beta", &referencedfirst.BetaArgs{
-+			AlphaRef: &referencedfirst.AlphaRefArgs{
-+				Alpha: alpha,
-+			},
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		return nil
-+	})
-+}
+@@ -284,7 +284,7 @@ func ChooseStack(ctx context.Context, sink diag.Sink, ws pkgWorkspace.Context,
+ 	message = opts.Color.Colorize(colors.SpecPrompt + message + colors.Reset)
+ 
+ 	var option string
+-	if err = survey.AskOne(&survey.Select{
++	if err = ui.AskOne(&survey.Select{
+ 		Message: message,
+ 		Options: options,
+ 		Default: defaultOption,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25668** (2026-11-11): Freeze v3.275.0 (@pulumi-bot)
+- **PR #25635** (2026-11-10): Report operation and prompt status using OSC 7501 (@julienp)
+- **PR #25634** (2026-11-10): Centralize Survey prompts behind ui.AskOne (@julienp)
+- **PR #25633** (2026-11-10): Update dependency pulumi/pulumi-dotnet to v3.118.0 (@pulumi-renovate[bot])
+- **PR #25632** (2026-11-10): Lint against assert.Error (@Frassle)
 - **PR #25627** (2026-11-09): Fix Windows closure test tool resolution (@julienp)
-- **PR #25626** (2026-11-09): Fix panic in `pulumi package remove` without a version (@flostadler)
-- **PR #25623** (2026-11-09): Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (@pulumi-renovate[bot])
-- **PR #25621** (2026-11-09): Continue DIY non-project deprecation (@Frassle)
-- **PR #25612** (2026-11-06): Keep `project new --esc-config` out of the generated Automation API (@rgharris)
-- **PR #25608** (closed): Regenerate automation APIs (@pulumi-bot)
 
 ---
 
@@ -2447,28 +1982,31 @@ chan
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623)
+## X. pulumi import code generation for indexed modules (#25616)
 
 **RULE**:
-When implementing operations in `pkg/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/cli-import-fix-20261106-121148.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9c1940d`: Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6199fe78`: pulumi import code generation for indexed modules (#25616). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/cli-import-fix-20261106-121148.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/klauspost/compress v1.20.2 // indirect
+component: cli/import
+kind: fix
+body: Fix `pulumi import` failing to generate code for resources in indexed modules, such as those using `count` or `for_each`
+time: 2026-11-06T12:11:48.366604-08:00
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/klauspost/compress v1.18.7 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9c1940d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6199fe78` are properly handled with clean fallback behavior.

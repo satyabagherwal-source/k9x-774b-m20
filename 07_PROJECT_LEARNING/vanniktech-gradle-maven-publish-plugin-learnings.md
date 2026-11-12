@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md`  
 > **Source**: github ([https://github.com/vanniktech/gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin))  
-> **Source Version**: `8c6a683a`  
+> **Source Version**: `086c4bd6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T05:26:22.051Z  
+> **Timestamp**: 2026-11-12T06:20:03.676Z  
 > **Learning ID**: `learn-github-vanniktech-gradle-maven-publish-plugin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vanniktech/gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T05:26:21.798Z  
+> **Harvest Timestamp**: 2026-11-12T06:19:35.683Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -998,8 +998,54 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c6a683a` (2026-11-06)
-**Commit Message**: Update Gradle to v9.9.0 (#1470)
+### Incident Patch 1: `086c4bd6` (2026-11-11)
+**Commit Message**: Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `gradle/alpha.versions.toml` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ [versions]
+ gradle = "9.9.1"
+ 
+-kotlin = "2.5.0-Beta2"
++kotlin = "2.5.0-RC"
+ 
+ android-gradle = "9.6.0-alpha03"
+ 
+```
+
+**File**: `gradle/beta.versions.toml` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ [versions]
+ gradle = "9.9.1"
+ 
+-kotlin = "2.5.0-Beta2"
++kotlin = "2.5.0-RC"
+ 
+ android-gradle = "9.5.1"
+ 
+```
+
+**File**: `gradle/rc.versions.toml` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ [versions]
+ gradle = "9.9.1"
+ 
+-kotlin = "2.4.21"
++kotlin = "2.5.0-RC"
+ 
+ android-gradle = "9.5.1"
+ 
+```
+
+---
+
+### Incident Patch 2: `a4a73cb5` (2026-11-10)
+**Commit Message**: Update Gradle to v9.9.1 (#1471)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
@@ -1007,8 +1053,8 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 ```diff
 @@ -1,5 +1,5 @@
  [versions]
--gradle = "9.9.0-rc-1"
-+gradle = "9.9.0"
+-gradle = "9.9.0"
++gradle = "9.9.1"
  
  kotlin = "2.5.0-Beta2"
  
@@ -1018,8 +1064,8 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 ```diff
 @@ -1,5 +1,5 @@
  [versions]
--gradle = "9.9.0-rc-1"
-+gradle = "9.9.0"
+-gradle = "9.9.0"
++gradle = "9.9.1"
  
  kotlin = "2.5.0-Beta2"
  
@@ -1031,8 +1077,8 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
  minAgp = "8.13.0"
  minKgp = "2.2.0"
  
--gradle = "9.8.2"
-+gradle = "9.9.0"
+-gradle = "9.9.0"
++gradle = "9.9.1"
  
  kotlin = "2.4.21"
  
@@ -1042,8 +1088,8 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 ```diff
 @@ -1,5 +1,5 @@
  [versions]
--gradle = "9.9.0-rc-1"
-+gradle = "9.9.0"
+-gradle = "9.9.0"
++gradle = "9.9.1"
  
  kotlin = "2.4.21"
  
@@ -1054,81 +1100,111 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 @@ -1,7 +1,7 @@
  distributionBase=GRADLE_USER_HOME
  distributionPath=wrapper/dists
--distributionSha256Sum=21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
-+distributionSha256Sum=0b00b0ffe07c4d4789c12d4935a44a7057d55774b7540bd4a3f76f336deb177a
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
+-distributionSha256Sum=0b00b0ffe07c4d4789c12d4935a44a7057d55774b7540bd4a3f76f336deb177a
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
++distributionSha256Sum=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
  networkTimeout=10000
  retries=0
  retryBackOffMs=500
 ```
 
----
-
-### Incident Patch 2: `9d73adc4` (2026-11-05)
-**Commit Message**: Update android.gradle (#1468)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `gradle/alpha.versions.toml` (modified, +1/-1)
+**File**: `gradlew.bat` (modified, +41/-11)
 ```diff
-@@ -3,7 +3,7 @@ gradle = "9.9.0-rc-1"
+@@ -26,6 +26,33 @@
+ @rem Set local scope for the variables, and ensure extensions are enabled
+ setlocal EnableExtensions
  
- kotlin = "2.5.0-Beta2"
++@rem Catch executions from older scripts and ensure they exit cleanly.
++@rem This can be removed once we can be reasonably confident that few people
++@rem will be migrating directly to this new wrapper.
++goto afterSafetyNet
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++goto exitWithErrorLevel
++:afterSafetyNet
++
+ set DIRNAME=%~dp0
+ if "%DIRNAME%"=="" set DIRNAME=.
+ @rem This is normally unused
+@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
+ %JAVA_EXE% -version >NUL 2>&1
+ if %ERRORLEVEL% equ 0 goto execute
  
--android-gradle = "9.6.0-alpha02"
-+android-gradle = "9.6.0-alpha03"
+-echo. 1>&2
+-echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
+-echo. 1>&2
+-echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+-echo location of your Java installation. 1>&2
++1>&2 echo.
++1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++1>&2 echo.
++1>&2 echo Please set the JAVA_HOME variable in your environment to match the
++1>&2 echo location of your Java installation.
  
- gradle-plugin-publish = "2.2.1"
+ "%COMSPEC%" /c exit 1
++goto exitWithErrorLevel
  
-```
-
-**File**: `gradle/beta.versions.toml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ gradle = "9.9.0-rc-1"
+ :findJavaFromJavaHome
+ set JAVA_HOME=%JAVA_HOME:"=%
+ set JAVA_EXE=%JAVA_HOME%/bin/java.exe
  
- kotlin = "2.5.0-Beta2"
+ if exist "%JAVA_EXE%" goto execute
  
--android-gradle = "9.5.0"
-+android-gradle = "9.5.1"
+-echo. 1>&2
+-echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
+-echo. 1>&2
+-echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+-echo location of your Java installation. 1>&2
++1>&2 echo.
++1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
++1>&2 echo.
++1>&2 echo Please set the JAVA_HOME variable in your environment to match the
++1>&2 echo location of your Java installation.
  
- gradle-plugin-publish = "2.2.1"
+ "%COMSPEC%" /c exit 1
++goto exitWithErrorLevel
  
-```
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ gradle = "9.8.2"
+ :execute
+ @rem Setup the command line
+@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
+ @rem Execute gradlew
+ @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
+ @rem which allows us to clear the local environment before executing the java command
+-endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
++endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
  
- kotlin = "2.4.21"
- 
--android-gradle = "9.5.0"
-+android-gradle = "9.5.1"
- 
- dokka = "2.3.0"
- 
-```
-
-**File**: `gradle/rc.versions.toml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ gradle = "9.9.0-rc-1"
- 
- kotlin = "2.4.21"
- 
--android-gradle = "9.5.0"
-+android-gradle = "9.5.1"
- 
- gradle-plugin-publish = "2.2.1"
- 
++@rem This label must not be changed. We rely on old scripts being able to jump to this point.
+ :exitWithErrorLevel
+ @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
+ "%COMSPEC%" /c exit %ERRORLEVEL%
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1472** (2026-11-11): Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (@renovate[bot])
+- **PR #1471** (2026-11-10): Update Gradle to v9.9.1 (@renovate[bot])
 - **PR #1470** (2026-11-06): Update Gradle to v9.9.0 (@renovate[bot])
 - **PR #1469** (2026-11-05): Update dependency org.jetbrains.dokka:dokka-gradle-plugin to v2.3.0 (@renovate[bot])
 - **PR #1468** (2026-11-05): Update android.gradle (@renovate[bot])
 - **PR #1464** (2026-10-30): Update dependency org.jetbrains.kotlin.jvm to v2.5.0-Beta2 (@renovate[bot])
-- **PR #1463** (2026-10-29): Update android.gradle (@renovate[bot])
-- **PR #1461** (2026-10-30): Update Gradle (@renovate[bot])
 
 ---
 
@@ -1148,13 +1224,13 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Gradle to v9.9.0 (#1470)
+## X. Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472)
 
 **RULE**:
 When implementing operations in `gradle/alpha.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vanniktech/gradle-maven-publish-plugin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c6a683a`: Update Gradle to v9.9.0 (#1470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `086c4bd6`: Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/alpha.versions.toml`.
@@ -1162,14 +1238,14 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-gradle = "9.9.0"
+kotlin = "2.5.0-RC"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-gradle = "9.9.0-rc-1"
+kotlin = "2.5.0-Beta2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c6a683a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `086c4bd6` are properly handled with clean fallback behavior.

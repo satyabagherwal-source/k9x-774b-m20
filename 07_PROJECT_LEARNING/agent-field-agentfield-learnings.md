@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `296fac67`  
+> **Source Version**: `522cc8b7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T23:17:47.746Z  
+> **Timestamp**: 2026-11-12T06:26:58.118Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T23:17:47.736Z  
+> **Harvest Timestamp**: 2026-11-12T06:26:57.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2651 stars
+- **Stars / Engagement**: 2653 stars
 
 ---
 
@@ -1418,82 +1418,1274 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0dc4f14a` (2026-11-09)
-**Commit Message**: fix(go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166)
+### Incident Patch 1: `186f695c` (2026-11-10)
+**Commit Message**: fix(storage): create the relay and approval tables with the schema, never cache a failed create (#1177)
 
-The SSEDecoder only split events on "\n\n" and required the literal
-prefix "data: ", so a server using CRLF line endings or "data:" with no
-space yielded zero chunks and StreamComplete silently lost the whole stream.
+The three tables #1174 added (execution_relay, run_owners, execution_approval_questions) were created lazily with CREATE TABLE IF NOT EXISTS. On Postgres two first uses raced on pg_type_typname_nsp_index, and the store cached the error, so run ownership and relay writes stayed broken until a restart; ordinary executions also ran DDL on every call.
 
-**File**: `sdk/go/ai/client.go` (modified, +5/-3)
+The tables are now created at startup in autoMigrateSchema for SQLite and Postgres. The remaining guard serializes creation per db, caches only success, runs no DDL in steady state, and treats a concurrent create by another process as success.
+
+Proved by the existing-deployments smoke suite (15/15 on main plus this change).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `control-plane/internal/storage/approval_question.go` (modified, +16/-22)
 ```diff
-@@ -383,14 +383,16 @@ func NewSSEDecoder(r io.Reader) *SSEDecoder {
- func (d *SSEDecoder) Decode() (StreamChunk, error) {
- 	for {
- 		// First check if we already have a complete message in accumulated buffer
--		data := string(d.accumulated)
-+		// SSE allows CRLF line endings; normalize so "\r\n\r\n" separates events too.
-+		data := strings.ReplaceAll(string(d.accumulated), "\r\n", "\n")
- 		if idx := strings.Index(data, "\n\n"); idx >= 0 {
- 			message := data[:idx]
- 			d.accumulated = []byte(data[idx+2:])
+@@ -6,7 +6,6 @@ import (
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
+-	"sync"
+ 	"time"
  
- 			// Parse SSE message
--			if strings.HasPrefix(message, "data: ") {
--				jsonData := strings.TrimPrefix(message, "data: ")
-+			// The SSE field is "data:" with an optional single space after the colon.
-+			if strings.HasPrefix(message, "data:") {
-+				jsonData := strings.TrimPrefix(message, "data:")
- 				jsonData = strings.TrimSpace(jsonData)
+ 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
+@@ -20,35 +19,30 @@ import (
+ // read what they approve, so the control plane now keeps the question beside
+ // the approval — its kind, a one-line title, the full markdown body (a plan)
+ // and the option labels — keyed by (execution_id, approval_request_id), one
+-// row per round. It lives in its own table, created lazily like the relay's,
+-// so the workflow_executions column lists and their migrations stay as they
+-// were.
++// row per round. It lives in its own table, created with the schema alongside
++// the relay's, so the workflow_executions column lists and their migrations
++// stay as they were.
  
- 				// Check for stream end
+-var approvalQuestionTableOnce sync.Map // *sqlDatabase → error
+-
+-func (ls *LocalStorage) approvalQuestionTable(ctx context.Context) error {
+-	if v, ok := approvalQuestionTableOnce.Load(ls.db); ok {
+-		if v == nil {
+-			return nil
+-		}
+-		return v.(error)
+-	}
+-	_, err := ls.db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS execution_approval_questions (
++var approvalQuestionsSchemaTable = guardedSchemaTable{
++	name: "execution_approval_questions",
++	ddl: `CREATE TABLE IF NOT EXISTS execution_approval_questions (
+ 		execution_id TEXT NOT NULL,
+ 		approval_request_id TEXT NOT NULL,
+ 		kind TEXT NOT NULL,
+ 		question TEXT,
+ 		body TEXT,
+ 		options TEXT,
+ 		recorded_at TIMESTAMP NOT NULL,
+-		PRIMARY KEY (execution_id, approval_request_id))`)
+-	if err != nil {
+-		err = fmt.Errorf("create execution_approval_questions: %w", err)
+-		approvalQuestionTableOnce.Store(ls.db, err)
+-		return err
+-	}
+-	approvalQuestionTableOnce.Store(ls.db, nil)
+-	return nil
++		PRIMARY KEY (execution_id, approval_request_id))`,
++	existsQuery: `SELECT 1 FROM execution_approval_questions LIMIT 0`,
++}
++
++// approvalQuestionTable ensures execution_approval_questions exists. THESE
++// TABLES ARE CREATED WITH THE SCHEMA, NOT ON FIRST USE; this guard catches
++// stores built without autoMigrateSchema, serializes creation per db, and
++// caches only success — A FAILED CREATE IS NEVER CACHED.
++func (ls *LocalStorage) approvalQuestionTable(ctx context.Context) error {
++	return ls.ensureSchemaTable(ctx, approvalQuestionsSchemaTable)
+ }
+ 
+ // PutApprovalQuestion keeps q for one approval round. A round asked twice
 ```
 
-**File**: `sdk/go/ai/client_test.go` (modified, +30/-0)
+**File**: `control-plane/internal/storage/approval_question_test.go` (modified, +4/-4)
 ```diff
-@@ -769,3 +769,33 @@ func TestStreamComplete_TimeoutAppliesWhileWaitingForResponse(t *testing.T) {
- 	assert.Error(t, streamErr)
- 	assert.Less(t, time.Since(start), 2*time.Second)
+@@ -92,10 +92,10 @@ func TestApprovalQuestionStorage_S8_PutGetUpdateSeparateRoundsAndUnknown(t *test
+ }
+ 
+ // Contract S9: execution_approval_questions is created lazily on the first call
+-// to a fresh store without a schema migration, and surfaces errors when the
++// to a store constructed without autoMigrateSchema, and surfaces errors when the
+ // context or database is closed.
+ func TestApprovalQuestionStorage_S9_LazyTableCreationWithoutMigration(t *testing.T) {
+-	ls, ctx := setupLocalStorage(t)
++	ls, ctx := newUnmigratedLocalStorage(t)
+ 
+ 	var before int
+ 	err := ls.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'execution_approval_questions'`).Scan(&before)
+@@ -122,8 +122,8 @@ func TestApprovalQuestionStorage_S9_LazyTableCreationWithoutMigration(t *testing
+ 	_, err = ls.GetApprovalQuestion(cancelledCtx, "exec-lazy", "apr-lazy")
+ 	require.Error(t, err)
+ 
+-	// A closed fresh store surfaces and remembers the lazy DDL error on its db handle.
+-	closedLS, closedCtx := setupLocalStorage(t)
++	// A closed unmigrated store surfaces the lazy DDL error on its db handle.
++	closedLS, closedCtx := newUnmigratedLocalStorage(t)
+ 	require.NoError(t, closedLS.Close(closedCtx))
+ 	require.Error(t, closedLS.PutApprovalQuestion(closedCtx, types.ApprovalQuestion{
+ 		ExecutionID:       "exec-closed",
+```
+
+**File**: `control-plane/internal/storage/migrations.go` (modified, +97/-0)
+```diff
+@@ -2,7 +2,10 @@ package storage
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
++
++	"github.com/jackc/pgx/v5/pgconn"
+ )
+ 
+ // migrateAgentNodesCompositePK recreates the agent_nodes table with a composite
+@@ -244,5 +247,99 @@ func (ls *LocalStorage) autoMigrateSchema(ctx context.Context) error {
+ 		return fmt.Errorf("failed to auto-migrate schema: %w", err)
+ 	}
+ 
++	// THESE TABLES ARE CREATED WITH THE SCHEMA, NOT ON FIRST USE. Running the
++	// same guarded DDL helpers here creates execution_relay, run_owners, and
++	// execution_approval_questions at startup for both SQLite and PostgreSQL
++	// and marks ls.db ready so steady-state operations issue no DDL.
++	if err := ls.ensureRelayAndApprovalTables(ctx); err != nil {
++		return fmt.Errorf("failed to ensure relay and approval tables: %w", err)
++	}
++
++	return nil
++}
++
++type guardedSchemaTable struct {
++	name        string
++	ddl         string
++	existsQuery string
++}
++
++func (ls *LocalStorage) ensureRelayAndApprovalTables(ctx context.Context) error {
++	if err := ls.relayTable(ctx); err != nil {
++		return err
++	}
++	if err := ls.runOwnerTable(ctx); err != nil {
++		return err
++	}
++	return ls.approvalQuestionTable(ctx)
++}
++
++// ensureSchemaTable creates t on ls.db if it has not yet been confirmed on
++// this database handle.
++//
++// THESE TABLES ARE CREATED WITH THE SCHEMA, NOT ON FIRST USE, via
++// autoMigrateSchema; this guard remains only so stores constructed in tests
++// without autoMigrateSchema still work on first call. Creation is serialized
++// per *sqlDatabase with tableCreateMu so goroutines in one process never race
++// CREATE TABLE IF NOT EXISTS. A FAILED CREATE IS NEVER CACHED: tablesCreated
++// records only confirmed tables, so a transient failure is retried on the next
++// call instead of breaking the store until restart. On PostgreSQL, another
++// process running CREATE TABLE IF NOT EXISTS at the same moment can trip
++// pg_type_typname_nsp_index (SQLSTATE 23505) or pg_class (SQLSTATE 42P07); if
++// the table is present afterward, that peer finished creating it and the guard
++// records success.
++func (ls *LocalStorage) ensureSchemaTable(ctx context.Context, t guardedSchemaTable) error {
++	if ls == nil || ls.db == nil || ls.db.DB == nil {
++		return fmt.Errorf("create %s: sql database is not initialized", t.name)
++	}
++	if _, ok := ls.db.tablesCreated.Load(t.name); ok {
++		return nil
++	}
++
++	ls.db.tableCreateMu.Lock()
++	defer ls.db.tableCreateMu.Unlock()
++
++	if _, ok := ls.db.tablesCreated.Load(t.name); ok {
++		return nil
++	}
++
++	if _, err := ls.db.ExecContext(ctx, t.ddl); err != nil {
++		if ls.isPostgresMode() && isPostgresConcurrentTableCreateError(err) && ls.tableExistsAfterRace(ctx, t) {
++			ls.db.tablesCreated.Store(t.name, struct{}{})
++			return nil
++		}
++		return fmt.Errorf("create %s: %w", t.name, err)
++	}
++
++	ls.db.tablesCreated.Store(t.name, struct{}{})
+ 	return nil
  }
 +
-+func TestSSEDecoder_CRLFAndNoSpaceDataField(t *testing.T) {
-+	tests := []struct {
-+		name  string
-+		input string
-+	}{
-+		{"CRLF delimiters", "data: {\"id\":\"a\"}\r\n\r\ndata: {\"id\":\"b\"}\r\n\r\ndata: [DONE]\r\n\r\n"},
-+		{"no space after data colon", "data:{\"id\":\"a\"}\n\ndata:{\"id\":\"b\"}\n\ndata:[DONE]\n\n"},
-+		{"CRLF and no space", "data:{\"id\":\"a\"}\r\n\r\ndata:{\"id\":\"b\"}\r\n\r\n"},
++func (ls *LocalStorage) isPostgresMode() bool {
++	return ls != nil && (ls.mode == "postgres" || ls.db.Mode() == "postgres")
++}
++
++func isPostgresConcurrentTableCreateError(err error) bool {
++	if err == nil {
++		return false
 +	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			decoder := NewSSEDecoder(strings.NewReader(tt.input))
-+			var ids []string
-+			for {
-+				chunk, err := decoder.Decode()
-+				if err == io.EOF {
-+					break
-+				}
-+				if err != nil {
-+					t.Fatalf("unexpected error: %v", err)
-+				}
-+				ids = append(ids, chunk.ID)
-+			}
-+			if len(ids) != 2 || ids[0] != "a" || ids[1] != "b" {
-+				t.Fatalf("expected chunks [a b], got %v", ids)
-+			}
-+		})
++	var pgErr *pgconn.PgError
++	if errors.As(err, &pgErr) {
++		return pgErr.Code == "23505" || pgErr.Code == "42P07"
 +	}
++	var stateErr interface{ SQLState() string }
++	if errors.As(err, &stateErr) {
++		code := stateErr.SQLState()
++		return code == "23505" || code == "42P07"
++	}
++	return false
++}
++
++func (ls *LocalStorage) tableExistsAfterRace(ctx context.Context, t guardedSchemaTable) bool {
++	rows, err := ls.db.QueryContext(ctx, t.existsQuery)
++	if err != nil {
++		return false
++	}
++	defer rows.Close()
++	return rows.Err() == nil
 +}
 ```
 
+**File**: `control-plane/internal/storage/relay.go` (modified, +26/-29)
+```diff
+@@ -6,7 +6,6 @@ import (
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
+-	"sync"
+ 	"time"
+ )
+ 
+@@ -35,29 +34,24 @@ type RelayEntry struct {
+ 	At   time.Time       `json:"at"`
+ }
+ 
+-var relayTableOnce sync.Map // *sqlDatabase → error
+-
+-func (ls *LocalStorage) relayTable(ctx context.Context) error {
+-	if v, ok := relayTableOnce.Load(ls.db); ok {
+-		if v == nil {
+-			return nil
+-		}
+-		return v.(error)
+-	}
+-	_, err := ls.db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS execution_relay (
++var executionRelaySchemaTable = guardedSchemaTable{
++	name: "execution_relay",
++	ddl: `CREATE TABLE IF NOT EXISTS execution_relay (
+ 		execution_id TEXT NOT NULL,
+ 		seq BIGINT NOT NULL,
+ 		kind TEXT NOT NULL,
+ 		data TEXT,
+ 		recorded_at TIMESTAMP NOT NULL,
+-		PRIMARY KEY (execution_id, seq))`)
+-	if err != nil {
+-		err = fmt.Errorf("create execution_relay: %w", err)
+-		relayTableOnce.Store(ls.db, err)
+-		return err
+-	}
+-	relayTableOnce.Store(ls.db, nil)
+-	return nil
++		PRIMARY KEY (execution_id, seq))`,
++	existsQuery: `SELECT 1 FROM execution_relay LIMIT 0`,
++}
++
++// relayTable ensures execution_relay exists. THESE TABLES ARE CREATED WITH THE
++// SCHEMA, NOT ON FIRST USE; this guard catches stores built without
++// autoMigrateSchema, serializes creation per db, and caches only success —
++// A FAILED CREATE IS NEVER CACHED.
++func (ls *LocalStorage) relayTable(ctx context.Context) error {
++	return ls.ensureSchemaTable(ctx, executionRelaySchemaTable)
+ }
+ 
+ // RelayPut holds entries for executionID. A seq already held is ignored. It
+@@ -183,18 +177,21 @@ func (ls *LocalStorage) RelayExecutions(ctx context.Context) ([]string, error) {
+ // carries the header again cannot move a run to another subscriber. This is
+ // control data, like the execution tree itself, so it is durable.
+ 
+-func (ls *LocalStorage) runOwnerTable(ctx context.Context) error {
+-	if err := ls.relayTable(ctx); err != nil {
+-		return err
+-	}
+-	_, err := ls.db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS run_owners (
++var runOwnersSchemaTable = guardedSchemaTable{
++	name: "run_owners",
++	ddl: `CREATE TABLE IF NOT EXISTS run_owners (
+ 		run_id TEXT PRIMARY KEY,
+ 		owner_node_id TEXT NOT NULL,
+-		created_at TIMESTAMP NOT NULL)`)
+-	if err != nil {
+-		return fmt.Errorf("create run_owners: %w", err)
+-	}
+-	return nil
++		created_at TIMESTAMP NOT NULL)`,
++	existsQuery: `SELECT 1 FROM run_owners LIMIT 0`,
++}
++
++// runOwnerTable ensures run_owners exists without issuing DDL on steady-state
++// lookups (such as lookupRunWatched on ordinary executions). THESE TABLES ARE
++// CREATED WITH THE SCHEMA, NOT ON FIRST USE, and A FAILED CREATE IS NEVER
++// CACHED.
++func (ls *LocalStorage) runOwnerTable(ctx context.Context) error {
++	return ls.ensureSchemaTable(ctx, runOwnersSchemaTable)
+ }
+ 
+ // SetRunOwner records owner for runID unless the run already has one.
+```
+
+**File**: `control-plane/internal/storage/relay_storage_test.go` (modified, +5/-5)
+```diff
+@@ -299,10 +299,10 @@ func TestRelayStorage_S7_RunsOwnedByScopingAndSinceFilter(t *testing.T) {
+ }
+ 
+ // Contract S9: Both execution_relay and run_owners are created lazily on first
+-// use of a fresh store without needing a schema migration, and propagate database
++// use of a store constructed without autoMigrateSchema, and propagate database
+ // errors when the context or store is closed.
+ func TestRelayStorage_S9_LazyTableCreationWithoutMigration(t *testing.T) {
+-	ls, ctx := setupLocalStorage(t)
++	ls, ctx := newUnmigratedLocalStorage(t)
+ 
+ 	tableExists := func(s *LocalStorage, name string) bool {
+ 		var count int
+@@ -311,7 +311,7 @@ func TestRelayStorage_S9_LazyTableCreationWithoutMigration(t *testing.T) {
+ 		return count == 1
+ 	}
+ 
+-	// Neither table exists right after Initialize and migrations finish.
++	// Neither table exists on a store that skipped schema migration.
+ 	require.False(t, tableExists(ls, "execution_relay"))
+ 	require.False(t, tableExists(ls, "run_owners"))
+ 
+@@ -348,8 +348,8 @@ func TestRelayStorage_S9_LazyTableCreationWithoutMigration(t *testing.T) {
+ 	_, err = ls.RunsOwnedBy(cancelledCtx, "owner-c", time.Now())
+ 	require.Error(t, err)
+ 
+-	// A closed fresh store surfaces and remembers the lazy DDL error on its db handle.
+-	closedLS, closedCtx := setupLocalStorage(t)
++	// A closed unmigrated store surfaces the lazy DDL error on its db handle.
++	closedLS, closedCtx := newUnmigratedLocalStorage(t)
+ 	require.NoError(t, closedLS.Close(closedCtx))
+ 	_, err = closedLS.RelayPut(closedCtx, "exec-closed", []RelayEntry{{Seq: 1, Kind: "k"}})
+ 	require.Error(t, err)
+```
+
+**File**: `control-plane/internal/storage/relay_table_race_test.go` (added, +781/-0)
+```diff
+@@ -0,0 +1,781 @@
++package storage
++
++import (
++	"context"
++	"database/sql"
++	"database/sql/driver"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"path/filepath"
++	"strings"
++	"sync"
++	"testing"
++
++	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
++	"github.com/jackc/pgx/v5/pgconn"
++	sqlite3 "github.com/mattn/go-sqlite3"
++	"github.com/stretchr/testify/require"
++)
++
++// newUnmigratedLocalStorage constructs a SQLite-backed LocalStorage that skips
++// Initialize and autoMigrateSchema so tests can exercise the lazy-creation guard.
++func newUnmigratedLocalStorage(t *testing.T) (*LocalStorage, context.Context) {
++	t.Helper()
++	ctx := context.Background()
++	dsn := fmt.Sprintf("%s?_journal_mode=WAL&_synchronous=NORMAL&_busy_timeout=60000&_txlock=immediate",
++		filepath.Join(t.TempDir(), "unmigrated.db"))
++	rawDB, err := sql.Open("sqlite3", dsn)
++	require.NoError(t, err)
++	t.Cleanup(func() { _ = rawDB.Close() })
++	return &LocalStorage{
++		db:   newSQLDatabase(rawDB, "local"),
++		mode: "local",
++	}, ctx
++}
++
++type sqlHookFunc func(inner driver.Conn, query string) error
++
++type interceptingDriver struct{}
++
++func (interceptingDriver) Open(string) (driver.Conn, error) {
++	return nil, errors.New("use sql.OpenDB with interceptingConnector")
++}
++
++type interceptingConnector struct {
++	dsn     string
++	mu      sync.Mutex
++	hook    sqlHookFunc
++	queries []string
++}
++
++func newInterceptingSQLiteDB(t *testing.T, mode string) (*sql.DB, *interceptingConnector, *LocalStorage) {
++	t.Helper()
++	dsn := fmt.Sprintf("%s?_journal_mode=WAL&_synchronous=NORMAL&_busy_timeout=60000&_txlock=immediate",
++		filepath.Join(t.TempDir(), "intercepted.db"))
++	conn := &interceptingConnector{dsn: dsn}
++	rawDB := sql.OpenDB(conn)
++	rawDB.SetMaxOpenConns(1)
++	t.Cleanup(func() { _ = rawDB.Close() })
++	ls := &LocalStorage{
++		db:   newSQLDatabase(rawDB, mode),
++		mode: mode,
++	}
++	return rawDB, conn, ls
++}
++
++func (c *interceptingConnector) Driver() driver.Driver {
++	return interceptingDriver{}
++}
++
++func (c *interceptingConnector) Connect(context.Context) (driver.Conn, error) {
++	rawConn, err := (&sqlite3.SQLiteDriver{}).Open(c.dsn)
++	if err != nil {
++		return nil, err
++	}
++	return &interceptingConn{inner: rawConn, parent: c}, nil
++}
++
++func (c *interceptingConnector) setHook(hook sqlHookFunc) {
++	c.mu.Lock()
++	c.hook = hook
++	c.mu.Unlock()
++}
++
++func (c *interceptingConnector) resetQueries() {
++	c.mu.Lock()
++	c.queries = nil
++	c.mu.Unlock()
++}
++
++func (c *interceptingConnector) recordedQueries() []string {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	out := make([]string, len(c.queries))
++	copy(out, c.queries)
++	return out
++}
++
++func (c *interceptingConnector) intercept(inner driver.Conn, query string) error {
++	c.mu.Lock()
++	c.queries = append(c.queries, query)
++	hook := c.hook
++	c.mu.Unlock()
++	if hook != nil {
++		return hook(inner, query)
++	}
++	return nil
++}
++
++type interceptingConn struct {
++	inner  driver.Conn
++	parent *interceptingConnector
++}
++
++func (c *interceptingConn) Prepare(query string) (driver.Stmt, error) {
++	if err := c.parent.intercept(c.inner, query); err != nil {
++		return nil, err
++	}
++	return c.inner.Prepare(query)
++}
++
++func (c *interceptingConn) PrepareContext(ctx context.Context, query string) (driver.Stmt, error) {
++	if err := ctx.Err(); err != nil {
++		return nil, err
++	}
++	if err := c.parent.intercept(c.inner, query); err != nil {
++		return nil, err
++	}
++	if pc, ok := c.inner.(driver.ConnPrepareContext); ok {
++		return pc.PrepareContext(ctx, query)
++	}
++	return c.inner.Prepare(query)
++}
++
++func (c *interceptingConn) Close() error {
++	return c.inner.Close()
++}
++
++func (c *interceptingConn) Begin() (driver.Tx, error) {
++	return c.inner.Begin()
++}
++
++func (c *interceptingConn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
++	if bt, ok := c.inner.(driver.ConnBeginTx); ok {
++		return bt.BeginTx(ctx, opts)
++	}
++	return c.inner.Begin()
++}
++
++func (c *interceptingConn) CheckNamedValue(nv *driver.NamedValue) error {
++	if nvc, ok := c.inner.(driver.NamedValueChecker); ok {
++		return nvc.CheckNamedValue(nv)
++	}
++	return driver.ErrSkip
++}
++
++func countCreateTableQueries(queries []string) int {
++	n := 0
++	for _, q := range queries {
++		if strings.Contains(strings.ToUpper(q), "CREATE TABLE") {
++			n++
++		}
++	}
++	return n
++}
++
++// Contract R1: A fresh store built the normal way (with autoMigrateSchema) has
++// execution_relay, run_owners, and execution_approval_questions before any
++// relay, owner, or approval call.
++func TestRelayTable_R1_StartupMigrationCreatesAllThreeTables(t *testing.T) {
++	ls, ctx := setupLocalStorage(t)
++
++	for _, table := range []string{
++		"execution_relay",
++		"run_owners",
++		"execution_approval_questions",
++	} {
++		var count int
++		err := ls.db.QueryRowContext(ctx,
++			`SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = ?`, table,
++		).Scan(&count)
++		require.NoError(t, err)
++		require.Equal(t, 1, count, "table %s must exist right after startup schema migration", table)
+
+```
+
+**File**: `control-plane/internal/storage/sql_helpers.go` (modified, +4/-1)
+```diff
+@@ -4,13 +4,16 @@ import (
+ 	"context"
+ 	"database/sql"
+ 	"fmt"
++	"sync"
+ 
+ 	"github.com/jmoiron/sqlx"
+ )
+ 
+ type sqlDatabase struct {
+ 	*sql.DB
+-	mode string
++	mode          string
++	tableCreateMu sync.Mutex
++	tablesCreated sync.Map // table name (string) -> struct{}{}
+ }
+ 
+ func newSQLDatabase(db *sql.DB, mode string) *sqlDatabase {
+```
+
+---
+
+### Incident Patch 2: `bcef6b54` (2026-11-10)
+**Commit Message**: fix(sdk): return an error to the model for malformed tool-call arguments (#1168)
+
+* fix(sdk): return an error to the model for malformed tool-call arguments
+
+When an LLM tool call carried invalid or truncated JSON arguments, both the
+Python and Go SDKs silently replaced them with {} and still executed the
+tool, so the tool ran with missing/default inputs and the model never learned
+its call was broken. Report the parse error back as a tool message (like the
+existing missing-"arguments" case) and skip execution. An empty arguments
+string is still accepted as "no arguments", since some providers send that for
+parameterless tools.
+
+* style(sdk): format malformed-arguments assertion
+
+Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
+
+* test(sdk): update error-path tests for invalid tool-call arguments
+
+Invalid arguments no longer create a tool-call record, so assert on the
+tool error message fed back to the model instead of trace.calls.
+
+---------
+
+Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
+
+**File**: `sdk/go/ai/tool_calling.go` (modified, +21/-1)
+```diff
+@@ -271,8 +271,28 @@ func (c *Client) ExecuteToolCallLoopResult(
+ 			trace.TotalToolCalls = totalCalls
+ 
+ 			var args map[string]interface{}
+-			if err := json.Unmarshal([]byte(tc.Function.Arguments), &args); err != nil {
++			if strings.TrimSpace(tc.Function.Arguments) == "" {
++				// Some providers send "" for tools that take no arguments.
+ 				args = map[string]interface{}{}
++			} else if err := json.Unmarshal([]byte(tc.Function.Arguments), &args); err != nil || args == nil {
++				// Malformed or truncated arguments: do not run the tool with
++				// empty args; report the error so the model can retry.
++				if err == nil {
++					err = fmt.Errorf("arguments must be a JSON object")
++				}
++				invalidMsg := Message{
++					Role: "tool",
++					Content: []ContentPart{{Type: "text", Text: encodeToolContent(map[string]string{
++						"error": fmt.Sprintf("Tool call to '%s' has invalid or truncated JSON arguments (%v). Please retry with valid JSON arguments.", tc.Function.Name, err),
++					})}},
++					ToolCallID: tc.ID,
++				}
++				loopMessages = append(loopMessages, invalidMsg)
++				trace.Messages = append(trace.Messages, TracedMessage{
++					Message: invalidMsg,
++					Source:  TraceSourceToolError,
++				})
++				continue
+ 			}
+ 			toolName := unsanitizeToolName(tc.Function.Name)
+ 
+```
+
+**File**: `sdk/go/ai/tool_calling_loop_test.go` (modified, +60/-4)
+```diff
+@@ -96,7 +96,7 @@ func TestExecuteToolCallLoop_CompletesAfterToolResponse(t *testing.T) {
+ 	assert.Equal(t, map[string]interface{}{"status": "open"}, trace.Calls[0].Result)
+ }
+ 
+-func TestExecuteToolCallLoop_RecordsToolErrorsAndMalformedArguments(t *testing.T) {
++func TestExecuteToolCallLoop_RecordsToolErrors(t *testing.T) {
+ 	var requestCount atomic.Int32
+ 	client := newToolLoopClient(t, func(w http.ResponseWriter, r *http.Request) {
+ 		count := requestCount.Add(1)
+@@ -106,9 +106,9 @@ func TestExecuteToolCallLoop_RecordsToolErrorsAndMalformedArguments(t *testing.T
+ 					Message: Message{
+ 						Role: "assistant",
+ 						ToolCalls: []ToolCall{{
+-							ID:   "call-2",
+-							Type: "function",
+-							Function: ToolCallFunction{Name: "lookup", Arguments: `{bad json`},
++							ID:       "call-2",
++							Type:     "function",
++							Function: ToolCallFunction{Name: "lookup", Arguments: ``},
+ 						}},
+ 					},
+ 					FinishReason: "tool_calls",
+@@ -152,6 +152,62 @@ func TestExecuteToolCallLoop_RecordsToolErrorsAndMalformedArguments(t *testing.T
+ 	assert.Empty(t, trace.Calls[0].Arguments)
+ }
+ 
++func TestExecuteToolCallLoop_MalformedArgumentsAreNotExecuted(t *testing.T) {
++	var requestCount atomic.Int32
++	client := newToolLoopClient(t, func(w http.ResponseWriter, r *http.Request) {
++		count := requestCount.Add(1)
++		if count == 1 {
++			require.NoError(t, json.NewEncoder(w).Encode(Response{
++				Choices: []Choice{{
++					Message: Message{
++						Role: "assistant",
++						ToolCalls: []ToolCall{{
++							ID:       "call-3",
++							Type:     "function",
++							Function: ToolCallFunction{Name: "lookup", Arguments: `{"query": "trunca`},
++						}},
++					},
++					FinishReason: "tool_calls",
++				}},
++			}))
++			return
++		}
++
++		var req Request
++		require.NoError(t, json.NewDecoder(r.Body).Decode(&req))
++		require.Len(t, req.Messages, 3)
++		assert.Equal(t, "tool", req.Messages[2].Role)
++		assert.Equal(t, "call-3", req.Messages[2].ToolCallID)
++		assert.Contains(t, req.Messages[2].Content[0].Text, "invalid or truncated JSON arguments")
++		require.NoError(t, json.NewEncoder(w).Encode(Response{
++			Choices: []Choice{{
++				Message: Message{
++					Role:    "assistant",
++					Content: []ContentPart{{Type: "text", Text: "retry later"}},
++				},
++				FinishReason: "stop",
++			}},
++		}))
++	})
++
++	called := false
++	resp, trace, err := client.ExecuteToolCallLoop(
++		context.Background(),
++		[]Message{{Role: "user", Content: []ContentPart{{Type: "text", Text: "Lookup"}}}},
++		[]ToolDefinition{{Type: "function", Function: ToolFunction{Name: "lookup", Parameters: map[string]interface{}{"type": "object"}}}},
++		ToolCallConfig{MaxTurns: 3, MaxToolCalls: 2},
++		func(_ context.Context, _ string, _ map[string]interface{}) (map[string]interface{}, error) {
++			called = true
++			return map[string]interface{}{}, nil
++		},
++	)
++
++	require.NoError(t, err)
++	assert.Equal(t, "retry later", resp.Text())
++	assert.False(t, called, "tool must not run with malformed arguments")
++	assert.Empty(t, trace.Calls)
++}
++
+ func TestSimpleAndStructuredAIAndResponseHelpers(t *testing.T) {
+ 	var requestCount atomic.Int32
+ 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+```
+
+**File**: `sdk/python/agentfield/tool_calling.py` (modified, +24/-3)
+```diff
+@@ -546,9 +546,30 @@ async def execute_tool_call_loop(
+                 )
+                 continue
+             try:
+-                func_args = json.loads(raw_args)
+-            except (json.JSONDecodeError, TypeError):
+-                func_args = {}
++                # Some providers send "" for tools that take no arguments.
++                func_args = json.loads(raw_args) if raw_args.strip() else {}
++                if not isinstance(func_args, dict):
++                    raise TypeError("tool arguments must be a JSON object")
++            except (json.JSONDecodeError, TypeError, AttributeError) as e:
++                # Malformed or truncated arguments: do not run the tool with
++                # empty args; report the error so the model can retry.
++                log_warn(f"Invalid JSON arguments for tool call '{func_name}': {e}")
++                invalid_args_message = {
++                    "role": "tool",
++                    "tool_call_id": tc.id,
++                    "content": json.dumps(
++                        {
++                            "error": f"Tool call to '{func_name}' has invalid or truncated JSON arguments ({e}). Please retry with valid JSON arguments."
++                        }
++                    ),
++                }
++                messages.append(invalid_args_message)
++                trace.messages.append(
++                    TracedMessage(
++                        message=invalid_args_message, source=TRACE_SOURCE_TOOL_ERROR
++                    )
++                )
++                continue
+ 
+             record = ToolCallRecord(
+                 tool_name=func_name,
+```
+
+**File**: `sdk/python/tests/test_tool_calling.py` (modified, +69/-0)
+```diff
+@@ -456,6 +456,75 @@ async def mock_completion(params):
+             == "Tool call to 'sentiment_agent.analyze' is missing the 'arguments' field. Please retry with valid JSON arguments."
+         )
+ 
++    @pytest.mark.asyncio
++    @pytest.mark.parametrize("bad_args", ['{"text": "trunca', "not json", "[1, 2]"])
++    async def test_malformed_arguments_are_not_executed(self, bad_args):
++        agent = make_mock_agent()
++        agent.call = AsyncMock(return_value={"result": "ok"})
++
++        messages = [{"role": "user", "content": "test"}]
++        tools = capabilities_to_tool_schemas([make_reasoner()])
++        config = ToolCallConfig(max_turns=5)
++
++        tool_resp = make_llm_response(tool_calls=[make_tool_call(arguments=bad_args)])
++        final_resp = make_llm_response(content="Please retry")
++        call_count = 0
++
++        async def mock_completion(params):
++            nonlocal call_count
++            call_count += 1
++            return tool_resp if call_count == 1 else final_resp
++
++        resp, trace = await execute_tool_call_loop(
++            agent=agent,
++            messages=messages,
++            tools=tools,
++            config=config,
++            needs_lazy_hydration=False,
++            litellm_params={"model": "openai/gpt-4"},
++            make_completion=mock_completion,
++        )
++
++        agent.call.assert_not_called()
++        assert trace.calls == []
++        tool_messages = [m for m in messages if m.get("role") == "tool"]
++        assert len(tool_messages) == 1
++        assert (
++            "invalid or truncated JSON arguments"
++            in json.loads(tool_messages[0]["content"])["error"]
++        )
++
++    @pytest.mark.asyncio
++    async def test_empty_string_arguments_run_with_no_args(self):
++        agent = make_mock_agent()
++        agent.call = AsyncMock(return_value={"result": "ok"})
++
++        messages = [{"role": "user", "content": "test"}]
++        tools = capabilities_to_tool_schemas([make_reasoner()])
++        config = ToolCallConfig(max_turns=5)
++
++        tool_resp = make_llm_response(tool_calls=[make_tool_call(arguments="")])
++        final_resp = make_llm_response(content="Done")
++        call_count = 0
++
++        async def mock_completion(params):
++            nonlocal call_count
++            call_count += 1
++            return tool_resp if call_count == 1 else final_resp
++
++        await execute_tool_call_loop(
++            agent=agent,
++            messages=messages,
++            tools=tools,
++            config=config,
++            needs_lazy_hydration=False,
++            litellm_params={"model": "openai/gpt-4"},
++            make_completion=mock_completion,
++        )
++
++        agent.call.assert_awaited_once()
++        assert agent.call.await_args.kwargs == {}
++
+     @pytest.mark.asyncio
+     async def test_max_tool_calls_limit(self):
+         agent = make_mock_agent()
+```
+
+**File**: `sdk/python/tests/test_tool_calling_error_paths.py` (modified, +6/-4)
+```diff
+@@ -129,12 +129,13 @@ async def test_invalid_argument_type_is_reported_and_loop_continues():
+     )
+ 
+     assert trace.total_tool_calls == 1
+-    assert trace.calls[0].error is not None
+-    assert "mapping" in trace.calls[0].error
++    # Invalid arguments are reported to the model without creating a call record.
++    assert trace.calls == []
+     assert agent.call.await_count == 0
+     tool_messages = [m for m in messages if m.get("role") == "tool"]
+     assert len(tool_messages) == 1
+-    assert "error" in json.loads(tool_messages[0]["content"])
++    error = json.loads(tool_messages[0]["content"])["error"]
++    assert "JSON object" in error
+ 
+ 
+ @pytest.mark.asyncio
+@@ -164,11 +165,12 @@ async def test_mixed_valid_and_invalid_tool_calls_in_single_turn():
+     )
+ 
+     assert trace.total_tool_calls == 2
++    assert len(trace.calls) == 1
+     assert trace.calls[0].result == {"echoed": "hi"}
+-    assert trace.calls[1].error is not None
+     agent.call.assert_awaited_once_with("utility.echo", text="hi")
+     tool_messages = [m for m in messages if m.get("role") == "tool"]
+     assert len(tool_messages) == 2
++    assert "invalid" in json.loads(tool_messages[1]["content"])["error"]
+ 
+ 
+ @pytest.mark.asyncio
+```
+
+---
+
+### Incident Patch 3: `8a2f0ef1` (2026-11-11)
+**Commit Message**: Merge pull request #1179 from Agent-Field/fix/offline-node-keeps-executions-main
+
+control-plane: an offline node keeps its executions until it comes back
+
+**File**: `control-plane/config/agentfield.yaml` (modified, +4/-0)
+```diff
+@@ -13,6 +13,10 @@ agentfield:
+     batch_size: 200
+     preserve_recent_duration: 1h
+     stale_execution_timeout: 10m
++    # A node registered with metadata.custom.holds_executions_offline: true has
++    # its quiet executions held (not timed out) while it is offline, until it
++    # comes back or this ceiling passes.
++    offline_hold_ceiling: 168h
+     # max_retries only rewinds stale workflow rows to pending; no dispatcher
+     # re-enqueues them, so do not rely on it for execution retries.
+     max_retries: 0
+```
+
+**File**: `control-plane/internal/config/config.go` (modified, +13/-0)
+```diff
+@@ -291,8 +291,17 @@ type ExecutionCleanupConfig struct {
+ 	MaxRetries             int           `yaml:"max_retries" mapstructure:"max_retries" default:"0"`
+ 	RetryBackoff           time.Duration `yaml:"retry_backoff" mapstructure:"retry_backoff" default:"30s"`
+ 	PayloadOrphanGrace     time.Duration `yaml:"payload_orphan_grace" mapstructure:"payload_orphan_grace"`
++	// OfflineHoldCeiling is how long an execution may be held for an opted-in
++	// node that is offline (metadata.custom.holds_executions_offline) before
++	// it is failed anyway, so nothing waits forever on a node that never
++	// returns. Zero or less is the default, DefaultOfflineHoldCeiling.
++	OfflineHoldCeiling time.Duration `yaml:"offline_hold_ceiling" mapstructure:"offline_hold_ceiling" default:"168h"`
+ }
+ 
++// DefaultOfflineHoldCeiling is a week: a laptop asleep over a long weekend
++// still finds its work waiting.
++const DefaultOfflineHoldCeiling = 7 * 24 * time.Hour
++
+ // UnmarshalYAML records whether enabled was explicitly configured, including
+ // the otherwise indistinguishable enabled: false value.
+ func (c *ExecutionCleanupConfig) UnmarshalYAML(node *yaml.Node) error {
+@@ -678,6 +687,9 @@ func ApplyDefaults(cfg *Config) {
+ 	if cleanup.PayloadOrphanGrace <= 0 {
+ 		cleanup.PayloadOrphanGrace = time.Hour
+ 	}
++	if cleanup.OfflineHoldCeiling <= 0 {
++		cleanup.OfflineHoldCeiling = DefaultOfflineHoldCeiling
++	}
+ 	if !cfg.AgentField.ExecutionQueue.agentCallTimeoutSet && cfg.AgentField.ExecutionQueue.AgentCallTimeout == 0 {
+ 		cfg.AgentField.ExecutionQueue.AgentCallTimeout = DefaultAgentCallTimeout
+ 	}
+@@ -942,6 +954,7 @@ func ApplyEnvOverrides(cfg *Config) {
+ 	applyIntEnv("AGENTFIELD_EXECUTION_CLEANUP_BATCH_SIZE", &cfg.AgentField.ExecutionCleanup.BatchSize)
+ 	applyDurationEnv("AGENTFIELD_EXECUTION_PRESERVE_RECENT", &cfg.AgentField.ExecutionCleanup.PreserveRecentDuration)
+ 	applyDurationEnv("AGENTFIELD_PAYLOAD_ORPHAN_GRACE", &cfg.AgentField.ExecutionCleanup.PayloadOrphanGrace)
++	applyDurationEnv("AGENTFIELD_EXECUTION_OFFLINE_HOLD_CEILING", &cfg.AgentField.ExecutionCleanup.OfflineHoldCeiling)
+ 	applyDurationEnv("AGENTFIELD_AGENT_CALL_TIMEOUT", &cfg.AgentField.ExecutionQueue.AgentCallTimeout)
+ 	if val := os.Getenv("AGENTFIELD_EXECUTION_MAX_RETRIES"); val != "" {
+ 		if i, err := strconv.Atoi(val); err == nil {
+```
+
+**File**: `control-plane/internal/config/execution_cleanup_contract_test.go` (modified, +15/-0)
+```diff
+@@ -104,3 +104,18 @@ func TestExecutionCleanupNonPositiveIntervalIsClamped(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestExecutionCleanupOfflineHoldCeilingDefaultAndEnvOverride(t *testing.T) {
++	cfg := Config{}
++	ApplyDefaults(&cfg)
++	require.Equal(t, DefaultOfflineHoldCeiling, cfg.AgentField.ExecutionCleanup.OfflineHoldCeiling)
++
++	t.Setenv("AGENTFIELD_EXECUTION_OFFLINE_HOLD_CEILING", "48h")
++	ApplyEnvOverrides(&cfg)
++	require.Equal(t, 48*time.Hour, cfg.AgentField.ExecutionCleanup.OfflineHoldCeiling)
++
++	t.Setenv("AGENTFIELD_EXECUTION_OFFLINE_HOLD_CEILING", "not-a-duration")
++	ApplyEnvOverrides(&cfg)
++	require.Equal(t, 48*time.Hour, cfg.AgentField.ExecutionCleanup.OfflineHoldCeiling)
++}
++
+```
+
+**File**: `control-plane/internal/handlers/execution_cleanup.go` (modified, +9/-0)
+```diff
+@@ -31,6 +31,11 @@ type ExecutionCleanupService struct {
+ 	// first-pass branch of cleanupLoop is reachable without a 30s sleep.
+ 	initialDelay time.Duration
+ 
++	// offlineAfter is how long after its last heartbeat an opted-in node is
++	// judged offline and its quiet executions held (offline_hold.go). Zero is
++	// DefaultLeaseTTL: a node that let its lease lapse.
++	offlineAfter time.Duration
++
+ 	// Metrics
+ 	totalCleaned    int64
+ 	lastCleanupTime time.Time
+@@ -159,6 +164,10 @@ func (ecs *ExecutionCleanupService) performCleanup(ctx context.Context) {
+ 	payloadURIListErrors := 0
+ 	effectiveRetention := storage.EffectiveExecutionRetention(ecs.config.RetentionPeriod, ecs.config.PreserveRecentDuration)
+ 	if ecs.config.StaleExecutionTimeout > 0 {
++		// Hold the work of opted-in nodes that are offline before anything
++		// below can time it out or rewind it.
++		ecs.holdOfflineNodes(cleanupCtx)
++
+ 		// Retry eligible workflow executions before marking anything as timed out
+ 		if ecs.config.MaxRetries > 0 {
+ 			retriedIDs, err := ecs.storage.RetryStaleWorkflowExecutions(
+```
+
+**File**: `control-plane/internal/handlers/nodes_rest.go` (modified, +5/-0)
+```diff
+@@ -135,12 +135,17 @@ func NodeStatusLeaseHandler(storageProvider storage.StorageProvider, statusManag
+ 			presenceManager.Touch(nodeID, agent.Version, now)
+ 		}
+ 
++		// Settle what was held while the node was away before touching: a
++		// held execution it lists carries on, one it does not was lost.
++		released, lost := ResolveOfflineHolds(ctx, storageProvider, nodeID, payload.Inflight)
+ 		touched := TouchInflightExecutions(ctx, storageProvider, nodeID, payload.Inflight)
+ 
+ 		c.JSON(http.StatusOK, gin.H{
+ 			"lease_seconds":      int(leaseTTL.Seconds()),
+ 			"next_lease_renewal": now.Add(leaseTTL).Format(time.RFC3339),
+ 			"inflight_touched":   touched,
++			"held_released":      released,
++			"held_lost":          lost,
+ 		})
+ 	}
+ }
+```
+
+**File**: `control-plane/internal/handlers/offline_hold.go` (added, +194/-0)
+```diff
+@@ -0,0 +1,194 @@
++package handlers
++
++import (
++	"context"
++	"fmt"
++	"strings"
++	"time"
++
++	"github.com/Agent-Field/agentfield/control-plane/internal/config"
++	"github.com/Agent-Field/agentfield/control-plane/internal/logger"
++	"github.com/Agent-Field/agentfield/control-plane/internal/storage"
++	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
++)
++
++// ── A NODE THAT GOES AWAY DOES NOT LOSE ITS WORK BY BEING AWAY ───────────────
++//
++// A node that registers with metadata.custom.holds_executions_offline = true
++// (the codeaf factory, on a laptop that sleeps) promises two things: its work
++// survives it being offline, and on its first lease back it lists every
++// execution it still holds as inflight. In exchange the stale sweep does not
++// time those executions out while it is away. Instead each cleanup pass, before
++// the sweeps run, marks the quiet executions of an opted-in, registered,
++// offline node as held (storage/offline_hold.go), and the sweeps skip them.
++//
++// A hold ends in one of four ways, and only the first keeps the execution:
++//   - the node's lease lists it as inflight: released, it carries on;
++//   - the node's lease does not list it: failed, the node came back without it;
++//   - the node is no longer registered: failed, there is nobody to come back;
++//   - the hold outlives offline_hold_ceiling: failed, nothing waits forever.
++//
++// A node that did not opt in is untouched: its executions are reaped by the
++// stale sweep exactly as before.
++
++// offlineHolder is the storage the offline hold needs. LocalStorage serves it
++// for SQLite and Postgres alike; a store without it simply never holds.
++type offlineHolder interface {
++	HoldOfflineNodeExecutions(ctx context.Context, agentNodeID string, staleAfter time.Duration, limit int) (int, error)
++	ListHeldExecutions(ctx context.Context, agentNodeID string) ([]storage.HeldExecution, error)
++	ReleaseHeldExecutions(ctx context.Context, agentNodeID string, ids []string) (int, error)
++	FailHeldExecutions(ctx context.Context, ids []string, reason, message string) (int, error)
++}
++
++// nodeLostExecutionMessage is the error a held execution fails with when its
++// node comes back without it.
++func nodeLostExecutionMessage(nodeID string) string {
++	return fmt.Sprintf("node %s came back without this execution: it was lost while the node was offline", nodeID)
++}
++
++// ResolveOfflineHolds settles every execution held for nodeID against the
++// inflight list of the lease that just arrived: a listed one is released and
++// carries on, an unlisted one is failed as lost. It returns how many of each.
++// A node with nothing held costs one indexed query.
++func ResolveOfflineHolds(ctx context.Context, store any, nodeID string, inflight []string) (released, lost int) {
++	holder, ok := store.(offlineHolder)
++	if !ok {
++		return 0, 0
++	}
++	held, err := holder.ListHeldExecutions(ctx, nodeID)
++	if err != nil {
++		logger.Logger.Warn().Err(err).Str("node_id", nodeID).Msg("lease: could not read held executions")
++		return 0, 0
++	}
++	if len(held) == 0 {
++		return 0, 0
++	}
++	listed := make(map[string]struct{}, len(inflight))
++	for _, id := range inflight {
++		listed[strings.TrimSpace(id)] = struct{}{}
++	}
++	var keep, drop []string
++	for _, h := range held {
++		if _, ok := listed[h.ExecutionID]; ok {
++			keep = append(keep, h.ExecutionID)
++		} else {
++			drop = append(drop, h.ExecutionID)
++		}
++	}
++	if released, err = holder.ReleaseHeldExecutions(ctx, nodeID, keep); err != nil {
++		logger.Logger.Warn().Err(err).Str("node_id", nodeID).Msg("lease: could not release held executions")
++	}
++	if lost, err = holder.FailHeldExecutions(ctx, drop, types.ExecutionReasonNodeLostExecution, nodeLostExecutionMessage(nodeID)); err != nil {
++		logger.Logger.Warn().Err(err).Str("node_id", nodeID).Msg("lease: could not fail lost executions")
++	}
++	if released > 0 || lost > 0 {
++		logger.Logger.Info().Str("node_id", nodeID).Int("released", released).Int("lost", lost).Msg("lease: node back; held executions settled")
++	}
++	return released, lost
++}
++
++// holdOfflineNodes is the cleanup pass's first step when the stale sweep is
++// on: it ends the holds that can no longer be honoured and holds the quiet
++// executions of every opted-in node that is offline now, so the sweeps that
++// follow skip them.
++func (ecs *ExecutionCleanupService) holdOfflineNodes(ctx context.Context) {
++	holder, ok := ecs.storage.(offlineHolder)
++	if !ok {
++		return
++	}
++	agents, err := ecs.storage.ListAgents(ctx, types.AgentFilters{})
++	if err != nil {
++		// Without the node list nothing can be judged; leave every hold as it
++		// is. The sweep that follows still skips held rows.
++		logger.Logger.Warn().Err(err).Msg("offline hold: could not list nodes")
++		return
++	}
++	// One node may be registered under several versions; it is opted in when
++	// any of them is, and its last word is the latest heartbeat of any.
++	type nodeState struct {
++		optedIn  bool
++		lastSeen time.Time
++	}
++	nodes := map[str
+```
+
+**File**: `control-plane/internal/handlers/offline_hold_test.go` (added, +415/-0)
+```diff
+@@ -0,0 +1,415 @@
++package handlers
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"errors"
++	"net/http"
++	"net/http/httptest"
++	"testing"
++	"time"
++
++	"github.com/Agent-Field/agentfield/control-plane/internal/config"
++	"github.com/Agent-Field/agentfield/control-plane/internal/services"
++	"github.com/Agent-Field/agentfield/control-plane/internal/storage"
++	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
++	"github.com/gin-gonic/gin"
++	"github.com/stretchr/testify/require"
++)
++
++// The stale window these tests run the sweep with. CreateExecutionRecord
++// stamps updated_at itself, so an execution is made quiet by waiting past the
++// window rather than by backdating it (as TestLeaseInflightKeepsExecutionsAlive
++// does).
++const holdStale = 300 * time.Millisecond
++
++func waitPastStale() { time.Sleep(holdStale + 150*time.Millisecond) }
++
++// offlineHoldWorld is a control plane with one node that went to sleep an
++// hour ago while it was running exec_<node>.
++type offlineHoldWorld struct {
++	t     *testing.T
++	ctx   context.Context
++	store storage.StorageProvider
++	sweep *ExecutionCleanupService
++	lease *gin.Engine
++}
++
++func newOfflineHoldWorld(t *testing.T, ceiling time.Duration) *offlineHoldWorld {
++	t.Helper()
++	gin.SetMode(gin.TestMode)
++	store, ctx := setupTestStorage(t)
++	lease := gin.New()
++	lease.PATCH("/nodes/:node_id/status", NodeStatusLeaseHandler(store, nil, nil, nil, time.Minute))
++	lease.PUT("/executions/:execution_id/status", UpdateExecutionStatusHandler(store, services.NopPayloadStore{}, nil, time.Second))
++	sweep := NewExecutionCleanupService(store, config.ExecutionCleanupConfig{
++		Enabled: true, StaleExecutionTimeout: holdStale, BatchSize: 100, OfflineHoldCeiling: ceiling,
++	})
++	return &offlineHoldWorld{t: t, ctx: ctx, store: store, sweep: sweep, lease: lease}
++}
++
++// node registers id, opted in to the hold or not, last heard from an hour
++// ago, holding one running execution (both tables) named exec_<id>.
++func (w *offlineHoldWorld) node(id string, optedIn bool) string {
++	w.t.Helper()
++	agent := &types.AgentNode{ID: id, Version: "1", LifecycleStatus: types.AgentStatusReady}
++	if optedIn {
++		agent.Metadata.Custom = map[string]interface{}{types.AgentMetadataHoldsExecutionsOffline: true}
++	}
++	require.NoError(w.t, w.store.RegisterAgent(w.ctx, agent))
++	require.NoError(w.t, w.store.UpdateAgentHeartbeat(w.ctx, id, "1", time.Now().UTC().Add(-time.Hour)))
++	exec := "exec_" + id
++	now := time.Now().UTC()
++	require.NoError(w.t, w.store.CreateExecutionRecord(w.ctx, &types.Execution{
++		ExecutionID: exec, RunID: "run_" + id, AgentNodeID: id, NodeID: id, ReasonerID: "intake",
++		Status: types.ExecutionStatusRunning, StartedAt: now, CreatedAt: now, UpdatedAt: now,
++	}))
++	require.NoError(w.t, w.store.StoreWorkflowExecution(w.ctx, &types.WorkflowExecution{
++		WorkflowID: "run_" + id, ExecutionID: exec, AgentFieldRequestID: "req_" + id,
++		AgentNodeID: id, ReasonerID: "intake", Status: types.ExecutionStatusRunning,
++		StartedAt: now, CreatedAt: now, UpdatedAt: now, WorkflowTags: []string{},
++		InputData: json.RawMessage("{}"), OutputData: json.RawMessage("{}"),
++	}))
++	return exec
++}
++
++// leaseFrom sends node's lease listing inflight and answers the body.
++func (w *offlineHoldWorld) leaseFrom(node string, inflight ...string) map[string]any {
++	w.t.Helper()
++	if inflight == nil {
++		inflight = []string{}
++	}
++	raw, _ := json.Marshal(map[string]any{"phase": "ready", "version": "1", "inflight": inflight})
++	req := httptest.NewRequest(http.MethodPatch, "/nodes/"+node+"/status", bytes.NewReader(raw))
++	req.Header.Set("Content-Type", "application/json")
++	rec := httptest.NewRecorder()
++	w.lease.ServeHTTP(rec, req)
++	require.Equal(w.t, http.StatusOK, rec.Code, rec.Body.String())
++	var body map[string]any
++	require.NoError(w.t, json.Unmarshal(rec.Body.Bytes(), &body))
++	return body
++}
++
++func (w *offlineHoldWorld) exec(id string) *types.Execution {
++	w.t.Helper()
++	e, err := w.store.GetExecutionRecord(w.ctx, id)
++	require.NoError(w.t, err)
++	return e
++}
++
++func (w *offlineHoldWorld) workflowStatus(id string) string {
++	w.t.Helper()
++	wf, err := w.store.GetWorkflowExecution(w.ctx, id)
++	require.NoError(w.t, err)
++	return wf.Status
++}
++
++func reasonOf(e *types.Execution) string {
++	if e.StatusReason == nil {
++		return ""
++	}
++	return *e.StatusReason
++}
++
++func errorOf(e *types.Execution) string {
++	if e.ErrorMessage == nil {
++		return ""
++	}
++	return *e.ErrorMessage
++}
++
++// A NODE ASLEEP PAST THE STALE TIMEOUT STILL HOLDS ITS WORK. The opted-in
++// laptop's execution stays running through any number of sweeps, on both
++// tables, marked node_offline; the node that did not opt in is timed out by
++// the same sweep exactly as before.
++func TestOfflineNodeKeepsItsExecutionPastTheStaleTimeout(t *testing.T) {
++	w := newOfflineHoldWorld(t, time.Hour)
++	laptop := w.node("laptop", true)
++	server := w.node("server", false)
++	waitPastStale()
++
++	w.sweep.performCleanup(w.ctx)
++	waitPastStale()
++	w.sw
+```
+
+**File**: `control-plane/internal/server/config_db.go` (modified, +3/-0)
+```diff
+@@ -81,6 +81,9 @@ func mergeDBConfig(target, dbCfg *config.Config) {
+ 	if dbCfg.AgentField.ExecutionCleanup.StaleExecutionTimeout != 0 {
+ 		target.AgentField.ExecutionCleanup.StaleExecutionTimeout = dbCfg.AgentField.ExecutionCleanup.StaleExecutionTimeout
+ 	}
++	if dbCfg.AgentField.ExecutionCleanup.OfflineHoldCeiling != 0 {
++		target.AgentField.ExecutionCleanup.OfflineHoldCeiling = dbCfg.AgentField.ExecutionCleanup.OfflineHoldCeiling
++	}
+ 	// Enabled is a bool — only override if cleanup config is present in DB at all
+ 	if dbCfg.AgentField.ExecutionCleanup.RetentionPeriod != 0 || dbCfg.AgentField.ExecutionCleanup.CleanupInterval != 0 {
+ 		target.AgentField.ExecutionCleanup.Enabled = dbCfg.AgentField.ExecutionCleanup.Enabled
+```
+
 #### Recent Merged Pull Requests:
+- **PR #1179** (2026-11-11): control-plane: an offline node keeps its executions until it comes back (@AbirAbbas)
+- **PR #1178** (2026-11-10): control-plane: an offline node keeps its executions until it comes back (@santoshkumarradha)
+- **PR #1177** (2026-11-10): fix(storage): create the relay and approval tables with the schema, never cache a failed create (@AbirAbbas)
 - **PR #1176** (2026-11-09): ci: move macOS jobs from macos-14 to macos-15 (@AbirAbbas)
 - **PR #1174** (2026-11-09): WorkAF harness watch: node link, relay pipe and steer, streamed only for owned runs (@AbirAbbas)
 - **PR #1172** (closed): perf(control-plane): fast Runs list and run page under live traffic (@santoshkumarradha)
-- **PR #1170** (closed): fix(control-plane): store execution VC created_at in UTC on SQLite (@santoshkumarradha)
-- **PR #1169** (closed): fix(web): send the API key on direct fetches; fix Playground replay and View run (@santoshkumarradha)
-- **PR #1167** (2026-11-09): feat(examples): add optional Outcrawl search backend to deep_research (@heydryft)
 
 ---
 
@@ -1513,34 +2705,64 @@ space yielded zero chunks and StreamComplete silently lost the whole stream.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166)
+## X. storage): create the relay and approval tables with the schema, never cache a fa
 
 **RULE**:
-When implementing operations in `sdk/go/ai/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `control-plane/internal/storage/approval_question.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0dc4f14a`: go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `186f695c`: storage): create the relay and approval tables with the schema, never cache a failed create (#1177). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control-plane/internal/storage/approval_question.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// SSE allows CRLF line endings; normalize so "\r\n\r\n" separates events too.
-		data := strings.ReplaceAll(string(d.accumulated), "\r\n", "\n")
-			// The SSE field is "data:" with an optional single space after the colon.
-			if strings.HasPrefix(message, "data:") {
-				jsonData := strings.TrimPrefix(message, "data:")
+// row per round. It lives in its own table, created with the schema alongside
+// the relay's, so the workflow_executions column lists and their migrations
+// stay as they were.
+var approvalQuestionsSchemaTable = guardedSchemaTable{
+	name: "execution_approval_questions",
+	ddl: `CREATE TABLE IF NOT EXISTS execution_approval_questions (
+		PRIMARY KEY (execution_id, approval_request_id))`,
+	existsQuery: `SELECT 1 FROM execution_approval_questions LIMIT 0`,
+}
+
+// approvalQuestionTable ensures execution_approval_questions exists. THESE
+// TABLES ARE CREATED WITH THE SCHEMA, NOT ON FIRST USE; this guard catches
+// stores built without autoMigrateSchema, serializes creation per db, and
+// caches only success — A FAILED CREATE IS NEVER CACHED.
+func (ls *LocalStorage) approvalQuestionTable(ctx context.Context) error {
+	return ls.ensureSchemaTable(ctx, approvalQuestionsSchemaTable)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		data := string(d.accumulated)
-			if strings.HasPrefix(message, "data: ") {
-				jsonData := strings.TrimPrefix(message, "data: ")
+	"sync"
+// row per round. It lives in its own table, created lazily like the relay's,
+// so the workflow_executions column lists and their migrations stay as they
+// were.
+var approvalQuestionTableOnce sync.Map // *sqlDatabase → error
+
+func (ls *LocalStorage) approvalQuestionTable(ctx context.Context) error {
+	if v, ok := approvalQuestionTableOnce.Load(ls.db); ok {
+		if v == nil {
+			return nil
+		}
+		return v.(error)
+	}
+	_, err := ls.db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS execution_approval_questions (
+		PRIMARY KEY (execution_id, approval_request_id))`)
+	if err != nil {
+		err = fmt.Errorf("create execution_approval_questions: %w", err)
+		approvalQuestionTableOnce.Store(ls.db, err)
+		return err
+	}
+	approvalQuestionTableOnce.Store(ls.db, nil)
+	return nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0dc4f14a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `186f695c` are properly handled with clean fallback behavior.

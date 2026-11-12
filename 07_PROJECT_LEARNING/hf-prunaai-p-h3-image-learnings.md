@@ -3,7 +3,7 @@
 > **Source Version**: `hf-prunaai-p`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T17:40:39.028Z  
+> **Timestamp**: 2026-11-12T07:37:46.130Z  
 > **Learning ID**: `learn-huggingface-prunaai-p-h3-image`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/PrunaAI/P-H3-Image](https://huggingface.co/PrunaAI/P-H3-Image))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T17:40:39.021Z  
+> **Harvest Timestamp**: 2026-11-12T07:37:45.940Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 789 downloads | 157 likes
+- **Stars / Engagement**: 1398 downloads | 281 likes
 
 ---
 

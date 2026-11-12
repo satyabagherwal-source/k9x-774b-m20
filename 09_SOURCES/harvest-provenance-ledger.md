@@ -9066,3 +9066,125 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `bb49df41` | Multi-dimensional audit evidence | 2026-11-12T03:10:39.224Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `5431e621` | Multi-dimensional audit evidence | 2026-11-12T03:10:45.844Z |
 | `learn-dom-d-e8885f06` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-12T03:10:59.806Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `037d6597` | Multi-dimensional audit evidence | 2026-11-12T03:23:54.786Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `75fd3e94` | Multi-dimensional audit evidence | 2026-11-12T03:24:02.387Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `fcc9870c` | Multi-dimensional audit evidence | 2026-11-12T03:24:03.363Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `d73d3cc5` | Multi-dimensional audit evidence | 2026-11-12T03:30:47.942Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `d1c0035f` | Multi-dimensional audit evidence | 2026-11-12T03:30:53.960Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `5dd643fb` | Multi-dimensional audit evidence | 2026-11-12T03:48:49.602Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `cc21315a` | Multi-dimensional audit evidence | 2026-11-12T03:48:51.844Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `ca8ac478` | Multi-dimensional audit evidence | 2026-11-12T03:49:09.255Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `e00d4622` | Multi-dimensional audit evidence | 2026-11-12T03:56:23.368Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `9f7bb87b` | Multi-dimensional audit evidence | 2026-11-12T03:56:24.167Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `bf73116b` | Multi-dimensional audit evidence | 2026-11-12T04:24:11.136Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `fe1e32b8` | Multi-dimensional audit evidence | 2026-11-12T04:24:38.654Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `b9a7b08e` | Multi-dimensional audit evidence | 2026-11-12T04:32:18.372Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `927950e2` | Multi-dimensional audit evidence | 2026-11-12T04:50:27.837Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `9f6d833e` | Multi-dimensional audit evidence | 2026-11-12T04:50:34.374Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `18e46648` | Multi-dimensional audit evidence | 2026-11-12T04:50:41.496Z |
+| `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m` | `https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-12T05:13:03.127Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `09ed1694` | Multi-dimensional audit evidence | 2026-11-12T05:13:21.207Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `43410e87` | Multi-dimensional audit evidence | 2026-11-12T05:13:31.982Z |
+| `learn-dom-d-5f13cac2` | `project://hf-facebook-dinov3-vitl16-pretrain-lvd1689m` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md` | 2026-11-12T05:13:50.798Z |
+| `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `c262c330` | Multi-dimensional audit evidence | 2026-11-12T05:27:03.232Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `4ee8d46f` | Multi-dimensional audit evidence | 2026-11-12T05:27:07.800Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `f8d8fe10` | Multi-dimensional audit evidence | 2026-11-12T05:27:16.546Z |
+| `learn-dom-h-0aa4f6ed` | `project://wasm-bindgen-wasm-pack` | `c262c330` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md` | 2026-11-12T05:27:35.956Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `9495f482` | Multi-dimensional audit evidence | 2026-11-12T05:35:15.908Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-12T05:47:34.813Z |
+| `learn-dom-d-0c67c5db` | `project://hf-abenzerps-qwen-image-2.1-turbo-quantized` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | 2026-11-12T05:47:56.937Z |
+| `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `6da1f821` | Multi-dimensional audit evidence | 2026-11-12T05:57:19.113Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `527eec41` | Multi-dimensional audit evidence | 2026-11-12T06:19:50.346Z |
+| `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `086c4bd6` | Multi-dimensional audit evidence | 2026-11-12T06:20:20.688Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `522cc8b7` | Multi-dimensional audit evidence | 2026-11-12T06:27:05.782Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `64d040b5` | Multi-dimensional audit evidence | 2026-11-12T06:27:13.767Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `5613284a` | Multi-dimensional audit evidence | 2026-11-12T06:27:16.974Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `09f2de88` | Multi-dimensional audit evidence | 2026-11-12T06:28:52.248Z |
+| `learn-github-mohamedrejeb-calf` | `https://github.com/MohamedRejeb/Calf` | `6b13fad1` | Multi-dimensional audit evidence | 2026-11-12T06:41:45.537Z |
+| `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-12T06:56:00.792Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `987b8c5a` | Multi-dimensional audit evidence | 2026-11-12T06:56:13.633Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `41d49a9e` | Multi-dimensional audit evidence | 2026-11-12T06:56:24.518Z |
+| `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-12T07:15:23.811Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `766683fe` | Multi-dimensional audit evidence | 2026-11-12T07:15:39.147Z |
+| `learn-dom-d-2efb96c5` | `project://hf-nousresearch-arete-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | 2026-11-12T07:16:00.760Z |
+| `learn-huggingface-prunaai-p-h3-image` | `https://huggingface.co/PrunaAI/P-H3-Image` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-12T07:37:46.470Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `90a50e46` | Multi-dimensional audit evidence | 2026-11-12T07:38:00.624Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `e62a47c3` | Multi-dimensional audit evidence | 2026-11-12T07:38:13.650Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `ef4c7459` | Multi-dimensional audit evidence | 2026-11-12T07:38:17.616Z |
+| `learn-dom-d-91eb11da` | `project://hf-prunaai-p-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | 2026-11-12T07:38:38.948Z |
+| `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `5c3dabee` | Multi-dimensional audit evidence | 2026-11-12T07:46:13.014Z |
+| `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `01ebe841` | Multi-dimensional audit evidence | 2026-11-12T07:46:25.609Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `ed0a4eb9` | Multi-dimensional audit evidence | 2026-11-12T07:46:38.030Z |
+| `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `518f6311` | Multi-dimensional audit evidence | 2026-11-12T07:54:24.209Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `8edc639f` | Multi-dimensional audit evidence | 2026-11-12T07:54:27.737Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `2e9dbfd6` | Multi-dimensional audit evidence | 2026-11-12T08:07:07.588Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `0fd2f874` | Multi-dimensional audit evidence | 2026-11-12T08:07:15.990Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `a3613276` | Multi-dimensional audit evidence | 2026-11-12T08:19:19.252Z |
+| `learn-dom-j-5650848d` | `project://redisearch-redisearch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md` | 2026-11-12T08:19:36.667Z |
+| `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `71b67691` | Multi-dimensional audit evidence | 2026-11-12T08:27:56.945Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `86c191ba` | Multi-dimensional audit evidence | 2026-11-12T08:28:20.012Z |
+| `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `552dac7a` | Multi-dimensional audit evidence | 2026-11-12T08:28:27.981Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `b695140a` | Multi-dimensional audit evidence | 2026-11-12T08:32:08.567Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `195ab76b` | Multi-dimensional audit evidence | 2026-11-12T08:34:25.736Z |
+| `learn-dom-k-ae91e0b9` | `project://salvo-rs-salvo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md` | 2026-11-12T08:34:44.459Z |
+| `learn-dom-h-f56dbc84` | `project://salvo-rs-salvo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md` | 2026-11-12T08:35:03.648Z |
+| `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-11-12T08:52:38.460Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `d947de73` | Multi-dimensional audit evidence | 2026-11-12T08:53:00.339Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `8097fc0b` | Multi-dimensional audit evidence | 2026-11-12T08:53:00.393Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `988d97f3` | Multi-dimensional audit evidence | 2026-11-12T08:53:04.385Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `4a7d3d74` | Multi-dimensional audit evidence | 2026-11-12T08:53:54.038Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `1598acaa` | Multi-dimensional audit evidence | 2026-11-12T09:19:34.571Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `482bbeb9` | Multi-dimensional audit evidence | 2026-11-12T09:25:49.127Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `03441954` | Multi-dimensional audit evidence | 2026-11-12T09:46:18.456Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e449c978` | Multi-dimensional audit evidence | 2026-11-12T09:46:20.424Z |
+| `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-12T09:54:51.593Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `e1f6df0a` | Multi-dimensional audit evidence | 2026-11-12T09:55:07.681Z |
+| `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `649a6f63` | Multi-dimensional audit evidence | 2026-11-12T09:55:17.691Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `390d168f` | Multi-dimensional audit evidence | 2026-11-12T09:55:22.206Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e3ecbb98` | Multi-dimensional audit evidence | 2026-11-12T09:55:22.984Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `719fcc41` | Multi-dimensional audit evidence | 2026-11-12T09:55:28.885Z |
+| `learn-dom-d-78355aec` | `project://hf-viggle-viggle-remake` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | 2026-11-12T09:55:51.213Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `ac7afd8b` | Multi-dimensional audit evidence | 2026-11-12T10:17:33.365Z |
+| `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `40ad0ac9` | Multi-dimensional audit evidence | 2026-11-12T10:43:07.206Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `ac4f4442` | Multi-dimensional audit evidence | 2026-11-12T10:52:37.875Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `72d4626f` | Multi-dimensional audit evidence | 2026-11-12T10:52:51.122Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `970b4474` | Multi-dimensional audit evidence | 2026-11-12T10:52:54.199Z |
+| `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/serviette` | `53c6382b` | Multi-dimensional audit evidence | 2026-11-12T10:52:55.020Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `37c46843` | Multi-dimensional audit evidence | 2026-11-12T11:00:58.670Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `e50f0f23` | Multi-dimensional audit evidence | 2026-11-12T11:01:10.486Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `bcdaac0c` | Multi-dimensional audit evidence | 2026-11-12T11:01:13.790Z |
+| `learn-dom-l-80d1f65c` | `project://volcengine-openviking` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | 2026-11-12T11:01:33.161Z |
+| `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-12T11:18:20.345Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `54855b62` | Multi-dimensional audit evidence | 2026-11-12T11:18:33.439Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `41ccfbfe` | Multi-dimensional audit evidence | 2026-11-12T11:18:43.589Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `c4e4e677` | Multi-dimensional audit evidence | 2026-11-12T11:18:47.823Z |
+| `learn-dom-d-e7997468` | `project://hf-microsoft-mage-vl-cowork` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md` | 2026-11-12T11:19:08.436Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `0d7d62cf` | Multi-dimensional audit evidence | 2026-11-12T11:37:28.640Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `e523ba9d` | Multi-dimensional audit evidence | 2026-11-12T11:37:31.667Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `4c2e88a3` | Multi-dimensional audit evidence | 2026-11-12T11:37:36.729Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `c25aa858` | Multi-dimensional audit evidence | 2026-11-12T11:37:40.195Z |
+| `learn-dom-h-7d775901` | `project://google-closure-compiler` | `0d7d62cf` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md` | 2026-11-12T11:38:00.745Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `ff7404cc` | Multi-dimensional audit evidence | 2026-11-12T11:50:57.903Z |
+| `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/llm-app` | `53c6382b` | Multi-dimensional audit evidence | 2026-11-12T11:51:08.778Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `2d3e5eda` | Multi-dimensional audit evidence | 2026-11-12T12:15:11.714Z |
+| `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `baeabbfe` | Multi-dimensional audit evidence | 2026-11-12T12:15:17.343Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `791e654b` | Multi-dimensional audit evidence | 2026-11-12T12:20:07.935Z |
+| `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `99714d4e` | Multi-dimensional audit evidence | 2026-11-12T12:20:14.321Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `3e1a86e6` | Multi-dimensional audit evidence | 2026-11-12T12:32:51.840Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `1afb2cc4` | Multi-dimensional audit evidence | 2026-11-12T12:33:02.203Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `0ff3d233` | Multi-dimensional audit evidence | 2026-11-12T12:33:05.573Z |
+| `learn-github-touchlab-xcode-kotlin` | `https://github.com/touchlab/xcode-kotlin` | `8e9834df` | Multi-dimensional audit evidence | 2026-11-12T12:45:29.816Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `58854051` | Multi-dimensional audit evidence | 2026-11-12T12:45:39.277Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `39b7c8a8` | Multi-dimensional audit evidence | 2026-11-12T12:50:32.086Z |
+| `learn-dom-h-ee08d822` | `project://webpack-webpack` | `39b7c8a8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md` | 2026-11-12T12:50:51.248Z |
+| `learn-dom-h-b173c8f8` | `project://dathere-qsv` | `58854051` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-12T12:51:11.112Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `41ee3267` | Multi-dimensional audit evidence | 2026-11-12T12:58:05.542Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `013ddb1c` | Multi-dimensional audit evidence | 2026-11-12T13:10:23.048Z |
+| `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-12T13:15:10.040Z |
+| `learn-dom-d-a3aabf62` | `project://hf-liquidai-lfm3-1.7b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | 2026-11-12T13:15:27.334Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `a866511c` | Multi-dimensional audit evidence | 2026-11-12T13:33:21.061Z |
+| `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `634ef6c9` | Multi-dimensional audit evidence | 2026-11-12T13:40:56.959Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `746348d7` | Multi-dimensional audit evidence | 2026-11-12T13:41:09.124Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `036dde8e` | Multi-dimensional audit evidence | 2026-11-12T13:50:57.875Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `9b528b5e` | Multi-dimensional audit evidence | 2026-11-12T14:08:35.295Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `36357612` | Multi-dimensional audit evidence | 2026-11-12T14:08:45.716Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source**: github ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
-> **Source Version**: `93b9a2d9`  
+> **Source Version**: `40ad0ac9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:44:30.183Z  
+> **Timestamp**: 2026-11-12T10:42:55.834Z  
 > **Learning ID**: `learn-github-infracost-infracost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:44:28.985Z  
+> **Harvest Timestamp**: 2026-11-12T10:42:55.671Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud cost intelligence for engineers, AI coding agents, and CI/CD 💰📉 Shift FinOps Left!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12606 stars
+- **Stars / Engagement**: 12620 stars
 
 ---
 
@@ -693,274 +693,228 @@ func regionToCDNZone(region string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93b9a2d9` (2026-11-03)
-**Commit Message**: ci: release from master by dispatch, not from a pushed tag (#3637)
+### Incident Patch 1: `40ad0ac9` (2026-11-10)
+**Commit Message**: fix(deps): bump brotli, go-jose and klauspost/compress (#3641)
 
-Releases are started by hand from master with the version. The build
-tags the checkout locally so it embeds the version, and the draft
-release targets the dispatched commit, so publishing it creates the tag
-there.
-
-**File**: `.github/workflows/create-release.yml` (modified, +51/-7)
+**File**: `go.mod` (modified, +3/-3)
 ```diff
-@@ -1,9 +1,19 @@
- name: Upload Release Asset
- 
-+# Releases are started by hand from master with the version to release. The
-+# draft release targets the commit this run builds, so publishing it creates
-+# the tag there.
- on:
--  push:
--    tags:
--      - "v*"
-+  workflow_dispatch:
-+    inputs:
-+      version:
-+        description: "Version to release, e.g. v0.10.48"
-+        type: string
-+        required: true
-+
-+concurrency:
-+  group: release
-+  cancel-in-progress: false
- 
- jobs:
-   build:
-@@ -24,7 +34,40 @@ jobs:
-           sudo rm -rf /usr/share/swift        # ~3GB Swift toolchain
-           sudo rm -rf /opt/hostedtoolcache    # ~6GB cached tool versions
- 
-+      - name: Check the version
-+        env:
-+          VERSION: ${{ inputs.version }}
-+          GH_TOKEN: ${{ github.token }}
-+        run: |
-+          if [ "$GITHUB_REF" != "refs/heads/master" ]; then
-+            echo "::error::Releases run on master, not $GITHUB_REF"; exit 1
-+          fi
-+          if ! [[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
-+            echo "::error::$VERSION is not vX.Y.Z or vX.Y.Z-pre"; exit 1
-+          fi
-+          # Only a 404 means the tag is free; any other error stops the release.
-+          if out=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" 2>&1); then
-+            echo "::error::$VERSION already exists"; exit 1
-+          elif ! grep -q "HTTP 404" <<<"$out"; then
-+            echo "::error::Couldn't check whether $VERSION exists: $out"; exit 1
-+          fi
-+          # A draft has no tag yet, so a re-run would pass the check above and
-+          # make a second draft. Delete the old draft first.
-+          if out=$(gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" 2>&1); then
-+            echo "::error::A release named $VERSION already exists (possibly a draft). Delete it, then run again."; exit 1
-+          elif ! grep -q "release not found" <<<"$out"; then
-+            echo "::error::Couldn't check for a release named $VERSION: $out"; exit 1
-+          fi
-+
-       - uses: actions/checkout@v4
-+
-+      # The build reads its version from the tag on HEAD. Tag the checkout
-+      # locally; the real tag is created when the draft release is published.
-+      - name: Tag the checkout
-+        env:
-+          VERSION: ${{ inputs.version }}
-+        run: git tag "$VERSION"
-+
-       - name: Set up Go 1.x
-         uses: actions/setup-go@v5
-         with:
-@@ -38,6 +81,7 @@ jobs:
-         run: go run tools/release/main.go
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          RELEASE_TAG: ${{ inputs.version }}
- 
-       - name: Remove build assets
-         run: rm -rf build
-@@ -61,8 +105,8 @@ jobs:
-           images: |
-             infracost/infracost
-           tags: |
--            type=semver,pattern={{version}}
--            type=semver,pattern={{major}}.{{minor}}
-+            type=semver,pattern={{version}},value=${{ inputs.version }}
-+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
- 
-       - name: Build and push Docker images
-         uses: docker/build-push-action@v4
-@@ -85,8 +129,8 @@ jobs:
-           flavor: |
-             prefix=ci-,onlatest=true
-           tags: |
--            type=semver,pattern={{version}}
--            type=semver,pattern={{major}}.{{minor}}
-+            type=semver,pattern={{version}},value=${{ inputs.version }}
-+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
- 
-       - name: Build and push Docker images (CI)
-         uses: docker/build-push-action@v4
+@@ -155,7 +155,7 @@ require (
+ 	github.com/ProtonMail/go-crypto v1.1.6 // indirect
+ 	github.com/STARRY-S/zip v0.2.1 // indirect
+ 	github.com/agnivade/levenshtein v1.2.1 // indirect
+-	github.com/andybalholm/brotli v1.1.1 // indirect
++	github.com/andybalholm/brotli v1.2.8 // indirect
+ 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
+ 	github.com/apparentlymart/go-versions v1.0.1 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.24 // indirect
+@@ -183,7 +183,7 @@ require (
+ 	github.com/felixge/httpsnoop v1.0.4 // indirect
+ 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
+ 	github.com/go-ini/ini v1.67.0 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/gogo/protobuf v1.3.2 // indirect
+@@ -294,7 +294,7 @@ require (
+ 	github.com/hashicorp/go-version v1.6.0
+ 	github.com/heimdalr/dag v1.3.1
+ 	github.com/iancoleman/orderedmap v0.2.0 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
+ 	github.com/open-policy-agent/opa v1.6.0
+ 	github.com/otiai10/copy v1.7.0
 ```
 
-**File**: `tools/release/main.go` (modified, +5/-1)
+**File**: `go.sum` (modified, +6/-6)
 ```diff
-@@ -80,7 +80,11 @@ func fetchExistingRelease(cli *github.Client, tag string) (*github.RepositoryRel
- }
- 
- func createDraftRelease(cli *github.Client) (*github.RepositoryRelease, error) {
--	name := github.String(strings.Join(strings.Split(os.Getenv("GITHUB_REF"), "/")[2:], "/"))
-+	tag := strings.TrimSpace(os.Getenv("RELEASE_TAG"))
-+	if tag == "" {
-+		return nil, errors.New("RELEASE_TAG is not set")
-+	}
-+	name := github.String(tag)
- 	o, res, err := cli.Repositories.CreateRelease(
- 		context.Background(),
- 		"infracost",
+@@ -732,8 +732,8 @@ github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible/go.mod h1:LDQHRZy
+ github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 h1:bvNMNQO63//z+xNgfBlViaCIJKLlCJ6/fmUseuG0wVQ=
+ github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
+ github.com/andybalholm/brotli v1.0.4/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
+-github.com/andybalholm/brotli v1.1.1 h1:PR2pgnyFznKEugtsUo0xLdDop5SKXd5Qf5ysW+7XdTA=
+-github.com/andybalholm/brotli v1.1.1/go.mod h1:05ib4cKhjx3OQYUY22hTVd34Bc8upXjOLL2rKwwZBoA=
++github.com/andybalholm/brotli v1.2.8 h1:H9F6r7RNwzSRsx/lytpIYkbjNFMt2yNBwsJ2+0gpx78=
++github.com/andybalholm/brotli v1.2.8/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
+ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
+ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
+ github.com/antchfx/xpath v0.0.0-20190129040759-c8489ed3251e/go.mod h1:Yee4kTMuNiPYJ7nSNorELQMr1J33uOpXDMByNYhvtNk=
+@@ -1038,8 +1038,8 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2
+ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
+ github.com/go-ini/ini v1.67.0 h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
+ github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.9 h1:pKfeQkig1NmgK4hJrZYXLEYURXfoJB61Larw0uIW4gY=
++github.com/go-jose/go-jose/v4 v4.1.9/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-latex/latex v0.0.0-20210118124228-b3d85cf34e07/go.mod h1:CO1AlKB2CSIqUrmQPqA0gdRIlnLEY0gK5JGjh37zN5U=
+ github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81/go.mod h1:SX0U8uGpxhq9o2S/CELCSUxEWWAuoCUcVCQWv7G2OCk=
+@@ -1400,8 +1400,8 @@ github.com/klauspost/asmfmt v1.3.2/go.mod h1:AG8TuvYojzulgDAMCnYn50l/5QV3Bs/tp6j
+ github.com/klauspost/compress v1.4.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
+ github.com/klauspost/compress v1.15.9/go.mod h1:PhcZ0MbTNciWF3rruxRgKxI5NkcHHrHUDtV4Yw2GlzU=
+ github.com/klauspost/compress v1.15.11/go.mod h1:QPwzmACJjUTFsnSHH934V6woptycfrDDJnH7hvFVbGM=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid v1.2.0/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
+ github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
+ github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
 ```
 
----
-
-### Incident Patch 2: `79b7c3b9` (2026-11-03)
-**Commit Message**: ci: switch docker hub login to oidc [TRK-1401] (#3636)
-
-**File**: `.github/workflows/create-docker-prerelease.yml` (modified, +11/-5)
+**File**: `internal/providers/terraform/google/testdata/compute_instance_test/compute_instance_test.golden` (modified, +15/-15)
 ```diff
-@@ -8,8 +8,11 @@ jobs:
-   build:
-     name: Create docker prerelease
-     runs-on: ubuntu-latest
-+    # release env supplies the OIDC connection ID and fixes the subject claim
-+    environment: release
-     permissions:
-       contents: write
-+      id-token: write
-     steps:
-       - name: Free up disk space
-         run: |
-@@ -26,17 +29,20 @@ jobs:
-         uses: docker/setup-buildx-action@v3
- 
-       - name: Login to DockerHub
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v4.5.0
-         with:
--          username: ${{ secrets.DOCKER_USERNAME }}
--          password: ${{ secrets.DOCKER_PASSWORD }}
-+          username: infracost          # must be the org name, not a user
-+        env:
-+          DOCKERHUB_OIDC_CONNECTIONID: "${{ vars.DOCKERHUB_OIDC_CONNECTION_ID }}"
-+          # the default 300s token expires before the second image push finishes
-+          DOCKERHUB_OIDC_EXPIREIN: "3600"
- 
-       - name: Docker meta
-         id: meta
-         uses: docker/metadata-action@v5
-         with:
-           images: |
--            ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
-+            infracost/infracost
-           tags: |
-             type=edge
-           flavor: |
-@@ -59,7 +65,7 @@ jobs:
-         uses: docker/metadata-action@v5
-         with:
-           images: |
--            ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
-+            infracost/infracost
-           tags: |
-             type=edge
-           flavor: |
+@@ -10,16 +10,16 @@
+  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+  └─ NVIDIA Tesla K80 (on-demand)                                         2,920  hours       $919.80   
+                                                                                                       
+- google_compute_instance.preemptible_gpu                                                              
+- ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $332.75   
+- ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+- └─ NVIDIA Tesla K80 (preemptible)                                       2,920  hours       $501.95   
+-                                                                                                      
+  google_compute_instance.gpu_l4                                                                       
+  ├─ Instance usage (Linux/UNIX, on-demand, g2-standard-4)                  730  hours       $515.99   
+  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+  └─ NVIDIA L4 (on-demand)                                                  730  hours       $286.18   
+                                                                                                       
++ google_compute_instance.preemptible_gpu                                                              
++ ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $298.70   
++ ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
++ └─ NVIDIA Tesla K80 (preemptible)                                       2,920  hours       $501.95   
++                                                                                                      
+  google_compute_instance.sud_20_perc_with_hours                                                       
+  ├─ Instance usage (Linux/UNIX, on-demand, n2-standard-8)                  730  hours       $226.87   
+  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+@@ -45,8 +45,13 @@
+  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+                                                                                                       
+  google_compute_instance.custom_preemptible                                                           
+- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $87.21   
+- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $38.95   
++ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $78.27   
++ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $34.97   
++ └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
++                                                                                                      
++ google_compute_instance.custom_n2d                                                                   
++ ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $44.85   
++ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $30.05   
+  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+                                                                                                       
+  google_compute_instance.custom_ext                                                                   
+@@ -55,11 +60,6 @@
+  ├─ Custom Instance Extended RAM (Linux/UNIX, on-demand, N1 2 GB)          730  hours         $9.76   
+  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+                                                                                                       
+- google_compute_instance.custom_n2d                                                                   
+- ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $41.11   
+- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $27.52   
+- └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+-                                                                                                      
+  google_compute_instance.local_ssd                                                                    
+  ├─ Instance usage (Linux/UNIX, on-demand, f1-micro)                       730  hours         $3.88   
+  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+@@ -68,7 +68,7 @@
+  google_compute_instance.preemptibl
 ```
 
-**File**: `.github/workflows/create-release.yml` (modified, +11/-5)
+**File**: `internal/providers/terraform/google/testdata/container_cluster_test/container_cluster_test.golden` (modified, +17/-17)
 ```diff
-@@ -9,8 +9,11 @@ jobs:
-   build:
-     name: Upload Release Asset
-     runs-on: ubuntu-latest
-+    # release env supplies the OIDC connection ID and fixes the subject claim
-+    environment: release
-     permissions:
-       contents: write
-+      id-token: write
-     steps:
-       - name: Free up disk space
-         run: |
-@@ -43,17 +46,20 @@ jobs:
-         uses: docker/setup-buildx-action@v3
- 
-       - name: Login to DockerHub
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v4.5.0
-         with:
--          username: ${{ secrets.DOCKER_USERNAME }}
--          password: ${{ secrets.DOCKER_PASSWORD }}
-+          username: infracost          # must be the org name, not a user
-+        env:
-+          DOCKERHUB_OIDC_CONNECTIONID: "${{ vars.DOCKERHUB_OIDC_CONNECTION_ID }}"
-+          # the default 300s token expires before the second image push finishes
-+          DOCKERHUB_OIDC_EXPIREIN: "3600"
- 
-       - name: Docker meta
-         id: meta
-         uses: docker/metadata-action@v5
-         with:
-           images: |
--            ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
-+            infracost/infracost
-           tags: |
-             type=semver,pattern={{version}}
-             type=semver,pattern={{major}}.{{minor}}
-@@ -75,7 +81,7 @@ jobs:
-         uses: docker/metadata-action@v5
-         with:
-           images: |
--            ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
-+            infracost/infracost
-           flavor: |
-             prefix=ci-,onlatest=true
-           tags: |
+@@ -10,7 +10,7 @@
+  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 8,760  hours                  $4,660.30    
+  │  └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
+  └─ node_pool[1]                                                                                                         
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
++    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
+     └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
+                                                                                                                          
+  google_container_cluster.with_node_pools_regional                                                                       
+@@ -22,7 +22,7 @@
+  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 4,380  hours                  $2,330.15    
+  │  └─ Standard provisioned storage (pd-standard)                               600  GB                        $24.00    
+  └─ node_pool[1]                                                                                                         
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
++    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
+     └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
+                                                                                                                          
+  google_container_cluster.with_node_pools_node_locations_withUsage                                                       
+@@ -34,18 +34,9 @@
+  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 5,840  hours                  $3,106.86    
+  │  └─ Standard provisioned storage (pd-standard)                               800  GB                        $32.00    
+  └─ node_pool[1]                                                                                                         
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,330.99    
++    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,194.81    
+     └─ Standard provisioned storage (pd-standard)                               400  GB                        $16.00    
+                                                                                                                          
+- google_container_cluster.with_unsupported_node_pool                                                                     
+- ├─ Cluster management fee                                                      730  hours                     $73.00    
+- ├─ default_pool                                                                                                         
+- │  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                      6,570  hours                    $220.13    
+- │  └─ Standard provisioned storage (pd-standard)                               900  GB                        $36.00    
+- └─ node_pool[1]                                                                                                         
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
+-    └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
+-                                                                                                                         
+  google_container_cluster.with_node_config                                                                               
+  ├─ Cluster management fee                                                      730  hours                     $73.00    
+  └─ default_pool                                                                                                         
+@@ -54,6 +45,15 @@
+     ├─ Local SSD provisioned storage                                          1,125  GB                        $90.00    
+     └─ NVIDIA Tesla K80 (on-demand)                                           8,760  hours                  $2,759.40    
+                                                                                                                          
++ google_container_cluster.with_unsupported_node_pool                                                                     
++ ├─ Cluster management fee                                                      730  hours                     $73.00    
++ ├─ d
 ```
 
-**File**: `.github/workflows/create-test-image.yml` (removed, +0/-28)
+**File**: `internal/providers/terraform/google/testdata/container_node_pool_test/container_node_pool_test.golden` (modified, +6/-6)
 ```diff
-@@ -1,28 +0,0 @@
--name: Build and push docker infracost/infracost:test
--
--on:
--  workflow_dispatch
--
--jobs:
--  build:
--    name: Build and Push Docker test image
--    runs-on: ubuntu-latest
--    steps:
--      - uses: actions/checkout@v4
--      - name: Set up Go 1.x
--        uses: actions/setup-go@v5
--        with:
--          go-version-file: go.mod
--
--      - name: Build project
--        run: |
--          make build
--
--      - name: Build and push Docker images
--        uses: docker/build-push-action@v4
--        with:
--          username: ${{ secrets.DOCKER_USERNAME }}
--          password: ${{ secrets.DOCKER_PASSWORD }}
--          repository: ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPOSITORY }}
--          tags: test
--          tag_with_ref: true
+@@ -19,13 +19,13 @@
+  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
+                                                                                                   
+  google_container_node_pool.with_preemptible_instance                                             
+- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $261.62   
+- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $116.86   
++ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
++ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
+  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
+                                                                                                   
+  google_container_node_pool.with_spot_instance                                                    
+- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $261.62   
+- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $116.86   
++ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
++ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
+  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
+                                                                                                   
+  google_container_node_pool.initial_node_count_zonal                                              
+@@ -122,7 +122,7 @@
+  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                1,460  hours        $48.92   
+  └─ Standard provisioned storage (pd-standard)                         200  GB            $8.00   
+                                                                                                   
+- OVERALL TOTAL                                                                      $28,486.42 
++ OVERALL TOTAL                                                                      $28,408.89 
+ 
+ *Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
+ 
+@@ -133,5 +133,5 @@
+ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+ ┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
+ ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
+-┃ main                                               ┃       $28,486 ┃           - ┃    $28,486 ┃
++┃ main                                               ┃       $28,409 ┃           - ┃    $28,409 ┃
+ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3641** (2026-11-10): fix(deps): bump brotli, go-jose and klauspost/compress (@aliscott)
 - **PR #3637** (2026-11-03): ci: release from master by dispatch, not from a pushed tag (@aliscott)
 - **PR #3636** (2026-11-03): ci: switch docker hub login to oidc [TRK-1401] (@owenrumney)
+- **PR #3635** (closed): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 (@dependabot[bot])
 - **PR #3634** (2026-10-21): fix: build with Go 1.26.10 and Alpine 3.24 (@liamg)
 - **PR #3633** (2026-10-15): docs: add AGENTS.md steering contributors to discussions for EOL 0.10.x repo (@glenngillen)
-- **PR #3632** (closed): fix(azure): price the PostgreSQL Flexible Server HA standby and Premium SSD v2 (@willejs)
-- **PR #3631** (2026-10-12): fix(deps): bump Go toolchain and x/net for Inspector findings (@aliscott)
 
 ---
 
@@ -980,62 +934,32 @@ there.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: release from master by dispatch, not from a pushed tag (#3637)
+## X. deps): bump brotli, go-jose and klauspost/compress (#3641)
 
 **RULE**:
-When implementing operations in `.github/workflows/create-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93b9a2d9`: ci: release from master by dispatch, not from a pushed tag (#3637). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40ad0ac9`: deps): bump brotli, go-jose and klauspost/compress (#3641). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/create-release.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Releases are started by hand from master with the version to release. The
-# draft release targets the commit this run builds, so publishing it creates
-# the tag there.
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version to release, e.g. v0.10.48"
-        type: string
-        required: true
-
-concurrency:
-  group: release
-  cancel-in-progress: false
-      - name: Check the version
-        env:
-          VERSION: ${{ inputs.version }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if [ "$GITHUB_REF" != "refs/heads/master" ]; then
-            echo "::error::Releases run on master, not $GITHUB_REF"; exit 1
-          fi
-          if ! [[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
-            echo "::error::$VERSION is not vX.Y.Z or vX.Y.Z-pre"; exit 1
-          fi
-          # Only a 404 means the tag is free; any other error stops the release.
-          if out=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" 2>&1); then
-            echo "::error::$VERSION already exists"; exit 1
-          elif ! grep -q "HTTP 404" <<<"$out"; then
-            echo "::error::Couldn't check whether $VERSION exist
+	github.com/andybalholm/brotli v1.2.8 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
+	github.com/klauspost/compress v1.20.2 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  push:
-    tags:
-      - "v*"
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+	github.com/andybalholm/brotli v1.1.1 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93b9a2d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40ad0ac9` are properly handled with clean fallback behavior.

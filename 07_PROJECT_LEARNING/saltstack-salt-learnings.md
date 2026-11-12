@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `944a95d5`  
+> **Source Version**: `390d168f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T03:43:20.883Z  
+> **Timestamp**: 2026-11-12T09:55:03.397Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T03:43:20.139Z  
+> **Harvest Timestamp**: 2026-11-12T09:55:03.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15747 stars
+- **Stars / Engagement**: 15755 stars
 
 ---
 
@@ -2064,11 +2064,11 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #70661** (2026-11-03): **[Bug]: cmd.run's runas does not switch the current user from root when salt-call is started with sudo, and runas evaluates as the same user calling salt-call**
-  *Symptoms*: ### What happened?  Hey folks! This is pretty edge-casey, but I think it could be problematic and I wanted to let you know. PR on it's way 🫡.  ### The Problem  <blockquote>  It's possible, with the current implementation of `cmd.runas` to not change to the `runas` user because `getpass.getuser()` checks environment variables like `LOGNAME` to determine the current user  This happens if `salt-call` is running with sudo, as the same user as the `runas`  ex. ``` # /srv/salt/problem-state.sls  some-command:   cmd.run:     - runas: me ```  ```bash echo $USER me  sudo salt-call state.apply problem-state ```  evaluates `some-command` as root  </blockquote>   ### Replication steps  <blockquote>  The setup is pretty finnicky here, so here's podman setup to replicate it.  ```Containerfile # Containerfile FROM debian:13  RUN apt-get update \     && apt-get install -y --no-install-recommends build-essential python3 python3-dev python3-venv sudo \     && python3 -m venv /opt/salt-venv \     && /opt/salt-venv/bin/pip install --no-cache-dir 'salt==3008.5' \     && useradd -m -s /bin/bash non-root-user \     && printf 'non-root-user ALL=(root) NOPASSWD: ALL\n' > /etc/sudoers.d/salt-demo \     && chmod 0440 /etc/sudoers.d/salt-demo \     && mkdir -p /srv/salt \     && apt-get clean \     && rm -rf /var/lib/apt/lists/*  COPY demo.sls /srv/salt/demo.sls  CMD ["sleep", "infinity"] ```   ```yaml # demo.sls  show_effective_user:   cmd.run:     - name: |         printf 'effective_uid='; id -u     
+- **Issue #70736** (2026-11-10): **[Bug]: Residual shutdown-time ERROR log sites after #70733 — audit salt/master.py, salt/minion.py, salt/transport/, salt/cluster/consensus/**
+  *Symptoms*: ### Description  Follow-up to #70730 / PR #70733 (commit `7128c04a406`).  That PR fixed four shutdown-time ERROR / CRITICAL sites that fired during cluster SIGTERM or `docker compose down`:  - `SaltPeer._send` — peer-unreachable traceback flood - `SaltPeer._publish` — cached-client reuse after send failure - `PubServer.close` — `Task was destroyed but it is pending!` - `ZeroMQSocketMonitor.stop` — ditto  Gamma explicitly deferred the broader audit (see PR body: *"Shutdown-only ERROR audit: no other shutdown-only CRITICAL/ERROR signatures surfaced by a `git grep` scan within `salt/cluster/consensus/` and `salt/transport/`; deferred any additional discovery to follow-up."*).  A targeted audit across `salt/master.py`, `salt/minion.py`, `salt/transport/` (recursive), and `salt/cluster/consensus/` (recursive) turns up **six** additional log sites that fire at ERROR/CRITICAL during expected shutdown paths and match the same "expected unreachable peer / closed stream / cancelled future" pattern:  | # | Path | Signature | |---|------|-----------| | 1 | `salt/cluster/consensus/peer.py:377` | `RaftDispatcher._reply` logs traceback when replying to a departing peer (same pattern as `SaltPeer._send`) | | 2 | `salt/transport/tcp.py:740` | `RequestServer.close` `log.exception` for `EBADF` (errno 9) — fd already closed under us at shutdown | | 3 | `salt/transport/zeromq.py:855` | `RequestServer.close` `log.error("IOLoop closed when trying to cancel task")` — loop already torn down | | 4 | `
 
-- **Issue #70631** (2026-11-06): **[Bug]: salt CLI exits 0 on authentication / authorization failures**
-  *Symptoms*: ### Description  The `salt` CLI's non-batch run path catches `AuthenticationError`, `AuthorizationError`, `SaltInvocationError`, `EauthAuthenticationError`, and `SaltClientError`, prints the message, then falls out of the function.  Because `_output_ret` only calls `sys.exit` when its `ret` argument is falsy (the "No return received" branch), passing an error string short-circuits that exit and the process ends up returning `0` for a clear-cut failure.  This breaks the standard shell-exit-code contract that `salt ... || alert` and CI pipelines rely on, and contradicts the policy at [`doc/topics/return_codes/index.rst`](https://github.com/saltstack/salt/blob/master/doc/topics/return_codes/index.rst) which says `salt` should exit non-zero on these errors.  ### Setup  Standard master + minion with `external_auth` configured.  ### Steps to Reproduce  ```shell # master's /etc/salt/master: # external_auth: #   file: #     ^filename: /etc/salt/users #     alice: #       - test.* # master's /etc/salt/users: #   alice:correctpassword  # From a shell: salt --eauth file -a alice --password=WRONG '*' test.ping ```  ### Expected behavior  ```shell $ salt --eauth file -a alice --password=WRONG '*' test.ping Authentication error occurred. $ echo $? 1   # or any non-zero ```  ### Actual behavior  ```shell $ salt --eauth file -a alice --password=WRONG '*' test.ping Authentication error occurred. $ echo $? 0   # <-- bug ```  Same with `salt-run`: ```shell $ salt-run --eauth file -a alice --pas
+- **Issue #70728** (2026-11-10): **[Bug]: Salt startup log lines mis-categorized at CRITICAL/WARNING**
+  *Symptoms*: ### Description  Several log statements fired during normal salt-minion / salt-master cluster startup are mis-leveled, which trips up operators reviewing logs and alert pipelines that watch `CRITICAL`/`WARNING` lines.  The clearest offender is a `log.critical()` call that reports an auto-corrected configuration -- which is helpful behavior, not a critical failure:  ``` [CRITICAL] 'master_type' set to 'failover' but 'retry_dns' is not 0. Setting 'retry_dns' to 0 to failover to the next master on DNS errors. ```  Additional startup-path warnings fire during normal operation (DNS updates, peer discovery before cluster is fully converged) and should be `INFO`:  - `[WARNING] Master ip address changed from X to Y` (`salt/minion.py`) -- fires on every DNS failover, which is the exact purpose of `master_alive_interval`. - `[WARNING] Peer key missing <path>` (`salt/channel/server.py`) -- fires on every cluster peer that has not yet synced its key; the next line of code schedules the fetch, so this is an expected transient state, not a warning.  ### Scope / fix  Lower log levels on the above message sites to match actionability:  | Message | Current | Proposed | | --- | --- | --- | | `'master_type' set to 'failover' but 'retry_dns' is not 0` | CRITICAL | INFO | | `Master ip address changed from %s to %s` | WARNING | INFO | | `Peer key missing %r` | WARNING | INFO |  Message text is preserved; only levels change. Deprecation warnings (e.g. `master_shuffle`) stay at `WARNING`. Genuine cl
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2085,208 +2085,487 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `944a95d5` (2026-11-07)
-**Commit Message**: Bugfix 67214 minion swarm (#67783)
+### Incident Patch 1: `caf72ef5` (2026-11-11)
+**Commit Message**: Move etcd support to etcd3gw and fix etcd contract bugs (#70660)
 
-* Fix bugs in minionswarm. Updated help with significant enhancements. Added username to salt-master command. Added ability to turn off open_mode.
+* Switch the etcd client library from etcd3-py to etcd3gw
 
-* cleaned up some problems with the parser.add_options and added a
-clarificationn to the config-dir help text.
+etcd3-py has had no release since 0.1.6 in 2019 and is the only client
+the etcd modules, state, and etcd3 cache can use since the v2 removal.
+etcd3gw is maintained by OpenStack, talks to the same etcd v3 HTTP
+gateway, and is synchronous, so EtcdClientV3 keeps its public methods
+and read() results keep their key/value/mod_revision attributes.
 
-* added changelog file
+etcd3gw releases up to 2.7.0 cannot authenticate with a user name and
+password. _AuthEtcd3Client adds that until etcd3gw does
+(https://review.opendev.org/c/openstack/etcd3gw/+/1013860):
+_client_class() uses etcd3gw's own client when its constructor takes
+username, so dropping the subclass is the only change needed then.
 
-* Eliminated some trailing whitespace errors revealed by nox -e lint-tests
+etcd3gw needs Python 3.10 or later, so it is only pulled in for those
+CI environments.
 
-* Pre-commit black and Pre-commit isort fixed problems with tests/minionswarm.py and tests/support/runtests.py
+* Fix etcd module, state and util contracts for 3009
 
-* Fix tests/minionswarm.py import + correctness bugs
+salt.utils.etcd_util:
+- read(), and so get(), tree() and ls(), returned None for every error,
+  so an unreachable etcd, bad credentials or a permission error looked
+  like a missing key. Errors now raise CommandExecutionError with etcd's
+  message; None still means
 
-Address review feedback on #67214:
-
-* tests/support/runtests.py: restore canonical package-qualified
-  import. ``import support.paths as paths`` only resolved when the
-  CWD was ``tests/`` and broke ``from tests.support.runtests import
-  RUNTIME_VARS`` -- used by 50+ conftests/tests. Use
-  ``from tests.support import paths`` instead. This was the root
-  cause of the 393 failing Test Salt / Test Package jobs.
-* tests/minionswarm.py: use ``from tests.support import runtests``
-  and add a sys.path bootstrap so the script can still be executed
-  directly via ``python tests/minionswarm.py`` (the original
-  ``cd tests/`` reproduction fr
-
-**File**: `changelog/67214.fixed.md` (added, +1/-0)
+**File**: `changelog/70659.changed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Fixed bugs in minionswarm and added ability turn off open-mode.
++The etcd execution and state modules, the ``etcd3`` cache and ``salt.utils.etcd_util`` now use ``etcd3gw`` instead of ``etcd3-py``, which has had no release since 2019. Install it with ``salt-pip install etcd3gw``; configuration is unchanged. etcd3gw needs Python 3.10 or later.
 ```
 
-**File**: `tests/minionswarm.py` (modified, +181/-37)
+**File**: `changelog/70659.fixed.md` (added, +1/-0)
 ```diff
-@@ -6,6 +6,7 @@
- """
- # pylint: disable=resource-leakage
+@@ -0,0 +1 @@
++Fixed several etcd contract bugs. Recursive etcd operations no longer match sibling keys that share a prefix, so a recursive delete of ``/app`` no longer deletes ``/application``. Errors talking to etcd now raise instead of returning ``None`` like a missing key. ``etcd.watch`` with ``timeout=0`` waits for a change. The ``etcd.set``, ``etcd.rm`` and ``etcd.directory`` states honor ``test=True``, ``etcd.set`` no longer rewrites keys that already have the right value and can create keys without a profile, ``etcd.rm`` and ``wait_rm`` report and recurse correctly, and partial credential or client certificate settings raise instead of being ignored.
+```
+
+**File**: `changelog/70660.added.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Restored the etcd sdb module (``driver: etcd``), the ``etcd`` ext_pillar and the ``etcd`` returner for the etcd v3 API. They were removed in 3008.0; their 3007 configuration works unchanged apart from ``etcd.require_v2``. The returner can also be the master job cache (``master_job_cache: etcd``).
+```
+
+**File**: `doc/ref/pillar/all/index.rst` (modified, +1/-0)
+```diff
+@@ -12,6 +12,7 @@ pillar modules
  
-+import getpass
- import hashlib
- import optparse  # pylint: disable=deprecated-module
- import os
-@@ -18,10 +19,20 @@
- import time
- import uuid
- 
--import salt
--import salt.utils.files
--import salt.utils.yaml
--import tests.support.runtests
-+# When this module is executed directly (``python tests/minionswarm.py``)
-+# the parent of ``tests/`` is not on ``sys.path``, which makes the
-+# ``from tests.support import runtests`` import below fail. Pre-pend the
-+# repository root so the script remains runnable without ``PYTHONPATH``
-+# manipulation. This is a no-op when the module is imported normally
-+# (e.g. by pytest) because the repository root is already on ``sys.path``.
-+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-+if _REPO_ROOT not in sys.path:
-+    sys.path.insert(0, _REPO_ROOT)
+     cmd_json
+     cmd_yaml
++    etcd_pillar
+     extra_minion_data_in_pillar
+     file_tree
+     git_pillar
+```
+
+**File**: `doc/ref/pillar/all/salt.pillar.etcd_pillar.rst` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++salt.pillar.etcd_pillar
++=======================
 +
-+import salt  # noqa: E402
-+import salt.utils.files  # noqa: E402
-+import salt.utils.yaml  # noqa: E402
-+from tests.support import runtests  # noqa: E402
- 
- OSES = [
-     "Arch",
-@@ -34,25 +45,40 @@
-     "Solaris",
- ]
- VERS = [
--    "2014.1.6",
--    "2014.7.4",
--    "2015.5.5",
--    "2015.8.0",
-+    "3006.1",
-+    "3006.5",
-+    "3006.9",
-+    "3007.1",
- ]
- 
- 
- def parse():
-     """
-     Parse the cli options
-     """
--    parser = optparse.OptionParser()
-+    guidance = (
-+        "\n\n   To execute salt commands against minionswarm you must include the configuration\n"
-+        "   file using the -c option. For commands such as salt, salt-key, salt-cp,\n"
-+        "   and salt-run use -c <temp-dir>/master. For example, when using the\n"
-+        "   default for --temp-dir, the configuration directory would be\n"
-+        "   /tmp/sroot/master. If the master runs on a different machine you\n"
-+        "   must execute the command on that machine using the master config file\n"
-+        "   there. For the salt-call command, which is a minion side\n"
-+        "   command, use -c <tmp-dir>/<name>-<minion number>. For example to\n"
-+        "   execute salt-call on the first minion using the default values for\n"
-+        "   temp-dir and name use -c /tmp/sroot/minion-0. The commands salt-api,\n"
-+        "   salt-cloud, salt-extend, salt-master, salt-minion, salt-proxy,\n"
-+        "   salt-ssh, salt-syndic and spm are not supported."
-+    )
-+    usage = "usage: python %prog [options]" + guidance
-+    parser = optparse.OptionParser(usage)
-     parser.add_option(
-         "-m",
-         "--minions",
-         dest="minions",
-         default=5,
-         type="int",
--        help="The number of minions to make",
-+        help="The number of minions to make (default = %default)",
-     )
-     parser.add_option(
-         "-M",
-@@ -64,19 +90,19 @@ def parse():
-     parser.add_option(
-         "--master",
-         dest="master",
--        default="salt",
--        help="The location of the salt master that this swarm will serve",
-+        default="localhost",
-+        help="The location of the salt master that this swarm will serve. (default = %default) "
-+        "The standard port used by daemon masters is 4506. Masters can be specified using "
-+        "<IP address>:<port>. For example, 192.168.1.2:4506",
-     )
-     parser.add_option(
-         "--name",
-         "-n",
-         dest="name",
--        default="ms",
--        help=(
--            "Give the minions an alternative id prefix, this is used "
--            "when minions from many systems are being aggregated onto "
--            "a single master"
--        ),
-+        default="minion",
-+        help="Give the minions an alternative id prefix, this is used "
-+        "when minions from many systems are being aggregated onto "
-+        "a single master. (default = %default)",
-     )
-     parser.add_option(
-         "--rand-os",
-@@ -111,7 +137,7 @@ def parse():
-         "--keep-modules",
-         dest="keep",
-         default="",
--        help="A comma delimited list of modules to enable",
-+        help="A comma delimited list of modules to enable. (default = %default)",
-     )
-     parser.add_option(
-         "-f",
-@@ -124,26 +150,33 @@ def parse():
-     parser.add_option(
-         "--temp-dir",
-         dest="temp_dir",
--        default=None,
--        help="Place temporary files/directories here",
-+        default="/tmp/sroot",
-+        help="Place temporary files/directories here, (default = %default)",
-     )
-     parser.add_option(
-         "--no-clean",
-         action="store_true",
-         default=False,
--        help="Don't cleanup temporary files/directories",
-+        help="Don't cleanup temporary files/directories. "
-+        "If specified, you must manually recursively delete "
-+        "the swarm root (see --temp-dir) before running "
-+        "minionswarm again, e.g., using the default swarm "
-+        "root, rm -fr /tmp/sroot",
-     )
-     parser.add_option(
-         "--root-dir",
-         dest="root_dir",
-         default=None,
--        help="Override the minion root_dir config",
-
++.. automodule:: salt.pillar.etcd_pillar
++    :members:
 ```
 
-**File**: `tests/support/runtests.py` (modified, +1/-1)
+**File**: `doc/ref/returners/all/index.rst` (modified, +1/-0)
 ```diff
-@@ -50,7 +50,7 @@
+@@ -10,6 +10,7 @@ returner modules
+     :toctree:
+     :template: autosummary.rst.tmpl
  
- import salt.utils.path
- import salt.utils.platform
--import tests.support.paths as paths
-+from tests.support import paths
++    etcd_return
+     highstate_return
+     local
+     local_cache
+```
+
+**File**: `doc/ref/returners/all/salt.returners.etcd_return.rst` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++salt.returners.etcd_return
++==========================
++
++.. automodule:: salt.returners.etcd_return
++    :members:
+```
+
+**File**: `doc/ref/sdb/all/index.rst` (modified, +1/-0)
+```diff
+@@ -11,4 +11,5 @@ sdb modules
+     :template: autosummary.rst.tmpl
  
- try:
-     import pwd
+     env
++    etcd_db
+     yaml
+```
+
+---
+
+### Incident Patch 2: `390d168f` (2026-11-11)
+**Commit Message**: fix: replace bare except with specific exception types (#68842)
+
+* fix: replace bare except with specific exception in ipcidr_match.py
+
+* fix: replace bare except with specific exception in dir.py
+
+* fix: replace bare except with specific exception in __init__.py
+
+* fix: replace bare except with specific exception in saltmod.py
+
+* fix: use broad-except pylint disable and ValueError in x509
+
+Per maintainer feedback: replace bare-except/W0702 pylint disable
+comments with broad-except at all modified sites; narrow x509.py
+strptime exception clauses from BaseException to ValueError.
+
+* Add changelog and ipcidr_match unit tests
+
+Add changelog/68842.fixed.md per reviewer request and add unit tests
+for salt/matchers/ipcidr_match.py covering address match, CIDR match,
+invalid target error handling, and missing proto in grains.
+
+---------
+
+Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
+Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
+
+**File**: `changelog/68842.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Replace bare `except:` clauses with `except Exception:` (and `except ValueError:` where appropriate) in `salt/beacons/__init__.py`, `salt/matchers/ipcidr_match.py`, `salt/modules/x509.py`, `salt/roster/dir.py`, and `salt/states/saltmod.py`.
+```
+
+**File**: `salt/beacons/__init__.py` (modified, +1/-1)
+```diff
+@@ -188,7 +188,7 @@ def process(self, config, grains):
+                 error = None
+                 try:
+                     raw = self.beacons[fun_str](b_config[mod])
+-                except:  # pylint: disable=bare-except
++                except Exception:  # pylint: disable=broad-except
+                     error = f"{sys.exc_info()[1]}"
+                     log.error("Unable to start %s beacon, %s", mod, error)
+                     # send beacon error event
+```
+
+**File**: `salt/matchers/ipcidr_match.py` (modified, +2/-2)
+```diff
+@@ -20,11 +20,11 @@ def match(tgt, opts=None, minion_id=None):
+     try:
+         # Target is an address?
+         tgt = ipaddress.ip_address(tgt)
+-    except:  # pylint: disable=bare-except
++    except Exception:  # pylint: disable=broad-except
+         try:
+             # Target is a network?
+             tgt = ipaddress.ip_network(tgt)
+-        except:  # pylint: disable=bare-except
++        except Exception:  # pylint: disable=broad-except
+             log.error("Invalid IP/CIDR target: %s", tgt)
+             return []
+     proto = f"ipv{tgt.version}"
+```
+
+**File**: `salt/roster/dir.py` (modified, +1/-1)
+```diff
+@@ -103,6 +103,6 @@ def _render(roster_file, **kwargs):
+         )
+         result.setdefault("host", f"{os.path.basename(roster_file)}.{domain}")
+         return result
+-    except:  # pylint: disable=W0702
++    except Exception:  # pylint: disable=broad-except
+         log.warning('Unable to render roster file "%s".', roster_file, exc_info=True)
+         return {}
+```
+
+**File**: `salt/states/saltmod.py` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ def create_thread(index):
+         def run_thread():
+             try:
+                 outputs[index] = func(inputs[index])
+-            except:  # pylint: disable=bare-except
++            except Exception:  # pylint: disable=broad-except
+                 errors[index] = sys.exc_info()
+ 
+         thread = threading.Thread(target=run_thread)
+```
+
+**File**: `tests/pytests/unit/matchers/test_ipcidr_match.py` (added, +62/-0)
+```diff
+@@ -0,0 +1,62 @@
++"""
++Unit tests for the ipcidr matcher.
++"""
++
++import logging
++
++import pytest
++
++import salt.matchers.ipcidr_match as ipcidr_match
++
++
++@pytest.fixture
++def configure_loader_modules():
++    return {ipcidr_match: {}}
++
++
++def _make_opts(ipv4_addrs=None, ipv6_addrs=None):
++    grains = {}
++    if ipv4_addrs is not None:
++        grains["ipv4"] = ipv4_addrs
++    if ipv6_addrs is not None:
++        grains["ipv6"] = ipv6_addrs
++    return {"grains": grains}
++
++
++def test_match_ipv4_address_hit():
++    """Match a specific IPv4 address that is in the minion's grains."""
++    opts = _make_opts(ipv4_addrs=["192.168.1.1", "10.0.0.1"])
++    assert ipcidr_match.match("192.168.1.1", opts=opts) is True
++
++
++def test_match_ipv4_address_miss():
++    """No match when the IPv4 address is not in the minion's grains."""
++    opts = _make_opts(ipv4_addrs=["192.168.1.2"])
++    assert ipcidr_match.match("192.168.1.1", opts=opts) is False
++
++
++def test_match_ipv4_cidr_hit():
++    """Match a CIDR network that contains the minion's IPv4 address."""
++    opts = _make_opts(ipv4_addrs=["192.168.1.5"])
++    assert ipcidr_match.match("192.168.1.0/24", opts=opts) is True
++
++
++def test_match_ipv4_cidr_miss():
++    """No match when the CIDR network does not contain any minion address."""
++    opts = _make_opts(ipv4_addrs=["10.0.0.1"])
++    assert ipcidr_match.match("192.168.1.0/24", opts=opts) is False
++
++
++def test_match_invalid_target_returns_empty_list(caplog):
++    """An invalid IP/CIDR target logs an error and returns an empty list."""
++    opts = _make_opts(ipv4_addrs=["192.168.1.1"])
++    with caplog.at_level(logging.ERROR, logger="salt.matchers.ipcidr_match"):
++        result = ipcidr_match.match("not-an-ip", opts=opts)
++    assert result == []
++    assert "Invalid IP/CIDR target" in caplog.text
++
++
++def test_match_proto_not_in_grains():
++    """Returns False when the IP version is not present in grains."""
++    opts = _make_opts()  # no ipv4 or ipv6
++    assert ipcidr_match.match("192.168.1.1", opts=opts) is False
+```
+
+---
+
+### Incident Patch 3: `88302c07` (2026-11-11)
+**Commit Message**: Fix race condition in copyfile() causing inotify permission errors (#68860)
+
+* Fix race condition in copyfile() causing inotify permission errors
+
+Apply the destination file's ownership and permissions to the temp
+file BEFORE the atomic move, instead of after.
+
+Previously, mkstemp() created the temp file with default 0600
+permissions. After shutil.move() atomically replaced the destination,
+there was a brief window where the file was visible with restrictive
+permissions. Services using inotify to watch managed files (e.g. nscd
+watching /etc/resolv.conf) would detect the replacement via
+IN_DELETE_SELF, then fail to re-add a file watch with "Permission
+denied" due to the 0600 permissions, leading to service failures
+such as DNS resolution loss.
+
+By setting chown/chmod on the temp file before shutil.move(), the
+destination file is never visible with incorrect permissions,
+eliminating the race condition entirely.
+
+Fixes #65651
+
+* Fix lint and formatting issues in copyfile tests
+
+- Replace open() with salt.utils.files.fopen() to satisfy W8470 and W1514
+- Reformat multi-line with-patch statement for black compliance
+
+---------
+
+Co-authored-by: Wang Bo <[REDACTED_EMAIL]>
+
+**File**: `changelog/65651.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Fixed a race condition in salt.utils.files.copyfile() where the temporary file was moved to the destination with mkstemp's default 0600 permissions before ownership and permissions were restored. Services using inotify to watch managed files (e.g. nscd watching /etc/resolv.conf) could fail to re-add a file watch during this window, leading to service failures such as DNS resolution loss.
+```
+
+**File**: `salt/utils/files.py` (modified, +14/-15)
+```diff
+@@ -217,21 +217,24 @@ def copyfile(source, dest, backup_mode="", cachedir=""):
+     if backup_mode == "master" or backup_mode == "both" and bkroot:
+         # TODO, backup to master
+         pass
+-    # Get current file stats to they can be replicated after the new file is
+-    # moved to the destination path.
+-    fstat = None
+-    # We must check for platform availability first, or use a conditional import
+-    # salt.utils.platform is available, but if this function is called early, it might fail?
+-    # Actually, the error says 'salt' variable is used before assignment.
+-    # This means 'import salt.utils.platform' is likely missing or 'salt' is not in scope.
+-    # But this file starts with 'import salt.utils.platform'.
+-    # Ah, 'import salt.utils.platform' is NOT at the top level of this file in the provided context?
+-    # Let me check the imports.
++    # Get current file stats so they can be applied to the temp file BEFORE
++    # it is moved to the destination path. This eliminates a race condition
++    # where inotify-based services (e.g. nscd) detect the new file with
++    # mkstemp's default 0600 permissions before chown/chmod can restore
++    # them, causing "Permission denied" on inotify re-watch.
+     if not salt.utils.platform.is_windows():
+         try:
+             fstat = os.stat(dest)
+         except OSError:
+-            pass
++            # dest does not exist yet; nothing to preserve
++            fstat = None
++        if fstat is not None:
++            try:
++                os.chown(tgt, fstat.st_uid, fstat.st_gid)
++                os.chmod(tgt, fstat.st_mode)
++            except OSError:
++                __clean_tmp(tgt)
++                raise
+ 
+     # The move could fail if the dest has xattr protections, so delete the
+     # temp file in this case
+@@ -240,10 +243,6 @@ def copyfile(source, dest, backup_mode="", cachedir=""):
+     except Exception:  # pylint: disable=broad-except
+         __clean_tmp(tgt)
+         raise
+-
+-    if fstat is not None:
+-        os.chown(dest, fstat.st_uid, fstat.st_gid)
+-        os.chmod(dest, fstat.st_mode)
+     # If SELINUX is available run a restorecon on the file
+     rcon = salt.utils.path.which("restorecon")
+     if rcon:
+```
+
+**File**: `tests/pytests/unit/utils/test_files.py` (modified, +109/-0)
+```diff
+@@ -5,6 +5,7 @@
+ import copy
+ import io
+ import os
++import shutil
+ import threading
+ 
+ import pytest
+@@ -474,3 +475,111 @@ def test_set_umask_nests_in_a_single_thread():
+         with salt.utils.files.set_umask(0o022):
+             pass
+     assert salt.utils.files.get_umask() == orig
++
++
++@pytest.mark.skip_on_windows(reason="Unix-only permission test")
++def test_copyfile_preserves_perms_before_move(tmp_path):
++    """
++    Test that copyfile applies the destination file's mode to the result
++    and copies the content correctly.
++    """
++    source = str(tmp_path / "source")
++    dest = str(tmp_path / "dest")
++
++    with salt.utils.files.fopen(source, "w") as f:
++        f.write("new content")
++    with salt.utils.files.fopen(dest, "w") as f:
++        f.write("old content")
++    os.chmod(dest, 0o644)
++
++    import stat as stat_mod
++
++    dest_mode_before = stat_mod.S_IMODE(os.stat(dest).st_mode)
++
++    salt.utils.files.copyfile(source, dest)
++
++    dest_mode_after = stat_mod.S_IMODE(os.stat(dest).st_mode)
++    assert dest_mode_after == dest_mode_before
++    with salt.utils.files.fopen(dest) as f:
++        assert f.read() == "new content"
++
++
++@pytest.mark.skip_on_windows(reason="Unix-only permission test")
++def test_copyfile_perms_applied_before_move(tmp_path):
++    """
++    Test that ownership and permissions are set on the temp file before
++    shutil.move, not after. We patch shutil.move to capture the temp
++    file's mode at move time, and patch os.chown to verify it is called
++    with the correct (fake) uid/gid before the move happens.
++    """
++    import stat as stat_mod
++
++    source = str(tmp_path / "source")
++    dest = str(tmp_path / "dest")
++
++    with salt.utils.files.fopen(source, "w") as f:
++        f.write("new content")
++    with salt.utils.files.fopen(dest, "w") as f:
++        f.write("old content")
++    os.chmod(dest, 0o644)
++
++    # Fake stat result with uid/gid different from current process
++    fake_uid = os.getuid() + 42
++    fake_gid = os.getgid() + 42
++    real_stat = os.stat(dest)
++    fake_stat = MagicMock()
++    fake_stat.st_uid = fake_uid
++    fake_stat.st_gid = fake_gid
++    fake_stat.st_mode = real_stat.st_mode
++
++    captured_modes = []
++    chown_calls = []
++    move_called = []
++    original_move = shutil.move
++
++    def capturing_move(src, dst):
++        captured_modes.append(os.stat(src).st_mode)
++        move_called.append(True)
++        return original_move(src, dst)
++
++    def capturing_chown(path, uid, gid):
++        chown_calls.append((uid, gid))
++        # Verify chown is called BEFORE move
++        assert not move_called, "os.chown must be called before shutil.move"
++
++    original_stat = os.stat
++
++    def patched_stat(path):
++        result = original_stat(path)
++        if path == dest:
++            return fake_stat
++        return result
++
++    with patch("salt.utils.files.shutil.move", side_effect=capturing_move), patch(
++        "salt.utils.files.os.chown", side_effect=capturing_chown
++    ), patch("salt.utils.files.os.stat", side_effect=patched_stat):
++        salt.utils.files.copyfile(source, dest)
++
++    assert move_called, "shutil.move was not called"
++    # Mode should be 0o644 at move time, not mkstemp's default 0o600
++    assert stat_mod.S_IMODE(captured_modes[0]) == 0o644
++    # chown should have been called with the fake uid/gid
++    assert chown_calls, "os.chown was not called"
++    assert chown_calls[0] == (fake_uid, fake_gid)
++
++
++def test_copyfile_new_file(tmp_path):
++    """
++    Test that copyfile works when the destination does not exist yet.
++    No permissions to preserve in this case.
++    """
++    source = str(tmp_path / "source")
++    dest = str(tmp_path / "dest")
++
++    with salt.utils.files.fopen(source, "w") as f:
++        f.write("content")
++
++    salt.utils.files.copyfile(source, dest)
++
++    with salt.utils.files.fopen(dest) as f:
++        assert f.read() == "content"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #70710** (2026-11-07): [3008.x] Log deltaproxy sub-proxy initialization failures at ERROR (@ITJamie)
-- **PR #70707** (2026-11-07): Add resources scaling docs and proxy/deltaproxy direction notes (@dwoz)
-- **PR #70704** (2026-11-06): mmap_cache: fix roster-divergence cascade + add put_many bulk path (@dwoz)
-- **PR #70703** (2026-11-06): Fix quadratic disk use in minion resource-fanout queued payloads (@dwoz)
-- **PR #70702** (2026-11-06): Port 3 bug fixes from 3006.x missing on 3008.x (@dwoz)
-- **PR #70700** (closed): Merge forward 3006.x into 3007.x (@charzl)
+- **PR #70759** (2026-11-11): Cluster topology (@dwoz)
+- **PR #70756** (2026-11-10): Cluster-master stability bundle for 3008.x (8 fixes + regression tests) (@dwoz)
+- **PR #70755** (2026-11-10): Backport cluster correctness fixes to 3008.x (@dwoz)
+- **PR #70754** (2026-11-10): Fix cluster_ready never fires after restart from persisted Raft state (@dwoz)
+- **PR #70753** (closed): Add scenario-tier regression tests for cluster-master stability (@dwoz)
+- **PR #70752** (closed): Batch resource-grain writes via cache.store_many to unblock chunked register (@dwoz)
 
 ---
 
@@ -2306,74 +2585,28 @@ Address review feedback on #67214:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bugfix 67214 minion swarm (#67783)
+## X. Move etcd support to etcd3gw and fix etcd contract bugs (#70660)
 
 **RULE**:
-When implementing operations in `tests/minionswarm.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/70659.changed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `944a95d5`: Bugfix 67214 minion swarm (#67783). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `caf72ef5`: Move etcd support to etcd3gw and fix etcd contract bugs (#70660). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/minionswarm.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/70659.changed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import getpass
-# When this module is executed directly (``python tests/minionswarm.py``)
-# the parent of ``tests/`` is not on ``sys.path``, which makes the
-# ``from tests.support import runtests`` import below fail. Pre-pend the
-# repository root so the script remains runnable without ``PYTHONPATH``
-# manipulation. This is a no-op when the module is imported normally
-# (e.g. by pytest) because the repository root is already on ``sys.path``.
-_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
-
-import salt  # noqa: E402
-import salt.utils.files  # noqa: E402
-import salt.utils.yaml  # noqa: E402
-from tests.support import runtests  # noqa: E402
-    "3006.1",
-    "3006.5",
-    "3006.9",
-    "3007.1",
-    guidance = (
-        "\n\n   To execute salt commands against minionswarm you must include the configuration\n"
-        "   file using the -c option. For commands such as salt, salt-key, salt-cp,\n"
-        "   and salt-run use -c <temp-dir>/master. For example, when using the\n"
-        "   default for --temp-dir, the configuration directory would be\n"
-        "   /tmp/sroot/master. If the ma
+The etcd execution and state modules, the ``etcd3`` cache and ``salt.utils.etcd_util`` now use ``etcd3gw`` instead of ``etcd3-py``, which has had no release since 2019. Install it with ``salt-pip install etcd3gw``; configuration is unchanged. etcd3gw needs Python 3.10 or later.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-import salt
-import salt.utils.files
-import salt.utils.yaml
-import tests.support.runtests
-    "2014.1.6",
-    "2014.7.4",
-    "2015.5.5",
-    "2015.8.0",
-    parser = optparse.OptionParser()
-        help="The number of minions to make",
-        default="salt",
-        help="The location of the salt master that this swarm will serve",
-        default="ms",
-        help=(
-            "Give the minions an alternative id prefix, this is used "
-            "when minions from many systems are being aggregated onto "
-            "a single master"
-        ),
-        help="A comma delimited list of modules to enable",
-        default=None,
-        help="Place temporary files/directories here",
-        help="Don't cleanup temporary files/directories",
-        help="Override the minion root_dir config",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `944a95d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `caf72ef5` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `290a9d94`  
+> **Source Version**: `036dde8e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T22:34:13.509Z  
+> **Timestamp**: 2026-11-12T13:50:42.836Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T22:34:12.402Z  
+> **Harvest Timestamp**: 2026-11-12T13:40:41.598Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3446 stars
+- **Stars / Engagement**: 3450 stars
 
 ---
 
@@ -1820,13 +1820,11 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #546** (2026-11-10): **fix: sem starts on Debian 12 and Ubuntu 22.04 (0.30.1)**
+  *Symptoms*: Reported by Grump (grump.run): on Debian 12 and Ubuntu 22.04, sem installs but won't start (`GLIBC_2.38 not found`), and the installer still says "Installed unknown" and exits 0. `cargo install sem-cli` also fails everywhere because cargo pulls rmcp 1.8.0.  - **Linux binaries are built on ubuntu-22.04** (glibc 2.35) instead of ubuntu-latest (2.39). A new release step fails the build if a Linux binary needs a glibc newer than 2.35. - **install.sh and npm postinstall check that sem starts.** If it doesn't, they show the error and exit non-zero instead of reporting success. - **sem-mcp accepts rmcp ~1.6.** I checked that rmcp 1.8.0 fails to compile sem-mcp (E0308). The README now uses `cargo install --locked`. - **Release 0.30.1.** package.json was still at 0.29.1 and is now 0.30.1 too, so npm users get the fixed binary.
+
 - **Issue #544** (2026-11-06): **Add jq support behind an opt-in lang-jq feature**
   *Symptoms*: Adds jq (`.jq`) via `tree-sitter-jq` 1.0.2. Because that grammar is GPL-3.0-or-later, the feature is opt-in and **not** in `grammar-all`, pending your answer on #543. Moving it into `grammar-all` is a one-line change.  - Each top-level `def` is a `function` entity. A nested `def` stays inside its parent. A `def` after a top-level pipeline is still found. The trailing program is not an entity, so edits to it show up as orphan changes. - New `StripStrategy::HashLine` for jq. `//` is jq's alternative operator, so the generic stripper blanked every reference after `.x // …` on a line. - Edges come from the existing same-file word scan: `f(args)` is `calls`, a bare `f` is `TypeRef`. - Known limits: builtins and defs in other files are not resolved, and a `$name` variable that shares a def's name creates a false edge. That last one is an `#[ignore]`d test with the reason attached.  Tested on a real jq codebase: 11 defs across 6 files, no parse errors.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-
-- **Issue #542** (2026-11-04): **Parse Quarto documents (.qmd) as Markdown**
-  *Symptoms*: Quarto's `.qmd` files are Markdown with a YAML header and executable code blocks. This registers `.qmd` with the Markdown plugin, so they get heading-based sections like `.md` and `.mdx`.  weave's merge setup reads its supported extensions from sem-core, so this is the change weave needs for Ataraxy-Labs/weave#216 (thanks @athyfr for the request).  Adds a test that `report.qmd` routes to the Markdown plugin and that its headings become entities, and lists `.qmd` in the README and docs.
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #VN8V8fvOIKoaR/1j8q2gWwkjIwlhqRq5irF5PPhvmSo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9HYW1RalQzbTg5OXdWZDlYNk1EVmMyUU56VDVMIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1xbWQtbWFya2Rvd24tcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiUEVORElORyIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJzZW0tZG9jcy1naXQtcW1kLW1hcmtkb3duLXJzNTQ1ODM3cy1wcm9qZWN0cy52ZXJjZWwuYXBwIn19XSwicmVxdWVzdFJldmlld1VybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS92ZXJjZWwtYWdlbnQvcmVxdWVzdC1yZXZpZXc/b3duZXI9QXRhcmF4eS1MYWJzJnJlcG89c2VtJnByPTU0MiJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/rs545837s-p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1843,38 +1841,235 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `290a9d94` (2026-11-09)
-**Commit Message**: ci(release): build macOS on macos-15 (macos-14 runners are retired)
+### Incident Patch 1: `036dde8e` (2026-11-10)
+**Commit Message**: fix: sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546)
 
-**File**: `.github/workflows/release.yml` (modified, +4/-4)
+Reported by Grump (grump.run): on Debian 12 and Ubuntu 22.04, sem
+installs but won't start (`GLIBC_2.38 not found`), and the installer
+still says "Installed unknown" and exits 0. `cargo install sem-cli` also
+fails everywhere because cargo pulls rmcp 1.8.0.
+
+- **Linux binaries are built on ubuntu-22.04** (glibc 2.35) instead of
+ubuntu-latest (2.39). A new release step fails the build if a Linux
+binary needs a glibc newer than 2.35.
+- **install.sh and npm postinstall check that sem starts.** If it
+doesn't, they show the error and exit non-zero instead of reporting
+success.
+- **sem-mcp accepts rmcp ~1.6.** I checked that rmcp 1.8.0 fails to
+compile sem-mcp (E0308). The README now uses `cargo install --locked`.
+- **Release 0.30.1.** package.json was still at 0.29.1 and is now 0.30.1
+too, so npm users get the fixed binary.
+
+**File**: `.github/workflows/release.yml` (modified, +16/-2)
 ```diff
-@@ -97,13 +97,13 @@ jobs:
+@@ -87,11 +87,13 @@ jobs:
+       fail-fast: false
+       matrix:
+         include:
++          # Linux builds run on the oldest supported Ubuntu: a binary needs the glibc it was built against or newer,
++          # so building on ubuntu-latest (glibc 2.39) broke Debian 12 (2.36) and Ubuntu 22.04 (2.35).
+           - target: x86_64-unknown-linux-gnu
+-            os: ubuntu-latest
++            os: ubuntu-22.04
+             name: sem-linux-x86_64
+           - target: aarch64-unknown-linux-gnu
+-            os: ubuntu-latest
++            os: ubuntu-22.04
+             name: sem-linux-arm64
+             cross_package: gcc-aarch64-linux-gnu
              cross_linker: aarch64-linux-gnu-gcc
-             vendor_openssl: true
-           - target: aarch64-apple-darwin
--            os: macos-14
-+            os: macos-15
-             name: sem-darwin-arm64
-           - target: x86_64-apple-darwin
-             # Cross-compile on Apple Silicon: macOS clang targets x86_64 natively,
--            # and macos-14 runners are plentiful (Intel macos-13 runners are scarce
--            # and being retired, which can leave the build queued indefinitely).
--            os: macos-14
-+            # and Apple Silicon runners are plentiful (Intel runners are scarce and
-+            # being retired). macos-14 was retired in Nov 2026 ("configuration not supported").
-+            os: macos-15
-             name: sem-darwin-x86_64
-             # Cross-compiling can't find a target-arch OpenSSL, so vendor + build
-             # it from source for x86_64 (same as the Linux arm64 cross-build).
+@@ -141,6 +143,18 @@ jobs:
+       - name: Build
+         run: cargo build --release --target ${{ matrix.target }} -p sem-cli ${{ matrix.vendor_openssl && '--features vendored-openssl' || '' }}
+ 
++      - name: Check the binary runs on glibc 2.35 (Ubuntu 22.04, Debian 12)
++        if: runner.os == 'Linux'
++        run: |
++          OBJDUMP=objdump
++          [ "${{ matrix.target }}" = aarch64-unknown-linux-gnu ] && OBJDUMP=aarch64-linux-gnu-objdump
++          need=$($OBJDUMP -T target/${{ matrix.target }}/release/sem | grep -o 'GLIBC_[0-9.]*' | sed 's/GLIBC_//' | sort -V | tail -1)
++          echo "highest glibc symbol needed: $need"
++          if [ "$(printf '%s\n2.35\n' "$need" | sort -V | tail -1)" != "2.35" ]; then
++            echo "::error::sem needs glibc $need, newer than 2.35: it would not start on Ubuntu 22.04 or Debian 12"
++            exit 1
++          fi
++
+       - name: Package (Unix)
+         if: runner.os != 'Windows'
+         run: |
+```
+
+**File**: `CHANGELOG.md` (modified, +8/-0)
+```diff
+@@ -4,6 +4,14 @@ All notable changes to sem are documented in this file.
+ 
+ ## [Unreleased]
+ 
++## [0.30.1] - 2026-11-11
++
++### Fixed
++
++- sem starts on Debian 12 and Ubuntu 22.04 again. The Linux binaries were built against glibc 2.39 and failed with `GLIBC_2.38 not found`; they are now built on Ubuntu 22.04, and a release fails if a binary needs anything newer than glibc 2.35. Thanks to Grump for the report and repro.
++- The install script and `npm install` no longer report success when sem can't start. They now show the error and exit with a failure.
++- `cargo install sem-cli` builds again: sem-mcp now accepts rmcp 1.6.x only, since rmcp 1.8.0 doesn't compile with it. The README also uses `--locked`.
++
+ ## [0.30.0] - 2026-11-09
+ 
+ ### Added
+```
+
+**File**: `README.md` (modified, +2/-2)
+```diff
+@@ -166,13 +166,13 @@ sem config update
+ Or via cargo, from [crates.io](https://crates.io/crates/sem-cli):
+ 
+ ```bash
+-cargo install sem-cli
++cargo install --locked sem-cli
+ ```
+ 
+ Or build the latest `main` from source (requires Rust):
+ 
+ ```bash
+-cargo install --git https://github.com/Ataraxy-Labs/sem sem-cli
++cargo install --locked --git https://github.com/Ataraxy-Labs/sem sem-cli
+ ```
+ 
+ Or grab a binary from [GitHub Releases](https://github.com/Ataraxy-Labs/sem/releases).
+```
+
+**File**: `crates/Cargo.lock` (modified, +5/-5)
+```diff
+@@ -2300,7 +2300,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+ 
+ [[package]]
+ name = "sem-cli"
+-version = "0.30.0"
++version = "0.30.1"
+ dependencies = [
+  "axum",
+  "ciborium",
+@@ -2330,7 +2330,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "sem-cloud-client"
+-version = "0.30.0"
++version = "0.30.1"
+ dependencies = [
+  "serde",
+  "serde_json",
+@@ -2339,7 +2339,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "sem-core"
+-version = "0.30.0"
++version = "0.30.1"
+ dependencies = [
+  "ciborium",
+  "criterion",
+@@ -2406,7 +2406,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "sem-mcp"
+-version = "0.30.0"
++version = "0.30.1"
+ dependencies = [
+  "axum",
+  "git2",
+@@ -2434,7 +2434,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "sem-plugin"
+-version = "0.30.0"
++version = "0.30.1"
+ dependencies = [
+  "sem-core",
+  "serde",
+```
+
+**File**: `crates/sem-cli/Cargo.toml` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "sem-cli"
+-version = "0.30.0"
++version = "0.30.1"
+ edition = "2021"
+ license = "MIT OR Apache-2.0"
+ description = "Semantic version control CLI. Shows what entities changed (functions, classes, methods) instead of lines."
+@@ -15,9 +15,9 @@ path = "src/main.rs"
+ 
+ [dependencies]
+ tempfile = "3.24.0"
+-sem-core = { path = "../sem-core", version = "0.30.0", features = ["disk-cache", "topology"] }
+-sem-mcp = { path = "../sem-mcp", version = "0.30.0" }
+-sem-cloud-client = { path = "../sem-cloud-client", version = "0.30.0" }
++sem-core = { path = "../sem-core", version = "0.30.1", features = ["disk-cache", "topology"] }
++sem-mcp = { path = "../sem-mcp", version = "0.30.1" }
++sem-cloud-client = { path = "../sem-cloud-client", version = "0.30.1" }
+ serde = { version = "1", features = ["derive"] }
+ clap = { version = "4", features = ["derive", "env"] }
+ colored = "2"
+```
+
+**File**: `crates/sem-cloud-client/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "sem-cloud-client"
+-version = "0.30.0"
++version = "0.30.1"
+ edition = "2021"
+ license = "MIT OR Apache-2.0"
+ description = "Shared client for sem-cloud: credentials, repo resolution, caching, and the metered graph API. Used by both the sem CLI and the sem MCP server."
+```
+
+**File**: `crates/sem-core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "sem-core"
+-version = "0.30.0"
++version = "0.30.1"
+ edition = "2021"
+ license = "MIT OR Apache-2.0"
+ description = "Entity-level semantic diff engine. Extracts functions, classes, and methods from 28 languages via tree-sitter and diffs at the entity level."
+```
+
+**File**: `crates/sem-mcp/Cargo.toml` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "sem-mcp"
+-version = "0.30.0"
++version = "0.30.1"
+ edition = "2021"
+ license = "MIT OR Apache-2.0"
+ description = "MCP server for entity-level semantic code intelligence. 6 tools: sem_entities, sem_diff, sem_blame, sem_impact, sem_log, sem_context."
+@@ -14,11 +14,11 @@ name = "sem-mcp"
+ path = "src/main.rs"
+ 
+ [dependencies]
+-sem-core = { path = "../sem-core", version = "0.30.0", features = ["disk-cache"] }
+-sem-cloud-client = { path = "../sem-cloud-client", version = "0.30.0" }
++sem-core = { path = "../sem-core", version = "0.30.1", features = ["disk-cache"] }
++sem-cloud-client = { path = "../sem-cloud-client", version = "0.30.1" }
+ git2 = { version = "0.20", default-features = false }
+ lru = "0.16"
+-rmcp = { version = "1", features = ["server", "transport-io", "transport-streamable-http-server"] }
++rmcp = { version = "~1.6", features = ["server", "transport-io", "transport-streamable-http-server"] }
+ axum = "0.8"
+ subtle = "2"
+ tower-http = { version = "0.6", features = ["limit"] }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #546** (2026-11-10): fix: sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (@rs545837)
 - **PR #544** (2026-11-06): Add jq support behind an opt-in lang-jq feature (@alycda)
 - **PR #542** (2026-11-04): Parse Quarto documents (.qmd) as Markdown (@rs545837)
 - **PR #541** (2026-11-02): chore(release): prepare Sem 0.29.1 (@rs545837)
 - **PR #540** (2026-10-31): Intent search ranks code by meaning; edit hook stops refusing scratch writes (@rs545837)
 - **PR #539** (2026-10-30): release: Sem 0.29.0 (@rs545837)
-- **PR #538** (2026-10-30): fix(core): extract definitions sem used to miss across 7 languages (@rs545837)
 
 ---
 
@@ -1894,13 +2089,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): build macOS on macos-15 (macos-14 runners are retired)
+## X. sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546)
 
 **RULE**:
 When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `290a9d94`: ci(release): build macOS on macos-15 (macos-14 runners are retired). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `036dde8e`: sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
@@ -1908,20 +2103,30 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            os: macos-15
-            # and Apple Silicon runners are plentiful (Intel runners are scarce and
-            # being retired). macos-14 was retired in Nov 2026 ("configuration not supported").
-            os: macos-15
+          # Linux builds run on the oldest supported Ubuntu: a binary needs the glibc it was built against or newer,
+          # so building on ubuntu-latest (glibc 2.39) broke Debian 12 (2.36) and Ubuntu 22.04 (2.35).
+            os: ubuntu-22.04
+            os: ubuntu-22.04
+      - name: Check the binary runs on glibc 2.35 (Ubuntu 22.04, Debian 12)
+        if: runner.os == 'Linux'
+        run: |
+          OBJDUMP=objdump
+          [ "${{ matrix.target }}" = aarch64-unknown-linux-gnu ] && OBJDUMP=aarch64-linux-gnu-objdump
+          need=$($OBJDUMP -T target/${{ matrix.target }}/release/sem | grep -o 'GLIBC_[0-9.]*' | sed 's/GLIBC_//' | sort -V | tail -1)
+          echo "highest glibc symbol needed: $need"
+          if [ "$(printf '%s\n2.35\n' "$need" | sort -V | tail -1)" != "2.35" ]; then
+            echo "::error::sem needs glibc $need, newer than 2.35: it would not start on Ubuntu 22.04 or Debian 12"
+            exit 1
+          fi
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            os: macos-14
-            # and macos-14 runners are plentiful (Intel macos-13 runners are scarce
-            # and being retired, which can leave the build queued indefinitely).
-            os: macos-14
+            os: ubuntu-latest
+            os: ubuntu-latest
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `290a9d94` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `036dde8e` are properly handled with clean fallback behavior.

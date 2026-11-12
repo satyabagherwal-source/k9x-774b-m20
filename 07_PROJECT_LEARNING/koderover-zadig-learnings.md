@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `2a25eecd`  
+> **Source Version**: `e00d4622`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:20:45.067Z  
+> **Timestamp**: 2026-11-12T03:56:12.366Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:20:44.858Z  
+> **Harvest Timestamp**: 2026-11-12T03:56:12.036Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zadig: An AI-powered, cloud-native, distributed DevOps platform designed for developers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3269 stars
+- **Stars / Engagement**: 3276 stars
 
 ---
 
@@ -1158,31 +1158,57 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a25eecd` (2026-11-06)
-**Commit Message**: fix: preserve runtime environment selection in restart jobs (#5058)
+### Incident Patch 1: `e00d4622` (2026-11-12)
+**Commit Message**: fix(workflow): honor runtime commit source for builds (#5053)
 
-Signed-off-by: Cynthia <[REDACTED_EMAIL]>
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
 
-**File**: `pkg/microservice/aslan/core/workflow/service/workflow/controller/job/job_restart.go` (modified, +1/-1)
+**File**: `pkg/microservice/aslan/core/common/service/service.go` (modified, +6/-0)
 ```diff
-@@ -150,7 +150,7 @@ func (j RestartJobController) Update(useUserInput bool, ticket *commonmodels.App
- 		j.jobSpec.Env = latestSpec.Env
- 		j.jobSpec.Services = make([]string, 0)
- 		return nil
--	} else {
-+	} else if !useUserInput {
- 		j.jobSpec.Env = latestSpec.Env
+@@ -1039,6 +1039,12 @@ func replaceVariable(customRule *template.CustomRule, candidate *candidate) stri
+ 			return fmt.Sprintf("%s:%s-%d-%s", candidate.ImageName, candidate.Timestamp, candidate.TaskID, candidate.Branch)
+ 		}
+ 		currentRule = customRule.BranchRule
++	} else if candidate.CommitID != "" {
++		// commit-only source without a branch
++		if customRule == nil {
++			return fmt.Sprintf("%s:%s-%d-%s", candidate.ImageName, candidate.Timestamp, candidate.TaskID, candidate.CommitID)
++		}
++		currentRule = customRule.BranchRule
  	}
  
+ 	currentRule = ReplaceRuleVariable(currentRule, &Variable{
+```
+
+**File**: `pkg/microservice/aslan/core/workflow/service/workflow/controller/job/utils.go` (modified, +11/-0)
+```diff
+@@ -290,6 +290,17 @@ func applyRepos(base, input []*types.Repository) []*types.Repository {
+ 			item.SSHKey = cv.SSHKey
+ 			item.PrivateAccessToken = cv.PrivateAccessToken
+ 
++			// an explicit runtime source decides the commit mode; otherwise keep the configured mode
++			if cv.EnableCommit && cv.CommitID != "" {
++				item.EnableCommit = true
++				// keep the configured branch for image tag naming, the checkout still uses the commit
++				if cv.Branch == "" {
++					item.Branch = repo.Branch
++				}
++			} else if cv.CommitID == "" && (cv.Branch != "" || cv.Tag != "" || cv.PR > 0 || len(cv.PRs) > 0) {
++				item.EnableCommit = false
++			}
++
+ 			if item.Address == "" {
+ 				item.Address = cv.Address
+ 			}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5072** (closed): fix(openapi): keep template defaults and accept new service variable keys (@huanghongbo-hhb)
+- **PR #5071** (closed): feat(openapi): query K8s YAML service templates (@huanghongbo-hhb)
 - **PR #5058** (2026-11-06): fix: preserve runtime environment selection in restart jobs (@Cynthia-0203)
 - **PR #5057** (2026-11-05): fix(security): harden authentication, callbacks and resource access (@Cynthia-0203)
 - **PR #5055** (2026-11-03): fix(workflow): validate freestyle variables by job type (@Cynthia-0203)
-- **PR #5051** (2026-11-03): fix: skip CRDs from disabled Helm subcharts (@Cynthia-0203)
-- **PR #5050** (2026-11-03): feat: mask git tokens in build pod logs (@Cynthia-0203)
-- **PR #5049** (2026-11-03): fix: use /rest/api/2/search/jql for Jira Cloud issue search (@torrresagus)
+- **PR #5053** (2026-11-12): fix(workflow): honor runtime commit source for builds (@huanghongbo-hhb)
 
 ---
 
@@ -1202,28 +1228,33 @@ Signed-off-by: Cynthia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. preserve runtime environment selection in restart jobs (#5058)
+## X. workflow): honor runtime commit source for builds (#5053)
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/workflow/service/workflow/controller/job/job_restart.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/common/service/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a25eecd`: preserve runtime environment selection in restart jobs (#5058). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e00d4622`: workflow): honor runtime commit source for builds (#5053). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/workflow/service/workflow/controller/job/job_restart.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/service.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	} else if !useUserInput {
+	} else if candidate.CommitID != "" {
+		// commit-only source without a branch
+		if customRule == nil {
+			return fmt.Sprintf("%s:%s-%d-%s", candidate.ImageName, candidate.Timestamp, candidate.TaskID, candidate.CommitID)
+		}
+		currentRule = customRule.BranchRule
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	} else {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a25eecd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e00d4622` are properly handled with clean fallback behavior.

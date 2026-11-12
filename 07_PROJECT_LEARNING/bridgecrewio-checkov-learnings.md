@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source**: github ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
-> **Source Version**: `47986461`  
+> **Source Version**: `4c2e88a3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:12:07.277Z  
+> **Timestamp**: 2026-11-12T11:37:18.876Z  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:12:06.396Z  
+> **Harvest Timestamp**: 2026-11-12T11:37:18.869Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9131 stars
+- **Stars / Engagement**: 9151 stars
 
 ---
 
@@ -955,81 +955,209 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5038a50e` (2026-11-02)
-**Commit Message**: fix(terraform): build userinfo test URLs dynamically (#7776)
-
-initial impl
-
-Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
+### Incident Patch 1: `80d66edd` (2026-11-11)
+**Commit Message**: Merge remote-tracking branch 'origin/main' into fix/request-logging-hardening
 
 **File**: `checkov/version.py` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--version = '3.4.2'
-+version = '3.4.3'
+-version = '3.4.3'
++version = '3.4.4'
 ```
 
 **File**: `kubernetes/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--checkov==3.4.2
-+checkov==3.4.3
+-checkov==3.4.3
++checkov==3.4.4
 ```
 
 ---
 
-### Incident Patch 2: `dd3d9cd7` (2026-11-02)
-**Commit Message**: fix(terraform): build userinfo test URLs dynamically (#7776)
+### Incident Patch 2: `c7f1a45f` (2026-11-10)
+**Commit Message**: fix(bicep): resolve references within the declaring file (#7794)
 
-initial impl
+Bicep symbols (params, vars, resources, modules, outputs) are scoped to the file they are declared in. The graph builder looked up references by name across all scanned files, so when two files declared the same name, a reference could be linked to the other file's declaration. Which file won depended on processing order, which made results of Python and graph checks differ between runs.
 
-Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
+References are now resolved against the referencing vertex's own file. This also fixes references to the vertex at index 0 being skipped.
 
-**File**: `tests/terraform/module_loading/loaders/test_git_loader.py` (modified, +9/-4)
+**File**: `checkov/bicep/graph_builder/local_graph.py` (modified, +7/-2)
 ```diff
-@@ -19,6 +19,11 @@
+@@ -50,6 +50,9 @@ def __init__(self, definitions: dict[Path, BicepJson]) -> None:
+         self.vertices: list[BicepBlock] = []
+         self.definitions = definitions
+         self.vertices_by_name: dict[str, int] = {}
++        # Bicep symbols (params, vars, resources, modules, outputs) are scoped to the file they are declared in,
++        # so references must be resolved against the same file
++        self.vertices_by_path_and_name: dict[tuple[str, str], int] = {}
  
- EXTERNAL_MODULES_FOLDER_NAME = ".external_modules"
+     def build_graph(self, render_variables: bool) -> None:
+         self._create_vertices()
+@@ -74,6 +77,7 @@ def _create_vertices(self) -> None:
+             self.vertices_by_block_type[vertex.block_type].append(i)
+             self.vertices_block_name_map[vertex.block_type][vertex.name].append(i)
+             self.vertices_by_name[vertex.name] = i
++            self.vertices_by_path_and_name[(vertex.path, vertex.name)] = i
  
-+# userinfo fragments for URL test inputs, assembled at runtime
-+USER_INFO_TOKEN = ":".join(("user", "token"))
-+USER_INFO_PASS = ":".join(("user", "pass"))
-+OTHER_USER_INFO = ":".join(("other", "creds"))
+             self.in_edges[i] = []
+             self.out_edges[i] = []
+@@ -236,8 +240,9 @@ def _create_edge(self, element_name: str, origin_vertex_index: int, label: str)
+             # special case for`bicep elements, when properties are accessed
+             vertex_name = vertex_name.split(".")[0]
+ 
+-        dest_vertex_index = self.vertices_by_name.get(vertex_name)
+-        if dest_vertex_index:
++        origin_path = self.vertices[origin_vertex_index].path
++        dest_vertex_index = self.vertices_by_path_and_name.get((origin_path, vertex_name))
++        if dest_vertex_index is not None:
+             if origin_vertex_index == dest_vertex_index:
+                 return
+             edge = Edge(origin_vertex_index, dest_vertex_index, label)
+```
+
+**File**: `tests/bicep/graph/graph_builder/examples/same_name_in_multiple_files/event_hub/main.bicep` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++param minimumTlsVersion string = '1.2'
 +
++resource eventHubNamespace 'Microsoft.EventHub/namespaces@2022-01-01-preview' = {
++  name: 'example-namespace'
++  location: 'westeurope'
++  properties: {
++    minimumTlsVersion: minimumTlsVersion
++  }
++}
+```
+
+**File**: `tests/bicep/graph/graph_builder/examples/same_name_in_multiple_files/storage/main.bicep` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++var minimumTlsVersion = 'TLS1_2'
++
++resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
++  name: 'examplestorage'
++  location: 'westeurope'
++  kind: 'StorageV2'
++  sku: {
++    name: 'Standard_LRS'
++  }
++  properties: {
++    minimumTlsVersion: minimumTlsVersion
++  }
++}
+```
+
+**File**: `tests/bicep/graph/graph_builder/test_reference_scoping.py` (added, +84/-0)
+```diff
+@@ -0,0 +1,84 @@
++from pathlib import Path
++
++import pytest
++
++from checkov.arm.runner import Runner as ArmRunner
++from checkov.bicep.graph_builder.local_graph import BicepLocalGraph
++from checkov.bicep.parser import Parser
++from checkov.bicep.runner import Runner
++from checkov.common.models.enums import CheckResult
++from checkov.runner_filter import RunnerFilter
++
++EXAMPLES_DIR = Path(__file__).parent / "examples" / "same_name_in_multiple_files"
++EVENT_HUB_FILE = EXAMPLES_DIR / "event_hub" / "main.bicep"
++STORAGE_FILE = EXAMPLES_DIR / "storage" / "main.bicep"
++
++
++def _build_rendered_graph(file_order: list[Path]) -> BicepLocalGraph:
++    definitions = {}
++    for file_path in file_order:
++        template, _ = Parser().parse(file_path)
++        definitions[file_path] = template
++
++    local_graph = BicepLocalGraph(definitions=definitions)
++    local_graph.build_graph(render_variables=True)
++    return local_graph
++
++
++def _resource_config(local_graph: BicepLocalGraph, file_path: Path, name: str) -> dict:
++    vertex = local_graph.vertices[local_graph.vertices_by_path_and_name[(str(file_path), name)]]
++    return vertex.config["config"]
++
++
++@pytest.mark.parametrize(
++    "file_order",
++    [
++        pytest.param([EVENT_HUB_FILE, STORAGE_FILE], id="event_hub_first"),
++        pytest.param([STORAGE_FILE, EVENT_HUB_FILE], id="storage_first"),
++    ],
++)
++def test_same_name_in_multiple_files_resolves_within_own_file(file_order: list[Path]) -> None:
++    # when
++    local_graph = _build_rendered_graph(file_order)
++
++    # then
++    event_hub_config = _resource_config(local_graph, EVENT_HUB_FILE, "eventHubNamespace")
++    storage_config = _resource_config(local_graph, STORAGE_FILE, "storageAccount")
++
++    assert event_hub_config["properties"]["minimumTlsVersion"] == "1.2"
++    assert storage_config["properties"]["minimumTlsVersion"] == "TLS1_2"
++
++
++@pytest.mark.parametrize(
++    "file_order",
++    [
++        pytest.param([EVENT_HUB_FILE, STORAGE_FILE], id="event_hub_first"),
++        pytest.param([STORAGE_FILE, EVENT_HUB_FILE], id="storage_first"),
++    ],
++)
++def test_edges_do_not_cross_files(file_order: list[Path]) -> None:
++    # when
++    local_graph = _build_rendered_graph(file_order)
++
++    # then
++    for edge in local_graph.edges:
++        assert local_graph.vertices[edge.origin].path == local_graph.vertices[edge.dest].path
++
++
++def test_runner_check_uses_value_from_own_file() -> None:
++    # given: initialize the ARM runner to add the ARM checks to the Bicep registry
++    ArmRunner()
++
++    # when
++    report = Runner().run(
++        root_folder=str(EXAMPLES_DIR),
++        runner_filter=RunnerFilter(framework=["bicep"], checks=["CKV_AZURE_223"]),
++    )
++
++    # then
++    event_hub_results = [
++        record.check_result["result"]
++        for record in report.passed_checks + report.failed_checks
++        if record.resource == "Microsoft.EventHub/namespaces.eventHubNamespace"
++    ]
++    assert event_hub_results == [CheckResult.PASSED]
+```
+
+**File**: `tests/bicep/test_graph_manager.py` (modified, +3/-1)
+```diff
+@@ -23,7 +23,9 @@ def test_build_graph_from_source_directory():
+     assert set(definitions.keys()) == {existing_file, playground_file, graph_file, loop_file}  # should not include 'malformed.bicep' file
  
- @pytest.mark.parametrize("source, expected_root_module, expected_inner_module", [
-     ("git::git@github.com:test-inner-module/out-module//inner-module?ref=main",
-@@ -371,8 +376,8 @@ def test_module_source_in_allowed_prefixes_is_loaded(
- @pytest.mark.parametrize(
-     "source",
-     [
--        "git::https://user:token@127.0.0.1:8443/x?@github.com/org/repo.git",
--        "git::https://user:token@127.0.0.1:8443/x#@github.com/org/repo.git",
-+        f"git::https://{USER_INFO_TOKEN}@127.0.0.1:8443/x?@github.com/org/repo.git",
-+        f"git::https://{USER_INFO_TOKEN}@127.0.0.1:8443/x#@github.com/org/repo.git",
-     ],
-     ids=["query_with_at_sign", "fragment_with_at_sign"],
- )
-@@ -424,8 +429,8 @@ def test_is_allowed_module_source_rejects_non_matching_source(source: str, allow
-         ("https://github.com/org/repo", "https://github.com:443/"),
-         ("http://github.com:80/org/repo", "http://github.com/"),
-         ("https://192.0.2.1:8443/org/repo", "https://192.0.2.1:8443"),
--        ("git::https://user:pass@github.com/org/repo.git", "https://github.com/"),
--        ("git::https://user:pass@github.com/org/repo.git", "https://other:creds@github.com/org/"),
-+        (f"git::https://{USER_INFO_PASS}@github.com/org/repo.git", "https://github.com/"),
-+        (f"git::https://{USER_INFO_PASS}@github.com/org/repo.git", f"https://{OTHER_USER_INFO}@github.com/org/"),
-         ("git::https://GitHub.com/Org/repo.git", "https://github.com/org/"),
-         ("github.com/org/repo", "github.com/org/"),
-         ("git::ssh://git@github.com/org/repo.git", "ssh://github.com/org/"),
+     assert len(local_graph.vertices) == 48
+-    assert len(local_graph.edges) == 47
++    # references are resolved within the declaring file only, 'graph.bicep' and 'loop.bicep' use 'location'
++    # and 'storageAccountType' without declaring them, therefore no edges to the params in 'playground.bicep'
++    assert len(local_graph.edges) == 42
+ 
+     storage_account_idx = local_graph.vertices_by_name["diagsAccount"]  # vertices_by_name exists for BicepGraphManager
+     storage_account = local_graph.vertices[storage_account_idx]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7794** (2026-11-10): fix(bicep): resolve references within the declaring file (@itrocki)
 - **PR #7776** (2026-11-02): fix(terraform): build userinfo test URLs dynamically (@talazuri)
 - **PR #7759** (closed): Test Migration of CI Jobs to GitHub-Hosted Runners (@amitz)
 - **PR #7758** (2026-11-02): fix(terraform): add optional allowlist for external module download sources (@talazuri)
 - **PR #7757** (2026-10-20): fix(secrets): load platform-provided detectors in spawn-mode secrets … (@Saarett)
-- **PR #7739** (closed): fix(terraform): Handle dynamic DNSSEC key specs (@botaoshi1)
-- **PR #7738** (closed): fix(terraform): Handle Athena managed encryption (@botaoshi1)
+- **PR #7742** (2026-11-11): chore(general): Drop Python 3.9 support (@Saarett)
 
 ---
 
@@ -1049,39 +1177,35 @@ Co-authored-by: eshmayovitz <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. terraform): build userinfo test URLs dynamically (#7776)
+## X. bicep): resolve references within the declaring file (#7794)
 
 **RULE**:
-When implementing operations in `tests/terraform/module_loading/loaders/test_git_loader.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `checkov/bicep/graph_builder/local_graph.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd3d9cd7`: terraform): build userinfo test URLs dynamically (#7776). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7f1a45f`: bicep): resolve references within the declaring file (#7794). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/terraform/module_loading/loaders/test_git_loader.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/bicep/graph_builder/local_graph.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# userinfo fragments for URL test inputs, assembled at runtime
-USER_INFO_TOKEN = ":".join(("user", "token"))
-USER_INFO_PASS = ":".join(("user", "pass"))
-OTHER_USER_INFO = ":".join(("other", "creds"))
-
-        f"git::https://{USER_INFO_TOKEN}@127.0.0.1:8443/x?@github.com/org/repo.git",
-        f"git::https://{USER_INFO_TOKEN}@127.0.0.1:8443/x#@github.com/org/repo.git",
-        (f"git::https://{USER_INFO_PASS}@github.com/org/repo.git", "https://github.com/"),
-        (f"git::https://{USER_INFO_PASS}@github.com/org/repo.git", f"https://{OTHER_USER_INFO}@github.com/org/"),
+        # Bicep symbols (params, vars, resources, modules, outputs) are scoped to the file they are declared in,
+        # so references must be resolved against the same file
+        self.vertices_by_path_and_name: dict[tuple[str, str], int] = {}
+            self.vertices_by_path_and_name[(vertex.path, vertex.name)] = i
+        origin_path = self.vertices[origin_vertex_index].path
+        dest_vertex_index = self.vertices_by_path_and_name.get((origin_path, vertex_name))
+        if dest_vertex_index is not None:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        "git::https://user:token@127.0.0.1:8443/x?@github.com/org/repo.git",
-        "git::https://user:token@127.0.0.1:8443/x#@github.com/org/repo.git",
-        ("git::https://user:pass@github.com/org/repo.git", "https://github.com/"),
-        ("git::https://user:pass@github.com/org/repo.git", "https://other:creds@github.com/org/"),
+        dest_vertex_index = self.vertices_by_name.get(vertex_name)
+        if dest_vertex_index:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd3d9cd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7f1a45f` are properly handled with clean fallback behavior.
