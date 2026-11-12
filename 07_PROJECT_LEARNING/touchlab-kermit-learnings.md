@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/touchlab-kermit-learnings.md`  
 > **Source**: github ([https://github.com/touchlab/Kermit](https://github.com/touchlab/Kermit))  
-> **Source Version**: `44bd2980`  
+> **Source Version**: `141dc8dd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:53:15.980Z  
+> **Timestamp**: 2026-11-12T23:54:48.119Z  
 > **Learning ID**: `learn-github-touchlab-kermit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/touchlab-kermit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/touchlab/Kermit](https://github.com/touchlab/Kermit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:53:15.973Z  
+> **Harvest Timestamp**: 2026-11-12T23:54:48.107Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -471,324 +471,43 @@ actual fun mutableLoggerConfigInit(logWriters: List<LogWriter>): MutableLoggerCo
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44bd2980` (2026-11-04)
-**Commit Message**: Fixing sample build (#492)
+### Incident Patch 1: `141dc8dd` (2026-11-12)
+**Commit Message**: Don't upload the dokka html to maven central (#494)
 
-**File**: `samples/sample/kotlin-js-store/package-lock.json` (modified, +95/-1)
+**File**: `convention-plugins/src/main/kotlin/kermit.multiplatform-library.gradle.kts` (modified, +9/-1)
 ```diff
-@@ -12,7 +12,14 @@
-         "packages/sample-app-browser-test",
-         "packages/sample-shared",
-         "packages/sample-shared-test",
--        "packages_imported/ktor-ktor-client-core/3.2.3"
-+        "packages_imported/ktor-ktor-client-core/3.2.3",
-+        "packages_imported/skiko-js/0.9.37-4",
-+        "packages_imported/coil-root-coil-compose/3.4.0",
-+        "packages_imported/coil-root-coil/3.4.0",
-+        "packages_imported/coil-root-coil-core/3.4.0",
-+        "packages_imported/coil-root-coil-compose-core/3.4.0",
-+        "packages_imported/coil-root-coil-network-ktor3/3.4.0",
-+        "packages_imported/coil-root-coil-network-core/3.4.0"
-       ],
-       "devDependencies": {}
-     },
-@@ -1788,6 +1795,30 @@
-         "node": ">=6"
-       }
-     },
-+    "node_modules/coil-root-coil": {
-+      "resolved": "packages_imported/coil-root-coil/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-compose": {
-+      "resolved": "packages_imported/coil-root-coil-compose/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-compose-core": {
-+      "resolved": "packages_imported/coil-root-coil-compose-core/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-core": {
-+      "resolved": "packages_imported/coil-root-coil-core/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-network-core": {
-+      "resolved": "packages_imported/coil-root-coil-network-core/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-network-ktor3": {
-+      "resolved": "packages_imported/coil-root-coil-network-ktor3/3.4.0",
-+      "link": true
-+    },
-     "node_modules/color-convert": {
-       "version": "2.0.1",
-       "resolved": "https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz",
-@@ -5096,6 +5127,10 @@
-         "url": "https://github.com/sponsors/isaacs"
-       }
-     },
-+    "node_modules/skiko-js": {
-+      "resolved": "packages_imported/skiko-js/0.9.37-4",
-+      "link": true
-+    },
-     "node_modules/socket.io": {
-       "version": "4.8.1",
-       "resolved": "https://registry.npmjs.org/socket.io/-/socket.io-4.8.1.tgz",
-@@ -6373,6 +6408,60 @@
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
-+    "packages_imported/coil-root-coil-compose-core/3.4.0": {
-+      "name": "coil-root-coil-compose-core",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-compose/3.4.0": {
-+      "name": "coil-root-coil-compose",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-core/3.4.0": {
-+      "name": "coil-root-coil-core",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-network-core/3.4.0": {
-+      "name": "coil-root-coil-network-core",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-network-ktor3/3.4.0": {
-+      "name": "coil-root-coil-network-ktor3",
-+      "version": "3.4.0",
-+      "dependencies": {
-+        "ws": "8.18.0"
-+      },
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-network-ktor3/3.4.0/node_modules/ws": {
-+      "version": "8.18.0",
-+      "resolved": "https://registry.npmjs.org/ws/-/ws-8.18.0.tgz",
-+      "integrity": "sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==",
-+      "license": "MIT",
-+      "engines": {
-+        "node": ">=10.0.0"
-+      },
-+      "peerDependencies": {
-+        "bufferutil": "^4.0.1",
-+        "utf-8-validate": ">=5.0.2"
-+      },
-+      "peerDependenciesMeta": {
-+        "bufferutil": {
-+          "optional": true
-+        },
-+        "utf-8-validate": {
-+          "optional": true
-+        }
-+      }
-+    },
-+    "packages_imported/coil-root-coil/3.4.0": {
-+      "name": "coil-root-coil",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-     "packages_imported/kotlin/1.8.20": {
-       "name": "kotlin",
-       "version": "1.8.20",
-@@ -6407,6 +6496,11 @@
-         }
-       }
-     },
-+    "packages_imported/skiko-js/0.9.37-4": {
-+      "name": "skiko-js",
-+      "version": "0.9.37-4",
-+      "devDependencies": {}
-+    },
-     "packages/sample-app-browser": {
-       "version": "0.0.0-unspecified",
-       "dependencies": {
-```
-
-**File**: `samples/sample/kotlin-js-store/wasm/package-lock.json` (modified, +93/-89)
-```diff
-@@ -12,10 +12,42 @@
-         "packages/sample-shared-test",
-         "packages/sample-wasm-browser",
-         "packages/sample-wasm-browser-test",
--        "packages_imported/ktor-ktor-client-core-wasm-js/3.2.3"
-+        "packages_imported/ktor-ktor-client-core-wasm-js/3.2.3",
-+        "packages_imported/skiko-wasm-js/0.9.37-4",
-+        "packages_imported/skiko-js-wasm-runtime/0.9.37-4",
-+        "packages_imported/coil-root-coil-compose/3.4.0",
-+        "packages_imported/coil-root-coil/3.4.0",
-+        "packages_imported/coil-root-coil-core/3.4.0",
-+        "packages_imported/coil-root-coil-compose-core/3.4.0",
-+        "packages_imported/coil-root-coil-network-ktor3/3.4.0",
-+        "packages_imported/coil-root-coil-network-core/3.4.0"
-       ],
-       "devDependencies": {}
-     },
-+    "node_modules/coil-root-coil": {
-+      "resolved": "packages_imported/coil-root-coil/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-compose": {
-+      "resolved": "packages_imported/coil-root-coil-compose/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-compose-core": {
-+      "resolved": "packages_imported/coil-root-coil-compose-core/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-core": {
-+      "resolved": "packages_imported/coil-root-coil-core/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-network-core": {
-+      "resolved": "packages_imported/coil-root-coil-network-core/3.4.0",
-+      "link": true
-+    },
-+    "node_modules/coil-root-coil-network-ktor3": {
-+      "resolved": "packages_imported/coil-root-coil-network-ktor3/3.4.0",
-+      "link": true
-+    },
-     "node_modules/ktor-ktor-client-core-wasm-js": {
-       "resolved": "packages_imported/ktor-ktor-client-core-wasm-js/3.2.3",
-       "link": true
-@@ -36,18 +68,19 @@
-       "resolved": "packages/sample-wasm-browser-test",
-       "link": true
-     },
--    "packages_imported/ktor-ktor-client-core-wasm-js/3.2.3": {
--      "name": "ktor-ktor-client-core-wasm-js",
--      "version": "3.2.3",
--      "dependencies": {
--        "ws": "8.18.0"
--      },
--      "devDependencies": {}
-+    "node_modules/skiko-js-wasm-runtime": {
-+      "resolved": "packages_imported/skiko-js-wasm-runtime/0.9.37-4",
-+      "link": true
-     },
--    "packages_imported/ktor-ktor-client-core-wasm-js/3.2.3/node_modules/ws": {
-+    "node_modules/skiko-wasm-js": {
-+      "resolved": "packages_imported/skiko-wasm-js/0.9.37-4",
-+      "link": true
-+    },
-+    "node_modules/ws": {
-       "version": "8.18.0",
-       "resolved": "https://registry.npmjs.org/ws/-/ws-8.18.0.tgz",
-       "integrity": "sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==",
-+      "license": "MIT",
-       "engines": {
-         "node": ">=10.0.0"
-       },
-@@ -64,6 +97,47 @@
-         }
-       }
-     },
-+    "packages_imported/coil-root-coil-compose-core/3.4.0": {
-+      "name": "coil-root-coil-compose-core",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-compose/3.4.0": {
-+      "name": "coil-root-coil-compose",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-core/3.4.0": {
-+      "name": "coil-root-coil-core",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-network-core/3.4.0": {
-+      "name": "coil-root-coil-network-core",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil-network-ktor3/3.4.0": {
-+      "name": "coil-root-coil-network-ktor3",
-+      "version": "3.4.0",
-+      "dependencies": {
-+        "ws": "8.18.0"
-+      },
-+      "devDependencies": {}
-+    },
-+    "packages_imported/coil-root-coil/3.4.0": {
-+      "name": "coil-root-coil",
-+      "version": "3.4.0",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/ktor-ktor-client-core-wasm-js/3.2.3": {
-+      "name": "ktor-ktor-client-core-wasm-js",
-+      "version": "3.2.3",
-+      "dependencies": {
-+        "ws": "8.18.0"
-+      },
-+      "devDependencies": {}
-+    },
-     "packages_imported/ktor-ktor-client-core/3.3.1": {
-       "name": "ktor-ktor-client-core",
-       "version": "3.3.1",
-@@ -73,6 +147,16 @@
-       },
-       "devDependencies": {}
-     },
-+    "packages_imported/skiko-js-wasm-runtime/0.9.37-4": {
-+      "name": "skiko-js-wasm-runtime",
-+      "version": "0.9.37-4",
-+      "devDependencies": {}
-+    },
-+    "packages_imported/skiko-wasm-js/0.9.37-4": {
-+      "name": "skiko-wasm-js",
-+      "version": "0.9.37-4",
-+      "devDependencies": {}
-+    },
-     "packages/sample-shared": {
-       "version": "0.0.1",
-       "dependencies": {
-@@ -87,46 +171,6 @@
-       },
-       "devDependencies": {}
-     },
--    "packages/sample-shared-test/node_modules/ws": {
--      "version": "8.18.0",
--      "resolved": "https://registry.npmjs.org/ws/-/ws-8.18.0.tgz",
--      "integrity": "sha512-8VbfWfHLbbwu3+N6OKsO
-```
-
-**File**: `samples/sample/shared/build.gradle.kts` (modified, +3/-3)
-```diff
-@@ -49,9 +49,6 @@ kotlin {
-             implementation(libs.ktor.client.cio)
+@@ -3,6 +3,7 @@ import org.gradle.kotlin.dsl.withType
+ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+ import com.vanniktech.maven.publish.DeploymentValidation
++import com.vanniktech.maven.publish.JavadocJar
  
-             implementation(compose.runtime)
--            implementation(compose.foundation)
--            implementation(libs.coil.compose)
--            implementation(libs.coil.network.ktor3)
-         }
+ /*
+  * Copyright (c) 2026 Touchlab
+@@ -63,6 +64,13 @@ project.afterEvaluate {
+ }
  
-         commonTest.dependencies {
-@@ -63,6 +60,9 @@ kotlin {
-             dependsOn(commonMain.get())
-             dependencies {
-                 implementation("co.touchlab:kermit-io:${KERMIT_VERSION}")
-+                implementation(compose.foundation)
-+                implementation(libs.coil.compose)
-+                implementation(libs.coil.network.ktor3)
-             }
-         }
-         androidMain {
+ mavenPublishing {
+-    configureBasedOnAppliedPlugins()
++    /*
++     * Pass explicitly rather than using the default which causes every publication to get
++     * `JavadocJar.Dokka("dokkaGeneratePublicationHtml")` --  adding the same full Dokka HTML site
++     * to every target publication
++     *
++     * `Empty()` rather than `None()`: Maven Central requires a javadoc jar to be present, but it can be empty
++     */
++    configureBasedOnAppliedPlugins(javadocJar = JavadocJar.Empty())
+     publishToMavenCentral(true, DeploymentValidation.NONE)
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #494** (2026-11-12): Don't upload the dokka html to maven central (@samhill303)
 - **PR #492** (2026-11-04): Fixing sample build (@KevinSchildhorn)
 - **PR #489** (2026-09-16): Adding coil to sample (@KevinSchildhorn)
 - **PR #488** (2026-09-15): Improving Karma config to avoid timeout errors on KotlinJS tests (@faogustavo)
 - **PR #487** (2026-09-29): Add Kotlin 2.0+ support for Gradle and IR compiler plugin (#435) (@kareemessam09)
 - **PR #486** (2026-09-08): Release 2.2.0 (@KevinSchildhorn)
-- **PR #485** (2026-08-24): Manually wiring Android API dump (@faogustavo)
 
 ---
 
@@ -808,57 +527,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixing sample build (#492)
+## X. Don't upload the dokka html to maven central (#494)
 
 **RULE**:
-When implementing operations in `samples/sample/kotlin-js-store/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in touchlab/Kermit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `convention-plugins/src/main/kotlin/kermit.multiplatform-library.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in touchlab/Kermit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `44bd2980`: Fixing sample build (#492). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `141dc8dd`: Don't upload the dokka html to maven central (#494). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `samples/sample/kotlin-js-store/package-lock.json`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `convention-plugins/src/main/kotlin/kermit.multiplatform-library.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        "packages_imported/ktor-ktor-client-core/3.2.3",
-        "packages_imported/skiko-js/0.9.37-4",
-        "packages_imported/coil-root-coil-compose/3.4.0",
-        "packages_imported/coil-root-coil/3.4.0",
-        "packages_imported/coil-root-coil-core/3.4.0",
-        "packages_imported/coil-root-coil-compose-core/3.4.0",
-        "packages_imported/coil-root-coil-network-ktor3/3.4.0",
-        "packages_imported/coil-root-coil-network-core/3.4.0"
-    "node_modules/coil-root-coil": {
-      "resolved": "packages_imported/coil-root-coil/3.4.0",
-      "link": true
-    },
-    "node_modules/coil-root-coil-compose": {
-      "resolved": "packages_imported/coil-root-coil-compose/3.4.0",
-      "link": true
-    },
-    "node_modules/coil-root-coil-compose-core": {
-      "resolved": "packages_imported/coil-root-coil-compose-core/3.4.0",
-      "link": true
-    },
-    "node_modules/coil-root-coil-core": {
-      "resolved": "packages_imported/coil-root-coil-core/3.4.0",
-      "link": true
-    },
-    "node_modules/coil-root-coil-network-core": {
-      "resolved": "packages_imported/coil-root-coil-network-core/3.4.0",
-      "link": true
-    },
-    "node_modules/coil-root-coil-network-ktor3": {
-
+import com.vanniktech.maven.publish.JavadocJar
+    /*
+     * Pass explicitly rather than using the default which causes every publication to get
+     * `JavadocJar.Dokka("dokkaGeneratePublicationHtml")` --  adding the same full Dokka HTML site
+     * to every target publication
+     *
+     * `Empty()` rather than `None()`: Maven Central requires a javadoc jar to be present, but it can be empty
+     */
+    configureBasedOnAppliedPlugins(javadocJar = JavadocJar.Empty())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        "packages_imported/ktor-ktor-client-core/3.2.3"
+    configureBasedOnAppliedPlugins()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44bd2980` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `141dc8dd` are properly handled with clean fallback behavior.

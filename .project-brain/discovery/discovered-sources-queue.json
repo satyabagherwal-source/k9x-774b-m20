@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T23:42:22.379Z",
+  "updated_at": "2026-11-12T23:55:11.815Z",
   "stats": {
-    "total_discovered": 1844,
-    "approved_pending_harvest": 1701,
+    "total_discovered": 1863,
+    "approved_pending_harvest": 1716,
     "harvested_count": 0,
-    "rejected_count": 143,
+    "rejected_count": 147,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1706,
-      "OFFICIAL_DOCUMENTATION": 67,
+      "COMMUNITY_AND_EXPERT": 1724,
+      "OFFICIAL_DOCUMENTATION": 68,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 3
@@ -39584,6 +39584,396 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
         "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-B5DFBE055050": {
+      "id": "SRC-B5DFBE055050",
+      "url": "https://github.com/zenbu-labs/terminal-browser",
+      "title": "https://github.com/zenbu-labs/terminal-browser",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.566Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
+        "fileName": "zenbu-labs-terminal-browser-learnings.md"
+      }
+    },
+    "SRC-FF7BFFBFF16C": {
+      "id": "SRC-FF7BFFBFF16C",
+      "url": "https://terminal-browser.sh/",
+      "title": "https://terminal-browser.sh/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
+        "fileName": "zenbu-labs-terminal-browser-learnings.md"
+      }
+    },
+    "SRC-C61EA604B0D8": {
+      "id": "SRC-C61EA604B0D8",
+      "url": "http://127.0.0.1:${state.port",
+      "title": "http://127.0.0.1:${state.port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T23:55:11.591Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
+        "fileName": "zenbu-labs-terminal-browser-learnings.md"
+      }
+    },
+    "SRC-98DA7477CB6B": {
+      "id": "SRC-98DA7477CB6B",
+      "url": "http://${text/",
+      "title": "http://${text/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T23:55:11.605Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
+        "fileName": "zenbu-labs-terminal-browser-learnings.md"
+      }
+    },
+    "SRC-63504AB406BD": {
+      "id": "SRC-63504AB406BD",
+      "url": "https://${text/",
+      "title": "https://${text/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.616Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
+        "fileName": "zenbu-labs-terminal-browser-learnings.md"
+      }
+    },
+    "SRC-2A6F9AA98B04": {
+      "id": "SRC-2A6F9AA98B04",
+      "url": "https://github.com/touchlab/Kermit",
+      "title": "https://github.com/touchlab/Kermit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-E454F4A9E716": {
+      "id": "SRC-E454F4A9E716",
+      "url": "https://developer.apple.com/documentation/os/oslog/2320726-init",
+      "title": "https://developer.apple.com/documentation/os/oslog/2320726-init",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.653Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-FD372818FB2B": {
+      "id": "SRC-FD372818FB2B",
+      "url": "https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code",
+      "title": "https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.665Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-D5CA846F1053": {
+      "id": "SRC-D5CA846F1053",
+      "url": "https://github.com/touchlab/Kermit/issues/243",
+      "title": "https://github.com/touchlab/Kermit/issues/243",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.677Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-873333D139E1": {
+      "id": "SRC-873333D139E1",
+      "url": "https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code?language=objc",
+      "title": "https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code?language=objc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-C21246BF0DAB": {
+      "id": "SRC-C21246BF0DAB",
+      "url": "https://github.com/AAkira/Napier",
+      "title": "https://github.com/AAkira/Napier",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.698Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-E00F7B625A5E": {
+      "id": "SRC-E00F7B625A5E",
+      "url": "https://github.com/touchlab/Kermit/pull/372/commits/8db5cb2e09af34c67e118eb41c341373aebfe050",
+      "title": "https://github.com/touchlab/Kermit/pull/372/commits/8db5cb2e09af34c67e118eb41c341373aebfe050",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
+        "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-8F8569A2FAD2": {
+      "id": "SRC-8F8569A2FAD2",
+      "url": "https://github.com/nginx/kubernetes-ingress",
+      "title": "https://github.com/nginx/kubernetes-ingress",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-1AEE6F313927": {
+      "id": "SRC-1AEE6F313927",
+      "url": "https://$idp_backend/keys",
+      "title": "https://$idp_backend/keys",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-8F77FC3460B6": {
+      "id": "SRC-8F77FC3460B6",
+      "url": "http://coffee-v1/",
+      "title": "http://coffee-v1/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T23:55:11.766Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-153D48402A7D": {
+      "id": "SRC-153D48402A7D",
+      "url": "http://vs_default_cafe_cm-acme-http-solver-abcde/",
+      "title": "http://vs_default_cafe_cm-acme-http-solver-abcde/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T23:55:11.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-0C11ABB0BE8A": {
+      "id": "SRC-0C11ABB0BE8A",
+      "url": "https://yamllint.readthedocs.io/en/stable/rules.html",
+      "title": "https://yamllint.readthedocs.io/en/stable/rules.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.790Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-805CCAF2350E": {
+      "id": "SRC-805CCAF2350E",
+      "url": "https://github.com/adrienverge/yamllint.git",
+      "title": "https://github.com/adrienverge/yamllint.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-7FE546B1E873": {
+      "id": "SRC-7FE546B1E873",
+      "url": "https://github.com/rhysd/actionlint",
+      "title": "https://github.com/rhysd/actionlint",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T23:55:11.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
       }
     }
   }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T23:42:16.740Z",
-  "total_cycles_completed": 9071,
-  "total_learnings_persisted": 9071,
-  "total_rules_promoted": 8907,
+  "last_updated": "2026-11-12T23:55:04.792Z",
+  "total_cycles_completed": 9074,
+  "total_learnings_persisted": 9074,
+  "total_rules_promoted": 8910,
   "history": [
-    {
-      "timestamp": "2026-11-12T01:31:23.748Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T01:52:02.014Z",
-      "repository": "lxml/lxml",
-      "learningId": "learn-github-lxml-lxml",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T01:52:07.180Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T02:03:45.839Z",
       "repository": "sqlpage/SQLPage",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T23:42:16.740Z",
       "repository": "fastapi/fastapi",
       "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T23:54:54.633Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T23:55:04.631Z",
+      "repository": "touchlab/Kermit",
+      "learningId": "learn-github-touchlab-kermit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T23:55:04.792Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T23:42:16.602Z",
+  "last_updated": "2026-11-12T23:55:04.638Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48118,14 +48118,19 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "59dbb784",
-      "content_hash": "1589357b742d71f29758d68e60c56ca69b6858b50b625e0ebaaaf4aeaef97df3",
+      "source_version": "f00b7006",
+      "content_hash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Add nginxAgent.labels to Helm chart for NGINX One Console (#11347)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Render JWT claim authorization in the NGINX Plus VirtualServer template (#11227)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48204,7 +48209,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T13:29:12.560Z",
+      "verified_at": "2026-11-12T23:55:04.597Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69388,14 +69393,19 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "a8c78463",
-      "content_hash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
+      "source_version": "d09e97c4",
+      "content_hash": "e1d02459c4c857a5f66ff0401c9b11bb0fe51a26c563526a19fa3f5de820e2ff",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "misc pixel fixes (#262)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Cell-grid renderer  (#267)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -69454,7 +69464,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:13:08.073Z",
+      "verified_at": "2026-11-12T23:54:54.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

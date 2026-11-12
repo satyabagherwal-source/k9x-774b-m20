@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "59dbb784",
+    "sourceVersion": "f00b7006",
     "license": "Apache-2.0",
-    "contentHash": "1589357b742d71f29758d68e60c56ca69b6858b50b625e0ebaaaf4aeaef97df3",
-    "lastHarvestedAt": "2026-11-11T13:29:12.684Z",
+    "contentHash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
+    "lastHarvestedAt": "2026-11-12T23:55:04.785Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "a8c78463",
+    "sourceVersion": "d09e97c4",
     "license": "MIT",
-    "contentHash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
-    "lastHarvestedAt": "2026-11-08T20:13:08.193Z",
+    "contentHash": "e1d02459c4c857a5f66ff0401c9b11bb0fe51a26c563526a19fa3f5de820e2ff",
+    "lastHarvestedAt": "2026-11-12T23:54:54.624Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -8913,10 +8913,10 @@
     "repository": "touchlab/Kermit",
     "platform": "github",
     "sourceUrl": "https://github.com/touchlab/Kermit",
-    "sourceVersion": "44bd2980",
+    "sourceVersion": "141dc8dd",
     "license": "Apache-2.0",
-    "contentHash": "cc573839a0d8d7db5543e8b2227b37d71847ac85c8ab1ae0c25947927665bc2b",
-    "lastHarvestedAt": "2026-11-05T11:53:16.790Z",
+    "contentHash": "d770c3af6590fe933da96ec7f4952d856c267deca18a459b1d5ef74338cd9f8a",
+    "lastHarvestedAt": "2026-11-12T23:55:04.610Z",
     "learningId": "learn-github-touchlab-kermit"
   },
   "gatenlp-ultimate-sitemap-parser": {

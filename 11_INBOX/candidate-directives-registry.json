@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T23:42:22.331Z",
+  "last_updated": "2026-11-12T23:55:11.718Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7589,6 +7589,33 @@
       "source_repo": "defguard-defguard",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-65315E-validate-network-size-aganist-allowed-de.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-904606",
+      "directive_title": "Cell-grid renderer  (#267)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zenbu-labs-terminal-browser",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-904606-cell-grid-renderer-267-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-933270",
+      "directive_title": "Don't upload the dokka html to maven central (#494)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "touchlab-kermit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-933270-don-t-upload-the-dokka-html-to-maven-cen.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4D3E5B",
+      "directive_title": "Render JWT claim authorization in the NGINX Plus VirtualServer template (#11227)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nginx-kubernetes-ingress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D3E5B-render-jwt-claim-authorization-in-the-ng.md",
       "staged_date": "2026-11-12"
     }
   ]

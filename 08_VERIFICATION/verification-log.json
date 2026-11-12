@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-201H",
-    "timestamp": "2026-11-09T14:04:49.205Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "490500df40a383b2b1e4b8d107f7c109102b3d400a27631105dd980101d46baf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-2Y99",
-    "timestamp": "2026-11-09T14:05:33.549Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "63c38cb9b9b85ca1a37f381e0c684f3398d3e33d9b4ed3122590bf24240f1d6e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-J1NK",
-    "timestamp": "2026-11-09T14:18:04.448Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "04834c3a58eb9c16dec094600de38abf4dffd8e3f1ce67adc749198007cf91b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-J6RQ",
     "timestamp": "2026-11-09T14:18:11.078Z",
     "repository": "gluesql/gluesql",
@@ -7490,6 +7445,51 @@
     "repository": "fastapi/fastapi",
     "learningId": "learn-github-fastapi-fastapi",
     "contentHash": "f918b3270d2a4fd1b1d54de8a804aefdafdb5e630077f6da628e18448475bb8d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-GF16",
+    "timestamp": "2026-11-12T23:54:54.618Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "e1d02459c4c857a5f66ff0401c9b11bb0fe51a26c563526a19fa3f5de820e2ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-GMQM",
+    "timestamp": "2026-11-12T23:55:04.606Z",
+    "repository": "touchlab/Kermit",
+    "learningId": "learn-github-touchlab-kermit",
+    "contentHash": "d770c3af6590fe933da96ec7f4952d856c267deca18a459b1d5ef74338cd9f8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-GMVH",
+    "timestamp": "2026-11-12T23:55:04.781Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

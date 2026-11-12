@@ -9264,3 +9264,6 @@ Every entry in this ledger must capture:
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `401a9202` | Multi-dimensional audit evidence | 2026-11-12T23:41:57.640Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `af417d1d` | Multi-dimensional audit evidence | 2026-11-12T23:42:00.819Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `5add7a45` | Multi-dimensional audit evidence | 2026-11-12T23:42:16.723Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `d09e97c4` | Multi-dimensional audit evidence | 2026-11-12T23:54:54.624Z |
+| `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `141dc8dd` | Multi-dimensional audit evidence | 2026-11-12T23:55:04.610Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `f00b7006` | Multi-dimensional audit evidence | 2026-11-12T23:55:04.785Z |

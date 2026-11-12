@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `59dbb784`  
+> **Source Version**: `f00b7006`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T13:29:01.200Z  
+> **Timestamp**: 2026-11-12T23:54:48.578Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T13:29:01.191Z  
+> **Harvest Timestamp**: 2026-11-12T23:54:48.563Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -919,6 +919,12 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &applyconfigurationconfigurationv1.IngressMTLSApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("JWTAuth"):
 		return &applyconfigurationconfigurationv1.JWTAuthApplyConfiguration{}
+	case configurationv1.SchemeGroupVersion.WithKind("JWTAuthorization"):
+		return &applyconfigurationconfigurationv1.JWTAuthorizationApplyConfiguration{}
+	case configurationv1.SchemeGroupVersion.WithKind("JWTAuthorizationRule"):
+		return &applyconfigurationconfigurationv1.JWTAuthorizationRuleApplyConfiguration{}
+	case configurationv1.SchemeGroupVersion.WithKind("JWTClaim"):
+		return &applyconfigurationconfigurationv1.JWTClaimApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("JWTCondition"):
 		return &applyconfigurationconfigurationv1.JWTConditionApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("Listener"):
@@ -944,13 +950,7 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 	case configurationv1.SchemeGroupVersion.WithKind("ProxyResponseHeaders"):
 		return &applyconfigurationconfigurationv1.ProxyResponseHeadersApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("RateLimit"):
-		return &applyconfigurationconfigurationv1.RateLimitApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("RateLimitCondition"):
-		return &applyconfigurationconfigurationv1.RateLimitConditionApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Route"):
-		return &applyconfigurationconfigurationv1.RouteApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("SecurityLog"):
-		return &applyconfigurationconfigurationv1.
+		return &applyconfigu
 ```
 
 ### Core Architecture Module: `cmd/nginx-ingress/aws.go`
@@ -1265,8 +1265,8 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 - **Issue #11346** (2026-11-11): **Merge nginx-agent.conf labels into `--labels` for NGINX Agent 3**
   *Symptoms*: ### Proposed changes  With NGINX Agent 3, NIC always starts the agent with `--labels=<NIC metadata>`. The agent treats that flag as the complete set of labels, so any `labels:` block in `nginx-agent.conf` (for example `display-name`) is silently ignored and never reaches NGINX One Console.  NIC now reads `labels` from `/etc/nginx-agent/nginx-agent.conf` and adds them to `--labels` after the NIC metadata labels, sorted by key:  - NIC metadata labels (`product-*`, `cluster-id`, `installation-*`, `control-*`) cannot be overridden. - Labels the agent would reject are skipped and logged in a single warning. Keys and values are checked against the agent's own label pattern (`^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$`). This also stops a `,`, `=` or `"` in a label from breaking `--labels` and preventing the agent from starting. - Number and boolean values (for example `port: 8080`) are kept as their literal text instead of causing every label to be dropped. - A missing config file is not an error. A file that can't be parsed logs a warning, and the agent starts with the NIC metadata labels only.  Stacked: the Helm value `nginxAgent.labels`   ### Linked issue   Closes #11345   <!-- Link the issue here, not in the PR title. External contributors: the issue must be accepted first, see "Open a Pull Request" in CONTRIBUTING.md. -->  ### How I tested  - `make test`: new table-driven tests in `internal/nginx/manager_test.go`:   - `TestExtractAgentConfigLabels`
 
-- **Issue #11298** (2026-11-04): **Fix malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources**
-  *Symptoms*: ### Proposed changes  Event messages, and VirtualServer/TransportServer `.status.message`, contain stray separators and spaces, visible in `kubectl describe` and through the API.  | Resource | Case | Before | After | |---|---|---|---| | Ingress, VS, TS | error only | `...updated ; but was not applied: err` | `...updated but was not applied: err` | | Ingress, VS | generated warnings only | `...updated ; with warning(s): w` | `...updated with warning(s): w` | | Ingress, VS, TS | no warnings, no error | `...updated ` (trailing space) | `...updated` | | Minion Ingress | warnings + error | `...with warning(s): w1; ; but was not applied: err` | `...with warning(s): w1; but was not applied: err` | | VirtualServerRoute | warnings + error | `...updated  with warning(s): w1; but was not applied:err` | `...updated with warning(s): w1; but was not applied: err` |  - Minion Ingress events use the master Ingress format. - VirtualServerRoute events use `"; "` only when warnings come before the error. - Regular Ingress, VirtualServer and TransportServer use a new `appendEventDetail` helper, so `"; "` appears only   between parts, and the trailing space is trimmed.  **User-visible change:** VirtualServer and TransportServer `.status.message` text changes as above. Tooling that matches the old `" ; "` text needs updating.  Not changed: the delete-path messages already produce well-formed text. Two related problems are tracked separately: DosLogConf events (`appprotect_dos
+- **Issue #11345** (2026-11-12): **[Bug]: Labels in nginx-agent.conf are ignored with NGINX Agent 3, and the Helm chart can't set them**
+  *Symptoms*: ### AI agents and bots  - [ ] I am an AI agent or bot opening this issue  ### Version  edge  ### What Kubernetes platforms are you running on?  GKE Google Cloud  ### Steps to reproduce  1. Install NIC with NGINX Agent v3 connected to NGINX One Console 2. Edit the `<release name>-agent-config` ConfigMap and add a top-level `labels` block to `nginx-agent.conf`: ```        labels:          display-name: my-nginx-instance ```  4. . Restart the NIC pod. 4. Check the instance in NGINX One Console and NIC logs  ### Expected behaviour  The instance in NGINX One Console has `display-name=my-nginx-instance` as well as the NIC metadata labels.  Helm users can set custom labels from `values.yaml` without editing the generated ConfigMap.  ### Actual behaviour  The custom label never appears in NGINX One Console, and no error is logged.  NIC starts the agent with `--labels=product-type=...,product-version=...,cluster-id=...,installation-*=...,control-*=...`. With Agent v3, the `--labels` flag takes priority over the `labels` key in `nginx-agent.conf`, so labels set in the config file are discarded.  The Helm chart has no value for labels, so a manual ConfigMap edit is the only option, and that doesn't work because of the problem above.  ### Possible solutions  1. NIC reads `labels` from `/etc/nginx-agent/nginx-agent.conf` and adds them to `--labels` after the NIC metadata labels. Metadata labels can't be overridden. Keys and values that don't match the agent's label pattern `^[a-zA-Z0-9]([
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1283,427 +1283,1038 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59dbb784` (2026-11-11)
-**Commit Message**: Add nginxAgent.labels to Helm chart for NGINX One Console (#11347)
+### Incident Patch 1: `ba1960d9` (2026-11-11)
+**Commit Message**: Render JWT claim authorization in the NGINX Plus VirtualServer template (#11227)
 
-* Add nginxAgent.labels to Helm chart for NGINX One Console labels
+* feat: render JWT claim authorization in the NGINX Plus VirtualServer template (#11174)
 
-* Add negative Helm test for invalid nginxAgent.labels
+- Move the server- and location-level auth_jwt directives into one
+  shared "jwtAuth" template, which also renders
+  auth_jwt_require <variable> error=<code> when the policy has claim
+  authorization. A policy without it renders exactly as before, and
+  every existing snapshot is unchanged.
+- Render auth_jwt_require with the always-passing variable on
+  locations that run their own JWT handling under a server policy that
+  requires claims, since the directive is inherited and has no "off".
+  ACME challenge locations never get it.
+- Add snapshot fixtures for server, route and mixed policies, OIDC,
+  ACME and JWKS locations, claim headers for HTTP and gRPC, and the
+  map chain. The OSS template is unchanged.
 
-**File**: `charts/nginx-ingress/templates/_helpers.tpl` (modified, +5/-0)
+* fix: let OIDC login run under a server-level JWT policy (#11174)
+
+---------
+
+Co-authored-by: Paul Abel <[REDACTED_EMAIL]>
+
+**File**: `docs/developer/jwt-claim-validation-plan.md` (modified, +1/-0)
 ```diff
-@@ -688,6 +688,11 @@ command:
- collector:
-   log:
-     path: "stdout"
-+{{- if .Values.nginxAgent.labels }}
+@@ -320,6 +320,7 @@ One map per claim check. All value matches compile to a **single case-sensitive
+   - **Reset variable:** emit `map $uri $jwt_authz_none_<vsNamespace>_<vsName> { default 1; }` from a VirtualServer **only when one of its locations needs the reset**. The name is per VirtualServer because every VirtualServer renders into the same `http` context, and a fixed name emitted twice fails `nginx -t` with a duplicate variable. A location-level `auth_jwt_require $jwt_authz_none_<vsNamespace>_<vsName>;` replaces the inherited requirement and always passes (the value must start with a variable and be non-empty and not `0`).
+   - **Where the reset is emitted:** (a) a location whose own JWT policy has no `authorization` while the server-level JWT policy has one (route policies override spec policies, `addPoliciesCfgToLocation`). This includes the [validate-then-route](#required-validate-then-route) entry location (`InternalRedirectLocation`, a separate type in `version2/http.go`, assembled separately in `virtualserver.go`), which needs the same reset flag and rendering. A route policy that **has** `authorization` emits its own requirement, never the reset; (b) OIDC locations, which run `auth_jwt "" token=$session_jwt;` and would otherwise inherit.
+   - **Not affected:** ACME-challenge locations, because they emit `auth_jwt off;`, which disables the module so `auth_jwt_require` is never evaluated. `/_jwks_uri_server_*` internal locations do not emit `auth_jwt off`; they are reached by subrequest, and NGINX skips the ACCESS phase for subrequests. Snapshot fixtures still prove both.
++  - **OIDC helper locations (`oidc.tmpl`):** the legacy OIDC include sits at server level, so `@do_oidc_flow`, the redirect URI (`/_codexch`), `/logout` and `/front_channel_logout` inherit the server's `auth_jwt` and `auth_jwt_require`. A login request carries no token, so the inherited check returns 401 and the login never starts. They emit `auth_jwt off;` when the VirtualServer has a server-level JWT policy (`OIDC.ServerJWTAuth`). A reset variable would not be enough, because the inherited `auth_jwt` alone also demands a bearer token. `/_logout` and `@oidc_error` use `return`, which runs before the access phase, and `/_jwks_uri`, `/_token`, `/_refresh`, `/_token_validation` are subrequests. `auth_jwt off` removes no protection: the entry location still validates the session token.
+ 
+ ### 5. Claim header forwarding (`location` context)
+ 
+```
+
+**File**: `internal/configs/version2/__snapshots__/jwt_authorization_templates_test.snap` (added, +779/-0)
+```diff
+@@ -0,0 +1,779 @@
 +
-+labels:
-+{{ toYaml .Values.nginxAgent.labels | indent 2 }}
-+{{- end }}
++[TestVirtualServerForNginxPlusJWTAuthorizationACMEAndJWKSLocations - 1]
++
++upstream coffee-v1 {
++    zone coffee-v1 ;
++    server 10.0.0.31:8001 max_fails=0 fail_timeout= max_conns=0;
++}
++
++
++server {
++    listen 80;
++    listen [::]:80;
++
++
++    server_name cafe.example.com;
++    status_zone "cafe.example.com";
++    set $resource_type "virtualserver";
++    set $resource_name "cafe";
++    set $resource_namespace "default";
++    set $service "-";
++
++    server_tokens "";
++    auth_jwt "api" token=$http_token;
++    
++    auth_jwt_key_cache 1h;
++    auth_jwt_key_request /_jwks_uri_server_default/shop-jwt;
++    auth_jwt_require $jwt_authz_default_cafe_vs_default_shop_jwt error=403;
++    location = /_jwks_uri_server_default/shop-jwt {
++        internal;
++        client_max_body_size 0;
++        proxy_method GET;
++        proxy_set_header Content-Length "";
++        proxy_ssl_verify off;
++        proxy_pass_request_headers off;
++        proxy_pass_request_body off;
++        proxy_set_header Host idp.example.com;
++        set $idp_backend idp.example.com;
++        proxy_pass https://$idp_backend/keys;
++    }
++
++    
++
++    
++    location "/coffee" {
++        set $service "coffee-svc";
++        status_zone "coffee-svc";
++
++        
++        set $default_connection_header close;
++        proxy_connect_timeout 30s;
++        proxy_read_timeout 31s;
++        proxy_send_timeout 32s;
++        client_max_body_size 1m;
++
++        proxy_buffering off;
++        proxy_set_header Upgrade $http_upgrade;
++        proxy_set_header Connection $vs_connection_header;
++        proxy_pass_request_headers off;
++        proxy_set_header X-Real-IP $remote_addr;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_set_header X-Forwarded-Host $host;
++        proxy_set_header X-Forwarded-Port $server_port;
++        proxy_set_header X-Forwarded-Proto $scheme;
++        proxy_pass http://coffee-v1;
++        proxy_next_upstream ;
++        proxy_next_upstream_timeout ;
++        proxy_next_upstream_tries 0;
++    }
++    location = "/.well-known/acme-challenge/tok" {
++        set $service "cm-acme-http-solver-abcde";
++        status_zone "cm-acme-http-solver-abcde";
++        auth_request off;
++        auth_jwt off;
++        auth_basic off;
++
++        
++        auth_oidc off;
++        set $default_connection_header close;
++        proxy_connect_timeout 30s;
++        proxy_read_timeout 31s;
++        proxy_send_timeout 32s;
++        client_max_body_size 1m;
++
++        proxy_buffering off;
++        proxy_set_header Upgrade $http_upgrade;
++        proxy_set_header Connection $vs_connection_header;
++        proxy_pass_request_headers off;
++        proxy_set_header X-Real-IP $remote_addr;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_set_header X-Forwarded-Host $host;
++        proxy_set_header X-Forwarded-Port $server_port;
++        proxy_set_header X-Forwarded-Proto $scheme;
++        proxy_pass http://vs_default_cafe_cm-acme-http-solver-abcde;
++        proxy_next_upstream ;
++        proxy_next_upstream_timeout ;
++        proxy_next_upstream_tries 0;
++    }
++}
++
++---
++
++[TestVirtualServerForNginxPlusJWTAuthorizationClaimHeaders - 1]
++
++upstream coffee-v1 {
++    zone coffee-v1 ;
++    server 10.0.0.31:8001 max_fails=0 fail_timeout= max_conns=0;
++}
++
++map $jwt_default_cafe_vs_scope $jwt_authz_r0_c0_hdr {
++    "~[\r\n]" "";
++    default $jwt_default_cafe_vs_scope;
++}
++map $jwt_default_cafe_vs_ip $jwt_authz_r0_c1_hdr {
++    "~[\r\n]" "";
++    default $jwt_default_cafe_vs_ip;
++}
++map $jwt_default_cafe_vs_tenant $jwt_authz_r0_c2_hdr {
++    "~[\r\n]" "";
++    default $jwt_default_cafe_vs_tenant;
++}
++
++server {
++    listen 80;
++    listen [::]:80;
++
++
++    server_name cafe.example.com;
++    status_zone "cafe.example.com";
++    set $resource_type "virtualserver";
++    set $resource_name "cafe";
++    set $resource_namespace "default";
++    set $service "-";
++
++    server_tokens "";
++    auth_jwt "api";
++    auth_jwt_key_file /etc/nginx/secrets/default-jwk;
++    auth_jwt_require $jwt_authz_default_cafe_vs_default_shop_jwt error=403;
++
++    
++
++    
++    location "/http" {
++        set $service "coffee-svc";
++        status_zone "coffee-svc";
++
++        
++        set $default_connection_header close;
++        proxy_connect_timeout 30s;
++        proxy_read_timeout 31s;
++        proxy_send_timeout 32s;
++        client_max_body_size 1m;
++
++        proxy_buffering off;
++        proxy_set_header Upgrade $http_upgrade;
++        proxy_set_header Connection $vs_connection_header;
++        proxy_pass_request_headers off;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_set_header X-Forwarded-Host $host;
++        proxy_set_header X-Forwarded-Port $server_port;
++        proxy_set_header X-Forwarded-Proto $scheme;
++        proxy_set_header X-Token-Scope "$jwt_authz_r0_c0_hdr";
++        proxy_set_header X-Real-IP "$jwt_authz_r0_c1_hdr";
++        proxy_set
+```
+
+**File**: `internal/configs/version2/http.go` (modified, +4/-0)
+```diff
+@@ -181,6 +181,10 @@ type OIDC struct {
+ 	// oidc.tmpl can emit app_protect_enable off; on its internal sub-request
+ 	// locations only when the WAF module is actually loaded.
+ 	AppProtectLoadModule bool
++	// ServerJWTAuth is set when the VirtualServer has a server-level JWT policy. Its auth_jwt and
++	// auth_jwt_require are inherited by the locations below, and a login request carries no token,
++	// so oidc.tmpl turns auth_jwt off in the ones that run the access phase.
++	ServerJWTAuth bool
+ }
  
- {{- else }}
- log:
+ // APIKey holds API key configuration.
 ```
 
-**File**: `charts/nginx-ingress/values.schema.json` (modified, +17/-0)
+**File**: `internal/configs/version2/jwt_authorization_templates_test.go` (added, +373/-0)
 ```diff
-@@ -2848,6 +2848,23 @@
-           "default": "false",
-           "title": "skip certificate verification"
-         },
-+        "labels": {
-+          "type": "object",
-+          "default": {},
-+          "title": "Custom labels to associate with the NGINX instance in NGINX One Console",
-+          "propertyNames": {
-+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$"
-+          },
-+          "additionalProperties": {
-+            "type": "string",
-+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$"
-+          },
-+          "examples": [
-+            {
-+              "display-name": "my-instance"
-+            }
-+          ]
-+        },
-         "instanceManager": {
-           "type": "object",
-           "default": {},
-```
-
-**File**: `charts/nginx-ingress/values.yaml` (modified, +2/-0)
-```diff
-@@ -866,6 +866,8 @@ nginxAgent:
-   endpointHost: "agent.connect.nginx.com"
-   endpointPort: 443
-   tlsSkipVerify: false
-+  ## Custom labels to associate with the NGINX instance in NGINX One Console (for example, display-name: my-instance).
-+  labels: {}
- 
-   # Agent V2 configuration
-   ## If nginxAgent.instanceGroup is not set the value of nginx-ingress.controller.fullname will be used
-```
-
-**File**: `charts/tests/__snapshots__/helmunit_test.snap` (modified, +3/-1)
-```diff
-@@ -20035,6 +20035,8 @@ data:
-     collector:
-       log:
-         path: "stdout"
-+    labels:
-+      display-name: my-nginx-instance
- /-/-/-/
- # Source: nginx-ingress/templates/controller-configmap.yaml
- apiVersion: v1
-@@ -20331,7 +20333,7 @@ spec:
-       labels:
-         app.kubernetes.io/name: nginx-ingress
-         app.kubernetes.io/instance: plus-agent-all
--        agent-configuration-revision-hash: "36d57a7e"
-+        agent-configuration-revision-hash: "751c3c9a"
-       annotations:
-         prometheus.io/scrape: "true"
-         prometheus.io/port: "9113"
-```
-
-**File**: `charts/tests/helmunit_test.go` (modified, +12/-0)
-```diff
-@@ -426,6 +426,18 @@ func TestHelmNICTemplateNegative(t *testing.T) {
- 			namespace:         "default",
- 			expectedErrorMsgs: []string{`label "app.kubernetes.io/name" is managed by the chart and cannot be overridden`},
- 		},
-+		"agentLabelsInvalid": {
-+			valuesFile:  "testdata/agent-labels-invalid.yaml",
-+			releaseName: "agent-labels-invalid",
-+			namespace:   "default",
-+			expectedErrorMsgs: []string{
-+				"invalid propertyName 'bad,key'",
-+				"'/nginxAgent/labels/comma': 'a,b' does not match pattern",
-+				"'/nginxAgent/labels/equals': 'a=b' does not match pattern",
-+				"'/nginxAgent/labels/empty': '' does not match pattern",
-+				"'/nginxAgent/labels/number': got number, want string",
-+			},
+@@ -0,0 +1,373 @@
++package version2
++
++import (
++	"strconv"
++	"strings"
++	"testing"
++
++	"github.com/gkampitakis/go-snaps/snaps"
++)
++
++const (
++	jwtAuthzServerVar = "$jwt_authz_default_cafe_vs_default_shop_jwt"
++	jwtAuthzRouteVar  = "$jwt_authz_default_cafe_vs_default_route_jwt"
++	jwtAuthzNoneVar   = "$jwt_authz_none_default_cafe"
++)
++
++func jwtAuthzSecretAuth(realm, secret, requireVar string, errorCode int) *JWTAuth {
++	return &JWTAuth{
++		Realm:            realm,
++		Secret:           secret,
++		RequireVariable:  requireVar,
++		RequireErrorCode: errorCode,
++	}
++}
++
++func jwtAuthzJWKSAuth(key, requireVar string, errorCode int) *JWTAuth {
++	return &JWTAuth{
++		Key:              key,
++		Realm:            "api",
++		Token:            "$http_token",
++		KeyCache:         "1h",
++		JwksURI:          JwksURI{JwksScheme: "https", JwksHost: "idp.example.com", JwksPath: "/keys"},
++		RequireVariable:  requireVar,
++		RequireErrorCode: errorCode,
++	}
++}
++
++func jwtAuthzLocation(path string) Location {
++	return Location{
++		Path:                path,
++		ProxyConnectTimeout: "30s",
++		ProxyReadTimeout:    "31s",
++		ProxySendTimeout:    "32s",
++		ClientMaxBodySize:   "1m",
++		ProxyPass:           "http://coffee-v1",
++		ServiceName:         "coffee-svc",
++		ProxySetHeaders:     []Header{{Name: "Host", Value: "$host"}},
++	}
++}
++
++func jwtAuthzCfg(server *JWTAuth, locations ...Location) VirtualServerConfig {
++	return VirtualServerConfig{
++		Upstreams: []Upstream{{Name: "coffee-v1", Servers: []UpstreamServer{{Address: "10.0.0.31:8001"}}}},
++		Server: Server{
++			ServerName:  "cafe.example.com",
++			StatusZone:  "cafe.example.com",
++			VSNamespace: "default",
++			VSName:      "cafe",
++			JWTAuth:     server,
++			Locations:   locations,
 +		},
- 		"appProtectWAFPLMWithoutPlus": {
- 			valuesFile:        "testdata/app-protect-waf-plm-without-plus.yaml",
- 			releaseName:       "appprotect-waf-plm-without-plus",
++	}
++}
++
++func executeJWTAuthzTemplate(t *testing.T, cfg VirtualServerConfig) string {
++	t.Helper()
++
++	data, err := newTmplExecutorNGINXPlus(t).ExecuteVirtualServerTemplate(&cfg)
++	if err != nil {
++		t.Fatalf("Failed to execute template: %v", err)
++	}
++	return string(data)
++}
++
++func TestVirtualServerForNginxPlusJWTAuthorizationServerLevel(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		name      string
++		auth      *JWTAuth
++		errorCode int
++	}{
++		{"secret, 403", jwtAuthzSecretAuth("api", "/etc/nginx/secrets/default-jwk", jwtAuthzServerVar, 403), 403},
++		{"secret, 401", jwtAuthzSecretAuth("api", "/etc/nginx/secrets/default-jwk", jwtAuthzServerVar, 401), 401},
++		{"jwks, 403", jwtAuthzJWKSAuth("default/shop-jwt", jwtAuthzServerVar, 403), 403},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++
++			conf := executeJWTAuthzTemplate(t, jwtAuthzCfg(tc.auth, jwtAuthzLocation("/coffee")))
++
++			want := "auth_jwt_require " + jwtAuthzServerVar + " error=" + strconv.Itoa(tc.errorCode) + ";"
++			assertCount(t, conf, want, 1)
++			assertCount(t, conf, "auth_jwt_require", 1)
++
++			// auth_jwt_require sits with the auth_jwt it belongs to, and the location inherits it.
++			coffee := locationBlock(t, conf, `"/coffee"`)
++			assertCount(t, coffee, "auth_jwt", 0)
++			assertCount(t, coffee, "auth_jwt_require", 0)
++
++			snaps.MatchSnapshot(t, conf)
++		})
++	}
++}
++
++func TestVirtualServerForNginxPlusJWTAuthorizationRouteLevel(t *testing.T) {
++	t.Parallel()
++
++	coffee := jwtAuthzLocation("/coffee")
++	coffee.JWTAuth = jwtAuthzSecretAuth("route", "/etc/nginx/secrets/default-route-jwk", jwtAuthzRouteVar, 401)
++	tea := jwtAuthzLocation("/tea")
++
++	conf := executeJWTAuthzTemplate(t, jwtAuthzCfg(nil, coffee, tea))
++
++	block := locationBlock(t, conf, `"/coffee"`)
++	assertCount(t, block, `auth_jwt "route";`, 1)
++	assertCount(t, block, "auth_jwt_require "+jwtAuthzRouteVar+" error=401;", 1)
++	assertCount(t, locationBlock(t, conf, `"/tea"`), "auth_jwt", 0)
++	assertCount(t, conf, "auth_jwt_require", 1)
++
++	snaps.MatchSnapshot(t, conf)
++}
++
++// A route policy replaces the server's auth_jwt, but auth_jwt_require is inherited and has no "off",
++// so the location resets it. A route policy with its own authorization sets its own requirement.
++func TestVirtualServerForNginxPlusJWTAuthorizationMixedPolicies(t *testing.T) {
++	t.Parallel()
++
++	plain := jwtAuthzLocation("/plain")
++	plain.JWTAuth = jwtAuthzSecretAuth("plain", "/etc/nginx/secrets/default-plain-jwk", "", 0)
++	plain.JWTRequireReset = jwtAuthzNoneVar
++
++	own := jwtAuthzLocation("/own")
++	own.JWTAuth = jwtAuthzSecretAuth("own", "/etc/nginx/secrets/default-own-jwk", jwtAuthzRouteVar, 401)
++
++	inherits := jwtAuthzLocation("/inherits")
++
++	cfg := jwtAuthzCfg(jwtAuthzSecretAuth("api", "/etc/nginx/secrets/default-jwk", jwtAuthzServerVar, 403), plain, own, inherits)
++	cfg.Maps = []Map{{Source: "$uri", Variable: jwtAuthzNoneVar, Parameters: []Parameter{{Value: "default", Result: "1"}}}}
++	conf := executeJWTAuthzTemplate(t, cfg)
++
++	assertCount(t, conf, "map $uri "+jwtAuthzNoneVar+" {", 1)
++
++	plainBlock := locationBlock(t, conf, `"/plain"`)
++	assertCount(t, plainBlock, `auth_jwt "plain";`, 1)
++	assertCount(t, plainBlock, "auth_jwt_require "+jwtAuthz
 ```
 
-**File**: `charts/tests/testdata/agent-labels-invalid.yaml` (added, +11/-0)
+**File**: `internal/configs/version2/nginx-plus.virtualserver.tmpl` (modified, +24/-24)
 ```diff
-@@ -0,0 +1,11 @@
-+controller:
-+  nginxplus: true
-+nginxAgent:
-+  enable: true
-+  dataplaneKeySecretName: "dataplane-key"
-+  labels:
-+    "bad,key": valid
-+    comma: "a,b"
-+    equals: "a=b"
-+    empty: ""
-+    number: 5
+@@ -393,21 +393,7 @@ server {
+         {{- end }}
+     {{- end }}
+ 
+-    {{- with $s.JWTAuth }}
+-    {{- /* .Realm is already escaped for NGINX by realmFmt, which accepts '\"'
+-           but rejects an unescaped '"', so plain quoting is correct here and
+-           printf "%q" would escape the backslashes a second time. .Token must
+-           stay unquoted: NGINX only strips quotes from the start of a token, so
+-           token="$http_token" would leave the quotes in the compiled value and
+-           the JWT would never be found. See the escaping contract in
+-           internal/validation/nginx.go. */}}
+-    auth_jwt "{{ .Realm }}"{{ if .Token }} token={{ .Token }}{{ end }};
+-    {{ if .Secret}}auth_jwt_key_file {{ .Secret }};{{ end }}
+-    {{- if .JwksURI.JwksHost }}
+-    {{ if .KeyCache }}auth_jwt_key_cache {{ .KeyCache }};{{ end }}
+-    auth_jwt_key_request /_jwks_uri_server_{{ .Key }};
+-    {{- end }}
+-    {{- end }}
++    {{- template "jwtAuth" (jwtAuthBlock $s.JWTAuth "    ") }}
+ 
+     {{- range $index, $element := $s.JWTAuthList }}
+     location = /_jwks_uri_server_{{ .Key }} {
+@@ -754,15 +740,9 @@ server {
+         {{- if $l.ACMEChallenge }}
+         auth_jwt off;
+         {{- else }}
+-        {{- with $l.JWTAuth }}
+-        {{- /* See the note on the server-level auth_jwt above: .Realm is
+-               pre-escaped and .Token must stay unquoted. */}}
+-        auth_jwt "{{ .Realm }}"{{ if .Token }} token={{ .Token }}{{ end }};
+-        {{ if .Secret}}auth_jwt_key_file {{ .Secret }};{{ end }}
+-        {{- if .JwksURI.JwksHost }}
+-        {{ if .KeyCache }}auth_jwt_key_cache {{ .KeyCache }};{{ end }}
+-        auth_jwt_key_request /_jwks_uri_server_{{ .Key }};
+-        {{- end }}
++        {{- template "jwtAuth" (jwtAuthBlock $l.JWTAuth "        ") }}
++        {{- with $l.JWTRequireReset }}
++        auth_jwt_require {{ . }};
+         {{- end }}
+         {{- end }}
+ 
+@@ -1175,3 +1155,23 @@ server {
+     }
+     {{- end }}
+ }
++{{- define "jwtAuth" }}
++{{- with .Auth }}
++{{- /* .Realm is already escaped for NGINX by realmFmt, which accepts '\"'
++       but rejects an unescaped '"', so plain quoting is correct here and
++       printf "%q" would escape the backslashes a second time. .Token must
++       stay unquoted: NGINX only strips quotes from the start of a token, so
++       token="$http_token" would leave the quotes in the compiled value and
++       the JWT would never be found. See the escaping contract in
++       internal/validation/nginx.go. */}}
++{{ $.Indent }}auth_jwt "{{ .Realm }}"{{ if .Token }} token={{ .Token }}{{ end }};
++{{ $.Indent }}{{ if .Secret}}auth_jwt_key_file {{ .Secret }};{{ end }}
++{{- if .JwksURI.JwksHost }}
++{{ $.Indent }}{{ if .KeyCache }}auth_jwt_key_cache {{ .KeyCache }};{{ end }}
++{{ $.Indent }}auth_jwt_key_request /_jwks_uri_server_{{ .Key }};
++{{- end }}
++{{- if .RequireVariable }}
++{{ $.Indent }}auth_jwt_require {{ .RequireVariable }} error={{ .RequireErrorCode }};
++{{- end }}
++{{- end }}
++{{- end }}
 ```
 
-**File**: `charts/tests/testdata/plus-agentv3-all.yaml` (modified, +2/-0)
+**File**: `internal/configs/version2/oidc.tmpl` (modified, +12/-0)
 ```diff
-@@ -7,3 +7,5 @@ nginxAgent:
-   logLevel: debug
-   endpointHost: my-host.example.com
-   endpointPort: 8443
-+  labels:
-+    display-name: my-nginx-instance
+@@ -32,6 +32,9 @@
+ 
+     location @do_oidc_flow {
+         status_zone "OIDC start";
++        {{- if .ServerJWTAuth }}
++        auth_jwt off; # the server-level JWT policy must not gate the OIDC flow
++        {{- end }}
+         js_content oidc.auth;
+         default_type text/plain; # In case we throw an error
+     }
+@@ -40,6 +43,9 @@
+     location = {{ printf "%q" .RedirectURI }} {
+         # This location is called by the IdP after successful authentication
+         status_zone "OIDC code exchange";
++        {{- if .ServerJWTAuth }}
++        auth_jwt off; # the server-level JWT policy must not gate the OIDC flow
++        {{- end }}
+         js_content oidc.codeExchange;
+         error_page 500 502 504 @oidc_error;
+     }
+@@ -109,6 +115,9 @@
+ 
+     location = /logout {
+         status_zone "OIDC logout";
++        {{- if .ServerJWTAuth }}
++        auth_jwt off; # the server-level JWT policy must not gate the OIDC flow
++        {{- end }}
+         add_header Set-Cookie "auth_token=; $oidc_cookie_flags";
+         add_header Set-Cookie "auth_nonce=; $oidc_cookie_flags";
+         add_header Set-Cookie "auth_redir=; $oidc_cookie_flags";
+@@ -117,6 +126,9 @@
+ 
+     location = /front_channel_logout {
+         status_zone "OIDC logout";
++        {{- if .ServerJWTAuth }}
++        auth_jwt off; # the server-level JWT policy must not gate the OIDC flow
++        {{- end }}
+         add_header Cache-Control "no-store";
+         default_type text/plain;
+         js_content oidc.handleFrontChannelLogout;
+```
+
+**File**: `internal/configs/version2/template_helper.go` (modified, +12/-0)
+```diff
+@@ -297,9 +297,21 @@ func hasExternalAuthNoSignin(s Server) bool {
+ 	return false
+ }
+ 
++// jwtAuthBlockData is the data of the "jwtAuth" template, which renders the JWT directives of a
++// server or a location. The two sit at different indentation, so it is passed in.
++type jwtAuthBlockData struct {
++	Auth   *JWTAuth
++	Indent string
++}
++
++func jwtAuthBlock(auth *JWTAuth, indent string) jwtAuthBlockData {
++	return jwtAuthBlockData{Auth: auth, Indent: indent}
++}
++
+ var helperFunctions = template.FuncMap{
+ 	"headerListToCIMap":       headerListToCIMap,
+ 	"hasCIKey":                hasCIKey,
++	"jwtAuthBlock":            jwtAuthBlock,
+ 	"contains":                strings.Contains,
+ 	"hasPrefix":               strings.HasPrefix,
+ 	"hasSuffix":               strings.HasSuffix,
+```
+
+**File**: `internal/configs/virtualserver.go` (modified, +1/-0)
+```diff
+@@ -1239,6 +1239,7 @@ func (vsc *virtualServerConfigurator) GenerateVirtualServerConfig(
+ 
+ 	if policiesCfg.OIDC != nil {
+ 		policiesCfg.OIDC.AppProtectLoadModule = vsc.appProtectLoadModule
++		policiesCfg.OIDC.ServerJWTAuth = policiesCfg.JWTAuth.Auth != nil
+ 	}
+ 
+ 	// auth_jwt_require cannot be turned off, so these locations reset the inherited one.
 ```
 
 ---
 
-### Incident Patch 2: `fb120e3e` (2026-11-11)
-**Commit Message**: Merge nginx-agent.conf labels into `--labels` for NGINX Agent 3 (#11346)
+### Incident Patch 2: `c33cc3b1` (2026-11-11)
+**Commit Message**: Add yamllint pre-commit hook and fix YAML formatting (#11277)
 
-* Merge nginx-agent.conf labels into --labels for NGINX Agent 3
+* add yamllint file for linting issues
 
-* Parse agent config labels with YAML 1.2 to match NGINX Agent 3
+* Add yamllint pre-commit hook and fix YAML lint issues
 
-**File**: `go.mod` (modified, +1/-1)
+* Revert yamllint changes to external-dns manifests
+
+* Fix yamllint formatting in external-dns manifests
+
+---------
+
+Signed-off-by: antojacob <[REDACTED_EMAIL]>
+
+**File**: `.fossa.yml` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,7 @@ require (
- 	github.com/stretchr/testify v1.12.1
- 	go.opentelemetry.io/otel v1.47.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.47.0
-+	go.yaml.in/yaml/v3 v3.0.5
- 	golang.org/x/crypto v0.58.0
- 	k8s.io/api v0.37.2
- 	k8s.io/apiextensions-apiserver v0.37.2
-@@ -131,7 +132,6 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.27.1 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
--	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/exp v0.0.0-20261007192929-f45ad48fbe92 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/net v0.60.0 // indirect
+@@ -3,4 +3,4 @@ targets:
+   exclude:
+     - type: setuptools
+ paths:
+-  exclude:
++  exclude: []
 ```
 
-**File**: `internal/nginx/manager.go` (modified, +87/-13)
+**File**: `.github/labeler.yml` (modified, +4/-4)
 ```diff
-@@ -2,19 +2,24 @@ package nginx
+@@ -12,15 +12,15 @@ chore:
  
- import (
- 	"context"
-+	"errors"
- 	"fmt"
-+	"io/fs"
- 	"log/slog"
-+	"maps"
- 	"net/http"
- 	"os"
- 	"os/exec"
- 	"path"
- 	"path/filepath"
- 	"regexp"
-+	"slices"
- 	"strconv"
- 	"strings"
- 	"time"
+ github_actions:
+   - changed-files:
+-    - any-glob-to-any-file: ['.github/**/*.yml', '.github/**/*.yaml', '.github/**/*.md']
++      - any-glob-to-any-file: ['.github/**/*.yml', '.github/**/*.yaml', '.github/**/*.md']
  
- 	"github.com/nginx/kubernetes-ingress/internal/metadata"
-+	"go.yaml.in/yaml/v3"
+ go:
+   - changed-files:
+-    - any-glob-to-any-file: ['**/*.go', 'go.mod', 'go.sum']
++      - any-glob-to-any-file: ['**/*.go', 'go.mod', 'go.sum']
  
- 	license_reporting "github.com/nginx/kubernetes-ingress/internal/license_reporting"
- 	nl "github.com/nginx/kubernetes-ingress/internal/logger"
-@@ -42,7 +47,8 @@ const (
- 	appProtectPluginStartCmd = "/usr/share/ts/bin/bd-socket-plugin"
- 	appProtectLogLevelCmd    = "/opt/app_protect/bin/set_log_level"
+ python:
+   - changed-files:
+-    - any-glob-to-any-file: ['tests/**/*.py', 'tests/**/requirements.txt', 'tests/**/*.yaml', 'perf-tests/**/*.py', 'perf-tests/**/*.yaml']
++      - any-glob-to-any-file: ['tests/**/*.py', 'tests/**/requirements.txt', 'tests/**/*.yaml', 'perf-tests/**/*.py', 'perf-tests/**/*.yaml']
  
--	agentPath = "/usr/bin/nginx-agent"
-+	agentPath       = "/usr/bin/nginx-agent"
-+	agentConfigPath = "/etc/nginx-agent/nginx-agent.conf"
+ tests:
+   - head-branch: ['^tests?/']
+@@ -36,4 +36,4 @@ helm_chart:
  
- 	// appPluginParams is the configuration of App-Protect plugin
- 	appPluginParams = "tmm_count 4 proc_cpuinfo_cpu_mhz 2000000 total_xml_memory 471859200 total_umu_max_size 3129344 sys_max_account_id 1024 no_static_config"
-@@ -692,19 +698,15 @@ func (lm *LocalManager) AgentStart(agentDone chan error, instanceGroup string) {
- 		if err != nil {
- 			nl.Fatalf(lm.logger, "Failed to start NGINX Agent: %v", err)
- 		}
--		labels := []string{
--			fmt.Sprintf("product-type=%s", metadataInfo.ProductType),
--			fmt.Sprintf("product-version=%s", metadataInfo.ProductVersion),
--			fmt.Sprintf("cluster-id=%s", metadataInfo.ClusterID),
--			fmt.Sprintf("installation-id=%s", metadataInfo.InstallationID),
--			fmt.Sprintf("installation-name=%s", metadataInfo.InstallationName),
--			fmt.Sprintf("installation-namespace=%s", metadataInfo.InstallationNamespace),
--			fmt.Sprintf("control-id=%s", metadataInfo.InstallationID),               // control-id is required but is the same as installation-id
--			fmt.Sprintf("control-name=%s", metadataInfo.InstallationName),           // control-name is required but is the same as installation-name
--			fmt.Sprintf("control-namespace=%s", metadataInfo.InstallationNamespace), // control-namespace is required but is the same as installation-namespace
-+		configLabels, err := extractAgentConfigLabels(agentConfigPath)
-+		if err != nil {
-+			nl.Warnf(lm.logger, "Failed to read labels from %s: %v", agentConfigPath, err)
-+		}
-+		labelsFlag, skipped := buildAgentLabels(metadataInfo, configLabels)
-+		if len(skipped) > 0 {
-+			nl.Warnf(lm.logger, "Ignoring reserved or invalid NGINX Agent labels: %v", skipped)
- 		}
--		metadataLabels := "--labels=" + strings.Join(labels, ",")
--		args = append(args, metadataLabels)
-+		args = append(args, labelsFlag)
- 	}
- 	cmd := exec.Command(agentPath, args...) // #nosec G204
- 
-@@ -721,6 +723,78 @@ func (lm *LocalManager) AgentStart(agentDone chan error, instanceGroup string) {
- 	}()
- }
- 
-+// agentLabelRegex mirrors NGINX Agent v3 label validation. It also keeps ',', '=' and '"'
-+// out of the --labels flag, which pflag parses as a single CSV record.
-+var agentLabelRegex = regexp.MustCompile(`^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$`)
-+
-+// extractAgentConfigLabels reads the labels map from the NGINX Agent config file.
-+// The agent ignores config-file labels when --labels is passed, so NIC merges them into the flag.
-+// It parses with YAML 1.2 (go.yaml.in/yaml/v3) and stringifies values the way NGINX Agent 3 does
-+// (viper + spf13/cast), so unquoted values such as yes, on or 0755 resolve to the same label text.
-+func extractAgentConfigLabels(configPath string) (map[string]string, error) {
-+	data, err := os.ReadFile(filepath.Clean(configPath))
-+	if err != nil {
-+		if errors.Is(err, fs.ErrNotExist) {
-+			return nil, nil
-+		}
-+		return nil, err
-+	}
-+	var cfg struct {
-+		Labels map[string]any `yaml:"labels"`
-+	}
-+	if err := yaml.Unmarshal(data, &cfg); err != nil {
-+		return nil, err
-+	}
-+	if cfg.Labels == nil {
-+		return nil, nil
-+	}
-+	labels := make(map[string]string, len(cfg.Labels))
-+	for k, v := range cfg.Labels {
-+		switch val := v.(type) {
-+		case nil:
-+			labels[k] = ""
-+		case float64:
-+			labels[k] = strconv.FormatFloat(val, 'f', -1, 64)
-+		default:
-+			labels[k] = fmt.Sprint(val)
-+		}
-+	}
-+	return labels, nil
-+}
-+
-+// buildAgentLabels returns the --labels flag: NIC metadata labels followed by valid, non-reserved
-+// config labels sorted by key, plus the config label keys that were skipped.
-+func buildAgentLabels(m *metadata.Labels, configLabels map[string]string) (string, []string) {
-+	base := [][2]string{
-+		{"product-type", m.ProductType},
-+		{"product-version", m.ProductVersion},
-+		{"cluster-id", m.ClusterID},
-+		{"installation-id", m.InstallationID},
-+		{"installation-name", m.InstallationName},
-+		{"installation-namespace", m.InstallationNamespace},
-+		// control-* labels are required but mirror the installation-* labels
-+		{"control-id", m.InstallationID},
-+		{"control-name", m.InstallationName},
-+		{"control-namespace", m.InstallationNamespace},
-+	}
-+	labels := make([]string, 0, len(base)+len(configLabels))
-+	reserved := make(map[string]bool, len(base))
-+	for _, kv := range base {
-+		labels = append(labels, kv[0]+"="+kv[
+ docker:
+   - changed-files:
+-    - any-glob-to-any-file: '**/Dockerfile*'
++      - any-glob-to-any-file: '**/Dockerfile*'
 ```
 
-**File**: `internal/nginx/manager_test.go` (modified, +104/-0)
+**File**: `.github/workflows/build-artifacts.yml` (modified, +1/-1)
 ```diff
-@@ -1,8 +1,12 @@
- package nginx
+@@ -225,7 +225,7 @@ jobs:
+   #       with:
+   #         assertion-doc: ${{ steps.assertiondoc.outputs.assertion-document-path }}
  
- import (
-+	"os"
-+	"path/filepath"
- 	"testing"
+-  #     - name: Cleanup netrc
++  #     - name: Cleanup netrc
+   #       run: rm -f $HOME/.netrc
+   #       if: ${{ always() }}
  
-+	"github.com/google/go-cmp/cmp"
-+	"github.com/nginx/kubernetes-ingress/internal/metadata"
- 	"github.com/nginx/nginx-plus-go-client/v3/client"
+```
+
+**File**: `.github/workflows/external-pr.yml` (modified, +9/-9)
+```diff
+@@ -1,7 +1,7 @@
+ name: External PR Handler
+ on:
+   issue_comment:
+-    types: [ created ]
++    types: [created]
+ 
+ permissions:
+   contents: read
+@@ -17,14 +17,14 @@ jobs:
+       )
+     runs-on: ubuntu-26.04
+     outputs:
+-        is_fork: ${{ steps.pr-info.outputs.is_fork }}
+-        fork_owner: ${{ steps.pr-info.outputs.fork_owner }}
+-        fork_repo: ${{ steps.pr-info.outputs.fork_repo }}
+-        sha: ${{ steps.pr-info.outputs.sha }}
+-        base_branch: ${{ steps.pr-info.outputs.base_branch }}
+-        pr_number: ${{ steps.pr-info.outputs.pr_number }}
+-        title: ${{ steps.pr-info.outputs.title }}
+-        body: ${{ steps.pr-info.outputs.body }}
++      is_fork: ${{ steps.pr-info.outputs.is_fork }}
++      fork_owner: ${{ steps.pr-info.outputs.fork_owner }}
++      fork_repo: ${{ steps.pr-info.outputs.fork_repo }}
++      sha: ${{ steps.pr-info.outputs.sha }}
++      base_branch: ${{ steps.pr-info.outputs.base_branch }}
++      pr_number: ${{ steps.pr-info.outputs.pr_number }}
++      title: ${{ steps.pr-info.outputs.title }}
++      body: ${{ steps.pr-info.outputs.body }}
+     steps:
+       - name: Get PR details
+         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+```
+
+**File**: `.goreleaser.yml` (modified, +70/-70)
+```diff
+@@ -20,76 +20,76 @@ builds:
+       - -s -w -X main.version={{.Version}}
+     main: ./cmd/nginx-ingress/
+     binary: nginx-ingress
+-  ## Disable AWS Marketplace builds
+-  # - id: aws
+-  #   goos:
+-  #     - linux
+-  #   goarch:
+-  #     - amd64
+-  #     - arm64
+-  #   flags:
+-  #     - -trimpath
+-  #   gcflags:
+-  #     - all=-trimpath={{.Env.GOPATH}}
+-  #   asmflags:
+-  #     - all=-trimpath={{.Env.GOPATH}}
+-  #   ldflags:
+-  #     - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_PUB_KEY}}
+-  #   main: ./cmd/nginx-ingress/
+-  #   binary: nginx-ingress
+-  #   tags:
+-  #     - aws
+-  # - id: aws-nap-dos
+-  #   goos:
+-  #     - linux
+-  #   goarch:
+-  #     - amd64
+-  #   flags:
+-  #     - -trimpath
+-  #   gcflags:
+-  #     - all=-trimpath={{.Env.GOPATH}}
+-  #   asmflags:
+-  #     - all=-trimpath={{.Env.GOPATH}}
+-  #   ldflags:
+-  #     - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_DOS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_DOS_PUB_KEY}}
+-  #   main: ./cmd/nginx-ingress/
+-  #   binary: nginx-ingress
+-  #   tags:
+-  #     - aws
+-  # - id: aws-nap-waf
+-  #   goos:
+-  #     - linux
+-  #   goarch:
+-  #     - amd64
+-  #   flags:
+-  #     - -trimpath
+-  #   gcflags:
+-  #     - all=-trimpath={{.Env.GOPATH}}
+-  #   asmflags:
+-  #     - all=-trimpath={{.Env.GOPATH}}
+-  #   ldflags:
+-  #     - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_WAF_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_WAF_PUB_KEY}}
+-  #   main: ./cmd/nginx-ingress/
+-  #   binary: nginx-ingress
+-  #   tags:
+-  #     - aws
+-  # - id: aws-nap-both
+-  #   goos:
+-  #     - linux
+-  #   goarch:
+-  #     - amd64
+-  #   flags:
+-  #     - -trimpath
+-  #   gcflags:
+-  #     - all=-trimpath={{.Env.GOPATH}}
+-  #   asmflags:
+-  #     - all=-trimpath={{.Env.GOPATH}}
+-  #   ldflags:
+-  #     - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_WAF_DOS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_WAF_DOS_PUB_KEY}}
+-  #   main: ./cmd/nginx-ingress/
+-  #   binary: nginx-ingress
+-  #   tags:
+-  #     - aws
++# Disable AWS Marketplace builds
++#   - id: aws
++#     goos:
++#       - linux
++#     goarch:
++#       - amd64
++#       - arm64
++#     flags:
++#       - -trimpath
++#     gcflags:
++#       - all=-trimpath={{.Env.GOPATH}}
++#     asmflags:
++#       - all=-trimpath={{.Env.GOPATH}}
++#     ldflags:
++#       - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_PUB_KEY}}
++#     main: ./cmd/nginx-ingress/
++#     binary: nginx-ingress
++#     tags:
++#       - aws
++#   - id: aws-nap-dos
++#     goos:
++#       - linux
++#     goarch:
++#       - amd64
++#     flags:
++#       - -trimpath
++#     gcflags:
++#       - all=-trimpath={{.Env.GOPATH}}
++#     asmflags:
++#       - all=-trimpath={{.Env.GOPATH}}
++#     ldflags:
++#       - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_DOS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_DOS_PUB_KEY}}
++#     main: ./cmd/nginx-ingress/
++#     binary: nginx-ingress
++#     tags:
++#       - aws
++#   - id: aws-nap-waf
++#     goos:
++#       - linux
++#     goarch:
++#       - amd64
++#     flags:
++#       - -trimpath
++#     gcflags:
++#       - all=-trimpath={{.Env.GOPATH}}
++#     asmflags:
++#       - all=-trimpath={{.Env.GOPATH}}
++#     ldflags:
++#       - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_WAF_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_WAF_PUB_KEY}}
++#     main: ./cmd/nginx-ingress/
++#     binary: nginx-ingress
++#     tags:
++#       - aws
++#   - id: aws-nap-both
++#     goos:
++#       - linux
++#     goarch:
++#       - amd64
++#     flags:
++#       - -trimpath
++#     gcflags:
++#       - all=-trimpath={{.Env.GOPATH}}
++#     asmflags:
++#       - all=-trimpath={{.Env.GOPATH}}
++#     ldflags:
++#       - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_WAF_DOS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_WAF_DOS_PUB_KEY}}
++#     main: ./cmd/nginx-ingress/
++#     binary: nginx-ingress
++#     tags:
++#       - aws
+ 
+ changelog:
+   disable: true
+```
+
+**File**: `.pre-commit-config.yaml` (modified, +11/-2)
+```diff
+@@ -37,7 +37,9 @@ repos:
+     hooks:
+       - id: golangci-lint
+         name: golangci-lint
+-        description: Fast linters runner for Go. Note that only modified files are linted, so linters like 'unused' that need to scan all files won't work as expected.
++        description: >-
++          Fast linters runner for Go. Note that only modified files are linted,
++          so linters like 'unused' that need to scan all files won't work as expected.
+         entry: golangci-lint run --new-from-rev HEAD --fix
+         types: [go]
+         language: golang
+@@ -121,10 +123,17 @@ repos:
+     rev: v0.24.0
+     hooks:
+       - id: markdownlint-cli2
+-        args: [ "**/*.md", "--fix" ]
++        args: ["**/*.md", "--fix"]
+         pass_filenames: false
+         always_run: true
+ 
++  # Rules are in .yamllint.yaml file
++  # See https://yamllint.readthedocs.io/en/stable/rules.html# for rule descriptions
++  - repo: https://github.com/adrienverge/yamllint.git
++    rev: v1.38.0
++    hooks:
++      - id: yamllint
++
+   - repo: https://github.com/rhysd/actionlint
+     rev: v1.7.12
+     hooks:
+```
+
+**File**: `.yamllint.yaml` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++---
++ignore:
++  - charts/nginx-ingress/templates
++  - config/crd/bases/
++  - config/crd/upstream/
++  - deploy
++  - tests/data/virtual-server-certmanager/certmanager.yaml
++
++rules:
++  braces: enable
++  brackets: enable
++  colons: enable
++  commas: enable
++  comments:
++    require-starting-space: true
++    ignore-shebangs: true
++    min-spaces-from-content: 1
++  comments-indentation:
++    ignore: |
++      charts/nginx-ingress/values.yaml
++      deployments/
++  document-end: disable
++  document-start: disable
++  empty-lines: enable
++  empty-values:
++    ignore: |
++      .github/workflows/
++  float-values: disable
++  hyphens: enable
++  indentation:
++    spaces: consistent
++    indent-sequences: consistent
++    check-multi-line-strings: false
++  key-duplicates: enable
++  key-ordering: disable
++  line-length:
++    max: 120
++    allow-non-breakable-words: true
++    allow-non-breakable-inline-mappings: true
++    ignore: |
++      .github/
++      .goreleaser.yml
++      charts/nginx-ingress/
++  new-line-at-end-of-file: enable
++  new-lines: enable
++  octal-values: disable
++  quoted-strings: disable
++  trailing-spaces: enable
++  truthy:
++    ignore: |
++      .github/workflows/
+```
+
+**File**: `charts/nginx-ingress/values.yaml` (modified, +5/-5)
+```diff
+@@ -52,7 +52,7 @@ controller:
+     ## Secret containing trusted CA certificate
+     # sslTrustedCertificateSecretName: ssl-trusted-cert
+ 
+-    # configMapName allows changing the name of the MGMT config map
++    # configMapName allows changing the name of the MGMT config map
+     # the name should not include a namespace
+     # configMapName: ""
+ 
+@@ -128,7 +128,7 @@ controller:
+         pullPolicy: IfNotPresent
+       securityContext:
+         allowPrivilegeEscalation: false
+-        runAsUser: 101 #nginx
++        runAsUser: 101 # nginx
+         runAsNonRoot: true
+         capabilities:
+           drop:
+@@ -174,7 +174,7 @@ controller:
+         pullPolicy: IfNotPresent
+       securityContext:
+         allowPrivilegeEscalation: false
+-        runAsUser: 101 #nginx
++        runAsUser: 101 # nginx
+         runAsNonRoot: true
+         capabilities:
+           drop:
+@@ -354,7 +354,7 @@ controller:
+     {} # Remove curly brackets before adding values
+     # allowPrivilegeEscalation: true
+     # readOnlyRootFilesystem: true
+-    # runAsUser: 101 #nginx
++    # runAsUser: 101 # nginx
+     # runAsNonRoot: true
+     # capabilities:
+     #   drop:
+@@ -445,7 +445,7 @@ controller:
+       storageClass: ""
+       ## Access modes for the nginx-cache volume
+       accessModes:
+-      - "ReadWriteOnce"
++        - "ReadWriteOnce"
+ 
+   ## Extra containers for the Ingress Controller pods.
+   extraContainers: []
+```
+
+---
+
+### Incident Patch 3: `a462d69b` (2026-11-12)
+**Commit Message**: Fix flaky JWT VSR and empty-host startup e2e tests (#11391)
+
+* Poll instead of reading once in flaky JWT VSR and empty-host e2e tests
+
+Wait for the 500 response and VSR Warning state after deleting the policy/secret, and for the 'but was not applied' event after NIC startup, rather than asserting on a single immediate read.
+
+* Reuse assert_vsr_status instead of a local polling helper
+
+* Improve host header handling in wait_and_assert_status_code function
+
+**File**: `tests/suite/test_empty_host_ingress_reload.py` (modified, +3/-0)
+```diff
+@@ -18,6 +18,7 @@
+     get_ingress_nginx_template_conf,
+     replace_ingress,
+     wait_before_test,
++    wait_for_event,
+     wait_until_all_pods_are_ready,
  )
  
-@@ -217,3 +221,103 @@ REDHAT_SUPPORT_PRODUCT_VERSION="9.7"
- 		})
- 	}
- }
-+
-+func TestExtractAgentConfigLabels(t *testing.T) {
-+	t.Parallel()
-+
-+	tests := []struct {
-+		name    string
-+		content string // empty means the config file does not exist
-+		want    map[string]string
-+		wantErr bool
-+	}{
-+		{name: "missing file"},
-+		{name: "no labels key", content: "log:\n  level: info\n"},
-+		{
-+			name:    "mixed scalar labels",
-+			content: "labels:\n  display-name: my-nic\n  port: 8080\n  enabled: true\n  unset:\n",
-+			want:    map[string]string{"display-name": "my-nic", "port": "8080", "enabled": "true", "unset": ""},
-+		},
-+		{
-+			// Must match NGINX Agent 3 (YAML 1.2 via viper): yes/on stay strings, not booleans.
-+			name:    "YAML 1.2 scalars match agent",
-+			content: "labels:\n  a: yes\n  b: on\n  c: off\n  d: 1.50\n  e: 1e21\n  f: 0x1F\n",
-+			want:    map[string]string{"a": "yes", "b": "on", "c": "off", "d": "1.5", "e": "1000000000000000000000", "f": "31"},
-+		},
-+		{name: "invalid YAML", content: "labels: [invalid", wantErr: true},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			cfgPath := filepath.Join(t.TempDir(), "nginx-agent.conf")
-+			if tc.content != "" {
-+				if err := os.WriteFile(cfgPath, []byte(tc.content), 0o600); err != nil {
-+					t.Fatal(err)
-+				}
-+			}
-+			got, err := extractAgentConfigLabels(cfgPath)
-+			if (err != nil) != tc.wantErr {
-+				t.Fatalf("extractAgentConfigLabels() error = %v, wantErr %v", err, tc.wantErr)
-+			}
-+			if diff := cmp.Diff(tc.want, got); diff != "" {
-+				t.Errorf("extractAgentConfigLabels() mismatch (-want +got):\n%s", diff)
-+			}
-+		})
-+	}
-+}
-+
-+func TestBuildAgentLabels(t *testing.T) {
-+	t.Parallel()
-+
-+	meta := &metadata.Labels{
-+		ProductType:           "nic",
-+		ProductVersion:        "5.8.0",
-+		ClusterID:             "cluster-123",
-+		InstallationID:        "install-456",
-+		InstallationName:      "my-nic",
-+		InstallationNamespace: "default",
-+	}
-+	base := "--labels=product-type=nic,product-version=5.8.0,cluster-id=cluster-123,installation-id=install-456," +
-+		"installation-name=my-nic,installation-namespace=default,control-id=install-456,control-name=my-nic,control-namespace=default"
-+
-+	tests := []struct {
-+		name         string
-+		configLabels map[string]string
-+		wantFlag     string
-+		wantSkipped  []string
-+	}{
-+		{name: "no config labels", wantFlag: base},
-+		{
-+			name:         "custom labels appended sorted",
-+			configLabels: map[string]string{"env": "staging", "display-name": "my-nic", "port": "8080"},
-+			wantFlag:     base + ",display-name=my-nic,env=staging,port=8080",
-+		},
-+		{
-+			name: "reserved and invalid labels skipped",
-+			configLabels: map[string]string{
-+				"cluster-id":   "override",
-+				"comma":        "a,b",
-+				"space":        "my nic",
-+				"empty":        "",
-+				"bad,key":      "x",
-+				"display-name": "my-nic",
-+			},
-+			wantFlag:    base + ",display-name=my-nic",
-+			wantSkipped: []string{"bad,key", "cluster-id", "comma", "empty", "space"},
-+		},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			gotFlag, gotSkipped := buildAgentLabels(meta, tc.configLabels)
-+			if gotFlag != tc.wantFlag {
-+				t.Errorf("buildAgentLabels() flag = %q, want %q", gotFlag, tc.wantFlag)
-+			}
-+			if diff := cmp.Diff(tc.wantSkipped, gotSkipped); diff != "" {
-+				t.Errorf("buildAgentLabels() skipped mismatch (-want +got):\n%s", diff)
-+			}
-+		})
-+	}
-+}
+@@ -376,6 +377,8 @@ def test_default_server_survives_invalid_empty_host_ingress_on_startup(
+         wait_and_assert_status_code(404, f"{request_url}/", verify=False)
+         wait_and_assert_status_code(200, f"{health_url}/nginx-health")
+ 
++        # Events are written asynchronously, so poll instead of reading once.
++        assert wait_for_event(kube_apis.v1, "but was not applied", test_namespace), "no 'but was not applied' event"
+         messages = " ".join(
+             event.message
+             for event in get_events_for_object(kube_apis.v1, test_namespace, invalid_empty_host_ingress_before_startup)
+```
+
+**File**: `tests/suite/test_jwt_policies_vsr.py` (modified, +7/-10)
+```diff
+@@ -1,6 +1,7 @@
+ import pytest
+ import requests
+ from settings import TEST_DATA
++from suite.utils.custom_assertions import assert_vsr_status, wait_and_assert_status_code
+ from suite.utils.custom_resources_utils import read_custom_resource
+ from suite.utils.policy_resources_utils import create_policy_from_yaml, delete_policy
+ from suite.utils.resources_utils import create_secret_from_yaml, delete_secret, wait_before_test
+@@ -333,16 +334,14 @@ def test_jwt_policy_delete_secret(
+         print(resp1.status_code)
+ 
+         delete_secret(kube_apis.v1, secret, v_s_route_setup.route_m.namespace)
++        wait_and_assert_status_code(500, f"{req_url}{v_s_route_setup.route_m.paths[0]}", headers=headers)
+         resp2 = requests.get(
+             f"{req_url}{v_s_route_setup.route_m.paths[0]}",
+             headers=headers,
+         )
+         print(resp2.status_code)
+-        crd_info = read_custom_resource(
+-            kube_apis.custom_objects,
+-            v_s_route_setup.route_m.namespace,
+-            "virtualserverroutes",
+-            v_s_route_setup.route_m.name,
++        crd_info = assert_vsr_status(
++            kube_apis, v_s_route_setup.route_m.namespace, v_s_route_setup.route_m.name, "Warning"
+         )
+         delete_policy(kube_apis.custom_objects, pol_name, v_s_route_setup.route_m.namespace)
+ 
+@@ -399,16 +398,14 @@ def test_jwt_policy_delete_policy(
+         print(resp1.status_code)
+         delete_policy(kube_apis.custom_objects, pol_name, v_s_route_setup.route_m.namespace)
+ 
++        wait_and_assert_status_code(500, f"{req_url}{v_s_route_setup.route_m.paths[0]}", headers=headers)
+         resp2 = requests.get(
+             f"{req_url}{v_s_route_setup.route_m.paths[0]}",
+             headers=headers,
+         )
+         print(resp2.status_code)
+-        crd_info = read_custom_resource(
+-            kube_apis.custom_objects,
+-            v_s_route_setup.route_m.namespace,
+-            "virtualserverroutes",
+-            v_s_route_setup.route_m.name,
++        crd_info = assert_vsr_status(
++            kube_apis, v_s_route_setup.route_m.namespace, v_s_route_setup.route_m.name, "Warning"
+         )
+         delete_secret(kube_apis.v1, secret, v_s_route_setup.route_m.namespace)
+ 
+```
+
+**File**: `tests/suite/utils/custom_assertions.py` (modified, +6/-3)
+```diff
+@@ -224,11 +224,14 @@ def wait_and_assert_status_code(code, req_url, host=None, **kwargs) -> None:
+ 
+     :param  code: status_code
+     :param  req_url: request url
+-    :param  host: optional host header
+-    :param  kwargs: optional arguments passed to ``requests.get``
++    :param  host: optional host header (overrides any "host" in ``headers``)
++    :param  kwargs: optional arguments passed to ``requests.get``; a ``headers`` dict is
++        merged with the host header rather than replaced
+     :return:
+     """
+-    headers = {} if host is None else {"host": host}
++    headers = dict(kwargs.pop("headers", None) or {})
++    if host is not None:
++        headers["host"] = host
+     resp = None
+     last_error = None
+     # One initial request plus up to 31 retries (~31s of polling), matching the
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11372** (2026-11-10): Update version to 5.7.1 & chart to 2.8.1 (@pdabelf5)
-- **PR #11370** (2026-11-10): Update Red Hat UBI images (release-5.7) (@renovate[bot])
-- **PR #11369** (2026-11-10): Update module github.com/mikefarah/yq/v4 to v4.54.3 (main) (@renovate[bot])
-- **PR #11368** (2026-11-10): Update Red Hat UBI images (main) (@renovate[bot])
-- **PR #11367** (2026-11-11): [ci]: 1.6-lts: create an action to fetch secrets for various jobs (@javorszky)
-- **PR #11366** (2026-11-11): [ci]: 1.6-main: Create an action to fetch secrets for various jobs (@javorszky)
+- **PR #11409** (2026-11-12): Add comment explaining pull-requests permission in CI (@haywoodsh)
+- **PR #11407** (2026-11-12): Update actions/checkout action to v7 (release-2026-lts) (@renovate[bot])
+- **PR #11406** (2026-11-12): Update module golang.org/x/crypto to v0.59.0 (release-2026-lts) (@renovate[bot])
+- **PR #11405** (2026-11-12): Update github actions (release-2026-lts) (@renovate[bot])
+- **PR #11404** (2026-11-12): Update docker/dockerfile Docker tag to v1.29 (release-2026-lts) (@renovate[bot])
+- **PR #11403** (2026-11-12): Update module golang.org/x/crypto to v0.59.0 (release-5.7) (@renovate[bot])
 
 ---
 
@@ -1723,25 +2334,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add nginxAgent.labels to Helm chart for NGINX One Console (#11347)
+## X. Render JWT claim authorization in the NGINX Plus VirtualServer template (#11227)
 
 **RULE**:
-When implementing operations in `charts/nginx-ingress/templates/_helpers.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/developer/jwt-claim-validation-plan.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59dbb784`: Add nginxAgent.labels to Helm chart for NGINX One Console (#11347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba1960d9`: Render JWT claim authorization in the NGINX Plus VirtualServer template (#11227). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/nginx-ingress/templates/_helpers.tpl`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/developer/jwt-claim-validation-plan.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-{{- if .Values.nginxAgent.labels }}
-
-labels:
-{{ toYaml .Values.nginxAgent.labels | indent 2 }}
-{{- end }}
+  - **OIDC helper locations (`oidc.tmpl`):** the legacy OIDC include sits at server level, so `@do_oidc_flow`, the redirect URI (`/_codexch`), `/logout` and `/front_channel_logout` inherit the server's `auth_jwt` and `auth_jwt_require`. A login request carries no token, so the inherited check returns 401 and the login never starts. They emit `auth_jwt off;` when the VirtualServer has a server-level JWT policy (`OIDC.ServerJWTAuth`). A reset variable would not be enough, because the inherited `auth_jwt` alone also demands a bearer token. `/_logout` and `@oidc_error` use `return`, which runs before the access phase, and `/_jwks_uri`, `/_token`, `/_refresh`, `/_token_validation` are subrequests. `auth_jwt off` removes no protection: the entry location still validates the session token.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1751,4 +2358,4 @@ labels:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59dbb784` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba1960d9` are properly handled with clean fallback behavior.

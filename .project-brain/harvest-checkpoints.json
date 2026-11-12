@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T23:42:16.744Z",
+  "last_updated": "2026-11-12T23:55:04.796Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "1589357b742d71f29758d68e60c56ca69b6858b50b625e0ebaaaf4aeaef97df3",
-      "verified_at": "2026-11-11T13:29:12.691Z",
+      "content_hash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
+      "verified_at": "2026-11-12T23:55:04.795Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T13:29:12.691Z"
+      "last_updated": "2026-11-12T23:55:04.795Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
-      "verified_at": "2026-11-08T20:13:08.202Z",
+      "content_hash": "e1d02459c4c857a5f66ff0401c9b11bb0fe51a26c563526a19fa3f5de820e2ff",
+      "verified_at": "2026-11-12T23:54:54.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:13:08.202Z"
+      "last_updated": "2026-11-12T23:54:54.638Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",
@@ -13416,14 +13416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-touchlab-kermit",
-      "content_hash": "cc573839a0d8d7db5543e8b2227b37d71847ac85c8ab1ae0c25947927665bc2b",
-      "verified_at": "2026-11-05T11:53:16.808Z",
+      "content_hash": "d770c3af6590fe933da96ec7f4952d856c267deca18a459b1d5ef74338cd9f8a",
+      "verified_at": "2026-11-12T23:55:04.634Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T11:53:16.808Z"
+      "last_updated": "2026-11-12T23:55:04.634Z"
     },
     "GateNLP/ultimate-sitemap-parser": {
       "repository": "GateNLP/ultimate-sitemap-parser",

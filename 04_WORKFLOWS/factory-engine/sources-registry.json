@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T23:42:22.049Z",
-    "lastVerified": "2026-11-12T23:42:22.049Z",
+    "lastChecked": "2026-11-12T23:55:11.402Z",
+    "lastVerified": "2026-11-12T23:55:11.402Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -365,8 +365,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T23:07:53.441Z",
-    "lastVerified": "2026-11-12T23:07:53.441Z",
+    "lastChecked": "2026-11-12T23:54:50.546Z",
+    "lastVerified": "2026-11-12T23:54:50.546Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -414,14 +414,14 @@
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T13:29:01.191Z",
-    "lastVerified": "2026-11-11T13:29:01.191Z",
+    "lastChecked": "2026-11-12T23:54:48.563Z",
+    "lastVerified": "2026-11-12T23:54:48.563Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "1589357b742d71f29758d68e60c56ca69b6858b50b625e0ebaaaf4aeaef97df3",
+    "contentHash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -934,9 +934,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-12T13:10:16.072Z",
+    "lastChecked": "2026-11-12T23:54:45.531Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-12T13:10:16.072Z"
+    "lastVerified": "2026-11-12T23:54:45.531Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -3113,9 +3113,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-11T11:18:53.135Z",
+    "lastChecked": "2026-11-12T23:54:48.125Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-11T11:18:53.135Z"
+    "lastVerified": "2026-11-12T23:54:48.125Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -8217,22 +8217,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zenbu-labs-terminal-browser": {
-    "name": "terminal-browser",
+    "name": "zenbu-labs/terminal-browser",
     "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T04:59:05.548Z",
-    "lastVerified": "2026-11-10T04:59:05.548Z",
+    "lastChecked": "2026-11-12T23:54:39.978Z",
+    "lastVerified": "2026-11-12T23:54:39.978Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "664a590b200c01144430bec64b18907030c0de22eb34b367ca1caf43bc2fde61",
+    "contentHash": "e1d02459c4c857a5f66ff0401c9b11bb0fe51a26c563526a19fa3f5de820e2ff",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a8c78463"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-cactus-compute-whistle": {
     "name": "Cactus-Compute/whistle",
@@ -10975,22 +10974,21 @@
     "lastVerified": "2026-11-11T18:03:31.196Z"
   },
   "touchlab-kermit": {
-    "name": "Kermit",
+    "name": "touchlab/Kermit",
     "officialUrl": "https://github.com/touchlab/Kermit",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T17:42:33.018Z",
-    "lastVerified": "2026-11-08T17:42:33.018Z",
+    "lastChecked": "2026-11-12T23:54:48.107Z",
+    "lastVerified": "2026-11-12T23:54:48.107Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-touchlab-kermit",
-    "contentHash": "cc573839a0d8d7db5543e8b2227b37d71847ac85c8ab1ae0c25947927665bc2b",
+    "contentHash": "d770c3af6590fe933da96ec7f4952d856c267deca18a459b1d5ef74338cd9f8a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "44bd2980"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lucky-media-astro-seo": {
     "name": "astro-seo",
@@ -12974,8 +12972,8 @@
     "officialUrl": "https://github.com/pallets/flask",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-08T01:03:04.487Z",
-    "lastVerified": "2026-11-08T01:03:04.487Z",
+    "lastChecked": "2026-11-12T23:54:37.965Z",
+    "lastVerified": "2026-11-12T23:54:37.965Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pallets-flask",
