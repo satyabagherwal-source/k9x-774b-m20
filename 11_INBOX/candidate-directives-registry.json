@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T06:20:28.299Z",
+  "last_updated": "2026-11-12T06:28:57.584Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6300,6 +6300,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2EFD1D-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C22949",
+      "directive_title": "build(deps): bump actions-rust-lang/setup-rust-toolchain from 2.0.0 to 2.0.1 (#4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "actix-actix-web",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C22949-build-deps-bump-actions-rust-lang-setup-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-2F73AE",
+      "directive_title": "actions lock file for codeql-action and cibuildwheel bumps (#14366)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aio-libs-aiohttp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2F73AE-actions-lock-file-for-codeql-action-and-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-956993",
+      "directive_title": "storage): create the relay and approval tables with the schema, never cache a fa",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "agent-field-agentfield",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-956993-storage-create-the-relay-and-approval-ta.md",
       "staged_date": "2026-11-12"
     }
   ]

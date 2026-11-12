@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T06:20:20.714Z",
+  "last_updated": "2026-11-12T06:28:52.265Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "1289b8bafa0e5a8ff0d67dda0c9126eb751fda86b5910d56fdc0a5c7070d2f4d",
-      "verified_at": "2026-11-09T23:17:49.691Z",
+      "content_hash": "79121a7d041b95e27ba7973c20604e034c372e57ecedc5c1740e14248da3c6ef",
+      "verified_at": "2026-11-12T06:27:05.807Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T23:17:49.691Z"
+      "last_updated": "2026-11-12T06:27:05.807Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "960e37fd10091aab83bafd5757051a2e37f533bfe4863994c95e09cdbaa06ecd",
-      "verified_at": "2026-11-09T12:49:30.127Z",
+      "content_hash": "14713634de47c67d8614b2e636afc603fe8326270000c1313617d8ebfe95e522",
+      "verified_at": "2026-11-12T06:27:16.981Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:49:30.127Z"
+      "last_updated": "2026-11-12T06:27:16.981Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "921fcbbce477064cd686bfe9eec4a5d4ef49335113d0e68072a8d0113ef650df",
-      "verified_at": "2026-11-09T22:34:28.777Z",
+      "content_hash": "c8616073b9ad62fa8882f4002ebe24c2bacdf3fedd73d46e6cf2ad361dcacdb4",
+      "verified_at": "2026-11-12T06:27:13.775Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T22:34:28.777Z"
+      "last_updated": "2026-11-12T06:27:13.775Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -14556,14 +14556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aio-libs-aiohttp",
-      "content_hash": "47d0aa1997f034bee0afff4b4655aa128b60507a9ecd18795d154e496aff9fbe",
-      "verified_at": "2026-11-07T06:29:23.737Z",
+      "content_hash": "6734bdbf4a043028bdf93e08583b0772107500aadf90f18cda1e63b2a60b9890",
+      "verified_at": "2026-11-12T06:28:52.265Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T06:29:23.737Z"
+      "last_updated": "2026-11-12T06:28:52.265Z"
     },
     "iPlug2/iPlug2": {
       "repository": "iPlug2/iPlug2",

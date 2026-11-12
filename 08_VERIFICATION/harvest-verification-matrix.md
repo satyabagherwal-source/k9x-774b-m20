@@ -9087,3 +9087,7 @@
 | `CYCLE-20261112-YMIT` | `2026-11-12T05:57:19.109Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fff051ed...`) |
 | `CYCLE-20261112-RL51` | `2026-11-12T06:19:50.341Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`637610b5...`) |
 | `CYCLE-20261112-S8JW` | `2026-11-12T06:20:20.684Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1f8f509...`) |
+| `CYCLE-20261112-0X4K` | `2026-11-12T06:27:05.780Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`79121a7d...`) |
+| `CYCLE-20261112-13AB` | `2026-11-12T06:27:13.763Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c8616073...`) |
+| `CYCLE-20261112-15RG` | `2026-11-12T06:27:16.972Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`14713634...`) |
+| `CYCLE-20261112-379X` | `2026-11-12T06:28:52.245Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6734bdbf...`) |

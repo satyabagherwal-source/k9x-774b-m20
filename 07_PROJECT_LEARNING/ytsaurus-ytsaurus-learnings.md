@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `04c23427`  
+> **Source Version**: `64d040b5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T22:34:27.123Z  
+> **Timestamp**: 2026-11-12T06:27:04.301Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T22:34:26.744Z  
+> **Harvest Timestamp**: 2026-11-12T06:27:04.296Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1171,14 +1171,14 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1898** (2026-11-11): **DQ GWM mishandles late interconnect events after leader demotion**
+  *Symptoms*: The DQ global worker manager (GWM) does not safely handle interconnect notifications after transitioning from leader to follower.  ### Problem  While serving allocation requests as leader, GWM subscribes to the requesting nodes' interconnect sessions. `TransitionToFollowerOfRemoteLeader()` clears worker and allocation state, but does not call `UnsubscribeAll()`.  The `Follower` state also lacks handlers for `TEvInterconnect::TEvNodeDisconnected`, `TEvInterconnect::TEvNodeConnected`, and `TEvents::TEvUndelivered`. Notifications from the former leader's sessions can therefore arrive in a state that does not accept them. Even unsubscribing during demotion is insufficient on its own: notifications may already be queued in the actor's mailbox.  In builds with debug assertions enabled, an unexpected notification reaches the assertion in `STRICT_STFUNC` and can abort the yql-agent process. In builds with these assertions disabled, the notification is ignored instead of going through the normal interconnect cleanup path.  ### Reproduction  An actor test can reproduce the problematic transition without a full YT cluster:  1. Start GWM as leader and register a worker. 2. Allocate a worker from an actor on another node, establishing an interconnect subscription. 3. Demote GWM to follower of a remote leader. 4. Deliver a late `TEvNodeDisconnected` from the previous session. Also cover late `TEvNodeConnected` and `TEvUndelivered` notifications.  The follower should process these notificat
+
 - **Issue #1895** (2026-11-09): **yt/chyt: remove hardcoded jaeger**
   *Symptoms*: It is definitely should not be here. 
   **Post-Mortem & Fix Analysis**:
   > `05.11.2026, 12:29:13` PR autocheck started. Watch workflow progress [here](https://github.com/ytsaurus/ytsaurus/actions/runs/42027488293). `05.11.2026, 12:30:46` PR autocheck finished. Statuses: Strawberry controller: cancelled CMake build+check: skipped Ya-make build: skipped Tests: skipped 
   > `05.11.2026, 12:31:20` PR autocheck started. Watch workflow progress [here](https://github.com/ytsaurus/ytsaurus/actions/runs/42027611538). `06.11.2026, 02:20:21` Integration tests are started. `06.11.2026, 04:59:06` Tests finished. Something went wrong.  `06.11.2026, 04:59:16` PR autocheck finished. Statuses: Strawberry controller: success CMake build+check: success Ya-make build: success Tests: success 
-
-- **Issue #1881** (2026-11-01): **YQL: WHERE resolves input columns as GROUP BY aliases with language version 2025.02 (TPC-H Q3)**
-  *Symptoms*: ### Description  With YQL language version `2025.02`, a TPC-H Q3 query fails during type annotation when `WHERE` references input columns that also have same-name aliases in `GROUP BY`.  `WHERE` should resolve these references against the input tables before the `GROUP BY` expressions and aliases are introduced. Instead, the translator appears to resolve them as grouping aliases, then fails because those aliases have not been computed yet.  ### SQL reproducer  The following is TPC-H Q3 with minor YQL syntax adaptations. Run it against the standard TPC-H tables, adjusting `TablePathPrefix` to their location, with Query Tracker setting `yql_version: "2025.02"`:  ```sql pragma TablePathPrefix = '//home/tpc/h/1/'; pragma AnsiImplicitCrossJoin;  select 	l_orderkey, 	sum(l_extendedprice * (Decimal('1',15,6) - l_discount)) as revenue, 	o_orderdate, 	o_shippriority from 	customer, 	orders, 	lineitem where 	c_mktsegment = 'BUILDING' 	and c_custkey = o_custkey 	and l_orderkey = o_orderkey 	and o_orderdate < Date('1995-03-15') 	and l_shipdate > Date('1995-03-15') group by 	l_orderkey as l_orderkey, 	o_orderdate as o_orderdate, 	o_shippriority as o_shippriority order by 	revenue desc, 	o_orderdate limit 10; ```  ### Actual behavior  The query fails before execution with a type annotation error. The relevant errors from this example are:  ```text Type annotation   At function: OrderedFilter     At function: ==       At function: Member         16:6: Member not found: l_orderkey     At fun
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1195,680 +1195,150 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d2cdb39` (2026-11-09)
-**Commit Message**: Fix DQ worker manager interconnect cleanup after leader demotion
+### Incident Patch 1: `df0b544e` (2026-11-11)
+**Commit Message**: YT-30385: Fix lease timeout assertions and force transaction cleanup
 
-При переходе GWM из leader в follower подписки на interconnect с узлами аллокаторов сохранялись, а Follower не обрабатывал поздние TEvNodeDisconnected, TEvNodeConnected и TEvUndelivered. В debug это приводило к assert в STRICT_STFUNC. При потере лидерства теперь выполняется UnsubscribeAll(); уже поставленные в очередь disconnect/undelivered проходят через существующие обработчики очистки, а connected логируется на уровне DEBUG с NodeId через OnExecuterConnectedStub с полным именем метода, по образцу OnFreeWorkersStub.
+The lease revocation test introduced in https://nda.ya.ru/t/-tbdDpB27wJmXy rejects a valid timeout: the driver reports "Operation timed out" (code 3), while the assertion requires "Request timed out". The worker exception reaches join() before unreference_lease(), leaving cleanup waiting for the held reference.
+commit_hash:4eb268d491e58881392019c1869e4161fd11c1f0
 
-Регрессионные actor-тесты добавлены отдельным interconnect_ut.cpp в существующий аркадийный UT-проект: проверяются отправка отписки, поздние уведомления, отзывчивость follower и успешная аллокация после повторного избрания. Все прежние тесты и зависимости сохранены. UT подключён безусловно через RECURSE_FOR_TESTS; новые PEERDIR не потребовались. Benchmark подключён только под IF (NOT OPENSOURCE), без проверки имени проекта, чтобы не расширять публичную выгрузку его транзитивными benchmark/example/UT-проектами. Проверка Linux-графов подтвердила: внутри Аркадии остаются UT и benchmark, в OpenSource остаё
-
-**File**: `contrib/ydb/tests/supp/__main__.py` (added, +31/-0)
+**File**: `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py` (modified, +9/-2)
 ```diff
-@@ -0,0 +1,31 @@
-+# -*- coding: utf-8 -*-
-+import os
-+import sys
-+import yatest.common
-+
-+from library.python.testing.recipe import declare_recipe
-+from library.python.testing.recipe import set_env
-+
-+
-+def setup_suppression():
-+    supp_txt = yatest.common.source_path(os.getenv("YDB_UBSAN_OPTIONS"))
-+    assert os.path.exists(supp_txt)
-+
-+    with open(supp_txt, 'r') as supp:
-+        sys.stderr.write("Using suppressions:\n=====\n%s" % supp.read())
-+
-+    set_env(
-+        "UBSAN_OPTIONS",
-+        "suppressions=%s" % supp_txt
-+    )
-+
-+
-+def stop():
-+    pass
-+
-+
-+if __name__ == "__main__":
-+    declare_recipe(
-+        lambda args: setup_suppression(),
-+        lambda args: stop(),
-+    )
-```
-
-**File**: `contrib/ydb/tests/supp/ubsan_default.txt` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+vptr:*.so
-+function:yql/minikql/mkql_function_registry.cpp
-+vptr:NYql::NUdf
-+alignment:NYT
-+nonnull-attribute:yt/yt/core/misc/string_builder-inl.h
-+vptr:NYT::NConcurrency::TThreadPoolPoller
-+vptr:NYT::TAllocationHolder
-```
-
-**File**: `contrib/ydb/tests/supp/ubsan_supp.inc` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+DATA(
-+    arcadia/contrib/ydb/tests/supp
-+)
-+
-+ENV(YDB_UBSAN_OPTIONS=contrib/ydb/tests/supp/ubsan_default.txt)
-+
-+DEPENDS(
-+    contrib/ydb/tests/supp
-+)
-+
-+USE_RECIPE(
-+    contrib/ydb/tests/supp/ydb_supp
-+)
-```
-
-**File**: `contrib/ydb/tests/supp/ya.make` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+PY3_PROGRAM(ydb_supp)
-+
-+PY_SRCS(__main__.py)
-+
-+PEERDIR(
-+    library/python/testing/recipe
-+    library/python/testing/yatest_common
-+)
-+
-+END()
-+
-+
-```
-
-**File**: `yt/yql/providers/dq/actors/yt/ya.make` (modified, +2/-9)
-```diff
-@@ -22,8 +22,7 @@ IF (NOT OS_WINDOWS)
-     )
- ENDIF()
+@@ -10,6 +10,8 @@
  
--SET(
--    SOURCE
-+SRCS(
-     node_id_allocator.cpp
-     node_id_allocator.h
-     nodeid_assigner.cpp
-@@ -33,9 +32,7 @@ SET(
- )
+ from yt_driver_bindings import Driver
  
- IF (NOT OS_WINDOWS)
--    SET(
--        SOURCE
--        ${SOURCE}
-+    SRCS(
-         nodeid_cleaner.cpp
-         nodeid_cleaner.h
-         worker_registrator.cpp
-@@ -51,10 +48,6 @@ IF (NOT OS_WINDOWS)
-     )
- ENDIF()
++import yt_error_codes
++
+ from yt_helpers import master_exit_read_only_sync
  
--SRCS(
--    ${SOURCE}
--)
--
- END()
+ from yt.test_helpers import (
+@@ -30,6 +32,9 @@ class TestDynamicTablesLeases(YTEnvSetup):
+     NUM_NODES = 3
+     USE_DYNAMIC_TABLES = True
  
- RECURSE_FOR_TESTS(
++    # Failed assertions can leave deliberately held lease references blocking cleanup.
++    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = True
++
+     LEASE_ID = "1-2-3-4"
+ 
+     DELTA_MASTER_CONFIG = {
+@@ -730,8 +735,10 @@ def test_lease_revocation_timeout(self):
+         driver = Driver(driver_config)
+ 
+         def run_abort():
+-            with raises_yt_error("Request timed out|Request queue size limit exceeded"):
++            with raises_yt_error() as error:
+                 abort_transaction(tx, driver=driver, verbose=False)
++            assert error[0].contains_code(yt_error_codes.Timeout) or error[0].contains_code(
++                yt_error_codes.RequestQueueSizeLimitExceeded)
+ 
+         abort_requests = [
+             self.spawn_additional_thread(target=run_abort)
+@@ -743,7 +750,7 @@ def run_abort():
+ 
+         # NB: If all previous requests aren't stuck this request won't get
+         # "RequestQueueSizeLimitExceeded" error.
+-        with raises_yt_error("Request timed out"):
++        with raises_yt_error(code=yt_error_codes.Timeout):
+             abort_transaction(tx, driver=driver)
+ 
+         self._check_lease(cell_id, "revoking", 1, 0, lease_id=tx)
 ```
 
-**File**: `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp` (modified, +9/-0)
+**File**: `yt/yt/tests/library/yt_env_setup.py` (modified, +5/-1)
 ```diff
-@@ -475,6 +475,10 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
-     STRICT_STFUNC(Follower, {
-         HHFunc(TEvBecomeLeader, StartLeader)
-         HHFunc(TEvBecomeFollower, StartFollower)
-+        // Notifications from the previous leader's sessions can already be queued.
-+        HHFunc(TEvInterconnect::TEvNodeConnected, OnExecuterConnectedStub)
-+        HHFunc(TEvInterconnect::TEvNodeDisconnected, OnExecuterDisconnected)
-+        HHFunc(TEvents::TEvUndelivered, OnUndelivered)
-         HHFunc(TEvAllocateWorkersRequest, StartUploadAndForward)
-         FORWARD(TEvFreeWorkersNotify)
-         FORWARD(TEvRegisterNode)
-@@ -756,6 +760,7 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
-     }
+@@ -505,6 +505,7 @@ class YTEnvSetup(object):
+     TEST_MAINTENANCE_FLAGS = False
  
-     void TransitionToFollowerOfRemoteLeader() {
-+        UnsubscribeAll();
-         WaitListSize = nullptr;
-         Workers.Clear();
-         for (const auto& [key, value] : AllocatedResources) {
-@@ -1187,6 +1192,10 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
-         });
-     }
+     WAIT_FOR_DYNAMIC_CONFIG = True
++    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = False
  
-+    void OnExecuterConnectedStub(TEvInterconnect::TEvNodeConnected::TPtr& ev, const NActors::TActorContext&) {
-+        YQL_CLOG(DEBUG, ProviderDq) << "TGlobalWorkerManager::OnExecuterConnectedStub " << ev->Get()->NodeId;
-+    }
-+
-     void OnExecuterDisconnected(TEvInterconnect::TEvNodeDisconnected::TPtr& ev, const NActors::TActorContext& /*ctx*/)
-     {
-         YQL_CLOG(DEBUG, ProviderDq) << "OnExecuterDisconnected " << ev->Get()->NodeId;
-```
-
-**File**: `yt/yql/providers/dq/global_worker_manager/global_worker_manager_ut.cpp` (added, +2296/-0)
-```diff
-@@ -0,0 +1,2296 @@
-+#include "global_worker_manager.h"
-+#include <yt/yql/providers/dq/testlib/test_coordination_helper.h>
-+#include <yt/yql/providers/dq/actors/yt/yt_wrapper.h>
-+#include <contrib/ydb/library/yql/providers/dq/worker_manager/local_worker_manager.h>
-+#include <contrib/ydb/library/actors/core/hfunc.h>
-+#include <contrib/ydb/library/actors/interconnect/interconnect.h>
-+#include <contrib/ydb/library/yql/providers/dq/worker_manager/interface/events.h>
-+
-+#include <yql/essentials/utils/log/proto/logger_config.pb.h>
-+#include <yql/essentials/utils/log/log.h>
-+
-+#include <library/cpp/testing/unittest/registar.h>
-+#include <contrib/ydb/library/actors/testlib/test_runtime.h>
-+#include <library/cpp/yson/node/node_io.h>
-+#include <yt/cpp/mapreduce/interface/fluent.h>
-+#include <yql/essentials/providers/common/metrics/metrics_registry.h>
-+#include <contrib/ydb/library/yql/providers/dq/actors/events/events.h>
-+#include <contrib/ydb/library/yql/providers/dq/common/attrs.h>
-+#include <contrib/ydb/library/yql/providers/dq/common/yql_dq_common.h>
-+#include <yt/yql/providers/dq/actors/dynamic_nameserver.h>
-+#include <contrib/ydb/library/yql/providers/dq/actors/resource_allocator.h>
-+#include <yql/essentials/minikql/invoke_builtins/mkql_builtins.h>
-+#include <yql/essentials/core/dq_integration/transform/yql_dq_task_transform.h>
-+#include <contrib/ydb/library/yql/dq/comp_nodes/yql_common_dq_factory.h>
-+#include <yql/essentials/providers/common/comp_nodes/yql_factory.h>
-+#include <yql/essentials/minikql/comp_nodes/mkql_factories.h>
-+#include <contrib/ydb/library/yql/dq/transform/yql_common_dq_transform.h>
-+#include <contrib/ydb/library/yql/providers/dq/task_runner/tasks_runner_local.h>
-+
-+#include <util/generic/map.h>
-+#include <util/folder/tempdir.h>
-+#include <util/stream/file.h>
-+
-+using namespace NYql;
-+using namespace NActors;
-+using namespace NProto;
-+using namespace NDqs;
-+
-+namespace {
-+
-+using TWarmupGroups = TMap<std::pair<TString, TString>, THashSet<TString>>;
-+
-+template <typename TGroups>
-+void AssertWarmupGroups(const TGroups& groups, const TWarmupGroups& expected) {
-+    UNIT_ASSERT_VALUES_EQUAL(groups.size(), expected.size());
-+    THashSet<std::pair<TString, TString>> locations;
-+    for (const auto& group : groups) {
-+        const auto location = std::make_pair(group.GetUploadClusterAddress(), group.GetUploadPrefix());
-+        UNIT_ASSERT(locations.insert(location).second);
-+        const auto it = expected.find(location);
-+        UNIT_ASSERT(it != expected.end());
-+        UNIT_ASSERT_VALUES_EQUAL(group.GetFiles().size(), it->second.size());
-+        THashSet<TString> ids;
-+        for (const auto& file : group.GetFiles()) {
-+            UNIT_ASSERT(ids.insert(file.GetObjectId()).second);
-+            UNIT_ASSERT(it->second.contains(file.GetObjectId()));
-+            UNIT_ASSERT(file.GetLocalPath().empty());
-+        }
-+    }
-+}
-+
-+void InitTestLogger() {
-+    NYql::NProto::TLoggingConfig loggerConfig;
-+    loggerConfig.set_allcomponentslevel(NYql::NProto::TLoggingConfig_ELevel_DEBUG);
-+    NYql::NLog::InitLogger(loggerConfig, false);
-+}
-+
-+NProto::TDqConfig::TScheduler MakeRunningLimiterConfig() {
-+    NProto::TDqConfig::TScheduler config;
-+    config.SetLimitRunningTasksPerUserPercent(50);
-+    return config;
-+}
-+
-+TResourceManagerOptions MakeTargetCapacityOption(ui32 maxJobs, i32 workerCapacity = 1) {
-+    TResourceManagerOptions options;
-+    options.YtBackend.SetMaxJobs(maxJobs);
-+    options.YtBackend.SetWorkerCapacity(workerCapacity);
-+    return options;
-+}
-+
-+TIntrusivePtr<TTableNameserverSetup> MakeNameserverTable(const TTestActorRuntimeBase& runtime) {
-+    auto nameserverTable = MakeIntrusive<TTableNameserverSetup>();
-+    for (ui32 index = 0; index < runtime.GetNodeCount(); ++index) {
-+        const auto nodeId = runtime.GetNodeId(index);
-+        nameserverTable->StaticNodeTable[nodeId] = std::make_pair(ToString(nodeId), nodeId);
-+    }
-+    return nameserverTable;
-+}
-+
-+class TProbeLock: public TActor<TProbeLock> {
-+public:
-+    explicit TProbeLock(TIntrusivePtr<TLockProbe> probe)
-+        : TActor(&TProbeLock::Main)
-+        , Probe_(std::move(probe))
-+    {
-+    }
-+
-+    STATEFN(Main) {
-+        switch (ev->GetTypeRewrite()) {
-+            HFunc(TEvBecomeFollower, OnBecomeFollower);
-+            cFunc(TEvents::TEvPoison::EventType, OnPoison);
-+        }
-+    }
-+
-+    void OnBecomeFollower(TEvBecomeFollower::TPtr& ev, const TActorContext& ctx) {
-+        Y_UNUSED(ev);
-+        Y_UNUSED(ctx);
-+        ++Probe_->BecomeFollowerCount;
-+    }
-+
-+    void OnPoison() {
-+        ++Probe_->PoisonCount;
-+        PassAway();
-+    }
-+
-+    TIntrusivePtr<TLockProbe> Probe_;
-+};
-+
-+class TMockLock: public TActor<TMockLock> {
-+public:
-+    TMockLock()
-+        : TActor(&TMockLock::Main)
-+    {
-+    }
-+
-+    STATEFN(Main) {
-+        switch (ev->GetTypeRewrite()) {
-+            cFunc(TEvents::TEvPoison::EventType, PassAway);
-+        }
-+    }
-+};
-+
-+class TWarmupUploadLock: public TActor<TWarm
-```
-
-**File**: `yt/yql/providers/dq/global_worker_manager/service_node_pinger_ut.cpp` (added, +197/-0)
-```diff
-@@ -0,0 +1,197 @@
-+#include "service_node_pinger.h"
-+#include <yt/yql/providers/dq/testlib/test_coordination_helper.h>
-+
-+#include <yt/yql/providers/dq/actors/yt/yt_wrapper.h>
-+#include <yt/yql/providers/dq/runtime/file_cache.h>
-+
-+#include <contrib/ydb/library/actors/testlib/test_runtime.h>
-+#include <contrib/ydb/library/yql/providers/dq/runtime/runtime_data.h>
-+
-+#include <contrib/libs/grpc/include/grpcpp/server_builder.h>
-+
-+#include <library/cpp/testing/unittest/registar.h>
-+
-+#include <util/folder/tempdir.h>
-+#include <util/generic/hash_set.h>
-+#include <util/stream/file.h>
-+#include <util/string/builder.h>
-+
-+namespace NYql {
-+    namespace {
-+
-+        class TDownloadListService: public Yql::DqsProto::DqService::Service {
-+        public:
-+            grpc::Status RegisterNode(grpc::ServerContext*, const Yql::DqsProto::RegisterNodeRequest*,
-+                                      Yql::DqsProto::RegisterNodeResponse* response) override {
-+                *response = Response;
-+                return grpc::Status::OK;
-+            }
-+
-+            Yql::DqsProto::RegisterNodeResponse Response;
-+        };
-+
-+        class TPingerCoordinator: public TTestCoordinationHelper {
-+        public:
-+            TPingerCoordinator(ui32 nodeId, THashMap<TString, NActors::TActorId> wrappers)
-+                : TTestCoordinationHelper(nodeId)
-+                , Wrappers(std::move(wrappers))
-+            {
-+                Config.SetHeartbeatPeriodMs(3'600'000);
-+            }
-+
-+            NActors::TActorId GetWrapper(NActors::TActorSystem*, const TString& cluster,
-+                                         const TString&, const TString&, const TString& = {}) override {
-+                return Wrappers.at(cluster);
-+            }
-+
-+            TWorkerRuntimeData* GetRuntimeData() override {
-+                return &RuntimeData;
-+            }
-+
-+            const NProto::TDqConfig::TYtCoordinator& GetConfig() override {
-+                return Config;
-+            }
-+
-+        private:
-+            const THashMap<TString, NActors::TActorId> Wrappers;
-+            TWorkerRuntimeData RuntimeData;
-+            NProto::TDqConfig::TYtCoordinator Config;
-+        };
-+
-+        using TExpectedReads = THashMap<TString, THashMap<TString, TString>>;
-+
-+        void CheckDownloads(const Yql::DqsProto::RegisterNodeResponse& response, TExpectedReads expectedReads) {
-+            using namespace NActors;
-+            TTempDir tempDir;
-+            TDownloadListService service;
-+            service.Response = response;
-+            THashSet<TString> expectedIds;
-+            for (const auto& [cluster, reads] : expectedReads) {
-+                for (const auto& [path, id] : reads) {
-+                    expectedIds.insert(id);
-+                }
-+            }
-+            int port = 0;
-+            grpc::ServerBuilder builder;
-+            builder.AddListeningPort("localhost:0", grpc::InsecureServerCredentials(), &port);
-+            builder.RegisterService(&service);
-+            auto server = builder.BuildAndStart();
-+            UNIT_ASSERT(server);
-+            UNIT_ASSERT(port);
-+
-+            TTestActorRuntimeBase runtime(1, true);
-+            runtime.Initialize();
-+            THashMap<TString, TActorId> wrappers;
-+            for (const auto& [cluster, _] : expectedReads) {
-+                wrappers.emplace(cluster, runtime.AllocateEdgeActor());
-+            }
-+            auto coordinator = MakeIntrusive<TPingerCoordinator>(runtime.GetNodeId(0), wrappers);
-+            TResourceManagerOptions options;
-+            options.YtBackend.SetProxyAddress("worker-cluster.yt");
-+            options.YtBackend.SetUploadPrefix("//worker");
-+            options.YtBackend.SetUser("worker-user");
-+            options.TmpDir = tempDir.Name() + "/download";
-+            options.FileCache = MakeIntrusive<TFileCache>(tempDir.Name() + "/cache", 1024);
-+            auto resolver = CreateStaticResolver({TStringBuilder() << "localhost:" << port});
-+            runtime.Register(CreateServiceNodePinger(runtime.GetNodeId(0), "localhost", 12345,
-+                                                     "worker_node", {}, resolver, coordinator, options));
-+
-+            for (auto& [cluster, reads] : expectedReads) {
-+                const auto wrapper = wrappers.at(cluster);
-+                while (!reads.empty()) {
-+                    const auto read = runtime.GrabEdgeEvent<TEvReadFile>(wrapper, TDuration::Seconds(10));
-+                    UNIT_ASSERT(read);
-+                    const auto remotePath = std::get<0>(*read->Get()).GetPath();
-+                    const auto it = reads.find(remotePath);
-+                    UNIT_ASSERT_C(it != reads.end(), cluster << ": unexpected path " << remotePath);
-+                    const auto& localPath = std::get<1>(*read->Get());
-+                    TFsPath(localPath).Parent().MkDirs();
-+                    {
-+                        TFileOutput output(localPath);
-+                        output << it->secon
-```
-
----
-
-### Incident Patch 2: `789e744c` (2026-11-09)
-**Commit Message**: Fix test_resharded_replication class teardown timeout
-
-Use 60 Chaos partitions to keep cumulative runtime within the class limit.
-
-Assigned YT test: test_chaos.py::TestChaos[*]::test_resharded_replication[data] (savrus)
-
-Test history: https://nda.ya.ru/t/O1RJ_o4c7w9ct6
-commit_hash:29c7f6810f31d4e10a5741dd631b763dcf3f31f0
-
-**File**: `yt/yt/tests/integration/dynamic_tables/test_chaos.py` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ class TestChaos(ChaosTestBase):
-     # TODO(nadya73): split this test suite.
-     ENABLE_MULTIDAEMON = True
-     NUM_REMOTE_CLUSTERS = 2
--    NUM_TEST_PARTITIONS = 40
-+    NUM_TEST_PARTITIONS = 60
-     NUM_SECONDARY_MASTER_CELLS_REMOTE_0 = 1
-     NUM_SECONDARY_MASTER_CELLS_REMOTE_1 = 1
+     ENABLE_MULTIDAEMON = False
+ 
+@@ -2256,7 +2257,10 @@ def _abort_transactions(self, driver=None):
+         test_cleanup.abort_transactions(
+             list_action=lambda *args, **kwargs: yt_commands.ls(*args, driver=driver, **kwargs),
+             abort_action=lambda transaction_id: requests.append(
+-                yt_commands.make_batch_request(abort_command, transaction_id=transaction_id)),
++                yt_commands.make_batch_request(
++                    abort_command,
++                    transaction_id=transaction_id,
++                    force=self.FORCE_ABORT_TRANSACTIONS_ON_CLEANUP)),
+             exists_action=lambda *args, **kwargs: yt_commands.exists(*args, driver=driver, **kwargs),
+             get_action=lambda *args, **kwargs: yt_commands.get(*args, driver=driver, **kwargs))
  
 ```
 
 ---
 
-### Incident Patch 3: `2adcdc20` (2026-11-09)
-**Commit Message**: Fix setting parsing with yt ql engine
+### Incident Patch 2: `884fc894` (2026-11-11)
+**Commit Message**: Fix transaction cleanup in Sequoia reconstructor tests
+commit_hash:a6992634534551a2c2995ee2ab7e59ba8b985323
 
-* Changelog entry
-  Type: fix
-  Component: query-tracker
-
-<Message for release notes>
-
-Fix settings parsing in YT QL engine
-commit_hash:abffe47a04e6d827d790e800ced59e5c482da0c2
-
-**File**: `yt/yt/server/query_tracker/ql_engine.cpp` (modified, +45/-21)
+**File**: `yt/yt/tests/integration/sequoia/test_sequoia_reconstructor.py` (modified, +2/-2)
 ```diff
-@@ -16,11 +16,14 @@
+@@ -2,7 +2,7 @@
  
- #include <yt/yt/core/misc/cache_config.h>
+ from yt_commands import (
+     authors, create, create_user, make_ace, remove, write_table,
+-    start_transaction, abort_transaction, abort_all_transactions,
++    start_transaction, abort_transaction, abort_all_user_transactions,
+     commit_transaction, get, lock, link, set)
  
--#include <yt/yt/core/ytree/convert.h>
- #include <yt/yt/core/ytree/attributes.h>
-+#include <yt/yt/core/ytree/convert.h>
-+#include <yt/yt/core/ytree/node.h>
+ from sequoia_reconstructor import check_single_cell_sequoia_reconstructor
+@@ -35,7 +35,7 @@ def cypress_root(self):
+         path = "//cypress"
+         create("map_node", path, attributes={"account": "tmp"})
+         yield path
+-        abort_all_transactions()
++        abort_all_user_transactions()
+         remove(path, recursive=True)
  
- #include <yt/yt/core/concurrency/action_queue.h>
- 
-+#include <type_traits>
-+
- namespace NYT::NQueryTracker {
- 
- using namespace NQueryTrackerClient;
-@@ -110,9 +113,9 @@ class TQLEngine
- 
-     IQueryHandlerPtr StartOrAttachQuery(NRecords::TActiveQuery activeQuery) override
-     {
--        auto settings = ConvertToAttributes(activeQuery.Settings);
--        auto cluster = settings->Find<std::string>("cluster").value_or(Config_->DefaultCluster);
--        auto proxyRole = settings->Find<std::string>("rpc_proxy_role").value_or(DefaultRpcProxyRole);
-+        auto settings = ConvertTo<IMapNodePtr>(activeQuery.Settings);
-+        auto cluster = FindSetting<std::string>(settings.Get(), "cluster").value_or(Config_->DefaultCluster);
-+        auto proxyRole = FindSetting<std::string>(settings.Get(), "rpc_proxy_role").value_or(DefaultRpcProxyRole);
-         auto nativeConnection = ClusterDirectory_->GetConnectionOrThrow(cluster);
-         auto nativeClient = nativeConnection->CreateNativeClient(NNative::TClientOptions::FromUser(activeQuery.User));
-         auto nativeConfig = nativeConnection->GetConfig();
-@@ -172,44 +175,65 @@ class TQLEngine
-     TQLEngineConfigPtr Config_;
-     TClusterDirectoryPtr ClusterDirectory_;
- 
--    static TSelectRowsOptions GetOptions(IAttributeDictionary* settings)
-+    template <class T>
-+    static std::optional<T> FindSetting(IMapNode* settings, TStringBuf key)
-+    {
-+        auto value = settings->FindChild(key);
-+        if (!value) {
-+            return std::nullopt;
-+        }
-+
-+        try {
-+            if (std::is_arithmetic_v<T> && value->GetType() == ENodeType::String) {
-+                return ConvertTo<T>(NYson::TYsonString(value->AsString()->GetValue()));
-+            }
-+            return ConvertTo<T>(value);
-+        } catch (const std::exception& ex) {
-+            THROW_ERROR_EXCEPTION("Error parsing setting value")
-+                .With("key", key)
-+                .With("value", value)
-+                .With(ex);
-+        }
-+    }
-+
-+    static TSelectRowsOptions GetOptions(IMapNode* settings)
-     {
-         auto options = TSelectRowsOptions();
- 
--        options.InputRowLimit = settings->Find<i64>("input_row_limit");
--        options.OutputRowLimit = settings->Find<i64>("output_row_limit");
--        options.ExecutionPool = settings->Find<std::string>("execution_pool");
--        options.ExecutionBackend = settings->Find<EExecutionBackend>("execution_backend");
--        options.UseLookupCache = settings->Find<bool>("use_lookup_cache");
--        options.UdfRegistryPath = settings->Find<TYPath>("udf_registry_path");
--        if (auto statisticsAggregation = settings->Find<EStatisticsAggregation>("statistics_aggregation")) {
-+        options.InputRowLimit = FindSetting<i64>(settings, "input_row_limit");
-+        options.OutputRowLimit = FindSetting<i64>(settings, "output_row_limit");
-+        options.ExecutionPool = FindSetting<std::string>(settings, "execution_pool");
-+        options.ExecutionBackend = FindSetting<EExecutionBackend>(settings, "execution_backend");
-+        options.UseLookupCache = FindSetting<bool>(settings, "use_lookup_cache");
-+        options.UdfRegistryPath = FindSetting<TYPath>(settings, "udf_registry_path");
-+        if (auto statisticsAggregation = FindSetting<EStatisticsAggregation>(settings, "statistics_aggregation")) {
-             options.StatisticsAggregation = *statisticsAggregation;
-         }
--        if (auto enableCodeCache = settings->Find<bool>("enable_code_cache")) {
-+        if (auto enableCodeCache = FindSetting<bool>(settings, "enable_code_cache")) {
-             options.EnableCodeCache = *enableCodeCache;
-         }
--        if (auto useCanonicalNullRelations = settings->Find<bool>("use_canonical_null_relations")) {
-+        if (auto useCanonicalNullRelations = FindSetting<bool>(settings, "use_canonical_null_relations")) {
-             options.UseCanonicalNullRelations = *useCanonicalNullRelations;
-         }
--        if (auto mergeVersionedRows = settings->Find<bool>("merge_versioned_rows")) {
-+        if (auto mergeVersionedRows = FindSetting<bool>(settings, "merge_versioned_rows")) {
-             options.MergeVersionedRows = *mergeVersionedRows;
-         }
--        if (auto useOrderByInJoinSubqueries = settings->Find<bool>("use_order_by_in_join_subqueries")) {
-+        if (auto useOrderByInJoinSubqueries = FindSetting<bool>(settings, "use_order_by_in_join_subqueries")) {
-             options.UseOrderByInJoinSubqueries = *useOrderByInJoinSubqueries;
-         }
--        if (auto syntaxVersion = settings->Find<int>("syntax_version")) {
-+        if (auto syntaxVersion = FindSetting<int>(settings, "syntax_version")) {
-             options.SyntaxVersion = *syntaxVersion;
-         }
--        if (auto expression
+     @authors("grphil")
 ```
 
-**File**: `yt/yt/tests/integration/queries/test_ql.py` (modified, +103/-0)
+---
+
+### Incident Patch 3: `49906e19` (2026-11-11)
+**Commit Message**: YQL-21692 prebuilt embedded
+
+#### Execute YQL jobs through the prebuilt embedded ABI ✎
+
+- A new set of C ABI functions exposes job descriptors (Calc, InferSchema, User) and a `Run` entry point so that YQL jobs can be executed inside a prebuilt embedded library. Job descriptors are available before factory construction.
+- When the library is used as a prebuilt binary, proxy job classes are auto-registered in the host job registry; when source-linked, the existing native registrations are detected and no proxies are added.
+- Errors propagate across the ABI boundary with their original type preserved: `TSystemError` status codes (including zero) are surfaced through a dedicated accessor, while other exceptions are returned as generic error strings.
+- YT runtime initialization now checks whether the process is already dispatched as a YT job (via the `YT_JOB_ID` environment variable) and skips re-dispatch in that case.
+- Prebuilt embedded ABI resource IDs are now set for default and RelWithDebInfo builds.
+
+<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
+commit_hash:631450ac25037a2101604bfe3591f4d3ed670768
+
+**File**: `yql/essentials/udfs/common/python/python_udf/python_udf.cpp` (modified, +5/-3)
 ```diff
-@@ -208,6 +208,109 @@ def test_supports_syntax_and_expression_builder_versions(self, query_tracker):
-         q.track()
-         assert_items_equal(q.read_result(0), [{"p": p + 2} for p in range(2)])
+@@ -82,9 +82,11 @@ class TPythonModule: public IUdfModule {
+         }
+ #endif
  
-+    @authors("artemmashin")
-+    @pytest.mark.parametrize("stringify", [False, True])
-+    def test_output_row_limit(self, query_tracker, stringify):
-+        self._create_simple_dynamic_table("//tmp/t", enable_dynamic_store_read=True)
-+        sync_mount_table("//tmp/t")
-+        rows = [{"key": i, "value": str(i)} for i in range(3)]
-+        insert_rows("//tmp/t", rows)
-+
-+        output_row_limit = 1
-+        settings = {
-+            "cluster": "primary",
-+            "output_row_limit": output_row_limit,
-+            "fail_on_incomplete_result": False,
+-        char executableVar[] = "executable"; // PySys_{Get,Set}Object take a non-const char* arg
+-        TPyObjectPtr pyExecutableStr = PyRepr(GetExecPath().data());
+-        Y_ABORT_UNLESS(PySys_SetObject(executableVar, pyExecutableStr.Get()) >= 0, "Can't set sys.executable");
++        {
++            char executableVar[] = "executable"; // PySys_{Get,Set}Object take a non-const char* arg
++            TPyObjectPtr pyExecutableStr = PyRepr(GetExecPath().data());
++            Y_ABORT_UNLESS(PySys_SetObject(executableVar, pyExecutableStr.Get()) >= 0, "Can't set sys.executable");
 +        }
-+        if stringify:
-+            settings["output_row_limit"] = yson.dumps(output_row_limit)
-+
-+        q = start_query("ql", "* from [//tmp/t] order by key limit 3", settings=settings)
-+        q.track()
-+        assert_items_equal(q.read_result(0), rows[:output_row_limit])
-+
-+    @authors("artemmashin")
-+    @pytest.mark.parametrize("stringify", [False, True])
-+    @pytest.mark.parametrize("fail_on_incomplete_result", [False, True])
-+    def test_fail_on_incomplete_result(self, query_tracker, stringify, fail_on_incomplete_result):
-+        self._create_simple_dynamic_table("//tmp/t", enable_dynamic_store_read=True)
-+        sync_mount_table("//tmp/t")
-+        rows = [{"key": i, "value": str(i)} for i in range(3)]
-+        insert_rows("//tmp/t", rows)
-+
-+        output_row_limit = 1
-+        settings = {
-+            "cluster": "primary",
-+            "output_row_limit": output_row_limit,
-+            "fail_on_incomplete_result": fail_on_incomplete_result,
-+        }
-+        if stringify:
-+            settings["fail_on_incomplete_result"] = yson.dumps(fail_on_incomplete_result)
-+
-+        q = start_query("ql", "* from [//tmp/t] order by key limit 3", settings=settings)
-+        if fail_on_incomplete_result:
-+            with raises_yt_error("Query terminated prematurely due to excessive output"):
-+                q.track()
-+            assert q.get_state() == "failed"
-+        else:
-+            q.track()
-+            assert_items_equal(q.read_result(0), rows[:output_row_limit])
-+
-+    @authors("artemmashin")
-+    @pytest.mark.parametrize("stringify", [False, True])
-+    def test_settings_parsing(self, query_tracker, stringify):
-+        self._create_simple_dynamic_table("//tmp/t", enable_dynamic_store_read=True)
-+        sync_mount_table("//tmp/t")
-+        rows = [{"key": i, "value": str(i)} for i in range(3)]
-+        insert_rows("//tmp/t", rows)
-+
-+        for name, value in [
-+            ("cluster", "primary"),
-+            ("rpc_proxy_role", "default"),
-+            ("input_row_limit", 1_000_000),
-+            ("output_row_limit", 1_000_000),
-+            # A numeric-looking setting must remain a string, not be parsed as a YSON number.
-+            ("execution_pool", "123"),
-+            ("execution_backend", "native"),
-+            ("use_lookup_cache", False),
-+            ("udf_registry_path", "//tmp/udfs"),
-+            ("statistics_aggregation", "depth_omit_node"),
-+            ("enable_code_cache", True),
-+            ("use_canonical_null_relations", False),
-+            ("merge_versioned_rows", True),
-+            ("use_order_by_in_join_subqueries", False),
-+            ("syntax_version", 1),
-+            ("expression_builder_version", 1),
-+            ("allow_full_scan", True),
-+            ("allow_join_without_index", False),
-+            ("fail_on_incomplete_result", True),
-+        ]:
-+            if stringify and isinstance(value, (bool, int)):
-+                value = yson.dumps(value, yson_format="text")
-+
-+            settings = {"cluster": "primary", name: value}
-+            self._assert_select_result("//tmp/t", settings, rows, False)
-+
-+    @authors("artemmashin")
-+    def test_settings_parsing_error(self, query_tracker):
-+        for name, value in [
-+            ("cluster", 1),
-+            ("execution_backend", "invalid"),
-+            ("output_row_limit", "invalid"),
-+            ("syntax_version", "invalid"),
-+            ("fail_on_incomplete_result", "invalid"),
-+        ]:
-+            settings = {"cluster": "primary", name: value}
-+            q = start_query("ql", "* from [//tmp/t]", settings=settings)
-+            with raises_yt_error("Error parsing setting value") as err:
-+                q.track()
-+            parsing_error = err[0].find_matching_error(
-+                predicate=lambda error: error.message == "Error parsing setting value")
-+            assert parsing_error is not None
-+            assert parsing_error.attributes["key"] == name
-+            assert parsing_error.attributes["value"] == value
-+            assert q.get_state() == "failed"
-+
  
- ##################################################################
- 
+         if (Standalone_) {
+             PyEval_InitThreads();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1897** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1895** (closed): yt/chyt: remove hardcoded jaeger (@koct9i)
 - **PR #1892** (closed): Fix typo in chaos-dynamic-tables.md (@hsalkaline)
 - **PR #1887** (closed): Preserve bus TLS configuration for YT QL RPC connections (@Tony-Romanov)
 - **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
 - **PR #1884** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
-- **PR #1883** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 
 ---
 
@@ -1888,58 +1358,37 @@ commit_hash:abffe47a04e6d827d790e800ced59e5c482da0c2
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. DQ worker manager interconnect cleanup after leader demotion
+## X. YT-30385: Fix lease timeout assertions and force transaction cleanup
 
 **RULE**:
-When implementing operations in `contrib/ydb/tests/supp/__main__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d2cdb39`: DQ worker manager interconnect cleanup after leader demotion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df0b544e`: YT-30385: Fix lease timeout assertions and force transaction cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/ydb/tests/supp/__main__.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# -*- coding: utf-8 -*-
-import os
-import sys
-import yatest.common
+import yt_error_codes
 
-from library.python.testing.recipe import declare_recipe
-from library.python.testing.recipe import set_env
+    # Failed assertions can leave deliberately held lease references blocking cleanup.
+    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = True
 
-
-def setup_suppression():
-    supp_txt = yatest.common.source_path(os.getenv("YDB_UBSAN_OPTIONS"))
-    assert os.path.exists(supp_txt)
-
-    with open(supp_txt, 'r') as supp:
-        sys.stderr.write("Using suppressions:\n=====\n%s" % supp.read())
-
-    set_env(
-        "UBSAN_OPTIONS",
-        "suppressions=%s" % supp_txt
-    )
-
-
-def stop():
-    pass
-
-
-if __name__ == "__main__":
-    declare_recipe(
-        lambda args: setup_suppression(),
-        lambda args: stop(),
-    )
+            with raises_yt_error() as error:
+            assert error[0].contains_code(yt_error_codes.Timeout) or error[0].contains_code(
+                yt_error_codes.RequestQueueSizeLimitExceeded)
+        with raises_yt_error(code=yt_error_codes.Timeout):
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            with raises_yt_error("Request timed out|Request queue size limit exceeded"):
+        with raises_yt_error("Request timed out"):
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d2cdb39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df0b544e` are properly handled with clean fallback behavior.

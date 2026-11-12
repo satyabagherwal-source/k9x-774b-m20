@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "296fac67",
+    "sourceVersion": "522cc8b7",
     "license": "Apache-2.0",
-    "contentHash": "1289b8bafa0e5a8ff0d67dda0c9126eb751fda86b5910d56fdc0a5c7070d2f4d",
-    "lastHarvestedAt": "2026-11-09T23:17:49.681Z",
+    "contentHash": "79121a7d041b95e27ba7973c20604e034c372e57ecedc5c1740e14248da3c6ef",
+    "lastHarvestedAt": "2026-11-12T06:27:05.782Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "04649fe7",
+    "sourceVersion": "5613284a",
     "license": "Apache-2.0",
-    "contentHash": "960e37fd10091aab83bafd5757051a2e37f533bfe4863994c95e09cdbaa06ecd",
-    "lastHarvestedAt": "2026-11-09T12:49:30.118Z",
+    "contentHash": "14713634de47c67d8614b2e636afc603fe8326270000c1313617d8ebfe95e522",
+    "lastHarvestedAt": "2026-11-12T06:27:16.974Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "04c23427",
+    "sourceVersion": "64d040b5",
     "license": "Apache-2.0",
-    "contentHash": "921fcbbce477064cd686bfe9eec4a5d4ef49335113d0e68072a8d0113ef650df",
-    "lastHarvestedAt": "2026-11-09T22:34:28.761Z",
+    "contentHash": "c8616073b9ad62fa8882f4002ebe24c2bacdf3fedd73d46e6cf2ad361dcacdb4",
+    "lastHarvestedAt": "2026-11-12T06:27:13.767Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "0ae5b96b",
+    "sourceVersion": "09f2de88",
     "license": "Apache-2.0",
-    "contentHash": "47d0aa1997f034bee0afff4b4655aa128b60507a9ecd18795d154e496aff9fbe",
-    "lastHarvestedAt": "2026-11-07T06:29:23.724Z",
+    "contentHash": "6734bdbf4a043028bdf93e08583b0772107500aadf90f18cda1e63b2a60b9890",
+    "lastHarvestedAt": "2026-11-12T06:28:52.248Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {

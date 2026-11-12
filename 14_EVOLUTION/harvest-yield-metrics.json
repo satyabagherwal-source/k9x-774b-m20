@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T06:20:20.709Z",
-  "total_cycles_completed": 8921,
-  "total_learnings_persisted": 8921,
-  "total_rules_promoted": 8767,
+  "last_updated": "2026-11-12T06:28:52.262Z",
+  "total_cycles_completed": 8925,
+  "total_learnings_persisted": 8925,
+  "total_rules_promoted": 8771,
   "history": [
-    {
-      "timestamp": "2026-11-11T06:33:46.448Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T06:33:49.366Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T06:33:50.008Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T07:03:08.639Z",
-      "repository": "Cactus-Compute/mirage",
-      "learningId": "learn-huggingface-cactus-compute-mirage",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T07:08:07.281Z",
       "repository": "ConwayResearch/Underdog-Woof",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T06:20:20.709Z",
       "repository": "vanniktech/gradle-maven-publish-plugin",
       "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T06:27:05.804Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T06:27:13.772Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T06:27:16.979Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T06:28:52.262Z",
+      "repository": "aio-libs/aiohttp",
+      "learningId": "learn-github-aio-libs-aiohttp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

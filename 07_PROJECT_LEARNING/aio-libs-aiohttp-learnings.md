@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source**: github ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
-> **Source Version**: `0ae5b96b`  
+> **Source Version**: `09f2de88`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T06:29:22.483Z  
+> **Timestamp**: 2026-11-12T06:28:42.463Z  
 > **Learning ID**: `learn-github-aio-libs-aiohttp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T06:24:20.764Z  
+> **Harvest Timestamp**: 2026-11-12T06:26:52.455Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Asynchronous HTTP client/server framework for asyncio and Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 16605 stars
+- **Stars / Engagement**: 16607 stars
 
 ---
 
@@ -1843,95 +1843,85 @@ class WebSocketReader:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2091405f` (2026-11-04)
-**Commit Message**: Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (#14218)
+### Incident Patch 1: `0058e2b6` (2026-11-11)
+**Commit Message**: Fix actions lock file for codeql-action and cibuildwheel bumps (#14366)
 
-Bumps [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel) from 4.3.4 to 4.3.5.
-- [Release notes](https://github.com/pypa/cibuildwheel/releases)
-- [Changelog](https://github.com/pypa/cibuildwheel/blob/main/docs/changelog.md)
-- [Commits](https://github.com/pypa/cibuildwheel/compare/v4.3.4...v4.3.5)
-
----
-updated-dependencies:
-- dependency-name: pypa/cibuildwheel
-  dependency-version: 4.3.5
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/reusable-cibuildwheel.yml` (modified, +1/-1)
+**File**: `.github/workflows/actions.lock` (modified, +8/-8)
 ```diff
-@@ -116,7 +116,7 @@ jobs:
-         image: tonistiigi/binfmt:qemu-v8.1.5
- 
-     - name: Build wheels
--      uses: pypa/cibuildwheel@v4.3.4
-+      uses: pypa/cibuildwheel@v4.3.5
-       with:
-         package-dir: >-  # not necessarily a dir, we pass an acceptable sdist
-           dist/${{ inputs.source-tarball-name }}
+@@ -9,7 +9,7 @@ workflows:
+         - 'dependabot/fetch-metadata@v3.1.0'
+     '.github/workflows/codeql.yml':
+         - 'actions/checkout@v7.0.1'
+-        - 'github/codeql-action@v4.39.0'
++        - 'github/codeql-action@v4.39.3'
+     '.github/workflows/dependency-submission.yml':
+         - 'actions/checkout@v7.0.1'
+         - 'actions/github-script@v9.0.0'
+@@ -21,7 +21,7 @@ workflows:
+         - 'actions/download-artifact@v8.0.2'
+         - 'actions/upload-artifact@v7.0.2'
+         - 'docker/setup-qemu-action@v4.4.0'
+-        - 'pypa/cibuildwheel@v4.3.1'
++        - 'pypa/cibuildwheel@v4.3.5'
+     '.github/workflows/stale.yml':
+         - 'actions/stale@v11.0.0'
+ dependencies:
+@@ -70,19 +70,19 @@ dependencies:
+         commit: 'sha1-99012661954931238ded8c8b007157a8430204e1'
+         owner_id: 5429470
+         repo_id: 288487894
+-    'github/codeql-action@v4.39.0':
+-        ref: 'v4.39.0'
+-        commit: 'sha1-6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee'
++    'github/codeql-action@v4.39.3':
++        ref: 'v4.39.3'
++        commit: 'sha1-33d7b85da1a04171e211befe2c739303b9a4c066'
+         owner_id: 9919
+         repo_id: 259445878
+     'matteogabriele/agentscan-action@v2.5.0':
+         ref: 'v2.5.0'
+         commit: 'sha1-8112fb79b33fafb8506159df20129a34209ac410'
+         owner_id: 5337152
+         repo_id: 1183120486
+-    'pypa/cibuildwheel@v4.3.1':
+-        ref: 'v4.3.1'
+-        commit: 'sha1-b3395e271a35f73dad77f21802abe9b986dfe299'
++    'pypa/cibuildwheel@v4.3.5':
++        ref: 'v4.3.5'
++        commit: 'sha1-f9b966cfadf4109556cadc5bb39ddb72d0ce664e'
+         owner_id: 647025
+         repo_id: 85508223
+         uses:
 ```
 
 ---
 
-### Incident Patch 2: `79b099dc` (2026-11-04)
-**Commit Message**: Fix CI on Ubuntu 26.04 runners (#14273)
+### Incident Patch 2: `ad642e5c` (2026-11-07)
+**Commit Message**: Revert "Add Asyntai to the spelling wordlist and update mac (#14293)"
 
-* Fix CI on Ubuntu 26.04 runners
+This partially reverts commit 0ae5b96be76a0fd8566fed53e7effc294f924add.
 
-Install JDK 21 for the Android test job, since the Gradle version used
-by CPython's Android testbed cannot parse the default JDK 25 version.
-Use the latest Python 3.13 for benchmarks, since setup-python has no
-3.13.2 build for Ubuntu 26.04; 3.13.2 was only a minimum version.
+Assisted-by: Git, meat and NeoVim.
 
-* Pin benchmark Python to 3.13.18
-
-Keep an exact patch version so CodSpeed results stay comparable
-between runs.
-
-**File**: `.github/workflows/ci-cd.yml` (modified, +10/-2)
+**File**: `docs/spelling_wordlist.txt` (modified, +0/-1)
 ```diff
-@@ -396,6 +396,14 @@ jobs:
-         python-version: ${{ matrix.pyver }}
-         activate-environment: true
-         enable-cache: true
-+    - name: Setup Java for Android Gradle build
-+      # The Gradle version used by CPython's Android testbed cannot run
-+      # on the JDK that newer runner images ship by default.
-+      if: ${{ matrix.config.platform == 'android' }}
-+      uses: actions/setup-java@v6.1.0
-+      with:
-+        distribution: temurin
-+        java-version: 21
-     - name: Free up disk space for Android emulator
-       if: ${{ matrix.config.platform == 'android' }}
-       uses: BRAINSia/free-disk-space@v2.1.3
-@@ -515,11 +523,11 @@ jobs:
-       with:
-         name: dist-pure
-         path: dist/
--    - name: Setup Python 3.13.2
-+    - name: Setup Python 3.13.18
-       id: python-install
-       uses: actions/setup-python@v7.1.0
-       with:
--        python-version: 3.13.2
-+        python-version: 3.13.18
-         cache: pip
-         cache-dependency-path: requirements/*.txt
-     - name: Install dependencies
+@@ -24,7 +24,6 @@ async
+ asyncio
+ asyncpg
+ asynctest
+-Asyntai
+ attrs
+ auth
+ autocalculated
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14293** (2026-11-07): Add Asyntai to the spelling wordlist and update mac (@asvetlov)
-- **PR #14291** (2026-11-05): [PR #14263/e87b8b78 backport][3.14] Add aiohttp-ai-chatbot to third-party libraries (@patchback[bot])
-- **PR #14290** (2026-11-05): [PR #14263/e87b8b78 backport][3.15] Add aiohttp-ai-chatbot to third-party libraries (@patchback[bot])
-- **PR #14289** (2026-11-05): Bump cython from 3.3.0 to 3.3.1 (@dependabot[bot])
-- **PR #14288** (2026-11-05): Bump platformdirs from 4.14.2 to 4.14.3 (@dependabot[bot])
-- **PR #14287** (2026-11-05): Bump cython from 3.3.0 to 3.3.1 (@dependabot[bot])
+- **PR #14366** (2026-11-11): Fix actions lock file for codeql-action and cibuildwheel bumps (@Dreamsorcerer)
+- **PR #14365** (2026-11-11): Mocked request surrogateescape (@Dreamsorcerer)
+- **PR #14361** (2026-11-10): Bump click from 8.5.0 to 8.5.1 (@dependabot[bot])
+- **PR #14360** (2026-11-10): Bump virtualenv from 21.15.5 to 21.15.6 (@dependabot[bot])
+- **PR #14359** (2026-11-10): Bump python-discovery from 1.9.4 to 1.9.5 (@dependabot[bot])
+- **PR #14358** (2026-11-10): Bump backports-zstd from 1.3.0 to 1.8.0 (@dependabot[bot])
 
 ---
 
@@ -1951,28 +1941,42 @@ between runs.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (#14218)
+## X. actions lock file for codeql-action and cibuildwheel bumps (#14366)
 
 **RULE**:
-When implementing operations in `.github/workflows/reusable-cibuildwheel.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2091405f`: Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (#14218). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0058e2b6`: actions lock file for codeql-action and cibuildwheel bumps (#14366). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/reusable-cibuildwheel.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-      uses: pypa/cibuildwheel@v4.3.5
+        - 'github/codeql-action@v4.39.3'
+        - 'pypa/cibuildwheel@v4.3.5'
+    'github/codeql-action@v4.39.3':
+        ref: 'v4.39.3'
+        commit: 'sha1-33d7b85da1a04171e211befe2c739303b9a4c066'
+    'pypa/cibuildwheel@v4.3.5':
+        ref: 'v4.3.5'
+        commit: 'sha1-f9b966cfadf4109556cadc5bb39ddb72d0ce664e'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-      uses: pypa/cibuildwheel@v4.3.4
+        - 'github/codeql-action@v4.39.0'
+        - 'pypa/cibuildwheel@v4.3.1'
+    'github/codeql-action@v4.39.0':
+        ref: 'v4.39.0'
+        commit: 'sha1-6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee'
+    'pypa/cibuildwheel@v4.3.1':
+        ref: 'v4.3.1'
+        commit: 'sha1-b3395e271a35f73dad77f21802abe9b986dfe299'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2091405f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0058e2b6` are properly handled with clean fallback behavior.

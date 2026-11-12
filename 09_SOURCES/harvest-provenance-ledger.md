@@ -9096,3 +9096,7 @@ Every entry in this ledger must capture:
 | `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `6da1f821` | Multi-dimensional audit evidence | 2026-11-12T05:57:19.113Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `527eec41` | Multi-dimensional audit evidence | 2026-11-12T06:19:50.346Z |
 | `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `086c4bd6` | Multi-dimensional audit evidence | 2026-11-12T06:20:20.688Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `522cc8b7` | Multi-dimensional audit evidence | 2026-11-12T06:27:05.782Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `64d040b5` | Multi-dimensional audit evidence | 2026-11-12T06:27:13.767Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `5613284a` | Multi-dimensional audit evidence | 2026-11-12T06:27:16.974Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `09f2de88` | Multi-dimensional audit evidence | 2026-11-12T06:28:52.248Z |

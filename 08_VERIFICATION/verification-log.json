@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-PIYH",
-    "timestamp": "2026-11-09T01:19:17.561Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "0b8c13a3f7b82f77c55ad07fb04b1c3380dcaaaa0b8c8d40a8d7d8e5599d9a7b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-YMEK",
-    "timestamp": "2026-11-09T01:26:21.932Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "ba2c1b442438e2b33d4c24114d30835a734f1f4c05f9282dd556f83af420cd3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-YOXP",
-    "timestamp": "2026-11-09T01:26:25.213Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-E3PD",
-    "timestamp": "2026-11-09T01:38:24.193Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "11bfe9e38f3d132261ceea797bab0530926ba950774821c33158fc334d00849d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-E6J1",
     "timestamp": "2026-11-09T01:38:27.853Z",
     "repository": "sharkdp/bat",
@@ -7490,6 +7430,66 @@
     "repository": "vanniktech/gradle-maven-publish-plugin",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
     "contentHash": "c1f8f509eb9a0dcd25b674857a0297a5d4c7a5f12d75e6477a744b6c4cc55c89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-0X4K",
+    "timestamp": "2026-11-12T06:27:05.780Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "79121a7d041b95e27ba7973c20604e034c372e57ecedc5c1740e14248da3c6ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-13AB",
+    "timestamp": "2026-11-12T06:27:13.763Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "c8616073b9ad62fa8882f4002ebe24c2bacdf3fedd73d46e6cf2ad361dcacdb4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-15RG",
+    "timestamp": "2026-11-12T06:27:16.972Z",
+    "repository": "actix/actix-web",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "14713634de47c67d8614b2e636afc603fe8326270000c1313617d8ebfe95e522",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-379X",
+    "timestamp": "2026-11-12T06:28:52.245Z",
+    "repository": "aio-libs/aiohttp",
+    "learningId": "learn-github-aio-libs-aiohttp",
+    "contentHash": "6734bdbf4a043028bdf93e08583b0772107500aadf90f18cda1e63b2a60b9890",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

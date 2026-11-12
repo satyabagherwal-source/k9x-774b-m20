@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T06:20:28.293Z",
+  "updated_at": "2026-11-12T06:28:57.596Z",
   "stats": {
-    "total_discovered": 870,
-    "approved_pending_harvest": 790,
+    "total_discovered": 930,
+    "approved_pending_harvest": 845,
     "harvested_count": 0,
-    "rejected_count": 80,
+    "rejected_count": 85,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 813,
-      "OFFICIAL_DOCUMENTATION": 24,
-      "STANDARDS_AND_SPECIFICATIONS": 31,
+      "COMMUNITY_AND_EXPERT": 858,
+      "OFFICIAL_DOCUMENTATION": 26,
+      "STANDARDS_AND_SPECIFICATIONS": 43,
       "ENGINEERING_BLOGS": 1,
-      "SECURITY_ADVISORIES": 1
+      "SECURITY_ADVISORIES": 2
     }
   },
   "sources": {
@@ -18597,6 +18597,1291 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
         "fileName": "vanniktech-gradle-maven-publish-plugin-learnings.md"
+      }
+    },
+    "SRC-73C11756FAC6": {
+      "id": "SRC-73C11756FAC6",
+      "url": "https://github.com/actix/actix-web",
+      "title": "https://github.com/actix/actix-web",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.409Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-08574DA759FF": {
+      "id": "SRC-08574DA759FF",
+      "url": "https://datatracker.ietf.org/doc/html/rfc5987",
+      "title": "https://datatracker.ietf.org/doc/html/rfc5987",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-387DB443878E": {
+      "id": "SRC-387DB443878E",
+      "url": "http://localhost:8080/",
+      "title": "http://localhost:8080/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T06:28:57.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-28C465B7955E": {
+      "id": "SRC-28C465B7955E",
+      "url": "https://github.com/servo/rust-smallvec",
+      "title": "https://github.com/servo/rust-smallvec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.418Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-9A1BBDF3A576": {
+      "id": "SRC-9A1BBDF3A576",
+      "url": "https://github.com/servo/rust-smallvec/releases",
+      "title": "https://github.com/servo/rust-smallvec/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-CFAAFB180B5C": {
+      "id": "SRC-CFAAFB180B5C",
+      "url": "https://github.com/alejandro-vaz",
+      "title": "https://github.com/alejandro-vaz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-05695C2B4A1D": {
+      "id": "SRC-05695C2B4A1D",
+      "url": "https://redirect.github.com/smallvec/smallvec/pull/853",
+      "title": "https://redirect.github.com/smallvec/smallvec/pull/853",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.427Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-7590C64552C9": {
+      "id": "SRC-7590C64552C9",
+      "url": "https://github.com/smallvec/smallvec/compare/v1.16.4...v1.16.5",
+      "title": "https://github.com/smallvec/smallvec/compare/v1.16.4...v1.16.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-152FEBCE9C73": {
+      "id": "SRC-152FEBCE9C73",
+      "url": "https://github.com/smallvec/smallvec/commit/6e900059c51b7c0f5580e13e9e215a50b6be9d27",
+      "title": "https://github.com/smallvec/smallvec/commit/6e900059c51b7c0f5580e13e9e215a50b6be9d27",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.433Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-E97DACD11B8F": {
+      "id": "SRC-E97DACD11B8F",
+      "url": "https://redirect.github.com/servo/rust-smallvec/issues/853",
+      "title": "https://redirect.github.com/servo/rust-smallvec/issues/853",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-11DE23033996": {
+      "id": "SRC-11DE23033996",
+      "url": "https://github.com/servo/rust-smallvec/compare/v1.16.4...v1.16.5",
+      "title": "https://github.com/servo/rust-smallvec/compare/v1.16.4...v1.16.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.439Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-0A1B0DAE153C": {
+      "id": "SRC-0A1B0DAE153C",
+      "url": "https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=smallvec&package-manager=cargo&previous-version=1.16.4&new-version=1.16.5",
+      "title": "https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=smallvec&package-manager=cargo&previous-version=1.16.4&new-version=1.16.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-6F3881356A4C": {
+      "id": "SRC-6F3881356A4C",
+      "url": "https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates",
+      "title": "https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.445Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-1D64FADC47C7": {
+      "id": "SRC-1D64FADC47C7",
+      "url": "https://github.com/hyperium/mime",
+      "title": "https://github.com/hyperium/mime",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-03196FE639B7": {
+      "id": "SRC-03196FE639B7",
+      "url": "https://github.com/hyperium/mime/commit/89e3ef41c4b890a68a6ec002980ab14bff61d3d8",
+      "title": "https://github.com/hyperium/mime/commit/89e3ef41c4b890a68a6ec002980ab14bff61d3d8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-26DF4128F6B8": {
+      "id": "SRC-26DF4128F6B8",
+      "url": "https://github.com/hyperium/mime/commit/c8eb7e25a70fdffad388bcb29ce065b5ec153ee5",
+      "title": "https://github.com/hyperium/mime/commit/c8eb7e25a70fdffad388bcb29ce065b5ec153ee5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-9E0399898258": {
+      "id": "SRC-9E0399898258",
+      "url": "https://github.com/hyperium/mime/commit/9d0020729aecba2b3a960666a4d3060f4338c021",
+      "title": "https://github.com/hyperium/mime/commit/9d0020729aecba2b3a960666a4d3060f4338c021",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-9CF0124DC12A": {
+      "id": "SRC-9CF0124DC12A",
+      "url": "https://github.com/hyperium/mime/commit/17321ccab29372622a9ba717907dd001110095af",
+      "title": "https://github.com/hyperium/mime/commit/17321ccab29372622a9ba717907dd001110095af",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-3A2539D353D0": {
+      "id": "SRC-3A2539D353D0",
+      "url": "https://github.com/hyperium/mime/commit/3610d80cf900c685585a0d8d11683672c485e6f3",
+      "title": "https://github.com/hyperium/mime/commit/3610d80cf900c685585a0d8d11683672c485e6f3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-F6010E1D1893": {
+      "id": "SRC-F6010E1D1893",
+      "url": "https://redirect.github.com/hyperium/mime/issues/150",
+      "title": "https://redirect.github.com/hyperium/mime/issues/150",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.464Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-DE9E071037AA": {
+      "id": "SRC-DE9E071037AA",
+      "url": "https://github.com/hyperium/mime/commit/6842ffc13db3f9eecb3d05ba01c26d7a054a5e9f",
+      "title": "https://github.com/hyperium/mime/commit/6842ffc13db3f9eecb3d05ba01c26d7a054a5e9f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.467Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-C68C4A0CBB90": {
+      "id": "SRC-C68C4A0CBB90",
+      "url": "https://redirect.github.com/hyperium/mime/issues/149",
+      "title": "https://redirect.github.com/hyperium/mime/issues/149",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.470Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-12491AD4A6AA": {
+      "id": "SRC-12491AD4A6AA",
+      "url": "https://github.com/hyperium/mime/commit/563350c621ade9a3d1396a59c7d7902164037745",
+      "title": "https://github.com/hyperium/mime/commit/563350c621ade9a3d1396a59c7d7902164037745",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-897F3116FF11": {
+      "id": "SRC-897F3116FF11",
+      "url": "https://redirect.github.com/hyperium/mime/issues/147",
+      "title": "https://redirect.github.com/hyperium/mime/issues/147",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-8CD68F595B2D": {
+      "id": "SRC-8CD68F595B2D",
+      "url": "https://github.com/actions-rust-lang/setup-rust-toolchain",
+      "title": "https://github.com/actions-rust-lang/setup-rust-toolchain",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.479Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-500E122056F0": {
+      "id": "SRC-500E122056F0",
+      "url": "https://github.com/actions-rust-lang/setup-rust-toolchain/releases",
+      "title": "https://github.com/actions-rust-lang/setup-rust-toolchain/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-18CD59B66119": {
+      "id": "SRC-18CD59B66119",
+      "url": "https://github.com/actions-rust-lang/setup-rust-toolchain/blob/main/CHANGELOG.md",
+      "title": "https://github.com/actions-rust-lang/setup-rust-toolchain/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.486Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-7D76348FA644": {
+      "id": "SRC-7D76348FA644",
+      "url": "https://github.com/actions-rust-lang/setup-rust-toolchain/compare/v2.0.0...v2.0.1",
+      "title": "https://github.com/actions-rust-lang/setup-rust-toolchain/compare/v2.0.0...v2.0.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-9BAD2238C6C3": {
+      "id": "SRC-9BAD2238C6C3",
+      "url": "https://github.com/taiki-e/install-action",
+      "title": "https://github.com/taiki-e/install-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-094F78C53133": {
+      "id": "SRC-094F78C53133",
+      "url": "https://github.com/taiki-e/install-action/releases",
+      "title": "https://github.com/taiki-e/install-action/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.497Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-572039292A2A": {
+      "id": "SRC-572039292A2A",
+      "url": "https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md",
+      "title": "https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.500Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-705970189158": {
+      "id": "SRC-705970189158",
+      "url": "https://github.com/taiki-e/install-action/compare/v2.89.0...v2.90.3",
+      "title": "https://github.com/taiki-e/install-action/compare/v2.89.0...v2.90.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-81B5ED6744C0": {
+      "id": "SRC-81B5ED6744C0",
+      "url": "https://github.com/rust-lang/flate2-rs",
+      "title": "https://github.com/rust-lang/flate2-rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.505Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-B2A0F1585F69": {
+      "id": "SRC-B2A0F1585F69",
+      "url": "https://github.com/rust-lang/flate2-rs/releases",
+      "title": "https://github.com/rust-lang/flate2-rs/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.508Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-1D9B8A38EE48": {
+      "id": "SRC-1D9B8A38EE48",
+      "url": "https://github.com/rust-lang/flate2-rs/blob/main/CHANGELOG.md",
+      "title": "https://github.com/rust-lang/flate2-rs/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-4E7F2C737067": {
+      "id": "SRC-4E7F2C737067",
+      "url": "https://github.com/rust-lang/flate2-rs/compare/1.1.10...v1.1.11",
+      "title": "https://github.com/rust-lang/flate2-rs/compare/1.1.10...v1.1.11",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.514Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-2821F1C18EEA": {
+      "id": "SRC-2821F1C18EEA",
+      "url": "https://www.rfc-editor.org/rfc/rfc5987",
+      "title": "IETF RFC 5987",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-937E771069AA": {
+      "id": "SRC-937E771069AA",
+      "url": "https://www.rfc-editor.org/rfc/rfc3986",
+      "title": "IETF RFC 3986",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.521Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-9FFBDA493D73": {
+      "id": "SRC-9FFBDA493D73",
+      "url": "https://github.com/aio-libs/aiohttp",
+      "title": "https://github.com/aio-libs/aiohttp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-E0954831DA50": {
+      "id": "SRC-E0954831DA50",
+      "url": "https://datatracker.ietf.org/doc/html/rfc8878",
+      "title": "https://datatracker.ietf.org/doc/html/rfc8878",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.533Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-8EEBF6279FD5": {
+      "id": "SRC-8EEBF6279FD5",
+      "url": "http://docs.aiohttp.org/en/stable/logging.html",
+      "title": "http://docs.aiohttp.org/en/stable/logging.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "OFFICIAL_DOCUMENTATION",
+      "discovered_at": "2026-11-12T06:28:57.536Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-30255A161B90": {
+      "id": "SRC-30255A161B90",
+      "url": "https://github.com/aio-libs/aiohttp/pull/1453",
+      "title": "https://github.com/aio-libs/aiohttp/pull/1453",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.539Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-945D0513EAC8": {
+      "id": "SRC-945D0513EAC8",
+      "url": "https://github.com/aio-libs/aiohttp/issues/11632",
+      "title": "https://github.com/aio-libs/aiohttp/issues/11632",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-0732F7E79314": {
+      "id": "SRC-0732F7E79314",
+      "url": "https://datatracker.ietf.org/doc/html/rfc6455",
+      "title": "https://datatracker.ietf.org/doc/html/rfc6455",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-857DDECA415B": {
+      "id": "SRC-857DDECA415B",
+      "url": "https://github.com/aio-libs/aiohttp/commit/5affd64f86d28a16a8f8e6fea2d217c99bf7831f",
+      "title": "https://github.com/aio-libs/aiohttp/commit/5affd64f86d28a16a8f8e6fea2d217c99bf7831f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.548Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-623C28FE82EF": {
+      "id": "SRC-623C28FE82EF",
+      "url": "https://www.rfc-editor.org/rfc/rfc8878",
+      "title": "IETF RFC 8878",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-E003FBF5ED0D": {
+      "id": "SRC-E003FBF5ED0D",
+      "url": "https://www.rfc-editor.org/rfc/rfc6265",
+      "title": "IETF RFC 6265",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.553Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-59D2EEB2B982": {
+      "id": "SRC-59D2EEB2B982",
+      "url": "https://www.rfc-editor.org/rfc/rfc2616",
+      "title": "IETF RFC 2616",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.556Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-6510195732F1": {
+      "id": "SRC-6510195732F1",
+      "url": "https://www.rfc-editor.org/rfc/rfc822",
+      "title": "IETF RFC 822",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.559Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-E59DB9FED1D8": {
+      "id": "SRC-E59DB9FED1D8",
+      "url": "https://www.rfc-editor.org/rfc/rfc850",
+      "title": "IETF RFC 850",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.562Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-E281F9244EEC": {
+      "id": "SRC-E281F9244EEC",
+      "url": "https://www.rfc-editor.org/rfc/rfc1036",
+      "title": "IETF RFC 1036",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.565Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-86B8469513C9": {
+      "id": "SRC-86B8469513C9",
+      "url": "https://www.rfc-editor.org/rfc/rfc1123",
+      "title": "IETF RFC 1123",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.568Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-9C4C1B2FCF9E": {
+      "id": "SRC-9C4C1B2FCF9E",
+      "url": "https://www.rfc-editor.org/rfc/rfc2822",
+      "title": "IETF RFC 2822",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.571Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-ED4E40C795C9": {
+      "id": "SRC-ED4E40C795C9",
+      "url": "https://www.rfc-editor.org/rfc/rfc2109",
+      "title": "IETF RFC 2109",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.574Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-6D091AD3B5C7": {
+      "id": "SRC-6D091AD3B5C7",
+      "url": "https://www.rfc-editor.org/rfc/rfc6455",
+      "title": "IETF RFC 6455",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-19C7104997DD": {
+      "id": "SRC-19C7104997DD",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-69224",
+      "title": "Vulnerability Advisory CVE-2025-69224",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.580Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-808298F5DFFB": {
+      "id": "SRC-808298F5DFFB",
+      "url": "https://github.com/Agent-Field/agentfield",
+      "title": "https://github.com/Agent-Field/agentfield",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T06:28:57.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-23ADF19A8B6D": {
+      "id": "SRC-23ADF19A8B6D",
+      "url": "http://localhost:%d\\n",
+      "title": "http://localhost:%d\\n",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T06:28:57.589Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-EBEB307F659B": {
+      "id": "SRC-EBEB307F659B",
+      "url": "http://127.0.0.1:%d/health",
+      "title": "http://127.0.0.1:%d/health",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T06:28:57.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-27E399EB56FF": {
+      "id": "SRC-27E399EB56FF",
+      "url": "http://127.0.0.0/",
+      "title": "http://127.0.0.0/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T06:28:57.596Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
       }
     }
   }
