@@ -621,6 +621,192 @@ export function parseDomainIntelligenceRecords(customRoot = null) {
 }
 
 /**
+ * Universal Folder Responsibility & Indexability Contract (Section 5)
+ */
+export const FOLDER_INDEXABILITY_CONTRACT = {
+  version: '1.0.0',
+  description: 'AI-Builder-Brain Universal Folder Responsibility & Indexability Contract',
+  folders: {
+    '00_START_HERE': { indexable: false, reason: 'Orientation documents; retrieved via direct navigation, not BM25' },
+    '01_CORE': { indexable: true, pattern: 'operating-rules.md', category: 'CORE_OPERATING_RULE' },
+    '02_AGENT_INTELLIGENCE': { indexable: true, pattern: '*.md', category: 'AGENT_PERSONA' },
+    '03_SKILLS': { indexable: true, pattern: '*.md', category: 'SKILL' },
+    '04_WORKFLOWS': { indexable: true, pattern: '*.md', excludePattern: '*.mjs|*.json|*.log', category: 'WORKFLOW_PLAYBOOK' },
+    '05_KNOWLEDGE': { indexable: true, pattern: 'engineering-patterns.md|domain-intelligence/*.json', category: 'ENGINEERING_PATTERN|DOMAIN_INTELLIGENCE' },
+    '06_PROJECT_CONTEXT': { indexable: false, reason: 'Ephemeral runtime environment state' },
+    '07_PROJECT_LEARNING': { indexable: true, pattern: '*-learnings.md', category: 'HARVESTED_INTELLIGENCE_DOSSIER' },
+    '08_VERIFICATION': { indexable: true, pattern: '*.md', category: 'VERIFICATION_EVIDENCE' },
+    '09_SOURCES': { indexable: false, reason: 'Raw URLs and catalog metadata; query via source registries' },
+    '10_PROMPTS': { indexable: true, pattern: '*.md', category: 'SYSTEM_PROMPT' },
+    '11_INBOX': { indexable: false, reason: 'Unverified pre-promotion staging buffer; must not pollute canonical retrieval' },
+    '12_DECISIONS': { indexable: true, pattern: 'ADR-*.md', category: 'ARCHITECTURE_DECISION' },
+    '13_GOVERNANCE': { indexable: true, pattern: '*.md', category: 'GOVERNANCE_POLICY' },
+    '14_EVOLUTION': { indexable: true, pattern: '*.md', category: 'EVOLUTION_ROADMAP' },
+    '15_METADATA': { indexable: true, pattern: 'capability-registry.json', category: 'CAPABILITY' }
+  }
+};
+
+/**
+ * Parses Architecture Decision Records from 12_DECISIONS/ (ADR-*.md)
+ */
+export function parseDecisions(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  const decisionsDir = path.join(p.brainRoot, '12_DECISIONS');
+  if (!fs.existsSync(decisionsDir)) return [];
+  const files = fs.readdirSync(decisionsDir).filter(f => f.endsWith('.md') && f !== '.gitkeep');
+  const docs = [];
+  for (const f of files) {
+    const fullPath = path.join(decisionsDir, f);
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1].trim() : f.replace('.md', '');
+    const summary = content.slice(0, 350).replace(/^#.*?\n/, '').trim();
+    docs.push({
+      id: `ADR: ${f.replace('.md', '')}`,
+      title,
+      category: 'ARCHITECTURE_DECISION',
+      domainLetter: 'G',
+      domainId: 'architecture',
+      domainName: 'Architecture Intelligence',
+      filePath: `12_DECISIONS/${f}`,
+      lineRange: [1, content.split(/\r?\n/).length],
+      summary,
+      fullContent: content.trim(),
+      tokens: tokenize(`${title} ${f} ${content} Architecture Decision ADR`)
+    });
+  }
+  return docs;
+}
+
+/**
+ * Parses Verification Evidence & Audit artifacts from 08_VERIFICATION/ (*.md)
+ */
+export function parseVerificationEvidence(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  const verDir = path.join(p.brainRoot, '08_VERIFICATION');
+  if (!fs.existsSync(verDir)) return [];
+  const files = fs.readdirSync(verDir).filter(f => f.endsWith('.md') && f !== '.gitkeep');
+  const docs = [];
+  for (const f of files) {
+    const fullPath = path.join(verDir, f);
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1].trim() : f.replace('.md', '');
+    const summary = content.slice(0, 350).replace(/^#.*?\n/, '').trim();
+    docs.push({
+      id: `Verification: ${f.replace('.md', '')}`,
+      title,
+      category: 'VERIFICATION_EVIDENCE',
+      domainLetter: 'K',
+      domainId: 'quality_verification',
+      domainName: 'Quality & Verification Intelligence',
+      filePath: `08_VERIFICATION/${f}`,
+      lineRange: [1, content.split(/\r?\n/).length],
+      summary,
+      fullContent: content.trim(),
+      tokens: tokenize(`${title} ${f} ${content} verification audit evidence quality`)
+    });
+  }
+  return docs;
+}
+
+/**
+ * Parses Workflow Playbooks from 04_WORKFLOWS/ (*.md only, strictly excluding .mjs)
+ */
+export function parseWorkflowPlaybooks(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  const wfDir = path.join(p.brainRoot, '04_WORKFLOWS');
+  if (!fs.existsSync(wfDir)) return [];
+  const files = fs.readdirSync(wfDir).filter(f => f.endsWith('.md') && f !== '.gitkeep');
+  const docs = [];
+  for (const f of files) {
+    const fullPath = path.join(wfDir, f);
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1].trim() : f.replace('.md', '');
+    const summary = content.slice(0, 350).replace(/^#.*?\n/, '').trim();
+    docs.push({
+      id: `Workflow: ${f.replace('.md', '')}`,
+      title,
+      category: 'WORKFLOW_PLAYBOOK',
+      domainLetter: 'H',
+      domainId: 'technical_construction',
+      domainName: 'Technical Construction Intelligence',
+      filePath: `04_WORKFLOWS/${f}`,
+      lineRange: [1, content.split(/\r?\n/).length],
+      summary,
+      fullContent: content.trim(),
+      tokens: tokenize(`${title} ${f} ${content} workflow playbook automation execution`)
+    });
+  }
+  return docs;
+}
+
+/**
+ * Parses Governance Policies from 13_GOVERNANCE/ (*.md)
+ */
+export function parseGovernanceDocuments(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  const govDir = path.join(p.brainRoot, '13_GOVERNANCE');
+  if (!fs.existsSync(govDir)) return [];
+  const files = fs.readdirSync(govDir).filter(f => f.endsWith('.md') && f !== '.gitkeep');
+  const docs = [];
+  for (const f of files) {
+    const fullPath = path.join(govDir, f);
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1].trim() : f.replace('.md', '');
+    const summary = content.slice(0, 350).replace(/^#.*?\n/, '').trim();
+    docs.push({
+      id: `Governance: ${f.replace('.md', '')}`,
+      title,
+      category: 'GOVERNANCE_POLICY',
+      domainLetter: 'M',
+      domainId: 'feedback_evolution',
+      domainName: 'Feedback & Evolution Intelligence',
+      filePath: `13_GOVERNANCE/${f}`,
+      lineRange: [1, content.split(/\r?\n/).length],
+      summary,
+      fullContent: content.trim(),
+      tokens: tokenize(`${title} ${f} ${content} governance policy change protocol approval`)
+    });
+  }
+  return docs;
+}
+
+/**
+ * Parses Agent Personas from 02_AGENT_INTELLIGENCE/ (*.md)
+ */
+export function parseAgentPersonas(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  const agentDir = path.join(p.brainRoot, '02_AGENT_INTELLIGENCE');
+  if (!fs.existsSync(agentDir)) return [];
+  const files = fs.readdirSync(agentDir).filter(f => f.endsWith('.md') && f !== '.gitkeep');
+  const docs = [];
+  for (const f of files) {
+    const fullPath = path.join(agentDir, f);
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1].trim() : f.replace('.md', '');
+    const summary = content.slice(0, 350).replace(/^#.*?\n/, '').trim();
+    docs.push({
+      id: `Agent: ${f.replace('.md', '')}`,
+      title,
+      category: 'AGENT_PERSONA',
+      domainLetter: 'G',
+      domainId: 'architecture',
+      domainName: 'Architecture Intelligence',
+      filePath: `02_AGENT_INTELLIGENCE/${f}`,
+      lineRange: [1, content.split(/\r?\n/).length],
+      summary,
+      fullContent: content.trim(),
+      tokens: tokenize(`${title} ${f} ${content} agent persona contract role intelligence`)
+    });
+  }
+  return docs;
+}
+
+/**
  * Extracts a concise, evidence-grounded excerpt surrounding matched search terms
  */
 export function extractEvidenceExcerpt(text, matchedTerms = [], maxLen = 220) {
@@ -1309,7 +1495,7 @@ export function normalizeCachedDocuments(documents) {
   if (!Array.isArray(documents)) return [];
   for (const doc of documents) {
     if (!doc.indexingStatus) {
-      if (doc.category === 'CORE_OPERATING_RULE' || doc.category === 'ENGINEERING_PATTERN' || doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE') {
+      if (doc.category === 'CORE_OPERATING_RULE' || doc.category === 'ENGINEERING_PATTERN' || doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE' || doc.category === 'ARCHITECTURE_DECISION' || doc.category === 'VERIFICATION_EVIDENCE' || doc.category === 'WORKFLOW_PLAYBOOK' || doc.category === 'GOVERNANCE_POLICY' || doc.category === 'AGENT_PERSONA') {
         doc.indexingStatus = 'COMPLETE';
       } else if (doc.category === 'HARVESTED_DOSSIER_CHUNK') {
         doc.indexingStatus = 'UNKNOWN';
@@ -1468,8 +1654,26 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
 
   const capabilityDocs = parseCapabilities(resolvedRoot);
   const domainDocs = parseDomainIntelligenceRecords(resolvedRoot);
+  const decisionDocs = parseDecisions(resolvedRoot);
+  const verificationDocs = parseVerificationEvidence(resolvedRoot);
+  const workflowDocs = parseWorkflowPlaybooks(resolvedRoot);
+  const governanceDocs = parseGovernanceDocuments(resolvedRoot);
+  const personaDocs = parseAgentPersonas(resolvedRoot);
   const dossierChunkDocs = parseDossierChunks(p, resolvedOpts);
-  const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs, ...capabilityDocs, ...domainDocs, ...dossierChunkDocs];
+  const documents = [
+    ...patternDocs,
+    ...coreDocs,
+    ...skillDocs,
+    ...indexDocs,
+    ...capabilityDocs,
+    ...domainDocs,
+    ...decisionDocs,
+    ...verificationDocs,
+    ...workflowDocs,
+    ...governanceDocs,
+    ...personaDocs,
+    ...dossierChunkDocs
+  ];
   const N = documents.length;
 
   let totalDocLength = 0;
@@ -1511,7 +1715,7 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
         epistemicState = 'CANONICAL';
         confidence = doc.category === 'CORE_OPERATING_RULE' ? 1.0 : 0.95;
         confidenceType = 'CANONICAL_RULE_AUTHORITY';
-      } else if (doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE') {
+      } else if (doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE' || doc.category === 'ARCHITECTURE_DECISION' || doc.category === 'VERIFICATION_EVIDENCE' || doc.category === 'WORKFLOW_PLAYBOOK' || doc.category === 'GOVERNANCE_POLICY' || doc.category === 'AGENT_PERSONA') {
         sourceTier = 'EMPIRICAL';
         epistemicState = 'VALIDATED';
         confidence = doc.category === 'CAPABILITY' ? 0.85 : 0.90;
@@ -1528,7 +1732,7 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
 
     let indexingStatus = doc.indexingStatus;
     if (!indexingStatus) {
-      if (doc.category === 'CORE_OPERATING_RULE' || doc.category === 'ENGINEERING_PATTERN' || doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE') {
+      if (doc.category === 'CORE_OPERATING_RULE' || doc.category === 'ENGINEERING_PATTERN' || doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE' || doc.category === 'ARCHITECTURE_DECISION' || doc.category === 'VERIFICATION_EVIDENCE' || doc.category === 'WORKFLOW_PLAYBOOK' || doc.category === 'GOVERNANCE_POLICY' || doc.category === 'AGENT_PERSONA') {
         indexingStatus = 'COMPLETE';
       } else {
         indexingStatus = 'UNKNOWN';

@@ -3,7 +3,7 @@
   "stage_index": 9,
   "stage_name": "Empirical Verification & Security Boundaries",
   "primary_domain": "K",
-  "generated_at": "2026-11-11T17:47:28.793Z",
+  "generated_at": "2026-11-12T04:17:52.040Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -47,6 +47,84 @@
       "invariant": "Bypassing semantic graph traversal during optimization or \"no-op\" bypass branches. -> Even if an AST node is copied verbatim without mutation, it must traverse the semantic symbol dependency analyzer before codegen.",
       "confidence": 1,
       "source_provenance": "project://oxc-project-oxc/oxc-project-oxc-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-09-VERIFY-01",
+      "stage_id": "09_VERIFY",
+      "title": "Execute zero-network isolation probe and secret leak audit for IncidentLens",
+      "description": "Verify that running application emits zero outbound network requests, bundles zero remote CDN scripts, and leaks no secret files.",
+      "objective": "Provide empirical proof of zero-network data sovereignty and security.",
+      "input_requirements": [
+        "TASK-08-TEST-01",
+        "TASK-08-TEST-02"
+      ],
+      "output_requirements": [
+        ".project-brain/lifecycle/09-verify.json"
+      ],
+      "dependencies": [
+        "TASK-08-TEST-01",
+        "TASK-08-TEST-02"
+      ],
+      "domain": "K",
+      "required_brain_knowledge": [
+        "DOM-A-DD59FA01",
+        "DOM-K-353B93D6",
+        "DOM-M-85839FD0",
+        "DOM-H-A79F59EB",
+        "DOM-K-76C43650"
+      ],
+      "acceptance_criteria": [
+        "Zero outgoing HTTP/WebSocket socket requests during operation",
+        "No third-party CDN script tags (<script src=\"http...) in HTML",
+        "Zero sensitive files (.env, keys) tracked in project workspace"
+      ],
+      "verification_method": "SECURITY_AUDIT",
+      "evidence_references": [
+        ".project-brain/lifecycle/09-verify.json",
+        "tests/"
+      ],
+      "confidence": 1,
+      "human_approval_required": false,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "TASK-09-VERIFY-02",
+      "stage_id": "09_VERIFY",
+      "title": "Perform residual risk assessment and acceptance verification for IncidentLens",
+      "description": "Audit residual engineering risks, verify complete test suite execution with exit code 0, and compile formal verification report.",
+      "objective": "Produce comprehensive, reproducible verification dossier.",
+      "input_requirements": [
+        "TASK-09-VERIFY-01"
+      ],
+      "output_requirements": [
+        "verification-report.json"
+      ],
+      "dependencies": [
+        "TASK-09-VERIFY-01"
+      ],
+      "domain": "K",
+      "required_brain_knowledge": [
+        "DOM-A-DD59FA01",
+        "DOM-K-353B93D6",
+        "DOM-M-85839FD0",
+        "DOM-H-A79F59EB",
+        "DOM-K-76C43650"
+      ],
+      "acceptance_criteria": [
+        "Automated test runner exits with code 0",
+        "All P0 MVP capabilities verified operational",
+        "Residual risks enumerated with mitigation strategies"
+      ],
+      "verification_method": "COMPREHENSIVE_AUDIT",
+      "evidence_references": [
+        ".project-brain/lifecycle/09-verify.json",
+        "tests/"
+      ],
+      "confidence": 0.97,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "verification_invariants": [

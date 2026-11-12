@@ -3,7 +3,7 @@
   "stage_index": 10,
   "stage_name": "Release Packaging & Distribution Strategy",
   "primary_domain": "J",
-  "generated_at": "2026-11-11T17:47:28.821Z",
+  "generated_at": "2026-11-12T04:17:52.048Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -23,6 +23,45 @@
       "invariant": "Architectural design pattern from 11ty-eleventy -> Eleventy generates pure HTML and CSS without bundling a client-side JavaScript framework runtime.\rDelivers perfect 100/100 Core Web Vitals s",
       "confidence": 1,
       "source_provenance": "project://11ty-eleventy/11ty-eleventy-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-10-RELEASE-01",
+      "stage_id": "10_RELEASE",
+      "title": "Validate release packaging, semver format, and documentation for IncidentLens",
+      "description": "Inspect package.json metadata, semantic versioning (>= 0.1.0), and ensure README and lifecycle guides are complete.",
+      "objective": "Prepare verified release package.",
+      "input_requirements": [
+        "TASK-09-VERIFY-01",
+        "TASK-09-VERIFY-02"
+      ],
+      "output_requirements": [
+        "package.json",
+        "README.md"
+      ],
+      "dependencies": [
+        "TASK-09-VERIFY-01",
+        "TASK-09-VERIFY-02"
+      ],
+      "domain": "J",
+      "required_brain_knowledge": [
+        "DOM-J-C14FC2D6",
+        "DOM-J-B305372A"
+      ],
+      "acceptance_criteria": [
+        "package.json contains valid semver version",
+        "Zero secret leaks in root package files",
+        "README or lifecycle guide present"
+      ],
+      "verification_method": "CODE_INSPECTION",
+      "evidence_references": [
+        "package.json",
+        "README.md"
+      ],
+      "confidence": 0.98,
+      "human_approval_required": false,
+      "status": "PENDING"
     }
   ],
   "semver": "0.1.0",

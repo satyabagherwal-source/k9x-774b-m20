@@ -27,7 +27,7 @@ import { decomposeSemanticRequirements } from './semantic-decomposer.mjs';
 import { validatePlanDAG } from './task-planner.mjs';
 import { validateSubtask } from './task-contract.mjs';
 import { getAllAdapters, getAdapterForFile } from './language-adapters/adapter-registry.mjs';
-import { constructProjectLifecycle, executeStageVerification } from './project-lifecycle-engine.mjs';
+import { constructProjectLifecycle, executeStageVerification, verifyProjectLifecyclePipeline } from './project-lifecycle-engine.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -2438,5 +2438,6 @@ export function constructUniversalProduct(goal, targetDir, options = {}) {
 
 export {
   constructProjectLifecycle,
-  executeStageVerification
+  executeStageVerification,
+  verifyProjectLifecyclePipeline
 };

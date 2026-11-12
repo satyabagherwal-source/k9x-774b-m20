@@ -3,7 +3,7 @@
   "stage_index": 8,
   "stage_name": "Automated Quality & Contract Testing",
   "primary_domain": "K",
-  "generated_at": "2026-11-11T17:47:28.770Z",
+  "generated_at": "2026-11-12T04:17:52.032Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -47,6 +47,84 @@
       "invariant": "Bypassing semantic graph traversal during optimization or \"no-op\" bypass branches. -> Even if an AST node is copied verbatim without mutation, it must traverse the semantic symbol dependency analyzer before codegen.",
       "confidence": 1,
       "source_provenance": "project://oxc-project-oxc/oxc-project-oxc-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-08-TEST-01",
+      "stage_id": "08_TEST",
+      "title": "Implement comprehensive end-to-end automated test suite for IncidentLens",
+      "description": "Construct multi-phase automated integration test suite verifying health probes, dashboard delivery, REST CRUD, RFC 7807 errors, and persistence reloads.",
+      "objective": "Verify end-to-end system correctness with zero synthetic mocks.",
+      "input_requirements": [
+        "TASK-07-BUILD-01",
+        "TASK-07-BUILD-02",
+        "TASK-07-BUILD-03"
+      ],
+      "output_requirements": [
+        "tests/"
+      ],
+      "dependencies": [
+        "TASK-07-BUILD-01",
+        "TASK-07-BUILD-02",
+        "TASK-07-BUILD-03"
+      ],
+      "domain": "K",
+      "required_brain_knowledge": [
+        "DOM-A-DD59FA01",
+        "DOM-K-353B93D6",
+        "DOM-M-85839FD0",
+        "DOM-H-A79F59EB",
+        "DOM-K-76C43650"
+      ],
+      "acceptance_criteria": [
+        "All automated test phases pass with 0 failures",
+        "Zero synthetic mocks used for core storage or HTTP operations",
+        "Empirical contrast calculation verifies WCAG AA >= 4.5:1 ratio"
+      ],
+      "verification_method": "AUTOMATED_TEST",
+      "evidence_references": [
+        "tests/"
+      ],
+      "confidence": 0.99,
+      "human_approval_required": false,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "TASK-08-TEST-02",
+      "stage_id": "08_TEST",
+      "title": "Verify state machine invariants and negative edge case boundaries for IncidentLens",
+      "description": "Implement test assertions verifying illegal state transitions and oversized payloads (>1MB) are strictly rejected with 400 Bad Request.",
+      "objective": "Prove system resilience under invalid inputs and boundary violations.",
+      "input_requirements": [
+        "TASK-08-TEST-01"
+      ],
+      "output_requirements": [
+        "tests/"
+      ],
+      "dependencies": [
+        "TASK-08-TEST-01"
+      ],
+      "domain": "K",
+      "required_brain_knowledge": [
+        "DOM-A-DD59FA01",
+        "DOM-K-353B93D6",
+        "DOM-M-85839FD0",
+        "DOM-H-A79F59EB",
+        "DOM-K-76C43650"
+      ],
+      "acceptance_criteria": [
+        "Illegal state transitions rejected with RFC 7807 details",
+        "Oversized payloads >1MB rejected immediately without memory exhaustion",
+        "Malformed JSON or missing fields handled with 400 Bad Request"
+      ],
+      "verification_method": "AUTOMATED_TEST",
+      "evidence_references": [
+        "tests/"
+      ],
+      "confidence": 0.98,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "test_pyramid": {

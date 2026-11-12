@@ -3,7 +3,7 @@
   "stage_index": 2,
   "stage_name": "Product Definition & Scope Boundaries",
   "primary_domain": "B",
-  "generated_at": "2026-11-11T17:47:28.634Z",
+  "generated_at": "2026-11-12T04:17:51.833Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -23,6 +23,77 @@
       "invariant": "Radix signed division requires non-trivial signed digit extraction, two's-complement negation, and iterative restoring or non-restoring cond -> Heterogeneous backend feature parity must be validated via unified matrix integration tests (`tests/integrations`) that execute all supporte",
       "confidence": 1,
       "source_provenance": "project://zama-ai-tfhe-rs/zama-ai-tfhe-rs-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-02-DEFINE-01",
+      "stage_id": "02_DEFINE",
+      "title": "Synthesize PRD core capabilities and P0 MVP scope for IncidentLens",
+      "description": "Formalize functional requirements, API routes, data structures, and deterministic execution behavior for IncidentLens.",
+      "objective": "Deliver unambiguous, testable P0 functional scope specification.",
+      "input_requirements": [
+        "TASK-01-DISCOVER-01",
+        "TASK-01-DISCOVER-02"
+      ],
+      "output_requirements": [
+        "prd-specification.json",
+        "p0-scope.json"
+      ],
+      "dependencies": [
+        "TASK-01-DISCOVER-01",
+        "TASK-01-DISCOVER-02"
+      ],
+      "domain": "B",
+      "required_brain_knowledge": [
+        "DOM-B-44DC921B",
+        "DOM-B-1CC83E41"
+      ],
+      "acceptance_criteria": [
+        "Core MVP capabilities explicitly listed",
+        "Input/output payload schemas defined",
+        "Deterministic verification boundaries specified"
+      ],
+      "verification_method": "SPECIFICATION_REVIEW",
+      "evidence_references": [
+        ".project-brain/lifecycle/02-define.json"
+      ],
+      "confidence": 0.95,
+      "human_approval_required": false,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "TASK-02-DEFINE-02",
+      "stage_id": "02_DEFINE",
+      "title": "Enforce non-negotiable negative scope boundaries and anti-goals for IncidentLens",
+      "description": "Explicitly forbid speculative features, third-party trackers, unnecessary cloud services, and forced authentication barriers.",
+      "objective": "Prevent scope creep and maintain minimal, resilient architecture.",
+      "input_requirements": [
+        "TASK-02-DEFINE-01"
+      ],
+      "output_requirements": [
+        "negative-scope.json"
+      ],
+      "dependencies": [
+        "TASK-02-DEFINE-01"
+      ],
+      "domain": "B",
+      "required_brain_knowledge": [
+        "DOM-B-44DC921B",
+        "DOM-B-1CC83E41"
+      ],
+      "acceptance_criteria": [
+        "Third-party analytics and tracking beacons explicitly barred",
+        "No forced login walls or mandatory remote accounts for local operations",
+        "Speculative external cloud services rejected for bootstrap MVP"
+      ],
+      "verification_method": "POLICY_AUDIT",
+      "evidence_references": [
+        ".project-brain/lifecycle/02-define.json"
+      ],
+      "confidence": 0.98,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "p0_mvp_scope": [

@@ -3,7 +3,7 @@
   "stage_index": 6,
   "stage_name": "System Architecture & Structural Topology",
   "primary_domain": "G",
-  "generated_at": "2026-11-11T17:47:28.676Z",
+  "generated_at": "2026-11-12T04:17:52.016Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -31,6 +31,79 @@
       "invariant": "Prevents defects observed in production commit `5dce9d48`: Clean up Hugging Face source logging for per-source debug (#5523). Unvalidated ex -> When implementing operations in `pkg/sources/huggingface/README.md`, engineers MUST enforce rigorous boundary validation, safe state transit",
       "confidence": 0.55,
       "source_provenance": "project://trufflesecurity-trufflehog/trufflesecurity-trufflehog-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-06-ARCHITECT-01",
+      "stage_id": "06_ARCHITECT",
+      "title": "Design system component topology and unidirectional data flow for IncidentLens",
+      "description": "Specify component boundaries, state machine transitions, storage engine abstraction, and HTTP routing topology.",
+      "objective": "Establish decoupled, maintainable software architecture.",
+      "input_requirements": [
+        "TASK-02-DEFINE-01",
+        "TASK-05-DESIGN-01"
+      ],
+      "output_requirements": [
+        "architecture-topology.json",
+        "data-flow-dag.json"
+      ],
+      "dependencies": [
+        "TASK-02-DEFINE-01",
+        "TASK-05-DESIGN-01"
+      ],
+      "domain": "G",
+      "required_brain_knowledge": [
+        "DOM-F-C060CCE1",
+        "DOM-G-D1C40B63",
+        "DOM-D-CB6BA6DF"
+      ],
+      "acceptance_criteria": [
+        "Unidirectional data flow DAG documented",
+        "Deterministic state machine with valid and forbidden transitions specified",
+        "Clear decoupling between UI, API, and storage layers"
+      ],
+      "verification_method": "ARCHITECTURE_REVIEW",
+      "evidence_references": [
+        ".project-brain/lifecycle/06-architect.json"
+      ],
+      "confidence": 0.97,
+      "human_approval_required": false,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "TASK-06-ARCHITECT-02",
+      "stage_id": "06_ARCHITECT",
+      "title": "Define fault isolation boundaries and atomic persistence contract for IncidentLens",
+      "description": "Design RFC 7807 problem details handler, atomic file replacement (temp file write + rename), and payload safety boundaries.",
+      "objective": "Prevent crash cascades, partial disk corruption, and unbounded memory consumption.",
+      "input_requirements": [
+        "TASK-06-ARCHITECT-01"
+      ],
+      "output_requirements": [
+        "fault-tolerance-spec.json"
+      ],
+      "dependencies": [
+        "TASK-06-ARCHITECT-01"
+      ],
+      "domain": "G",
+      "required_brain_knowledge": [
+        "DOM-F-C060CCE1",
+        "DOM-G-D1C40B63",
+        "DOM-D-CB6BA6DF"
+      ],
+      "acceptance_criteria": [
+        "Atomic storage write pattern (write to tmp + renameSync) specified",
+        "RFC 7807 error formatting contract defined for all API failures",
+        "Payload size limit barrier (>1MB rejection) established"
+      ],
+      "verification_method": "SPECIFICATION_REVIEW",
+      "evidence_references": [
+        ".project-brain/lifecycle/06-architect.json"
+      ],
+      "confidence": 0.98,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "architecture_topology": {

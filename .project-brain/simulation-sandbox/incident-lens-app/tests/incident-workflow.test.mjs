@@ -14,6 +14,32 @@ import os from 'os';
 import { createServer } from '../src/server.mjs';
 import { IncidentStore } from '../src/storage/incident-store.mjs';
 
+// Helper functions for WCAG 2.1 AA Contrast calculation
+function getLuminance(r, g, b) {
+  const [rs, gs, bs] = [r, g, b].map(c => {
+    c = c / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+function hexToRgb(hex) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+  const num = parseInt(hex, 16);
+  return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+}
+
+function getContrastRatio(hex1, hex2) {
+  const [r1, g1, b1] = hexToRgb(hex1);
+  const [r2, g2, b2] = hexToRgb(hex2);
+  const lum1 = getLuminance(r1, g1, b1);
+  const lum2 = getLuminance(r2, g2, b2);
+  const brightest = Math.max(lum1, lum2);
+  const darkest = Math.min(lum1, lum2);
+  return (brightest + 0.05) / (darkest + 0.05);
+}
+
 function makeRequest(port, method, path, body = null, headers = {}) {
   return new Promise((resolve, reject) => {
     const options = {
@@ -96,15 +122,28 @@ describe('IncidentLens Universal Construction Verification Suite', () => {
     assert.strictEqual(res.headers['x-frame-options'], 'DENY');
   });
 
-  // 2. High-Contrast Dashboard Delivery
+  // 2. High-Contrast Dashboard Delivery & WCAG AA Contrast Verification
   it('Phase 2: Accessible WCAG AA Dashboard HTML Delivery', async () => {
     const res = await makeRequest(testPort, 'GET', '/');
     assert.strictEqual(res.statusCode, 200);
     assert(res.headers['content-type'].includes('text/html'));
     assert(res.body.includes('IncidentLens'));
     assert(res.body.includes('--bg-canvas: #090d13;')); // High-contrast dark palette
+    assert(res.body.includes('--btn-primary-bg: #2563eb;')); // Blue 600 accessible contrast token
+    assert(res.body.includes('--btn-primary-hover: #1d4ed8;'));
+    assert(res.body.includes('--btn-primary-active: #1e40af;'));
     assert(res.body.includes('SRE WORKSTATION'));
     assert(!res.body.includes('<script src="http')); // Zero external CDN tracker scripts
+
+    // Empirical WCAG 2.1 AA Contrast Ratios (Minimum 4.5:1 for normal text)
+    const defaultContrast = getContrastRatio('#ffffff', '#2563eb');
+    assert(defaultContrast >= 4.5, `Default button contrast must be >= 4.5:1, got ${defaultContrast.toFixed(2)}:1`);
+
+    const hoverContrast = getContrastRatio('#ffffff', '#1d4ed8');
+    assert(hoverContrast >= 4.5, `Hover button contrast must be >= 4.5:1, got ${hoverContrast.toFixed(2)}:1`);
+
+    const activeContrast = getContrastRatio('#ffffff', '#1e40af');
+    assert(activeContrast >= 4.5, `Active button contrast must be >= 4.5:1, got ${activeContrast.toFixed(2)}:1`);
   });
 
   // 3. Incident Lifecycle CRUD & State Machine

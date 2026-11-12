@@ -3,7 +3,7 @@
   "stage_index": 1,
   "stage_name": "Problem Discovery & Human Need",
   "primary_domain": "A",
-  "generated_at": "2026-11-11T17:47:28.629Z",
+  "generated_at": "2026-11-12T04:17:51.822Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -15,6 +15,70 @@
       "invariant": "Users and enterprise professionals handling confidential vector assets, images, or documents require mathematical certainty that their files never transit remote cloud servers. Software handling user data must default to 100% in-browser processing via WebAssembly, Web Workers, or",
       "confidence": 0.94,
       "source_provenance": "01_CORE/operating-rules.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-01-DISCOVER-01",
+      "stage_id": "01_DISCOVER",
+      "title": "Analyze target personas, user friction points, and core Jobs-to-be-Done for IncidentLens",
+      "description": "Map out persona struggles, manual toil, and latency bottlenecks in existing workflows for IncidentLens. Establish target persona profile and core Job-to-be-Done.",
+      "objective": "Establish grounded human need analysis and verified persona constraints for IncidentLens.",
+      "input_requirements": [
+        "Product Directive: IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging"
+      ],
+      "output_requirements": [
+        "problem-record.json",
+        "persona-analysis.json"
+      ],
+      "dependencies": [],
+      "domain": "A",
+      "required_brain_knowledge": [
+        "DOM-A-DD59FA01"
+      ],
+      "acceptance_criteria": [
+        "At least 3 distinct human friction points documented for IncidentLens",
+        "Target persona profile and proficiency level clearly specified",
+        "Primary Job-to-be-Done formalized without speculative complexity"
+      ],
+      "verification_method": "DOCUMENT_INSPECTION",
+      "evidence_references": [
+        ".project-brain/lifecycle/01-discover.json"
+      ],
+      "confidence": 0.95,
+      "human_approval_required": false,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "TASK-01-DISCOVER-02",
+      "stage_id": "01_DISCOVER",
+      "title": "Establish data privacy sovereignty and local execution boundary for IncidentLens",
+      "description": "Define strict client-side/workstation data residency guarantees preventing unauthorized outbound telemetry or cloud leaks.",
+      "objective": "Guarantee 100% data privacy sovereignty and zero unneeded cloud exposure.",
+      "input_requirements": [
+        "TASK-01-DISCOVER-01"
+      ],
+      "output_requirements": [
+        "data-privacy-spec.json"
+      ],
+      "dependencies": [
+        "TASK-01-DISCOVER-01"
+      ],
+      "domain": "A",
+      "required_brain_knowledge": [
+        "DOM-A-DD59FA01"
+      ],
+      "acceptance_criteria": [
+        "Zero mandatory external server dependencies for core workflows",
+        "Local filesystem or client-side storage designated as source of truth"
+      ],
+      "verification_method": "SECURITY_SCAN",
+      "evidence_references": [
+        ".project-brain/lifecycle/01-discover.json"
+      ],
+      "confidence": 0.98,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "human_pain_points": [

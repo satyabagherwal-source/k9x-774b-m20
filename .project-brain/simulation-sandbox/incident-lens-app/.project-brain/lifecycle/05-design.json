@@ -3,7 +3,7 @@
   "stage_index": 5,
   "stage_name": "UX/UI & Design System Specifications",
   "primary_domain": "F",
-  "generated_at": "2026-11-11T17:47:28.667Z",
+  "generated_at": "2026-11-12T04:17:51.991Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -23,6 +23,75 @@
       "invariant": "Modern tokenizers omit a distinct `[PAD]` token to minimize vocabulary fragmentation. However, equating `pad_token_id` and `eos_token_id` wi -> When `pad_token_id == eos_token_id`, the attention mask MUST be passed to all downstream operations to prevent masking tokens from triggerin",
       "confidence": 1,
       "source_provenance": "project://hf-webai-official-twil-8b/hf-webai-official-twil-8b-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-05-DESIGN-01",
+      "stage_id": "05_DESIGN",
+      "title": "Specify WCAG 2.1 AA accessible color tokens and contrast matrix for IncidentLens",
+      "description": "Formulate design tokens ensuring normal text and interactive button states achieve >= 4.5:1 contrast ratio against dark backgrounds.",
+      "objective": "Deliver mathematically verified WCAG AA accessible token palette.",
+      "input_requirements": [
+        "TASK-04-IMAGINE-01"
+      ],
+      "output_requirements": [
+        "design-tokens.json",
+        "contrast-matrix.json"
+      ],
+      "dependencies": [
+        "TASK-04-IMAGINE-01"
+      ],
+      "domain": "F",
+      "required_brain_knowledge": [
+        "DOM-F-C060CCE1",
+        "DOM-F-83D565C2"
+      ],
+      "acceptance_criteria": [
+        "Primary button token (--btn-primary-bg: #2563eb) provides >= 4.5:1 contrast against white text",
+        "Hover (#1d4ed8), active (#1e40af), and focus (#60a5fa) states maintain high contrast",
+        "Canvas and surface colors provide high-contrast background for text (#090d13 / #f0f6fc)"
+      ],
+      "verification_method": "CONTRAST_CALCULATION",
+      "evidence_references": [
+        ".project-brain/lifecycle/05-design.json"
+      ],
+      "confidence": 0.99,
+      "human_approval_required": false,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "TASK-05-DESIGN-02",
+      "stage_id": "05_DESIGN",
+      "title": "Establish responsive layout hierarchy and keyboard accessibility contract for IncidentLens",
+      "description": "Define responsive grid, keyboard Tab order, 2px focus-visible outlines, and ARIA semantic labels for all interactive elements.",
+      "objective": "Guarantee 100% keyboard accessibility and responsive adaptability.",
+      "input_requirements": [
+        "TASK-05-DESIGN-01"
+      ],
+      "output_requirements": [
+        "accessibility-contract.json"
+      ],
+      "dependencies": [
+        "TASK-05-DESIGN-01"
+      ],
+      "domain": "F",
+      "required_brain_knowledge": [
+        "DOM-F-C060CCE1",
+        "DOM-F-83D565C2"
+      ],
+      "acceptance_criteria": [
+        "2px focus outline specified for keyboard users",
+        "All form controls and buttons provide accessible names/labels",
+        "Responsive layout scales gracefully across screen sizes"
+      ],
+      "verification_method": "A11Y_AUDIT",
+      "evidence_references": [
+        ".project-brain/lifecycle/05-design.json"
+      ],
+      "confidence": 0.96,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "design_tokens": {

@@ -3,7 +3,7 @@
   "stage_index": 4,
   "stage_name": "Creative Direction & Concept Ideation",
   "primary_domain": "E",
-  "generated_at": "2026-11-11T17:47:28.657Z",
+  "generated_at": "2026-11-12T04:17:51.981Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -15,6 +15,42 @@
       "invariant": "Iconography and graphic previews often omit accessible labels, scale inconsistently across viewports, or lack visible high-contrast focus ri -> All graphic elements and visual previews must enforce explicit accessibility attributes (hasA11yProp), standard viewBox coordinate scaling, ",
       "confidence": 1,
       "source_provenance": "project://lucide-icons-lucide/lucide-icons-lucide-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-04-IMAGINE-01",
+      "stage_id": "04_IMAGINE",
+      "title": "Define creative tone, UX metaphors, and delight invariants for IncidentLens",
+      "description": "Establish ergonomic design direction, Swiss-Army-Knife precision metaphor, and sub-100ms feedback latency budget.",
+      "objective": "Formulate focused, clutter-free user interaction philosophy.",
+      "input_requirements": [
+        "TASK-02-DEFINE-01",
+        "TASK-03-RESEARCH-01"
+      ],
+      "output_requirements": [
+        "creative-direction.json"
+      ],
+      "dependencies": [
+        "TASK-02-DEFINE-01",
+        "TASK-03-RESEARCH-01"
+      ],
+      "domain": "E",
+      "required_brain_knowledge": [
+        "DOM-E-D288C96D"
+      ],
+      "acceptance_criteria": [
+        "Aesthetic tone defined (focused, transparent, resilient)",
+        "Sub-100ms UI feedback envelope specified",
+        "Zero modal traps or unrequested background spinners"
+      ],
+      "verification_method": "UX_REVIEW",
+      "evidence_references": [
+        ".project-brain/lifecycle/04-imagine.json"
+      ],
+      "confidence": 0.9,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "creative_tone": "Focused, Clean, Transparent, Resilient",

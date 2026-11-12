@@ -18,6 +18,12 @@ export function renderDashboardHtml() {
       --bg-card: #16202e;
       --border-subtle: #243447;
       --border-focus: #3b82f6;
+      --btn-primary-bg: #2563eb;
+      --btn-primary-hover: #1d4ed8;
+      --btn-primary-active: #1e40af;
+      --btn-primary-focus: #60a5fa;
+      --btn-disabled-bg: #334155;
+      --btn-disabled-text: #94a3b8;
       --text-main: #f0f6fc;
       --text-muted: #94a3b8;
       --sev1-color: #ef4444;
@@ -155,8 +161,8 @@ export function renderDashboardHtml() {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: var(--border-focus);
-      color: #fff;
+      background: var(--btn-primary-bg);
+      color: #ffffff;
       font-weight: 600;
       font-size: 0.9rem;
       padding: 0.65rem 1.25rem;
@@ -164,10 +170,28 @@ export function renderDashboardHtml() {
       border: none;
       cursor: pointer;
       width: 100%;
-      transition: opacity 0.15s ease;
+      transition: background-color 0.15s ease, opacity 0.15s ease;
     }
 
-    .btn:hover { opacity: 0.9; }
+    .btn:hover {
+      background: var(--btn-primary-hover);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--btn-primary-focus);
+      outline-offset: 2px;
+    }
+
+    .btn:active {
+      background: var(--btn-primary-active);
+    }
+
+    .btn:disabled {
+      background: var(--btn-disabled-bg);
+      color: var(--btn-disabled-text);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
 
     .btn-secondary {
       background: #1e293b;

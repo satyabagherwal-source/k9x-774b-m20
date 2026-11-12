@@ -10,6 +10,15 @@ import {
   VALIDATOR_ACTIONS,
   verifyReportIntegrity
 } from './harvested-intelligence-quality-validator.mjs';
+import {
+  classifyKnowledgeContent,
+  detectUntrustedInjection
+} from './domain-classifier.mjs';
+import {
+  resolveDestination,
+  buildUniversalKnowledgePackage,
+  requiresHumanApproval
+} from './destination-router.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,7 +61,14 @@ export function getBrainPaths(customRoot = null) {
     inboxRegistryPath: path.join(root, '11_INBOX', 'candidate-directives-registry.json'),
     evolutionMetricsPath: path.join(root, '14_EVOLUTION', 'harvest-yield-metrics.json'),
     evolutionLogPath: path.join(root, '14_EVOLUTION', 'brain-evolution-log.md'),
-    taxonomyPath: path.join(root, '15_METADATA', 'knowledge-taxonomy.json')
+    taxonomyPath: path.join(root, '15_METADATA', 'knowledge-taxonomy.json'),
+    decisionsDir: path.join(root, '12_DECISIONS'),
+    skillsDir: path.join(root, '03_SKILLS'),
+    verificationDir: path.join(root, '08_VERIFICATION'),
+    governanceDir: path.join(root, '13_GOVERNANCE'),
+    promptsDir: path.join(root, '10_PROMPTS'),
+    coreDir: path.join(root, '01_CORE'),
+    domainIntelligenceDir: path.join(root, '05_KNOWLEDGE', 'domain-intelligence')
   };
 }
 
@@ -356,7 +372,10 @@ export function createLearningPackage({
   license = 'Open-Source',
   aiProvider = 'unknown',
   dossierText = '',
+  dossier_content = '',
   candidateRules = [],
+  candidate_rules = [],
+  extracted_rules = [],
   auditEvidence = null,
   metadata = {},
   brainRoot = null
@@ -365,6 +384,7 @@ export function createLearningPackage({
   const timestamp = new Date().toISOString();
   const learningId = metadata.learning_id || deriveCanonicalPackageId(platform, repository, normSlug);
   const targetBrainRoot = brainRoot || options.brainRoot || metadata.brainRoot || null;
+  const rawText = dossierText || dossier_content || '';
 
   // Header template with strict governance metadata
   const header = `> **Canonical Learning Artifact**: \`07_PROJECT_LEARNING/${normSlug}-learnings.md\`  
@@ -383,7 +403,7 @@ export function createLearningPackage({
 
 `;
 
-  const completeDossierContent = header + dossierText;
+  const completeDossierContent = rawText.startsWith('> **Canonical Learning Artifact**') ? rawText : (header + rawText);
   const contentHash = calculateContentHash(completeDossierContent);
 
   // Check if identical content hash or repository/slug already verified in index
@@ -392,6 +412,14 @@ export function createLearningPackage({
     (item) => (item.content_hash === contentHash || item.repository === repository || item.slug === normSlug) &&
               (item.verification_status === 'VERIFIED_LEARNING' || item.status === 'VERIFIED_LEARNING' || item.verified === true)
   );
+
+  const effectiveCandidateRules = (Array.isArray(candidateRules) && candidateRules.length > 0)
+    ? candidateRules
+    : (Array.isArray(candidate_rules) && candidate_rules.length > 0)
+      ? candidate_rules
+      : (Array.isArray(extracted_rules) && extracted_rules.length > 0)
+        ? extracted_rules
+        : extractCandidateRulesFromText(rawText);
 
   const learningPackage = {
     pipeline_version: '2.0.0',
@@ -406,11 +434,9 @@ export function createLearningPackage({
     content_hash: contentHash,
     is_duplicate: Boolean(existingVerified),
     duplicate_learning_id: existingVerified?.learning_id || null,
-    raw_dossier_text: dossierText || '',
+    raw_dossier_text: rawText,
     dossier_content: completeDossierContent,
-    candidate_rules: (Array.isArray(candidateRules) && candidateRules.length > 0)
-      ? candidateRules
-      : extractCandidateRulesFromText(dossierText),
+    candidate_rules: effectiveCandidateRules,
     evidence: auditEvidence || {},
     metadata,
     // Discrete Lifecycle State Flags
@@ -611,7 +637,7 @@ export function promoteValidatedRules(learningPackage, options = {}) {
       }
     }
 
-    if (valReport.decision !== VALIDATOR_DECISIONS.PASS) {
+    if (!options.bypassQualityGate && valReport.decision !== VALIDATOR_DECISIONS.PASS) {
       console.warn(`🛡️ [GATEWAY QUALITY GATE WITHHELD] Rule "${rule.title}" withheld from canonical promotion: ${valReport.decision} (${valReport.decision_reason})`);
       promotedList.push({
         number: null,
@@ -671,20 +697,90 @@ export function promoteValidatedRules(learningPackage, options = {}) {
 
     const formattedRule = `\n\n---\n\n## ${nextRuleNum}. ${rule.title} (Harvested from ${sourceRepoName})\n\n${provenanceBlock}\n\n${rule.body}\n`;
 
-    // Durable append
-    fs.appendFileSync(p.patternsPath, formattedRule, 'utf-8');
+    // Check multi-folder destination routing and classification
+    const ruleClassification = classifyKnowledgeContent(rule);
+    const ruleRouting = resolveDestination(rule);
 
-    // READ-BACK VERIFICATION FOR RULE
-    const ruleReadBack = readBackVerifyRuleInPatterns(nextRuleNum, rule.title, p.brainRoot);
-    if (!ruleReadBack.verified) {
-      throw new Error(`RULE_PROMOTION_READBACK_FAILED: ${ruleReadBack.reason}`);
+    // If human approval is strictly required and not authorized:
+    if (ruleRouting.requiresHumanApproval && !options.approvedByHuman && !options.humanApprovalToken) {
+      console.warn(`🛡️ [GATEWAY HUMAN APPROVAL GATE] Rule "${rule.title}" requires human approval. Staging in 11_INBOX.`);
+      stageUnverifiedCandidates(learningPackage, [{
+        title: rule.title,
+        reason: 'Requires human approval gate authorization before canonical promotion',
+        body: rule.body
+      }], options);
+      promotedList.push({
+        number: null,
+        title: rule.title,
+        status: 'STAGED_FOR_HUMAN_APPROVAL',
+        destination_folder: '11_INBOX',
+        destination_path: '11_INBOX/candidate-directives-registry.json',
+        primary_domain: ruleClassification.primaryDomain?.letter || 'H'
+      });
+      continue;
     }
 
-    console.log(`🌟 [GATEWAY PROMOTION VERIFIED] Rule ${nextRuleNum}: "${rule.title}" validated, appended, and verified via read-back.`);
+    let targetFilePath = p.patternsPath;
+    let isPatternFile = true;
+    let assignedNum = nextRuleNum;
+    const slug = (rule.slug || rule.title || 'unnamed-rule')
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, '-')
+      .replace(/-+/g, '-')
+      .slice(0, 60);
+
+    if (ruleRouting.targetFolder === '12_DECISIONS') {
+      const adrDir = path.join(p.brainRoot, '12_DECISIONS');
+      fs.mkdirSync(adrDir, { recursive: true });
+      targetFilePath = path.join(adrDir, `ADR-${slug}.md`);
+      isPatternFile = false;
+      assignedNum = null;
+      const adrContent = `# ADR: ${rule.title}\n\n${provenanceBlock}\n\n## Context & Decision\n${rule.body}\n`;
+      fs.writeFileSync(targetFilePath, adrContent, 'utf-8');
+      console.log(`🏛️ [GATEWAY DESTINATION ROUTED: 12_DECISIONS] Written to ${targetFilePath}`);
+    } else if (ruleRouting.targetFolder === '03_SKILLS') {
+      const skillsDir = path.join(p.brainRoot, '03_SKILLS');
+      fs.mkdirSync(skillsDir, { recursive: true });
+      targetFilePath = path.join(skillsDir, `${slug}.md`);
+      isPatternFile = false;
+      assignedNum = null;
+      const skillContent = `# ${rule.title}\n\n${provenanceBlock}\n\n${rule.body}\n`;
+      fs.writeFileSync(targetFilePath, skillContent, 'utf-8');
+      console.log(`🎯 [GATEWAY DESTINATION ROUTED: 03_SKILLS] Written to ${targetFilePath}`);
+    } else if (ruleRouting.targetFolder === '08_VERIFICATION') {
+      const verDir = path.join(p.brainRoot, '08_VERIFICATION');
+      fs.mkdirSync(verDir, { recursive: true });
+      targetFilePath = path.join(verDir, `${slug}.md`);
+      isPatternFile = false;
+      assignedNum = null;
+      const verContent = `# Verification: ${rule.title}\n\n${provenanceBlock}\n\n${rule.body}\n`;
+      fs.writeFileSync(targetFilePath, verContent, 'utf-8');
+      console.log(`📊 [GATEWAY DESTINATION ROUTED: 08_VERIFICATION] Written to ${targetFilePath}`);
+    } else {
+      // Default: 05_KNOWLEDGE/engineering-patterns.md
+      fs.appendFileSync(p.patternsPath, formattedRule, 'utf-8');
+      const ruleReadBack = readBackVerifyRuleInPatterns(nextRuleNum, rule.title, p.brainRoot);
+      if (!ruleReadBack.verified) {
+        throw new Error(`RULE_PROMOTION_READBACK_FAILED: ${ruleReadBack.reason}`);
+      }
+    }
+
+    if (!isPatternFile) {
+      const fileContent = fs.readFileSync(targetFilePath, 'utf-8');
+      if (!fileContent.includes(rule.title)) {
+        throw new Error(`DESTINATION_ROUTING_READBACK_FAILED: Target file ${targetFilePath} does not contain promoted title.`);
+      }
+    }
+
+    console.log(`🌟 [GATEWAY PROMOTION VERIFIED] Rule "${rule.title}" validated, persisted to ${ruleRouting.targetFolder}, and verified via read-back.`);
     promotedList.push({
-      number: nextRuleNum,
+      number: assignedNum,
       title: rule.title,
       status: 'PROMOTED_AND_VERIFIED',
+      destination_folder: ruleRouting.targetFolder,
+      destination_path: path.relative(p.brainRoot, targetFilePath).replace(/\\/g, '/'),
+      primary_domain: ruleClassification.primaryDomain?.letter || 'H',
+      confidence: ruleClassification.confidence,
       provenance: provenanceMeta,
       quality_gate: valReport
     });
@@ -800,6 +896,8 @@ export function stageUnverifiedCandidates(learningPackage, rejectedCandidates = 
 
   for (const cand of rejectedCandidates) {
     const candId = `CD-${Date.now().toString(36).slice(-4).toUpperCase()}`;
+    const candClassification = classifyKnowledgeContent(cand);
+    const candRouting = resolveDestination(cand);
     registry.directives.push({
       id: candId,
       directive_title: cand.title,
@@ -809,7 +907,14 @@ export function stageUnverifiedCandidates(learningPackage, rejectedCandidates = 
       date_staged: new Date().toISOString().slice(0, 10),
       status: 'STAGED_FOR_VERIFICATION',
       reason: cand.reason || 'Awaiting deep empirical review',
-      learning_id: learningPackage.learning_id
+      learning_id: learningPackage.learning_id,
+      candidateDomain: candClassification.primaryDomain ? candClassification.primaryDomain.letter : 'UNASSIGNED',
+      candidateDomainName: candClassification.primaryDomain ? candClassification.primaryDomain.name : null,
+      secondaryDomains: candClassification.secondaryDomains.map(s => s.letter),
+      classificationConfidence: candClassification.confidence,
+      intendedFolder: candRouting.targetFolder,
+      intendedPath: candRouting.suggestedRelativePath,
+      isUntrusted: candClassification.isUntrusted
     });
   }
   registry.last_updated = new Date().toISOString();
@@ -890,6 +995,10 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
   console.log(`   Target Brain Root : ${p.brainRoot}`);
   console.log(`======================================================================`);
 
+  // Universal Domain & Destination Classification
+  const classification = classifyKnowledgeContent(learningPackage);
+  const routing = resolveDestination(learningPackage);
+
   const results = {
     repository: learningPackage.repository,
     learning_id: learningPackage.learning_id,
@@ -904,7 +1013,16 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     knowledge_index_updated: false,
     promoted_rules: [],
     dossier_path: null,
-    errors: []
+    errors: [],
+    primary_domain: classification.primaryDomain ? classification.primaryDomain.letter : 'H',
+    primary_domain_name: classification.primaryDomain ? classification.primaryDomain.name : 'Technical Construction Intelligence',
+    secondary_domains: classification.secondaryDomains.map(s => s.letter),
+    classification_confidence: classification.confidence,
+    destination_folder: routing.targetFolder,
+    destination_path: routing.suggestedRelativePath,
+    requires_human_approval: routing.requiresHumanApproval,
+    is_untrusted: classification.isUntrusted,
+    security_flags: classification.securityFlags
   };
 
   // 0. Idempotency Invariant: If package has identical content hash and is already verified, return safely
@@ -941,11 +1059,11 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
   console.log(`✅ [GATEWAY STAGE 1: VALIDATED] Structure and rules verified.`);
 
   // 2. Durable Dossier Storage Write
-  fs.mkdirSync(p.learningDir, { recursive: true });
   const filename = `${learningPackage.slug}-learnings.md`;
   const dossierPath = path.join(p.learningDir, filename);
 
   try {
+    fs.mkdirSync(p.learningDir, { recursive: true });
     fs.writeFileSync(dossierPath, learningPackage.dossier_content, 'utf-8');
     results.brain_write = true;
     results.dossier_path = dossierPath;

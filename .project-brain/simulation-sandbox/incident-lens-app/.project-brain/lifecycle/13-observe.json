@@ -3,7 +3,7 @@
   "stage_index": 13,
   "stage_name": "Telemetry, Logging & Observability Budgets",
   "primary_domain": "L",
-  "generated_at": "2026-11-11T17:47:28.870Z",
+  "generated_at": "2026-11-12T04:17:52.079Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -15,6 +15,39 @@
       "invariant": "Disaster recovery snapshots must atomically chunk repositories into 45MB parts to strictly comply with GitHub 100MB blob limits, encrypt credentials with AES-256-GCM, and verify 100% SHA-256 manifest parity prior to state restore.",
       "confidence": 1,
       "source_provenance": "04_WORKFLOWS/factory-engine/vault-backup-engine.mjs"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-13-OBSERVE-01",
+      "stage_id": "13_OBSERVE",
+      "title": "Establish structured telemetry logging and PII exclusion filters for IncidentLens",
+      "description": "Ensure JSON logging format is standard, latency budgets (P50/P99) are tracked, and sensitive credentials/PII are redacted.",
+      "objective": "Observability standard with complete privacy safeguards.",
+      "input_requirements": [
+        "TASK-12-OPERATE-01"
+      ],
+      "output_requirements": [
+        ".project-brain/lifecycle/13-observe.json"
+      ],
+      "dependencies": [
+        "TASK-12-OPERATE-01"
+      ],
+      "domain": "L",
+      "required_brain_knowledge": [
+        "DOM-L-1B851132"
+      ],
+      "acceptance_criteria": [
+        "Structured JSON logging active",
+        "Zero PII or credentials recorded in logs"
+      ],
+      "verification_method": "LOG_AUDIT",
+      "evidence_references": [
+        ".project-brain/lifecycle/13-observe.json"
+      ],
+      "confidence": 0.97,
+      "human_approval_required": false,
+      "status": "PENDING"
     }
   ],
   "observability_invariants": [

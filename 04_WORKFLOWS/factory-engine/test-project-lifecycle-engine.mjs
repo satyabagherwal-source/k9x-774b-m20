@@ -23,6 +23,10 @@ import {
   recallStageDomainIntelligence,
   synthesizeStagePayload,
   constructProjectLifecycle,
+  extractProductSummary,
+  generateStageTasks,
+  verifyStandardLifecycleStage,
+  verifyProjectLifecyclePipeline,
   verifyReleasePackaging,
   verifyDeploymentReadiness,
   verifyOperationsRunbook,
@@ -101,9 +105,20 @@ try {
   assert(fs.existsSync(constructionRes.lifecycleDir), '.project-brain/lifecycle directory created in target project');
 
   // ---------------------------------------------------------------------------
-  // 3. Artifact Completeness & JSON Schema Verification
+  // 3. Artifact Completeness & JSON Schema Verification (Tasks & Guidelines)
   // ---------------------------------------------------------------------------
   console.log('\n--- Phase 3: Artifact Completeness & JSON Schema Verification ---');
+  const allTaskIds = new Set();
+  const allTasks = [];
+
+  const requiredTaskFields = [
+    'id', 'stage_id', 'title', 'description', 'objective',
+    'input_requirements', 'output_requirements', 'dependencies',
+    'domain', 'required_brain_knowledge', 'acceptance_criteria',
+    'verification_method', 'evidence_references', 'confidence',
+    'human_approval_required', 'status'
+  ];
+
   for (const stage of CONSTRUCTION_LIFECYCLE_STAGES) {
     const fileName = `${stage.id.toLowerCase().replace('_', '-')}.json`;
     const filePath = path.join(constructionRes.lifecycleDir, fileName);
@@ -114,6 +129,23 @@ try {
     assert(parsed.stage_id === stage.id, `Stage manifest ${fileName} contains valid stage_id`);
     assert(parsed.primary_domain === stage.primaryDomain, `Stage manifest matches primary domain ${stage.primaryDomain}`);
     assert(Array.isArray(parsed.brain_intelligence_guidelines), `Stage manifest contains brain_intelligence_guidelines array`);
+
+    // Non-Empty Tasks Array Verification across all stages (specifically stages 01-09)
+    assert(Array.isArray(parsed.tasks) && parsed.tasks.length > 0, `Stage ${stage.id} contains non-empty tasks array (Count: ${parsed.tasks?.length})`);
+
+    // Strict 16-field Task Schema Verification
+    for (const task of parsed.tasks) {
+      allTaskIds.add(task.id);
+      allTasks.push(task);
+
+      const hasAllFields = requiredTaskFields.every(field => Object.prototype.hasOwnProperty.call(task, field));
+      assert(hasAllFields, `Task ${task.id} conforms to strict 16-field lifecycle schema`);
+      assert(task.stage_id === stage.id, `Task ${task.id} stage_id matches parent stage ${stage.id}`);
+      assert(task.domain === stage.primaryDomain, `Task ${task.id} domain matches stage domain ${stage.primaryDomain}`);
+      assert(typeof task.confidence === 'number' && task.confidence >= 0 && task.confidence <= 1, `Task ${task.id} has valid confidence score`);
+      assert(typeof task.human_approval_required === 'boolean', `Task ${task.id} has boolean human_approval_required flag`);
+      assert(Array.isArray(task.acceptance_criteria) && task.acceptance_criteria.length > 0, `Task ${task.id} has non-empty acceptance_criteria`);
+    }
   }
 
   // Master index and guide
@@ -121,6 +153,7 @@ try {
   assert(fs.existsSync(indexPath), 'project-lifecycle-index.json exists in lifecycle directory');
   const indexData = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
   assert(indexData.stages.length === 15, 'Master index tracks all 15 stages');
+  assert(typeof indexData.total_tasks_count === 'number' && indexData.total_tasks_count > 0, `Master index tracks total tasks count (${indexData.total_tasks_count})`);
 
   const guidePath = path.join(targetProjectDir, 'CONSTRUCTION_LIFECYCLE.md');
   assert(fs.existsSync(guidePath), 'CONSTRUCTION_LIFECYCLE.md guide exists in root of target project');
@@ -216,6 +249,107 @@ try {
   // 6.7 Unified Dispatcher
   const dispatchRes = executeStageVerification('10_RELEASE', targetProjectDir);
   assert(dispatchRes.stage === '10_RELEASE' && dispatchRes.verified === true, 'Unified executeStageVerification dispatched Stage 10 cleanly');
+
+  // ---------------------------------------------------------------------------
+  // 7. DAG Dependency Resolution, Stages 01-09 Verification & Multi-Product Generality
+  // ---------------------------------------------------------------------------
+  console.log('\n--- Phase 7: DAG Dependency Integrity, Pipeline Execution & Generality ---');
+
+  // 7.1 DAG Dependency Integrity
+  let allDependenciesValid = true;
+  for (const task of allTasks) {
+    if (task.dependencies.length > 0) {
+      for (const depId of task.dependencies) {
+        if (!allTaskIds.has(depId)) {
+          allDependenciesValid = false;
+          console.error(`Invalid dependency: Task ${task.id} depends on non-existent ${depId}`);
+        }
+      }
+    }
+  }
+  assert(allDependenciesValid, 'Every task dependency points to a valid upstream task ID in the DAG');
+
+  // Verify Stage 01 has zero external upstream dependencies (root of DAG)
+  const stage01Tasks = allTasks.filter(t => t.stage_id === '01_DISCOVER');
+  const stage01Root = stage01Tasks.find(t => t.id === 'TASK-01-DISCOVER-01');
+  assert(stage01Root && stage01Root.dependencies.length === 0, 'Stage 01 initial task has 0 dependencies (DAG root)');
+  assert(stage01Tasks.every(t => t.dependencies.every(d => d.startsWith('TASK-01'))), 'Stage 01 tasks have zero external upstream dependencies');
+
+  // Verify Stage 02 depends on Stage 01
+  const stage02Tasks = allTasks.filter(t => t.stage_id === '02_DEFINE');
+  assert(stage02Tasks.some(t => t.dependencies.includes('TASK-01-DISCOVER-01')), 'Stage 02 Define tasks depend on Stage 01 Discover tasks');
+
+  // 7.2 Stage 01-09 Verification via executeStageVerification
+  const discRes = executeStageVerification('01_DISCOVER', targetProjectDir);
+  assert(discRes.verified === true, 'Stage 01 executeStageVerification succeeded');
+  assert(discRes.tasks_count > 0, 'Stage 01 tasks verified');
+
+  const defRes = executeStageVerification('02_DEFINE', targetProjectDir);
+  assert(defRes.verified === true, 'Stage 02 executeStageVerification succeeded');
+
+  const desRes = executeStageVerification('05_DESIGN', targetProjectDir);
+  assert(desRes.verified === true, 'Stage 05 executeStageVerification succeeded');
+
+  const archRes = executeStageVerification('06_ARCHITECT', targetProjectDir);
+  assert(archRes.verified === true, 'Stage 06 executeStageVerification succeeded');
+
+  // 7.3 Missing Evidence & Artifact Detection (Stages 07 & 08)
+  const emptyProjectDir = path.join(sandboxDir, 'EmptyProjectTest');
+  constructProjectLifecycle('Empty Project Test', emptyProjectDir, { customRoot: BRAIN_ROOT });
+
+  // Stage 07 without code should fail with MISSING_SOURCE_CODE_ARTIFACTS
+  const buildNoCode = executeStageVerification('07_BUILD', emptyProjectDir);
+  assert(buildNoCode.verified === false, 'Stage 07 correctly fails verification when source code is missing');
+  assert(buildNoCode.issues.includes('MISSING_SOURCE_CODE_ARTIFACTS'), 'Stage 07 reports MISSING_SOURCE_CODE_ARTIFACTS');
+
+  // Add source code and re-verify
+  fs.mkdirSync(path.join(emptyProjectDir, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(emptyProjectDir, 'src', 'index.mjs'), 'export const ready = true;', 'utf-8');
+  const buildWithCode = executeStageVerification('07_BUILD', emptyProjectDir);
+  assert(buildWithCode.verified === true, 'Stage 07 verification succeeds once source code artifacts exist');
+
+  // Stage 08 without tests should fail with MISSING_TEST_SUITE_ARTIFACTS
+  const testNoTests = executeStageVerification('08_TEST', emptyProjectDir);
+  assert(testNoTests.verified === false, 'Stage 08 correctly fails verification when test suite is missing');
+  assert(testNoTests.issues.includes('MISSING_TEST_SUITE_ARTIFACTS'), 'Stage 08 reports MISSING_TEST_SUITE_ARTIFACTS');
+
+  // Add tests and re-verify
+  fs.mkdirSync(path.join(emptyProjectDir, 'tests'), { recursive: true });
+  fs.writeFileSync(path.join(emptyProjectDir, 'tests', 'index.test.mjs'), 'import test from "node:test";', 'utf-8');
+  const testWithTests = executeStageVerification('08_TEST', emptyProjectDir);
+  assert(testWithTests.verified === true, 'Stage 08 verification succeeds once test suite artifacts exist');
+
+  // Stage 09 Verify succeeds
+  const verifyRes = executeStageVerification('09_VERIFY', emptyProjectDir);
+  assert(verifyRes.verified === true, 'Stage 09 verification succeeds with invariants and test suite present');
+
+  // 7.4 Pipeline Execution & Prerequisite Failure Propagation
+  const pipelineRes = verifyProjectLifecyclePipeline(emptyProjectDir, { humanAuthorized: true });
+  assert(pipelineRes.total_stages_count === 15, 'Pipeline checked all 15 stages');
+  assert(pipelineRes.verified_stages_count >= 9, 'Pipeline verified at least 9 stages');
+
+  // Test failure propagation when an upstream manifest is deleted
+  const brokenProjectDir = path.join(sandboxDir, 'BrokenPipelineTest');
+  constructProjectLifecycle('Broken Pipeline Test', brokenProjectDir, { customRoot: BRAIN_ROOT });
+  // Remove Stage 01 manifest
+  fs.unlinkSync(path.join(brokenProjectDir, '.project-brain', 'lifecycle', '01-discover.json'));
+  const brokenPipeline = verifyProjectLifecyclePipeline(brokenProjectDir);
+  assert(brokenPipeline.success === false, 'Broken pipeline correctly reports success: false');
+  assert(brokenPipeline.stage_results[0].status === 'MISSING_STAGE_MANIFEST', 'Stage 01 reports MISSING_STAGE_MANIFEST');
+  assert(brokenPipeline.stage_results[1].status === 'BLOCKED_BY_PREREQUISITE', 'Stage 02 is blocked by failed Stage 01 prerequisite');
+  assert(brokenPipeline.stage_results[5].status === 'BLOCKED_BY_PREREQUISITE', 'Downstream Stage 06 is blocked by upstream prerequisite failure');
+
+  // 7.5 Multi-Product Generality (No IncidentLens Hardcoding)
+  const telemetryGoal = 'DataPulse: Edge Telemetry Buffer and Alert Filter with ring-buffer storage and rate limiting';
+  const telemetryDir = path.join(sandboxDir, 'DataPulseApp');
+  const telemetryRes = constructProjectLifecycle(telemetryGoal, telemetryDir, { customRoot: BRAIN_ROOT });
+  assert(telemetryRes.success === true, 'constructProjectLifecycle succeeded for distinct product goal');
+
+  const dpDiscover = JSON.parse(fs.readFileSync(path.join(telemetryDir, '.project-brain', 'lifecycle', '01-discover.json'), 'utf-8'));
+  assert(Array.isArray(dpDiscover.tasks) && dpDiscover.tasks.length > 0, 'DataPulse lifecycle has non-empty tasks in Stage 01');
+  assert(dpDiscover.tasks[0].title.includes('DataPulse'), 'DataPulse tasks dynamically use product summary "DataPulse"');
+  assert(!dpDiscover.tasks[0].title.includes('IncidentLens'), 'DataPulse tasks do NOT contain hardcoded "IncidentLens"');
+  assert(!dpDiscover.tasks[0].title.includes('Markdown'), 'DataPulse tasks do NOT contain hardcoded "Markdown"');
 
 } finally {
   try {

@@ -3,7 +3,7 @@
   "stage_index": 11,
   "stage_name": "Deployment & Infrastructure Configuration",
   "primary_domain": "L",
-  "generated_at": "2026-11-11T17:47:28.827Z",
+  "generated_at": "2026-11-12T04:17:52.056Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -15,6 +15,39 @@
       "invariant": "Disaster recovery snapshots must atomically chunk repositories into 45MB parts to strictly comply with GitHub 100MB blob limits, encrypt credentials with AES-256-GCM, and verify 100% SHA-256 manifest parity prior to state restore.",
       "confidence": 1,
       "source_provenance": "04_WORKFLOWS/factory-engine/vault-backup-engine.mjs"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-11-DEPLOY-01",
+      "stage_id": "11_DEPLOY",
+      "title": "Verify deployment readiness and enforce human authorization gate for IncidentLens",
+      "description": "Verify deployment manifest and dry-run safety. Enforce strict human approval gate before any production deploy.",
+      "objective": "Safe, human-authorized deployment boundary.",
+      "input_requirements": [
+        "TASK-10-RELEASE-01"
+      ],
+      "output_requirements": [
+        ".project-brain/lifecycle/11-deploy.json"
+      ],
+      "dependencies": [
+        "TASK-10-RELEASE-01"
+      ],
+      "domain": "L",
+      "required_brain_knowledge": [
+        "DOM-L-1B851132"
+      ],
+      "acceptance_criteria": [
+        "Deployment manifest exists and defines zero-downtime strategy",
+        "Production deployment blocked without explicit human approval token"
+      ],
+      "verification_method": "HUMAN_GATE",
+      "evidence_references": [
+        ".project-brain/lifecycle/11-deploy.json"
+      ],
+      "confidence": 1,
+      "human_approval_required": true,
+      "status": "PENDING"
     }
   ],
   "deployment_target": "Local / Edge Static Host",

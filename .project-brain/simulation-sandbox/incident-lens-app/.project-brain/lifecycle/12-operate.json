@@ -3,7 +3,7 @@
   "stage_index": 12,
   "stage_name": "Runtime Operations & Resilience Playbooks",
   "primary_domain": "L",
-  "generated_at": "2026-11-11T17:47:28.850Z",
+  "generated_at": "2026-11-12T04:17:52.070Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -15,6 +15,39 @@
       "invariant": "Disaster recovery snapshots must atomically chunk repositories into 45MB parts to strictly comply with GitHub 100MB blob limits, encrypt credentials with AES-256-GCM, and verify 100% SHA-256 manifest parity prior to state restore.",
       "confidence": 1,
       "source_provenance": "04_WORKFLOWS/factory-engine/vault-backup-engine.mjs"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-12-OPERATE-01",
+      "stage_id": "12_OPERATE",
+      "title": "Verify operational health probes and graceful teardown playbooks for IncidentLens",
+      "description": "Configure /api/health probes and SIGTERM handlers ensuring clean shutdown and zero orphaned state.",
+      "objective": "Resilient runtime operations with liveness and readiness monitoring.",
+      "input_requirements": [
+        "TASK-11-DEPLOY-01"
+      ],
+      "output_requirements": [
+        ".project-brain/lifecycle/12-operate.json"
+      ],
+      "dependencies": [
+        "TASK-11-DEPLOY-01"
+      ],
+      "domain": "L",
+      "required_brain_knowledge": [
+        "DOM-L-1B851132"
+      ],
+      "acceptance_criteria": [
+        "Liveness and readiness checks configured",
+        "Graceful teardown protocol verified"
+      ],
+      "verification_method": "RUNTIME_PROBE",
+      "evidence_references": [
+        ".project-brain/lifecycle/12-operate.json"
+      ],
+      "confidence": 0.96,
+      "human_approval_required": false,
+      "status": "PENDING"
     }
   ],
   "health_probes": [

@@ -3,7 +3,7 @@
   "stage_index": 3,
   "stage_name": "Market & Empirical Research",
   "primary_domain": "C",
-  "generated_at": "2026-11-11T17:47:28.644Z",
+  "generated_at": "2026-11-12T04:17:51.973Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -15,6 +15,41 @@
       "invariant": "High server compute and storage costs erode gross margin in high-volume market utilities, threatening business viability and forcing aggress -> Client-side zero-backend processing achieves sustainable gross margin and pricing viability by shifting compute to browser memory, establish",
       "confidence": 1,
       "source_provenance": "project://glincker-thesvg/glincker-thesvg-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-03-RESEARCH-01",
+      "stage_id": "03_RESEARCH",
+      "title": "Survey technical standards, RFC protocols, and commercial feasibility for IncidentLens",
+      "description": "Identify applicable open RFCs (e.g. RFC 7807), W3C accessibility specs, and commercial distribution advantages (zero server overhead).",
+      "objective": "Ground technical design in verified standards and establish economic feasibility.",
+      "input_requirements": [
+        "TASK-02-DEFINE-01"
+      ],
+      "output_requirements": [
+        "research-dossier.json",
+        "standards-matrix.json"
+      ],
+      "dependencies": [
+        "TASK-02-DEFINE-01"
+      ],
+      "domain": "C",
+      "required_brain_knowledge": [
+        "DOM-C-A3EC3CE8"
+      ],
+      "acceptance_criteria": [
+        "Applicable RFC error/status protocols identified",
+        "Zero-infrastructure distribution model validated",
+        "Standards-based architecture approach documented"
+      ],
+      "verification_method": "LITERATURE_AUDIT",
+      "evidence_references": [
+        ".project-brain/lifecycle/03-research.json"
+      ],
+      "confidence": 0.92,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "commercial_feasibility": {

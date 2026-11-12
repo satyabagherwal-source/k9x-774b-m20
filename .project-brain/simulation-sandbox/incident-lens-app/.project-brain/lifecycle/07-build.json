@@ -3,7 +3,7 @@
   "stage_index": 7,
   "stage_name": "Technical Construction & Implementation",
   "primary_domain": "H",
-  "generated_at": "2026-11-11T17:47:28.742Z",
+  "generated_at": "2026-11-12T04:17:52.025Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -47,6 +47,126 @@
       "invariant": "User-uploaded SVG markup can harbor embedded script tags, external resource references, or nested XML entity expansions that execute malicio -> All ingested SVG XML strings must be sanitized by stripping script elements, dangerous attributes (onload/onclick/javascript:), and validati",
       "confidence": 0.9,
       "source_provenance": "project://lucky-media-astro-seo/lucky-media-astro-seo-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-07-BUILD-01",
+      "stage_id": "07_BUILD",
+      "title": "Implement core storage engine and deterministic data models for IncidentLens",
+      "description": "Construct atomic file storage, JSON serialization routines, schema validation logic, and query filters.",
+      "objective": "Deliver robust, crash-resilient storage engine without external database dependencies.",
+      "input_requirements": [
+        "TASK-06-ARCHITECT-01",
+        "TASK-06-ARCHITECT-02"
+      ],
+      "output_requirements": [
+        "src/storage/"
+      ],
+      "dependencies": [
+        "TASK-06-ARCHITECT-01",
+        "TASK-06-ARCHITECT-02"
+      ],
+      "domain": "H",
+      "required_brain_knowledge": [
+        "DOM-H-C4EF28D3",
+        "DOM-H-83C24083",
+        "DOM-H-94C4B932",
+        "DOM-H-2007DF83",
+        "DOM-I-16F011E5"
+      ],
+      "acceptance_criteria": [
+        "Atomic file write succeeds and persists data across reloads",
+        "Schema validation enforces required attributes and rejects malformed inputs",
+        "Zero external database services required"
+      ],
+      "verification_method": "AUTOMATED_TEST",
+      "evidence_references": [
+        "src/storage/",
+        "tests/"
+      ],
+      "confidence": 0.98,
+      "human_approval_required": false,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "TASK-07-BUILD-02",
+      "stage_id": "07_BUILD",
+      "title": "Build HTTP server, REST endpoints, and RFC 7807 error middleware for IncidentLens",
+      "description": "Implement native Node.js HTTP server, REST route handlers, query parameter filtering, and RFC 7807 problem details responses.",
+      "objective": "Deliver production-grade, self-contained REST HTTP service.",
+      "input_requirements": [
+        "TASK-07-BUILD-01"
+      ],
+      "output_requirements": [
+        "src/server.mjs",
+        "src/api/"
+      ],
+      "dependencies": [
+        "TASK-07-BUILD-01"
+      ],
+      "domain": "H",
+      "required_brain_knowledge": [
+        "DOM-H-C4EF28D3",
+        "DOM-H-83C24083",
+        "DOM-H-94C4B932",
+        "DOM-H-2007DF83",
+        "DOM-I-16F011E5"
+      ],
+      "acceptance_criteria": [
+        "REST API endpoints return correct HTTP status codes (200, 201, 400, 404)",
+        "Error responses strictly adhere to RFC 7807 (type, title, status, detail, instance)",
+        "CORS and security headers (nosniff, DENY) applied on all responses"
+      ],
+      "verification_method": "API_TEST",
+      "evidence_references": [
+        "src/server.mjs",
+        "tests/"
+      ],
+      "confidence": 0.97,
+      "human_approval_required": false,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "TASK-07-BUILD-03",
+      "stage_id": "07_BUILD",
+      "title": "Assemble accessible WCAG AA dashboard UI and client controller for IncidentLens",
+      "description": "Construct self-contained dashboard HTML, high-contrast CSS design tokens, and reactive client controller.",
+      "objective": "Deliver accessible, zero-network user interface embedded in the server.",
+      "input_requirements": [
+        "TASK-05-DESIGN-01",
+        "TASK-05-DESIGN-02",
+        "TASK-07-BUILD-02"
+      ],
+      "output_requirements": [
+        "src/ui/dashboard-html.mjs"
+      ],
+      "dependencies": [
+        "TASK-05-DESIGN-01",
+        "TASK-05-DESIGN-02",
+        "TASK-07-BUILD-02"
+      ],
+      "domain": "H",
+      "required_brain_knowledge": [
+        "DOM-H-C4EF28D3",
+        "DOM-H-83C24083",
+        "DOM-H-94C4B932",
+        "DOM-H-2007DF83",
+        "DOM-I-16F011E5"
+      ],
+      "acceptance_criteria": [
+        "Primary button uses --btn-primary-bg: #2563eb with >= 4.5:1 contrast",
+        "Zero external CDN scripts or stylesheet dependencies",
+        "Live forms interact seamlessly with REST API endpoints"
+      ],
+      "verification_method": "UI_TEST",
+      "evidence_references": [
+        "src/ui/dashboard-html.mjs",
+        "tests/"
+      ],
+      "confidence": 0.99,
+      "human_approval_required": false,
+      "status": "VERIFIED"
     }
   ],
   "build_specification": {

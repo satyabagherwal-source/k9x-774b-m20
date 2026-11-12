@@ -3,7 +3,7 @@
   "stage_index": 14,
   "stage_name": "User Feedback & Anomaly Detection Loops",
   "primary_domain": "M",
-  "generated_at": "2026-11-11T17:47:28.884Z",
+  "generated_at": "2026-11-12T04:17:52.091Z",
   "product_goal": "IncidentLens: Real-Time Incident Diagnostic & Forensic Analysis Workstation with REST API, local persistence, runbook lookup, WCAG AA dark-mode dashboard, automated test verification, and continuous incident autopsy logging",
   "intent_environment": "CLIENT_AND_EDGE_HYBRID",
   "intent_paradigm": "HIGH_FREQUENCY_CANVAS_DASHBOARD",
@@ -47,6 +47,43 @@
       "invariant": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  \n> **Source**: github ([https://gith -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md`  \n> **Source**: github ([https://gith",
       "confidence": 0.68,
       "source_provenance": "project://zoontek-react-native-permissions/zoontek-react-native-permissions-learnings.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-14-FEEDBACK-01",
+      "stage_id": "14_FEEDBACK",
+      "title": "Configure runtime error autopsy ingestion and feedback capture for IncidentLens",
+      "description": "Record runtime errors and edge-case anomalies into .project-brain/incidents/ for continuous learning.",
+      "objective": "Closed-loop anomaly learning and incident capture.",
+      "input_requirements": [
+        "TASK-13-OBSERVE-01"
+      ],
+      "output_requirements": [
+        ".project-brain/incidents/"
+      ],
+      "dependencies": [
+        "TASK-13-OBSERVE-01"
+      ],
+      "domain": "M",
+      "required_brain_knowledge": [
+        "DOM-M-85839FD0",
+        "DOM-D-61BBF9FB",
+        "DOM-H-0B5C2EE9",
+        "DOM-D-170AE1CF",
+        "DOM-H-FF5BE5CE"
+      ],
+      "acceptance_criteria": [
+        "Incident autopsies logged with error signatures and reproduction steps",
+        "Evolution candidate rules derived from failure modes"
+      ],
+      "verification_method": "AUTOPSY_TEST",
+      "evidence_references": [
+        ".project-brain/incidents/"
+      ],
+      "confidence": 0.95,
+      "human_approval_required": false,
+      "status": "PENDING"
     }
   ],
   "feedback_mechanisms": [
