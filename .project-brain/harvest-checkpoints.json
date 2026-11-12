@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T21:49:32.699Z",
+  "last_updated": "2026-11-12T21:56:46.133Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "3d96f5cc84413df255e870ae5d320f379d432bd447d26584092fb5ff6248bcfc",
-      "verified_at": "2026-11-11T10:17:41.231Z",
+      "content_hash": "a828e68bdd75eb287c250672b9d3dcac96a00ff2c82fd528ad7d211a2cdb9bb1",
+      "verified_at": "2026-11-12T21:56:46.133Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:17:41.231Z"
+      "last_updated": "2026-11-12T21:56:46.133Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "b6bbb39efa479d5f36287371e8001c0b0c262efa736e57e2dd747c2b9fc8cf52",
-      "verified_at": "2026-11-10T01:46:27.003Z",
+      "content_hash": "9e6dba947a6a661a7312164893db8827f9464e812b413e7dce99b809b972377b",
+      "verified_at": "2026-11-12T21:56:36.924Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:46:27.003Z"
+      "last_updated": "2026-11-12T21:56:36.924Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -15411,14 +15411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dubzzz-fast-check",
-      "content_hash": "f47b38de595f0c6676ad7b4d447fdc5ebc50003fa1f8482573e3fb9230dcd35a",
-      "verified_at": "2026-11-07T23:34:14.107Z",
+      "content_hash": "580fe0ffc3f28cb86cbc49b52d24c3c2df0004571e2b43c62c02535ab6a66080",
+      "verified_at": "2026-11-12T21:56:39.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T23:34:14.107Z"
+      "last_updated": "2026-11-12T21:56:39.478Z"
     },
     "react/react-native": {
       "repository": "react/react-native",

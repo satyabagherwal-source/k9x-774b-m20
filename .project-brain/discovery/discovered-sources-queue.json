@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T21:49:40.233Z",
+  "updated_at": "2026-11-12T21:56:52.212Z",
   "stats": {
-    "total_discovered": 1630,
-    "approved_pending_harvest": 1495,
+    "total_discovered": 1678,
+    "approved_pending_harvest": 1539,
     "harvested_count": 0,
-    "rejected_count": 135,
+    "rejected_count": 139,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1495,
-      "OFFICIAL_DOCUMENTATION": 65,
-      "STANDARDS_AND_SPECIFICATIONS": 66,
+      "COMMUNITY_AND_EXPERT": 1540,
+      "OFFICIAL_DOCUMENTATION": 67,
+      "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 3
     }
@@ -34932,6 +34932,1034 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
         "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-01A817C36C0A": {
+      "id": "SRC-01A817C36C0A",
+      "url": "https://github.com/restatedev/restate",
+      "title": "https://github.com/restatedev/restate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.915Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-FF4E26BCB952": {
+      "id": "SRC-FF4E26BCB952",
+      "url": "http://localhost:{",
+      "title": "http://localhost:{",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T21:56:51.921Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-4593E7648172": {
+      "id": "SRC-4593E7648172",
+      "url": "http://localhost:9080/nThe",
+      "title": "http://localhost:9080/nThe",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T21:56:51.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-A89560BF3108": {
+      "id": "SRC-A89560BF3108",
+      "url": "https://docs.restate.dev/foundations/key-concepts",
+      "title": "https://docs.restate.dev/foundations/key-concepts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-5F891DB64195": {
+      "id": "SRC-5F891DB64195",
+      "url": "https://docs.restate.dev/services/flow-control",
+      "title": "https://docs.restate.dev/services/flow-control",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.940Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-2F5B0394B6F1": {
+      "id": "SRC-2F5B0394B6F1",
+      "url": "https://www.rfc-editor.org/rfc/rfc6902",
+      "title": "IETF RFC 6902",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.946Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
+        "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-C0164F4E2F33": {
+      "id": "SRC-C0164F4E2F33",
+      "url": "https://github.com/dubzzz/fast-check",
+      "title": "https://github.com/dubzzz/fast-check",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.957Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-B1C6EE1B7524": {
+      "id": "SRC-B1C6EE1B7524",
+      "url": "https://vite.dev/",
+      "title": "https://vite.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.966Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-E5B1AF48252A": {
+      "id": "SRC-E5B1AF48252A",
+      "url": "https://redirect.github.com/vitejs/vite/tree/HEAD/packages/vite",
+      "title": "https://redirect.github.com/vitejs/vite/tree/HEAD/packages/vite",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.972Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-3BA8699C54A6": {
+      "id": "SRC-3BA8699C54A6",
+      "url": "https://renovatebot.com/diffs/npm/vite/8.3.7/8.3.8",
+      "title": "https://renovatebot.com/diffs/npm/vite/8.3.7/8.3.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.980Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-10525ADF7709": {
+      "id": "SRC-10525ADF7709",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/vite/8.3.8?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/vite/8.3.8?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-BE0E0DB11E28": {
+      "id": "SRC-BE0E0DB11E28",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/vite/8.3.7/8.3.8?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/vite/8.3.7/8.3.8?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-B54C8BA9FAAC": {
+      "id": "SRC-B54C8BA9FAAC",
+      "url": "https://redirect.github.com/vitejs/vite/blob/HEAD/packages/vite/CHANGELOG.md",
+      "title": "https://redirect.github.com/vitejs/vite/blob/HEAD/packages/vite/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:51.996Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-D6B0DFEF459B": {
+      "id": "SRC-D6B0DFEF459B",
+      "url": "https://redirect.github.com/vitejs/vite/compare/v8.3.7...v8.3.8",
+      "title": "https://redirect.github.com/vitejs/vite/compare/v8.3.7...v8.3.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-3A3F8D266A9F": {
+      "id": "SRC-3A3F8D266A9F",
+      "url": "https://redirect.github.com/vitejs/vite/issues/24012",
+      "title": "https://redirect.github.com/vitejs/vite/issues/24012",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.008Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-589500D3DE36": {
+      "id": "SRC-589500D3DE36",
+      "url": "https://redirect.github.com/vitejs/vite/commit/a3b28e8744ffae9abd018696ad4fc01b27ac71ce",
+      "title": "https://redirect.github.com/vitejs/vite/commit/a3b28e8744ffae9abd018696ad4fc01b27ac71ce",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-E91A8B90193E": {
+      "id": "SRC-E91A8B90193E",
+      "url": "https://redirect.github.com/vitejs/vite/issues/23103",
+      "title": "https://redirect.github.com/vitejs/vite/issues/23103",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-B954EB4484F6": {
+      "id": "SRC-B954EB4484F6",
+      "url": "https://redirect.github.com/vitejs/vite/commit/5e50bae4bdfa123c25c4f5afcbb27efd96fcf681",
+      "title": "https://redirect.github.com/vitejs/vite/commit/5e50bae4bdfa123c25c4f5afcbb27efd96fcf681",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.026Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-2F6FBAE54094": {
+      "id": "SRC-2F6FBAE54094",
+      "url": "https://redirect.github.com/vitejs/vite/issues/24021",
+      "title": "https://redirect.github.com/vitejs/vite/issues/24021",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-49A4C9509C91": {
+      "id": "SRC-49A4C9509C91",
+      "url": "https://redi/",
+      "title": "https://redi/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.037Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-3B5BEDEA088A": {
+      "id": "SRC-3B5BEDEA088A",
+      "url": "https://redirect.github.com/sxzz/rolldown-plugin-dts",
+      "title": "https://redirect.github.com/sxzz/rolldown-plugin-dts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.042Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-B058568B45FE": {
+      "id": "SRC-B058568B45FE",
+      "url": "https://renovatebot.com/diffs/npm/rolldown-plugin-dts/0.30.0/0.30.1",
+      "title": "https://renovatebot.com/diffs/npm/rolldown-plugin-dts/0.30.0/0.30.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.049Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-E1076C77F43E": {
+      "id": "SRC-E1076C77F43E",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/rolldown-plugin-dts/0.30.1?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/rolldown-plugin-dts/0.30.1?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.055Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-282DCFDE85E7": {
+      "id": "SRC-282DCFDE85E7",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/rolldown-plugin-dts/0.30.0/0.30.1?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/rolldown-plugin-dts/0.30.0/0.30.1?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-0107FC19B5AB": {
+      "id": "SRC-0107FC19B5AB",
+      "url": "https://redirect.github.com/sxzz/rolldown-plugin-dts/releases/tag/v0.30.1",
+      "title": "https://redirect.github.com/sxzz/rolldown-plugin-dts/releases/tag/v0.30.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.065Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-EC6F44240A99": {
+      "id": "SRC-EC6F44240A99",
+      "url": "https://redirect.github.com/sxzz/rolldown-plugin-dts/compare/v0.30.0...v0.30.1",
+      "title": "https://redirect.github.com/sxzz/rolldown-plugin-dts/compare/v0.30.0...v0.30.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-83CDFCCFBB1C": {
+      "id": "SRC-83CDFCCFBB1C",
+      "url": "https://redirect.github.com/sxzzbot",
+      "title": "https://redirect.github.com/sxzzbot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-4E665930C001": {
+      "id": "SRC-4E665930C001",
+      "url": "https://redirect.github.com/sxzz/rolldown-plugin-dts/issues/347",
+      "title": "https://redirect.github.com/sxzz/rolldown-plugin-dts/issues/347",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.084Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-5949527A684D": {
+      "id": "SRC-5949527A684D",
+      "url": "https://redirect.github.com/sxzz/rolldown-plugin-dts/commit/41ac37f",
+      "title": "https://redirect.github.com/sxzz/rolldown-plugin-dts/commit/41ac37f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-401C33E42B37": {
+      "id": "SRC-401C33E42B37",
+      "url": "https://redirect.github.com/sxzz/rolldown-plugin-dts/issues/356",
+      "title": "https://redirect.github.com/sxzz/rolldown-plugin-dts/issues/356",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.094Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-52F69316EDA1": {
+      "id": "SRC-52F69316EDA1",
+      "url": "https://redirect.github.com/sxzz/rolldown-plugin-dts/commit/5b422f0",
+      "title": "https://redirect.github.com/sxzz/rolldown-plugin-dts/commit/5b422f0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.100Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-FC121FE184AC": {
+      "id": "SRC-FC121FE184AC",
+      "url": "https://oxc.rs/docs/guide/usage/formatter",
+      "title": "https://oxc.rs/docs/guide/usage/formatter",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.105Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-372A523C1A59": {
+      "id": "SRC-372A523C1A59",
+      "url": "https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxfmt",
+      "title": "https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxfmt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-FF92E209AF8F": {
+      "id": "SRC-FF92E209AF8F",
+      "url": "https://renovatebot.com/diffs/npm/oxfmt/0.77.0/0.78.0",
+      "title": "https://renovatebot.com/diffs/npm/oxfmt/0.77.0/0.78.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-5DC65B355A2B": {
+      "id": "SRC-5DC65B355A2B",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.78.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.78.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-F2C31CBA8858": {
+      "id": "SRC-F2C31CBA8858",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.77.0/0.78.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.77.0/0.78.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.128Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-CD8E14C0014A": {
+      "id": "SRC-CD8E14C0014A",
+      "url": "https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.78.0",
+      "title": "https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.78.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.133Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-04454BBD9348": {
+      "id": "SRC-04454BBD9348",
+      "url": "https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.77.0...oxfmt_v0.78.0",
+      "title": "https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.77.0...oxfmt_v0.78.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.138Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-CE52413EEC84": {
+      "id": "SRC-CE52413EEC84",
+      "url": "https://redirect.github.com/oxc-project/oxc/commit/ab78621",
+      "title": "https://redirect.github.com/oxc-project/oxc/commit/ab78621",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-698AA0EB054C": {
+      "id": "SRC-698AA0EB054C",
+      "url": "https://redirect.github.com/oxc-project/oxc/issues/29089",
+      "title": "https://redirect.github.com/oxc-project/oxc/issues/29089",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.150Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-FC46F3E3CF99": {
+      "id": "SRC-FC46F3E3CF99",
+      "url": "https://redirect.github.co/",
+      "title": "https://redirect.github.co/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+        "fileName": "dubzzz-fast-check-learnings.md"
+      }
+    },
+    "SRC-51F39317E096": {
+      "id": "SRC-51F39317E096",
+      "url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "title": "https://github.com/aleo-labs-protocol/snarkOS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-E0DEE0ADCCB8": {
+      "id": "SRC-E0DEE0ADCCB8",
+      "url": "http://localhost:3030/v2/testnet/block/height/latest",
+      "title": "http://localhost:3030/v2/testnet/block/height/latest",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T21:56:52.174Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-D68DABBC4C48": {
+      "id": "SRC-D68DABBC4C48",
+      "url": "http://localhost:3030/v2/testnet/block",
+      "title": "http://localhost:3030/v2/testnet/block",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T21:56:52.180Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-25499ECE19EA": {
+      "id": "SRC-25499ECE19EA",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d6e80e6c1745813b3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.190Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-7000785D4D2E": {
+      "id": "SRC-7000785D4D2E",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.200Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-8DACAD841C85": {
+      "id": "SRC-8DACAD841C85",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=a78dd20b33a5f4d898400d1d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-A6B047C1450C": {
+      "id": "SRC-A6B047C1450C",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T21:56:52.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

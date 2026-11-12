@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T21:49:40.179Z",
+  "last_updated": "2026-11-12T21:56:52.160Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7310,6 +7310,33 @@
       "source_repo": "lancedb-lancedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3A5AF6-ci-use-two-cargo-jobs-for-unlocked-build.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-1EA7DE",
+      "directive_title": "[VQueues] Add per-entry tokens for indexes that are still being built",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "restatedev-restate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1EA7DE--vqueues-add-per-entry-tokens-for-indexe.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-DB6505",
+      "directive_title": "⬆️ Update dependency vite to ^8.3.8 (#7563)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dubzzz-fast-check",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DB6505--update-dependency-vite-to-8-3-8-7563-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B19403",
+      "directive_title": "Merge pull request #4663 from aleo-labs-protocol/ci/bump-snarkvm",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B19403-merge-pull-request-4663-from-aleo-labs-p.md",
       "staged_date": "2026-11-12"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source**: github ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
-> **Source Version**: `9a5f8e25`  
+> **Source Version**: `98cf746f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T23:34:12.629Z  
+> **Timestamp**: 2026-11-12T21:56:29.782Z  
 > **Learning ID**: `learn-github-dubzzz-fast-check`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T23:34:11.375Z  
+> **Harvest Timestamp**: 2026-11-12T21:56:29.778Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Property based testing framework for JavaScript (like QuickCheck) written in TypeScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 5240 stars
+- **Stars / Engagement**: 5250 stars
 
 ---
 
@@ -612,14 +612,11 @@ export function runAllCallbacksAndReturn<T>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7550** (2026-11-07): **⬆️ Update dependency oxlint to ^1.92.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [oxlint](https://oxc.rs/docs/guide/usage/linter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxlint)) | [`^1.91.0` → `^1.92.0`](https://renovatebot.com/diffs/npm/oxlint/1.91.0/1.92.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxlint/1.92.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxlint/1.91.0/1.92.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxlint)</summary>  ### [`v1.92.0`](https://redirect.github.com/oxc-project/oxc/blob/HEAD/npm/oxlint/CHANGELOG.md#1920---2026-11-06)  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxlint_v1.91.0...oxlint_v1.92.0)  ##### 🚀 Features  - [`b7d2c75`](https://redirect.github.com/oxc-project/oxc/commit/b7d2c75) linter/eslint/no-redeclare: Add `ignoreDeclarationMerge` option ([#&#8203;28816](https://redirect.github.com/oxc-project/oxc/issues/28816)) (Cam McHenry)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update 
-  **Post-Mortem & Fix Analysis**:
-  > ### ⚠️ No Changeset found  Latest commit: 2c9793ad4c9f29772c3fd9d51c79000b0764c6f0  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/dubzzz/fast-check/new/renovate/oxlint-monorepo?filename=.changeset/quiet-dryers-hang.md&value=---%0A%0A---%0A%0A%E2%AC%86%EF%B8%8F%20Update%20dependency%20oxlint%20to%20%5E1.92.0%0A)  
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- This is an auto-generated comment: skip review by coderabbit.ai -->  > [!IMPORTANT] > ## Review skipped >  > Bot user detected. >  > To trigger a single review, invoke the `@coderabbitai review` command. >  > <details> > <summary><strong><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog.svg" width="16" height="16" align="absmiddle" alt=""></picture> Run configuration</strong></summary> > <dl> > <dd> > <br> >  > - **Source mode**: Auto > - **Repository**: Unavailable > - **Branch**: Unavailable > - **File**: No configuration file from this repository applied > - **Commit**: Unavailable > - **Layers**: Repository UI > - **Review profile**: ASSERTIVE > - **Plan**: Advanced > - **Ru
+- **Issue #7563** (2026-11-12): **⬆️ Update dependency vite to ^8.3.8**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [vite](https://vite.dev) ([source](https://redirect.github.com/vitejs/vite/tree/HEAD/packages/vite)) | [`^8.3.7` → `^8.3.8`](https://renovatebot.com/diffs/npm/vite/8.3.7/8.3.8) | ![age](https://developer.mend.io/api/mc/badges/age/npm/vite/8.3.8?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vite/8.3.7/8.3.8?slim=true) |  ---  ### Release Notes  <details> <summary>vitejs/vite (vite)</summary>  ### [`v8.3.8`](https://redirect.github.com/vitejs/vite/blob/HEAD/packages/vite/CHANGELOG.md#small-838-2026-11-11-small)  [Compare Source](https://redirect.github.com/vitejs/vite/compare/v8.3.7...v8.3.8)  ##### Bug Fixes  - **build:** keep `magicString` and `ast` in transform hook meta ([#&#8203;24012](https://redirect.github.com/vitejs/vite/issues/24012)) ([a3b28e8](https://redirect.github.com/vitejs/vite/commit/a3b28e8744ffae9abd018696ad4fc01b27ac71ce)) - **bundled-dev:** emit assets referenced by inline workers during load ([#&#8203;23103](https://redirect.github.com/vitejs/vite/issues/23103)) ([5e50bae](https://redirect.github.com/vitejs/vite/commit/5e50bae4bdfa123c25c4f5afcbb27efd96fcf681)) - **config:** skip native loader compat checks for type-only imports ([#&#8203;24021](https://redirect.github.com/vitejs/vite/issues/24021)) ([e554294](https://redi
 
-- **Issue #7549** (2026-11-07): **⬆️ Update dependency oxfmt to ^0.77.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [oxfmt](https://oxc.rs/docs/guide/usage/formatter) ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxfmt)) | [`^0.76.0` → `^0.77.0`](https://renovatebot.com/diffs/npm/oxfmt/0.76.0/0.77.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.77.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.76.0/0.77.0?slim=true) |  ---  ### Release Notes  <details> <summary>oxc-project/oxc (oxfmt)</summary>  ### [`v0.77.0`](https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.77.0): oxfmt v0.77.0  [Compare Source](https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.76.0...oxfmt_v0.77.0)  ##### 💥 BREAKING CHANGES  - [`00d1a67`](https://redirect.github.com/oxc-project/oxc/commit/00d1a67) oxfmt: \[**BREAKING**] Format `parser:vue` files by `oxc_formatter_htmlish` ([#&#8203;28848](https://redirect.github.com/oxc-project/oxc/issues/28848)) (leaysgur)  ##### 🚀 Features  - [`9a81e58`](https://redirect.github.com/oxc-project/oxc/commit/9a81e58) formatter_htmlish: Format Vue templates ([#&#8203;28847](https://redirect.github.com/oxc-project/oxc/issues/28847)) (leaysgur) - [`119d82f`](https://redirect.github.com/oxc-project/oxc/commit/119d82f) formatter: Format a template's expressions and handlers as `JsR
+- **Issue #7562** (2026-11-11): **⬆️ Update dependency rolldown-plugin-dts to ^0.30.1**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [rolldown-plugin-dts](https://redirect.github.com/sxzz/rolldown-plugin-dts) | [`^0.30.0` → `^0.30.1`](https://renovatebot.com/diffs/npm/rolldown-plugin-dts/0.30.0/0.30.1) | ![age](https://developer.mend.io/api/mc/badges/age/npm/rolldown-plugin-dts/0.30.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/rolldown-plugin-dts/0.30.0/0.30.1?slim=true) |  ---  ### Release Notes  <details> <summary>sxzz/rolldown-plugin-dts (rolldown-plugin-dts)</summary>  ### [`v0.30.1`](https://redirect.github.com/sxzz/rolldown-plugin-dts/releases/tag/v0.30.1)  [Compare Source](https://redirect.github.com/sxzz/rolldown-plugin-dts/compare/v0.30.0...v0.30.1)  #####    🚀 Features  - Add `typecheck` option to fail on type errors  -  by [@&#8203;sxzzbot](https://redirect.github.com/sxzzbot) in [#&#8203;347](https://redirect.github.com/sxzz/rolldown-plugin-dts/issues/347) [<samp>(41ac3)</samp>](https://redirect.github.com/sxzz/rolldown-plugin-dts/commit/41ac37f)  #####    🐞 Bug Fixes  - Support binding patterns in variable declarations  -  by [@&#8203;sxzzbot](https://redirect.github.com/sxzzbot) in [#&#8203;356](https://redirect.github.com/sxzz/rolldown-plugin-dts/issues/356) [<samp>(5b422)</samp>](https://redirect.github.com/sxzz/rolldown-plugin-dts/commit/5b422f0) - Kee
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -636,8 +633,8 @@ export function runAllCallbacksAndReturn<T>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a5f8e25` (2026-11-07)
-**Commit Message**: ⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (#7548)
+### Incident Patch 1: `98cf746f` (2026-11-12)
+**Commit Message**: ⬆️ Update dependency vite to ^8.3.8 (#7563)
 
 This PR contains the following updates:
 
@@ -645,14 +642,13 @@ This PR contains the following updates:
 [Age](https://docs.renovatebot.com/merge-confidence/) |
 [Confidence](https://docs.renovatebot.com/merge-confidence/) |
 |---|---|---|---|
+| [vite](https://vite.dev)
+([source](https://redirect.github.com/vitejs/vite/tree/HEAD/packages/vite))
+| [`^8.3.7` →
+`^8.3.8`](https://renovatebot.com/diffs/npm/vite/8.3.7/8.3.8) |
+![age](https://developer.mend.io/api/mc/badges/age/npm/vite/8.3.8?slim=true)
 |
-[rolldown-plugin-dts](https://redirect.github.com/sxzz/rolldown-plugin-dts)
-| [`^0.29.0` →
-`^0.30.0`](https://renovatebot.com/diffs/npm/rolldown-plugin-dts/0.29.0/0.30.0)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/rolldown-plugin-dts/0.30.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/rolldown-plugin-dts/0.29.0/0.30.0?slim=true)
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vite/8.3.7/8.3.8?slim=true)
 |
 
 ---
@@ -660,162 +656,149 @@ This PR contains the following updates:
 ### Release Notes
 
 <details>
-<summary>sxzz/rolldown-plugin-dts (rolldown-plugin-dts)</summary>
+<summary>vitejs/vite (vite)</summary>
 
 ###
-[`v0.30.0`](https://redirect.github.com/sxzz/rolldown-plugin-dts/releases/tag/v0.30.0)
+[`v8.3.8`](https://redirect.github.com/vitejs/vite/blob/HEAD/packages/vite/CHANGELOG.md#small-838-2026-11-11-small)
 
 [Compare
-Source](https://redirect.github.com/sxzz/rolldown-plugin-dts/compare/v0.29.0...v0.30.0)
+Source](https://redirect.github.com/vitejs/vite/compare/v8.3.7...v8.3.8)
 
-#####    🚨 Breaking Changes
+##### Bug Fixes
 
-- Merge `emitDtsOnly` and `dtsInput` into `dtsOnly`  -  by
-[@&#8203;sxzzbot](https://redirect.github.com/sxzzbot) in
-[#&#8203;340](https://redirect.github.com/sxzz/rolldown-plugin-dts/issues/340)
-[<samp>(2858d)</samp>](https://redir
+- **build:** keep `magicString` and `ast` in transform hook meta
+([#&#8203;24012](https://redirect.github.com/vitejs/vite/issues/24012))
+([a3b28e8](https://redirect.github.com/vitejs/vite/commit/a3b28e8744ffae9abd018696ad4fc01b27ac71ce))
+- **bundled-dev:** emit assets referenced by inline workers duri
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `packages/jest/package.json` (modified, +1/-1)
 ```diff
-@@ -60,7 +60,7 @@
-     "pkg-pr-new": "^0.0.93",
-     "publint": "^0.3.25",
-     "rolldown": "^1.3.0",
--    "rolldown-plugin-dts": "^0.29.0",
-+    "rolldown-plugin-dts": "^0.30.0",
+@@ -79,7 +79,7 @@
+     "jest": "^30.5.2",
+     "jest-jasmine2": "^30.5.2",
      "typescript": "~7.0.2",
+-    "vite": "^8.3.7",
++    "vite": "^8.3.8",
      "vitest": "^5.1.0"
-   }
+   },
+   "keywords": [
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +34/-34)
+**File**: `packages/vitest/package.json` (modified, +1/-1)
 ```diff
-@@ -216,8 +216,8 @@ importers:
-         specifier: ^1.3.0
-         version: 1.3.0
-       rolldown-plugin-dts:
--        specifier: ^0.29.0
--        version: 0.29.0(rolldown@1.3.0)(typescript@7.0.2)
-+        specifier: ^0.30.0
-+        version: 0.30.0(rolldown@1.3.0)(typescript@7.0.2)
-       typescript:
+@@ -39,7 +39,7 @@
+     "fast-check": "workspace:*",
+     "rolldown": "^1.3.1",
+     "typescript": "~7.0.2",
+-    "vite": "^8.3.7",
++    "vite": "^8.3.8",
+     "vitest": "^5.1.0"
+   },
+   "keywords": [
+```
+
+**File**: `pnpm-lock.yaml` (modified, +25/-25)
+```diff
+@@ -223,7 +223,7 @@ importers:
+         version: 7.0.2
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
+ 
+   examples:
+     devDependencies:
+@@ -268,7 +268,7 @@ importers:
+         version: 7.0.2
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
+ 
+   packages/ava:
+     dependencies:
+@@ -299,7 +299,7 @@ importers:
+         version: 7.0.2
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
+ 
+   packages/fast-check:
+     dependencies:
+@@ -330,7 +330,7 @@ importers:
+         version: 7.0.2
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
+ 
+   packages/jest:
+     dependencies:
+@@ -369,11 +369,11 @@ importers:
          specifier: ~7.0.2
          version: 7.0.2
-@@ -4656,33 +4656,33 @@ packages:
-   '@xtuc/long@4.2.2':
-     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
+       vite:
+-        specifier: ^8.3.7
+-        version: 8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1)
++        specifier: ^8.3.8
++        version: 8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1)
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
  
--  '@yuku-toolchain/darwin-arm64@0.25.0':
--    resolution: {integrity: sha512-21QMCgP74cgSrgxIgw/SS5uMnn7cFHwgjNEBZYgO1HxpdjG4ULenXyUY92xRReuAJZdbRyz6OGwtYi6lDKumSw==}
-+  '@yuku-toolchain/darwin-arm64@0.27.0':
-+    resolution: {integrity: sha512-A3v83rNyHWlnJeeMBsWggZ+RZDP2BEMHIiMk+j23LqtVch24MXwg8veflkQgZ2GtCtZOxcG+NkztnsSUS4rWEQ==}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@yuku-toolchain/darwin-x64@0.25.0':
--    resolution: {integrity: sha512-bsR90bUlDZpBdFyK5C+XFZ/Yuq4aPtK8BI15GZsT+dfdWabl8OGpTiJXcriSBu+4vrljw3pYKmn7WizWgjZ0fQ==}
-+  '@yuku-toolchain/darwin-x64@0.27.0':
-+    resolution: {integrity: sha512-u+fcqQw0uRj5irtO5f0xu5nGazYRxfBVBNIuhiONWX6Mh2izRONSNXhCwFDaYRqHunublzw2l2aQMB0n5n1t0Q==}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@yuku-toolchain/linux-arm64@0.25.0':
--    resolution: {integrity: sha512-T0Y/gCqE4FKfchzRKpxXbQyWFpyaCcw6wdopu1ZKCLqZs48MfZShqihQjq1dck0JgJYwc+zxlfVvb693gFH4fg==}
-+  '@yuku-toolchain/linux-arm64@0.27.0':
-+    resolution: {integrity: sha512-IPB+9LSC/sf8Sa8DtqapUgU4uTL/U94Vr5mgUsfRx59u8/4BT38cze+e5b96AlQynsdtuF4tgC0FW0TmJ2B75g==}
-     cpu: [arm64]
-     os: [linux]
- 
--  '@yuku-toolchain/linux-x64@0.25.0':
--    resolution: {integrity: sha512-uwroa8GsFLJLarEphscB0UCqrx3jdDNqhwVZC2Tv2QDN4i4Eo87NmJaTFpOlNF4+CNVsiN+P0BnriySTidc3xQ==}
-+  '@yuku-toolchain/linux-x64@0.27.0':
-+    resolution: {integrity: sha512-fe1kN04JPBODrkRZOuI06jIqKyzcyn0ykx+tpiERDwqAh9ALWOtkgfhFjVaOQSu+guhakzY/89xjQdmfY7EJ7w==}
-     cpu: [x64]
-     os: [linux]
- 
--  '@yuku-toolchain/win32-arm64@0.25.0':
--    resolution: {integrity: sha512-VssXbUjyRj1egmSSNwo2NEayMTth0mHBPit9WiYGEnvQyTQSUM0TLix0sJn/mVjJBrwqEKyGYg7dkdWFafNYFw==}
-+  '@yuku-toolchain/win32-arm64@0.27.0':
-+    resolution: {integrity: sha512-NZmiFTF7ee45Fhnsa0BGMCpElJGg8iGYt4N3UoKj/n1vNmACcgY6NI4najNr9Jc1ulIVVvtPbo934RMlZQakrA==}
-     cpu: [arm64]
-     os: [win32]
- 
--  '@yuku-toolchain/win32-x64@0.25.0':
--    resolution: {integrity: sha512-drLnLlLtqLni1UPZJ1pKl6PPsdGJoaFGaQsJa1khtjJT+OK5Z71rb+md9fO6KP9eJXjIOJKtW7OgnVlLf91WIw==}
-+  '@yuku-toolchain/win32-x64@0.27.0':
-+    resolution: {integrity: sha512-7LSviI8HtHga0g7G2oT7C/SP2IoLmrg8LYPeWZkp4ljFtaWKJoTRF0Iv0cVt0dR4rehoN/+TjN4r8SoArCKvlg==}
-     cpu: [x64]
-     os: [win32]
- 
-@@ -9130,8 +9130,8 @@ packages:
-   robust-predicates@3.0.3:
-     resolution: {integrity: sha512-NS3levdsRIUOmiJ8FZWCP7LG3QpJyrs/TE0Zpf1yvZu8cAJJ6QMW92H1c7kWpdIHo8RvmLxN/o2JXTKHp74lUA==}
- 
--  rolldown-plugin-dts@0.29.0:
--    resolution: {integrity: sha512-PvsbRXQR5tHGnjLyxj2peRMwv3pfRfStiIqhbag3J/I2fFaYdfEQ1AaFwXfZlK8qKBkgQUNnCZdrUcaTPPq05Q==}
-+  rolldown-plugin-dts@0.30.0:
-+    resolution: {integrity: sha512-5FNezfYv5alHvrYw5Xoj4RNqbZ9F+/1jETFSohhYfRiama8tUN4mcVURmBqbZQba45t5hRdW7aSOnV6WYIj0MA==}
-     engines: {node: ^22.18.0 || ^24.11.0 || >=26.0.0}
-     peerDependencies:
-       '@volar/typescript': ~2.4.0
-@@ -10442,11 +10442,11 @@ packages:
-     resolution: {integrity: sha512-xYqdZFUK/VYazNl/oCDYN+3WloWQwMfZxBoiNt6qNyk+xfOdi598muWE42rNZFp1kNOiqW936q5RhUdnpqElSg==}
-     engines: {node: '>=18'}
- 
--  yuku@0.25.0:
--    resolution: {integrity: sha512-iAlHlpPmcjRqUauDkW9xF33b+jsUzTrrv49FfPLBNxEAUWuU7XN8tBUGjBHYPCEF/d3632MhG6GjCZutecA8Ng==}
-+  yuku@0.27.0:
-+    resolution: {integrity: sha512-YmSD4xYlESRi8egxzC4guegQdMhAcz1G9NUsMNrTABAIV9dQxoBzDC7ZyAG/dSG18o1Oxt4xDok2irvPy9FSJQ==}
-     engines: {node: '>=16.4.0'}
-     peerDependencies:
--      '@yuku-toolchain/wasm': 0.25.0
-+      '@yuku-toolchain/wasm': 0.27.0
-     peerDependenciesMeta:
-       '@yuku-toolchain/wasm':
-         optional: true
-@@ -15790,22 +15790,22 @@ snapshots:
- 
-   '@xtuc/long@4.2.2': {}
- 
--  '@yuku-toolchain/darwin-arm64@0.25.0':
-+  '@yuku-toolchain/darwin-arm64@0.27.0':
-     optional: true
- 
--  '@yuku-toolchain/darwin-x64@0.25.0':
-+  '@yuku-toolchain/darwin-x64@0.27.0':
-     optional: true
- 
--  '@yuku-toolchain/linux-arm64@0.25.0':
-+  '@yuku-toolchain/linux-arm64@0.27.0':
-     optional: true
- 
--  '@yuku-toolchain/linux-x64@0.25.0':
-+  '@yuku-toolchain/linux-x64@0.27.0':
-     optional: true
- 
--  '@yuku-toolchain/win32-arm64@0.25.0':
-+  '@yuku-toolchain/win32-arm64@0.27.0':
-     optional: true
- 
--  '@yuku-toolchain/win32-x64@0.25.0':
-+  '@yuku-toolchain/win32-x64@0.27.0':
-     optional: true
- 
-   abbrev@3.0.1: {}
-@@ -21117,13 +21117,13 @@ snapshots:
- 
-   robust-predicates@3.0.3: {}
- 
--  rolldown-plugin-dts@0.29.0(rolldown@1.3.0)(typescript@7.0.2):
-+  rolldown-plugin-dts@0.30.0(rolldown@1.3.0)(typescript@7.0.2):
+   packages/packaged:
      dependencies:
-       dts-resolv
+@@ -398,7 +398,7 @@ importers:
+         version: 7.0.2
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
+ 
+   packages/poisoning:
+     devDependencies:
+@@ -416,7 +416,7 @@ importers:
+         version: 7.0.2
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
+ 
+   packages/vitest:
+     dependencies:
+@@ -437,11 +437,11 @@ importers:
+         specifier: ~7.0.2
+         version: 7.0.2
+       vite:
+-        specifier: ^8.3.7
+-        version: 8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1)
++        specifier: ^8.3.8
++        version: 8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1)
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
+ 
+   packages/worker:
+     dependencies:
+@@ -463,7 +463,7 @@ importers:
+         version: 7.0.2
+       vitest:
+         specifier: ^5.1.0
+-        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.7(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
++        version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(vite@8.3.8(@types/node@26.6.6)(jiti@1.21.7)(terser@5.51.2)(yaml@2.9.1))
+ 
+   playground:
+     devDependencies:
+@@ -481
 ```
 
 ---
 
-### Incident Patch 2: `b3d2f808` (2026-11-07)
-**Commit Message**: ⬆️ Update dependency oxfmt to ^0.77.0 (#7549)
+### Incident Patch 2: `7c69eca5` (2026-11-11)
+**Commit Message**: ⬆️ Update dependency oxfmt to ^0.78.0 (#7559)
 
 This PR contains the following updates:
 
@@ -825,11 +808,11 @@ This PR contains the following updates:
 |---|---|---|---|
 | [oxfmt](https://oxc.rs/docs/guide/usage/formatter)
 ([source](https://redirect.github.com/oxc-project/oxc/tree/HEAD/npm/oxfmt))
-| [`^0.76.0` →
-`^0.77.0`](https://renovatebot.com/diffs/npm/oxfmt/0.76.0/0.77.0) |
-![age](https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.77.0?slim=true)
+| [`^0.77.0` →
+`^0.78.0`](https://renovatebot.com/diffs/npm/oxfmt/0.77.0/0.78.0) |
+![age](https://developer.mend.io/api/mc/badges/age/npm/oxfmt/0.78.0?slim=true)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.76.0/0.77.0?slim=true)
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/oxfmt/0.77.0/0.78.0?slim=true)
 |
 
 ---
@@ -840,32 +823,31 @@ This PR contains the following updates:
 <summary>oxc-project/oxc (oxfmt)</summary>
 
 ###
-[`v0.77.0`](https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.77.0):
-oxfmt v0.77.0
+[`v0.78.0`](https://redirect.github.com/oxc-project/oxc/releases/tag/oxfmt_v0.78.0):
+oxfmt v0.78.0
 
 [Compare
-Source](https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.76.0...oxfmt_v0.77.0)
+Source](https://redirect.github.com/oxc-project/oxc/compare/oxfmt_v0.77.0...oxfmt_v0.78.0)
 
-##### 💥 BREAKING CHANGES
+##### 🐛 Bug Fixes
 
 -
-[`00d1a67`](https://redirect.github.com/oxc-project/oxc/commit/00d1a67)
-oxfmt: \[**BREAKING**] Format `parser:vue` files by
-`oxc_formatter_htmlish`
-([#&#8203;28848](https://redirect.github.com/oxc-project/oxc/issues/28848))
-(leaysgur)
-
-##### 🚀 F
+[`ab78621`](https://redirect.github.com/oxc-project/oxc/commit/ab78621)
+formatter_css/less: Print `~` escape consistently
+([#&#8203;29089](https://redirect.github.com/oxc-project/oxc/issues/29089))
+(Yuji Sugiura)
+-
+[`91721d2`](https://redirect.github.co
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
 @@ -54,7 +54,7 @@
      "@vitest/coverage-v8": "^5.1.0",
-     "all-contributors-cli": "^7.0.0",
+     "all-contributors-cli": "^7.0.1",
      "cross-env": "^10.1.0",
--    "oxfmt": "^0.76.0",
-+    "oxfmt": "^0.77.0",
-     "oxlint": "^1.92.0",
+-    "oxfmt": "^0.77.0",
++    "oxfmt": "^0.78.0",
+     "oxlint": "^1.93.0",
      "oxlint-tsgolint": "^7.0.2006",
      "pkg-pr-new": "^0.0.93",
 ```
@@ -876,113 +858,113 @@ oxfmt: \[**BREAKING**] Format `parser:vue` files by
          specifier: ^10.1.0
          version: 10.1.0
        oxfmt:
--        specifier: ^0.76.0
--        version: 0.76.0
-+        specifier: ^0.77.0
-+        version: 0.77.0
+-        specifier: ^0.77.0
+-        version: 0.77.0
++        specifier: ^0.78.0
++        version: 0.78.0
        oxlint:
-         specifier: ^1.92.0
-         version: 1.92.0(oxlint-tsgolint@7.0.2006)
-@@ -2695,124 +2695,124 @@ packages:
+         specifier: ^1.93.0
+         version: 1.93.0(oxlint-tsgolint@7.0.2006)
+@@ -2688,124 +2688,124 @@ packages:
    '@oxc-project/types@0.157.0':
      resolution: {integrity: sha512-95iTox1qdt6WGWce3xwNOVayByOfLaYAq+qGPpub6NWbBh9sv0GG3+zyfh9ZBCO/jVu5A0EWI+qQI7g6fevjxg==}
  
--  '@oxfmt/binding-android-arm-eabi@0.76.0':
--    resolution: {integrity: sha512-z8x4kittQLPsrJWmfoIJyYqs2gNwceGShoUqAJdFRPw3K4kkkKCFHh3Cr4NFRvZb7DPfDS3+JfBjSm3OIyQaJQ==}
-+  '@oxfmt/binding-android-arm-eabi@0.77.0':
-+    resolution: {integrity: sha512-zmPiuOvkuu0csMx4U3gdMunIFWNcWulzikFMdAPBzLazVAA3LhdHzv9yzgUgAckv/zje5vz4XJcseNQKdSsWMw==}
+-  '@oxfmt/binding-android-arm-eabi@0.77.0':
+-    resolution: {integrity: sha512-zmPiuOvkuu0csMx4U3gdMunIFWNcWulzikFMdAPBzLazVAA3LhdHzv9yzgUgAckv/zje5vz4XJcseNQKdSsWMw==}
++  '@oxfmt/binding-android-arm-eabi@0.78.0':
++    resolution: {integrity: sha512-1x9NPGQG5WMOOT8spRP4hPbeqwB/P9ayxFo4EUDSle6mLmtYRqE6suXgHr93/S2nnszy77LlIa8klkKdWtHbMw==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [arm]
      os: [android]
  
--  '@oxfmt/binding-android-arm64@0.76.0':
--    resolution: {integrity: sha512-Zj9fEQhQSKGj8ZTB+X4q4ho4545xWf7qsvJpwREWnBz5BATEFYtStKRgiwYOZvxQ7ORlBEgSj7pmDzuljfV1mQ==}
-+  '@oxfmt/binding-android-arm64@0.77.0':
-+    resolution: {integrity: sha512-shXOIK9sj3bvt4H6K47qFWNKaYBwEhzj97iUwoLGyyRDrXt1OdAAuCiupCinG1i7ETL81knjEKeB+JmhOOfPew==}
+-  '@oxfmt/binding-android-arm64@0.77.0':
+-    resolution: {integrity: sha512-shXOIK9sj3bvt4H6K47qFWNKaYBwEhzj97iUwoLGyyRDrXt1OdAAuCiupCinG1i7ETL81knjEKeB+JmhOOfPew==}
++  '@oxfmt/binding-android-arm64@0.78.0':
++    resolution: {integrity: sha512-1muYaW9SiPEq8NIPGX0B20oUwCx6HWiCsZem/2jU7UsOzoXLT4YxWq6ybdhwKSKl0PyAfvyMyPF7FsI1To7AdA==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [arm64]
      os: [android]
  
--  '@oxfmt/binding-darwin-arm64@0.76.0':
--    resolution: {integrity: sha512-jZy8GpUXaWpic5JPMAvLmaBz95Sx0naZl6hptBPLOMiYmZYiME7jAt6pv8o/tjQqPNWKb+7jKzZhrYx6UqM5MQ==}
-+  '@oxfmt/binding-darwin-arm64@0.77.0':
-+    resolution: {integrity: sha512-lrTX0I54buv9CW2leEWchWLdfcrblZ5Rj8uAilKzBEyWif8CTN6zBHdFc12K1b6U2cnlvOFBd1LxdLdqLKX2EA==}
+-  '@oxfmt/binding-darwin-arm64@0.77.0':
+-    resolution: {integrity: sha512-lrTX0I54buv9CW2leEWchWLdfcrblZ5Rj8uAilKzBEyWif8CTN6zBHdFc12K1b6U2cnlvOFBd1LxdLdqLKX2EA==}
++  '@oxfmt/binding-darwin-arm64@0.78.0':
++    resolution: {integrity: sha512-jl4KJdo8HrVpLmcSYS/7oDXPH8Hzd6VrzgUFRAbY0j6cSRjcDkUnpuAStuNLoqvMtZEi7Rdy68BBriCgWJcy2g==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [arm64]
      os: [darwin]
  
--  '@oxfmt/binding-darwin-x64@0.76.0':
--    resolution: {integrity: sha512-U59+a9lVpoRp9enRhTE9GssL3qB1k09CYagRzTfs3dfknopMYV0x0xHZv7Pls3SNMqHlyHR+ufmY76CYafQoLw==}
-+  '@oxfmt/binding-darwin-x64@0.77.0':
-+    resolution: {integrity: sha512-SD44K3x/Im8EsOtdHxjVmTBi0cafAaunRpCeq+w91tkD2keqYagR8oAvxkJHUK+KPg5NQk7JZqQnzGHnVEBrDw==}
+-  '@oxfmt/binding-darwin-x64@0.77.0':
+-    resolution: {integrity: sha512-SD44K3x/Im8EsOtdHxjVmTBi0cafAaunRpCeq+w91tkD2keqYagR8oAvxkJHUK+KPg5NQk7JZqQnzGHnVEBrDw==}
++  '@oxfmt/binding-darwin-x64@0.78.0':
++    resolution: {integrity: sha512-RwOhQgAQi1qV3TeuTfrgGkCWEL3eDFIql/lo4rt2xpGHqyolKa+W5cFbb+M9IvwMwQbplii5Gbv1ZQQPTJlNug==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [x64]
      os: [darwin]
  
--  '@oxfmt/binding-freebsd-x64@0.76.0':
--    resolution: {integrity: sha512-J1R3YJHPdQJ2RQvzMdTVDWyizhihGiRGGAeEZxtGp629j5pcT5ypSLSiBflopD7o7tmiMD+xlNfhIVmjcHKMVQ==}
-+  '@oxfmt/binding-freebsd-x64@0.77.0':
-+    resolution: {integrity: sha512-N+gUflsCx3FAVkxi5sxGlL5LwO+7pv5NexHJufBqPyl3BcPv1rXpfwqhL/Vj+XfshfoxMFTBbzrbJgGVaPVkAw==}
+-  '@oxfmt/binding-freebsd-x64@0.77.0':
+-    resolution: {integrity: sha512-N+gUflsCx3FAVkxi5sxGlL5LwO+7pv5NexHJufBqPyl3BcPv1rXpfwqhL/Vj+XfshfoxMFTBbzrbJgGVaPVkAw==}
++  '@oxfmt/binding-freebsd-x64@0.78.0':
++    resolution: {integrity: sha512-MAXydj01mLjMUlnmo7sYVm+7kdBdU9Nwaux2Q1f9oLNqt3CCdego1oMoZ30qDyZQGQXfVJZEU1yRV7mSzwKDVA==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [x64]
      os: [freebsd]
  
--  '@oxfmt/binding-linux-arm-gnueabihf@0.76.0':
--    resolution: {integrity: sha512-x9qTg6zHoqeyzmFVlIjSb9WlhZdoXaayMTeQeDeUEfKA484AgPJz7f9chLjDMONA6wUUX0FJxnVHsYgX5Zv0+g==}
-+  '@oxfmt/binding-linux-arm-gnueabihf@0.77.0':
-+    resolution: {integrity: sha512-DXGwP8818IUZ4cxcfugg9PXqnI6fVCWIqgCgBoUKdl/QhJF4Po+lucJBrnrX/b5BNKwVMc3xSrvbI9rl8+RrBA==}
+-  '@oxfmt/binding-linux-arm-gnueabihf@0.77.0':
+-    resolution: {integrity: sha512-DXGwP8818IUZ4cxcfugg9PXqnI6fVCWIqgCgBoUKdl/QhJF4Po+lucJBrnrX/b5BNKwVMc3xSrvbI9rl8+RrBA==}
++  '@oxfmt/binding-linux-arm-gnueabihf@0.78.0':
++    resolution: {integrity: sha512-rz6FVZRiWsq3O2YQgCoqZRwaQQaPQ70NBks4+KINjjPJOjBTd8g/iq6ynS97ode+qKGlhXtpc/xCl8LHzfOjyQ==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [arm]
      os: [linux]
  
--  '@oxfmt/binding-linux-arm-musleabihf@0.76.0':
--    resolution: {integrity: sha512-303gbamm7NDllTtkeaX+8F5Da+KcSBr64mqELQEFg9XgnjfLX3YBCHUcOfgIlVTSybesy43eoeKai8oGr0P6UA==}
-+  '@oxfmt/binding-linux-arm-musleabihf@0.77.0':
-+    resolution: {integrity: sha512-HUiJTgdV10PkCW41nHqVYYlW8Uc+39YBOoluZLfJE2MBPKVTNElhL+vpdSEuVaCGhGkzOGR6XyxM37gu31L1Qw==}
+-  '@oxfmt/binding-linux-arm-musleabihf@0.77.0':
+-    resolution: {integrity: sha512-HUiJTgdV10PkCW41nHqVYYlW8Uc+39YBOoluZLfJE2MBPKVTNElhL+vpdSEuVaCGhGkzOGR6XyxM37gu31L1Qw==}
++  '@oxfmt/binding-linux-arm-musleabihf@0.78.0':
++    resolution: {integrity: sha512-lIK0XJi4JP1FnhuLjR/JWhQHGghZc+ghFNnbZTQC8kxsmrkW3ex8CeF7fp0FT+rEP0Nm6voCYkasL8poVWA9sQ==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [arm]
      os: [linux]
  
--  '@oxfmt/binding-linux-arm64-gnu@0.76.0':
--    resolution: {integrity: sha512-j3UAXzCJoWX9bZLaICj6DfwkI/2fzja9RpiCIbIN+2CQAcKoY+5SH5pQUcECvn32mQm17NSPE9YqTAwYx1seZg==}
-+  '@oxfmt/binding-linux-arm64-gnu@0.77.0':
-+    resolution: {integrity: sha512-+w3V07y6yy8FdACnGtzgDsG/CHgA0Y/W2/bzZuPYgvBAa23Lap/nmvyNQmCiGKkSaChTPlY7QpIShGGAC7IGEQ==}
+-  '@oxfmt/binding-linux-arm64-gnu@0.77.0':
+-    resolution: {integrity: sha512-+w3V07y6yy8FdACnGtzgDsG/CHgA0Y/W2/bzZuPYgvBAa23Lap/nmvyNQmCiGKkSaChTPlY7QpIShGGAC7IGEQ==}
++  '@oxfmt/binding-linux-arm64-gnu@0.78.0':
++    resolution: {integrity: sha512-o2LJIHfW3ZADOjDVk5c7MM1M8CiAG43GTc4mlJAK23fOHgru4CvnqWedCoCXpIsKokoRdEa7XdQywPGZv1BAiA==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [arm64]
      os: [linux]
      libc: [glibc]
  
--  '@oxfmt/binding-linux-arm64-musl@0.76.0':
--    resolution: {integrity: sha512-qFZqWVkEzuxWMtUkCtHxsnohXHnUMBQr/ZIxF0KmlCSt8de/bc1lbpVgpqjb3QxCADQHG/O1s3JcowcBF2sqdw==}
-+  '@oxfmt/binding-linux-arm64-musl@0.77.0':
-+    resolution: {integrity: sha512-FASxWQAuLW4WXFViDa77ybd3Y1lbkBx5DTtL4OGl+pL64/ymtydTFvJM0xz/0vnCirNzPUDAI6TiTBDGsFbEVg==}
+-  '@oxfmt/binding-linux-arm64-musl@0.77.0':
+-    resolution: {integrity: sha512-FASxWQAuLW4WXFViDa77ybd3Y1lbkBx5DTtL4OGl+pL64/ymtydTFvJM0xz/0vnCirNzPUDAI6TiTBDGsFbEVg==}
++  '@oxfmt/binding-linux-arm64-musl@0.78.0':
++    resolution: {integrity: sha512-G+lUaQk94Vo+4byyd8X2+pPXtd7wObpdbvBC8xyozZD0ROSVBI3XpNNR6HECkJq4Q51AwLuJG81f4x+4eqvSrw==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [arm64]
      os: [linux]
      libc: [musl]
  
--  '@oxfmt/binding-linux-ppc64-gnu@0.76.0':
--    resolution: {integrity: sha512-ROiAid0UH2GN5lMMX2JTgKlOKx1rN+6a1WxIuBsU3j5A3MuB9U5XkREMW76XBbAImnH45mfOCFcSIwb+drcVYg==}
-+  '@oxfmt/binding-linux-ppc64-gnu@0.77.0':
-+    resolution: {integrity: sha512-WRdlgZahG35zCieq7Po7QU8mBgkFAIdEpgS5p3vVZrHt0FXTbFgzqC7xeBCceh9gpFGgr4VWblULNnU8gdw0DA==}
+-  '@oxfmt/binding-linux-ppc64-gnu@0.77.0':
+-    resolution: {integrity: sha512-WRdlgZahG35zCieq7Po7QU8mBgkFAIdEpgS5p3vVZrHt0FXTbFgzqC7xeBCceh9gpFGgr4VWblULNnU8gdw0DA==}
++  '@oxfmt/binding-linux-ppc64-gnu@0.78.0':
++    resolution: {integrity: sha512-r76PAZf9/ZgF/iDRaIf8nLsr4x6ZHe/j2QLmWUjoQ46Sa11qMO68a5u5iux3y8vLzqYTS/xtKO9PjjMfyk5png==}
      engines: {node: ^20.19.0 || >=22.12.0}
      cpu: [ppc64]
      os: [linux]
      libc: [glibc]
  
--  '@oxfmt/binding-linux-riscv64-gnu@0.76.0':
--    resolution: {integrity: sha512-Oyd/9ObdM2RYkZ7yzF/GyvVdbNgJcRG8BFVwnAVo3ooqzaem4E2p5eTIGB09FecQD+Q5HQEANOTEnIZTO6rBAQ==}
-+  '@oxfmt/binding-linux-riscv64-gnu@0.77.0':
+-  '@oxfmt/binding-linux-riscv64-gnu@0.77.0':
+-    resolution: {integrity: sha512-CVzNO94x/UzQe/INVUu9qt5X1MjLEooqwc/5VcQ88eyLXiEIIsjubpPQgwEMKwfWtAA5hnpFL2GF74zSdCg07Q==}
++  '@oxfmt/binding-linux-riscv64-gnu@0.78.0':
 +    resolution: {integrity: 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7550** (2026-11-07): ⬆️ Update dependency oxlint to ^1.92.0 (@renovate[bot])
-- **PR #7549** (2026-11-07): ⬆️ Update dependency oxfmt to ^0.77.0 (@renovate[bot])
-- **PR #7548** (2026-11-07): ⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (@renovate[bot])
-- **PR #7547** (2026-11-07): ⬆️ Update dependency @atproto/api to ^0.30.3 (@renovate[bot])
-- **PR #7546** (2026-11-06): ⬆️ Update dependency rolldown to ^1.3.0 (@renovate[bot])
-- **PR #7545** (2026-11-06): ⬆️ Update dependency oxlint-tsgolint to ^7.0.2006 (@renovate[bot])
+- **PR #7563** (2026-11-12): ⬆️ Update dependency vite to ^8.3.8 (@renovate[bot])
+- **PR #7562** (2026-11-11): ⬆️ Update dependency rolldown-plugin-dts to ^0.30.1 (@renovate[bot])
+- **PR #7561** (2026-11-11): ⬆️ Update dependency @testing-library/user-event to ^14.6.9 (@renovate[bot])
+- **PR #7560** (2026-11-11): ⬆️ Update dependency oxlint to ^1.93.0 (@renovate[bot])
+- **PR #7559** (2026-11-11): ⬆️ Update dependency oxfmt to ^0.78.0 (@renovate[bot])
+- **PR #7558** (2026-11-10): ⬆️ Update dependency vite to ^8.3.7 (@renovate[bot])
 
 ---
 
@@ -1002,28 +984,28 @@ oxfmt: \[**BREAKING**] Format `parser:vue` files by
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (#7548)
+## X. ⬆️ Update dependency vite to ^8.3.8 (#7563)
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/jest/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a5f8e25`: ⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (#7548). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `98cf746f`: ⬆️ Update dependency vite to ^8.3.8 (#7563). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/jest/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "rolldown-plugin-dts": "^0.30.0",
+    "vite": "^8.3.8",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "rolldown-plugin-dts": "^0.29.0",
+    "vite": "^8.3.7",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a5f8e25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `98cf746f` are properly handled with clean fallback behavior.

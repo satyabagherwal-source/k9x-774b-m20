@@ -9225,3 +9225,6 @@
 | `CYCLE-20261112-YX65` | `2026-11-12T21:49:19.853Z` | `yshrsmz/BuildKonfig` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f256fb68...`) |
 | `CYCLE-20261112-Z5RY` | `2026-11-12T21:49:31.006Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ca61faad...`) |
 | `CYCLE-20261112-Z72M` | `2026-11-12T21:49:32.686Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d74fb9f2...`) |
+| `CYCLE-20261112-8AE5` | `2026-11-12T21:56:36.893Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9e6dba94...`) |
+| `CYCLE-20261112-8CDM` | `2026-11-12T21:56:39.466Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`580fe0ff...`) |
+| `CYCLE-20261112-8HI4` | `2026-11-12T21:56:46.108Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a828e68b...`) |

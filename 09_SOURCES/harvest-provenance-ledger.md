@@ -9234,3 +9234,6 @@ Every entry in this ledger must capture:
 | `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `f044a582` | Multi-dimensional audit evidence | 2026-11-12T21:49:19.858Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `6d24446a` | Multi-dimensional audit evidence | 2026-11-12T21:49:31.009Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bc20ed9c` | Multi-dimensional audit evidence | 2026-11-12T21:49:32.690Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `b8c2a10f` | Multi-dimensional audit evidence | 2026-11-12T21:56:36.897Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `98cf746f` | Multi-dimensional audit evidence | 2026-11-12T21:56:39.469Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `56afe28f` | Multi-dimensional audit evidence | 2026-11-12T21:56:46.111Z |

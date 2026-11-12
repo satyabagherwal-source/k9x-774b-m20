@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `4733a867`  
+> **Source Version**: `b8c2a10f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:46:25.396Z  
+> **Timestamp**: 2026-11-12T21:56:27.778Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:41:23.170Z  
+> **Harvest Timestamp**: 2026-11-12T21:56:27.415Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4684 stars
+- **Stars / Engagement**: 4695 stars
 
 ---
 
@@ -37,7 +37,7 @@
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `cli/src/commands/cloud/environments/tunnel/renderer.rs`
+### Core Architecture Module: `cli/src/commands/cloud/tunnel/renderer.rs`
 ```
 // Copyright (c) 2023 - 2026 Restate Software, Inc., Restate GmbH.
 // All rights reserved.
@@ -1634,41 +1634,1154 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `edcaf8be` (2026-11-09)
-**Commit Message**: [Bifrost] Let read stream counters wrap the same way in every build
+### Incident Patch 1: `e38d1750` (2026-11-12)
+**Commit Message**: [VQueues] Add per-entry tokens for indexes that are still being built
 
-records_read and bytes_read used plain additions, which wrap in release
-builds and panic on overflow in debug and test builds. They now wrap at
-2^64 in every build, like the partitions' byte offsets. A stream would
-need to read 16 EiB to get there, so this only makes the behavior
-explicit.
+When a secondary index or a statistic is added to a running partition, it is built in the background, so for a while it reflects some entries and not others. A write that changes an entry must then know whether the index already holds the entry's old state: if it does, the old state is removed and the new one added; if not, only the new one is added.
 
-**File**: `crates/bifrost/src/read_stream.rs` (modified, +5/-3)
+This commit gives entries that memory. Each entry-status header gets an optional `touched_by` list: the IDs of the indexes still being built that already reflect this entry. The IDs are sorted, distinct big-endian `u32`s; the list is omitted when empty, so headers written today don't grow. Their representation, `MigrationJobIds`, lives in the new `restate_storage_api::migration_job` module, because any table can carry such tokens; the entry-status header is only the first.
+
+For example, an entry stored with the list `[70]` keeps `[70]` through any number of updates; deleting it and inserting it again starts with an empty list. Nothing writes tokens yet: the index registry, in a later commit, assigns them and clears the ones of finished indexes.
+
+- Updates and delet
+
+**File**: `crates/partition-store/src/tests/vqueue_table_test/mod.rs` (modified, +3/-3)
 ```diff
-@@ -527,9 +527,11 @@ impl Stream for LogReadStream {
-                                     // record and fast-forward.
-                                     continue;
-                                 }
--                                *this.records_read += 1;
--                                *this.bytes_read +=
--                                    data_record.encoded_body_size().unwrap_or_default() as u64;
-+                                // Wrap at 2^64 the same way in every build.
-+                                *this.records_read = this.records_read.wrapping_add(1);
-+                                *this.bytes_read = this.bytes_read.wrapping_add(
-+                                    data_record.encoded_body_size().unwrap_or_default() as u64,
-+                                );
-                             }
+@@ -34,7 +34,7 @@ use restate_storage_api::vqueue_table::filters::ScanEntryIdFilter;
+ use restate_storage_api::vqueue_table::metadata::{VQueueLink, VQueueMeta};
+ use restate_storage_api::vqueue_table::{
+     EntryContext, EntryKey, EntryMetadata, EntryStateRef, EntryStatusHeader, EntryValue, Options,
+-    ReadVQueueTable, Stage, Status, VQueueCursor, VQueueRunningCursor, VQueueStore,
++    ReadVQueueTable, Stage, Status, StoredEntryRef, VQueueCursor, VQueueRunningCursor, VQueueStore,
+     WriteVQueueTable, stats::EntryStatistics,
+ };
+ use restate_storage_api::vqueue_table::{
+@@ -731,7 +731,7 @@ async fn entry_lifecycle_preserves_identity_and_transactional_state(rocksdb: &mu
+         stats: &finished_stats,
+         ..initial
+     };
+-    txn.update_vqueue_entry_status(&context, EntryStateRef::from_header(&before), finished);
++    txn.update_vqueue_entry_status(&context, StoredEntryRef::from_header(&before), finished);
+     let before_delete = txn.get_vqueue_entry_status(&id).await.unwrap().unwrap();
+     assert_eq!(before_delete.entry_key(), &finished_key);
+     assert_eq!(before_delete.stage(), Stage::Finished);
+@@ -740,7 +740,7 @@ async fn entry_lifecycle_preserves_identity_and_transactional_state(rocksdb: &mu
+         before_delete.stats().transitioned_at,
+         finished_stats.transitioned_at
+     );
+-    txn.delete_vqueue_entry_status(&context, EntryStateRef::from_header(&before_delete));
++    txn.delete_vqueue_entry_status(&context, StoredEntryRef::from_header(&before_delete));
+     assert!(txn.get_vqueue_entry_status(&id).await.unwrap().is_none());
+     txn.commit().await.unwrap();
+     drop(txn);
+```
+
+**File**: `crates/partition-store/src/vqueue_table/entry.rs` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ pub(super) fn entry_status_header_from_raw(
+         header.stats,
+         header.status,
+     )
++    .with_touched_by(header.touched_by)
+ }
  
-                             update_shared_state(&this);
+ #[cfg(test)]
+```
+
+**File**: `crates/partition-store/src/vqueue_table/mod.rs` (modified, +43/-14)
+```diff
+@@ -16,6 +16,8 @@ mod key_codec;
+ mod metadata;
+ mod reader;
+ mod running_reader;
++#[cfg(test)]
++mod touched_by_tests;
+ 
+ use std::num::NonZeroUsize;
+ use std::pin::Pin;
+@@ -39,7 +41,7 @@ use restate_storage_api::vqueue_table::filters::{ScanEntryIdFilter, ScanMetaFilt
+ use restate_storage_api::vqueue_table::metadata::{VQueueMeta, VQueueMetaRef};
+ use restate_storage_api::vqueue_table::{
+     EntryChange, EntryContext, EntryKey, EntryStateRef, EntryStatusHeader, EntryValue,
+-    ReadVQueueTable, ScanVQueueTable, Stage, VQueueDisposition, WriteVQueueTable,
++    ReadVQueueTable, ScanVQueueTable, Stage, StoredEntryRef, VQueueDisposition, WriteVQueueTable,
+ };
+ use restate_storage_api::vqueue_table::{
+     RawStatusHeader, RawStatusHeaderRef, ScanVQueueEntries, ScanVQueueEntryStatusTable,
+@@ -372,11 +374,11 @@ impl WriteVQueueTable for PartitionStoreTransaction<'_> {
+     fn update_vqueue_entry_status(
+         &mut self,
+         context: &EntryContext<'_>,
+-        before: EntryStateRef<'_>,
++        before: StoredEntryRef<'_>,
+         after: EntryStateRef<'_>,
+     ) {
+         assert_eq!(
+-            before.entry_key.entry_id(),
++            before.state().entry_key.entry_id(),
+             after.entry_key.entry_id(),
+             "entry identity cannot change"
+         );
+@@ -386,7 +388,7 @@ impl WriteVQueueTable for PartitionStoreTransaction<'_> {
+     fn delete_vqueue_entry_status(
+         &mut self,
+         context: &EntryContext<'_>,
+-        before: EntryStateRef<'_>,
++        before: StoredEntryRef<'_>,
+     ) {
+         self.apply_entry_change(context, &EntryChange::Delete { before });
+     }
+@@ -438,13 +440,20 @@ impl PartitionStoreTransaction<'_> {
+     fn apply_entry_change(&mut self, context: &EntryContext<'_>, change: &EntryChange<'_>) {
+         let state = match change {
+             EntryChange::Insert { after } | EntryChange::Update { after, .. } => after,
+-            EntryChange::Delete { before } => before,
++            EntryChange::Delete { before } => before.state(),
+         };
+         let id = state.base_entry_id(context);
+         let mut key_buffer = [0u8; EntryStatusKey::serialized_length_fixed()];
+         EntryStatusKeyRef::builder()
+             .id(&id)
+             .serialize_to(&mut key_buffer.as_mut());
++        #[cfg(any(test, feature = "test-util"))]
++        if let Some(before) = change.stored_before() {
++            assert!(
++                self.touched_by_is_current(key_buffer, before.touched_by()),
++                "the before-image must carry the entry's current stored tokens"
++            );
++        }
+ 
+         if let Some(after) = change.after() {
+             let header = RawStatusHeaderRef {
+@@ -456,6 +465,11 @@ impl PartitionStoreTransaction<'_> {
+                 metadata: after.metadata.into(),
+                 stats: after.stats.clone(),
+                 status: after.status,
++                // An update keeps the stored tokens until the registry maintains
++                // indexes; an insertion starts without tokens.
++                touched_by: change
++                    .stored_before()
++                    .map_or(&[][..], |before| before.touched_by().as_bytes()),
+             };
+             let header_len = header.encoded_len();
+             let value_buf = self.cleared_value_buffer_mut(
+@@ -472,6 +486,27 @@ impl PartitionStoreTransaction<'_> {
+     }
+ }
+ 
++#[cfg(any(test, feature = "test-util"))]
++impl PartitionStoreTransaction<'_> {
++    /// Whether a before-image carries the tokens stored for its entry,
++    /// including earlier writes in this transaction. A stale before-image would
++    /// lose or invent tokens. Tests only: production adds no read per write.
++    pub(super) fn touched_by_is_current(
++        &self,
++        key: [u8; EntryStatusKey::serialized_length_fixed()],
++        touched_by: restate_storage_api::migration_job::MigrationJobIds<'_>,
++    ) -> bool {
++        let stored = self
++            .get(TableKind::VQueue, key)
++            .expect("entry status is readable")
++            .map(|value| RawStatusHeader::decode_stored(value.as_ref()).expect("valid header"));
++        stored
++            .as_ref()
++            .map_or(&[][..], |header| header.touched_by.as_slice())
++            == touched_by.as_bytes()
++    }
++}
++
+ impl<'txn> ReadVQueueTable for PartitionStoreTransaction<'txn> {
+     async fn get_vqueue(&self, qid: &VQueueId) -> Result<Option<VQueueMeta>, StorageError> {
+         let _x = RocksDbReadPerfGuard::new("get-vqueue-meta");
+@@ -500,7 +535,7 @@ impl<'txn> ReadVQueueTable for PartitionStoreTransaction<'txn> {
+             return Ok(None);
+         };
+ 
+-        let header = RawStatusHeader::decode_length_delimited(&mut raw_value.as_ref())?;
++        let header = RawStatusHeader::decode_stored(raw_value.as_ref())?;
+ 
+         Ok(Some(entry_status_header_from_raw(id, header)))
+     }
+@@ -647,10 +682,7 @@ impl ScanVQueueEntryStatusTable for PartitionStore {
+                 ids,
+                 |id| EntrySta
+```
+
+**File**: `crates/partition-store/src/vqueue_table/touched_by_tests.rs` (added, +219/-0)
+```diff
+@@ -0,0 +1,219 @@
++// Copyright (c) 2026 Restate Software, Inc., Restate GmbH.
++// All rights reserved.
++//
++// Use of this software is governed by the Business Source License
++// included in the LICENSE file.
++//
++// As of the Change Date specified in that file, in accordance with
++// the Business Source License, use of this software will be governed
++// by the Apache License, Version 2.0.
++
++//! Stored tokens survive every write through the entry-status boundary.
++//! Nothing assigns them yet, so the tests write them directly.
++
++use restate_clock::UniqueTimestamp;
++use restate_clock::time::MillisSinceEpoch;
++use restate_rocksdb::RocksDbManager;
++use restate_storage_api::vqueue_table::filters::ScanEntryIdFilter;
++use restate_storage_api::vqueue_table::stats::EntryStatistics;
++use restate_storage_api::vqueue_table::{
++    EntryContext, EntryKey, EntryMetadata, EntryStateRef, EntryStatusHeader, RawStatusHeader,
++    ReadVQueueTable, ScanVQueueEntryStatusTable, Stage, Status, StoredEntryRef, WriteVQueueTable,
++};
++use restate_storage_api::{StorageError, Transaction};
++use restate_types::identifiers::{BaseEntryId, PartitionId};
++use restate_types::partitions::Partition;
++use restate_types::sharding::KeyRange;
++use restate_types::vqueues::{EntryId, EntryKind, EntryTargetRef, VQueueId};
++
++use crate::keys::{EncodeTableKeyPrefix, KeyKind};
++use crate::vqueue_table::EntryStatusKey;
++use crate::{PartitionStore, PartitionStoreManager, PartitionStoreTransaction, StorageRead};
++
++const TARGET: EntryTargetRef<'static> = EntryTargetRef::Service {
++    scope: None,
++    service: "svc",
++    handler: "run",
++};
++
++fn touched_by(header: &impl EntryStatusHeader) -> Vec<u32> {
++    header.touched_by().ids().unwrap().collect()
++}
++
++/// Rewrites the stored header of `id` with `touched` bytes, as the registry will.
++fn store_tracked(tx: &mut PartitionStoreTransaction<'_>, id: BaseEntryId, touched_by: &[u8]) {
++    let key = EntryStatusKey::from(id).serialize();
++    let mut header = {
++        let value = tx
++            .get(crate::TableKind::VQueue, &key)
++            .unwrap()
++            .expect("stored status");
++        RawStatusHeader::decode_stored(value.as_ref()).unwrap()
++    };
++    header.touched_by = touched_by.to_vec();
++    tx.raw_put_cf(
++        KeyKind::VQueueEntryStatus,
++        key,
++        bilrost::Message::encode_length_delimited_to_vec(&header),
++    );
++}
++
++async fn setup() -> (
++    PartitionStore,
++    VQueueId,
++    BaseEntryId,
++    EntryKey,
++    EntryStatistics,
++) {
++    RocksDbManager::init();
++    let manager = PartitionStoreManager::create(true).await.unwrap();
++    let store = manager
++        .open(&Partition::new(PartitionId::MIN, KeyRange::FULL), None)
++        .await
++        .unwrap();
++    let at =
++        UniqueTimestamp::try_from_unix_millis(MillisSinceEpoch::new(1_744_010_000_000)).unwrap();
++    let qid = VQueueId::custom(7, "q");
++    let key = EntryKey::new(
++        false,
++        at.to_unix_millis(),
++        1,
++        EntryId::new(EntryKind::Invocation, [1; 16]),
++    );
++    let id = key.entry_id().to_base_id(qid.partition_key());
++    (store, qid, id, key, EntryStatistics::new(at, key.run_at()))
++}
++
++#[restate_core::test]
++async fn stored_tokens_survive_chained_updates_and_end_with_deletion() {
++    let (mut store, qid, id, key, stats) = setup().await;
++    let context = EntryContext {
++        qid: &qid,
++        target: &TARGET,
++    };
++    let metadata = EntryMetadata::default();
++    let state = |stage, status| EntryStateRef {
++        stage,
++        status,
++        entry_key: &key,
++        metadata: &metadata,
++        stats: &stats,
++    };
++    let mut tx = store.transaction();
++    tx.create_vqueue_entry_status(&context, state(Stage::Inbox, Status::New));
++    store_tracked(&mut tx, id, &[0, 0, 0, 64, 0, 0, 0, 70]);
++    tx.commit().await.unwrap();
++    drop(tx);
++
++    // Two updates in one transaction, each from the header read after the last write.
++    let mut tx = store.transaction();
++    for (stage, status) in [
++        (Stage::Running, Status::Started),
++        (Stage::Paused, Status::BackingOff),
++    ] {
++        let header = tx.get_vqueue_entry_status(&id).await.unwrap().unwrap();
++        assert_eq!(touched_by(&header), [64, 70]);
++        tx.update_vqueue_entry_status(
++            &context,
++            StoredEntryRef::from_header(&header),
++            state(stage, status),
++        );
++    }
++    tx.commit().await.unwrap();
++    drop(tx);
++    let mut tx = store.transaction();
++    let header = tx.get_vqueue_entry_status(&id).await.unwrap().unwrap();
++    assert_eq!(
++        (header.stage(), touched_by(&header)),
++        (Stage::Paused, vec![64, 70]),
++        "updates_keep_the_stored_list_across_commits"
++    );
++
++    // Deleting and re-creating in one transaction starts without tokens.
++    tx.delete_vqueue_entry_status(&context, StoredEntryRef::from_header(&header));
++    assert!(tx.get_vqueue_entry_status(&id).await.unwrap().is_n
+```
+
+**File**: `crates/storage-api/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -71,6 +71,7 @@ pub mod journal_events;
+ pub mod journal_table;
+ pub mod journal_table_v2;
+ pub mod lock_table;
++pub mod migration_job;
+ pub mod outbox_table;
+ pub mod promise_table;
+ pub mod protobuf_types;
+```
+
+**File**: `crates/storage-api/src/migration_job.rs` (added, +113/-0)
+```diff
+@@ -0,0 +1,113 @@
++// Copyright (c) 2026 Restate Software, Inc., Restate GmbH.
++// All rights reserved.
++//
++// Use of this software is governed by the Business Source License
++// included in the LICENSE file.
++//
++// As of the Change Date specified in that file, in accordance with
++// the Business Source License, use of this software will be governed
++// by the Apache License, Version 2.0.
++
++//! Migration jobs: background work that builds derived data, such as an index or
++//! a statistic, from a table that is being written at the same time.
++//!
++//! While a job is still running, its output reflects some rows and not others.
++//! A write that changes a row must know which case it is in: if the job already
++//! reflects the row, the write replaces the row's old contribution; if not, it
++//! only adds the new one. The rows of the source table carry that knowledge as
++//! **tokens**: a row lists the IDs of the unfinished jobs that already reflect it.
++//!
++//! This module holds the token list's representation, [`MigrationJobIds`]. Which
++//! table carries tokens, where it stores them, and when they are written are
++//! decided by the table and by the partition store that maintains the jobs. The
++//! vqueue entry-status header is the first such table (its `touched_by` field).
++
++/// The IDs of the unfinished migration jobs that already reflect one row.
++///
++/// For each listed job, the row's *current* state has been applied to the job's
++/// output. That includes the case where the row contributes nothing, for example
++/// an entry that an index doesn't cover: the job has looked at the row and
++/// decided. A write to the row then replaces the old contribution for listed
++/// jobs and only adds the new one for unlisted jobs.
++///
++/// Tokens are needed only while a job runs. A finished job reflects every row by
++/// definition, so its token is dropped the next time the row is written; a row
++/// that is never written again keeps the stale token, which is harmless because
++/// job IDs are never reused.
++///
++/// A job building an index has the same ID as the index. Only the partition
++/// store writes tokens; readers treat the bytes as opaque except through this
++/// type.
++///
++/// Stored as sorted, distinct big-endian `u32`s, four bytes per job. For example,
++/// a row written while jobs 64 and 70 were running stores
++/// `[0, 0, 0, 64, 0, 0, 0, 70]`; once both have finished, its next write stores
++/// nothing, and the field is omitted.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
++pub struct MigrationJobIds<'a>(&'a [u8]);
++
++impl<'a> MigrationJobIds<'a> {
++    /// No tokens: the row is reflected by no unfinished job.
++    pub const EMPTY: Self = Self(&[]);
++
++    /// Wraps stored bytes without checking them; [`Self::ids`] validates them.
++    pub const fn from_bytes(bytes: &'a [u8]) -> Self {
++        Self(bytes)
++    }
++
++    pub fn as_bytes(&self) -> &'a [u8] {
++        self.0
++    }
++
++    pub fn is_empty(&self) -> bool {
++        self.0.is_empty()
++    }
++
++    /// Fails with [`StorageError::DataIntegrityError`](crate::StorageError) if the
++    /// bytes are not a sorted list of distinct big-endian `u32`s.
++    pub fn validate(&self) -> crate::Result<()> {
++        self.ids()
++            .map(|_| ())
++            .ok_or(crate::StorageError::DataIntegrityError)
++    }
++
++    /// Whether job `id` is listed. Expects validated bytes (see [`Self::ids`]).
++    pub fn contains(&self, id: u32) -> bool {
++        let (chunks, _) = self.0.as_chunks::<4>();
++        chunks
++            .binary_search_by_key(&id, |chunk| u32::from_be_bytes(*chunk))
++            .is_ok()
++    }
++
++    /// The IDs in increasing order, or `None` if the bytes are not a sorted list
++    /// of distinct big-endian `u32`s.
++    pub fn ids(&self) -> Option<impl Iterator<Item = u32> + 'a> {
++        let (chunks, rest) = self.0.as_chunks::<4>();
++        let ids = chunks.iter().map(|chunk| u32::from_be_bytes(*chunk));
++        (rest.is_empty() && ids.clone().is_sorted_by(|a, b| a < b)).then_some(ids)
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::MigrationJobIds;
++
++    #[test]
++    fn ids_are_sorted_distinct_big_endian_u32s() {
++        let ids = MigrationJobIds::from_bytes(&[0, 0, 0, 64, 0, 1, 0, 70]);
++        assert_eq!(ids.ids().unwrap().collect::<Vec<_>>(), [64, 65_606]);
++        assert!(ids.contains(64) && ids.contains(65_606) && !ids.contains(65));
++        assert_eq!(MigrationJobIds::EMPTY.ids().unwrap().count(), 0);
++        for malformed in [
++            &[0, 0, 0, 64, 0][..],
++            &[0, 0, 0, 70, 0, 0, 0, 64],
++            &[0, 0, 0, 64, 0, 0, 0, 64],
++        ] {
++            let ids = MigrationJobIds::from_bytes(malformed);
++            assert!(
++                ids.ids().is_none() && ids.validate().is_err(),
++                "{malformed:?}"
++            );
++        }
++    }
++}
+```
+
+**File**: `crates/storage-api/src/vqueue_table/entry_change.rs` (modified, +38/-2)
+```diff
+@@ -13,6 +13,7 @@ use restate_types::vqueues::{EntryTargetRef, VQueueId};
+ 
+ use super::stats::EntryStatistics;
+ use super::{EntryKey, EntryMetadata, EntryStatusHeader, EntryValue, Stage, Status};
++use crate::migration_job::MigrationJobIds;
+ 
+ /// Queue and target shared by both sides of an entry mutation.
+ ///
+@@ -62,6 +63,36 @@ impl<'a> EntryStateRef<'a> {
+     }
+ }
+ 
++/// The before-image of an update or deletion: a stored entry status together
++/// with its migration-job tokens (see [`MigrationJobIds`]), which say which
++/// unfinished jobs already reflect the entry.
++///
++/// Built only from a header, so the stored tokens travel with the logical
++/// state. It does not prove that the header is current: callers read it after
++/// any earlier write to the entry in the same transaction.
++#[derive(Debug, Clone, Copy)]
++pub struct StoredEntryRef<'a> {
++    state: EntryStateRef<'a>,
++    touched_by: MigrationJobIds<'a>,
++}
++
++impl<'a> StoredEntryRef<'a> {
++    pub fn from_header(header: &'a impl EntryStatusHeader) -> Self {
++        Self {
++            state: EntryStateRef::from_header(header),
++            touched_by: header.touched_by(),
++        }
++    }
++
++    pub fn state(&self) -> &EntryStateRef<'a> {
++        &self.state
++    }
++
++    pub fn touched_by(&self) -> MigrationJobIds<'a> {
++        self.touched_by
++    }
++}
++
+ /// One source mutation. Before-images must include earlier writes in the same
+ /// transaction; absence is represented only by insertion or deletion.
+ #[derive(Debug)]
+@@ -70,16 +101,21 @@ pub enum EntryChange<'a> {
+         after: EntryStateRef<'a>,
+     },
+     Update {
+-        before: EntryStateRef<'a>,
++        before: StoredEntryRef<'a>,
+         after: EntryStateRef<'a>,
+     },
+     Delete {
+-        before: EntryStateRef<'a>,
++        before: StoredEntryRef<'a>,
+     },
+ }
+ 
+ impl<'a> EntryChange<'a> {
+     pub fn before(&self) -> Option<&EntryStateRef<'a>> {
++        self.stored_before().map(StoredEntryRef::state)
++    }
++
++    /// The before-image with its stored tokens; `None` for insertions.
++    pub fn stored_before(&self) -> Option<&StoredEntryRef<'a>> {
+         match self {
+             Self::Insert { .. } => None,
+             Self::Update { before, .. } | Self::Delete { before } => Some(before),
+```
+
+**File**: `crates/storage-api/src/vqueue_table/entry_status.rs` (modified, +87/-0)
+```diff
+@@ -13,6 +13,7 @@ use restate_types::vqueues::{CanonicalEntryId, EntryId, EntryKind, Seq, VQueueId
+ 
+ use super::stats::EntryStatistics;
+ use super::{EntryKey, EntryMetadata, EntryMetadataRef, Stage};
++use crate::migration_job::MigrationJobIds;
+ 
+ #[derive(Debug, strum::Display, Clone, Copy, Eq, PartialEq, bilrost::Enumeration)]
+ #[strum(serialize_all = "kebab-case")]
+@@ -71,6 +72,12 @@ pub struct RawStatusHeaderRef<'a> {
+     pub stats: EntryStatistics,
+     #[bilrost(tag(8))]
+     pub status: Status,
++    /// Which unfinished migration jobs, such as index or statistic builds, already
++    /// reflect this entry, so that a later write knows whether to replace its old
++    /// contribution or only add the new one. See [`MigrationJobIds`]. Only the
++    /// partition store writes it; omitted when empty.
++    #[bilrost(tag(9), encoding(plainbytes))]
++    pub touched_by: &'a [u8],
+ }
+ 
+ #[derive(Debug, Clone, bilrost::Message)]
+@@ -93,6 +100,30 @@ pub struct RawStatusHeader {
+     pub stats: EntryStatistics,
+     #[bilrost(tag(8))]
+     pub status: Status,
++    /// Which unfinished migration jobs, such as index or statistic builds, already
++    /// reflect this entry, so that a later write knows whether to replace its old
++    /// contribution or only add the new one. See [`MigrationJobIds`]. Only the
++    /// partition store writes it; omitted when empty.
++    #[bilrost(tag(9), encoding(plainbytes))]
++    pub touched_by: Vec<u8>,
++}
++
++impl<'a> RawStatusHeaderRef<'a> {
++    /// Decodes a stored, length-delimited header, rejecting malformed tokens.
++    pub fn decode_stored(value: &mut &'a [u8]) -> crate::Result<Self> {
++        let header = <Self as bilrost::BorrowedMessage>::decode_borrowed_length_delimited(value)?;
++        MigrationJobIds::from_bytes(header.touched_by).validate()?;
++        Ok(header)
++    }
++}
++
++impl RawStatusHeader {
++    /// Decodes a stored, length-delimited header, rejecting malformed tokens.
++    pub fn decode_stored(mut value: &[u8]) -> crate::Result<Self> {
++        let header = <Self as bilrost::OwnedMessage>::decode_length_delimited(&mut value)?;
++        MigrationJobIds::from_bytes(&header.touched_by).validate()?;
++        Ok(header)
++    }
+ }
+ 
+ /// Owned vqueue entry status header.
+@@ -104,6 +135,7 @@ pub struct OwnedEntryStatusHeader {
+     metadata: EntryMetadata,
+     status: Status,
+     stats: EntryStatistics,
++    touched_by: Vec<u8>,
+ }
+ 
+ impl OwnedEntryStatusHeader {
+@@ -122,8 +154,16 @@ impl OwnedEntryStatusHeader {
+             metadata,
+             status,
+             stats,
++            touched_by: Vec::new(),
+         }
+     }
++
++    /// Attaches the stored [`MigrationJobIds`] bytes to this header so they travel
++    /// with its logical state when it is used as a before-image.
++    pub fn with_touched_by(mut self, touched_by: Vec<u8>) -> Self {
++        self.touched_by = touched_by;
++        self
++    }
+ }
+ 
+ impl EntryStatusHeader for OwnedEntryStatusHeader {
+@@ -192,6 +232,11 @@ impl EntryStatusHeader for OwnedEntryStatusHeader {
+     fn status(&self) -> Status {
+         self.status
+     }
++
++    #[inline]
++    fn touched_by(&self) -> MigrationJobIds<'_> {
++        MigrationJobIds::from_bytes(&self.touched_by)
++    }
+ }
+ 
+ mod bilrost_encoding {
+@@ -245,6 +290,12 @@ pub trait EntryStatusHeader: std::fmt::Debug {
+     fn stats(&self) -> &EntryStatistics;
+     fn canonical_entry_id(&self) -> CanonicalEntryId;
+     fn display_entry_id(&self) -> impl std::fmt::Display + '_;
++    /// Which unfinished migration jobs already reflect this entry, as stored with
++    /// the header; see [`MigrationJobIds`] for what that means and why it exists.
++    /// May include stale tokens of finished jobs until the entry is next written.
++    /// A header built in memory has none unless stored tokens are attached with
++    /// [`OwnedEntryStatusHeader::with_touched_by`].
++    fn touched_by(&self) -> MigrationJobIds<'_>;
+     /// Returns new if this entry has not started yet.
+     fn has_started(&self) -> bool {
+         self.stats().num_attempts > 0
+@@ -282,6 +333,42 @@ mod tests {
+ 
+     use super::*;
+ 
++    #[test]
++    fn tokens_are_omitted_when_empty_and_round_trip() {
++        let header = |touched_by: Vec<u8>| RawStatusHeader {
++            qid: VQueueId::custom(7, "q"),
++            stage: Stage::Inbox,
++            has_lock: false,
++            next_run_at: RoughTimestamp::new(10),
++            seq: Seq::new(1),
++            metadata: EntryMetadata::default(),
++            stats: EntryStatistics::new(
++                restate_clock::UniqueTimestamp::try_from_unix_millis(
++                    restate_clock::time::MillisSinceEpoch::new(1_744_010_000_000),
++                )
++                .unwrap(),
++                RoughTimestamp::new(10),
++            ),
++            status: Status::New,
++            touched_by,
++        };
++        let untouched = header(vec![]).encode_to_vec();
++        let touched_by = header(vec![0, 0, 0, 64, 0, 1, 0, 70]).encode_to_vec();
++     
+```
+
+---
+
+### Incident Patch 2: `e8c09e07` (2026-11-11)
+**Commit Message**: [Core] Require network protocol V3 or newer
+
+## Summary
+
+Raise the node-to-node protocol floor from V2 to V3. V3 shipped in Restate 1.6,
+while the supported upgrade and data-compatibility floor is already Restate
+1.7. Maintaining the older record encoding no longer serves a supported peer.
+
+- Advertise V3 as the minimum and reject peers that only support V2 during
+  connection negotiation.
+- Remove the V2 protocol variant, reserving both number 2 and the V2 name so
+  neither can be reassigned.
+- Delete the V2-specific Append/Store encoders, decoders, compatibility payloads
+  and conversion code. Keep the supported V3/V4/V6 encodings unchanged.
+- Update codec version guards, metadata matches, benchmarks and test helpers.
+  Mock replies now decode with the version used to encode them.
+- Document Restate 1.7 as the supported upgrade floor. Older installations
+  must first follow the supported upgrade path to 1.7.
+
+This is a prequel to record preparation and direct transport encoding; those
+commits can now use a single record wire format for every supported peer.
+
+## Validation
+
+- Verify the advertised floor, rejection of retired protocol number 2, V3-only
+  negotiation, mixed version 
+
+**File**: `crates/bifrost/benches/replicated_loglet_serde.rs` (modified, +4/-15)
+```diff
+@@ -34,7 +34,7 @@ use restate_types::logs::{LogId, LogletId, LogletOffset, Record, SequenceNumber}
+ use restate_types::net::codec::{WireDecode, WireEncode};
+ use restate_types::net::log_server::{LogServerRequestHeader, Store, StoreFlags};
+ use restate_types::net::replicated_loglet::{Append, CommonRequestHeader};
+-use restate_types::net::{RpcRequest, Service};
++use restate_types::net::{CURRENT_PROTOCOL_VERSION, RpcRequest, Service};
+ use restate_types::time::MillisSinceEpoch;
+ use restate_types::{GenerationalNodeId, RestateVersion};
+ use restate_wal_protocol::{Command, Destination, Envelope};
+@@ -159,7 +159,7 @@ fn serialize_store_message(payloads: Arc<[Record]>) -> anyhow::Result<Message> {
+     let body = Body::Datagram(Datagram {
+         datagram: Some(
+             restate_core::network::protobuf::network::RpcCall {
+-                payload: store_message.encode_to_bytes(restate_types::net::ProtocolVersion::V2)?,
++                payload: store_message.encode_to_bytes(CURRENT_PROTOCOL_VERSION)?,
+                 id: 88,
+                 service: <Store as RpcRequest>::Service::TAG.into(),
+                 msg_type: Store::TYPE.into(),
+@@ -192,7 +192,7 @@ fn serialize_append_message(payloads: Arc<[Record]>) -> anyhow::Result<Message>
+     let body = Body::Datagram(Datagram {
+         datagram: Some(
+             restate_core::network::protobuf::network::RpcCall {
+-                payload: append_message.encode_to_bytes(restate_types::net::ProtocolVersion::V2)?,
++                payload: append_message.encode_to_bytes(CURRENT_PROTOCOL_VERSION)?,
+                 id: 88,
+                 service: <Append as RpcRequest>::Service::TAG.into(),
+                 msg_type: Append::TYPE.into(),
+@@ -213,14 +213,6 @@ fn serialize_append_message(payloads: Arc<[Record]>) -> anyhow::Result<Message>
+ }
+ 
+ fn deserialize_append_message(serialized_message: Bytes) -> anyhow::Result<Append> {
+-    // let protocol_version = restate_types::net::ProtocolVersion::V1;
+-    // let msg = Message::decode(serialized_message)?;
+-    // let body = msg.body.unwrap();
+-    // we ignore non-deserializable messages (serde errors, or control signals in drain)
+-    // let msg_body = body.try_as_binary_body(restate_types::net::ProtocolVersion::V1)?;
+-    // Ok(Append::decode(msg_body.payload, protocol_version))
+-    //
+-    // disabled during fabric v2 refactoring, feel free to implement it if you need this bench
+     let message = Message::decode(serialized_message)?;
+ 
+     let Body::Datagram(Datagram {
+@@ -230,10 +222,7 @@ fn deserialize_append_message(serialized_message: Bytes) -> anyhow::Result<Appen
+         bail!("expecting a Datagram(RpcCall)");
+     };
+ 
+-    Ok(Append::decode(
+-        rpc_call.payload,
+-        restate_types::net::ProtocolVersion::V2,
+-    ))
++    Ok(Append::decode(rpc_call.payload, CURRENT_PROTOCOL_VERSION))
+ }
+ 
+ fn replicated_loglet_append_invoke_cmd_serde(c: &mut Criterion) {
+```
+
+**File**: `crates/core/src/network/connection_manager.rs` (modified, +29/-29)
+```diff
+@@ -711,35 +711,35 @@ mod tests {
+     async fn bad_handshake() -> Result<()> {
+         let test_setup = TestCoreEnv::create_with_single_node(1, 1).await;
+         let metadata = test_setup.metadata;
+-        let (tx, rx) = mpsc::channel(1);
+-        let my_node_id = metadata.my_node_id();
+-
+-        // unsupported protocol version
+-        let hello = Hello {
+-            min_protocol_version: ProtocolVersion::Unknown.into(),
+-            max_protocol_version: ProtocolVersion::Unknown.into(),
+-            my_node_id: Some(my_node_id.into()),
+-            cluster_name: metadata.nodes_config_ref().cluster_name().to_owned(),
+-            cluster_fingerprint: metadata
+-                .nodes_config_ref()
+-                .cluster_fingerprint()
+-                .map_or(0, |f| f.to_u64()),
+-            direction: ConnectionDirection::Bidirectional.into(),
+-            swimlane: Swimlane::default().into(),
+-        };
+-        let hello = Message::new(Header::default(), hello);
+-        tx.send(hello).await.expect("Channel accept hello message");
+-
+-        let connections = ConnectionManager::default();
+-        let incoming = ReceiverStream::new(rx);
+-        let resp = connections.accept_incoming_connection(incoming).await;
+-        assert!(resp.is_err());
+-        assert!(matches!(
+-            resp,
+-            Err(AcceptError::Handshake(
+-                HandshakeError::UnsupportedVersion(proto_version)
+-            )) if proto_version == ProtocolVersion::Unknown as i32
+-        ));
++        // Unknown and retired V2-only peers must fail before establishing a connection.
++        for version in [ProtocolVersion::Unknown as i32, 2] {
++            let (tx, rx) = mpsc::channel(1);
++            let my_node_id = metadata.my_node_id();
++            let hello = Hello {
++                min_protocol_version: version,
++                max_protocol_version: version,
++                my_node_id: Some(my_node_id.into()),
++                cluster_name: metadata.nodes_config_ref().cluster_name().to_owned(),
++                cluster_fingerprint: metadata
++                    .nodes_config_ref()
++                    .cluster_fingerprint()
++                    .map_or(0, |f| f.to_u64()),
++                direction: ConnectionDirection::Bidirectional.into(),
++                swimlane: Swimlane::default().into(),
++            };
++            let hello = Message::new(Header::default(), hello);
++            tx.send(hello).await.expect("Channel accept hello message");
++
++            let connections = ConnectionManager::default();
++            let incoming = ReceiverStream::new(rx);
++            let resp = connections.accept_incoming_connection(incoming).await;
++            assert!(matches!(
++                resp,
++                Err(AcceptError::Handshake(
++                    HandshakeError::UnsupportedVersion(proto_version)
++                )) if proto_version == version
++            ));
++        }
+ 
+         // cluster name mismatch
+         let (tx, rx) = mpsc::channel(1);
+```
+
+**File**: `crates/core/src/network/handshake.rs` (modified, +41/-0)
+```diff
+@@ -121,3 +121,44 @@ where
+ 
+     Ok((header, welcome))
+ }
++
++#[cfg(test)]
++mod tests {
++    use crate::network::protobuf::network::{ConnectionDirection, Swimlane};
++
++    use super::*;
++
++    #[test]
++    fn protocol_negotiation_requires_v3() {
++        let mut hello = Hello::new(
++            None,
++            "test-cluster".to_owned(),
++            None,
++            ConnectionDirection::Bidirectional,
++            Swimlane::default(),
++        );
++        assert_eq!(hello.min_protocol_version, 3);
++        assert_eq!(hello.max_protocol_version, CURRENT_PROTOCOL_VERSION as i32);
++        assert!(ProtocolVersion::try_from(2).is_err());
++
++        // Older peers may advertise a floor of V2 while also supporting V3+.
++        for (min, max, expected) in [
++            (2, 3, ProtocolVersion::V3),
++            (3, 3, ProtocolVersion::V3),
++            (2, 4, ProtocolVersion::V4),
++            (3, 6, ProtocolVersion::V6),
++            (3, i32::MAX, CURRENT_PROTOCOL_VERSION),
++        ] {
++            hello.min_protocol_version = min;
++            hello.max_protocol_version = max;
++            assert_eq!(negotiate_protocol_version(&hello).unwrap(), expected);
++        }
++
++        hello.min_protocol_version = 2;
++        hello.max_protocol_version = 2;
++        assert!(matches!(
++            negotiate_protocol_version(&hello),
++            Err(HandshakeError::UnsupportedVersion(2))
++        ));
++    }
++}
+```
+
+**File**: `crates/core/src/network/incoming.rs` (modified, +7/-3)
+```diff
+@@ -857,7 +857,11 @@ pub mod test_util {
+ 
+     use super::*;
+ 
+-    pub struct OneshotRxMock<O>(oneshot::Receiver<ReplyEnvelope>, PhantomData<O>);
++    pub struct OneshotRxMock<O>(
++        oneshot::Receiver<ReplyEnvelope>,
++        PhantomData<O>,
++        ProtocolVersion,
++    );
+ 
+     impl<O: WireDecode> OneshotRxMock<O> {
+         pub async fn recv(self) -> O {
+@@ -867,7 +871,7 @@ pub mod test_util {
+                     ..
+                 }) = self.0.await
+             );
+-            O::decode(buf, ProtocolVersion::V2)
++            O::decode(buf, self.2)
+         }
+ 
+         pub fn assert_not_received(mut self) {
+@@ -892,7 +896,7 @@ pub mod test_util {
+                     },
+                     _phantom: PhantomData,
+                 },
+-                OneshotRxMock(rx, PhantomData),
++                OneshotRxMock(rx, PhantomData, protocol_version),
+             )
+         }
+     }
+```
+
+**File**: `crates/types/protobuf/restate/common.proto` (modified, +4/-3)
+```diff
+@@ -13,11 +13,12 @@ package restate.common;
+ 
+ enum ProtocolVersion {
+   ProtocolVersion_UNKNOWN = 0;
+-  reserved 1;
++  reserved 1, 2;
++  reserved "V2";
+   // Released in v1.2. Support dropped in v1.5.0
+   // V1 = 1;
+-  // [Native RPC] Released in >= v1.3.3
+-  V2 = 2;
++  // [Native RPC] Released in v1.3.3. Support dropped in v1.8.2.
++  // V2 = 2;
+ 
+   // Release in v1.6. Support custom `Record`
+   // encoding that uses Bytes instead of PolyBytes
+```
+
+**File**: `crates/types/src/net/codec.rs` (modified, +6/-6)
+```diff
+@@ -18,7 +18,7 @@ use bytes::Bytes;
+ use serde::Serialize;
+ use serde::de::DeserializeOwned;
+ 
+-use crate::protobuf::common::ProtocolVersion;
++use crate::net::{MIN_SUPPORTED_PROTOCOL_VERSION, ProtocolVersion};
+ 
+ #[derive(thiserror::Error, Debug)]
+ pub enum EncodeError {
+@@ -102,8 +102,8 @@ pub fn decode_as_flexbuffers<T: DeserializeOwned>(
+     protocol_version: ProtocolVersion,
+ ) -> Result<T, anyhow::Error> {
+     assert!(
+-        protocol_version >= ProtocolVersion::V2,
+-        "unknown protocol version should never be set"
++        protocol_version >= MIN_SUPPORTED_PROTOCOL_VERSION,
++        "unsupported network protocol version"
+     );
+ 
+     let len = buf.remaining();
+@@ -132,8 +132,8 @@ pub fn decode_as_bilrost<T: OwnedMessage>(
+     protocol_version: ProtocolVersion,
+ ) -> Result<T, anyhow::Error> {
+     assert!(
+-        protocol_version >= ProtocolVersion::V2,
+-        "bilrost encoding is supported from protocol version v2"
++        protocol_version >= MIN_SUPPORTED_PROTOCOL_VERSION,
++        "unsupported network protocol version"
+     );
+ 
+     T::decode(buf).context("failed decoding (bilrost) network message")
+@@ -153,7 +153,7 @@ mod tests {
+     }
+ 
+     fn decode(mut buf: impl Buf) -> Message {
+-        let message = decode_as_flexbuffers(&mut buf, ProtocolVersion::V2).unwrap();
++        let message = decode_as_flexbuffers(&mut buf, MIN_SUPPORTED_PROTOCOL_VERSION).unwrap();
+         assert!(!buf.has_remaining(), "decoding consumes the message");
+         message
+     }
+```
+
+**File**: `crates/types/src/net/log_server.rs` (modified, +3/-126)
+```diff
+@@ -26,8 +26,6 @@ use crate::net::codec::{WireDecode, WireEncode, encode_as_bilrost};
+ use crate::net::{ProtocolVersion, define_service};
+ use crate::time::MillisSinceEpoch;
+ 
+-pub use compat::Payloads as CompatibilityPayloads;
+-
+ pub struct LogServerDataService;
+ define_service! {
+     @service = LogServerDataService,
+@@ -386,17 +384,10 @@ impl WireEncode for Store {
+     ) -> Result<bytes::Bytes, super::codec::EncodeError> {
+         match protocol_version {
+             ProtocolVersion::Unknown => Err(crate::net::codec::EncodeError::IncompatibleVersion {
+-                type_tag: stringify!($message),
+-                min_required: ProtocolVersion::V2,
++                type_tag: stringify!(Store),
++                min_required: ProtocolVersion::V3,
+                 actual: protocol_version,
+             }),
+-            ProtocolVersion::V2 => {
+-                // note: cloning the store message is cheap, but not free.
+-                // hopefully this code path will be short lived until all
+-                // nodes has been upgraded to protocol-version: V3
+-                let msg: compat::Store = self.clone().into();
+-                Ok(encode_as_bilrost(&msg))
+-            }
+             ProtocolVersion::V3 | ProtocolVersion::V4 | ProtocolVersion::V6 => {
+                 Ok(encode_as_bilrost(self))
+             }
+@@ -416,14 +407,9 @@ impl WireDecode for Store {
+     {
+         match protocol_version {
+             ProtocolVersion::Unknown => Err(anyhow::anyhow!(
+-                "Store requires at least protocol version V2, got {:?}",
++                "Store requires at least protocol version V3, got {:?}",
+                 protocol_version
+             )),
+-            ProtocolVersion::V2 => {
+-                let msg: compat::Store =
+-                    crate::net::codec::decode_as_bilrost(buf, protocol_version)?;
+-                Ok(msg.into())
+-            }
+             ProtocolVersion::V3 | ProtocolVersion::V4 | ProtocolVersion::V6 => {
+                 crate::net::codec::decode_as_bilrost(buf, protocol_version)
+             }
+@@ -943,115 +929,6 @@ impl Digest {
+     }
+ }
+ 
+-mod compat {
+-    use std::sync::Arc;
+-
+-    use restate_clock::time::MillisSinceEpoch;
+-    use restate_encoding::{ArcedSlice, NetSerde};
+-
+-    use crate::{
+-        GenerationalNodeId,
+-        logs::{LogletOffset, Record},
+-        net::log_server::{LogServerRequestHeader, StoreFlags},
+-    };
+-
+-    /// A backward compatible Payloads that uses PolyBytes encoding directly.
+-    /// Unlike the newer [`super::Payloads`] which uses custom encoding to generate
+-    /// a [`Bytes`] compatible wire encoding
+-    ///
+-    /// Used only with wire-protocol V2.
+-    #[derive(
+-        bilrost::Message,
+-        derive_more::Into,
+-        derive_more::From,
+-        derive_more::Deref,
+-        Debug,
+-        Clone,
+-        Default,
+-        NetSerde,
+-    )]
+-    pub struct Payloads(#[bilrost(encoding(ArcedSlice<unpacked>))] Arc<[Record]>);
+-
+-    impl From<super::Payloads> for Payloads {
+-        fn from(value: super::Payloads) -> Self {
+-            Self(value.0)
+-        }
+-    }
+-
+-    impl From<Payloads> for super::Payloads {
+-        fn from(value: Payloads) -> Self {
+-            Self(value.0)
+-        }
+-    }
+-
+-    /// Store one or more records on a log-server
+-    #[derive(Debug, Clone, bilrost::Message, NetSerde)]
+-    pub struct Store {
+-        #[bilrost(1)]
+-        pub header: LogServerRequestHeader,
+-        #[bilrost(2)]
+-        pub timeout_at: Option<MillisSinceEpoch>,
+-        #[bilrost(3)]
+-        pub flags: StoreFlags,
+-        #[bilrost(4)]
+-        pub first_offset: LogletOffset,
+-        #[bilrost(5)]
+-        pub sequencer: GenerationalNodeId,
+-        #[bilrost(6)]
+-        pub known_archived: LogletOffset,
+-        #[bilrost(7)]
+-        pub payloads: Payloads,
+-    }
+-
+-    impl From<super::Store> for Store {
+-        fn from(value: super::Store) -> Self {
+-            let super::Store {
+-                header,
+-                timeout_at,
+-                flags,
+-                first_offset,
+-                sequencer,
+-                known_archived,
+-                payloads,
+-            } = value;
+-
+-            Self {
+-                header,
+-                timeout_at,
+-                flags,
+-                first_offset,
+-                sequencer,
+-                known_archived,
+-                payloads: payloads.into(),
+-            }
+-        }
+-    }
+-
+-    impl From<Store> for super::Store {
+-        fn from(value: Store) -> Self {
+-            let Store {
+-                header,
+-                timeout_at,
+-                flags,
+-                first_offset,
+-                sequencer,
+-                known_archived,
+-                payloads,
+-            } = value;
+-
+-            Self {
+-                header,
+-                timeout_at,
+-                flags,
+-                first_offset,
+-                sequencer,
+-                known_archived,
+-           
+```
+
+**File**: `crates/types/src/net/metadata.rs` (modified, +6/-8)
+```diff
+@@ -68,10 +68,9 @@ impl WireDecode for GetMetadataRequest {
+ impl WireEncode for MetadataUpdate {
+     fn encode_to_bytes(&self, protocol_version: ProtocolVersion) -> Result<Bytes, EncodeError> {
+         match protocol_version {
+-            ProtocolVersion::Unknown
+-            | ProtocolVersion::V2
+-            | ProtocolVersion::V3
+-            | ProtocolVersion::V4 => Ok(Bytes::from(codec::encode_as_flexbuffers(self))),
++            ProtocolVersion::Unknown | ProtocolVersion::V3 | ProtocolVersion::V4 => {
++                Ok(Bytes::from(codec::encode_as_flexbuffers(self)))
++            }
+             ProtocolVersion::V6 => Ok(wire::metadata_update_wire_encode(self, protocol_version)
+                 .expect("encode to succeed")),
+         }
+@@ -88,10 +87,9 @@ impl WireDecode for MetadataUpdate {
+         Self: Sized,
+     {
+         match protocol_version {
+-            ProtocolVersion::Unknown
+-            | ProtocolVersion::V2
+-            | ProtocolVersion::V3
+-            | ProtocolVersion::V4 => codec::decode_as_flexbuffers(buf, protocol_version),
++            ProtocolVersion::Unknown | ProtocolVersion::V3 | ProtocolVersion::V4 => {
++                codec::decode_as_flexbuffers(buf, protocol_version)
++            }
+             ProtocolVersion::V6 => Ok(wire::metadata_update_wire_decode(buf, protocol_version)?),
+         }
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5792** (2026-11-09): [restatectl] Show who reads each log and how many bytes per second (@AhmedSoliman)
-- **PR #5791** (2026-11-09): [Bifrost] Let read stream counters wrap the same way in every build (@AhmedSoliman)
-- **PR #5790** (2026-11-09): [Bifrost] Let read stream owners name their streams and show their role (@AhmedSoliman)
-- **PR #5788** (2026-11-09): [Bifrost] Count the records and bytes each read stream delivers (@AhmedSoliman)
-- **PR #5787** (2026-11-09): [worker] Let max-command-batch-bytes bound the committed write batch (@AhmedSoliman)
-- **PR #5786** (2026-11-09): [worker] Add a histogram of partition processor write batch sizes (@AhmedSoliman)
+- **PR #5841** (2026-11-12): [VQueues] Stamp user-limit counters with their scope's partition key (@AhmedSoliman)
+- **PR #5835** (2026-11-12): [Invoker] Release initial response future storage after headers arrive (@AhmedSoliman)
+- **PR #5833** (2026-11-12): [Service Client] Share transports and configuration across client clones (@AhmedSoliman)
+- **PR #5832** (2026-11-12): [Invoker] Box invocation futures before attaching task-local scopes (@AhmedSoliman)
+- **PR #5829** (2026-11-12): connection-pool: default http2-max-connection-age to 5m, 0 disables it (@muhamadazmy)
+- **PR #5827** (2026-11-12): Split read access out of StorageAccess into StorageRead (@MohamedBassem)
 
 ---
 
@@ -1688,34 +2801,32 @@ explicit.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Bifrost] Let read stream counters wrap the same way in every build
+## X. [VQueues] Add per-entry tokens for indexes that are still being built
 
 **RULE**:
-When implementing operations in `crates/bifrost/src/read_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/partition-store/src/tests/vqueue_table_test/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `edcaf8be`: [Bifrost] Let read stream counters wrap the same way in every build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e38d1750`: [VQueues] Add per-entry tokens for indexes that are still being built. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bifrost/src/read_stream.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/partition-store/src/tests/vqueue_table_test/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                                // Wrap at 2^64 the same way in every build.
-                                *this.records_read = this.records_read.wrapping_add(1);
-                                *this.bytes_read = this.bytes_read.wrapping_add(
-                                    data_record.encoded_body_size().unwrap_or_default() as u64,
-                                );
+    ReadVQueueTable, Stage, Status, StoredEntryRef, VQueueCursor, VQueueRunningCursor, VQueueStore,
+    txn.update_vqueue_entry_status(&context, StoredEntryRef::from_header(&before), finished);
+    txn.delete_vqueue_entry_status(&context, StoredEntryRef::from_header(&before_delete));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                                *this.records_read += 1;
-                                *this.bytes_read +=
-                                    data_record.encoded_body_size().unwrap_or_default() as u64;
+    ReadVQueueTable, Stage, Status, VQueueCursor, VQueueRunningCursor, VQueueStore,
+    txn.update_vqueue_entry_status(&context, EntryStateRef::from_header(&before), finished);
+    txn.delete_vqueue_entry_status(&context, EntryStateRef::from_header(&before_delete));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `edcaf8be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e38d1750` are properly handled with clean fallback behavior.

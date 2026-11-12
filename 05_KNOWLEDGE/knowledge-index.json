@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T21:49:32.537Z",
+  "last_updated": "2026-11-12T21:56:46.004Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55668,8 +55668,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "4733a867",
-      "content_hash": "b6bbb39efa479d5f36287371e8001c0b0c262efa736e57e2dd747c2b9fc8cf52",
+      "source_version": "b8c2a10f",
+      "content_hash": "9e6dba947a6a661a7312164893db8827f9464e812b413e7dce99b809b972377b",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -55681,6 +55681,11 @@
         {
           "number": null,
           "title": "[Bifrost] Let read stream counters wrap the same way in every build",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[VQueues] Add per-entry tokens for indexes that are still being built",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55764,7 +55769,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:46:26.841Z",
+      "verified_at": "2026-11-12T21:56:36.672Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78662,8 +78667,8 @@
       "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "b2bfa52b",
-      "content_hash": "3d96f5cc84413df255e870ae5d320f379d432bd447d26584092fb5ff6248bcfc",
+      "source_version": "56afe28f",
+      "content_hash": "a828e68bdd75eb287c250672b9d3dcac96a00ff2c82fd528ad7d211a2cdb9bb1",
       "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
@@ -78740,6 +78745,11 @@
         {
           "number": null,
           "title": "Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4663 from aleo-labs-protocol/ci/bump-snarkvm",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -78868,7 +78878,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:17:41.057Z",
+      "verified_at": "2026-11-12T21:56:45.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85161,8 +85171,8 @@
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "9a5f8e25",
-      "content_hash": "f47b38de595f0c6676ad7b4d447fdc5ebc50003fa1f8482573e3fb9230dcd35a",
+      "source_version": "98cf746f",
+      "content_hash": "580fe0ffc3f28cb86cbc49b52d24c3c2df0004571e2b43c62c02535ab6a66080",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
@@ -85170,6 +85180,11 @@
         {
           "number": null,
           "title": "⬆️ Update dependency rolldown-plugin-dts to ^0.30.0 (#7548)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "⬆️ Update dependency vite to ^8.3.8 (#7563)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -85203,7 +85218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T23:34:13.964Z",
+      "verified_at": "2026-11-12T21:56:39.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
