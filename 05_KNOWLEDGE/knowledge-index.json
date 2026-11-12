@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T02:03:47.646Z",
+  "last_updated": "2026-11-12T02:17:03.391Z",
   "total_verified_learnings": 1256,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14276,8 +14276,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "d622ec57",
-      "content_hash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
+      "source_version": "d87ef4ce",
+      "content_hash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -14289,6 +14289,11 @@
         {
           "number": null,
           "title": "Merge pull request #22682 from fuweid/weifu/benchmark",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "etcdutl : Fix lint failure",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14357,7 +14362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:23:08.181Z",
+      "verified_at": "2026-11-12T02:17:03.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58292,14 +58297,19 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "c8a4781a",
-      "content_hash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
+      "source_version": "8fece0b2",
+      "content_hash": "36f9ed2d92a680c8a73cf9f31e64b2d9ec4778a1cfe56a51b1bc9c4646479c5c",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Verify blobs exclusively via sigstore-go (#5087)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Require new bundle format for attest-blob (#5088)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58383,7 +58393,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:19:28.657Z",
+      "verified_at": "2026-11-12T02:16:55.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -180115,7 +180125,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
       "source_version": "hf-divagr1925-qwen3.5-4b-qwenputer",
-      "content_hash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
+      "content_hash": "89b57261595c7d6146405a8dfdd07f3cbab61b4ccc5062f6800d73020316399b",
       "dossier_path": "07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
       "promoted_rules": [
@@ -180155,7 +180165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:49:04.888Z",
+      "verified_at": "2026-11-12T02:16:30.244Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

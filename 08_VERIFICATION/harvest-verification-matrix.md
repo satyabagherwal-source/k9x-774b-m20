@@ -9036,3 +9036,7 @@
 | `CYCLE-20261112-7APF` | `2026-11-12T01:52:07.155Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4731c5a8...`) |
 | `CYCLE-20261112-M9T2` | `2026-11-12T02:03:45.830Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md` | Yes (`2ce122bd...`) |
 | `CYCLE-20261112-MB9U` | `2026-11-12T02:03:47.730Z` | `taubyte/tau` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1e19823b...`) |
+| `CYCLE-20261112-2NQY` | `2026-11-12T02:16:30.394Z` | `divagr1925/Qwen3.5-4B-Qwenputer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md` | Yes (`89b57261...`) |
+| `CYCLE-20261112-36YO` | `2026-11-12T02:16:55.296Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`36f9ed2d...`) |
+| `CYCLE-20261112-3DAO` | `2026-11-12T02:17:03.504Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`66fc21e3...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T02:17:25.219Z` | `hf-divagr1925-qwen3.5-4b-qwenputer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1866CC44` [Domain D] | Yes (`d76d0024...`) |

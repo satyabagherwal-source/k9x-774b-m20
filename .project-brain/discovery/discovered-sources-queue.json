@@ -2,17 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T02:03:51.162Z",
+  "updated_at": "2026-11-12T02:17:25.325Z",
   "stats": {
-    "total_discovered": 453,
-    "approved_pending_harvest": 405,
+    "total_discovered": 480,
+    "approved_pending_harvest": 431,
     "harvested_count": 0,
-    "rejected_count": 48,
+    "rejected_count": 49,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 419,
+      "COMMUNITY_AND_EXPERT": 444,
       "OFFICIAL_DOCUMENTATION": 18,
-      "STANDARDS_AND_SPECIFICATIONS": 15,
-      "ENGINEERING_BLOGS": 1
+      "STANDARDS_AND_SPECIFICATIONS": 16,
+      "ENGINEERING_BLOGS": 1,
+      "SECURITY_ADVISORIES": 1
     }
   },
   "sources": {
@@ -9646,6 +9647,593 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
         "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-8F14BA33B424": {
+      "id": "SRC-8F14BA33B424",
+      "url": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
+      "title": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
+        "fileName": "hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md"
+      }
+    },
+    "SRC-13D727F30D8B": {
+      "id": "SRC-13D727F30D8B",
+      "url": "https://github.com/sigstore/cosign",
+      "title": "https://github.com/sigstore/cosign",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-A2FD48B8D25C": {
+      "id": "SRC-A2FD48B8D25C",
+      "url": "https://github.com/google/certificate-transparency-go/blob/master/ctutil/ctutil.go",
+      "title": "https://github.com/google/certificate-transparency-go/blob/master/ctutil/ctutil.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-18DB0FED528F": {
+      "id": "SRC-18DB0FED528F",
+      "url": "https://developers.yubico.com/PIV/Introduction/Certificate_slots.html",
+      "title": "https://developers.yubico.com/PIV/Introduction/Certificate_slots.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-C2F8F6A7715C": {
+      "id": "SRC-C2F8F6A7715C",
+      "url": "https://github.com/sigstore/cosign/issues/4696",
+      "title": "https://github.com/sigstore/cosign/issues/4696",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-7AEC48BB5BA4": {
+      "id": "SRC-7AEC48BB5BA4",
+      "url": "https://www.strix.ai/cve/CVE-2026-56854",
+      "title": "https://www.strix.ai/cve/CVE-2026-56854",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.246Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-168068B7D282": {
+      "id": "SRC-168068B7D282",
+      "url": "https://github.com/sigstore/cosign/pull/5082",
+      "title": "https://github.com/sigstore/cosign/pull/5082",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.250Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-F3B213D40166": {
+      "id": "SRC-F3B213D40166",
+      "url": "http://localhost:0/auth/callback",
+      "title": "http://localhost:0/auth/callback",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T02:17:25.254Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-3665303C91B4": {
+      "id": "SRC-3665303C91B4",
+      "url": "https://www.rfc-editor.org/rfc/rfc3161",
+      "title": "IETF RFC 3161",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-E80EA13F3F11": {
+      "id": "SRC-E80EA13F3F11",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-56854",
+      "title": "Vulnerability Advisory CVE-2026-56854",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.260Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-1F7306F96E56": {
+      "id": "SRC-1F7306F96E56",
+      "url": "https://github.com/etcd-io/etcd",
+      "title": "https://github.com/etcd-io/etcd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-9C022A4630D8": {
+      "id": "SRC-9C022A4630D8",
+      "url": "https://github.com/etcd-io/etcd/pull/22804",
+      "title": "https://github.com/etcd-io/etcd/pull/22804",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-314CF5E9A48D": {
+      "id": "SRC-314CF5E9A48D",
+      "url": "https://github.com/etcd-io/etcd/issues/22633",
+      "title": "https://github.com/etcd-io/etcd/issues/22633",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.276Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-8992A922AC79": {
+      "id": "SRC-8992A922AC79",
+      "url": "https://github.com/etcd-io/etcd/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/etcd-io/etcd/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.279Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-C6CFD7725C98": {
+      "id": "SRC-C6CFD7725C98",
+      "url": "https://github.com/kubernetes/community/blob/master/contributors/guide/pull-requests.md",
+      "title": "https://github.com/kubernetes/community/blob/master/contributors/guide/pull-requests.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.282Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-70CCCB3B53D0": {
+      "id": "SRC-70CCCB3B53D0",
+      "url": "https://app.codecov.io/gh/etcd-io/etcd/pull/22805?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/etcd-io/etcd/pull/22805?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-D376A2E43373": {
+      "id": "SRC-D376A2E43373",
+      "url": "https://app.codecov.io/gh/etcd-io/etcd/commit/647766500ad7ddf9359461c70241e88aa1056bd6?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/etcd-io/etcd/commit/647766500ad7ddf9359461c70241e88aa1056bd6?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-64716E23134C": {
+      "id": "SRC-64716E23134C",
+      "url": "https://app.codecov.io/gh/etcd-io/etcd/commit/b844e453a2abdb9cb777cca86e37b84b39f2de92?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/etcd-io/etcd/commit/b844e453a2abdb9cb777cca86e37b84b39f2de92?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.292Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-D17EBA32BC52": {
+      "id": "SRC-D17EBA32BC52",
+      "url": "https://app.codecov.io/gh/etcd-",
+      "title": "https://app.codecov.io/gh/etcd-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.295Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-AE046F470094": {
+      "id": "SRC-AE046F470094",
+      "url": "https://github.com/orgs/etcd-io/people",
+      "title": "https://github.com/orgs/etcd-io/people",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-7529018BA23C": {
+      "id": "SRC-7529018BA23C",
+      "url": "https://go.k8s.io/bot-commands?repo=etcd-io%2Fetcd",
+      "title": "https://go.k8s.io/bot-commands?repo=etcd-io%2Fetcd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.301Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-2BD2C5990BD0": {
+      "id": "SRC-2BD2C5990BD0",
+      "url": "https://git.k8s.io/community/contributors/guide/pull-requests.md",
+      "title": "https://git.k8s.io/community/contributors/guide/pull-requests.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-0E98A3CA391A": {
+      "id": "SRC-0E98A3CA391A",
+      "url": "https://prow.k8s.io/view/gs/kubernetes-ci-logs/pr-logs/pull/etcd-io_etcd/22804/pull-etcd-govulncheck/2120626729406959616",
+      "title": "https://prow.k8s.io/view/gs/kubernetes-ci-logs/pr-logs/pull/etcd-io_etcd/22804/pull-etcd-govulncheck/2120626729406959616",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-9ABD801A7536": {
+      "id": "SRC-9ABD801A7536",
+      "url": "https://prow.k8s.io/pr-history?org=etcd-io&repo=etcd&pr=22804",
+      "title": "https://prow.k8s.io/pr-history?org=etcd-io&repo=etcd&pr=22804",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-B7529111A8F8": {
+      "id": "SRC-B7529111A8F8",
+      "url": "https://prow.k8s.io/pr?query=is%3Apr+state%3Aopen+author%3Ak8s-infra-cherrypick-robot",
+      "title": "https://prow.k8s.io/pr?query=is%3Apr+state%3Aopen+author%3Ak8s-infra-cherrypick-robot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.318Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-BB095EA733B6": {
+      "id": "SRC-BB095EA733B6",
+      "url": "https://git.k8s.io/community/contributors/devel/sig-testing/flaky-tests.md",
+      "title": "https://git.k8s.io/community/contributors/devel/sig-testing/flaky-tests.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.322Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-7FB84D9B5E62": {
+      "id": "SRC-7FB84D9B5E62",
+      "url": "https://github.com/etcd-io/etcd/issues?q=is%3Aissue+is%3Aopen",
+      "title": "https://github.com/etcd-io/etcd/issues?q=is%3Aissue+is%3Aopen",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:17:25.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
       }
     }
   }

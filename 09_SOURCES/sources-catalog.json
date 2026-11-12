@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "c8a4781a",
+    "sourceVersion": "8fece0b2",
     "license": "Apache-2.0",
-    "contentHash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
-    "lastHarvestedAt": "2026-11-10T01:19:28.791Z",
+    "contentHash": "36f9ed2d92a680c8a73cf9f31e64b2d9ec4778a1cfe56a51b1bc9c4646479c5c",
+    "lastHarvestedAt": "2026-11-12T02:16:55.300Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "d622ec57",
+    "sourceVersion": "d87ef4ce",
     "license": "Apache-2.0",
-    "contentHash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
-    "lastHarvestedAt": "2026-11-07T20:23:08.284Z",
+    "contentHash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
+    "lastHarvestedAt": "2026-11-12T02:17:03.508Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -11825,8 +11825,8 @@
     "sourceUrl": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
     "sourceVersion": "hf-divagr1925-qwen3.5-4b-qwenputer",
     "license": "Open-Source",
-    "contentHash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
-    "lastHarvestedAt": "2026-11-07T03:49:04.999Z",
+    "contentHash": "89b57261595c7d6146405a8dfdd07f3cbab61b4ccc5062f6800d73020316399b",
+    "lastHarvestedAt": "2026-11-12T02:16:30.398Z",
     "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer"
   },
   "hf-abenzerps-qwen-image-2.1-turbo-quantized": {

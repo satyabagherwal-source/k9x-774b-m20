@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T02:03:47.739Z",
+  "last_updated": "2026-11-12T02:17:03.521Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
-      "verified_at": "2026-11-10T01:19:28.799Z",
+      "content_hash": "36f9ed2d92a680c8a73cf9f31e64b2d9ec4778a1cfe56a51b1bc9c4646479c5c",
+      "verified_at": "2026-11-12T02:16:55.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:19:28.799Z"
+      "last_updated": "2026-11-12T02:16:55.311Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
-      "verified_at": "2026-11-07T20:23:08.291Z",
+      "content_hash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
+      "verified_at": "2026-11-12T02:17:03.520Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T20:23:08.291Z"
+      "last_updated": "2026-11-12T02:17:03.520Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -17796,14 +17796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-      "content_hash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
-      "verified_at": "2026-11-07T03:49:05.019Z",
+      "content_hash": "89b57261595c7d6146405a8dfdd07f3cbab61b4ccc5062f6800d73020316399b",
+      "verified_at": "2026-11-12T02:16:30.408Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:49:05.020Z"
+      "last_updated": "2026-11-12T02:16:30.408Z"
     },
     "abenzerps/Qwen-Image-2.1-Turbo-Quantized": {
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",

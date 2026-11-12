@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T02:03:51.030Z",
-    "lastVerified": "2026-11-12T02:03:51.030Z",
+    "lastChecked": "2026-11-12T02:17:08.716Z",
+    "lastVerified": "2026-11-12T02:17:08.716Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -153,8 +153,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T01:31:18.325Z",
-    "lastVerified": "2026-11-12T01:31:18.325Z",
+    "lastChecked": "2026-11-12T02:16:42.256Z",
+    "lastVerified": "2026-11-12T02:16:42.256Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1901,22 +1901,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
-    "name": "cosign",
+    "name": "sigstore/cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T16:05:02.188Z",
-    "lastVerified": "2026-11-11T16:05:02.188Z",
+    "lastChecked": "2026-11-12T02:16:41.954Z",
+    "lastVerified": "2026-11-12T02:16:41.954Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
+    "contentHash": "36f9ed2d92a680c8a73cf9f31e64b2d9ec4778a1cfe56a51b1bc9c4646479c5c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c8a4781a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3401,9 +3400,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-09T16:33:26.089Z",
+    "lastChecked": "2026-11-12T02:16:34.765Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-09T16:33:26.089Z"
+    "lastVerified": "2026-11-12T02:16:34.765Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -3745,9 +3744,9 @@
   "kuberwastaken-claurst": {
     "name": "claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
-    "lastChecked": "2026-11-09T07:20:46.038Z",
+    "lastChecked": "2026-11-12T02:16:27.220Z",
     "revisionIdentifier": "e4228cc6",
-    "lastVerified": "2026-11-09T07:20:46.038Z"
+    "lastVerified": "2026-11-12T02:16:27.220Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -5829,22 +5828,21 @@
     "revisionIdentifier": "47986461"
   },
   "etcd-io-etcd": {
-    "name": "etcd",
+    "name": "etcd-io/etcd",
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T15:51:33.430Z",
-    "lastVerified": "2026-11-09T15:51:33.430Z",
+    "lastChecked": "2026-11-12T02:16:49.245Z",
+    "lastVerified": "2026-11-12T02:16:49.245Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
+    "contentHash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d622ec57"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cloudwego-volo": {
     "name": "volo",
@@ -9411,12 +9409,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "parthjadhav-app-store-screenshots": {
-    "name": "ParthJadhav/app-store-screenshots",
+    "name": "app-store-screenshots",
     "officialUrl": "https://github.com/ParthJadhav/app-store-screenshots",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T03:07:51.051Z",
-    "lastVerified": "2026-11-08T03:07:51.051Z",
+    "lastChecked": "2026-11-12T02:16:32.268Z",
+    "lastVerified": "2026-11-12T02:16:32.268Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-parthjadhav-app-store-screenshots",
@@ -9425,7 +9423,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e889033b"
   },
   "hf-openmoss-team-moss-image-base": {
     "name": "OpenMOSS-Team/MOSS-Image-Base",
@@ -13925,13 +13924,13 @@
     "officialUrl": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-07T03:48:56.752Z",
-    "lastVerified": "2026-11-07T03:48:56.752Z",
+    "lastChecked": "2026-11-12T02:16:29.891Z",
+    "lastVerified": "2026-11-12T02:16:29.891Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-    "contentHash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
-    "promotedRulesCount": 3,
+    "contentHash": "89b57261595c7d6146405a8dfdd07f3cbab61b4ccc5062f6800d73020316399b",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

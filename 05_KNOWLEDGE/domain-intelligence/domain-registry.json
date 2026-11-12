@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T01:23:57.635Z",
-  "total_records": 54,
+  "last_updated": "2026-11-12T02:17:25.217Z",
+  "total_records": 55,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 24,
+      "total": 25,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -49,7 +49,8 @@
         "DOM-D-01CFC4FC",
         "DOM-D-D2E2CA9E",
         "DOM-D-1A1383CC",
-        "DOM-D-66B0E6DD"
+        "DOM-D-66B0E6DD",
+        "DOM-D-1866CC44"
       ]
     },
     "E": {
@@ -2180,6 +2181,47 @@
       },
       "confidence": 0.64,
       "created_at": "2026-11-12T01:23:57.633Z"
+    },
+    "DOM-D-1866CC44": {
+      "record_id": "DOM-D-1866CC44",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): divagr1925/Qwen3.5-4B-Qwenputer",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer](https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer))  \n> **Source Version**: `hf-divagr192`  \n> **License",
+      "content_hash": "d76d00248cec54dae423bce08aac4e14127ea72b3c4201204f7ca9dbfe1242ee",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-divagr1925-qwen3.5-4b-qwenputer/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T02:17:08.847Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-divagr1925-qwen3.5-4b-qwenputer)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-divagr1925-qwen3.5-4b-qwenputer"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-12T02:17:25.215Z"
     }
   }
 }

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T01:23:57.636Z",
+  "updated_at": "2026-11-12T02:17:25.219Z",
   "statistics": {
-    "total_nodes": 6,
+    "total_nodes": 7,
     "total_edges": 3,
     "domain_distribution": {
-      "D": 5,
+      "D": 6,
       "M": 1
     },
     "relation_distribution": {
@@ -140,6 +140,28 @@
       ],
       "created_at": "2026-11-12T01:23:57.636Z",
       "updated_at": "2026-11-12T01:23:57.636Z"
+    },
+    "DOM-D-1866CC44": {
+      "id": "DOM-D-1866CC44",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): divagr1925/Qwen3.5-4B-Qwenputer",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-divagr1925-qwen3.5-4b-qwenputer/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T02:17:08.847Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-divagr1925-qwen3.5-4b-qwenputer)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T02:17:25.219Z",
+      "updated_at": "2026-11-12T02:17:25.219Z"
     }
   },
   "edges": [

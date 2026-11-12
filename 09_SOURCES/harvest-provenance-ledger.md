@@ -9045,3 +9045,7 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `36caf4ca` | Multi-dimensional audit evidence | 2026-11-12T01:52:07.159Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `3c673a3b` | Multi-dimensional audit evidence | 2026-11-12T02:03:45.833Z |
 | `learn-github-taubyte-tau` | `https://github.com/taubyte/tau` | `59816f6f` | Multi-dimensional audit evidence | 2026-11-12T02:03:47.733Z |
+| `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-12T02:16:30.398Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `8fece0b2` | Multi-dimensional audit evidence | 2026-11-12T02:16:55.300Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `d87ef4ce` | Multi-dimensional audit evidence | 2026-11-12T02:17:03.508Z |
+| `learn-dom-d-1866cc44` | `project://hf-divagr1925-qwen3.5-4b-qwenputer` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md` | 2026-11-12T02:17:25.219Z |

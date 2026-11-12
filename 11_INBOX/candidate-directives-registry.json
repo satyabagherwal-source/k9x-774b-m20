@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T02:03:51.166Z",
+  "last_updated": "2026-11-12T02:17:25.264Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5857,6 +5857,24 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-30D8E1-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-267BC2",
+      "directive_title": "Require new bundle format for attest-blob (#5088)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sigstore-cosign",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-267BC2-require-new-bundle-format-for-attest-blo.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C2218C",
+      "directive_title": "etcdutl : Fix lint failure",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "etcd-io-etcd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C2218C-etcdutl-fix-lint-failure.md",
       "staged_date": "2026-11-12"
     }
   ]

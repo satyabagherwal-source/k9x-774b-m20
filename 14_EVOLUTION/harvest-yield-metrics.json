@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T02:03:47.737Z",
-  "total_cycles_completed": 8876,
-  "total_learnings_persisted": 8876,
-  "total_rules_promoted": 8728,
+  "last_updated": "2026-11-12T02:17:03.515Z",
+  "total_cycles_completed": 8879,
+  "total_learnings_persisted": 8879,
+  "total_rules_promoted": 8730,
   "history": [
-    {
-      "timestamp": "2026-11-10T01:58:32.915Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T01:58:33.139Z",
-      "repository": "openyurtio/openyurt",
-      "learningId": "learn-github-openyurtio-openyurt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T01:58:36.693Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T01:58:38.085Z",
       "repository": "Open-Source-Legal/OpenContracts",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-12T02:03:47.737Z",
       "repository": "taubyte/tau",
       "learningId": "learn-github-taubyte-tau",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T02:16:30.405Z",
+      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
+      "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T02:16:55.307Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T02:17:03.515Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
