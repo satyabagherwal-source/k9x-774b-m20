@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source**: github ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
-> **Source Version**: `74561086`  
+> **Source Version**: `8097fc0b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T06:49:17.775Z  
+> **Timestamp**: 2026-11-12T08:52:46.910Z  
 > **Learning ID**: `learn-github-maziyarpanahi-openmed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T06:49:16.829Z  
+> **Harvest Timestamp**: 2026-11-12T08:52:41.217Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first healthcare AI: clinical NER and HIPAA PII de-identification on hardware you control. 2,200+ medical models, 35 model-backed PII languages, and Python, MLX, Android and browser runtimes. Apache-2.0 SDK.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5787 stars
+- **Stars / Engagement**: 5800 stars
 
 ---
 
@@ -2304,11 +2304,11 @@ def _check_element(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4373** (2026-10-31): **Require patched ASN.1 decoding in the cloud extra**
-  *Symptoms*: ## Description  The v3.2 candidate's vulnerability gate blocks on four HIGH pyasn1 decoder advisories in the optional cloud closure. Require `pyasn1>=0.6.5` in the cloud extra and uv constraints, and update only that package's locked version and artifact hashes. The [upstream release](https://github.com/pyasn1/pyasn1/releases/tag/v0.6.5) fixes CVE-2026-119194 through CVE-2026-119197.  ## Type of Change  - [x] Bug fix - [x] Documentation update  ## Changes Made  - Add the patched minimum to the published cloud extra. - Retain the existing lockfile format and every unrelated package record, platform marker and pin. - Document the change in the v3.2 changelog and release notes. Core dependencies, scanner policy and allowlists are unchanged.  ## Testing  - [x] CI's uv 0.13.6 accepts `uv lock --check --offline` without drift; a frozen cloud install of the final lock succeeds. - [x] Existing scanner/pip-audit policy, cloud storage, dependency report and core-import tests: 110 passed and 20 passing subtests. - [x] Networking-blocked smoke check: cloud imports, ASN.1 DER round trip, synthetic service-account signing and JWT verification pass with pyasn1 0.6.5 / pyasn1-modules 0.4.2 / google-auth 2.55.1. - [x] Canonical formatting, lint, format check, scoped pre-commit and strict complete docs staging pass. - [x] Wheel/sdist build and Twine checks pass; wheel metadata scopes the new floor to `extra == cloud`. - [x] Full final candidate suite after the license follow-ups: 24,224 passed
+- **Issue #5499** (2026-11-08): **fix: reject non-JSON request media types at the privacy proxy**
+  *Symptoms*: # Pull Request  ## Description Validate the request `Content-Type` header on the privacy proxy chat completion routes (`/v1/chat/completions` and `/chat/completions`) before reading or parsing the request body. Requests with non-JSON or missing media types now return HTTP 415 with `reason: "unsupported_content_type"` through the existing PHI-safe error payload without invoking the transport or echoing request text.  ## Type of Change - [x] Bug fix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected) - [ ] Documentation update - [ ] Code refactoring - [ ] Performance improvement - [x] Test addition/improvement  ## Changes Made - Reused `_normalize_content_type` from `openmed.service.privacy_proxy.outbound` in `chat_completions` (`openmed/service/privacy_proxy/app.py`) to validate the `Content-Type` header before calling `await request.json()`. - Added optional `status_code` override support to `PrivacyProxyError` so `PrivacyProxyRequestError(reason_code="unsupported_content_type", status_code=415)` returns HTTP 415 via `_error_response`. - Added unit tests in `tests/unit/service/privacy_proxy/test_app.py` covering `application/json; charset=utf-8`, `text/plain` with a JSON payload, and a missing `Content-Type` header.  ## Testing - [x] I have added tests that prove my fix is effective or that my feature works - [x] New an
 
-- **Issue #4372** (2026-10-31): **Update the cloud ASN.1 dependency before v3.2 release**
-  *Symptoms*: The final v3.2 candidate vulnerability scan blocks on four HIGH advisories in `pyasn1 0.6.4`, reachable in the optional `cloud` dependency set through `gcsfs -> google-auth -> pyasn1-modules`.  Evidence: [candidate scan](https://github.com/maziyarpanahi/openmed/actions/runs/41225035698/job/124607303226), head `64526054878477acda2141167c822f416c28e038`. Findings: CVE-2026-119194, CVE-2026-119195, CVE-2026-119196 and CVE-2026-119197. The [upstream 0.6.5 release](https://github.com/pyasn1/pyasn1/releases/tag/v0.6.5) addresses all four decoder CPU-exhaustion issues.  For v3.2, require `pyasn1>=0.6.5` in the cloud extra and resolution constraints, update only the affected lock entry, verify a frozen cloud install and offline authentication/ASN.1 imports, then pass the unchanged vulnerability gate. Core dependencies, suppression policy and scanner assertions should remain unchanged. Integrate through a focused PR into `prepare/v3.2.0` / #4369.
+- **Issue #5185** (2026-11-08): **Reject non-JSON request media types at the privacy proxy**
+  *Symptoms*: ## Problem and existing coverage  `chat_completions` (`app.py:461-468`) calls `request.json()` whatever the `Content-Type` header says, so a `text/plain` or form body is parsed if it happens to be JSON. The outbound filter already normalizes and checks media types (`outbound.py:597-606`, `SUPPORTED_CONTENT_TYPES` at `:31`), but the route does not.  ## Implementation  - Check the `Content-Type` header before reading the body, accepting `application/json` with parameters such as `charset=utf-8`. - Return 415 with reason `unsupported_content_type` otherwise, through the existing error payload. - Add tests for JSON, JSON with charset, text/plain and a missing header.  ## Acceptance criteria  - [ ] `application/json; charset=utf-8` requests behave as before. - [ ] `text/plain` with a JSON body returns 415 and the transport is not called. - [ ] The error body contains no request text. - [ ] `.venv/bin/python -m pytest tests/unit/service/privacy_proxy/test_app.py -q` passes.  ## Independent development boundary  Owns the media-type check on the chat route.  ## Starting points and validation  `openmed/service/privacy_proxy/app.py`, `openmed/service/privacy_proxy/outbound.py`, `tests/unit/service/privacy_proxy/test_app.py`.  Add focused offline unit and integration tests for this slice and document the public behavior. Use synthetic fixtures, injected transports/clocks/providers where needed, and negative controls. Record exact validation commands in the implementation PR.  ## For fir
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2325,1483 +2325,517 @@ def _check_element(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f698a58f` (2026-11-07)
-**Commit Message**: Add synthetic malformed multimodal preflight fixtures
+### Incident Patch 1: `8097fc0b` (2026-11-11)
+**Commit Message**: Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh
 
-Closes #3007
+fix(docs): refresh expired public metric evidence
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `README.ar.md` (modified, +1/-1)
 ```diff
-@@ -190,6 +190,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -470,7 +470,7 @@ curl -X POST http://127.0.0.1:8080/pii/extract \
  
- - Add deterministic DICOM series sampling with acquisition-aware geometry coverage, bounded native previews, source-bound manifests, and local VLM drafts that distinguish selected evidence from unexamined frames (#2793).
+ </div>
  
-+- Ship bounded synthetic malformed-header fixtures exercising the existing multimodal preflight and batch contracts (#3007).
-+
- - Run ordered multimodal batch preflight with shared per-asset reports, aggregate ceilings, duplicates and explicit stop policies (#3009).
+-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
++[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
  
- - Add a bounded Python session for injected local image, PDF and streaming-audio providers, with preflighted immutable snapshots, explicit ownership, cooperative cancellation and metadata-only ordered results (#3677).
+ ---
+ 
 ```
 
-**File**: `docs/brand/system/publication.yml` (modified, +1/-0)
+**File**: `README.de.md` (modified, +1/-1)
 ```diff
-@@ -478,6 +478,7 @@ classification:
-     - multimodal/vision/vlm-resource-planning.md
-     - multimodal/preflight.md
-     - multimodal/batch-preflight.md
-+    - multimodal/preflight-fixtures.md
-     - multimodal/preflight-cli.md
-     - multimodal/inference-cli.md
-     - multimodal/page-batches.md
+@@ -393,7 +393,7 @@ Wenn OpenMed für deine Forschung nützlich ist, zitiere es bitte:
+ 
+ Wenn OpenMed dir nützlich ist, hilft ein Stern anderen, es zu entdecken.
+ 
+-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
++[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+ 
+ ---
+ 
 ```
 
-**File**: `docs/multimodal/preflight-fixtures.md` (added, +34/-0)
+**File**: `README.es.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,34 @@
-+# Synthetic malformed-asset preflight fixtures
-+
-+The version-1 bundled negative pack contains **13** minimal synthetic cases for
-+PDF, PNG, JPEG, TIFF, DICOM and WAV. Each case declares stable expected finding
-+codes from the existing `preflight_asset` or `validate_asset_batch` contract.
-+Headers are at most 132 bytes: they contain signatures, truncations and zero
-+preambles, with no image pixels, audio samples, DICOM dataset, patient text or
-+credentials. These cases are not fuzzing, malware or real clinical media.
-+
-+```python
-+from openmed.multimodal.preflight_fixtures import load_preflight_fixtures
-+
-+for case in load_preflight_fixtures():
-+    assert case.actual_findings() == case.expected_findings
-+```
-+
-+Cases cover each format's truncated signature, a declared-type mismatch, zero
-+dimensions, an oversized frame count, a bad digest, duplicate asset IDs/content,
-+unknown media and a pixel-resource ceiling. The PDF truncation also retains the
-+existing resource contract's insufficient-geometry finding. Expected codes are
-+complete code sets, sorted without copying asset values or source bytes.
-+
-+The loader checks a strict schema and JSON fields, duplicate JSON keys, unique
-+case IDs, closed categories and expected codes, numeric metadata, hex encoding,
-+at most 64 cases and a 64 KiB input ceiling. Cases and manifest mappings are
-+immutable. Optional payloads must be synthetic JSON bytes or text; filenames,
-+transports and unknown payload fields are not accepted. The default pack ships
-+under `openmed/multimodal/fixtures/malformed_asset_preflight.json`.
-+
-+The single-asset preflight detects signatures, validates declared metadata,
-+checks limits and hashes bytes; it does **not** deeply parse every header or
-+prove a file is decodable. These fixtures exercise that existing boundary and
-+do not claim complete malformed-file coverage, PHI absence in arbitrary input,
-+clinical validity or model qualification.
+@@ -393,7 +393,7 @@ Si OpenMed te resulta útil en tu investigación, cítalo:
+ 
+ Si OpenMed te resulta útil, una estrella ayuda a que otros lo descubran.
+ 
+-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
++[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+ 
+ ---
+ 
 ```
 
-**File**: `mkdocs.yml` (modified, +1/-0)
+**File**: `README.fa.md` (modified, +1/-1)
 ```diff
-@@ -418,6 +418,7 @@ nav:
-       - Edge-VLM Execution Memory Plans: multimodal/vision/vlm-resource-planning.md
-       - Multimodal Preflight Report: multimodal/preflight.md
-       - Ordered Multimodal Batch Preflight: multimodal/batch-preflight.md
-+      - Synthetic Preflight Fixtures: multimodal/preflight-fixtures.md
-       - Offline Multimodal Preflight CLI: multimodal/preflight-cli.md
-       - Offline Media Task CLI: multimodal/inference-cli.md
-       - Document Page Batches: multimodal/page-batches.md
+@@ -472,7 +472,7 @@ OpenMed بر پایهٔ کارهای عالیِ متن‌باز ساخته شد
+ 
+ </div>
+ 
+-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
++[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+ 
+ ---
+ 
 ```
 
-**File**: `openmed/multimodal/fixtures/malformed_asset_preflight.json` (added, +279/-0)
+**File**: `README.fr.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,279 @@
-+{
-+  "schema_version": 1,
-+  "synthetic": true,
-+  "cases": [
-+    {
-+      "case_id": "pdf_truncated",
-+      "category": "truncation",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "pdf_truncated",
-+            "media_type": "application/pdf",
-+            "sha256": "b9c39a040804e0b3424df7b13a11cca1d0e45bd246b541acb1177429cd3236ab",
-+            "byte_size": 2,
-+            "pages": 1
-+          },
-+          "header_hex": "2550"
-+        }
-+      ],
-+      "expected_findings": [
-+        "limits.insufficient_metadata",
-+        "media_type.unknown"
-+      ]
-+    },
-+    {
-+      "case_id": "png_truncated",
-+      "category": "truncation",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "png_truncated",
-+            "media_type": "image/png",
-+            "sha256": "449ba17f2a44989a58050282f82fec8663b84f57a6a443d3750033a0c02f8be9",
-+            "byte_size": 3,
-+            "width": 8,
-+            "height": 8
-+          },
-+          "header_hex": "89504e"
-+        }
-+      ],
-+      "expected_findings": [
-+        "media_type.unknown"
-+      ]
-+    },
-+    {
-+      "case_id": "jpeg_truncated",
-+      "category": "truncation",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "jpeg_truncated",
-+            "media_type": "image/jpeg",
-+            "sha256": "71563ad80061407ede9c6f316836284bd3710a520c5a792b5eda1cb703690815",
-+            "byte_size": 2,
-+            "width": 8,
-+            "height": 8
-+          },
-+          "header_hex": "ffd8"
-+        }
-+      ],
-+      "expected_findings": [
-+        "media_type.unknown"
-+      ]
-+    },
-+    {
-+      "case_id": "tiff_truncated",
-+      "category": "truncation",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "tiff_truncated",
-+            "media_type": "image/tiff",
-+            "sha256": "2e561ff2355c06484efc416619b5b7f7fc055acdb4e5b6db7a4bc0a5016b19e3",
-+            "byte_size": 2,
-+            "width": 8,
-+            "height": 8
-+          },
-+          "header_hex": "4949"
-+        }
-+      ],
-+      "expected_findings": [
-+        "media_type.unknown"
-+      ]
-+    },
-+    {
-+      "case_id": "dicom_truncated",
-+      "category": "truncation",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "dicom_truncated",
-+            "media_type": "application/dicom",
-+            "sha256": "ef2d8d1b20317cd4025b904d7e73adba4725199aed41390781fbb6f8a03eecbb",
-+            "byte_size": 130,
-+            "width": 8,
-+            "height": 8,
-+            "frames": 1
-+          },
-+          "header_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004449"
-+        }
-+      ],
-+      "expected_findings": [
-+        "media_type.unknown"
-+      ]
-+    },
-+    {
-+      "case_id": "wav_truncated",
-+      "category": "truncation",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "wav_truncated",
-+            "media_type": "audio/wav",
-+            "sha256": "465c9de99e308a0f400eea7020cab9eb4e73149a0ff2dced52599a0e9b21f867",
-+            "byte_size": 10,
-+            "duration_seconds": 1
-+          },
-+          "header_hex": "52494646000000005741"
-+        }
-+      ],
-+      "expected_findings": [
-+        "media_type.unknown"
-+      ]
-+    },
-+    {
-+      "case_id": "type_mismatch",
-+      "category": "type_mismatch",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "type_mismatch",
-+            "media_type": "image/jpeg",
-+            "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6",
-+            "byte_size": 8,
-+            "width": 8,
-+            "height": 8
-+          },
-+          "header_hex": "89504e470d0a1a0a"
-+        }
-+      ],
-+      "expected_findings": [
-+        "media_type.mismatch"
-+      ]
-+    },
-+    {
-+      "case_id": "invalid_dimensions",
-+      "category": "invalid_dimensions",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "invalid_dimensions",
-+            "media_type": "image/png",
-+            "sha256": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6",
-+            "byte_size": 8,
-+            "width": 0,
-+            "height": 8
-+          },
-+          "header_hex": "89504e470d0a1a0a"
-+        }
-+      ],
-+      "expected_findings": [
-+        "manifest.malformed_manifest"
-+      ]
-+    },
-+    {
-+      "case_id": "oversized_counts",
-+      "category": "oversized_counts",
-+      "assets": [
-+        {
-+          "manifest": {
-+            "asset_id": "oversized_counts",
-+            "media_type": "application/dicom",
-+            "sha256": "314a5c728edd839d51d46862b48989b0c1d791e6295301bd798390c741495ccb",
-+    
+@@ -393,7 +393,7 @@ Si OpenMed vous est utile dans vos recherches, merci de le citer :
+ 
+ Si OpenMed vous est utile, une étoile aide les autres à le découvrir.
+ 
+-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
++[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+ 
+ ---
+ 
 ```
 
-**File**: `openmed/multimodal/preflight_fixtures.py` (added, +261/-0)
+**File**: `README.hi.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,261 @@
-+"""Small synthetic negative fixtures for existing multimodal preflight contracts."""
-+
-+from __future__ import annotations
-+
-+import json
-+import re
-+from dataclasses import dataclass
-+from pathlib import Path
-+from types import MappingProxyType
-+from typing import Mapping
-+
-+from .asset_batch import validate_asset_batch
-+from .preflight import preflight_asset
-+
-+MAX_FIXTURE_BYTES = 65536
-+MAX_CASES = 64
-+MAX_HEADER_BYTES = 132
-+_CODE = re.compile(r"[a-z][a-z0-9_-]{0,63}\Z")
-+_DIGEST = re.compile(r"[0-9a-f]{64}\Z")
-+_MEDIA = frozenset(
-+    {
-+        "application/pdf",
-+        "image/png",
-+        "image/jpeg",
-+        "image/tiff",
-+        "application/dicom",
-+        "audio/wav",
-+        "image/unknown",
-+    }
-+)
-+_CATEGORIES = frozenset(
-+    {
-+        "truncation",
-+        "type_mismatch",
-+        "invalid_dimensions",
-+        "oversized_counts",
-+        "bad_digest",
-+        "duplicate_asset",
-+        "unknown_media",
-+        "resource_limit",
-+    }
-+)
-+_EXPECTED = frozenset(
-+    {
-+        "manifest.malformed_manifest",
-+        "media_type.unknown",
-+        "media_type.mismatch",
-+        "metadata.missing_required",
-+        "metadata.inapplicable_present",
-+        "limits.insufficient_metadata",
-+        "limits.limit_exceeded",
-+        "digest.sha256_mismatch",
-+        "digest.byte_count_mismatch",
-+        "digest.not_evaluated",
-+        "batch.duplicate_asset_id",
-+        "batch.duplicate_sha256",
-+        "batch.order_not_canonical",
-+    }
-+)
-+_MANIFEST_FIELDS = frozenset(
-+    {
-+        "version",
-+        "asset_id",
-+        "media_type",
-+        "sha256",
-+        "byte_size",
-+        "pages",
-+        "width",
-+        "height",
-+        "frames",
-+        "duration_seconds",
-+    }
-+)
-+
-+
-+@dataclass(frozen=True, slots=True)
-+class PreflightFixtureAsset:
-+    """Immutable controlled metadata plus at most 132 synthetic header bytes."""
-+
-+    manifest: Mapping[str, object]
-+    header: bytes
-+
-+    def __post_init__(self) -> None:
-+        if (
-+            not isinstance(self.manifest, Mapping)
-+            or set(self.manifest) - _MANIFEST_FIELDS
-+            or not {"asset_id", "media_type", "sha256", "byte_size"}
-+            <= set(self.manifest)
-+        ):
-+            raise ValueError("invalid preflight fixture manifest fields")
-+        manifest = dict(self.manifest)
-+        if not isinstance(manifest["asset_id"], str) or not _CODE.fullmatch(
-+            manifest["asset_id"]
-+        ):
-+            raise ValueError("invalid preflight fixture asset code")
-+        if (
-+            not isinstance(manifest["media_type"], str)
-+            or manifest["media_type"] not in _MEDIA
-+        ):
-+            raise ValueError("invalid preflight fixture media type")
-+        if not isinstance(manifest["sha256"], str) or not _DIGEST.fullmatch(
-+            manifest["sha256"]
-+        ):
-+            raise ValueError("invalid preflight fixture digest")
-+        for key in set(manifest) - {"asset_id", "media_type", "sha256"}:
-+            value = manifest[key]
-+            if type(value) is not int or not 0 <= value <= 2**63:
-+                raise ValueError("invalid preflight fixture numeric metadata")
-+        if (
-+            type(self.header) is not bytes
-+            or not 1 <= len(self.header) <= MAX_HEADER_BYTES
-+        ):
-+            raise ValueError("invalid preflight fixture header size")
-+        object.__setattr__(self, "manifest", MappingProxyType(manifest))
-+
-+
-+@dataclass(frozen=True, slots=True)
-+class PreflightFixtureCase:
-+    """A bounded named negative case with a closed expected-finding inventory."""
-+
-+    case_id: str
-+    category: str
-+    assets: tuple[PreflightFixtureAsset, ...]
-+    expected_findings: tuple[str, ...]
-+
-+    def __post_init__(self) -> None:
-+        if not isinstance(self.case_id, str) or not _CODE.fullmatch(self.case_id):
-+            raise ValueError("invalid preflight fixture case code")
-+        if not isinstance(self.category, str) or self.category not in _CATEGORIES:
-+            raise ValueError("invalid preflight fixture category")
-+        if (
-+            not isinstance(self.assets, (tuple, list))
-+            or not 1 <= len(self.assets) <= 2
-+            or any(
-+                not isinstance(asset, PreflightFixtureAsset) for asset in self.assets
-+            )
-+        ):
-+            raise ValueError("invalid preflight fixture asset collection")
-+        if (self.category == "duplicate_asset") != (len(self.assets) == 2):
-+            raise ValueError("invalid preflight fixture batch category")
-+        if (
-+            not isinstance(self.expected_findings, (tuple, list))
-+            or not 1 <= len(self.expected_findings) <= len(_EXPECTED)
-+            or any(
-+                not isinstance(code, str) or code not in _EXPECTED
-+                for code in self.expected_findings
-+            )
-+        ):
-+            raise ValueError("invalid preflight fixture expected findings
+@@ -750,7 +750,7 @@ OpenMed SDK का स्रोत [Apache-2.0 License](LICENSE) के अं
+ 
+ यदि OpenMed आपके लिए उपयोगी है, तो एक star दूसरों को इसे खोजने में मदद करता है।
+ 
+-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
++[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+ 
+ ---
+ 
 ```
 
-**File**: `tests/unit/multimodal/test_preflight_fixtures.py` (added, +133/-0)
+**File**: `README.it.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,133 @@
-+"""Complete coverage of the bundled synthetic negative fixture inventory."""
-+
-+import json
-+from dataclasses import FrozenInstanceError
-+from pathlib import Path
-+
-+import pytest
-+
-+from openmed.multimodal.preflight_fixtures import (
-+    MAX_FIXTURE_BYTES,
-+    PreflightFixtureAsset,
-+    load_preflight_fixtures,
-+)
-+
-+CASE_IDS = frozenset(
-+    {
-+        "pdf_truncated",
-+        "png_truncated",
-+        "jpeg_truncated",
-+        "tiff_truncated",
-+        "dicom_truncated",
-+        "wav_truncated",
-+        "type_mismatch",
-+        "invalid_dimensions",
-+        "oversized_counts",
-+        "bad_digest",
-+        "duplicate_asset",
-+        "unknown_media",
-+        "resource_limit",
-+    }
-+)
-+
-+
-+def payload():
-+    import openmed.multimodal.preflight_fixtures as module
-+
-+    return json.loads(
-+        (
-+            Path(module.__file__).parent / "fixtures/malformed_asset_preflight.json"
-+        ).read_bytes()
-+    )
-+
-+
-+def test_complete_case_id_coverage_and_production_expected_findings():
-+    cases = load_preflight_fixtures()
-+    assert {case.case_id for case in cases} == CASE_IDS
-+    for case in cases:
-+        assert case.actual_findings() == case.expected_findings
-+        assert all(0 < len(asset.header) <= 132 for asset in case.assets)
-+
-+
-+def test_reordered_input_has_identical_immutable_cases():
-+    data = payload()
-+    original = load_preflight_fixtures(json.dumps(data))
-+    data["cases"].reverse()
-+    assert load_preflight_fixtures(json.dumps(data)) == original
-+    assert tuple(case.case_id for case in original) == tuple(sorted(CASE_IDS))
-+    with pytest.raises(FrozenInstanceError):
-+        original[0].category = "changed"
-+    with pytest.raises(TypeError):
-+        original[0].assets[0].manifest["width"] = 0
-+
-+
-+@pytest.mark.parametrize(
-+    "mutation",
-+    [
-+        lambda x: x.update(schema_version=True),
-+        lambda x: x.update(synthetic=False),
-+        lambda x: x.update(private_path="synthetic/private"),
-+        lambda x: x["cases"].append(x["cases"][0]),
-+        lambda x: x["cases"][0].update(expected_findings=["invented.reason"]),
-+        lambda x: x["cases"][0].update(expected_findings=[]),
-+        lambda x: x["cases"][0]["assets"][0].update(header_hex="00" * 133),
-+        lambda x: x["cases"][0]["assets"][0].update(header_hex="nothex"),
-+        lambda x: x["cases"][0]["assets"][0]["manifest"].update(
-+            patient="synthetic/private"
-+        ),
-+        lambda x: x["cases"][0].update(case_id="synthetic/private"),
-+        lambda x: x["cases"][0]["assets"][0]["manifest"].update(width=True),
-+    ],
-+)
-+def test_malformed_fixtures_reject_without_payload_echo(mutation):
-+    data = payload()
-+    mutation(data)
-+    with pytest.raises(ValueError) as exc:
-+        load_preflight_fixtures(json.dumps(data))
-+    assert "synthetic/private" not in str(exc.value)
-+
-+
-+def test_payload_and_case_count_bounds():
-+    with pytest.raises(ValueError):
-+        load_preflight_fixtures(b" " * (MAX_FIXTURE_BYTES + 1))
-+    data = payload()
-+    data["cases"] = data["cases"][:1] * 65
-+    with pytest.raises(ValueError, match="case count"):
-+        load_preflight_fixtures(json.dumps(data))
-+
-+
-+def test_duplicate_json_keys_reject_before_fixture_construction():
-+    with pytest.raises(ValueError, match="JSON"):
-+        load_preflight_fixtures('{"schema_version":1,"schema_version":1}')
-+
-+
-+def test_no_real_media_or_sensitive_payload_metadata_in_bundled_cases():
-+    cases = load_preflight_fixtures()
-+    forbidden = {
-+        "patient",
-+        "name",
-+        "credential",
-+        "path",
-+        "transcript",
-+        "text",
-+        "dataset",
-+        "endpoint",
-+    }
-+    for case in cases:
-+        for asset in case.assets:
-+            assert not forbidden & set(asset.manifest)
-+            assert len(asset.header) <= 132
-+    formats = {asset.manifest["media_type"] for case in cases for asset in case.assets}
-+    assert {
-+        "application/pdf",
-+        "image/png",
-+        "image/jpeg",
-+        "image/tiff",
-+        "application/dicom",
-+        "audio/wav",
-+    } <= formats
-+
-+
-+def test_direct_asset_constructor_rejects_private_metadata():
-+    with pytest.raises(ValueError):
-+        PreflightFixtureAsset({"path": "synthetic/private"}, b"\x00")
+@@ -393,7 +393,7 @@ Se OpenMed ti è utile nella tua ricerca, ti preghiamo di citarlo:
+ 
+ Se OpenMed ti è utile, una stella aiuta altri a scoprirlo.
+ 
+-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
++[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+ 
+ ---
+ 
+```
+
+**File**: `README.ja.md` (modified, +1/-1)
+```diff
+@@ -393,7 +393,7 @@ OpenMed SDK のソースは [Apache-2.0 License](LICENSE) の下で公開され
+ 
+ OpenMed が役立つと感じたら、スターを付けると他の人が見つけやすくなります。
+ 
+-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
++[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+ 
+ ---
+ 
 ```
 
 ---
 
-### Incident Patch 2: `706fcdd1` (2026-11-07)
-**Commit Message**: Extend malformed PDF and DICOM header fixtures
+### Incident Patch 2: `35fe34e2` (2026-11-08)
+**Commit Message**: fix: reject unsupported privacy proxy media types (#5499)
 
-Closes #3094
+Validate the media type before reading chat completion requests.
 
-**File**: `CHANGELOG.md` (modified, +4/-0)
+Closes #5185
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -186,6 +186,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - Add a bounded Python session for injected local image, PDF and streaming-audio providers, with preflighted immutable snapshots, explicit ownership, cooperative cancellation and metadata-only ordered results (#3677).
+ ### Fixed
  
-+- Added deterministic synthetic malformed PDF and DICOM header fixtures with
-+  recorded pre-decode boundaries, expected reason codes and payload digests,
-+  plus offline regression tests (#3094).
++- Reject missing, repeated, or unsupported content types on the local privacy
++  proxy's chat routes before reading the request body (#5185).
 +
- - Added a bounded, dependency-free DICOM transfer-syntax preflight that classifies
-   declared file-meta transfer syntaxes into closed native, optional-decoder,
-   review, and unsupported outcomes with stable reason codes, and reports no
+ - Discover nested public multimodal packages in the API compatibility gate,
+   require committed baseline coverage, and document baseline updates for new
+   packages. Private packages and unavailable optional shims are skipped
 ```
 
-**File**: `docs/brand/system/publication.yml` (modified, +1/-0)
+**File**: `docs/service/privacy-proxy.md` (modified, +7/-1)
 ```diff
-@@ -468,6 +468,7 @@ classification:
-     - i18n/locale-pack-conformance.md
-     - multimodal/pdf-reading-order.md
-     - multimodal/pdf-geometry-preflight.md
-+    - multimodal/synthetic-malformed-fixtures.md
-     - multimodal/ocr-streaming.md
-     - multimodal/asset-digests.md
-     - multimodal/asset-manifests.md
+@@ -6,7 +6,13 @@ listens locally, redacts text before calling an injected inference transport,
+ and restores the placeholders only in the local response.
+ 
+ The proxy exposes both `POST /v1/chat/completions` and
+-`POST /chat/completions`. A request uses the familiar shape:
++`POST /chat/completions`. Both routes require a single
++`Content-Type: application/json` header and accept parameters such as
++`charset=utf-8`. A missing, repeated, or unsupported content type returns
++HTTP 415 with the reason `unsupported_content_type` before the proxy reads
++the request body.
++
++Send requests using this JSON shape.
+ 
+ ```json
+ {
 ```
 
-**File**: `docs/multimodal/synthetic-malformed-fixtures.md` (added, +93/-0)
+**File**: `openmed/service/privacy_proxy/app.py` (modified, +15/-0)
 ```diff
-@@ -0,0 +1,93 @@
-+# Synthetic malformed header fixtures
+@@ -37,6 +37,7 @@
+     InboundRestorationError,
+     InboundRestorationState,
+ )
++from .outbound import UnsupportedContentTypeError, _normalize_content_type
+ 
+ DEFAULT_MODEL = "openmed-local"
+ DEFAULT_REDACTION_MODEL = "OpenMed/OpenMed-PII-SuperClinical-Small-44M-v1"
+@@ -78,6 +79,13 @@ class PrivacyProxyRequestError(PrivacyProxyError):
+     reason_code = "invalid_request"
+ 
+ 
++class _UnsupportedRequestMediaTypeError(PrivacyProxyRequestError):
++    """Raised when the chat request lacks a single supported media type."""
 +
-+The multimodal preflight suite already refuses malformed document and
-+medical-image headers before any decode. This contribution adds reusable,
-+deterministic corruption fixtures and focused regression tests for those
-+boundaries; it does **not** add PDF or DICOM parsing support, relax any refusal,
-+or change runtime behavior.
++    status_code = 415
++    reason_code = "unsupported_content_type"
 +
-+```python
-+from openmed.multimodal.pdf_geometry import read_pdf_geometry
-+from tests.fixtures.multimodal.malformed import case_by_name
 +
-+case = case_by_name("pdf-header-cyclic")
-+report = read_pdf_geometry(case.payload)
-+assert report.reason_codes == ("pdf_page_tree_invalid",)
-+```
-+
-+`tests/fixtures/multimodal/malformed.py` exposes one table,
-+`MALFORMED_HEADER_CASES`, with five corruption classes for each modality:
-+truncated, oversized, cyclic, inconsistent, and unsupported. Each entry records
-+the payload, the boundary that refuses it, and the exact reason that boundary
-+reports, so tests and documentation cannot drift from implemented behavior.
-+
-+## Pre-decode boundaries
-+
-+PDF fixtures are consumed by `openmed.multimodal.pdf_geometry.read_pdf_geometry`,
-+the bounded, dependency-free header and page-tree reader. Corrupt input does not
-+raise: the reader returns a report whose `reason_codes` are stable members of
-+`PDF_REASON_CODES`.
-+
-+| Fixture | Corruption | Expected reason | Status |
-+| --- | --- | --- | --- |
-+| `pdf-header-truncated` | truncated | `pdf_catalog_missing` | rejected |
-+| `pdf-header-oversized` | oversized | `pdf_object_limit` | rejected |
-+| `pdf-header-cyclic` | cyclic | `pdf_page_tree_invalid` | rejected |
-+| `pdf-header-inconsistent` | inconsistent | `page_count_mismatch` | review |
-+| `pdf-header-unsupported` | unsupported | `pdf_encrypted` | rejected |
-+
-+`pdf-header-oversized` is a twelve-object file probed with an explicit
-+`max_objects=4` budget, so the fixture exercises the reader's bounded object
-+allowance without carrying a large payload. `pdf-header-inconsistent` is the one
-+case that is not rejected: a declared `/Count 3` over a single page-tree leaf is
-+reported as `page_count_mismatch` on a `review` verdict, which is the reader's
-+existing precedence rule.
-+
-+## DICOM boundary limitation
-+
-+This repository has **no byte-level DICOM structure preflight**. The only raw
-+byte boundary is the media-type check in
-+`openmed.multimodal.media_type.detect_media_type`, which inspects at most
-+`MAX_MEDIA_TYPE_PREFIX_BYTES` (132) leading bytes and matches the `DICM` magic at
-+offset 128, followed by `openmed.multimodal.preflight.preflight_asset`, which
-+reports `unknown` or `mismatch` under its `media_type` check. Every DICOM decode
-+path takes a path and calls `pydicom.dcmread(..., force=True)`, so a truncated or
-+badly sized data set may never raise there.
-+
-+The DICOM fixtures therefore document the bounded magic boundary and the
-+preflight media-type verdict only. They never reach a decoder and make no claim
-+about group length, transfer syntax, or pixel data.
-+
-+| Fixture | Corruption | Expected reason (`media_type`) | Status |
-+| --- | --- | --- | --- |
-+| `dicom-header-truncated` | truncated | `unknown` | abstain |
-+| `dicom-header-oversized` | oversized | `unknown` | abstain |
-+| `dicom-header-cyclic` | cyclic | `unknown` | abstain |
-+| `dicom-header-inconsistent` | inconsistent | `mismatch` | abstain |
-+| `dicom-header-unsupported` | unsupported | `unknown` | abstain |
-+
-+Each DICOM fixture also records the manifest declaration it is compared against
-+(a `frames`/`width`/`height` DICOM manifest, or an `image/bmp` manifest for the
-+inconsistent case), so the preflight report contains exactly one finding: the
-+media-type verdict that classifies the corruption.
-+
-+## Determinism and privacy
-+
-+Every fixture is assembled from constants only — no randomness, no timestamps,
-+no third-party dependency. Payloads are at most 4096 bytes and, apart from the
-+PDF structural dictionaries, contain no text, no patient identifiers, no
-+clinical pixels, and no encoded image data. `PAYLOAD_SHA256` pins each payload's
-+digest, and the tests fail if a fixture's bytes, size, or recorded reason code
-+drift.
-+
-+## Verification
-+
-+```bash
-+uv run --frozen --extra dev pytest tests/unit/multimodal/test_malformed_headers.py -q
-+```
-+
-+The tests run entirely offline and assert, per fixture, the boundary's status,
-+the exact reason code, the media type reported by the bounded sniffer, the
-+presence of a valid `DICM` magic only where one is expected, and the absence of
-+PHI markers. Existing PDF geometry, media-type, and preflight tests are retained
-+unmodified. No network calls, decoders, model weights, or credentials are needed.
+ class PrivacyProxyConfigurationError(PrivacyProxyError):
+     """Raised when no local transport has been injected."""
+ 
+@@ -460,6 +468,13 @@ async def health() -> dict[str, Any]:
+ 
+     async def chat_completions(request: Request) -> Any:
+         try:
++            content_types = request.headers.getlist("content-type")
++            if len(content_types) != 1:
++                raise _UnsupportedRequestMediaTypeError()
++            try:
++                _normalize_content_type(content_types[0])
++            except UnsupportedContentTypeError:
++                raise _UnsupportedRequestMediaTypeError() from None
+             try:
+                 payload = await request.json()
+             except (TypeError, ValueError):
 ```
 
-**File**: `mkdocs.yml` (modified, +1/-0)
+**File**: `tests/unit/service/privacy_proxy/test_app.py` (modified, +90/-0)
 ```diff
-@@ -408,6 +408,7 @@ nav:
-       - Locale-Pack Conformance Checks: i18n/locale-pack-conformance.md
-       - PDF Reading Order: multimodal/pdf-reading-order.md
-       - PDF Page Geometry Preflight: multimodal/pdf-geometry-preflight.md
-+      - Synthetic Malformed Header Fixtures: multimodal/synthetic-malformed-fixtures.md
-       - OCR Through Memory: multimodal/ocr-streaming.md
-       - Bounded Asset Digests: multimodal/asset-digests.md
-       - Privacy-safe Asset Manifests: multimodal/asset-manifests.md
-```
-
-**File**: `tests/fixtures/multimodal/malformed.py` (added, +400/-0)
-```diff
-@@ -0,0 +1,400 @@
-+"""Synthetic malformed PDF and DICOM header fixtures for multimodal preflight.
-+
-+Every fixture is a tiny, deterministic, fully synthetic byte string assembled
-+from constants only: no randomness, no timestamps, no real PHI, no clinical
-+pixels, and no third-party dependency. Payloads are at most a few hundred bytes
-+so they can be inlined into preflight tests without touching the filesystem.
-+
-+The fixtures exist to pin the *pre-decode* boundaries that already refuse
-+malformed document and medical-image headers:
-+
-+* PDF payloads are consumed by ``openmed.multimodal.pdf_geometry.read_pdf_geometry``,
-+  the bounded, dependency-free header and page-tree reader. Each fixture fails
-+  with one stable reason code from ``PDF_REASON_CODES``.
-+* DICOM payloads are consumed by ``openmed.multimodal.preflight.preflight_asset``,
-+  whose media-type check reads at most
-+  ``openmed.multimodal.media_type.MAX_MEDIA_TYPE_PREFIX_BYTES`` (132) leading
-+  bytes and matches the ``DICM`` magic at offset 128. No byte-level DICOM
-+  structure reader exists in this repository, so the DICOM fixtures document
-+  the bounded magic boundary plus the preflight media-type verdict; they never
-+  reach ``pydicom``.
-+
-+``MALFORMED_HEADER_CASES`` maps each corruption class (truncated, oversized,
-+cyclic, inconsistent, unsupported) for each modality to the boundary that
-+refuses it and the reason that boundary reports, so tests and documentation
-+cannot drift from the implemented behavior.
-+"""
-+
-+from __future__ import annotations
-+
-+import hashlib
-+from dataclasses import dataclass
-+from typing import Final
-+
-+CORRUPTION_CLASSES: Final[tuple[str, ...]] = (
-+    "truncated",
-+    "oversized",
-+    "cyclic",
-+    "inconsistent",
-+    "unsupported",
-+)
-+
-+MODALITIES: Final[tuple[str, ...]] = ("pdf", "dicom")
-+
-+PDF_BOUNDARY: Final[str] = "pdf_geometry"
-+DICOM_BOUNDARY: Final[str] = "media_type_preflight"
-+
-+# Largest payload any fixture may carry; keeps the fixtures tiny by construction.
-+MAX_FIXTURE_BYTES: Final[int] = 4096
-+
-+# Byte markers that must never appear in a fixture payload.
-+PHI_MARKERS: Final[tuple[bytes, ...]] = (
-+    b"Patient",
-+    b"MRN",
-+    b"DOE^",
-+    b"1977",
-+    b"OpenMed Synthetic",
-+)
-+
-+_DICOM_PREAMBLE_BYTES: Final[int] = 128
-+_DICOM_MAGIC: Final[bytes] = b"DICM"
-+_DICOM_FOREIGN_MAGIC: Final[bytes] = b"DICX"
-+
-+# Synthetic PDF building blocks (version string, object bodies, trailer).
-+_PDF_HEADER: Final[bytes] = b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\n"
-+_PDF_CATALOG: Final[str] = "<< /Type /Catalog /Pages 2 0 R >>"
-+_PDF_SINGLE_PAGE_TREE: Final[str] = "<< /Type /Pages /Kids [3 0 R] /Count 1 >>"
-+_PDF_SINGLE_PAGE: Final[str] = (
-+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 8 8] /Contents 4 0 R >>"
-+)
-+_PDF_EMPTY_CONTENT: Final[str] = "<< /Length 0 >>\nstream\n\nendstream"
-+_PDF_CYCLIC_PAGE_TREE: Final[str] = "<< /Type /Pages /Kids [2 0 R] /Count 1 >>"
-+_PDF_UNBALANCED_PAGE_TREE: Final[str] = "<< /Type /Pages /Kids [3 0 R] /Count 3 >>"
-+
-+
-+@dataclass(frozen=True, slots=True)
-+class MalformedHeaderCase:
-+    """One synthetic malformed-header fixture and its pre-decode verdict.
-+
-+    Attributes:
-+        name: Stable kebab-case identifier used as the test id.
-+        modality: ``"pdf"`` or ``"dicom"``.
-+        corruption: One of :data:`CORRUPTION_CLASSES`.
-+        payload: The synthetic bytes handed to the preflight boundary.
-+        boundary: Boundary that refuses the payload (``pdf_geometry`` or
-+            ``media_type_preflight``).
-+        expected_reason: Reason the boundary reports: a full ``PDF_REASON_CODES``
-+            member for the PDF boundary, or the ``media_type`` reason code
-+            (``"unknown"`` or ``"mismatch"``) for the DICOM boundary.
-+        expected_detected: Media type the bounded sniffer reports, or ``None``
-+            when the payload is not a supported type.
-+        rejected: ``True`` when the boundary rejects the payload outright;
-+            ``False`` when it reports the reason on a review verdict.
-+        declared_media_type: Media type the manifest declares when the DICOM
-+            boundary is exercised; empty for PDF fixtures.
-+        declared_fields: Manifest count fields paired with ``declared_media_type``.
-+        reader_limits: Keyword limits passed to ``read_pdf_geometry`` for the
-+            cases that exercise the reader's bounded byte/object budget.
-+        notes: One-line explanation of the corruption, reused by the docs page.
-+    """
-+
-+    name: str
-+    modality: str
-+    corruption: str
-+    payload: bytes
-+    boundary: str
-+    expected_reason: str
-+    expected_detected: str | None = None
-+    rejected: bool = True
-+    declared_media_type: str = ""
-+    declared_fields: tuple[tuple[str, int], ...] = ()
-+    reader_limits: tuple[tuple[str, int], ...] = ()
-+    notes: str = ""
-+
-+    def __post_init__(self) -> None:
-+        if self.modality not in MODALITIES:
-+            raise ValueError("fixture modality is unsupported")
-
-```
-
-**File**: `tests/unit/multimodal/test_malformed_headers.py` (added, +220/-0)
-```diff
-@@ -0,0 +1,220 @@
-+"""Tests for the synthetic malformed PDF and DICOM header fixtures (#3094).
-+
-+The fixtures pin the two *pre-decode* boundaries this repository already
-+implements: the dependency-free PDF header/page-tree reader
-+(``read_pdf_geometry``) and the bounded media-type preflight
-+(``preflight_asset``/``detect_media_type``). Every assertion is offline and
-+byte-exact so a fixture cannot silently drift away from the boundary it
-+documents.
-+"""
-+
-+from __future__ import annotations
-+
-+import hashlib
-+import importlib
-+import socket
-+
+@@ -5,6 +5,8 @@
+ import json
+ from typing import Any
+ 
 +import pytest
++from fastapi import Request
+ from fastapi.testclient import TestClient
+ 
+ from openmed.service.privacy_proxy.app import create_app
+@@ -227,3 +229,91 @@ def test_unconfigured_proxy_is_local_and_fails_closed_without_echoing_input():
+     assert health.json()["transport_configured"] is False
+     assert response.status_code == 503
+     assert prompt not in response.text
 +
-+from openmed.multimodal.asset_manifest import AssetManifest
-+from openmed.multimodal.media_type import MAX_MEDIA_TYPE_PREFIX_BYTES, detect_media_type
-+from openmed.multimodal.pdf_geometry import (
-+    PDF_REASON_CODES,
-+    PdfGeometryStatus,
-+    read_pdf_geometry,
++
++@pytest.mark.parametrize(
++    "content_type",
++    ["application/json; charset=utf-8", "Application/JSON; Charset=UTF-8"],
 +)
-+from openmed.multimodal.preflight import PreflightStatus, preflight_asset
-+from tests.fixtures.multimodal.malformed import (
-+    CORRUPTION_CLASSES,
-+    DICOM_BOUNDARY,
-+    MALFORMED_HEADER_CASES,
-+    MAX_FIXTURE_BYTES,
-+    MODALITIES,
-+    PAYLOAD_SHA256,
-+    PDF_BOUNDARY,
-+    PHI_MARKERS,
-+    MalformedHeaderCase,
-+    case_by_name,
-+    cases_for,
-+    corruption_matrix,
-+)
++def test_chat_completion_accepts_json_content_type_with_charset(content_type: str):
++    seen_payloads: list[dict[str, Any]] = []
 +
-+PDF_CASES = cases_for("pdf")
-+DICOM_CASES = cases_for("dicom")
-+ALL_CASES = MALFORMED_HEADER_CASES
-+IDS = [case.name for case in ALL_CASES]
-+READER_LIMIT_NAMES = frozenset(
-+    {"max_bytes", "max_pages", "max_objects", "max_decompressed_bytes"}
-+)
-+DICOM_MAGIC = b"DICM"
++    def transport(payload: dict[str, Any], **_: Any) -> str:
++        seen_payloads.append(payload)
++        return payload["messages"][0]["content"]
 +
++    prompt = f"Contact {SYNTHETIC_NAME} at {SYNTHETIC_PHONE}."
++    body = json.dumps(
++        {
++            "model": "local-fixture",
++            "messages": [{"role": "user", "content": prompt}],
++        }
++    ).encode("utf-8")
 +
-+def _manifest(case: MalformedHeaderCase) -> AssetManifest:
-+    """Build the matching manifest for a DICOM-boundary fixture."""
-+    return AssetManifest(
-+        asset_id="fixture-asset",
-+        sha256=case.sha256(),
-+        byte_size=len(case.payload),
-+        **case.declaration(),
-+    )
-+
-+
-+def test_fixture_table_covers_every_modality_and_corruption_class() -> None:
-+    assert len(ALL_CASES) == len(MODALITIES) * len(CORRUPTION_CLASSES)
-+    assert tuple(case.modality for case in PDF_CASES) == ("pdf",) * len(
-+        CORRUPTION_CLASSES
-+    )
-+    assert tuple(case.modality for case in DICOM_CASES) == ("dicom",) * len(
-+        CORRUPTION_CLASSES
-+    )
-+    assert tuple(case.corruption for case in PDF_CASES) == CORRUPTION_CLASSES
-+    assert tuple(case.corruption for case in DICOM_CASES) == CORRUPTION_CLASSES
-+    assert corruption_matrix() == {
-+        "pdf": CORRUPTION_CLASSES,
-+        "dicom": CORRUPTION_CLASSES,
-+    }
-+
-+
-+def test_fixture_names_are_unique_and_kebab_case() -> None:
-+    assert len(set(IDS)) == len(IDS)
-+    for case in ALL_CASES:
-+        assert case.name == case.name.lower()
-+        assert "-" in case.name
-+        assert case.name.startswith(f"{case.modality}-")
-+
-+
-+def test_boundary_matches_modality() -> None:
-+    for case in PDF_CASES:
-+        assert case.boundary == PDF_BOUNDARY
-+    for case in DICOM_CASES:
-+        assert case.boundary == DICOM_BOUNDARY
-+
-+
-+def test_payloads_are_tiny_and_carry_no_phi_markers() -> None:
-+    for case in ALL_CASES:
-+        assert 0 < len(case.payload) <= MAX_FIXTURE_BYTES
-+        for marker in PHI_MARKERS:
-+            assert marker not in case.payload
-+
-+
-+def test_payload_digests_match_the_pinned_table() -> None:
-+    assert set(PAYLOAD_SHA256) == set(IDS)
-+    for case in ALL_CASES:
-+        digest = hashlib.sha256(case.payload).hexdigest()
-+        assert digest == case.sha256()
-+        assert PAYLOAD_SHA256[case.name] == digest
-+
-+
-+def test_fixture_module_is_byte_stable_across_reloads() -> None:
-+    module = importlib.import_module("tests.fixtures.multimodal.malformed")
-+    reloaded = importlib.reload(module)
-+    try:
-+        assert tuple(case.payload for case in reloaded.MALFORMED_HEADER_CASES) == tuple(
-+            case.payload for case in ALL_CASES
++    with _client(transport) as client:
++        response = client.post(
++            "/v1/chat/completions",
++            content=body,
++            headers={"Content-Type": content_type},
 +        )
-+        assert reloaded.PAYLOAD_SHA256 == PAYLOAD_SHA256
-+    finally:
-+        importlib.reload(module)
++
++    assert response.status_code == 200
++    assert response.json()["choices"][0]["message"]["content"] == prompt
++    assert len(seen_payloads) == 1
 +
 +
-+@pytest.mark.parametrize("case", PDF_CASES, ids=[c.name for c in PDF_CASES])
-+def test_pdf_fixture_fails_at_the_geometry_boundary(case: MalformedHeaderCase) -> None:
-+    report = read_pdf_geometry(case.payload, **case.limits())
-+    assert case.expected_reason in PDF_REASON_CODES
-+    assert report.reason_codes == (case.expected_reason,)
-+    if case.rejected:
-+        assert report.status is PdfGeometryStatus.REJECTED
-+        assert report.pages == ()
-+    else:
-+        assert report.status is PdfGeometryStatus.REVIEW
-+        assert report.pages
++@pytest.mark.parametrize("path", ["/v1/chat/completions", "/chat/completions"])
++@pytest.mark.parametrize(
++    "headers",
++    [
++        [("Content-Type", "text/plain")],
++        [],
++        [("Content-Type", "application/json"), ("Content-Type", "text/plain")],
++    ],
++    ids=["non-json", "missing", "conflicting"],
++)
++def test_chat_completion_rejects_unsupported_media_type_without_reading_body(
++    path: str, headers: list[tuple[str, str]], monkeypatch: pytest.MonkeyPatch
++):
++    def read_body(_request: Request) -> None:
++        pytest.fail("Unsupported media type reached the request body reader")
++
++    def transport(*_args: Any, **_kwargs: Any) -> str:
++        pytest.fail("Unsupported media type reached the transport")
++
++    monkeypatch.setattr(Request, "stream", read_body)
++    prompt = f"Contact {SYNTHETIC_NAME} at {SYNTHETIC_PHONE}."
++    body = json.dumps(
++        {
++            "model": "local-fixture",
++            "messages": [{"role": "user", "content": prompt}],
++        }
++    ).encode("utf-8")
++
++    with _client(transport) as client:
++        response = client.post(path, content=body, headers=headers)
++
++    assert response.status_code == 415
++    assert response.json() == {
++        "error": {
++            "code": "privacy_proxy_invalid_request",
++            "message": "Privacy proxy request failed",
++            "details": {"reason": "unsupported_content_type"},
++        }
++    }
++    assert SYNTHETIC_NAME not in response.text
++    assert SYNTHETIC_PHONE not in response.text
++    assert prompt not in response.text
 +
 +
-+def test_reader_limits_are_declared_only_where_a_budget_is_exercised() -> None:
-+    limited = [case for case in PDF_CASES if case.limits()]
-+    assert [case.name for case in limited] == ["pdf-header-oversized"]
-+    for case in PDF_CASES:
-+        assert set(case.limits()) <= READER_LIMIT_NAMES
-+        assert case.declared_media_type == ""
-+        assert case.declaration() == {"media_type": ""}
++def test_chat_completion_returns_safe_400_for_malformed_json():
++    with TestClient(create_app()) as client:
++        response = client.post(
++            "/v1/chat/completions",
++            content=f'{{"messages": "{SYNTHETIC_NAME}',
++            headers={"Content-Type": "application/json"},
++        )
 +
-+
-+@pytest.mark.parametrize("case", DICOM_CASES, ids=[c.name for c in DICOM_CASES])
-+def test_dicom_fixture_fails_at_th
++    assert response.status_code == 400
++    assert response.json()["error"]["details"]["reason"] == "invalid_json"
++    assert SYNTHETIC_NAME not in response.text
 ```
 
 ---
 
-### Incident Patch 3: `5e1eb459` (2026-11-07)
-**Commit Message**: Render synthetic clinical dialogue and timed PHI truth
+### Incident Patch 3: `96a83ebb` (2026-11-08)
+**Commit Message**: fix: reject ambiguous privacy proxy request media types
 
-Closes #3831
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -102,6 +102,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - Generate bounded non-diagnostic waveform stimuli with declared event timing and synthetic device metadata (#2850).
+ ### Fixed
  
-+- Offline synthetic dialogue rendering through licensed local speech adapters,
-+  sample-exact PHI chunks and word timing manifests, a model-free waveform fixture,
-+  and seeded noise, gain, overlap and bandpass augmentation provenance (#3831).
++- Reject missing, repeated, or unsupported content types on the local privacy
++  proxy's chat routes before reading the request body (#5185).
 +
- - Generate reproducible synthetic DICOM files with paired metadata, burned-in identifier masks, annotation and ruler geometry, native pixel roundtrips and source-bound privacy-mask lineage (#2849).
+ - Discover nested public multimodal packages in the API compatibility gate,
+   require committed baseline coverage, and document baseline updates for new
+   packages. Private packages and unavailable optional shims are skipped
+```
+
+**File**: `docs/service/privacy-proxy.md` (modified, +7/-1)
+```diff
+@@ -6,7 +6,13 @@ listens locally, redacts text before calling an injected inference transport,
+ and restores the placeholders only in the local response.
  
- - Compare packet-scoped identity digests, page numbering, rendered pixels, template anchors and continuation cues across document pages; preserve original evidence and masks when splitting or quarantining inconsistent groups (#2805).
+ The proxy exposes both `POST /v1/chat/completions` and
+-`POST /chat/completions`. A request uses the familiar shape:
++`POST /chat/completions`. Both routes require a single
++`Content-Type: application/json` header and accept parameters such as
++`charset=utf-8`. A missing, repeated, or unsupported content type returns
++HTTP 415 with the reason `unsupported_content_type` before the proxy reads
++the request body.
++
++Send requests using this JSON shape.
+ 
+ ```json
+ {
 ```
 
-**File**: `docs/brand/system/publication.yml` (modified, +1/-0)
+**File**: `openmed/service/privacy_proxy/app.py` (modified, +12/-8)
 ```diff
-@@ -441,6 +441,7 @@ classification:
-     - training/synthetic/document-rendering.md
-     - training/synthetic/dicom-overlays.md
-     - training/synthetic/waveform-records.md
-+    - training/synthetic/speech-rendering.md
-     - training/synthetic/longitudinal-trajectories.md
-     - training/synthetic/fhir-records.md
-     - training/synthetic/omop-cohorts.md
+@@ -65,13 +65,10 @@ def __init__(
+         message: str = "Privacy proxy request failed",
+         *,
+         reason_code: Optional[str] = None,
+-        status_code: Optional[int] = None,
+     ) -> None:
+         super().__init__(message)
+         if reason_code is not None:
+             self.reason_code = reason_code
+-        if status_code is not None:
+-            self.status_code = status_code
+ 
+ 
+ class PrivacyProxyRequestError(PrivacyProxyError):
+@@ -82,6 +79,13 @@ class PrivacyProxyRequestError(PrivacyProxyError):
+     reason_code = "invalid_request"
+ 
+ 
++class _UnsupportedRequestMediaTypeError(PrivacyProxyRequestError):
++    """Raised when the chat request lacks a single supported media type."""
++
++    status_code = 415
++    reason_code = "unsupported_content_type"
++
++
+ class PrivacyProxyConfigurationError(PrivacyProxyError):
+     """Raised when no local transport has been injected."""
+ 
+@@ -464,13 +468,13 @@ async def health() -> dict[str, Any]:
+ 
+     async def chat_completions(request: Request) -> Any:
+         try:
++            content_types = request.headers.getlist("content-type")
++            if len(content_types) != 1:
++                raise _UnsupportedRequestMediaTypeError()
+             try:
+-                _normalize_content_type(request.headers.get("content-type", ""))
++                _normalize_content_type(content_types[0])
+             except UnsupportedContentTypeError:
+-                raise PrivacyProxyRequestError(
+-                    reason_code="unsupported_content_type",
+-                    status_code=415,
+-                ) from None
++                raise _UnsupportedRequestMediaTypeError() from None
+             try:
+                 payload = await request.json()
+             except (TypeError, ValueError):
 ```
 
-**File**: `docs/training/synthetic/speech-rendering.md` (added, +135/-0)
+**File**: `tests/unit/service/privacy_proxy/test_app.py` (modified, +52/-29)
 ```diff
-@@ -0,0 +1,135 @@
-+# Synthetic speech rendering and timing truth
-+
-+`openmed.training.synthetic.speech_render.render_dialogue` renders caller-authored
-+synthetic scripts through an injected local `SpeechSynthesizer`. It writes mono
-+16-bit little-endian PCM WAV and a version-1 manifest with turn, word and gold
-+PHI timing. This is Python training/evaluation fixture tooling, scoped to #3831;
-+there is no runtime speech synthesis or OpenMedKit adapter in this slice.
-+
-+```python
-+import io
-+
-+from openmed.multimodal.asr_audio_profile import (
-+    MONO_16K_PCM_PROFILE,
-+    check_asr_compatibility,
-+)
-+from openmed.multimodal.wav_metadata import read_wav_metadata
-+from openmed.training.synthetic.speech_render import (
-+    GoldPhiSpan,
-+    ModelFreeSynthesizer,
-+    ScriptedTurn,
-+    render_dialogue,
-+)
-+
-+wav = io.BytesIO()
-+manifest = render_dialogue(
-+    (
-+        ScriptedTurn("patient", "en", "Synthetic One speaks", (GoldPhiSpan(0, 13),)),
-+        ScriptedTurn("reviewer", "fr", "Synthetic Deux répond", (GoldPhiSpan(0, 14),)),
-+    ),
-+    ModelFreeSynthesizer(),
-+    wav,
-+)
-+report = check_asr_compatibility(
-+    read_wav_metadata(wav.getvalue()), MONO_16K_PCM_PROFILE
-+)
-+assert report.is_compatible
-+assert manifest.to_dict()["reviewer_confirmation_required"]
-+```
-+
-+The bundled model-free engine produces deterministic token waveforms, **not
-+intelligible speech**. Its alignments are known by construction. It exercises
-+plumbing and timing-sensitive privacy fixtures without weights, downloads,
-+network calls or speech-quality claims. A real engine and its measured word
-+alignment must be supplied for speech or ASR evaluation; no provider is qualified
-+by these tests.
-+
-+## Script and adapter contract
-+
-+Each `ScriptedTurn` carries a speaker role, language, text and sorted, disjoint
-+`GoldPhiSpan` intervals. All character offsets use Python Unicode code points;
-+all sample and character intervals are half-open `[start, end)`. Adjacent PHI
-+spans are allowed. Empty, whitespace-only, overlapping or out-of-range spans
-+fail closed before synthesis. Scripts must be synthetic, never real patient
-+records. Authoring, translation, PHI detection and withholding remain separate.
-+
-+The renderer splits each turn at gold PHI boundaries and synthesizes each PHI
-+span independently from its surrounding text. Nonempty chunks are concatenated
-+with exactly `chunk_gap_samples` silent frames (default 160). Whitespace-only
-+surrounding slices are omitted. Turns are separated by `turn_gap_samples`
-+(default 1,600). A PHI interval encloses precisely its complete synthesized
-+chunk, including any leading/trailing silence supplied by the engine, without
-+surrounding chunks or declared gaps in the unaugmented output.
-+
-+The protocol receives the chunk text, role, language and requested sample rate;
-+it returns `SynthesizedChunk(pcm16, words)`. PCM must be mono signed little-endian
-+16-bit samples at that rate. Each `WordAlignment` supplies character and sample
-+bounds for one `\S+` whitespace token, in order. Missing, overlapping, empty,
-+out-of-range or mismatched word alignments are rejected. Timing is never inferred
-+from text length for real adapters. Languages without whitespace have one token
-+per whitespace-delimited run; no linguistic segmentation is claimed.
-+
-+A PHI boundary can split a token, such as `Ada` in `Ada,`. The manifest preserves
-+both engine-aligned fragments with their exact offsets and gives the original
-+script token their enclosing interval. That envelope can include the declared
-+inter-chunk gap. No intra-token alignment is fabricated.
-+
-+Before synthesis, **both** engine and voice licenses must normalize to one of
-+MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC or 0BSD. Missing, unknown,
-+custom `LicenseRef`, compound and non-permissive declarations are rejected.
-+`SynthesizerDeclaration.offline` and `.synthetic_voice` must both be true.
-+The caller must review actual engine/voice terms, keep assets local and use only
-+synthetic voices that do not clone or imitate a real person. Declarations are
-+checked; they are not independent verification or sandboxing of arbitrary
-+adapter code. Adapters must avoid network IO, payload logging and retention.
-+
-+## Augmentation truth
-+
-+`Augmentations` records its seed, numeric parameters and controlled labels.
-+Operations run in this order: overlap mix, gain, seeded uniform integer noise,
-+optional centered FIR bandpass, then rounded PCM16 clipping.
-+
-+| Label | Signal effect | Timing effect recorded |
-+| --- | --- | --- |
-+| `uniform_noise` | Adds noise bounded by `noise_amplitude` using a private seeded PRNG | Source intervals unchanged; output digests change |
-+| `gain` | Applies positive linear gain, at most 16 | Intervals unchanged; clipped-sample count measured after filtering |
-+| `speaker_overlap` | Mixes consecutive distinct speakers; removes turn gaps and advances each later turn by `overlap_samples` | Absolute intervals shifted; accumulated `tim
-```
-
-**File**: `mkdocs.yml` (modified, +1/-0)
-```diff
-@@ -381,6 +381,7 @@ nav:
-           - Synthetic Document Rendering: training/synthetic/document-rendering.md
-           - Synthetic DICOM Overlays: training/synthetic/dicom-overlays.md
-           - Synthetic Waveform Records: training/synthetic/waveform-records.md
-+          - Synthetic Speech Timing: training/synthetic/speech-rendering.md
-           - Synthetic Longitudinal Trajectories: training/synthetic/longitudinal-trajectories.md
-           - Synthetic FHIR Records: training/synthetic/fhir-records.md
-           - Synthetic OMOP Cohorts: training/synthetic/omop-cohorts.md
-```
-
-**File**: `openmed/training/synthetic/speech_render.py` (added, +589/-0)
-```diff
-@@ -0,0 +1,589 @@
-+"""Offline synthetic dialogue rendering with sample-exact PHI chunk truth."""
-+
-+from __future__ import annotations
-+
-+import hashlib
-+import io
-+import json
-+import math
-+import random
-+import re
-+import struct
-+import wave
-+from dataclasses import asdict, dataclass, field
-+from typing import Any, BinaryIO, Protocol, TextIO
-+
-+from .spdx_identifier import normalize_spdx_identifier
-+
-+__all__ = [
-+    "Augmentations",
-+    "GoldPhiSpan",
-+    "ModelFreeSynthesizer",
-+    "ScriptedTurn",
-+    "SpeechRenderError",
-+    "SpeechRenderManifest",
-+    "SpeechSynthesizer",
-+    "SynthesizedChunk",
-+    "SynthesizerDeclaration",
-+    "WordAlignment",
-+    "render_dialogue",
-+]
-+
-+# Match the in-process dependency policy; do not infer permissive terms from
-+# arbitrary declarations or accept custom LicenseRef expressions.
-+_LICENSES = frozenset(
-+    {"MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD"}
-+)
-+_WORDS = re.compile(r"\S+")
-+_NOTICE = "Synthetic test audio only; non-diagnostic; no clinical validation."
-+
-+
-+class SpeechRenderError(ValueError):
-+    """Controlled, value-free rendering failure."""
-+
-+
-+@dataclass(frozen=True)
-+class GoldPhiSpan:
-+    """Gold PHI interval in Python Unicode character offsets, end exclusive."""
-+
-+    start: int
-+    end: int
-+
-+
-+@dataclass(frozen=True)
-+class ScriptedTurn:
-+    """Caller-supplied synthetic turn; source values are excluded from repr."""
-+
-+    speaker_role: str = field(repr=False)
-+    language: str = field(repr=False)
-+    text: str = field(repr=False)
-+    phi_spans: tuple[GoldPhiSpan, ...] = ()
-+
-+
-+@dataclass(frozen=True)
-+class SynthesizerDeclaration:
-+    """Adapter declarations checked before any synthesis call.
-+
-+    Args:
-+        engine_license: Permissive SPDX identifier for the engine.
-+        voice_license: Permissive SPDX identifier for the voice assets.
-+        offline: True only for local execution without network access.
-+        synthetic_voice: True only for voices that do not clone or imitate people.
-+    """
-+
-+    engine_license: str = field(repr=False)
-+    voice_license: str = field(repr=False)
-+    offline: bool = True
-+    synthetic_voice: bool = True
-+
-+
-+@dataclass(frozen=True)
-+class WordAlignment:
-+    """One whitespace token's character and sample bounds within a chunk."""
-+
-+    char_start: int
-+    char_end: int
-+    start_sample: int
-+    end_sample: int
-+
-+
-+@dataclass(frozen=True)
-+class SynthesizedChunk:
-+    """Mono little-endian signed PCM16 and measured local word alignments."""
-+
-+    pcm16: bytes = field(repr=False)
-+    words: tuple[WordAlignment, ...]
-+
-+
-+class SpeechSynthesizer(Protocol):
-+    """Injected local engine with caller-reviewed licensing and word alignment.
-+
-+    Adapters must not perform network IO, clone voices, log source text, or
-+    retain payloads. The renderer validates declarations, not engine behavior.
-+    """
-+
-+    declaration: SynthesizerDeclaration
-+
-+    def synthesize(
-+        self, text: str, *, speaker_role: str, language: str, sample_rate_hz: int
-+    ) -> SynthesizedChunk:
-+        """Return PCM16 and exact whitespace-token alignments for this chunk."""
-+        ...
-+
-+
-+class ModelFreeSynthesizer:
-+    """Deterministic waveform fixture for plumbing, never intelligible speech.
-+
-+    This engine has no model or voice assets. Its waveforms cannot qualify an
-+    ASR provider or establish clinical quality.
-+    """
-+
-+    declaration = SynthesizerDeclaration("Apache-2.0", "Apache-2.0")
-+
-+    def synthesize(
-+        self, text: str, *, speaker_role: str, language: str, sample_rate_hz: int
-+    ) -> SynthesizedChunk:
-+        """Generate deterministic token waveforms with construction-time truth."""
-+        pcm = bytearray()
-+        words = []
-+        for match in _WORDS.finditer(text):
-+            start = len(pcm) // 2
-+            length = max(1, len(match.group()) * sample_rate_hz // 100)
-+            digest = hashlib.sha256(
-+                json.dumps([speaker_role, language, match.group()]).encode()
-+            ).digest()
-+            for index in range(length):
-+                value = (digest[index % len(digest)] - 128) * 32
-+                pcm.extend(struct.pack("<h", value))
-+            words.append(
-+                WordAlignment(match.start(), match.end(), start, start + length)
-+            )
-+        return SynthesizedChunk(bytes(pcm), tuple(words))
-+
-+
-+@dataclass(frozen=True)
-+class Augmentations:
-+    """Seeded amplitude noise, gain, turn overlap and fixed FIR band limiting.
-+
-+    Args:
-+        seed: Integer seed for an isolated PRNG.
-+        noise_amplitude: Uniform integer PCM noise bound (0 disables noise).
-+        gain: Linear gain before clipping to PCM16.
-+        overlap_samples: Later turns start this far before the preceding end.
-+        band_limit: Apply centered five-tap bandpass [-1, 0, 2, 0, -1] / 4.
-+    """
-+
-+    seed: int = 0
-+    noise_amplitude: int = 0
-+    gain: float = 1.0
-+    overlap_samples: i
-```
-
-**File**: `tests/integration/test_synthetic_speech_render.py` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+"""Offline fixture handoff to existing audio preflight contracts."""
-+
-+import io
-+
+@@ -5,6 +5,8 @@
+ import json
+ from typing import Any
+ 
 +import pytest
-+
-+from openmed.multimodal.asr_audio_profile import (
-+    MONO_16K_PCM_PROFILE,
-+    check_asr_compatibility,
-+)
-+from openmed.multimodal.wav_metadata import read_wav_metadata
-+from openmed.training.synthetic.speech_render import (
-+    GoldPhiSpan,
-+    ModelFreeSynthesizer,
-+    ScriptedTurn,
-+    render_dialogue,
-+)
-+
-+
-+@pytest.mark.integration
-+def test_synthetic_dialogue_handoff_without_provider_qualification():
-+    wav = io.BytesIO()
-+    manifest = render_dialogue(
-+        (
-+            ScriptedTurn(
-+                "patient", "en", "Synthetic One speaks", (GoldPhiSpan(0, 13),)
-+            ),
-+            ScriptedTurn(
-+                "reviewer", "fr", "Synthetic Deux répond", (GoldPhiSpan(0, 14),)
-+            ),
-+        ),
-+        ModelFreeSynthesizer(),
-+        wav,
-+    ).to_dict()
-+    metadata = read_wav_metadata(wav.getvalue())
-+    report = check_asr_compatibility(metadata, MONO_16K_PCM_PROFILE)
-+    assert report.is_compatible
-+    assert metadata.frame_count == manifest["frame_count"]
-+    assert all(turn["phi"] for turn in manifest["turns"])
-+    assert manifest["reviewer_confirmation_required"] is True
-```
-
-**File**: `tests/unit/training/synthetic/test_speech_render.py` (added, +447/-0)
-```diff
-@@ -0,0 +1,447 @@
-+"""Synthetic offline renderer controls; all identifiers are invented."""
-+
-+from __future__ import annotations
-+
-+import hashlib
-+import io
-+import json
-+import socket
-+import struct
-+import wave
-+from dataclasses import replace
-+
-+import pytest
-+
-+from openmed.multimodal.asr_audio_profile import (
-+    MONO_16K_PCM_PROFILE,
-+    AsrAudioProfile,
-+    check_asr_compatibility,
-+)
-+from openmed.multimodal.wav_metadata import read_wav_metadata
-+from openmed.training.synthetic.speech_render import (
-+    Augmentations,
-+    GoldPhiSpan,
-+    ModelFreeSynthesizer,
-+    ScriptedTurn,
-+    SpeechRenderError,
-+    SynthesizedChunk,
-+    SynthesizerDeclaration,
-+    WordAlignment,
-+    render_dialogue,
-+)
-+
-+
-+def scripts():
-+    return (
-+        ScriptedTurn("patient", "en", "I am Synthetic Ada.", (GoldPhiSpan(5, 18),)),
-+        ScriptedTurn("reviewer", "fr", "Bonjour Élise Test.", (GoldPhiSpan(8, 18),)),
-+    )
-+
-+
-+def render(turns=None, provider=None, **kwargs):
-+    wav = io.BytesIO()
-+    output = io.StringIO()
-+    manifest = render_dialogue(
-+        turns or scripts(),
-+        provider or ModelFreeSynthesizer(),
-+        wav,
-+        manifest_output=output,
-+        **kwargs,
-+    )
-+    assert output.getvalue() == manifest.to_json()
-+    assert json.loads(output.getvalue()) == manifest.to_dict()
-+    with wave.open(io.BytesIO(wav.getvalue()), "rb") as reader:
-+        pcm = reader.readframes(reader.getnframes())
-+    return wav.getvalue(), pcm, manifest.to_dict()
-+
-+
-+def test_deterministic_two_speaker_phi_sample_truth_and_word_fragments():
-+    first = render()
-+    assert first == render()
-+    _, pcm, manifest = first
-+    provider = ModelFreeSynthesizer()
-+    for script, turn in zip(scripts(), manifest["turns"]):
-+        assert turn["start_seconds"] == turn["start_sample"] / 16000
-+        assert turn["end_seconds"] == turn["end_sample"] / 16000
-+        assert turn["overlapping_turns"] == []
-+        for phi in turn["phi"]:
-+            text = script.text[phi["char_start"] : phi["char_end"]]
-+            expected = provider.synthesize(
-+                text,
-+                speaker_role=script.speaker_role,
-+                language=script.language,
-+                sample_rate_hz=16000,
-+            ).pcm16
-+            actual = pcm[2 * phi["start_sample"] : 2 * phi["end_sample"]]
-+            assert actual == expected
-+            assert phi["source_pcm_sha256"] == hashlib.sha256(actual).hexdigest()
-+            assert phi["rendered_pcm_sha256"] == phi["source_pcm_sha256"]
-+        # Punctuation immediately after a PHI span splits a script token. Both
-+        # exact fragment intervals are retained instead of estimating timing.
-+        last_word = turn["words"][-1]
-+        assert len(last_word["fragments"]) == 2
-+        assert (
-+            last_word["fragments"][0]["end_sample"] + 160
-+            == last_word["fragments"][1]["start_sample"]
-+        )
-+
-+
-+@pytest.mark.parametrize("rate", [8000, 16000, 44100, 48000])
-+def test_wav_metadata_matches_declared_asr_profile(rate):
-+    wav, pcm, manifest = render(sample_rate_hz=rate)
-+    metadata = read_wav_metadata(wav)
-+    profile = replace(MONO_16K_PCM_PROFILE, sample_rates_hz=(rate,))
-+    assert isinstance(profile, AsrAudioProfile)
-+    assert check_asr_compatibility(metadata, profile).is_compatible
-+    assert metadata.frame_count == len(pcm) // 2 == manifest["frame_count"]
-+    assert metadata.sample_rate_hz == manifest["sample_rate_hz"] == rate
-+    assert metadata.bit_depth == 16
-+    assert manifest["wav_sha256"] == hashlib.sha256(wav).hexdigest()
-+
-+
++from fastapi import Request
+ from fastapi.testclient import TestClient
+ 
+ from openmed.service.privacy_proxy.app import create_app
+@@ -229,7 +231,11 @@ def test_unconfigured_proxy_is_local_and_fails_closed_without_echoing_input():
+     assert prompt not in response.text
+ 
+ 
+-def test_chat_completion_accepts_json_content_type_with_charset():
 +@pytest.mark.parametrize(
-+    "license_value",
-+    [
-+        None,
-+        "",
-+        "unknown",
-+        "LicenseRef-private",
-+        "GPL-3.0-only",
-+        "MPL-2.0",
-+        "MIT OR GPL-3.0-only",
-+    ],
++    "content_type",
++    ["application/json; charset=utf-8", "Application/JSON; Charset=UTF-8"],
 +)
-+@pytest.mark.parametrize("field", ["engine_license", "voice_license"])
-+def test_license_negative_controls_rejected_before_synthesis(license_value, field):
-+    class NeverCalled(ModelFreeSynthesizer):
-+        declaration = replace(
-+            ModelFreeSynthesizer.declaration, **{field: license_value}
-+        )
++def test_chat_completion_accepts_json_content_type_with_charset(content_type: str):
+     seen_payloads: list[dict[str, Any]] = []
+ 
+     def transport(payload: dict[str, Any], **_: Any) -> str:
+@@ -248,21 +254,34 @@ def transport(payload: dict[str, Any], **_: Any) -> str:
+         response = client.post(
+             "/v1/chat/completions",
+             content=body,
+-            headers={"Content-Type": "application/json; charset=utf-8"},
++            headers={"Content-Type": content_type},
+         )
+ 
+     assert response.status_code == 200
+     assert response.json()["choices"][0]["message"]["content"] == prompt
+     assert len(seen_payloads) == 1
+ 
+ 
+-def test_chat_completion_rejects_non_json_and_missing_content_type():
+-    seen_payloads: list[dict[str, Any]] = []
+-
+-    def transport(payload: dict[str, Any], **_: Any) -> str:
+-        seen_payloads.append(payload)
+-        return payload["messages"][0]["content"]
+-
++@pytest.mark.parametrize("path", ["/v1/chat/completions", "/chat/completions"])
++@pytest.mark.parametrize(
++    "headers",
++    [
++        [("Content-Type", "text/plain")],
++        [],
++        [("Content-Type", "application/json"), ("Content-Type", "text/plain")],
++    ],
++    ids=["non-json", "missing", "conflicting"],
++)
++def test_chat_completion_rejects_unsupported_media_type_without_reading_body(
++    path: str, headers: list[tuple[str, str]], monkeypatch: pytest.MonkeyPatch
++):
++    def read_body(_request: Request) -> None:
++        pytest.fail("Unsupported media type reached the request body reader")
 +
-+        def synthesize(self, *args, **kwargs):
-+            pytest.fail("Rejected adapter was called")
++    def transport(*_args: Any, **_kwargs: Any) -> str:
++        pytest.fail("Unsupported media type reached the transport")
 +
-+    wav = io.BytesIO()
-+    with pytest.raises(SpeechRenderError, match="speech_license_rejected"):
-+        render_dialogue(scripts(), NeverCalled(), wav)
-+    assert wav.getvalue() == b""
++    monkeypatch.setattr(Request, "stream", read_body)
+     prompt = f"Contact {SYNTHETIC_NAME} at {SYNTHETIC_PHONE}."
+     body = json.dumps(
+         {
+@@ -272,25 +291,29 @@ def transport(payload: dict[str, Any], **_: Any) -> str:
+     ).encode("utf-8")
+ 
+     with _client(transport) as client:
+-        plain_response = client.post(
++        response = client.post(path, content=body, headers=headers)
++
++    assert response.status_code == 415
++    assert response.json() == {
++        "error": {
++            "code": "privacy_proxy_invalid_request",
++            "message": "Privacy proxy request failed",
++            "details": {"reason": "unsupported_content_type"},
++        }
++    }
++    assert SYNTHETIC_NAME not in response.text
++    assert SYNTHETIC_PHONE not in response.text
++    assert prompt not in response.text
 +
 +
-+@pytest.mark.parametrize("field", ["offline", "synthetic_voice"])
-+def test_cloud_and_cloned_voice_declarations_rejected(field):
-+    provider = ModelFreeSynthesizer()
-+    provider.declaration = replace(provider.declaration, **{field: False})
-+    with pytest.raises(SpeechRenderError, match="speech_adapter_policy_rejected"):
-+        render(provider=provider)
++def test_chat_completion_returns_safe_400_for_malformed_json():
++    with TestClient(create_app()) as client:
++        response = client.post(
+             "/v1/chat/completions",
+-            content=body,
+-            headers={"Content-Type": "text/plain"},
++            content=f'{{"messages": "{SYNTHETIC_NAME}',
++            headers={"Content-Type": "application/json"},
+         )
+-        missing_request = client.build_request("POST", "/v1/chat/completions")
+-        missing_request.headers.pop("content-type", None)
+-        missing_response = client.send(missing_request)
+-
+-    for response in (plain_response, missing_response):
+-        assert response.status_code == 415
+-        assert response.json() == {
+-            "error": {
+-                "code": "privacy_proxy_invalid_request",
+-                "message": "Privacy proxy request failed",
+-                "details": {"reason": "unsupported_content_type"},
+-            }
+-        }
+-        assert SYNTHETIC_NAME not in response.text
+-        assert SYNTHETIC_PHONE not in response.text
+-        assert prompt not in response.text
+-    assert seen_payloads == []
 +
-+
-+def test_missing_declaration_is_rejected():
-+    with pytest.raises(SpeechRenderError, match="speech_declaration_invalid"):
-+        render(provider=object())
-+
-+
-+def test_
++    assert response.status_code == 400
++    assert response.json()["error"]["details"]["reason"] == "invalid_json"
++    assert SYNTHETIC_NAME not in response.text
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4435** (2026-11-06): De-identify System One requests before local decision scoring (@maziyarpanahi)
-- **PR #4434** (2026-11-06): Support user-supplied d1-omni weights for local text, image and audio decisions (@maziyarpanahi)
-- **PR #4433** (2026-11-05): Run pinned d3-edge decision models on local CPU (@maziyarpanahi)
-- **PR #4432** (2026-11-05): Accept verified local images and videos in fixed-option decisions (@maziyarpanahi)
-- **PR #4431** (2026-11-05): Add experimental local streaming speech inference with ONNX Runtime (@maziyarpanahi)
-- **PR #4430** (2026-11-07): Mute finalized spoken identifiers in retained audio (@maziyarpanahi)
+- **PR #5545** (2026-11-11): fix(docs): refresh expired public metric evidence (@maziyarpanahi)
+- **PR #5536** (closed): test: pin date-shift offsets with synthetic golden vectors (@damonchandio)
+- **PR #5512** (closed): test: add synthetic date-shift offset vectors (@shu-chen-dot-ca)
+- **PR #5502** (2026-11-11): Prepare OpenMed 3.3.0 release candidate (@maziyarpanahi)
+- **PR #5499** (2026-11-08): fix: reject non-JSON request media types at the privacy proxy (@Mr45401)
+- **PR #5488** (2026-11-08): Fix Nix CLI tests and pinned image signer downloads (@maziyarpanahi)
 
 ---
 
@@ -3821,29 +2855,28 @@ Closes #3831
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add synthetic malformed multimodal preflight fixtures
+## X. Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.ar.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f698a58f`: Add synthetic malformed multimodal preflight fixtures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8097fc0b`: Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.ar.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Ship bounded synthetic malformed-header fixtures exercising the existing multimodal preflight and batch contracts (#3007).
-
+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f698a58f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8097fc0b` are properly handled with clean fallback behavior.

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T08:35:03.998Z",
+  "updated_at": "2026-11-12T08:53:59.698Z",
   "stats": {
-    "total_discovered": 1078,
-    "approved_pending_harvest": 969,
+    "total_discovered": 1091,
+    "approved_pending_harvest": 979,
     "harvested_count": 0,
-    "rejected_count": 109,
+    "rejected_count": 112,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1001,
+      "COMMUNITY_AND_EXPERT": 1014,
       "OFFICIAL_DOCUMENTATION": 30,
       "STANDARDS_AND_SPECIFICATIONS": 44,
       "ENGINEERING_BLOGS": 1,
@@ -22970,6 +22970,271 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
         "fileName": "openyurtio-openyurt-learnings.md"
+      }
+    },
+    "SRC-93FD8AA5CBFD": {
+      "id": "SRC-93FD8AA5CBFD",
+      "url": "https://github.com/maziyarpanahi/openmed",
+      "title": "https://github.com/maziyarpanahi/openmed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-52092AC3A5ED": {
+      "id": "SRC-52092AC3A5ED",
+      "url": "https://hl7.org/",
+      "title": "https://hl7.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-40F821C85AB8": {
+      "id": "SRC-40F821C85AB8",
+      "url": "https://www.hl7.org/",
+      "title": "https://www.hl7.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.641Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-3F410C2B3E3A": {
+      "id": "SRC-3F410C2B3E3A",
+      "url": "http://www.hl7.org/",
+      "title": "http://www.hl7.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T08:53:59.646Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-938A207FACF3": {
+      "id": "SRC-938A207FACF3",
+      "url": "http://hl7.org/",
+      "title": "http://hl7.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T08:53:59.652Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-8224F5ECADC9": {
+      "id": "SRC-8224F5ECADC9",
+      "url": "http://127.0.0.1:8080/pii/extract",
+      "title": "http://127.0.0.1:8080/pii/extract",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T08:53:59.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-2753F7C40521": {
+      "id": "SRC-2753F7C40521",
+      "url": "https://github.com/maziyarpanahi/openmed/stargazers",
+      "title": "https://github.com/maziyarpanahi/openmed/stargazers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.662Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-75267D807E2F": {
+      "id": "SRC-75267D807E2F",
+      "url": "https://github.com/hashicorp/terraform",
+      "title": "https://github.com/hashicorp/terraform",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
+        "fileName": "hashicorp-terraform-learnings.md"
+      }
+    },
+    "SRC-8A6646FD1A6B": {
+      "id": "SRC-8A6646FD1A6B",
+      "url": "https://{account/",
+      "title": "https://{account/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.679Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
+        "fileName": "hashicorp-terraform-learnings.md"
+      }
+    },
+    "SRC-6FFCE820D029": {
+      "id": "SRC-6FFCE820D029",
+      "url": "https://sale.dfs.core.windows.net`/",
+      "title": "https://sale.dfs.core.windows.net`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.684Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
+        "fileName": "hashicorp-terraform-learnings.md"
+      }
+    },
+    "SRC-7E9E90B5984D": {
+      "id": "SRC-7E9E90B5984D",
+      "url": "https://%s.blob.%s",
+      "title": "https://%s.blob.%s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.689Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
+        "fileName": "hashicorp-terraform-learnings.md"
+      }
+    },
+    "SRC-B35F45B99F41": {
+      "id": "SRC-B35F45B99F41",
+      "url": "https://gist.github.com/zanecodes/35d1f0b073dd3a07f0dbb6456fb00a7e",
+      "title": "https://gist.github.com/zanecodes/35d1f0b073dd3a07f0dbb6456fb00a7e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.693Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
+        "fileName": "hashicorp-terraform-learnings.md"
+      }
+    },
+    "SRC-3F7AF21A0C2B": {
+      "id": "SRC-3F7AF21A0C2B",
+      "url": "https://github.com/hashicorp/terraform/commit/55436336db424d9ff85151d31dc3a82a541fc382",
+      "title": "https://github.com/hashicorp/terraform/commit/55436336db424d9ff85151d31dc3a82a541fc382",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T08:53:59.698Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
+        "fileName": "hashicorp-terraform-learnings.md"
       }
     }
   }

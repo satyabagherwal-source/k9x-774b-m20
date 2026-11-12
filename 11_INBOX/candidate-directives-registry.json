@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T08:35:03.910Z",
+  "last_updated": "2026-11-12T08:53:59.705Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6554,6 +6554,33 @@
       "source_repo": "openyurtio-openyurt",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EBC88C-test-yurthub-fix-pool-scope-metadata-key.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5EC936",
+      "directive_title": "Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "maziyarpanahi-openmed",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5EC936-merge-pull-request-5545-from-maziyarpana.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-818DB6",
+      "directive_title": "Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hashicorp-terraform",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-818DB6-ensure-fmt-s-fallback-output-is-skipped-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-71C192",
+      "directive_title": "bpf:tests: add encrypt_host_masq suite for encrypted packets",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-71C192-bpf-tests-add-encrypt-host-masq-suite-fo.md",
       "staged_date": "2026-11-12"
     }
   ]

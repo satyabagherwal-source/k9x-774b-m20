@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T08:34:25.610Z",
+  "last_updated": "2026-11-12T08:53:53.858Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12616,8 +12616,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "23221edf",
-      "content_hash": "4b6af69b1a862c7b3fa9dc4114bdbdef847c192cf3c6dc546c53674b4e26c75b",
+      "source_version": "988d97f3",
+      "content_hash": "eb04bd8559a6eeec47705f555abf5eee736042d62115ab548c8e6e0926b1d17f",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -12639,6 +12639,11 @@
         {
           "number": null,
           "title": "dangling segment node link when appending a segment runs out of memory (#28583)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Preserve fixed allocator blocks when queue allocation fails",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12727,7 +12732,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T00:45:08.780Z",
+      "verified_at": "2026-11-12T08:53:04.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19187,8 +19192,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "03b4f662",
-      "content_hash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
+      "source_version": "4a7d3d74",
+      "content_hash": "29dd9c9c6f3bf4601acc5e53e1820f6f0aed8cade79ec21a09e4bd250e91b361",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -19200,6 +19205,11 @@
         {
           "number": null,
           "title": "command/state pull: Refactor to use views (#39493)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -19278,7 +19288,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:11:45.844Z",
+      "verified_at": "2026-11-12T08:53:53.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43425,14 +43435,19 @@
       "slug": "maziyarpanahi-openmed",
       "platform": "github",
       "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "74561086",
-      "content_hash": "9fac6036ce24b02769c275fbf51dafa75251b2375e852324a98f4b8f5c82061d",
+      "source_version": "8097fc0b",
+      "content_hash": "24c39041d34b09597145e2ddb18cd8a8a027c8dc55a4b5c7785939872d138c34",
       "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Add synthetic malformed multimodal preflight fixtures",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43471,7 +43486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:49:18.816Z",
+      "verified_at": "2026-11-12T08:53:00.158Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167835,7 +167850,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
       "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "6e6193672a940f8a4ba08cb66e0ab6f8334f885a328c92a7bb2dde714a62ec7f",
+      "content_hash": "37069d5effcf331b2dcff1e456b50e4ad6f70d0024c30edfd8e86669666fe035",
       "dossier_path": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
       "promoted_rules": [
@@ -167870,7 +167885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:50:15.617Z",
+      "verified_at": "2026-11-12T08:52:38.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

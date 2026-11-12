@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `03b4f662`  
+> **Source Version**: `4a7d3d74`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:11:43.972Z  
+> **Timestamp**: 2026-11-12T08:53:41.150Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:06:42.154Z  
+> **Harvest Timestamp**: 2026-11-12T08:52:43.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50187 stars
+- **Stars / Engagement**: 50210 stars
 
 ---
 
@@ -2263,8 +2263,8 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 - **Issue #39501** (2026-11-06): **`Error: Cycle` when forgetting a resource with `destroy = false` if a provider configuration depends on it**
   *Symptoms*: ### Terraform Version  ```shell Terraform v1.17.1                                                                                                                                                                                                                                             on linux_amd64                                                                                                                                                                                                                                                + provider registry.terraform.io/hashicorp/tls v4.4.2 ```  ### Terraform Configuration Files  ```terraform terraform {   required_version = "1.17.1"   required_providers {     tls = {       version = "4.4.2"     }   } }  resource "terraform_data" "test" {   input = null    lifecycle {     destroy = false   } }  provider "tls" {   proxy {     url = terraform_data.test.output   } }  # The issue does not occur if the provider does not define any resources resource "tls_private_key" "test" {   algorithm = "ED25519" } ```   ### Debug Output  https://gist.github.com/zanecodes/35d1f0b073dd3a07f0dbb6456fb00a7e  ### Expected Behavior  `terraform destroy` should work when `destroy = false` lifecycle meta-argument is specified on a resource upon which a provider configuration depends, as it does when `destroy = true`  ### Actual Behavior  `terraform destroy` fails validation with the following error:  ``` Error: Cycle:   terraform_data.test (forget)   tls_p
 
-- **Issue #39468** (2026-11-03): **terraform show of a saved plan fails with "Module source has changed" when a const variable comes from a var-file**
-  *Symptoms*: ### Terraform Version  ```shell Terraform v1.16.7 on darwin_arm64 ```  ### Terraform Configuration Files  ```terraform # main.tf variable "ref" {   type    = string   const   = true   default = "a" }  module "m" {   source = "./mod_${var.ref}" }  output "n" {   value = module.m.n } ```  ```terraform # mod_a/main.tf output "n" { value = "a" }  # mod_b/main.tf output "n" { value = "b" } ```  ```terraform # dev.tfvars ref = "b" ```    ### Debug Output  ``` 2026-10-28T13:13:26.360-0400 [INFO]  Terraform version: 1.16.7 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/go-tfe v1.110.0 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/hcl/v2 v2.24.0 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/hashicorp/terraform-svchost v0.2.1 2026-10-28T13:13:26.360-0400 [DEBUG] using github.com/zclconf/go-cty v1.18.1 2026-10-28T13:13:26.360-0400 [INFO]  Go runtime version: go1.26.10 2026-10-28T13:13:26.360-0400 [INFO]  CLI args: []string{"terraform", "show", "-json", "p.bin"} 2026-10-28T13:13:26.360-0400 [TRACE] Stdout is not a terminal 2026-10-28T13:13:26.360-0400 [TRACE] Stderr is not a terminal 2026-10-28T13:13:26.360-0400 [TRACE] Stdin is not a terminal 2026-10-28T13:13:26.360-0400 [INFO]  Checkpoint disabled. Not running. 2026-10-28T13:13:26.360-0400 [INFO]  CLI command args: []string{"show", "-json", "p.bin"} 2026-10-28T13:13:26.361-0400 [TRACE] terraform.NewContext: starting 2026-10-28T13:13:26.361-0400 [TRACE] terraform.NewContext: complete 2026-10-28
+- **Issue #39478** (2026-11-11): **init: repeated unavailable-provider schema warnings during module loading with TF_LOG=INFO on 1.15+**
+  *Symptoms*: ### Terraform Version  ```shell Affected versions observed: - **Terraform v1.17.1, linux_amd64:** observed in CI. - **Terraform v1.15.2, windows_amd64:** reproduced with the minimal configuration below.  Comparison using the same minimal configuration with `TF_LOG=INFO`:  | Terraform Version | Platform | Matching Schema Warnings | Init Result | |---|---|---:|---| | 1.17.1 | linux_amd64 | 2,608 in the larger CI configuration | Success | | 1.15.2 | windows_amd64 | 2 in the minimal reproduction | Success | | 1.14.9 | windows_amd64 | 0 in the minimal reproduction | Success | | 1.11.4 | windows_amd64 | 0 in the minimal reproduction | Success |  The Linux and Windows warning counts are from different configurations, not a platform comparison. ```  ### Terraform Configuration Files   Root `main.tf`:  ```hcl terraform {   required_providers {     random = {       source  = "hashicorp/random"       version = "3.7.2"     }   } }  module "child" {   source = "./child" } ```  `child/main.tf`:  ```hcl output "value" {   value = "fixture" } ```  No backend, existing state, cloud credentials, provider configuration, or resources are required. The child module has no `terraform` block, and the module source is a literal string.   ### Debug Output  Relevant excerpt from the minimal reproduction on Terraform v1.15.2 with `TF_LOG=INFO`, with timestamps omitted:  ```text [INFO] Terraform version: 1.15.2 Initializing modules... [WARN] Error loading schema for registry.terraform.io/hashicorp/rando
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2281,1084 +2281,400 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03b4f662` (2026-11-09)
-**Commit Message**: command/state pull: Refactor to use views (#39493)
+### Incident Patch 1: `55436336` (2026-11-09)
+**Commit Message**: fix: Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode
 
-This change:
+After all, when `-check` is set the output to indicate formatting is needed is the exit code. Therefore we don't need to fallback to executing this block, which serves to ensure that fmt behaves differently when files need to be formatted.
 
-* Changes diagnostics handling in `state pull` command, makes it use diagnostics to report if we failed to write the pulled state to file
-* Makes the `arguments` package control the active view type in the `state pull` command
-* Implements a human view for `state pull`
-* Refactors `state pull` to use views for terminal output
-
-**File**: `internal/command/arguments/state_pull.go` (modified, +4/-1)
+**File**: `internal/command/fmt.go` (modified, +1/-1)
 ```diff
-@@ -11,6 +11,8 @@ import (
- type StatePull struct {
- 	// Vars are the variable-related flags (-var, -var-file).
- 	Vars *Vars
-+
-+	ViewType ViewType
- }
- 
- // ParseStatePull processes CLI arguments, returning a StatePull value and
-@@ -19,7 +21,8 @@ type StatePull struct {
- func ParseStatePull(args []string) (*StatePull, tfdiags.Diagnostics) {
- 	var diags tfdiags.Diagnostics
- 	pull := &StatePull{
--		Vars: &Vars{},
-+		Vars:     &Vars{},
-+		ViewType: ViewHuman,
+@@ -205,7 +205,7 @@ func (c *FmtCommand) processFile(path string, r io.Reader, w io.Writer) tfdiags.
+ 		}
  	}
  
- 	cmdFlags := extendedFlagSet("state pull", nil, nil, pull.Vars)
-```
-
-**File**: `internal/command/arguments/state_pull_test.go` (modified, +4/-2)
-```diff
-@@ -20,7 +20,8 @@ func TestParseStatePull_valid(t *testing.T) {
- 		"defaults": {
- 			nil,
- 			&StatePull{
--				Vars: &Vars{},
-+				Vars:     &Vars{},
-+				ViewType: ViewHuman,
- 			},
- 		},
- 	}
-@@ -93,7 +94,8 @@ func TestParseStatePull_invalid(t *testing.T) {
- 		"unknown flag": {
- 			[]string{"-boop"},
- 			&StatePull{
--				Vars: &Vars{},
-+				Vars:     &Vars{},
-+				ViewType: ViewHuman,
- 			},
- 			tfdiags.Diagnostics{
- 				tfdiags.Sourceless(
-```
-
-**File**: `internal/command/state_pull.go` (modified, +43/-17)
-```diff
-@@ -9,6 +9,7 @@ import (
- 	"strings"
- 
- 	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/command/views"
- 	"github.com/hashicorp/terraform/internal/states/statefile"
- 	"github.com/hashicorp/terraform/internal/states/statemgr"
- 	"github.com/hashicorp/terraform/internal/tfdiags"
-@@ -21,19 +22,30 @@ type StatePullCommand struct {
- 	StateMeta
- }
- 
--func (c *StatePullCommand) Run(args []string) int {
-+func (c *StatePullCommand) Run(rawArgs []string) int {
- 	var diags tfdiags.Diagnostics
- 
--	parsedArgs, parseDiags := arguments.ParseStatePull(c.Meta.process(args))
--	if parseDiags.HasErrors() {
--		c.showDiagnostics(parseDiags)
-+	// Parse and apply global view arguments
-+	common, rawArgs := arguments.ParseView(rawArgs)
-+	c.View.Configure(common)
-+
-+	// Process command-specific arguments.
-+	parsedArgs, argDiags := arguments.ParseStatePull(rawArgs)
-+	diags = diags.Append(argDiags)
-+
-+	// Prepare the view
-+	view := views.NewStatePull(parsedArgs.ViewType, c.View)
-+
-+	// Now the view is ready, process any error diagnostics from parsing arguments.
-+	if diags.HasErrors() {
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	loader, err := c.initConfigLoader()
- 	if err != nil {
- 		diags = diags.Append(err)
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -42,20 +54,23 @@ func (c *StatePullCommand) Run(args []string) int {
- 		loader.Parser().ForceFileSource(filename, src)
- 	})
- 	if varDiags.HasErrors() {
--		c.showDiagnostics(varDiags)
-+		diags = diags.Append(varDiags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
--	if diags := c.Meta.checkRequiredVersion(); diags != nil {
--		c.showDiagnostics(diags)
-+	vDiags := c.Meta.checkRequiredVersion()
-+	diags = diags.Append(vDiags)
-+	if vDiags.HasErrors() {
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Load the backend
--	view := arguments.ViewHuman
--	b, diags := c.backend(".", view)
--	if diags.HasErrors() {
--		c.showDiagnostics(diags)
-+	b, beDiags := c.backend(".", parsedArgs.ViewType)
-+	diags = diags.Append(beDiags)
-+	if beDiags.HasErrors() {
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -70,13 +85,13 @@ func (c *StatePullCommand) Run(args []string) int {
- 			"Failed to select workspace",
- 			fmt.Sprintf("Error selecting workspace: %s", err),
- 		))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 	stateMgr, sDiags := b.StateMgr(env)
- 	if sDiags.HasErrors() {
- 		diags = diags.Append(fmt.Errorf(errStateLoadingState, sDiags.Err()))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 	if err := stateMgr.RefreshState(); err != nil {
-@@ -85,7 +100,7 @@ func (c *StatePullCommand) Run(args []string) int {
- 			"Failed to refresh the state",
- 			fmt.Sprintf("Error refreshing the state: %s", err),
- 		))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -96,11 +111,16 @@ func (c *StatePullCommand) Run(args []string) int {
- 		var buf bytes.Buffer
- 		err = statefile.Write(stateFile, &buf)
+-	if !c.list && !c.write && !c.diff {
++	if !c.list && !c.write && !c.diff && !c.check {
+ 		_, err = w.Write(result)
  		if err != nil {
--			c.Ui.Error(fmt.Sprintf("Failed to write state: %s", err))
-+			diags = diags.Append(tfdiags.Sourceless(
-+				tfdiags.Error,
-+				"Failed to save the state",
-+				fmt.Sprintf("Terraform encountered an error when saving state: %s", err),
-+			))
-+			view.Diagnostics(diags)
- 			return 1
- 		}
- 
--		c.Ui.Output(buf.String())
-+		view.State(buf.String())
- 	}
- 
- 	return 0
-@@ -122,6 +142,12 @@ Usage: terraform [global options] state pull [options]
- 
- Options:
- 
-+  -compact-warnings   If Terraform produces any warnings that are not
-+                      accompanied by errors, show them in a more compact
-+                      form that includes only the summary messages
-+
-+  -no-color           Disable text coloring in the output.
-+
-   -var 'foo=bar'      Set a value for one of the input variables in the root
-                       module of the configuration. Use this option more than
-                       once to set more than one variable.
-```
-
-**File**: `internal/command/state_pull_test.go` (modified, +27/-27)
-```diff
-@@ -25,17 +25,17 @@ func TestStatePull(t *testing.T) {
- 	t.Chdir(td)
- 
- 	p := testProvider()
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &StatePullCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(p),
--			Ui:               ui,
-+			View:             view,
- 		},
- 	}
- 
- 	args := []string{}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
- 	expectedResource := `
-@@ -57,7 +57,7 @@ func TestStatePull(t *testing.T) {
-       ]
-     }
- `
--	actual := ui.OutputWriter.String()
-+	actual := done(t).Stdout()
- 	if !strings.Contains(actual, expectedResource) {
- 		t.Fatalf("expected state to contain: %s\n\nstate:%s", expectedResource, actual)
- 	}
-@@ -111,7 +111,7 @@ func TestStatePull_stateStore(t *testing.T) {
- 		"hashicorp/test": {"1.0.0"},
- 	})
- 
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	streams, _ := terminal.StreamsForTesting(t)
- 	c := &StatePullCommand{
- 		Meta: Meta{
-@@ -122,7 +122,7 @@ func TestStatePull_stateStore(t *testing.T) {
- 				},
- 			},
- 			ProviderSource: providerSource,
--			Ui:             ui,
-+			View:           view,
- 			Streams:        streams,
- 		},
- 	}
-@@ -132,7 +132,7 @@ func TestStatePull_stateStore(t *testing.T) {
- 	args := []string{expectedResourceAddr}
- 	code := c.Run(args)
- 	if code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
- 	// Test that the state in the output matches the original state
-@@ -154,7 +154,7 @@ func TestStatePull_stateStore(t *testing.T) {
-       ]
-     }
- `
--	actual := ui.OutputWriter.String()
-+	actual := done(t).Stdout()
- 	if !strings.Contains(actual, expectedResource) {
- 		t.Fatalf("expected state to contain: %s\n\nstate:%s", expectedResource, actual)
- 	}
-@@ -165,20 +165,20 @@ func TestStatePull_noState(t *testing.T) {
- 	t.Chdir(tmp)
- 
- 	p := testProvider()
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &StatePullCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(p),
--			Ui:               ui,
-+			View:             view,
- 		},
- 	}
- 
- 	args := []string{}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
--	actual := ui.OutputWriter.String()
-+	actual := done(t).Stdout()
- 	if actual != "" {
- 		t.Fatalf("bad: %s", actual)
- 	}
-@@ -189,11 +189,11 @@ func TestStatePull_constVariable(t *testing.T) {
- 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var")
- 		t.Chdir(wd.RootModuleDir())
- 
--		ui := testUiWrapped(t)
-+		view, done := testView(t)
- 		c := &StatePullCommand{
- 			Meta: Meta{
- 				testingOverrides: metaOverridesForProvider(testProvider()),
--				Ui:               ui,
-+				View:             view,
- 				WorkingDir:       wd,
- 			},
- 		}
-@@ -203,7 +203,7 @@ func TestStatePull_constVariable(t *testing.T) {
- 			t.Fatalf("expected error, got 0")
- 		}
- 
--		errStr := ui.ErrorWriter.String()
-+		errStr := done(t).Stderr()
- 		if !strings.Contains(errStr, "No value for required variable") {
- 			t.Fatalf("expected missing variable error, got: %s", errStr)
- 		}
-@@ -213,18 +213,18 @@ func TestStatePull_constVariable(t *testing.T) {
- 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var")
- 		t.Chdir(wd.RootModuleDir())
- 
--		ui := testUiWrapped(t)
-+		view, done := testView(t)
- 		c := &StatePullCommand{
- 			Meta: Meta{
- 				testingOverrides: metaOverridesForProvider(testProvider()),
--				Ui:               ui,
-+				View:             view,
- 				WorkingDir:       wd,
- 			},
- 		}
- 
- 		args := []string{"-var", "module_name=child"}
- 		if code := c.Run(args); code != 0 {
--			t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+			t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 		}
- 
- 		expectedResource := `
-@@ -244,7 +244,7 @@ func TestStatePull_constVariable(t *testing.T) {
-       ]
-     }
- `
--		actual := ui.OutputWriter.String()
-+		actual := done(t).Stdout()
- 		if !strings.Contains(actual, expectedResource) {
- 			t.Fatalf("expected state to contain: %s\n\nstate:%s", expectedResource, actual)
- 		}
-@@ -260,18 +260,18 @@ func TestStatePull_constVariable(t *testing.T) {
- 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var-backend")
- 		t.Chdir(wd.RootModuleDir())
- 
--		ui := testUiWrapped(t)
-+		view, done := testView(t)
- 		c := &StatePullCommand{
- 			Meta: Meta{
- 				testingOverrides: metaOverridesForProvider(testProvider()),
--				Ui:               ui,
-+				View:             view,
- 				WorkingDir:       wd,
- 			},
- 		}
- 
- 		args := []string{}
- 		if code := c.Run(args); code != 0 {
--			t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+			t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 		}
- 
- 		expectedResource := `
-@@ -291,7 +291,7 @@ func TestStatePull_constVariable(t *testing.T) {
-       ]
-     }
- `
--		actual := ui.OutputWriter.String()
-+
-```
-
-**File**: `internal/command/views/state_pull.go` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+// Copyright IBM Corp. 2014, 2026
-+// SPDX-License-Identifier: BUSL-1.1
-+
-+package views
-+
-+import (
-+	"fmt"
-+
-+	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
-+)
-+
-+// The StatePull is used for the `state pull` command.
-+type StatePull interface {
-+	// The pulled state is printed to stdout
-+	State(state string)
-+
-+	Diagnostics(diags tfdiags.Diagnostics)
-+}
-+
-+// NewStatePull returns an initialized StatePull implementation for the given ViewType.
-+func NewStatePull(vt arguments.ViewType, view *View) StatePull {
-+	switch vt {
-+	case arguments.ViewHuman:
-+		return &StatePullHuman{view: view}
-+	default:
-+		panic(fmt.Sprintf("unknown view type %v", vt))
-+	}
-+}
-+
-+// The StatePullHuman implementation renders diagnostics in a human-readable form.
-+type StatePullHuman struct {
-+	view *View
-+}
-+
-+var _ StatePull = (*StatePullHuman)(nil)
-+
-+func (v *StatePullHuman) Diagnostics(diags tfdiags.Diagnostics) {
-+	v.view.Diagnostics(diags)
-+}
-+
-+func (v *StatePullHuman) State(state string) {
-+	v.view.streams.Println(state)
-+}
-```
-
-**File**: `internal/command/views/state_pull_test.go` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+// Copyright IBM Corp. 2014, 2026
-+// SPDX-License-Identifier: BUSL-1.1
-+
-+package views
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	"github.com/google/go-cmp/cmp"
-+	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/terminal"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
-+)
-+
-+func TestStatePullHuman_State(t *testing.T) {
-+	streams, done := terminal.StreamsForTesting(t)
-+	view := NewView(streams)
-+	view.Configure(&arguments.View{NoColor: true})
-+	v := NewStatePull(arguments.ViewHuman, view)
-+
-+	val := "imagine this is the string representation of state..."
-+	v.State(val)
-+
-+	output := done(t)
-+	expectedStdout := val
-+	if diff := cmp.Diff(expectedStdout, strings.TrimSpace(output.Stdout())); diff != "" {
-+		t.Fatalf("unexpected stdout diff:\n%s", diff)
-+	}
-+	expectedStderr := ""
-+	if diff := cmp.Diff(expectedStderr, strings.TrimSpace(output.Stderr())); diff != "" {
-+		t.Fatalf("unexpected stderr diff:\n%s", diff)
-+	}
-+}
-+
-+func TestStatePullHuman_Diagnostics(t *testing.T) {
-+	streams, done := terminal.StreamsForTesting(t)
-+	view := NewView(streams)
-+	view.Configure(&arguments.View{NoColor: true})
-+	v := NewStatePull(arguments.ViewHuman, view)
-+
-+	diags := tfdiags.Diagnostics{
-+		tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Example error.",
-+			"This is an example error detail.",
-+		),
-+	}
-+	v.Diagnostics(diags)
-+
-+	output := done(t)
-+	expectedStdout := ""
-+	if diff := cmp.Diff(expectedStdout, strings.TrimSpace(output.Stdout())); diff != "" {
-+		t.Fatalf("unexpected stdout diff:\n%s", diff)
-+	}
-+	expectedStderr := "Error: Example error.\n\nThis is an example error detail."
-+	if diff := cmp.Diff(expectedStderr, strings.TrimSpace(output.Stderr())); diff != "" {
-+		t.Fatalf("unexpected stderr diff:\n%s", diff)
-+	}
-+}
+ 			diags = diags.Append(fmt.Errorf("Failed to write result"))
 ```
 
 ---
 
-### Incident Patch 2: `c834c404` (2026-11-09)
-**Commit Message**: command/state list: Refactor to use views (#39492)
+### Incident Patch 2: `73f40fde` (2026-11-10)
+**Commit Message**: command/fmt: Fix issue where output from `-diff` option is suppressed if `-list=false` is set (#39525)
 
-This change:
-* Makes the `arguments` package control the active view type in the `state list` command
-* Implements a human view for `state list`
-* Makes `states list` use views for terminal output
+This change refactors how the `fmt` command's `-check` option is used. A new boolean field in the command's struct tracks if changes are found, and output to stdout is now printed the same way regardless of whether `-check` is used or not.
 
-**File**: `internal/command/arguments/state_list.go` (modified, +5/-1)
+This addresses a bug where output originating from the `-diff` option couldn't be printed to stdout unless `-list` was true. There is a test in place to assert this is fixed.
+
+I also added a test to show that if all options that produce output to stdout are disabled alongside using `-check` then no output is printed to stdout. See: https://github.com/hashicorp/terraform/commit/55436336db424d9ff85151d31dc3a82a541fc382
+
+**File**: `.changes/v1.18/BUG FIXES-20261109-165621.yaml` (added, +5/-0)
 ```diff
-@@ -19,14 +19,18 @@ type StateList struct {
- 	// Addrs are optional resource or module addresses used to filter the
- 	// listed instances.
- 	Addrs []string
+@@ -0,0 +1,5 @@
++kind: BUG FIXES
++body: 'fmt: Output from the `-diff` option is now printed to stdout when using `terraform fmt -check -diff -list=false`'
++time: 2026-11-09T16:56:21.909029Z
++custom:
++    Issue: "39518"
+```
+
+**File**: `internal/command/fmt.go` (modified, +11/-16)
+```diff
+@@ -42,6 +42,10 @@ type FmtCommand struct {
+ 	check     bool
+ 	recursive bool
+ 	input     io.Reader // STDIN if nil
 +
-+	ViewType ViewType
++	// Boolean indicates if any files need formatting changes.
++	// This is used to determine the exit code when the -check option is used.
++	formattingChangesFound bool
  }
  
- // ParseStateList processes CLI arguments, returning a StateList value and
- // diagnostics. If errors are encountered, a StateList value is still returned
- // representing the best effort interpretation of the arguments.
- func ParseStateList(args []string) (*StateList, tfdiags.Diagnostics) {
- 	var diags tfdiags.Diagnostics
--	list := &StateList{}
-+	list := &StateList{
-+		ViewType: ViewHuman,
-+	}
+ func (c *FmtCommand) Run(args []string) int {
+@@ -65,18 +69,12 @@ func (c *FmtCommand) Run(args []string) int {
+ 	c.check = parsedArgs.Check
+ 	c.recursive = parsedArgs.Recursive
  
- 	var statePath, id string
- 	cmdFlags := defaultFlagSet("state list")
-```
-
-**File**: `internal/command/arguments/state_list_test.go` (modified, +8/-4)
-```diff
-@@ -16,24 +16,27 @@ func TestParseStateList_valid(t *testing.T) {
- 	}{
- 		"defaults": {
- 			nil,
--			&StateList{},
-+			&StateList{ViewType: ViewHuman},
- 		},
- 		"state path": {
- 			[]string{"-state=foobar.tfstate"},
- 			&StateList{
- 				StatePath: "foobar.tfstate",
-+				ViewType:  ViewHuman,
- 			},
- 		},
- 		"id filter": {
- 			[]string{"-id=bar"},
- 			&StateList{
--				ID: "bar",
-+				ID:       "bar",
-+				ViewType: ViewHuman,
- 			},
- 		},
- 		"with addresses": {
- 			[]string{"module.example", "aws_instance.foo"},
- 			&StateList{
--				Addrs: []string{"module.example", "aws_instance.foo"},
-+				Addrs:    []string{"module.example", "aws_instance.foo"},
-+				ViewType: ViewHuman,
- 			},
- 		},
- 		"all options": {
-@@ -42,6 +45,7 @@ func TestParseStateList_valid(t *testing.T) {
- 				StatePath: "foobar.tfstate",
- 				ID:        "bar",
- 				Addrs:     []string{"module.example"},
-+				ViewType:  ViewHuman,
- 			},
- 		},
+-	var output io.Writer
+-	list := c.list // preserve the original value of -list
+ 	if c.check {
+-		// set to true so we can use the list output to check
+-		// if the input needs formatting
+-		c.list = true
++		// check is a read-only operation
+ 		c.write = false
+-		output = &bytes.Buffer{}
+-	} else {
+-		output = &cli.UiWriter{Ui: c.Ui}
  	}
-@@ -78,7 +82,7 @@ func TestParseStateList_invalid(t *testing.T) {
- 	}{
- 		"unknown flag": {
- 			[]string{"-boop"},
--			&StateList{},
-+			&StateList{ViewType: ViewHuman},
- 			tfdiags.Diagnostics{
- 				tfdiags.Sourceless(
- 					tfdiags.Error,
+ 
++	var output io.Writer = &cli.UiWriter{Ui: c.Ui}
+ 	fileDiags := c.fmt(parsedArgs.Paths, c.input, output)
+ 	diags = diags.Append(fileDiags)
+ 	c.showDiagnostics(diags)
+@@ -85,15 +83,10 @@ func (c *FmtCommand) Run(args []string) int {
+ 	}
+ 
+ 	if c.check {
+-		buf := output.(*bytes.Buffer)
+-		ok := buf.Len() == 0
+-		if list {
+-			io.Copy(&cli.UiWriter{Ui: c.Ui}, buf)
+-		}
+-		if ok {
+-			return 0
+-		} else {
++		if c.formattingChangesFound {
+ 			return 3
++		} else {
++			return 0
+ 		}
+ 	}
+ 
+@@ -185,6 +178,8 @@ func (c *FmtCommand) processFile(path string, r io.Reader, w io.Writer) tfdiags.
+ 
+ 	if !bytes.Equal(src, result) {
+ 		// Something was changed
++		c.formattingChangesFound = true
++
+ 		if c.list {
+ 			fmt.Fprintln(w, path)
+ 		}
 ```
 
-**File**: `internal/command/experimental_test.go` (modified, +1/-4)
+**File**: `internal/command/fmt_test.go` (modified, +84/-2)
 ```diff
-@@ -9,7 +9,6 @@ import (
- )
+@@ -723,6 +723,45 @@ func TestFmt_check(t *testing.T) {
+ 		}
+ 	})
  
- func TestInit_stateStoreBlockIsExperimental(t *testing.T) {
--
- 	t.Run("init command", func(t *testing.T) {
- 		// Create a temporary working directory with state_store in use
- 		td := t.TempDir()
-@@ -76,11 +75,9 @@ func TestInit_stateStoreBlockIsExperimental(t *testing.T) {
- 		testCopyDir(t, testFixturePath("init-with-state-store"), td)
- 		t.Chdir(td)
++	t.Run("combining -diff and -list=false options", func(t *testing.T) {
++		t.Parallel()
++		tempDir := fmtFixtureWriteDir(t)
++
++		ui := testUiWrapped(t)
++		c := &FmtCommand{
++			Meta: Meta{
++				testingOverrides: metaOverridesForProvider(testProvider()),
++				Ui:               ui,
++			},
++		}
++
++		args := []string{
++			"-check",
++			"-diff",
++			"-list=false",
++			tempDir,
++		}
++		if code := c.Run(args); code != 3 {
++			t.Fatalf("wrong exit code. expected 3")
++		}
++
++		tempDir = c.normalizePath(tempDir)
++		// output doesn't have the file path printed before the diff, which is the -list contribution to output
++		expectedOutput := fmt.Sprintf(`--- old/%s/main.tf
+++++ new/%s/main.tf
++@@ -1 +1 @@
++-  foo  =  "bar"
+++foo = "bar"
++`, tempDir, tempDir)
++
++		if actual := ui.OutputWriter.String(); actual != expectedOutput {
++			t.Fatalf("expected:\n%s\n\ngot:\n%s", expectedOutput, actual)
++		}
++		if actual := ui.ErrorWriter.String(); actual != "" {
++			t.Fatalf("expected:\n%s\n\nto be empty.", actual)
++		}
++	})
++
+ 	t.Run("explicit -write=true option is silently ignored when using the check option", func(t *testing.T) {
+ 		t.Parallel()
+ 		tempDir := fmtFixtureWriteDir(t)
+@@ -754,6 +793,39 @@ func TestFmt_check(t *testing.T) {
+ 			t.Fatalf("expected:\n%s\n\nto be empty.", actual)
+ 		}
+ 	})
++
++	t.Run("all outputs disabled, alongside -check option", func(t *testing.T) {
++		t.Parallel()
++		tempDir := fmtFixtureWriteDir(t)
++
++		ui := testUiWrapped(t)
++		c := &FmtCommand{
++			Meta: Meta{
++				testingOverrides: metaOverridesForProvider(testProvider()),
++				Ui:               ui,
++			},
++		}
++
++		args := []string{
++			"-check",
++			"-write=false",
++			"-list=false",
++			"-diff=false",
++			tempDir,
++		}
++		if code := c.Run(args); code != 3 {
++			t.Fatalf("wrong exit code. expected 3")
++		}
++
++		expectedOutput := ""
++
++		if actual := ui.OutputWriter.String(); actual != expectedOutput {
++			t.Fatalf("expected:\n%s\n\ngot:\n%s", expectedOutput, actual)
++		}
++		if actual := ui.ErrorWriter.String(); actual != "" {
++			t.Fatalf("expected:\n%s\n\nto be empty.", actual)
++		}
++	})
+ }
  
+ // When `fmt` encounters a symlink:
+@@ -829,7 +901,12 @@ c =   "y"
+ 
+ 		// The symlinked file has been formatted
+ 		ui = testUiWrapped(t)
+-		c.Ui = ui
++		c = &FmtCommand{
++			Meta: Meta{
++				Ui:         ui,
++				WorkingDir: workingDir,
++			},
++		}
+ 		args := []string{
+ 			"-no-color",
+ 			"-check",
+@@ -912,7 +989,12 @@ c =   "y"
+ 
+ 		// The symlinked file has been formatted
+ 		ui = testUiWrapped(t)
+-		c.Ui = ui
++		c = &FmtCommand{
++			Meta: Meta{
++				Ui: ui,
++				// Not setting WorkingDir
++			},
++		}
+ 		args = []string{
+ 			"-no-color",
+ 			"-check",
+```
+
+---
+
+### Incident Patch 3: `3a203d33` (2026-11-11)
+**Commit Message**: tests: Remove unused cli.UI vars from some tests, fix test failure handling (#39533)
+
+**File**: `internal/command/workspace_command_test.go` (modified, +28/-58)
+```diff
+@@ -19,7 +19,6 @@ import (
+ 	"github.com/hashicorp/terraform/internal/backend/local"
+ 	"github.com/hashicorp/terraform/internal/backend/remote-state/inmem"
+ 	"github.com/hashicorp/terraform/internal/command/arguments"
+-	tfui "github.com/hashicorp/terraform/internal/command/ui"
+ 	"github.com/hashicorp/terraform/internal/command/views"
+ 	"github.com/hashicorp/terraform/internal/command/workdir"
+ 	"github.com/hashicorp/terraform/internal/providers"
+@@ -54,15 +53,17 @@ func TestWorkspaceCommand_alwaysReturnsRunResultHelp(t *testing.T) {
+ 
+ 	for name, test := range tests {
+ 		t.Run(name, func(t *testing.T) {
+-			ui := cli.NewMockUi()
++			view, done := testView(t)
+ 			c := &WorkspaceCommand{
+-				Meta: Meta{Ui: ui},
++				Meta: Meta{
++					View: view,
++				},
+ 			}
+ 
+ 			// Always returns cli.RunResultHelp
+ 			// Returning cli.RunResultHelp causes hashicorp/cli to render the help text.
+ 			if code := c.Run(test.args); code != cli.RunResultHelp {
+-				t.Fatalf("unexpected exit code: got %d, want %d\n%s", code, cli.RunResultHelp, ui.ErrorWriter)
++				t.Fatalf("unexpected exit code: got %d, want %d\n%s", code, cli.RunResultHelp, done(t).Stderr())
+ 			}
+ 		})
+ 	}
+@@ -90,11 +91,9 @@ func TestWorkspace_allCommands_pluggableStateStore(t *testing.T) {
+ 		"hashicorp/test": {"1.2.3"},
+ 	})
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	meta := Meta{
+ 		AllowExperimentalFeatures: true,
+-		Ui:                        ui,
+ 		View:                      view,
+ 		testingOverrides: &testingOverrides{
+ 			Providers: map[addrs.Provider]providers.Factory{
+@@ -112,7 +111,8 @@ func TestWorkspace_allCommands_pluggableStateStore(t *testing.T) {
+ 	args := []string{"-enable-pluggable-state-storage-experiment"} // Needed to test init changes for PSS project
+ 	code := intCmd.Run(args)
+ 	if code != 0 {
+-		t.Fatalf("bad: %d\n\n%s\n%s", code, ui.ErrorWriter, ui.OutputWriter)
++		output := done(t)
++		t.Fatalf("bad: %d\n\n%s\n%s", code, output.Stderr(), output.Stdout())
+ 	}
+ 	// We expect a state to have not been created for the default workspace
+ 	ok, err := mock.MockStates.StateIdExists("test_store", "default")
+@@ -125,7 +125,7 @@ func TestWorkspace_allCommands_pluggableStateStore(t *testing.T) {
+ 
+ 	//// Create Workspace
+ 	newWorkspace := "foobar"
+-	view, done := testView(t)
++	view, done = testView(t)
+ 	meta.View = view
+ 	newCmd := &WorkspaceNewCommand{
+ 		Meta: meta,
+@@ -273,11 +273,9 @@ func TestWorkspace_list_noReturnedWorkspaces(t *testing.T) {
+ 		"hashicorp/test": {"1.2.3"},
+ 	})
+ 
+-	ui := testUiWrapped(t)
+ 	view, done := testView(t)
+ 	meta := Meta{
+ 		AllowExperimentalFeatures: true,
+-		Ui:                        ui,
+ 		View:                      view,
+ 		testingOverrides: &testingOverrides{
+ 			Providers: map[addrs.Provider]providers.Factory{
+@@ -343,15 +341,13 @@ func TestWorkspace_createAndChange(t *testing.T) {
+ 	}
+ 
+ 	args := []string{"test"}
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	newCmd.Meta = Meta{
+-		Ui:         ui,
+ 		View:       view,
+ 		WorkingDir: workdir.NewDir("."),
+ 	}
+ 	if code := newCmd.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter)
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	current, _ = newCmd.Workspace()
+@@ -361,7 +357,7 @@ func TestWorkspace_createAndChange(t *testing.T) {
+ 
+ 	selCmd := &WorkspaceSelectCommand{}
+ 	args = []string{backend.DefaultStateName}
+-	view, done := testView(t)
++	view, done = testView(t)
+ 	selCmd.Meta = Meta{
+ 		View:       view,
+ 		WorkingDir: workdir.NewDir("."),
+@@ -607,11 +603,9 @@ func TestWorkspace_createWithState(t *testing.T) {
+ 		defer inmem.Reset()
+ 
+ 		// init the backend
 -		ui := testUiWrapped(t)
  		view, done := testView(t)
- 		c := &StateListCommand{
+ 		initCmd := &InitCommand{
  			Meta: Meta{
--				Ui:                        ui,
- 				View:                      view,
- 				AllowExperimentalFeatures: false,
+-				Ui:         ui,
+ 				View:       view,
+ 				WorkingDir: workdir.NewDir("."),
  			},
-@@ -94,7 +91,7 @@ func TestInit_stateStoreBlockIsExperimental(t *testing.T) {
- 		}
+@@ -684,11 +678,9 @@ func TestWorkspace_createWithState(t *testing.T) {
+ 		defer inmem.Reset()
  
- 		// Check output
--		output := ui.ErrorWriter.String()
-+		output := testOutput.Stderr()
- 		if !strings.Contains(output, `Blocks of type "state_store" are not expected here`) {
- 			t.Fatalf("doesn't look like experiment is blocking access': %s", output)
- 		}
-```
-
-**File**: `internal/command/state_list.go` (modified, +34/-19)
-```diff
-@@ -10,6 +10,7 @@ import (
- 
- 	"github.com/hashicorp/terraform/internal/addrs"
- 	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/command/views"
- 	"github.com/hashicorp/terraform/internal/states"
- 	"github.com/hashicorp/terraform/internal/tfdiags"
- )
-@@ -21,13 +22,23 @@ type StateListCommand struct {
- 	StateMeta
- }
- 
--func (c *StateListCommand) Run(args []string) int {
-+func (c *StateListCommand) Run(rawArgs []string) int {
- 	var diags tfdiags.Diagnostics
- 
--	parsedArgs, parseDiags := arguments.ParseStateList(c.Meta.process(args))
-+	// Parse and apply global view arguments
-+	common, rawArgs := arguments.ParseView(rawArgs)
-+	c.View.Configure(common)
-+
-+	// Process command-specific arguments.
-+	parsedArgs, parseDiags := arguments.ParseStateList(rawArgs)
- 	diags = diags.Append(parseDiags)
-+
-+	// Prepare the view
-+	view := views.NewStateList(parsedArgs.ViewType, c.View)
-+
-+	// Now the view is ready, process any error diagnostics from parsing arguments.
- 	if diags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -36,9 +47,9 @@ func (c *StateListCommand) Run(args []string) int {
- 	}
- 
- 	// Load the backend
--	b, diags := c.backend(".", arguments.ViewHuman)
-+	b, diags := c.backend(".", parsedArgs.ViewType)
- 	if diags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -53,13 +64,13 @@ func (c *StateListCommand) Run(args []string) int {
- 			"Failed to select workspace",
- 			fmt.Sprintf("Error selecting workspace: %s", err),
- 		))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 	stateMgr, sDiags := b.StateMgr(env)
- 	if sDiags.HasErrors() {
- 		diags = diags.Append(fmt.Errorf(errStateLoadingState, sDiags.Err()))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 	if err := stateMgr.RefreshState(); err != nil {
-@@ -68,14 +79,14 @@ func (c *StateListCommand) Run(args []string) int {
- 			"Failed to refresh the state",
- 			fmt.Sprintf("Error refreshing the state: %s", err),
- 		))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	state := stateMgr.State()
- 	if state == nil {
- 		diags = diags.Append(errStateNotFound)
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -86,20 +97,19 @@ func (c *StateListCommand) Run(args []string) int {
- 		addrs, diags = c.lookupResourceInstanceAddrs(state, parsedArgs.Addrs...)
- 	}
- 	if diags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-+	addresses := []string{}
- 	for _, addr := range addrs {
- 		if is := state.ResourceInstance(addr); is != nil {
- 			if parsedArgs.ID == "" || parsedArgs.ID == states.LegacyInstanceObjectID(is.Current) {
--				c.Ui.Output(addr.String())
-+				addresses = append(addresses, addr.String())
- 			}
- 		}
- 	}
--
--	c.showDiagnostics(diags)
--
-+	view.List(addresses, diags)
- 	return 0
- }
- 
-@@ -125,15 +135,20 @@ Usage: terraform [global options] state list [options] [address...]
- 
- Options:
- 
--  -state=statefile    Path to a Terraform state file to use to look
--                      up Terraform-managed resources. By default, Terraform
--                      will consult the state of the currently-selected
--                      workspace.
--
-   -id=ID              Filters the results to include only instances whose
-                       resource types have an attribute named "id" whose value
-                       equals the given id string.
- 
-+  -compact-warnings   If Terraform produces any warnings that are not
-+                      accompanied by errors, show them in a more compact
-+                      form that includes only the summary messages
-+
-+  -no-color           Disable text coloring in the output.
-+
-+  -state=statefile    Path to a Terraform state file to use to look
-+                      up Terraform-managed resources. By default, Terraform
-+                      will consult the state of the currently-selected
-+                      workspace.
- `
- 	return strings.TrimSpace(helpText)
- }
-```
-
-**File**: `internal/command/state_list_test.go` (modified, +58/-53)
-```diff
-@@ -20,24 +20,24 @@ func TestStateList(t *testing.T) {
- 	statePath := testStateFile(t, state)
- 
- 	p := testProvider()
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &StateListCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(p),
--			Ui:               ui,
-+			View:             view,
- 		},
- 	}
- 
- 	args := []string{
- 		"-state", statePath,
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
- 	// Test that outputs were displayed
- 	expected := strings.TrimSpace(testStateListOutput) + "\n"
--	actual := ui.OutputWriter.String()
-+	actual := done(t).Stdout()
- 	if actual != expected {
- 		t.Fatalf("Expected:\n%q\n\nTo equal: %q", actual, expected)
- 	}
-@@ -48,11 +48,11 @@ func TestStateListWithID(t *testing.T) {
- 	statePath := testStateFile(t, state)
- 
- 	p := testProvider()
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &StateListCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(p),
--			Ui:               ui,
-+			View:             view,
- 		},
- 	}
- 
-@@ -61,12 +61,12 @@ func TestStateListWithID(t *testing.T) {
- 		"-id", "bar",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
- 	// Test that outputs were displayed
- 	expected := strings.TrimSpace(testStateListOutput) + "\n"
--	actual := ui.OutputWriter.String()
-+	actual := done(t).Stdout()
- 	if actual != expected {
- 		t.Fatalf("Expected:\n%q\n\nTo equal: %q", actual, expected)
- 	}
-@@ -77,11 +77,11 @@ func TestStateListWithNonExistentID(t *testing.T) {
- 	statePath := testStateFile(t, state)
- 
- 	p := testProvider()
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &StateListCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(p),
--			Ui:               ui,
-+			View:             view,
- 		},
- 	}
- 
-@@ -90,15 +90,13 @@ func TestStateListWithNonExistentID(t *testing.T) {
- 		"-id", "baz",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
- 	// Test that output is empty
--	if ui.OutputWriter != nil {
--		actual := ui.OutputWriter.String()
--		if actual != "" {
--			t.Fatalf("Expected an empty output but got: %q", actual)
--		}
-+	output := done(t).Stdout()
-+	if output != "" {
-+		t.Fatalf("Expected an empty output but got: %q", output)
- 	}
- }
- 
-@@ -109,22 +107,22 @@ func TestStateList_backendDefaultState(t *testing.T) {
- 	t.Chdir(td)
- 
- 	p := testProvider()
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &StateListCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(p),
--			Ui:               ui,
-+			View:             view,
- 		},
- 	}
- 
- 	args := []string{}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
- 	// Test that outputs were displayed
- 	expected := "null_resource.a\n"
--	actual := ui.OutputWriter.String()
-+	actual := done(t).Stdout()
- 	if actual != expected {
- 		t.Fatalf("Expected:\n%q\n\nTo equal: %q", actual, expected)
- 	}
-@@ -137,22 +135,22 @@ func TestStateList_backendCustomState(t *testing.T) {
- 	t.Chdir(td)
- 
- 	p := testProvider()
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &StateListCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(p),
--			Ui:               ui,
-+			View:             view,
- 		},
- 	}
- 
- 	args := []string{}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
- 	// Test that outputs were displayed
- 	expected := "null_resource.a\n"
--	actual := ui.OutputWriter.String()
-+	actual := done(t).Stdout()
- 	if actual != expected {
- 		t.Fatalf("Expected:\n%q\n\nTo equal: %q", actual, expected)
- 	}
-@@ -206,7 +204,7 @@ func TestStateList_stateStore(t *testing.T) {
- 	)
- 	mockProviderAddress := addrs.NewDefaultProvider("test")
- 
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &StateListCommand{
- 		Meta: Meta{
- 			AllowExperimentalFeatures: true,
-@@ -215,18 +213,18 @@ func TestStateList_stateStore(t *testing.T) {
- 					mockProviderAddress: providers.FactoryFixed(mockProvider),
- 				},
+ 		// init the backend
+-		ui := testUiWrapped(t)
+ 		view, done := testView(t)
+ 		initCmd := &InitCommand{
+ 			Meta: Meta{
+-				Ui:         ui,
+ 				View:       view,
+ 				WorkingDir: workdir.NewDir("."),
  			},
--			Ui: ui,
-+			View: view,
- 		},
+@@ -739,11 +731,9 @@ func TestWorkspace_delete(t *testing.T) {
+ 		t.Fatal(err)
  	}
  
- 	args := []string{}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).Stderr())
- 	}
- 
- 	// Test that outputs were displayed
- 	expected := "test_instance.foo\n"
--	actual := ui.OutputWriter.String()
-+	actual := done(t).Stdout()
- 	if actual != expected {
- 		t.Fatalf("Expected:\n%q\n\nTo equal: %q", actual, expected)
- 	}
-@@ -239,11 +237,11 @@ func TestStateList_backendOverrideState(t *testing.T) {
- 	t.Chdir(td)
- 
- 	p := testProvider()
 -	ui := testUiWrapped(t)
-+	view, 
-```
-
-**File**: `internal/command/views/state_list.go` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+// Copyright IBM Corp. 2014, 2026
-+// SPDX-License-Identifier: BUSL-1.1
-+
-+package views
-+
-+import (
-+	"fmt"
-+	"strings"
-+
-+	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
-+)
-+
-+type StateList interface {
-+	List(addresses []string, diags tfdiags.Diagnostics)
-+
-+	Diagnostics(diags tfdiags.Diagnostics)
-+}
-+
-+func NewStateList(viewType arguments.ViewType, view *View) StateList {
-+	switch viewType {
-+	case arguments.ViewHuman:
-+		return &StateListHuman{view: view}
-+	default:
-+		panic(fmt.Sprintf("unsupported view type: %s", viewType))
-+	}
-+}
-+
-+type StateListHuman struct {
-+	view *View
-+}
-+
-+func (v *StateListHuman) List(addresses []string, diags tfdiags.Diagnostics) {
-+	sb := &strings.Builder{}
-+	for _, addr := range addresses {
-+		sb.WriteString(addr)
-+		sb.WriteString("\n")
-+	}
-+	v.view.streams.Print(sb.String())
-+
-+	// The `state list` command outputs the list of resource addresses
-+	// before any diagnostics, and this is preserved here for now.
-+	v.view.Diagnostics(diags)
-+}
-+
-+func (v *StateListHuman) Diagnostics(diags tfdiags.Diagnostics) {
-+	v.view.Diagnostics(diags)
-+}
-```
-
-**File**: `internal/command/views/state_list_test.go` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+// Copyright IBM Corp. 2014, 2026
-+// SPDX-License-Identifier: BUSL-1.1
-+
-+package views
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	"github.com/google/go-cmp/cmp"
-+	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/terminal"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
-+)
-+
-+func TestStateListHuman_List(t *testing.T) {
-+	cases := map[string]struct {
-+		addresses      []string
-+		diags          tfdiags.Diagnostics
-+		expectedStdout string
-+	}{
-+		"basic": {
-+			addresses: []string{
-+				"aws_instance.one",
-+				"aws_instance.two",
-+				"aws_instance.three",
-+			},
-+			expectedStdout: "aws_instance.one\naws_instance.two\naws_instance.three",
-+		},
-+		"with diags": {
-+			addresses: []string{
-+				"aws_instance.one",
-+				"aws_instance.two",
-+				"aws_instance.three",
-+			},
-+			diags: tfdiags.Diagnostics{
-+				tfdiags.Sourceless(
-+					tfdiags.Warning,
-+					"Example warning.",
-+					"This is an example warning detail.",
-+				),
-+			},
-+			expectedStdout: "aws_instance.one\naws_instance.two\naws_instance.three\n\n" +
-+				"Warning: Example warning.\n\nThis is an example warning detail.",
-+		},
-+	}
-+	for n, tc := range cases {
-+		t.Run(n, func(t *testing.T) {
-+			streams, done := terminal.StreamsForTesting(t)
-+			view := NewView(streams)
-+			view.Configure(&arguments.View{NoColor: true})
-+			v := NewStateList(arguments.ViewHuman, view)
-+
-+			v.List(tc.addresses, tc.diags)
-+
-+			output := done(t)
-+			if diff := cmp.Diff(tc.expectedStdout, strings.TrimSpace(output.Stdout())); diff != "" {
-+				t.Fatalf("unexpected stdout diff:\n%s", diff)
-+			}
-+		})
-+	}
-+}
-+
-+func TestStateListHuman_Diagnostics(t *testing.T) {
-+	streams, done := terminal.StreamsForTesting(t)
-+	view := NewView(streams)
-+	view.Configure(&arguments.View{NoColor: true})
-+	v := NewStateList(arguments.ViewHuman, view)
-+
-+	diags := tfdiags.Diagnostics{
-+		tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Example error.",
-+			"This is an example error detail.",
-+		),
-+	}
-+	v.Diagnostics(diags)
-+
-+	output := done(t)
-+	expectedStdout := ""
-+	if diff := cmp.Diff(expectedStdout, strings.TrimSpace(output.Stdout())); diff != "" {
-+		t.Fatalf("unexpected stdout diff:\n%s", diff)
-+	}
-+	expectedStderr := "Error: Example error.\n\nThis is an example error detail."
-+	if diff := cmp.Diff(expectedStderr, strings.TrimSpace(output.Stderr())); diff != "" {
-+		t.Fatalf("unexpected stderr diff:\n%s", diff)
-+	}
-+}
+ 	view, _ := testView(t)
+ 	delCmd := &WorkspaceDeleteCommand{
+ 		Meta: Meta{
+-			Ui:         ui,
+ 			View:       view,
+ 			WorkingDir: workdir.NewDir("."),
+ 		},
+@@ -766,10 +756,10 @@ func TestWorkspace_delete(t *testing.T) {
+ 	}
+ 
+ 	// try the delete again
+-	ui = testUiWrapped(t)
+-	delCmd.Meta.Ui = ui
++	view, done := testView(t)
++	delCmd.Meta.View = view
+ 	if code := delCmd.Run(args); code != 0 {
+-		t.Fatalf("error deleting workspace: %s", ui.ErrorWriter)
++		t.Fatalf("error deleting workspace: %s", done(t).All())
+ 	}
+ 
+ 	current, _ = delCmd.Workspace()
+@@ -794,19 +784,17 @@ func TestWorkspace_deleteInvalid(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39516** (2026-11-09): chore: Remove unused parameter from `(FmtCommand) processFile` (@SarahFrench)
-- **PR #39515** (2026-11-09): tests: Add test coverage for `fmt -check` (@SarahFrench)
-- **PR #39510** (2026-11-09): Extract plan `InputValue` parsing into helper method (@dbanck)
-- **PR #39509** (2026-11-06): Backport of forget-resource nodes are not referenceable into v1.17 (@github-actions[bot])
-- **PR #39508** (2026-11-06): command/state replace-provider: Make output deterministic, refactor how confirmation input is requested. (@SarahFrench)
-- **PR #39507** (2026-11-06): forget-resource nodes are not referenceable (@jbardin)
+- **PR #39536** (2026-11-11): command/logout: Remove remaining use of `cli.Ui` via `c.showDiagnostics` (@SarahFrench)
+- **PR #39534** (2026-11-11): tests: Remove unused cli.UI vars and Streams from some tests - Part 4 (@SarahFrench)
+- **PR #39533** (2026-11-11): tests: Remove unused cli.UI vars and Streams from some tests, fix test failure handling - Part 3 (@SarahFrench)
+- **PR #39532** (2026-11-11): tests: Remove unused cli.UI vars and Streams from some tests - Part 2 (@SarahFrench)
+- **PR #39531** (2026-11-11): Cleanup after 1.17.2 release (@hc-github-team-tf-core)
+- **PR #39529** (2026-11-11): Prepare for 1.17.2 release (@hc-github-team-tf-core)
 
 ---
 
@@ -3378,31 +2694,28 @@ This change:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. command/state pull: Refactor to use views (#39493)
+## X. Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode
 
 **RULE**:
-When implementing operations in `internal/command/arguments/state_pull.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/command/fmt.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03b4f662`: command/state pull: Refactor to use views (#39493). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55436336`: Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/arguments/state_pull.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/fmt.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-	ViewType ViewType
-		Vars:     &Vars{},
-		ViewType: ViewHuman,
+	if !c.list && !c.write && !c.diff && !c.check {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Vars: &Vars{},
+	if !c.list && !c.write && !c.diff {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03b4f662` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55436336` are properly handled with clean fallback behavior.

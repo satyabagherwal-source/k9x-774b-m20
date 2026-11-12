@@ -9128,3 +9128,8 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `195ab76b` | Multi-dimensional audit evidence | 2026-11-12T08:34:25.736Z |
 | `learn-dom-k-ae91e0b9` | `project://salvo-rs-salvo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md` | 2026-11-12T08:34:44.459Z |
 | `learn-dom-h-f56dbc84` | `project://salvo-rs-salvo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md` | 2026-11-12T08:35:03.648Z |
+| `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-11-12T08:52:38.460Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `d947de73` | Multi-dimensional audit evidence | 2026-11-12T08:53:00.339Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `8097fc0b` | Multi-dimensional audit evidence | 2026-11-12T08:53:00.393Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `988d97f3` | Multi-dimensional audit evidence | 2026-11-12T08:53:04.385Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `4a7d3d74` | Multi-dimensional audit evidence | 2026-11-12T08:53:54.038Z |

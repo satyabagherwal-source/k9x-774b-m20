@@ -9119,3 +9119,8 @@
 | `CYCLE-20261112-KO5H` | `2026-11-12T08:34:25.733Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aff8deff...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T08:34:44.459Z` | `salvo-rs-salvo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-AE91E0B9` [Domain K] | Yes (`4af49fd0...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T08:35:03.648Z` | `salvo-rs-salvo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F56DBC84` [Domain H] | Yes (`313c3abe...`) |
+| `CYCLE-20261112-83AW` | `2026-11-12T08:52:38.456Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md` | Yes (`37069d5e...`) |
+| `CYCLE-20261112-8K6K` | `2026-11-12T08:53:00.332Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2ca6ca3b...`) |
+| `CYCLE-20261112-8K85` | `2026-11-12T08:53:00.389Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`24c39041...`) |
+| `CYCLE-20261112-8NB0` | `2026-11-12T08:53:04.381Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eb04bd85...`) |
+| `CYCLE-20261112-9PLY` | `2026-11-12T08:53:54.022Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`29dd9c9c...`) |

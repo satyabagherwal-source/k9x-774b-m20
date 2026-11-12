@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T08:35:04.001Z",
+  "last_updated": "2026-11-12T08:53:59.729Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T08:19:36.877Z",
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-12T02:33:49.102Z",
+      "processed_at": "2026-11-12T08:53:59.706Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -976,9 +976,19 @@
       "processed_at": "2026-11-12T08:35:03.911Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "maziyarpanahi-openmed-learnings.md": {
+      "processed_at": "2026-11-12T08:53:59.620Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hashicorp-terraform-learnings.md": {
+      "processed_at": "2026-11-12T08:53:59.671Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 258,
+  "total_dossiers_evaluated": 261,
   "total_canonical_promoted": 32,
-  "total_staged_for_review": 225
+  "total_staged_for_review": 228
 }
