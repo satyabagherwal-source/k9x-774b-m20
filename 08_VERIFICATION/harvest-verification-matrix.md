@@ -9069,3 +9069,4 @@
 | `CYCLE-20261112-N4KJ` | `2026-11-12T03:56:24.163Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`72ca1805...`) |
 | `CYCLE-20261112-MUT8` | `2026-11-12T04:24:11.132Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e2ca9c5f...`) |
 | `CYCLE-20261112-NG1L` | `2026-11-12T04:24:38.649Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md` | Yes (`504c49a1...`) |
+| `CYCLE-20261112-XARK` | `2026-11-12T04:32:18.368Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2e35bc62...`) |

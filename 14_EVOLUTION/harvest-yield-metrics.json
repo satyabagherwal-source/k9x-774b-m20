@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T04:24:38.664Z",
-  "total_cycles_completed": 8906,
-  "total_learnings_persisted": 8906,
-  "total_rules_promoted": 8754,
+  "last_updated": "2026-11-12T04:32:18.392Z",
+  "total_cycles_completed": 8907,
+  "total_learnings_persisted": 8907,
+  "total_rules_promoted": 8755,
   "history": [
-    {
-      "timestamp": "2026-11-10T05:14:25.124Z",
-      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T05:21:51.747Z",
       "repository": "agent-of-empires/agent-of-empires",
@@ -1403,6 +1396,13 @@
       "repository": "fabio-rovai/open-ontologies",
       "learningId": "learn-github-fabio-rovai-open-ontologies",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T04:32:18.392Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

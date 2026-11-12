@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T04:24:41.202Z",
-    "lastVerified": "2026-11-12T04:24:41.202Z",
+    "lastChecked": "2026-11-12T04:32:23.339Z",
+    "lastVerified": "2026-11-12T04:32:23.339Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -328,22 +328,21 @@
     "lastVerified": "2026-11-11T13:17:04.100Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "agent-governance-toolkit",
+    "name": "microsoft/agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T18:35:38.349Z",
-    "lastVerified": "2026-11-11T18:35:38.349Z",
+    "lastChecked": "2026-11-12T04:32:07.198Z",
+    "lastVerified": "2026-11-12T04:32:07.198Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "0ffc8c9afee3e3e40c4b6dda9449d5e627985cbfd5e1729a211fbe971d4aad8e",
+    "contentHash": "2e35bc62e1de7e050f450a5e6fdfefba79f14961af7ebe34015707c99b9f4071",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "81a399b8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -366,9 +365,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T03:30:43.368Z",
+    "lastChecked": "2026-11-12T04:32:07.853Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T03:30:43.368Z"
+    "lastVerified": "2026-11-12T04:32:07.853Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -4023,8 +4022,8 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T21:55:35.130Z",
-    "lastVerified": "2026-11-09T21:55:35.131Z",
+    "lastChecked": "2026-11-12T04:32:00.376Z",
+    "lastVerified": "2026-11-12T04:32:00.376Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-graphjin",
@@ -4346,9 +4345,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-09T10:59:22.116Z",
+    "lastChecked": "2026-11-12T04:31:52.850Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-09T10:59:22.116Z"
+    "lastVerified": "2026-11-12T04:31:52.850Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -6565,8 +6564,8 @@
     "officialUrl": "https://github.com/pingcap/talent-plan",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T17:44:00.417Z",
-    "lastVerified": "2026-11-09T17:44:00.417Z",
+    "lastChecked": "2026-11-12T04:32:05.395Z",
+    "lastVerified": "2026-11-12T04:32:05.395Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-talent-plan",
@@ -11558,9 +11557,9 @@
   "wooorm-parse-entities": {
     "name": "parse-entities",
     "officialUrl": "https://github.com/wooorm/parse-entities",
-    "lastChecked": "2026-11-07T05:16:34.141Z",
+    "lastChecked": "2026-11-12T04:31:55.352Z",
     "revisionIdentifier": "07f0abed",
-    "lastVerified": "2026-11-07T05:16:34.141Z"
+    "lastVerified": "2026-11-12T04:31:55.352Z"
   },
   "sparrowcode-alertkit": {
     "name": "AlertKit",
@@ -14124,12 +14123,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "jarvis322-macos-sysdata": {
-    "name": "Jarvis322/macos-sysdata",
+    "name": "macos-sysdata",
     "officialUrl": "https://github.com/Jarvis322/macos-sysdata",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T04:26:47.554Z",
-    "lastVerified": "2026-11-08T04:26:47.554Z",
+    "lastChecked": "2026-11-12T04:31:57.865Z",
+    "lastVerified": "2026-11-12T04:31:57.865Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jarvis322-macos-sysdata",
@@ -14138,7 +14137,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bcfd205a"
   },
   "hf-nvidia-nvidia-nemotronlabs-re-use": {
     "name": "nvidia/NVIDIA-NemotronLabs-RE-USE",

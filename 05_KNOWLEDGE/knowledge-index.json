@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T04:24:38.541Z",
+  "last_updated": "2026-11-12T04:32:18.236Z",
   "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44457,8 +44457,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "81a399b8",
-      "content_hash": "0ffc8c9afee3e3e40c4b6dda9449d5e627985cbfd5e1729a211fbe971d4aad8e",
+      "source_version": "b9a7b08e",
+      "content_hash": "2e35bc62e1de7e050f450a5e6fdfefba79f14961af7ebe34015707c99b9f4071",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -44485,6 +44485,11 @@
         {
           "number": null,
           "title": "deps-dev): Update pydantic requirement (#4558)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "agent-os): refuse run_tool before executing when post_tool_call is unbound (#442",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44618,7 +44623,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:52:30.383Z",
+      "verified_at": "2026-11-12T04:32:18.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

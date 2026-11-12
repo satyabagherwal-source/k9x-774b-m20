@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T04:24:41.439Z",
+  "updated_at": "2026-11-12T04:32:23.475Z",
   "stats": {
-    "total_discovered": 737,
-    "approved_pending_harvest": 665,
+    "total_discovered": 739,
+    "approved_pending_harvest": 667,
     "harvested_count": 0,
     "rejected_count": 72,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 691,
+      "COMMUNITY_AND_EXPERT": 693,
       "OFFICIAL_DOCUMENTATION": 22,
       "STANDARDS_AND_SPECIFICATIONS": 22,
       "ENGINEERING_BLOGS": 1,
@@ -15727,6 +15727,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
         "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-699CB8262327": {
+      "id": "SRC-699CB8262327",
+      "url": "https://github.com/microsoft/agent-governance-toolkit",
+      "title": "https://github.com/microsoft/agent-governance-toolkit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:32:23.469Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-9775BD716405": {
+      "id": "SRC-9775BD716405",
+      "url": "https://github.com/microsoft/agent-governance-toolkit/blob/70a4ab8e8a0434f481ba85a52ccf988a0572ceeb/agent-governance-python/agent-os/src/agent_os/integrations/_native_adapter_runtime.py",
+      "title": "https://github.com/microsoft/agent-governance-toolkit/blob/70a4ab8e8a0434f481ba85a52ccf988a0572ceeb/agent-governance-python/agent-os/src/agent_os/integrations/_native_adapter_runtime.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T04:32:23.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T04:24:41.443Z",
+  "last_updated": "2026-11-12T04:32:23.514Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6111,6 +6111,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7D1DAB-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-392BF3",
+      "directive_title": "agent-os): refuse run_tool before executing when post_tool_call is unbound (#442",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microsoft-agent-governance-toolkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-392BF3-agent-os-refuse-run-tool-before-executin.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BB4F45",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB4F45-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-39FC47",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-39FC47-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-12"
     }
   ]
