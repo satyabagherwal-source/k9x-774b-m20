@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T02:33:49.135Z",
+  "updated_at": "2026-11-12T02:49:02.534Z",
   "stats": {
-    "total_discovered": 505,
-    "approved_pending_harvest": 456,
+    "total_discovered": 527,
+    "approved_pending_harvest": 476,
     "harvested_count": 0,
-    "rejected_count": 49,
+    "rejected_count": 51,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 467,
+      "COMMUNITY_AND_EXPERT": 489,
       "OFFICIAL_DOCUMENTATION": 20,
       "STANDARDS_AND_SPECIFICATIONS": 16,
       "ENGINEERING_BLOGS": 1,
@@ -10784,6 +10784,476 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-E7CFF3B84AFB": {
+      "id": "SRC-E7CFF3B84AFB",
+      "url": "https://github.com/unovue/reka-ui",
+      "title": "https://github.com/unovue/reka-ui",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+        "fileName": "unovue-reka-ui-learnings.md"
+      }
+    },
+    "SRC-BDCD14D7CB23": {
+      "id": "SRC-BDCD14D7CB23",
+      "url": "https://github.com/vuejs/core/pull/15649",
+      "title": "https://github.com/vuejs/core/pull/15649",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+        "fileName": "unovue-reka-ui-learnings.md"
+      }
+    },
+    "SRC-668E1C17CB0C": {
+      "id": "SRC-668E1C17CB0C",
+      "url": "https://github.com/melt-ui/melt-ui/blob/develop/src/lib/builders/calendar/create.ts",
+      "title": "https://github.com/melt-ui/melt-ui/blob/develop/src/lib/builders/calendar/create.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+        "fileName": "unovue-reka-ui-learnings.md"
+      }
+    },
+    "SRC-E576791C9537": {
+      "id": "SRC-E576791C9537",
+      "url": "https://stackblitz.com/edit/1jo1ofyw?file=src%2FApp.vue",
+      "title": "https://stackblitz.com/edit/1jo1ofyw?file=src%2FApp.vue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+        "fileName": "unovue-reka-ui-learnings.md"
+      }
+    },
+    "SRC-4306DB53EB1D": {
+      "id": "SRC-4306DB53EB1D",
+      "url": "https://stackblitz.com/github/Youhan/reka-dialog-memory-repro?file=README.md",
+      "title": "https://stackblitz.com/github/Youhan/reka-dialog-memory-repro?file=README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.461Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+        "fileName": "unovue-reka-ui-learnings.md"
+      }
+    },
+    "SRC-24EB3AAF3258": {
+      "id": "SRC-24EB3AAF3258",
+      "url": "https://github.com/inikulin/parse5",
+      "title": "https://github.com/inikulin/parse5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.470Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-C266FD138999": {
+      "id": "SRC-C266FD138999",
+      "url": "https://en.wikipedia.org/wiki/Simple_API_for_XML",
+      "title": "https://en.wikipedia.org/wiki/Simple_API_for_XML",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-CF4B367E49BF": {
+      "id": "SRC-CF4B367E49BF",
+      "url": "http://google.com/",
+      "title": "http://google.com/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T02:49:02.478Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-67BB00D0F2DB": {
+      "id": "SRC-67BB00D0F2DB",
+      "url": "https://en.wikipedia.org/wiki/Document_type_declaration",
+      "title": "https://en.wikipedia.org/wiki/Document_type_declaration",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.481Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-EF68E2F95939": {
+      "id": "SRC-EF68E2F95939",
+      "url": "http://inikulin.github.io/parse5",
+      "title": "http://inikulin.github.io/parse5",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T02:49:02.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-4B69A3461055": {
+      "id": "SRC-4B69A3461055",
+      "url": "https://html.spec.whatwg.org/",
+      "title": "https://html.spec.whatwg.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.489Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-286B42DDA528": {
+      "id": "SRC-286B42DDA528",
+      "url": "https://github.com/inikulin/parse5/issues/97",
+      "title": "https://github.com/inikulin/parse5/issues/97",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-BEC68FBC55E7": {
+      "id": "SRC-BEC68FBC55E7",
+      "url": "https://stackblitz.com/edit/node-vyajam?file=index.js",
+      "title": "https://stackblitz.com/edit/node-vyajam?file=index.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.495Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-7B925D6C0466": {
+      "id": "SRC-7B925D6C0466",
+      "url": "https://html.spec.whatwg.org/multipage/forms.html",
+      "title": "https://html.spec.whatwg.org/multipage/forms.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.498Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-460939F8BE42": {
+      "id": "SRC-460939F8BE42",
+      "url": "https://github.com/hedgepigdaniel/parse5-bug",
+      "title": "https://github.com/hedgepigdaniel/parse5-bug",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-9953A3022966": {
+      "id": "SRC-9953A3022966",
+      "url": "https://github.com/inikulin/parse5/compare/master...hedgepigdaniel:test/waterline?expand=1",
+      "title": "https://github.com/inikulin/parse5/compare/master...hedgepigdaniel:test/waterline?expand=1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-8B6B51712F1B": {
+      "id": "SRC-8B6B51712F1B",
+      "url": "https://github.com/hedgepigdaniel/parse5-bug/blob/master/index.js",
+      "title": "https://github.com/hedgepigdaniel/parse5-bug/blob/master/index.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-3E57486B259E": {
+      "id": "SRC-3E57486B259E",
+      "url": "https://tidelift.com/security",
+      "title": "https://tidelift.com/security",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-1E0CF2A8391C": {
+      "id": "SRC-1E0CF2A8391C",
+      "url": "https://github.com/apache/shardingsphere",
+      "title": "https://github.com/apache/shardingsphere",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.521Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-37E2128D2672": {
+      "id": "SRC-37E2128D2672",
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/load-data.html",
+      "title": "https://dev.mysql.com/doc/refman/8.4/en/load-data.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.527Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-DEC0DAF4F86D": {
+      "id": "SRC-DEC0DAF4F86D",
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/update.html",
+      "title": "https://dev.mysql.com/doc/refman/8.4/en/update.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-E260C9EF39E0": {
+      "id": "SRC-E260C9EF39E0",
+      "url": "https://shardingsphere.apache.org/community/en/involved/conduct/code",
+      "title": "https://shardingsphere.apache.org/community/en/involved/conduct/code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T02:49:02.534Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
       }
     }
   }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-W7D9",
-    "timestamp": "2026-11-08T22:36:31.437Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-    "contentHash": "a29506c7ea5027b30fdc5b570fa3ca7557219e38c11a023519c492cd312fc528",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-WA5H",
-    "timestamp": "2026-11-08T22:36:35.045Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "209bc7b66719a3c229169beec264062f663b52cdcd5c56322b5d041d60e203a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-GTED",
-    "timestamp": "2026-11-08T22:52:33.109Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "f01e79e51eee9f7b8453fae49d7e041acc0a1033bf0e7ecd4a4d380c45a3cca8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-H031",
     "timestamp": "2026-11-08T22:52:41.773Z",
     "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -7490,6 +7445,51 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "8b37cf3393503a562711200dc6861cbcb747602b4597b2bfec8b50761c1636d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-80VQ",
+    "timestamp": "2026-11-12T02:48:40.310Z",
+    "repository": "unovue/reka-ui",
+    "learningId": "learn-github-unovue-reka-ui",
+    "contentHash": "6a096eb2df0ec29c2b8e6535748e1afc30e677a7d72712d0948aa978affbf6b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-86NY",
+    "timestamp": "2026-11-12T02:48:47.807Z",
+    "repository": "inikulin/parse5",
+    "learningId": "learn-github-inikulin-parse5",
+    "contentHash": "eb97b42b22fc6bbde186d14d77bbc13692c9e22c95b1aebca1a67015c8aea035",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-8DKV",
+    "timestamp": "2026-11-12T02:48:56.767Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

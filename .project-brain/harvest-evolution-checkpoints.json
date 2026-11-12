@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T02:33:49.137Z",
+  "last_updated": "2026-11-12T02:49:02.536Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T01:44:30.411Z",
@@ -696,9 +696,24 @@
       "processed_at": "2026-11-12T02:33:49.073Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "unovue-reka-ui-learnings.md": {
+      "processed_at": "2026-11-12T02:49:02.440Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "inikulin-parse5-learnings.md": {
+      "processed_at": "2026-11-12T02:49:02.468Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "apache-shardingsphere-learnings.md": {
+      "processed_at": "2026-11-12T02:49:02.519Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 180,
+  "total_dossiers_evaluated": 183,
   "total_canonical_promoted": 22,
-  "total_staged_for_review": 155
+  "total_staged_for_review": 158
 }

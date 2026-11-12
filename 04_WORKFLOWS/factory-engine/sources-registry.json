@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T02:33:48.911Z",
-    "lastVerified": "2026-11-12T02:33:48.911Z",
+    "lastChecked": "2026-11-12T02:49:02.321Z",
+    "lastVerified": "2026-11-12T02:49:02.321Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -365,9 +365,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-12T01:51:55.995Z",
+    "lastChecked": "2026-11-12T02:48:41.351Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-12T01:51:55.995Z"
+    "lastVerified": "2026-11-12T02:48:41.351Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2111,8 +2111,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T16:35:47.694Z",
-    "lastVerified": "2026-11-11T16:35:47.694Z",
+    "lastChecked": "2026-11-12T02:48:36.238Z",
+    "lastVerified": "2026-11-12T02:48:36.238Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -3532,9 +3532,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-09T16:59:43.374Z",
+    "lastChecked": "2026-11-12T02:48:33.707Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-09T16:59:43.374Z"
+    "lastVerified": "2026-11-12T02:48:33.707Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -5969,22 +5969,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-shardingsphere": {
-    "name": "shardingsphere",
+    "name": "apache/shardingsphere",
     "officialUrl": "https://github.com/apache/shardingsphere",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T16:11:01.771Z",
-    "lastVerified": "2026-11-09T16:11:01.771Z",
+    "lastChecked": "2026-11-12T02:48:43.411Z",
+    "lastVerified": "2026-11-12T02:48:43.411Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "1f329c73419736806b12a15742892947a838876bd5f51147f9a3d05f74438cd5",
+    "contentHash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "633ccf2e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ntex-rs-ntex": {
     "name": "ntex-rs/ntex",
@@ -9480,9 +9479,9 @@
   "dimillian-icecubesapp": {
     "name": "IceCubesApp",
     "officialUrl": "https://github.com/Dimillian/IceCubesApp",
-    "lastChecked": "2026-11-08T03:21:24.751Z",
+    "lastChecked": "2026-11-12T02:48:31.194Z",
     "revisionIdentifier": "98098b9c",
-    "lastVerified": "2026-11-08T03:21:24.751Z"
+    "lastVerified": "2026-11-12T02:48:31.194Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -11350,14 +11349,14 @@
     "officialUrl": "https://github.com/inikulin/parse5",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T04:03:12.745Z",
-    "lastVerified": "2026-11-07T04:03:12.745Z",
+    "lastChecked": "2026-11-12T02:48:32.615Z",
+    "lastVerified": "2026-11-12T02:48:32.615Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-inikulin-parse5",
-    "contentHash": "9622306459c34e9a59d4298c60215a831b2187f5acedf42a297c8e45c7da26c9",
+    "contentHash": "eb97b42b22fc6bbde186d14d77bbc13692c9e22c95b1aebca1a67015c8aea035",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14862,6 +14861,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "unovue-reka-ui": {
+    "name": "unovue/reka-ui",
+    "officialUrl": "https://github.com/unovue/reka-ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-12T02:48:26.784Z",
+    "lastVerified": "2026-11-12T02:48:26.784Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-unovue-reka-ui",
+    "contentHash": "6a096eb2df0ec29c2b8e6535748e1afc30e677a7d72712d0948aa978affbf6b8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 25,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

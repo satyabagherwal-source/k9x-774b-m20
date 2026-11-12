@@ -20899,5 +20899,20 @@
     "downloads": 4170,
     "qualityScore": 3740,
     "discoveredAt": "2026-11-12T01:09:27.784Z"
+  },
+  {
+    "name": "reka-ui",
+    "fullName": "unovue/reka-ui",
+    "url": "https://github.com/unovue/reka-ui",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "An open-source UI component library for building high-quality, accessible design systems and web apps for Vue. Previously Radix Vue",
+    "stars": 6951,
+    "forks": 583,
+    "openIssues": 238,
+    "language": "TypeScript",
+    "qualityScore": 4100,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-12T02:45:15.270Z"
   }
 ]

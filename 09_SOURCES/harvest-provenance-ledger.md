@@ -9052,3 +9052,6 @@ Every entry in this ledger must capture:
 | `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `9f84200c` | Multi-dimensional audit evidence | 2026-11-12T02:33:32.408Z |
 | `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `8fe6e970` | Multi-dimensional audit evidence | 2026-11-12T02:33:33.758Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f32bb49a` | Multi-dimensional audit evidence | 2026-11-12T02:33:42.519Z |
+| `learn-github-unovue-reka-ui` | `https://github.com/unovue/reka-ui` | `7601c967` | Multi-dimensional audit evidence | 2026-11-12T02:48:40.315Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `48fb1533` | Multi-dimensional audit evidence | 2026-11-12T02:48:47.811Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `7f808225` | Multi-dimensional audit evidence | 2026-11-12T02:48:56.771Z |

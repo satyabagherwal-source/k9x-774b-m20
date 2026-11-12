@@ -5010,3 +5010,7 @@ https://huggingface.co/Comfy-Org/RelayVSR
 # --- Automatically Discovered by AI Scout Engine [2026-11-12T01:11:35.838Z] ---
 # [HUGGINGFACE-AI-MODELS] Zyphra/ZONOS3-Mini (3740 score) - Verified Hugging Face Model: Zyphra/ZONOS3-Mini (174 likes, 4170 downloads)
 https://huggingface.co/Zyphra/ZONOS3-Mini
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-12T02:48:20.777Z] ---
+# [FULLSTACK-UI] unovue/reka-ui (4100 score) - An open-source UI component library for building high-quality, accessible design
+https://github.com/unovue/reka-ui

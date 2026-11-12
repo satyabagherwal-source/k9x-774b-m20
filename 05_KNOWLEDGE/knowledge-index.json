@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T02:33:42.389Z",
-  "total_verified_learnings": 1256,
+  "last_updated": "2026-11-12T02:48:56.657Z",
+  "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2588,8 +2588,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "633ccf2e",
-      "content_hash": "1f329c73419736806b12a15742892947a838876bd5f51147f9a3d05f74438cd5",
+      "source_version": "7f808225",
+      "content_hash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2606,6 +2606,11 @@
         {
           "number": null,
           "title": "Add Grice guidance and require formal review for Git-visible changes (#40489)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Oracle parenthesized expression parsing (#40500)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2689,7 +2694,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:42:50.274Z",
+      "verified_at": "2026-11-12T02:48:56.632Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82044,14 +82049,19 @@
       "slug": "inikulin-parse5",
       "platform": "github",
       "source_url": "https://github.com/inikulin/parse5",
-      "source_version": "7bf0fc95",
-      "content_hash": "9622306459c34e9a59d4298c60215a831b2187f5acedf42a297c8e45c7da26c9",
+      "source_version": "48fb1533",
+      "content_hash": "eb97b42b22fc6bbde186d14d77bbc13692c9e22c95b1aebca1a67015c8aea035",
       "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "tokenizer): bound the duplicate-attribute check for wide tags (#1922)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs(security): name Tidelift as the only channel for reports",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -82095,7 +82105,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:03:14.937Z",
+      "verified_at": "2026-11-12T02:48:47.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -191173,6 +191183,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-12T01:11:41.845Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-unovue-reka-ui": {
+      "learning_id": "learn-github-unovue-reka-ui",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unovue/reka-ui",
+      "repository": "unovue/reka-ui",
+      "slug": "unovue-reka-ui",
+      "platform": "github",
+      "source_url": "https://github.com/unovue/reka-ui",
+      "source_version": "7601c967",
+      "content_hash": "6a096eb2df0ec29c2b8e6535748e1afc30e677a7d72712d0948aa978affbf6b8",
+      "dossier_path": "07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Select): select the typed match while the trigger is closed (#3061)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-12T02:48:40.145Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

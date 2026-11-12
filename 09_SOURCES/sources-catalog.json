@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "633ccf2e",
+    "sourceVersion": "7f808225",
     "license": "Apache-2.0",
-    "contentHash": "1f329c73419736806b12a15742892947a838876bd5f51147f9a3d05f74438cd5",
-    "lastHarvestedAt": "2026-11-08T17:42:50.417Z",
+    "contentHash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
+    "lastHarvestedAt": "2026-11-12T02:48:56.771Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -9373,10 +9373,10 @@
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "7bf0fc95",
+    "sourceVersion": "48fb1533",
     "license": "MIT",
-    "contentHash": "9622306459c34e9a59d4298c60215a831b2187f5acedf42a297c8e45c7da26c9",
-    "lastHarvestedAt": "2026-11-07T04:03:15.060Z",
+    "contentHash": "eb97b42b22fc6bbde186d14d77bbc13692c9e22c95b1aebca1a67015c8aea035",
+    "lastHarvestedAt": "2026-11-12T02:48:47.811Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {
@@ -12378,5 +12378,15 @@
     "contentHash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
     "lastHarvestedAt": "2026-11-12T01:11:41.996Z",
     "learningId": "learn-huggingface-zyphra-zonos3-mini"
+  },
+  "unovue-reka-ui": {
+    "repository": "unovue/reka-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/unovue/reka-ui",
+    "sourceVersion": "7601c967",
+    "license": "MIT",
+    "contentHash": "6a096eb2df0ec29c2b8e6535748e1afc30e677a7d72712d0948aa978affbf6b8",
+    "lastHarvestedAt": "2026-11-12T02:48:40.315Z",
+    "learningId": "learn-github-unovue-reka-ui"
   }
 }

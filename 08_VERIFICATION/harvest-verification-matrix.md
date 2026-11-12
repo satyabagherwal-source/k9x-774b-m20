@@ -9043,3 +9043,6 @@
 | `CYCLE-20261112-OKC2` | `2026-11-12T02:33:32.402Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c46b9aaf...`) |
 | `CYCLE-20261112-OLDL` | `2026-11-12T02:33:33.753Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6a16a683...`) |
 | `CYCLE-20261112-OS4Z` | `2026-11-12T02:33:42.515Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8b37cf33...`) |
+| `CYCLE-20261112-80VQ` | `2026-11-12T02:48:40.310Z` | `unovue/reka-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6a096eb2...`) |
+| `CYCLE-20261112-86NY` | `2026-11-12T02:48:47.807Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eb97b42b...`) |
+| `CYCLE-20261112-8DKV` | `2026-11-12T02:48:56.767Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cd0b0f3a...`) |

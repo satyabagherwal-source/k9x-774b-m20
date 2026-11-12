@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T02:33:49.101Z",
+  "last_updated": "2026-11-12T02:49:02.517Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5902,6 +5902,33 @@
       "source_repo": "cilium-cilium",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-07FACC-deps-update-module-golang-org-x-crypto-t.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9565F5",
+      "directive_title": "Select): select the typed match while the trigger is closed (#3061)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "unovue-reka-ui",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9565F5-select-select-the-typed-match-while-the-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4D163B",
+      "directive_title": "docs(security): name Tidelift as the only channel for reports",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "inikulin-parse5",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D163B-docs-security-name-tidelift-as-the-only-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-97CBE4",
+      "directive_title": "Oracle parenthesized expression parsing (#40500)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-shardingsphere",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-97CBE4-oracle-parenthesized-expression-parsing-.md",
       "staged_date": "2026-11-12"
     }
   ]
