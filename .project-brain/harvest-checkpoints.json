@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T00:58:47.017Z",
+  "last_updated": "2026-11-12T01:12:10.867Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
-      "verified_at": "2026-11-09T15:29:01.989Z",
+      "content_hash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
+      "verified_at": "2026-11-12T01:12:10.866Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T15:29:01.989Z"
+      "last_updated": "2026-11-12T01:12:10.866Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -11871,14 +11871,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-darrylmorley-whatcable",
-      "content_hash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
-      "verified_at": "2026-10-19T11:27:55.235Z",
+      "content_hash": "3789f30ef3bcb7d8fca6eb9d66b50d22d1d4c1c7b3b4e3db99f0ed34cf2b93f7",
+      "verified_at": "2026-11-12T01:12:06.394Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:27:55.235Z"
+      "last_updated": "2026-11-12T01:12:06.394Z"
     },
     "XcodesOrg/XcodesApp": {
       "repository": "XcodesOrg/XcodesApp",
@@ -13926,14 +13926,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-browsertrix-crawler",
-      "content_hash": "cbc2521b34be00ae68b79a484df6a078944079f4998f80eb771264f29ee18829",
-      "verified_at": "2026-11-07T02:54:24.600Z",
+      "content_hash": "fbf94cfbc53023a9ac8141196bba8f895eab1db0a59a28abeb1709464e5cffb8",
+      "verified_at": "2026-11-12T01:12:03.337Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T02:54:24.600Z"
+      "last_updated": "2026-11-12T01:12:03.337Z"
     },
     "pointfreeco/isowords": {
       "repository": "pointfreeco/isowords",
@@ -18614,6 +18614,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-11T11:10:17.010Z"
+    },
+    "Zyphra/ZONOS3-Mini": {
+      "repository": "Zyphra/ZONOS3-Mini",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-zyphra-zonos3-mini",
+      "content_hash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
+      "verified_at": "2026-11-12T01:11:42.006Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-12T01:11:42.006Z"
     }
   },
   "repos": {

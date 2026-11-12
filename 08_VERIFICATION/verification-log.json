@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-MZBQ",
-    "timestamp": "2026-11-08T21:33:21.878Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "b072865280454e73257e568cd62e4cf2097f36bf8463fd4ba4d2e032452cf655",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-N1VC",
-    "timestamp": "2026-11-08T21:33:25.176Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "7f61a00fe4fb591cc7f8061e4f4fe8c5fa23777939d6cd83a4468ca08c3d3e5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-N8D4",
-    "timestamp": "2026-11-08T21:33:33.592Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "dc3fa3c3faa11c8f749c0a57ca245e6cd395f5c3f2bf94cae854b39bbc47f466",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-NA4W",
-    "timestamp": "2026-11-08T21:33:35.888Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "03a557d8da695d666ed9ca566f666f4c4d76c35e1fc5288a088aceb9106c7e99",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-4BGE",
     "timestamp": "2026-11-08T21:46:50.750Z",
     "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
@@ -7490,6 +7430,66 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "a4ec99c1335af934d00a7c3d06197879487c2a7354082964722c995c8b7c8b7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-RBFS",
+    "timestamp": "2026-11-12T01:11:41.992Z",
+    "repository": "Zyphra/ZONOS3-Mini",
+    "learningId": "learn-huggingface-zyphra-zonos3-mini",
+    "contentHash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-RRVK",
+    "timestamp": "2026-11-12T01:12:03.296Z",
+    "repository": "webrecorder/browsertrix-crawler",
+    "learningId": "learn-github-webrecorder-browsertrix-crawler",
+    "contentHash": "fbf94cfbc53023a9ac8141196bba8f895eab1db0a59a28abeb1709464e5cffb8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-RU8N",
+    "timestamp": "2026-11-12T01:12:06.359Z",
+    "repository": "darrylmorley/whatcable",
+    "learningId": "learn-github-darrylmorley-whatcable",
+    "contentHash": "3789f30ef3bcb7d8fca6eb9d66b50d22d1d4c1c7b3b4e3db99f0ed34cf2b93f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-RXP3",
+    "timestamp": "2026-11-12T01:12:10.839Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

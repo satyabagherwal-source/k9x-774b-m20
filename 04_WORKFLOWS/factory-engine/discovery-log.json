@@ -20887,5 +20887,17 @@
     "downloads": 91134,
     "qualityScore": 3360,
     "discoveredAt": "2026-11-11T11:08:02.482Z"
+  },
+  {
+    "name": "Zyphra/ZONOS3-Mini",
+    "fullName": "Zyphra/ZONOS3-Mini",
+    "url": "https://huggingface.co/Zyphra/ZONOS3-Mini",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Zyphra/ZONOS3-Mini (174 likes, 4170 downloads)",
+    "likes": 174,
+    "downloads": 4170,
+    "qualityScore": 3740,
+    "discoveredAt": "2026-11-12T01:09:27.784Z"
   }
 ]

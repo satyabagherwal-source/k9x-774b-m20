@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T00:58:47.012Z",
-  "total_cycles_completed": 8862,
-  "total_learnings_persisted": 8862,
-  "total_rules_promoted": 8717,
+  "last_updated": "2026-11-12T01:12:10.862Z",
+  "total_cycles_completed": 8866,
+  "total_learnings_persisted": 8866,
+  "total_rules_promoted": 8720,
   "history": [
-    {
-      "timestamp": "2026-11-10T00:45:08.924Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T00:45:09.744Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T00:59:44.745Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T00:59:47.776Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T00:59:51.662Z",
       "repository": "ClickHouse/ClickHouse",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-12T00:58:47.012Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:11:42.003Z",
+      "repository": "Zyphra/ZONOS3-Mini",
+      "learningId": "learn-huggingface-zyphra-zonos3-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:12:03.332Z",
+      "repository": "webrecorder/browsertrix-crawler",
+      "learningId": "learn-github-webrecorder-browsertrix-crawler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:12:06.374Z",
+      "repository": "darrylmorley/whatcable",
+      "learningId": "learn-github-darrylmorley-whatcable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T01:12:10.862Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

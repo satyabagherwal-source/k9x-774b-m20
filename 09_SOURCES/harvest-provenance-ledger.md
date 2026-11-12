@@ -9029,3 +9029,8 @@ Every entry in this ledger must capture:
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `e0f4d211` | Multi-dimensional audit evidence | 2026-11-12T00:45:31.373Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `acae3b45` | Multi-dimensional audit evidence | 2026-11-12T00:58:45.811Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `9aedb400` | Multi-dimensional audit evidence | 2026-11-12T00:58:47.006Z |
+| `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-12T01:11:41.996Z |
+| `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `7ac9f642` | Multi-dimensional audit evidence | 2026-11-12T01:12:03.300Z |
+| `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `6d8580a0` | Multi-dimensional audit evidence | 2026-11-12T01:12:06.365Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `fa001f3a` | Multi-dimensional audit evidence | 2026-11-12T01:12:10.842Z |
+| `learn-dom-d-1a1383cc` | `project://hf-zyphra-zonos3-mini` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md` | 2026-11-12T01:12:31.449Z |

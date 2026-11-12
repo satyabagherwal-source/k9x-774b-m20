@@ -9020,3 +9020,8 @@
 | `CYCLE-20261112-TNJE` | `2026-11-12T00:45:31.370Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7ef933bb...`) |
 | `CYCLE-20261112-AOJ3` | `2026-11-12T00:58:45.807Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1bf2cab6...`) |
 | `CYCLE-20261112-APGA` | `2026-11-12T00:58:47.002Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a4ec99c1...`) |
+| `CYCLE-20261112-RBFS` | `2026-11-12T01:11:41.992Z` | `Zyphra/ZONOS3-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md` | Yes (`455841dc...`) |
+| `CYCLE-20261112-RRVK` | `2026-11-12T01:12:03.296Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fbf94cfb...`) |
+| `CYCLE-20261112-RU8N` | `2026-11-12T01:12:06.359Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3789f30e...`) |
+| `CYCLE-20261112-RXP3` | `2026-11-12T01:12:10.839Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`31149f03...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T01:12:31.449Z` | `hf-zyphra-zonos3-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1A1383CC` [Domain D] | Yes (`22181792...`) |

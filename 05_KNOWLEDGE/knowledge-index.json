@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T00:58:46.889Z",
-  "total_verified_learnings": 1255,
+  "last_updated": "2026-11-12T01:12:10.709Z",
+  "total_verified_learnings": 1256,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10089,11 +10089,16 @@
       "slug": "darrylmorley-whatcable",
       "platform": "github",
       "source_url": "https://github.com/darrylmorley/whatcable",
-      "source_version": "58e588ab",
-      "content_hash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
+      "source_version": "6d8580a0",
+      "content_hash": "3789f30ef3bcb7d8fca6eb9d66b50d22d1d4c1c7b3b4e3db99f0ed34cf2b93f7",
       "dossier_path": "07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Mirror from private (2ebfc38a)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2536,
           "title": "Mirror from private (a89a218b)",
@@ -10105,7 +10110,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:27:55.151Z",
+      "verified_at": "2026-11-12T01:12:06.157Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38483,8 +38488,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "705b459b",
-      "content_hash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
+      "source_version": "fa001f3a",
+      "content_hash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -38496,6 +38501,11 @@
         {
           "number": null,
           "title": "build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #8029 from lbarrosby/fix-ingress-tls-empty-secretname",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38574,7 +38584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T15:29:01.852Z",
+      "verified_at": "2026-11-12T01:12:10.669Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81608,14 +81618,19 @@
       "slug": "webrecorder-browsertrix-crawler",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/browsertrix-crawler",
-      "source_version": "7ed01936",
-      "content_hash": "cbc2521b34be00ae68b79a484df6a078944079f4998f80eb771264f29ee18829",
+      "source_version": "7ac9f642",
+      "content_hash": "fbf94cfbc53023a9ac8141196bba8f895eab1db0a59a28abeb1709464e5cffb8",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "WARC-Concurrent-To references for revisit records (#1199)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tests: attempt to make redis tests more resilient  (#1203)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81654,7 +81669,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:54:24.455Z",
+      "verified_at": "2026-11-12T01:12:03.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -191066,6 +191081,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-11T11:10:16.876Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-zyphra-zonos3-mini": {
+      "learning_id": "learn-huggingface-zyphra-zonos3-mini",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Zyphra/ZONOS3-Mini",
+      "repository": "Zyphra/ZONOS3-Mini",
+      "slug": "hf-zyphra-zonos3-mini",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Zyphra/ZONOS3-Mini",
+      "source_version": "hf-zyphra-zonos3-mini",
+      "content_hash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
+      "dossier_path": "07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-12T01:11:41.845Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

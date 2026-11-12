@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "705b459b",
+    "sourceVersion": "fa001f3a",
     "license": "Apache-2.0",
-    "contentHash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
-    "lastHarvestedAt": "2026-11-09T15:29:01.973Z",
+    "contentHash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
+    "lastHarvestedAt": "2026-11-12T01:12:10.842Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -7893,10 +7893,10 @@
     "repository": "darrylmorley/whatcable",
     "platform": "github",
     "sourceUrl": "https://github.com/darrylmorley/whatcable",
-    "sourceVersion": "58e588ab",
+    "sourceVersion": "6d8580a0",
     "license": "NOASSERTION",
-    "contentHash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
-    "lastHarvestedAt": "2026-10-19T11:27:55.229Z",
+    "contentHash": "3789f30ef3bcb7d8fca6eb9d66b50d22d1d4c1c7b3b4e3db99f0ed34cf2b93f7",
+    "lastHarvestedAt": "2026-11-12T01:12:06.365Z",
     "learningId": "learn-github-darrylmorley-whatcable"
   },
   "xcodesorg-xcodesapp": {
@@ -9253,10 +9253,10 @@
     "repository": "webrecorder/browsertrix-crawler",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/browsertrix-crawler",
-    "sourceVersion": "7ed01936",
+    "sourceVersion": "7ac9f642",
     "license": "AGPL-3.0",
-    "contentHash": "cbc2521b34be00ae68b79a484df6a078944079f4998f80eb771264f29ee18829",
-    "lastHarvestedAt": "2026-11-07T02:54:24.589Z",
+    "contentHash": "fbf94cfbc53023a9ac8141196bba8f895eab1db0a59a28abeb1709464e5cffb8",
+    "lastHarvestedAt": "2026-11-12T01:12:03.300Z",
     "learningId": "learn-github-webrecorder-browsertrix-crawler"
   },
   "pointfreeco-isowords": {
@@ -12368,5 +12368,15 @@
     "contentHash": "1fd9414f960dba44905ee7d3858978a365aefafa33ae5ed47db757b932511f81",
     "lastHarvestedAt": "2026-11-11T11:10:17.001Z",
     "learningId": "learn-huggingface-comfy-org-relayvsr"
+  },
+  "hf-zyphra-zonos3-mini": {
+    "repository": "Zyphra/ZONOS3-Mini",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Zyphra/ZONOS3-Mini",
+    "sourceVersion": "hf-zyphra-zonos3-mini",
+    "license": "Open-Source",
+    "contentHash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
+    "lastHarvestedAt": "2026-11-12T01:11:41.996Z",
+    "learningId": "learn-huggingface-zyphra-zonos3-mini"
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T00:58:53.215Z",
+  "updated_at": "2026-11-12T01:12:31.502Z",
   "stats": {
-    "total_discovered": 355,
-    "approved_pending_harvest": 322,
+    "total_discovered": 368,
+    "approved_pending_harvest": 332,
     "harvested_count": 0,
-    "rejected_count": 33,
+    "rejected_count": 36,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 327,
+      "COMMUNITY_AND_EXPERT": 340,
       "OFFICIAL_DOCUMENTATION": 14,
       "STANDARDS_AND_SPECIFICATIONS": 13,
       "ENGINEERING_BLOGS": 1
@@ -7594,6 +7594,271 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
         "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-25B629867BD0": {
+      "id": "SRC-25B629867BD0",
+      "url": "https://huggingface.co/Zyphra/ZONOS3-Mini",
+      "title": "https://huggingface.co/Zyphra/ZONOS3-Mini",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md",
+        "fileName": "hf-zyphra-zonos3-mini-learnings.md"
+      }
+    },
+    "SRC-F0DED7CDCCCD": {
+      "id": "SRC-F0DED7CDCCCD",
+      "url": "https://github.com/webrecorder/browsertrix-crawler",
+      "title": "https://github.com/webrecorder/browsertrix-crawler",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.463Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-FC968413EB91": {
+      "id": "SRC-FC968413EB91",
+      "url": "https://github.com/puppeteer/puppeteer/blob/main/packages/puppeteer-core/src/common/De",
+      "title": "https://github.com/puppeteer/puppeteer/blob/main/packages/puppeteer-core/src/common/De",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-2F515226FBE7": {
+      "id": "SRC-2F515226FBE7",
+      "url": "https://pywb.proxy/",
+      "title": "https://pywb.proxy/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-F3FE535BDD79": {
+      "id": "SRC-F3FE535BDD79",
+      "url": "http://pywb.proxy/",
+      "title": "http://pywb.proxy/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:12:31.474Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-90AC7073876F": {
+      "id": "SRC-90AC7073876F",
+      "url": "http://invalid-host-x:31501/",
+      "title": "http://invalid-host-x:31501/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:12:31.477Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-318BAF8D3D84": {
+      "id": "SRC-318BAF8D3D84",
+      "url": "https://example-com.webrecorder.net/",
+      "title": "https://example-com.webrecorder.net/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.479Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-707752EB04F0": {
+      "id": "SRC-707752EB04F0",
+      "url": "https://github.com/darrylmorley/whatcable",
+      "title": "https://github.com/darrylmorley/whatcable",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.488Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
+      }
+    },
+    "SRC-D84F85DEF40B": {
+      "id": "SRC-D84F85DEF40B",
+      "url": "https://github.com/darrylmorley/whatcable/issues/new",
+      "title": "https://github.com/darrylmorley/whatcable/issues/new",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.491Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
+      }
+    },
+    "SRC-A90D3B74E953": {
+      "id": "SRC-A90D3B74E953",
+      "url": "https://github.com/user-attachments/assets/48bc5eb8-5e79-47f9-8490-9eef89653330",
+      "title": "https://github.com/user-attachments/assets/48bc5eb8-5e79-47f9-8490-9eef89653330",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.494Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
+      }
+    },
+    "SRC-81C64FE4E581": {
+      "id": "SRC-81C64FE4E581",
+      "url": "https://github.com/darrylmorley/whatcable/releases/latest/download/WhatCable.zip",
+      "title": "https://github.com/darrylmorley/whatcable/releases/latest/download/WhatCable.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.497Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
+      }
+    },
+    "SRC-C316575B5DC9": {
+      "id": "SRC-C316575B5DC9",
+      "url": "https://github.com/darrylmorley/whatcable/issues",
+      "title": "https://github.com/darrylmorley/whatcable/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T01:12:31.499Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
+      }
+    },
+    "SRC-FAD8D6CA250D": {
+      "id": "SRC-FAD8D6CA250D",
+      "url": "http://www.apple.com/DTDs/PropertyList-1.0.dtd",
+      "title": "http://www.apple.com/DTDs/PropertyList-1.0.dtd",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T01:12:31.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
       }
     }
   }
