@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source**: github ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
-> **Source Version**: `f21f224b`  
+> **Source Version**: `47c87ebb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T21:36:28.125Z  
+> **Timestamp**: 2026-11-12T14:44:32.058Z  
 > **Learning ID**: `learn-github-vitest-dev-vitest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T21:36:27.910Z  
+> **Harvest Timestamp**: 2026-11-12T14:44:31.821Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next generation testing framework powered by Vite.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17346 stars
+- **Stars / Engagement**: 17375 stars
 
 ---
 
@@ -1282,14 +1282,14 @@ export function setState<State extends MatcherState = MatcherState>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11911** (2026-11-07): **fix(spy): remove restored mocks from restore set**
-  *Symptoms*: ## Summary  Removes a spy's restore callback from `MOCK_RESTORE` when `mockRestore()` is explicitly called.  Previously, calling `mockRestore()` restored the original method but left its restore callback registered. A subsequent call to `vi.restoreAllMocks()` could therefore restore the spy again and overwrite a newer method assignment.  ## Changes - Remove the restore callback from `MOCK_RESTORE` during `mockRestore()`. - Add a regression test verifying that `vi.restoreAllMocks()` does not overwrite a replacement assigned after `mockRestore()`.  ## Testing - `pnpm --filter vitest build` - `pnpm vitest run test/unit/test/jest-mock.test.ts`  Result: 40 passed, 1 skipped.
+- **Issue #11951** (2026-11-12): **Reporters: `testModule.project.config.config` missing in v5**
+  *Symptoms*: ### Describe the bug  Vitest 5 dropped `project.config.config` from test modules.  ```ts import { defineConfig } from "vitest/config";  export default defineConfig({   test: {     reporters: [       "default",       {         onTestRunEnd(testModules) {           for (const testModule of testModules) {             console.log(testModule.project.config.config);           }         },       },     ],   }, }); ```  | v4 | v5 | | ------ | ----- | | <img width="617" height="192" alt="image" src="https://github.com/user-attachments/assets/b31d5906-3b42-4c22-9b43-d9bbe4fc6552" />  |  <img width="617" height="192" alt="image" src="https://github.com/user-attachments/assets/b62876b6-6b13-4719-bff3-3f136afe7917" /> |   As work-around `testModule.project.vite.config.configFile` works too.  ### Reproduction  Vitest monorepo, `test/unit` with inline reporter from above.  ### System Info  ```shell Vitest monorepo, `main`. ```  ### Used Package Manager  pnpm  ### Validations  - [x] Follow our [Code of Conduct](https://github.com/vitest-dev/vitest/blob/main/CODE_OF_CONDUCT.md) - [x] Read the [Contributing Guidelines](https://github.com/vitest-dev/vitest/blob/main/CONTRIBUTING.md). - [x] Read the [docs](https://vitest.dev/guide/). - [x] Check that there isn't [already an issue](https://github.com/vitest-dev/vitest/issues) that reports the same bug to avoid creating a duplicate. - [x] Check that this is a concrete bug. For Q&A open a [GitHub Discussion](https://github.com/vitest-dev/vitest/dis
   **Post-Mortem & Fix Analysis**:
-  > <!-- vitest-pr-redirect --> Hello @katyayni241. Thank you for taking the time to contribute!  Unfortunately, the team accepts pull requests only from maintainers, from anyone who contributed before, from approved contributors, or for issues with the `approved` label, so this pull request was closed automatically. We are sorry about that, it is not a judgement of your work. The number of pull requests grew beyond what the team can review, and this policy gives maintainers the space to triage and prioritize issues at their own pace.  If there is no issue for this change yet, please [open one](https://github.com/vitest-dev/vitest/issues/new/choose) to discuss it with the team first. Your changes are not lost: a maintainer can reopen this pull request if the team decides to go forward with it. See our [pull request policy](https://github.com/vitest-dev/vitest/blob/main/CONTRIBUTING.md#pull-request-policy) for more context.
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *vitest-dev* ready! Built [without sensitive environment variables](https://docs.netlify.com/configure-builds/environment-variables/#sensitive-variable-policy)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 8a6e3a9a4db86b86df055a5e1a37f68cd99b3f41 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/vitest-dev/deploys/6aef2ca21a3566feae04a603 | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-11911--vitest-dev.netlify.app](https://deploy-preview-11911--vitest-dev.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTExOTExLS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.azNb6YIQFr4G3k7a1AxY7YW88pydm3ItnsusOyTJtl4)<br /><br />_Use 
+  > That was intentional breaking change though, see https://github.com/vitest-dev/vitest/issues/11305#issuecomment-5726992058
+  > Ok, looks good. The `testModule.project.vite.config.configFile` seems to work with v4 too.
 
-- **Issue #11908** (2026-11-07): **v5.1.0: vi.spyOn(WeakMap.prototype, 'get') recurses until 'Maximum call stack size exceeded'**
-  *Symptoms*: ### Describe the bug  Since 5.1.0, spying on `WeakMap.prototype.get` crashes with `RangeError: Maximum call stack size exceeded`. Inside a forks worker it kills the worker (`Worker exited unexpectedly with exit code 7`).  The spy bookkeeping added in 5.1.0 calls a plain `WeakMap` method on every spied call:  ```js // dist/chunks/spy.DDMXghXv.js (5.1.0) const addToSet = Set.prototype.add;          // guarded: "a test may spy on Set.prototype.add" const MOCK_REFS = /* @__PURE__ */ new WeakMap(); function markDirty(set, mock) { \tlet ref = MOCK_REFS.get(mock);              // not guarded: resolves to the spied WeakMap.prototype.get \t... \taddToSet.call(set, ref); } ```  So the spied `get` calls `markDirty`, which calls `MOCK_REFS.get`, which is the spy again. `Set.prototype.add` is captured to avoid exactly this, but `WeakMap.prototype.get` / `.set` are not (`MOCK_REFS.set` in the same function has the same exposure, and so does `unmarkDirty`). 5.0.3's spy chunk had no WeakMap on this path (`DIRTY_MOCK_STATES.add.bind(...)`), so this is a 5.1.0 regression.  ### Reproduction  ```js // repro.test.js import { expect, it, vi } from 'vitest';  it('spying on WeakMap.prototype.get', () => {   const spy = vi.spyOn(WeakMap.prototype, 'get');   const map = new WeakMap();   const key = {};   map.get(key);   expect(spy).toHaveBeenCalledWith(key); }); ```  `npx vitest run` on 5.1.0:  ``` RangeError: Maximum call stack size exceeded     at markDirty (node_modules/vitest/dist/chunks/spy.DDMXg
+- **Issue #11950** (2026-11-12): **fix(runner): don't consume a value for escaped percent sign (%% ) in test titles**
+  *Symptoms*: ## Summary  Fixes #11913  \`test.each\` / \`describe.each\` / \`test.for\` titles that use \`%%\` (an escaped literal percent sign, [as documented](https://vitest.dev/api/#test-each)) incorrectly advanced the value index inside \`formatTitle\`, so every placeholder after \`%%\` read the wrong value and the last one printed \`undefined\`.  This also diverges from Jest, which renders \`%%\` as a literal \`%\` without consuming a value.  ### Changes - In \`formatTitle\`'s match handler, emit \`%\` for a \`%%\` match **without** incrementing the value index (it is a literal, not a placeholder). - Add regression tests covering \`%d%% is %s\`, \`100%% of %s\`, a \`describe.each\` \`%s%% group\` title, and \`test.for\` \`%d%% %s\`.  ### Verification - \`pnpm --filter test-unit exec vitest run --project threads test/each.test.ts\` — 70 passed (including the 4 new regression tests). - Confirmed the new tests fail when the fix is reverted.  ## Checklist - [x] Tests included - [x] Relevant test suite passes locally
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1306,335 +1306,489 @@ export function setState<State extends MatcherState = MatcherState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f21f224b` (2026-11-06)
-**Commit Message**: fix(cache): treat a removed cache file as a miss (#11861)
+### Incident Patch 1: `d7d0eb4b` (2026-11-09)
+**Commit Message**: chore(deps): update dependency happy-dom to v21.0.4 [security] (#11736)
 
-**File**: `packages/vitest/src/node/cache/fsModuleCache.ts` (modified, +21/-14)
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `pnpm-lock.yaml` (modified, +6/-6)
 ```diff
-@@ -141,17 +141,29 @@ export class FileSystemModuleCache {
-       parallelFsCacheRead.set(
-         cachedFilePath,
-         readFile(cachedFilePath, 'utf-8')
--          .then((code) => {
--            const matchIndex = code.lastIndexOf(cacheComment)
--            if (matchIndex === -1) {
-+          .then(
-+            (code) => {
-+              const matchIndex = code.lastIndexOf(cacheComment)
-+              if (matchIndex === -1) {
-+                debugFs?.(
-+                  `${c.red('[empty]')} ${cachedFilePath} exists, but doesn't have a ${cacheComment} comment, transforming by vite instead`,
-+                )
-+                return
-+              }
-+
-+              return { code, meta: this.fromBase64(code.slice(matchIndex + cacheCommentLength)) }
-+            },
-+            (error) => {
-+              // another process can remove the cache at any time
-+              if (error?.code !== 'ENOENT') {
-+                throw error
-+              }
-               debugFs?.(
--                `${c.red('[empty]')} ${cachedFilePath} exists, but doesn't have a ${cacheComment} comment, transforming by vite instead`,
-+                `${c.red('[empty]')} ${cachedFilePath} doesn't exist, transforming by vite first`,
-               )
--              return
--            }
--
--            return { code, meta: this.fromBase64(code.slice(matchIndex + cacheCommentLength)) }
--          })
-+              return undefined
-+            },
-+          )
-           .finally(() => {
-             parallelFsCacheRead.delete(cachedFilePath)
-           }),
-@@ -161,11 +173,6 @@ export class FileSystemModuleCache {
-   }
+@@ -1066,7 +1066,7 @@ importers:
+         version: 3.4.4
+       happy-dom:
+         specifier: ^21.0.3
+-        version: 21.0.3
++        version: 21.0.4
+       jsdom:
+         specifier: ^30.1.3
+         version: 30.1.3(@noble/hashes@1.8.0)
+@@ -1223,7 +1223,7 @@ importers:
+         version: 2.5.1(@vue/compiler-dom@3.5.44)(@vue/server-renderer@3.5.44)(vue@3.5.44(typescript@5.9.3))
+       happy-dom:
+         specifier: ^21.0.3
+-        version: 21.0.3
++        version: 21.0.4
+       magic-string:
+         specifier: ^1.4.3
+         version: 1.4.3
+@@ -1503,7 +1503,7 @@ importers:
+         version: link:../../packages/ui
+       happy-dom:
+         specifier: ^21.0.3
+-        version: 21.0.3
++        version: 21.0.4
+       pathe:
+         specifier: 'catalog:'
+         version: 2.0.3
+@@ -6883,8 +6883,8 @@ packages:
+   handle-thing@2.0.1:
+     resolution: {integrity: sha512-9Qn4yBxelxoh2Ow62nP+Ka/kMnOXRi8BXnRaUwezLNhqelnN49xKz4F/dPP8OYLxLxq6JDtZb2i9XznUQbNPTg==}
  
-   async getCachedModule(cachedFilePath: string): Promise<CachedInlineModuleMeta | undefined> {
--    if (!existsSync(cachedFilePath)) {
--      debugFs?.(`${c.red('[empty]')} ${cachedFilePath} doesn't exist, transforming by vite first`)
--      return
--    }
--
-     const fileResult = await this.readCachedFileConcurrently(cachedFilePath)
-     if (!fileResult) {
-       return
+-  happy-dom@21.0.3:
+-    resolution: {integrity: sha512-PesNgu5BnIEmAwzKGewB3K1ORFeznFZJ4JrRz89ea1wkHnxskdpzX9sN/+zb4KO6k8oSMhyJSj/cwXAFrYBBNA==}
++  happy-dom@21.0.4:
++    resolution: {integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==}
+     engines: {node: '>=20.0.0'}
+ 
+   has-bigints@1.1.0:
+@@ -14906,7 +14906,7 @@ snapshots:
+ 
+   handle-thing@2.0.1: {}
+ 
+-  happy-dom@21.0.3:
++  happy-dom@21.0.4:
+     dependencies:
+       '@types/node': 24.19.2
+       '@types/whatwg-mimetype': 3.0.2
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +2/-0)
+```diff
+@@ -175,3 +175,5 @@ minimumReleaseAgeExclude:
+   - undici@8.12.2
+   - vitepress-plugin-group-icons@1.8.1
+   - wrangler@4.151.1
++  # Renovate security update: happy-dom@21.0.4
++  - happy-dom@21.0.4
 ```
 
 ---
 
-### Incident Patch 2: `9c044db8` (2026-11-06)
-**Commit Message**: fix(cache): watch cached files outside the root (#11860)
+### Incident Patch 2: `979118a7` (2026-11-09)
+**Commit Message**: fix(pool): shutdown disconnected workers even when `testTimeout` is disabled (#11924)
 
-**File**: `packages/vitest/src/node/cache/fsModuleCache.ts` (modified, +8/-0)
+**File**: `packages/vitest/src/runtime/workers/init-forks.ts` (modified, +7/-0)
 ```diff
-@@ -241,6 +241,14 @@ export class FileSystemModuleCache {
-     this.vitest.coverageProvider?.restoreModuleCacheData?.(environment, id, data)
-   }
+@@ -27,6 +27,7 @@ if (isProfiling) {
+ }
  
-+  // Vite watches the files outside of the root when it loads them, a cached module skips that
-+  watchFile(file: string): void {
-+    const server = this.vitest.vite
-+    if (!file.startsWith(`${server.config.root}/`) && existsSync(file)) {
-+      server.watcher.add(file)
+ processOn('error', onError)
++processOn('disconnect', onDisconnect)
+ 
+ export default function workerInit(options: {
+   runTests: (method: 'run' | 'collect', state: WorkerGlobalState, traces: Traces) => Promise<void>
+@@ -41,6 +42,7 @@ export default function workerInit(options: {
+     teardown: () => {
+       processRemoveAllListeners('message')
+       processOff('error', onError)
++      processOff('disconnect', onDisconnect)
+       // the guard installed by the test runner stays active between test
+       // files: with `isolate: false` a late process.exit would kill the
+       // other files sharing this process
+@@ -59,3 +61,8 @@ function onError(error: any) {
+     processExit(1)
+   }
+ }
++
++// Main process has died, there is no one to report results to
++function onDisconnect() {
++  processExit(1)
++}
+```
+
+**File**: `test/e2e/test/pool-worker-exit.test.ts` (modified, +71/-2)
+```diff
+@@ -1,8 +1,10 @@
+ import type { TestRunEndReason } from 'vitest/node'
++import { spawn } from 'node:child_process'
++import { existsSync, readFileSync } from 'node:fs'
+ import { sep } from 'node:path'
+ import { resolve } from 'pathe'
+-import { expect, test } from 'vitest'
+-import { runInlineTests, runVitest, StableTestFileOrderSorter } from '#test-utils'
++import { expect, onTestFinished, test } from 'vitest'
++import { runInlineTests, runVitest, StableTestFileOrderSorter, useTmpFS } from '#test-utils'
+ import { readCoverageMap } from '../../coverage-test/utils'
+ 
+ test('worker death on a shared runner does not skip coverage finalization', async () => {
+@@ -225,3 +227,70 @@ test('run with a queued module after worker death is reported as failed', async
+   expect(reason).toBe('failed')
+   expect(exitCode).toBe(1)
+ })
++
++test('forks worker exits when the main process dies', async () => {
++  const fs = useTmpFS({
++    'idle.test.ts': `
++      import { writeFileSync } from 'node:fs'
++      import { test } from 'vitest'
++
++      test('idle', async () => {
++        // keeps the event loop alive like an open server would
++        setInterval(() => {}, 1_000)
++
++        // let the throttled task updates reach main process first
++        await new Promise((resolve) => setTimeout(resolve, 500))
++
++        writeFileSync('./worker.pid', String(process.pid))
++        await new Promise(() => {})
++      })
++    `,
++  })
++
++  const main = spawn(
++    process.execPath,
++    [resolve('node_modules/vitest/vitest.mjs'), '--run', '--pool=forks', '--testTimeout=0'],
++    { cwd: fs.root, stdio: 'ignore' },
++  )
++  const mainExit = new Promise((resolve) => main.once('exit', resolve))
++
++  let workerPid: number | undefined
++  onTestFinished(async () => {
++    main.kill('SIGKILL')
++
++    if (workerPid && isAlive(workerPid)) {
++      process.kill(workerPid, 'SIGKILL')
++    }
++
++    await mainExit
++  })
++
++  await expect.poll(() => existsSync(fs.resolveFile('worker.pid')), { timeout: 10_000 }).toBe(true)
++  workerPid = Number(fs.readFile('worker.pid'))
++  expect(isAlive(workerPid)).toBe(true)
++
++  main.kill('SIGKILL')
++  await mainExit
++
++  await expect.poll(() => isAlive(workerPid!), { timeout: 5_000 }).toBe(false)
++})
++
++function isAlive(pid: number) {
++  try {
++    process.kill(pid, 0)
++  } catch {
++    return false
++  }
++
++  // orphans are re-parented to PID 1, which does not reap them in CI containers
++  if (process.platform === 'linux') {
++    try {
++      const state = readFileSync(`/proc/${pid}/stat`, 'utf8').split(') ').at(-1)![0]
++      return state !== 'Z'
++    } catch {
++      return false
 +    }
 +  }
 +
-   private toBase64(obj: unknown) {
-     const json = stringify(obj)
-     return Buffer.from(json).toString('base64')
-```
-
-**File**: `packages/vitest/src/node/environments/transformService.ts` (modified, +4/-0)
-```diff
-@@ -375,6 +375,10 @@ export class ModuleTransformService {
-       return
-     }
- 
-+    if (cachedModule.file) {
-+      this.fsCache.watchFile(cachedModule.file)
-+    }
-+
-     // Notify coverage provider that cached results were read
-     if (cachedModule.hasCoverageData) {
-       this.fsCache.restoreCoverageData(environment, cachedModule.id, cachedModule.coverageData)
-```
-
-**File**: `test/e2e/test/watch/file-watching.test.ts` (modified, +42/-0)
-```diff
-@@ -179,6 +179,48 @@ export default {
-   await vitest.waitForStdout('1 passed')
- })
- 
-+test('editing a cached source file outside the root triggers re-run', async () => {
-+  const fs = testUtils.useTmpFS(
-+    {
-+      'app/package.json': JSON.stringify({ name: 'app', type: 'module' }),
-+      // keeps the workspace root at app/
-+      'app/pnpm-workspace.yaml': '',
-+      'app/vitest.config.mjs': /* js */ `
-+export default {
-+  test: {
-+    fsModuleCache: true,
-+    fsModuleCachePath: './node_modules/.vitest-fs-cache',
-+  },
++  return true
 +}
-+`,
-+      'app/test/uses-lib.test.ts': /* ts */ `
-+import { expect, test } from 'vitest'
-+import { helper } from '../../lib/src/helper.ts'
-+
-+test('uses lib', () => {
-+  expect(helper()).toBe(1)
-+})
-+`,
-+      'lib/src/helper.ts': `export const helper = () => 1\n`,
-+    },
-+    false,
-+  )
-+  const root = resolve(fs.root, 'app')
-+
-+  // the first run writes the cache, so the watched run reads the helper from it
-+  const cold = await testUtils.runVitest({ root })
-+  expect(cold.errorTree()).toEqual({ 'test/uses-lib.test.ts': { 'uses lib': 'passed' } })
-+  await cold.ctx?.close()
-+
-+  const { vitest } = await testUtils.runVitest({ root, watch: true })
-+
-+  fs.editFile('lib/src/helper.ts', modifyContent)
-+
-+  await vitest.waitForStdout('New code running')
-+  await vitest.waitForStdout('RERUN  ../../../lib/src/helper.ts')
-+  await vitest.waitForStdout('1 passed')
-+})
-+
- test('editing config file reloads new changes', async () => {
-   const { vitest, fs } = await testUtils.runInlineTests(
-     {
 ```
 
 ---
 
-### Incident Patch 3: `5f72c3d0` (2026-11-06)
-**Commit Message**: fix(mocker): keep re-exports of hoisted imports (#11867)
+### Incident Patch 3: `47c87ebb` (2026-11-12)
+**Commit Message**: fix(pool): terminate stuck orphaned forks workers (#11939)
 
-**File**: `packages/mocker/src/node/hoistMocks.ts` (modified, +18/-1)
+**File**: `packages/vitest/rollup.config.js` (modified, +1/-0)
 ```diff
-@@ -148,6 +148,7 @@ export function hoistMocks(
+@@ -38,6 +38,7 @@ const entries = {
+   'workers/threads': 'src/runtime/workers/threads.ts',
+   'workers/vmThreads': 'src/runtime/workers/vmThreads.ts',
+   'workers/vmForks': 'src/runtime/workers/vmForks.ts',
++  'workers/watchdog': 'src/runtime/workers/watchdog.ts',
  
-   let uid = 0
-   const idToImportMap = new Map<string, string>()
-+  const exportedLocalNames = new Set<string>()
- 
-   const imports: {
-     node: Positioned<ImportDeclaration>
-@@ -206,9 +207,17 @@ export function hoistMocks(
-         }
-       }
-     }
-+    // export { baz } --> const baz = __import_foo__.baz
-+    if (node.type === 'ExportNamedDeclaration' && !node.source) {
-+      for (const spec of node.specifiers) {
-+        if (spec.local.type === 'Identifier') {
-+          exportedLocalNames.add(spec.local.name)
-+        }
-+      }
-+    }
-   }
- 
--  const declaredConst = new Set<string>()
-+  const declaredConst = new Set<string>(exportedLocalNames)
-   const hoistedNodes: Set<Positioned<CallExpression | VariableDeclaration | AwaitExpression>> =
-     new Set()
- 
-@@ -598,6 +607,14 @@ export function hoistMocks(
-       importLine += `import(${sourceString});\n`
-     }
- 
-+    const exportedBindings = importNode.specifiers
-+      .map((spec) => spec.local.name)
-+      .filter((name) => exportedLocalNames.has(name))
-+      .map((name) => `${name} = ${idToImportMap.get(name)}`)
-+    if (exportedBindings.length) {
-+      importLine += `const ${exportedBindings.join(', ')};\n`
-+    }
-+
-     s.update(importNode.start, importNode.end, importLine)
- 
-     if (importNode.start === hoistIndex) {
+   'workers/runVmTests': 'src/runtime/runVmTests.ts',
+ }
 ```
 
-**File**: `test/e2e/test/mocking.test.ts` (modified, +48/-0)
+**File**: `packages/vitest/src/node/pools/pool.ts` (modified, +2/-0)
 ```diff
-@@ -734,6 +734,54 @@ test('mock works without loading original', () => {
-   },
- )
+@@ -4,6 +4,7 @@ import type { Logger } from '../logger'
+ import type { StateManager } from '../state'
+ import type { PoolOptions, PoolTask, WorkerResponse } from './types'
+ import { PoolRunner } from './poolRunner'
++import { stopWatchdog } from './watchdog'
+ import { ForksPoolWorker } from './workers/forksWorker'
+ import { ThreadsPoolWorker } from './workers/threadsWorker'
+ import { TypecheckPoolWorker } from './workers/typecheckWorker'
+@@ -240,6 +241,7 @@ export class Pool {
  
-+test.for(['node', 'playwright'])(
-+  'a module with vi.mock re-exports its imports (%s)',
-+  async (mode) => {
-+    const { stderr, testTree } = await runInlineTests(
-+      {
-+        './values.js': `
-+export const arrow = () => 'arrow'
-+export function declared() { return 'declared' }
-+    `,
-+        './target.js': `export const value = 'original'`,
-+        './harness.js': `
-+import { vi } from 'vitest'
-+import { arrow, declared } from './values.js'
-+import { value } from './target.js'
+   async close(): Promise<void> {
+     await this.cancel()
++    stopWatchdog()
+   }
+ 
+   private getPoolRunner(task: PoolTask, method: 'run' | 'collect'): PoolRunner {
+```
+
+**File**: `packages/vitest/src/node/pools/watchdog.ts` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++import type { ChildProcess } from 'node:child_process'
++import { fork } from 'node:child_process'
++import { resolve } from 'node:path'
 +
-+vi.mock('./target.js', () => ({ value: 'mocked' }))
++export type WatchdogMessage = { type: 'watch'; pid: number } | { type: 'unwatch'; pid: number }
 +
-+export { arrow, declared, value }
-+    `,
-+        './basic.test.js': `
-+import { test, expect } from 'vitest'
-+import { arrow, declared, value } from './harness.js'
++let watchdog: ChildProcess | undefined
++const watched = new Set<number>()
 +
-+test('re-exports imported bindings', () => {
-+  expect(arrow()).toBe('arrow')
-+  expect(declared()).toBe('declared')
++export function watchProcess(child: ChildProcess, distPath: string): void {
++  const pid = child.pid
++  if (pid == null) {
++    return
++  }
++
++  watchdog ??= startWatchdog(distPath)
++  watched.add(pid)
++  send({ type: 'watch', pid })
++
++  child.once('exit', () => {
++    watched.delete(pid)
++    send({ type: 'unwatch', pid })
++  })
++}
++
++export function stopWatchdog(): void {
++  if (watchdog && watched.size === 0) {
++    watchdog.disconnect()
++    watchdog = undefined
++  }
++}
++
++function send(message: WatchdogMessage) {
++  if (watchdog?.connected) {
++    watchdog.send(message)
++  }
++}
++
++function startWatchdog(distPath: string): ChildProcess {
++  /** Loads {@link file://./../../runtime/workers/watchdog.ts} */
++  const child = fork(resolve(distPath, 'workers/watchdog.js'), [], {
++    stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
++    execArgv: [],
++    env: { ...process.env, NODE_OPTIONS: undefined },
++  })
++
++  // must never keep the main process alive
++  child.unref()
++  child.channel?.unref()
++
++  // losing the watchdog only loses the cleanup, the test run is not affected
++  child.on('error', () => {})
++  child.once('exit', () => {
++    if (watchdog === child) {
++      watchdog = undefined
++    }
++  })
++
++  return child
++}
+```
+
+**File**: `packages/vitest/src/node/pools/workers/forksWorker.ts` (modified, +4/-0)
+```diff
+@@ -4,6 +4,7 @@ import type { PoolOptions, PoolWorker, WorkerRequest } from '../types'
+ import { fork } from 'node:child_process'
+ import { EventEmitter } from 'node:events'
+ import { resolve } from 'node:path'
++import { watchProcess } from '../watchdog'
+ import { streamFlushed } from './utils'
+ 
+ const SIGKILL_TIMEOUT = 500 /** jest does 500ms by default, let's follow it */
+@@ -19,6 +20,7 @@ export class ForksPoolWorker implements PoolWorker {
+   protected readonly entrypoint: string
+   protected execArgv: string[]
+   protected env: Partial<NodeJS.ProcessEnv>
++  private distPath: string
+ 
+   private _fork?: ChildProcess
+   private stdout: NodeJS.WriteStream | Writable
+@@ -32,6 +34,7 @@ export class ForksPoolWorker implements PoolWorker {
+     this.env = options.env
+     this.stdout = options.project.vitest.logger.outputStream
+     this.stderr = options.project.vitest.logger.errorStream
++    this.distPath = options.distPath
+ 
+     /** Loads {@link file://./../../../runtime/workers/forks.ts} */
+     this.entrypoint = resolve(options.distPath, 'workers/forks.js')
+@@ -66,6 +69,7 @@ export class ForksPoolWorker implements PoolWorker {
+     })
+ 
+     this._fork.on('error', this.emitError)
++    watchProcess(this._fork, this.distPath)
+ 
+     // `end: false`: the logger streams are shared by every worker, so one
+     // ending worker stream must not end them for everyone else
+```
+
+**File**: `packages/vitest/src/runtime/workers/watchdog.ts` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++import type { WatchdogMessage } from '../../node/pools/watchdog'
++
++process.title = 'vitest-watchdog'
++
++const pids = new Set<number>()
++
++// Ctrl+C and closing the terminal signal the whole process group, but the
++// watchdog must outlive the main process to clean up after it
++for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
++  process.on(signal, () => {})
++}
++
++process.on('message', (message: WatchdogMessage) => {
++  if (message.type === 'watch') {
++    pids.add(message.pid)
++  } else if (message.type === 'unwatch') {
++    pids.delete(message.pid)
++  }
 +})
 +
-+test('re-exports a mocked binding', () => {
-+  expect(value).toBe('mocked')
++// Workers blocked on synchronous code cannot notice the main process dying
++process.on('disconnect', () => {
++  for (const pid of pids) {
++    try {
++      process.kill(pid, 'SIGKILL')
++    } catch {}
++  }
++  process.exit()
 +})
+```
+
+**File**: `test/e2e/test/pool-worker-exit.test.ts` (modified, +60/-18)
+```diff
+@@ -1,6 +1,6 @@
+ import type { TestRunEndReason } from 'vitest/node'
+ import { spawn } from 'node:child_process'
+-import { existsSync, readFileSync } from 'node:fs'
++import { readFileSync } from 'node:fs'
+ import { sep } from 'node:path'
+ import { resolve } from 'pathe'
+ import { expect, onTestFinished, test } from 'vitest'
+@@ -229,28 +229,57 @@ test('run with a queued module after worker death is reported as failed', async
+ })
+ 
+ test('forks worker exits when the main process dies', async () => {
+-  const fs = useTmpFS({
+-    'idle.test.ts': `
+-      import { writeFileSync } from 'node:fs'
+-      import { test } from 'vitest'
++  const workerPid = await killMainProcessDuringTest(
++    'forks',
++    `
++      setInterval(() => {}, 1_000)
++
++      console.log(\`worker-pid:\${process.pid}\`)
++      await new Promise(() => {})
 +    `,
-+      },
-+      modeToConfig(mode),
++  )
+ 
+-      test('idle', async () => {
+-        // keeps the event loop alive like an open server would
+-        setInterval(() => {}, 1_000)
++  await expect.poll(() => isAlive(workerPid), { timeout: 5_000 }).toBe(false)
++})
+ 
+-        // let the throttled task updates reach main process first
+-        await new Promise((resolve) => setTimeout(resolve, 500))
++test.for(['forks', 'vmForks'])(
++  '%s worker blocked by synchronous code is killed when the main process dies',
++  async (pool) => {
++    const workerPid = await killMainProcessDuringTest(
++      pool,
++      `
++        console.log(\`worker-pid:\${process.pid}\`)
+ 
+-        writeFileSync('./worker.pid', String(process.pid))
+-        await new Promise(() => {})
++        await new Promise((resolve) => setImmediate(resolve))
++        while (true) {}
++      `,
 +    )
 +
-+    expect(stderr).toBe('')
-+    expect(testTree()).toMatchInlineSnapshot(`
-+    {
-+      "basic.test.js": {
-+        "re-exports a mocked binding": "passed",
-+        "re-exports imported bindings": "passed",
-+      },
-+    }
-+  `)
++    await expect.poll(() => isAlive(workerPid), { timeout: 5_000 }).toBe(false)
 +  },
 +)
 +
- test.for(['node', 'playwright'])(
-   'mocking actual module with factory skips loading original (%s)',
-   async (mode) => {
-```
-
-**File**: `test/unit/test/injector-mock.test.ts` (modified, +46/-5)
-```diff
-@@ -364,11 +364,52 @@ vi.mock('./mock.js', () => {
-   test('named exports of imported binding', () => {
-     expect(hoistSimpleCodeWithoutMocks(`import {createApp} from 'vue';export {createApp}`))
-       .toMatchInlineSnapshot(`
--      "vi.mock('faker');
--      const __vi_import_0__ = await import("vue");
--      import {vi} from "vitest";
--      export {createApp}"
--    `)
-+        "vi.mock('faker');
-+        const __vi_import_0__ = await import("vue");
-+        const createApp = __vi_import_0__.createApp;
-+        import {vi} from "vitest";
-+        export {createApp}"
-+      `)
-+  })
++async function killMainProcessDuringTest(pool: string, testBody: string) {
++  const fs = useTmpFS({
++    'basic.test.ts': `
++      import { test } from 'vitest'
 +
-+  test('named exports of default, renamed and namespace imports', () => {
-+    expect(
-+      hoistSimpleCodeWithoutMocks(
-+        `import Vue, { createApp as create } from 'vue';\n` +
-+          `import * as utils from './utils';\n` +
-+          `export function mountApp() { return create(Vue).mount(utils.root) }\n` +
-+          `export { Vue as default, create, utils }`,
-+      ),
-+    ).toMatchInlineSnapshot(`
-+        "vi.mock('faker');
-+        const __vi_import_0__ = await import("vue");
-+        const Vue = __vi_import_0__.default, create = __vi_import_0__.createApp;
-+        const __vi_import_1__ = await import("./utils");
-+        const utils = __vi_import_1__;
-+        import {vi} from "vitest";
-+
-+
-+        export function mountApp() { return __vi_import_0__.createApp(__vi_import_0__.default).mount(__vi_import_1__.root) }
-+        export { Vue as default, create, utils }"
-+      `)
-+  })
-+
-+  test('named export of an imported super class', () => {
-+    expect(
-+      hoistSimpleCodeWithoutMocks(
-+        `import { Base } from './base';\n` +
-+          `export class Service extends Base {}\n` +
-+          `export { Base }`,
-+      ),
-+    ).toMatchInlineSnapshot(`
-+        "vi.mock('faker');
-+        const __vi_import_0__ = await import("./base");
-+        const Base = __vi_import_0__.Base;
-+        import {vi} from "vitest";
-+
-+        export class Service extends Base {}
-+        export { Base }"
-+      `)
++      test('basic', async () => {
++        ${testBody}
+       })
+     `,
    })
  
-   test('export * from', () => {
+   const main = spawn(
+     process.execPath,
+-    [resolve('node_modules/vitest/vitest.mjs'), '--run', '--pool=forks', '--testTimeout=0'],
+-    { cwd: fs.root, stdio: 'ignore' },
++    [
++      resolve('node_modules/vitest/vitest.mjs'),
++      '--run',
++      `--pool=${pool}`,
++      '--testTimeout=0',
++      '--reporter=default',
++    ],
++    { cwd: fs.root, stdio: ['ignore', 'pipe', 'ignore'] },
+   )
+   const mainExit = new Promise((resolve) => main.once('exit', resolve))
+ 
+@@ -265,15 +294,28 @@ test('forks worker exits when the main process dies', async () => {
+     await mainExit
+   })
+ 
+-  await expect.poll(() => existsSync(fs.resolveFile('worker.pid')), { timeout: 10_000 }).toBe(true)
+-  workerPid = Number(fs.readFile('worker.pid'))
++  workerPid = await new Promise<number>((resolve, reject) => {
++    let stdout = ''
++
++    main.stdout.on('data', (chunk) => {
++      stdout += chunk
++
++      const pid = stdout.match(/worker-pid:(\d+)/)?.[1]
++
++      if (pid) {
++        resolve(Number(pid))
++      }
++    })
++
++    main.once('exit', () => reject(new Error(`Vitest exited before the test started:\n${stdout}`)))
++  })
+   expect(isAlive(workerPid)).toBe(true)
+ 
+   main.kill('SIGKILL')
+   await mainExit
+ 
+-  await expect.poll(() => isAlive(workerPid!), { timeout: 5_000 }).toBe(false)
+-})
++  return workerPid
++}
+ 
+ function isAlive(pid: number) {
+   try {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11911** (closed): fix(spy): remove restored mocks from restore set (@katyayni241)
-- **PR #11906** (2026-11-06): docs(browser): drop stale serviceWorkers note (@magurotuna)
-- **PR #11905** (2026-11-06): docs(browser): clarify context reuse between test files (@magurotuna)
-- **PR #11900** (2026-11-06): fix: reset local expect state between retries for `expect.assertions/hasAssertions` (@hi-ogawa)
-- **PR #11899** (2026-11-06): docs: add ci matrix table to test readme (@hi-ogawa)
-- **PR #11896** (2026-11-05): fix(cli): parse `--bail` correctly (@AriPerkkio)
+- **PR #11950** (closed): fix(runner): don't consume a value for escaped percent sign (%% ) in test titles (@Zephyr-Song)
+- **PR #11948** (closed): fix(runner): exclude scoped fixture setup from test duration (@flesler)
+- **PR #11947** (closed): fix(runner): exclude scoped fixture setup from test duration (@flesler)
+- **PR #11946** (closed): fix(runtime): wait for all in-flight RPC calls before teardown (@abhinav-phi)
+- **PR #11945** (closed): fix(runtime): wait for all in-flight RPC calls before teardown (@abhinav-phi)
+- **PR #11939** (2026-11-12): fix(pool): terminate stuck orphaned forks workers (@AriPerkkio)
 
 ---
 
@@ -1654,61 +1808,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cache): treat a removed cache file as a miss (#11861)
+## X. deps): update dependency happy-dom to v21.0.4 [security] (#11736)
 
 **RULE**:
-When implementing operations in `packages/vitest/src/node/cache/fsModuleCache.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f21f224b`: cache): treat a removed cache file as a miss (#11861). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7d0eb4b`: deps): update dependency happy-dom to v21.0.4 [security] (#11736). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vitest/src/node/cache/fsModuleCache.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          .then(
-            (code) => {
-              const matchIndex = code.lastIndexOf(cacheComment)
-              if (matchIndex === -1) {
-                debugFs?.(
-                  `${c.red('[empty]')} ${cachedFilePath} exists, but doesn't have a ${cacheComment} comment, transforming by vite instead`,
-                )
-                return
-              }
-
-              return { code, meta: this.fromBase64(code.slice(matchIndex + cacheCommentLength)) }
-            },
-            (error) => {
-              // another process can remove the cache at any time
-              if (error?.code !== 'ENOENT') {
-                throw error
-              }
-                `${c.red('[empty]')} ${cachedFilePath} doesn't exist, transforming by vite first`,
-              return undefined
-            },
-          )
+        version: 21.0.4
+        version: 21.0.4
+        version: 21.0.4
+  happy-dom@21.0.4:
+    resolution: {integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==}
+  happy-dom@21.0.4:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-          .then((code) => {
-            const matchIndex = code.lastIndexOf(cacheComment)
-            if (matchIndex === -1) {
-                `${c.red('[empty]')} ${cachedFilePath} exists, but doesn't have a ${cacheComment} comment, transforming by vite instead`,
-              return
-            }
-
-            return { code, meta: this.fromBase64(code.slice(matchIndex + cacheCommentLength)) }
-          })
-    if (!existsSync(cachedFilePath)) {
-      debugFs?.(`${c.red('[empty]')} ${cachedFilePath} doesn't exist, transforming by vite first`)
-      return
-    }
-
+        version: 21.0.3
+        version: 21.0.3
+        version: 21.0.3
+  happy-dom@21.0.3:
+    resolution: {integrity: sha512-PesNgu5BnIEmAwzKGewB3K1ORFeznFZJ4JrRz89ea1wkHnxskdpzX9sN/+zb4KO6k8oSMhyJSj/cwXAFrYBBNA==}
+  happy-dom@21.0.3:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f21f224b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7d0eb4b` are properly handled with clean fallback behavior.

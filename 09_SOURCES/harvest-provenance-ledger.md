@@ -9192,3 +9192,17 @@ Every entry in this ledger must capture:
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `898ea993` | Multi-dimensional audit evidence | 2026-11-12T14:24:02.670Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `201a62bc` | Multi-dimensional audit evidence | 2026-11-12T14:24:06.943Z |
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `22e24311` | Multi-dimensional audit evidence | 2026-11-12T14:31:52.510Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `47c87ebb` | Multi-dimensional audit evidence | 2026-11-12T14:44:44.065Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `0863eb48` | Multi-dimensional audit evidence | 2026-11-12T14:44:54.863Z |
+| `learn-dom-h-b77a0fed` | `project://clockworklabs-spacetimedb` | `0863eb48` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | 2026-11-12T14:45:15.021Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `1c4984ad` | Multi-dimensional audit evidence | 2026-11-12T14:59:49.316Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `3443896f` | Multi-dimensional audit evidence | 2026-11-12T14:59:50.293Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `444dc948` | Multi-dimensional audit evidence | 2026-11-12T14:59:56.952Z |
+| `learn-github-tonhowtf-omniget` | `https://github.com/tonhowtf/omniget` | `5d91e41a` | Multi-dimensional audit evidence | 2026-11-12T15:04:38.650Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `4ef7adc3` | Multi-dimensional audit evidence | 2026-11-12T15:17:31.135Z |
+| `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `1870103c` | Multi-dimensional audit evidence | 2026-11-12T15:25:09.789Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `04ccf364` | Multi-dimensional audit evidence | 2026-11-12T15:25:30.839Z |
+| `learn-dom-d-2297b13c` | `project://devexpress-testcafe` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md` | 2026-11-12T15:25:51.481Z |
+| `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `ec5e8777` | Multi-dimensional audit evidence | 2026-11-12T15:33:58.747Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `0f0b3e7e` | Multi-dimensional audit evidence | 2026-11-12T15:34:10.587Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a90bee6a` | Multi-dimensional audit evidence | 2026-11-12T15:34:12.028Z |

@@ -9183,3 +9183,17 @@
 | `CYCLE-20261112-2A20` | `2026-11-12T14:24:02.664Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b411170a...`) |
 | `CYCLE-20261112-2DCQ` | `2026-11-12T14:24:06.938Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b294ca60...`) |
 | `CYCLE-20261112-CCL6` | `2026-11-12T14:31:52.506Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`953415d4...`) |
+| `CYCLE-20261112-SVX8` | `2026-11-12T14:44:44.060Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b4fa5b2d...`) |
+| `CYCLE-20261112-T496` | `2026-11-12T14:44:54.858Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fc748c15...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T14:45:15.021Z` | `clockworklabs-spacetimedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B77A0FED` [Domain H] | Yes (`5acd248a...`) |
+| `CYCLE-20261112-CAF3` | `2026-11-12T14:59:49.311Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d5dcd248...`) |
+| `CYCLE-20261112-CB68` | `2026-11-12T14:59:50.288Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f04ec340...`) |
+| `CYCLE-20261112-CGAC` | `2026-11-12T14:59:56.916Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c88d5a65...`) |
+| `CYCLE-20261112-IHO6` | `2026-11-12T15:04:38.646Z` | `tonhowtf/omniget` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`23685f9a...`) |
+| `CYCLE-20261112-Z1Q4` | `2026-11-12T15:17:31.132Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f580c772...`) |
+| `CYCLE-20261112-8VMG` | `2026-11-12T15:25:09.784Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md` | Yes (`e775f605...`) |
+| `CYCLE-20261112-9BV7` | `2026-11-12T15:25:30.835Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a98fb75...`) |
+| `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T15:25:51.481Z` | `devexpress-testcafe` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2297B13C` [Domain D] | Yes (`5299036d...`) |
+| `CYCLE-20261112-K7QZ` | `2026-11-12T15:33:58.715Z` | `mswjs/msw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ad88efd...`) |
+| `CYCLE-20261112-KGWN` | `2026-11-12T15:34:10.583Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`236425e8...`) |
+| `CYCLE-20261112-KI0N` | `2026-11-12T15:34:12.023Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8875915d...`) |

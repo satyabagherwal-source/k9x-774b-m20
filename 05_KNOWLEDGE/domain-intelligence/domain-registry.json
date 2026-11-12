@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T13:15:27.331Z",
-  "total_records": 72,
+  "last_updated": "2026-11-12T15:25:51.479Z",
+  "total_records": 74,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 34,
+      "total": 35,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -59,7 +59,8 @@
         "DOM-D-91EB11DA",
         "DOM-D-78355AEC",
         "DOM-D-E7997468",
-        "DOM-D-A3AABF62"
+        "DOM-D-A3AABF62",
+        "DOM-D-2297B13C"
       ]
     },
     "E": {
@@ -82,7 +83,7 @@
       ]
     },
     "H": {
-      "total": 18,
+      "total": 19,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -101,7 +102,8 @@
         "DOM-H-F56DBC84",
         "DOM-H-7D775901",
         "DOM-H-EE08D822",
-        "DOM-H-B173C8F8"
+        "DOM-H-B173C8F8",
+        "DOM-H-B77A0FED"
       ]
     },
     "I": {
@@ -2919,6 +2921,90 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T13:15:27.329Z"
+    },
+    "DOM-H-B77A0FED": {
+      "record_id": "DOM-H-B77A0FED",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "TypeScript SDK crash on React Native with automatic reconnect (#6511)",
+      "content": "When implementing operations in `crates/bindings-typescript/src/sdk/db_connection_impl.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "5acd248a98ddcba673a2fdcb4fde06319494e77a7ec4c461be9f16627f99c84c",
+      "summary": "Prevents defects observed in production commit `0863eb48`: TypeScript SDK crash on React Native with automatic reconnect (#6511). Unvalidate -> When implementing operations in `crates/bindings-typescript/src/sdk/db_connection_impl.ts`, engineers MUST enforce rigorous boundary validat",
+      "provenance": {
+        "source_uri": "project://clockworklabs-spacetimedb/clockworklabs-spacetimedb-learnings.md",
+        "source_version": "0863eb48",
+        "observed_at": "2026-11-12T14:44:41.630Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (clockworklabs-spacetimedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of clockworklabs-spacetimedb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T14:45:15.014Z"
+    },
+    "DOM-D-2297B13C": {
+      "record_id": "DOM-D-2297B13C",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): DevExpress/testcafe",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  \n> **Source**: github ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  \n> **Source Version**: `1870103c`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-sy",
+      "content_hash": "5299036d3b3062e515c04ff21f383e66d2926414e1c7d94b5a9fefdf50bf7ee3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  \n> **Source**: github ([https://github.com/DevExp -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  \n> **Source**: github ([https://github.com/DevExp",
+      "provenance": {
+        "source_uri": "project://devexpress-testcafe/devexpress-testcafe-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T15:25:36.191Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (devexpress-testcafe)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of devexpress-testcafe"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-12T15:25:51.476Z"
     }
   }
 }

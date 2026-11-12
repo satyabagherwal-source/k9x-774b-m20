@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `0b6f11ab`  
+> **Source Version**: `0863eb48`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T06:23:50.715Z  
+> **Timestamp**: 2026-11-12T14:44:41.630Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T06:23:50.710Z  
+> **Harvest Timestamp**: 2026-11-12T14:44:41.622Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25538 stars
+- **Stars / Engagement**: 25543 stars
 
 ---
 
@@ -830,28 +830,97 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e49c074e` (2026-11-10)
-**Commit Message**: Fix LLM benchmark health-check timeouts and C# references (#6408)
+### Incident Patch 1: `0863eb48` (2026-11-12)
+**Commit Message**: Fix TypeScript SDK crash on React Native with automatic reconnect (#6511)
+
+Fixes a crash on React Native (reported with Expo) when a connection
+uses `withAutomaticReconnect()`:
+
+```
+TypeError: undefined is not a function
+  win?.addEventListener("focus", onResume);
+```
+
+React Native defines a global `window` without the DOM event API; the
+page-resume listeners from #5927 only checked that it exists.
+
+- Listeners attach only to a `window` or `document` that has both event
+methods.
+- On React Native, reconnect still works via its backoff timer, without
+early retry on foreground.
+
+## Rollback safety impact
+
+n/a
+
+## Testing
+
+- Liveness test with no `document` and an event-less `window`; fails
+without the fix.
+- Not yet tried in a React Native or Expo app.
+
+**File**: `crates/bindings-typescript/src/sdk/db_connection_impl.ts` (modified, +11/-2)
+```diff
+@@ -912,8 +912,17 @@ export class DbConnectionImpl<RemoteModule extends UntypedRemoteModule>
+     if (!this.#automaticReconnect || this.#livenessCleanup) {
+       return;
+     }
+-    const doc = typeof document !== 'undefined' ? document : undefined;
+-    const win = typeof window !== 'undefined' ? window : undefined;
++    // React Native defines `window` without the DOM event API.
++    const hasEvents = (target: unknown): boolean =>
++      typeof (target as EventTarget | undefined)?.addEventListener ===
++        'function' &&
++      typeof (target as EventTarget).removeEventListener === 'function';
++    const doc =
++      typeof document !== 'undefined' && hasEvents(document)
++        ? document
++        : undefined;
++    const win =
++      typeof window !== 'undefined' && hasEvents(window) ? window : undefined;
+     if (!doc && !win) {
+       return;
+     }
+```
+
+**File**: `crates/bindings-typescript/tests/db_connection_liveness.test.ts` (modified, +10/-0)
+```diff
+@@ -162,6 +162,16 @@ describe('liveness listeners', () => {
+     expect(listeners).toEqual({});
+   });
+ 
++  test('are skipped when window lacks the event API (React Native)', async () => {
++    vi.stubGlobal('document', undefined);
++    vi.stubGlobal('window', {});
++    const harness = build();
++    await establish(harness);
++
++    expect(harness.connects).toHaveLength(1);
++    expect(harness.connection.isActive).toBe(true);
++  });
++
+   test('are removed when the connection ends', async () => {
+     const harness = build();
+     await establish(harness);
+```
+
+---
+
+### Incident Patch 2: `0247e79f` (2026-11-11)
+**Commit Message**: Expand agent guidance for writing pull requests (#6557)
 
 # Description of Changes
 
-Lets the LLM benchmark finish full batches, and stops incomplete ones
-from uploading.
+Broaden `.agents/testing-sections.md` into `.agents/writing-prs.md` and
+update `AGENTS.md` to require consulting it when creating or updating
+PRs. Narrow the testing guidance to actual automated or manual testing
+and relevant coverage.
 
-- Move blocking scoring and cleanup off the async task, so health checks
-don't time out.
-- Use a fresh server per C# batch and publish references per task. Peak
-memory drops from 10.66 GiB to about 1.7 GiB.
-- Keep running other models after one fails, and never upload an
-incomplete batch.
-- Score any candidate publish failure as a failure unless the
-environment broke. A batch only completes if a known-good module still
-publishes at the end.
-- In schema parity, ignore case and underscores in table names.
-- Fix the prompts for `t_041`, `t_043`, `t_074` and `t_079`.
-
-Compile errors in SDK-generated code now count against the model, even
-when the SDK is at fault.
+Also made these changes:
+- Require verified commits and instruct agents to alert the user if not
+set up
+- Require every template section to be retained and faithfully populated
+- Tweak to PR testing sections
 
 # API and ABI breaking changes
 
@@ -863,413 +932,107 @@ n/a
 
 # Expected complexity level and risk
 
-1/5. Benchmark tooling only.
+1 — Documentation and agent instructions only. No runtime behavior
+changes.
 
 # Testing
 
-- [x] Unit tests, lints and CI pass.
-- [x] All 95 C# references pass on Linux: [run
-41154392202](https://github.com/clockworklabs/SpacetimeDB/actions/runs/41154392202).
-- [x] Full `no_context` batch in 
-
-**File**: `.github/workflows/llm-benchmark-periodic.yml` (modified, +14/-2)
-```diff
-@@ -76,6 +76,7 @@ jobs:
-     name: Run benchmarks (${{ matrix.lang }})
-     needs: prepare_matrix
-     runs-on: spacetimedb-linux
-+    timeout-minutes: 1440
-     env:
-       CARGO_TARGET_DIR: ${{ github.workspace }}/target
-       TARGET_TRIPLE: x86_64-unknown-linux-gnu
-@@ -180,11 +181,13 @@ jobs:
-           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
-           MSBUILDDISABLENODEREUSE: "1"
-           DOTNET_CLI_USE_MSBUILD_SERVER: "0"
-+          # Bound in-flight provider credit reservations across the three language jobs.
-           LLM_BENCH_CONCURRENCY: "8"
-           LLM_BENCH_RUST_CONCURRENCY: "4"
--          LLM_BENCH_CSHARP_CONCURRENCY: "2"
--          LLM_BENCH_ROUTE_CONCURRENCY: ${{ matrix.lang == 'typescript' && '4' || matrix.lang == 'csharp' && '1' || '2' }}
-+          LLM_BENCH_CSHARP_CONCURRENCY: "4"
-+          LLM_BENCH_ROUTE_CONCURRENCY: "1"
-           LLM_BENCHMARK_REPORT_DIR: ${{ runner.temp }}/llm-benchmark-reports
-+          LLM_BENCHMARK_DIAGNOSTICS_DIR: ${{ runner.temp }}/llm-benchmark-diagnostics
-           INPUT_LANGUAGE: ${{ matrix.lang }}
-           INPUT_MODEL_SET: ${{ inputs.model_set || 'website_active' }}
-           INPUT_MODELS: ${{ inputs.models || '' }}
-@@ -271,6 +274,15 @@ jobs:
-           if-no-files-found: ignore
-           retention-days: 14
- 
-+      - name: Upload server diagnostics
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: llm-benchmark-diagnostics-${{ matrix.lang }}
-+          path: ${{ runner.temp }}/llm-benchmark-diagnostics
-+          if-no-files-found: ignore
-+          retention-days: 14
-+
-   summarize:
-     name: Summarize benchmark analysis
-     if: always()
-```
-
-**File**: `.github/workflows/llm-benchmark-validate-goldens.yml` (modified, +12/-2)
-```diff
-@@ -27,7 +27,7 @@ concurrency:
- jobs:
-   validate-goldens:
-     runs-on: spacetimedb-linux
--    timeout-minutes: 60
-+    timeout-minutes: 180
-     env:
-       CARGO_TARGET_DIR: ${{ github.workspace }}/target
-       TARGET_TRIPLE: x86_64-unknown-linux-gnu
-@@ -122,5 +122,15 @@ jobs:
-           MSBUILDDISABLENODEREUSE: "1"
-           DOTNET_CLI_USE_MSBUILD_SERVER: "0"
-           LLM_BENCH_CSHARP_CONCURRENCY: "1"
-+          LLM_BENCHMARK_DIAGNOSTICS_DIR: ${{ runner.temp }}/llm-golden-diagnostics
-         run: |
--          llm_benchmark run --goldens-only --lang ${{ matrix.lang }}
-+          llm_benchmark run --goldens-only --lang ${{ matrix.lang }} --dry-run --skip-task-catalog-upload
-+
-+      - name: Upload server diagnostics
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: llm-golden-diagnostics-${{ matrix.lang }}
-+          path: ${{ runner.temp }}/llm-golden-diagnostics
-+          if-no-files-found: ignore
-+          retention-days: 14
-```
-
-**File**: `codex-plugin/plugins/spacetimedb/skills/csharp-server/SKILL.md` (modified, +10/-5)
-```diff
-@@ -187,15 +187,17 @@ The pattern is `ctx.Db.{Accessor}.{ColumnName}.{Method}(value)` for all indexed
- 
- ```csharp
- [SpacetimeDB.Reducer(ReducerKind.Init)]
--public static void OnInit(ReducerContext ctx) { ... }
-+public static void Init(ReducerContext ctx) { ... }
- 
- [SpacetimeDB.Reducer(ReducerKind.ClientConnected)]
--public static void OnConnect(ReducerContext ctx) { ... }
-+public static void ClientConnected(ReducerContext ctx) { ... }
- 
- [SpacetimeDB.Reducer(ReducerKind.ClientDisconnected)]
--public static void OnDisconnect(ReducerContext ctx) { ... }
-+public static void ClientDisconnected(ReducerContext ctx) { ... }
- ```
- 
-+Reducer and procedure method names must not start with `On`, `on`, or `__`; the code generator rejects them (STDB0010), so name lifecycle reducers `ClientConnected`, not `OnConnect`.
-+
- `ctx.ConnectionId` is `ConnectionId?`, including in connection lifecycle reducers. Check or unwrap it before storing it in a non-nullable column or passing it to an index accessor.
- 
- ## Views
-@@ -333,7 +335,7 @@ public partial struct TickTimer
- [SpacetimeDB.Reducer]
- public static void Tick(ReducerContext ctx, TickTimer timer)
- {
--    // timer row is auto-deleted after this reducer runs
-+    // a one-time row is deleted after this runs; an interval row stays
- }
- 
- // One-time: fires once at a specific time
-@@ -344,7 +346,7 @@ var at = new ScheduleAt.Interval(TimeSpan.FromSeconds(5));
- ctx.Db.TickTimer.Insert(new TickTimer { ScheduledId = 0, ScheduledAt = at });
- ```
- 
--Scheduled reducer callbacks use the ordinary `[SpacetimeDB.Reducer]` attribute. There is no `ReducerKind.Scheduled`; the table's `Scheduled` option associates the callback.
-+Scheduled reducer callbacks use the ordinary `[SpacetimeDB.Reducer]` attribute. There is no `ReducerKind.Scheduled`; the table's `Scheduled` option associates the callback. To let only the scheduler run a callback, reject calls where `ctx.Sender != ctx.DatabaseIdentity`.
- 
- To construct a `ConnectionId` from a 128-bit numeric representation, encode it as exactly 16 little-endian bytes and call `ConnectionId.From(bytes)`. The result is nullable and must be checked before use.
- 
-@@ -364,6 +366,7 @@ public static ResultValue Inspect(ProcedureContext ctx, string input) =>
- Outbound HTTP is available through `ctx.Http`; handle its success/error result before using the response. Open short database transactions with `ctx.WithTx`. Perform network I/O before opening the transaction, and keep only database work inside its callback.
- 
- ```csharp
-+string uri = "https://example.com/data"; // the C# HTTP API takes the URI as a string
- var result = ctx.Http.Get(uri);
- var text = result.Match(
-     response => response.Body.ToStringUtf8Lossy(),
-@@ -435,3 +438,5 @@ public partial record Shape : SpacetimeDB.TaggedEnum<(Circle Circle, Rectangle R
- var a = new Shape.Circle(new Circle { Radius = 10 });
- var b = new Shape.Rectangle(new Rectangle { Width = 4, Height = 6 });
- ```
-+
-+Declare `TaggedEnum` records inside your `Module` class. At file scope, a variant named after its own type, such as `Circle Circle`, fails with CS8910.
-```
-
-**File**: `codex-plugin/plugins/spacetimedb/skills/rust-server/SKILL.md` (modified, +3/-1)
-```diff
-@@ -273,7 +273,7 @@ pub struct TickTimer {
- 
- #[spacetimedb::reducer]
- pub fn tick(ctx: &ReducerContext, timer: TickTimer) {
--    // timer row is auto-deleted after this reducer runs
-+    // a one-time row is deleted after this runs; an interval row stays
- }
- 
- // One-time: fires once at a specific time
-@@ -284,6 +284,8 @@ let at = ScheduleAt::Interval(std::time::Duration::from_secs(5).into());
- ctx.db.tick_timer().insert(TickTimer { scheduled_id: 0, scheduled_at: at });
- ```
- 
-+To let only the scheduler run a callback, reject calls where `ctx.sender() != ctx.database_identity()`.
-+
- Construct a connection ID from a numeric representation with `ConnectionId::from_u128(value)`.
- 
- ## Inter-Database Calls (Async IDC)
-```
-
-**File**: `codex-plugin/plugins/spacetimedb/skills/typescript-server/SKILL.md` (modified, +3/-1)
-```diff
-@@ -248,7 +248,7 @@ const tickTimer = table({
- export const tick = spacetimedb.reducer(
-   { onSchedule: tickTimer },
-   { timer: tickTimer.rowType },
--  (ctx, { timer }) => { /* timer row auto-deleted after this runs */ }
-+  (ctx, { timer }) => { /* a one-time row is deleted after this runs; an interval row stays */ }
- );
- 
- // `onSchedule` also works for scheduled procedures whose return type is `t.unit()`.
-@@ -261,6 +261,8 @@ export const tick = spacetimedb.reducer(
- //   const micros = at.tag === 'time' ? at.value : at.value.microsSinceUnixEpoch;  // bigint
- ```
- 
-+To let only the scheduler run a callback, reject calls where `!ctx.sender.isEqual(ctx.databaseIdentity)`.
-+
- ## Submodules
- 
- Import the library's full module-namespace object, not just its default schema:
-```
-
-**File**: `docs/docs/00200-core-concepts/00200-functions/00300-reducers/00500-lifecycle.md` (modified, +2/-2)
-```diff
-@@ -203,7 +203,7 @@ export const onConnect = spacetimedb.clientConnected((ctx) => {
- 
- ```csharp
- [SpacetimeDB.Reducer(ReducerKind.ClientConnected)]
--public static void OnConnect(ReducerContext ctx)
-+public static void ClientConnected(ReducerContext ctx)
- {
-     Log.Info($"Client connected: {ctx.Sender}");
-     
-@@ -318,7 +318,7 @@ export const onDisconnect = spacetimedb.clientDisconnected((ctx) => {
- 
- ```csharp
- [SpacetimeDB.Reducer(ReducerKind.ClientDisconnected)]
--public static void OnDisconnect(ReducerContext ctx)
-+public static void ClientDisconnected(ReducerContext ctx)
- {
-     Log.Info($"Client disconnected: {ctx.Sender}");
-     
-```
-
-**File**: `skills/csharp-server/SKILL.md` (modified, +10/-5)
-```diff
-@@ -187,15 +187,17 @@ The pattern is `ctx.Db.{Accessor}.{ColumnName}.{Method}(value)` for all indexed
- 
- ```csharp
- [SpacetimeDB.Reducer(ReducerKind.Init)]
--public static void OnInit(ReducerContext ctx) { ... }
-+public static void Init(ReducerContext ctx) { ... }
- 
- [SpacetimeDB.Reducer(ReducerKind.ClientConnected)]
--public static void OnConnect(ReducerContext ctx) { ... }
-+public static void ClientConnected(ReducerContext ctx) { ... }
- 
- [SpacetimeDB.Reducer(ReducerKind.ClientDisconnected)]
--public static void OnDisconnect(ReducerContext ctx) { ... }
-+public static void ClientDisconnected(ReducerContext ctx) { ... }
- ```
- 
-+Reducer and procedure method names must not start with `On`, `on`, or `__`; the code generator rejects them (STDB0010), so name lifecycle reducers `ClientConnected`, not `OnConnect`.
-+
- `ctx.ConnectionId` is `ConnectionId?`, including in connection lifecycle reducers. Check or unwrap it before storing it in a non-nullable column or passing it to an index accessor.
- 
- ## Views
-@@ -333,7 +335,7 @@ public partial struct TickTimer
- [SpacetimeDB.Reducer]
- public static void Tick(ReducerContext ctx, TickTimer timer)
- {
--    // timer row is auto-deleted after this reducer runs
-+    // a one-time row is deleted after this runs; an interval row stays
- }
- 
- // One-time: fires once at a specific time
-@@ -344,7 +346,7 @@ var at = new ScheduleAt.Interval(TimeSpan.FromSeconds(5));
- ctx.Db.TickTimer.Insert(new TickTimer { ScheduledId = 0, ScheduledAt = at });
- ```
- 
--Scheduled reducer callbacks use the ordinary `[SpacetimeDB.Reducer]` attribute. There is no `ReducerKind.Scheduled`; the table's `Scheduled` option associates the callback.
-+Scheduled reducer callbacks use the ordinary `[SpacetimeDB.Reducer]` attribute. There is no `ReducerKind.Scheduled`; the table's `Scheduled` option associates the callback. To let only the scheduler run a callback, reject calls where `ctx.Sender != ctx.DatabaseIdentity`.
- 
- To construct a `ConnectionId` from a 128-bit numeric representation, encode it as exactly 16 little-endian bytes and call `ConnectionId.From(bytes)`. The result is nullable and must be checked before use.
- 
-@@ -364,6 +366,7 @@ public static ResultValue Inspect(ProcedureContext ctx, string input) =>
- Outbound HTTP is available through `ctx.Http`; handle its success/error result before using the response. Open short database transactions with `ctx.WithTx`. Perform network I/O before opening the transaction, and keep only database work inside its callback.
- 
- ```csharp
-+string uri = "https://example.com/data"; // the C# HTTP API takes the URI as a string
- var result = ctx.Http.Get(uri);
- var text = result.Match(
-     response => response.Body.ToStringUtf8Lossy(),
-@@ -435,3 +438,5 @@ public partial record Shape : SpacetimeDB.TaggedEnum<(Circle Circle, Rectangle R
- var a = new Shape.Circle(new Circle { Radius = 10 });
- var b = new Shape.Rectangle(new Rectangle { Width = 4, Height = 6 });
- ```
-+
-+Declare `TaggedEnum` records inside your `Module` class. At file scope, a variant named after its own type, such as `Circle Circle`, fails with CS8910.
-```
-
-**File**: `skills/rust-server/SKILL.md` (modified, +3/-1)
-```diff
-@@ -273,7 +273,7 @@ pub struct TickTimer {
- 
- #[spacetimedb::reducer]
- pub fn tick(ctx: &ReducerContext, timer: TickTimer) {
--    // timer row is auto-deleted after this reducer runs
-+    // a one-time row is deleted after this runs; an interval row stays
- }
- 
- // One-time: fires once at a specific time
-@@ -284,6 +284,8 @@ let at = ScheduleAt::Interval(std::time::Duration::from_secs(5).into());
- ctx.db.tick_timer().insert(TickTimer { scheduled_id: 0, scheduled_at: at });
- ```
- 
-+To let only the scheduler run a callback, reject calls where `ctx.sender() != ctx.database_identity()`.
-+
- Construct a connection ID from a numeric representation with `ConnectionId::from_u128(value)`.
- 
- ## Inter-Database Calls (Async IDC)
-```
-
----
-
-### Incident Patch 2: `b5debf86` (2026-11-10)
-**Commit Message**: Fix database name publication (#6547)
-
-# Description of Changes
-Already released. Needs to get into master now for future releases.
-
-# API and ABI breaking changes
-Tightens permissions for republishing previously used database names.
-
-# Rollback safety impact
-n/a
-
-# Expected complexity level and risk
-1
-
-# Testing
-Already released. Includes deletion/republish regression coverage.
-[Public CI
-passed](https://github.com/clockworklabs/SpacetimeDB/actions/runs/42266404314).
+Not tested.
 
 ---------
 
-Co-authored-by: Shubham Mishra <[REDACTED_EMAIL]>
 Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
-**File**: `crates/client-api/src/routes/database.rs` (modified, +14/-2)
+**File**: `.agents/writing-prs.md` (renamed, +23/-8)
 ```diff
-@@ -1411,8 +1411,20 @@ pub async fn publish<S: NodeDelegate + ControlStateDelegate + Authorization>(
-         .map_err(log_and_500)?;
-     match existing.as_ref() {
-         None => {
--            if matches!(name_or_identity.as_ref(), Some(NameOrIdentity::Identity(_))) {
--                return Err(bad_request("Cannot create a database at a supplied identity".into()));
-+            match name_or_identity.as_ref() {
-+                Some(NameOrIdentity::Identity(_)) => {
-+                    return Err(bad_request("Cannot create a database at a supplied identity".into()));
-+                }
-+                Some(NameOrIdentity::Name(name)) if name_to_register.is_none() => {
-+                    // Deleted databases retain their name and namespace owner.
-+                    // Reusing the identity requires that owner, not merely
-+                    // permission to create a new database.
-+                    let owner = ctx.lookup_namespace_owner(name.as_ref()).await.map_err(log_and_500)?;
-+                    if owner != Some(auth.claims.identity) {
-+                        return Err((StatusCode::FORBIDDEN, "Only the name owner can recreate this database").into());
-+                    }
-+                }
-+                Some(NameOrIdentity::Name(_)) | None => {}
-             }
-             allow_creation(&auth)?;
-             ctx.authorize_action(
+@@ -1,18 +1,33 @@
+-# Writing testing sections
++# Writing pull requests
+ 
+-A PR's testing section should explain what verification gives the reviewer confidence that the change works as intended and avoids bugs. The goal is evidence for correctness, not a list of testing activities.
++Read this guide when creating or updating a PR. Use the repository's [PR template](../.github/pull_request_template.md) and preserve every section when updating an existing PR.
+ 
+-## Choose the evidence
++## Verified commits
++
++Verified commits are required: a PR cannot be merged without them. Enable commit signing before creating commits for a PR, and ensure GitHub recognizes the commits as **Verified**. A local signature alone does not establish that GitHub can verify it.
++
++If you cannot create verified commits, alert the user promptly, explicitly tell them that the PR cannot be merged without verified commits, and help them set up commit signing and GitHub verification. Do not silently proceed with unverified commits or present the PR as ready to merge. After setup, confirm that GitHub marks the PR's commits as **Verified**.
++
++## Preserve and complete the template
++
++No section of the PR template may be removed. PRs that remove any template section will be rejected. Populate every section faithfully, following its instructions and describing the actual change; do not leave placeholders or invent information. Where a section does not apply, say so explicitly and follow any prescribed wording.
++
++## Writing the testing section
++
++Describe the automated or manual testing performed and what behavior it covers, including relevant existing test coverage. Include important gaps in that coverage.
++
++If no testing was performed, write “Not tested.” Do not justify the absence of testing or pad the section with routine checks. Reviewing the diff or instructions, checking whitespace or links, and verifying commit signatures are not substitutes for testing the change.
++
++### Choose the evidence
+ 
+ - Start from the change's intended outcome and the important ways it could fail. Identify what verification addresses those concerns, including existing coverage.
+ - Usually, the strongest evidence is how automated tests were extended or adapted, or why existing tests cover the change. Manual tests, successful use, and other verification can also provide evidence.
+ - State what the evidence establishes. A same-client compilation test supports source compatibility; a client/server test supports actual interaction. Neither proves the other.
+-- For documentation and instructions, look for evidence that readers can accomplish the intended task. Consistency checks and working links are useful, but don't establish that the content is effective.
+ - Include important remaining uncertainty and explain any barriers to testing it. Distinguish "not tested yet" from "cannot be tested"; don't invent a reason or imply impossibility.
+ 
+ The connection between the evidence and the intended outcome should be clear from the wording. It doesn't need a separate justification after every bullet.
+ 
+-## Content
++### Content
+ 
+ - Distinguish updated tests, added tests, and relevant existing coverage. Use short bullets; omit categories that don't apply.
+ - Describe what each test or other check verifies. Name the inputs or API when needed to make the claim clear: incorrect reducer arguments, generated bindings, or the built package.
+@@ -23,7 +38,7 @@ The connection between the evidence and the intended outcome should be clear fro
+ - Label manual verification as manual and state what was checked and the result.
+ - Keep caveats focused on gaps that affect confidence in the change, not a routine list of what tests don't do.
+ 
+-## Wording and detail
++### Wording and detail
+ 
+ Brevity comes from removing unnecessary detail, not replacing concrete information with vague labels.
+ 
+@@ -34,7 +49,7 @@ Brevity comes from removing unnecessary detail, not replacing concrete informati
+ - Omit routine mechanics, commands, counts, and assertion details unless they materially help the reviewer.
+ - Scale the section to the change. Don't turn it into an inventory of every assertion or an explicit question-and-answer checklist.
+ 
+-## Wording examples
++### Wording examples
+ 
+ | Vague or misleading | Concrete |
+ | --- | --- |
+@@ -45,7 +60,7 @@ Brevity comes from removing unnecessary detail, not replacing concrete informati
+ | Package and browser checks. | Tests that the new declaration API works with ESM and CommonJS imports and browser builds. |
+ | End-to-end coverage. | Existing integration tests connect to a server, subscribe, call reducers, and check received rows. |
+ 
+-## Example: generated bindings
++### Example: generated bindings
+ 
+ Updated:
+ 
 ```
 
-**File**: `crates/smoketests/tests/cluster/delete_database.rs` (modified, +53/-0)
+**File**: `AGENTS.md` (modified, +2/-2)
 ```diff
-@@ -90,3 +90,56 @@ fn test_delete_database_yes_skips_confirmation() {
-     let result = test.spacetime(&["logs", "--server", &test.server_url, &name]);
-     assert!(result.is_err(), "expected database to be deleted");
- }
-+
-+#[test]
-+fn test_deleted_database_name_requires_owner() {
-+    let mut test = Smoketest::builder()
-+        .precompiled_module("modules-basic")
-+        .autopublish(false)
-+        .build();
-+    test.new_identity().unwrap();
-+    let owner_token = test.read_token().unwrap();
-+    let name = format!("delete-republish-{}", std::process::id());
-+    let previous = test.publish().name(&name).run().unwrap();
-+    assert_eq!(
-+        test.api_call("DELETE", &format!("/v1/database/{previous}"))
-+            .unwrap()
-+            .status_code,
-+        200
-+    );
-+    assert_eq!(
-+        test.api_call("GET", &format!("/v1/database/{previous}"))
-+            .unwrap()
-+            .status_code,
-+        404
-+    );
-+    assert_eq!(
-+        test.api_call("GET", &format!("/v1/database/{name}/identity"))
-+            .unwrap()
-+            .status_code,
-+        200
-+    );
-+
-+    test.new_identity().unwrap();
-+    // Establish that this account can publish, then check the retained reservation.
-+    let other = test.publish().run().unwrap();
-+    assert_eq!(
-+        test.api_call("DELETE", &format!("/v1/database/{other}"))
-+            .unwrap()
-+            .status_code,
-+        200
-+    );
-+    assert!(test.publish().name(&name).run().is_err());
-+    assert_eq!(
-+        test.api_call("GET", &format!("/v1/database/{previous}"))
-+            .unwrap()
-+            .status_code,
-+        404
-+    );
-+
-+    test.login_with_token(&owner_token).unwrap();
-+    let replacement = test.publish().name(&name).run().unwrap();
-+    assert_eq!(replacement, previous);
-+    test.call("say_hello", &[]).unwrap();
-+    assert!(test.logs(100).unwrap().iter().any(|line| line.contains("World")));
-+}
+@@ -14,6 +14,6 @@ A path's review tier comes from the nearest `.deep` marker in its directory or a
+ 
+ These markers are provisional, and CI does not check any of this yet.
+ 
+-# PR testing sections
++# Writing PRs
+ 
+-When writing or updating a PR's testing section, read [Writing testing sections](.agents/testing-sections.md). Explain what verification supports confidence that the change works as intended, and identify important remaining uncertainty.
++When creating or updating a PR, read [Writing pull requests](.agents/writing-prs.md). Follow its requirements for verified commits, preserving and faithfully completing every template section, and explaining verification and remaining uncertainty.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6557** (2026-11-11): Expand agent guidance for writing pull requests (@bfops)
+- **PR #6552** (2026-11-11): Disable Nagle's algorithm in the Rust SDK (@JulienLavocat)
+- **PR #6551** (closed): fix: update pgwire 0.42.2 (@sunng87)
+- **PR #6550** (2026-11-11): Tiered storage metrics (@joshua-spacetime)
 - **PR #6548** (2026-11-10): Bump version to 2.16.0 (@rekhoff)
 - **PR #6547** (2026-11-10): Fix database name publication (@bfops)
-- **PR #6532** (2026-11-10): Use tx state blob set for view refresh (@kim)
-- **PR #6528** (2026-11-09): Remove the deprecated write-nuget-config.sh (@cloutiertyler)
-- **PR #6524** (2026-11-06): Document editing data and calling reducers in the Maincloud dashboard (@cloutiertyler)
-- **PR #6516** (closed): [Do not merge] Test docs-only CI skipping from #6515 (@cloutiertyler)
 
 ---
 
@@ -1289,42 +1052,39 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. LLM benchmark health-check timeouts and C# references (#6408)
+## X. TypeScript SDK crash on React Native with automatic reconnect (#6511)
 
 **RULE**:
-When implementing operations in `.github/workflows/llm-benchmark-periodic.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/bindings-typescript/src/sdk/db_connection_impl.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e49c074e`: LLM benchmark health-check timeouts and C# references (#6408). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0863eb48`: TypeScript SDK crash on React Native with automatic reconnect (#6511). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/llm-benchmark-periodic.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/sdk/db_connection_impl.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    timeout-minutes: 1440
-          # Bound in-flight provider credit reservations across the three language jobs.
-          LLM_BENCH_CSHARP_CONCURRENCY: "4"
-          LLM_BENCH_ROUTE_CONCURRENCY: "1"
-          LLM_BENCHMARK_DIAGNOSTICS_DIR: ${{ runner.temp }}/llm-benchmark-diagnostics
-      - name: Upload server diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: llm-benchmark-diagnostics-${{ matrix.lang }}
-          path: ${{ runner.temp }}/llm-benchmark-diagnostics
-          if-no-files-found: ignore
-          retention-days: 14
-
+    // React Native defines `window` without the DOM event API.
+    const hasEvents = (target: unknown): boolean =>
+      typeof (target as EventTarget | undefined)?.addEventListener ===
+        'function' &&
+      typeof (target as EventTarget).removeEventListener === 'function';
+    const doc =
+      typeof document !== 'undefined' && hasEvents(document)
+        ? document
+        : undefined;
+    const win =
+      typeof window !== 'undefined' && hasEvents(window) ? window : undefined;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-          LLM_BENCH_CSHARP_CONCURRENCY: "2"
-          LLM_BENCH_ROUTE_CONCURRENCY: ${{ matrix.lang == 'typescript' && '4' || matrix.lang == 'csharp' && '1' || '2' }}
+    const doc = typeof document !== 'undefined' ? document : undefined;
+    const win = typeof window !== 'undefined' ? window : undefined;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e49c074e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0863eb48` are properly handled with clean fallback behavior.

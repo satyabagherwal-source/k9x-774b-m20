@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mswjs-msw-learnings.md`  
 > **Source**: github ([https://github.com/mswjs/msw](https://github.com/mswjs/msw))  
-> **Source Version**: `9bbfe99c`  
+> **Source Version**: `ec5e8777`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T22:16:03.486Z  
+> **Timestamp**: 2026-11-12T15:33:44.763Z  
 > **Learning ID**: `learn-github-mswjs-msw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mswjs-msw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mswjs/msw](https://github.com/mswjs/msw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T22:16:03.279Z  
+> **Harvest Timestamp**: 2026-11-12T15:33:44.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The industry standard for API mocking in JavaScript.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 18338 stars
+- **Stars / Engagement**: 18348 stars
 
 ---
 
@@ -825,388 +825,367 @@ export function supportsReadableStreamTransfer() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6dd13026` (2026-11-05)
-**Commit Message**: fix(worker): prevent the worker from going idle (#2830)
+### Incident Patch 1: `589c5cfc` (2026-11-10)
+**Commit Message**: fix: update `@mswjs/interceptors` to 0.45.11
 
-**File**: `src/mockServiceWorker.js` (modified, +150/-10)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -10,13 +10,34 @@
- const PACKAGE_VERSION = '<PACKAGE_VERSION>'
- const INTEGRITY_CHECKSUM = '<INTEGRITY_CHECKSUM>'
- const IS_MOCKED_RESPONSE = Symbol('isMockedResponse')
-+// Cache Storage is shared by the whole origin. Scope the cache name
-+// to this registration so multiple workers do not overwrite each other.
-+const ACTIVE_CLIENTS_CACHE_NAME = `msw:active-clients:${self.registration.scope}`
-+const ACTIVE_CLIENTS_CACHE_KEY = '/__msw__/active-clients'
- 
- const activeClientIds = new Set()
- /**
-  * @type {Map<string, Set<Promise<Response>>>}
-  */
- const pendingRequests = new Map()
- 
-+/**
-+ * The browser may terminate this worker at any point (idle timeout,
-+ * hidden page throttling, event timeout) and evaluate it again on the
-+ * next event, losing all in-memory state. Restore the active client IDs
-+ * from the storage so the worker keeps handling requests after that.
-+ */
-+let hasRestoredActiveClientIds = false
-+let isStoredActiveClientIdsOutdated = false
-+let activeClientIdsStorePromise = Promise.resolve()
-+const activeClientIdsRestorePromise = restoreActiveClientIds()
-+  .catch((error) => {
-+    console.error('[MSW] Failed to restore the active clients:', error)
-+  })
-+  .finally(() => {
-+    hasRestoredActiveClientIds = true
-+  })
-+
- addEventListener('install', function () {
-   self.skipWaiting()
- })
-@@ -34,12 +55,17 @@ addEventListener('message', function (event) {
- 
-   event.waitUntil(
-     (async () => {
-+      // Never mutate the active clients before they are restored,
-+      // otherwise storing them would persist an incomplete set.
-+      await activeClientIdsRestorePromise
-+
-       if (event.data === 'CLIENT_CLOSE') {
-         const allClients = await self.clients.matchAll({
-           type: 'window',
-         })
- 
-         activeClientIds.delete(clientId)
-+        await storeActiveClientIds()
- 
-         // Await any pending requests from the closing client.
-         // This makes sure that those requests are handled and not passthrough.
-@@ -55,13 +81,14 @@ addEventListener('message', function (event) {
- 
-         // Unregister itself when there are no more clients
-         if (remainingClients.length === 0) {
-+          await clearStoredActiveClientIds()
-           await self.registration.unregister()
-         }
- 
-         const client = await self.clients.get(clientId)
- 
-         if (client != null) {
--          await sendToClient(client, {
-+          notifyClient(client, {
-             type: 'CLIENT_CLOSED',
-           })
-         }
-@@ -83,14 +110,20 @@ addEventListener('message', function (event) {
- 
-       switch (event.data) {
-         case 'KEEPALIVE_REQUEST': {
--          await sendToClient(client, {
-+          // Retry a failed store on the next keepalive so the storage
-+          // catches up with the in-memory state before the worker restarts.
-+          if (isStoredActiveClientIdsOutdated) {
-+            await storeActiveClientIds()
-+          }
-+
-+          notifyClient(client, {
-             type: 'KEEPALIVE_RESPONSE',
-           })
-           break
-         }
- 
-         case 'INTEGRITY_CHECK_REQUEST': {
--          await sendToClient(client, {
-+          notifyClient(client, {
-             type: 'INTEGRITY_CHECK_RESPONSE',
-             payload: {
-               packageVersion: PACKAGE_VERSION,
-@@ -102,8 +135,9 @@ addEventListener('message', function (event) {
- 
-         case 'MOCK_ACTIVATE': {
-           activeClientIds.add(clientId)
-+          await storeActiveClientIds()
- 
--          await sendToClient(client, {
-+          notifyClient(client, {
-             type: 'MOCKING_ENABLED',
-             payload: {
-               client: {
-@@ -129,22 +163,108 @@ addEventListener('fetch', function (event) {
-     return
-   }
- 
-+  // This request may be the one waking the worker up after the browser
-+  // has terminated it. Wait for the active clients to be restored
-+  // before deciding whether to handle the request.
-+  if (!hasRestoredActiveClientIds) {
-+    event.respondWith(
-+      activeClientIdsRestorePromise.then(() => {
-+        if (activeClientIds.size === 0) {
-+          return fetch(event.request)
-+        }
-+
-+        return handleRequest(event)
-+      }),
-+    )
-+    return
-+  }
-+
-   // Bypass all requests when there are no active clients.
-   // Prevents the self-unregistered worked from handling requests
-   // after it's been terminated (still remains active until the next reload).
-   if (activeClientIds.size === 0) {
-     return
-   }
- 
--  const requestId = crypto.randomUUID()
--  event.respondWith(handleRequest(event, requestId))
-+  event.respondWith(handleRequest(event))
- })
- 
-+/**
-+ * Populate the active client IDs from the storage,
-+ * ignoring the clients that no longer exist.
-+ */
-+async function restoreActiveClientIds() {
-+  const storedClientIds = await readStoredActiveClientIds()
-+
-+  if (storedClientIds.length === 0) {
-+    return
-+  }
-+
-+  const windowClients = await self.clients.matchAll({
-+    type: 'window',
-+  })
-+  const windowClientIds = new Set(windowClients.
+@@ -139,7 +139,7 @@
+   "dependencies": {
+     "@inquirer/confirm": "^6.0.11",
+     "@msw/url": "^0.1.2",
+-    "@mswjs/interceptors": "^0.45.6",
++    "@mswjs/interceptors": "^0.45.11",
+     "cookie": "^2.0.1",
+     "headers-polyfill": "^5.0.1",
+     "is-node-process": "^1.2.0",
 ```
 
-**File**: `test/msw-api/setup-worker/worker-termination.pw.test.ts` (added, +28/-0)
+**File**: `pnpm-lock.yaml` (modified, +29/-5)
 ```diff
-@@ -0,0 +1,28 @@
-+import { inlineModule, test, expect } from '../../setup/playwright'
-+
-+const example = inlineModule(({ http, HttpResponse, setupWorker }) => {
-+  const worker = setupWorker(
-+    http.get('*/resource', () => {
-+      return HttpResponse.json({ mocked: true })
-+    }),
-+  )
-+  worker.start()
-+})
-+
-+test('keeps handling requests after the browser terminates the worker', async ({
-+  loadExample,
-+  page,
-+  fetch,
-+}) => {
-+  await loadExample(example)
-+
-+  const session = await page.context().newCDPSession(page)
-+  await session.send('ServiceWorker.enable')
-+  await session.send('ServiceWorker.stopAllWorkers')
-+  await session.detach()
-+
-+  const response = await fetch('/resource')
-+
-+  expect(response.fromServiceWorker()).toBe(true)
-+  await expect(response.json()).resolves.toEqual({ mocked: true })
-+})
+@@ -15,8 +15,8 @@ importers:
+         specifier: ^0.1.2
+         version: 0.1.2
+       '@mswjs/interceptors':
+-        specifier: ^0.45.6
+-        version: 0.45.6(supports-color@8.1.1)
++        specifier: ^0.45.11
++        version: 0.45.11(supports-color@8.1.1)
+       cookie:
+         specifier: ^2.0.1
+         version: 2.0.1
+@@ -658,8 +658,8 @@ packages:
+   '@msw/url@0.1.2':
+     resolution: {integrity: sha512-DdeBLQxQ+ZrtmwEmaj7GQ7lbzPCgbbbyAqOz/I4ulo68hwBpfdNvQJ5bmihJUkAAKOeCmqCIG3OFZGosqFN4mA==}
+ 
+-  '@mswjs/interceptors@0.45.6':
+-    resolution: {integrity: sha512-qdBK6aOT5Qjt+cmU/XcobZjjmrIsdiQRR6hA0LP72uB7CRx+XfAjm8Opvgia8nX9kPOKqp+BKHuzMa1IFPTvyg==}
++  '@mswjs/interceptors@0.45.11':
++    resolution: {integrity: sha512-+ISPERIRIHhSVnFQRGCP9jDJXxn0/z2+pWWbXUym6JUfpUCRW2Pvro4P9RBKGYUKTKAULszKurKMTQIsaJUIgQ==}
+     engines: {node: '>=22'}
+ 
+   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
+@@ -1734,133 +1734,157 @@ packages:
+     resolution: {integrity: sha512-Oc2KInVkPfUjEB4PeV6X0NvIoyYTzDe/WmqFrTwBqKs6YKnz4A7XwWQvJTb7M0rLz9a6WgpUUiiS5QKaCi4O/g==}
+     cpu: [arm64]
+     os: [android]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-darwin-arm64@0.10.2':
+     resolution: {integrity: sha512-3H7eNPIHJndUJXZ4QUGBPq1zC6RGcUZfm7bymJes+/N7wTVWUn1bxZ9JcozYHpkWQNm9f23G8YWbaHD9aYH72A==}
+     cpu: [arm64]
+     os: [darwin]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-darwin-x64@0.10.2':
+     resolution: {integrity: sha512-AJOUpR2s3LF9AWiiub/Uyc/UoXNTWcq8hK3cVI6fUSXtwh34dG21J6hRuNlO6JVJFTo4o3ScVvZOrh/YFfUEAA==}
+     cpu: [x64]
+     os: [darwin]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-freebsd-x64@0.10.2':
+     resolution: {integrity: sha512-ms7DcZu87u5CiK/wMwvpKAvAmtaqKjCQIXNweMLypG6qbuiaOMQf1jpbB5+j46xBcgCovo8TQMcv0bCQLKIL9w==}
+     cpu: [x64]
+     os: [freebsd]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm-gnu@0.10.2':
+     resolution: {integrity: sha512-xJDpYAsKV5+eaiBhTYl05fvT6sst4PsCeuIFMRu9b0/WCSrNQPfCDtAQ5/MS6xNpsdujdZEPR+gmfWk3ZG5i3A==}
+     cpu: [arm]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm-musl@0.10.2':
+     resolution: {integrity: sha512-qfTkgd7AEx61l4K9VtXWCGTxc/fmXJ4ZheDz3i+/AAJUtg4sa0bPrc0VBxPggB/rayR8Z3+JfrBItuyanBJJ9Q==}
+     cpu: [arm]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm64-gnu@0.10.2':
+     resolution: {integrity: sha512-4e6Mifm/4UdjtU3D8mATIrvgP+xEiH8xtQOjd0zpd72XKWT7ug3sdyhq2utkkZFP6BvYp7SgZrI+aR4VeIOHdw==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-arm64-musl@0.10.2':
+     resolution: {integrity: sha512-RdsJrUfDYFVV3JOmWFUWwSu31fa1APn12xDeIKxgl/YWxrabwtxsDBNjF2561c7tmcbiewdCUvngqRs8AyGVLA==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-x64-gnu@0.10.2':
+     resolution: {integrity: sha512-mVzWimEPPreaPyXIUvxsHoJzvO7ckZ5j0LgQFHz04zQIRwt9A9T2hA7K5/jYjJKkMxWG/U2VjhGNwVhtyU+uqg==}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-linux-x64-musl@0.10.2':
+     resolution: {integrity: sha512-Y77fyISurmr2mvO1yeq3u+x/WJbACgPR4w+lzEVx30ViCxZzIGrZPRN1yEdZ9xUNPNsIO5thBHIdRNG+UGUG+Q==}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-win32-arm64@0.10.2':
+     resolution: {integrity: sha512-1+tGLyG0u5YYy0lev4ck7/0sd8xJ9SZde0dLut7qLDPZV5WVTV8x6OxNXUne/PGuHZyO1vK+txPQzzHOyXHGSw==}
+     cpu: [arm64]
+     os: [win32]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-codegen/binding-win32-x64@0.10.2':
+     resolution: {integrity: sha512-8a2SExRohRbwC0MY4VpOF0/RSckrJ2ASZqAor5/RYSJJaeadR93n10gZzcKT6pY9ukiSOIZCRKVRD2tH73T0qA==}
+     cpu: [x64]
+     os: [win32]
++    deprecated: yuku-codegen is pure JavaScript since 0.14
+ 
+   '@yuku-parser/binding-android-arm64@0.10.2':
+     resolution: {integrity: sha512-2VPBU9fRGRAQ2xPAvghnec3oou5Nrxm2Bezhf+13UMspAxQSkF/32r+ySKXSwIPA5/RivumDJDxAxc301Sgicw==}
+     cpu: [arm64]
+     os: [android]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-darwin-arm64@0.10.2':
+     resolution: {integrity: sha512-LD+PMZE51tCYTOss5HBkm3/AE39MvcMDBfWJx7A4yDcjfNbAQDnHZKtzSOuqrswx+TQHY0ws5xn6+fWOwtmfBA==}
+     cpu: [arm64]
+     os: [darwin]
++    deprecated: yuku-parser runs on yuku-core since 0.14
+ 
+   '@yuku-parser/binding-darwin-x64@0.10.2':
+     resolution: {integrity: sha512-mmZ8cND+AoIIMRERyMinlg5ApHxP23B9jH2B5wT7T+dliPa9rubLxneB/SUjFwyUjGaFnB5G7t4YvpfbO5zbkQ==}
+     cpu: [x64]
+     os: [darwin]
++    depr
 ```
 
 ---
 
-### Incident Patch 2: `ebffbd4c` (2026-11-05)
-**Commit Message**: fix(isCommonAssetRequest): add `ico` to common assets (#2829)
+### Incident Patch 2: `8719ce23` (2026-11-10)
+**Commit Message**: fix: add `handler` to the "request:match" event (#2834)
 
-**File**: `src/utils/is-common-asset-request.test.ts` (added, +371/-0)
+**File**: `src/core/experimental/frames/http-frame.test.ts` (modified, +14/-18)
 ```diff
-@@ -0,0 +1,371 @@
-+// @vitest-environment node
-+import { isCommonAssetRequest } from './is-common-asset-request'
-+
-+test('treats requests over the "file:" protocol as common assets', () => {
-+  expect(
-+    isCommonAssetRequest(new Request('file:///Users/me/app/index.js')),
-+  ).toBe(true)
-+  expect(isCommonAssetRequest(new Request('file:///Users/me/app/data'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('file:///etc/hosts'))).toBe(true)
-+})
-+
-+test('does not treat requests over other protocols as common assets by default', () => {
-+  expect(isCommonAssetRequest(new Request('http://localhost/api/user'))).toBe(
-+    false,
-+  )
-+  expect(isCommonAssetRequest(new Request('https://localhost/api/user'))).toBe(
-+    false,
-+  )
-+  expect(isCommonAssetRequest(new Request('ftp://localhost/api/user'))).toBe(
-+    false,
-+  )
-+})
-+
-+test('treats requests to Google Fonts as common assets', () => {
-+  expect(
-+    isCommonAssetRequest(
-+      new Request('https://fonts.googleapis.com/css2?family=Inter'),
-+    ),
-+  ).toBe(true)
-+  expect(
-+    isCommonAssetRequest(new Request('https://fonts.googleapis.com/')),
-+  ).toBe(true)
-+  expect(
-+    isCommonAssetRequest(new Request('http://fonts.googleapis.com/icon')),
-+  ).toBe(true)
-+})
-+
-+test('does not treat requests to other Google hosts as common assets', () => {
-+  expect(
-+    isCommonAssetRequest(new Request('https://www.googleapis.com/oauth2/v1')),
-+  ).toBe(false)
-+  expect(
-+    isCommonAssetRequest(new Request('https://fonts.gstatic.com/resource')),
-+  ).toBe(false)
-+})
-+
-+test('treats requests to node modules served over HTTP as common assets', () => {
-+  expect(
-+    isCommonAssetRequest(
-+      new Request('http://localhost:3000/node_modules/react/index.js'),
-+    ),
-+  ).toBe(true)
-+  expect(
-+    isCommonAssetRequest(
-+      new Request('http://localhost:3000/node_modules/.vite/deps/react.js'),
-+    ),
-+  ).toBe(true)
-+  expect(
-+    isCommonAssetRequest(
-+      new Request('http://localhost:3000/packages/app/node_modules/lodash'),
-+    ),
-+  ).toBe(true)
-+})
-+
-+test('does not treat node modules in the hostname as common assets', () => {
-+  expect(
-+    isCommonAssetRequest(new Request('http://node_modules.example.com/api')),
-+  ).toBe(false)
-+})
-+
-+test('does not treat node modules in the query as common assets', () => {
-+  expect(
-+    isCommonAssetRequest(
-+      new Request('http://localhost/api?path=node_modules/react'),
-+    ),
-+  ).toBe(false)
-+})
-+
-+test('treats internal Vite requests as common assets', () => {
-+  expect(
-+    isCommonAssetRequest(new Request('http://localhost:5173/@vite/client')),
-+  ).toBe(true)
-+  expect(
-+    isCommonAssetRequest(new Request('http://localhost:5173/@vite/env')),
-+  ).toBe(true)
-+  expect(
-+    isCommonAssetRequest(
-+      new Request('http://localhost:5173/@vite-plugin-react/preamble'),
-+    ),
-+  ).toBe(true)
-+})
-+
-+test('does not treat Vite mentions in the query as common assets', () => {
-+  expect(
-+    isCommonAssetRequest(new Request('http://localhost/api?source=@vite')),
-+  ).toBe(false)
-+})
-+
-+test('treats stylesheet requests as common assets', () => {
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.css'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.scss'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.less'))).toBe(
-+    true,
-+  )
-+})
-+
-+test('treats script requests as common assets', () => {
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.js'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.mjs'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.jsx'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.ts'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.mts'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/main.tsx'))).toBe(
-+    true,
-+  )
-+})
-+
-+test('treats HTML document requests as common assets', () => {
-+  expect(isCommonAssetRequest(new Request('http://localhost/index.html'))).toBe(
-+    true,
-+  )
-+})
-+
-+test('treats font requests as common assets', () => {
-+  expect(isCommonAssetRequest(new Request('http://localhost/font.ttf'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/font.otf'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/font.woff'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/font.woff2'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/font.eot'))).toBe(
-+    true,
-+  )
-+})
-+
-+test('treats image requests as common assets', () => {
-+  expect(isCommonAssetRequest(new Request('http://localhost/image.gif'))).toBe(
-+    true,
-+  )
-+  expect(isCommonAssetRequest(new Request('http://localhost/image.jpg'
+@@ -81,15 +81,12 @@ test('resolves a matching request', async () => {
+   const { events } = spyOnNetworkFrame(frame)
+   const unhandledFrameCallback = vi.fn()
+ 
+-  const matches = await frame.resolve(
+-    [
+-      http.get('http://localhost/api', () => {
+-        return new Response(null, { status: 204 })
+-      }),
+-    ],
+-    unhandledFrameCallback,
+-    { quiet: true },
+-  )
++  const handler = http.get('http://localhost/api', () => {
++    return new Response(null, { status: 204 })
++  })
++  const matches = await frame.resolve([handler], unhandledFrameCallback, {
++    quiet: true,
++  })
+ 
+   expect.soft(matches).toBe(true)
+   expect.soft(frame.respondWith).toHaveBeenCalledExactlyOnceWith(
+@@ -110,6 +107,7 @@ test('resolves a matching request', async () => {
+       type: 'request:match',
+       requestId: frame.data.id,
+       request: frame.data.request,
++      handler,
+     }),
+     expect.objectContaining({
+       type: 'request:end',
+@@ -231,15 +229,12 @@ test('resolves a matched passthrough', async () => {
+   const { events } = spyOnNetworkFrame(frame)
+   const unhandledFrameCallback = vi.fn()
+ 
+-  const matches = await frame.resolve(
+-    [
+-      http.get('http://localhost/api', () => {
+-        // Intentionally do nothing to passthrough.
+-      }),
+-    ],
+-    unhandledFrameCallback,
+-    { quiet: true },
+-  )
++  const handler = http.get('http://localhost/api', () => {
++    // Intentionally do nothing to passthrough.
++  })
++  const matches = await frame.resolve([handler], unhandledFrameCallback, {
++    quiet: true,
++  })
+ 
+   expect.soft(matches).toBeNull()
+   expect.soft(frame.passthrough).toHaveBeenCalledOnce()
+@@ -256,6 +251,7 @@ test('resolves a matched passthrough', async () => {
+       type: 'request:match',
+       requestId: frame.data.id,
+       request: frame.data.request,
++      handler,
+     }),
+     expect.objectContaining({
+       type: 'request:end',
 ```
 
-**File**: `src/utils/is-common-asset-request.ts` (modified, +1/-1)
+**File**: `src/core/experimental/frames/http-frame.ts` (modified, +28/-2)
 ```diff
-@@ -40,7 +40,7 @@ export function isCommonAssetRequest(request: Request): boolean {
+@@ -43,6 +43,31 @@ class RequestEvent<
    }
- 
-   // Ignore common static assets.
--  return /\.(s?css|less|m?jsx?|m?tsx?|html|ttf|otf|woff|woff2|eot|gif|jpe?g|png|avif|webp|svg|mp4|webm|ogg|mov|mp3|wav|ogg|flac|aac|pdf|txt|csv|json|xml|md|zip|tar|gz|rar|7z)$/i.test(
-+  return /\.(s?css|less|m?jsx?|m?tsx?|html|ttf|otf|woff|woff2|eot|gif|jpe?g|png|avif|webp|ico|svg|mp4|webm|ogg|mov|mp3|wav|ogg|flac|aac|pdf|txt|csv|json|xml|md|zip|tar|gz|rar|7z)$/i.test(
-     url.pathname,
-   )
  }
+ 
++class RequestMatchEvent<
++  DataType extends {
++    requestId: string
++    request: Request
++    handler: RequestHandler
++  } = {
++    requestId: string
++    request: Request
++    handler: RequestHandler
++  },
++  ReturnType = void,
++  EventType extends string = string,
++> extends TypedEvent<DataType, ReturnType, EventType> {
++  public readonly requestId: string
++  public readonly request: Request
++  public readonly handler: RequestHandler
++
++  constructor(type: EventType, data: DataType) {
++    super(...([type, {}] as any))
++    this.requestId = data.requestId
++    this.request = data.request
++    this.handler = data.handler
++  }
++}
++
+ export class ResponseEvent<
+   DataType extends {
+     requestId: string
+@@ -95,7 +120,7 @@ class UnhandledExceptionEvent<
+ 
+ export type HttpNetworkFrameEventMap = {
+   'request:start': RequestEvent
+-  'request:match': RequestEvent
++  'request:match': RequestMatchEvent
+   'request:unhandled': RequestEvent
+   'request:end': RequestEvent
+   'response:mocked': ResponseEvent
+@@ -239,9 +264,10 @@ export abstract class HttpNetworkFrame extends NetworkFrame<
+     const { response, handler, parsedResult } = lookupResult
+ 
+     this.events.emit(
+-      new RequestEvent('request:match', {
++      new RequestMatchEvent('request:match', {
+         requestId,
+         request,
++        handler,
+       }),
+     )
+ 
+```
+
+**File**: `test/msw-api/setup-server/life-cycle-events/on.node.test.ts` (modified, +12/-10)
+```diff
+@@ -53,11 +53,11 @@ test('emits events for a handled request and mocked response', async () => {
+     },
+   })
+   const url = httpServer.http.url('/user').href
+-  server.use(
+-    http.get(url, () => {
+-      return HttpResponse.text('response-body')
+-    }),
+-  )
++  const handler = http.get(url, () => {
++    return HttpResponse.text('response-body')
++  })
++
++  server.use(handler)
+ 
+   const listener = spyOnEvents(server)
+   await fetch(url)
+@@ -85,6 +85,7 @@ test('emits events for a handled request and mocked response', async () => {
+         url,
+       }),
+       requestId,
++      handler,
+     }),
+   )
+   expect(listener).toHaveBeenNthCalledWith(
+@@ -128,11 +129,11 @@ test('emits events for a handled request with no response', async () => {
+     },
+   })
+   const url = httpServer.http.url('/no-response').href
+-  server.use(
+-    http.post(url, () => {
+-      return
+-    }),
+-  )
++  const handler = http.post(url, () => {
++    return
++  })
++
++  server.use(handler)
+ 
+   const listener = spyOnEvents(server)
+   await fetch(url, { method: 'POST' })
+@@ -160,6 +161,7 @@ test('emits events for a handled request with no response', async () => {
+         url,
+       }),
+       requestId,
++      handler,
+     }),
+   )
+   expect(listener).toHaveBeenNthCalledWith(
+```
+
+**File**: `test/typings/life-cycle-events.test-d.ts` (modified, +11/-2)
+```diff
+@@ -1,5 +1,6 @@
+ import { setupServer } from 'msw/node'
+ import { setupWorker } from 'msw/browser'
++import type { RequestHandler } from 'msw'
+ import {
+   type HttpNetworkFrameEventMap,
+   type WebSocketNetworkFrameEventMap,
+@@ -57,7 +58,11 @@ test('annotates event listener argument (node)', () => {
+     expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
+   })
+   server.events.on('request:match', (args) => {
+-    expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
++    expectTypeOf(args).toExtend<{
++      request: Request
++      requestId: string
++      handler: RequestHandler
++    }>()
+   })
+   server.events.on('request:unhandled', (args) => {
+     expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
+@@ -97,7 +102,11 @@ test('annotates event listener argument (browser)', () => {
+     expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
+   })
+   worker.events.on('request:match', (args) => {
+-    expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
++    expectTypeOf(args).toExtend<{
++      request: Request
++      requestId: string
++      handler: RequestHandler
++    }>()
+   })
+   worker.events.on('request:unhandled', (args) => {
+     expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2834** (2026-11-10): fix: add `handler` to the "request:match" event (@kettanaito)
 - **PR #2830** (2026-11-05): fix(worker): prevent the worker from going idle (@kettanaito)
 - **PR #2829** (2026-11-05): fix(isCommonAssetRequest): add `ico` to common assets (@kettanaito)
 - **PR #2819** (2026-10-17): chore: fix the typescript-nightly job to run (@kettanaito)
 - **PR #2810** (2026-10-09): fix(HandlersController): dispose of reset handlers (@kettanaito)
 - **PR #2809** (2026-10-09): fix: expose network context on `enable` in network sources (@kettanaito)
-- **PR #2808** (2026-10-09): test(node): add jsdom cors/preflight regression tests (@kettanaito)
 
 ---
 
@@ -1226,60 +1205,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. worker): prevent the worker from going idle (#2830)
+## X. update `@mswjs/interceptors` to 0.45.11
 
 **RULE**:
-When implementing operations in `src/mockServiceWorker.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mswjs/msw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mswjs/msw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6dd13026`: worker): prevent the worker from going idle (#2830). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `589c5cfc`: update `@mswjs/interceptors` to 0.45.11. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mockServiceWorker.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// Cache Storage is shared by the whole origin. Scope the cache name
-// to this registration so multiple workers do not overwrite each other.
-const ACTIVE_CLIENTS_CACHE_NAME = `msw:active-clients:${self.registration.scope}`
-const ACTIVE_CLIENTS_CACHE_KEY = '/__msw__/active-clients'
-/**
- * The browser may terminate this worker at any point (idle timeout,
- * hidden page throttling, event timeout) and evaluate it again on the
- * next event, losing all in-memory state. Restore the active client IDs
- * from the storage so the worker keeps handling requests after that.
- */
-let hasRestoredActiveClientIds = false
-let isStoredActiveClientIdsOutdated = false
-let activeClientIdsStorePromise = Promise.resolve()
-const activeClientIdsRestorePromise = restoreActiveClientIds()
-  .catch((error) => {
-    console.error('[MSW] Failed to restore the active clients:', error)
-  })
-  .finally(() => {
-    hasRestoredActiveClientIds = true
-  })
-
-      // Never mutate the active clients before they are restored,
-      // otherwise storing them would persist an incomplete set.
-      await activeClientIdsRestorePromise
-
-        await storeActiveClientIds()
-          await clearStoredActiveClientIds()
-         
+    "@mswjs/interceptors": "^0.45.11",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-          await sendToClient(client, {
-          await sendToClient(client, {
-          await sendToClient(client, {
-          await sendToClient(client, {
-  const requestId = crypto.randomUUID()
-  event.respondWith(handleRequest(event, requestId))
+    "@mswjs/interceptors": "^0.45.6",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6dd13026` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `589c5cfc` are properly handled with clean fallback behavior.

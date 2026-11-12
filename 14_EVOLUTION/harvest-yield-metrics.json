@@ -1,94 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T14:31:52.529Z",
-  "total_cycles_completed": 9005,
-  "total_learnings_persisted": 9005,
-  "total_rules_promoted": 8847,
+  "last_updated": "2026-11-12T15:34:12.035Z",
+  "total_cycles_completed": 9017,
+  "total_learnings_persisted": 9017,
+  "total_rules_promoted": 8858,
   "history": [
-    {
-      "timestamp": "2026-11-11T14:43:51.381Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T14:56:37.856Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T14:56:47.114Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T14:56:51.604Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T15:27:24.511Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T15:27:48.621Z",
-      "repository": "arkivanov/Decompose",
-      "learningId": "learn-github-arkivanov-decompose",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:06:52.781Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:06:52.972Z",
-      "repository": "flux-iac/tofu-controller",
-      "learningId": "learn-github-flux-iac-tofu-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:11:47.634Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:20:38.469Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:20:44.067Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-11T16:35:51.617Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T16:35:58.447Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1318,90 @@
       "timestamp": "2026-11-12T14:31:52.529Z",
       "repository": "QwikDev/qwik",
       "learningId": "learn-github-qwikdev-qwik",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:44:44.099Z",
+      "repository": "vitest-dev/vitest",
+      "learningId": "learn-github-vitest-dev-vitest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:44:54.869Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:59:49.323Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:59:50.302Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T14:59:57.056Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:04:38.669Z",
+      "repository": "tonhowtf/omniget",
+      "learningId": "learn-github-tonhowtf-omniget",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:17:31.140Z",
+      "repository": "webdriverio/webdriverio",
+      "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:25:09.795Z",
+      "repository": "DevExpress/testcafe",
+      "learningId": "learn-github-devexpress-testcafe",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:25:30.858Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:33:58.758Z",
+      "repository": "mswjs/msw",
+      "learningId": "learn-github-mswjs-msw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:34:10.608Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T15:34:12.035Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

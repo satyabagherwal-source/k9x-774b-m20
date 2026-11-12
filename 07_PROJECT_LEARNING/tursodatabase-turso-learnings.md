@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `9833b0f7`  
+> **Source Version**: `444dc948`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T06:33:24.674Z  
+> **Timestamp**: 2026-11-12T14:59:38.423Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T06:33:24.652Z  
+> **Harvest Timestamp**: 2026-11-12T14:59:38.411Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25214 stars
+- **Stars / Engagement**: 25232 stars
 
 ---
 
@@ -56,7 +56,9 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use std::sync::Arc;
 use std::time::Duration;
 use tempfile::TempDir;
-use turso_core::{ConnectOpts, Connection, Database, PlatformIO, Statement, StepResult, Value};
+use turso_core::{
+    ConnectOpts, Connection, Database, PlatformIO, SessionRole, Statement, StepResult, Value,
+};
 use turso_sqlite::SqliteDialect;
 
 #[cfg(not(target_family = "wasm"))]
@@ -77,7 +79,9 @@ fn seed_db() -> Fixture {
     #[allow(clippy::arc_with_non_send_sync)]
     let io = Arc::new(PlatformIO::new().unwrap());
     let db = Database::open_file(io, path.to_str().unwrap(), Arc::new(SqliteDialect)).unwrap();
-    let conn = db.connect(ConnectOpts::new()).unwrap();
+    let conn = db
+        .connect(ConnectOpts::new(SessionRole::Superuser))
+        .unwrap();
 
     conn.execute("PRAGMA cache_size=-65536").unwrap(); //negative means kibibytes (https://sqlite.org/pragma.html#pragma_cache_size)
     conn.execute(
@@ -1428,11 +1432,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11656** (2026-11-10): **testing/whopper: keep nextval values from rolled-back BEGIN CONCURRENT**
-  *Symptoms*: The in-process-mvcc-swarm job failed with `sequence went in wrong direction: seq=seq_87168, value=21, watermark=51, increment=5` ([run](https://github.com/tursodatabase/turso/actions/runs/42782544523/job/129717394398)). It reproduces every time with:  ``` SEED=12039184926679051324 cargo run --release -p turso_whopper -- --mode fast --enable-mvcc --swarm ```  The engine is correct here; the simulator's sequence checker has the wrong model. Under MVCC, nextval inside `BEGIN CONCURRENT` writes the sequence in its own inner transaction that commits before nextval returns. A `ROLLBACK` of the outer transaction therefore does not give the values back, as documented in `create-sequence.mdx`. The checker assumed every rollback undoes nextval and dropped those values.  In the failing run, a `CYCLE` sequence (MAXVALUE 76, INCREMENT 5) wrapped from 76 to 1 inside a `BEGIN CONCURRENT` transaction that then rolled back. The checker never saw the wrap. The next value outside a transaction was 21, and the checker compared it with its last-seen value of 51.  The checker now records which transactions were opened with `BEGIN CONCURRENT` and handles their nextval values like values from outside a transaction. Exclusive transactions keep the old handling.  The second commit fixes the sequence design comment in `core/schema.rs`, which said a rollback always undoes the advance. 
+- **Issue #11772** (2026-11-12): **postgres: report reserved role names with SQLSTATE 42939**
+  *Symptoms*: CREATE ROLE with a name that PostgreSQL reserves failed with SQLSTATE 42601 (syntax_error) instead of 42939 (reserved_name).  | Statement | Before | After | |---|---|---| | CREATE ROLE public, CREATE ROLE none | 42601, Invalid statement: role name "none" is reserved | 42939, role name "none" is reserved | | CREATE ROLE current_user and the other role keywords | 42601, Invalid statement: CURRENT_USER cannot be used as a role name here | 42939, CURRENT_USER cannot be used as a role name here | | CREATE ROLE pg_anything | 42601, role name "pg_anything" is reserved | 42939, role name "pg_anything" is reserved |  PostgreSQL's grammar refuses public, none and the role keywords, and pg_query reports these errors with only a message, no SQLSTATE. The parser now recognizes them by their message where it converts pg_query's errors. The translator's own check for the pg_ prefix now carries the SQLSTATE too.  The frontend and the wire server both turned every parser error into a plain parse error, which dropped any SQLSTATE the parser had set. They now share a conversion that keeps it.
 
-- **Issue #11653** (2026-11-10): **testing/sqlancer: build only turso-java dependencies in the image**
-  *Symptoms*: The sqlancer-runner image build has been failing in `cargo chef cook`:  ``` Unable to find libclang: "couldn't find any valid shared libraries matching: ['libclang.so', ...]" ```  `cargo chef cook` built the dependencies of every crate in the workspace. Since the PostgreSQL parser was added, that includes `pg_query`, whose build script runs bindgen and needs libclang. The image ships only the Java binding, so this changes the cook step to build only the dependencies of `turso-java`. That crate doesn't use `pg_query`, so the image doesn't need libclang.
+- **Issue #11770** (2026-11-12): **postgres: refuse renames of objects other than tables and columns with 0A000**
+  *Symptoms*: ALTER ... RENAME is supported only for tables and columns. The translator looked for a relation before it checked what kind of object was being renamed. So renaming any other object failed with SQLSTATE 42601 (syntax_error) and a message that did not say what was wrong.  | Statement | Before | After | |---|---|---| | ALTER ROLE, ALTER SCHEMA, ALTER TYPE ... RENAME | 42601, RENAME missing relation | 0A000, ALTER ROLE ... RENAME is not supported | | ALTER VIEW, ALTER INDEX, ALTER SEQUENCE ... RENAME | 42601, Unsupported RENAME type: ObjectView | 0A000, ALTER VIEW ... RENAME is not supported | | ALTER POLICY ... RENAME | 42601, Unsupported RENAME type: ObjectPolicy | 0A000, ALTER POLICY ... RENAME is not supported | | ALTER TABLE ... RENAME CONSTRAINT | 42601, Unsupported RENAME type: ObjectTabconstraint | 0A000, ALTER TABLE ... RENAME CONSTRAINT is not supported |  Renaming tables and columns does not change.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1449,341 +1453,152 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dcfbe24` (2026-11-10)
-**Commit Message**: core/vdbe: make built-in scalar functions a function of their arguments
+### Incident Patch 1: `ae542a8c` (2026-11-12)
+**Commit Message**: postgres/conformance: test that security_invoker views are refused
 
-exec_scalar_function read and wrote the statement state: it took its arguments
-from state.registers, wrote the result to state.registers[dest], and reached
-for the program and the pager for the connection, the I/O and the clock.
+A view reads its tables as its owner, and views that read as their
+reader are not supported. Test that they fail with 0A000 rather than
+being created as views that read as their owner.
 
-call_builtin_scalar takes the registers that hold the arguments and a
-ScalarFuncContext carrying the connection, the I/O, the statement clock and the
-call site's collation, and returns the value. op_function builds the context
-and stores the result. The helpers only this function used (check_arg_count,
-exec_like_converted, execute_sqlite_version) change with it: check_arg_count
-becomes a function over the arguments.
-
-Every arm keeps its behavior; most changes are mechanical, replacing
-'state.registers[*start_reg + n]' with 'args[n]' and 'set_value(v)' with
-returning v.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `core/dialect/mod.rs` (modified, +11/-1)
+**File**: `postgres/conformance/pg-sqltests/row-security/bypass.sqltest` (modified, +10/-0)
 ```diff
-@@ -22,7 +22,7 @@ use crate::{
-     schema::{BTreeTable, RelationKind, Schema},
-     security::roles::RoleId,
-     vdbe::builder::ProgramBuilder,
--    Connection, Func, LimboError, OpenOptions, Result, Value,
-+    Clock, CollationSeq, Connection, Func, LimboError, OpenOptions, Result, Value, IO,
- };
- use std::{any::Any, sync::Arc};
- use turso_parser::ast::{Cmd, CreateTableBody, Grantee, Privilege, QualifiedName, RoleSpec, Stmt};
-@@ -88,6 +88,16 @@ pub enum NewOwner {
-     Role(RoleSpec),
+@@ -226,6 +226,16 @@ expect {
+     2
  }
  
-+/// What a built-in scalar function may read besides its arguments.
-+pub struct ScalarFuncContext<'a> {
-+    pub connection: &'a Connection,
-+    pub io: &'a dyn IO,
-+    /// The statement's clock: every function of one step sees the same time.
-+    pub clock: &'a dyn Clock,
-+    /// The collation of the call site, for functions that compare arguments.
-+    pub collation: CollationSeq,
++@skip-if postgres "PostgreSQL supports security_invoker views"
++test view-that-reads-as-its-reader-is-not-supported {
++    CREATE TABLE by_invoker_base (id INT);
++    CREATE VIEW by_invoker_view WITH (security_invoker = true) AS SELECT id FROM by_invoker_base;
++}
++@sqlstate 0A000
++expect error {
++    CREATE VIEW ... WITH \(options\) is not supported
 +}
 +
- /// SQL dialect layered on top of the engine.
- ///
- /// Every [`crate::Database`] carries a dialect, supplied explicitly by
-```
-
-**File**: `core/vdbe/execute.rs` (modified, +419/-760)
-```diff
-@@ -3,15 +3,23 @@ use crate::alloc::{
-     TursoTryWithCapacityExt, TursoVecExt,
- };
- use crate::cdc::TURSO_CDC_VERSION_TABLE_NAME;
-+use crate::dialect::ScalarFuncContext;
- use crate::error::SQLITE_CONSTRAINT_UNIQUE;
- use crate::function::{AccumulatorFunc, AlterTableFunc, WindowFunc};
-+use crate::functions::datetime::exec_timediff;
-+use crate::functions::math::{exec_gcd, exec_lcm};
-+use crate::functions::string::{exec_lpad, exec_repeat, exec_rpad};
- use crate::io::TempFile;
- use crate::mvcc::cursor::{MvccCursorType, NextRowidResult};
- use crate::mvcc::database::{
-     BootstrapState, CheckpointReadLockState, CheckpointStateMachine, TxID,
- };
- use crate::mvcc::MvccClock;
- use crate::namespace::{mangle_name, NamespaceId, NamespaceRef};
-+use crate::numeric::decimal::{
-+    bigdecimal_to_blob, blob_to_bigdecimal, check_numeric_limits, format_numeric,
-+    validate_precision_scale,
-+};
- use crate::numeric::decimal::{numeric_from_value, MAX_FRACTION_DIGITS};
- use crate::numeric::Numeric;
- use crate::schema::{
-@@ -96,13 +104,14 @@ use crate::{
-     stats::StatAccum,
-     translate::emitter::TransactionMode,
- };
-+use bigdecimal::Zero;
- use branches::{mark_unlikely, unlikely};
- use either::Either;
- use smallvec::SmallVec;
- use std::any::Any;
-+use std::borrow::Cow;
- use std::str::FromStr;
- use std::{
--    borrow::BorrowMut,
-     cell::Cell,
-     num::NonZero,
-     sync::{atomic::Ordering, Arc},
-@@ -230,26 +239,6 @@ macro_rules! return_if_io {
-     };
- }
- 
--use arg_count::check_arg_count;
--mod arg_count {
--    use crate::LimboError;
--
--    macro_rules! check_arg_count {
--        ($actual:expr, $expected:expr) => {
--            if unlikely($actual != $expected) {
--                return Err(arg_count::wrong_arg_count($expected, $actual));
--            }
--        };
--    }
--    pub(super) use check_arg_count;
--
--    #[cold]
--    #[inline(never)]
--    pub(super) fn wrong_arg_count(expected: usize, actual: usize) -> Box<LimboError> {
--        LimboError::InternalError(format!("expected {expected} argument(s), got {actual}")).into()
--    }
--}
--
- /// Errors are boxed so an op's whole return value stays small: a LimboError
- /// is 40 bytes and would otherwise be copied through memory on every executed
- /// instruction. `?` boxes automatically via `From`; explicit `Err` sites box
-@@ -10410,10 +10399,19 @@ pub fn op_function(
-             state.registers[*dest].set_null();
-         }
-         crate::function::Func::Scalar(scalar_func) => {
--            match exec_scalar_function(program, state, pager, func, scalar_func, start_reg, dest)? {
--                InsnFunctionStepResult::Step => {}
--                other => return Ok(other),
--            }
-+            let clock = StatementClock::new(pager.io.as_ref(), &mut state.current_time);
-+            let context = ScalarFuncContext {
-+                connection: &program.connection,
-+                io: pager.io.as_ref(),
-+                clock: &clock,
-+                collation: func.collation,
-+            };
-+            let value = call_builtin_scalar(
-+                &context,
-+                scalar_func,
-+                &state.registers[*start_reg..*start_reg + arg_count],
-+            )?;
-+            state.registers[*dest].set_value(value);
-         }
-         crate::function::Func::Vector(vector_func) => {
-             let args = &state.registers[*start_reg..*start_reg + arg_count];
-@@ -11289,277 +11287,156 @@ pub fn op_function(
-     Ok(InsnFunctionStepResult::Step)
- }
- 
--fn exec_scalar_function(
--    program: &Program,
--    state: &mut ProgramState,
--    pager: &Arc<Pager>,
--    func: &crate::function::FuncCtx,
--    scalar_func: &ScalarFunc,
--    start_reg: &usize,
--    dest: &usize,
--) -> InsnResult {
--    let arg_count = func.arg_count;
--
--    match scalar_func {
-+/// Runs built-in scalar function `func` on the registers that hold its
-+/// arguments. Shared by every dialect that resolves names onto the built-in
-+/// set through [`resolve_builtin_function`].
-+pub fn call_builtin_scalar(
-+    context: &ScalarFuncContext<'_>,
-+    func: &ScalarFunc,
-+    args: &[Register],
-+) -> crate::Result<Value> {
-+    let connection = context.connection;
-+    match func {
-         ScalarFunc::Array | ScalarFunc::ArrayElement | ScalarFunc::ArraySetElement => {
-             unreachable!("desugared to dedicated instructions, not Function")
-         }
--        ScalarFunc::Cast => {
--            assert_eq!(arg_count, 2);
--            assert!(*start_reg + 1 < state.registers.len());
--            let result = {
--                let Value::Text(cast_type) = state.registers[*start_reg + 1].get_value() else {
--                    unreachable!("Cast with non-text type");
--                };
--                state.registers[*start_reg]
--                    .get_value()
--                    .exec_cast(cast_type.as_str())?
--            };
--            state.registers[*dest].set_value(result);
--        }
--        ScalarFunc::Changes => {
--            let res = &program.connection.changes;
--
+ test owner-writes-every-row-of-its-table-with-row-security {
+     CREATE ROLE rw_owner_20;
+     CREATE TABLE rw_docs_20 (id INT PRIMARY KEY, owner TEXT);
 ```
 
 ---
 
-### Incident Patch 2: `214ca686` (2026-11-10)
-**Commit Message**: core/dialect: test that a dialect can change a built-in scalar function
+### Incident Patch 2: `c8bcab22` (2026-11-12)
+**Commit Message**: postgres/conformance: test that the owner enables row-level security and FORCE is refused
 
-A dialect that overrides call_scalar for upper() sees its version run, while
-the other built-ins keep the shared behavior.
+Only the refusal for a role that does not own the table was tested. FORCE
+ROW LEVEL SECURITY was only tested from Rust, so add a .sqltest that it
+fails as not supported (0A000).
 
-Tests: dialect_owns_builtin_scalar_function_behavior fails when the VDBE calls
-engine::call_builtin_scalar directly and passes through the dialect.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `core/dialect/mod.rs` (modified, +81/-0)
+**File**: `postgres/conformance/pg-sqltests/row-security/enable.sqltest` (modified, +22/-0)
 ```diff
-@@ -1045,6 +1045,87 @@ mod tests {
-         }
-     }
- 
-+    /// A dialect that resolves the built-in names but runs `upper` its own
-+    /// way, as a frontend does for a built-in whose behavior differs in its
-+    /// dialect.
-+    struct ShoutingUpperDialect;
+@@ -209,3 +209,25 @@ test role-that-does-not-own-the-table-cannot-enable-row-security {
+ expect error {
+     must be owner of table rp_docs_17
+ }
 +
-+    impl Dialect for ShoutingUpperDialect {
-+        fn name(&self) -> &'static str {
-+            "shouting"
-+        }
++test owner-may-enable-row-security {
++    CREATE ROLE en_owner;
++    CREATE TABLE en_owned (id INT);
++    ALTER TABLE en_owned OWNER TO en_owner;
++    SET ROLE en_owner;
++    ALTER TABLE en_owned ENABLE ROW LEVEL SECURITY;
++    SELECT relrowsecurity FROM pg_class WHERE relname = 'en_owned';
++}
++expect {
++    t
++}
 +
-+        fn parse(&self, sql: &str) -> Result<(Option<Cmd>, usize)> {
-+            engine::parse(sql)
-+        }
-+
-+        fn parse_table_sql(&self, sql: &str, root_page: i64) -> Result<BTreeTable> {
-+            BTreeTable::from_sql(sql, root_page)
-+        }
-+
-+        fn parse_table_sql_ast(&self, sql: &str) -> Result<Stmt> {
-+            engine::parse_table_sql_ast(sql)
-+        }
-+
-+        fn table_sql_for_replay(&self, sql: &str) -> Result<String> {
-+            engine::table_sql_for_replay(sql)
-+        }
-+
-+        fn format_table_sql(
-+            &self,
-+            _input: &str,
-+            tbl_name: &QualifiedName,
-+            body: &CreateTableBody,
-+        ) -> Result<String> {
-+            engine::format_table_sql(tbl_name, body)
-+        }
-+
-+        fn register_catalog(&self, schema: &mut Schema, enable_custom_types: bool) -> Result<()> {
-+            engine::register_builtin_catalog(schema, enable_custom_types)
-+        }
-+
-+        fn resolve_function(&self, name: &str, arg_count: usize) -> Result<Option<Func>> {
-+            engine::resolve_builtin_function(name, arg_count)
-+        }
-+
-+        fn call_scalar(
-+            &self,
-+            context: &ScalarFuncContext<'_>,
-+            func: &ScalarFunc,
-+            args: &[Register],
-+        ) -> Result<Value> {
-+            let value = engine::call_builtin_scalar(context, func, args)?;
-+            if !matches!(func, ScalarFunc::Upper) {
-+                return Ok(value);
-+            }
-+            Ok(Value::build_text(format!("{value}!")))
-+        }
-+    }
-+
-+    #[test]
-+    fn dialect_owns_builtin_scalar_function_behavior() {
-+        let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
-+        let db = open_db(&io, "dialect-shouting.db", Arc::new(ShoutingUpperDialect)).unwrap();
-+        let conn = db.connect(ConnectOpts::new()).unwrap();
-+
-+        conn.execute("CREATE TABLE t (s TEXT)").unwrap();
-+        conn.execute("INSERT INTO t VALUES ('hi')").unwrap();
-+        let rows = conn
-+            .prepare("SELECT upper(s), lower('ABC'), abs(-7) FROM t")
-+            .unwrap()
-+            .run_collect_rows()
-+            .unwrap();
-+        assert_eq!(
-+            rows,
-+            vec![vec![
-+                Value::build_text("HI!"),
-+                Value::build_text("abc"),
-+                Value::from_i64(7),
-+            ]]
-+        );
-+        conn.close().unwrap();
-+    }
-+
-     #[test]
-     fn dialect_scalar_function_resolves_and_executes() {
-         let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
++@skip-if postgres "PostgreSQL supports FORCE ROW LEVEL SECURITY"
++test force-row-level-security-is-not-supported {
++    CREATE TABLE en_forced (id INT);
++    ALTER TABLE en_forced FORCE ROW LEVEL SECURITY;
++}
++@sqlstate 0A000
++expect error {
++    ALTER TABLE ... FORCE ROW LEVEL SECURITY is not supported
++}
 ```
 
 ---
 
-### Incident Patch 3: `f5293267` (2026-11-10)
-**Commit Message**: Merge 'testing/sqlancer: build only turso-java dependencies in the image' from Pekka Enberg
+### Incident Patch 3: `be784bfd` (2026-11-12)
+**Commit Message**: postgres/conformance: test policies that call auth.uid()
 
-The sqlancer-runner image build has been failing in `cargo chef cook`:
+USING (user_id = auth.uid()) is the policy most Supabase projects write,
+but no test called auth.uid() from a policy. Test that it limits the
+rows a user reads, and that WITH CHECK refuses a row of another user.
 
-```
-Unable to find libclang: "couldn't find any valid shared libraries matching: ['libclang.so', ...]"
-```
+On PostgreSQL, the setup now grants USAGE on schema auth to every role,
+as Supabase does, so that a role may call the functions.
 
-`cargo chef cook` built the dependencies of every crate in the
-workspace. Since the PostgreSQL parser was added, that includes
-`pg_query`, whose build script runs bindgen and needs libclang. The
-image ships only the Java binding, so this changes the cook step to
-build only the dependencies of `turso-java`. That crate doesn't use
-`pg_query`, so the image doesn't need libclang.
-
-Closes #11653
-
-**File**: `testing/sqlancer/sqlancer-runner/Dockerfile.sqlancer` (modified, +1/-1)
+**File**: `postgres/conformance/pg-sqltests/auth.sqltest` (modified, +37/-2)
 ```diff
-@@ -27,7 +27,7 @@ RUN --mount=type=bind,source=.,target=/app \
- FROM chef AS builder
+@@ -2,11 +2,13 @@
  
- COPY --from=planner /tmp/recipe.json recipe.json
--RUN cargo chef cook --release --recipe-path recipe.json
-+RUN cargo chef cook --release -p turso-java --recipe-path recipe.json
+ @database :memory:
  
- # Copy full source
- COPY . .
+-# The SQL definitions of the functions. tursopg has the functions built in,
+-# so this setup runs only on PostgreSQL.
++# The SQL definitions of the functions, and USAGE on their schema for every
++# role, as Supabase grants it. tursopg has the functions built in, so this
++# setup runs only on PostgreSQL.
+ @backend postgres
+ setup auth_functions {
+     create schema auth;
++    grant usage on schema auth to public;
+ 
+     create or replace function auth.uid()
+     returns uuid
+@@ -794,6 +796,39 @@ expect {
+     mine
+ }
+ 
++@setup auth_functions
++test auth-uid-in-a-policy-shows-the-user-its-rows {
++    CREATE ROLE au_reader;
++    CREATE TABLE au_read_todos (id int, user_id uuid, task text);
++    INSERT INTO au_read_todos VALUES (1, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'mine'), (2, '11111111-1111-1111-1111-111111111111', 'theirs');
++    ALTER TABLE au_read_todos ENABLE ROW LEVEL SECURITY;
++    CREATE POLICY own ON au_read_todos USING (user_id = auth.uid());
++    GRANT SELECT ON au_read_todos TO au_reader;
++    SET ROLE au_reader;
++    SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
++    SELECT task FROM au_read_todos;
++}
++expect {
++    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
++    mine
++}
++
++@setup auth_functions
++test auth-uid-in-a-policy-refuses-a-row-of-another-user {
++    CREATE ROLE au_writer;
++    CREATE TABLE au_written_todos (id int, user_id uuid, task text);
++    ALTER TABLE au_written_todos ENABLE ROW LEVEL SECURITY;
++    CREATE POLICY own ON au_written_todos USING (user_id = (SELECT auth.uid())) WITH CHECK (user_id = (SELECT auth.uid()));
++    GRANT SELECT, INSERT ON au_written_todos TO au_writer;
++    SET ROLE au_writer;
++    SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
++    INSERT INTO au_written_todos VALUES (1, '11111111-1111-1111-1111-111111111111', 'theirs');
++}
++@sqlstate 42501
++expect error {
++    new row violates row-level security policy for table "au_written_todos"
++}
++
+ @setup auth_functions
+ test auth-uid-in-a-column-default {
+     SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11656** (2026-11-10): testing/whopper: keep nextval values from rolled-back BEGIN CONCURRENT (@penberg)
-- **PR #11653** (2026-11-10): testing/sqlancer: build only turso-java dependencies in the image (@penberg)
-- **PR #11652** (2026-11-10): docs: add Finnish translation of the README (@penberg)
-- **PR #11645** (closed): postgres: cast text to bool through the boolean type (@orangec-at)
-- **PR #11644** (2026-11-10): bindings/c: convert sqlite3_value reads between text, numbers and blobs (@turso-github-handyman[bot])
-- **PR #11630** (2026-11-10): Guide AI agents towards our mode of working (@glommer)
+- **PR #11772** (2026-11-12): postgres: report reserved role names with SQLSTATE 42939 (@penberg)
+- **PR #11770** (2026-11-12): postgres: refuse renames of objects other than tables and columns with 0A000 (@penberg)
+- **PR #11769** (2026-11-12): postgres: refuse unsupported statements with SQLSTATE 0A000 (@penberg)
+- **PR #11766** (2026-11-12): postgres: move roles from core to the frontend (@penberg)
+- **PR #11764** (2026-11-12): postgres/conformance: Improve access control test coverage (@penberg)
+- **PR #11757** (2026-11-12): core: Connect to database with explicit role (@penberg)
 
 ---
 
@@ -1803,29 +1618,28 @@ Closes #11653
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core/vdbe: make built-in scalar functions a function of their arguments
+## X. postgres/conformance: test that security_invoker views are refused
 
 **RULE**:
-When implementing operations in `core/dialect/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `postgres/conformance/pg-sqltests/row-security/bypass.sqltest`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2dcfbe24`: core/vdbe: make built-in scalar functions a function of their arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae542a8c`: postgres/conformance: test that security_invoker views are refused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `postgres/conformance/pg-sqltests/row-security/bypass.sqltest`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    Clock, CollationSeq, Connection, Func, LimboError, OpenOptions, Result, Value, IO,
-/// What a built-in scalar function may read besides its arguments.
-pub struct ScalarFuncContext<'a> {
-    pub connection: &'a Connection,
-    pub io: &'a dyn IO,
-    /// The statement's clock: every function of one step sees the same time.
-    pub clock: &'a dyn Clock,
-    /// The collation of the call site, for functions that compare arguments.
-    pub collation: CollationSeq,
+@skip-if postgres "PostgreSQL supports security_invoker views"
+test view-that-reads-as-its-reader-is-not-supported {
+    CREATE TABLE by_invoker_base (id INT);
+    CREATE VIEW by_invoker_view WITH (security_invoker = true) AS SELECT id FROM by_invoker_base;
+}
+@sqlstate 0A000
+expect error {
+    CREATE VIEW ... WITH \(options\) is not supported
 }
 
 ```
@@ -1833,8 +1647,8 @@ pub struct ScalarFuncContext<'a> {
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    Connection, Func, LimboError, OpenOptions, Result, Value,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dcfbe24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae542a8c` are properly handled with clean fallback behavior.
