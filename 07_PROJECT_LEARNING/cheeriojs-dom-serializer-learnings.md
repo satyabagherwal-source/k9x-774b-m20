@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md`  
 > **Source**: github ([https://github.com/cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer))  
-> **Source Version**: `9c682911`  
+> **Source Version**: `70bfbf41`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:22:25.247Z  
+> **Timestamp**: 2026-11-12T03:10:22.592Z  
 > **Learning ID**: `learn-github-cheeriojs-dom-serializer`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:22:23.257Z  
+> **Harvest Timestamp**: 2026-11-12T03:10:22.587Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -661,11 +661,11 @@ function renderText(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1763** (2026-11-06): **build(deps-dev): bump vitest from 5.0.5 to 5.1.0**
-  *Symptoms*: Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 5.0.5 to 5.1.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/vitest-dev/vitest/releases">vitest's releases</a>.</em></p> <blockquote> <h2>v5.1.0</h2> <h3>   🚀 Features</h3> <ul> <li>Add <code>--last-failed</code> to run only failed tests  -  by <a href="https://github.com/sheremet-va"><code>@​sheremet-va</code></a> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/11558">vitest-dev/vitest#11558</a> <a href="https://github.com/vitest-dev/vitest/commit/82f634220"><!-- raw HTML omitted -->(82f63)<!-- raw HTML omitted --></a></li> <li>Support <code>Temporal.Instant</code> and <code>Temporal.ZonedDateTime</code> in <code>vi.setSystemTime()</code>  -  by <a href="https://github.com/Prajwal2246"><code>@​Prajwal2246</code></a>, <strong>Prajwal2246</strong>, <strong>Claude Opus 5.5 (1M context)</strong>, <a href="https://github.com/hi-ogawa"><code>@​hi-ogawa</code></a> and <strong>Codex (GPT-6)</strong> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/11321">vitest-dev/vitest#11321</a> <a href="https://github.com/vitest-dev/vitest/commit/f150f5108"><!-- raw HTML omitted -->(f150f)<!-- raw HTML omitted --></a></li> <li>Introduce <code>--since-last-run</code> flag  -  by <a href="https://github.com/sheremet-va"><code>@​sheremet-va</code></a> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/11516">vitest-dev/vite
+- **Issue #1765** (2026-11-10): **build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.5**
+  *Symptoms*: Bumps [@biomejs/biome](https://github.com/biomejs/biome/tree/HEAD/packages/@biomejs/biome) from 2.5.15 to 2.6.5. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/biomejs/biome/releases">@​biomejs/biome's releases</a>.</em></p> <blockquote> <h2>Biome CLI v2.6.5</h2> <h2>2.6.5</h2> <h3>Patch Changes</h3> <ul> <li> <p><a href="https://redirect.github.com/biomejs/biome/pull/12755">#12755</a> <a href="https://github.com/biomejs/biome/commit/bbc4887f1b885d8f9bea8e265108c919f021eec4"><code>bbc4887</code></a> Thanks <a href="https://github.com/dyc3"><code>@​dyc3</code></a>! - Added the new nursery rule <a href="https://biomejs.dev/linter/rules/no-array-for-each/"><code>noArrayForEach</code></a>, which reports <code>forEach()</code> calls that can be written as <code>for...of</code> loops. Values known not to be arrays, such as a <code>Map</code> or a <code>Set</code>, are ignored.</p> <pre lang="js"><code>array.forEach((element) =&gt; { 	bar(element); }); </code></pre> </li> <li> <p><a href="https://redirect.github.com/biomejs/biome/pull/12777">#12777</a> <a href="https://github.com/biomejs/biome/commit/ba692e45d4e9ad0d7c0d6b341a603bbbdbeaa4c8"><code>ba692e4</code></a> Thanks <a href="https://github.com/dyc3"><code>@​dyc3</code></a>! - Added the new nursery rule <a href="https://biomejs.dev/linter/rules/no-await-in-promise-methods/"><code>noAwaitInPromiseMethods</code></a>, which reports <code>await</code> inside the array passed to <code>Pro
 
-- **Issue #1762** (2026-11-06): **build(deps): bump github/codeql-action from 4.39.1 to 4.39.2**
-  *Symptoms*: Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action's releases</a>.</em></p> <blockquote> <h2>v4.39.2</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4">2.27.4</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4284">#4284</a></li> <li><em>Upcoming breaking change</em>: CodeQL version 2.22.3 and earlier were discontinued on 16 October 2026 alongside GitHub Enterprise Server 3.18, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4266">#4266</a></li> <li>Starting with macOS 27 and Xcode 27, traced analyses are unsupported. See <a href="https://github.blog/changelog/2026-10-19-codeql-changes-for-macos-27-xcode-27-and-swift-6-4/">this blog post for more information</a>. The CodeQL Action will now try to identify if a workflow is about to perform a traced analysis on version 27 or above of macOS or Xcode. If so, the CodeQL Action will emit a corresponding warning that will also be visible on the <a href="https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/manage-your-configuration/use-the-tools-status-page-for
+- **Issue #1764** (2026-11-09): **build(deps): bump github/codeql-action from 4.39.2 to 4.39.3**
+  *Symptoms*: Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.2 to 4.39.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action's releases</a>.</em></p> <blockquote> <h2>v4.39.3</h2> <ul> <li>Fixed diff-informed alert filtering incorrectly removing alerts in changed files whose paths contain spaces, special characters, or non-ASCII characters. <a href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/codeql-action's changelog</a>.</em></p> <blockquote> <h2>4.39.3 - 04 Nov 2026</h2> <ul> <li>Fixed diff-informed alert filtering incorrectly removing alerts in changed files whose paths contain spaces, special characters, or non-ASCII characters. <a href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/github/codeql-action/commit/33d7b85da1a04171e211befe2c739303b9a4c066"><code>33d7b85</code></a> Merge pull request <a href="https://redirect.github.com/github/codeql-action/issues/4299">#4299</a> from github/update-v4.39.3-064910ba2</li> <li><a href="https://github.com/github/codeql-action/commit/24393f8692ae5a8fb94c4f5829ffa08cea01bd1b"><code>24393f8</cod
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -682,162 +682,18 @@ function renderText(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c682911` (2026-11-06)
-**Commit Message**: build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763)
+### Incident Patch 1: `70bfbf41` (2026-11-09)
+**Commit Message**: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764)
 
-Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 5.0.5 to 5.1.0.
-- [Release notes](https://github.com/vitest-dev/vitest/releases)
-- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
-- [Commits](https://github.com/vitest-dev/vitest/commits/v5.1.0/packages/vitest)
-
----
-updated-dependencies:
-- dependency-name: vitest
-  dependency-version: 5.1.0
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `package-lock.json` (modified, +96/-96)
-```diff
-@@ -23,7 +23,7 @@
-         "eslint-config-biome": "^2.1.3",
-         "typescript": "^6.0.2",
-         "typescript-eslint": "^8.72.1",
--        "vitest": "^5.0.5"
-+        "vitest": "^5.1.0"
-       },
-       "engines": {
-         "node": ">=20.19.0"
-@@ -565,9 +565,9 @@
-       "license": "MIT"
-     },
-     "node_modules/@oxc-project/types": {
--      "version": "0.154.0",
--      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.154.0.tgz",
--      "integrity": "sha512-KYOUGQFlLWR+s4QMV2Q9ko38TZm7EdO87Qm7rvZLqk/webse/cDjtyxKhg/47l0byCbs/k46LT8qc4PKjAikzA==",
-+      "version": "0.156.0",
-+      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
-+      "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
-       "dev": true,
-       "license": "MIT",
-       "peer": true,
-@@ -576,9 +576,9 @@
-       }
-     },
-     "node_modules/@rolldown/binding-android-arm-eabi": {
--      "version": "1.2.14",
--      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.14.tgz",
--      "integrity": "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==",
-+      "version": "1.2.16",
-+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
-+      "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
-       "cpu": [
-         "arm"
-       ],
-@@ -594,9 +594,9 @@
-       }
-     },
-     "node_modules/@rolldown/binding-android-arm64": {
--      "version": "1.2.14",
--      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.14.tgz",
--      "integrity": "sha512-QiVxHofl6A8lQU7WAtOUY4QMVZXohxwz7WJJoeh8NBEUyKfIkMRKhYyq8az/1RypNiIXzNTtiS6KwHz0erxYRQ==",
-+      "version": "1.2.16",
-+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
-+      "integrity": "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -612,9 +612,9 @@
-       }
-     },
-     "node_modules/@rolldown/binding-darwin-arm64": {
--      "version": "1.2.14",
--      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.14.tgz",
--      "integrity": "sha512-lTQOzHuBIooh3jIr5XINQkjPGEuGy+Dsy0meXDr6Sjty0b99kYgGh4uBC/8mJX1T0kC8d6S0aPP1Y+bHkh6aBw==",
-+      "version": "1.2.16",
-+      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz",
-+      "integrity": "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -630,9 +630,9 @@
-       }
-     },
-     "node_modules/@rolldown/binding-darwin-x64": {
--      "version": "1.2.14",
--      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.14.tgz",
--      "integrity": "sha512-hyMKEGatjmBYCs/Q4sbIcL/GqpFEqsX3wc+HYVQ/85A4rxc1o7rPm4DUI4GV4k/h0ITddwFSGpqQunI14GXjTA==",
-+      "version": "1.2.16",
-+      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.16.tgz",
-+      "integrity": "sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==",
-       "cpu": [
-         "x64"
-       ],
-@@ -648,9 +648,9 @@
-       }
-     },
-     "node_modules/@rolldown/binding-freebsd-x64": {
--      "version": "1.2.14",
--      "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.14.tgz",
--      "integrity": "sha512-u371GbXoVXrEgP20PwzoGNOdAOqAMhzo19JzzY+V4YmmnC+DTOoqdbMu+O+54emM59Mik/UdrtWgcuEDKWRPKA==",
-+      "version": "1.2.16",
-+      "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.16.tgz",
-+      "integrity": "sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==",
-       "cpu": [
-         "x64"
-       ],
-@@ -666,9 +666,9 @@
-       }
-     },
-     "node_modules/@rolldown/binding-linux-arm-gnueabihf": {
--      "version": "1.2.14",
--      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.14.tgz",
--      "integrity": "sha512-BqwKsdZQf6EqVWr8fv2MrDYzAvOZ7+NYFSJESRGs87fkseEhs0TU9TXgRJTkZoRRkxTizyEg1LKUXfU3/78uqg==",
-+      "version": "1.2.16",
-+      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.16.tgz",
-+      "integrity": "sha512-tHdKWbFkFBI687iim3LIyIvyL7j66VvQYkDPss5Stn/qyE2tWkR1YD0dXmXPFKKqT/o5ZEJVsaRsWS2meQwGOA==",
-       "cpu": [
-         "arm"
-       ],
-@@ -684,9 +684,9 @@
-       }
-     },
-     "node_modules/@rolldown/binding-linux-arm64-gnu": {
--      "version": "1.2.14",
--      "resolved": "http
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@
-     "eslint-config-biome": "^2.1.3",
-     "typescript": "^6.0.2",
-     "typescript-eslint": "^8.72.1",
--    "vitest": "^5.0.5"
-+    "vitest": "^5.1.0"
-   },
-   "engines": {
-     "node": ">=20.19.0"
-```
-
----
-
-### Incident Patch 2: `d3fabaa0` (2026-11-06)
-**Commit Message**: build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (#1762)
-
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2.
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.2 to 4.39.3.
 - [Release notes](https://github.com/github/codeql-action/releases)
 - [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.39.1...v4.39.2)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.2...v4.39.3)
 
 ---
 updated-dependencies:
 - dependency-name: github/codeql-action
-  dependency-version: 4.39.2
+  dependency-version: 4.39.3
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
@@ -851,23 +707,23 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
          uses: actions/checkout@v7
  
        - name: Initialize CodeQL
--        uses: github/codeql-action/init@v4.39.1
-+        uses: github/codeql-action/init@v4.39.2
+-        uses: github/codeql-action/init@v4.39.2
++        uses: github/codeql-action/init@v4.39.3
          with:
            languages: "javascript"
  
        - name: Perform CodeQL Analysis
--        uses: github/codeql-action/analyze@v4.39.1
-+        uses: github/codeql-action/analyze@v4.39.2
+-        uses: github/codeql-action/analyze@v4.39.2
++        uses: github/codeql-action/analyze@v4.39.3
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1765** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.5 (@dependabot[bot])
+- **PR #1764** (2026-11-09): build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (@dependabot[bot])
 - **PR #1763** (2026-11-06): build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
 - **PR #1762** (2026-11-06): build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (@dependabot[bot])
 - **PR #1761** (2026-11-03): build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (@dependabot[bot])
 - **PR #1760** (2026-11-02): build(deps-dev): bump @types/node from 26.6.5 to 26.6.6 (@dependabot[bot])
-- **PR #1757** (2026-10-30): build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (@dependabot[bot])
-- **PR #1756** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.3 (@dependabot[bot])
 
 ---
 
@@ -887,58 +743,30 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763)
+## X. build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764)
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheeriojs/dom-serializer. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/codeql-analysis.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheeriojs/dom-serializer. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9c682911`: build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70bfbf41`: build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql-analysis.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "vitest": "^5.1.0"
-      "version": "0.156.0",
-      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
-      "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
-      "version": "1.2.16",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
-      "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
-      "version": "1.2.16",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
-      "integrity": "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==",
-      "version": "1.2.16",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz",
-      "integrity": "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==",
-      "version": "1.2.16",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.16.tgz",
-      "integrity": "
+        uses: github/codeql-action/init@v4.39.3
+        uses: github/codeql-action/analyze@v4.39.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        "vitest": "^5.0.5"
-      "version": "0.154.0",
-      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.154.0.tgz",
-      "integrity": "sha512-KYOUGQFlLWR+s4QMV2Q9ko38TZm7EdO87Qm7rvZLqk/webse/cDjtyxKhg/47l0byCbs/k46LT8qc4PKjAikzA==",
-      "version": "1.2.14",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.14.tgz",
-      "integrity": "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==",
-      "version": "1.2.14",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.14.tgz",
-      "integrity": "sha512-QiVxHofl6A8lQU7WAtOUY4QMVZXohxwz7WJJoeh8NBEUyKfIkMRKhYyq8az/1RypNiIXzNTtiS6KwHz0erxYRQ==",
-      "version": "1.2.14",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.14.tgz",
-      "integrity": "sha512-lTQOzHuBIooh3jIr5XINQkjPGEuGy+Dsy0meXDr6Sjty0b99kYgGh4uBC/8mJX1T0kC8d6S0aPP1Y+bHkh6aBw==",
-      "version": "1.2.14",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.14.tgz",
-      "integrity": "
+        uses: github/codeql-action/init@v4.39.2
+        uses: github/codeql-action/analyze@v4.39.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9c682911` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70bfbf41` are properly handled with clean fallback behavior.

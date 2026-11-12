@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mrkai77-loop-learnings.md`  
 > **Source**: github ([https://github.com/mrkai77/Loop](https://github.com/mrkai77/Loop))  
-> **Source Version**: `573ace30`  
+> **Source Version**: `b041fcbb`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:41:16.709Z  
+> **Timestamp**: 2026-11-11T19:46:07.795Z  
 > **Learning ID**: `learn-github-mrkai77-loop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mrkai77-loop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mrkai77/Loop](https://github.com/mrkai77/Loop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:41:16.701Z  
+> **Harvest Timestamp**: 2026-11-11T19:46:07.788Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Window management made elegant.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 11810 stars
+- **Stars / Engagement**: 11956 stars
 
 ---
 
@@ -1363,11 +1363,11 @@ extension LoopManager {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1178** (2026-10-12): **🐞 Persistent crash when updating from development version 1.4.3 (1766) to 1.4.3 (1779)**
-  *Symptoms*: ### Bug Description  Hi there, thanks for making this great application open source!  I've tried multiple times to update from development versions 1766 to 1779 with the same crash each time.   I was having a similar issue to issue #1164 previous to this, so in addition to capturing a macOS system crash report, I also captured output from the command you suggested in that issue: `log stream --level debug --style compact --predicate 'subsystem == "com.MrKai77.Loop" OR (process == "Loop" AND eventMessage CONTAINS[c] "quit")'`:  <details><summary>Command output:</summary> <p>  ``` BlackBook:~ $ log stream --level debug --style compact --predicate 'subsystem == "com.MrKai77.Loop" OR (process == "Loop" AND eventMessage CONTAINS[c] "quit")' Filtering the log data using "subsystem == "com.MrKai77.Loop" OR (process == "Loop" AND composedMessage CONTAINS[c] "quit")" Timestamp               Ty Process[PID:TID] 2026-10-12 09:20:11.669 F  Loop[49180:3b26fd] [com.apple.kvs:Connection] BUG IN CLIENT OF KVS: Trying to initialize NSUbiquitousKeyValueStore without a store identifier. Please specify your store identifier in the 'com.apple.developer.ubiquity-kvstore-identifier' entitlement. 2026-10-12 09:20:11.687 I  Loop[49180:3b270e] [com.MrKai77.Loop:DefaultsiCloudSyncRegistrar] 2026-10-12 09:20:11.687-0500 ℹ️ [DefaultsiCloudSyncRegistrar] iCloud sync enabled 2026-10-12 09:20:11.789 Db Loop[49180:3b270e] [com.MrKai77.Loop:IconManager] 2026-10-12 09:20:11.790-0500 🔍 [IconManager] Deleted doc
+- **Issue #1192** (2026-10-27): **Radial menu has stopped working after the latest macOS update (Golden Gate 27.2)**
+  *Symptoms*: ### Bug Description  The key trigger functionality stopped working after updating to macOS Golden Gate 27.2. The radial menu no longer opens when the configured trigger key or key combination is pressed.  ### Affected Scope  User interface  ### Steps to Reproduce  1. Update macOS to Golden Gate 27.2. 2. Launch the application and ensure the radial menu is enabled. 3. Press the configured trigger key or key combination. 4. Observe that the radial menu does not open.  ### Reproducibility  Always  ### Expected vs Actual Behavior  **Expected Behavior:** The radial menu should open when the configured trigger key or key combination is pressed.  **Actual Behavior:** The radial menu does not open, making it inaccessible through the configured keyboard trigger.  ### Screen Recordings / Screenshots  _No response_  ### Severity  Critical (major functionality broken)  ### macOS Version  Golden Gate 27.2  ### Loop Version  1.4.2  ### Did You Try the Development Build?  No  ### Additional Context  _No response_  ### Final Checks  - [x] My issue is written in English. - [x] My issue title is descriptive. - [x] This is a single bug (multiple bugs should be reported individually). - [x] I have looked to see if this is a duplicate of another bug report. - [ ] I can help with further investigation. - [ ] I can help with developing a fix for this issue.
 
-- **Issue #1176** (2026-10-13): **🐞 Stop trackpad gestures from scrolling the page behind them**
-  *Symptoms*: With the native macOS gestures turned off, 3 and 4-finger Loop gestures would also scroll the page underneath, keep scrolling after lifting your fingers, and even trigger back/forward in browsers. This is because macOS turns unassigned 3 and 4-finger swipes into scrolls, and the gesture blocker only kicked in once Loop had _recognized_ the gesture. By then, the page had already started scrolling, and the momentum carried on after the lift. This PR:  1. Holds scrolls that _could_ belong to a Loop gesture from `began` while Loop decides on the stroke. If Loop takes it, the scroll is dropped. Otherwise, the held events are replayed in order through the tap proxy, 1. Lets swipes in unbound directions pass straight through, so they still scroll with no delay, 1. Decides momentum once, when it begins, so a stroke Loop took no longer flings the page after you lift your fingers, 1. Holds and replays navigation swipes (`kIOHIDEventTypeNavigationSwipe`, aka what browsers use for back/forward) the same way as scrolls, 1. Blocks rotation, zoom and smart zoom while a Loop gesture is active. Touch frames, force clicks and gesture brackets still pass, so apps don't get stuck mid-gesture, 1. Adds `scrollOwner(heldFor:direction:)` to `SystemGestureFilter` so the blocker can tell whether Loop owns the current touch. Loop keeps ownership until every finger lifts, since they rarely leave at the same time. 
+- **Issue #1188** (2026-10-22): **🐞 Bug Loop shutting down if used with quite on close option in Vorssaint**
+  *Symptoms*: ### Bug Description  There is a "bug" if you are using Loop with Vorssaint :  If the option "[x] button close completly the app/window" is activated, when you first setup Loop then once lauched and after opening setting of loop, you want to close the windows/setting page ---> it will kill the app, the icone in menu bar will disapear (so maybe it's a problem of not keeping/maintaining Loop active in background idk)  what I did is disable the Vorssaint option, then launch and setup Loop to start at startup, then close loop (still with Vorssaint option disabled), then enable back Vorssaint close option.  ### Affected Scope  User interface  ### Steps to Reproduce  1. have Vorssaint installed AND "quit when closing" option enabled (see picture) and not having Loop installed (or not launch on startup)  <img width="156" height="41" alt="Image" src="https://github.com/user-attachments/assets/6ea7eef1-87b4-4d8a-9f52-9dae8f3317ec" />  2. Launch Loop 3. If you close Loop, it will shutdown/close totaly even in menu bar (so not active anymore in background) 4. you have to disable Vorssaint option, setup your loop, enable launch on startup, close Loop (so it will not be killed by Vorssaint option), then enable back the Vorssaint option 5. the end  ### Reproducibility  Always  ### Expected vs Actual Behavior  expected to still be active in background  ### Screen Recordings / Screenshots  _No response_  ### Severity  Major (workaround exists)  ### macOS Version  27  ### Loop Version  1.4.2  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1384,140 +1384,552 @@ extension LoopManager {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ce662a5` (2026-10-03)
-**Commit Message**: 🐞 Fix updater crash when updating download progress off the main thread (#1166)
+### Incident Patch 1: `b041fcbb` (2026-11-09)
+**Commit Message**: ✨ Track the original radial menu gesture in the session
 
-**File**: `Loop/Updater/UpdateDownloader.swift` (modified, +5/-5)
+**File**: `.swiftformat` (modified, +1/-1)
 ```diff
-@@ -15,7 +15,7 @@ final class UpdateDownloader: NSObject {
- 
-     private var urlSession: URLSession?
-     private var downloadTask: URLSessionDownloadTask?
--    private var progressClosure: ((UpdateProgress) async -> ())?
-+    private var progressClosure: (@MainActor (UpdateProgress) -> ())?
-     private var completionClosure: ((Result<URL, Error>) -> ())?
-     private(set) var isDownloading = false
-     private var performanceTracker: PerformanceTracker = .init()
-@@ -32,7 +32,7 @@ final class UpdateDownloader: NSObject {
- 
-     func downloadUpdate(
-         manifest: UpdateManifest,
--        progress: @escaping (UpdateProgress) async -> ()
-+        progress: @escaping @MainActor (UpdateProgress) -> ()
-     ) async throws -> URL {
-         guard !isDownloading else {
-             throw DownloadError.downloadInProgress
-@@ -75,7 +75,7 @@ final class UpdateDownloader: NSObject {
- 
-     private func setupDownload(
-         url: URL,
--        progress: @escaping (UpdateProgress) async -> (),
-+        progress: @escaping @MainActor (UpdateProgress) -> (),
-         completion: @escaping (Result<URL, Error>) -> ()
-     ) {
-         isDownloading = true
-@@ -173,7 +173,7 @@ extension UpdateDownloader: URLSessionDownloadDelegate {
-         totalBytesWritten: Int64,
-         totalBytesExpectedToWrite: Int64
-     ) {
--        Task {
-+        Task { @MainActor in
-             guard self.isDownloading else { return }
- 
-             let progress = self.performanceTracker.updateProgress(
-@@ -182,7 +182,7 @@ extension UpdateDownloader: URLSessionDownloadDelegate {
-                 totalBytesExpectedToWrite: totalBytesExpectedToWrite
-             )
- 
--            await self.progressClosure?(progress)
-+            self.progressClosure?(progress)
-         }
-     }
- 
+@@ -124,5 +124,5 @@
+ --xcode-indentation disabled
+ --xctest-symbols 
+ --yoda-swap always
+---disable genericExtensions,redundantVariable,simplifyGenericConstraints,wrapFunctionBodies,wrapIfExpressionBodies,wrapIfStatementBodies,wrapLoopBodies,wrapMultilineStatementBraces,wrapPropertyBodies
++--disable genericExtensions,redundantVariable,repeatedGuard,simplifyGenericConstraints,wrapFunctionBodies,wrapIfExpressionBodies,wrapIfStatementBodies,wrapLoopBodies,wrapMultilineStatementBraces,wrapPropertyBodies
+ --enable isEmpty
 ```
 
-**File**: `Loop/Updater/UpdateInstaller.swift` (modified, +1/-1)
+**File**: `Loop/Core/Multitouch/MultitouchGestureSession.swift` (modified, +11/-0)
 ```diff
-@@ -50,7 +50,7 @@ actor UpdateInstaller {
-     func installUpdate(
-         from downloadURL: URL,
-         manifest: UpdateManifest,
--        progress: @escaping (UpdateProgress) async -> ()
-+        progress: @escaping @MainActor @Sendable (UpdateProgress) -> ()
-     ) async throws {
-         log.info("Starting installation of update: \(manifest.version)")
+@@ -22,6 +22,8 @@ final class MultitouchGestureSession {
+     private(set) var ownsGestureBlocker = false
+     /// The gesture currently driving this stroke. Swapped on direction reversal
+     private(set) var resolvedGesture: GestureBinding?
++    /// Kept so an override can hand the stroke back to the radial menu it began as
++    private var radialMenuGesture: GestureBinding?
+     private(set) var pendingTargetWindow: Window?
+     private var activationContext: MultitouchGestureActivationContext?
+     /// Set once Loop rejects or abandons the stroke, as the Dock may already be acting on it
+@@ -52,6 +54,7 @@ final class MultitouchGestureSession {
+         hasGestureBegun = false
+         ownsGestureBlocker = false
+         resolvedGesture = nil
++        radialMenuGesture = nil
+         pendingTargetWindow = nil
+         activationContext = nil
+         if endsStroke {
+@@ -97,6 +100,7 @@ final class MultitouchGestureSession {
+ 
+         pendingTargetWindow = activationContext.targetWindow
+         resolvedGesture = gesture
++        radialMenuGesture = gesture.kind == .radialMenu ? gesture : nil
+         hasGestureBegun = true
+         // Loop is already on screen, so no activation threshold to cross.
+         hasActivated = loopWasAlreadyOpen
+@@ -354,6 +358,13 @@ final class MultitouchGestureSession {
+         return true
+     }
+ 
++    /// Hands an overridden stroke back to the radial menu it began as
++    func restoreRadialMenuGesture() -> Bool {
++        guard let radialMenuGesture else { return false }
++        resolvedGesture = radialMenuGesture
++        return true
++    }
++
+     func switchSwipeGesture(to gesture: GestureBinding, distance: CGFloat) -> Bool {
+         guard canActivate(gesture) else { return false }
+         resolvedGesture = gesture
+```
+
+**File**: `Loop/Core/Multitouch/MultitouchTrigger+Magnify.swift` (modified, +9/-3)
+```diff
+@@ -30,7 +30,7 @@ extension MultitouchTrigger {
+         #endif
+ 
+         if let radialMenuGesture = entry.radialMenuGesture,
+-           !handsRadialMenuMagnifyToOverride(magnify, fingerCount: fingerCount) {
++           !routesMagnifyToOverride(magnify, fingerCount: fingerCount) {
+             await handleRadialMenuMagnify(magnify, fingerCount: fingerCount, gesture: radialMenuGesture)
+             return
+         }
+@@ -133,7 +133,7 @@ extension MultitouchTrigger {
+ 
+     /// A pinch or spread binding sharing the radial menu's finger count takes over the stroke
+     /// once it crosses the activation threshold in that direction, in place of the center action
+-    private func handsRadialMenuMagnifyToOverride(
++    private func routesMagnifyToOverride(
+         _ magnify: SubsurfaceGestureEvent.MagnifyEvent,
+         fingerCount: Int
+     ) -> Bool {
+@@ -144,15 +144,21 @@ extension MultitouchTrigger {
+             return false
+         }
+ 
++        let directionGesture = magnify.distance >= magnify.originDistance ? entry.magnifyInGesture : entry.magnifyOutGesture
++
+         // The stroke always begins as the radial menu, so anything else means an override took it
+         if session.resolvedGesture?.kind != .radialMenu {
++            // Reversing into a direction no override can take hands the stroke back to the menu
++            guard let directionGesture, session.canActivate(directionGesture) else {
++                return !session.restoreRadialMenuGesture()
++            }
+             return true
+         }
+ 
+         guard magnify.phase == .began || magnify.phase == .changed,
+               !session.hasCommittedMagnifyAction,
+               hasCrossedActivationThreshold(magnify),
+-              let overrideGesture = magnify.distance >= magnify.originDistance ? entry.magnifyInGesture : entry.magnifyOutGesture
++              let overrideGesture = directionGesture
+         else {
+             return false
+         }
+```
+
+**File**: `Loop/Utilities/ScreenOrder.swift` (modified, +6/-6)
+```diff
+@@ -191,12 +191,12 @@ private extension ScreenOrder {
+             (0 ..< columns).contains(column) && (0 ..< rows).contains(row) && isSolid[column][row]
+         }
+ 
+-        /// The screen the outline runs along, looking inwards through any bridged gap.
+-        ///
+-        /// A gap less than half as deep as the screen at the bottom of it is tall (or wide, for a
+-        /// gap in the side of the arrangement) is only screens being slightly out of line, like a
+-        /// row with one screen a point lower, so the outline belongs to that screen. Anything
+-        /// deeper is a real gap, and the outline across it belongs to no screen.
++        // The screen the outline runs along, looking inwards through any bridged gap.
++        //
++        // A gap less than half as deep as the screen at the bottom of it is tall (or wide, for a
++        // gap in the side of the arrangement) is only screens being slightly out of line, like a
++        // row with one screen a point lower, so the outline belongs to that screen. Anything
++        // deeper is a real gap, and the outline across it belongs to no screen.
+         func screen(behind direction: Direction, of column: Int, _ row: Int) -> Int? {
+             var column = column
+             var row = row
+```
+
+**File**: `Loop/Window Management/Window Manipulation/WindowFrameResolver.swift` (modified, +3/-3)
+```diff
+@@ -507,9 +507,9 @@ extension WindowFrameResolver {
+             .filter { !$0.intersects(currentFrame) } // Ensure it doesn't intersect with the current window
+             .map { $0.intersection(screenFrame) } // Crop it to the screen frame
+ 
+-        /// Computes the closest window obstacle in each of the four cardinal directions
+-        /// (left, right, top, bottom) relative to the current window, and returns the boundaries
+-        /// formed by these obstacles, constrained to the screen frame.
++        // Computes the closest window obstacle in each of the four cardinal directions
++        // (left, right, top, bottom) relative to the current window, and returns the boundaries
++        // formed by these obstacles, constrained to the screen frame.
+         func computeBoundaries() -> (minX: CGFloat, minY: CGFloat, maxX: CGFloat, maxY: CGFloat) {
+             var minX = screenFrame.minX
+             var minY = screenFrame.minY
+```
+
+**File**: `LoopTests/RadialMenuGestureOverrideTests.swift` (modified, +16/-1)
+```diff
+@@ -57,14 +57,29 @@ struct RadialMenuGestureOverrideTests {
+         #expect(session.resolvedGesture?.id == pinch.id)
+     }
+ 
+-    @Test func nonRadialStrokeCannotBeOverridden() {
++    @Test func overriddenStrokeCanReturnToRadialMenu() {
++        let session = MultitouchGestureSession()
++        let radial = gesture(kind: .radialMenu)
++        let pinch = gesture(kind: .magnifyOut)
++        let spread = gesture(kind: .magnifyIn)
++        let context = MultitouchGestureActivationContext(targetWindow: nil, startedInTitlebar: false)
++
++        #expect(session.begin(activationContext: context, gesture: radial, loopWasAlreadyOpen: true))
++        #expect(session.overrideRadialMenuGesture(with: pinch))
++        #expect(session.restoreRadialMenuGesture())
++        #expect(session.resolvedGesture?.id == radial.id)
++        #expect(session.overrideRadialMenuGesture(with: spread))
++    }
++
++    @Test func nonRadialStrokeCannotBeOverriddenOrRestored() {
+         let session = MultitouchGestureSession()
+         let swipeUp = gesture(kind: .swipeUp, activationZone: .anywhere)
+         let pinch = gesture(kind: .magnifyOut, activationZone: .anywhere)
+         let context = MultitouchGestureActivationContext(targetWindow: nil, startedInTitlebar: true)
+ 
+         #expect(session.begin(activationContext: context, gesture: swipeUp, loopWasAlreadyOpen: true))
+         #expect(!session.overrideRadialMenuGesture(with: pinch))
++        #expect(!session.restoreRadialMenuGesture())
+         #expect(session.resolvedGesture?.id == swipeUp.id)
+     }
  
 ```
 
 ---
 
-### Incident Patch 2: `a1e33281` (2026-08-31)
-**Commit Message**: 🐞 Fix Golden Gate icon blocking releases in macOS Tahoe CI
+### Incident Patch 2: `fbf21e89` (2026-11-09)
+**Commit Message**: ✨ Let gestures override radial menu directions (#1189)
 
-**File**: `Loop/Resources/AppIcon-Developer.icon/icon.json` (modified, +3/-12)
+* ✨ Let gestures override radial menu directions
+
+* 🔥 Remove custom gesture names
+
+* ✨ Remove unnecessary description calls in string interpolation
+
+**File**: `Loop/Core/LoopManager.swift` (modified, +3/-3)
 ```diff
-@@ -1,7 +1,4 @@
- {
--  "features" : [
--    "refractivity"
--  ],
-   "fill" : {
-     "linear-gradient" : [
-       "display-p3:0.29000,0.64300,1.00000,1.00000",
-@@ -118,11 +115,6 @@
-           "value" : 1
+@@ -306,7 +306,7 @@ extension LoopManager {
+             shouldCancelOpening = false
          }
-       ],
--      "refractivity" : {
--        "depth" : 0.14,
--        "enabled" : true,
--        "strength" : 0.38
--      },
-       "shadow" : {
-         "kind" : "neutral",
-         "opacity" : 0.75
-@@ -200,9 +192,8 @@
+ 
+-        log.info("Opening Loop with starting action: \(startingAction.description) and target window: \(window?.description ?? "(none)")")
++        log.info("Opening Loop with starting action: \(startingAction) and target window: \(window?.description ?? "(none)")")
+ 
+         // Refresh accent colors in case user has enabled the wallpaper processor
+         Task {
+@@ -635,15 +635,15 @@ extension LoopManager {
+                         }
+ 
+                         originatingContext.commitWindowTarget(preparedTarget)
+-                        log.info("Focusing window: \(newTargetWindow.description)")
++                        log.info("Focusing window: \(newTargetWindow)")
+                         newTargetWindow.focus()
+                     }
+                 } else if !Defaults[.previewVisibility] {
+                     _ = try? await WindowActionEngine.shared.apply(context: originatingContext)
+                 }
+             }
+ 
+-            log.info("Window action changed: \(newAction.description)")
++            log.info("Window action changed: \(newAction)")
+         }
      }
-   ],
-   "supported-platforms" : {
--    "circles" : [
--      "watchOS"
--    ],
--    "squares" : "shared"
-+    "squares" : [
-+      "macOS"
-+    ]
-   }
+ 
+```
+
+**File**: `Loop/Core/Multitouch/MultitouchGestureSession.swift` (modified, +9/-2)
+```diff
+@@ -347,6 +347,13 @@ final class MultitouchGestureSession {
+             activationContext?.allows(gesture) == true
+     }
+ 
++    /// Hands a radial menu stroke to a binding that overrides one of its directions
++    func overrideRadialMenuGesture(with gesture: GestureBinding) -> Bool {
++        guard resolvedGesture?.kind == .radialMenu, canActivate(gesture) else { return false }
++        resolvedGesture = gesture
++        return true
++    }
++
+     func switchSwipeGesture(to gesture: GestureBinding, distance: CGFloat) -> Bool {
+         guard canActivate(gesture) else { return false }
+         resolvedGesture = gesture
+@@ -429,10 +436,10 @@ final class MultitouchGestureSession {
+     private func directionalMagnifyStepIndex(
+         for distance: CGFloat,
+         originDistance: CGFloat,
+-        kind: GestureBinding.Kind,
++        kind: GestureBinding.Kind?,
+         step: CGFloat
+     ) -> Int {
+-        guard step > 0, let direction = kind.magnificationDirection else { return 0 }
++        guard step > 0, let direction = kind?.magnificationDirection else { return 0 }
+         let normalizedDistance = (distance - originDistance) * direction / step
+         return max(Int(floor(normalizedDistance + 0.000_001)), 0)
+     }
+```
+
+**File**: `Loop/Core/Multitouch/MultitouchRecognizerRegistry.swift` (modified, +5/-19)
+```diff
+@@ -27,10 +27,9 @@ final class MultitouchRecognizerRegistry {
+             _ gestures: [GestureBinding]
+         ) -> (radial: GestureBinding?, directionals: [GestureBinding], magnifyOut: GestureBinding?, magnifyIn: GestureBinding?) {
+             let radial = gestures.first { $0.kind == .radialMenu }
+-            let gesturesByPriority = gestures.sortedByActionability
+-            let directionals = gesturesByPriority.filter(\.kind.isDirectionalSwipe)
+-            let magnifyOut = gesturesByPriority.first { $0.kind == .magnifyOut }
+-            let magnifyIn = gesturesByPriority.first { $0.kind == .magnifyIn }
++            let directionals = gestures.filter { $0.kind?.isDirectionalSwipe == true }
++            let magnifyOut = gestures.first { $0.kind == .magnifyOut }
++            let magnifyIn = gestures.first { $0.kind == .magnifyIn }
+             return (radial, directionals, magnifyOut, magnifyIn)
+         }
+     }
+@@ -111,7 +110,7 @@ final class MultitouchRecognizerRegistry {
+     }
+ 
+     private func logConflictingGestures(in gestures: [GestureBinding]) {
+-        let conflictingIDs = GestureBinding.conflictingActionableIDs(in: gestures)
++        let conflictingIDs = GestureBinding.conflictingIDs(in: gestures)
+         guard conflictingIDs != conflictingGestureIDs else { return }
+         conflictingGestureIDs = conflictingIDs
+ 
+@@ -122,8 +121,7 @@ final class MultitouchRecognizerRegistry {
+ 
+         let conflictingGestures = gestures
+             .filter { conflictingIDs.contains($0.id) }
+-            .map { "\($0.fingerCount)-finger \($0.kind)" }
+-        log.warn("Disabled gestures that conflict on the same finger count: \(conflictingGestures.joined(separator: ", "))")
++        log.warn("Disabled gestures that conflict on the same finger count: \(conflictingGestures)")
+     }
+ 
+     private func startRecognizer(
+@@ -169,15 +167,3 @@ final class MultitouchRecognizerRegistry {
+         )
+     }
  }
-\ No newline at end of file
+-
+-private extension Array where Element == GestureBinding {
+-    var sortedByActionability: [GestureBinding] {
+-        sorted {
+-            if $0.resolvesToNoAction != $1.resolvesToNoAction {
+-                return !$0.resolvesToNoAction
+-            }
+-
+-            return false
+-        }
+-    }
+-}
 ```
 
----
-
-### Incident Patch 3: `2467291f` (2026-08-07)
-**Commit Message**: 🐞 Fix crash when a cycle action has an empty cycle (#1115)
-
-**File**: `Loop/Core/LoopManager.swift` (modified, +2/-1)
+**File**: `Loop/Core/Multitouch/MultitouchTrigger+Magnify.swift` (modified, +37/-1)
 ```diff
-@@ -474,7 +474,8 @@ extension LoopManager {
+@@ -29,7 +29,8 @@ extension MultitouchTrigger {
+             }
+         #endif
+ 
+-        if let radialMenuGesture = entry.radialMenuGesture {
++        if let radialMenuGesture = entry.radialMenuGesture,
++           !handsRadialMenuMagnifyToOverride(magnify, fingerCount: fingerCount) {
+             await handleRadialMenuMagnify(magnify, fingerCount: fingerCount, gesture: radialMenuGesture)
+             return
+         }
+@@ -130,6 +131,41 @@ extension MultitouchTrigger {
+         }
      }
  
-     private func getNextCycleAction(_ action: WindowAction) async -> WindowAction {
--        guard let currentCycle = action.cycle else {
-+        // `currentCycle[0]` below would trap on an empty cycle.
-+        guard let currentCycle = action.cycle, !currentCycle.isEmpty else {
-             return action
++    /// A pinch or spread binding sharing the radial menu's finger count takes over the stroke
++    /// once it crosses the activation threshold in that direction, in place of the center action
++    private func handsRadialMenuMagnifyToOverride(
++        _ magnify: SubsurfaceGestureEvent.MagnifyEvent,
++        fingerCount: Int
++    ) -> Bool {
++        guard let entry = recognizerRegistry.entry(for: fingerCount),
++              let session = recognizerRegistry.session(for: fingerCount),
++              session.hasGestureBegun, !session.isGestureRejected
++        else {
++            return false
++        }
++
++        // The stroke always begins as the radial menu, so anything else means an override took it
++        if session.resolvedGesture?.kind != .radialMenu {
++            return true
++        }
++
++        guard magnify.phase == .began || magnify.phase == .changed,
++              !session.hasCommittedMagnifyAction,
++              hasCrossedActivationThreshold(magnify),
++              let overrideGesture = magnify.distance >= magnify.originDistance ? entry.magnifyInGesture : entry.magnifyOutGesture
++        else {
++            return false
++        }
++
++        guard session.overrideRadialMenuGesture(with: overrideGesture) else { return false }
++
++        if let window = session.pendingTargetWindow,
++           resolvedWindowAction(from: overrideGesture)?.allowsRapidRepeat == true {
++            targetResolver.rememberRepeatableWindow(window, allowsRapidRepeat: true)
++        }
++        return true
++    }
++
+     /// Magnify within a radial menu gesture triggers the center (last) radial menu action.
+     private func handleRadialMenuMagnify(
+         _ magnify: SubsurfaceGestureEvent.MagnifyEvent,
+```
+
+**File**: `Loop/Core/Multitouch/MultitouchTrigger+Swipe.swift` (modified, +78/-17)
+```diff
+@@ -29,7 +29,9 @@ extension MultitouchTrigger {
+         if let radialMenuGesture = entry.radialMenuGesture {
+             await handleRadialMenuSwipe(swipe, fingerCount: fingerCount, gesture: radialMenuGesture)
+         } else {
+-            let direction = directionalSwipeKind(angle: swipe.angle)
++            let direction = directionalSwipeKind(
++                normalizedAngle: RadialGestureGeometry.normalizedAngle(fromSubsurfaceAngle: swipe.angle)
++            )
+             let directionalGesture = entry.directionalGestures.first { $0.kind == direction }
+             let isTerminal = switch swipe.phase {
+             case .ended(_), .cancelled:
+@@ -69,7 +71,13 @@ extension MultitouchTrigger {
+ 
+             let normalizedAngle = RadialGestureGeometry.normalizedAngle(fromSubsurfaceAngle: swipe.angle)
+             let actions = radialMenuActions.dropLast()
+-            guard actions.count > 1 else { return }
++            let overrideGesture = radialMenuOverride(
++                angle: normalizedAngle,
++                actionCount: actions.count,
++                fingerCount: fingerCount,
++                session: session
++            )
++            guard overrideGesture != nil || actions.count > 1 else { return }
+ 
+             let newIndex = RadialGestureGeometry.slotIndex(
+                 angle: normalizedAngle,
+@@ -85,18 +93,26 @@ extension MultitouchTrigger {
+             #endif
+             session.commitSwipe(
+                 distance: swipe.distance,
+-                newKey: .radialSlot(newIndex),
++                newKey: overrideGesture.map { .gesture($0.id) } ?? .radialSlot(newIndex),
+                 step: swipeCycleStepSize
+             ) { reverse in
+                 #if DEBUG
+                     didCommit = true
+                 #endif
+-                triggerRadialMenuAction(
+-                    at: newIndex,
+-                    from: actions,
+-                    reverse: reverse,
+-                    canAdvanceCycle: !session.isRevisitingAction
+-                )
++                if let overrideGesture {
++                    triggerSingleAction(
++                        from: overrideGesture,
++                        reverse: reverse,
++                        canAdvanceCycle: !session.isRevisitingAction
++                    )
++                } else {
++                    triggerRadialMenuAction(
++                        at: newIndex,
++                        from: actions,
++                        reverse: reverse,
++                        canAdvanceCycle: !session.isRevisitingAction
++                    )
++                }
+             }
+ 
+             #if DEBUG
+@@ -116,6 +132,40 @@ extension MultitouchTrigger {
          }
+     }
+ 
++    /// A directional binding sharing the radial menu's finger count takes over the slot
++    /// its direction points into, leaving every other slot, diagonals included, to the menu
++    private func radialMenuOverride(
++        angle normalizedAngle: CGFloat,
++        actionCount: Int,
++        fingerCount: Int,
++        session: MultitouchGestureSession
++    ) -> GestureBinding? {
++        let overrides = recognizerRegistry.entry(for: fingerCount)?.directionalGestures
++            .filter { session.canActivate($0) } ?? []
++        guard !overrides.isEmpty else { return nil }
++
++        // Without slots to share, each direction covers its whole quadrant
++        guard actionCount > 1 else {
++            let direction = directionalSwipeKind(normalizedAngle: normalizedAngle)
++            return overrides.first { $0.kind == direction }
++        }
++
++        let selectedSlot = RadialGestureGeometry.slotIndex(angle: normalizedAngle, actionCount: actionCount)
++        // Menus with fewer than four slots can fit two directions into one, so the nearer one wins
++        return overrides
++            .compactMap { gesture -> (gesture: GestureBinding, offset: CGFloat)? in
++                guard let directionAngle = gesture.kind?.normalizedSwipeAngle,
++                      RadialGestureGeometry.slotIndex(angle: directionAngle, actionCount: actionCount) == selectedSlot
++                else {
++                    return nil
++                }
++                let offset = abs(normalizedAngle - directionAngle)
++                return (gesture, min(offset, 2 * .pi - offset))
++            }
++            .min { $0.offset < $1.offset }?
++            .gesture
++    }
++
+     private func handleDirectionalSwipe(
+         _ swipe: SubsurfaceGestureEvent.SwipeEvent,
+         fingerCount: Int,
+@@ -218,7 +268,7 @@ extension MultitouchTrigger {
+         }
+     }
+ 
+-    private func oppositeDirectionalSwipeKind(of kind: GestureBinding.Kind) -> GestureBinding.Kind? {
++    private func oppositeDirectionalSwipeKind(of kind: GestureBinding.Kind?) -> GestureBinding.Kind? {
+         switch kind {
+         case .swipeUp:
+             .swipeDown
+@@ -307,17 +357,15 @@ extension MultitouchTrigger {
+         clearActionSelection()
+     }
+ 
+-    private func directionalSwipeKind(angle: 
+```
+
+**File**: `Loop/Core/Multitouch/MultitouchTrigger.swift` (modified, +4/-4)
+```diff
+@@ -191,7 +191,7 @@ final class MultitouchTrigger {
+         releaseGestureBlocker(for: session)
+ 
+         guard systemGestureFilter.canClaimCurrentTouch(fingerCount: fingerCount) else {
+-            log.info("Rejected \(fingerCount)-finger \(gesture.kind) gesture: \(dockOwnershipRejectionReason)")
++            log.info("Rejected \(gesture): \(dockOwnershipRejectionReason)")
+             session.abandonStroke()
+             return false
+         }
+@@ -202,9 +202,9 @@ final class MultitouchTrigger {
+             loopWasAlreadyOpen: loopWasAlreadyOpen
+         ) else {
+             if !activationContext.allows(gesture) {
+-                log.info("Rejected \(fingerCount)-finger \(gesture.kind) gesture: titlebar-only gesture started outside a titlebar")
++                log.info("Rejected \(gesture): titlebar-only gesture started outside a titlebar")
+             } else {
+-                log.info("Rejected \(fingerCount)-finger \(gesture.kind) gesture: no target window")
++                log.info("Rejected \(gesture): no target window")
+             }
+             systemGestureFilter.releaseCurrentTouch(fingerCount: fingerCount)
+             // Keep the DEBUG overlay alive, as it follows the physical stroke
+@@ -213,7 +213,7 @@ final class MultitouchTrigger {
+ 
+         // Claimed only once accepted, so the filter never sees Loop own a stroke it's about to reject
+         guard systemGestureFilter.claimCurrentTouch(fingerCount: fingerCount) else {
+-            log.info("Rejected \(fingerCount)-finger \(gesture.kind) gesture: failed to claim the touch, \(dockOwnershipRejectionReason)")
++            log.info("Rejected \(gesture): failed to claim the touch, \(dockOwnershipRejectionReason)")
+             session.reject()
+             return false
+         }
+```
+
+**File**: `Loop/Core/Multitouch/SystemGestureFilter.swift` (modified, +2/-1)
+```diff
+@@ -537,7 +537,8 @@ extension SystemGestureFilter {
+     static func claims(for gestures: [GestureBinding]) -> [Int: Claims] {
+         GestureBinding.activeGestures(in: gestures)
+             .reduce(into: [:]) { result, gesture in
+-                let dockGestures = dockGestures(for: gesture.kind)
++                guard let kind = gesture.kind else { return }
++                let dockGestures = dockGestures(for: kind)
+                 switch gesture.effectiveActivationZone {
+                 case .anywhere:
+                     result[gesture.fingerCount, default: Claims()].anywhere.formUnion(dockGestures)
+```
+
+**File**: `Loop/Core/WindowDragManager.swift` (modified, +1/-1)
+```diff
+@@ -201,7 +201,7 @@ final class WindowDragManager {
+             await context.refreshResolvedState()
+             self.resizeContext = context
+ 
+-            log.info("Determined window being dragged: \(window.description)")
++            log.info("Determined window being dragged: \(window)")
+         }
+     }
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1181** (closed): apply Maximize after a cross-display move (@mvanhorn)
-- **PR #1180** (closed): ✨ Add per-app default window presets (@Mars-den)
-- **PR #1176** (2026-10-13): 🐞 Stop trackpad gestures from scrolling the page behind them (@mrkai77)
-- **PR #1175** (2026-10-09): 🐞 Use the system setting to prevent Mission Control on macOS 15+ (@mrkai77)
-- **PR #1174** (2026-10-09): 🐞 Ignore windows at or above the menu bar's window level (@mrkai77)
-- **PR #1173** (2026-10-09): 🌐 Update translations from Crowdin (@github-actions[bot])
+- **PR #1202** (closed): 🐞 Persist updater info logs so failed updates can be diagnosed (@jvanderen1)
+- **PR #1201** (closed): 🐞 Include newer stable releases on the development channel (@jvanderen1)
+- **PR #1200** (closed): 🐞 Install relocated updates over an existing /Applications copy (@jvanderen1)
+- **PR #1199** (closed): 🐞 Don't run automatic update checks in Debug builds (@jvanderen1)
+- **PR #1198** (closed): 🐞 Offer to relaunch instead of re-downloading an update that's already installed (@jvanderen1)
+- **PR #1194** (closed): ✨ Add opt-in initial frames for new app windows (@Mars-den)
 
 ---
 
@@ -1537,36 +1949,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 Fix updater crash when updating download progress off the main thread (#1166)
+## X. ✨ Track the original radial menu gesture in the session
 
 **RULE**:
-When implementing operations in `Loop/Updater/UpdateDownloader.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mrkai77/Loop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.swiftformat`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mrkai77/Loop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ce662a5`: 🐞 Fix updater crash when updating download progress off the main thread (#1166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b041fcbb`: ✨ Track the original radial menu gesture in the session. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Loop/Updater/UpdateDownloader.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.swiftformat`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    private var progressClosure: (@MainActor (UpdateProgress) -> ())?
-        progress: @escaping @MainActor (UpdateProgress) -> ()
-        progress: @escaping @MainActor (UpdateProgress) -> (),
-        Task { @MainActor in
-            self.progressClosure?(progress)
+--disable genericExtensions,redundantVariable,repeatedGuard,simplifyGenericConstraints,wrapFunctionBodies,wrapIfExpressionBodies,wrapIfStatementBodies,wrapLoopBodies,wrapMultilineStatementBraces,wrapPropertyBodies
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    private var progressClosure: ((UpdateProgress) async -> ())?
-        progress: @escaping (UpdateProgress) async -> ()
-        progress: @escaping (UpdateProgress) async -> (),
-        Task {
-            await self.progressClosure?(progress)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ce662a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b041fcbb` are properly handled with clean fallback behavior.

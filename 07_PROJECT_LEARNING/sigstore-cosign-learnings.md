@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `c8a4781a`  
+> **Source Version**: `8fece0b2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:19:27.217Z  
+> **Timestamp**: 2026-11-12T02:16:41.962Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:19:26.936Z  
+> **Harvest Timestamp**: 2026-11-12T02:16:41.954Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6422 stars
+- **Stars / Engagement**: 6432 stars
 
 ---
 
@@ -1797,854 +1797,748 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8a4781a` (2026-11-09)
-**Commit Message**: Verify blobs exclusively via sigstore-go (#5087)
+### Incident Patch 1: `8fece0b2` (2026-11-11)
+**Commit Message**: Require new bundle format for attest-blob (#5088)
 
-* Verify blobs exclusively via sigstore-go
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
-* Mark bundle flag required for verify-blob
-
-This change marks the `--bundle` flag required for `verify-blob`, replacing an `if` statement checking for the bundle path in `VerifyBlobCmd.Exec`.
-
-This change also removes the corresponding case from `TestVerifyBlob`.
+* Require new bundle format for attest-blob
 
 Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
-* Remove unused VerifyBlobSignature
+* Assert AttestBlobOptions implements Interface
 
-This change removes `VerifyBlobSignature`, which is no longer used now that `verify-blob` verifies exclusively via `sigstore-go`.
-
-This change also updates `FuzzSigVerify` to call `verifyInternal` directly, so the fuzzer keeps the same coverage.
+This change fixes the interface assertion in the `attest-blob` options, which asserted `AttestOptions` instead of `AttestBlobOptions`.
 
 Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
-* Update verify-blob help text for required bundle
+* Remove obsolete new bundle case in TestAttestBlobCmdLocalKeyAndCert
 
-This change updates the help text of `verify-blob` to state that `--bundle` is required, removing the statements that a bundle is optional or preferred. It also lists the supported ways to verify and describes the trusted root.
+This change removes the "new bundle generation" case and unused `newBundle` field in `TestAttestBlobCmdLocalKeyAndCert`, since the new bundle format is now the only format.
 
-This change also adds the missing certificate identity and issuer flags to the example verifying with a trusted root, which failed without t
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
-**File**: `cmd/cosign/cli/options/verify.go` (modified, +1/-19)
+---------
+
+Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+
+**File**: `cmd/cosign/cli/attest/attest_blob.go` (modified, +7/-92)
 ```diff
-@@ -199,47 +199,29 @@ func (o *VerifyAttestationOptions) AddFlags(cmd *cobra.Command) {
- // VerifyBlobOptions is the top level wrapper for the `verify blob` command.
- type VerifyBlobOptions struct {
- 	Key        string
--	Signature  string
- 	BundlePath string
- 
- 	SecurityKey         SecurityKeyOptions
- 	CertVerify          CertVerifyOptions
--	Rekor               RekorOptions
- 	CommonVerifyOptions CommonVerifyOptions
--	SignatureDigest     SignatureDigestOptions
--
--	RFC3161TimestampPath string
- }
- 
- var _ Interface = (*VerifyBlobOptions)(nil)
- 
- // AddFlags implements Interface
- func (o *VerifyBlobOptions) AddFlags(cmd *cobra.Command) {
- 	o.SecurityKey.AddFlags(cmd)
--	o.Rekor.AddFlags(cmd)
- 	o.CertVerify.AddFlags(cmd)
- 	o.CommonVerifyOptions.AddFlags(cmd)
--	o.SignatureDigest.AddFlags(cmd)
--
--	_ = cmd.Flags().MarkDeprecated("rekor-url", "please use --bundle, which includes the Rekor inclusion proof")
- 
- 	cmd.Flags().StringVar(&o.Key, "key", "",
- 		"path to the public key file, KMS URI or Kubernetes Secret")
- 	_ = cmd.MarkFlagFilename("key", publicKeyExts...)
- 
--	cmd.Flags().StringVar(&o.Signature, "signature", "",
--		"signature content or path or remote URL")
--	_ = cmd.MarkFlagFilename("signature", signatureExts...)
--	_ = cmd.Flags().MarkDeprecated("signature", "please use --bundle to provide a signature")
--
- 	cmd.Flags().StringVar(&o.BundlePath, "bundle", "",
- 		"path to bundle FILE")
- 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
--
--	cmd.Flags().StringVar(&o.RFC3161TimestampPath, "rfc3161-timestamp", "",
--		"path to RFC3161 timestamp FILE")
--	// _ = cmd.MarkFlagFilename("rfc3161-timestamp") // no typical extensions
--	_ = cmd.Flags().MarkDeprecated("rfc3161-timestamp", "please use --bundle to provide the output bundle location, which will include the signed timestamp")
-+	_ = cmd.MarkFlagRequired("bundle")
- }
- 
- // VerifyDockerfileOptions is the top level wrapper for the `dockerfile verify` command.
-```
-
-**File**: `cmd/cosign/cli/verify.go` (modified, +11/-27)
-```diff
-@@ -269,17 +269,17 @@ func VerifyBlob() *cobra.Command {
- 	cmd := &cobra.Command{
- 		Use:   "verify-blob",
- 		Short: "Verify a signature on the supplied blob",
--		Long: `Verify a signature on the supplied blob input using the specified key reference.
--You may specify either a key, a bundle (optionally with trusted root), or a kms reference to verify against.
--	If you use a key, bundle, or trusted root, you must specify the path to them on disk.
-+		Long: `Verify a signature on the supplied blob input using a Sigstore bundle, provided via --bundle (required).
-+Verify against a public key or KMS reference (--key), a security key (--sk), or, for keyless
-+signatures, a certificate identity and OIDC issuer (--certificate-identity and --certificate-oidc-issuer).
- 
--The preferred way to provide verification material is via a Sigstore bundle using --bundle,
--which contains the signature, certificate, and transparency log proof.
-+A trusted root verifies service-provided material in the bundle (certificates, transparency log
-+entries, and RFC 3161 timestamps). Cosign fetches it from TUF, unless you provide one via --trusted-root.
- The blob may be specified as a path to a file or - for stdin.`,
- 		Example: ` cosign verify-blob --bundle <path> --certificate-identity <identity> --certificate-oidc-issuer <issuer> <blob>
- 
--  # Verify a signature with a bundle and trusted root
--  cosign verify-blob --bundle artifact.sigstore.json --trusted-root trusted_root.json <blob>
-+  # Verify a keyless signature with a bundle and trusted root
-+  cosign verify-blob --bundle artifact.sigstore.json --trusted-root trusted_root.json --certificate-identity foo@example.com --certificate-oidc-issuer https://accounts.google.com <blob>
- 
-   # Verify a blob (keyless)
-   cosign verify-blob --bundle artifact.sigstore.json --certificate-identity foo@example.com --certificate-oidc-issuer https://accounts.google.com <blob>
-@@ -313,41 +313,25 @@ The blob may be specified as a path to a file or - for stdin.`,
- 				o.CommonVerifyOptions.IgnoreTlog = true
- 			}
- 
--			hashAlgorithm, err := o.SignatureDigest.HashAlgorithm()
--			if err != nil {
--				return err
--			}
--
- 			ko := options.KeyOpts{
--				KeyRef:               o.Key,
--				Sk:                   o.SecurityKey.Use,
--				Slot:                 o.SecurityKey.Slot,
--				RekorURL:             o.Rekor.URL,
--				BundlePath:           o.BundlePath,
--				RFC3161TimestampPath: o.RFC3161TimestampPath,
--				TSACertChainPath:     o.CommonVerifyOptions.TSACertChainPath,
--				NewBundleFormat:      o.CommonVerifyOptions.NewBundleFormat,
-+				KeyRef:     o.Key,
-+				Sk:         o.SecurityKey.Use,
-+				Slot:       o.SecurityKey.Slot,
-+				BundlePath: o.BundlePath,
- 			}
- 			verifyBlobCmd := &verify.VerifyBlobCmd{
- 				KeyOpts:                      ko,
- 				CertVerifyOptions:            o.CertVerify,
--				CertRef:                      o.CertVerify.Cert,
--				CertChain:                    o.CertVerify.CertChain,
--				CARoots:                      o.CertVerify.CARoots,
--				CAIntermediates:              o.CertVerify.CAIntermediates,
--				SigRef:                       o.Signature,
- 				CertGithubWorkflowTrigger:    o.CertVerify.CertGithubWorkflowTrigger,
- 				CertGithubWorkflowSHA:        o.CertVerify.CertGithubWorkflowSha,
- 				CertGithubWorkflowName:       o.CertVerify.CertGithubWorkflowName,
- 				CertGithubWorkflowRepository: o.CertVerify.CertGithubWorkflowRepository,
- 				CertGithubWorkflowRef:        o.CertVerify.CertGithubWorkflowRef,
- 				IgnoreSCT:                    o.CertVerify.IgnoreSCT,
--				SCTRef:                       o.CertVerify.SCT,
- 				Offline:                      o.CommonVerifyOptions.Offline,
- 				IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
- 				UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
- 				TrustedRootPath:              o.CommonVerifyOptions.TrustedRootPath,
--				HashAlgorithm:                hashAlgorithm,
- 				AllowCertificateChain:        o.CommonVerifyOptions.AllowCertificateChain,
- 			}
- 
-```
-
-**File**: `cmd/cosign/cli/verify/common.go` (modified, +37/-0)
-```diff
-@@ -69,6 +69,43 @@ func CheckSigstoreBundleUnsupportedOptions(cmd any, verifyOfflineWithKey bool, c
- 	return nil
- }
- 
-+func isb64(data []byte) bool {
-+	_, err := base64.StdEncoding.DecodeString(string(data))
-+	return err == nil
-+}
-+
-+// LoadVerifierFromKey returns a signature.Verifier from the provided key flags to use for verifying an artifact.
-+// In the case of certain types of keys, it returns a close function that must be called by the calling method.
-+func LoadVerifierFromKey(ctx context.Context, keyRef, slot string, sk bool) (signature.Verifier, func(), error) {
-+	var sigVerifier signature.Verifier
-+	var err error
-+	switch {
-+	case keyRef != "":
-+		sigVerifier, err = csignature.PublicKeyFromKeyRef(ctx, keyRef)
-+		if err != nil {
-+			return nil, nil, fmt.Errorf("loading public key: %w", err)
-+		}
-+		pkcs11Key, ok := sigVerifier.(*pkcs11key.Key)
-+		closeSV := func() {}
-+		if ok {
-+			closeSV = pkcs11Key.Close
-+		}
-+		return sigVerifier, closeSV, nil
-+	case sk:
-+		sk, err := pivkey.GetKeyWithSlot(slot)
-+		if err != nil {
-+			return nil, nil, fmt.Errorf("opening piv token: %w", err)
-+		}
-+		sigVerifier, err = sk.Verifier()
-+		if err != nil {
-+			sk.Close()
-+			return nil, nil, fmt.Errorf("initializing piv token verifier: %w", err)
-+		}
-+		return sigVerifier, sk.Close, nil
-+	}
-+	return nil, func() {}, nil
-+}
-+
- // LoadVerifierFromKeyOrCert returns either a signature.Verifier or a certificate from the provided flags to use for verifying an artifact.
- // In the case of certain types of keys, it returns a close function that must be called by the calling method.
- func LoadVerifierFromKeyOrCert(ctx context.Context, keyRef, slot, certRef, certChain string, hashAlgorithm crypto.Hash, sk, withGetCert bool, co *cosign.CheckOpts) (signature.Verifier, *x509.Certificate, func(), error) {
-```
-
-**File**: `cmd/cosign/cli/verify/verify_blob.go` (modified, +19/-207)
-```diff
-@@ -18,78 +18,46 @@ package verify
- import (
- 	"bytes"
- 	"context"
--	"crypto"
--	"crypto/x509"
--	"encoding/base64"
- 	"encoding/hex"
--	"encoding/json"
--	"errors"
- 	"fmt"
- 	"io"
--	"io/fs"
- 	"os"
--	"path/filepath"
- 	"strings"
- 
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
+@@ -33,10 +33,7 @@ import (
+ 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/signcommon"
  	"github.com/sigstore/cosign/v3/internal/ui"
- 	"github.com/sigstore/cosign/v3/pkg/blob"
- 	"github.com/sigstore/cosign/v3/pkg/cosign"
--	"github.com/sigstore/cosign/v3/pkg/cosign/bundle"
--	"github.com/sigstore/cosign/v3/pkg/oci/static"
- 	sgbundle "github.com/sigstore/sigstore-go/pkg/bundle"
- 	sgverify "github.com/sigstore/sigstore-go/pkg/verify"
--
--	"github.com/sigstore/sigstore/pkg/cryptoutils"
+ 	"github.com/sigstore/cosign/v3/pkg/cosign/attestation"
+-	cbundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle"
+-	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
+ 	"github.com/sigstore/sigstore/pkg/signature"
+-	"google.golang.org/protobuf/encoding/protojson"
  )
  
--func isb64(data []byte) bool {
--	_, err := base64.StdEncoding.DecodeString(string(data))
--	return err == nil
--}
--
  // nolint
- type VerifyBlobCmd struct {
- 	options.KeyOpts
- 	options.CertVerifyOptions
--	CertRef                      string
--	CAIntermediates              string
--	CARoots                      string
--	CertChain                    string
--	SigRef                       string
- 	TrustedRootPath              string
- 	CertGithubWorkflowTrigger    string
- 	CertGithubWorkflowSHA        string
- 	CertGithubWorkflowName       string
- 	CertGithubWorkflowRepository string
- 	CertGithubWorkflowRef        string
- 	IgnoreSCT                    bool
--	SCTRef                       string
- 	Offline                      bool
- 	UseSignedTimestamps          bool
- 	IgnoreTlog                   bool
--	HashAlgorithm                crypto.Hash
- 	AllowCertificateChain        bool
+@@ -51,14 +48,7 @@ type AttestBlobCommand struct {
+ 	PredicatePath string
+ 	PredicateType string
+ 
+-	TlogUpload bool
+-	Timeout    time.Duration
+-
+-	OutputSignature   string
+-	OutputAttestation string
+-	OutputCertificate string
+-
+-	RekorEntryType string
++	Timeout time.Duration
  }
  
  // nolint
- func (c *VerifyBlobCmd) Exec(ctx context.Context, blobRef string) error {
--	// c.HashAlgorithm may be 0 (unset) here, in which case LoadVerifierFromKeyOrCert
--	// picks the digest algorithm that matches the provided key, rather than assuming
--	// SHA256 for keys that require a different algorithm (e.g. P-521 ECDSA keys).
--
--	// Require a certificate/key OR a local bundle file that has the cert.
--	if options.NOf(c.KeyRef, c.CertRef, c.Sk, c.BundlePath) == 0 {
--		return fmt.Errorf("provide a key with --key or --sk, a certificate to verify against with --certificate, or a bundle with --bundle")
+@@ -72,10 +62,6 @@ func (c *AttestBlobCommand) Exec(ctx context.Context, artifactPath string) error
+ 		return fmt.Errorf("one of --predicate or --statement must be set")
+ 	}
+ 
+-	if c.RekorEntryType != "dsse" && c.RekorEntryType != "intoto" {
+-		return fmt.Errorf("unknown value for rekor-entry-type")
 -	}
 -
- 	// key and cert identity are mutually exclusive
- 	if options.NOf(c.KeyRef, c.CertIdentity, c.CertIdentityRegexp) > 1 {
- 		return &options.KeyAndIdentityParseError{}
+ 	if c.Timeout != 0 {
+ 		var cancelFn context.CancelFunc
+ 		ctx, cancelFn = context.WithTimeout(ctx, c.Timeout)
+@@ -147,14 +133,10 @@ func (c *AttestBlobCommand) Exec(ctx context.Context, artifactPath string) error
  	}
  
--	// Key, sk, and cert are mutually exclusive.
--	if options.NOf(c.KeyRef, c.Sk, c.CertRef) > 1 {
-+	// Key and sk are mutually exclusive.
-+	if options.NOf(c.KeyRef, c.Sk) > 1 {
- 		return &options.PubKeyParseError{}
+ 	if c.SigningConfig == nil {
+-		var err error
+-		c.SigningConfig, err = signcommon.NewSigningConfigFromKeyOpts(c.KeyOpts)
+-		if err != nil {
+-			return fmt.Errorf("creating signing config: %w", err)
+-		}
++		c.SigningConfig = signcommon.NewEmptySigningConfig()
+ 	}
+-	if !signcommon.ShouldUploadToTlog(ctx, c.KeyOpts, nil, c.TlogUpload) {
+-		c.SigningConfig = c.SigningConfig.WithRekorLogURLs()
++	if err := signcommon.RequireFulcioForCertificate(c.KeyOpts); err != nil {
++		return err
+ 	}
+ 	if err := signcommon.ConfirmPrivacyStatement(ctx, c.KeyOpts); err != nil {
+ 		return err
+@@ -165,77 +147,10 @@ func (c *AttestBlobCommand) Exec(ctx context.Context, artifactPath string) error
+ 		return fmt.Errorf("creating bundle: %w", err)
  	}
  
-@@ -112,210 +80,54 @@ func (c *VerifyBlobCmd) Exec(ctx context.Context, blobRef string) error {
- 		Identities:                   identities,
- 		Offline:                      c.Offline,
- 		IgnoreTlog:                   c.IgnoreTlog,
--		UseSignedTimestamps:          c.TSACertChainPath != "" || c.UseSignedTimestamps,
-+		UseSignedTimestamps:          c.UseSignedTimestamps,
- 		AllowCertificateChain:        c.AllowCertificateChain,
- 	}
--	co.NewBundleFormat = c.KeyOpts.NewBundleFormat && checkNewBundle(c.BundlePath, co.BundleOptions()...)
--	vOfflineKey := verifyOfflineWithKey(c.KeyRef, c.CertRef, c.Sk, co)
-+	vOfflineKey := verifyOfflineWithKey(c.KeyRef, "", c.Sk, co)
- 
--	// User provides a key or certificate. Otherwise, verification requires a Fulcio certificate
--	// provided in an attached bundle or OCI annotation.
-+	// User provides a key. Otherwise, verification requires a Fulcio certificate
-+	// provided in an attached bundle.
- 	var closeSV func()
--	var cert *x509.Certificate
--	co.SigVerifier, cert, closeSV, err = LoadVerifierFromKeyOrCert(ctx, c.KeyRef, c.Slot, c.CertRef, "", c.HashAlgorithm, c.Sk, true, co)
-+	co.SigVerifier, closeSV, err = LoadVerifierFromKey(ctx, c.KeyRef, c.Slot, c.Sk)
- 	if err != nil {
- 		return fmt.Errorf("loading verifier from key opts: %w", err)
- 	}
- 	defer closeSV()
- 
--	err = SetTrustedMaterial(ctx, c.TrustedRootPath, c.CertChain, c.CARoots, c.CAIntermediates, c.TSACertChainPath, vOfflineKey, co)
-+	err = SetTrustedMaterial(ctx, c.TrustedRootPath, "", "", "", "", vOfflineKey, co)
- 	if err != nil {
- 		return fmt.Errorf("setting trusted material: %w", err)
- 	}
+-	if c.NewBundleFormat {
+-		if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
+-			return fmt.Errorf("create bundle file: %w", err)
+-		}
+-		ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
+-		return nil
+-	}
 -
--	if err = CheckSigstoreBundleUnsupportedOptions(*c, vOfflineKey, co); err != nil {
+-	var pb protobundle.Bundle
+-	if err := protojson.Unmarshal(bundleBytes, &pb); err != nil {
+-		return fmt.Errorf("unmarshalling bundle: %w", err)
+-	}
+-
+-	bundleComponents, err := signcommon.ExtractComponentsFromProtoBundle(&pb)
+-	if err != nil {
 -		return err
 -	}
 -
--	if co.NewBundleFormat {
--		bundle, err := sgbundle.LoadJSONFromPath(c.BundlePath, co.BundleOptions()...)
+-	if c.BundlePath != "" {
+-		contents, err := signcommon.NewLegacyBundleFromProtoBundleComponents(bundleComponents)
 -		if err != nil {
--			return err
+-			return fmt.Errorf("creating legacy bundle: %w", err)
 -		}
 -
--		var artifactPolicyOption sgverify.ArtifactPolicyOption
--		blobBytes, err := payloadBytes(blobRef)
--		if err != nil {
--			alg, digest, payloadDigestError := payloadDigest(blobRef)
--			if payloadDigestError != nil {
--				return err
--			}
--			artifactPolicyOption = sgverify.WithArtifactDigest(alg, digest)
--		} else {
--			artifactPolicyOption = sgverify.WithArtifact(bytes.NewReader(blobBytes))
+-		if err := os.WriteFile(c.BundlePath, contents, 0600); err != nil {
+-			return fmt.Errorf("create bundle file: %w", err)
 -		}
+-		ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
+-	}
 -
--		_, err = cosign.VerifyNewBundle(ctx, co, artifactPolicyOption, bundle)
--		if err != nil {
--			return err
+-	if c.OutputSignature != "" {
+-		if err := os.WriteFile(c.OutputSignature, bundleComponents.Signature, 0600); err != nil {
+-			return fmt.Errorf("create signature file: %w", err)
 -		}
+-		fmt.Fprintf(os.Stderr, "Signature written in %s\n", c.OutputSignature)
+-	} else {
+-		fmt.Fprintln(os.Stdout, string(bundleComponents.Signature))
+-	}
 -
--		ui.Infof(ctx, "Verified OK")
--		return 
+-	if c.OutputAttestation != "" {
+-		if err := os.WriteFile(c.OutputAttestation, payload, 0600); err != nil {
+-			return fmt.Errorf("create attestation file: %w", err)
+-		}
+-		fmt.Fprintf(os.Stderr, "Attestation written in %s\n", c.OutputAttestation)
+-	}
+-
+-	if c.OutputCertificate != "" {
+-		if len(bundleComponents.Certificates) == 0 {
+-			return fmt.Errorf("no certificate found in bundle")
+-		}
+-		certPem, _ := signcommon.EncodeCertificatesToPEM(bundleComponents.Certificates)
+-		if err := os.WriteFile(c.OutputCertificate, certPem, 0600); err != nil {
+-			return fmt.Errorf("create certificate file: %w", err)
+-		}
+-		fmt.Fprintln(os.Stderr, "Certificate written to file ", c.OutputCertificate)
+-	}
+-
+-	if c.RFC3161TimestampPath != "" {
+-		if len(bundleComponents.RFC3161Timestamps) == 0 {
+-			return fmt.Errorf("no RFC3161 timestamp found in bundle")
+-		}
+-		legacyTimestamp := cbundle.TimestampToRFC3161Timestamp(bundleComponents.RFC3161Timestamps[0].GetSignedTimestamp())
+-		ts, err := json.Marshal(legacyTimestamp)
+-		if err != nil {
+-			return fmt.Errorf("marshalling timestamp: %w", err)
+-		}
+-		if err := os.WriteFile(c.RFC3161TimestampPath, ts, 0600); err != nil {
+-			return fmt.Errorf("create timestamp file: %w", err)
+-		}
+-		fmt.Fprintln(os.Stderr, "Timestamp wrote in the file ", c.RFC3161TimestampPath)
++	if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
++		return fmt.Errorf("create bundle file: %w", err)
+ 	}
++	ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
+ 
+ 	return nil
+ }
 ```
 
-**File**: `cmd/cosign/cli/verify/verify_blob_test.go` (modified, +106/-1559)
+**File**: `cmd/cosign/cli/attest/attest_blob_test.go` (modified, +55/-69)
 ```diff
-@@ -23,113 +23,23 @@ import (
- 	"crypto/rand"
- 	"crypto/sha256"
- 	"crypto/sha512"
--	"crypto/x509"
--	"encoding/base64"
- 	"encoding/hex"
--	"encoding/json"
- 	"errors"
--	"fmt"
--	"net/http"
--	"net/http/httptest"
- 	"os"
- 	"path/filepath"
- 	"strings"
- 	"testing"
--	"time"
- 
--	"github.com/cyberphone/json-canonicalization/go/src/webpki.org/jsoncanonicalizer"
--	"github.com/go-openapi/runtime"
--	"github.com/go-openapi/swag/conv"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
--	"github.com/sigstore/cosign/v3/internal/pkg/cosign/tsa/mock"
--	"github.com/sigstore/cosign/v3/internal/test"
--	"github.com/sigstore/cosign/v3/pkg/cosign"
--	"github.com/sigstore/cosign/v3/pkg/cosign/bundle"
- 	sigs "github.com/sigstore/cosign/v3/pkg/signature"
--	ctypes "github.com/sigstore/cosign/v3/pkg/types"
- 	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
- 	protocommon "github.com/sigstore/protobuf-specs/gen/pb-go/common/v1"
--	"github.com/sigstore/rekor/pkg/generated/models"
--	"github.com/sigstore/rekor/pkg/pki"
--	"github.com/sigstore/rekor/pkg/types"
--	rekor_dsse "github.com/sigstore/rekor/pkg/types/dsse"
--	"github.com/sigstore/rekor/pkg/types/hashedrekord"
--	hashedrekord_v001 "github.com/sigstore/rekor/pkg/types/hashedrekord/v0.0.1"
--	"github.com/sigstore/rekor/pkg/types/intoto"
--	"github.com/sigstore/rekor/pkg/types/rekord"
- 	"github.com/sigstore/sigstore/pkg/cryptoutils"
+@@ -37,9 +37,11 @@ import (
+ 	"github.com/sigstore/cosign/v3/internal/test"
+ 	"github.com/sigstore/cosign/v3/pkg/cosign"
+ 	"github.com/sigstore/cosign/v3/pkg/cosign/attestation"
++	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
  	"github.com/sigstore/sigstore/pkg/signature"
--	"github.com/sigstore/sigstore/pkg/signature/dsse"
- 	signatureoptions "github.com/sigstore/sigstore/pkg/signature/options"
- 	"google.golang.org/protobuf/encoding/protojson"
+ 	"github.com/sigstore/sigstore/pkg/signature/dsse"
+ 	"github.com/stretchr/testify/assert"
++	"google.golang.org/protobuf/encoding/protojson"
  )
  
--func TestSignaturesRef(t *testing.T) {
--	sig := "a=="
--	b64sig := "YT09"
--	tests := []struct {
--		description string
--		sigRef      string
--		shouldErr   bool
--	}{
--		{
--			description: "raw sig",
--			sigRef:      sig,
+ // TestAttestBlobCmdLocalKeyAndSk verifies the AttestBlobCmd returns an error
+@@ -73,6 +75,31 @@ func writeFile(t *testing.T, td string, blob string, name string) string {
+ 	return blobPath
+ }
+ 
++// assertOfflineBundle asserts that a key-signed bundle file carries no material
++// from online services (certificates, tlog entries, or signed timestamps).
++func assertOfflineBundle(t *testing.T, bundlePath string) {
++	t.Helper()
++	bundleBytes, err := os.ReadFile(bundlePath)
++	if err != nil {
++		t.Fatalf("failed to read bundle: %v", err)
++	}
++	var bundle protobundle.Bundle
++	if err := protojson.Unmarshal(bundleBytes, &bundle); err != nil {
++		t.Fatalf("failed to unmarshal bundle: %v", err)
++	}
++	vm := bundle.GetVerificationMaterial()
++	// The content is a oneof, so a public key hint also rules out a certificate.
++	if vm.GetPublicKey() == nil {
++		t.Errorf("expected a public key hint, got %T", vm.GetContent())
++	}
++	if n := len(vm.GetTlogEntries()); n != 0 {
++		t.Errorf("expected no transparency log entries, got %d", n)
++	}
++	if n := len(vm.GetTimestampVerificationData().GetRfc3161Timestamps()); n != 0 {
++		t.Errorf("expected no RFC 3161 timestamps, got %d", n)
++	}
++}
++
+ func makeSLSA02PredicateFile(t *testing.T, td string) string {
+ 	predicate := `{ "buildType": "x", "builder": { "id": "2" }, "recipe": {} }`
+ 	return writeFile(t, td, predicate, "predicate02.json")
+@@ -124,7 +151,6 @@ func TestAttestBlobCmdLocalKeyAndCert(t *testing.T) {
+ 				keyref       string
+ 				certref      string
+ 				certchainref string
+-				newBundle    bool
+ 				errString    string
+ 			}{
+ 				{
+@@ -136,24 +162,12 @@ func TestAttestBlobCmdLocalKeyAndCert(t *testing.T) {
+ 					keyref:  keyRef,
+ 					certref: certRef,
+ 				},
+-				{
+-					name:      "new bundle generation",
+-					keyref:    keyRef,
+-					certref:   certRef,
+-					newBundle: true,
+-				},
+ 				{
+ 					name:      "fail: cert no match key",
+ 					keyref:    keyRef,
+ 					certref:   subCertPem,
+ 					errString: "public key in certificate does not match the provided public key",
+ 				},
+-				{
+-					name:         "cert chain matches key",
+-					keyref:       keyRef,
+-					certref:      certRef,
+-					certchainref: subCertPem,
+-				},
+ 				{
+ 					name:         "cert chain partial",
+ 					keyref:       keyRef,
+@@ -175,18 +189,13 @@ func TestAttestBlobCmdLocalKeyAndCert(t *testing.T) {
+ 				},
+ 			} {
+ 				t.Run(tc.name, func(t *testing.T) {
+-					keyOpts := options.KeyOpts{KeyRef: tc.keyref}
+-					if tc.newBundle {
+-						keyOpts.NewBundleFormat = true
+-						keyOpts.BundlePath = filepath.Join(td, "output.bundle")
+-					}
++					keyOpts := options.KeyOpts{KeyRef: tc.keyref, BundlePath: filepath.Join(td, "output.bundle")}
+ 					at := AttestBlobCommand{
+-						KeyOpts:        keyOpts,
+-						CertPath:       tc.certref,
+-						CertChainPath:  tc.certchainref,
+-						PredicatePath:  predicatePath,
+-						PredicateType:  predicateType,
+-						RekorEntryType: "dsse",
++						KeyOpts:       keyOpts,
++						CertPath:      tc.certref,
++						CertChainPath: tc.certchainref,
++						PredicatePath: predicatePath,
++						PredicateType: predicateType,
+ 					}
+ 					err := at.Exec(ctx, blob)
+ 					if err != nil {
+@@ -228,25 +237,34 @@ func TestAttestBlob(t *testing.T) {
+ 
+ 	for predicateType, predicatePath := range predicates {
+ 		t.Run(predicateType, func(t *testing.T) {
+-			dssePath := filepath.Join(td, "dsse.intoto.jsonl")
++			bundlePath := filepath.Join(td, "bundle.json")
++			keyOpts := options.KeyOpts{KeyRef: keyRef, BundlePath: bundlePath}
+ 			at := AttestBlobCommand{
+-				KeyOpts:         options.KeyOpts{KeyRef: keyRef},
+-				PredicatePath:   predicatePath,
+-				PredicateType:   predicateType,
+-				OutputSignature: dssePath,
+-				RekorEntryType:  "dsse",
++				KeyOpts:       keyOpts,
++				PredicatePath: predicatePath,
++				PredicateType: predicateType,
+ 			}
+ 			err := at.Exec(ctx, blobPath)
+ 			if err != nil {
+ 				t.Fatal(err)
+ 			}
++			assertOfflineBundle(t, bundlePath)
+ 
+-			// Load the attestation.
+-			dsseBytes, _ := os.ReadFile(dssePath)
+-			env := &ssldsse.Envelope{}
+-			if err := json.Unmarshal(dsseBytes, env); err != nil {
++			// Load the attestation bundle.
++			bundleBytes, err := os.ReadFile(bundlePath)
++			if err != nil {
+ 				t.Fatal(err)
+ 			}
++			var bundleJSON struct {
++				DsseEnvelope *ssldsse.Envelope `json:"dsseEnvelope"`
++			}
++			if err := json.Unmarshal(bundleBytes, &bundleJSON); err != nil {
++				t.Fatal(err)
++			}
++			env := bundleJSON.DsseEnvelope
++			if env == nil {
++				t.Fatal("expected dsse envelope in bundle")
++			}
+ 
+ 			if
+```
+
+**File**: `cmd/cosign/cli/attest_blob.go` (modified, +21/-37)
+```diff
+@@ -15,8 +15,6 @@
+ package cli
+ 
+ import (
+-	"fmt"
+-
+ 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/attest"
+ 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/generate"
+ 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
+@@ -30,38 +28,35 @@ func AttestBlob() *cobra.Command {
+ 	cmd := &cobra.Command{
+ 		Use:   "attest-blob",
+ 		Short: "Attest the supplied blob",
+-		Example: `  cosign attest-blob --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--f] [--r] <BLOB uri>
++		Example: `  cosign attest-blob [--key <key path>|<kms uri>] [--predicate <path>] [--yes] --bundle <bundle.json> <BLOB uri>
++
++  # attach an attestation to a blob using keyless signing and write the bundle to a file
++  cosign attest-blob --predicate <FILE> --type <TYPE> --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a local key pair file and write the bundle to a file
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key cosign.key --bundle <path> <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key cosign.key --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a key pair stored in Azure Key Vault
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key azurekms://[VAULT_NAME][VAULT_URI]/[KEY] <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key azurekms://[VAULT_NAME][VAULT_URI]/[KEY] --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a key pair stored in AWS KMS
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key awskms://[ENDPOINT]/[ID/ALIAS/ARN] <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key awskms://[ENDPOINT]/[ID/ALIAS/ARN] --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a key pair stored in Google Cloud KMS
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key gcpkms://projects/[PROJECT]/locations/global/keyRings/[KEYRING]/cryptoKeys/[KEY]/versions/[VERSION] <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key gcpkms://projects/[PROJECT]/locations/global/keyRings/[KEYRING]/cryptoKeys/[KEY]/versions/[VERSION] --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a key pair stored in Hashicorp Vault
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key hashivault://[KEY] <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key hashivault://[KEY] --bundle <bundle.json> <BLOB>
+ 
+   # supply attestation via stdin
+-  echo <PAYLOAD> | cosign attest-blob --predicate - --yes`,
++  echo <PAYLOAD> | cosign attest-blob --predicate - --bundle <bundle.json> --yes`,
+ 
+ 		PersistentPreRun: options.BindViper,
+-		PreRunE: func(_ *cobra.Command, _ []string) error {
+-			if o.NewBundleFormat && o.BundlePath == "" {
+-				return fmt.Errorf("must specify --bundle with --new-bundle-format")
+-			}
+-			return nil
 -		},
--		{
--			description: "encoded sig",
--			sigRef:      b64sig,
--		}, {
--			description: "empty ref",
--			shouldErr:   true,
--		},
--	}
+ 		RunE: func(cmd *cobra.Command, args []string) error {
+ 			if err := signcommon.ValidateSigningOptions(cmd.Context(), o.UseSigningConfig, o.SigningConfigPath,
+-				o.Rekor.URL, o.Fulcio.URL, o.OIDC.Issuer, o.TSAServerURL,
+-				o.TlogUpload, o.NewBundleFormat, o.BundlePath,
+-				"", o.OutputAttestation, o.OutputCertificate, "", o.OutputSignature, o.RFC3161TimestampPath); err != nil {
++				"", o.Fulcio.URL, o.OIDC.Issuer, "",
++				true, true, o.BundlePath,
++				"", "", "", "", "", ""); err != nil {
+ 				return err
+ 			}
+ 
+@@ -78,11 +73,8 @@ func AttestBlob() *cobra.Command {
+ 				PassFunc:                       generate.GetPass,
+ 				Sk:                             o.SecurityKey.Use,
+ 				Slot:                           o.SecurityKey.Slot,
+-				FulcioURL:                      o.Fulcio.URL,
+ 				IDToken:                        o.Fulcio.IdentityToken,
+ 				FulcioAuthFlow:                 o.Fulcio.AuthFlow,
+-				RekorURL:                       o.Rekor.URL,
+-				OIDCIssuer:                     o.OIDC.Issuer,
+ 				OIDCClientID:                   o.OIDC.ClientID,
+ 				OIDCClientSecret:               oidcClientSecret,
+ 				OIDCRedirectURL:                o.OIDC.RedirectURL,
+@@ -93,30 +85,22 @@ func AttestBlob() *cobra.Command {
+ 				TSAClientKey:                   o.TSAClientKey,
+ 				TSAClientCert:                  o.TSAClientCert,
+ 				TSAServerName:                  o.TSAServerName,
+-				TSAServerURL:                   o.TSAServerURL,
+-				RFC3161TimestampPath:           o.RFC3161TimestampPath,
+ 				IssueCertificateForExistingKey: o.IssueCertificate,
+ 				BundlePath:                     o.BundlePath,
+-				NewBundleFormat:                o.NewBundleFormat,
+ 			}
+ 			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
+ 				return err
+ 			}
+ 
+ 			v := attest.AttestBlobCommand{
+-				KeyOpts:           ko,
+-				CertPath:          o.Cert,
+-				CertChainPath:     o.CertChain,
+-				ArtifactHash:      o.Hash,
+-				TlogUpload:        o.TlogUpload,
+-				PredicateType:     o.Predicate.Type,
+-				PredicatePath:     o.Predicate.
+```
+
+**File**: `cmd/cosign/cli/options/attest_blob.go` (modified, +11/-61)
+```diff
+@@ -15,39 +15,27 @@
+ package options
+ 
+ import (
+-	"strings"
 -
--	for _, test := range tests {
--		t.Run(test.description, func(t *testing.T) {
--			gotSig, err := base64signature(test.sigRef, "")
--			if test.shouldErr && err != nil {
--				return
--			}
--			if test.shouldErr {
--				t.Fatal("should have received an error")
--			}
--			if gotSig != b64sig {
--				t.Fatalf("unexpected signature, expected: %s got: %s", sig, gotSig)
--			}
--		})
--	}
--}
+ 	"github.com/spf13/cobra"
+ )
+ 
+-// AttestOptions is the top level wrapper for the attest command.
++// AttestBlobOptions is the top level wrapper for the attest-blob command.
+ type AttestBlobOptions struct {
+ 	Key              string
+ 	Cert             string
+ 	CertChain        string
+ 	IssueCertificate bool
+ 
+-	SkipConfirmation     bool
+-	TlogUpload           bool
+-	TSAClientCACert      string
+-	TSAClientCert        string
+-	TSAClientKey         string
+-	TSAServerName        string
+-	TSAServerURL         string
+-	RFC3161TimestampPath string
++	SkipConfirmation bool
++	TSAClientCACert  string
++	TSAClientCert    string
++	TSAClientKey     string
++	TSAServerName    string
+ 
+ 	Hash      string
+ 	Predicate PredicateLocalOptions
+ 
+-	OutputSignature   string
+-	OutputAttestation string
+-	OutputCertificate string
+-	BundlePath        string
+-	NewBundleFormat   bool
 -
--func TestSignaturesBundle(t *testing.T) {
--	td := t.TempDir()
--	fp := filepath.Join(td, "file")
+-	RekorEntryType string
++	BundlePath string
+ 
+-	Rekor       RekorOptions
+ 	Fulcio      FulcioOptions
+ 	OIDC        OIDCOptions
+ 	SecurityKey SecurityKeyOptions
+@@ -57,12 +45,11 @@ type AttestBlobOptions struct {
+ 	TrustedRootPath   string
+ }
+ 
+-var _ Interface = (*AttestOptions)(nil)
++var _ Interface = (*AttestBlobOptions)(nil)
+ 
+ // AddFlags implements Interface
+ func (o *AttestBlobOptions) AddFlags(cmd *cobra.Command) {
+ 	o.Predicate.AddFlags(cmd)
+-	o.Rekor.AddFlags(cmd)
+ 	o.Fulcio.AddFlags(cmd)
+ 	o.OIDC.AddFlags(cmd)
+ 	o.SecurityKey.AddFlags(cmd)
+@@ -82,35 +69,17 @@ func (o *AttestBlobOptions) AddFlags(cmd *cobra.Command) {
+ 			"signing certificate and end with the root certificate.")
+ 	_ = cmd.MarkFlagFilename("certificate-chain", certificateExts...)
+ 
+-	cmd.Flags().StringVar(&o.OutputSignature, "output-signature", "",
+-		"write the signature to FILE")
+-	_ = cmd.MarkFlagFilename("output-signature", signatureExts...)
+-	_ = cmd.Flags().MarkDeprecated("output-signature", "please use --bundle to provide the output bundle location, which will include the signature")
 -
--	b64sig := "YT09"
+-	cmd.Flags().StringVar(&o.OutputAttestation, "output-attestation", "",
+-		"write the attestation to FILE")
+-	// _ = cmd.MarkFlagFilename("output-attestation") // no typical extensions
+-	_ = cmd.Flags().MarkDeprecated("output-attestation", "please use --bundle to provide the output bundle location, which will include the attestation")
 -
--	// save as a LocalSignedPayload to the file
--	lsp := cosign.LocalSignedPayload{
--		Base64Signature: b64sig,
--	}
--	contents, err := json.Marshal(lsp)
--	if err != nil {
--		t.Fatal(err)
--	}
--	if err := os.WriteFile(fp, contents, 0644); err != nil {
--		t.Fatal(err)
--	}
+-	cmd.Flags().StringVar(&o.OutputCertificate, "output-certificate", "",
+-		"write the certificate to FILE")
+-	_ = cmd.MarkFlagFilename("key", certificateExts...)
+-	_ = cmd.Flags().MarkDeprecated("output-certificate", "please use --bundle to provide the output bundle location, which will include the certificate")
 -
--	gotSig, err := base64signature("", fp)
--	if err != nil {
--		t.Fatal(err)
--	}
--	if gotSig != b64sig {
--		t.Fatalf("unexpected signature, expected: %s got: %s", b64sig, gotSig)
--	}
--}
+ 	cmd.Flags().StringVar(&o.BundlePath, "bundle", "",
+ 		"write everything required to verify the blob to a FILE")
+ 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
 -
--// Does not test identity options, only blob verification with different
--// options.
- func TestVerifyBlob(t *testing.T) {
+-	cmd.Flags().BoolVar(&o.NewBundleFormat, "new-bundle-format", true,
+-		"output bundle in new format that contains all verification material")
+-	_ = cmd.Flags().MarkDeprecated("new-bundle-format", "this will be the only supported format in future versions")
++	_ = cmd.MarkFlagRequired("bundle")
+ 
+ 	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
+-		"whether to use a TUF-provided signing config for the service URLs. Must provide --bundle, which will output verification material in the new format")
++		"whether to use a TUF-provided signing config for the service URLs")
+ 	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
+ 
+ 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
+-		"path to a signing config file. Must provide --bundle, which will output verification material in the new format")
++		"path to a signing config file")
+ 
+ 	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
+ 
+@@ -124,15 +93,6 @@ func (o *AttestBlobOptions) AddFlags(cmd *cobra.Command) {
+ 	cmd.Flags().BoolVarP(&o.SkipConfirmation, "yes", "y", false,
+ 		"skip confirmation prompts for non-destructive operations")
+ 
+-	cmd.Flags().BoolVar(&o.TlogUpload, "tlog-upload", true,
+-		"whether or not to upload to the tlog")
+-	_ = cmd.Flags().MarkDeprecated("tlog-upload", "prefer using a --signing-config file with no transparency log services")
+-
+-	cmd.Flags().StringVar(&o.RekorEntryType, "rekor-entry-type", rekorEntryTypes[0],
+-		"specifies the type to be used for a rekor entry upload ("+strings.Join(rekorEntryTypes, "|")+")")
+-	_ = cmd.RegisterFlagCompletionFunc("rekor-entry-type", cobra.FixedCompletions(rekorEntryTypes, cobra.ShellCompDirectiveNoFileComp))
+-	_ = cmd.Flags().MarkDeprecated("rekor-entry-type", "support for this flag will be removed in the future. it is strongly discouraged to rely on Rekor for attestation storage, and in future releases of Rekor, this functionality will be removed.")
+-
+ 	cmd.Flags().StringVar(&o.TSAClientCACert, "timestamp-client-cacer
+```
+
+**File**: `doc/cosign_attest-blob.md` (modified, +11/-8)
+```diff
+@@ -9,25 +9,28 @@ cosign attest-blob [flags]
+ ### Examples
+ 
+ ```
+-  cosign attest-blob --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--f] [--r] <BLOB uri>
++  cosign attest-blob [--key <key path>|<kms uri>] [--predicate <path>] [--yes] --bundle <bundle.json> <BLOB uri>
++
++  # attach an attestation to a blob using keyless signing and write the bundle to a file
++  cosign attest-blob --predicate <FILE> --type <TYPE> --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a local key pair file and write the bundle to a file
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key cosign.key --bundle <path> <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key cosign.key --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a key pair stored in Azure Key Vault
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key azurekms://[VAULT_NAME][VAULT_URI]/[KEY] <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key azurekms://[VAULT_NAME][VAULT_URI]/[KEY] --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a key pair stored in AWS KMS
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key awskms://[ENDPOINT]/[ID/ALIAS/ARN] <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key awskms://[ENDPOINT]/[ID/ALIAS/ARN] --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a key pair stored in Google Cloud KMS
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key gcpkms://projects/[PROJECT]/locations/global/keyRings/[KEYRING]/cryptoKeys/[KEY]/versions/[VERSION] <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key gcpkms://projects/[PROJECT]/locations/global/keyRings/[KEYRING]/cryptoKeys/[KEY]/versions/[VERSION] --bundle <bundle.json> <BLOB>
+ 
+   # attach an attestation to a blob with a key pair stored in Hashicorp Vault
+-  cosign attest-blob --predicate <FILE> --type <TYPE> --key hashivault://[KEY] <BLOB>
++  cosign attest-blob --predicate <FILE> --type <TYPE> --key hashivault://[KEY] --bundle <bundle.json> <BLOB>
+ 
+   # supply attestation via stdin
+-  echo <PAYLOAD> | cosign attest-blob --predicate - --yes
++  echo <PAYLOAD> | cosign attest-blob --predicate - --bundle <bundle.json> --yes
+ ```
+ 
+ ### Options
+@@ -47,7 +50,7 @@ cosign attest-blob [flags]
+       --oidc-provider string                          Specify the provider to get the OIDC token from (Optional). If unset, all options will be tried. Options include: [spiffe, google, github-actions, filesystem, buildkite-agent]
+       --oidc-redirect-url string                      OIDC redirect URL (Optional). The default oidc-redirect-url is 'http://localhost:0/auth/callback'.
+       --predicate string                              path to the predicate file.
+-      --signing-config string                         path to a signing config file. Must provide --bundle, which will output verification material in the new format
++      --signing-config string                         path to a signing config file
+       --sk[=true|false]                               whether to use a hardware security key
+       --slot string                                   security key slot to use for generated key (default: signature) (authentication|signature|card-authentication|key-management)
+       --statement string                              path to the statement file.
+```
+
+**File**: `test/e2e_test.go` (modified, +46/-45)
+```diff
+@@ -993,14 +993,11 @@ func TestSignAttestVerifyBlobWithSigningConfig(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	attBundlePath := filepath.Join(attestDir, "attest.bundle.json")
+-	ko.NewBundleFormat = true
+ 	ko.BundlePath = attBundlePath
+ 
+ 	attestBlobCmd := attest.AttestBlobCommand{
+-		KeyOpts:        ko,
+-		RekorEntryType: "dsse",
+-		StatementPath:  statementPath,
+-		TlogUpload:     true,
++		KeyOpts:       ko,
++		StatementPath: statementPath,
+ 	}
+ 	must(attestBlobCmd.Exec(ctx, bp), t)
+ 
+@@ -1439,12 +1436,10 @@ func TestSignVerifyBlobWithCertificateChain(t *testing.T) {
+ 			var verifyErr error
+ 			if tc.attestation {
+ 				attestBlobCmd := attest.AttestBlobCommand{
+-					KeyOpts:        ko,
+-					CertPath:       leafCertPath,
+-					CertChainPath:  signChainPath,
+-					RekorEntryType: "dsse",
+-					StatementPath:  statementPath,
+-					TlogUpload:     false,
++					KeyOpts:       ko,
++					CertPath:      leafCertPath,
++					CertChainPath: signChainPath,
++					StatementPath: statementPath,
+ 				}
+ 				must(attestBlobCmd.Exec(ctx, bp), t)
+ 
+@@ -1803,15 +1798,12 @@ func TestSignVerifyWithSigningConfigWithKey(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	attBundlePath := filepath.Join(attestDir, "attest.bundle.json")
+-	ko.NewBundleFormat = true
+ 	ko.BundlePath = attBundlePath
+ 	ko.KeyRef = privKeyPath
+ 
+ 	attestBlobCmd := attest.AttestBlobCommand{
+-		KeyOpts:        ko,
+-		RekorEntryType: "dsse",
+-		StatementPath:  statementPath,
+-		TlogUpload:     true,
++		KeyOpts:       ko,
++		StatementPath: statementPath,
+ 	}
+ 	must(attestBlobCmd.Exec(ctx, bp), t)
+ 
+@@ -2854,21 +2846,22 @@ func TestAttestationBlobRFC3161Timestamp(t *testing.T) {
+ 	_, privKeyPath, pubKeyPath := keypair(t, td)
+ 
  	ctx := context.Background()
- 	td := t.TempDir()
-@@ -147,53 +57,8 @@ func TestVerifyBlob(t *testing.T) {
++	signingConfigPath := prepareSigningConfig(t, fulcioURL, rekorURL, "unused", tsaURL+"/api/v1/timestamp")
++	trustedRootPath := prepareTrustedRoot(t, tsaURL)
+ 	ko := options.KeyOpts{
+-		KeyRef:          privKeyPath,
+-		BundlePath:      bundlePath,
+-		NewBundleFormat: true,
+-		TSAServerURL:    tsaURL + "/api/v1/timestamp",
+-		PassFunc:        passFunc,
++		KeyRef:           privKeyPath,
++		BundlePath:       bundlePath,
++		PassFunc:         passFunc,
++		SkipConfirmation: true,
+ 	}
++	err := signcommon.LoadSigningConfigAndTrustedMaterial(ctx, &ko, false, signingConfigPath, trustedRootPath)
++	must(err, t)
+ 
+ 	attestBlobCmd := attest.AttestBlobCommand{
+-		KeyOpts:        ko,
+-		PredicatePath:  predicatePath,
+-		PredicateType:  predicateType,
+-		Timeout:        30 * time.Second,
+-		TlogUpload:     false,
+-		RekorEntryType: "dsse",
++		KeyOpts:       ko,
++		PredicatePath: predicatePath,
++		PredicateType: predicateType,
++		Timeout:       30 * time.Second,
+ 	}
+ 	must(attestBlobCmd.Exec(ctx, bp), t)
+ 
+@@ -2905,7 +2898,7 @@ func TestAttestationBlobRFC3161Timestamp(t *testing.T) {
+ 		t.Error(err)
+ 	}
+ 
+-	trustedRootPath := filepath.Join(td, "trustedroot.json")
++	trustedRootPath = filepath.Join(td, "trustedroot.json")
+ 	trustedRootBytes, err := trustedRoot.MarshalJSON()
+ 	if err != nil {
+ 		t.Error(err)
+@@ -4579,17 +4572,19 @@ func TestAttestBlobSignVerify(t *testing.T) {
  		t.Fatal(err)
  	}
  
--	// Generate expired and unexpired certificates
--	identity := "hello@foo.com"
--	issuer := "issuer"
--	rootCert, rootPriv, _ := test.GenerateRootCa()
--	rootPool := x509.NewCertPool()
--	rootPool.AddCert(rootCert)
--	chain, _ := cryptoutils.MarshalCertificatesToPEM([]*x509.Certificate{rootCert})
--	chainPath := writeBlobFile(t, td, string(chain), "chain.pem")
--
--	unexpiredLeafCert, _ := test.GenerateLeafCertWithExpiration(identity, issuer,
--		time.Now(), leafPriv, rootCert, rootPriv)
--	unexpiredCertPem, _ := cryptoutils.MarshalCertificateToPEM(unexpiredLeafCert)
--
--	expiredLeafCert, _ := test.GenerateLeafCertWithExpiration(identity, issuer,
--		time.Now().Add(-10*time.Minute), leafPriv, rootCert, rootPriv)
--	expiredLeafPem, _ := cryptoutils.MarshalCertificateToPEM(expiredLeafCert)
--
--	unrelatedPriv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
--	if err != nil {
--		t.Fatal(err)
--	}
--	unrelatedSigner, err := signature.LoadECDSASignerVerifier(unrelatedPriv, crypto.SHA256)
--	if err != nil {
--		t.Fatal(err)
--	}
--	unrelatedLeafCert, _ := test.GenerateLeafCertWithExpiration(identity, issuer,
--		time.Now(), unrelatedPriv, rootCert, rootPriv)
--	unrelatedCertPem, _ := cryptoutils.MarshalCertificateToPEM(unrelatedLeafCert)
--
--	// Make rekor signer
--	rekorPriv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
--	if err != nil {
--		t.Fatal(err)
--	}
--	rekorSigner, err := signature.LoadECDSASignerVerifier(rekorPriv, crypto.SHA256)
--	if err != nil {
--		t.Fatal(err)
--	}
--	pemRekor, err := cryptoutils.MarshalPublicKeyToPEM(rekorSigner.Public())
--	if err != nil {
--		t.Fatal(err)
--	}
--	tmpRekorPubFile := writeBlobFile(t, td, string(pemRekor), "rekor_pub.key")
--	t.Setenv("SIGSTORE_REKOR_PUBLIC_KEY", tmpRekorPubFile)
--
--	var makeSignature = func(blob []byte, signer signature.SignerVerifier) st
-```
-
-**File**: `doc/cosign_verify-blob.md` (modified, +7/-7)
-```diff
-@@ -4,12 +4,12 @@ Verify a signature on the supplied blob
+-	outputSignature := filepath.Join(td1, "signature")
++	bundlePath1 := filepath.Join(td1, "attest1.bundle.json")
++	bundlePath2 := filepath.Join(td1, "attest2.bundle.json")
  
- ### Synopsis
+ 	_, privKeyPath1, pubKeyPath1 := keypair(t, td1)
  
--Verify a signature on the supplied blob input using the specified key reference.
--You may specify either a key, a bundle (optionally with trusted root), or a kms reference to verify against.
--	If you use a key, bundle, or trusted root, you must specify the path to them on disk.
-+Verify a signature on the supplied blob input using a Sigstore bundle, provided via --bundle (required).
-+Verify against a public key or KMS reference (--key), a security key (--sk), or, for keyless
-+signatures, a certificate identity and OIDC issuer (--certificate-identity and --certificate-oidc-issuer).
+ 	ctx := context.Background()
+ 	ko := options.KeyOpts{
+-		KeyRef: pubKeyPath1,
++		KeyRef:          pubKeyPath1,
++		BundlePath:      bundlePath1,
++		NewBundleFormat: true,
+ 	}
+ 	blobVerifyAttestationCmd := cliverify.VerifyBlobAttestationCommand{
+ 		KeyOpts:       ko,
+-		SignaturePath: outputSignature,
+ 		PredicateType: predicateType,
+ 		IgnoreTlog:    true,
+ 		CheckClaims:   true,
+@@ -4599,17 +4594,18 @@ func TestAttestBlobSignVerify(t *testing.T) {
  
--The preferred way to provide verification material is via a Sigstore bundle using --bundle,
--which contains the signature, certificate, and transparency log proof.
-+A trusted root verifies service-provided material in the bundle (certificates, transparency log
-+entries, and RFC 3161 timestamps). Cosign fetches it from TUF, unless you provide one via --trusted-root.
- The blob may be specified as a path to a file or - for stdin.
+ 	// Now attest the blob with the private key
+ 	ko = options.KeyOpts{
+-		KeyRef:   privKeyPath1,
+-		PassFunc: passFunc,
++		KeyRef:           privKeyPath1,
++		PassFunc:         passFunc,
++		BundlePath:       bundlePath1,
++		SkipConfirmation: true,
+ 	}
+ 	attestBlobCmd := attest.AttestBlobCommand{
+-		KeyOpts:         ko,
+-		PredicatePath:   predicatePath,
+-		PredicateType:   predicateType,
+-		OutputSignature: outputSignature,
+-		RekorEntryType:  "dsse",
++		KeyOpts:       ko,
++		PredicatePath: predicatePath,
++		PredicateType: predicateType,
+ 	}
+ 	must(attestBlobCmd.Exec(ctx, bp), t)
++	assertOfflineBundle(t, bundlePath1)
  
- ```
-@@ -21,8 +21,8 @@ cosign verify-blob [flags]
- ```
-  cosign verify-blob --bundle <path> --certificate-identity <identity> --certificate-oidc-issuer <issuer> <blob>
+ 	// Now verify should work
+ 	must(blobVerifyAttestationCmd.Exec(ctx, bp), t)
+@@ -4623,23 +4619,28 @@ func TestAttestBlobSignVerify(t *testing.T) {
+ 	mustErr(blobVerifyAttestationCmd.Exec(ctx, anotherBlob), t)
  
--  # Verify a signature with a bundle and trusted root
--  cosign verify-blob --bundle artifact.sigstore.json --trusted-root trusted_root.json <blob>
-+  # Verify a keyless signature with a bundle and trusted root
-+  cosign verify-blob --bundle artifact.sigstore.json --trusted-root trusted_root.json --certificate-identity foo@example.com --certificate-oidc-issuer https://accounts.google.com <blob>
- 
-   # Verify a blob (keyless)
-   cosign verify-blob --bundle artifact.sigstore.json --certificate-identity foo@example.com --certificate-oidc-issuer https://accounts.google.com <blob>
-```
-
-**File**: `pkg/cosign/fuzz_test.go` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ func FuzzSigVerify(f *testing.F) {
- 				t.Fatal(err)
- 			}
- 			for _, sig := range sl {
--				VerifyBlobSignature(context.Background(), sig, &CheckOpts{IgnoreTlog: true})
-+				verifyInternal(context.Background(), sig, v1.Hash{}, verifyOCISignature, &CheckOpts{IgnoreTlog: true})
- 			}
- 		case 3:
- 			sl, err := sigs.Get()
-```
-
-**File**: `pkg/cosign/verify.go` (modified, +0/-6)
-```diff
-@@ -1000,12 +1000,6 @@ func keyBytes(sig oci.Signature, co *CheckOpts) ([]byte, error) {
- 	return cryptoutils.MarshalPublicKeyToPEM(pub)
- }
- 
--// VerifyBlobSignature verifies a blob signature.
--func VerifyBlobSignature(ctx context.Context, sig oci.Signature, co *CheckOpts) (bundleVerified bool, err error) {
--	// The hash of the artifact is unused.
--	return verifyInternal(ctx, sig, v1.Hash{}, verifyOCISignature, co)
--}
--
- // VerifyImageSignature verifies a signature
- func VerifyImageSignature(ctx context.Context, sig oci.Signature, h v1.Hash, co *CheckOpts) (bundleVerified bool, err error) {
- 	return verifyInternal(ctx, sig, h, verifyOCISignature, co)
-```
-
----
-
-### Incident Patch 2: `06f54ea6` (2026-11-09)
-**Commit Message**: move to maintained lib (#5099)
-
-Signed-off-by: Bob Callaway <[REDACTED_EMAIL]>
-
-**File**: `cmd/cosign/cli/options/registry.go` (modified, +1/-1)
-```diff
-@@ -25,13 +25,13 @@ import (
- 	"os"
- 
- 	ecr "github.com/awslabs/amazon-ecr-credential-helper/ecr-login"
--	"github.com/chrismellard/docker-credential-acr-env/pkg/credhelper"
- 	"github.com/google/go-containerregistry/pkg/authn"
- 	"github.com/google/go-containerregistry/pkg/authn/github"
- 	"github.com/google/go-containerregistry/pkg/name"
- 	"github.com/google/go-containerregistry/pkg/v1/google"
- 	"github.com/google/go-containerregistry/pkg/v1/remote"
- 	alibabaacr "github.com/mozillazg/docker-credential-acr-helper/pkg/credhelper"
-+	"github.com/osscontainertools/docker-credential-acr/pkg/credhelper"
- 	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
- 	"github.com/spf13/cobra"
- )
-```
-
-**File**: `doc/cosign.md` (modified, +4/-4)
-```diff
-@@ -5,10 +5,10 @@ A tool for Container Signing, Verification and Storage in an OCI registry
- ### Options
- 
- ```
--  -h, --help                 help for cosign
--      --output-file string   log output to a file
--  -t, --timeout duration     timeout for commands (default 3m0s)
--  -d, --verbose              log debug output
-+  -h, --help[=true|false]      help for cosign
-+      --output-file string     log output to a file
-+  -t, --timeout duration       timeout for commands (default 3m0s)
-+  -d, --verbose[=true|false]   log debug output
- ```
- 
- ### SEE ALSO
-```
-
-**File**: `doc/cosign_attest-blob.md` (modified, +28/-28)
-```diff
-@@ -33,39 +33,39 @@ cosign attest-blob [flags]
- ### Options
- 
- ```
--      --bundle string                    write everything required to verify the blob to a FILE
--      --certificate string               path to the X.509 certificate for signing attestation
--      --certificate-chain string         path to a list of CA X.509 certificates in PEM format which will be needed when building the certificate chain for the signed attestation. Must start with the parent intermediate CA certificate of the signing certificate and end with the root certificate.
--      --fulcio-auth-flow string          fulcio interactive oauth2 flow to use for certificate from fulcio. Defaults to determining the flow based on the runtime environment. (options) normal|device|token|client_credentials
--      --hash string                      hash of blob in hexadecimal (base16). Used if you want to sign an artifact stored elsewhere and have the hash
--  -h, --help                             help for attest-blob
--      --identity-token string            identity token to use for certificate from fulcio. the token or a path to a file containing the token is accepted.
--      --key string                       path to the private key file, KMS URI or Kubernetes Secret
--      --oidc-client-id string            OIDC client ID for application (default "sigstore")
--      --oidc-client-secret-file string   Path to file containing OIDC client secret for application
--      --oidc-disable-ambient-providers   Disable ambient OIDC providers. When true, ambient credentials will not be read
--      --oidc-provider string             Specify the provider to get the OIDC token from (Optional). If unset, all options will be tried. Options include: [spiffe, google, github-actions, filesystem, buildkite-agent]
--      --oidc-redirect-url string         OIDC redirect URL (Optional). The default oidc-redirect-url is 'http://localhost:0/auth/callback'.
--      --predicate string                 path to the predicate file.
--      --signing-config string            path to a signing config file. Must provide --bundle, which will output verification material in the new format
--      --sk                               whether to use a hardware security key
--      --slot string                      security key slot to use for generated key (default: signature) (authentication|signature|card-authentication|key-management)
--      --statement string                 path to the statement file.
--      --timestamp-client-cacert string   path to the X.509 CA certificate file in PEM format to be used for the connection to the TSA Server
--      --timestamp-client-cert string     path to the X.509 certificate file in PEM format to be used for the connection to the TSA Server
--      --timestamp-client-key string      path to the X.509 private key file in PEM format to be used, together with the 'timestamp-client-cert' value, for the connection to the TSA Server
--      --timestamp-server-name string     SAN name to use as the 'ServerName' tls.Config field to verify the mTLS connection to the TSA Server
--      --trusted-root string              optional path to a TrustedRoot JSON file to verify a signature after signing
--      --type string                      specify a predicate type (slsaprovenance|slsaprovenance02|slsaprovenance1|link|spdx|spdxjson|cyclonedx|vuln|openvex|custom) or an URI (default "custom")
--  -y, --yes                              skip confirmation prompts for non-destructive operations
-+      --bundle string                                 write everything required to verify the blob to a FILE
-+      --certificate string                            path to the X.509 certificate for signing attestation
-+      --certificate-chain string                      path to a list of CA X.509 certificates in PEM format which will be needed when building the certificate chain for the signed attestation. Must start with the parent intermediate CA certificate of the signing certificate and end with the root certificate.
-+      --fulcio-auth-flow string                       fulcio interactive oauth2 flow to use for certificate from fulcio. Defaults to determining the flow based on the runtime environment. (options) normal|device|token|client_credentials
-+      --hash string                                   hash of blob in hexadecimal (base16). Used if you want to sign an artifact stored elsewhere and have the hash
-+  -h, --help[=true|false]                             help for attest-blob
-+      --identity-token string                         identity token to use for certificate from fulcio. the token or a path to a file containing the token is accepted.
-+      --key string                                    path to the private key file, KMS URI or Kubernetes Secret
-+      --oidc-client-id string                         OIDC client ID for application (default "sigstore")
-+      --oidc-client-secret-file string                Path to file containing OIDC client secret f
-```
-
-**File**: `doc/cosign_attest.md` (modified, +38/-38)
-```diff
-@@ -48,49 +48,49 @@ cosign attest [flags]
- ### Options
- 
- ```
--      --allow-http-registry              whether to allow using HTTP protocol while connecting to registries. Don't use this for anything but testing
--      --allow-insecure-registry          whether to allow insecure connections to registries (e.g., with expired or self-signed TLS certificates). Don't use this for anything but testing
--      --bundle string                    write everything required to verify the blob to a FILE
--      --certificate string               path to the X.509 certificate in PEM format to include in the OCI Signature
--      --certificate-chain string         path to a list of CA X.509 certificates in PEM format which will be needed when building the certificate chain for the signing certificate. Must start with the parent intermediate CA certificate of the signing certificate and end with the root certificate. Included in the OCI Signature
--      --fulcio-auth-flow string          fulcio interactive oauth2 flow to use for certificate from fulcio. Defaults to determining the flow based on the runtime environment. (options) normal|device|token|client_credentials
--  -h, --help                             help for attest
--      --identity-token string            identity token to use for certificate from fulcio. the token or a path to a file containing the token is accepted.
--      --k8s-keychain                     whether to use the kubernetes keychain instead of the default keychain (supports workload identity).
--      --key string                       path to the private key file, KMS URI or Kubernetes Secret
--      --no-upload                        do not upload the generated attestation, but send the attestation output to STDOUT
--      --oidc-client-id string            OIDC client ID for application (default "sigstore")
--      --oidc-client-secret-file string   Path to file containing OIDC client secret for application
--      --oidc-disable-ambient-providers   Disable ambient OIDC providers. When true, ambient credentials will not be read
--      --oidc-provider string             Specify the provider to get the OIDC token from (Optional). If unset, all options will be tried. Options include: [spiffe, google, github-actions, filesystem, buildkite-agent]
--      --oidc-redirect-url string         OIDC redirect URL (Optional). The default oidc-redirect-url is 'http://localhost:0/auth/callback'.
--      --predicate string                 path to the predicate file.
--      --registry-cacert string           path to the X.509 CA certificate file in PEM format to be used for the connection to the registry
--      --registry-client-cert string      path to the X.509 certificate file in PEM format to be used for the connection to the registry
--      --registry-client-key string       path to the X.509 private key file in PEM format to be used, together with the 'registry-client-cert' value, for the connection to the registry
--      --registry-password string         registry basic auth password
--      --registry-server-name string      SAN name to use as the 'ServerName' tls.Config field to verify the mTLS connection to the registry
--      --registry-token string            registry bearer auth token
--      --registry-username string         registry basic auth username
--      --signing-config string            path to a signing config file
--      --sk                               whether to use a hardware security key
--      --slot string                      security key slot to use for generated key (default: signature) (authentication|signature|card-authentication|key-management)
--      --statement string                 path to the statement file.
--      --timestamp-client-cacert string   path to the X.509 CA certificate file in PEM format to be used for the connection to the TSA Server
--      --timestamp-client-cert string     path to the X.509 certificate file in PEM format to be used for the connection to the TSA Server
--      --timestamp-client-key string      path to the X.509 private key file in PEM format to be used, together with the 'timestamp-client-cert' value, for the connection to the TSA Server
--      --timestamp-server-name string     SAN name to use as the 'ServerName' tls.Config field to verify the mTLS connection to the TSA Server
--      --trusted-root string              optional path to a TrustedRoot JSON file to verify a signature after signing
--      --type string                      specify a predicate type (slsaprovenance|slsaprovenance02|slsaprovenance1|link|spdx|spdxjson|cyclonedx|vuln|openvex|custom) or an URI (default "custom")
--  -y, --yes                              skip confirmation prompts for non-destructive operations
-+      --allow-http-registry[=true|false]              whether to allow using HTTP protocol while connecting to registries. Don't use this for anything but testing
-+      --allow-insecure-registry[=true|false]          whether to allow insecure connections to registri
-```
-
-**File**: `doc/cosign_bundle.md` (modified, +4/-4)
-```diff
-@@ -9,15 +9,15 @@ Tools for interacting with a Sigstore protobuf bundle
- ### Options
- 
- ```
--  -h, --help   help for bundle
-+  -h, --help[=true|false]   help for bundle
- ```
- 
- ### Options inherited from parent commands
- 
- ```
--      --output-file string   log output to a file
--  -t, --timeout duration     timeout for commands (default 3m0s)
--  -d, --verbose              log debug output
-+      --output-file string     log output to a file
-+  -t, --timeout duration       timeout for commands (default 3m0s)
-+  -d, --verbose[=true|false]   log debug output
- ```
- 
- ### SEE ALSO
-```
-
-**File**: `doc/cosign_bundle_create-from-container.md` (modified, +19/-19)
-```diff
-@@ -25,30 +25,30 @@ cosign bundle create-from-container IMAGE [flags]
- ### Options
- 
- ```
--      --allow-http-registry           whether to allow using HTTP protocol while connecting to registries. Don't use this for anything but testing
--      --allow-insecure-registry       whether to allow insecure connections to registries (e.g., with expired or self-signed TLS certificates). Don't use this for anything but testing
--  -h, --help                          help for create-from-container
--      --ignore-tlog                   ignore transparency log verification, to be used when an artifact signature has not been uploaded to the transparency log.
--      --k8s-keychain                  whether to use the kubernetes keychain instead of the default keychain (supports workload identity).
--      --key string                    path to the public key file, KMS URI or Kubernetes Secret
--      --registry-cacert string        path to the X.509 CA certificate file in PEM format to be used for the connection to the registry
--      --registry-client-cert string   path to the X.509 certificate file in PEM format to be used for the connection to the registry
--      --registry-client-key string    path to the X.509 private key file in PEM format to be used, together with the 'registry-client-cert' value, for the connection to the registry
--      --registry-password string      registry basic auth password
--      --registry-server-name string   SAN name to use as the 'ServerName' tls.Config field to verify the mTLS connection to the registry
--      --registry-token string         registry bearer auth token
--      --registry-username string      registry basic auth username
--      --rekor-url string              address of rekor STL server (default "https://rekor.sigstore.dev")
--      --sk                            whether to use a hardware security key
--      --slot string                   security key slot to use for generated key (authentication|signature|card-authentication|key-management) (default "signature")
-+      --allow-http-registry[=true|false]       whether to allow using HTTP protocol while connecting to registries. Don't use this for anything but testing
-+      --allow-insecure-registry[=true|false]   whether to allow insecure connections to registries (e.g., with expired or self-signed TLS certificates). Don't use this for anything but testing
-+  -h, --help[=true|false]                      help for create-from-container
-+      --ignore-tlog[=true|false]               ignore transparency log verification, to be used when an artifact signature has not been uploaded to the transparency log.
-+      --k8s-keychain[=true|false]              whether to use the kubernetes keychain instead of the default keychain (supports workload identity).
-+      --key string                             path to the public key file, KMS URI or Kubernetes Secret
-+      --registry-cacert string                 path to the X.509 CA certificate file in PEM format to be used for the connection to the registry
-+      --registry-client-cert string            path to the X.509 certificate file in PEM format to be used for the connection to the registry
-+      --registry-client-key string             path to the X.509 private key file in PEM format to be used, together with the 'registry-client-cert' value, for the connection to the registry
-+      --registry-password string               registry basic auth password
-+      --registry-server-name string            SAN name to use as the 'ServerName' tls.Config field to verify the mTLS connection to the registry
-+      --registry-token string                  registry bearer auth token
-+      --registry-username string               registry basic auth username
-+      --rekor-url string                       address of rekor STL server (default "https://rekor.sigstore.dev")
-+      --sk[=true|false]                        whether to use a hardware security key
-+      --slot string                            security key slot to use for generated key (authentication|signature|card-authentication|key-management) (default "signature")
- ```
- 
- ### Options inherited from parent commands
- 
- ```
--      --output-file string   log output to a file
--  -t, --timeout duration     timeout for commands (default 3m0s)
--  -d, --verbose              log debug output
-+      --output-file string     log output to a file
-+  -t, --timeout duration       timeout for commands (default 3m0s)
-+  -d, --verbose[=true|false]   log debug output
- ```
- 
- ### SEE ALSO
-```
-
-**File**: `doc/cosign_bundle_create.md` (modified, +6/-6)
-```diff
-@@ -27,23 +27,23 @@ cosign bundle create [flags]
-       --attestation string         path to attestation FILE
-       --bundle string              path to old format bundle FILE
-       --certificate string         path to the signing certificate, likely from Fulcio.
--  -h, --help                       help for create
--      --ignore-tlog                ignore transparency log verification, to be used when an artifact signature has not been uploaded to the transparency log.
-+  -h, --help[=true|false]          help for create
-+      --ignore-tlog[=true|false]   ignore transparency log verification, to be used when an artifact signature has not been uploaded to the transparency log.
-       --key string                 path to the public key file, KMS URI or Kubernetes Secret
-       --out string                 path to output bundle
-       --rekor-url string           address of rekor STL server (default "https://rekor.sigstore.dev")
-       --rfc3161-timestamp string   path to RFC3161 timestamp FILE
-       --signature string           path to base64-encoded signature over attestation in DSSE format
--      --sk                         whether to use a hardware security key
-+      --sk[=true|false]            whether to use a hardware security key
-       --slot string                security key slot to use for generated key (authentication|signature|card-authentication|key-management) (default "signature")
- ```
- 
- ### Options inherited from parent commands
- 
- ```
--      --output-file string   log output to a file
--  -t, --timeout duration     timeout for commands (default 3m0s)
--  -d, --verbose              log debug output
-+      --output-file string     log output to a file
-+  -t, --timeout duration       timeout for commands (default 3m0s)
-+  -d, --verbose[=true|false]   log debug output
- ```
- 
- ### SEE ALSO
-```
-
-**File**: `doc/cosign_bundle_inspect.md` (modified, +4/-4)
-```diff
-@@ -9,15 +9,15 @@ cosign bundle inspect BUNDLE [flags]
- ### Options
- 
- ```
--  -h, --help   help for inspect
-+  -h, --help[=true|false]   help for inspect
- ```
- 
- ### Options inherited from parent commands
- 
- ```
--      --output-file string   log output to a file
--  -t, --timeout duration     timeout for commands (default 3m0s)
--  -d, --verbose              log debug output
-+      --output-file string     log output to a file
-+  -t, --timeout duration       timeout for commands (default 3m0s)
-+  -d, --verbose[=true|false]   log debug output
- ```
- 
- ### SEE ALSO
+ 	// Test statement signing
++	ko = options.KeyOpts{
++		KeyRef:           privKeyPath1,
++		PassFunc:         passFunc,
++		BundlePath:       bundlePath2,
++		SkipConfirmation: true,
++	}
+ 	attestBlobCmd = attest.AttestBlobCommand{
+-		KeyOpts:         ko,
+-		StatementPath:   statementPath,
+-		OutputSignature: outputSignature,
+-		RekorEntryType:  "dsse",
++		KeyOpts:   
 ```
 
 #### Recent Merged Pull Requests:
@@ -2673,46 +2567,70 @@ Signed-off-by: Bob Callaway <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Verify blobs exclusively via sigstore-go (#5087)
+## X. Require new bundle format for attest-blob (#5088)
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/options/verify.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/cosign/cli/attest/attest_blob.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8a4781a`: Verify blobs exclusively via sigstore-go (#5087). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8fece0b2`: Require new bundle format for attest-blob (#5088). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/options/verify.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/attest/attest_blob.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	_ = cmd.MarkFlagRequired("bundle")
+	Timeout time.Duration
+		c.SigningConfig = signcommon.NewEmptySigningConfig()
+	if err := signcommon.RequireFulcioForCertificate(c.KeyOpts); err != nil {
+		return err
+	if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
+		return fmt.Errorf("create bundle file: %w", err)
+	ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	Signature  string
-	Rekor               RekorOptions
-	SignatureDigest     SignatureDigestOptions
+	cbundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle"
+	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
+	"google.golang.org/protobuf/encoding/protojson"
+	TlogUpload bool
+	Timeout    time.Duration
 
-	RFC3161TimestampPath string
-	o.Rekor.AddFlags(cmd)
-	o.SignatureDigest.AddFlags(cmd)
+	OutputSignature   string
+	OutputAttestation string
+	OutputCertificate string
 
-	_ = cmd.Flags().MarkDeprecated("rekor-url", "please use --bundle, which includes the Rekor inclusion proof")
-	cmd.Flags().StringVar(&o.Signature, "signature", "",
-		"signature content or path or remote URL")
-	_ = cmd.MarkFlagFilename("signature", signatureExts...)
-	_ = cmd.Flags().MarkDeprecated("signature", "please use --bundle to provide a signature")
+	RekorEntryType string
+	if c.RekorEntryType != "dsse" && c.RekorEntryType != "intoto" {
+		return fmt.Errorf("unknown value for rekor-entry-type")
+	}
 
+		var err error
+		c.SigningConfig, err = signcommon.NewSigningConfigFromKeyOpts(c.KeyOpts)
+		if err != nil {
+			return fmt.Errorf("creating signing config: %w", err)
+		}
+	if !signcommon.ShouldUploadToTlog(ctx, c.KeyOpts, nil, c.TlogUpload) {
+		c.SigningConfig = c.SigningConfig.WithRekorLogURLs()
+	if c.NewBundleFormat {
+		if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
+			return fmt.Errorf("create bundle file: %w", err)
+		}
+		ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
+		return nil
+	}
 
-	cmd.Flags().StringVar(&o.RFC3161TimestampPath, "rfc3161-timestamp", "",
-		"path to RFC3161 timestamp FILE")
-	// _ = cmd.MarkFlagFilename("rfc3161-timestamp") // no typical extensions
-	_ = cmd.Flags().MarkDeprecated("rfc3161-timestamp", "please use --bundle to provide the output bundle location, which will include the signed timestamp")
+	var pb protobundle.Bundle
+	if err := protojson.Unmarshal(bundleBytes, &pb); err != nil {
+		return fmt.Errorf("unmarshalling bundle: %w", err)
+	}
+
+	bundleComponents, err := signcommon.ExtractComponentsFromProtoBundle(&pb)
+	if 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8a4781a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8fece0b2` are properly handled with clean fallback behavior.

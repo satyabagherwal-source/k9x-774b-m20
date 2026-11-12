@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `95a0477a`  
+> **Source Version**: `d904ad91`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:18:34.484Z  
+> **Timestamp**: 2026-11-12T02:56:27.281Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:18:34.475Z  
+> **Harvest Timestamp**: 2026-11-12T02:56:27.272Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17937 stars
+- **Stars / Engagement**: 17942 stars
 
 ---
 
@@ -2069,11 +2069,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3035** (2026-11-10): **Inband signaling to close connection client-side**
+  *Symptoms*: 
+
 - **Issue #3034** (2026-11-09): **Add README explaining purpose of raft/ directory**
   *Symptoms*: The raft/ directory inside the data directory exists only so an operator has somewhere to place peers.json when recovering a cluster that has lost quorum. Since it is otherwise empty its purpose is easy to forget, so write a short README into it on Store open if one is not already present.   
-
-- **Issue #3032** (2026-11-09): **Honor cluster retry limits and detect stale pooled connections**
-  *Symptoms*: Forwarded commands could be sent twice with retries=0 when a leader's response timed out. This change sends a command once plus at most the explicitly configured retries, returning ambiguous failures to the caller when retries are disabled. Permitted retries use fresh connections.  Idle pool checkout now uses nonblocking socket peeks to discard detectably closed connections before sending a command. Healthy connections remain pooled. The networking implementation lives in tcp/pool and supports Linux, macOS, and BSD; other platforms conservatively retain connections. TLS checks inspect the underlying socket without consuming bytes or changing deadlines. These checks are best effort: a close racing with checkout, or pending TLS control records, can still result in a failed request.  The client also discards connections after exact unauthorized or unsupported service responses, and the backup stream's missing-request response, before returning them to the pool. Ordinary application errors preserve reuse.  The series contains separate commits for terminal-response handling, strict retry limits, pool liveness checks, and the stale-pool end-to-end assertion. That test now verifies successful recovery without command retries, replacing its old expectation of one forced resend. CHANGELOG is unchanged.  Validation: - go test ./... passed. - go test -race ./cluster ./tcp/pool passed; the subsequently added dial/write/cancellation cases also passed under the race detector. - Cluster and
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2090,198 +2090,630 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95a0477a` (2026-11-09)
-**Commit Message**: Merge pull request #3034 from rqlite/raft-dir-readme
+### Incident Patch 1: `46613189` (2026-11-10)
+**Commit Message**: Fix sqlean Docker build
 
-Add README explaining purpose of raft/ directory
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `tools/build-sqlean.sh` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,7 @@ This release provides more options for securing backups in the Cloud, upgrades S
- - [PR #3005](https://github.com/rqlite/rqlite/pull/3005): Support CMEK for automatic backups to Google Cloud Storage.
+@@ -27,7 +27,7 @@ curl --retry 5 --retry-delay 5 -L "$sqlean_url" -o sqlean.tar.gz
+ log "[3/4] Extract and build"
+ tar xvfz sqlean.tar.gz
+ cd nalgeon*
+-make prepare-dist download-sqlite download-external compile-linux
++make prepare-dist download-sqlite build
  
- ### Implementation changes and bug fixes
-+- [PR #3034](https://github.com/rqlite/rqlite/pull/3034): Add README explaining purpose of `raft/` directory.
- - [PR #3014](https://github.com/rqlite/rqlite/pull/3014): Preserve table data in SQL dumps when table names contain single quotes or column names contain double quotes.
- - [PR #3031](https://github.com/rqlite/rqlite/pull/3031): Move automatic backup retries from the Store provider to the uploader.
- - [PR #3022](https://github.com/rqlite/rqlite/pull/3022): Replace credentials and permissions only after validating the complete auth configuration, leaving the store unchanged on failure.
-```
-
-**File**: `store/state.go` (modified, +36/-0)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"fmt"
- 	"log"
- 	"net"
-+	"os"
- 	"path/filepath"
- 	"strings"
- 	"time"
-@@ -168,6 +169,41 @@ func HasData(dir string) (bool, error) {
- 	return h, nil
- }
- 
-+// recoveryREADMEName is the name of the file written to the directory which
-+// holds the peers file, explaining to operators why the directory exists.
-+const recoveryREADMEName = "README"
-+
-+const recoveryREADME = `
-+This directory is used to recover a cluster that has lost quorum.
-+
-+At startup rqlite checks this directory for a file named peers.json and, if
-+present, uses it to force a new cluster configuration. After a successful
-+recovery the file is renamed to peers.info. Unless you are recovering a
-+cluster this directory will be otherwise empty, and can be ignored.
-+
-+For the full recovery procedure see:
-+https://rqlite.io/docs/clustering/general-guidelines/#dealing-with-failure
-+
-+`
-+
-+// writeRecoveryREADME writes a README to dir, the directory in which the peers
-+// file is placed during cluster recovery. If the README already exists it is
-+// left untouched.
-+func writeRecoveryREADME(dir string) error {
-+	f, err := os.OpenFile(filepath.Join(dir, recoveryREADMEName), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
-+	if err != nil {
-+		if os.IsExist(err) {
-+			return nil
-+		}
-+		return err
-+	}
-+	if _, err := f.WriteString(recoveryREADME); err != nil {
-+		f.Close()
-+		return err
-+	}
-+	return f.Close()
-+}
-+
- // RecoverNode is used to manually force a new configuration, in the event that
- // quorum cannot be restored. This borrows heavily from RecoverCluster functionality
- // of the Hashicorp Raft library, but has been customized for rqlite use.
-```
-
-**File**: `store/store.go` (modified, +9/-4)
-```diff
-@@ -124,8 +124,8 @@ const (
- 	restoreScratchPattern  = "rqlite-restore-*"
- 	bootScratchPattern     = "rqlite-boot-*"
- 	backupScratchPattern   = "rqlite-backup-*"
--	raftDBPath             = "raft.db" // Changing this will break backwards compatibility.
--	peersPath              = "raft/peers.json"
-+	raftDBPath             = "raft.db"         // Changing this will break backwards compatibility.
-+	peersPath              = "raft/peers.json" // The "raft" directory exists only to hold the peers file during cluster recovery.
- 	peersInfoPath          = "raft/peers.info"
- 	applyTimeout           = 10 * time.Second
- 	sqliteFile             = "db.sqlite"
-@@ -542,14 +542,19 @@ func (s *Store) Open() (retErr error) {
- 	// Clean up a never-used file from previous releases.
- 	fsutil.Remove(filepath.Join(s.raftDir, "applied_index"))
- 
--	// Create all the required Raft directories.
-+	// Create the data directory, and the directory in which an operator places
-+	// the peers file when recovering a cluster.
- 	s.logger.Printf("ensuring data directory exists at %s", s.raftDir)
- 	if err := os.MkdirAll(s.raftDir, 0755); err != nil {
- 		return err
- 	}
--	if err := os.MkdirAll(filepath.Dir(s.peersPath), 0755); err != nil {
-+	peersDir := filepath.Dir(s.peersPath)
-+	if err := os.MkdirAll(peersDir, 0755); err != nil {
- 		return err
- 	}
-+	if err := writeRecoveryREADME(peersDir); err != nil {
-+		s.logger.Printf("failed to write README to %s: %s", peersDir, err.Error())
-+	}
- 	decMgmr, err := chunking.NewDechunkerManager(filepath.Dir(s.dbPath))
- 	if err != nil {
- 		return err
-```
-
-**File**: `store/store_test.go` (modified, +37/-0)
-```diff
-@@ -123,6 +123,43 @@ func Test_OpenStoreSingleNode(t *testing.T) {
- 	}
- }
- 
-+// Test_OpenStoreRecoveryREADME tests that the README explaining the purpose
-+// of the peers directory is written when the Store is opened, and is written
-+// again on the next open if it has been removed.
-+func Test_OpenStoreRecoveryREADME(t *testing.T) {
-+	s, ln := mustNewStore(t)
-+	defer ln.Close()
-+	readmePath := filepath.Join(filepath.Dir(s.peersPath), recoveryREADMEName)
-+
-+	if err := s.Open(); err != nil {
-+		t.Fatalf("failed to open single-node store: %s", err.Error())
-+	}
-+	if !fsutil.FileExists(readmePath) {
-+		t.Fatalf("recovery README does not exist at %s after open", readmePath)
-+	}
-+	if got, exp := string(mustReadFile(readmePath)), recoveryREADME; got != exp {
-+		t.Fatalf("recovery README has wrong contents, got: %s, exp: %s", got, exp)
-+	}
-+	if err := s.Close(true); err != nil {
-+		t.Fatalf("failed to close single-node store: %s", err.Error())
-+	}
-+
-+	if err := fsutil.Remove(readmePath); err != nil {
-+		t.Fatalf("failed to remove recovery README: %s", err.Error())
-+	}
-+	if fsutil.FileExists(readmePath) {
-+		t.Fatalf("recovery README still exists at %s after removal", readmePath)
-+	}
-+
-+	if err := s.Open(); err != nil {
-+		t.Fatalf("failed to reopen single-node store: %s", err.Error())
-+	}
-+	defer s.Close(true)
-+	if !fsutil.FileExists(readmePath) {
-+		t.Fatalf("recovery README does not exist at %s after reopen", readmePath)
-+	}
-+}
-+
- func Test_SingleNodeDBAppliedIndex(t *testing.T) {
- 	s, ln := mustNewStore(t)
- 	defer ln.Close()
+ log "[4/4] Package dist/sqlean.so into $OUTPUT_DIR/sqlean.zip"
+ zip -j "$OUTPUT_DIR/sqlean.zip" dist/sqlean.so
 ```
 
 ---
 
-### Incident Patch 2: `b0f17e72` (2026-11-09)
-**Commit Message**: Pad recovery README with leading and trailing blank lines
+### Incident Patch 2: `99389a74` (2026-11-09)
+**Commit Message**: Merge pull request #3033 from rqlite/claude-fix-retries
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Fix retries while still detecting stale connections
 
-**File**: `store/state.go` (modified, +3/-1)
+**File**: `cluster/DESIGN.md` (modified, +4/-4)
 ```diff
-@@ -173,7 +173,8 @@ func HasData(dir string) (bool, error) {
- // holds the peers file, explaining to operators why the directory exists.
- const recoveryREADMEName = "README"
+@@ -38,11 +38,11 @@ Permission checks happen per message via the `CredentialStore` interface (`AA(us
  
--const recoveryREADME = `This directory is used to recover a cluster that has lost quorum.
-+const recoveryREADME = `
-+This directory is used to recover a cluster that has lost quorum.
+ A `SetLocal(nodeAddr, *Service)` shortcut lets the client serve `GetNodeMeta` for the local node without a network round-trip. The HTTP layer holds a single `Client` per process; asking it about *self* — which happens often enough — should not touch the network.
  
- At startup rqlite checks this directory for a file named peers.json and, if
- present, uses it to force a new cluster configuration. After a successful
-@@ -182,6 +183,7 @@ cluster this directory will be otherwise empty, and can be ignored.
+-### Connection Pool Retries
++### Retries and Stale Connections
  
- For the full recovery procedure see:
- https://rqlite.io/docs/clustering/general-guidelines/#dealing-with-failure
+-Every retry-eligible request goes through `Client.retry`. The base loop is unsurprising: dial from the pool, write/read, return on success, mark the connection unusable on error and try again. The wrinkle is the *last* retry. If every previous attempt has failed, the client does not just take another connection from the pool — it forces a brand-new dial via `pl.New()`.
++Every retry-eligible request goes through `Client.retry`: dial from the pool, write and read, return on success, mark the connection unusable on error, and send again only if the caller asked for retries. Zero retries means the command is sent once. The client cannot tell a reply that was lost from a command that was never acted on, so a caller asking for retries accepts that a write may be applied twice; the HTTP layer forwards with zero retries unless the user asks otherwise.
+ 
+-This catches a real production failure pattern that motivated the v10 fix. When a remote node restarts, the local pool can be holding sixty-three TCP connections that all *look* fine but are actually dead. Each retry takes one of those, fails, marks it unusable, and moves on, but if the pool is replenished as fast as retries deplete it the request can fail without ever proving the remote is reachable. The "force new on last retry" path bypasses the pool entirely so a single fresh connection definitively distinguishes "node down" from "all my pool entries are stale." It only triggers after retries are otherwise exhausted, so the cost is negligible in steady state.
++That rules out resending as the answer to a stale pool. When a remote node restarts, the local pool can hold dozens of connections that all look fine but are dead, and the write on each one succeeds -- only the read fails, which is exactly the lost-reply case above. So the pool catches staleness before anything is written. While a connection is idle in the pool a goroutine blocks reading from it; nothing is expected to arrive on an idle connection, so that read only returns when the remote side has gone away, and the connection is marked dead on the spot. `Get` stops the watcher and skips dead connections, so a pool full of them is drained in one call and followed by a single fresh dial. The remote `Service` closes connections idle for 30 seconds, and the same mechanism catches those.
+ 
+ Cluster management operations (`Join`, `Notify`, `RemoveNode`, `Stepdown`) deliberately *do not* retry at this layer. Operator-initiated commands should fail visibly so the operator knows what happened, and higher layers (the `Bootstrapper`, the HTTP handler) are the right places to add policy-aware retries.
+ 
+@@ -103,7 +103,7 @@ Two backup paths exist for historical and operational reasons:
+ 
+ - **Single port for all internode traffic.** Both Raft and the cluster control plane share one TCP listener with mux byte tags. The trade-off is a small amount of demux glue; the payoff is one fewer port for operators to manage and firewall. The HTTP port stays separate because end-user traffic has fundamentally different networking requirements.
+ 
+-- **Per-node connection pool with last-retry bypass (v10).** Pooled connections amortize TCP/TLS setup. Pooled connections after a *remote restart*, however, can all be silently dead. The v10 "force a fresh dial on the last retry" path catches that case without giving up the pool's steady-state benefits. This was a real production bug; a node restart could cause the local node's forwarding requests to fail until the entire pool churned through.
++- **Per-node connection pool that watches its idle connections.** Pooled connections amortize TCP/TLS setup. Pooled connections after a *remote restart*, however, can all be silently dead, and a stale connection only reveals itself on the read after the write has gone out. An earlier fix resent the command on a fresh connection, which duplicated writes whose reply had merely been slow. Watching idle connections finds dead ones before they are used, so the pool keeps its steady-state benefits and a command with zero retries is never sent twice.
+ 
+ - **Cluster-management operations do not auto-retry at the wire.** Joins, removals, notifies, and stepdowns are operator-driven; auto-retrying them silently would obscure failures. Higher layers (`Bootstrapper`, `Remover`, the HTTP handler) add their own retry policy where it makes sense.
+ 
+```
+
+**File**: `cluster/client.go` (modified, +86/-253)
+```diff
+@@ -11,7 +11,6 @@ import (
+ 	"net"
+ 	"os"
+ 	"sync"
+-	"sync/atomic"
+ 	"time"
+ 
+ 	"github.com/rqlite/rqlite/v10/auth"
+@@ -83,17 +82,14 @@ type Client struct {
+ 
+ 	poolMu sync.RWMutex
+ 	pools  map[string]pool.Pool
+-
+-	// Whitebox testing
+-	numForcedNewConns atomic.Int32
+ }
+ 
+ // NewClient returns a client instance for talking to a remote node.
+-// Clients will retry certain commands if they fail, to allow for
+-// remote node restarts. Cluster management operations such as joining
+-// and removing nodes are not retried, to make it clear to the operator
+-// that the operation failed. In addition, higher-level code will
+-// usually retry these operations.
++// Commands are sent exactly once unless the caller asks for retries; see
++// retry for what a retry can mean for a write. Cluster management
++// operations such as joining and removing nodes are never retried, to
++// make it clear to the operator that the operation failed. In addition,
++// higher-level code will usually retry these operations.
+ func NewClient(dl Dialer, t time.Duration) *Client {
+ 	return &Client{
+ 		dialer:  dl,
+@@ -149,17 +145,12 @@ func (c *Client) GetNodeMeta(ctx context.Context, nodeAddr string, retries int,
+ 	command := &proto.Command{
+ 		Type: proto.Command_COMMAND_TYPE_GET_NODE_META,
+ 	}
+-	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
++	a := &proto.NodeMeta{}
++	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
+ 	stats.Add(numGetNodeAPIRequestRetries, int64(nr))
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-
+-	a := &proto.NodeMeta{}
+-	err = pb.Unmarshal(p, a)
+-	if err != nil {
+-		return nil, fmt.Errorf("protobuf unmarshal: %w", err)
+-	}
+ 	if a.Version == "" {
+ 		// Handle nodes running older code.
+ 		a.Version = "unknown"
+@@ -175,17 +166,12 @@ func (c *Client) GetCommitIndex(ctx context.Context, nodeAddr string, retries in
+ 	command := &proto.Command{
+ 		Type: proto.Command_COMMAND_TYPE_GET_NODE_META,
+ 	}
+-	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
++	a := &proto.NodeMeta{}
++	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
+ 	stats.Add(numGetNodeAPIRequestRetries, int64(nr))
+ 	if err != nil {
+ 		return 0, err
+ 	}
+-
+-	a := &proto.NodeMeta{}
+-	err = pb.Unmarshal(p, a)
+-	if err != nil {
+-		return 0, fmt.Errorf("protobuf unmarshal: %w", err)
+-	}
+ 	return a.CommitIndex, nil
+ }
+ 
+@@ -203,14 +189,9 @@ func (c *Client) Execute(ctx context.Context, er *command.ExecuteRequest, nodeAd
+ 		},
+ 		Credentials: creds,
+ 	}
+-	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
+-	stats.Add(numClientExecuteRetries, int64(nr))
+-	if err != nil {
+-		return nil, 0, err
+-	}
+-
+ 	a := &proto.CommandExecuteResponse{}
+-	err = pb.Unmarshal(p, a)
++	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
++	stats.Add(numClientExecuteRetries, int64(nr))
+ 	if err != nil {
+ 		return nil, 0, err
+ 	}
+@@ -235,14 +216,9 @@ func (c *Client) Query(ctx context.Context, qr *command.QueryRequest, nodeAddr s
+ 		},
+ 		Credentials: creds,
+ 	}
+-	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
+-	stats.Add(numClientQueryRetries, int64(nr))
+-	if err != nil {
+-		return nil, 0, err
+-	}
+-
+ 	a := &proto.CommandQueryResponse{}
+-	err = pb.Unmarshal(p, a)
++	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
++	stats.Add(numClientQueryRetries, int64(nr))
+ 	if err != nil {
+ 		return nil, 0, err
+ 	}
+@@ -267,14 +243,9 @@ func (c *Client) Request(ctx context.Context, r *command.ExecuteQueryRequest, no
+ 		},
+ 		Credentials: creds,
+ 	}
+-	p, nr, err := c.retry(ctx, command, nodeAddr, timeout, retries)
+-	stats.Add(numClientRequestRetries, int64(nr))
+-	if err != nil {
+-		return nil, 0, 0, err
+-	}
+-
+ 	a := &proto.CommandRequestResponse{}
+-	err = pb.Unmarshal(p, a)
++	nr, err := c.retry(ctx, command, nodeAddr, timeout, retries, a)
++	stats.Add(numClientRequestRetries, int64(nr))
+ 	if err != nil {
+ 		return nil, 0, 0, err
+ 	}
+@@ -324,23 +295,32 @@ func (c *Client) Backup(ctx context.Context, br *command.BackupRequest, nodeAddr
+ 		return 0, err
+ 	}
+ 	if a.Error != "" {
++		// The service ends the connection after any error reply to a
++		// backup stream request, so this connection must not be reused.
++		handleConnError(conn)
+ 		return 0, errors.New(a.Error)
+ 	}
+ 
+ 	// The backup stream is unconditionally compressed, so depending on whether
+ 	// the user requested compression, we may need to decompress the response.
++	// A stream that ends early leaves the connection mid-message, so it must
++	// not go back to the pool.
+ 	var rc io.ReadCloser
+ 	rc = conn
+ 	if !br.Compress {
+ 		gzr, err := gzip.NewReader(conn)
+ 		if err != nil {
++			handleConnError(conn)
+ 			return 0, err
+ 		}
+ 		gzr.Multistream(false)
+ 		rc = gzr
+ 		defer rc.Close()
+ 	}
+ 	n, err := io.Copy(w, rc)
++	if err != nil {
++		handleConnError(conn)
++	}
+ 	return int(n), err
+ }
+ 
+@@ -357,14 +337,9 @@ func (c *Client) Load(ctx context.Context, lr *command.LoadRequest, nodeAddr str
+ 		},
+ 		Credentials: creds,
+ 	}
+-	p, nr, err := c.retry(ctx, comman
+```
+
+**File**: `cluster/client_test.go` (modified, +294/-98)
+```diff
+@@ -3,10 +3,13 @@ package cluster
+ import (
+ 	"context"
+ 	"encoding/binary"
++	"errors"
++	"fmt"
+ 	"io"
+ 	"net"
++	"os"
+ 	"strings"
+-	"sync"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+@@ -502,12 +505,11 @@ func Test_ClientJoinNode_MaxRedirectsExceeded(t *testing.T) {
+ 
+ 	srv := servicetest.NewService()
+ 	srv.Handler = func(conn net.Conn) {
+-		redirects <- struct{}{}
+-
+ 		c := readCommand(conn)
+ 		if c == nil {
+ 			return
+ 		}
++		redirects <- struct{}{}
+ 		if c.Type != proto.Command_COMMAND_TYPE_JOIN {
+ 			t.Fatalf("unexpected command type: %d", c.Type)
+ 		}
+@@ -600,12 +602,11 @@ func Test_ClientJoinNode_SuccessAfterRedirect(t *testing.T) {
+ 
+ 	srv := servicetest.NewService()
+ 	srv.Handler = func(conn net.Conn) {
+-		attempts <- struct{}{}
+-
+ 		c := readCommand(conn)
+ 		if c == nil {
+ 			return
+ 		}
++		attempts <- struct{}{}
+ 		if c.Type != proto.Command_COMMAND_TYPE_JOIN {
+ 			t.Fatalf("unexpected command type: %d", c.Type)
+ 		}
+@@ -648,20 +649,41 @@ func Test_ClientJoinNode_SuccessAfterRedirect(t *testing.T) {
+ 	}
+ }
+ 
+-func Test_ClientRetry_SuccessFirstAttempt(t *testing.T) {
+-	srv := servicetest.NewService()
+-	srv.Handler = func(conn net.Conn) {
++// countingHandler wraps a handler so a test can see how many commands the
++// server read.
++type countingHandler struct {
++	commands atomic.Int32
++}
 +
- `
++// handle returns a servicetest handler that reads a command, counts it, and
++// then hands the connection and command to f. f is not called if no command
++// arrived.
++func (h *countingHandler) handle(f func(conn net.Conn, c *proto.Command)) func(net.Conn) {
++	return func(conn net.Conn) {
+ 		c := readCommand(conn)
+ 		if c == nil {
+ 			return
+ 		}
+-		p, err := pb.Marshal(&proto.CommandQueryResponse{})
+-		if err != nil {
+-			conn.Close()
+-			return
+-		}
+-		writeBytesWithLength(conn, p)
++		h.commands.Add(1)
++		f(conn, c)
++	}
++}
++
++func mustWriteQueryResponse(conn net.Conn) {
++	p, err := pb.Marshal(&proto.CommandQueryResponse{})
++	if err != nil {
++		conn.Close()
++		return
+ 	}
++	writeBytesWithLength(conn, p)
++}
++
++func Test_ClientRetry_SuccessFirstAttempt(t *testing.T) {
++	h := &countingHandler{}
++	srv := servicetest.NewService()
++	srv.Handler = h.handle(func(conn net.Conn, _ *proto.Command) {
++		mustWriteQueryResponse(conn)
++	})
+ 	srv.Start()
+ 	defer srv.Close()
  
- // writeRecoveryREADME writes a README to dir, the directory in which the peers
+@@ -671,142 +693,191 @@ func Test_ClientRetry_SuccessFirstAttempt(t *testing.T) {
+ 	if err != nil {
+ 		t.Fatalf("expected success on first attempt, got: %s", err)
+ 	}
+-	if c.numForcedNewConns.Load() != 0 {
+-		t.Fatalf("expected no forced new connections, got %d", c.numForcedNewConns.Load())
++	if exp, got := int32(1), h.commands.Load(); exp != got {
++		t.Fatalf("expected command to be sent %d time, got %d", exp, got)
+ 	}
+ }
+ 
+-func Test_ClientRetry_FailAllPoolThenFreshSucceeds(t *testing.T) {
+-	// Simulate a node that restarted: the first connection (from pool) fails,
+-	// but a fresh connection succeeds.
+-	var connCount int
+-	var mu sync.Mutex
+-	srv := servicetest.NewService()
+-	srv.Handler = func(conn net.Conn) {
+-		mu.Lock()
+-		connCount++
+-		n := connCount
+-		mu.Unlock()
+-
+-		c := readCommand(conn)
+-		if c == nil {
+-			return
+-		}
++func Test_ClientRetry_ZeroRetries_SingleAttempt(t *testing.T) {
++	// With zero retries, or a nonsensical negative count, a failing server
++	// is tried exactly once.
++	for _, retries := range []int{0, -1} {
++		t.Run(fmt.Sprint(retries), func(t *testing.T) {
++			h := &countingHandler{}
++			srv := servicetest.NewService()
++			srv.Handler = h.handle(func(conn net.Conn, _ *proto.Command) {
++				conn.Close()
++			})
++			srv.Start()
++			defer srv.Close()
++
++			c := NewClient(&simpleDialer{}, 0)
++			_, _, err := c.Query(context.Background(), queryRequestFromString("SELECT * FROM foo"),
++				srv.Addr(), nil, time.Second, retries)
++			if err == nil {
++				t.Fatal("expected error with no retries and a failing server")
++			}
++			if exp, got := int32(1), h.commands.Load(); exp != got {
++				t.Fatalf("expected command to be sent %d time, got %d", exp, got)
++			}
++		})
++	}
++}
+ 
+-		// First connection fails (simulating stale pool connection reading response),
+-		// second succeeds.
+-		if n == 1 {
+-			conn.Close()
+-			return
+-		}
+-		p, err := pb.Marshal(&proto.CommandQueryResponse{})
+-		if err != nil {
++func Test_ClientRetry_FailThenSucceed(t *testing.T) {
++	// The first attempt fails, the one retry asked for succeeds.
++	h := &countingHandler{}
++	srv := servicetest.NewService()
++	srv.Handler = h.handle(func(conn net.Conn, _ *proto.Command) {
++		if h.commands.Load() == 1 {
+ 			conn.Close()
+ 			return
+ 		}
+-		writeBytesWithLength(conn, p)
+-	}
++		mustWriteQueryResponse(conn)
++	})
+ 	srv.Start()
+ 	defer srv.Close()
+ 
+ 	c := NewClient(&simpleDialer{}, 0)
+ 	_, _, err := c.Query(context.Background(), queryRequestFromString("SELECT * FROM foo"),
+-		srv.Addr(), nil, time.Second, 0)
++		srv.Addr(), nil, time.Second, 1)
+ 	if err != nil {
+-		t.Fatalf("expected fresh connection to succeed, got: %s", err)
++		t.Fatalf("expected retry to succeed, got: %s", err)
+ 	}
+-
+```
+
+**File**: `cluster/service.go` (modified, +10/-3)
+```diff
+@@ -59,7 +59,6 @@ const (
+ 	numClientRequestRetries     = "num_client_request_retries"
+ 	numClientReadTimeouts       = "num_client_read_timeouts"
+ 	numClientWriteTimeouts      = "num_client_write_timeouts"
+-	numClientForceNewConn       = "num_client_force_new_conn"
+ 
+ 	// Client stats for this package.
+ 	numGetNodeAPIRequestLocal = "num_get_node_api_req_local"
+@@ -114,7 +113,6 @@ func ResetStats() {
+ 	stats.Add(numClientRequestRetries, 0)
+ 	stats.Add(numClientReadTimeouts, 0)
+ 	stats.Add(numClientWriteTimeouts, 0)
+-	stats.Add(numClientForceNewConn, 0)
+ 	stats.Add(numConnRejected, 0)
+ 	stats.Add(numUnauthorizedRequest, 0)
+ }
+@@ -206,6 +204,10 @@ type Service struct {
+ 	// connLimiterCh limits the number of in-service connections.
+ 	connLimiterCh chan struct{}
+ 
++	// connReleased, if set, is called each time a connection gives back its
++	// place in the limiter. Tests use it to wait for that moment.
++	connReleased func()
++
+ 	hwmMu      sync.RWMutex
+ 	hwmUpdateC chan<- uint64 // Channel for HWM updates
+ 
+@@ -347,7 +349,12 @@ func (s *Service) serve() error {
+ 		select {
+ 		case s.connLimiterCh <- struct{}{}:
+ 			go func() {
+-				defer func() { <-s.connLimiterCh }()
++				defer func() {
++					<-s.connLimiterCh
++					if s.connReleased != nil {
++						s.connReleased()
++					}
++				}()
+ 				s.handleConn(conn)
+ 			}()
+ 		default:
+```
+
+**File**: `cluster/service_test.go` (modified, +9/-1)
+```diff
+@@ -1100,6 +1100,8 @@ func Test_ServiceConnLimiterRejectAndRelease(t *testing.T) {
+ 	if err := s.SetConnectionLimit(1); err != nil {
+ 		t.Fatalf("failed to set connection limit: %s", err)
+ 	}
++	released := make(chan struct{}, 8)
++	s.connReleased = func() { released <- struct{}{} }
+ 
+ 	if err := s.Open(); err != nil {
+ 		t.Fatalf("failed to open cluster service")
+@@ -1125,10 +1127,16 @@ func Test_ServiceConnLimiterRejectAndRelease(t *testing.T) {
+ 		t.Fatalf("expected connection to be rejected without timing out, got: %v", err)
+ 	}
+ 
+-	// Releasing the idle connection should free its limiter slot.
++	// Releasing the idle connection should free its limiter slot. The service
++	// learns of the close in its own time, so wait for it to let the slot go.
+ 	if err := md.CloseConn(0); err != nil {
+ 		t.Fatalf("failed to close first connection: %s", err)
+ 	}
++	select {
++	case <-released:
++	case <-time.After(5 * time.Second):
++		t.Fatal("service did not release the limiter slot")
++	}
+ 
+ 	// A new client request should be accepted once capacity is available again.
+ 	c3 := NewClient(md, 30*time.Second)
+```
+
+**File**: `cluster/servicetest/service.go` (modified, +64/-6)
+```diff
+@@ -2,12 +2,20 @@ package servicetest
+ 
+ import (
+ 	"net"
++	"sync"
++	"sync/atomic"
+ )
+ 
+-// Service represents a test service.
++// Service represents a test service. Like the real cluster service it keeps
++// a connection open and serves commands on it one after another: Handler is
++// called once per command, and again on the same connection when it returns,
++// until the connection fails or a Handler call finishes without using it.
+ type Service struct {
+ 	Listener net.Listener
+ 	Handler  func(net.Conn)
++
++	mu    sync.Mutex
++	conns []net.Conn
+ }
+ 
+ // NewService returns a new instance of the service that runs on
+@@ -33,9 +41,16 @@ func (s *Service) Addr() string {
+ 	return s.Listener.Addr().String()
+ }
+ 
+-// Close closes the service.
++// Close closes the service and every connection it accepted.
+ func (s *Service) Close() error {
+-	return s.Listener.Close()
++	err := s.Listener.Close()
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	for _, conn := range s.conns {
++		conn.Close()
++	}
++	s.conns = nil
++	return err
+ }
+ 
+ func (s *Service) serve() error {
+@@ -44,14 +59,57 @@ func (s *Service) serve() error {
+ 		if err != nil {
+ 			return err
+ 		}
++		s.mu.Lock()
++		s.conns = append(s.conns, conn)
++		s.mu.Unlock()
+ 
+ 		go s.handleConn(conn)
+ 	}
+ }
+ 
+ func (s *Service) handleConn(conn net.Conn) {
+-	if s.Handler != nil {
+-		s.Handler(conn)
++	defer conn.Close()
++	if s.Handler == nil {
++		return
++	}
++	tc := &trackedConn{Conn: conn}
++	for {
++		tc.used.Store(false)
++		s.Handler(tc)
++		if tc.failed.Load() || !tc.used.Load() {
++			return
++		}
+ 	}
+-	conn.Close()
++}
++
++// trackedConn records whether a Handler used the connection and whether the
++// connection has failed, so the service knows whether to serve another
++// command on it.
++type trackedConn struct {
++	net.Conn
++	used   atomic.Bool
++	failed atomic.Bool
++}
++
++func (c *trackedConn) Read(b []byte) (int, error) {
++	c.used.Store(true)
++	n, err := c.Conn.Read(b)
++	if err != nil {
++		c.failed.Store(true)
++	}
++	return n, err
++}
++
++func (c *trackedConn) Write(b []byte) (int, error) {
++	c.used.Store(true)
++	n, err := c.Conn.Write(b)
++	if err != nil {
++		c.failed.Store(true)
++	}
++	return n, err
++}
++
++func (c *trackedConn) Close() error {
++	c.failed.Store(true)
++	return c.Conn.Close()
+ }
+```
+
+**File**: `http/query_params.go` (modified, +4/-1)
+```diff
+@@ -226,7 +226,10 @@ func (qp QueryParams) Timeout(def time.Duration) time.Duration {
+ 	return d
+ }
+ 
+-// Retries returns the requested number of retries.
++// Retries returns the requested number of retries. A retry re-sends a
++// request forwarded to another node after a failure, including a failure
++// to hear back from a node that may have acted on the request, so a write
++// may be applied more than once when retries are requested.
+ func (qp QueryParams) Retries(def int) int {
+ 	i, ok := qp["retries"]
+ 	if !ok {
+```
+
+**File**: `system_test/e2e/multi_node.py` (modified, +4/-2)
+```diff
+@@ -561,11 +561,13 @@ def test(self):
+     self.assertEqual(n.node_id, l0.node_id)
+ 
+     # Now, the followers have connection pools, but the connections within are stale.
+-    # Ensure the followers detect this and use a fresh connection to the leader.
++    # Ensure the followers detect this, discard the stale connections, and use a
++    # fresh connection to the leader.
+     for f in self.cluster.followers():
+       j = f.query('SELECT 1', level="strong")
+       self.assertEqual(j, d_("{'results': [{'values': [[1]], 'types': ['integer'], 'columns': ['1']}]}"))
+-      self.assertEqual(f.expvar()['cluster']['num_client_force_new_conn'], 1)
++      pools = f.status()['http']['cluster']['conn_pool_stats'].values()
++      self.assertGreaterEqual(sum(p['stale_discarded'] for p in pools), 1)
+ 
+ class TestEndToEndNonVoter(unittest.TestCase):
+   def setUp(self):
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3035** (2026-11-10): Inband signaling to close connection client-side (@otoolep)
 - **PR #3034** (2026-11-09): Add README explaining purpose of raft/ directory (@otoolep)
+- **PR #3033** (2026-11-09): Fix retries while still detecting stale connections (@otoolep)
 - **PR #3032** (closed): Honor cluster retry limits and detect stale pooled connections (@otoolep)
 - **PR #3031** (2026-11-08): Move retry logic out of Store Provider (@otoolep)
 - **PR #3030** (2026-11-08): Explicitly state if there are no new features (@otoolep)
-- **PR #3029** (2026-11-08): Include the tag's CHANGELOG section in the release notes (@otoolep)
-- **PR #3024** (closed): Preserve copy sources that overlap the staging directory (@otoolep)
 
 ---
 
@@ -2301,28 +2733,28 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #3034 from rqlite/raft-dir-readme
+## X. sqlean Docker build
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/build-sqlean.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95a0477a`: Merge pull request #3034 from rqlite/raft-dir-readme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46613189`: sqlean Docker build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/build-sqlean.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- [PR #3034](https://github.com/rqlite/rqlite/pull/3034): Add README explaining purpose of `raft/` directory.
+make prepare-dist download-sqlite build
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+make prepare-dist download-sqlite download-external compile-linux
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95a0477a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46613189` are properly handled with clean fallback behavior.

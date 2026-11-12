@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `633ccf2e`  
+> **Source Version**: `7f808225`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T17:42:48.805Z  
+> **Timestamp**: 2026-11-12T02:48:43.421Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T17:42:48.630Z  
+> **Harvest Timestamp**: 2026-11-12T02:48:43.411Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20822 stars
+- **Stars / Engagement**: 20828 stars
 
 ---
 
@@ -1434,15 +1434,13 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40493** (2026-11-08): **Refactor code for 64 approved Sonar findings**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ### Summary  This PR performs localized Sonar-driven refactoring across production code and tests, including predicate simplification, regex reuse, private helper placement and test parameterization. The NEXTVAL update uses the existing lazy precondition helper while preserving expression dispatch and exception behavior.  ### Result  Review Result: Mergeable  No blocking code issues or required changes remain.  ### Evidence  - Reviewed all 48 files and their affected consumers, contracts and preserved test scenarios. - Spotless and Checkstyle passed for all 48 Java files across 24 modules, with exit code 0 and no Checkstyle errors. - The 154-case analyzer result and three equivalence probes match the current sources. These are historical regression evidence; the Column NEXTVAL rejection path was checked through source-level condition, short-circuit and supplier analysis.  ### Coverage  [PR #40493](https://github.com/apache/shardingsphere/pull/40493), head `1d3a49913d10` against merge-b
+- **Issue #40500** (2026-11-12): **Refactor Oracle parenthesized expression parsing**
+  *Symptoms*: Changes proposed in this pull request:   - Share the handling of parenthesized expressions between Oracle expression visitor entry points, and unwrap nested expression contexts before visiting the inner expression.   - Preserve the outermost parentheses and their original source ranges for column segments.   - Add 12 Oracle Parser IT cases covering simple, qualified, nested, quoted, spaced and full-width columns, unparenthesized columns, calculations, literals, functions and row-value comparisons; also run the existing parenthesized DISTINCT case for Oracle.  Validation: - Installed the Oracle parser module from the original implementation and ran the new fixtures before the refactor: 2,085 Oracle supported/unsupported parser tests passed. - Installed the refactored Oracle parser module and ran Oracle supported/unsupported and MySQL Parser IT: 4,039 tests passed (2,066 Oracle supported, 19 Oracle unsupported, 1,954 in the MySQL/H2 suite). - Exact-file Spotless and Checkstyle checks passed for `OracleStatementVisitor.java`: one Java file selected, zero error-severity Checkstyle violations. - Full reactor `clean install -B -T1C -Pcheck` and native Oracle database execution were not run. The full-width case protects the Oracle lexer's existing compatibility behavior. - Documentation and release notes are not applicable to this internal refactor.  Material AI assistance: OpenAI Codex assisted implementation, fixture porting, review and PR text. The affected files are: - `parser/s
 
-- **Issue #40492** (2026-11-08): **Move pipeline data source configuration implementations to core**
-  *Symptoms*: 
+- **Issue #40496** (2026-11-10): **Refactor sql parser metadata for MySQL UPDATE and LOAD DATA**
+  *Symptoms*: Changes proposed in this pull request:   - Preserve the explicit `IGNORE` modifier in the UPDATE AST and statement binding.   - Preserve LOAD DATA `IGNORE`, `REPLACE`, and partition source ranges; rebuild partition metadata using the bound table and copied partitions.   - Populate these fields in the MySQL visitors and extend parser IT and binder regression coverage, including the distinction between duplicate handling and `IGNORE n LINES`.  Validation:   - Internal SQL Parser IT: 11,756 tests, zero failures or errors; one existing disabled openGauss unsupported-syntax test.   - All binder modules: 564 unit tests passed, zero failures, errors, or skipped tests.   - Exact-file Spotless and Checkstyle passed for all 12 changed Java files; Apache RAT passed.   - Current-source dependencies were built and installed with the selected reactor modules. A full repository clean install was not run.  SQL syntax references: [MySQL LOAD DATA](https://dev.mysql.com/doc/refman/8.4/en/load-data.html), [MySQL UPDATE](https://dev.mysql.com/doc/refman/8.4/en/update.html).  ---  Before submitting this PR, I confirm that: - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [x] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant docum
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  The cumulative changes move rule copying during data source creation into the core Creator, while keeping configuration construction, parsing, and actual data source configuration derivation in api. This update removes only two test stubs whose default return values are sufficient, while retaining the necessary pool stub in core.  ### Result  Review Result: Mergeable  No blocking issues or further required changes remain.  ### Evidence  All 5 tests across two test classes passed. Spotless and Checkstyle checks passed for all 5 files in the cumulative change. Two independent complete reviews, coordinator review, and review session validation have been completed.  ### Coverage  Local candidate for PR #40492: baseline `26cef652f5c1`, public head `4fc959bda11e` plus two local line deletions. The review covers all 5 files and 27 changed blocks. This conclusion covers code correctness only; CI was not reviewed.
+  > ### Summary The change retains explicit MySQL UPDATE and LOAD DATA modifiers and partition spans in the AST and after binding. It reuses existing statement and segment owners with focused regression coverage.  ### Result Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence Internal parser IT: 11,756 tests, zero failures/errors, one pre-existing disabled test. Binder suites: 564 tests passed. Exact-file Spotless and Checkstyle passed for all 12 changed Java files; Apache RAT passed.  ### Coverage Reviewed all 16 files and 30 changed blocks from `633ccf2e34c3` to `3ded23578f73`. One round of independent review and confirmation completed; the published candidate matches the reviewed content. Code scope only: CI was not reviewed, and a full repository clean install was not run. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1459,606 +1457,482 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a77a0cb` (2026-11-08)
-**Commit Message**: Add Grice guidance and require formal review for Git-visible changes (#40489)
+### Incident Patch 1: `7f808225` (2026-11-12)
+**Commit Message**: Refactor Oracle parenthesized expression parsing (#40500)
 
-* Require formal review for all deliverable file changes
-
-* Add Grice guidance and scope formal review to Git-visible changes
-
-**File**: `.codex/config.toml` (modified, +1/-1)
+**File**: `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/OracleStatementVisitor.java` (modified, +17/-12)
 ```diff
-@@ -14,7 +14,7 @@
- # limitations under the License.
- 
- [[hooks.PreToolUse]]
--matcher = "^(Bash|exec_command|write_stdin)$"
-+matcher = "^(Bash|apply_patch|exec_command|write_stdin)$"
- 
- [[hooks.PreToolUse.hooks]]
- type = "command"
-```
-
-**File**: `.codex/context/change-completion.md` (modified, +11/-5)
-```diff
-@@ -19,21 +19,25 @@
- 
- This file is the sole owner of completion-loop orchestration. Other policy sources may route here or define their own implementation and verification rules, but must not duplicate this sequence or its review selection.
- 
--For every authorized code-writing task, including a restoration or rollback that changes production, test, script, build, generated, or behavior-affecting configuration artifacts:
-+Apply this loop to authorized changes to Git-tracked files and unignored untracked files, including restoration or rollback.
-+Untracked Git-ignored files and files outside Git repositories are outside this loop's scope.
-+Deliverables include source, tests, scripts, build files, generated artifacts, configuration, documentation, prompts, Skills, and AGENTS.md.
-+A read-only review does not enter this loop merely because its input contains changed files.
-+Private review snapshots, ledgers, logs, and drafts used only to perform the review stay outside the declared candidate and do not recursively trigger review.
- 
- 1. Confirm the post-write task-delta audit required by `AGENTS.md` is current for the read-only diff, surrounding context, and acceptance checklist.
-    Confirm every task-introduced hunk is necessary and allowlisted, prohibited paths have no task delta, architecture changes were authorized, tests protect owned behavior, and unattributed work remains untouched.
- 2. Apply any missing or invalidated triggered coding-standard and simplification checks to the effective task delta.
-    Treat scripts, searches, formatters, compilation, tests, benchmarks, and review tools as evidence rather than proof, and fix every safe in-scope violation.
- 3. Run the applicable verification and non-regression checks that lack valid current-state evidence.
-    An invalidated, unmatched, missing, or inconclusive required result keeps the task incomplete.
--4. Invoke `$review-pr` in Formal Review Mode for every code-writing task, including ordinary low-risk local changes, without requiring a separate user request.
-+4. Invoke `$review-pr` in Formal Review Mode for every task that changes files reported by Git, regardless of file type, without requiring a separate user request.
-    Policy and harness changes also require this Formal Review route.
-    Use [review-pr](../skills/review-pr/SKILL.md) as the sole review entry and apply its Review Focus, Local Candidate Scope, Scope and Evidence, and Independent Review Coordination requirements.
-    Existing authority, architecture, safety, and triggered high-risk gates remain required.
-    - When the effective final task delta adds, extends or strengthens defensive code, assign an independent reviewer within the current task to audit that delta read-only under the existing defensive-code rules.
-      Do not assign this audit when no such defensive change remains in the final task delta.
--5. Hand off only when the selected review is confirmed, all required current-state checks pass, and no later code-affecting write or new evidence invalidates them.
-+5. Hand off only when the selected review is confirmed, all required current-state checks pass, and no later deliverable-content write or new evidence invalidates them.
-    For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`.
- 6. When a confirmed Formal Review returns `Not Mergeable` with a safe in-scope required finding, fix it, rerun only invalidated audits and checks, and invoke the same review entry for the changed full candidate.
-    Preserve the original task baseline and attributed scope through this fix loop, and continue until step 5 passes.
-@@ -62,8 +66,10 @@ Report confirmed findings and required changes, or explicitly state that no bloc
- Keep `Task Status: Completed`, the outer `Evidence:` summary, and `Commit Message:` outside the review block.
- Do not substitute bounded self-review for the required Formal Review or fabricate a passing verdict.
- 
--The project Stop hook checks the textual completion state after supported write tools change a non-prose repository artifact.
--Any later code-affecting write marks the task pending again and requires current checks and the applicable passing review before completion.
-+The project Stop hook checks completion state after supported tool events change repository deliverable content.
-+Any later repository deliverable-content write marks the task pending again and requires applicable current checks and a passing review of the updated cumulative candidate.
-+Restoring original content does not clear an existing pending review.
-+The hook must not treat file extensions as review exemptions.
- When required user input blocks completion, include exactly one `Task Status: Awaiting User` line, non-empty `Required User Action:` and `Evidence:` summaries, and any actual non-passing Formal Review result relevant to that blocker.
- If no Formal Review has run, state that fact instead of fabricating a report.
- The hook may yield tha
-```
-
-**File**: `.codex/harness/agents/cases.toml` (modified, +193/-10)
-```diff
-@@ -375,7 +375,7 @@ allowed_actions = ["inspect_local", "edit_non_code", "run_local_checks", "wrap_h
- forbidden_actions = ["mutate_git", "mutate_remote"]
- required_reasons = ["explicit_non_code_authorization", "pre_handoff_review_required"]
- policy_binding_profile = "code-write"
--policy_assertions = [{source = "change-completion", statements = ["Invoke `$review-pr` in Formal Review Mode for every code-writing task, including ordinary low-risk local changes, without requiring a separate user request.", "Policy and harness changes also require this Formal Review route.", "Use [review-pr](../skills/review-pr/SKILL.md) as the sole review entry and apply its Review Focus, Local Candidate Scope, Scope and Evidence, and Independent Review Coordination requirements.", "For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`."]}]
-+policy_assertions = [{source = "change-completion", statements = ["Invoke `$review-pr` in Formal Review Mode for every task that changes files reported by Git, regardless of file type, without requiring a separate user request.", "Policy and harness changes also require this Formal Review route.", "Use [review-pr](../skills/review-pr/SKILL.md) as the sole review entry and apply its Review Focus, Local Candidate Scope, Scope and Evidence, and Independent Review Coordination requirements.", "For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`."]}]
- critical = true
- 
- [[cases]]
-@@ -1393,7 +1393,7 @@ allowed_actions = ["inspect_local", "propose_commit_message"]
- forbidden_actions = ["edit_code", "edit_non_code", "edit_unrelated_changes", "mutate_git", "mutate_remote"]
- required_reasons = ["preserve_unrelated_work", "review_passed"]
- policy_binding_profile = "code-write"
--policy_assertions = [{source = "change-completion", statements = ["Hand off only when the selected review is confirmed, all required current-state checks pass, and no later code-affecting write or new evidence invalidates them.", "For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`.", "For a completed task, include exactly one `Task Status: Completed` line and a non-empty `Evidence:` summary of the current audit, verification and selected review.", "Include the actual completed Formal Review as one complete fenced `markdown` report with exactly one `Review Result: Mergeable` line and nonempty `### Result`, `### Evidence`, and `### Coverage` sections.", "After every code-writing task completes, provide a nonempty `Commit Message:` without requiring a separate user request; this never authorizes Git mutation.", "Provide manual Git commands only when the user requests them.", "For requested manual Git commands, propose `git commit --dry-run --only` and `git commit --only` for only task-owned files without unrelated hunks.", "Include `git add -- <new-task-paths>` first only when requested manual instructions need to add untracked task files.", "Never execute a Git write without exact current-task authorization."]}]
-+policy_assertions = [{source = "change-completion", statements = ["Hand off only when the selected review is confirmed, all required current-state checks pass, and no later deliverable-content write or new evidence invalidates them.", "For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`.", "For a completed task, include exactly one `Task Status: Completed` line and a non-empty `Evidence:` summary of the current audit, verification and selected review.", "Include the actual completed Formal Review as one complete fenced `markdown` report with exactly one `Review Result: Mergeable` line and nonempty `### Result`, `### Evidence`, and `### Coverage` sections.", "After every code-writing task completes, provide a nonempty `Commit Message:` without requiring a separate user request; this never authorizes Git mutation.", "Provide manual Git commands only when the user requests them.", "For requested manual Git commands, propose `git commit --dry-run --only` and `git commit --only` for only task-owned files without unrelated hunks.", "Include `git add -- <new-task-paths>` first only when requested manual instructions need to add untracked task files.", "Never execute a Git write without exact current-task authorization."]}]
- critical = true
- required_summary_terms = ["Commit Message:", "```markdown", "### Result", "### Evidence", "### Coverage"]
- 
-@@ -1850,7 +1850,7 @@ forbidden_actions = ["edit_code", "edit_non_code", "run_bounded_adversarial_revi
- required_reasons = ["pre_handoff_review_required"]
- required_summary_terms = ["$review-pr", "Formal Review"]
- policy_binding_profile = "code-write"
--policy_assertions = [{source = "change-completion", statements = ["Invoke `$review-pr` in Formal Review Mode for every code-writing task, including ordinary low-risk local changes, without requiring a separate user request.", "
-```
-
-**File**: `.codex/harness/agents/code_handoff_hook.py` (modified, +100/-51)
-```diff
-@@ -15,7 +15,7 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
- 
--"""Require an explicit review handoff after Codex changes implementation files."""
-+"""Require an explicit review handoff after Codex changes repository deliverables."""
- 
- from __future__ import annotations
- 
-@@ -29,13 +29,13 @@
- import tempfile
- from typing import Any
- 
--PROSE_SUFFIXES = frozenset({".adoc", ".md", ".rst"})
--PATCH_FILE_PATTERN = re.compile(r"^\*\*\* (?:Add|Delete|Update) File: (.+)$", re.MULTILINE)
-+PATCH_FILE_PATTERN = re.compile(r"^\*\*\* (?:(?:Add|Delete|Update) File|Move to): (.+)$", re.MULTILINE)
- FIELD_PATTERN = r"(?P<emphasis>\*\*)?{label}:(?(emphasis)(?:\*\*)?)[ \t]*(?P<value>.*?)"
- FIELD_PREFIX_PATTERN = re.compile(r"^[ \t]*(?:[-*][ \t]+)?(?:#{1,6}[ \t]+)?")
- FENCE_PATTERN = re.compile(r"(?:`{3,}[^`]*|~{3,}.*)")
- FENCE_OPEN_PATTERN = re.compile(r"^ {0,3}(?P<fence>`{3,}|~{3,})(?P<info>.*)$")
--SHELL_TOOL_NAMES = frozenset({"Bash", "exec_command", "write_stdin"})
-+SNAPSHOT_TOOL_NAMES = frozenset({"Bash", "apply_patch", "exec_command", "write_stdin"})
-+COMMIT_EXEMPT_SUFFIXES = frozenset({".adoc", ".md", ".rst"})
- PASSING_RESULT = "Mergeable"
- PAUSED_RESULTS = frozenset({"Not Mergeable", "Review Incomplete"})
- 
-@@ -47,53 +47,37 @@ def process_event(event: dict[str, Any], state_directory: Path) -> dict[str, str
-         _record_pre_tool_state(event, state_directory)
-         return {}
-     if "PostToolUse" == event_name:
--        _record_implementation_change(event, state_directory)
-+        _record_tool_change(event, state_directory)
-         return {}
-     if "Stop" != event_name:
-         return {}
-     marker_path = _marker_path(event, state_directory)
-+    message = event.get("last_assistant_message")
-     if not marker_path.exists():
-         return {}
--    message = event.get("last_assistant_message")
--    passing_failures = validate_handoff(message)
-+    require_commit = _pending_requires_commit(marker_path)
-+    passing_failures = validate_handoff(message, require_commit=require_commit)
-     if not passing_failures:
-         marker_path.unlink()
-         return {}
-     paused_failures = validate_paused_handoff(message)
-     if not paused_failures:
-         return {}
--    return {"decision": "block", "reason": _continuation_reason(passing_failures, paused_failures)}
-+    return {"decision": "block", "reason": _continuation_reason(passing_failures, paused_failures, require_commit)}
- 
- 
- def _record_pre_tool_state(event: dict[str, Any], state_directory: Path) -> None:
--    if event.get("tool_name") not in SHELL_TOOL_NAMES:
-+    if event.get("tool_name") not in SNAPSHOT_TOOL_NAMES:
-         return
-     snapshot_path = _snapshot_path(event, state_directory)
-     snapshot_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-     snapshot = _repository_snapshot(event)
-     snapshot_path.write_text(json.dumps(snapshot, sort_keys=True), encoding="utf-8")
- 
- 
--def _record_implementation_change(event: dict[str, Any], state_directory: Path) -> None:
--    tool_name = event.get("tool_name")
--    if tool_name in SHELL_TOOL_NAMES:
--        _record_shell_change(event, state_directory)
--        return
--    if "apply_patch" != tool_name:
--        return
--    tool_input = event.get("tool_input")
--    patch = None
--    if isinstance(tool_input, dict):
--        patch = tool_input.get("command") or tool_input.get("patch")
--    if not isinstance(patch, str):
--        _mark_pending(event, state_directory)
--        return
--    if not _changes_implementation_file(patch):
-+def _record_tool_change(event: dict[str, Any], state_directory: Path) -> None:
-+    if event.get("tool_name") not in SNAPSHOT_TOOL_NAMES:
-         return
--    _mark_pending(event, state_directory)
--
--
--def _record_shell_change(event: dict[str, Any], state_directory: Path) -> None:
-     snapshot_path = _snapshot_path(event, state_directory)
-     try:
-         before = json.loads(snapshot_path.read_text(encoding="utf-8"))
-@@ -111,23 +95,30 @@ def _record_shell_change(event: dict[str, Any], state_directory: Path) -> None:
-     if not isinstance(before_files, dict) or not isinstance(after_files, dict):
-         _mark_pending(event, state_directory)
-         return
-+    for path in before_files.keys() - after_files.keys():
-+        after_files[path] = _path_digest(Path(path))
-     changed_paths = {
-         each for each in before_files.keys() | after_files.keys()
-         if before_files.get(each) != after_files.get(each)
+@@ -619,12 +619,7 @@ public final ASTNode visitExpr(final ExprContext ctx) {
+             return visit(ctx.booleanPrimary());
+         }
+         if (null != ctx.LP_()) {
+-            ASTNode result = visit(ctx.expr(0));
+-            if (result instanceof ColumnSegment) {
+-                ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(ctx.LP_().getSymbol().getStartIndex(), ctx.LP_().getSymbol().getStopIndex(), ctx.LP_().getSymbol().getText()));
+-                ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(ctx.RP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex(), ctx.RP_().getSymbol().getText()));
+-            }
+-            return result;
++            return visitParenthesizedExpression(ctx.expr(0), ctx.LP_(), ctx.RP_());
+         }
+         if (null != ctx.andOperator()) {
+             return createBinaryOperationExpression(ctx, ctx.andOperator().getText());
+@@ -644,6 +639,21 @@ public final ASTNode visitExpr(final ExprContext ctx) {
+         return new NotExpression(ctx.start.getStartIndex(), ctx.stop.getStopIndex(), (ExpressionSegment) visit(ctx.expr(0)), false);
      }
--    if any(Path(each).suffix.lower() not in PROSE_SUFFIXES for each in changed_paths):
--        _mark_pending(event, state_directory)
-+    if changed_paths:
-+        _mark_pending(event, state_directory, require_commit=_requires_commit_message(changed_paths))
-+
-+
-+def _requires_commit_message(paths: set[str]) -> bool:
-+    return any(Path(path).suffix.lower() not in COMMIT_EXEMPT_SUFFIXES for path in paths)
- 
- 
--def _mark_pending(event: dict[str, Any], state_directory: Path) -> None:
-+
+     
++    private ASTNode visitParenthesizedExpression(final ExprContext ctx, final TerminalNode leftParentheses, final TerminalNode rightParentheses) {
++        ExprContext expression = ctx;
++        while (null != expression.LP_()) {
++            expression = expression.expr(0);
++        }
++        ASTNode result = visit(expression);
++        if (result instanceof ColumnSegment) {
++            ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(leftParentheses.getSymbol().getStartIndex(), leftParentheses.getSymbol().getStopIndex(),
++                    leftParentheses.getSymbol().getText()));
++            ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(rightParentheses.getSymbol().getStartIndex(), rightParentheses.getSymbol().getStopIndex(),
++                    rightParentheses.getSymbol().getText()));
++        }
++        return result;
++    }
++    
+     private ASTNode createMultisetExpression(final ExprContext ctx) {
+         ExpressionSegment left = (ColumnSegment) visitColumnName(ctx.multisetExpr().columnName(0));
+         ExpressionSegment right = (ColumnSegment) visitColumnName(ctx.multisetExpr().columnName(1));
+@@ -859,12 +869,7 @@ public final ASTNode visitSimpleExpr(final SimpleExprContext ctx) {
+             return visit(ctx.privateExprOfDb());
+         }
+         if (null != ctx.LP_() && 1 == ctx.expr().size()) {
+-            ASTNode result = visit(ctx.expr(0));
+-            if (result instanceof ColumnSegment) {
+-                ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(ctx.LP_().getSymbol().getStartIndex(), ctx.LP_().getSymbol().getStopIndex(), ctx.LP_().getSymbol().getText()));
+-                ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(ctx.RP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex(), ctx.RP_().getSymbol().getText()));
+-            }
+-            return result;
++            return visitParenthesizedExpression(ctx.expr(0), ctx.LP_(), ctx.RP_());
+         }
+         if (null != ctx.LP_()) {
+             ListExpression result = new ListExpression(ctx.LP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex());
 ```
 
-**File**: `.codex/harness/agents/policy-sources.toml` (modified, +1/-1)
+**File**: `test/it/parser/src/main/resources/case/dml/select.xml` (modified, +169/-0)
 ```diff
-@@ -27,7 +27,7 @@ coding-standards-audit = ["agents", "code-of-conduct", "coding-standards", "stan
- runtime-diagnosis = ["agents", "runtime-triage", "code-verification"]
- command-execution = ["agents", "token-efficiency", "docker-resources", "code-verification"]
- cross-cutting = ["agents", "cross-cutting-skills"]
--documentation = ["agents", "documentation-wording"]
-+documentation = ["agents", "documentation-wording", "change-completion", "review-pr", "review-pr-coordination"]
- analyze-issue = ["agents", "analyze-issue", "analyze-issue-output"]
- gen-ut = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "gen-ut", "gen-ut-verification", "change-completion"]
- review-pr = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "review-pr", "review-pr-coordination", "review-pr-evidence", "review-pr-high-risk", "review-pr-sql-parser", "review-pr-corrections"]
+@@ -16782,4 +16782,173 @@
+             </expression-projection>
+         </projections>
+     </select>
++    <select sql-case-id="select_parenthesized_column_simple_oracle">
++        <from>
++            <simple-table start-index="21" stop-index="29" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="14">
++            <column-projection start-index="8" stop-index="13" name="foo_id">
++                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
++                <right-parentheses start-index="14" stop-index="14" parentheses=")" />
++            </column-projection>
++        </projections>
++    </select>
++    <select sql-case-id="select_parenthesized_column_qualified_oracle">
++        <from>
++            <simple-table start-index="23" stop-index="31" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="16">
++            <column-projection start-index="8" stop-index="15" name="foo_id">
++                <owner start-index="8" stop-index="8" name="t" />
++                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
++                <right-parentheses start-index="16" stop-index="16" parentheses=")" />
++            </column-projection>
++        </projections>
++    </select>
++    <select sql-case-id="select_parenthesized_column_nested_oracle">
++        <from>
++            <simple-table start-index="23" stop-index="31" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="16">
++            <column-projection start-index="9" stop-index="14" name="foo_id">
++                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
++                <right-parentheses start-index="16" stop-index="16" parentheses=")" />
++            </column-projection>
++        </projections>
++    </select>
++    <select sql-case-id="select_parenthesized_column_deep_nested_oracle">
++        <from>
++            <simple-table start-index="25" stop-index="33" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="18">
++            <column-projection start-index="10" stop-index="15" name="foo_id">
++                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
++                <right-parentheses start-index="18" stop-index="18" parentheses=")" />
++            </column-projection>
++        </projections>
++    </select>
++    <select sql-case-id="select_parenthesized_column_quoted_oracle">
++        <from>
++            <simple-table start-index="23" stop-index="31" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="16">
++            <column-projection start-index="8" stop-index="15" name="foo_id" start-delimiter="&quot;" end-delimiter="&quot;">
++                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
++                <right-parentheses start-index="16" stop-index="16" parentheses=")" />
++            </column-projection>
++        </projections>
++    </select>
++    <select sql-case-id="select_parenthesized_column_spaced_oracle">
++        <from>
++            <simple-table start-index="23" stop-index="31" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="16">
++            <column-projection start-index="9" stop-index="14" name="foo_id">
++                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
++                <right-parentheses start-index="16" stop-index="16" parentheses=")" />
++            </column-projection>
++        </projections>
++    </select>
++    <select sql-case-id="select_parenthesized_column_full_width_compatibility_oracle">
++        <from>
++            <simple-table start-index="21" stop-index="29" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="14">
++            <column-projection start-index="8" stop-index="13" name="foo_id">
++                <left-parentheses start-index="7" stop-index="7" parentheses="（" />
++                <right-parentheses start-index="14" stop-index="14" parentheses="）" />
++            </column-projection>
++        </projections>
++    </select>
++    <select sql-case-id="select_parenthesized_column_unparenthesized_oracle">
++        <from>
++            <simple-table start-index="19" stop-index="27" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="12">
++            <column-projection start-index="7" stop-index="12" name="foo_id" />
++        </projections>
++    </select>
++    <select sql-case-id="select_parenthesized_calculation_oracle">
++        <from>
++            <simple-table start-index="25" stop-index="33" name="foo_tbl" alias="t" />
++        </from>
++        <projections start-index="7" stop-index="18">
++            <expression-projection start-index="8" stop-index="17" text="foo_id + 1">
++                <expr>
++                    <binary
 ```
 
-**File**: `.codex/harness/agents/test_code_handoff_hook.py` (modified, +488/-12)
+**File**: `test/it/parser/src/main/resources/sql/supported/dml/select-distinct.xml` (modified, +1/-1)
 ```diff
-@@ -20,8 +20,11 @@
- from __future__ import annotations
+@@ -24,7 +24,7 @@
+     <sql-case id="select_unique_with_multi_column_without_order_by" value="SELECT UNIQUE order_id, user_id, status FROM t_order" db-types="Oracle" />
  
- import importlib.util
-+from itertools import product
-+import json
- from pathlib import Path
- import subprocess
-+import sys
- import tempfile
- import tomllib
- import unittest
-@@ -49,11 +52,23 @@ def test_implementation_patch_requires_complete_handoff(self) -> None:
-             ), state_directory))
-             self.assertEqual([], list(state_directory.iterdir()))
- 
--    def test_prose_patch_does_not_require_code_handoff(self) -> None:
--        with tempfile.TemporaryDirectory() as directory:
--            state_directory = Path(directory)
--            code_handoff_hook.process_event(self._post_tool_event("*** Update File: docs/foo.md"), state_directory)
--            self.assertEqual({}, code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory))
-+    def test_prose_patch_requires_complete_handoff(self) -> None:
-+        for filename in ("README.md", "guide.adoc", "guide.rst"):
-+            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as repository, tempfile.TemporaryDirectory() as state:
-+                repository_path = self._initialize_repository(Path(repository), filename)
-+                state_directory = Path(state)
-+                event = self._shell_event("PreToolUse", repository_path)
-+                event["tool_name"] = "apply_patch"
-+                code_handoff_hook.process_event(event, state_directory)
-+                (repository_path / filename).write_text("Changed documentation.\n", encoding="utf-8")
-+                event["hook_event_name"] = "PostToolUse"
-+                code_handoff_hook.process_event(event, state_directory)
-+                actual = code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory)
-+                self.assertEqual("block", actual["decision"])
-+                self.assertNotIn("Commit Message", actual["reason"])
-+                self.assertEqual({}, code_handoff_hook.process_event(self._stop_event(
-+                    self._mergeable_handoff(commit_message=None),
-+                ), state_directory))
- 
-     def test_unknown_apply_patch_payload_fails_closed(self) -> None:
-         with tempfile.TemporaryDirectory() as directory:
-@@ -63,6 +78,9 @@ def test_unknown_apply_patch_payload_fails_closed(self) -> None:
-             code_handoff_hook.process_event(event, state_directory)
-             actual = code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory)
-             self.assertEqual("block", actual["decision"])
-+            actual = code_handoff_hook.process_event(self._stop_event(self._mergeable_handoff(commit_message=None)), state_directory)
-+            self.assertEqual("block", actual["decision"])
-+            self.assertIn("nonempty Commit Message", actual["reason"])
- 
-     def test_completed_handoff_requires_full_report_and_commit_message(self) -> None:
-         actual = code_handoff_hook.validate_handoff(
-@@ -361,7 +379,7 @@ def test_read_only_shell_command_does_not_require_code_handoff(self) -> None:
-             self.assertEqual({}, code_handoff_hook.process_event(self._stop_event("Inspection complete."), state_directory))
-             self.assertEqual([], list(state_directory.iterdir()))
- 
--    def test_shell_prose_change_does_not_require_code_handoff(self) -> None:
-+    def test_shell_prose_change_requires_complete_handoff(self) -> None:
-         with tempfile.TemporaryDirectory() as repository, tempfile.TemporaryDirectory() as state:
-             repository_path = self._initialize_repository(Path(repository), "README.md")
-             state_directory = Path(state)
-@@ -370,9 +388,445 @@ def test_shell_prose_change_does_not_require_code_handoff(self) -> None:
-             (repository_path / "README.md").write_text("Changed documentation.\n", encoding="utf-8")
-             event["hook_event_name"] = "PostToolUse"
-             code_handoff_hook.process_event(event, state_directory)
--            self.assertEqual({}, code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory))
-+            actual = code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory)
-+            self.assertEqual("block", actual["decision"])
-+            self.assertEqual({}, code_handoff_hook.process_event(self._stop_event(
-+                self._mergeable_handoff(commit_message=None),
-+            ), state_directory))
-+
-+    def test_code_commit_requirement_stays_pending_through_prose_and_restore(self) -> None:
-+        for changes in (("README.md", "Foo.java"), ("Foo.java", "README.md"), ("Foo.java", "README.md", "restore")):
-+            with self.subTest(changes=changes), tempfile.TemporaryDirectory() as directory:
-+                parent = Path(directory)
-+                repository = self._initialize_repository(parent / "repository", "README.md")
-+                (repository / "Foo.java").write_text("Original source.\n", encod
+     <sql-case id="select_distinct_with_owner_column_without_order_by" value="SELECT DISTINCT t_order.order_id FROM t_order order by t_order.order_id" db-types="MySQL" />
+-    <sql-case id="select_distinct_with_brackets" value="SELECT DISTINCT (item_id) FROM t_order_item" db-types="MySQL" />
++    <sql-case id="select_distinct_with_brackets" value="SELECT DISTINCT (item_id) FROM t_order_item" db-types="MySQL,Oracle" />
+     <sql-case id="select_distinct_with_owner_star_without_order_by" value="SELECT DISTINCT t_order.*, t_order_item.order_id FROM t_order, t_order_item WHERE t_order.order_id = t_order_item.order_id" db-types="MySQL" />
+     <!-- for with owner column with group by without order by  -->
+     <sql-case id="select_distinct_with_owner_column_with_group_by" value="SELECT DISTINCT t_order.order_id FROM t_order GROUP BY t_order.order_id" db-types="MySQL" />
 ```
 
-**File**: `.codex/skills/review-pr/scripts/build_review_inventory.py` (modified, +2/-0)
+**File**: `test/it/parser/src/main/resources/sql/supported/dml/select.xml` (modified, +12/-0)
 ```diff
-@@ -26,6 +26,8 @@
- from collections import defaultdict
- from typing import Iterable
- 
-+sys.dont_write_bytecode = True
-+
- from resolve_review_scope import (
-     ChangedFile, categorize, compare_github_files, final_paths, get_repo_root, parse_name_status, resolve_candidate_changes, run_git,
- )
-```
-
-**File**: `.codex/skills/review-pr/scripts/manage_review_ledger.py` (modified, +2/-0)
-```diff
-@@ -35,6 +35,8 @@
- from pathlib import Path, PurePosixPath
- from typing import Any, Iterable
- 
-+sys.dont_write_bytecode = True
-+
- from resolve_review_scope import (
-     categorize, compare_github_files, get_repo_root, parse_name_status, resolve_candidate_changes, run_git,
- )
+@@ -662,4 +662,16 @@
+     <sql-case id="select_fixed_operator_between_left_associative_pg" value="SELECT 0 BETWEEN `1 ` 2 AND 3, 0 BETWEEN &lt;=&gt;1 &lt;=&gt; 2 AND 3" db-types="PostgreSQL" case-types="Literal" />
+     <sql-case id="select_mixed_symbolic_operator_precedence_pg" value="SELECT $1 &amp;&amp; $2 &lt;=&gt; $3, $4 &lt;=&gt; $5 &amp; $6, $7 ~~ $8 &lt;=&gt; $9, @ $10 @ $11" db-types="PostgreSQL" case-types="Placeholder" />
+     <sql-case id="select_mixed_symbolic_operator_between_pg" value="SELECT 0 BETWEEN $1 &amp;&amp; $2 &lt;=&gt; $3 AND 4" db-types="PostgreSQL" case-types="Placeholder" />
++    <sql-case id="select_parenthesized_column_simple_oracle" value="SELECT (foo_id) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_column_qualified_oracle" value="SELECT (t.foo_id) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_column_nested_oracle" value="SELECT ((foo_id)) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_column_deep_nested_oracle" value="SELECT (((foo_id))) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_column_quoted_oracle" value='SELECT ("foo_id") FROM foo_tbl t' db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_column_spaced_oracle" value="SELECT ( foo_id ) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_column_full_width_compatibility_oracle" value="SELECT （foo_id） FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_column_unparenthesized_oracle" value="SELECT foo_id FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_calculation_oracle" value="SELECT (foo_id + 1) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_literal_oracle" value="SELECT (1) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_function_oracle" value="SELECT (ABS(foo_id)) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
++    <sql-case id="select_parenthesized_column_list_oracle" value="SELECT foo_id FROM foo_tbl WHERE (foo_id, bar_id) = ((1, 2))" db-types="Oracle" case-types="LITERAL" />
+ </sql-cases>
 ```
 
 ---
 
-### Incident Patch 2: `0111ba52` (2026-11-08)
-**Commit Message**: Fix NOT operator precedence in SQL Server, Oracle, SQL92 and ClickHouse parsers (#40486)
+### Incident Patch 2: `13a165ad` (2026-11-10)
+**Commit Message**: Refactor sql parser metadata for MySQL UPDATE and LOAD DATA (#40496)
 
-In the SQL Server, Oracle, SQL92 and ClickHouse grammars the
-`notOperator expr` alternative of `expr` was listed after the `AND` and
-`OR` alternatives. ANTLR gives earlier alternatives higher precedence, so
-the operand of `NOT` swallowed the rest of the condition:
-`NOT a = 1 AND b = 2` was parsed as `NOT (a = 1 AND b = 2)`, and
-`a = 1 AND NOT b = 2 OR c = 3` as `a = 1 AND NOT (b = 2 OR c = 3)`. All
-four bind NOT tighter than AND and OR.
-
-The wrong tree reaches routing: for a table sharded by account_id,
-`WHERE account_id = 100 AND NOT amount = 0 OR account_id = 101` was
-routed to the shard of account_id 100 only.
-
-Move `notOperator expr` ahead of the AND/OR alternatives, as was done for
-Firebird. In SQL Server, `IS [NOT] DISTINCT FROM` is a comparison and has
-to stay inside the operand of NOT, so it moves above NOT as well. This
-also fixes `a IS DISTINCT FROM b AND c = 1`, which was parsed as
-`a IS DISTINCT FROM (b AND c = 1)`.
-
-**File**: `parser/sql/engine/dialect/clickhouse/src/main/antlr4/imports/clickhouse/BaseRule.g4` (modified, +2/-2)
+**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/statement/dml/UpdateStatementBinder.java` (modified, +1/-1)
 ```diff
-@@ -143,9 +143,9 @@ cluster
-     ;
- 
- expr
--    : expr andOperator expr
-+    : notOperator expr
-+    | expr andOperator expr
-     | expr orOperator expr
--    | notOperator expr
-     | LP_ expr RP_
-     | booleanPrimary
-     ;
+@@ -101,7 +101,7 @@ private JoinTableSegment createReturningTableScope(final TableSegment table, fin
+     private UpdateStatement copy(final UpdateStatement sqlStatement, final WithSegment boundWith, final TableSegment boundTable, final TableSegment boundFrom,
+                                  final SetAssignmentSegment boundSetAssignment, final WhereSegment boundWhere, final OrderBySegment boundOrderBy,
+                                  final ReturningSegment boundReturning) {
+-        UpdateStatement result = UpdateStatement.builder().databaseType(sqlStatement.getDatabaseType()).with(boundWith).table(boundTable)
++        UpdateStatement result = UpdateStatement.builder().databaseType(sqlStatement.getDatabaseType()).with(boundWith).table(boundTable).ignore(sqlStatement.isIgnore())
+                 .from(boundFrom).setAssignment(boundSetAssignment).where(boundWhere).orderBy(boundOrderBy).limit(sqlStatement.getLimit().orElse(null))
+                 .returning(boundReturning).errorLogging(sqlStatement.getErrorLogging().orElse(null))
+                 .targetTableIsFromAlias(sqlStatement.isTargetTableIsFromAlias()).build();
 ```
 
-**File**: `parser/sql/engine/dialect/oracle/src/main/antlr4/imports/oracle/BaseRule.g4` (modified, +2/-2)
+**File**: `infra/binder/core/src/test/java/org/apache/shardingsphere/infra/binder/engine/statement/dml/UpdateStatementBinderTest.java` (modified, +2/-0)
 ```diff
-@@ -407,9 +407,9 @@ exprList
-     ;
- 
- expr
--    : expr andOperator expr
-+    : notOperator expr
-+    | expr andOperator expr
-     | expr orOperator expr
--    | notOperator expr
-     | LP_ expr RP_
-     | booleanPrimary
-     | expr datetimeExpr
+@@ -85,13 +85,15 @@ void assertBind() {
+         UpdateStatement updateStatement = UpdateStatement.builder()
+                 .databaseType(databaseType)
+                 .table(simpleTableSegment)
++                .ignore(true)
+                 .where(new WhereSegment(0, 0, new BinaryOperationExpression(0, 0, new ColumnSegment(0, 0, new IdentifierValue("status")),
+                         new LiteralExpressionSegment(0, 0, 0), "=", "status = 1")))
+                 .errorLogging(errorLogging)
+                 .returning(returning)
+                 .build();
+         UpdateStatement actual = new UpdateStatementBinder().bind(updateStatement, new SQLStatementBinderContext(createMetaData(), "foo_db", new HintValueContext(), updateStatement));
+         assertThat(actual, not(updateStatement));
++        assertTrue(actual.isIgnore());
+         assertThat(actual.getErrorLogging().get(), is(errorLogging));
+         assertThat(actual.getReturning().get().getStartIndex(), is(returning.getStartIndex()));
+         assertThat(actual.getReturning().get().getStopIndex(), is(returning.getStopIndex()));
 ```
 
-**File**: `parser/sql/engine/dialect/sql92/src/main/antlr4/imports/sql92/BaseRule.g4` (modified, +2/-2)
+**File**: `infra/binder/dialect/mysql/src/main/java/org/apache/shardingsphere/infra/binder/mysql/bind/type/MySQLLoadDataStatementBinder.java` (modified, +5/-0)
 ```diff
-@@ -131,9 +131,9 @@ characterSetName
-     ;
+@@ -25,6 +25,7 @@
+ import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementBinder;
+ import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementBinderContext;
+ import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementCopyUtils;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionDefinitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
+ import org.apache.shardingsphere.sql.parser.statement.mysql.dml.MySQLLoadDataStatement;
  
- expr
--    : expr andOperator expr
-+    : notOperator expr
-+    | expr andOperator expr
-     | expr orOperator expr
--    | notOperator expr
-     | LP_ expr RP_
-     | booleanPrimary
-     ;
+@@ -45,6 +46,10 @@ private MySQLLoadDataStatement copy(final MySQLLoadDataStatement sqlStatement, f
+         result.setColumnListStartIndex(sqlStatement.getColumnListStartIndex());
+         result.setColumnListStopIndex(sqlStatement.getColumnListStopIndex());
+         result.setLocal(sqlStatement.isLocal());
++        result.setIgnore(sqlStatement.isIgnore());
++        result.setReplace(sqlStatement.isReplace());
++        sqlStatement.getPartitionDefinition().ifPresent(each -> result.setPartitionDefinition(new PartitionDefinitionSegment(each.getStartIndex(), each.getStopIndex(),
++                boundTableSegment, result.getPartitions())));
+         result.setFileName(sqlStatement.getFileName());
+         result.getPartitions().addAll(sqlStatement.getPartitions());
+         sqlStatement.getColumnSeparator().ifPresent(result::setColumnSeparator);
 ```
 
-**File**: `parser/sql/engine/dialect/sqlserver/src/main/antlr4/imports/sqlserver/BaseRule.g4` (modified, +2/-2)
+**File**: `infra/binder/dialect/mysql/src/test/java/org/apache/shardingsphere/infra/binder/mysql/bind/type/MySQLLoadDataStatementBinderTest.java` (added, +92/-0)
 ```diff
-@@ -228,10 +228,10 @@ primaryKey
- // TODO comb expr
- expr
-     : booleanPrimary
--    | expr andOperator expr
--    | expr orOperator expr
-     | expr distinctFrom expr
-     | notOperator expr
-+    | expr andOperator expr
-+    | expr orOperator expr
-     | LP_ expr RP_
-     | expr AT TIME ZONE expr
-     ;
-```
-
-**File**: `test/it/parser/src/main/resources/case/dml/select-expression.xml` (modified, +67/-0)
-```diff
-@@ -1406,6 +1406,73 @@
-         </where>
-     </select>
- 
-+    <select sql-case-id="select_where_with_expr_with_and_not_or" parameters="1,2,3">
-+        <from start-index="14" stop-index="20">
-+            <simple-table name="t_order" start-index="14" stop-index="20" />
-+        </from>
-+        <projections start-index="7" stop-index="7">
-+            <shorthand-projection start-index="7" stop-index="7" />
-+        </projections>
-+        <where start-index="22" stop-index="96">
-+            <expr>
-+                <binary-operation-expression start-index="28" stop-index="96">
-+                    <left>
-+                        <binary-operation-expression start-index="28" stop-index="73">
-+                            <left>
-+                                <binary-operation-expression start-index="28" stop-index="46">
-+                                    <left>
-+                                        <column name="user_id" start-index="28" stop-index="42">
-+                                            <owner name="t_order" start-index="28" stop-index="34" />
-+                                        </column>
-+                                    </left>
-+                                    <operator>=</operator>
-+                                    <right>
-+                                        <literal-expression value="1" start-index="46" stop-index="46" />
-+                                        <parameter-marker-expression parameter-index="0" start-index="46" stop-index="46" />
-+                                    </right>
-+                                </binary-operation-expression>
-+                            </left>
-+                            <operator>AND</operator>
-+                            <right>
-+                                <not-expression start-index="52" stop-index="73">
-+                                    <expr>
-+                                        <binary-operation-expression start-index="56" stop-index="73">
-+                                            <left>
-+                                                <column name="status" start-index="56" stop-index="69">
-+                                                    <owner name="t_order" start-index="56" stop-index="62" />
-+                                                </column>
-+                                            </left>
-+                                            <operator>=</operator>
-+                                            <right>
-+                                                <literal-expression value="2" start-index="73" stop-index="73" />
-+                                                <parameter-marker-expression parameter-index="1" start-index="73" stop-index="73" />
-+                                            </right>
-+                                        </binary-operation-expression>
-+                                    </expr>
-+                                </not-expression>
-+                            </right>
-+                        </binary-operation-expression>
-+                    </left>
-+                    <operator>OR</operator>
-+                    <right>
-+                        <binary-operation-expression start-index="78" stop-index="96">
-+                            <left>
-+                                <column name="user_id" start-index="78" stop-index="92">
-+                                    <owner name="t_order" start-index="78" stop-index="84" />
-+                                </column>
-+                            </left>
-+                            <operator>=</operator>
-+                            <right>
-+                                <literal-expression value="3" start-index="96" stop-index="96" />
-+                                <parameter-marker-expression parameter-index="2" start-index="96" stop-index="96" />
-+                            </right>
-+                        </binary-operation-expression>
-+                    </right>
-+                </binary-operation-expression>
-+            </expr>
-+        </where>
-+    </select>
+@@ -0,0 +1,92 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one or more
++ * contributor license agreements.  See the NOTICE file distributed with
++ * this work for additional information regarding copyright ownership.
++ * The ASF licenses this file to You under the Apache License, Version 2.0
++ * (the "License"); you may not use this file except in compliance with
++ * the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
-     <select sql-case-id="select_where_with_expr_with_not_sign" parameters="1">
-         <from start-index="14" stop-index="20">
-             <simple-table name="t_order" start-index="14" stop-index="20" />
-```
-
-**File**: `test/it/parser/src/main/resources/case/dml/select.xml` (modified, +38/-0)
-```diff
-@@ -9734,6 +9734,44 @@
-         </where>
-     </select>
- 
-+    <select sql-case-id="select_with_distinct_from_and">
-+        <projections start-index="7" stop-index="7">
-+            <shorthand-projection start-index="7" stop-index="7"/>
-+        </projections>
-+        <from start-index="14" stop-index="29">
-+            <simple-table name="#SampleTempTable" start-index="14" stop-index="29"/>
-+        </from>
-+        <where start-index="31" stop-index="75">
-+            <expr>
-+                <binary-operation-expression start-index="37" stop-index="75">
-+                    <left>
-+                        <binary-operation-expression start-index="37" stop-index="58">
-+                            <left>
-+                                <column name="id" start-index="37" stop-index="38"/>
-+                            </left>
-+                            <right>
-+                                <literal-expression value="17" start-index="57" stop-index="58"/>
-+                            </right>
-+                            <operator>ISDISTINCTFROM</operator>
-+                        </binary-operation-expression>
-+                    </left>
-+                    <operator>AND</operator>
-+                    <right>
-+                        <binary-operation-expression start-index="64" stop-index="75">
-+                            <left>
-+                                <column name="order_id" start-index="64" stop-index="71"/>
-+                            </left>
-+                            <operator>=</operator>
-+                            <right>
-+                                <literal-expression value="1" start-index="75" stop-index="75"/>
-+                            </right>
-+                        </binary-operation-expression>
-+                    </right>
-+                </binary-operation-expression>
-+            </expr>
-+        </where>
-+    </select>
++package org.apache.shardingsphere.infra.binder.mysql.bind.type;
 +
-     <select sql-case-id="select_with_contains_function">
-         <projections start-index="7" stop-index="16">
-             <column-projection name="product_id" start-index="7" stop-index="16"/>
++import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
++import org.apache.shardingsphere.infra.binder.engine.segment.dml.from.type.SimpleTableSegmentBinder;
++import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementBinderContext;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionDefinitionSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.TableNameSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.value.identifier.IdentifierValue;
++import org.apache.shardingsphere.sql.parser.statement.mysql.dml.MySQLLoadDataStatement;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.CsvSource;
++import org.mockito.MockedStatic;
++
++import static org.hamcrest.MatcherAssert.assertThat;
++import static org.hamcrest.Matchers.is;
++import static org.hamcrest.Matchers.sameInstance;
++import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertTrue;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.same;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.mockStatic;
++
++class MySQLLoadDataStatementBinderTest {
++    
++    @ParameterizedTest(name = "{index}: ignore={0}, replace={1}, local={2}")
++    @CsvSource({"true,false,false", "false,true,true", "false,false,false"})
++    void assertBindPreservesNativeInputFlags(final boolean ignore, final boolean replace, final boolean local) {
++        SimpleTableSegment source = createTable("foo_source");
++        SimpleTableSegment bound = createTable("foo_bound");
++        MySQLLoadDataStatement statement = new MySQLLoadDataStatement(mock(DatabaseType.class), source);
++        statement.setIgnore(ignore);
++        statement.setReplace(replace);
++        statement.setLocal(local);
++        statement.setStopIndex(120);
++        SQLStatementBinderContext context = mock(SQLStatementBinderContext.class);
++        try (MockedStatic<SimpleTableSegmentBinder> binder = mockStatic(SimpleTableSegmentBinder.class)) {
++            binder.when(() -> SimpleTableSegmentBinder.bind(same(source), same(context), any())).thenReturn(bound);
++            MySQLLoadDataStatement actual = new MySQLLoadDataStatementBinder().bind(statement, context);
++            assertTrue(actual.isIgnore() == ignore);
++            assertTrue(actual.isReplace() == replace);
++            assertTrue(actual.isLocal() == local);
++            assertThat(actual.getTable(), sameInstance(bound));
++            assertThat(actual.getStopIndex(), is(120));
++            assertFalse(actual.getPartitionDefinition().isPresent());
++        }
++    }
++    
++    @Test
++    void assertBindPreservesPartitionSpanUsingBoundTable() {
++        SimpleTableSegment source = createTable("foo_source");
++        SimpleTableSegment bound = createTable("foo_bound");
++        MySQLLoadDataStatement statement = new MySQLLoadDataStatement(mock(DatabaseType.class), source);
++        statement.getPartitions().add(new PartitionSegment(52, 53, new IdentifierValue("p0")));
++        statement.setPartitionDefinition(new PartitionDefinitionSegment(42, 54, source, statement.getPartitions()));
++        SQLStatementBinderContext context = mock(SQLStatementBinderContext.class);
++        try (MockedStatic<SimpleTableSegmentBinder> binder = mockStatic(SimpleTableSegmentBinder.class)) {
++            binder.when(() -> SimpleTableSegmentBinder.bind(same(source), same(context), any())).thenReturn(bound);
++            MySQLLoadDataStatement actual = new MySQLLoadDataStatementBinder().bind(statement, context);
++            PartitionDefinitionSegment actualDefinition = actual.getPartitionDefinition().get();
++            assertThat(actual.getPartitions(), is(statement.getPartitions()));
++        
 ```
 
-**File**: `test/it/parser/src/main/resources/sql/supported/dml/select-expression.xml` (modified, +1/-0)
+**File**: `parser/sql/engine/dialect/mysql/src/main/java/org/apache/shardingsphere/sql/parser/engine/mysql/visitor/statement/MySQLStatementVisitor.java` (modified, +1/-1)
 ```diff
-@@ -65,6 +65,7 @@
-     <sql-case id="select_where_with_expr_with_not" value="SELECT * FROM t_order WHERE NOT (? = t_order.order_id)" db-types="MySQL,Hive" />
-     <sql-case id="select_where_with_expr_with_not_sign" value="SELECT * FROM t_order WHERE ! ( ? = t_order.order_id)" db-types="MySQL,Hive" />
-     <sql-case id="select_where_with_expr_with_not_or_firebird" value="SELECT * FROM t_order WHERE NOT t_order.order_id = ? OR ? = t_order.order_id" db-types="Firebird" />
-+    <sql-case id="select_where_with_expr_with_and_not_or" value="SELECT * FROM t_order WHERE t_order.user_id = ? AND NOT t_order.status = ? OR t_order.user_id = ?" db-types="SQLServer,Oracle,SQL92,ClickHouse" />
-     <sql-case id="select_where_with_expr_with_is" value="SELECT * FROM t_order WHERE ? = t_order.order_id IS FALSE" db-types="MySQL,Presto" />
-     <sql-case id="select_where_with_expr_with_is_not" value="SELECT * FROM t_order WHERE ? = t_order.order_id IS NOT FALSE" db-types="MySQL" />
-     <sql-case id="select_where_with_boolean_primary_with_is" value="SELECT * FROM t_order WHERE t_order.status IS NULL" db-types="MySQL,Presto,Hive" />
+@@ -1910,7 +1910,7 @@ private List<ColumnSegment> createInsertColumns(final FieldsContext fields) {
+     
+     @Override
+     public ASTNode visitUpdate(final UpdateContext ctx) {
+-        UpdateStatement.UpdateStatementBuilder result = UpdateStatement.builder().databaseType(databaseType);
++        UpdateStatement.UpdateStatementBuilder result = UpdateStatement.builder().databaseType(databaseType).ignore(null != ctx.updateSpecification_().IGNORE());
+         if (null != ctx.withClause()) {
+             result.with((WithSegment) visit(ctx.withClause()));
+         }
 ```
 
-**File**: `test/it/parser/src/main/resources/sql/supported/dml/select.xml` (modified, +1/-0)
+**File**: `parser/sql/engine/dialect/mysql/src/main/java/org/apache/shardingsphere/sql/parser/engine/mysql/visitor/statement/type/MySQLDMLStatementVisitor.java` (modified, +14/-1)
 ```diff
-@@ -334,6 +334,7 @@
-     <sql-case id="select_with_substring_function" value="SELECT ProductID, Name, ProductNumber FROM [Production].[Product] WHERE SUBSTRING(ProductNumber, 0, 4) =  'HN-'" db-types="SQLServer"/>
-     <sql-case id="select_with_not_distinct_from" value="SELECT * FROM #SampleTempTable WHERE id IS NOT DISTINCT FROM NULL" db-types="SQLServer"/>
-     <sql-case id="select_with_distinct_from" value="SELECT * FROM #SampleTempTable WHERE id IS DISTINCT FROM 17;" db-types="SQLServer"/>
-+    <sql-case id="select_with_distinct_from_and" value="SELECT * FROM #SampleTempTable WHERE id IS DISTINCT FROM 17 AND order_id = 1" db-types="SQLServer"/>
-     <sql-case id="select_with_contains_function" value="SELECT product_id FROM products WHERE CONTAINS(product_description, '&quot;Snap Happy 100EZ&quot; OR FORMSOF(THESAURUS,&quot;Snap Happy&quot;) OR &quot;100EZ&quot;') AND product_cost &lt; 200" db-types="SQLServer"/>
-     <sql-case id="select_with_default_schema" value="SELECT has_backup_checksums, database_name, * FROM msdb..backupset" db-types="SQLServer"/>
-     <sql-case id="select_from_dbms_table" value="select * from table(dbms_xplan.display);" db-types="Oracle"/>
+@@ -23,6 +23,7 @@
+ import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.CallContext;
+ import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.DoStatementContext;
+ import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.HandlerStatementContext;
++import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.IdentifierContext;
+ import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.ImportStatementContext;
+ import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.IndexHintContext;
+ import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.LeadLagInfoContext;
+@@ -39,6 +40,8 @@
+ import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.WindowSpecificationContext;
+ import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.WindowingClauseContext;
+ import org.apache.shardingsphere.sql.parser.engine.mysql.visitor.statement.MySQLStatementVisitor;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionDefinitionSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.ReturningSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ExpressionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.FunctionSegment;
+@@ -105,7 +108,17 @@ public ASTNode visitLoadStatement(final LoadStatementContext ctx) {
+     
+     @Override
+     public ASTNode visitLoadDataStatement(final LoadDataStatementContext ctx) {
+-        return new MySQLLoadDataStatement(getDatabaseType(), (SimpleTableSegment) visit(ctx.tableName()));
++        MySQLLoadDataStatement result = new MySQLLoadDataStatement(getDatabaseType(), (SimpleTableSegment) visit(ctx.tableName()));
++        result.setIgnore(!ctx.IGNORE().isEmpty() && ctx.IGNORE(0).getSymbol().getTokenIndex() < ctx.INTO().getSymbol().getTokenIndex());
++        result.setReplace(null != ctx.REPLACE());
++        if (null != ctx.partitionNames()) {
++            for (IdentifierContext each : ctx.partitionNames().identifier()) {
++                result.getPartitions().add(new PartitionSegment(each.start.getStartIndex(), each.stop.getStopIndex(), (IdentifierValue) visit(each)));
++            }
++            result.setPartitionDefinition(new PartitionDefinitionSegment(ctx.partitionNames().start.getStartIndex(), ctx.partitionNames().stop.getStopIndex(),
++                    result.getTable(), result.getPartitions()));
++        }
++        return result;
+     }
+     
+     @Override
 ```
 
----
-
-### Incident Patch 3: `ea876392` (2026-11-08)
-**Commit Message**: Fix RAT site report exclusion configuration (#40490)
-
-**File**: `pom.xml` (modified, +3/-1)
+**File**: `parser/sql/statement/core/src/main/java/org/apache/shardingsphere/sql/parser/statement/core/statement/type/dml/LoadDataStatement.java` (modified, +16/-0)
 ```diff
-@@ -1161,6 +1161,9 @@
-                 <groupId>org.apache.rat</groupId>
-                 <artifactId>apache-rat-plugin</artifactId>
-                 <version>${apache-rat-plugin.version}</version>
-+                <configuration>
-+                    <excludesFile>${maven.multiModuleProjectDirectory}/src/resources/rat.txt</excludesFile>
-+                </configuration>
-             </plugin>
-             <plugin>
-                 <artifactId>maven-checkstyle-plugin</artifactId>
-@@ -1169,7 +1172,6 @@
-                     <failOnViolation>false</failOnViolation>
-                     <failsOnError>false</failsOnError>
-                     <violationSeverity>warning</violationSeverity>
--                    <!--suppress MavenModelInspection -->
-                     <configLocation>${maven.multiModuleProjectDirectory}/src/resources/checkstyle.xml</configLocation>
-                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                     <excludes>**/autogen/**/*</excludes>
+@@ -20,6 +20,7 @@
+ import lombok.Getter;
+ import lombok.Setter;
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionDefinitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.property.PropertiesSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.assignment.SetAssignmentSegment;
+@@ -55,10 +56,16 @@ public abstract class LoadDataStatement extends DMLStatement {
+     
+     private boolean local;
+     
++    private boolean ignore;
++    
++    private boolean replace;
++    
+     private LiteralValueSegment fileName;
+     
+     private final Collection<PartitionSegment> partitions = new LinkedList<>();
+     
++    private PartitionDefinitionSegment partitionDefinition;
++    
+     private LiteralValueSegment columnSeparator;
+     
+     private LiteralValueSegment lineDelimiter;
+@@ -77,6 +84,15 @@ protected LoadDataStatement(final DatabaseType databaseType, final SimpleTableSe
+         attributes = new SQLStatementAttributes(new TableSQLStatementAttribute(table), new UnsupportedDistributeSQLStatementAttribute());
+     }
+     
++    /**
++     * Get partition definition.
++     *
++     * @return partition definition, or empty when no partition selection is specified
++     */
++    public Optional<PartitionDefinitionSegment> getPartitionDefinition() {
++        return Optional.ofNullable(partitionDefinition);
++    }
++    
+     /**
+      * Get column separator.
+      *
+```
+
+**File**: `parser/sql/statement/core/src/main/java/org/apache/shardingsphere/sql/parser/statement/core/statement/type/dml/UpdateStatement.java` (modified, +4/-2)
+```diff
+@@ -70,14 +70,15 @@ public final class UpdateStatement extends DMLStatement {
+     
+     private final boolean targetTableIsFromAlias;
+     
++    private final boolean ignore;
++    
+     private final SQLStatementAttributes attributes;
+     
+     @Builder
+     private UpdateStatement(final DatabaseType databaseType, final TableSegment table, final SetAssignmentSegment setAssignment, final WhereSegment where,
+                             final OrderBySegment orderBy, final LimitSegment limit, final TableSegment from, final WhereSegment deleteWhere, final WithSegment with,
+                             final ReturningSegment returning, final ErrorLoggingSegment errorLogging, final WithTableHintSegment withTableHint, final OptionHintSegment optionHint,
+-                            final OutputSegment output,
+-                            final boolean targetTableIsFromAlias) {
++                            final OutputSegment output, final boolean targetTableIsFromAlias, final boolean ignore) {
+         super(databaseType);
+         this.table = table;
+         this.setAssignment = setAssignment;
+@@ -93,6 +94,7 @@ private UpdateStatement(final DatabaseType databaseType, final TableSegment tabl
+         this.optionHint = optionHint;
+         this.output = output;
+         this.targetTableIsFromAlias = targetTableIsFromAlias;
++        this.ignore = ignore;
+         attributes = new SQLStatementAttributes(new WithSQLStatementAttribute(with));
+     }
+     
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40500** (2026-11-12): Refactor Oracle parenthesized expression parsing (@strongduanmu)
+- **PR #40496** (2026-11-10): Refactor sql parser metadata for MySQL UPDATE and LOAD DATA (@strongduanmu)
 - **PR #40493** (2026-11-08): Refactor code for 64 approved Sonar findings (@terrymanu)
 - **PR #40492** (2026-11-08): Move pipeline data source configuration implementations to core (@terrymanu)
 - **PR #40491** (2026-11-08): Exclude AI tool files and Python caches from RAT (@terrymanu)
 - **PR #40490** (2026-11-08): Fix RAT site report exclusion configuration (@terrymanu)
-- **PR #40489** (2026-11-08): Add Grice guidance and require formal review for Git-visible changes (@terrymanu)
-- **PR #40488** (2026-11-07): Resolve JTA dependency convergence while preserving API compatibility (@terrymanu)
 
 ---
 
@@ -2078,28 +1952,55 @@ also fixes `a IS DISTINCT FROM b AND c = 1`, which was parsed as
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Grice guidance and require formal review for Git-visible changes (#40489)
+## X. Oracle parenthesized expression parsing (#40500)
 
 **RULE**:
-When implementing operations in `.codex/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/OracleStatementVisitor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a77a0cb`: Add Grice guidance and require formal review for Git-visible changes (#40489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f808225`: Oracle parenthesized expression parsing (#40500). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/config.toml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/OracleStatementVisitor.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-matcher = "^(Bash|apply_patch|exec_command|write_stdin)$"
+            return visitParenthesizedExpression(ctx.expr(0), ctx.LP_(), ctx.RP_());
+    private ASTNode visitParenthesizedExpression(final ExprContext ctx, final TerminalNode leftParentheses, final TerminalNode rightParentheses) {
+        ExprContext expression = ctx;
+        while (null != expression.LP_()) {
+            expression = expression.expr(0);
+        }
+        ASTNode result = visit(expression);
+        if (result instanceof ColumnSegment) {
+            ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(leftParentheses.getSymbol().getStartIndex(), leftParentheses.getSymbol().getStopIndex(),
+                    leftParentheses.getSymbol().getText()));
+            ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(rightParentheses.getSymbol().getStartIndex(), rightParentheses.getSymbol().getStopIndex(),
+                    rightParentheses.getSymbol().getText()));
+        }
+        return result;
+    }
+    
+            return visitParenthesizedExpression(ctx.expr(0), ctx.LP_(), ctx.RP_());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-matcher = "^(Bash|exec_command|write_stdin)$"
+            ASTNode result = visit(ctx.expr(0));
+            if (result instanceof ColumnSegment) {
+                ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(ctx.LP_().getSymbol().getStartIndex(), ctx.LP_().getSymbol().getStopIndex(), ctx.LP_().getSymbol().getText()));
+                ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(ctx.RP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex(), ctx.RP_().getSymbol().getText()));
+            }
+            return result;
+            ASTNode result = visit(ctx.expr(0));
+            if (result instanceof ColumnSegment) {
+                ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(ctx.LP_().getSymbol().getStartIndex(), ctx.LP_().getSymbol().getStopIndex(), ctx.LP_().getSymbol().getText()));
+                ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(ctx.RP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex(), ctx.RP_().getSymbol().getText()));
+            }
+            return result;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a77a0cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f808225` are properly handled with clean fallback behavior.

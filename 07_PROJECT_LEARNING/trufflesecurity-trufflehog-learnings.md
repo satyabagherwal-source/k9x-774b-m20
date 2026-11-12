@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `18876676`  
+> **Source Version**: `2c078840`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:49:09.787Z  
+> **Timestamp**: 2026-11-12T02:56:24.092Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:49:09.778Z  
+> **Harvest Timestamp**: 2026-11-12T02:56:24.084Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29187 stars
+- **Stars / Engagement**: 29224 stars
 
 ---
 
@@ -1140,1128 +1140,110 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5dce9d48` (2026-11-10)
-**Commit Message**: Clean up Hugging Face source logging for per-source debug (#5523)
+### Incident Patch 1: `2c078840` (2026-11-12)
+**Commit Message**: Update module golang.org/x/crypto to v0.59.0 [SECURITY] (#5544)
 
-* Clean up Hugging Face source logging for per-source debug
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Fix the lost clone line, move lines to the right levels, log skip reasons,
-API failures and pages, and log scan failures as errors. Also close the body
-on 401/403 and stop panicking on IDs without a slash
-
-* Redact the endpoint password in Hugging Face repo URL logs
-
-**File**: `pkg/sources/huggingface/README.md` (modified, +13/-0)
+**File**: `go.mod` (modified, +7/-6)
 ```diff
-@@ -172,6 +172,19 @@ trufflehog huggingface --org my-org --skip-all-models --skip-all-spaces --skip-a
- trufflehog huggingface --model my-org/public-model
- ```
- 
-+## Debug Logs
-+
-+With debug on for this source, the scan logs:
-+
-+- `V(0)`: `Repo listing hit the API limit, some repos may be missing` when an organization or user listing returns 1000 repos, since that listing is not paged.
-+- `V(1)`: `Hugging Face source initialized` with the config choices (the auth type only, never the token), `Scanning repos` and `Scanning buckets` with counts, and `Resuming from saved progress` when a scan resumes.
-+- `V(2)`: `Listed repos` and `Listed buckets` per organization or user, `Caching repo info` and `Caching bucket info`, `Scanning repo` and `Finished scanning repo` with its duration, and `Scanning bucket` with its file count.
-+- `V(3)`: `Cloning repo` with the auth type, `Cloned repo`, `Listed discussions`, `Scanning discussion`, and `Scanning bucket file` with its size.
-+- `V(4)`: `Skipping repo`, `Skipping bucket`, `Skipping discussion` and `Skipping bucket file` with a `reason` (matches ignore filter, not in include filter, PRs not included, discussions not included, too large), `Fetched page` for bucket listings, and `Hugging Face API request failed` with the status and `Retry-After` for every failed API call.
-+- `V(5)`: `Hugging Face API request` for every API call, with its status and duration.
-+
-+Lines carry `organization` or `user`, and `model`, `space`, `dataset` or `bucket`, where they apply. Failures to fetch or scan a repo or bucket, and invalid include or ignore globs, are logged as errors at the default level.
-+
- ## Troubleshooting
- 
- ### Common Issues
+@@ -107,11 +107,11 @@ require (
+ 	go.uber.org/automaxprocs v1.6.0
+ 	go.uber.org/mock v0.6.0
+ 	go.uber.org/zap v1.27.0
+-	golang.org/x/crypto v0.58.0
++	golang.org/x/crypto v0.59.0
+ 	golang.org/x/net v0.62.0
+ 	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sync v0.24.0
+-	golang.org/x/text v0.43.0
++	golang.org/x/sync v0.25.0
++	golang.org/x/text v0.44.0
+ 	golang.org/x/time v0.14.0
+ 	google.golang.org/api v0.264.0
+ 	google.golang.org/protobuf v1.36.11
+@@ -312,9 +312,10 @@ require (
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
+-	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/sys v0.49.0 // indirect
+-	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/crypto/openpgp v0.1.0-deprecated // indirect
++	golang.org/x/mod v0.42.0 // indirect
++	golang.org/x/sys v0.50.0 // indirect
++	golang.org/x/term v0.48.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260720211330-0afa2a65878a // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a // indirect
 ```
 
-**File**: `pkg/sources/huggingface/bucket.go` (modified, +20/-11)
+**File**: `go.sum` (modified, +16/-14)
 ```diff
-@@ -1,6 +1,7 @@
- package huggingface
- 
- import (
-+	"errors"
- 	"fmt"
- 	"strings"
- 
-@@ -27,16 +28,21 @@ func (s *Source) cacheBucketInfo(ctx context.Context, bucketID string) error {
- 		bucketCtx.Logger().V(2).Info("Caching bucket info")
- 		bucket, err := s.apiClient.GetBucket(bucketCtx, bucketID)
- 		if err != nil {
--			bucketCtx.Logger().Error(err, "failed to fetch bucket")
-+			bucketCtx.Logger().Error(err, "Failed to fetch bucket info")
- 			return err
- 		}
- 		if bucket.BucketID == "" {
--			bucketCtx.Logger().Error(fmt.Errorf("no bucket found for bucket"), bucketID)
-+			bucketCtx.Logger().Error(errors.New("bucket not found"), "Skipping bucket")
- 			return nil
- 		}
-+		// Don't index past the slash, an ID without one would panic.
-+		owner, name, ok := strings.Cut(bucket.BucketID, "/")
-+		if !ok {
-+			owner, name = "", bucket.BucketID
-+		}
- 		s.repoInfoCache.put(bucketID, repoInfo{
--			owner:        strings.Split(bucket.BucketID, "/")[0],
--			name:         strings.Split(bucket.BucketID, "/")[1],
-+			owner:        owner,
-+			name:         name,
- 			fullName:     bucket.BucketID,
- 			visibility:   getVisibility(bucket.IsPrivate),
- 			resourceType: BUCKET,
-@@ -53,12 +59,13 @@ func (s *Source) fetchAndCacheBuckets(ctx context.Context, author string) error
- 	if err != nil {
- 		return err
- 	}
-+	ctx.Logger().V(2).Info("Listed buckets", "count", len(buckets))
- 	for _, bucket := range buckets {
--		s.filteredBucketsCache.Set(bucket.BucketID, bucket.BucketID)
--		// Set is a no-op for buckets excluded by include/ignore globs.
--		if _, ok := s.filteredBucketsCache.Get(bucket.BucketID); !ok {
-+		if reason := s.filteredBucketsCache.skipReason(bucket.BucketID); reason != "" {
-+			ctx.Logger().V(4).Info("Skipping bucket", "bucket", bucket.BucketID, "reason", reason)
- 			continue
- 		}
-+		s.filteredBucketsCache.Set(bucket.BucketID, bucket.BucketID)
- 		if err := s.cacheBucketInfo(ctx, bucket.BucketID); err != nil {
- 			continue
- 		}
-@@ -70,7 +77,7 @@ func (s *Source) fetchAndCacheBuckets(ctx context.Context, author string) error
- // are object storage rather than git repos, so files are downloaded
- // individually and chunked directly.
- func (s *Source) scanBuckets(ctx context.Context, chunksChan chan *sources.Chunk) error {
--	ctx.Logger().V(2).Info("Found buckets to scan", "count", len(s.buckets))
-+	ctx.Logger().V(1).Info("Scanning buckets", "count", len(s.buckets))
- 
- 	scanErrs := sources.NewScanErrors()
- 	reporter := sources.ChanReporter{Ch: chunksChan}
-@@ -80,7 +87,7 @@ func (s *Source) scanBuckets(ctx context.Context, chunksChan chan *sources.Chunk
- 		if !ok {
- 			// This should never happen.
- 			err := fmt.Errorf("no bucketInfo for bucket: %s", bucketID)
--			ctx.Logger().Error(err, "failed to scan bucket")
-+			ctx.Logger().Error(err, "Failed to scan bucket")
- 			continue
- 		}
- 		bucketCtx := context.WithValues(ctx, BUCKET, bucketID)
-@@ -90,6 +97,7 @@ func (s *Source) scanBuckets(ctx context.Context, chunksChan chan *sources.Chunk
- 			scanErrs.Add(fmt.Errorf("error listing files in bucket %s: %w", bucketID, err))
- 			continue
- 		}
-+		bucketCtx.Logger().V(2).Info("Scanning bucket", "files", len(files))
- 
- 		for _, file := range files {
- 			s.jobPool.Go(func() error {
-@@ -100,9 +108,10 @@ func (s *Source) scanBuckets(ctx context.Context, chunksChan chan *sources.Chunk
- 					return nil
- 				}
- 				if file.Size > maxBucketFileSize {
--					bucketCtx.Logger().V(2).Info("Skipping bucket file: exceeds max size", "path", file.Path, "size", file.Size)
-+					bucketCtx.Logger().V(4).Info("Skipping bucket file", "path", file.Path, "size", file.Size, "reason", "too large")
- 					return nil
- 				}
-+				bucketCtx.Logger().V(3).Info("Scanning bucket file", "path", file.Path, "size", file.Size)
- 				if err := s.scanBucketFile(bucketCtx, bucketID, bucketInfo, file, reporter); err != nil {
- 					scanErrs.Add(fmt.Errorf("error scanning file %s in bucket %s: %w", file.Path, bucketID, err))
- 				}
-@@ -113,7 +122,7 @@ func (s *Source) scanBuckets(ctx context.Context, chunksChan chan *sources.Chunk
- 
- 	_ = s.jobPool.Wait()
- 	if scanErrs.Count() > 0 {
--		ctx.Logger().V(0).Info("failed to scan some buckets", "error_count", scanErrs.Count(), "errors", scanErrs.String())
-+		ctx.Logger().Error(scanErrs.Errors(), "Failed to scan some buckets", "error_count", scanErrs.Count())
- 	}
- 	s.SetProgressComplete(len(s.buckets), len(s.buckets), "Completed HuggingFace bucket scan", "")
- 	return nil
-```
-
-**File**: `pkg/sources/huggingface/client.go` (modified, +30/-3)
-```diff
-@@ -181,10 +181,13 @@ func (c *HFClient) get(ctx context.Context, url string, target interface{}) erro
- 
- 	req.Header.Set("Authorization", "Bearer "+c.APIKey)
- 
-+	start := time.Now()
- 	resp, err := c.HTTPClient.Do(req)
- 	if err != nil {
- 		return fmt.Errorf("failed to make request to HuggingFace API: %w", err)
- 	}
-+	defer func() { _ = resp.Body.Close() }()
-+	logResponse(ctx, resp, start)
- 
- 	if resp.StatusCode == http.StatusUnauthorized {
- 		return errors.New("invalid API key")
-@@ -194,8 +197,6 @@ func (c *HFClient) get(ctx context.Context, url string, target interface{}) erro
- 		return errors.New("access to this repo is restricted and you are not in the authorized list. Visit the repository to ask for access")
- 	}
- 
--	defer func() { _ = resp.Body.Close() }()
--
- 	return json.NewDecoder(resp.Body).Decode(target)
- }
- 
-@@ -237,7 +238,7 @@ func (c *HFClient) GetDiscussionByID(ctx context.Context, repoInfo repoInfo, dis
- // Note: not addressing pagination b/c allow by default 1000 results, which should be enough for 99.99% of cases
- func (c *HFClient) ListReposByAuthor(ctx context.Context, resourceType string, author string) ([]Repo, error) {
- 	var repos []Repo
--	url := fmt.Sprintf("%s/%s/%s?limit=1000&author=%s", c.BaseURL, APIRoute, getResourceAPIPath(resourceType), author)
-+	url := fmt.Sprintf("%s/%s/%s?limit=%d&author=%s", c.BaseURL, APIRoute, getResourceAPIPath(resourceType), listReposLimit, author)
- 	err := c.get(ctx, url, &repos)
- 	return repos, err
- }
-@@ -264,6 +265,7 @@ func (c *HFClient) ListBucketsByAuthor(ctx context.Context, author string) ([]Bu
- 			return buckets, err
- 		}
- 		buckets = append(buckets, page...)
-+		ctx.Logger().V(4).Info("Fetched page", "items", len(page), "has_next", next != "")
- 		url = next
- 	}
- 	return buckets, nil
-@@ -281,6 +283,7 @@ func (c *HFClient) ListBucketFiles(ctx context.Context, bucketID string) ([]Buck
- 			return files, err
- 		}
- 		files = append(files, page...)
-+		ctx.Logger().V(4).Info("Fetched page", "items", len(page), "has_next", next != "")
- 		url = next
- 	}
- 	return files, nil
-@@ -299,10 +302,12 @@ func (c *HFClient) DownloadBucketFile(ctx context.Context, bucketID string, path
- 	}
- 	req.Header.Set("Authorization", "Bearer "+c.APIKey)
- 
-+	start := time.Now()
- 	resp, err := c.downloadClient.Do(req)
- 	if err != nil {
- 		return nil, fmt.Errorf("failed to download bucket file %s: %w", path, err)
- 	}
-+	logResponse(ctx, resp, start)
- 	if resp.StatusCode != http.StatusOK {
- 		_ = resp.Body.Close()
- 		return nil, fmt.Errorf("failed to download bucket file %s: status %d", path, resp.StatusCode)
-@@ -322,11 +327,13 @@ func (c *HFClient) getPage(ctx context.Context, url string, target interface{})
- 	}
- 	req.Header.Set("Authorization", "Bearer "+c.APIKey)
- 
-+	start := time.Now()
- 	resp, err := c.HTTPClient.Do(req)
- 	if err != nil {
- 		return "", fmt.Errorf("failed to make request to HuggingFace API: %w", err)
- 	}
- 	defer func() { _ = resp.Body.Close() }()
-+	logResponse(ctx, resp, start)
- 
- 	if resp.StatusCode == http.StatusUnauthorized {
- 		return "", errors.New("invalid API key")
-@@ -344,6 +351,26 @@ func (c *HFClient) getPage(ctx context.Context, url string, target interface{})
- 	return parseNextLink(resp.Header.Get("Link")), nil
- }
- 
-+// logResponse logs one API response. Failed ones go at V(4) so support can see
-+// 404s, rate limits and server errors, which the callers often turn into vague
-+// errors or empty results. Only the path is logged: headers hold the token, and
-+// the query can hold cursors and names that add nothing.
-+func logResponse(ctx context.Context, resp *http.Response, start time.Time) {
-+	if resp.StatusCode >= 400 {
-+		ctx.Logger().V(4).Info("Hugging Face API request failed",
-+			"path", resp.Request.URL.Path,
-+			"status", resp.StatusCode,
-+			"retry_after", resp.Header.Get("Retry-After"),
-+		)
-+		return
-+	}
-+	ctx.Logger().V(5).Info("Hugging Face API request",
-+		"path", resp.Request.URL.Path,
-+		"status", resp.StatusCode,
-+		"duration", time.Since(start),
-+	)
-+}
-+
- // escapePathSegments URL-encodes each slash-separated segment of a path while
- // keeping the slashes as separators, e.g. "a b/c?d" -> "a%20b/c%3Fd".
- func escapePathSegments(path string) string {
-```
-
-**File**: `pkg/sources/huggingface/huggingface.go` (modified, +143/-45)
-```diff
-@@ -1,15 +1,16 @@
- package huggingface
- 
- import (
-+	"errors"
- 	"fmt"
-+	"net/url"
- 	"os"
- 	"sort"
- 	"strings"
- 	"sync"
- 	"sync/atomic"
- 	"time"
- 
--	"github.com/go-logr/logr"
- 	"github.com/gobwas/glob"
- 	"golang.org/x/sync/errgroup"
- 	"google.golang.org/protobuf/proto"
-@@ -44,6 +45,10 @@ const (
- 	// bucketsPagination is the page size for bucket listing endpoints,
- 	// which default to 100 items per page (5000 max).
- 	bucketsPagination = 5000
-+
-+	// listReposLimit is the page size ListReposByAuthor asks for. The listing is
-+	// not paged, so a full page may mean repos were missed.
-+	listReposLimit = 1000
- )
- 
- type resourceType string
-@@ -126,15 +131,15 @@ func (s *Source) newFilteredRepoCache(ctx context.Context, c cache.Cache[string]
- 	for _, ig := range include {
- 		g, err := glob.Compile(ig)
- 		if err != nil {
--			ctx.Logger().V(1).Info("invalid include glob", "include_value", ig, "err", err)
-+			ctx.Logger().Error(err, "Invalid include glob, ignoring it", "glob", ig)
- 			continue
- 		}
- 		includeGlobs = append(includeGlobs, g)
- 	}
- 	for _, eg := range exclude {
- 		g, err := glob.Compile(eg)
- 		if err != nil {
--			ctx.Logger().V(1).Info("invalid exclude glob", "exclude_value", eg, "err", err)
-+			ctx.Logger().Error(err, "Invalid exclude glob, ignoring it", "glob", eg)
- 			continue
- 		}
- 		excludeGlobs = append(excludeGlobs, g)
-@@ -145,13 +150,22 @@ func (s *Source) newFilteredRepoCache(ctx context.Context, c cache.Cache[string]
- // Set overrides the cache.Cache Set method to filter out repos based on
- // include and exclude globs.
- func (c *filteredRepoCache) Set(key, val string) {
--	if c.ignoreRepo(key) {
-+	if c.skipReason(key) != "" {
- 		return
- 	}
-+	c.Cache.Set(key, val)
-+}
-+
-+// skipReason says why the include and exclude globs filter out a repo, or ""
-+// if they keep it.
-+func (c *filteredRepoCache) skipReason(key string) string {
-+	if c.ignoreRepo(key) {
-+		return "matches ignore filter"
-+	}
- 	if !c.includeRepo(key) {
--		return
-+		return "not in include filter"
- 	}
--	c.Cache.Set(key, val)
-+	return ""
- }
- 
- func (c *filteredRepoCache) ignoreRepo(s string) bool {
-@@ -234,11 +248,11 @@ func (s *Source) Init(ctx context.Context, name string, jobID sources.JobID, sou
- 		s.conn.GetIgnoreBuckets(),
- 	)
- 
--	s.models = initializeRepos(s.filteredModelsCache, s.conn.Models, fmt.Sprintf("%s/%s.git", s.conn.Endpoint, "%s"))
--	s.spaces = initializeRepos(s.filteredSpacesCache, s.conn.Spaces, fmt.Sprintf("%s/%s/%s.git", s.conn.Endpoint, SpacesRoute, "%s"))
--	s.datasets = initializeRepos(s.filteredDatasetsCache, s.conn.Datasets, fmt.Sprintf("%s/%s/%s.git", s.conn.Endpoint, DatasetsRoute, "%s"))
-+	s.models = initializeRepos(ctx, s.filteredModelsCache, s.conn.Models, fmt.Sprintf("%s/%s.git", s.conn.Endpoint, "%s"))
-+	s.spaces = initializeRepos(ctx, s.filteredSpacesCache, s.conn.Spaces, fmt.Sprintf("%s/%s/%s.git", s.conn.Endpoint, SpacesRoute, "%s"))
-+	s.datasets = initializeRepos(ctx, s.filteredDatasetsCache, s.conn.Datasets, fmt.Sprintf("%s/%s/%s.git", s.conn.Endpoint, DatasetsRoute, "%s"))
- 	// Buckets are not git repos; they are keyed by their plain "namespace/name" ID.
--	s.buckets = initializeRepos(s.filteredBucketsCache, s.conn.Buckets, "%s")
-+	s.buckets = initializeRepos(ctx, s.filteredBucketsCache, s.conn.Buckets, "%s")
- 	s.repoInfoCache = newRepoInfoCache()
- 
- 	s.includeDiscussions = s.conn.IncludeDiscussions
-@@ -280,9 +294,51 @@ func (s *Source) Init(ctx context.Context, name string, jobID sources.JobID, sou
- 	s.skipAllDatasets = s.conn.SkipAllDatasets
- 	s.skipAllBuckets = s.conn.SkipAllBuckets
- 
-+	ctx.Logger().V(1).Info("Hugging Face source initialized",
-+		"endpoint", redactURL(s.conn.Endpoint),
-+		"auth_type", authType(s.conn),
-+		"organizations", len(s.conn.Organizations),
-+		"users", len(s.conn.Users),
-+		"models", len(s.models),
-+		"spaces", len(s.spaces),
-+		"datasets", len(s.datasets),
-+		"buckets", len(s.buckets),
-+		"skip_all_models", s.skipAllModels,
-+		"skip_all_spaces", s.skipAllSpaces,
-+		"skip_all_datasets", s.skipAllDatasets,
-+		"skip_all_buckets", s.skipAllBuckets,
-+		"include_discussions", s.includeDiscussions,
-+		"include_prs", s.includePrs,
-+		"concurrency", concurrency,
-+	)
-+
- 	return nil
- }
- 
-+// redactURL hides the password in a URL before it is logged. Repo URLs are
-+// built from the configured endpoint, which could carry user:pass. Log fields
-+// and error values are not covered by global redaction, so this is the only
-+// guard.
-+func redactURL(rawURL string) string {
-+	u, err := url.Parse(rawURL)
-+	if err != nil {
-+		return "<invalid URL>"
-+	}
-+	return u.Redacted()
-+}
-+
-+// authType names the credential type for logs, never the credential.
-+func authType(conn *sourcespb.Huggingface) string {
-+	switch conn.GetCredential().(type) {
-+	case *sourcespb.Huggingface_Token:
-+		return "token"
-+	case *sourcespb.Huggingface_Unauthenticated:
-+		return "unauthenticated"
-+	default:
-+		return "none"
-+	}
-+}
-+
- func (s *Source) validateIgnoreIncludeRepos() error {
- 	if err := verifySlashSeparatedS
-```
-
-**File**: `pkg/sources/huggingface/huggingface_test.go` (modified, +105/-0)
-```diff
-@@ -1,13 +1,21 @@
- package huggingface
- 
- import (
-+	"encoding/json"
- 	"fmt"
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/source_metadatapb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-+	"go.uber.org/zap/zaptest/observer"
- 	"google.golang.org/protobuf/types/known/anypb"
- 	"gopkg.in/h2non/gock.v1"
- )
-@@ -984,3 +992,100 @@ func TestValidateIgnoreIncludeReposSpaces(t *testing.T) {
- }
- 
- // repeat this with all skip flags, and then include/ignore flags
-+
-+// fakeHF serves the parts of the Hugging Face API the debug logging test needs:
-+// one org with two models (one ignored) and one bucket whose file listing has two
-+// pages. User "ghost" has no models, and listing its buckets returns a 404. The
-+// model clone fails too, so the failure lines show up.
-+func fakeHF(t *testing.T, secretFile string) *httptest.Server {
-+	t.Helper()
-+	var srv *httptest.Server
-+	write := func(w http.ResponseWriter, body any) {
-+		_ = json.NewEncoder(w).Encode(body)
-+	}
-+	srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		switch r.URL.Path {
-+		case "/api/models":
-+			if r.URL.Query().Get("author") != "org1" {
-+				write(w, []map[string]any{})
-+				return
-+			}
-+			write(w, []map[string]any{
-+				{"id": "org1/model-a", "author": "org1"},
-+				{"id": "org1/ignored", "author": "org1"},
-+			})
-+		case "/api/models/org1/model-a":
-+			write(w, map[string]any{"id": "org1/model-a", "author": "org1"})
-+		case "/api/buckets/org1":
-+			write(w, []map[string]any{{"id": "org1/bkt", "private": true}})
-+		case "/api/buckets/org1/bkt":
-+			write(w, map[string]any{"id": "org1/bkt", "private": true})
-+		case "/api/buckets/org1/bkt/tree":
-+			if r.URL.Query().Get("cursor") == "" {
-+				w.Header().Set("Link", "<"+srv.URL+"/api/buckets/org1/bkt/tree?cursor=2>; rel=\"next\"")
-+				write(w, []map[string]any{
-+					{"type": "file", "path": "secret.txt", "size": len(secretFile)},
-+					{"type": "directory", "path": "dir"},
-+				})
-+				return
-+			}
-+			write(w, []map[string]any{{"type": "file", "path": "big.bin", "size": maxBucketFileSize + 1}})
-+		case "/buckets/org1/bkt/resolve/secret.txt":
-+			_, _ = w.Write([]byte(secretFile))
-+		default:
-+			w.WriteHeader(http.StatusNotFound)
-+			write(w, map[string]any{"error": "not found"})
-+		}
-+	}))
-+	return srv
-+}
-+
-+func TestSource_DebugLogging(t *testing.T) {
-+	const (
-+		testSecret   = "hfdebuglogtestsecret"
-+		testToken    = "hfdebuglogtesttoken"
-+		testPassword = "hfdebuglogtestpass"
-+	)
-+
-+	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
-+		t.Helper()
-+		srv := fakeHF(t, "token = "+testSecret)
-+		defer srv.Close()
-+
-+		ctx, logs := logtest.SourceContext(debug)
-+		s, conn := createTestSource(&sourcespb.Huggingface{
-+			// A password in the endpoint ends up in every repo URL, so no line
-+			// may show it.
-+			Endpoint:        strings.Replace(srv.URL, "http://", "http://user:"+testPassword+"@", 1),
-+			Credential:      &sourcespb.Huggingface_Token{Token: testToken},
-+			Organizations:   []string{"org1"},
-+			IgnoreModels:    []string{"org1/ignored"},
-+			Users:           []string{"ghost"},
-+			SkipAllSpaces:   true,
-+			SkipAllDatasets: true,
-+		})
-+		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
-+		if debug {
-+			logtest.CheckInitLine(t, logs.All())
-+		}
-+
-+		chunksCh := make(chan *sources.Chunk, 10)
-+		require.NoError(t, s.Chunks(ctx, chunksCh))
-+		close(chunksCh)
-+
-+		var files []string
-+		for chunk := range chunksCh {
-+			files = append(files, chunk.SourceMetadata.GetHuggingface().GetFile())
-+		}
-+		assert.Equal(t, []string{"secret.txt"}, files)
-+		return logs.All()
-+	}
-+
-+	t.Run("debug on", func(t *testing.T) {
-+		logtest.CheckSourceLines(t, runSource(t, true), testSecret, testToken, testPassword)
-+	})
-+
-+	t.Run("debug off", func(t *testing.T) {
-+		logtest.CheckNoDebugLines(t, runSource(t, false))
-+	})
-+}
-```
-
-**File**: `pkg/sources/huggingface/repo.go` (modified, +3/-3)
-```diff
-@@ -56,19 +56,19 @@ func (s *Source) cloneRepo(
- 
- 	switch s.conn.GetCredential().(type) {
- 	case *sourcespb.Huggingface_Unauthenticated:
--		ctx.Logger().V(2).Info("cloning repo without authentication", "repo_url", repoURL)
-+		ctx.Logger().V(3).Info("Cloning repo", "auth", "unauthenticated")
- 		path, repo, err = git.CloneRepoUsingUnauthenticated(ctx, repoURL, "")
- 		if err != nil {
- 			return "", nil, err
- 		}
- 	case *sourcespb.Huggingface_Token:
--		ctx.Logger().V(2).Info("cloning repo with token authentication", "repo_url", repoURL)
-+		ctx.Logger().V(3).Info("Cloning repo", "auth", "token")
- 		path, repo, err = git.CloneRepoUsingToken(ctx, s.huggingfaceToken, repoURL, "", "", true)
- 		if err != nil {
- 			return "", nil, err
- 		}
- 	default:
--		return "", nil, fmt.Errorf("unhandled credential type for repo %s: %T", repoURL, s.conn.GetCredential())
-+		return "", nil, fmt.Errorf("unhandled credential type for repo %s: %T", redactURL(repoURL), s.conn.GetCredential())
- 	}
- 	return path, repo, nil
- }
-```
-
----
-
-### Incident Patch 2: `221b9794` (2026-11-10)
-**Commit Message**: Clean up Elasticsearch source logging for per-source debug (#5521)
-
-* Clean up Elasticsearch source logging for per-source debug
-
-Remove the stored logger and ctx, move lines to the right levels, log skip
-reasons and API calls, and stop reading error responses as results
-
-* Log Elasticsearch network errors as failed requests
-
-**File**: `pkg/sources/elasticsearch/README.md` (modified, +12/-0)
-```diff
-@@ -217,6 +217,18 @@ trufflehog elasticsearch --nodes https://localhost:9200 --index-pattern "logs-*"
- trufflehog elasticsearch --nodes https://localhost:9200 --best-effort-scan
- ```
- 
-+## Debug Logs
-+
-+With debug on for this source, the scan logs:
-+
-+- `V(1)`: `Elasticsearch source initialized` with the config choices (the auth method only, never the credentials, and only whether a query is set, not the query), `Listed indices` with index and document counts for each pass, and the scan coverage line when best effort scan skips documents to catch up.
-+- `V(2)`: `Counted documents in index`, and `Scanning index` and `Finished scanning index` for each index a worker scans.
-+- `V(3)`: `Scanning document` for each document, with its id.
-+- `V(4)`: `Skipping document` with a `reason` (already scanned, no message field, no @timestamp field, no source, no document id), `Elasticsearch request failed` for every failed request, a response of 400 or above or a network error like connection refused, including the ones the client retries, `Scanned document count differs from expected`, and `No new documents, waiting` in best effort scan.
-+- `V(5)`: `Elasticsearch request` for every request, and `Fetched search page` for each page of search results.
-+
-+Lines carry `worker` and `index` where they apply. A failure to scan documents is logged as an error at the default level.
-+
- ## Troubleshooting
- 
- ### Common Issues
-```
-
-**File**: `pkg/sources/elasticsearch/api.go` (modified, +54/-4)
-```diff
-@@ -13,6 +13,8 @@ import (
- 
- 	es "github.com/elastic/go-elasticsearch/v8"
- 	"github.com/elastic/go-elasticsearch/v8/esapi"
-+
-+	logContext "github.com/trufflesecurity/trufflehog/v3/pkg/context"
- )
- 
- const PAGE_SIZE = 10
-@@ -154,6 +156,12 @@ func makeElasticSearchRequest(
- 
- 	data := make(map[string]any)
- 
-+	// An error response is JSON too, so without this check its keys were read as
-+	// results, for example as index names.
-+	if res.IsError() {
-+		return nil, fmt.Errorf("elasticsearch returned %s: %s", res.Status(), errorReason(rawData))
-+	}
-+
- 	err = json.Unmarshal(rawData, &data)
- 	if err != nil {
- 		return nil, err
-@@ -162,6 +170,29 @@ func makeElasticSearchRequest(
- 	return data, nil
- }
- 
-+// errorReason returns the reason from an Elasticsearch error response, or "unknown
-+// error" if the body has none. Only the reason is kept, not the whole body.
-+func errorReason(body []byte) string {
-+	var errResp struct {
-+		Error json.RawMessage `json:"error"`
-+	}
-+	if json.Unmarshal(body, &errResp) != nil || len(errResp.Error) == 0 {
-+		return "unknown error"
-+	}
-+	var detail struct {
-+		Type   string `json:"type"`
-+		Reason string `json:"reason"`
-+	}
-+	if json.Unmarshal(errResp.Error, &detail) == nil && detail.Reason != "" {
-+		return detail.Type + ": " + detail.Reason
-+	}
-+	var reason string
-+	if json.Unmarshal(errResp.Error, &reason) == nil && reason != "" {
-+		return reason
-+	}
-+	return "unknown error"
-+}
-+
- func fetchIndexNames(
- 	ctx context.Context,
- 	client *es.TypedClient,
-@@ -263,6 +294,8 @@ func processSearchedDocuments(
- 	docSearch *DocumentSearch,
- 	processDocument func(document *Document) error,
- ) (int, error) {
-+	logger := logContext.AddLogger(ctx).Logger()
-+
- 	pitID, err := createPITForSearch(ctx, client, docSearch)
- 	if err != nil {
- 		return 0, err
-@@ -272,7 +305,7 @@ func processSearchedDocuments(
- 	documentsProcessed := 0
- 	sort := []int{}
- 
--	for documentsProcessed < docSearch.documentCount {
-+	for page := 1; documentsProcessed < docSearch.documentCount; page++ {
- 		searchReqBody := SearchRequestBody{
- 			PIT: PointInTime{
- 				ID:        pitID,
-@@ -317,20 +350,27 @@ func processSearchedDocuments(
- 			return 0, err
- 		}
- 
-+		// A response without hits used to retry the same page forever.
- 		topLevelHits, ok := searchResults["hits"].(map[string]any)
- 		if !ok {
- 			apiErr, ok := searchResults["error"].(map[string]any)
- 			if ok {
- 				return 0, fmt.Errorf("error fetching search results: %v", apiErr)
- 			}
--			continue
-+			return 0, errors.New("no hits in search response")
- 		}
- 
- 		hits, ok := topLevelHits["hits"].([]any)
- 		if !ok {
--			continue
-+			return 0, errors.New("no hits list in search response")
- 		}
- 
-+		logger.V(5).Info("Fetched search page",
-+			"page", page,
-+			"hits", len(hits),
-+			"fetch_bodies", processingDocuments,
-+		)
-+
- 		if len(hits) == 0 {
- 			break
- 		}
-@@ -340,11 +380,13 @@ func processSearchedDocuments(
- 
- 			hit, ok := jsonHit.(map[string]any)
- 			if !ok {
-+				logger.V(4).Info("Skipping document", "reason", "hit is not an object")
- 				continue
- 			}
- 
- 			jsonSort, ok := hit["sort"].([]any)
- 			if !ok {
-+				logger.V(4).Info("Skipping document", "document_id", hit["_id"], "reason", "no sort values")
- 				continue
- 			}
- 
-@@ -359,21 +401,25 @@ func processSearchedDocuments(
- 
- 			id, ok := hit["_id"].(string)
- 			if !ok {
-+				logger.V(4).Info("Skipping document", "reason", "no document id")
- 				continue
- 			}
- 
- 			source, ok := hit["_source"].(map[string]any)
- 			if !ok {
-+				logger.V(4).Info("Skipping document", "document_id", id, "reason", "no source")
- 				continue
- 			}
- 
- 			timestamp, ok := source["@timestamp"].(string)
- 			if !ok {
-+				logger.V(4).Info("Skipping document", "document_id", id, "reason", "no @timestamp field")
- 				continue
- 			}
- 
- 			message, ok := source["message"].(string)
- 			if !ok {
-+				logger.V(4).Info("Skipping document", "document_id", id, "reason", "no message field")
- 				continue
- 			}
- 
-@@ -384,7 +430,7 @@ func processSearchedDocuments(
- 			}
- 
- 			if err = processDocument(&document); err != nil {
--				return 0, nil
-+				return documentsProcessed, err
- 			}
- 
- 			documentsProcessed++
-@@ -457,6 +503,10 @@ func (indices *Indices) Update(
- 		}
- 
- 		index.documentCount = documentCount
-+		logContext.AddLogger(ctx).Logger().V(2).Info("Counted documents in index",
-+			"index", indexName,
-+			"documents", documentCount,
-+		)
- 	}
- 
- 	indices.indices = make([]*Index, 0, len(newIndicesByName))
-```
-
-**File**: `pkg/sources/elasticsearch/apilog.go` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+package elasticsearch
-+
-+import (
-+	"net/http"
-+	"time"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+)
-+
-+// apiLogger is an elastictransport.Logger. The ES client retries 502, 503, 504 and
-+// network errors on its own and logs nothing, so without it support can't see retries
-+// or failed calls. The client calls it once per attempt, and passes an empty response
-+// when the attempt got none, so err must be checked first. It logs through the
-+// request's context, so every request must carry the scan ctx. Headers, bodies and the
-+// full URL are never logged, they can hold credentials or document data.
-+type apiLogger struct{}
-+
-+func (apiLogger) LogRoundTrip(req *http.Request, res *http.Response, err error, _ time.Time, dur time.Duration) error {
-+	if req == nil {
-+		return nil
-+	}
-+	logger := context.AddLogger(req.Context()).Logger()
-+	// A network error, like connection refused or a timeout. Only the last one
-+	// reaches the caller, so retried ones are only visible here. It is logged as
-+	// a field, since V(4).Error would ignore the level.
-+	if err != nil {
-+		logger.V(4).Info("Elasticsearch request failed",
-+			"method", req.Method,
-+			"path", req.URL.Path,
-+			"duration", dur,
-+			"error", err.Error(),
-+		)
-+		return nil
-+	}
-+	if res == nil {
-+		return nil
-+	}
-+	if res.StatusCode >= 400 {
-+		logger.V(4).Info("Elasticsearch request failed",
-+			"method", req.Method,
-+			"path", req.URL.Path,
-+			"status", res.StatusCode,
-+			"duration", dur,
-+		)
-+		return nil
-+	}
-+	logger.V(5).Info("Elasticsearch request",
-+		"method", req.Method,
-+		"path", req.URL.Path,
-+		"status", res.StatusCode,
-+		"duration", dur,
-+	)
-+	return nil
-+}
-+
-+func (apiLogger) RequestBodyEnabled() bool  { return false }
-+func (apiLogger) ResponseBodyEnabled() bool { return false }
-```
-
-**File**: `pkg/sources/elasticsearch/elasticsearch.go` (modified, +63/-30)
-```diff
-@@ -6,7 +6,6 @@ import (
- 
- 	es "github.com/elastic/go-elasticsearch/v8"
- 	"github.com/go-errors/errors"
--	"github.com/go-logr/logr"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/log"
-@@ -30,9 +29,7 @@ type Source struct {
- 	esConfig       es.Config
- 	filterParams   FilterParams
- 	bestEffortScan bool
--	ctx            context.Context
- 	client         *es.TypedClient
--	log            logr.Logger
- 	sources.Progress
- }
- 
-@@ -57,10 +54,7 @@ func (s *Source) Init(
- 	s.concurrency = concurrency
- 	s.verify = verify
- 
--	s.ctx = aCtx
--	s.log = aCtx.Logger()
--
--	esConfig := es.Config{}
-+	esConfig := es.Config{Logger: apiLogger{}}
- 
- 	if len(conn.Nodes) > 0 {
- 		esConfig.Addresses = conn.Nodes
-@@ -109,9 +103,34 @@ func (s *Source) Init(
- 
- 	s.client = client
- 
-+	aCtx.Logger().V(1).Info("Elasticsearch source initialized",
-+		"nodes", len(conn.Nodes),
-+		"cloud_id_set", conn.CloudId != "",
-+		"auth_method", authMethod(&conn),
-+		"index_pattern", s.filterParams.indexPattern,
-+		"query_set", conn.QueryJson != "",
-+		"since_timestamp", conn.SinceTimestamp,
-+		"best_effort_scan", s.bestEffortScan,
-+		"concurrency", s.concurrency,
-+	)
-+
- 	return nil
- }
- 
-+// authMethod names the credential type for logs, never the credential.
-+func authMethod(conn *sourcespb.Elasticsearch) string {
-+	switch {
-+	case conn.ServiceToken != "":
-+		return "service_token"
-+	case conn.ApiKey != "":
-+		return "api_key"
-+	case conn.Username != "" || conn.Password != "":
-+		return "basic"
-+	default:
-+		return "none"
-+	}
-+}
-+
- func (s *Source) Type() sourcespb.SourceType {
- 	return SourceType
- }
-@@ -132,19 +151,25 @@ func (s *Source) Chunks(
- ) error {
- 	indices := Indices{filterParams: &s.filterParams}
- 
--	for {
-+	for pass := 1; ; pass++ {
- 		workerPool := new(errgroup.Group)
- 		workerPool.SetLimit(s.concurrency)
- 
- 		previousDocumentCount := indices.documentCount
--		err := indices.Update(s.ctx, s.client)
-+		err := indices.Update(ctx, s.client)
- 		if err != nil {
- 			return err
- 		}
-+		ctx.Logger().V(1).Info("Listed indices",
-+			"pass", pass,
-+			"indices", len(indices.indices),
-+			"documents", indices.documentCount,
-+		)
- 
- 		// Don't burn up the ES API with rapid requests if there's no work to do
- 		if previousDocumentCount > 0 && indices.documentCount == 0 {
- 			duration, _ := time.ParseDuration("5s")
-+			ctx.Logger().V(4).Info("No new documents, waiting", "wait", duration)
- 			time.Sleep(duration)
- 			continue
- 		}
-@@ -155,12 +180,11 @@ func (s *Source) Chunks(
- 		if previousDocumentCount > 0 && indices.documentCount > 0 && previousDocumentCount < indices.documentCount {
- 			scanCoverageRate =
- 				float64(previousDocumentCount) / float64(indices.documentCount)
--			s.log.V(1).Info(fmt.Sprintf(
--				"Scan coverage rate is %f%% (%d/%d); skipping documents to catch up",
--				scanCoverageRate,
--				previousDocumentCount,
--				indices.documentCount,
--			))
-+			ctx.Logger().V(1).Info("Scan coverage below 100%, skipping documents to catch up",
-+				"coverage_rate", scanCoverageRate,
-+				"previous_documents", previousDocumentCount,
-+				"documents", indices.documentCount,
-+			)
- 		}
- 
- 		unitsOfWork := distributeDocumentScans(&indices, s.concurrency, scanCoverageRate)
-@@ -170,6 +194,8 @@ func (s *Source) Chunks(
- 			uow := outerUOW
- 
- 			workerPool.Go(func() error {
-+				workerCtx := context.WithValues(ctx, "worker", uowIndex)
-+
- 				// Give each worker its own client
- 				client, err := es.NewTypedClient(s.esConfig)
- 				if err != nil {
-@@ -179,14 +205,26 @@ func (s *Source) Chunks(
- 				uowDocumentsProcessed := 0
- 
- 				for _, docSearch := range uow.documentSearches {
-+					indexCtx := context.WithValues(workerCtx, "index", docSearch.index.name)
-+					indexCtx.Logger().V(2).Info("Scanning index",
-+						"offset", docSearch.offset,
-+						"documents", docSearch.documentCount,
-+						"skip", docSearch.skipCount,
-+					)
-+
- 					documentsProcessed, err := processSearchedDocuments(
--						s.ctx,
-+						indexCtx,
- 						client,
- 						&docSearch,
- 						func(document *Document) error {
- 							if docSearch.index.DocumentAlreadySeen(document) {
-+								indexCtx.Logger().V(4).Info("Skipping document",
-+									"document_id", document.id,
-+									"reason", "already scanned",
-+								)
- 								return nil
- 							}
-+							indexCtx.Logger().V(3).Info("Scanning document", "document_id", document.id)
- 
- 							chunk := sources.Chunk{
- 								SourceType: s.Type(),
-@@ -214,19 +252,13 @@ func (s *Source) Chunks(
- 						return err
- 					}
- 
--					s.log.V(2).Info(fmt.Sprintf(
--						"[Worker %d] Scanned %d documents from index %s",
--						uowIndex,
--						documentsProcessed,
--						docSearch.index.name,
--					))
-+					indexCtx.Logger().V(2).Info("Finished scanning index", "scanned", documentsProcessed)
- 
--					if documentsProcessed != docSearch.documentCount-docSearch.skipCount {
--						s.log.V(1).Info(fmt.Sprintf(
--							"documentsProcessed != do
-```
-
-**File**: `pkg/sources/elasticsearch/elasticsearch_test.go` (added, +144/-0)
-```diff
-@@ -0,0 +1,144 @@
-+package elasticsearch
-+
-+import (
-+	"encoding/json"
-+	"errors"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap/zaptest/observer"
-+	"google.golang.org/protobuf/types/known/anypb"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-+)
-+
-+// fakeES serves the parts of the Elasticsearch API the source uses, for one index.
-+// The first point in time request returns a 503, which the client retries.
-+func fakeES(t *testing.T, index string, docs []map[string]any) *httptest.Server {
-+	t.Helper()
-+
-+	var pitCalls, searchCalls atomic.Int32
-+	write := func(w http.ResponseWriter, body any) {
-+		_ = json.NewEncoder(w).Encode(body)
-+	}
-+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		// The client refuses responses without this header.
-+		w.Header().Set("X-Elastic-Product", "Elasticsearch")
-+		w.Header().Set("Content-Type", "application/json")
-+		switch r.URL.Path {
-+		case "/*":
-+			write(w, map[string]any{index: map[string]any{}})
-+		case "/" + index + "/_search":
-+			write(w, map[string]any{"hits": map[string]any{"total": map[string]any{"value": len(docs)}}})
-+		case "/" + index + "/_pit":
-+			if pitCalls.Add(1) == 1 {
-+				w.WriteHeader(http.StatusServiceUnavailable)
-+				write(w, map[string]any{"error": map[string]any{"type": "unavailable", "reason": "try again"}})
-+				return
-+			}
-+			write(w, map[string]any{"id": "pit-1"})
-+		case "/_search":
-+			hits := []map[string]any{}
-+			if searchCalls.Add(1) == 1 {
-+				for i, doc := range docs {
-+					hits = append(hits, map[string]any{
-+						"_id":     doc["_id"],
-+						"_source": doc["_source"],
-+						"sort":    []any{i},
-+					})
-+				}
-+			}
-+			write(w, map[string]any{"hits": map[string]any{"hits": hits}})
-+		default:
-+			http.NotFound(w, r)
-+		}
-+	}))
-+}
-+
-+func TestSource_DebugLogging(t *testing.T) {
-+	const (
-+		index      = "logs"
-+		testSecret = "esdebuglogtestsecret"
-+	)
-+	docs := []map[string]any{
-+		{"_id": "doc-1", "_source": map[string]any{"@timestamp": "2024-01-01T00:00:00Z", "message": "token = " + testSecret}},
-+		{"_id": "doc-2", "_source": map[string]any{"@timestamp": "2024-01-01T00:00:01Z"}},
-+	}
-+
-+	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
-+		t.Helper()
-+		srv := fakeES(t, index, docs)
-+		defer srv.Close()
-+
-+		ctx, logs := logtest.SourceContext(debug)
-+		conn, err := anypb.New(&sourcespb.Elasticsearch{Nodes: []string{srv.URL}})
-+		require.NoError(t, err)
-+
-+		s := &Source{}
-+		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
-+		if debug {
-+			logtest.CheckInitLine(t, logs.All())
-+		}
-+
-+		chunksCh := make(chan *sources.Chunk, 10)
-+		require.NoError(t, s.Chunks(ctx, chunksCh))
-+		close(chunksCh)
-+
-+		var ids []string
-+		for chunk := range chunksCh {
-+			ids = append(ids, chunk.SourceMetadata.GetElasticsearch().GetDocumentId())
-+		}
-+		assert.Equal(t, []string{"doc-1"}, ids, "the document without a message is not scanned")
-+		return logs.All()
-+	}
-+
-+	t.Run("debug on", func(t *testing.T) {
-+		logtest.CheckSourceLines(t, runSource(t, true), testSecret)
-+	})
-+
-+	t.Run("debug off", func(t *testing.T) {
-+		logtest.CheckNoDebugLines(t, runSource(t, false))
-+	})
-+}
-+
-+func TestMakeElasticSearchRequest_ErrorResponse(t *testing.T) {
-+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("X-Elastic-Product", "Elasticsearch")
-+		w.WriteHeader(http.StatusUnauthorized)
-+		_, _ = w.Write([]byte(`{"error":{"type":"security_exception","reason":"missing authentication credentials"},"status":401}`))
-+	}))
-+	defer srv.Close()
-+
-+	s := &Source{}
-+	conn, err := anypb.New(&sourcespb.Elasticsearch{Nodes: []string{srv.URL}})
-+	require.NoError(t, err)
-+	require.NoError(t, s.Init(context.Background(), "test source", 1, 1, false, conn, 1))
-+
-+	// The error body used to be read as a list of index names.
-+	names, err := fetchIndexNames(context.Background(), s.client, "*")
-+	assert.Nil(t, names)
-+	assert.EqualError(t, err, "elasticsearch returned 401 Unauthorized: security_exception: missing authentication credentials")
-+}
-+
-+// The transport passes an empty response, not nil, when an attempt got no
-+// response at all, so a network error must still log as a failed request.
-+func TestAPILogger_NetworkError(t *testing.T) {
-+	ctx, logs := logtest.SourceContext(true)
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://127.0.0.1:9200/_search", nil)
-+	require.NoError(t, err)
-+
-+	require.NoError(t, apiLogger{}.LogRoundTrip(req, &http.Response{}, errors.New("connection refused"), time.Now(), time.Millisecond))
-+
-+	failed := logs.FilterMessage("Elasticsearch request failed").All()
-+	require.Len(t,
+@@ -789,8 +789,10 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+-golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
++golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
++golang.org/x/crypto/openpgp v0.1.0-deprecated h1:T+duersHJVuH6qLtQk22qtGKH5vZhxGSlL5SMFHclaQ=
++golang.org/x/crypto/openpgp v0.1.0-deprecated/go.mod h1:KQF17hRm+yCzhnZa+aRLbinf2TRZa+7G3TeEnHj6OoY=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+@@ -801,8 +803,8 @@ golang.org/x/lint v0.0.0-20190930215403-16217165b5de/go.mod h1:6SW0HCj/g11FgYtHl
+ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
+-golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+-golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
++golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
++golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
+ golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+@@ -827,8 +829,8 @@ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+-golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
++golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -858,19 +860,19 @@ golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.0.0-20220908164124-27713097b956/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+-golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
++golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+-golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
+-golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
++golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.3.8/go.mod h1:E6s5w1FMmriuDzIBO73fBruAKo1PCIq6d2Q6DHfQ8WQ=
+-golang.org/x/text v0.43.0 h1:1Qivrl
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5544** (2026-11-12): Update module golang.org/x/crypto to v0.59.0 [SECURITY] (@renovate[bot])
 - **PR #5533** (2026-11-09): Update github-actions (@renovate[bot])
 - **PR #5528** (2026-11-10): feat(detectors): add Serval API key detector (@serval-frenchie)
 - **PR #5527** (2026-11-05): fix(sqlserver): use driver's default port in pre-dial check (@jordanTunstill)
 - **PR #5526** (2026-11-05): Time detector_execution_duration per detector run (@unsmith)
 - **PR #5525** (closed): Keep line breaks when decoding UTF-16 (@vamsibvv)
-- **PR #5524** (2026-11-10): Clean up CircleCI and Travis CI logging, share API log hooks (@kashifkhan0771)
 
 ---
 
@@ -2281,37 +1263,39 @@ reasons and API calls, and stop reading error responses as results
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clean up Hugging Face source logging for per-source debug (#5523)
+## X. Update module golang.org/x/crypto to v0.59.0 [SECURITY] (#5544)
 
 **RULE**:
-When implementing operations in `pkg/sources/huggingface/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5dce9d48`: Clean up Hugging Face source logging for per-source debug (#5523). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2c078840`: Update module golang.org/x/crypto to v0.59.0 [SECURITY] (#5544). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/huggingface/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## Debug Logs
-
-With debug on for this source, the scan logs:
-
-- `V(0)`: `Repo listing hit the API limit, some repos may be missing` when an organization or user listing returns 1000 repos, since that listing is not paged.
-- `V(1)`: `Hugging Face source initialized` with the config choices (the auth type only, never the token), `Scanning repos` and `Scanning buckets` with counts, and `Resuming from saved progress` when a scan resumes.
-- `V(2)`: `Listed repos` and `Listed buckets` per organization or user, `Caching repo info` and `Caching bucket info`, `Scanning repo` and `Finished scanning repo` with its duration, and `Scanning bucket` with its file count.
-- `V(3)`: `Cloning repo` with the auth type, `Cloned repo`, `Listed discussions`, `Scanning discussion`, and `Scanning bucket file` with its size.
-- `V(4)`: `Skipping repo`, `Skipping bucket`, `Skipping discussion` and `Skipping bucket file` with a `reason` (matches ignore filter, not in include filter, PRs not included, discussions not included, too large), `Fetched page` for bucket listings, and `Hugging Face API request failed` with the status and `Retry-After` for every failed API call.
-- `V(5)`: `Hugging Face API request` for
+	golang.org/x/crypto v0.59.0
+	golang.org/x/sync v0.25.0
+	golang.org/x/text v0.44.0
+	golang.org/x/crypto/openpgp v0.1.0-deprecated // indirect
+	golang.org/x/mod v0.42.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
+	golang.org/x/term v0.48.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	golang.org/x/crypto v0.58.0
+	golang.org/x/sync v0.24.0
+	golang.org/x/text v0.43.0
+	golang.org/x/mod v0.41.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/term v0.47.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5dce9d48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2c078840` are properly handled with clean fallback behavior.

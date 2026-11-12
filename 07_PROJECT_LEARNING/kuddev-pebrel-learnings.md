@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `288e4a3e`  
+> **Source Version**: `d79d5796`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T04:10:24.706Z  
+> **Timestamp**: 2026-11-11T18:35:36.501Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T04:10:23.157Z  
+> **Harvest Timestamp**: 2026-11-11T18:35:36.313Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3741 stars
+- **Stars / Engagement**: 3758 stars
 
 ---
 
@@ -933,20 +933,52 @@ def send(source, native, mode, payload, token, owner=None, route=None, deadline=
         if len(envelope) > MAX_ENVELOPE:
             return
         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
-        write_terminal(osc, source, route, deadline)
+        exit_owner = owner if source == "claude" and payload.get("hook_event_name") == "SessionEnd" else None
+        write_terminal(osc, source, route, deadline, exit_owner=exit_owner)
 
 
-def write_terminal(osc, source=None, route=None, deadline=None):
+def open_claude_exit_terminal(owner, flags):
+    """A detached SessionEnd can still reach Claude's verified Linux terminal."""
+    if sys.platform != "linux" or not owner:
+        return None
+    pid, _, epoch = owner.partition(":")
+    proc = Path("/proc") / pid
+    stdin = proc / "fd/0"
     try:
-        fd = os.open(route["tty"] if route else "/dev/tty",
-                     os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+        tty = stdin.readlink()
+        if not re.fullmatch(r"/dev/pts/[0-9]+", str(tty)):
+            return None
+        fd = os.open(tty, flags | os.O_NOCTTY)
+    except OSError:
+        return None
+    try:
+        info = os.fstat(fd)
+        raw = (proc / "stat").read_text(encoding="utf-8")
+        fields = raw[raw.rfind(")") + 2:].split()
+        if (stat.S_ISCHR(info.st_mode) and info.st_uid == os.geteuid()
+                and fields[19] == epoch and int(fields[2]) > 0 and fields[2] == fields[5]
+                and info.st_rdev == (int(fields[4]) & 0xffffffff)
+                and os.path.samestat(info, stdin.stat())):
+            return fd
+    except (OSError, ValueError, IndexError):
+        pass
+    os.close(fd)
+    return None
+
+
+def write_terminal(osc, source=None, route=None, deadline=None, *, exit_owner=None):
+    flags = os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW
+    try:
+        fd = os.open(route["tty"] if route else "/dev/tty", flags)
     except OSError as error:
         if route or source != "claude" or error.errno != errno.ENXIO:
             raise
-        # Interactive Claude consumes hook JSON even when its hook has no TTY.
-        # This fallback is only possible before any part of the OSC was written.
-        print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
-        return
+        fd = open_claude_exit_terminal(exit_owner, flags)
+        if fd is None:
+            # Interactive Claude consumes terminalSequence for other hooks but
+            # does not relay it during SessionEnd.
+            print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
+            return
     offset = 0
     deadline = min(deadline or float("inf"), time.monotonic() + 0.5)
     try:
@@ -974,30 +1006,7 @@ def write_terminal(osc, source=None, route=None, deadline=None):
 
 
 def run(args):
-    if not args or args[0] not in ("claude", "codex", "opencode", "pi"):
-        return
-    try:
-        payload, native = bounded_payload(args)
-        token = os.environ.get("PEBREL_REMOTE_HOOK_TOKEN", os.environ.get("NEBULA_REMOTE_HOOK_TOKEN", ""))
-        if payload is not None and (args[0] != "claude" or not os.environ.get("GROK_HOOK_NAME")):
-            mode = args[1] if native else ""
-            if os.environ.get("TMUX"):
-                from remote_tmux import destinations
-                deadline = time.monotonic() + 2
-                owner = process_identity(args[0])
-                for route in destinations(owner, deadline):
-                    if time.monotonic() >= deadline:
-                        break
-                    try:
-                        send(args[0], native, mode, payload, route["token"], owner, route, deadline)
-                    except (OSError, ValueError, TimeoutError):
-                        continue
-            elif re.fullmatch(r"[a-fA-F0-9]{32}", token):
-                send(args[0], native, mode, payload, token)
-    finally:
-        # A malformed payload, unavailable TTY or delivery failure must never
-        # suppress the user's original notifier (also outside Pebrel).
-        if args[:2] == ["codex", "--chain"] and len(
+    if not args or args[0] 
 ```
 
 ### Core Architecture Module: `nebula_app/res/hooks/remote_files.py`
@@ -1485,11 +1494,11 @@ def destinations(owner, deadline):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #924** (2026-11-11): **[Bug] 删除仍在占用的文件时程序崩溃**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  24h2  ### Pebrel version / 版本号  v2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Not sure / 不确定  ### Program running in the pane / 面板里正在跑的程序  Other / 其他  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Startup crash / hang / cannot exit — 启动崩溃、卡死、无法退出  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤   比如一个db文件正被后端服务占用着，此时通过侧边栏删除该文件直接系统崩溃。  ### Expected behavior / 期望结果  当然是不崩溃，并提醒一下正在被占用  ### Actual behavior / 实际结果  崩溃  ### Logs / screenshots / 日志或截图  <img width="686" height="340" alt="Image" src="https://github.com/user-attachments/assets/aace50eb-a95b-4347-a71c-c0d30799fc6b" />  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+
 - **Issue #870** (2026-11-07): **[Bug] 文件管理器图标乱码**
   *Symptoms*: ### Operating system / 操作系统  macOS  ### OS version and display / 系统版本与显示  macos 26.0  ### Pebrel version / 版本号  2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  zsh  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  File tree / drag-and-drop upload — 文件树、拖拽上传  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  <img width="425" height="293" alt="Image" src="https://github.com/user-attachments/assets/b79f6e67-9b1c-4eef-a239-ebc55bc004fb" />  ### Expected behavior / 期望结果  图标显示  ### Actual behavior / 实际结果  无  ### Logs / screenshots / 日志或截图  无  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
-
-- **Issue #868** (2026-11-07): **[Bug] 打字时鼠标光标每一次都会闪烁**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 23 H2  ### Pebrel version / 版本号  2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  fish, nushell  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Keyboard / IME / mouse / shortcuts / clipboard — 键盘、输入法、鼠标、快捷键、剪贴板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 鼠标光标移入终端 2. 每一次打字鼠标光标都会闪烁  ### Expected behavior / 期望结果  与Windows Terminal类似, 第一次键入后, 鼠标光标隐藏, 移动鼠标后, 鼠标光标出现  ### Actual behavior / 实际结果  每一次打字鼠标光标都会闪烁  ### Logs / screenshots / 日志或截图  <img width="916" height="358" alt="Image" src="https://github.com/user-attachments/assets/a34ddf26-6397-4fb3-a4a3-7ca6ed6d3faf" />  ### Non-default settings / 改过的设置  1. 使用monolisa字体 2. 开启平滑光标 3. 背景不透明度改为95%  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1506,1035 +1515,1266 @@ def destinations(owner, deadline):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13af2b2d` (2026-11-08)
-**Commit Message**: Allow the tmux name in the naming gate (#916)
+### Incident Patch 1: `1fe45e0d` (2026-11-11)
+**Commit Message**: Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111
 
-tmux is a compatibility target: hooks route through $TMUX, session
-discovery and recovery drive it, and mobile integration tests run it.
-Keeping it on the prohibited list required a new file-specific pattern
-for every integration and still rejected prose and commit messages, which
-now blocks the 2.4.0 follow-up chain (#882).
+fix: integrate reviewed rendering, workspace and hook regressions
 
-Remove it from the list and delete the patterns that only existed to
-strip it. Other listed names keep their rules; tests that relied on tmux
-to show the rest of a line is still checked now use another listed name.
-
-Co-authored-by: Kuddev <[REDACTED_EMAIL]>
-
-**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (modified, +2/-0)
+**File**: `architecture/notes/nebula_app/ai_hook/2026-11-11-detached-claude-session-end.md` (added, +77/-0)
 ```diff
-@@ -2,6 +2,8 @@
- 
- ## Status
- 
-+Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-terminal-multiplexer-name.md).
-+
- Prepared for maintainer review under the task's explicit instruction to retain
- necessary technical terms. This is a scoped governance correction, separate from
- the release candidate and its behavior fixes.
-```
-
-**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+# Allow the tmux name in the naming gate
+@@ -0,0 +1,77 @@
++# Deliver detached Claude SessionEnd to its verified Linux terminal
 +
 +## Status
 +
-+Accepted by the maintainer on 2026-11-08.
++Proposed for review with implementation.
 +
 +## Context
 +
-+The naming gate rejects listed product names in added text and commit messages.
-+tmux was on that list. Earlier changes kept it there and added narrow
-+per-file patterns, so that code which really uses tmux could still pass. These
-+patterns covered desktop resume endpoints, activity fixtures, mobile discovery,
-+history control and process fixtures. Prose, comments and commit subjects still
-+had to avoid the name.
++Issue #434 reports a WSL zsh pane retaining its Claude identity after a double
++Ctrl+C exit. Closing and reopening Pebrel then resumes an already exited CLI.
++The shared pane lifecycle clears the saved identity on SessionEnd or OSC 133;D,
++but either signal must first reach the pane.
 +
 +## Evidence
 +
-+The 2.4.0 follow-up chain (#882, folding #883–#887) fails `architecture-contracts`
-+on functional code and one commit message:
++A real zsh PTY running Claude Code 2.1.310 invoked both SessionStart and SessionEnd
++hooks. Claude detached each hook from its controlling terminal. The bridge
++returned authenticated OSC frames in terminalSequence JSON in both cases.
++Claude relayed SessionStart to the terminal, but discarded SessionEnd during
++both double Ctrl+C and /exit.
 +
-+- the remote hook bridge reads `$TMUX` and sends a `tmux=` route field
-+  (`nebula_app/res/hooks/remote_tmux.py`, `remote_bridge.py`, `ai_hook/protocol.rs`);
-+- the Android SSH integration test runs real `tmux` commands;
-+- a merge commit message names the IME fix "in tmux".
-+
-+Each of these would need another file-specific pattern, or a history rewrite of
-+an already reviewed merge chain. The checker already carried about 20 tmux-only
-+patterns and branches, with tests for each, and every new tmux integration
-+needed another governance change.
-+
-+tmux is a compatibility target the product integrates with: hooks, session
-+discovery, recovery, the mobile client. It is not a competing terminal the policy needs to keep out of
-+product text.
++The shared zsh integration still emitted OSC 133;D. Starting the same zsh without
++that integration demonstrated the missing second exit signal. These observations
++come from Linux ARM64; the reported Windows 11 WSL desktop path remains to be
++verified.
 +
 +## Decision
 +
-+Remove tmux from `PROHIBITED_PATTERNS` and `PROHIBITED_EXAMPLES`. Delete the
-+patterns and branches that existed only to strip tmux references. Patterns
-+shared with other listed names keep their remaining alternatives. Tests that
-+used tmux to prove "the rest of the line is still checked" now use another
-+listed name. A new test fixes the counterexample: prose,
-+functional code and a commit message that name tmux are accepted, while text
-+appended to them is still checked.
++For a Claude SessionEnd whose hook has no controlling terminal, recover the
++verified ancestor CLI's Linux devpts terminal from its stdin descriptor. Require
++the process epoch, foreground process group, controlling device, descriptor
++identity and device ownership to match before writing. Open without following
++symlinks or acquiring a controlling terminal.
++
++Reuse the existing bounded OSC write and pane token. When verification fails,
++retain the terminalSequence response. Existing controlling-terminal and tmux
++routes keep their delivery rules. Other hook events keep their existing path.
++The application continues to use its shared SessionEnd lifecycle and session-save
++logic.
 +
 +## Rejected alternatives
 +
-+- More per-file patterns for the new hook and Android files: does not cover the
-+  commit message, and the pattern set grows with every integration.
-+- Rewriting the merged chain's history to remove the word: changes reviewed merge
-+  commits and only defers the next conflict.
++- Clear state on Ctrl+C: interruption can stop one turn while leaving Claude open.
++- Rely only on a matching shell prompt: guest shell integration and prompt
++  recognition can be unavailable.
++- Scan every terminal or use a PID supplied in hook JSON: neither establishes the
++  owning terminal.
++- Return more SessionEnd JSON: the real CLI does not relay this response on exit.
++- Add a background relay: the current short-lived hook can deliver the event.
 +
 +## Consequences
 +
-+The tmux name may appear anywhere, including docs and commit messages. All other
-+listed names keep their existing rules and narrow allowances.
++The additional procfs reads and device open occur only on detached Claude exit.
++There is no new persisted route, token, worker or setting. Linux devpts is the
++supported recovery path; other hosts retain their existing transport.
 +
 +## Validation
 +
-+`python3 -m unittest scripts.tests.test_prohibited_names`: 26 passed.
-+`check_prohibited_names.py range` over the #882 chain
-+(`merge/2.4.0-part3-20261104..merge/mobile-baseline-20261104`) reports no hits.
++- The real-PTY regression fails before the change and passes after it. A detached
++  hook reaches its foreground Claude ancestor, while redirected stdin and a
++  background process group retain the JSON fallback.
++- The remote-hook Python suite covers authenticated delivery, partial writes,
++  detached JSON responses, native hooks and configuration preservation.
++- Real Claude Code 2.1.310 delivers SessionStart and SessionEnd with the same
++  process identity after the change: double Ctrl+C with and without zsh
++  integration, and /exit with integration.
++- The GPUI regression checks that a WSL SessionEnd without shell markers removes
++  the foreground and saved recovery identities before window close.
 +
 +## Supersedes
 +
-+The tmux-specific parts of
-+[remote control references](../naming/2026-10-22-remote-control-references.md),
-+[protocol and process fixtures](2026-11-01-protocol-and-process-fixtures.md),
-+[remote endpoint compatibility](../names/2026-10-25-remote-endpoint-compatibility.md),
-+[remote discovery compatibility](../policy/2026-09-30-remote-discovery-compatibility.md) and
-+[mobile integration references](../naming/2026-09-28-mobile-integration-references.md).
++None. Extends the [WSL hook transport](../platform/wsl_hooks/2026-09-20-wsl-hook-transport.md).
 +
 +## Revisit when
 +
-+tmux becomes a product the project competes with, or the maintainer wants to
-+restore the name to the prohibited list.
++Claude relays terminalSequence during SessionEnd, or supplies an authenticated
++terminal endpoint for detached hooks.
 ```
 
-**File**: `architecture/notes/scripts/names/2026-10-25-remote-endpoint-compatibility.md` (modified, +2/-0)
+**File**: `architecture/notes/nebula_app/display/file_operations/2026-11-11-recycle-bin-reentrancy.md` (added, +58/-0)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -0,0 +1,58 @@
++# Recycle-bin operations outside the GPUI update
++
++## Status
++
++Proposed in the fix for issue #924.
++
++## Context
++
++The file-tree confirmation invoked `SHFileOperationW` synchronously inside a
++workspace update. The Windows Shell can pump messages while handling a locked
++file, re-entering GPUI while its application `RefCell` is already borrowed.
++
++## Evidence
++
++[Issue #924](https://github.com/Kuddev/pebrel/issues/924) reports deleting a database
++held open by a service. Its screenshot identifies `gpui/src/app/async_context.rs`
++at `AsyncApp::update`, with `RefCell already borrowed`. The confirmation callback
++held the workspace update across the native operation.
++
++## Decision
++
++Dispatch the synchronous file operation through the existing background executor.
++The task owns the requested path; only its result returns to the foreground.
++Use the existing weak workspace handle so closing the window prevents a late
++result from updating a destroyed view. Refresh the tree after success and retain
++the existing localized failure notice on error.
++
++Initialize and uninitialize the worker's COM apartment around the synchronous
++Windows Shell call. Balance both successful COM initialization return codes;
++report initialization failure before invoking the Shell.
++
++## Rejected alternatives
++
++- A foreground async task still executes the native call on the UI thread and
++  permits its nested message loop to re-enter GPUI.
++- Catching a panic leaves the reentrant borrow and UI blockage in place.
++- Permanently deleting the file would change the Windows recycle-bin contract.
++
++## Consequences
++
++The confirmation closes while the operation runs. A confirmed deletion finishes
++even if the workspace closes; its result is then discarded. The native call is
++synchronous within one worker poll, keeping COM initialization on one thread.
++Sharing and lock violations use the operating system's error text.
++
++## Validation
++
++The Windows regression holds a real file with sharing disabled, runs the recycle
++operation on a fresh worker, and checks the error and retained file contents.
++Native GPUI message-loop acceptance is tracked in the PR's validation record.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++The shared native file-operation adapter gains a cancellable asynchronous API.
+```
+
+**File**: `architecture/notes/nebula_app/gpui_shell/file_editor/2026-11-11-markdown-reload-snapshot.md` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++# Markdown ranges belong to the loaded snapshot
++
++## Status
++
++Implemented for document reloads.
++
++## Context
++
++Reopening a Markdown file starts an asynchronous read. The old outline and
++live edit used to survive after the source input was cleared, so a frame
++between the two load stages could slice the empty buffer with old byte ranges.
++
++## Evidence
++
++Ropey 2.0.0-beta.1 calls `is_char_boundary` before its bounds check in
++`try_slice`. Slicing an empty rope at the old paragraph's range panics at
++`rope.rs:694:22`, matching the later panics reported in #911. A range ending
++inside a multibyte character returns `NonCharBoundary` in the same probe.
++The first string-slicing panic in #911 has not been attributed.
++
++## Decision
++
++Discard the old outline and edit sessions before clearing the source. Keep the
++scroll position separately and apply it when the new input and outline are
++installed together. Range readers check bounds before calling Ropey.
++
++## Rejected alternatives
++
++Bounds checks alone would still leave old actions and ranges active while the
++source is unavailable. Rechecking the file's modification time would not
++prevent a frame from using those ranges during a reload.
++
++## Consequences
++
++The loading frame has no document rows. A successful load restores the prior
++reading position within the new document; a failed read leaves no old ranges
++active.
++
++## Validation
++
++`reloading_rewritten_markdown_replaces_the_visible_snapshot` draws before
++the reload completes and after a shorter UTF-8 snapshot is installed. A
++standalone probe exercises the slice guard with the locked Ropey version.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++Remove the explicit Ropey bounds workaround when the pinned version guarantees
++that `try_slice` handles out-of-bounds offsets without panicking.
+```
+
+**File**: `architecture/notes/nebula_app/gpui_shell/workspace/2026-10-03-ordinary-window-geometry.md` (modified, +2/-0)
+```diff
+@@ -1,5 +1,7 @@
+ # Ordinary-window startup geometry
  
++Superseded for Windows directory-launch size by [Directory launches retain their normal window size](windowing/2026-11-11-directory-launch-window-size.md).
++
  ## Status
  
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
+ Proposed for review.
+```
+
+**File**: `architecture/notes/nebula_app/gpui_shell/workspace/windowing/2026-11-11-directory-launch-window-size.md` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++# Directory launches retain their normal window size
 +
- Proposed for maintainer review with the remote session recovery change.
- 
- ## Context
-```
-
-**File**: `architecture/notes/scripts/naming/2026-09-28-mobile-integration-references.md` (modified, +2/-0)
-```diff
-@@ -1,6 +1,8 @@
- # Mobile dependency and session references in name checks
- 
- ## Status
++## Status
 +
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
- Implemented with positive and negative regression coverage.
- 
- ## Context
-```
-
-**File**: `architecture/notes/scripts/naming/2026-10-22-remote-control-references.md` (modified, +2/-0)
-```diff
-@@ -2,6 +2,8 @@
- 
- ## Status
- 
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
++Proposed for [#922](https://github.com/Kuddev/pebrel/issues/922).
 +
- Focused correction prepared for maintainer review after reproducing PR #712.
- 
- ## Context
-```
-
-**File**: `architecture/notes/scripts/policy/2026-09-30-remote-discovery-compatibility.md` (modified, +2/-0)
-```diff
-@@ -1,6 +1,8 @@
- # Remote discovery compatibility references
- 
- ## Status
++## Context
 +
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
- Proposed for separate maintainer review.
- 
- ## Context
++Explorer opens Pebrel with an explicit working directory. A new regular window
++should use the last normal size and open a terminal in that directory.
++
++## Evidence
++
++Both cold startup and the resident runtime fallback choose
++`WorkspaceStartup::NewTerminal` for this request. The geometry loader accepted
++only `RestoreOrDefault`, so the first window in either path used the default
++grid. A resident process allocates a new window ID after the last window closes.
++
++## Decision
++
++When an explicit directory opens the only regular window on Windows, load the
++saved normal width and height through the existing session geometry reader.
++Scope the values to the allocated window ID, which also tells the workspace to
++size its initial terminal grid from the window. Explicit grid configuration
++still takes precedence. An isolated process cannot use ordinary geometry.
++
++## Rejected alternatives
++
++- Use `RestoreOrDefault` for Explorer launches: restoring old tabs can override
++  the requested directory and start programs the user did not ask to reopen.
++- Extend the first-window ID check: that ID is already consumed when a
++  resident process creates a replacement window.
++- Persist another size setting: the ordinary session snapshot already stores
++  the normal bounds at close.
++
++## Consequences
++
++Directory launches restore size while using ordinary placement for a new
++window. Opening a second regular window retains the existing defaults.
++
++## Validation
++
++`directory_launch_uses_saved_size_without_restoring_the_old_window` exercises
++both startup constructors, the geometry loader, and window options with a
++saved maximized rectangle. The existing explicit-grid regression covers
++configured dimensions.
++
++## Supersedes
++
++The Windows directory-launch eligibility rule in
++[Ordinary-window startup geometry](../2026-10-03-ordinary-window-geometry.md).
++
++## Revisit when
++
++Regular geometry has a persistence owner independent of the session snapshot.
 ```
 
-**File**: `scripts/check_prohibited_names.py` (modified, +9/-78)
+**File**: `nebula_app/AGENTS.md` (modified, +2/-0)
 ```diff
-@@ -21,7 +21,6 @@
-     re.compile(r"(?<![A-Za-z0-9_])herdr(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])kaku(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])orca(?![A-Za-z0-9_])", re.IGNORECASE),
--    re.compile(r"(?<![A-Za-z0-9_])tmux(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])wezterm(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])windows[-_ ]?terminal(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])alacritty(?![A-Za-z0-9_])", re.IGNORECASE),
-@@ -54,7 +53,6 @@
-     "herdr",
-     "kaku",
-     "orca",
--    "tmux",
-     "wezterm",
-     "Windows Terminal",
-     "Alacritty",
-@@ -89,14 +87,13 @@
-     re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
-     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
-     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
--    re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
--    re.compile(r"\b(?:kitty|tmux)\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
-+    re.compile(r"\bkitty/(?:legacy|style|protocol)\b", re.IGNORECASE),
-+    re.compile(r"\bkitty\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
-     re.compile(r"\bThemeFormat::(?:WindowsTerminal|Kitty|Ghostty|WezTerm|Alacritty)\b"),
-     re.compile(
-         r"unsupported theme format; use Pebrel JSON, Windows Terminal JSON, Kitty, Ghostty, WezTerm or Alacritty",
-         re.IGNORECASE,
-     ),
--    re.compile(r"\\x1bPtmux;"),
- )
- 
- # 移动端的原生依赖路径和远端命令是构建/兼容接口；只剔除这些确切引用，
-@@ -109,88 +106,47 @@
-     r"[\"']include/ghostty/vt\.h[\"']",
- ))
- REMOTE_SESSION_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r"\bSshSessionMode\.(?:TMUX|HERDR)\b",
--    r"\b(?:exec )?tmux (?:new-session -A -s|kill-session -t) '[^'\n]+'",
-+    r"\bSshSessionMode\.HERDR\b",
-     r"\bexec herdr(?=[\"'\s])",
-     r"\bherdr session (?:attach|stop) '[^'\n]+'",
--    r"\bcommand -v (?:tmux|herdr)(?=\s+>)",
-+    r"\bcommand -v herdr(?=\s+>)",
-     r"\bGet-Command herdr(?= -ErrorAction\b)",
--    r"\btmux (?:-u )?(?:list-sessions|list-windows|list-clients)(?= -[a-zA-Z]\b)",
--    r"\btmux (?:select-window -t|select-pane -t|display-message -p -t|attach-session -t|has-session -t)(?= )",
-     r"\bherdr session list --json\b",
-     r"\bherdr session attach(?= \$\{psQuote\()",
-     r"\bherdr --session(?= \$\{(?:quote|psQuote)\()",
- ))
- # 发现器的类型标签是线协议的一部分；只允许明确的构造/分派位置，
- # 不放行任意字符串字面量，更不能吞掉同行的说明、链接或比较文案。
- REMOTE_DISCOVERY_TAG_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bdata\["(?:tmux|herdr)"\]',
--    r'\bSshSessionMode\.TMUX\s+->\s+"tmux"',
-+    r'\bdata\["herdr"\]',
-     r'\bSshSessionMode\.HERDR\s+->\s+"herdr"',
--    r'^\s*"(?:tmux|herdr)"(?= ->)',
-+    r'^\s*"herdr"(?= ->)',
-     r'\bwarnings \+= "herdr"',
-     r"\[char\]30 \+ 'herdr'(?= \+ \[char\]10)",
- ))
- # Model tags belong to the remote-session consumers and their behavioral tests,
- # not to arbitrary labels or UI strings elsewhere in the mobile tree.
- REMOTE_MODEL_REFERENCE_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bRemoteSession\("(?:tmux|herdr)"(?=,)',
--    r'\b(?:session|it)\??\.kind (?:==|!=) "(?:tmux|herdr)"',
-+    r'\bRemoteSession\("herdr"(?=,)',
-+    r'\b(?:session|it)\??\.kind (?:==|!=) "herdr"',
- ))
- REMOTE_MODEL_CONSUMERS = (
-     "/connection/RemoteSessions.kt", "/connection/TmuxSessionControl.kt",
-     "/session/SessionRepository.kt",
- )
--REMOTE_CONTROL_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r"\btmux copy-mode(?= -t )",
--    r"\btmux send-keys -X(?= -(?:N|t) )",
--))
--REMOTE_DISCOVERY_TEST_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bProcessBuilder\("tmux", "-V"\)',
--    r'\bcommand\("tmux", (?="-f", "/dev/null", "new-session"|"kill-server"\))',
--    r'\bremove\("TMUX"\)',
--))
--REMOTE_PROCESS_FIXTURE_PATTERN = re.compile(
--    r"^\s*[0-9]+ [0-9]+ (?:pts/[0-9]+|\?) tmux: (?:client|server)\b"
--)
- 
- 
- def remote_reference_remainder(path: str, text: str) -> str:
-     is_test = path.startswith(("mobile/android/app/src/test/", "mobile/android/app/src/androidTest/"))
-     model_test = is_test and path.endswith("Test.kt") and any(
-         part in path for part in ("/connection/", "/session/")
-     )
--    if path.endswith("/connection/TmuxEndpoint.kt"):
--        # Executable defaults, process-name comparisons and executable path regexes
--        # are interface data. Only remove the matched tokens, never the whole line.
--        text = re.sub(r'\bexecutable: String = "tmux"', "", text)
--        text = re.sub(r'== "(?:tmux|tmux:)"', "", text)
--        text = text.replace(r"\/tmux${'$'}/", "").replace(r"\/tmux\)$/", "")
--    if path.endswith("/connection/SshPtyIdentity.kt"):
--        text = re.sub(r'\bit\.command == "tmux"', "", text)
--        text = re.sub(r'\bit\.command\.startsWith\("tmux:"\)', "", text)
--    if is_test and path.endswith(("/connection/TmuxSessionControlTest.kt", "/connection/TmuxReco
+@@ -5,6 +5,7 @@
+ - GLSL/WGSL 源码转换、Luau shader 参数与帧 ABI 边界见 [`shader_source`](../architecture/notes/nebula_app/gpui_shell/shader_source/)。
+ - `src/gpui_shell` 负责 GPUI 呈现、命令和订阅。交互改动必须覆盖默认、hover、pressed、键盘焦点、disabled/loading 以及成功/失败中实际需要的状态。
+ - 首帧窗口尺寸、非阻塞 logo 准备与原生呈现顺序的因果记录见 [`workspace`](../architecture/notes/nebula_app/gpui_shell/workspace/)。
++- Windows 指定目录启动时的窗口尺寸恢复见 [`startup geometry`](../architecture/notes/nebula_app/gpui_shell/workspace/windowing/2026-11-11-directory-launch-window-size.md)。
+ - 本地启动失败的诊断保留与显式 Shell 选择见 [`terminal/view`](../architecture/notes/nebula_app/gpui_shell/terminal/view/2026-10-24-failed-local-session-retention.md)。
+ - 独立本地草稿写入的 canonical target 并发合同见 [`file_editor writers`](../architecture/notes/nebula_app/gpui_shell/file_editor/2026-10-11-canonical-target-writers.md)。
+ - GPUI 图片解码帧与 zoom/pan 几何一致性见 [`doc_tabs`](../architecture/notes/nebula_app/gpui_shell/doc_tabs/)。
+@@ -18,6 +19,7 @@
+ - 只有跨层所有权、持久化、协议、线程/生命周期或重要性能取舍才写 note，路径镜像到 `architecture/notes/nebula_app/<capability>/`。
+ - Agent 集成、改键输入与 SSH 认证的因果记录分别位于 [`ai_hook`](../architecture/notes/nebula_app/ai_hook/)、[`input`](../architecture/notes/nebula_app/input/) 和 [`ssh_session`](../architecture/notes/nebula_app/ssh_session/)。
+ - Windows PowerShell 剪贴板粘贴与当前编辑器能力的边界见 [`terminal/view`](../architecture/notes/nebula_app/gpui_shell/terminal/view/)。
++- Windows 回收站调用的消息重入与后台 COM 生命周期见 [`file_operations`](../architecture/notes/nebula_app/display/file_operations/2026-11-11-recycle-bin-reentrancy.md)。
+ - Runtime 地址发现与隔离实例的生命周期边界见 [`runtime_api`](../architecture/notes/nebula_app/runtime_api/)。
+ - 补齐数据源选择和请求快照归 `completion.rs`，界面仅拥有任务与交互；边界依据见 [`completion`](../architecture/notes/nebula_app/completion/)。
+ - 旧渲染入口的窗口动画状态归 `display/animations.rs`；迁移及显式 legacy 验证依据见 [`display`](../architecture/notes/nebula_app/display/)。
 ```
 
-**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-169)
+**File**: `nebula_app/res/hooks/remote_bridge.py` (modified, +40/-8)
 ```diff
-@@ -35,48 +35,24 @@ def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) ->
-                      "Kitty graphics protocol_adapter"):
-             self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
+@@ -161,20 +161,52 @@ def send(source, native, mode, payload, token, owner=None, route=None, deadline=
+         if len(envelope) > MAX_ENVELOPE:
+             return
+         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
+-        write_terminal(osc, source, route, deadline)
++        exit_owner = owner if source == "claude" and payload.get("hook_event_name") == "SessionEnd" else None
++        write_terminal(osc, source, route, deadline, exit_owner=exit_owner)
  
--    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
--        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
--        cases = ('view.running_program = Some("tmux".into());',
--                 'for program in ["tmux", "screen"] {')
--        for text in cases:
--            with self.subTest(text=text):
--                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(
--                    path.replace("activity_tests", "other_tests"), text
--                ))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(
--                    path, text + " // https://example.invalid/tmux"
--                ))
--        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
--                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
--            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
--
--    def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
-+    def test_the_terminal_multiplexer_name_is_a_compatibility_target(self) -> None:
-+        # 产品要调用它、读取其环境变量并路由它的会话；叙述和提交说明同样可以直接写名称。
-         cases = (
--            ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
--            ("resume/identity.rs", 'command == "tmux" || command == "tmux:" || command.ends_with("/tmux")'),
--            ("resume/discover.sh", r'$3 == "tmux" || $3 == "tmux:" || $3 ~ /\/tmux$/'),
--            ("resume/discover.sh", r"sed -n 's/^n\(.*\/tmux\)$/\1/p'"),
--            ("resume/tests.rs", r'identity.has_client("42 pts/3 bash\n43 pts/3 tmux: client\n")'),
-+            ("README.md", "Agent status works inside tmux."),
-+            ("architecture/notes/mobile/recovery.md", "Typed tmux commands use an independent channel."),
-+            ("nebula_app/res/hooks/remote_tmux.py", 'if os.environ.get("TMUX"):'),
-+            ("nebula_app/src/ai_hook/protocol.rs", 'field.strip_prefix("tmux=")'),
-+            ("mobile/android/app/src/androidTest/SshIntegrationTest.kt", "tmux capture-pane -p -t '$name'"),
-+            ("mobile/android/app/preview-proguard-rules.pro", "# The real tmux/IME regression"),
-         )
--        for suffix, text in cases:
--            path = "nebula_app/src/ssh_session/" + suffix
--            with self.subTest(path=path, text=text):
-+        for path, text in cases:
-+            with self.subTest(path=path):
-                 self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use Ghostty"))
--        for path, text in (
--            ("resume.rs", 'let description = "tmux";'),
--            ("resume/identity.rs", '// use tmux for everything'),
--            ("resume/discover.sh", "tmux unknown-command"),
--            ("resume/tests.rs", 'println!("tmux");'),
--            ("other.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
--        ):
--            self.assertTrue(check_prohibited_names.prohibited_source_line("nebula_app/src/ssh_session/" + path, text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " Compare with Ghostty."))
-+        with tempfile.TemporaryDirectory() as directory:
-+            message = Path(directory) / "message.txt"
-+            message.write_text("fix(android): scroll tmux history", encoding="utf-8")
-+            self.assertFalse(check_prohibited_names.scan_message(message))
  
-     def test_truncated_unicode_hunk_context_preserves_added_source_checks(self) -> None:
-         context = "managed generation 改变时，旧回调".encode("utf-8")[:-1]
-@@ -210,22 +186,6 @@ def test_real_cargo_git_dependency_is_allowed_but_readme_reference_is_not(self)
-         self.assertFalse(check_prohibited_names.prohibited_source_line("Cargo.toml", dependency))
-         self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", dependency))
+-def write_terminal(osc, source=None, route=None, deadline=None):
++def open_claude_exit_terminal(owner, flags):
++    """A detached SessionEnd can still reach Claude's verified Linux terminal."""
++    if sys.platform != "linux" or not owner:
++        return None
++    pid, _, epoch = owner.partition(":")
++    proc = Path("/proc") / pid
++    stdin = proc / "fd/0"
+     try:
+-        fd = os.open(route["tty"] if route else "/dev/tty",
+-                     os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
++        tty = stdin.readlink()
++        if not re.fullmatch(r"/dev/pts/[0-9]+", str(tty)):
++            return None
++        fd = os.open(tty, flags | os.O_NOCTTY)
++    except OSError:
++        return None
++    try:
++        info = os.fstat(fd)
++        raw = (proc / "stat").read_text(encoding="utf-8")
++        fields = raw[raw.rfind(")") + 2:].split()
++        if (stat.S_ISCHR(info.st_mode) and info.st_uid == os.geteuid()
++                and fields[19] == epoch and int(fields[2]) > 0 and fields[2] == fields[5]
++                and info.st_rdev == (int(fields[4]) & 0xffffffff)
++                and os.path.samestat(info, stdin.stat())):
++            return fd
++    except (OSError, ValueError, IndexError):
++        pass
++    os.close(fd)
++    return None
++
++
++def write_terminal(osc, source=None, route=None, deadline=None, *, exit_owner=None):
++    flags = os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW
++    try:
++        fd = os.open(route["tty"] if route else "/dev/tty", flags)
+     except OSError as error:
+         if route or source != "claude" or error.errno != errno.ENXIO:
+             raise
+-        # Interactive Claude consumes hook JSON even when its hook has no TTY.
+-        # This fallback is only possible before any part of the OSC was written.
+-        print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
+-        return
++        fd = open_claude_exit_terminal(exit_owner, flags)
++        if fd is None:
++            # Interactive Claude consumes terminalSequence for other hooks but
++            # does not relay it during SessionEnd.
++            print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
++            return
+     offset = 0
+     deadline = min(deadline or float("inf"), time.monotonic() + 0.5)
+     try:
+```
+
+**File**: `nebula_app/src/display/file_operations.rs` (modified, +35/-0)
+```diff
+@@ -4,6 +4,9 @@
+ pub(crate) fn send_to_recycle_bin(path: &std::path::Path) -> Result<(), String> {
+     use std::os::windows::ffi::OsStrExt;
  
--    def test_desktop_hook_wire_references_preserve_only_the_exact_interface(self) -> None:
--        cases = (
--            ("nebula_app/res/hooks/remote_bridge.py", 'if os.environ.get("TMUX"):'),
--            ("nebula_app/res/hooks
++    use windows_sys::Win32::System::Com::{
++        COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE, CoInitializeEx, CoUninitialize,
++    };
+     use windows_sys::Win32::UI::Shell::{
+         FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_SILENT, SHFILEOPSTRUCTW,
+         SHFileOperationW,
+@@ -25,14 +28,46 @@ pub(crate) fn send_to_recycle_bin(path: &std::path::Path) -> Result<(), String>
+         hNameMappings: std::ptr::null_mut(),
+         lpszProgressTitle: std::ptr::null(),
+     };
++    // Background executor threads do not inherit the UI thread's COM apartment.
++    // Keep initialization and the synchronous Shell operation on this thread.
++    let initialized = unsafe {
++        CoInitializeEx(std::ptr::null(), (COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) as u32)
++    };
++    if initialized < 0 {
++        return Err(format!("COM initialization failed (HRESULT {initialized:#010x})"));
++    }
+     let code = unsafe { SHFileOperationW(&mut operation) };
++    // Both S_OK and S_FALSE acquire an initialization reference.
++    unsafe { CoUninitialize() };
+     if code == 0 && operation.fAnyOperationsAborted == 0 {
+         Ok(())
++    } else if matches!(code, 32 | 33) {
++        Err(std::io::Error::from_raw_os_error(code).to_string())
+     } else {
+         Err(format!("\u{7cfb}\u{7edf}\u{62d2}\u{7edd}\u{ff08}\u{4ee3}\u{7801} {code}\u{ff09}"))
+     }
+ }
+ 
++#[cfg(all(test, windows))]
++mod tests {
++    use super::*;
++    use std::os::windows::fs::OpenOptionsExt;
++
++    #[test]
++    fn recycling_a_locked_file_on_a_worker_returns_an_error_and_keeps_the_file() {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("locked.db");
++        std::fs::write(&path, b"in use").unwrap();
++        let locked = std::fs::OpenOptions::new().read(true).share_mode(0).open(&path).unwrap();
++        let worker_path = path.clone();
++        let result = std::thread::spawn(move || send_to_recycle_bin(&worker_path)).join().unwrap();
++        assert!(result.is_err(), "a locked file must report a deletion failure");
++        assert!(path.exists());
++        drop(locked);
++        assert_eq!(std::fs::read(&path).unwrap(), b"in use");
++    }
++}
++
+ #[cfg(not(windows))]
+ pub(crate) fn send_to_recycle_bin(path: &std::path::Path) -> Result<(), String> {
+     let result =
 ```
 
 ---
 
-### Incident Patch 2: `426077a6` (2026-11-08)
-**Commit Message**: Allow the tmux name in the naming gate
+### Incident Patch 2: `d79d5796` (2026-11-11)
+**Commit Message**: Merge pull request #948 from Kuddev/fix/settings-card-palette-20261111
 
-tmux is a compatibility target: hooks route through $TMUX, session
-discovery and recovery drive it, and mobile integration tests run it.
-Keeping it on the prohibited list required a new file-specific pattern
-for every integration and still rejected prose and commit messages, which
-now blocks the 2.4.0 follow-up chain (#882).
+Use theme palettes for grouped settings cards
 
-Remove it from the list and delete the patterns that only existed to
-strip it. Other listed names keep their rules; tests that relied on tmux
-to show the rest of a line is still checked now use another listed name.
-
-**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (modified, +2/-0)
+**File**: `nebula_app/src/gpui_shell/network_settings.rs` (modified, +5/-4)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -176,9 +176,9 @@ impl SettingsPane {
+     pub(super) fn section_network(&mut self, cx: &mut Context<Self>) -> gpui::Div {
+         let custom = shows_manual_proxy_address(self.runtime.ssh_proxy_mode);
+         let language = crate::gpui_shell::config::ui_language(cx);
+-        self.group(language.tr("settings.network.title"), cx)
+-            .child(self.proxy_test_banner(cx))
+-            .child(div().h(px(PROXY_TEST_GAP)).w_full().flex_shrink_0())
++        // 连通性检测是页面级状态，放在卡片之上；卡内只放设置行。
++        let settings = self
++            .group(language.tr("settings.network.title"), cx)
+             .child(self.proxy_mode_row(cx))
+             .when(custom, |page| page.child(self.proxy_address_row(cx)))
+             .child(self.switch_row(
+@@ -187,7 +187,8 @@ impl SettingsPane {
+                 language.text(crate::i18n::Message::SettingsNetworkTerminalDescription),
+                 self.runtime.terminal_proxy,
+                 cx,
+-            ))
++            ));
++        v_flex().w_full().gap(px(PROXY_TEST_GAP)).child(self.proxy_test_banner(cx)).child(settings)
+     }
  
- ## Status
- 
-+Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-terminal-multiplexer-name.md).
-+
- Prepared for maintainer review under the task's explicit instruction to retain
- necessary technical terms. This is a scoped governance correction, separate from
- the release candidate and its behavior fixes.
+     fn proxy_test_banner(&self, cx: &mut Context<Self>) -> gpui::Div {
 ```
 
-**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md` (added, +75/-0)
+**File**: `nebula_app/src/gpui_shell/settings_pane.rs` (modified, +27/-43)
 ```diff
-@@ -0,0 +1,75 @@
-+# Allow the tmux name in the naming gate
-+
-+## Status
-+
-+Accepted by the maintainer on 2026-11-08.
-+
-+## Context
-+
-+The naming gate rejects listed product names in added text and commit messages.
-+tmux was on that list. Earlier changes kept it there and added narrow
-+per-file patterns, so that code which really uses tmux could still pass. These
-+patterns covered desktop resume endpoints, activity fixtures, mobile discovery,
-+history control and process fixtures. Prose, comments and commit subjects still
-+had to avoid the name.
-+
-+## Evidence
-+
-+The 2.4.0 follow-up chain (#882, folding #883–#887) fails `architecture-contracts`
-+on functional code and one commit message:
-+
-+- the remote hook bridge reads `$TMUX` and sends a `tmux=` route field
-+  (`nebula_app/res/hooks/remote_tmux.py`, `remote_bridge.py`, `ai_hook/protocol.rs`);
-+- the Android SSH integration test runs real `tmux` commands;
-+- a merge commit message names the IME fix "in tmux".
-+
-+Each of these would need another file-specific pattern, or a history rewrite of
-+an already reviewed merge chain. The checker already carried about 20 tmux-only
-+patterns and branches, with tests for each, and every new tmux integration
-+needed another governance change.
-+
-+tmux is a compatibility target the product integrates with: hooks, session
-+discovery, recovery, the mobile client. It is not a competing terminal the policy needs to keep out of
-+product text.
-+
-+## Decision
-+
-+Remove tmux from `PROHIBITED_PATTERNS` and `PROHIBITED_EXAMPLES`. Delete the
-+patterns and branches that existed only to strip tmux references. Patterns
-+shared with other listed names keep their remaining alternatives. Tests that
-+used tmux to prove "the rest of the line is still checked" now use another
-+listed name. A new test fixes the counterexample: prose,
-+functional code and a commit message that name tmux are accepted, while text
-+appended to them is still checked.
-+
-+## Rejected alternatives
-+
-+- More per-file patterns for the new hook and Android files: does not cover the
-+  commit message, and the pattern set grows with every integration.
-+- Rewriting the merged chain's history to remove the word: changes reviewed merge
-+  commits and only defers the next conflict.
-+
-+## Consequences
-+
-+The tmux name may appear anywhere, including docs and commit messages. All other
-+listed names keep their existing rules and narrow allowances.
-+
-+## Validation
-+
-+`python3 -m unittest scripts.tests.test_prohibited_names`: 26 passed.
-+`check_prohibited_names.py range` over the #882 chain
-+(`merge/2.4.0-part3-20261104..merge/mobile-baseline-20261104`) reports no hits.
-+
-+## Supersedes
-+
-+The tmux-specific parts of
-+[remote control references](../naming/2026-10-22-remote-control-references.md),
-+[protocol and process fixtures](2026-11-01-protocol-and-process-fixtures.md),
-+[remote endpoint compatibility](../names/2026-10-25-remote-endpoint-compatibility.md),
-+[remote discovery compatibility](../policy/2026-09-30-remote-discovery-compatibility.md) and
-+[mobile integration references](../naming/2026-09-28-mobile-integration-references.md).
-+
-+## Revisit when
-+
-+tmux becomes a product the project competes with, or the maintainer wants to
-+restore the name to the prohibited list.
+@@ -900,9 +900,9 @@ impl SettingsPane {
+                     cx,
+                 )
+                 .into_any_element(),
+-            None => self
+-                .row_shell(label, desc.into(), None, false, layout, control, cx)
+-                .into_any_element(),
++            None => {
++                self.row_shell(label, desc.into(), None, layout, control, cx).into_any_element()
++            },
+         }
+     }
+ 
+@@ -1433,7 +1433,8 @@ impl SettingsPane {
+         // 平台没实现的开关整行不画：开着却没效果比没有更糟（见
+         // `platform::capabilities` 的说明）。
+         let caps = crate::platform::CAPABILITIES;
+-        self.group(language.pick("会话生命周期", "Session lifecycle"), cx)
++        let lifecycle = self
++            .group(language.pick("会话生命周期", "Session lifecycle"), cx)
+             .when(caps.launch_at_login, |group| {
+                 group.child(self.switch_row(
+                     "launch_at_login",
+@@ -1486,7 +1487,8 @@ impl SettingsPane {
+                     self.runtime.tray,
+                     cx,
+                 ))
+-            })
++            });
++        v_flex().w_full().child(lifecycle)
+     }
+ 
+     fn section_content(&mut self, window: &mut Window, cx: &mut Context<Self>) -> gpui::AnyElement {
+@@ -1655,6 +1657,8 @@ impl Render for SettingsPane {
+         let provider_drawer = self.provider_drawer(window, cx);
+         let application_page = self.active_section == 0;
+         let mobile_page = self.active_section == MOBILE_SECTION;
++        let form_page = matches!(self.active_section, 1 | 2 | 5 | 6 | 8);
++        let has_cards = form_page || mobile_page || self.active_section == 9;
+ 
+         div()
+             .size_full()
+@@ -1704,57 +1708,37 @@ impl Render for SettingsPane {
+                     .flex_1()
+                     .min_w_0()
+                     .h_full()
++                    .when(has_cards, |pane| pane.bg(crate::gpui_shell::theme::settings_canvas_tint(cx)))
+                     .child(
+                         v_flex()
+                             .flex_1()
+                             .min_h_0()
+-                            .px_5()
+-                            // 内容与页头线之间的一口气。分组之间的 24 由各
+-                            // section 容器的 `gap` 提供，不放在这里，也不放在
+-                            // 组自己身上——组自带 `pt` 时，首个元素不是分组的
+-                            // 页（按键映射开头是搜索框）就会直接贴到线上。
+-                            .pt(px(20.0))
+-                            .pb(px(22.0))
+-                            .when(!application_page, |content| content.pt(px(28.0)).pb(px(30.0)))
+-                            .when(mobile_page, |content| content.p_0())
+-                            .when(self.active_section == 3, |content| content.p_0())
+-                            // 注意这层包装 `v_flex` 的 `w_full` 不能删（2026-08-23
+-                            // 又栽了一次）：`overflow_y_scrollbar` 把内容层清成
+-                            // `Display::Block`，而 flex 容器在 block 父里
+-                            // `width:auto` 是 shrink-to-fit——不写 `w_full` 就退回
+-                            // 按内容取宽，每行各算一个宽度。判据是"窗口拖宽拖窄
+-                            // 都齐、卡在中间某个宽度不齐"：内容自然宽超过可用宽
+-                            // 时被压住反而对齐，没超过就各取各的。
+-                            //
+-                            // 不设行宽上限：内容跟着窗口延伸。标签与值离得
+-                            // 太远的问题由控件列定宽 + 右对齐解决（见
+-                            // design::CTRL_COL_W），不靠把整页钉窄。
+-                            // 正文继承设置根的统一主字号；只有说明、徽标、
+-                            // 快捷键提示等次级信息在各自元素上显式缩小。
++                            .when(!form_page, |content| {
++                                content.px_5().pt(px(20.0)).pb(px(22.0))
++                            })
++                            .when(!form_page && !application_page, |content| {
++                                content.pt(px(28.0)).pb(px(30.0))
++                            })
++                            .when(mobile_page || self.active_section == 3, |content| content.p_0())
+                             .overflow_y_scrollbar()
+-                            // 这层 v_flex 不能省。`overflow_y_scrollbar` 不是
+-                            // 就地加滚动条：它把本容器的样式 clone 到自己新建
+-                            // 的外层 div，再把这层样式清空、只补 flex_1（见
+-                            // gpui-component scroll/scrollable.rs）。于是真正
+-                            // 承载正文的那层退回 gpui 默认的 Display::Block，
+-                            // 各分组的 `w_full` 不再撑满，而是各自按内容取宽：
+-                            // 2026-08-17 A/B 实测，去掉这层后预览组右缘停在
+-                            // 1356 而主题组到 1762，一组一个宽度，控件既不贴左
+-                            // 也不贴右。补一层竖向 flex 后分组走交叉轴 stretch
+-                            // 取宽，症状消失。
+-                            //
+-                            // 行宽上限：控件贴的是这个上限的右边，不是窗口的右
+-                            // 边。没有它时标签在最左、值在最右，1080px 宽的窗口
+-                            // 里眼睛要横跨一整屏才能把"这一项"和"它现在是什么"
+-                            // 配上，扫到第三行就串行。窗口再宽只是两侧留白变多。
++                            // Scrollable wraps the content in a block; the full-width flex
++                            // column keeps cards aligned when the windo
 ```
 
-**File**: `architecture/notes/scripts/names/2026-10-25-remote-endpoint-compatibility.md` (modified, +2/-0)
+**File**: `nebula_app/src/gpui_shell/settings_pane/appearance.rs` (modified, +2/-2)
 ```diff
-@@ -2,6 +2,8 @@
- 
- ## Status
- 
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
-+
- Proposed for maintainer review with the remote session recovery change.
- 
- ## Context
+@@ -219,8 +219,8 @@ impl SettingsPane {
+         let theme = self.appearance_trigger(true, window, cx);
+         let icon = self.appearance_trigger(false, window, cx);
+         // 与开关、字体等设置共用行原语，字号、字重和说明缩放只维护一份。
+-        let selectors = v_flex()
+-            .w_full()
++        let selectors = self
++            .group(language.text(crate::i18n::Message::CommonTheme), cx)
+             .child(self.row(
+                 language.text(crate::i18n::Message::CommonTheme),
+                 language.text(crate::i18n::Message::SettingsAppearanceOnePaletteForTheTerminal),
 ```
 
-**File**: `architecture/notes/scripts/naming/2026-09-28-mobile-integration-references.md` (modified, +2/-0)
+**File**: `nebula_app/src/gpui_shell/settings_pane/backup/view.rs` (modified, +38/-61)
 ```diff
-@@ -1,6 +1,8 @@
- # Mobile dependency and session references in name checks
+@@ -1,8 +1,8 @@
+ //! 原型的阅读顺序：状态 → 存储 → 时间线；低频操作放在面板下面。
+ use super::*;
  
- ## Status
-+
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
- Implemented with positive and negative regression coverage.
+-pub(super) fn panel(_cx: &App) -> gpui::Div {
+-    v_flex().w_full().min_w_0().flex_shrink_0().overflow_hidden()
++pub(super) fn panel(cx: &App) -> gpui::Div {
++    super::super::design::settings_card(cx).flex_shrink_0().overflow_hidden()
+ }
  
- ## Context
+ pub(super) fn caption(text: impl Into<SharedString>, cx: &App) -> gpui::Div {
+@@ -57,7 +57,7 @@ impl SettingsPane {
+             .w_full()
+             .flex_shrink_0()
+             .max_w(px(700.0))
+-            .gap(px(48.0))
++            .gap(px(super::super::design::GROUP_GAP))
+             .text_size(px(14.0))
+             .child(
+                 v_flex()
+@@ -376,21 +376,13 @@ impl SettingsPane {
+     fn backup_encryption_row(&self, cx: &mut Context<Self>) -> gpui::Div {
+         let l = crate::gpui_shell::config::ui_language(cx);
+         let ready = cx.try_global::<BackupPassword>().is_some_and(|p| p.0.is_some());
+-        v_flex()
+-            .debug_selector(|| "backup-encryption".into())
+-            .w_full()
+-            .flex_shrink_0()
+-            .gap(px(20.0))
+-            .child(super::super::design::group_heading(
+-                l.text(Message::BackupFlowEncryption),
+-                14.0,
+-                cx,
+-            ))
+-            .child(
++        v_flex().debug_selector(|| "backup-encryption".into()).w_full().flex_shrink_0().child(
++            self.group(l.text(Message::BackupFlowEncryption), cx).child(
+                 v_flex()
+                     .w_full()
+                     .flex_shrink_0()
+                     .gap_2()
++                    .px(px(super::super::design::CARD_PAD_X))
+                     .py(px(self.row_padding_y()))
+                     .child(
+                         h_flex()
+@@ -445,57 +437,42 @@ impl SettingsPane {
+                         caption(l.text(Message::BackupFlowPasswordHint), cx)
+                             .debug_selector(|| "backup-password-description".into())
+                             .w_full()
+-                            .max_w(px(560.0))
+                             .flex_shrink_0(),
+                     ),
+-            )
++            ),
++        )
+     }
+ 
+-    fn backup_file_rows(&self, cx: &mut Context<Self>) -> gpui::Div {
++    fn backup_file_rows(&self, cx: &mut Context<Self>) -> super::super::design::SettingsGroup {
+         let l = crate::gpui_shell::config::ui_language(cx);
+-        v_flex()
+-            .gap(px(20.0))
+-            .child(super::super::design::group_heading(l.text(Message::BackupFlowFiles), 14.0, cx))
+-            .children(
+-                [
+-                    (true, Message::CloudExport, Message::BackupFlowExportHint),
+-                    (false, Message::CloudImport, Message::BackupFlowImportHint),
+-                ]
+-                .into_iter()
+-                .map(|(export, title, hint)| {
+-                    h_flex()
+-                        .gap_4()
+-                        .items_center()
+-                        .flex_wrap()
+-                        .py(px(self.row_padding_y()))
+-                        .child(
+-                            v_flex()
+-                                .flex_1()
+-                                .min_w(px(180.0))
+-                                .gap_1()
+-                                .child(l.text(title))
+-                                .child(caption(l.text(hint), cx)),
+-                        )
+-                        .child(
+-                            Button::new(if export { "backup-export" } else { "backup-import" })
+-                                .map(|button| {
+-                                    crate::gpui_shell::widgets::settings_button(button, true, cx)
+-                                })
+-                                .label(l.text(if export {
+-                                    Message::CloudExport
+-                                } else {
+-                                    Message::BackupFlowChooseFile
+-                                }))
+-                                .disabled(self.backup_busy)
+-                                .on_click(cx.listener(move |this, _, window, cx| {
+-                                    if export {
+-                                        this.open_backup_sheet(BackupSheet::Export, window, cx);
+-                                    } else {
+-                                        this.restore_backup(window, cx);
+-                                    }
+-                                })),
+-                        )
+-                }),
+-            )
++        self.group(l.text(Message::BackupFlowFiles), cx).children(
++            [
++                (true, Message::CloudExport, Message::BackupFlowExportHint),
++                (false, Message::CloudImport, Message::BackupFlowImportHint),
++            ]
++            .into_iter()
++            .map(|(export, title, hint)| {
++                self.row(
++                    l.text(title),
++                    l.text(hint),
++                    Butto
 ```
 
-**File**: `architecture/notes/scripts/naming/2026-10-22-remote-control-references.md` (modified, +2/-0)
+**File**: `nebula_app/src/gpui_shell/settings_pane/design.rs` (modified, +110/-95)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -1,12 +1,10 @@
+ //! 设置页的设计 token 与行原语。
+ //!
+-//! 分组标题使用更大、加粗的主文本；设置项名称和说明留在左列，控件在右列
+-//! 垂直居中。标准密度沿用原紧凑间距，紧凑档只再微收；字号、命中区域和窗口
+-//! 标题栏不随内容密度缩小。分组通过留白表达，不添加标题下横线。
++//! 每组设置使用一张卡片，标题在卡外，组内分隔线与行内容对齐。
++//! 窄窗中的控件可以换行；内容密度只调整留白，不改变字号和命中区域。
  
- ## Status
- 
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
-+
- Focused correction prepared for maintainer review after reproducing PR #712.
- 
- ## Context
-```
-
-**File**: `architecture/notes/scripts/policy/2026-09-30-remote-discovery-compatibility.md` (modified, +2/-0)
-```diff
-@@ -1,6 +1,8 @@
- # Remote discovery compatibility references
- 
- ## Status
-+
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
- Proposed for separate maintainer review.
- 
- ## Context
-```
-
-**File**: `scripts/check_prohibited_names.py` (modified, +9/-70)
-```diff
-@@ -21,7 +21,6 @@
-     re.compile(r"(?<![A-Za-z0-9_])herdr(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])kaku(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])orca(?![A-Za-z0-9_])", re.IGNORECASE),
--    re.compile(r"(?<![A-Za-z0-9_])tmux(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])wezterm(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])windows[-_ ]?terminal(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])alacritty(?![A-Za-z0-9_])", re.IGNORECASE),
-@@ -54,7 +53,6 @@
-     "herdr",
-     "kaku",
-     "orca",
--    "tmux",
-     "wezterm",
-     "Windows Terminal",
-     "Alacritty",
-@@ -89,14 +87,13 @@
-     re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
-     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
-     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
--    re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
--    re.compile(r"\b(?:kitty|tmux)\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
-+    re.compile(r"\bkitty/(?:legacy|style|protocol)\b", re.IGNORECASE),
-+    re.compile(r"\bkitty\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
-     re.compile(r"\bThemeFormat::(?:WindowsTerminal|Kitty|Ghostty|WezTerm|Alacritty)\b"),
-     re.compile(
-         r"unsupported theme format; use Pebrel JSON, Windows Terminal JSON, Kitty, Ghostty, WezTerm or Alacritty",
-         re.IGNORECASE,
-     ),
--    re.compile(r"\\x1bPtmux;"),
- )
- 
- # 移动端的原生依赖路径和远端命令是构建/兼容接口；只剔除这些确切引用，
-@@ -109,88 +106,47 @@
-     r"[\"']include/ghostty/vt\.h[\"']",
- ))
- REMOTE_SESSION_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r"\bSshSessionMode\.(?:TMUX|HERDR)\b",
--    r"\b(?:exec )?tmux (?:new-session -A -s|kill-session -t) '[^'\n]+'",
-+    r"\bSshSessionMode\.HERDR\b",
-     r"\bexec herdr(?=[\"'\s])",
-     r"\bherdr session (?:attach|stop) '[^'\n]+'",
--    r"\bcommand -v (?:tmux|herdr)(?=\s+>)",
-+    r"\bcommand -v herdr(?=\s+>)",
-     r"\bGet-Command herdr(?= -ErrorAction\b)",
--    r"\btmux (?:-u )?(?:list-sessions|list-windows|list-clients)(?= -[a-zA-Z]\b)",
--    r"\btmux (?:select-window -t|select-pane -t|display-message -p -t|attach-session -t|has-session -t)(?= )",
-     r"\bherdr session list --json\b",
-     r"\bherdr session attach(?= \$\{psQuote\()",
-     r"\bherdr --session(?= \$\{(?:quote|psQuote)\()",
- ))
- # 发现器的类型标签是线协议的一部分；只允许明确的构造/分派位置，
- # 不放行任意字符串字面量，更不能吞掉同行的说明、链接或比较文案。
- REMOTE_DISCOVERY_TAG_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bdata\["(?:tmux|herdr)"\]',
--    r'\bSshSessionMode\.TMUX\s+->\s+"tmux"',
-+    r'\bdata\["herdr"\]',
-     r'\bSshSessionMode\.HERDR\s+->\s+"herdr"',
--    r'^\s*"(?:tmux|herdr)"(?= ->)',
-+    r'^\s*"herdr"(?= ->)',
-     r'\bwarnings \+= "herdr"',
-     r"\[char\]30 \+ 'herdr'(?= \+ \[char\]10)",
- ))
- # Model tags belong to the remote-session consumers and their behavioral tests,
- # not to arbitrary labels or UI strings elsewhere in the mobile tree.
- REMOTE_MODEL_REFERENCE_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bRemoteSession\("(?:tmux|herdr)"(?=,)',
--    r'\b(?:session|it)\??\.kind (?:==|!=) "(?:tmux|herdr)"',
-+    r'\bRemoteSession\("herdr"(?=,)',
-+    r'\b(?:session|it)\??\.kind (?:==|!=) "herdr"',
- ))
- REMOTE_MODEL_CONSUMERS = (
-     "/connection/RemoteSessions.kt", "/connection/TmuxSessionControl.kt",
-     "/session/SessionRepository.kt",
- )
--REMOTE_CONTROL_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r"\btmux copy-mode(?= -t )",
--    r"\btmux send-keys -X(?= -(?:N|t) )",
--))
--REMOTE_DISCOVERY_TEST_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bProcessBuilder\("tmux", "-V"\)',
--    r'\bcommand\("tmux", (?="-f", "/dev/null", "new-session"|"kill-server"\))',
--    r'\bremove\("TMUX"\)',
--))
--REMOTE_PROCESS_FIXTURE_PATTERN = re.compile(
--    r"^\s*[0-9]+ [0-9]+ (?:pts/[0-9]+|\?) tmux: (?:client|server)\b"
--)
- 
- 
- def remote_reference_remainder(path: str, text: str) -> str:
-     is_test = path.startswith(("mobile/android/app/src/test/", "mobile/android/app/src/androidTest/"))
-     model_test = is_test and path.endswith("Test.kt") and any(
-         part in path for part in ("/connection/", "/session/")
-     )
--    if path.endswith("/connection/TmuxEndpoint.kt"):
--        # Executable defaults, process-name comparisons and executable path regexes
--        # are interface data. Only remove the matched tokens, never the whole line.
--        text = re.sub(r'\bexecutable: String = "tmux"', "", text)
--        text = re.sub(r'== "(?:tmux|tmux:)"', "", text)
--        text = text.replace(r"\/tmux${'$'}/", "").replace(r"\/tmux\)$/", "")
--    if path.endswith("/connection/SshPtyIdentity.kt"):
--        text = re.sub(r'\bit\.command == "tmux"', "", text)
--        text = re.sub(r'\bit\.command\.startsWith\("tmux:"\)', "", text)
--    if is_test and path.endswith(("/connection/TmuxSessionControlTest.kt", "/connection/TmuxReco
-```
-
-**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-153)
-```diff
-@@ -35,48 +35,24 @@ def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) ->
-                      "Kitty graphics protocol_adapter"):
-             self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
- 
--    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
--        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
--        cases = ('view.running_program = Some("tmux".into());',
--                 'for program in ["tmux", "screen"] {')
--        for text in cases:
--            with self.subTest(text=text):
--                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(
--                    path.replace("activity_tests", "other_tests"), text
--                ))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(
--                    path, text + " // https://example.invalid/tmux"
--                ))
--        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
--                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
--            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
+-use std::time::Duration;
 -
--    def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
-+    def test_the_terminal_multiplexer_name_is_a_compatibility_target(self) -> None:
-+        # 产品要调用它、读取其环境变量并路由它的会话；叙述和提交说明同样可以直接写名称。
-         cases = (
--            ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
--            ("resume/identity.rs", 'command == "tmux" || command == "tmux:" || command.ends_with("/tmux")'),
--            ("resume/discover.sh", r'$3 == "tmux" || $3 == "tmux:" || $3 ~ /\/tmux$/'),
--            ("resume/discover.sh", r"sed -n 's/^n\(.*\/tmux\)$/\1/p'"),
--            ("resume/tests.rs", r'identity.has_client("42 pts/3 bash\n43 pts/3 tmux: client\n")'),
-+            ("README.md", "Agent status works inside tmux."),
-+            ("architecture/notes/mobile/recovery.md", "Typed tmux commands use an independent channel."),
-+            ("nebula_app/res/hooks/remote_tmux.py", 'if os.environ.get("TMUX"):'),
-+            ("nebula_app/src/ai_hook/protocol.rs", 'field.strip_prefix("tmux=")'),
-+            ("mobile/android/app/src/androidTest/SshIntegrationTest.kt", "tmux capture-pane -p -t '$name'"),
-+            ("mobile/android/app/preview-proguard-rules.pro", "# The real tmux/IME regression"),
-         )
--        for suffix, text in cases:
--            path = "nebula_app/src/ssh_session/" + suffix
--            with self.subTest(path=path, text=text):
-+        for path, text in cases:
-+            with self.subTest(path=path):
-                 self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use Ghostty"))
--        for path, text in (
--            ("resume.rs", 'let description = "tmux";'),
--            ("resume/identity.rs", '// use tmux for everything'),
--            ("resume/discover.sh", "tmux unknown-command"),
--            ("resume/tests.rs", 'println!("tmux");'),
--            ("other.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
--        ):
--            self.assertTrue(check_prohibited_names.prohibited_source_line("nebula_app/src/ssh_session/" + path, text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " Compare with Ghostty."))
-+        with tempfile.TemporaryDirectory() as directory:
-+            message = Path(directory) / "message.txt"
-+            message.write_text("fix(android): scroll tmux history", encoding="utf-8")
-+            self.assertFalse(check_prohibited_names.scan_message(message))
+-use gpui::{Animation, AnimationExt as _, ElementId, FontWeight, ease_out_quint, relative};
++use gpui::FontWeight;
++use gpui_component::button::ButtonCustomVariant;
  
-     def test_truncated_unicode_hunk_context_preserves_added_source_checks(self) -> None:
-         context = "managed generation 改变时，旧回调".encode("utf-8")[:-1]
-@@ -224,7 +200,6 @@ def test_mobile_build_and_session_references_preserve_their_interfaces(self) ->
-             ("mobile/android/ghostty/UPSTREAM.json", '"project": "https://github.com/ghostty-org/ghostty",'),
-             ("mobile/ssh/licenses/SOURCE.json", '"url": "https://raw.githubusercontent.com/warp-tech/russh/revision/LICENSE.txt",'),
-             ("mobile/android/app/src/main/java/connection/SshSessionMode.kt", 'TMUX("tmux"), HERDR("herdr")'),
--            ("mobile/android/app/src/main/java/connection/SshSessionMode.
+ use super::*;
+ 
+@@ -15,24 +13,26 @@ use super::*;
+ pub(super) const DESC_SCALE: f32 = 0.82;
+ /// Parent headings stay above item labels in the visual hierarchy.
+ const GROUP_TITLE_SCALE: f32 = 16.0 / 14.0;
++/// 卡外分组标题比卡内条目略小、更淡：卡片本身已经说明了“这是一组”。
++const CARD_TITLE_SCALE: f32 = 12.5 / 14.0;
++const CARD_RADIUS: f32 = 10.0;
++/// 卡内行的左右留白，同时是行间细线的内缩量。
++pub(super) const CARD_PAD_X: f32 = 16.0;
+ /// label ↔ 说明。这 4px 在说"这两行是同一件事"。
+ const LABEL_DESC_GAP: f32 = 4.0;
+ /// 标准密度沿用原紧凑档的行留白；间距只由行内 padding 提供。
+ const ROW_PAD_Y: f32 = 12.0;
+ /// 紧凑档只再收紧少量留白，字号与控件命中区域保持不变。
+ const ROW_PAD_Y_COMPACT: f32 = 10.0;
+ /// 组与组。
+-pub(super) const GROUP_GAP: f32 = 48.0;
+-/// 轨道宽度。
+-const RAIL_W: f32 = 2.0;
+-/// 内容相对轨道的缩进。标题左对齐轨道本身、行内容缩进这么多——标题是命名者
+-/// 而不是组员，这个位置差比任何字重都更能表达层级。
+-pub(super) const RAIL_INDENT: f32 = 13.0;
++pub(super) const GROUP_GAP: f32 = 28.0;
++pub(super) const CONTENT_MAX_WIDTH: f32 = 960.0;
++pub(super) const CONTENT_PAD_X: f32 = 32.0;
++pub(super) const CONTENT_PAD_TOP: f32 = 36.0;
++pub(super) const CONTENT_PAD_BOTTOM: f32 = 64.0;
+ /// 控件列宽。够放下最宽的下拉（220）加一点余量；开关这类窄控件在列内右对齐，
+ /// 右缘与下拉保持一致。文字列允许收缩换行，避免窄窗口被旧的 320px 下限撑宽。
+ const CTRL_COL_W: f32 = 232.0;
+-/// 脏值段升起的时长。
+-const MARK_RISE: Duration = Duration::from_millis(260);
+ 
+ #[derive(Clone, Copy)]
+ pub(super) enum RowLayout {
+@@ -62,30 +62,13 @@ impl SettingsPane {
+         }
+     }
+ 
+-    /// 一组设置的开头：标题出线。轨道不在这里画——它由组内每一行自己接续，
+-    /// 这样才能做到"同一条线，某几段是亮的"。
+-    pub(crate) fn group(&self, title: &'static str, cx: &Context<Self>) -> gpui::Div {
+-        let base_px = self.font_size_px(cx);
+-        // 组间距归 section 容器的 `gap`（HTML 原型里就是 `.a-main` 自己
+-        // `gap:24`），组不自带 `pt`：自带的话，首个元素不是分组的页会拿不到
+-        // 那段留白而直接贴住页头线，而首组又会拿到"正文上留白 + 组上留白"的
+-        // 双份。间距是**容器**的事，不是组的事。
+-        // 这里**不能**写 `w_full()`。`width:100%` 依赖父的已解析宽度，链条上
+-        // 任何一层是 auto / max-content，100% 就解析成内容宽——于是每个分组、
+-        // 每一行各按自己的文字长度取宽，控件右缘参差不齐（宽窗口下差到 280px，
+-        // 窄窗口反而齐，因为那时被可用宽度压住了）。
+-        //
+-        // 不设宽度则走 flex 交叉轴 stretch：布局算法直接拉伸，不依赖父宽解析。
+-        v_flex().w_full().child(group_heading(title, base_px, cx).pb(px(20.0)))
++    /// 一组设置：标题在卡外，行在卡内。返回的构建器照常 `.child(row)`。
++    pub(crate) fn group(&self, title: &'static str, cx: &Context<Self>) -> SettingsGroup {
++        SettingsGroup { title, rows: Vec::new(), base_px: self.font_size_px(cx) }
+     }
+ 
+     /// 组与组之间的间隔。
+     ///
+-    /// 原来这里是 32px 容器夹一条 1px 细线。线现在多余了：分组的范围由左侧
+-    /// 轨道表达，横线再圈一道等于同一件事说两遍，而且横线会把"一组"读成
+-    /// "一段到此为止"——前者是归属，后者是切断。
+-    /// 保留给"两块内容之间需要一口气"的非分组场景（关于页把外链沉到下面就
+-    /// 用它）。分组之间**不要**用它——组自己带上留白，再插一段就是两倍。
+     pub(crate) fn group_divider(_cx: &Context<Self>) -> gpui::Div {
+         div().w_full().h(px(GROUP_GAP - 8.0)).flex_shrink_0()
+     }
+@@ -98,14 +81,10 @@ impl SettingsPane {
+         control: impl IntoElement,
+         cx: &Context<Self>,
+     ) -> impl IntoElement {
+-        self.row_shell(label, desc.into(), None, false, RowLayout::Standard, control, cx)
++        self.row_shell(label, desc.into(), None, RowLayout::Standard, control, cx)
+     }
+ 
+-    /// 带撤销的设置行：该项被覆盖过时，左侧轨道这一段亮起来，行内出现 ↶。
+-    ///
+-    /// 两个信号的时态不同，所以显示时机也不同：
+-    /// - 轨道亮色是**状态**（"这台机器上我动过它"），必须常显才能一眼扫完；
+-    /// - ↶ 是**动作**，只有真想撤销时才有用，常显就是噪音——所以 hover 才现。
++    /// 偏离默认值的设置项常驻显示恢复按钮，恢复后移除。
+     pub(crate) fn row_with_reset(
+         &self,
+         label: &'static str,
+@@ -128,35 +107,41 @@ impl SettingsPane {
+         control: impl IntoElement,
+         cx: &mut Context<Self>,
+     ) -> impl IntoElement {
+-        let hover_group = Self::row_hover_group(label);
+         let reset = dirty.then(|| {
+-            div()
+-                .id(SharedString::from(format!("setting-reset-{label}")))
++            let action = crate::gpui_shell::config::ui_language(cx)
++                .text(crate::i18n::Message::SettingsPaneRestoreDefault);
++            let id: SharedString = format!("setting-reset-{label}").into();
++            let ink = cx.theme().foreground;
++            let hover = crate::gpui_shell::theme::neutral_hover(cx);
++            Button::new(id.clone())
++                .debug_selector(move || format!("setting-reset-{label}"))
++                .group(id.clone())
++                .custom(ButtonCustomVariant::new(cx).foreground(cx.theme().muted_foreground))
+                 .size(px(32.0))
+-                .rounded_md()
+-                .flex()
+-                .items_center()
+-                .justify_center()
++                .px_0()
++                .rounded(px(6.0))
+                 .cursor_pointer()
+-                .invisible()
+-                .group_hover(hover_group, |el| el.
+```
+
+**File**: `nebula_app/src/gpui_shell/settings_pane/mobile/view.rs` (modified, +86/-80)
+```diff
+@@ -1,5 +1,6 @@
+ //! 三态共享同一份运行快照；二维码、在线状态和批准请求均来自实际连接。
+ 
++use super::super::design::settings_card;
+ use super::*;
+ use crate::gpui_shell::widgets::NebulaSwitch;
+ use gpui::{Animation, AnimationExt as _, relative};
+@@ -188,15 +189,12 @@ impl SettingsPane {
+     fn mobile_off(&self, cx: &Context<Self>) -> gpui::Stateful<gpui::Div> {
+         let language = crate::gpui_shell::config::ui_language(cx);
+         let busy = self.mobile.operation || self.mobile.loading;
+-        v_flex()
++        settings_card(cx)
+             .id("mobile-off")
+             .debug_selector(|| "mobile-off".into())
+             .w_full()
+             .mt(px(28.0))
+             .p(px(24.0))
+-            .border_1()
+-            .border_color(cx.theme().border)
+-            .rounded(px(10.0))
+             .gap_1()
+             .child(
+                 div()
+@@ -455,17 +453,15 @@ impl SettingsPane {
+                     ),
+             );
+         }
+-        h_flex()
++        settings_card(cx)
++            .flex_row()
+             .id("mobile-pairing")
+             .debug_selector(|| "mobile-pairing".into())
+             .w_full()
+             .mt(px(28.0))
+             .p(px(24.0))
+             .gap(px(32.0))
+             .items_start()
+-            .border_1()
+-            .border_color(cx.theme().border)
+-            .rounded(px(10.0))
+             .when(narrow, |hero| hero.flex_col())
+             .child(left)
+             .child(qr)
+@@ -493,17 +489,16 @@ impl SettingsPane {
+                 ("code", &request.verification_code),
+             ],
+         );
+-        h_flex()
++        settings_card(cx)
++            .flex_row()
++            .items_center()
+             .id(SharedString::from(format!("mobile-request-{}", request.id)))
+             .debug_selector(|| "mobile-pairing-request".into())
+             .w_full()
+             .mt(px(16.0))
+             .px(px(16.0))
+             .py(px(14.0))
+             .gap(px(14.0))
+-            .border_1()
+-            .border_color(cx.theme().border)
+-            .rounded(px(10.0))
+             .flex_wrap()
+             .child(Icon::default().path(crate::gpui_shell::assets::nav::PHONE).size(px(20.0)))
+             .child(
+@@ -616,7 +611,7 @@ impl SettingsPane {
+ 
+     fn mobile_devices(&self, cx: &Context<Self>) -> gpui::Stateful<gpui::Div> {
+         let language = crate::gpui_shell::config::ui_language(cx);
+-        let mut group = v_flex().id("mobile-devices").w_full().mt(px(36.0)).child(
++        let group = v_flex().id("mobile-devices").w_full().mt(px(36.0)).child(
+             h_flex()
+                 .w_full()
+                 .justify_between()
+@@ -639,10 +634,11 @@ impl SettingsPane {
+         );
+         let devices =
+             self.mobile.snapshot.as_ref().map(|s| s.devices.as_slice()).unwrap_or_default();
++        let mut card = settings_card(cx).debug_selector(|| "mobile-devices-card".into());
+         if devices.is_empty() {
+-            return group.child(
++            return group.child(card.child(
+                 description(language.text(Message::MobileNoDevices), cx).px(px(13.0)).py(px(12.0)),
+-            );
++            ));
+         }
+         for device in devices {
+             let id = device.id.clone();
+@@ -664,7 +660,7 @@ impl SettingsPane {
+             } else {
+                 status.to_owned()
+             };
+-            group = group.child(
++            card = card.child(
+                 h_flex()
+                     .id(SharedString::from(format!("mobile-device-{id}")))
+                     .debug_selector(|| "mobile-device-row".into())
+@@ -706,7 +702,7 @@ impl SettingsPane {
+                     ),
+             );
+         }
+-        group
++        group.child(card)
+     }
+ 
+     fn mobile_lan_options(&self, compact: bool, cx: &Context<Self>) -> gpui::Div {
+@@ -796,19 +792,17 @@ impl SettingsPane {
+         let language = crate::gpui_shell::config::ui_language(cx);
+         let preferences = self.mobile.preferences();
+         let busy = self.mobile.operation;
+-        let mut group = v_flex()
+-            .w_full()
+-            .mt(px(36.0))
+-            .child(
+-                h_flex()
+-                    .w_full()
+-                    .justify_between()
+-                    .gap_3()
+-                    .pb(px(6.0))
+-                    .child(group_heading(language.text(Message::MobileConnections), cx))
+-                    .child(description(language.text(Message::MobileConnectionsHint), cx)),
+-            )
+-            .child(row(
++        let group = v_flex().w_full().mt(px(36.0)).child(
++            h_flex()
++                .w_full()
++                .justify_between()
++                .gap_3()
++                .pb(px(6.0))
++                .child(group_heading(language.text(Message::MobileConnections), cx))
++                .child(description(language.text(Message::MobileConnectionsHint), cx)),
++        );
++        let mut card =
++            settings_card(cx).debug_selector(|| "mobile-connections-card".into()).child(row(
+               
+```
+
+**File**: `nebula_app/src/gpui_shell/settings_pane/terminal_effect.rs` (modified, +1/-2)
+```diff
+@@ -276,8 +276,7 @@ impl SettingsPane {
+             panel.child(
+                 v_flex()
+                     .w_full()
+-                    .pl(px(super::design::RAIL_INDENT))
+-                    .pr_4()
++                    .px(px(super::design::CARD_PAD_X))
+                     .pb(px(self.row_padding_y()))
+                     .gap_2()
+                     .children(sources),
+```
+
+**File**: `nebula_app/src/gpui_shell/settings_pane/terminal_effect_tests.rs` (modified, +1/-0)
+```diff
+@@ -77,6 +77,7 @@ fn keyboard_picker_enable_reload_and_remove_use_rendered_controls(cx: &mut TestA
+         focus.focus(window, cx);
+     });
+     draw(&mut window);
++    press("shift-tab", &mut window); // Restore the modified animation setting.
+     press("shift-tab", &mut window); // Enable; disabled Reload is skipped.
+     press("shift-tab", &mut window); // Add WGSL.
+     press("enter", &mut window);
 ```
 
 ---
 
-### Incident Patch 3: `e12622ff` (2026-11-08)
-**Commit Message**: Merge the tmux naming policy change (#916) into the follow-up chain
+### Incident Patch 3: `898c4c39` (2026-11-11)
+**Commit Message**: Merge reviewed bug fix #945
 
-The chain's tmux-specific checker branches and their test are superseded
-by #916, which allows the name everywhere.
-
-**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (modified, +2/-0)
+**File**: `architecture/notes/nebula_app/ai_hook/2026-11-11-detached-claude-session-end.md` (added, +77/-0)
 ```diff
-@@ -2,6 +2,8 @@
- 
- ## Status
- 
-+Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-terminal-multiplexer-name.md).
-+
- Prepared for maintainer review under the task's explicit instruction to retain
- necessary technical terms. This is a scoped governance correction, separate from
- the release candidate and its behavior fixes.
-```
-
-**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+# Allow the tmux name in the naming gate
+@@ -0,0 +1,77 @@
++# Deliver detached Claude SessionEnd to its verified Linux terminal
 +
 +## Status
 +
-+Accepted by the maintainer on 2026-11-08.
++Proposed for review with implementation.
 +
 +## Context
 +
-+The naming gate rejects listed product names in added text and commit messages.
-+tmux was on that list. Earlier changes kept it there and added narrow
-+per-file patterns, so that code which really uses tmux could still pass. These
-+patterns covered desktop resume endpoints, activity fixtures, mobile discovery,
-+history control and process fixtures. Prose, comments and commit subjects still
-+had to avoid the name.
++Issue #434 reports a WSL zsh pane retaining its Claude identity after a double
++Ctrl+C exit. Closing and reopening Pebrel then resumes an already exited CLI.
++The shared pane lifecycle clears the saved identity on SessionEnd or OSC 133;D,
++but either signal must first reach the pane.
 +
 +## Evidence
 +
-+The 2.4.0 follow-up chain (#882, folding #883–#887) fails `architecture-contracts`
-+on functional code and one commit message:
++A real zsh PTY running Claude Code 2.1.310 invoked both SessionStart and SessionEnd
++hooks. Claude detached each hook from its controlling terminal. The bridge
++returned authenticated OSC frames in terminalSequence JSON in both cases.
++Claude relayed SessionStart to the terminal, but discarded SessionEnd during
++both double Ctrl+C and /exit.
 +
-+- the remote hook bridge reads `$TMUX` and sends a `tmux=` route field
-+  (`nebula_app/res/hooks/remote_tmux.py`, `remote_bridge.py`, `ai_hook/protocol.rs`);
-+- the Android SSH integration test runs real `tmux` commands;
-+- a merge commit message names the IME fix "in tmux".
-+
-+Each of these would need another file-specific pattern, or a history rewrite of
-+an already reviewed merge chain. The checker already carried about 20 tmux-only
-+patterns and branches, with tests for each, and every new tmux integration
-+needed another governance change.
-+
-+tmux is a compatibility target the product integrates with: hooks, session
-+discovery, recovery, the mobile client. It is not a competing terminal the policy needs to keep out of
-+product text.
++The shared zsh integration still emitted OSC 133;D. Starting the same zsh without
++that integration demonstrated the missing second exit signal. These observations
++come from Linux ARM64; the reported Windows 11 WSL desktop path remains to be
++verified.
 +
 +## Decision
 +
-+Remove tmux from `PROHIBITED_PATTERNS` and `PROHIBITED_EXAMPLES`. Delete the
-+patterns and branches that existed only to strip tmux references. Patterns
-+shared with other listed names keep their remaining alternatives. Tests that
-+used tmux to prove "the rest of the line is still checked" now use another
-+listed name. A new test fixes the counterexample: prose,
-+functional code and a commit message that name tmux are accepted, while text
-+appended to them is still checked.
++For a Claude SessionEnd whose hook has no controlling terminal, recover the
++verified ancestor CLI's Linux devpts terminal from its stdin descriptor. Require
++the process epoch, foreground process group, controlling device, descriptor
++identity and device ownership to match before writing. Open without following
++symlinks or acquiring a controlling terminal.
++
++Reuse the existing bounded OSC write and pane token. When verification fails,
++retain the terminalSequence response. Existing controlling-terminal and tmux
++routes keep their delivery rules. Other hook events keep their existing path.
++The application continues to use its shared SessionEnd lifecycle and session-save
++logic.
 +
 +## Rejected alternatives
 +
-+- More per-file patterns for the new hook and Android files: does not cover the
-+  commit message, and the pattern set grows with every integration.
-+- Rewriting the merged chain's history to remove the word: changes reviewed merge
-+  commits and only defers the next conflict.
++- Clear state on Ctrl+C: interruption can stop one turn while leaving Claude open.
++- Rely only on a matching shell prompt: guest shell integration and prompt
++  recognition can be unavailable.
++- Scan every terminal or use a PID supplied in hook JSON: neither establishes the
++  owning terminal.
++- Return more SessionEnd JSON: the real CLI does not relay this response on exit.
++- Add a background relay: the current short-lived hook can deliver the event.
 +
 +## Consequences
 +
-+The tmux name may appear anywhere, including docs and commit messages. All other
-+listed names keep their existing rules and narrow allowances.
++The additional procfs reads and device open occur only on detached Claude exit.
++There is no new persisted route, token, worker or setting. Linux devpts is the
++supported recovery path; other hosts retain their existing transport.
 +
 +## Validation
 +
-+`python3 -m unittest scripts.tests.test_prohibited_names`: 26 passed.
-+`check_prohibited_names.py range` over the #882 chain
-+(`merge/2.4.0-part3-20261104..merge/mobile-baseline-20261104`) reports no hits.
++- The real-PTY regression fails before the change and passes after it. A detached
++  hook reaches its foreground Claude ancestor, while redirected stdin and a
++  background process group retain the JSON fallback.
++- The remote-hook Python suite covers authenticated delivery, partial writes,
++  detached JSON responses, native hooks and configuration preservation.
++- Real Claude Code 2.1.310 delivers SessionStart and SessionEnd with the same
++  process identity after the change: double Ctrl+C with and without zsh
++  integration, and /exit with integration.
++- The GPUI regression checks that a WSL SessionEnd without shell markers removes
++  the foreground and saved recovery identities before window close.
 +
 +## Supersedes
 +
-+The tmux-specific parts of
-+[remote control references](../naming/2026-10-22-remote-control-references.md),
-+[protocol and process fixtures](2026-11-01-protocol-and-process-fixtures.md),
-+[remote endpoint compatibility](../names/2026-10-25-remote-endpoint-compatibility.md),
-+[remote discovery compatibility](../policy/2026-09-30-remote-discovery-compatibility.md) and
-+[mobile integration references](../naming/2026-09-28-mobile-integration-references.md).
++None. Extends the [WSL hook transport](../platform/wsl_hooks/2026-09-20-wsl-hook-transport.md).
 +
 +## Revisit when
 +
-+tmux becomes a product the project competes with, or the maintainer wants to
-+restore the name to the prohibited list.
++Claude relays terminalSequence during SessionEnd, or supplies an authenticated
++terminal endpoint for detached hooks.
 ```
 
-**File**: `architecture/notes/scripts/names/2026-10-25-remote-endpoint-compatibility.md` (modified, +2/-0)
+**File**: `nebula_app/res/hooks/remote_bridge.py` (modified, +40/-8)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -161,20 +161,52 @@ def send(source, native, mode, payload, token, owner=None, route=None, deadline=
+         if len(envelope) > MAX_ENVELOPE:
+             return
+         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
+-        write_terminal(osc, source, route, deadline)
++        exit_owner = owner if source == "claude" and payload.get("hook_event_name") == "SessionEnd" else None
++        write_terminal(osc, source, route, deadline, exit_owner=exit_owner)
  
- ## Status
  
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
+-def write_terminal(osc, source=None, route=None, deadline=None):
++def open_claude_exit_terminal(owner, flags):
++    """A detached SessionEnd can still reach Claude's verified Linux terminal."""
++    if sys.platform != "linux" or not owner:
++        return None
++    pid, _, epoch = owner.partition(":")
++    proc = Path("/proc") / pid
++    stdin = proc / "fd/0"
+     try:
+-        fd = os.open(route["tty"] if route else "/dev/tty",
+-                     os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
++        tty = stdin.readlink()
++        if not re.fullmatch(r"/dev/pts/[0-9]+", str(tty)):
++            return None
++        fd = os.open(tty, flags | os.O_NOCTTY)
++    except OSError:
++        return None
++    try:
++        info = os.fstat(fd)
++        raw = (proc / "stat").read_text(encoding="utf-8")
++        fields = raw[raw.rfind(")") + 2:].split()
++        if (stat.S_ISCHR(info.st_mode) and info.st_uid == os.geteuid()
++                and fields[19] == epoch and int(fields[2]) > 0 and fields[2] == fields[5]
++                and info.st_rdev == (int(fields[4]) & 0xffffffff)
++                and os.path.samestat(info, stdin.stat())):
++            return fd
++    except (OSError, ValueError, IndexError):
++        pass
++    os.close(fd)
++    return None
 +
- Proposed for maintainer review with the remote session recovery change.
- 
- ## Context
-```
-
-**File**: `architecture/notes/scripts/naming/2026-09-28-mobile-integration-references.md` (modified, +2/-0)
-```diff
-@@ -1,6 +1,8 @@
- # Mobile dependency and session references in name checks
- 
- ## Status
 +
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
- Implemented with positive and negative regression coverage.
- 
- ## Context
++def write_terminal(osc, source=None, route=None, deadline=None, *, exit_owner=None):
++    flags = os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW
++    try:
++        fd = os.open(route["tty"] if route else "/dev/tty", flags)
+     except OSError as error:
+         if route or source != "claude" or error.errno != errno.ENXIO:
+             raise
+-        # Interactive Claude consumes hook JSON even when its hook has no TTY.
+-        # This fallback is only possible before any part of the OSC was written.
+-        print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
+-        return
++        fd = open_claude_exit_terminal(exit_owner, flags)
++        if fd is None:
++            # Interactive Claude consumes terminalSequence for other hooks but
++            # does not relay it during SessionEnd.
++            print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
++            return
+     offset = 0
+     deadline = min(deadline or float("inf"), time.monotonic() + 0.5)
+     try:
 ```
 
-**File**: `architecture/notes/scripts/naming/2026-10-22-remote-control-references.md` (modified, +2/-0)
+**File**: `nebula_app/src/gpui_shell/terminal/view/activity_tests.rs` (modified, +22/-0)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -26,6 +26,28 @@ fn remote_hook(session: &str, name: &str, process: &str, sequence: u64) -> AiHoo
+     crate::ai_hook::parse_remote_envelope(wire.as_bytes(), None).unwrap()
+ }
  
- ## Status
- 
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
++#[gpui::test]
++fn wsl_claude_session_end_without_shell_markers_clears_the_saved_agent(cx: &mut TestAppContext) {
++    let (view, window, _) = open(cx);
++    view.update(window, |view, cx| {
++        view.suggest.suggest_env =
++            crate::display::SuggestEnv::Wsl { distro: "session-end-434".into() };
++        assert!(view.handle_ai_hook(&remote_hook("exited", "SessionStart", "434:1", 1), cx));
++        let saved = view.session_agent().expect("running conversation is restorable");
++        assert_eq!(saved.source, "claude");
++        assert_eq!(saved.session_id.as_deref(), Some("exited"));
++        assert_eq!(view.running_program.as_deref(), Some("claude"));
++        assert!(view.handle_ai_hook(&remote_hook("exited", "SessionEnd", "434:1", 2), cx));
++        view.prepare_ai_session_save(cx);
++        assert!(view.session_agent().is_none(), "window close must not resume an exited CLI");
++        assert!(view.ai_session.is_none());
++        assert!(view.recovery.target.is_none());
++        assert!(view.running_program.is_none());
++        assert!(!view.ai_session_save_pending());
++        assert_eq!(view.sidebar_activity(), SidebarActivity::Idle);
++    });
++}
 +
- Focused correction prepared for maintainer review after reproducing PR #712.
- 
- ## Context
+ #[gpui::test]
+ fn pi_redraw_anchor_follows_accepted_hook_and_command_lifecycle(cx: &mut TestAppContext) {
+     use nebula_terminal::term::test::TermSize;
 ```
 
-**File**: `architecture/notes/scripts/policy/2026-09-30-remote-discovery-compatibility.md` (modified, +2/-0)
+**File**: `scripts/tests/test_remote_hooks.py` (modified, +62/-0)
 ```diff
-@@ -1,6 +1,8 @@
- # Remote discovery compatibility references
+@@ -93,6 +93,68 @@ def test_claude_with_controlling_terminal_does_not_duplicate_stdout(self):
+             write.assert_called_once_with(42, b"\x07")
+             self.assertEqual(output.getvalue(), "")
  
- ## Status
++    @unittest.skipUnless(sys.platform == "linux", "requires Linux procfs and a devpts terminal")
++    def test_detached_claude_session_end_reaches_its_foreground_terminal(self):
++        import pty
 +
-+Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
- Proposed for separate maintainer review.
- 
- ## Context
-```
-
-**File**: `scripts/check_prohibited_names.py` (modified, +9/-78)
-```diff
-@@ -21,7 +21,6 @@
-     re.compile(r"(?<![A-Za-z0-9_])herdr(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])kaku(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])orca(?![A-Za-z0-9_])", re.IGNORECASE),
--    re.compile(r"(?<![A-Za-z0-9_])tmux(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])wezterm(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])windows[-_ ]?terminal(?![A-Za-z0-9_])", re.IGNORECASE),
-     re.compile(r"(?<![A-Za-z0-9_])alacritty(?![A-Za-z0-9_])", re.IGNORECASE),
-@@ -54,7 +53,6 @@
-     "herdr",
-     "kaku",
-     "orca",
--    "tmux",
-     "wezterm",
-     "Windows Terminal",
-     "Alacritty",
-@@ -89,14 +87,13 @@
-     re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
-     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
-     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
--    re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
--    re.compile(r"\b(?:kitty|tmux)\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
-+    re.compile(r"\bkitty/(?:legacy|style|protocol)\b", re.IGNORECASE),
-+    re.compile(r"\bkitty\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
-     re.compile(r"\bThemeFormat::(?:WindowsTerminal|Kitty|Ghostty|WezTerm|Alacritty)\b"),
-     re.compile(
-         r"unsupported theme format; use Pebrel JSON, Windows Terminal JSON, Kitty, Ghostty, WezTerm or Alacritty",
-         re.IGNORECASE,
-     ),
--    re.compile(r"\\x1bPtmux;"),
- )
- 
- # 移动端的原生依赖路径和远端命令是构建/兼容接口；只剔除这些确切引用，
-@@ -109,88 +106,47 @@
-     r"[\"']include/ghostty/vt\.h[\"']",
- ))
- REMOTE_SESSION_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r"\bSshSessionMode\.(?:TMUX|HERDR)\b",
--    r"\b(?:exec )?tmux (?:new-session -A -s|kill-session -t) '[^'\n]+'",
-+    r"\bSshSessionMode\.HERDR\b",
-     r"\bexec herdr(?=[\"'\s])",
-     r"\bherdr session (?:attach|stop) '[^'\n]+'",
--    r"\bcommand -v (?:tmux|herdr)(?=\s+>)",
-+    r"\bcommand -v herdr(?=\s+>)",
-     r"\bGet-Command herdr(?= -ErrorAction\b)",
--    r"\btmux (?:-u )?(?:list-sessions|list-windows|list-clients)(?= -[a-zA-Z]\b)",
--    r"\btmux (?:select-window -t|select-pane -t|display-message -p -t|attach-session -t|has-session -t)(?= )",
-     r"\bherdr session list --json\b",
-     r"\bherdr session attach(?= \$\{psQuote\()",
-     r"\bherdr --session(?= \$\{(?:quote|psQuote)\()",
- ))
- # 发现器的类型标签是线协议的一部分；只允许明确的构造/分派位置，
- # 不放行任意字符串字面量，更不能吞掉同行的说明、链接或比较文案。
- REMOTE_DISCOVERY_TAG_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bdata\["(?:tmux|herdr)"\]',
--    r'\bSshSessionMode\.TMUX\s+->\s+"tmux"',
-+    r'\bdata\["herdr"\]',
-     r'\bSshSessionMode\.HERDR\s+->\s+"herdr"',
--    r'^\s*"(?:tmux|herdr)"(?= ->)',
-+    r'^\s*"herdr"(?= ->)',
-     r'\bwarnings \+= "herdr"',
-     r"\[char\]30 \+ 'herdr'(?= \+ \[char\]10)",
- ))
- # Model tags belong to the remote-session consumers and their behavioral tests,
- # not to arbitrary labels or UI strings elsewhere in the mobile tree.
- REMOTE_MODEL_REFERENCE_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bRemoteSession\("(?:tmux|herdr)"(?=,)',
--    r'\b(?:session|it)\??\.kind (?:==|!=) "(?:tmux|herdr)"',
-+    r'\bRemoteSession\("herdr"(?=,)',
-+    r'\b(?:session|it)\??\.kind (?:==|!=) "herdr"',
- ))
- REMOTE_MODEL_CONSUMERS = (
-     "/connection/RemoteSessions.kt", "/connection/TmuxSessionControl.kt",
-     "/session/SessionRepository.kt",
- )
--REMOTE_CONTROL_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r"\btmux copy-mode(?= -t )",
--    r"\btmux send-keys -X(?= -(?:N|t) )",
--))
--REMOTE_DISCOVERY_TEST_PATTERNS = tuple(re.compile(pattern) for pattern in (
--    r'\bProcessBuilder\("tmux", "-V"\)',
--    r'\bcommand\("tmux", (?="-f", "/dev/null", "new-session"|"kill-server"\))',
--    r'\bremove\("TMUX"\)',
--))
--REMOTE_PROCESS_FIXTURE_PATTERN = re.compile(
--    r"^\s*[0-9]+ [0-9]+ (?:pts/[0-9]+|\?) tmux: (?:client|server)\b"
--)
- 
- 
- def remote_reference_remainder(path: str, text: str) -> str:
-     is_test = path.startswith(("mobile/android/app/src/test/", "mobile/android/app/src/androidTest/"))
-     model_test = is_test and path.endswith("Test.kt") and any(
-         part in path for part in ("/connection/", "/session/")
-     )
--    if path.endswith("/connection/TmuxEndpoint.kt"):
--        # Executable defaults, process-name comparisons and executable path regexes
--        # are interface data. Only remove the matched tokens, never the whole line.
--        text = re.sub(r'\bexecutable: String = "tmux"', "", text)
--        text = re.sub(r'== "(?:tmux|tmux:)"', "", text)
--        text = text.replace(r"\/tmux${'$'}/", "").replace(r"\/tmux\)$/", "")
--    if path.endswith("/connection/SshPtyIdentity.kt"):
--        text = re.sub(r'\bit\.command == "tmux"', "", text)
--        text = re.sub(r'\bit\.command\.startsWith\("tmux:"\)', "", text)
--    if is_test and path.endswith(("/connection/TmuxSessionControlTest.kt", "/connection/TmuxReco
-```
-
-**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-169)
-```diff
-@@ -35,48 +35,24 @@ def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) ->
-                      "Kitty graphics protocol_adapter"):
-             self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
- 
--    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
--        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
--        cases = ('view.running_program = Some("tmux".into());',
--                 'for program in ["tmux", "screen"] {')
--        for text in cases:
--            with self.subTest(text=text):
--                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(
--                    path.replace("activity_tests", "other_tests"), text
--                ))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(
--                    path, text + " // https://example.invalid/tmux"
--                ))
--        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
--                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
--            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
--
--    def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
-+    def test_the_terminal_multiplexer_name_is_a_compatibility_target(self) -> None:
-+        # 产品要调用它、读取其环境变量并路由它的会话；叙述和提交说明同样可以直接写名称。
-         cases = (
--            ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
--            ("resume/identity.rs", 'command == "tmux" || command == "tmux:" || command.ends_with("/tmux")'),
--            ("resume/discover.sh", r'$3 == "tmux" || $3 == "tmux:" || $3 ~ /\/tmux$/'),
--            ("resume/discover.sh", r"sed -n 's/^n\(.*\/tmux\)$/\1/p'"),
--            ("resume/tests.rs", r'identity.has_client("42 pts/3 bash\n43 pts/3 tmux: client\n")'),
-+            ("README.md", "Agent status works inside tmux."),
-+            ("architecture/notes/mobile/recovery.md", "Typed tmux commands use an independent channel."),
-+            ("nebula_app/res/hooks/remote_tmux.py", 'if os.environ.get("TMUX"):'),
-+            ("nebula_app/src/ai_hook/protocol.rs", 'field.strip_prefix("tmux=")'),
-+            ("mobile/android/app/src/androidTest/SshIntegrationTest.kt", "tmux capture-pane -p -t '$name'"),
-+            ("mobile/android/app/preview-proguard-rules.pro", "# The real tmux/IME regression"),
-         )
--        for suffix, text in cases:
--            path = "nebula_app/src/ssh_session/" + suffix
--            with self.subTest(path=path, text=text):
-+        for path, text in cases:
-+            with self.subTest(path=path):
-                 self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
--                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use Ghostty"))
--        for path, text in (
--            ("resume.rs", 'let description = "tmux";'),
--            ("resume/identity.rs", '// use tmux for everything'),
--            ("resume/discover.sh", "tmux unknown-command"),
--            ("resume/tests.rs", 'println!("tmux");'),
--            ("other.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
--        ):
--            self.assertTrue(check_prohibited_names.prohibited_source_line("nebula_app/src/ssh_session/" + path, text))
-+                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " Compare with Ghostty."))
-+        with tempfile.TemporaryDirectory() as directory:
-+            message = Path(directory) / "message.txt"
-+            message.write_text("fix(android): scroll tmux history", encoding="utf-8")
-+            self.assertFalse(check_prohibited_names.scan_message(message))
- 
-     def test_truncated_unicode_hunk_context_preserves_added_source_checks(self) -> None:
-         context = "managed generation 改变时，旧回调".encode("utf-8")[:-1]
-@@ -210,22 +186,6 @@ def test_real_cargo_git_dependency_is_allowed_but_readme_reference_is_not(self)
-         self.assertFalse(check_prohibited_names.prohibited_source_line("Cargo.toml", dependency))
-         self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", dependency))
- 
--    def test_desktop_hook_wire_references_preserve_only_the_exact_interface(self) -> None:
--        cases = (
--            ("nebula_app/res/hooks/remote_bridge.py", 'if os.environ.get("TMUX"):'),
--            ("nebula_app/res/hooks
++        provider = self.root / "claude"
++        bridge = ASSETS / "remote_bridge.py"
++        provider.write_text(
++            "import json, os, subprocess, sys\n"
++            "if sys.argv[1] == 'background':\n"
++            " raise SystemExit(subprocess.run([sys.executable, __file__, 'worker'], process_group=0, timeout=5).returncode)\n"
++            "if sys.argv[1] == 'redirected':\n"
++            " fd = os.open(os.devnull, os.O_RDONLY)\n"
++            " os.dup2(fd, 0)\n"
++            " os.close(fd)\n"
++            "payload = json.dumps({'hook_event_name': 'SessionEnd', 'session_id': 'fixture', 'pid': 1})\n"
++            f"result = subprocess.run([sys.executable, {str(bridge)!r}, 'claude'], input=payload, "
++            "text=True, capture_output=True, start_new_session=True, check=True, timeout=4)\n"
++            # Claude ignores the terminalSequence response during SessionEnd.
++            "print('response=' + ('fallback' if result.stdout else 'empty'))\n"
++        )
++        for mode in ("foreground", "redirected", "background"):
++            with self.subTest(mode=mode):
++                pid, master = pty.fork()
++                if pid == 0:
++                    os.execv(sys.executable, [sys.executable, str(provider), mode])
++                output = bytearray()
++                try:
++                    deadline = time.monotonic() + 6
++                    while time.monotonic() < deadline:
++                        if select.select([master], [], [], 0.1)[0]:
++                            try:
++                                part = os.read(master, 65536)
++                            except OSError as error:
++                                if error.errno != errno.EIO:
++                                    raise
++                                break
++                            if not part:
++                                break
++                            output.extend(part)
++                    waited, status = os.waitpid(pid, os.WNOHANG)
++                    self.assertEqual(waited, pid, "provider did not finish within the PTY budget")
++                    self.assertEqual(status, 0, output)
++                finally:
++                    os.close(master)
++                    try:
++                        os.kill(pid, 9)
++                        os.waitpid(pid, 0)
++                    except ProcessLookupError:
++                        pass
++                frames = re.findall(
++                    rb"\x1b\]777;nebula-hook;" + TOKEN.encode() + rb";([^\x07]+)\x07", output
++                )
++                if mode != "foreground":
++                    self.assertEqual(frames, [])
++                    self.assertIn(b"response=fallback", output)
++                    continue
++                self.assertEqual(len(frames), 1, output)
++                header, body = base64.b64decode(frames[0]).split(b"\n", 1)
++                self.assertTrue(header.startswith(f"nebula-hook/1 source=claude process={pid}:".encode()))
++                self.assertEqual(json.loads(body)["hook_event_name"], "SessionEnd")
++                self.assertIn(b"response=empty", output)
++
+     def test_claude_partial_terminal_frame_is_cancelled_without_stdout_retry(self):
+         bridge = module("remote_bridge")
+         writes = []
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #921** (2026-11-08): Add a Plugins page to Settings (@Kuddev)
-- **PR #920** (2026-11-09): Install plugins, let them contribute themes, and add a Plugins page (@Kuddev)
-- **PR #918** (2026-11-08): Bring the 2.4.0 release workflow and script to main (@Kuddev)
-- **PR #917** (closed): fix(runtime): restore WSL agent callbacks and safe session reuse (@yjjheizhu)
-- **PR #916** (2026-11-08): Allow the tmux name in the naming gate (@Kuddev)
-- **PR #913** (2026-11-08): Add a Community page to the theme picker (@Kuddev)
+- **PR #948** (2026-11-11): Use theme palettes for grouped settings cards (@Kuddev)
+- **PR #946** (2026-11-11): fix: integrate reviewed rendering, workspace and hook regressions (@Kuddev)
+- **PR #945** (2026-11-11): fix(hooks): deliver detached Claude session end to its terminal (@Kuddev)
+- **PR #944** (2026-11-11): fix(macos): align top tabs with native window controls (@Kuddev)
+- **PR #943** (2026-11-11): fix(math): recover collapsed matrix rows from terminal output (@Kuddev)
+- **PR #942** (2026-11-11): fix(math): recognize uppercase variables with numeric subscripts (@Kuddev)
 
 ---
 
@@ -2554,22 +2794,51 @@ by #916, which allows the name everywhere.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allow the tmux name in the naming gate (#916)
+## X. Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111
 
 **RULE**:
-When implementing operations in `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/notes/nebula_app/ai_hook/2026-11-11-detached-claude-session-end.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13af2b2d`: Allow the tmux name in the naming gate (#916). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fe45e0d`: Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_app/ai_hook/2026-11-11-detached-claude-session-end.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-terminal-multiplexer-name.md).
+# Deliver detached Claude SessionEnd to its verified Linux terminal
 
+## Status
+
+Proposed for review with implementation.
+
+## Context
+
+Issue #434 reports a WSL zsh pane retaining its Claude identity after a double
+Ctrl+C exit. Closing and reopening Pebrel then resumes an already exited CLI.
+The shared pane lifecycle clears the saved identity on SessionEnd or OSC 133;D,
+but either signal must first reach the pane.
+
+## Evidence
+
+A real zsh PTY running Claude Code 2.1.310 invoked both SessionStart and SessionEnd
+hooks. Claude detached each hook from its controlling terminal. The bridge
+returned authenticated OSC frames in terminalSequence JSON in both cases.
+Claude relayed SessionStart to the terminal, but discarded SessionEnd during
+both double Ctrl+C and /exit.
+
+The shared zsh integration still emitted OSC 133;D. Starting the same zsh without
+that integration demonstrated the missing second exit signal. These observations
+come from Linux ARM64; the reported Windows 11 WSL desktop path remains to be
+verified.
+
+## Decision
+
+For a Claude SessionEnd whose hook has no controlling terminal, recover the
+verified ancestor CLI's Linux devpts terminal from its stdin descriptor. Require
+the pro
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2579,4 +2848,4 @@ Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-t
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13af2b2d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fe45e0d` are properly handled with clean fallback behavior.

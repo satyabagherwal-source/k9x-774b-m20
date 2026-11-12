@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source**: github ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
-> **Source Version**: `7bf0fc95`  
+> **Source Version**: `48fb1533`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:03:13.848Z  
+> **Timestamp**: 2026-11-12T02:48:32.625Z  
 > **Learning ID**: `learn-github-inikulin-parse5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:03:12.745Z  
+> **Harvest Timestamp**: 2026-11-12T02:48:32.615Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HTML parsing/serialization toolset for Node.js. WHATWG HTML Living Standard (aka HTML5)-compliant.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3939 stars
+- **Stars / Engagement**: 3940 stars
 
 ---
 
@@ -88,6 +88,7 @@ console.log('Memory after:', usageEnd);
 ### Core Architecture Module: `bench/perf/index.js`
 ```
 import { readFileSync, createReadStream, readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { Bench } from 'tinybench';
 import { loadTreeConstructionTestData } from 'parse5-test-utils/dist/generate-parsing-tests.js';
 import { loadSAXParserTestData } from 'parse5-test-utils/dist/load-sax-parser-test-data.js';
@@ -137,7 +138,7 @@ function runPages(parser) {
 }
 
 // Stream data
-const files = readdirSync(saxPath).map((dirName) => new URL(`${dirName}/src.html`, saxPath).pathname);
+const files = readdirSync(saxPath).map((dirName) => fileURLToPath(new URL(`${dirName}/src.html`, saxPath)));
 
 // Utils
 async function runBench({ name, workingCopyFn, upstreamFn }) {
@@ -317,7 +318,7 @@ export default [
 
 ### Core Architecture Module: `packages/parse5-html-rewriting-stream/lib/index.ts`
 ```
-import { html, type Token } from 'parse5';
+import { TokenizerMode, type Token } from 'parse5';
 import {
     SAXParser,
     type EndTag,
@@ -379,6 +380,9 @@ import { escapeText, escapeAttribute } from 'entities/escape';
  * ```
  */
 export class RewritingStream extends SAXParser {
+    /** Whether text is currently tokenized without decoding character references. */
+    private inRawText = false;
+
     /** Note: `sourceCodeLocationInfo` is always enabled. */
     constructor() {
         super({ sourceCodeLocationInfo: true });
@@ -401,8 +405,21 @@ export class RewritingStream extends SAXParser {
 
     // Events
     protected override emitIfListenerExists(eventName: string, token: SaxToken): boolean {
+        if (eventName === 'startTag') {
+            // The tokenizer has already been switched to the state for this element's content.
+            const { state } = this.tokenizer;
+            this.inRawText =
+                state === TokenizerMode.RAWTEXT ||
+                state === TokenizerMode.SCRIPT_DATA ||
+                state === TokenizerMode.PLAINTEXT;
+        }
+
         if (!super.emitIfListenerExists(eventName, token)) {
             this.emitRaw(this._getRawHtml(token.sourceCodeLocation!));
+        }
+
+        if (eventName === 'endTag') {
+            this.inRawText = false;
         }
 
         // NOTE: don't skip new lines after `<pre>` and other tags,
@@ -455,12 +472,7 @@ export class RewritingStream extends SAXParser {
 
     /** Emits a serialized text token into the output stream. */
     public emitText({ text }: Text): void {
-        this.push(
-            !this.parserFeedbackSimulator.inForeignContent &&
-                html.hasUnescapedText(this.tokenizer.lastStartTagName, true)
-                ? text
-                : escapeText(text),
-        );
+        this.push(this.inRawText ? text : escapeText(text));
     }
 
     /** Emits a serialized comment token into the output stream. */
@@ -615,7 +627,9 @@ export const adapter: TreeAdapter<Htmlparser2TreeAdapterMap> = {
     },
 
     insertBefore(parentNode: ParentNode, newNode: ChildNode, referenceNode: ChildNode): void {
-        const insertionIdx = parentNode.children.indexOf(referenceNode);
+        const { children } = parentNode;
+        const insertionIdx =
+            children[children.length - 1] === referenceNode ? children.length - 1 : children.indexOf(referenceNode);
         const { prev } = referenceNode;
 
         if (prev) {
@@ -666,7 +680,9 @@ export const adapter: TreeAdapter<Htmlparser2TreeAdapterMap> = {
 
     detachNode(node: ChildNode): void {
         if (node.parent) {
-            const idx = node.parent.children.indexOf(node);
+            const { children } = node.parent;
+            // The parser detaches from the end when it moves children, so check the last child first.
+            const idx = children[children.length - 1] === node ? children.length - 1 : children.indexOf(node);
             const { prev, next } = node;
 
             node.prev = null;
@@ -680,7 +696,7 @@ export const adapter: TreeAdapter<Htmlparser2TreeAdapterMap> = {
                 next.prev = prev;
             }
 
-            node.parent.children.splice(idx, 1);
+            children.splice(idx, 1);
             node.parent = null;
         }
     },
@@ -696,7 +712,7 @@ export const adapter: TreeAdapter<Htmlparser2TreeAdapterMap> = {
     },
 
     insertTextBefore(parentNode: ParentNode, text: string, referenceNode: ChildNode): void {
-        const prevNode = parentNode.children[parentNode.children.indexOf(referenceNode) - 1];
+        const prevNode = referenceNode.prev;
 
         if (prevNode && isText(prevNode)) {
             prevNode.data += text;
@@ -1156,12 +1172,17 @@ export class SAXParser extends Transform implements TokenHandler {
     protected _transformChunk(chunk: string): string {
         if (!this.stopped) {
             this.tokenizer.write(chunk, this.lastChunkWritten);
+            this.tokenizer.flushCurrentCharacterToken();
         }
         return chunk;
     }
 
     /** @internal */
     onCharacter({ chars, location }: Token.CharacterToken): void {
+        // After a chunk-boundary flush the tokenizer continues with an empty text token, which arrives here without
+        // characters. It is dropped unless its source range covers something (CDATA delimiters, a tag dropped at
+        // EOF), which the rewriting stream still has to forward.
+        if (chars.length === 0 && (!location || location.startOffset === location.endOffset)) return;
         if (this.pendingText === null) {
             this.pendingText = { text: chars, sourceCodeLocation: location };
         } else {
@@ -1352,6 +1373,13 @@ const LINE_FEED_CODE_POINT = 0x0a;
  */
 export class ParserFeedbackSimulator implements TokenHandler {
     private namespaceStack: html.NS[] = [];
+    /** The name of the tag that opened each namespace frame, lowercase as in end tags; its end tag closes the frame. */
+    private frameTags: string[] = [];
+    /**
+     * Above 0 while the current node is the element that opened the last frame; each further count is a frame below
+     * whose element is the parent of the next frame's, so the current node stays known as the frames close.
+     */
+    private directFrames = 0;
     public inForeignContent = false;
     public skipNextNewLine = false;
     public tokenizer: Tokenizer;
@@ -1361,7 +1389,7 @@ export class ParserFeedbackSimulator implements TokenHandler {
         private handler: TokenHandler,
     ) {
         this.tokenizer = new Tokenizer(options, this);
-        this._enterNamespace(html.NS.HTML);
+        this._enterNamespace(html.NS.HTML, '');
     }
 
     /** @internal */
@@ -1381,9 +1409,9 @@ export class ParserFeedbackSimulator implements TokenHandler {
 
     /** @internal */
     onWhitespaceCharacter(token: Token.CharacterToken): void {
-        if (this.skipNextNewLine && token.chars.charCodeAt(0) === LINE_FEED_CODE_POINT) {
-            this.skipNextNewLine = false;
-
+        const { skipNextNewLine } = this;
+        this.skipNextNewLine = false;
+        if (skipNextNewLine && token.chars.charCodeAt(0) === LINE_FEED_CODE_POINT) {
             if (token.chars.length === 1) {
                 return;
             }
@@ -1419,15 +1447,19 @@ export class ParserFeedbackSimulator implements TokenHandler {
     }
 
     //Namespace stack mutations
-    private _enterNamespace(namespace: html.NS): void {
-        this.namespaceStack.unshift(namespace);
+    private _enterNamespace(namespace: html.NS, tagName: string): void {
+        this.namespaceStack.push(namespace);
+        this.frameTags.push(tagName);
+        this.directFrames++;
         this.inForeignContent = namespace !== html.NS.HTML;
         this.tokenizer.inForeignNode = this.inForeignContent;
     }
 
     private _leaveCurrentNamespace(): void {
-        this.namespaceStack.shift();
-        this.inForeignContent = this.namespaceStack[0] !== html.NS.HTML;
+        this.namespaceStack.pop();
+        this.frameTags.pop();
+        if (this.directFrames > 0) this.directFrames--;
+        this.inForeignContent = this.namespaceStack[this.namespaceStack.length - 1] !== html.NS.HTML;
         this.tokenizer.inForeignNode = this.inForeignContent;
     }
 
@@ -1464,14 +1496,39 @@ export class ParserFeedbackSimulator implements TokenHandler {
     /** @internal */
     onStartTag(token: Token.TagToken): void {
         let tn = token.tagID;
+        const frames = this.namespaceStack.length;
+        const ns = this.namespaceStack[frames - 1];
 
         switch (tn) {
-            case $.SVG: {
-                this._enterNamespace(html.NS.SVG);
+            case $.SVG:
+            case $.MATH: {
+                const target = tn === $.SVG ? html.NS.SVG : html.NS.MATHML;
+
+                // Foreign content keeps these in its namespace, except svg in annotation-xml. Unless the current node is
+                // the frame's element, it may be annotation-xml or outside the frame: switch, as a guess nothing builds on.
+                if (ns === html.NS.HTML || ns === target) {
+                    this._enterNamespace(target, token.tagName);
+                } else if (this.directFrames === 0) {
+                    this._enterNamespace(target, token.tagName);
+                    this.directFrames = 0;
+                }
                 break;
             }
-            case $.MATH: {
-                this._enterNamespace(html.NS.MATHML);
+            case $.MGLYPH:
+            case $.MALIGNMARK: {
+                // A MathML text integration point keeps these children in MathML.
+                if (
+                    this.directFrames > 0 &&
+                    this.namespaceStack[frames - 2] === html.NS.MATHML &&
+                    foreignContent.isIntegrationPoint(
+                        html.getTagID(this.frameTags[frames - 1]),
+                        html.NS.MATHML,
+                        [],
+                        html.NS.MATHML,
+                    )
+                ) {
+                    this._enterNamespace(html.NS.MATHML, token.tagName);
+                }
                 break;
             }
             default:
@@ -1480,9 +1537,12 @@ export class ParserFeedbackSimulator implements TokenHandler {
 
         if (this.inForeignContent) {
             if (foreignContent.causesExit(token)) {
-                this._leaveCurrentNamespace();
+                // Tree construction pops foreign elements up to an HTML element or integration point.
+                while (this.inForeignContent) this._leaveCurrentNamespace();
+                this.directFrames = 0;
             } else {
-                const currentNs = this.namespaceStack[0];
+                const { tagName } = token;
+                const currentNs = this.namespaceStack[this.namespaceStack.length - 1];
 
                 if (currentNs === html.NS.MATHML) {
                     foreignContent.adjustTokenMathMLAttrs(token);
@@ -1495,11 +1555,23 @@ export class ParserFeedbackSimulator implements TokenHandler {
 
                 tn = token.tagID;
 
-                if (!token.selfClosing && foreignContent.isIntegrationPoint(tn, currentNs, token.attrs)) {
-                    this._enterNamespace(html.NS.HTML);
+                // Unless the switch above opened a frame for it, the element is an integration point or a new current node.
+                if (!token.selfClosing && this.namespaceStack.length === frames) {
+                    if (foreignContent.isIntegrationPoint(tn, currentNs, token.attrs)) {
+                        this._enterNamespace(html.NS.HTML, tagName);
+                    } else {
+                        this.directFrames = 0;
+                    }
                 }
             }
         } else {
+            // An HTML element named like the integration point closes before it does, so it gets a frame of its own.
+            if (token.tagName === this.frameTags[frames - 1]) {
+                this._enterNamespace(html.NS.HTML, token.tagName);
+            } else {
+                this.directFrames = 0;
+            }
+
             switch (tn) {
                 case $.PRE:
                 case $.TEXTAREA:
@@ -1519,44 +1591,47 @@ export class ParserFeedbackSimulator implements TokenHandler {
             this._ensureTokenizerMode(tn);
         }
 
+        // Tree construction pops a self-closing foreign element at once, so a frame it opened ends with the tag.
+        if (token.selfClosing && this.inForeignContent && this.namespaceStack.length > frames) {
+            this._leaveCurrentNamespace();
+        }
+
         this.handler.onStartTag(token);
     }
 
     /** @internal */
     onEndTag(token: Token.TagToken): void {
-        let tn = token.tagID;
+        const tn = token.tagID;
+        const frames = this.frameTags.length;
 
         if (!this.inForeignContent) {
-            const previousNs = this.namespaceStack[1];
-
-            if (previousNs === html.NS.SVG) {
-                const adjustedTagName = foreignContent.SVG_TAG_NAMES_ADJUSTMENT_MAP.get(token.tagName);
-
-                if (adjustedTagName) {
-                    tn = html.getTagID(adjustedTagName);
-                }
-            }
-
-            //NOTE: check for exit from integration point
-            if (foreignContent.isIntegrationPoint(tn, previousNs, token.attrs)) {
+            // Leaving an integration point: only the end tag of the element that opened the HTML frame closes it.
+            if (token.tagName === this.frameTags[frames - 1]) {
                 this._leaveCurrentNamespace();
+            } else {
+                this.directFrames = 0;
             }
-        } else if (
-            (tn === $.SVG && this.namespaceStack[0] === html.NS.SVG) ||
-            (tn === $.MATH && this.namespaceStack[0] === html.NS.MATHML)
-        ) {
-            this._leaveCurrentNamespace();
+        } else if (tn === $.P || tn === $.BR) {
+            // These end tags leave foreign content, as the start tags of `causesExit` do.
+            while (this.inForeignContent) this._leaveCurrentNamespace();
+        } else {
+            // The frame's own end tag closes it; an mglyph or malignmark frame sits directly in its text integration
+            // point, a MathML element, so the end tags of that element and of the next frame's below close it too.
+            const tag = this.frameTags[frames - 1];
+            const last = tag === html.TAG_NAMES.MGLYPH || tag === html.TAG_NAMES.MALIGNMARK ? frames - 3 : frames - 1;
+            let i = frames - 1;
+
+            while (i >= last && token.tagName !== this.frameTags[i]) i--;
+
+            if (i >= last) {
+                while (this.frameTags.length > i) this._leaveCurrentNamespace();
+            } else {
+                this.directFrames = 0;
+            }
         }
 
         // NOTE: adjust end tag name as well for consistency
-        if (this.namespaceStack[0] === html.NS.SVG) {
-            foreignContent.adjustTokenSVGTagName(token);
-        }
-
-        this.handler.onEndTag(token);
-    }
-}
-
+        if (this.namespaceStack[this.namespaceStack.len
 ```
 
 
@@ -1588,215 +1663,214 @@ export class ParserFeedbackSimulator implements TokenHandler {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7bf0fc95` (2026-11-06)
-**Commit Message**: fix(tokenizer): bound the duplicate-attribute check for wide tags (#1922)
+### Incident Patch 1: `f52fa37f` (2026-10-28)
+**Commit Message**: docs(security): name Tidelift as the only channel for reports
 
-Checking every new attribute name against every earlier one makes a tag with many attributes quadratic (#1901). Tags with up to 64 attributes keep the direct scan; once a 65th distinct name is accepted, the names are collected in a Set that is used for the rest of the tag and dropped when the tag is emitted. Duplicate semantics (first wins, parse error) and attribute order are unchanged. The field starts as `null`, so a wide tag does not add a property to the tokenizer; adding one made later tokenizing in the same process 2–5% slower.
+The current maintainers cannot see reports filed through GitHub's
+private vulnerability reporting, so say that Tidelift is the only
+channel.
 
-The test counts reads of earlier attributes for 2,000 names and checks that the next tag does not see the wide tag's names.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `packages/parse5/lib/tokenizer/index.test.ts` (modified, +44/-0)
+**File**: `SECURITY.md` (modified, +3/-0)
 ```diff
-@@ -345,3 +345,47 @@ describe('Tokenizer methods', () => {
-         );
+@@ -8,3 +8,6 @@ Only the current release is supported. Please make sure to update to the latest
+ 
+ To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security).
+ Tidelift will coordinate the fix and disclosure.
++
++The current maintainers do not have access to GitHub's private vulnerability reporting for this repository,
++so reports filed there are not seen. Tidelift is the only channel for submitting reports.
+```
+
+---
+
+### Incident Patch 2: `b9093da5` (2026-10-24)
+**Commit Message**: fix(parser): match foreign end tags ASCII case-insensitively
+
+The foreign-content "any other end tag" steps compare the node's name converted to ASCII lowercase. `String#toLowerCase` also folds non-ASCII characters (U+212A KELVIN SIGN becomes `k`), so an element could fail to match its own end tag or match another one. The stored name is compared against the token name and the SVG adjustment-map name instead: start-tag names are ASCII-lowercased by the tokenizer and tree construction only adds ASCII uppercase through that map, so the comparison is ASCII-exact and allocates nothing.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `packages/parse5/lib/parser/index.test.ts` (modified, +9/-0)
+```diff
+@@ -84,6 +84,15 @@ describe('parser', () => {
+         });
      });
- });
-+
-+describe('Tokenizer attributes', () => {
-+    it('should detect duplicates in a tag with many attributes without scanning them', () => {
-+        const names = Array.from({ length: 2000 }, (_, i) => `a${i}`);
-+        const duplicates = [...names.slice(0, 100), ...names.slice(-100)];
-+        const tags: Token.TagToken[] = [];
-+        let duplicateCount = 0;
-+        const tokenizer = new Tokenizer(tokenizerOpts, {
-+            onComment: noop,
-+            onDoctype: noop,
-+            onStartTag(t): void {
-+                tags.push(t);
-+            },
-+            onEndTag: noop,
-+            onEof: noop,
-+            onCharacter: noop,
-+            onNullCharacter: noop,
-+            onWhitespaceCharacter: noop,
-+            onParseError(err): void {
-+                duplicateCount += Number(err.code === 'duplicate-attribute');
-+            },
-+        });
-+
-+        // Count the reads of earlier attributes while the rest of the tag is tokenized.
-+        let reads = 0;
-+        tokenizer.write('<div ', false);
-+        const token = Reflect.get(tokenizer, 'currentToken') as Token.TagToken;
-+        token.attrs = new Proxy(token.attrs, {
-+            get(target, key, receiver): unknown {
-+                if (typeof key === 'string' && /^\d+$/.test(key)) reads++;
-+                return Reflect.get(target, key, receiver);
-+            },
-+        });
-+        tokenizer.write(`${names.join('=1 ')}=1 ${duplicates.join('=2 ')}=2><p a0=3>`, true);
-+
-+        // A scan per attribute would read about `names.length ** 2 / 2` entries.
-+        assert.isBelow(reads, names.length * 10);
-+        assert.strictEqual(tags[0].attrs.length, names.length);
-+        assert.ok(tags[0].attrs.every((attr, i) => attr.name === names[i] && attr.value === '1'));
-+        assert.strictEqual(duplicateCount, duplicates.length);
-+        // The next tag does not see the names of the wide one.
-+        assert.deepStrictEqual(tags[1].attrs, [{ name: 'a0', value: '3' }]);
+ 
++    // TODO: upstream to html5lib-tests
++    it.each([
++        // U+212A KELVIN SIGN is not an ASCII upper alpha: `toLowerCase` turns it into "k".
++        ['<svg><a\u212A><desc></a\u212A>x', '<svg><a\u212A><desc></desc></a\u212A>x</svg>'],
++        ['<svg><a\u212A><desc></ak>x', '<svg><a\u212A><desc>x</desc></a\u212A></svg>'],
++    ])('foreign end tags are matched ASCII case-insensitively - %s', (input, expected) => {
++        expect(serialize(parseFragment(input))).toBe(expected);
 +    });
-+});
++
+     describe("Regression - Don't inherit from Object when creating collections (GH-119)", () => {
+         beforeEach(() => {
+             // @ts-expect-error Adding unknown prototype method
 ```
 
-**File**: `packages/parse5/lib/tokenizer/index.ts` (modified, +25/-3)
+**File**: `packages/parse5/lib/parser/index.ts` (modified, +3/-1)
 ```diff
-@@ -23,6 +23,10 @@ import { HtmlEntityDecoder, DecodingMode } from 'entities/decode';
- import { ERR, type ParserErrorHandler } from '../common/error-codes.js';
- import { TAG_ID, getTagID } from '../common/html.js';
+@@ -3814,7 +3814,9 @@ function endTagInForeignContent<T extends TreeAdapterTypeMap>(p: Parser<T>, toke
  
-+// The few attributes a tag usually has are scanned for a duplicate name; from this many on, the names are
-+// collected in a Set instead, so that the check doesn't get quadratic in the number of attributes.
-+const ATTR_NAME_SET_THRESHOLD = 64;
-+
- //States
- const enum State {
-     DATA,
-@@ -224,6 +228,7 @@ export class Tokenizer {
-     protected currentToken: Token | null = null;
-     protected currentAttr: Attribute = { name: '', value: '' };
-     private currentAttrLocation: Location | null = null;
-+    private currentAttrNames: Set<string> | null = null;
-     /**
-      * `[start, end)` of `preprocessor.html` still to be appended to the attribute value, comment data or character
-      * token being built (`_flushRun`): input that is used as is is appended as one slice, not a code point at a time.
-@@ -562,8 +567,25 @@ export class Tokenizer {
+         const tagName = p.treeAdapter.getTagName(element);
  
-     protected _leaveAttrName(): void {
-         const token = this.currentToken as TagToken;
-+        const { name } = this.currentAttr;
-+        const names = this.currentAttrNames;
-+        let duplicate: boolean;
-+
-+        if (names === null) {
-+            duplicate = getTokenAttr(token, name) !== null;
-+            // Build the name set only once a new (65th) name is accepted, so a tag with 64 names and many
-+            // duplicates does not build it.
-+            if (!duplicate && token.attrs.length === ATTR_NAME_SET_THRESHOLD) {
-+                this.currentAttrNames = new Set(token.attrs.map((attr) => attr.name)).add(name);
-+            }
-+        } else {
-+            duplicate = names.has(name);
-+            if (!duplicate) names.add(name);
-+        }
- 
--        if (getTokenAttr(token, this.currentAttr.name) === null) {
-+        if (duplicate) {
-+            this._err(ERR.duplicateAttribute);
-+        } else {
-             token.attrs.push(this.currentAttr);
- 
-             if (token.location && this.currentAttrLocation) {
-@@ -573,8 +595,6 @@ export class Tokenizer {
-                 // Set end location
-                 this._leaveAttrValue();
-             }
--        } else {
--            this._err(ERR.duplicateAttribute);
-         }
-     }
- 
-@@ -670,6 +690,8 @@ export class Tokenizer {
-     protected emitCurrentTagToken(): void {
-         const ct = this.currentToken as TagToken;
- 
-+        this.currentAttrNames = null;
-+
-         this.prepareToken(ct);
- 
-         ct.tagID = getTagID(ct.tagName);
+-        if (tagName.toLowerCase() === token.tagName) {
++        // The tokenizer lowercases foreign start-tag names and tree construction adds ASCII uppercase only through
++        // the SVG adjustment map, so these two comparisons are the ASCII case-insensitive match for every name created.
++        if (tagName === token.tagName || tagName === foreignContent.SVG_TAG_NAMES_ADJUSTMENT_MAP.get(token.tagName)) {
+             //NOTE: update the token tag name for `_setEndLocation`.
+             token.tagName = tagName;
+             p.openElements.shortenToLength(i);
 ```
 
 ---
 
-### Incident Patch 2: `0ef02d3d` (2026-11-06)
-**Commit Message**: fix(plain-text): default to the standard tree adapter types (#1883)
+### Incident Patch 3: `48fb1533` (2026-11-10)
+**Commit Message**: test: resolve data dirs with fileURLToPath so the suite runs on Windows (#1930)
 
-* fix(plain-text): default to the standard tree adapter types
+Co-authored-by: goranai <[REDACTED_EMAIL]>
 
-* test(plain-text): drop unused type regression tests
-
-**File**: `packages/parse5-plain-text-conversion-stream/lib/index.ts` (modified, +2/-2)
+**File**: `bench/perf/index.js` (modified, +2/-1)
 ```diff
-@@ -1,4 +1,4 @@
--import { type ParserOptions, type TreeAdapterTypeMap, html } from 'parse5';
-+import { type ParserOptions, type TreeAdapterTypeMap, type DefaultTreeAdapterMap, html } from 'parse5';
- import { ParserStream } from 'parse5-parser-stream';
+@@ -1,4 +1,5 @@
+ import { readFileSync, createReadStream, readdirSync } from 'node:fs';
++import { fileURLToPath } from 'node:url';
+ import { Bench } from 'tinybench';
+ import { loadTreeConstructionTestData } from 'parse5-test-utils/dist/generate-parsing-tests.js';
+ import { loadSAXParserTestData } from 'parse5-test-utils/dist/load-sax-parser-test-data.js';
+@@ -48,7 +49,7 @@ function runPages(parser) {
+ }
  
- const { TAG_ID: $, TAG_NAMES: TN } = html;
-@@ -24,7 +24,7 @@ const { TAG_ID: $, TAG_NAMES: TN } = html;
-  * file.pipe(converter);
-  * ```
-  */
--export class PlainTextConversionStream<T extends TreeAdapterTypeMap> extends ParserStream<T> {
-+export class PlainTextConversionStream<T extends TreeAdapterTypeMap = DefaultTreeAdapterMap> extends ParserStream<T> {
-     constructor(options?: ParserOptions<T>) {
-         super(options);
+ // Stream data
+-const files = readdirSync(saxPath).map((dirName) => new URL(`${dirName}/src.html`, saxPath).pathname);
++const files = readdirSync(saxPath).map((dirName) => fileURLToPath(new URL(`${dirName}/src.html`, saxPath)));
+ 
+ // Utils
+ async function runBench({ name, workingCopyFn, upstreamFn }) {
+```
+
+**File**: `packages/parse5-sax-parser/test/parser-feedback-simulator.test.ts` (modified, +3/-2)
+```diff
+@@ -1,12 +1,13 @@
++import { fileURLToPath } from 'node:url';
+ import { it, assert } from 'vitest';
+ import { generateTokenizationTests } from 'parse5-test-utils/utils/generate-tokenization-tests.js';
+ import { ParserFeedbackSimulator } from '../lib/parser-feedback-simulator.js';
+ 
+-const feedbackPath = new URL('../../../test/data/parser-feedback', import.meta.url);
++const feedbackPath = fileURLToPath(new URL('../../../test/data/parser-feedback', import.meta.url));
+ 
+ generateTokenizationTests(
+     'ParserFeedbackSimulator',
+-    feedbackPath.pathname,
++    feedbackPath,
+     (handler) => new ParserFeedbackSimulator({}, handler).tokenizer,
+ );
  
 ```
 
----
-
-### Incident Patch 3: `edea69b6` (2026-11-06)
-**Commit Message**: fix(parser-stream): require parse5 ^8.1.0 (#1916)
-
-ParserStream#flushCharacters calls tokenizer.flushCharacters, which
-was added in parse5 8.1.0.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `package-lock.json` (modified, +2/-2)
+**File**: `packages/parse5/lib/tokenizer/index.test.ts` (modified, +3/-2)
 ```diff
-@@ -3472,7 +3472,7 @@
-             "version": "8.1.0",
-             "license": "MIT",
-             "dependencies": {
--                "parse5": "^8.0.0"
-+                "parse5": "^8.1.0"
-             },
-             "devDependencies": {
-                 "parse5-test-utils": "1.0.0"
-@@ -5140,7 +5140,7 @@
-         "parse5-parser-stream": {
-             "version": "file:packages/parse5-parser-stream",
-             "requires": {
--                "parse5": "^8.0.0",
-+                "parse5": "^8.1.0",
-                 "parse5-test-utils": "1.0.0"
-             }
-         },
+@@ -1,13 +1,14 @@
++import { fileURLToPath } from 'node:url';
+ import { it, assert, describe } from 'vitest';
+ import { Tokenizer, TokenizerMode, type Token } from 'parse5';
+ import { generateTokenizationTests } from 'parse5-test-utils/utils/generate-tokenization-tests.js';
+ 
+-const dataPath = new URL('../../../../test/data/html5lib-tests/tokenizer', import.meta.url);
++const dataPath = fileURLToPath(new URL('../../../../test/data/html5lib-tests/tokenizer', import.meta.url));
+ const tokenizerOpts = {
+     sourceCodeLocationInfo: true,
+ };
+ 
+-generateTokenizationTests('Tokenizer', dataPath.pathname, (handler) => new Tokenizer(tokenizerOpts, handler));
++generateTokenizationTests('Tokenizer', dataPath, (handler) => new Tokenizer(tokenizerOpts, handler));
+ 
+ function noop(): void {
+     // Noop
 ```
 
-**File**: `packages/parse5-parser-stream/package.json` (modified, +1/-1)
+**File**: `test/utils/generate-location-info-parser-tests.ts` (modified, +3/-2)
 ```diff
-@@ -28,7 +28,7 @@
-         }
-     },
-     "dependencies": {
--        "parse5": "^8.0.0"
-+        "parse5": "^8.1.0"
-     },
-     "scripts": {},
-     "repository": {
+@@ -1,6 +1,7 @@
+ import { it, assert } from 'vitest';
+ import * as fs from 'node:fs';
+ import path from 'node:path';
++import { fileURLToPath } from 'node:url';
+ import { type TreeAdapterTypeMap, type TreeAdapter, type ParserOptions, type Token, serializeOuter } from 'parse5';
+ import {
+     removeNewLines,
+@@ -101,11 +102,11 @@ export function assertNodeLocation(
+ }
+ 
+ function loadParserLocationInfoTestData(): { name: string; data: string }[] {
+-    const dataDirPath = new URL('../data/location-info', import.meta.url);
++    const dataDirPath = fileURLToPath(new URL('../data/location-info', import.meta.url));
+     const testSetFileDirs = fs.readdirSync(dataDirPath);
+ 
+     return testSetFileDirs.map((dirName) => {
+-        const dataFilePath = path.join(dataDirPath.pathname, dirName, 'data.html');
++        const dataFilePath = path.join(dataDirPath, dirName, 'data.html');
+         const data = fs.readFileSync(dataFilePath).toString();
+ 
+         return {
+```
+
+**File**: `test/utils/generate-parsing-tests.ts` (modified, +2/-1)
+```diff
+@@ -2,6 +2,7 @@ import { it, assert } from 'vitest';
+ import type { ParserOptions, TreeAdapter, TreeAdapterTypeMap, ParserError } from 'parse5';
+ import * as fs from 'node:fs';
+ import path from 'node:path';
++import { fileURLToPath } from 'node:url';
+ import { serializeToDatFileFormat } from './serialize-to-dat-file-format.js';
+ import { generateTestsForEachTreeAdapter } from './common.js';
+ import { parseDatFile, type DatFile } from './parse-dat-file.js';
+@@ -18,7 +19,7 @@ export function loadTreeConstructionTestData<T extends TreeAdapterTypeMap>(
+ ): TreeConstructionTestData<T>[] {
+     const tests: TreeConstructionTestData<T>[] = [];
+ 
+-    const dataDirPath = dataDir.pathname;
++    const dataDirPath = fileURLToPath(dataDir);
+     const testSetFileNames = fs.readdirSync(dataDir);
+     const dirName = path.basename(dataDirPath);
+ 
+```
+
+**File**: `test/utils/load-sax-parser-test-data.ts` (modified, +4/-3)
+```diff
+@@ -1,14 +1,15 @@
+ import * as fs from 'node:fs';
+ import path from 'node:path';
++import { fileURLToPath } from 'node:url';
+ import { normalizeNewLine } from './common.js';
+ 
+ export function loadSAXParserTestData(): { name: string; src: string; expected: string }[] {
+-    const dataDirPath = new URL('../data/sax', import.meta.url);
++    const dataDirPath = fileURLToPath(new URL('../data/sax', import.meta.url));
+     const testSetFileDirs = fs.readdirSync(dataDirPath);
+ 
+     return testSetFileDirs.map((dirName) => {
+-        const srcFilePath = path.join(dataDirPath.pathname, dirName, 'src.html');
+-        const expectedFilePath = path.join(dataDirPath.pathname, dirName, 'expected.html');
++        const srcFilePath = path.join(dataDirPath, dirName, 'src.html');
++        const expectedFilePath = path.join(dataDirPath, dirName, 'expected.html');
+         const src = fs.readFileSync(srcFilePath).toString();
+         const expected = fs.readFileSync(expectedFilePath).toString();
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1930** (2026-11-10): test: resolve data dirs with fileURLToPath so the suite runs on Windows (@goranai)
+- **PR #1927** (2026-11-09): chore(deps): bump the codeql group with 2 updates (@dependabot[bot])
+- **PR #1926** (2026-11-07): chore: v8.1.1 (@fb55)
 - **PR #1922** (2026-11-06): fix(tokenizer): bound the duplicate-attribute check for wide tags (@fb55)
+- **PR #1921** (2026-11-07): Security fixes for the tokenizer, serializer, SAX parser and tree construction (@fb55)
 - **PR #1919** (2026-11-06): chore(deps-dev): bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
-- **PR #1918** (2026-11-06): chore(deps-dev): bump @vitest/coverage-v8 from 5.0.5 to 5.1.0 (@dependabot[bot])
-- **PR #1917** (2026-11-06): chore(deps): bump the codeql group with 2 updates (@dependabot[bot])
-- **PR #1916** (2026-11-06): fix(parser-stream): require parse5 ^8.1.0 (@scttcper)
-- **PR #1915** (2026-11-05): chore(deps): bump tinybench from 6.2.2 to 6.2.3 (@dependabot[bot])
 
 ---
 
@@ -1816,50 +1890,23 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tokenizer): bound the duplicate-attribute check for wide tags (#1922)
+## X. docs(security): name Tidelift as the only channel for reports
 
 **RULE**:
-When implementing operations in `packages/parse5/lib/tokenizer/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7bf0fc95`: tokenizer): bound the duplicate-attribute check for wide tags (#1922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f52fa37f`: docs(security): name Tidelift as the only channel for reports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/parse5/lib/tokenizer/index.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 
-describe('Tokenizer attributes', () => {
-    it('should detect duplicates in a tag with many attributes without scanning them', () => {
-        const names = Array.from({ length: 2000 }, (_, i) => `a${i}`);
-        const duplicates = [...names.slice(0, 100), ...names.slice(-100)];
-        const tags: Token.TagToken[] = [];
-        let duplicateCount = 0;
-        const tokenizer = new Tokenizer(tokenizerOpts, {
-            onComment: noop,
-            onDoctype: noop,
-            onStartTag(t): void {
-                tags.push(t);
-            },
-            onEndTag: noop,
-            onEof: noop,
-            onCharacter: noop,
-            onNullCharacter: noop,
-            onWhitespaceCharacter: noop,
-            onParseError(err): void {
-                duplicateCount += Number(err.code === 'duplicate-attribute');
-            },
-        });
-
-        // Count the reads of earlier attributes while the rest of the tag is tokenized.
-        let reads = 0;
-        tokenizer.write('<div ', false);
-        const token = Reflect.get(tokenizer, 'currentToken') as Token.TagToken;
-        token.attrs = new Proxy(token.attrs, {
-            get(target, key, receiver): unknown {
-              
+The current maintainers do not have access to GitHub's private vulnerability reporting for this repository,
+so reports filed there are not seen. Tidelift is the only channel for submitting reports.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1869,4 +1916,4 @@ describe('Tokenizer attributes', () => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7bf0fc95` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f52fa37f` are properly handled with clean fallback behavior.

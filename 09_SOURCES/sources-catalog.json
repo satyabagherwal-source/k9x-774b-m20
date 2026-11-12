@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "cedaeca8",
+    "sourceVersion": "8cd4dbe1",
     "license": "Apache-2.0",
-    "contentHash": "e606a51ddeb5aaae1fc4d6c5c8cd00a2279526a5767422c7e5510b404a44ec91",
-    "lastHarvestedAt": "2026-11-07T20:23:02.896Z",
+    "contentHash": "119414c4fa5ea2bc0f7fcc382b01e17b50a349e875e54059fafc2b1d5dcf5024",
+    "lastHarvestedAt": "2026-11-11T18:35:49.754Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "942b6cfa",
+    "sourceVersion": "f0260049",
     "license": "Apache-2.0",
-    "contentHash": "8339467fd1dada35e40655e7edeb5d1efd26295945e270603fadf2c8bc0b145a",
-    "lastHarvestedAt": "2026-11-09T12:49:37.320Z",
+    "contentHash": "79c87ef277ca63e1510c6971ec93e9812d48297f21ba0d3b36ead6264b484c3a",
+    "lastHarvestedAt": "2026-11-11T18:54:54.343Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -2273,10 +2273,10 @@
     "repository": "fission/fission",
     "platform": "github",
     "sourceUrl": "https://github.com/fission/fission",
-    "sourceVersion": "9cac7b02",
+    "sourceVersion": "8152c961",
     "license": "Apache-2.0",
-    "contentHash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
-    "lastHarvestedAt": "2026-11-09T13:10:05.570Z",
+    "contentHash": "051fdbd2d5f80888e2df0cd26e1dfdd1235bbe538c738a96766db4f00d0a33d2",
+    "lastHarvestedAt": "2026-11-11T19:15:26.207Z",
     "learningId": "learn-github-fission-fission"
   },
   "smallstep-cli": {
@@ -2343,20 +2343,20 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "1eefe2ef",
+    "sourceVersion": "35a006bd",
     "license": "Apache-2.0",
-    "contentHash": "c9877c344624fda9dd4061dc718b6738fcb5bcb6fd67fd468f54f74994f2ad09",
-    "lastHarvestedAt": "2026-11-09T13:21:52.292Z",
+    "contentHash": "305cbe11fbe8908eeea71e796aa4ff4412aa0b9e280c4276d2f393f30b7210bb",
+    "lastHarvestedAt": "2026-11-11T19:28:42.115Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "cd5af882",
+    "sourceVersion": "cecd9f55",
     "license": "Apache-2.0",
-    "contentHash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
-    "lastHarvestedAt": "2026-11-11T11:19:12.005Z",
+    "contentHash": "5addd5440ec9a1ad64707f9e64a9b1ec55ce1cf12caded425f0320ff2024cc81",
+    "lastHarvestedAt": "2026-11-11T19:28:45.041Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "4613dae4",
+    "sourceVersion": "576278c9",
     "license": "Apache-2.0",
-    "contentHash": "ef569a41abbc6b68065d7d0b64c6ebcb393089475ba8b79eed10ced2699b3a70",
-    "lastHarvestedAt": "2026-11-05T23:39:59.400Z",
+    "contentHash": "aa233740ca5006e04310c3f265afbf20788dad9d6ee6ffcff02079220935d99a",
+    "lastHarvestedAt": "2026-11-11T20:18:40.325Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -2683,20 +2683,20 @@
     "repository": "Permify/permify",
     "platform": "github",
     "sourceUrl": "https://github.com/Permify/permify",
-    "sourceVersion": "81819b84",
+    "sourceVersion": "f1d2b9b0",
     "license": "AGPL-3.0",
-    "contentHash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
-    "lastHarvestedAt": "2026-11-06T00:02:51.498Z",
+    "contentHash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
+    "lastHarvestedAt": "2026-11-12T00:45:30.265Z",
     "learningId": "learn-github-permify-permify"
   },
   "rustls-rustls": {
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "c805ecfe",
+    "sourceVersion": "f68d6d29",
     "license": "NOASSERTION",
-    "contentHash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
-    "lastHarvestedAt": "2026-11-11T10:26:52.259Z",
+    "contentHash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
+    "lastHarvestedAt": "2026-11-11T18:03:57.490Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "705b459b",
+    "sourceVersion": "fa001f3a",
     "license": "Apache-2.0",
-    "contentHash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
-    "lastHarvestedAt": "2026-11-09T15:29:01.973Z",
+    "contentHash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
+    "lastHarvestedAt": "2026-11-12T01:12:10.842Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -2843,20 +2843,20 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "7490cf4b",
+    "sourceVersion": "42846c40",
     "license": "Apache-2.0",
-    "contentHash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
-    "lastHarvestedAt": "2026-11-09T15:51:36.447Z",
+    "contentHash": "b97768bdf78231ed2ddd22d9e3854a8a2c1107f8a8d4670b7887f4e6304cf5ff",
+    "lastHarvestedAt": "2026-11-12T01:23:32.213Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "653af09c",
+    "sourceVersion": "acae3b45",
     "license": "NOASSERTION",
-    "contentHash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
-    "lastHarvestedAt": "2026-11-11T06:33:46.439Z",
+    "contentHash": "1bf2cab605ca8e61df295726eadda3dd6774e328bd05a1262be275a8fd0771a4",
+    "lastHarvestedAt": "2026-11-12T00:58:45.811Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "ec498292",
+    "sourceVersion": "36caf4ca",
     "license": "AGPL-3.0",
-    "contentHash": "85bb04aedc010e220647d8d0156fa00c5d79a56e3948debbb9d466a08545bfe1",
-    "lastHarvestedAt": "2026-11-09T16:18:30.458Z",
+    "contentHash": "4731c5a82193f43b7de0c9033ad3da623f61e91d5c769a823e1c7cfc3fb5c005",
+    "lastHarvestedAt": "2026-11-12T01:52:07.159Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "ba0b4a85",
+    "sourceVersion": "f28032b1",
     "license": "MIT",
-    "contentHash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
-    "lastHarvestedAt": "2026-11-09T03:05:11.671Z",
+    "contentHash": "526830c2fd8321a1c8b9fef5e3faff3943b65b1ed41527e5a1637b448f293106",
+    "lastHarvestedAt": "2026-11-11T16:56:00.334Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "195ff5b6",
+    "sourceVersion": "b993537c",
     "license": "ISC",
-    "contentHash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
-    "lastHarvestedAt": "2026-11-05T22:40:05.011Z",
+    "contentHash": "3dc7fd1227bb5507f0cbc626f559328e47bd16fb0c9b3c4b1d42a7f884163557",
+    "lastHarvestedAt": "2026-11-11T17:13:09.821Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -3093,10 +3093,10 @@
     "repository": "taubyte/tau",
     "platform": "github",
     "sourceUrl": "https://github.com/taubyte/tau",
-    "sourceVersion": "374537fb",
+    "sourceVersion": "59816f6f",
     "license": "BSD-3-Clause",
-    "contentHash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
-    "lastHarvestedAt": "2026-11-03T21:00:09.286Z",
+    "contentHash": "1e19823b27f4f2c0ddbbc3a5c542e015afa2409fdfc0d5525f3ca5c15314d844",
+    "lastHarvestedAt": "2026-11-12T02:03:47.733Z",
     "learningId": "learn-github-taubyte-tau"
   },
   "build-trust-ockam": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "479c0a15",
+    "sourceVersion": "7016f77b",
     "license": "MIT",
-    "contentHash": "4012181ab373527484ac65f57b27e81e00a3527d9bc035d945e85df6faa3b719",
-    "lastHarvestedAt": "2026-11-09T03:35:19.191Z",
+    "contentHash": "7fffa3d52373a17722724855ecaeb1a4641eec84432eab1c361910cee2259e19",
+    "lastHarvestedAt": "2026-11-11T17:51:16.263Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "120bc0ad",
+    "sourceVersion": "9a1a9e7c",
     "license": "GPL-2.0",
-    "contentHash": "4e9907f4e3e383b10bfb7843e8855f8ad5dd8b7aa35794cca58d138a4b045f67",
-    "lastHarvestedAt": "2026-11-05T23:09:26.370Z",
+    "contentHash": "c1a49d371356d750113b45122f957825639972d9ee8829ab43a3938301232971",
+    "lastHarvestedAt": "2026-11-11T18:16:58.932Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -3333,20 +3333,20 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "60b764b8",
+    "sourceVersion": "b65a7b2f",
     "license": "Apache-2.0",
-    "contentHash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
-    "lastHarvestedAt": "2026-11-09T17:12:20.686Z",
+    "contentHash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
+    "lastHarvestedAt": "2026-11-12T02:56:23.413Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "523d26b3",
+    "sourceVersion": "f32bb49a",
     "license": "Apache-2.0",
-    "contentHash": "4d4d8b52e07be09bdd66a42a998265563cf0a75f072b563d8412d7152e94020b",
-    "lastHarvestedAt": "2026-11-11T16:20:44.044Z",
+    "contentHash": "8b37cf3393503a562711200dc6861cbcb747602b4597b2bfec8b50761c1636d2",
+    "lastHarvestedAt": "2026-11-12T02:33:42.519Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "288e4a3e",
+    "sourceVersion": "d79d5796",
     "license": "GPL-3.0",
-    "contentHash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
-    "lastHarvestedAt": "2026-11-09T04:10:26.094Z",
+    "contentHash": "43784fc8fde93f2afe398ae855f57559a0006a845a543ea83398f58a46e4abcb",
+    "lastHarvestedAt": "2026-11-11T18:35:36.790Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "a9a8a317",
+    "sourceVersion": "bb49df41",
     "license": "Apache-2.0",
-    "contentHash": "ea414e3508093a660d34058e6b5a00aafe616634d8abafe5204f664441b25184",
-    "lastHarvestedAt": "2026-11-09T17:35:01.899Z",
+    "contentHash": "f2c98b2c6e4af52cb5af7039b38cbc0c927f7052481efd715d109621ebbd7a00",
+    "lastHarvestedAt": "2026-11-12T03:10:39.224Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "533e89d6",
+    "sourceVersion": "7437e3e9",
     "license": "MIT",
-    "contentHash": "9fc22120a8c140cf239fdb9193a730dba6e0af276c6b411e287f11b2e0fe3ae0",
-    "lastHarvestedAt": "2026-11-09T04:20:08.709Z",
+    "contentHash": "828db638a33df3b4e7504735e093ad4bdf914ffbf97f29fbc3ea24a82a6e7496",
+    "lastHarvestedAt": "2026-11-11T18:54:57.369Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -3523,20 +3523,20 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "c8a4781a",
+    "sourceVersion": "8fece0b2",
     "license": "Apache-2.0",
-    "contentHash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
-    "lastHarvestedAt": "2026-11-10T01:19:28.791Z",
+    "contentHash": "36f9ed2d92a680c8a73cf9f31e64b2d9ec4778a1cfe56a51b1bc9c4646479c5c",
+    "lastHarvestedAt": "2026-11-12T02:16:55.300Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "1992a18d",
+    "sourceVersion": "d0a94b30",
     "license": "MIT",
-    "contentHash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
-    "lastHarvestedAt": "2026-11-08T12:35:09.294Z",
+    "contentHash": "b1d1b24a1baf60e395a47982bf2563dc4a388a119674b51783132a7203b3a392",
+    "lastHarvestedAt": "2026-11-11T16:43:02.289Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "47e426e5",
+    "sourceVersion": "02152f3a",
     "license": "MIT",
-    "contentHash": "dd639d46a09d2363ca1e77802267d72791f24ba998c8419890a208c02135e798",
-    "lastHarvestedAt": "2026-11-09T04:49:31.710Z",
+    "contentHash": "45f9398e3350d6ece94872281dfb344020c89c30639420f5e89366629a7642c9",
+    "lastHarvestedAt": "2026-11-11T19:46:17.194Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "18876676",
+    "sourceVersion": "2c078840",
     "license": "AGPL-3.0",
-    "contentHash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
-    "lastHarvestedAt": "2026-11-11T09:49:10.425Z",
+    "contentHash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
+    "lastHarvestedAt": "2026-11-12T02:56:41.154Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "c23311a8",
+    "sourceVersion": "df52b4fe",
     "license": "Apache-2.0",
-    "contentHash": "b1d6860ab9acd76ac0f6cdcf24aef9b2a7e3909c381d4aa1249734549aab84e5",
-    "lastHarvestedAt": "2026-11-08T14:00:00.596Z",
+    "contentHash": "039f0bb677fd5da847981474126aa0e5caa9fad8eba707bc3e46adb196968a1d",
+    "lastHarvestedAt": "2026-11-11T17:46:24.885Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "c0010d32",
+    "sourceVersion": "9457c528",
     "license": "Apache-2.0",
-    "contentHash": "5026c055df172b98d0fb5aa1c51d4ef7881e0a03cb8cf5cdb3ccb7ddd70b0137",
-    "lastHarvestedAt": "2026-11-09T05:13:58.023Z",
+    "contentHash": "11b5bd09de4a6a03e63883ff86507a1f99d2ed5ac4a88aab47ba89f7df2a651c",
+    "lastHarvestedAt": "2026-11-11T20:23:35.896Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "51395ef8",
+    "sourceVersion": "26236216",
     "license": "Apache-2.0",
-    "contentHash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
-    "lastHarvestedAt": "2026-11-09T10:07:57.073Z",
+    "contentHash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
+    "lastHarvestedAt": "2026-11-11T18:04:00.053Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "cc6facab",
+    "sourceVersion": "e0f4d211",
     "license": "MIT",
-    "contentHash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
-    "lastHarvestedAt": "2026-11-05T04:21:46.602Z",
+    "contentHash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
+    "lastHarvestedAt": "2026-11-12T00:45:31.373Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "91b650ea",
+    "sourceVersion": "a859dade",
     "license": "NOASSERTION",
-    "contentHash": "a9d41b1189d94a6da791be55f59ed92fd28640b24ef0341100c5072a131c2071",
-    "lastHarvestedAt": "2026-11-09T11:16:31.660Z",
+    "contentHash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
+    "lastHarvestedAt": "2026-11-11T18:35:55.479Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "06fcb151",
+    "sourceVersion": "5be60bda",
     "license": "Apache-2.0",
-    "contentHash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
-    "lastHarvestedAt": "2026-11-07T17:57:51.067Z",
+    "contentHash": "027d9b1fc3c7e3201366ee9733bd8cea6b2ba8e283f6ed5de908a96597c0b1a0",
+    "lastHarvestedAt": "2026-11-11T18:55:10.679Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "047a8a24",
+    "sourceVersion": "9e4c4967",
     "license": "OSL-3.0",
-    "contentHash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
-    "lastHarvestedAt": "2026-11-09T11:54:13.195Z",
+    "contentHash": "475ff7ebc5f757296168b646663213b46230673aa5e588bc827818f84740b43f",
+    "lastHarvestedAt": "2026-11-11T19:15:32.230Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "865a2448",
+    "sourceVersion": "d1e064e3",
     "license": "Apache-2.0",
-    "contentHash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
-    "lastHarvestedAt": "2026-11-09T06:38:54.296Z",
+    "contentHash": "83484a7482d7d4dab1b3587f6044149c5a7cddad8ccf54fb70f9f564a3f2ca26",
+    "lastHarvestedAt": "2026-11-12T01:31:20.902Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "fc736e32",
+    "sourceVersion": "fce8d5b9",
     "license": "Apache-2.0",
-    "contentHash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
-    "lastHarvestedAt": "2026-11-09T14:18:11.096Z",
+    "contentHash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
+    "lastHarvestedAt": "2026-11-12T01:23:37.416Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -4293,10 +4293,10 @@
     "repository": "Nasiko-Labs/nasiko",
     "platform": "github",
     "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "sourceVersion": "10a08581",
+    "sourceVersion": "9f84200c",
     "license": "NOASSERTION",
-    "contentHash": "d668d6a9b504220af26a3bc75d6be1802815ca3189eb97e80d74614fc7fab5b5",
-    "lastHarvestedAt": "2026-10-23T05:56:31.845Z",
+    "contentHash": "c46b9aaf60fee835f78b5f389e6bcd2bf6a540244b3d5dc44f28cbb26213e161",
+    "lastHarvestedAt": "2026-11-12T02:33:32.408Z",
     "learningId": "learn-github-nasiko-labs-nasiko"
   },
   "berty-berty": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "145de9c4",
+    "sourceVersion": "a99f0e28",
     "license": "MPL-2.0",
-    "contentHash": "9a9cb7f76ab9a47fbeaa06080617f632a5fac35236520438e403653e204d24e1",
-    "lastHarvestedAt": "2026-11-07T18:24:58.700Z",
+    "contentHash": "c8157f2b1df0dac673230fbd82148c4f1a0358afd461b9a3d981d75e00de5225",
+    "lastHarvestedAt": "2026-11-11T19:46:32.235Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -4393,10 +4393,10 @@
     "repository": "vi/websocat",
     "platform": "github",
     "sourceUrl": "https://github.com/vi/websocat",
-    "sourceVersion": "3a3574cd",
+    "sourceVersion": "734de478",
     "license": "MIT",
-    "contentHash": "fd20b733ab2d87ef6ac693befa8a07551bd578826f09f34bd45a547795ec9a04",
-    "lastHarvestedAt": "2026-10-19T01:16:20.322Z",
+    "contentHash": "84feebe60d2749e442bd1594babe3632d0d7a95245a917bb6ab5ab8bf6c29f0c",
+    "lastHarvestedAt": "2026-11-12T03:10:29.250Z",
     "learningId": "learn-github-vi-websocat"
   },
   "keybase-client": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "0b705dc8",
+    "sourceVersion": "9aedb400",
     "license": "Apache-2.0",
-    "contentHash": "a3bf1b0fb5f83ac0202d7d1c040a6a1abf8b7d9b8ab0d1f5e4b92a5f1bb58682",
-    "lastHarvestedAt": "2026-11-08T16:14:30.511Z",
+    "contentHash": "a4ec99c1335af934d00a7c3d06197879487c2a7354082964722c995c8b7c8b7d",
+    "lastHarvestedAt": "2026-11-12T00:58:47.006Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "d4f206e3",
+    "sourceVersion": "3c673a3b",
     "license": "MIT",
-    "contentHash": "56ad5a69167283bb71fc2b9f0c4a2b4d1ba7b2baeab7b655a55b062b7bb5a7d2",
-    "lastHarvestedAt": "2026-11-03T11:39:12.004Z",
+    "contentHash": "2ce122bd971384009a5c1ee40501ebe523515b2e2fa8f34231627846ef1cf12f",
+    "lastHarvestedAt": "2026-11-12T02:03:45.833Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "d622ec57",
+    "sourceVersion": "d87ef4ce",
     "license": "Apache-2.0",
-    "contentHash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
-    "lastHarvestedAt": "2026-11-07T20:23:08.284Z",
+    "contentHash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
+    "lastHarvestedAt": "2026-11-12T02:17:03.508Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "633ccf2e",
+    "sourceVersion": "7f808225",
     "license": "Apache-2.0",
-    "contentHash": "1f329c73419736806b12a15742892947a838876bd5f51147f9a3d05f74438cd5",
-    "lastHarvestedAt": "2026-11-08T17:42:50.417Z",
+    "contentHash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
+    "lastHarvestedAt": "2026-11-12T02:48:56.771Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "95a0477a",
+    "sourceVersion": "d904ad91",
     "license": "MIT",
-    "contentHash": "47d6ca5e739a8027bb9683646b42ee38fec985728b1ed57bc169c1e616c756ac",
-    "lastHarvestedAt": "2026-11-09T16:18:36.348Z",
+    "contentHash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
+    "lastHarvestedAt": "2026-11-12T02:56:44.583Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "91a45282",
+    "sourceVersion": "5431e621",
     "license": "Apache-2.0",
-    "contentHash": "e3df911e483a6e6cfed9835f556d9a2dbfa4865b38ad6f380a978ea519877f3c",
-    "lastHarvestedAt": "2026-11-09T16:26:07.076Z",
+    "contentHash": "6b1c1a0fdb06274053c266aa45f29f2855ceecc2fec835a4647af0a6734900ac",
+    "lastHarvestedAt": "2026-11-12T03:10:45.844Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "bc458019",
+    "sourceVersion": "fac9abd1",
     "license": "Apache-2.0",
-    "contentHash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
-    "lastHarvestedAt": "2026-11-09T10:59:35.994Z",
+    "contentHash": "3b35e68ee600c29af308e51a03367308387e658024111782a1d0bf088f717a47",
+    "lastHarvestedAt": "2026-11-11T16:55:57.487Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "c1a97cbd",
+    "sourceVersion": "0d4956f3",
     "license": "Apache-2.0",
-    "contentHash": "1756b1d3992fd0063b1b83e0091780d81a9d800c6cff0b10f91828bba2f6b512",
-    "lastHarvestedAt": "2026-11-09T11:31:13.413Z",
+    "contentHash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
+    "lastHarvestedAt": "2026-11-11T17:51:35.443Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "d353cc58",
+    "sourceVersion": "c5e9027e",
     "license": "Apache-2.0",
-    "contentHash": "6c78f38e77fc62c6bd2c099d8eb53f4d8ad6778c18c6aa97c4da482853263fd5",
-    "lastHarvestedAt": "2026-11-09T12:16:14.580Z",
+    "contentHash": "0bd23d27cb6f4b0285bf21fe065d25c074beb131a2b48c1b5179875b961b7a5a",
+    "lastHarvestedAt": "2026-11-11T18:12:01.976Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "0297b7e9",
+    "sourceVersion": "ca4d8fa9",
     "license": "MPL-2.0",
-    "contentHash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
-    "lastHarvestedAt": "2026-11-09T12:29:45.450Z",
+    "contentHash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
+    "lastHarvestedAt": "2026-11-11T18:23:48.997Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -7483,10 +7483,10 @@
     "repository": "linkwarden/linkwarden",
     "platform": "github",
     "sourceUrl": "https://github.com/linkwarden/linkwarden",
-    "sourceVersion": "eff7c6b7",
+    "sourceVersion": "24adcc14",
     "license": "AGPL-3.0",
-    "contentHash": "25c41a158cd8fec799a7e5a24eec270796aa35280c355ff0aaaf0b00422475e6",
-    "lastHarvestedAt": "2026-10-28T01:29:08.650Z",
+    "contentHash": "fba74864324c80e393b68621af4dc7a5a222725ceffd92692f0641ca5c159072",
+    "lastHarvestedAt": "2026-11-11T16:42:55.391Z",
     "learningId": "learn-github-linkwarden-linkwarden"
   },
   "databendlabs-databend": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "41fef581",
+    "sourceVersion": "5ba45344",
     "license": "NOASSERTION",
-    "contentHash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
-    "lastHarvestedAt": "2026-11-07T23:55:22.791Z",
+    "contentHash": "fd0a48d5ccde3a626e875af66de5350e41c75773f80c87536afb207d1bcf7187",
+    "lastHarvestedAt": "2026-11-11T17:13:14.562Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "a3cdce35",
+    "sourceVersion": "c3c5fe6a",
     "license": "AGPL-3.0",
-    "contentHash": "a176072a8155b99a37a7a3552912f5f70e89d506f0fadf6ef5c91573e653a45a",
-    "lastHarvestedAt": "2026-11-08T00:02:39.005Z",
+    "contentHash": "cd232e3053530f38bc6494bf7e5a9740d5c6f46926b97163e51f6571d101988e",
+    "lastHarvestedAt": "2026-11-11T17:46:20.585Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {
@@ -7653,10 +7653,10 @@
     "repository": "msasikanth/twine",
     "platform": "github",
     "sourceUrl": "https://github.com/msasikanth/twine",
-    "sourceVersion": "baf8d83c",
+    "sourceVersion": "15d06cbe",
     "license": "GPL-3.0",
-    "contentHash": "8762b44902ab0c261fe4b3fd10e7bfe50e40eb70bfcbd64dabffa8f9ef41ddb7",
-    "lastHarvestedAt": "2026-11-08T00:34:21.601Z",
+    "contentHash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
+    "lastHarvestedAt": "2026-11-11T18:28:49.921Z",
     "learningId": "learn-github-msasikanth-twine"
   },
   "facebook-folly": {
@@ -7753,10 +7753,10 @@
     "repository": "mrkai77/Loop",
     "platform": "github",
     "sourceUrl": "https://github.com/mrkai77/Loop",
-    "sourceVersion": "573ace30",
+    "sourceVersion": "b041fcbb",
     "license": "GPL-3.0",
-    "contentHash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
-    "lastHarvestedAt": "2026-10-19T10:41:16.980Z",
+    "contentHash": "c86f06af578c860a35da29746c5d01261576911246ff5bd9e10a09ed060151a7",
+    "lastHarvestedAt": "2026-11-11T19:46:23.705Z",
     "learningId": "learn-github-mrkai77-loop"
   },
   "tokio-rs-tokio": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "bf7f6dc2",
+    "sourceVersion": "026a4532",
     "license": "Apache-2.0",
-    "contentHash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
-    "lastHarvestedAt": "2026-11-08T01:17:54.950Z",
+    "contentHash": "cb94dc1e1a0f35afe6d32520600e7538b546d7c14e64264a50205874a6c80736",
+    "lastHarvestedAt": "2026-11-11T19:53:46.579Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {
@@ -7793,10 +7793,10 @@
     "repository": "MohamedRejeb/compose-rich-editor",
     "platform": "github",
     "sourceUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
-    "sourceVersion": "b972d50f",
+    "sourceVersion": "3254ff75",
     "license": "Apache-2.0",
-    "contentHash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
-    "lastHarvestedAt": "2026-10-19T10:54:42.521Z",
+    "contentHash": "0abf8a1babb8ae033e462bd814c63bec2429d3f2c3f8da89bfacb26271c5268a",
+    "lastHarvestedAt": "2026-11-11T20:23:08.756Z",
     "learningId": "learn-github-mohamedrejeb-compose-rich-editor"
   },
   "codewhale-hq-codewhale": {
@@ -7813,10 +7813,10 @@
     "repository": "meshtastic/Meshtastic-Android",
     "platform": "github",
     "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
-    "sourceVersion": "4b2503d2",
+    "sourceVersion": "157ef222",
     "license": "GPL-3.0",
-    "contentHash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
-    "lastHarvestedAt": "2026-11-08T01:36:02.508Z",
+    "contentHash": "3cf8d6ebc7046004190a026cb68b74492b022e205d58011e3152616644b3a436",
+    "lastHarvestedAt": "2026-11-11T23:57:06.842Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
   },
   "astral-sh-uv": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "92c959b6",
+    "sourceVersion": "3cb96a01",
     "license": "GPL-3.0",
-    "contentHash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
-    "lastHarvestedAt": "2026-11-08T01:46:17.503Z",
+    "contentHash": "134a3d23166a95568455bfc13c9ea51cdbfb9f896f663f3a2ecff2e71193e54f",
+    "lastHarvestedAt": "2026-11-12T00:23:19.029Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {
@@ -7893,20 +7893,20 @@
     "repository": "darrylmorley/whatcable",
     "platform": "github",
     "sourceUrl": "https://github.com/darrylmorley/whatcable",
-    "sourceVersion": "58e588ab",
+    "sourceVersion": "6d8580a0",
     "license": "NOASSERTION",
-    "contentHash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
-    "lastHarvestedAt": "2026-10-19T11:27:55.229Z",
+    "contentHash": "3789f30ef3bcb7d8fca6eb9d66b50d22d1d4c1c7b3b4e3db99f0ed34cf2b93f7",
+    "lastHarvestedAt": "2026-11-12T01:12:06.365Z",
     "learningId": "learn-github-darrylmorley-whatcable"
   },
   "xcodesorg-xcodesapp": {
     "repository": "XcodesOrg/XcodesApp",
     "platform": "github",
     "sourceUrl": "https://github.com/XcodesOrg/XcodesApp",
-    "sourceVersion": "45722c72",
+    "sourceVersion": "9836fd83",
     "license": "MIT",
-    "contentHash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
-    "lastHarvestedAt": "2026-10-19T11:35:13.750Z",
+    "contentHash": "9564bc00ea98fe65773b3ab2c93adb74729cbb8ae1378cf00b62cc4ad8be55b2",
+    "lastHarvestedAt": "2026-11-12T01:23:29.022Z",
     "learningId": "learn-github-xcodesorg-xcodesapp"
   },
   "lapce-lapce": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "14da8d0e",
+    "sourceVersion": "61311f6a",
     "license": "MIT",
-    "contentHash": "7cd0775f119ffc62ffb9c297e0d05213e6dc5aa0cc0422e9985512d6d93157c0",
-    "lastHarvestedAt": "2026-11-08T03:35:46.608Z",
+    "contentHash": "02d6baf1e92f3110cae5f0dfee5e75a66d88094ca3fa0e284cce7fdcf0028639",
+    "lastHarvestedAt": "2026-11-12T03:10:26.221Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "1bc04739",
+    "sourceVersion": "f7b1fd3f",
     "license": "BSD-3-Clause",
-    "contentHash": "1419417eaecdc86d1cb175180fe3b6455cfdeb482e8b7c085cdb186b5aa32b0b",
-    "lastHarvestedAt": "2026-11-06T23:19:54.865Z",
+    "contentHash": "7e0fac2a1484cb00ff99d3ed66df3097c090bd7c3f0cabc950cf48b3a0784f06",
+    "lastHarvestedAt": "2026-11-11T19:28:34.380Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {
@@ -9253,10 +9253,10 @@
     "repository": "webrecorder/browsertrix-crawler",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/browsertrix-crawler",
-    "sourceVersion": "7ed01936",
+    "sourceVersion": "7ac9f642",
     "license": "AGPL-3.0",
-    "contentHash": "cbc2521b34be00ae68b79a484df6a078944079f4998f80eb771264f29ee18829",
-    "lastHarvestedAt": "2026-11-07T02:54:24.589Z",
+    "contentHash": "fbf94cfbc53023a9ac8141196bba8f895eab1db0a59a28abeb1709464e5cffb8",
+    "lastHarvestedAt": "2026-11-12T01:12:03.300Z",
     "learningId": "learn-github-webrecorder-browsertrix-crawler"
   },
   "pointfreeco-isowords": {
@@ -9283,10 +9283,10 @@
     "repository": "ArchiveBox/ArchiveBox",
     "platform": "github",
     "sourceUrl": "https://github.com/ArchiveBox/ArchiveBox",
-    "sourceVersion": "ee80665d",
+    "sourceVersion": "2af81b9e",
     "license": "MIT",
-    "contentHash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
-    "lastHarvestedAt": "2026-11-03T21:28:33.030Z",
+    "contentHash": "dd619f037f60ee4a27d6767fe49d315d82f551ada64e9660a40df331f9e9d9b5",
+    "lastHarvestedAt": "2026-11-12T01:31:23.741Z",
     "learningId": "learn-github-archivebox-archivebox"
   },
   "buriy-python-readability": {
@@ -9313,10 +9313,10 @@
     "repository": "lxml/lxml",
     "platform": "github",
     "sourceUrl": "https://github.com/lxml/lxml",
-    "sourceVersion": "e4302f16",
+    "sourceVersion": "ba82d526",
     "license": "BSD-3-Clause",
-    "contentHash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
-    "lastHarvestedAt": "2026-11-07T03:29:38.512Z",
+    "contentHash": "47b8bac021feae427ec12f2f3ab1fd8c28097eb6e6068d7308cee11f58b4b8a4",
+    "lastHarvestedAt": "2026-11-12T01:52:01.991Z",
     "learningId": "learn-github-lxml-lxml"
   },
   "mazzzystar-queryable": {
@@ -9363,20 +9363,20 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "56968892",
+    "sourceVersion": "8fe6e970",
     "license": "MIT",
-    "contentHash": "21f33a24c4ddf6db145ff84c308e42b5aa85b7589425ebfc92b3d3d8860aa269",
-    "lastHarvestedAt": "2026-11-07T03:56:15.819Z",
+    "contentHash": "6a16a683cb04cbf87d9a72ab1c490d2ea905b4765821366ca6fb76d826207ca7",
+    "lastHarvestedAt": "2026-11-12T02:33:33.758Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "7bf0fc95",
+    "sourceVersion": "48fb1533",
     "license": "MIT",
-    "contentHash": "9622306459c34e9a59d4298c60215a831b2187f5acedf42a297c8e45c7da26c9",
-    "lastHarvestedAt": "2026-11-07T04:03:15.060Z",
+    "contentHash": "eb97b42b22fc6bbde186d14d77bbc13692c9e22c95b1aebca1a67015c8aea035",
+    "lastHarvestedAt": "2026-11-12T02:48:47.811Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {
@@ -9393,10 +9393,10 @@
     "repository": "fb55/css-select",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/css-select",
-    "sourceVersion": "3a34d992",
+    "sourceVersion": "17d5d874",
     "license": "BSD-2-Clause",
-    "contentHash": "dbaced49ddbd27be812fa8390f87d6991bd0ba511a45a667c36c18faafcd10d5",
-    "lastHarvestedAt": "2026-11-07T04:10:26.866Z",
+    "contentHash": "ffa44b0e6ed9a0515589ed18b7c418de5b0561ae2a8bbdf4f52d7cad3fba68a2",
+    "lastHarvestedAt": "2026-11-12T02:56:31.031Z",
     "learningId": "learn-github-fb55-css-select"
   },
   "sindresorhus-keyboardshortcuts": {
@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "9c682911",
+    "sourceVersion": "70bfbf41",
     "license": "MIT",
-    "contentHash": "06b532650f7d94dd2251b226dfd496f19b08d3145efb4ae27b039a7317238bba",
-    "lastHarvestedAt": "2026-11-07T04:22:26.387Z",
+    "contentHash": "e603f3d2ecc2cf52b9796fe26d4b51eba07fb4944b4e23d9b31d5bcd18b47535",
+    "lastHarvestedAt": "2026-11-12T03:10:31.535Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {
@@ -11555,8 +11555,8 @@
     "sourceUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
     "sourceVersion": "hf-pika-labs-pika-h3-flex",
     "license": "Open-Source",
-    "contentHash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
-    "lastHarvestedAt": "2026-11-06T23:12:02.563Z",
+    "contentHash": "5f5708b3f45948bd3dba06a1a48f55751bd249527c5b654dcc65903522538e92",
+    "lastHarvestedAt": "2026-11-11T19:15:03.648Z",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
   },
   "hf-liquidai-lfm3-audio-2b": {
@@ -11565,8 +11565,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
     "sourceVersion": "hf-liquidai-lfm3-audio-2b",
     "license": "Open-Source",
-    "contentHash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
-    "lastHarvestedAt": "2026-11-07T03:02:03.063Z",
+    "contentHash": "d39ed7a70db5c3766e0a3ba00bc239d1d9993505b2ad0040067dc7ff9c3b9aef",
+    "lastHarvestedAt": "2026-11-12T01:23:10.421Z",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b"
   },
   "mobile-next-mobile-mcp": {
@@ -11805,8 +11805,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
     "sourceVersion": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
     "license": "Open-Source",
-    "contentHash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
-    "lastHarvestedAt": "2026-11-06T23:02:42.515Z",
+    "contentHash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
+    "lastHarvestedAt": "2026-11-11T18:59:45.545Z",
     "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf"
   },
   "kortix-ai-companyos": {
@@ -11825,8 +11825,8 @@
     "sourceUrl": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
     "sourceVersion": "hf-divagr1925-qwen3.5-4b-qwenputer",
     "license": "Open-Source",
-    "contentHash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
-    "lastHarvestedAt": "2026-11-07T03:49:04.999Z",
+    "contentHash": "89b57261595c7d6146405a8dfdd07f3cbab61b4ccc5062f6800d73020316399b",
+    "lastHarvestedAt": "2026-11-12T02:16:30.398Z",
     "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer"
   },
   "hf-abenzerps-qwen-image-2.1-turbo-quantized": {
@@ -12368,5 +12368,25 @@
     "contentHash": "1fd9414f960dba44905ee7d3858978a365aefafa33ae5ed47db757b932511f81",
     "lastHarvestedAt": "2026-11-11T11:10:17.001Z",
     "learningId": "learn-huggingface-comfy-org-relayvsr"
+  },
+  "hf-zyphra-zonos3-mini": {
+    "repository": "Zyphra/ZONOS3-Mini",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Zyphra/ZONOS3-Mini",
+    "sourceVersion": "hf-zyphra-zonos3-mini",
+    "license": "Open-Source",
+    "contentHash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
+    "lastHarvestedAt": "2026-11-12T01:11:41.996Z",
+    "learningId": "learn-huggingface-zyphra-zonos3-mini"
+  },
+  "unovue-reka-ui": {
+    "repository": "unovue/reka-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/unovue/reka-ui",
+    "sourceVersion": "7601c967",
+    "license": "MIT",
+    "contentHash": "6a096eb2df0ec29c2b8e6535748e1afc30e677a7d72712d0948aa978affbf6b8",
+    "lastHarvestedAt": "2026-11-12T02:48:40.315Z",
+    "learningId": "learn-github-unovue-reka-ui"
   }
 }

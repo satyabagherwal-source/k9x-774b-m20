@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler))  
-> **Source Version**: `7ed01936`  
+> **Source Version**: `7ac9f642`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:54:23.044Z  
+> **Timestamp**: 2026-11-12T01:11:47.139Z  
 > **Learning ID**: `learn-github-webrecorder-browsertrix-crawler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:54:21.528Z  
+> **Harvest Timestamp**: 2026-11-12T01:11:47.133Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run a high-fidelity browser-based web archiving crawler in a single Docker container
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 1188 stars
+- **Stars / Engagement**: 1192 stars
 
 ---
 
@@ -2639,108 +2639,405 @@ export class OriginOverride {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ed01936` (2026-11-07)
-**Commit Message**: Fix WARC-Concurrent-To references for revisit records (#1199)
+### Incident Patch 1: `7ac9f642` (2026-11-11)
+**Commit Message**: tests: attempt to make redis tests more resilient  (#1203)
 
-## Summary
+use shared redisOpts with fixed number of redis retries + 30 second
+connection timeout (instead of default 10)
 
-When creating a revisit record, the corresponding request record was
-created before the response record was potentially converted into a
-revisit record. As a result, `WARC-Concurrent-To` still referenced the
-UUID of the original response record that was replaced.
-
-## Changes
-
-Create the request record only after deduplication handling and any
-possible conversion of the response record into a revisit record.
-
-This ensures that `WARC-Concurrent-To` references the response or
-revisit record that is actually written.
-
-
-tests: add tests to ensure request records point to actual response or revisit records
----------
-
-Co-authored-by: Ilya Kreymer <[REDACTED_EMAIL]>
-
-**File**: `src/util/recorder.ts` (modified, +4/-1)
+**File**: `tests/add-exclusion.test.ts` (modified, +4/-7)
 ```diff
-@@ -1936,7 +1936,6 @@ export class Recorder extends EventEmitter {
-     }
+@@ -1,6 +1,6 @@
+ import { exec, ExecException } from "child_process";
+ import Redis from "ioredis";
+-import { sleep } from "./utils";
++import { markRedisStopped, redisOpts, sleep } from "./utils";
  
-     let responseRecord = createResponse(reqresp, pageid, iter);
--    const requestRecord = createRequest(reqresp, responseRecord, pageid);
+ test("dynamically add exclusion while crawl is running", async () => {
+   let callback:
+@@ -21,6 +21,7 @@ test("dynamically add exclusion while crawl is running", async () => {
+       stdout: NonSharedBuffer,
+       stderr: NonSharedBuffer,
+     ) => {
++      markRedisStopped();
+       resolve({ error, stdout, stderr } as const);
+     };
+   });
+@@ -37,12 +38,7 @@ test("dynamically add exclusion while crawl is running", async () => {
  
-     let serializer = new WARCSerializer(responseRecord, {
-       gzip,
-@@ -2043,6 +2042,10 @@ export class Recorder extends EventEmitter {
-       }
-     }
+   await sleep(3000);
  
-+    // Create the request record after dedupe handling so it references the
-+    // response or revisit record that will actually be written.
-+    const requestRecord = createRequest(reqresp, responseRecord, pageid);
-+
-     let modified = false;
+-  const redis = new Redis("redis://127.0.0.1:36382/0", {
+-    lazyConnect: true,
+-    retryStrategy: () => null,
+-  });
+-
+-  await redis.connect();
++  const redis = new Redis("redis://127.0.0.1:36382/0", redisOpts);
  
-     if (reqresp.truncated) {
+   while (true) {
+     if (Number(await redis.zcard("test:q")) > 1) {
+@@ -62,6 +58,7 @@ test("dynamically add exclusion while crawl is running", async () => {
+ 
+   // ensure 'Add Exclusion is contained in the debug logs
+   const { stdout } = await p;
++  redis.disconnect();
+ 
+   expect(stdout.indexOf("Add Exclusion") > 0).toBe(true);
+ 
 ```
 
-**File**: `tests/dedupe-basic.test.ts` (modified, +23/-0)
+**File**: `tests/custom-behavior-flow.test.ts` (modified, +3/-9)
 ```diff
-@@ -129,13 +129,26 @@ test("check revisit records written on duplicate crawl, same collection, no wacz
+@@ -1,6 +1,6 @@
+ import child_process from "child_process";
+ import Redis from "ioredis";
+-import { sleep } from "./utils";
++import { markRedisStopped, redisOpts, sleep } from "./utils";
  
-   const parserOrig = loadFirstWARC(collName);
+ test("test pushing behavior logs to redis", async () => {
+   const child = child_process.exec(
+@@ -11,18 +11,12 @@ test("test pushing behavior logs to redis", async () => {
  
-+  const responseID = new Set<string>();
-+  const revisitID = new Set<string>();
+   child.on("exit", function () {
+     crawlFinished = true;
+-  });
+-
+-  const redis = new Redis("redis://127.0.0.1:36398/0", {
+-    lazyConnect: true,
+-    retryStrategy: () => null,
++    markRedisStopped();
+   });
+ 
+   await sleep(3000);
+ 
+-  redis.options.maxRetriesPerRequest = 50;
+-
+-  await redis.connect();
++  const redis = new Redis("redis://127.0.0.1:36398/0", redisOpts);
+ 
+   let customLogLineCount = 0;
+   let done = false;
+```
+
+**File**: `tests/custom-behavior.test.ts` (modified, +3/-9)
+```diff
+@@ -1,6 +1,6 @@
+ import child_process, { ExecException, type ChildProcess } from "child_process";
+ import Redis from "ioredis";
+-import { ErrorWithStatus, sleep } from "./utils";
++import { ErrorWithStatus, markRedisStopped, redisOpts, sleep } from "./utils";
+ 
+ let proc: ChildProcess | null = null;
+ 
+@@ -204,21 +204,15 @@ test("test pushing behavior logs to redis", async () => {
+   const crawlFinished = new Promise<void>((r) => (resolve = r));
+ 
+   child.on("exit", function () {
++    markRedisStopped();
+     resolve!();
+   });
+ 
+   await crawlFinished;
+ 
+-  const redis = new Redis("redis://127.0.0.1:36399/0", {
+-    lazyConnect: true,
+-    retryStrategy: () => null,
+-  });
+-
+   await sleep(3000);
+ 
+-  redis.options.maxRetriesPerRequest = 50;
+-
+-  await redis.connect();
++  const redis = new Redis("redis://127.0.0.1:36399/0", redisOpts);
+ 
+   let customLogLineCount = 0;
+ 
+```
+
+**File**: `tests/dedupe-basic.test.ts` (modified, +4/-11)
+```diff
+@@ -3,7 +3,7 @@ import fs from "fs";
+ import path from "path";
+ import Redis from "ioredis";
+ import { WARCParser } from "warcio";
+-import { sleep } from "./utils";
++import { markRedisStopped, redisOpts, sleep } from "./utils";
+ 
+ let redisId: Uint8Array;
+ let numResponses = 0;
+@@ -19,6 +19,8 @@ beforeAll(() => {
+ });
+ 
+ afterAll(async () => {
++  markRedisStopped();
 +
-   for await (const record of parserOrig) {
-     if (record.warcTargetURI && record.warcTargetURI.startsWith("urn:")) {
-       continue;
-     }
+   execSync(`docker kill ${redisId}`);
  
-     if (record.warcType === "response") {
-       response++;
-+      const id = record.warcHeader("WARC-Record-ID");
-+      if (id) {
-+        responseID.add(id);
-+      }
-+    }
+   await sleep(3000);
+@@ -89,16 +91,7 @@ function loadDataPackageRelated(name: string) {
+ }
+ 
+ async function initRedis(db = 0) {
+-  const redis = new Redis(`redis://127.0.0.1:37379/${db}`, {
+-    lazyConnect: true,
+-    retryStrategy: () => null,
+-  });
+-
+-  redis.options.maxRetriesPerRequest = 50;
+-
+-  await redis.connect();
+-
+-  return redis;
++  return new Redis(`redis://127.0.0.1:37379/${db}`, redisOpts);
+ }
+ 
+ async function checkSizeStats(
+```
+
+**File**: `tests/multi-instance-crawl.test.ts` (modified, +4/-9)
+```diff
+@@ -1,7 +1,7 @@
+ import { exec, execSync } from "child_process";
+ import fs from "fs";
+ import { Redis } from "ioredis";
+-import { sleep } from "./utils";
++import { markRedisStopped, redisOpts, sleep } from "./utils";
+ 
+ let redisId: NonSharedBuffer;
+ let crawler1: Promise<number | null>, crawler2: Promise<number | null>;
+@@ -27,6 +27,8 @@ beforeAll(() => {
+ });
+ 
+ afterAll(async () => {
++  markRedisStopped();
 +
-+    if (record.warcType === "request") {
-+      expect(
-+        responseID.has(record.warcHeader("WARC-Concurrent-To") || ""),
-+      ).toBe(true);
-     }
+   execSync(`docker kill ${redisId}`);
+ 
+   await sleep(3000);
+@@ -49,16 +51,9 @@ function runCrawl(name: string) {
+ }
+ 
+ test("run crawlers with external redis", async () => {
+-  const redis = new Redis("redis://127.0.0.1:37379/0", {
+-    lazyConnect: true,
+-    retryStrategy: () => null,
+-  });
+-
+   await sleep(3000);
+ 
+-  redis.options.maxRetriesPerRequest = 50;
+-
+-  await redis.connect();
++  const redis = new Redis("redis://127.0.0.1:37379/0", redisOpts);
+ 
+   let count = 0;
+ 
+```
+
+**File**: `tests/qa_compare.test.ts` (modified, +3/-9)
+```diff
+@@ -1,7 +1,7 @@
+ import child_process from "child_process";
+ import fs from "fs";
+ import { Redis } from "ioredis";
+-import { sleep } from "./utils";
++import { sleep, redisOpts, markRedisStopped } from "./utils";
+ 
+ test("run initial crawl with text and screenshots to prepare for QA", async () => {
+   fs.rmSync("./test-crawls/collections/qa-wr-net", {
+@@ -32,18 +32,12 @@ test("run QA comparison, with write pages to redis", async () => {
+   let crawler_exited = false;
+   child.on("exit", function () {
+     crawler_exited = true;
+-  });
+-
+-  const redis = new Redis("redis://127.0.0.1:36380/0", {
+-    lazyConnect: true,
+-    retryStrategy: () => null,
++    markRedisStopped();
+   });
+ 
+   await sleep(3000);
+ 
+-  redis.options.maxRetriesPerRequest = 50;
+-
+-  await redis.connect();
++  const redis = new Redis("redis://127.0.0.1:36380/0", redisOpts);
+ 
+   let count = 0;
+ 
+```
+
+**File**: `tests/retry-failed.test.ts` (modified, +14/-18)
+```diff
+@@ -1,8 +1,8 @@
+-import { exec, execSync } from "child_process";
++import { exec } from "child_process";
+ import fs from "fs";
+ import http from "http";
+ import Redis from "ioredis";
+-import { sleep } from "./utils";
++import { markRedisStopped, redisOpts, sleep } from "./utils";
+ 
+ const DOCKER_HOST_NAME = process.env.DOCKER_HOST_NAME || "host.docker.internal";
+ 
+@@ -33,23 +33,26 @@ afterAll(() => {
+ });
+ 
+ test("run crawl with retries for no response", async () => {
+-  execSync(
++  const child = exec(
+     `docker run -d -v $PWD/test-crawls:/crawls -e CRAWL_ID=test -p 36387:6379 --rm webrecorder/browsertrix-crawler crawl --url http://invalid-host-x:31501 --url https://example-com.webrecorder.net/ --limit 2 --pageExtraDelay 10 --debugAccessRedis --collection retry-fail --retries 5 --no-rateLimitStatusCodes`,
+   );
+ 
+-  const redis = new Redis("redis://127.0.0.1:36387/0", {
+-    lazyConnect: true,
+-    retryStrategy: () => null,
++  let resolve: () => void;
++
++  const crawlFinished = new Promise<void>((r) => (resolve = r));
++
++  child.on("exit", function () {
++    markRedisStopped();
++    resolve();
+   });
+ 
+   await sleep(3000);
+ 
++  const redis = new Redis("redis://127.0.0.1:36387/0", redisOpts);
++
+   let numRetries = 0;
+ 
+   try {
+-    redis.options.maxRetriesPerRequest = 100;
+-    await redis.connect();
+-
+     while (true) {
+       const res = await redis.lrange("test:f", 0, -1);
+       if (res.length) {
+@@ -66,6 +69,8 @@ test("run crawl with retries for no response", async () => {
+   } finally {
+     expect(numRetries).toBe(5);
+   }
++
++  await crawlFinished;
+ });
+ 
+ test("check only one failed page entry is made", () => {
+@@ -98,9 +103,6 @@ test("run crawl with retries for 503, enough retries to succeed", async () => {
+ 
+   const crawlFinished = new Promise<void>((r) => (resolve = r));
+ 
+-  // detect crawler exit
+-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+-  const crawler_exited = false;
+   child.on("exit", function (code) {
+     status = code;
+     resolve();
+@@ -129,9 +131,6 @@ test("run crawl with retries for 503, not enough retries, fail", async () => {
+ 
+   const crawlFinished = new Promise<void>((r) => (resolve = r));
+ 
+-  // detect crawler exit
+-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+-  const crawler_exited = false;
+   child.on("exit", function (code) {
+     status = code;
+     resolve();
+@@ -159,9 +158,6 @@ test("run crawl with retries for 503, no retries, fail", async () => {
+ 
+   const crawlFinished = new Promise<void>((r) => (resolve = r));
+ 
+-  // detect crawler exit
+-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+-  const crawler_exited = false;
+   child.on("exit", function (code) {
+     status = code;
+     resolve();
+```
+
+**File**: `tests/saved-state.test.ts` (modified, +4/-12)
+```diff
+@@ -3,7 +3,7 @@ import fs from "fs";
+ import path from "path";
+ import yaml from "js-yaml";
+ import Redis from "ioredis";
+-import { sleep } from "./utils";
++import { redisOpts, sleep } from "./utils";
+ import { SaveState } from "../src/util/state";
+ 
+ const pagesFile = "test-crawls/collections/int-state-test/pages/pages.jsonl";
+@@ -130,20 +130,11 @@ test("check crawl restarted with saved state", async () => {
+     console.log(error);
    }
  
-@@ -152,6 +165,16 @@ test("check revisit records written on duplicate crawl, same collection, no wacz
+-  await sleep(2000);
++  await sleep(4000);
  
-     if (record.warcType === "revisit") {
-       revisit++;
-+      const id = record.warcHeader("WARC-Record-ID");
-+      if (id) {
-+        revisitID.add(id);
-+      }
-+    }
-+
-+    if (record.warcType === "request") {
-+      expect(revisitID.has(record.warcHeader("WARC-Concurrent-To") || "")).toBe(
-+        true,
-+      );
-     }
+-  const redis = new Redis(`redis://127.0.0.1:${port}/0`, {
+-    lazyConnect: true,
+-    retryStrategy: () => null,
+-  });
++  const redis = new Redis(`redis://127.0.0.1:${port}/0`, redisOpts);
+ 
+   try {
+-    redis.options.maxRetriesPerRequest = 100;
+-
+-    await redis.connect();
+-
+-    await sleep(2000);
+-
+     expect(await redis.get("test:d")).toBe(numDone + "");
+ 
+     for (const url of finished) {
+@@ -153,6 +144,7 @@ test("check crawl restarted with saved state", async () => {
+   } catch (e) {
+     console.log(e);
+   } finally {
++    redis.disconnect();
+     await waitContainerDone(containerId!);
    }
+ });
+```
+
+---
+
+### Incident Patch 2: `e6e316a4` (2026-11-10)
+**Commit Message**: deps: update to brave 1.99 (#1202)
+
+bump to 1.15.4
+
+**File**: `Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-ARG BROWSER_VERSION=1.98.63
++ARG BROWSER_VERSION=1.99.56
+ ARG BROWSER_IMAGE_BASE=webrecorder/browsertrix-browser-base:brave-${BROWSER_VERSION}
  
+ FROM ${BROWSER_IMAGE_BASE}
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "browsertrix-crawler",
+-  "version": "1.15.3",
++  "version": "1.15.4",
+   "main": "browsertrix-crawler",
+   "type": "module",
+   "repository": "https://github.com/webrecorder/browsertrix-crawler",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1199** (2026-11-07): Fix WARC-Concurrent-To references for revisit records (@aponb)
-- **PR #1194** (2026-11-04): deps: bump brave to 1.98.63 (@ikreymer)
-- **PR #1193** (2026-11-06): warc writer: add callback to be executed after write (@mistydemeo)
-- **PR #1192** (2026-11-03): skipped pages reporting fix: (@ikreymer)
-- **PR #1190** (2026-11-03): deps: browsertrix-behaviors 0.15.2 (@mistydemeo)
-- **PR #1189** (2026-11-03): Allow skipping disk utilization check (@mistydemeo)
+- **PR #1206** (closed): fix: actionable errors when required container env / browser are missing (@chiangchenghsin-hash)
+- **PR #1205** (closed): docs: document dependencies required outside the Docker image (@chiangchenghsin-hash)
+- **PR #1203** (2026-11-11): tests: attempt to make redis tests more resilient  (@ikreymer)
+- **PR #1202** (2026-11-10): deps: update to brave 1.99 (@ikreymer)
+- **PR #1201** (2026-11-10): deps: browsertrix-behaviors 0.16.0 (@mistydemeo)
+- **PR #1200** (2026-11-10): when adding link from user set, always obey scope! (@ikreymer)
 
 ---
 
@@ -2760,31 +3057,37 @@ Co-authored-by: Ilya Kreymer <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. WARC-Concurrent-To references for revisit records (#1199)
+## X. tests: attempt to make redis tests more resilient  (#1203)
 
 **RULE**:
-When implementing operations in `src/util/recorder.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/browsertrix-crawler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/add-exclusion.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/browsertrix-crawler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ed01936`: WARC-Concurrent-To references for revisit records (#1199). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ac9f642`: tests: attempt to make redis tests more resilient  (#1203). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/util/recorder.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/add-exclusion.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // Create the request record after dedupe handling so it references the
-    // response or revisit record that will actually be written.
-    const requestRecord = createRequest(reqresp, responseRecord, pageid);
-
+import { markRedisStopped, redisOpts, sleep } from "./utils";
+      markRedisStopped();
+  const redis = new Redis("redis://127.0.0.1:36382/0", redisOpts);
+  redis.disconnect();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    const requestRecord = createRequest(reqresp, responseRecord, pageid);
+import { sleep } from "./utils";
+  const redis = new Redis("redis://127.0.0.1:36382/0", {
+    lazyConnect: true,
+    retryStrategy: () => null,
+  });
+
+  await redis.connect();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ed01936` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ac9f642` are properly handled with clean fallback behavior.

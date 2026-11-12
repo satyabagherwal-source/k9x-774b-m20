@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T13:29:30.753Z",
-  "total_records": 49,
+  "last_updated": "2026-11-12T03:10:59.805Z",
+  "total_records": 57,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 19,
+      "total": 27,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -44,7 +44,15 @@
         "DOM-D-11562009",
         "DOM-D-00269E5B",
         "DOM-D-40589951",
-        "DOM-D-BA155874"
+        "DOM-D-BA155874",
+        "DOM-D-62E0908D",
+        "DOM-D-01CFC4FC",
+        "DOM-D-D2E2CA9E",
+        "DOM-D-1A1383CC",
+        "DOM-D-66B0E6DD",
+        "DOM-D-1866CC44",
+        "DOM-D-3429AF3D",
+        "DOM-D-E8885F06"
       ]
     },
     "E": {
@@ -1970,6 +1978,334 @@
       },
       "confidence": 0.64,
       "created_at": "2026-11-11T13:29:30.751Z"
+    },
+    "DOM-D-62E0908D": {
+      "record_id": "DOM-D-62E0908D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): goharbor/harbor",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  \n> **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  \n> **Source Version**: `fac9abd1`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthes",
+      "content_hash": "2a954f5580808cfeb9b1e18edcf046fc738a753afdbf79d362db197faed4f06f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  \n> **Source**: github ([https://github.com/goharbor/h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  \n> **Source**: github ([https://github.com/goharbor/h",
+      "provenance": {
+        "source_uri": "project://goharbor-harbor/goharbor-harbor-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T16:56:05.352Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (goharbor-harbor)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of goharbor-harbor"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T16:56:20.046Z"
+    },
+    "DOM-D-01CFC4FC": {
+      "record_id": "DOM-D-01CFC4FC",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF](https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF))  \n> **Source Version**: `hf-unslot",
+      "content_hash": "3ea07f9bacdae11455a220b64ac74561235eb0c5faa18a8b87464297cc3b8bd7",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  \n> **Source**: huggingface (",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-deepseek-v4.1-flash-1017-gguf/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T18:59:48.233Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-deepseek-v4.1-flash-1017-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-deepseek-v4.1-flash-1017-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T19:00:03.096Z"
+    },
+    "DOM-D-D2E2CA9E": {
+      "record_id": "DOM-D-D2E2CA9E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Pika-Labs/Pika-H3-Flex",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Pika-Labs/Pika-H3-Flex](https://huggingface.co/Pika-Labs/Pika-H3-Flex))  \n> **Source Version**: `hf-pika-labs`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "a3bb90be5cee4011a0dd3378374f8ce6d0b6193bc06f12549564c7aadb215deb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-pika-labs-pika-h3-flex/hf-pika-labs-pika-h3-flex-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T19:15:37.675Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-pika-labs-pika-h3-flex)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-pika-labs-pika-h3-flex"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T19:15:52.265Z"
+    },
+    "DOM-D-1A1383CC": {
+      "record_id": "DOM-D-1A1383CC",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Zyphra/ZONOS3-Mini",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Zyphra/ZONOS3-Mini](https://huggingface.co/Zyphra/ZONOS3-Mini))  \n> **Source Version**: `hf-zyphra-zo`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "2218179208552b0d99026a2e7e147d78005f92b7d030f7dc839352ff78b3a45a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-zyphra-zonos3-mini/hf-zyphra-zonos3-mini-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T01:12:16.486Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-zyphra-zonos3-mini)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-zyphra-zonos3-mini"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-12T01:12:31.445Z"
+    },
+    "DOM-D-66B0E6DD": {
+      "record_id": "DOM-D-66B0E6DD",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-Audio-2B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/LFM3-Audio-2B](https://huggingface.co/LiquidAI/LFM3-Audio-2B))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "72bb14f44f55788c5f2969847af593f8a8bbf9ce03f62499476ecabe9d58d917",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-audio-2b/hf-liquidai-lfm3-audio-2b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T01:23:44.247Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-audio-2b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-lfm3-audio-2b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-12T01:23:57.633Z"
+    },
+    "DOM-D-1866CC44": {
+      "record_id": "DOM-D-1866CC44",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): divagr1925/Qwen3.5-4B-Qwenputer",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer](https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer))  \n> **Source Version**: `hf-divagr192`  \n> **License",
+      "content_hash": "d76d00248cec54dae423bce08aac4e14127ea72b3c4201204f7ca9dbfe1242ee",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-divagr1925-qwen3.5-4b-qwenputer/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T02:17:08.847Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-divagr1925-qwen3.5-4b-qwenputer)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-divagr1925-qwen3.5-4b-qwenputer"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-12T02:17:25.215Z"
+    },
+    "DOM-D-3429AF3D": {
+      "record_id": "DOM-D-3429AF3D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): kumahq/kuma",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  \n> **Source Version**: `b65a7b2f`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **T",
+      "content_hash": "c8e18f3d0a535058ac48909ffaf0f11e2d27a69894f3dd2fa722557317b457f8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h",
+      "provenance": {
+        "source_uri": "project://kumahq-kuma/kumahq-kuma-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T02:56:50.981Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kumahq-kuma)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of kumahq-kuma"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-12T02:57:07.401Z"
+    },
+    "DOM-D-E8885F06": {
+      "record_id": "DOM-D-E8885F06",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): momenbasel/PureMac",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  \n> **Source Version**: `61311f6a`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synth",
+      "content_hash": "0988e74bc457a2eab555f3fd6de6166dd3e67cfcfef78348b6da5927c15d71e5",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba",
+      "provenance": {
+        "source_uri": "project://momenbasel-puremac/momenbasel-puremac-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T03:10:50.996Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (momenbasel-puremac)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of momenbasel-puremac"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-12T03:10:59.804Z"
     }
   }
 }

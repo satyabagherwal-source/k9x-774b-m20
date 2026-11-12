@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mohamedrejeb-compose-rich-editor-learnings.md`  
 > **Source**: github ([https://github.com/MohamedRejeb/compose-rich-editor](https://github.com/MohamedRejeb/compose-rich-editor))  
-> **Source Version**: `b972d50f`  
+> **Source Version**: `3254ff75`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:54:42.356Z  
+> **Timestamp**: 2026-11-11T20:22:55.438Z  
 > **Learning ID**: `learn-github-mohamedrejeb-compose-rich-editor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mohamedrejeb-compose-rich-editor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MohamedRejeb/compose-rich-editor](https://github.com/MohamedRejeb/compose-rich-editor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:54:42.351Z  
+> **Harvest Timestamp**: 2026-11-11T20:18:28.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rich text editor library for both Jetpack Compose and Compose Multiplatform, fully customizable, supports HTML and Markdown.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1861 stars
+- **Stars / Engagement**: 1866 stars
 
 ---
 
@@ -1434,479 +1434,498 @@ public fun Float.maxDecimals(decimals: Int): Float {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `294f5e94` (2026-10-05)
-**Commit Message**: Merge pull request #832 from MohamedRejeb/fix/heading-on-line-break-block
+### Incident Patch 1: `3254ff75` (2026-11-11)
+**Commit Message**: Merge pull request #860 from MohamedRejeb/fix/issue-857-exit-list-paragraph-below
 
-fix: a heading set on one line of a <br> block only cuts the links it breaks
+fix: leaving a list with Enter no longer damages the paragraph below
 
-**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/model/RichTextState.kt` (modified, +26/-7)
+**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/model/RichTextState.kt` (modified, +14/-0)
 ```diff
-@@ -1499,20 +1499,21 @@ public class RichTextState internal constructor(
-      * [HeadingStyle.Normal], any existing heading style is removed from those paragraphs;
-      * otherwise the specified heading style replaces any previous one. Wrapped in
-      * [recordHistory] so undo/redo restores heading changes alongside other formatting.
-+     *
-+     * The lines of an imported `<br>` block look like any other paragraphs in the editor, so
-+     * the heading applies to the selected ones only. A line whose level now differs from its
-+     * neighbour's leaves the block; lines that still share a level stay linked.
-      */
-     public fun setHeadingStyle(headingStyle: HeadingStyle) {
-         if (headingStyle != HeadingStyle.Normal && RichTextFeature.Heading !in config.features) return
-         recordHistory(CommitTrigger.Formatting) {
-             val paragraphs = getRichParagraphListByTextRange(selection)
-             if (paragraphs.isEmpty()) return@recordHistory
+@@ -4443,12 +4443,26 @@ public class RichTextState internal constructor(
+                     richSpan.paragraph.isEmpty() &&
+                     richSpan.paragraph.type is ConfigurableListLevel
+                 ) {
++                    // No paragraph is added, so the newline leaves the text as well: left in, the
++                    // scan meets it again behind the dropped prefix and splits the paragraph below.
++                    tempTextFieldValue = tempTextFieldValue.copy(
++                        text = tempTextFieldValue.text.removeRange(index, index + 1),
++                        selection = TextRange(tempTextFieldValue.selection.min - 1),
++                    )
++
+                     // Exit list by removing list formatting
+                     tempTextFieldValue = updateParagraphType(
+                         paragraph = richSpan.paragraph,
+                         newType = DefaultParagraph(),
+                         textFieldValue = tempTextFieldValue,
+                     )
++
++                    // Numbered items below are a list of their own now
++                    tempTextFieldValue = adjustOrderedListsNumbers(
++                        startParagraphIndex = paragraphIndex + 1,
++                        startNumber = 1,
++                        textFieldValue = tempTextFieldValue,
++                    )
+                     newParagraphFirstRichSpan.spanStyle = SpanStyle()
+                     newParagraphFirstRichSpan.richSpanStyle = RichSpanStyle.Default
  
--            paragraphs.forEach { paragraph ->
--                if (paragraph.headingStyle == headingStyle) return@forEach
--                paragraph.applyHeadingStyle(headingStyle)
--                // A continuation has no heading of its own in html. Unlike addParagraphStyle,
--                // which severs unconditionally, a level that did not change severs nothing.
--                clearLineBreakContinuations(paragraph)
--            }
-+            val changed = paragraphs.filter { it.headingStyle != headingStyle }
-+            changed.forEach { it.applyHeadingStyle(headingStyle) }
-+            // After every level is set, so two selected lines that end up alike stay linked.
-+            changed.forEach { cutLineBreakLinksAcrossHeadingLevels(it) }
+```
+
+**File**: `richeditor-compose/src/commonTest/kotlin/com/mohamedrejeb/richeditor/model/Issue857ExitListAboveParagraphTest.kt` (added, +202/-0)
+```diff
+@@ -0,0 +1,202 @@
++package com.mohamedrejeb.richeditor.model
++
++import androidx.compose.foundation.text.input.TextFieldBuffer
++import androidx.compose.foundation.text.input.toTextFieldBuffer
++import androidx.compose.ui.text.TextRange
++import androidx.compose.ui.text.input.TextFieldValue
++import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
++import com.mohamedrejeb.richeditor.paragraph.type.DefaultParagraph
++import com.mohamedrejeb.richeditor.paragraph.type.OrderedList
++import com.mohamedrejeb.richeditor.paragraph.type.UnorderedList
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertIs
++
++/**
++ * Issue 857: Enter on an empty list item leaves the list. With a paragraph below the list, that
++ * paragraph lost its first character and an extra empty paragraph appeared.
++ *
++ * Cause: the exit turned the empty item into a plain paragraph and skipped the new paragraph, but
++ * left the typed newline in the pending text. Dropping the list prefix moved that newline back, so
++ * the paragraph scan met it a second time and split the paragraph below, removing its first
++ * character as if it were the newline. With the list at the end of the document nothing was there
++ * to split, which hid the bug.
++ *
++ * Fix: the exit removes the typed newline from the pending text and steps the caret back with it.
++ * Numbered items below the exit used to keep their old numbers; they restart at 1, the way they
++ * are exported.
++ */
++@OptIn(ExperimentalRichTextApi::class)
++class Issue857ExitListAboveParagraphTest {
++
++    private fun RichTextState.imeBatch(edit: TextFieldBuffer.() -> Unit) {
++        val buffer = textFieldState.toTextFieldBuffer()
++        buffer.edit()
++        applyChangeList(buffer)
++        reconcileBufferWithModel(buffer)
++        val text = buffer.asCharSequence().toString()
++        val selection = buffer.selection
++        pendingSelectionDuringSync = null
++        setTextFieldStateFromValue(text, selection)
++        handleSelectionChanged(textFieldState.selection, fromGestureObserver = true)
++    }
++
++    private fun RichTextState.type(text: String) {
++        val at = selection.min
++        imeBatch {
++            replace(at, at, text)
++            selection = TextRange(at + text.length)
++        }
++    }
++
++    /** Types through the [RichTextState.onTextFieldValueChange] bridge instead of a change list. */
++    private fun RichTextState.typeThroughBridge(text: String) {
++        val at = selection.min
++        val current = annotatedString.text
++        onTextFieldValueChange(
++            TextFieldValue(
++                text = current.substring(0, at) + text + current.substring(at),
++                selection = TextRange(at + text.length),
++            )
++        )
++    }
++
++    /** A list with one item and an empty second item holding the caret, above [below]. */
++    private fun listAbove(
++        below: String,
++        ordered: Boolean = false,
++        typing: RichTextState.(String) -> Unit = { type(it) },
++    ): RichTextState =
++        RichTextState().apply {
++            setHtml("<p></p>$below")
++            selection = TextRange(0)
++            if (ordered) toggleOrderedList() else toggleUnorderedList()
++            typing("Item")
++            typing("\n")
++        }
++
++    @Test
++    fun `leaving a bullet list keeps the paragraph below intact`() {
++        val state = listAbove("<p>Next line</p>")
++
++        state.type("\n")
++
++        assertEquals(3, state.richParagraphList.size)
++        assertIs<UnorderedList>(state.richParagraphList[0].type)
++        assertIs<DefaultParagraph>(state.richParagraphList[1].type)
++        assertEquals("• Item  Next line", state.annotatedString.text)
++        assertEquals(TextRange(7), state.selection)
++
++        state.type("Typed")
++
++        assertEquals(
++            "<ul><li>Item</li></ul><p>Typed</p><p>Next line</p>",
++            state.toHtml(),
++        )
++    }
++
++    @Test
++    fun `leaving a numbered list keeps the paragraph below intact`() {
++        val state = listAbove("<p>Next line</p>", ordered = true)
++
++        state.type("\n")
++
++        assertEquals(3, state.richParagraphList.size)
++        assertIs<OrderedList>(state.richParagraphList[0].type)
++        assertIs<DefaultParagraph>(state.richParagraphList[1].type)
++
++        state.type("Typed")
++
++        assertEquals(
++            "<ol><li>Item</li></ol><p>Typed</p><p>Next line</p>",
++            state.toHtml(),
++        )
++    }
++
++    @Test
++    fun `leaving a list keeps every paragraph below intact`() {
++        val state = listAbove("<p>First</p><p>Second</p>")
++
++        state.type("\n")
++        state.type("Typed")
++
++        assertEquals(
++            "<ul><li>Item</li></ul><p>Typed</p><p>First</p><p>Second</p>",
++            state.toHtml(),
++        )
++    }
++
++    @Test
++    fun `leaving a list above another list keeps that list intact`() {
++        val state = listAbove("<ol><li>One</li><li>Two</li></ol>")
++
++        state.type("\
+```
+
+---
+
+### Incident Patch 2: `3e4ae7e4` (2026-11-11)
+**Commit Message**: Merge pull request #853 from MohamedRejeb/fix/list-indent-first-frame
+
+fix: list items keep their indent from the first frame of a read-only view
+
+**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/model/RichTextConfig.kt` (modified, +2/-0)
+```diff
+@@ -347,6 +347,8 @@ internal fun RichTextConfig.headingSpanStyleFor(headingStyle: HeadingStyle): Spa
  
-             updateAnnotatedString()
-             updateCurrentSpanStyle()
-@@ -5157,6 +5158,24 @@ public class RichTextState internal constructor(
-         return richSpanList.getCommonStyle() ?: RichSpanStyle.DefaultSpanStyle
+ internal const val DefaultListIndent = 38
+ 
++internal const val StartTextWidthSentinel = "x"
++
+ internal val DefaultUnorderedListStyleType =
+     UnorderedListStyleType.from("•", "◦", "▪")
+ 
+```
+
+**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/model/RichTextState.kt` (modified, +49/-1)
+```diff
+@@ -5553,7 +5553,11 @@ public class RichTextState internal constructor(
+                     paragraphType is ConfigurableStartTextWidth &&
+                     paragraphType.startText.isNotEmpty() &&
+                     paragraphType.startRichSpan.textRange.min >= 0 &&
+-                    paragraphType.startRichSpan.textRange.max <= offsetLimit
++                    paragraphType.startRichSpan.textRange.max <= offsetLimit &&
++                    // A prefix whose end wrapped to the next line has no width to read here,
++                    // and feeding the bogus distance back into the indent never settles.
++                    textLayoutResult.getLineForOffset(paragraphType.startRichSpan.textRange.min) ==
++                    textLayoutResult.getLineForOffset(paragraphType.startRichSpan.textRange.max)
+                 ) {
+                     val start =
+                         textLayoutResult.getHorizontalPosition(
+@@ -5605,6 +5609,50 @@ public class RichTextState internal constructor(
+         }
      }
  
 +    /**
-+     * A `<br>` continuation is written inside the tag of the line it continues, so the two
-+     * must share a heading level. Cuts the links of [paragraph] to the line above and to the
-+     * line below where the levels differ. Links further along the block are not its concern.
++     * Measures the prefix of every list paragraph that has no width yet, so a state that has
++     * never been laid out renders its first frame with the final `TextIndent`. The layout pass
++     * in [adjustRichParagraphLayout] still has the last word on the width.
 +     */
-+    private fun cutLineBreakLinksAcrossHeadingLevels(paragraph: RichParagraph) {
-+        val index = richParagraphList.indexOf(paragraph)
-+        if (index < 0) return
++    internal fun measureStartTextWidths(
++        textMeasurer: TextMeasurer,
++        style: TextStyle,
++        density: Density,
++    ) {
++        val widths = mutableMapOf<Pair<String, SpanStyle>, TextUnit>()
++        var isParagraphUpdated = false
 +
-+        val previous = richParagraphList.getOrNull(index - 1)
-+        if (previous == null || previous.headingStyle != paragraph.headingStyle)
-+            paragraph.isFromLineBreak = false
++        richParagraphList.fastForEach { paragraph ->
++            val type = paragraph.type
++            if (type !is ConfigurableStartTextWidth || type.startText.isEmpty() || type.startTextWidth != 0.sp)
++                return@fastForEach
 +
-+        val next = richParagraphList.getOrNull(index + 1)
-+        if (next != null && next.headingStyle != paragraph.headingStyle)
-+            next.isFromLineBreak = false
++            val markerStyle = paragraph.getListMarkerSpanStyle(
++                config.listMarkerStyleBehavior,
++                config.listMarkerStyle,
++                config.headingSpanStyleFor(paragraph.headingStyle),
++            )
++            type.startTextWidth = widths.getOrPut(type.startText to markerStyle) {
++                // The prefix ends with a space, which a line does not count when it is last:
++                // measure up to a character placed after it instead.
++                val layout = textMeasurer.measure(
++                    text = AnnotatedString(type.startText + StartTextWidthSentinel, markerStyle),
++                    style = style,
++                    softWrap = false,
++                )
++                with(density) {
++                    layout.getHorizontalPosition(type.startText.length, usePrimaryDirection = true)
++                        .absoluteValue
++                        .toSp()
++                }
++            }
++            isParagraphUpdated = true
++        }
++
++        if (isParagraphUpdated)
++            updateTextFieldValue(textFieldValue)
 +    }
 +
      /**
-      * Clears [RichParagraph.isFromLineBreak] on the given paragraph and all
-      * consecutive trailing paragraphs that have `isFromLineBreak = true`.
+      * Test-only: simulates an `adjustRichParagraphLayout` pass having recorded a
+      * measured prefix width for [startText]. Used to verify the cache → render
 ```
 
-**File**: `richeditor-compose/src/commonTest/kotlin/com/mohamedrejeb/richeditor/model/ContinuationSeveringMatrixTest.kt` (modified, +5/-5)
+**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/ui/BasicRichText.kt` (modified, +4/-0)
 ```diff
-@@ -91,17 +91,17 @@ class ContinuationSeveringMatrixTest {
-     }
- 
-     @Test
--    fun `a heading on the head severs the whole chain`() {
--        // Same rule as addParagraphStyle on the head: the continuations were not touched by
--        // the user, so they must not silently become part of the heading.
-+    fun `a heading on the head severs it and leaves the rest of the chain linked`() {
-+        // The continuations were not touched by the user, so they do not become part of the
-+        // heading. They still share a level with each other, so their own link stays.
-         val state = continuationDocument()
-         state.selection = TextRange(1)
- 
-         state.setHeadingStyle(HeadingStyle.H1)
- 
--        assertEquals(listOf(false, false, false), structure(state).continuations)
-+        assertEquals(listOf(false, false, true), structure(state).continuations)
-         assertEquals(listOf(HeadingStyle.H1, HeadingStyle.Normal, HeadingStyle.Normal), structure(state).headings)
--        assertEquals("<h1>a</h1><p>b</p><p>c</p>", state.toHtml())
-+        assertEquals("<h1>a</h1><p>b<br>c</p>", state.toHtml())
-         assertReloadAgrees(state)
-     }
- 
-```
-
-**File**: `richeditor-compose/src/commonTest/kotlin/com/mohamedrejeb/richeditor/model/HeadingLineBreakBlockTest.kt` (added, +144/-0)
-```diff
-@@ -0,0 +1,144 @@
-+package com.mohamedrejeb.richeditor.model
-+
-+import androidx.compose.ui.text.TextRange
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+
-+/**
-+ * Headings and `<br>` blocks.
-+ *
-+ * The lines of `<p>a<br>b<br>c</p>` are separate paragraphs in the model, linked as line break
-+ * continuations of the first one. Such a block only comes from imported html; in the editor
-+ * its lines look like any other paragraphs. So an imported heading covers every line of its
-+ * block, while a heading set in the editor applies to the selected lines only: a line whose
-+ * level now differs from its neighbour's leaves the block, and the other links stay.
-+ *
-+ * Setting a heading on the first line used to cut every link in the block, including the one
-+ * between lines the change did not touch.
-+ */
-+class HeadingLineBreakBlockTest {
-+
-+    @Test
-+    fun `an imported heading block has the heading on every line`() {
-+        val state = stateOf("<h1>a<br>b<br>c</h1>")
-+
-+        assertEquals(List(3) { HeadingStyle.H1 }, state.richParagraphList.map { it.headingStyle })
-+        assertEquals("<h1>a<br>b<br>c</h1>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `a heading on the first line leaves the other two linked`() {
-+        val state = stateOf("<p>a<br>b<br>c</p>")
-+
-+        state.selection = FIRST_LINE
-+        state.setHeadingStyle(HeadingStyle.H1)
-+
-+        assertEquals("<h1>a</h1><p>b<br>c</p>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `a heading on the middle line separates all three`() {
-+        val state = stateOf("<p>a<br>b<br>c</p>")
-+
-+        state.selection = SECOND_LINE
-+        state.setHeadingStyle(HeadingStyle.H2)
-+
-+        assertEquals("<p>a</p><h2>b</h2><p>c</p>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `a heading on the last line leaves the first two linked`() {
-+        val state = stateOf("<p>a<br>b<br>c</p>")
-+
-+        state.selection = THIRD_LINE
-+        state.setHeadingStyle(HeadingStyle.H1)
-+
-+        assertEquals("<p>a<br>b</p><h1>c</h1>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `a heading on two selected lines keeps those two linked`() {
-+        val state = stateOf("<p>a<br>b<br>c</p>")
-+
-+        state.selection = TextRange(0, 3)
-+        state.setHeadingStyle(HeadingStyle.H1)
-+
-+        assertEquals("<h1>a<br>b</h1><p>c</p>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `a heading on every line keeps the block whole`() {
-+        val state = stateOf("<p>a<br>b<br>c</p>")
-+
-+        state.selection = TextRange(0, 5)
-+        state.setHeadingStyle(HeadingStyle.H1)
-+
-+        assertEquals("<h1>a<br>b<br>c</h1>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `removing the heading from one line of a heading block takes that line out`() {
-+        val state = stateOf("<h1>a<br>b<br>c</h1>")
-+
-+        state.selection = THIRD_LINE
-+        state.setHeadingStyle(HeadingStyle.Normal)
-+
-+        assertEquals("<h1>a<br>b</h1><p>c</p>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `only the selected line reports the heading`() {
-+        val state = stateOf("<p>a<br>b<br>c</p>")
-+        state.selection = FIRST_LINE
-+        state.setHeadingStyle(HeadingStyle.H1)
-+
-+        val levels = listOf(FIRST_LINE, SECOND_LINE, THIRD_LINE).map { line ->
-+            state.selection = line
-+            state.currentHeadingStyle
-+        }
-+
-+        assertEquals(listOf(HeadingStyle.H1, HeadingStyle.Normal, HeadingStyle.Normal), levels)
-+    }
-+
-+    @Test
-+    fun `the blocks around it are left alone`() {
-+        val state = stateOf("<p>x<br>y</p><p>a<br>b</p><p>after</p>")
-+
-+        // "x y a b after": the line "a" is at 4.
-+        state.selection = TextRange(4, 5)
-+        state.setHeadingStyle(HeadingStyle.H1)
-+
-+        assertEquals("<p>x<br>y</p><h1>a</h1><p>b</p><p>after</p>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `undo restores the block as it was`() {
-+        val state = stateOf("<p>a<br>b<br>c</p>")
-+        state.selection = FIRST_LINE
-+        state.setHeadingStyle(HeadingStyle.H1)
-+
-+        state.history.undo()
-+
-+        assertEquals("<p>a<br>b<br>c</p>", state.toHtml())
-+    }
-+
-+    @Test
-+    fun `the result survives an html round trip`() {
-+        val state = stateOf("<p>a<br>b<br>c</p>")
-+        state.selection = FIRST_LINE
-+        state.setHeadingStyle(HeadingStyle.H1)
-+
-+        val reloaded = stateOf(state.toHtml())
-+
-+        assertEquals("<h1>a</h1><p>b<br>c</p>", reloaded.toHtml())
-+    }
-+
-+    private fun stateOf(html: String): RichTextState = RichTextState().apply { setHtml(html) }
-+
-+    private companion object {
-+        // "a b c": one character per line, one separator between lines.
-+        val FIRST_LINE = TextRange(0, 1)
-+        val SECOND_LINE = TextRange(2, 3)
-+        val THIRD_LINE = TextRange(4, 5)
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `2590ceb6` (2026-10-06)
-**Commit Message**: Merge pull request #836 from MohamedRejeb/fix/span-drawing-with-empty-last-paragraph
-
-fix: span backgrounds missing with an empty last paragraph and on the last line
-
-**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/ui/ModifierExt.kt` (modified, +2/-3)
-```diff
-@@ -7,6 +7,7 @@ import androidx.compose.ui.text.TextRange
+@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalDensity
+ import androidx.compose.ui.platform.LocalUriHandler
+ import androidx.compose.ui.text.TextLayoutResult
+ import androidx.compose.ui.text.TextStyle
++import androidx.compose.ui.text.rememberTextMeasurer
+ import androidx.compose.ui.text.style.TextOverflow
+ import androidx.compose.ui.unit.TextUnit
  import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
- import com.mohamedrejeb.richeditor.model.RichSpanStyle
- import com.mohamedrejeb.richeditor.model.RichTextState
-+import com.mohamedrejeb.richeditor.model.isForModelText
- import androidx.compose.ui.util.fastForEach
- 
- @OptIn(ExperimentalRichTextApi::class)
-@@ -39,9 +40,7 @@ internal fun Modifier.drawRichSpanStyle(
-                 styledRichSpanList.fastForEach { (style, textRange) ->
-                     richTextState.textLayoutResult?.let { textLayoutResult ->
-                         with(style) {
--                            val textLength = richTextState.annotatedString.length
--                            val measuredTextLength = textLayoutResult.multiParagraph.intrinsics.annotatedString.length
--                            if (textLength == measuredTextLength) {
-+                            if (textLayoutResult.isForModelText(richTextState.annotatedString.length)) {
-                                 drawCustomStyle(
-                                     layoutResult = textLayoutResult,
-                                     textRange = textRange,
-```
-
-**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/utils/TextLayoutResultExt.kt` (modified, +4/-7)
-```diff
-@@ -31,17 +31,14 @@ public fun TextLayoutResult.getBoundingBoxes(
-     if (multiParagraph.lineCount == 0)
-         return emptyList()
- 
-+    // The end of the last line that holds text. Read from the line itself: a hit test at the
-+    // line's top right lands on the boundary with the paragraph above and reports that
-+    // paragraph's end, which is this line's start.
-     var lastOffset = 0
-     var lastNonEmptyLineIndex = multiParagraph.lineCount - 1
- 
-     while (lastOffset == 0 && lastNonEmptyLineIndex >= 0) {
--        val lastLinePosition =
--            Offset(
--                x = multiParagraph.getLineRight(lastNonEmptyLineIndex),
--                y = multiParagraph.getLineTop(lastNonEmptyLineIndex)
--            )
--
--        lastOffset = multiParagraph.getOffsetForPosition(lastLinePosition)
-+        lastOffset = multiParagraph.getLineEnd(lastNonEmptyLineIndex, visibleEnd = true)
-         lastNonEmptyLineIndex--
+@@ -63,6 +64,9 @@ public fun BasicRichText(
      }
+     val maxImageWidthProvider = remember { RichTextMaxImageWidthProvider() }
  
++    // Before the first read of the annotated string, so the first frame has the final indent.
++    state.measureStartTextWidths(rememberTextMeasurer(), style, density)
++
+     val text = remember(state.annotatedString, state.highlights) {
+         state.annotatedString.withHighlights(state.highlights)
+     }
 ```
 
-**File**: `richeditor-compose/src/desktopTest/kotlin/com/mohamedrejeb/richeditor/ui/CustomSpanDrawingTest.kt` (added, +91/-0)
+**File**: `richeditor-compose/src/desktopTest/kotlin/com/mohamedrejeb/richeditor/ui/StreamedListIndentStabilityTest.kt` (added, +146/-0)
 ```diff
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,146 @@
 +package com.mohamedrejeb.richeditor.ui
 +
-+import androidx.compose.foundation.background
-+import androidx.compose.foundation.layout.Box
-+import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.Column
 +import androidx.compose.foundation.layout.width
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.setValue
 +import androidx.compose.ui.Modifier
-+import androidx.compose.ui.graphics.Color
-+import androidx.compose.ui.graphics.toPixelMap
-+import androidx.compose.ui.platform.testTag
-+import androidx.compose.ui.test.DesktopComposeUiTest
 +import androidx.compose.ui.test.ExperimentalTestApi
-+import androidx.compose.ui.test.captureToImage
-+import androidx.compose.ui.test.onNodeWithTag
 +import androidx.compose.ui.test.runDesktopComposeUiTest
++import androidx.compose.ui.text.TextRange
++import androidx.compose.ui.text.TextStyle
 +import androidx.compose.ui.unit.dp
++import androidx.compose.ui.unit.sp
++import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
++import com.mohamedrejeb.richeditor.model.HeadingStyle
 +import com.mohamedrejeb.richeditor.model.RichTextState
++import com.mohamedrejeb.richeditor.paragraph.type.ConfigurableStartTextWidth
 +import kotlin.test.Test
++import kotlin.test.assertEquals
 +import kotlin.test.assertTrue
 +
 +/**
-+ * The background a code span draws behind its text must be painted whatever the shape of the
-+ * rest of the document. Two shapes lost it:
-+ *
-+ * - A document ending with an empty paragraph. The drawing is skipped while the text layout
-+ *   belongs to an older text, which was checked by comparing lengths, and an empty last
-+ *   paragraph adds an output-only character to the laid out text.
-+ * - A span on the last line of a document with more than one paragraph. The end of the laid
-+ *   out text was found with a hit test at the top right of the last line, which lands on the
-+ *   boundary with the paragraph above and reports the last line's start instead of its end.
++ * A read-only view that shows streamed Markdown gets new content on every chunk, often in a
++ * state that has never been laid out. Its list items must sit at their final indent on the
++ * first frame: a frame at the unmeasured indent followed by a corrected one makes every item
++ * jump sideways on each chunk.
 + */
-+@OptIn(ExperimentalTestApi::class)
-+class CustomSpanDrawingTest {
++@OptIn(ExperimentalTestApi::class, ExperimentalRichTextApi::class)
++class StreamedListIndentStabilityTest {
 +
-+    @Test
-+    fun `a code span is drawn in a document that ends with text`() = runDesktopComposeUiTest {
-+        setEditor("<p><code>CODE SPAN</code> text</p>")
++    private val style = TextStyle(fontSize = 16.sp)
 +
-+        assertTrue(codeSpanPixels() > 0)
-+    }
++    private val bulletChunks = listOf("- one", "- one\n- two", "- one\n- two\n- three and more")
 +
-+    @Test
-+    fun `a code span is drawn in a document that ends with an empty paragraph`() = runDesktopComposeUiTest {
-+        setEditor("<p><code>CODE SPAN</code> text</p><p><br></p>")
++    private val numberedChunks = listOf(
++        "1. a",
++        (1..9).joinToString("\n") { "$it. item" },
++        (1..10).joinToString("\n") { "$it. item" },
++    )
 +
-+        assertTrue(codeSpanPixels() > 0)
-+    }
-+
-+    @Test
-+    fun `a code span on the last line of a later paragraph is drawn`() = runDesktopComposeUiTest {
-+        setEditor("<p>first</p><p><code>CODE SPAN</code></p>")
-+
-+        assertTrue(codeSpanPixels() > 0)
-+    }
-+
-+    @Test
-+    fun `a code span followed by text on the last line is drawn`() = runDesktopComposeUiTest {
-+        setEditor("<p>first</p><p>second</p><p><code>CODE SPAN</code> text</p>")
-+
-+        assertTrue(codeSpanPixels() > 0)
-+    }
-+
-+    private fun DesktopComposeUiTest.setEditor(html: String) {
-+        val state = RichTextState()
-+        state.config.codeSpanBackgroundColor = Color.Red
-+        state.config.codeSpanStrokeColor = Color.Red
-+        state.setHtml(html)
-+        setContent {
-+            Box(Modifier.width(300.dp).background(Color.White).testTag(ROOT_TAG)) {
-+                BasicRichTextEditor(state = state, modifier = Modifier.fillMaxWidth())
++    /**
++     * Streams [chunks] into a view and returns, for every text layout, where the text of the
++     * first list item starts. [newStatePerChunk] rebuilds the state for each chunk instead of
++     * calling `setMarkdown` on the same one.
++     */
++    private fun firstItemTextStarts(
++        chunks: List<String>,
++        newStatePerChunk: Boolean,
++        prefixLength: Int,
++    ): List<Float> {
++        val starts = mutableListOf<Float>()
++        runDesktopComposeUiTest(width = 500, height = 600) {
++            var markdown by mutableStateOf(chunks.first())
++            val sharedState = RichTextState()
++            setContent {
++                val state =
++                    if (newStatePerChunk)
++                        remember(markdown) { RichTextState().apply { setMarkdown(markdown) } }
++                    else
++                        remember(markdown) { sharedState.apply { setMarkdown(markdown) } }
++                BasicRichText(
++                    state = state,
++                    style = style,
++                    modifier = Modifier.width(400.dp),
++                    onTextLayout = { starts += it.getHorizontalPosition(prefixLength, true) },
++                )
++            }
++            waitForIdle()
++            chunks.drop(1).forEach { chunk ->
++                markdown = chunk
++                waitForIdle()
 +            }
 +        }
-+        waitForIdle()
++        return starts
 +    }
 +
-+    private fun DesktopComposeUiTest.codeSpanPixels(): Int {
-+        val pixels = onNodeWithTag(ROOT_TAG).captureToImage().toPixelMap()
-+        var count = 0
-+        for (y in 0 until pixels.height) {
-+            for (x in 0 until pixels.width) {
-+                val color = pixels[x, y]
-+                if (color.red > 0.8f && color.green < 0.3f && color.blue < 0.3f) count++
++    private fun assertStable(starts: List<Float>) {
++        assertTrue(starts.isNotEmpty(), "Expected at least one text layout")
++        assertEquals(1, starts.distinct().size, "List item moved between layouts: $starts")
++    }
++
++    @Test
++    fun `bullet items keep their indent when every chunk builds a new state`() =
++        assertStable(firstItemTextStarts(bulletChunks, newStatePerChunk = true, prefixLength = 2))
++
++    @Test
++    fun `bullet items keep their indent when chunks are set on the same state`() =
++        assertStable(firstItemTextStarts(bulletChunks, newStatePerChunk = false, prefixLength = 2))
++
++    @Test
++    fun `numbered items keep their indent when every chunk builds a new state`() =
++        assertStable(firstItemTextStarts(numberedChunks, newStatePerChunk = true, prefixLength = 3))
++
++    @Test
++    fun `numbered items keep their indent when chunks are set on the same state`() =
++        assertStable(firstItemTextStarts(numberedChunks, newStatePerChunk = false, prefixLength = 3))
++
++    @Test
++    fun `a heading item restyled by the config keeps its indent`() {
++        val starts = mutableListOf<Float>()
++        runDesktopComposeUiTest(width = 500, height = 600) {
++            val state = RichTextState().apply {
++                config.headingTextStyles = mapOf(HeadingStyle.H1 to TextStyle(fontSize = 40.sp))
++                setMarkdown("- one")
++                selection = TextRange(annotatedString.text.length)
++                setHeadingStyle(HeadingStyle.H1)
 +            }
-+        }
-+        return count
-+    }
-+
-+    private companion object {
-+        const val ROOT_TAG = "root"
-+    }
-+}
++            setContent {
++                BasicRichText(
++                    state = state,
++                    style = style,
++                    modifier = Modifier.width(400.dp),
++                    onTextLayout = { starts += it.getHorizontalPosition(2, true) },
++                )
+
 ```
 
 ---
 
-### Incident Patch 3: `e8c367de` (2026-10-05)
-**Commit Message**: fix: span backgrounds on the last line of a multi-paragraph document are drawn
+### Incident Patch 3: `ebab3ffe` (2026-11-11)
+**Commit Message**: fix: a heading list item restyled by the config keeps its indent from the first frame
 
-**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/utils/TextLayoutResultExt.kt` (modified, +4/-7)
+**File**: `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/model/RichTextState.kt` (modified, +5/-2)
 ```diff
-@@ -31,17 +31,14 @@ public fun TextLayoutResult.getBoundingBoxes(
-     if (multiParagraph.lineCount == 0)
-         return emptyList()
+@@ -5627,8 +5627,11 @@ public class RichTextState internal constructor(
+             if (type !is ConfigurableStartTextWidth || type.startText.isEmpty() || type.startTextWidth != 0.sp)
+                 return@fastForEach
  
-+    // The end of the last line that holds text. Read from the line itself: a hit test at the
-+    // line's top right lands on the boundary with the paragraph above and reports that
-+    // paragraph's end, which is this line's start.
-     var lastOffset = 0
-     var lastNonEmptyLineIndex = multiParagraph.lineCount - 1
- 
-     while (lastOffset == 0 && lastNonEmptyLineIndex >= 0) {
--        val lastLinePosition =
--            Offset(
--                x = multiParagraph.getLineRight(lastNonEmptyLineIndex),
--                y = multiParagraph.getLineTop(lastNonEmptyLineIndex)
--            )
--
--        lastOffset = multiParagraph.getOffsetForPosition(lastLinePosition)
-+        lastOffset = multiParagraph.getLineEnd(lastNonEmptyLineIndex, visibleEnd = true)
-         lastNonEmptyLineIndex--
-     }
- 
+-            val markerStyle =
+-                paragraph.getListMarkerSpanStyle(config.listMarkerStyleBehavior, config.listMarkerStyle)
++            val markerStyle = paragraph.getListMarkerSpanStyle(
++                config.listMarkerStyleBehavior,
++                config.listMarkerStyle,
++                config.headingSpanStyleFor(paragraph.headingStyle),
++            )
+             type.startTextWidth = widths.getOrPut(type.startText to markerStyle) {
+                 // The prefix ends with a space, which a line does not count when it is last:
+                 // measure up to a character placed after it instead.
 ```
 
-**File**: `richeditor-compose/src/desktopTest/kotlin/com/mohamedrejeb/richeditor/ui/CustomSpanDrawingTest.kt` (modified, +21/-4)
+**File**: `richeditor-compose/src/desktopTest/kotlin/com/mohamedrejeb/richeditor/ui/StreamedListIndentStabilityTest.kt` (modified, +27/-1)
 ```diff
-@@ -20,11 +20,14 @@ import kotlin.test.assertTrue
- 
- /**
-  * The background a code span draws behind its text must be painted whatever the shape of the
-- * rest of the document.
-+ * rest of the document. Two shapes lost it:
-  *
-- * The drawing is skipped while the text layout belongs to an older text, which was checked by
-- * comparing lengths. An empty last paragraph adds an output-only character to the laid out
-- * text, so every span background disappeared as soon as the document ended with an empty line.
-+ * - A document ending with an empty paragraph. The drawing is skipped while the text layout
-+ *   belongs to an older text, which was checked by comparing lengths, and an empty last
-+ *   paragraph adds an output-only character to the laid out text.
-+ * - A span on the last line of a document with more than one paragraph. The end of the laid
-+ *   out text was found with a hit test at the top right of the last line, which lands on the
-+ *   boundary with the paragraph above and reports the last line's start instead of its end.
+@@ -9,9 +9,12 @@ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.test.ExperimentalTestApi
+ import androidx.compose.ui.test.runDesktopComposeUiTest
++import androidx.compose.ui.text.TextRange
+ import androidx.compose.ui.text.TextStyle
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
++import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
++import com.mohamedrejeb.richeditor.model.HeadingStyle
+ import com.mohamedrejeb.richeditor.model.RichTextState
+ import com.mohamedrejeb.richeditor.paragraph.type.ConfigurableStartTextWidth
+ import kotlin.test.Test
+@@ -24,7 +27,7 @@ import kotlin.test.assertTrue
+  * first frame: a frame at the unmeasured indent followed by a corrected one makes every item
+  * jump sideways on each chunk.
   */
- @OptIn(ExperimentalTestApi::class)
- class CustomSpanDrawingTest {
-@@ -43,6 +46,20 @@ class CustomSpanDrawingTest {
-         assertTrue(codeSpanPixels() > 0)
-     }
+-@OptIn(ExperimentalTestApi::class)
++@OptIn(ExperimentalTestApi::class, ExperimentalRichTextApi::class)
+ class StreamedListIndentStabilityTest {
+ 
+     private val style = TextStyle(fontSize = 16.sp)
+@@ -94,6 +97,29 @@ class StreamedListIndentStabilityTest {
+     fun `numbered items keep their indent when chunks are set on the same state`() =
+         assertStable(firstItemTextStarts(numberedChunks, newStatePerChunk = false, prefixLength = 3))
  
 +    @Test
-+    fun `a code span on the last line of a later paragraph is drawn`() = runDesktopComposeUiTest {
-+        setEditor("<p>first</p><p><code>CODE SPAN</code></p>")
-+
-+        assertTrue(codeSpanPixels() > 0)
++    fun `a heading item restyled by the config keeps its indent`() {
++        val starts = mutableListOf<Float>()
++        runDesktopComposeUiTest(width = 500, height = 600) {
++            val state = RichTextState().apply {
++                config.headingTextStyles = mapOf(HeadingStyle.H1 to TextStyle(fontSize = 40.sp))
++                setMarkdown("- one")
++                selection = TextRange(annotatedString.text.length)
++                setHeadingStyle(HeadingStyle.H1)
++            }
++            setContent {
++                BasicRichText(
++                    state = state,
++                    style = style,
++                    modifier = Modifier.width(400.dp),
++                    onTextLayout = { starts += it.getHorizontalPosition(2, true) },
++                )
++            }
++            waitForIdle()
++        }
++        assertStable(starts)
 +    }
 +
-+    @Test
-+    fun `a code span followed by text on the last line is drawn`() = runDesktopComposeUiTest {
-+        setEditor("<p>first</p><p>second</p><p><code>CODE SPAN</code> text</p>")
-+
-+        assertTrue(codeSpanPixels() > 0)
-+    }
-+
-     private fun DesktopComposeUiTest.setEditor(html: String) {
-         val state = RichTextState()
-         state.config.codeSpanBackgroundColor = Color.Red
+     private fun RichTextState.firstPrefixWidth() =
+         (richParagraphList.first().type as ConfigurableStartTextWidth).startTextWidth
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #860** (2026-11-11): fix: leaving a list with Enter no longer damages the paragraph below (@MohamedRejeb)
 - **PR #854** (closed): feat: paragraph spacing in RichText through an experimental config property (@MohamedRejeb)
+- **PR #853** (2026-11-11): fix: list items keep their indent from the first frame of a read-only view (@MohamedRejeb)
+- **PR #849** (2026-11-11): chore(deps): bump kotlin from 2.4.10 to 2.4.20 (@dependabot[bot])
 - **PR #845** (2026-10-06): feat: a list keeps its style type through HTML, the document model and JSON (@MohamedRejeb)
 - **PR #844** (2026-10-06): feat: Markdown typing shortcuts for headings and inline formatting (@MohamedRejeb)
-- **PR #843** (2026-10-06): feat: load editor content from an AnnotatedString (@MohamedRejeb)
-- **PR #841** (2026-10-08): feat: heading typography can be set per level in RichTextConfig (@MohamedRejeb)
-- **PR #840** (2026-10-06): feat: presentation-only highlight ranges on RichTextState (@MohamedRejeb)
 
 ---
 
@@ -1926,13 +1945,13 @@ fix: span backgrounds missing with an empty last paragraph and on the last line
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #832 from MohamedRejeb/fix/heading-on-line-break-block
+## X. Merge pull request #860 from MohamedRejeb/fix/issue-857-exit-list-paragraph-belo
 
 **RULE**:
 When implementing operations in `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/model/RichTextState.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MohamedRejeb/compose-rich-editor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `294f5e94`: Merge pull request #832 from MohamedRejeb/fix/heading-on-line-break-block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3254ff75`: Merge pull request #860 from MohamedRejeb/fix/issue-857-exit-list-paragraph-below. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `richeditor-compose/src/commonMain/kotlin/com/mohamedrejeb/richeditor/model/RichTextState.kt`.
@@ -1940,39 +1959,27 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-     *
-     * The lines of an imported `<br>` block look like any other paragraphs in the editor, so
-     * the heading applies to the selected ones only. A line whose level now differs from its
-     * neighbour's leaves the block; lines that still share a level stay linked.
-            val changed = paragraphs.filter { it.headingStyle != headingStyle }
-            changed.forEach { it.applyHeadingStyle(headingStyle) }
-            // After every level is set, so two selected lines that end up alike stay linked.
-            changed.forEach { cutLineBreakLinksAcrossHeadingLevels(it) }
-    /**
-     * A `<br>` continuation is written inside the tag of the line it continues, so the two
-     * must share a heading level. Cuts the links of [paragraph] to the line above and to the
-     * line below where the levels differ. Links further along the block are not its concern.
-     */
-    private fun cutLineBreakLinksAcrossHeadingLevels(paragraph: RichParagraph) {
-        val index = richParagraphList.indexOf(paragraph)
-        if (index < 0) return
+                    // No paragraph is added, so the newline leaves the text as well: left in, the
+                    // scan meets it again behind the dropped prefix and splits the paragraph below.
+                    tempTextFieldValue = tempTextFieldValue.copy(
+                        text = tempTextFieldValue.text.removeRange(index, index + 1),
+                        selection = TextRange(tempTextFieldValue.selection.min - 1),
+                    )
 
-        val previous = richParagraphList.getOrNull(index - 1)
-        if (previous == null || previous.headingStyle != paragraph.headingStyle)
-  
+
+                    // Numbered items below are a list of their own now
+                    tempTextFieldValue = adjustOrderedListsNumbers(
+                        startParagraphIndex = paragraphIndex + 1,
+                        startNumber = 1,
+                        textFieldValue = tempTextFieldValue,
+                    )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-            paragraphs.forEach { paragraph ->
-                if (paragraph.headingStyle == headingStyle) return@forEach
-                paragraph.applyHeadingStyle(headingStyle)
-                // A continuation has no heading of its own in html. Unlike addParagraphStyle,
-                // which severs unconditionally, a level that did not change severs nothing.
-                clearLineBreakContinuations(paragraph)
-            }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `294f5e94` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3254ff75` are properly handled with clean fallback behavior.

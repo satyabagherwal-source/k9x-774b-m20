@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:36:08.779Z",
+  "last_updated": "2026-11-12T03:10:50.955Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5211,6 +5211,761 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-87E40E-expression-fix-flaky-testgetlock-interna.md",
       "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-17289F",
+      "directive_title": "Merge pull request #1893 from linkwarden/dev",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "linkwarden-linkwarden",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-17289F-merge-pull-request-1893-from-linkwarden-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-719853",
+      "directive_title": "Make Anthropic endpoint and API version configurable (#568)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "llphant-llphant",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-719853-make-anthropic-endpoint-and-api-version-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-F3D791",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F3D791-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-E512C9",
+      "directive_title": "Enable linux fs fixes for all users (#5214)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "metalbear-co-mirrord",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E512C9-enable-linux-fs-fixes-for-all-users-5214.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-26DF2A",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-26DF2A-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-AC438B",
+      "directive_title": "Merge pull request #260 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "unhappychoice-gitlogue",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC438B-merge-pull-request-260-from-unhappychoic.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-394739",
+      "directive_title": "GitHub authentication for release source tags (#16592)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microsoft-react-native-windows",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-394739-github-authentication-for-release-source.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-E785F7",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E785F7-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-66B763",
+      "directive_title": "mutation): add the opt-in nullish-fallback operator (#4507)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fallow-rs-fallow",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-66B763-mutation-add-the-opt-in-nullish-fallback.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-B32300",
+      "directive_title": ":bug: post notifications to Notification Center on macOS while the main window i",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crosspaste-crosspaste-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B32300--bug-post-notifications-to-notification-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-89B0F9",
+      "directive_title": "[FIXED] Filestore metadata and new directories not crash-safe (#8887)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-89B0F9--fixed-filestore-metadata-and-new-direct.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-7C0C66",
+      "directive_title": "rustls-aws-lc-rs: reject non-canonical X25519 HPKE recipient keys",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rustls-rustls",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7C0C66-rustls-aws-lc-rs-reject-non-canonical-x2.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-787336",
+      "directive_title": "frontend): reject invalid rate limit in WITH options instead of panicking (#2790",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "risingwavelabs-risingwave",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-787336-frontend-reject-invalid-rate-limit-in-wi.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-32633D",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-32633D-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-09F5A1",
+      "directive_title": "telemetry): keep metrics files out of the current directory on config errors (#4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "flox-flox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-09F5A1-telemetry-keep-metrics-files-out-of-the-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-134332",
+      "directive_title": "CVE fixes (#2594)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "loft-sh-vcluster",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-134332-cve-fixes-2594-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-0FDA5F",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0FDA5F-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-BC9420",
+      "directive_title": "Animate screen corner radius during predictive back gesture",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "msasikanth-twine",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BC9420-animate-screen-corner-radius-during-pred.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-CD35C4",
+      "directive_title": "give the mdadm runtime map directory a dedicated SELinux type",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "siderolabs-talos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CD35C4-give-the-mdadm-runtime-map-directory-a-d.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-CB302D",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB302D-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-LY3E",
+      "directive_title": "Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "d79d5796",
+      "date_staged": "2026-11-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kuddev-pebrel"
+    },
+    {
+      "id": "CD-REV-3F8474",
+      "directive_title": "Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kuddev-pebrel",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3F8474-merge-pull-request-946-from-kuddev-merge.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-044F92",
+      "directive_title": "Merge pull request #7343 from locker95/fix-scratch-manifest-layers",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "moby-buildkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-044F92-merge-pull-request-7343-from-locker95-fi.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-684996",
+      "directive_title": "storage: rate limit gauge regression error logs (#40589)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "materializeinc-materialize",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-684996-storage-rate-limit-gauge-regression-erro.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-AR9T",
+      "directive_title": "mcp-server): acknowledge valid Legacy JSON-RPC responses (#5337)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "higress-group/higress",
+      "source_commit": "f0260049",
+      "date_staged": "2026-11-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-higress-group-higress"
+    },
+    {
+      "id": "CD-REV-4B2E9C",
+      "directive_title": "Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zeronsh-zeron",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4B2E9C-sound-macos-chimes-stop-triggering-a-ker.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-390BDB",
+      "directive_title": "mcp-server): acknowledge valid Legacy JSON-RPC responses (#5337)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "higress-group-higress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-390BDB-mcp-server-acknowledge-valid-legacy-json.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-319BE7",
+      "directive_title": "deps): bump golang.org/x/sync (#3751)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fission-fission",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-319BE7-deps-bump-golang-org-x-sync-3751-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-3EE349",
+      "directive_title": "Further simplify subscription state management. Avoid race between record-level",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trailbaseio-trailbase",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3EE349-further-simplify-subscription-state-mana.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-7661A1",
+      "directive_title": "Support coros in schedulers and dupefilters. (#8479)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "scrapy-scrapy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7661A1-support-coros-in-schedulers-and-dupefilt.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-609B82",
+      "directive_title": "dashboard): add server-side pagination for events (#5222)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "chaos-mesh-chaos-mesh",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-609B82-dashboard-add-server-side-pagination-for.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-BB4BC0",
+      "directive_title": "proxy): distinguish credential capture failures in HTTP responses",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nolabs-ai-nono",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB4BC0-proxy-distinguish-credential-capture-fai.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-41B0CD",
+      "directive_title": "tui): keep the terminal in TUI mode when a draw panic is recovered",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "1jehuang-jcode",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-41B0CD-tui-keep-the-terminal-in-tui-mode-when-a.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-3F1992",
+      "directive_title": "✨ Track the original radial menu gesture in the session",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mrkai77-loop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3F1992--track-the-original-radial-menu-gesture-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-933D5B",
+      "directive_title": "Prepare release 3.15.0-rc0 (#8055)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "typedb-typedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-933D5B-prepare-release-3-15-0-rc0-8055-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-0359E8",
+      "directive_title": "Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "simonschubert-linuxcommandlibrary",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0359E8-auto-fix-lintfix-and-refresh-paparazzi-s.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-B51DB4",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B51DB4-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-C4BF9F",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4BF9F-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-4BBD05",
+      "directive_title": "Align Ubuntu versions between build and package anatomy",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "orange-opensource-hurl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4BBD05-align-ubuntu-versions-between-build-and-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-42D964",
+      "directive_title": "Merge pull request #860 from MohamedRejeb/fix/issue-857-exit-list-paragraph-belo",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mohamedrejeb-compose-rich-editor",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-42D964-merge-pull-request-860-from-mohamedrejeb.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-AC816F",
+      "directive_title": "postgres): stop read-only SpiceDB from writing heartbeat rows (#3479)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "authzed-spicedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC816F-postgres-stop-read-only-spicedb-from-wri.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-58B5C2",
+      "directive_title": "test(database): join the DataStore scope before deleting the fixture dir (#8014)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshtastic-meshtastic-android",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-58B5C2-test-database-join-the-datastore-scope-b.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-721E77",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-721E77-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-EA034B",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EA034B-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-100F3A",
+      "directive_title": "capture, usability and motion follow-ups, real readings for the widget icon, and",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "thaw-app-thaw",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-100F3A-capture-usability-and-motion-follow-ups-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C4F4F7",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4F4F7-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B1C7E0",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B1C7E0-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-TMOV",
+      "directive_title": "add issue reporting flow to readme",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Permify/permify",
+      "source_commit": "f1d2b9b0",
+      "date_staged": "2026-11-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-permify-permify"
+    },
+    {
+      "id": "CD-REV-2DE91A",
+      "directive_title": "deps: bump rustix to 1.1.6 (#2312)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clementtsang-bottom",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2DE91A-deps-bump-rustix-to-1-1-6-2312-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-E87FC0",
+      "directive_title": "add issue reporting flow to readme",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "permify-permify",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E87FC0-add-issue-reporting-flow-to-readme.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0B0DBD",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0B0DBD-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0BE246",
+      "directive_title": "transport): a loss gate in front of QUIC Cubic, so random loss does not collapse",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0BE246-transport-a-loss-gate-in-front-of-quic-c.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D77096",
+      "directive_title": "Share one clock in compactor test fixture (#2250)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "slatedb-slatedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D77096-share-one-clock-in-compactor-test-fixtur.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-1C53D8",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1C53D8-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BBE927",
+      "directive_title": "tests: attempt to make redis tests more resilient  (#1203)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "webrecorder-browsertrix-crawler",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BBE927-tests-attempt-to-make-redis-tests-more-r.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-20ABE5",
+      "directive_title": "Mirror from private (2ebfc38a)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "darrylmorley-whatcable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-20ABE5-mirror-from-private-2ebfc38a-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-277EA1",
+      "directive_title": "installed and active state not refreshing after install, select, and uninstall",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "xcodesorg-xcodesapp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-277EA1-installed-and-active-state-not-refreshin.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BAAAA2",
+      "directive_title": "envoy_modules: build from the dependency stage with --locked (#15024)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kgateway-dev-kgateway",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BAAAA2-envoy-modules-build-from-the-dependency-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-E1B64C",
+      "directive_title": "gix-diff): count existing destinations when inferring directory renames",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gitoxidelabs-gitoxide",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E1B64C-gix-diff-count-existing-destinations-whe.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-DBD248",
+      "directive_title": "Preserve CLI timeout diagnostics and clean up child processes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "archivebox-archivebox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DBD248-preserve-cli-timeout-diagnostics-and-cle.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-FA9848",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FA9848-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-3EC187",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3EC187-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-30A070",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-30A070-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-616E3C",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-616E3C-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-CF98CC",
+      "directive_title": "Build: Use security fixed zlib 1.4.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lxml-lxml",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CF98CC-build-use-security-fixed-zlib-1-4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-123A7C",
+      "directive_title": "market(fix): refine catalog handling and api safeguards (#4436)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "beclab-olares",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-123A7C-market-fix-refine-catalog-handling-and-a.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-B15E6C",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B15E6C-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-M9T9",
+      "directive_title": "Pin sqlparser until the upstream quoted-parameter fix is released",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sqlpage/SQLPage",
+      "source_commit": "3c673a3b",
+      "date_staged": "2026-11-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-sqlpage-sqlpage"
+    },
+    {
+      "id": "CD-REV-6B020C",
+      "directive_title": "Merge pull request #565 from taubyte/fix/dream-push-wait-race",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "taubyte-tau",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6B020C-merge-pull-request-565-from-taubyte-fix-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-516A1F",
+      "directive_title": "Pin sqlparser until the upstream quoted-parameter fix is released",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sqlpage-sqlpage",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-516A1F-pin-sqlparser-until-the-upstream-quoted-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-30D8E1",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-30D8E1-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-267BC2",
+      "directive_title": "Require new bundle format for attest-blob (#5088)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sigstore-cosign",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-267BC2-require-new-bundle-format-for-attest-blo.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-C2218C",
+      "directive_title": "etcdutl : Fix lint failure",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "etcd-io-etcd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C2218C-etcdutl-fix-lint-failure.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9B6133",
+      "directive_title": "Update SECURITY.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nasiko-labs-nasiko",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9B6133-update-security-md.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-A847E3",
+      "directive_title": "build(deps): Bump github/codeql-action from 4.39.2 to 4.39.3 (#2569)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fb55-htmlparser2",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A847E3-build-deps-bump-github-codeql-action-fro.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-07FACC",
+      "directive_title": "deps): update module golang.org/x/crypto to v0.59.0 [security]",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-07FACC-deps-update-module-golang-org-x-crypto-t.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9565F5",
+      "directive_title": "Select): select the typed match while the trigger is closed (#3061)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "unovue-reka-ui",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9565F5-select-select-the-typed-match-while-the-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4D163B",
+      "directive_title": "docs(security): name Tidelift as the only channel for reports",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "inikulin-parse5",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D163B-docs-security-name-tidelift-as-the-only-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-97CBE4",
+      "directive_title": "Oracle parenthesized expression parsing (#40500)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-shardingsphere",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-97CBE4-oracle-parenthesized-expression-parsing-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-4EB2BA",
+      "directive_title": "build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fb55-css-select",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4EB2BA-build-deps-bump-github-codeql-action-fro.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-262A25",
+      "directive_title": "Update module golang.org/x/crypto to v0.59.0 [SECURITY] (#5544)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trufflesecurity-trufflehog",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-262A25-update-module-golang-org-x-crypto-to-v0-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-360495",
+      "directive_title": "help examples that use ws-l: where ws-u: is meant",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vi-websocat",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-360495-help-examples-that-use-ws-l-where-ws-u-i.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-9BDB9D",
+      "directive_title": "build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cheeriojs-dom-serializer",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9BDB9D-build-deps-bump-github-codeql-action-fro.md",
+      "staged_date": "2026-11-12"
     }
   ]
 }

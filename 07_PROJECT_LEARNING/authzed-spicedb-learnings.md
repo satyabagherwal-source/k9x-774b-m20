@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `4613dae4`  
+> **Source Version**: `576278c9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:39:57.452Z  
+> **Timestamp**: 2026-11-11T20:18:30.249Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:39:57.443Z  
+> **Harvest Timestamp**: 2026-11-11T20:18:30.082Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7196 stars
+- **Stars / Engagement**: 7215 stars
 
 ---
 
@@ -1086,16 +1086,11 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3452** (2026-11-05): **otel: add `--otel-ignore-remote-sampling`**
-  *Symptoms*: ## Why  SpiceDB follows the sampling decision a caller sends in its trace headers (`traceparent`, b3). If a caller marks most requests as sampled, SpiceDB traces most requests, no matter what `--otel-sample-ratio` is set to.  We saw this in production: one caller's requests arrived marked as sampled about 50–75% of the time, while the ratio was 0.01. The trace volume overwhelmed the tracing backend. Changing `--otel-trace-propagator` doesn't help when the caller sends several header formats.  ## What  A new flag, `--otel-ignore-remote-sampling`, defaulting to `false`.  | | Default (`false`) | `true` | |---|---|---| | Request with no trace headers | ratio | ratio | | Request whose caller says "sampled" | sampled | ratio | | Request whose caller says "not sampled" | not sampled | ratio | | Span inside SpiceDB (local parent) | follows parent | follows parent | | Caller's trace ID | kept | kept |  The default is unchanged. The zero value of the new config field (`IgnoreRemoteSampling`) also keeps today's behaviour, so code that builds `OTelConfig` directly isn't affected.  ## Why traces stay whole  The ratio sampler decides from the trace ID alone. That means every SpiceDB node on the dispatch path reaches the same decision for a given trace, and so does any downstream service that follows its parent. This holds as long as they all use the same ratio.  ## Testing  - Unit tests for every row of the table, with the flag on and off. - Test that the flag defaults to `false`. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3452?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :white_check_mark: All modified and coverable lines are covered by tests.  :loudspeaker: Thoughts on this report? [Let us know!](https://github.com/codecov/feedback/issues/255)
+- **Issue #3480** (2026-11-10): **chore: roll changelog**
+  *Symptoms*: ## Description Rolls the changelog for v1.57.1. This includes a CVE fix. We chose to cut it from a previous commit rather than head; this accounts for the roll still having unreleased entries.  ## Changes * Roll changelog entries * Include changelog entry for CVE ## Testing Review.
 
-- **Issue #3445** (2026-11-05): **feat(query): add context and execution planning signals**
-  *Symptoms*: Add planning signals for request-context stability, permission-check outcomes, and completed result sizes, including historical estimates that age as observations get older. These provide evidence for subsequent optimizations while keeping incomplete work distinct from completed results.  Each signal includes a short summary, examples, and tests for its estimates, revision scope, and behavior across schema changes. Validation includes race detection, generated properties, storage-budget regressions, and lint checks. 
-  **Post-Mortem & Fix Analysis**:
-  > Waiting for the base PR, [#3444](https://github.com/authzed/spicedb/pull/3444), to merge. This is a dependent draft and will be rebased after that PR lands. 
-  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3445?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :x: Patch coverage is `86.83473%` with `47 lines` in your changes missing coverage. Please review. | [Files with missing lines](https://app.codecov.io/gh/authzed/spicedb/pull/3445?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) | Patch % | Lines | |---|---|---| | [pkg/query/signals/historicalresultsize/signal.go](https://app.codecov.io/gh/authzed/spicedb/pull/3445?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed#diff-cGtnL3F1ZXJ5L3NpZ25hbHMvaGlzdG9yaWNhbHJlc3VsdHNpemUvc2lnbmFsLmdv) | 89.12% | [10 Missing and 6 partials :warning: ](https://app.codecov.io/gh/authzed/spicedb/pull/3445?src=pr&el=tree&utm_medium=referral&utm_source=github&ut
+- **Issue #3479** (2026-11-10): **fix(postgres): stop read-only SpiceDB from writing heartbeat rows**
+  *Symptoms*: ## What was wrong  If you run SpiceDB on Postgres with `--datastore-readonly=true`, it still tries to write to the database every few seconds, and every attempt fails. The logs fill up with this pair of messages, about once every 5 seconds per pod:      ERROR: cannot execute INSERT in a read-only transaction (SQLSTATE 25006)     failed to write heartbeat revision  ## Why it happened  SpiceDB on Postgres runs a small background job called the "revision heartbeat". Every few seconds it adds a row to the database so that newer revisions keep being created even when nobody is writing data.  The `--datastore-readonly` flag only blocks writes that come in through the API. It does not stop background jobs. Garbage collection was already turned off for read-only instances, but the heartbeat was not, so it kept running and kept failing.  ## The fix  Don't start the heartbeat when the datastore is read-only. It's a one-line change in `internal/datastore/postgres/enginebuilder.go`, following the same rule that already exists for garbage collection.  Nothing changes for instances that are not read-only.  ## Is anything lost on read-only instances?  No. Read-only instances still read the latest data. If a read-write SpiceDB shares the same database, it keeps writing heartbeat rows, and the read-only instances see them.  ## Other databases  Only Postgres has this heartbeat. MySQL already skips its background cleanup when read-only. CockroachDB and Spanner don't have this job.  ## How it's 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1112,284 +1107,550 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52ec6e3c` (2026-10-30)
-**Commit Message**: fix(query): bound provider retention and isolate concurrent digest updates
+### Incident Patch 1: `decb4729` (2026-11-10)
+**Commit Message**: fix(postgres): stop read-only SpiceDB from writing heartbeat rows (#3479)
 
-**File**: `pkg/query/signals/contextfield/ownership_test.go` (added, +25/-0)
+* fix(postgres): stop read-only SpiceDB from writing heartbeat rows
+
+When SpiceDB runs with --datastore-readonly=true on Postgres, it still
+started a background job that writes a small "heartbeat" row to the
+database every few seconds. A read-only instance can't write, so every
+attempt failed and logged an error, about once every 5 seconds per pod.
+
+The read-only flag already turned off the other background writer
+(garbage collection). This applies the same rule to the heartbeat.
+Instances that are not read-only behave exactly as before.
+
+* docs(changelog): note read-only Postgres heartbeat fix
+
+* test(postgres): fix data race in read-only heartbeat test
+
+require.Eventually and require.Never run their check on a separate
+goroutine, and can return while that check is still querying the
+database. The test cleanup then closed the connection while the query
+was still using it, which the race detector flagged in CI.
+
+Poll on the test's own goroutine instead, so the connection is never
+used by two goroutines at once.
+
+* test(postgres): add unit test for read-only datastore options
+
+Move the option building for the
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,25 @@
-+package contextfield
-+
-+import (
-+	"strings"
-+	"testing"
-+	"unsafe"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestRetainedFingerprintsOwnTheirBackingStorage(t *testing.T) {
-+	a := &accumulator{frequencies: map[string]uint64{}}
-+
-+	for range 2 {
-+		backing := strings.Repeat("x", 1<<20) + "same-value"
-+		fingerprint := backing[len(backing)-len("same-value"):]
-+
-+		require.NoError(t, a.Add(Observation{Present: true, Fingerprint: fingerprint}))
-+		require.NotSame(t, unsafe.StringData(fingerprint), unsafe.StringData(a.first))
-+
-+		for retained := range a.frequencies {
-+			require.NotSame(t, unsafe.StringData(fingerprint), unsafe.StringData(retained))
-+		}
-+	}
-+}
+@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ - Tracing: `--otel-ignore-remote-sampling` makes SpiceDB apply `--otel-sample-ratio` to every request, ignoring the sampling decision callers send in their trace headers. Without it, a caller that marks most requests as sampled makes SpiceDB trace most requests, whatever the ratio. The caller's trace ID is still kept, and spans created inside SpiceDB still follow their parent, so traces stay whole. Off by default. (https://github.com/authzed/spicedb/pull/3452)
+ 
+ ### Fixed
++- Postgres: SpiceDB started with `--datastore-readonly=true` no longer tries to write a "heartbeat" row to the database every few seconds. A read-only instance can't write, so every attempt failed and logged `cannot execute INSERT in a read-only transaction (SQLSTATE 25006)` followed by `failed to write heartbeat revision`, about once every 5 seconds per pod. The heartbeat is now turned off for read-only instances, the same way garbage collection already was. Instances that are not read-only are unchanged. (https://github.com/authzed/spicedb/pull/3479)
+ - Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
+ - LookupResources and Expand: the read connection pool can no longer deadlock because a request held one connection while waiting for another. LookupResources dispatched further lookups while its relationships query still held its connection, so on a schema of several levels every connection in the pool could end up held by a request waiting for another one. Since client cancellation does not reach the pool, the server stayed stuck until restarted. LookupResources now reads the relationships for each query in full before dispatching, with a single query when the request has no limit, and in pages when it does. Expand over an arrow now reads the schema before reading relationships, instead of once per relationship. With the single-store schema (`--experimental-schema-mode` set to `read-new-write-both` or `read-new-write-new`), caveat and namespace definitions are loaded before relationships are read, which also resolves the caveated LookupResources deadlock reported in the issue. The default legacy schema mode still loads definitions while relationships are being read, and is not fixed by this change. (https://github.com/authzed/spicedb/issues/3433)
+ - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
 ```
 
-**File**: `pkg/query/signals/contextfield/signal.go` (modified, +13/-5)
+**File**: `docs/spicedb.md` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@
- package contextfield
+@@ -613,7 +613,7 @@ spicedb serve [flags]
+       --enable-experimental-watchable-schema-cache                                      enables the experimental schema cache, which uses the Watch API to keep the schema up to date
+       --enable-memory-protection-middleware                                             enables middleware that does a best effort at preventing OOM (Out of Memory) if the server's memory usage is too high by returning ResourceExhausted on incoming requests (default true)
+       --enable-performance-insight-metrics                                              enables performance insight metrics, which are used to track the latency of API calls by shape
+-      --enable-revision-heartbeat                                                       enables support for revision heartbeat, used to create a synthetic revision on an interval defined by the quantization window (Postgres driver only) (default true)
++      --enable-revision-heartbeat                                                       enables support for revision heartbeat, used to create a synthetic revision on an interval defined by the quantization window (Postgres driver only; always off when --datastore-readonly is set) (default true)
+       --experimental-dispatch-secondary-maximum-primary-hedging-delays stringToString   maximum number of hedging delays to use for each request type to delay the primary request. default is 5ms (default [])
+       --experimental-dispatch-secondary-upstream-addrs stringToString                   secondary upstream addresses for dispatches, each with a name (default [])
+       --experimental-dispatch-secondary-upstream-exprs stringToString                   map from request type to its associated CEL expression, which returns the secondary upstream(s) to be used for the request (default [])
+```
+
+**File**: `internal/datastore/postgres/enginebuilder.go` (modified, +19/-3)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 	"github.com/authzed/spicedb/internal/datastore/common"
+ 	"github.com/authzed/spicedb/internal/datastore/postgres/migrations"
+ 	"github.com/authzed/spicedb/internal/datastore/proxy"
++	log "github.com/authzed/spicedb/internal/logging"
+ 	datastorecfg "github.com/authzed/spicedb/pkg/cmd/datastore/dsconfig"
+ 	"github.com/authzed/spicedb/pkg/datastore"
+ 	"github.com/authzed/spicedb/pkg/datastore/migration"
+@@ -98,6 +99,20 @@ func newReplicaDatastoreFromConfig(ctx context.Context, replicaIndex uint32, rep
+ }
  
- import (
-+	"strings"
- 	"time"
- 
- 	"github.com/ccoveille/go-safecast/v2"
-@@ -76,14 +77,20 @@ func (a *accumulator) Add(o Observation) error {
+ func newPrimaryDatastoreFromConfig(ctx context.Context, opts datastorecfg.Config) (datastore.Datastore, error) {
++	pgOpts, err := primaryDatastoreOptionsFromConfig(opts)
++	if err != nil {
++		return nil, err
++	}
++	return NewPostgresDatastore(ctx, opts.URI, pgOpts...)
++}
++
++// primaryDatastoreOptionsFromConfig translates the CLI datastore config into
++// the options used to build the primary Postgres datastore.
++func primaryDatastoreOptionsFromConfig(opts datastorecfg.Config) ([]Option, error) {
++	if opts.ReadOnly && opts.EnableRevisionHeartbeat {
++		log.Info().Msg("revision heartbeat disabled because the datastore is read-only")
++	}
++
+ 	pgOpts := []Option{ //nolint: prealloc  // we're not worried about perf here
+ 		CredentialsProviderName(opts.CredentialsProviderName),
+ 		GCWindow(opts.GCWindow),
+@@ -125,14 +140,15 @@ func newPrimaryDatastoreFromConfig(ctx context.Context, opts datastorecfg.Config
+ 		WithWatchDisabled(opts.DisableWatchSupport),
+ 		MigrationPhase(opts.MigrationPhase),
+ 		AllowedMigrations(opts.AllowedMigrations),
+-		WithRevisionHeartbeat(opts.EnableRevisionHeartbeat),
++		// The revision heartbeat INSERTs into the transaction table, so it must
++		// not run when the datastore is read-only.
++		WithRevisionHeartbeat(opts.EnableRevisionHeartbeat && !opts.ReadOnly),
+ 		WithRelaxedIsolationLevel(opts.RelaxedIsolationLevel),
  	}
  
- 	present := a.samples - a.missing
--	if present == 1 {
--		a.first = o.Fingerprint
--	} else if a.first != o.Fingerprint {
-+	if present > 1 && a.first != o.Fingerprint {
- 		a.different = true
+ 	commonOptions, err := commonDatastoreOptionsFromConfig(opts)
+ 	if err != nil {
+ 		return nil, err
  	}
- 
- 	if _, ok := a.frequencies[o.Fingerprint]; ok || len(a.frequencies) < 16 {
--		a.frequencies[o.Fingerprint]++
-+		// Map updates can replace an equal string key's backing pointer. Own the
-+		// fingerprint on every write, including repeated values, so a substring
-+		// supplied by an observer cannot retain a much larger context buffer.
-+		fingerprint := strings.Clone(o.Fingerprint)
-+		if present == 1 {
-+			a.first = fingerprint
-+		}
-+
-+		a.frequencies[fingerprint]++
- 	} else {
- 		a.overflow++
- 		a.different = true
-@@ -118,7 +125,8 @@ func (a *accumulator) Value(time.Time) (Estimate, signal.Availability) {
- 
- // Size returns the estimated resident size of the accumulator in bytes.
- func (a *accumulator) Size() int64 {
--	size := int64(64)
-+	// A later equal map-key update can leave first with its own backing bytes.
-+	size := int64(64) + safecast.MustConvert[int64](len(a.first))
- 
- 	for k := range a.frequencies {
- 		size += 64 + safecast.MustConvert[int64](len(k))
+-	pgOpts = append(pgOpts, commonOptions...)
+-	return NewPostgresDatastore(ctx, opts.URI, pgOpts...)
++	return append(pgOpts, commonOptions...), nil
+ }
 ```
 
-**File**: `pkg/query/signals/resultsize/README.md` (modified, +6/-0)
+**File**: `internal/datastore/postgres/enginebuilder_test.go` (added, +50/-0)
 ```diff
-@@ -47,3 +47,9 @@ eagerly exhausts an underlying iterator, that completed raw population is a vali
- sample even if the API consumer later stops. The arrow-direction optimization
- uses the mean from matching enumeration keys, falling back to historical evidence
- when the exact-revision estimate is unavailable.
-+
-+The memory estimate includes the digest's preallocated buffers and slice-growth
-+headroom. Even a sparse compression-100 digest reserves about 16 KiB before entry
-+and key overhead, so a smaller per-entry budget declines it. Historical buckets
-+account for their digests independently and can be evicted before their configured
-+retention period when the shared storage budget is exhausted.
-```
-
-**File**: `pkg/query/signals/resultsize/memory_test.go` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+package resultsize
+@@ -0,0 +1,50 @@
++package postgres
 +
 +import (
-+	"reflect"
 +	"testing"
 +
-+	"github.com/ccoveille/go-safecast/v2"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func assertDigestBuffersAccounted(t *testing.T, a *accumulator) {
-+	t.Helper()
-+
-+	// This regression deliberately inspects the dependency's backing capacities:
-+	// a library upgrade must not silently invalidate our conservative Size bound.
-+	summary := reflect.ValueOf(a.digest).Elem().FieldByName("summary").Elem()
-+	means := summary.FieldByName("means").Cap()
-+	counts := summary.FieldByName("counts").Cap()
-+	bufferBytes := 8 * safecast.MustConvert[int64](means+counts)
-+
-+	require.GreaterOrEqual(t, a.Size(), bufferBytes+256)
-+}
-+
-+func TestDigestBudgetCoversCompressionAndClones(t *testing.T) {
-+	a := NewAccumulator().(*accumulator)
-+	assertDigestBuffersAccounted(t, a)
-+
-+	for block := range 4 {
-+		for i := range 2048 {
-+			count := safecast.MustConvert[uint64]((i*7919 + block) % 12345)
-+
-+			require.NoError(t, a.Add(Observation{Count: count}))
-+		}
-+
-+		assertDigestBuffersAccounted(t, a)
-+		require.NoError(t, a.digest.Compress())
-+		assertDigestBuffersAccounted(t, a)
-+		cloned := a.Clone().(*accumulator)
-+		assertDigestBuffersAccounted(t, cloned)
-+	}
-+}
-```
-
-**File**: `pkg/query/signals/resultsize/ownership_test.go` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+package resultsize_test
-+
-+import (
-+	"sync"
-+	"testing"
-+
-+	"github.com/ccoveille/go-safecast/v2"
 +	"github.com/stretchr/testify/require"
 +
-+	"github.com/authzed/spicedb/internal/querysignalstest"
-+	"github.com/authzed/spicedb/pkg/query/signals"
-+	"github.com/authzed/spicedb/pkg/query/signals/resultsize"
-+	"github.com/authzed/spicedb/pkg/query/signals/signal"
++	datastorecfg "github.com/authzed/spicedb/pkg/cmd/datastore/dsconfig"
 +)
 +
-+func TestAccumulatorClonesCanLearnConcurrently(t *testing.T) {
-+	original := resultsize.NewAccumulator()
++// TestPrimaryDatastoreOptionsReadOnly checks that a read-only datastore does
++// not run the background jobs that write to the database: the revision
++// heartbeat (which INSERTs into relation_tuple_transaction) and garbage
++// collection.
++func TestPrimaryDatastoreOptionsReadOnly(t *testing.T) {
++	t.Parallel()
 +
-+	for i := range 100 {
-+		require.NoError(t, original.Add(resultsize.Observation{Count: safecast.MustConvert[uint64](i % 7)}))
++	tests := []struct {
++		name          string
++		readOnly      bool
++		heartbeatFlag bool
++		wantHeartbeat bool
++		wantGCEnabled bool
++	}{
++		{name: "read-write, heartbeat on", readOnly: false, heartbeatFlag: true, wantHeartbeat: true, wantGCEnabled: true},
++		{name: "read-write, heartbeat off", readOnly: false, heartbeatFlag: false, wantHeartbeat: false, wantGCEnabled: true},
++		{name: "read-only, heartbeat on", readOnly: true, heartbeatFlag: true, wantHeartbeat: false, wantGCEnabled: false},
++		{name: "read-only, heartbeat off", readOnly: true, heartbeatFlag: false, wantHeartbeat: false, wantGCEnabled: false},
 +	}
 +
-+	cloned := original.Clone()
-+	errors := make(chan error, 2)
-+	var workers sync.WaitGroup
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
 +
-+	for _, accumulator := range []signal.Accumulator[resultsize.Observation, resultsize.Estimate]{original, cloned} {
-+		workers.Go(func() {
-+			for i := range 2000 {
-+				if err := accumulator.Add(resultsize.Observation{Count: safecast.MustConvert[uint64](i % 17)}); err != nil {
-+					errors <- err
-+					return
-+				}
-+			}
++			cfg := datastorecfg.DefaultDatastoreConfig()
++			cfg.Engine = Engine
++			cfg.ReadOnly = tc.readOnly
++			cfg.EnableRevisionHeartbeat = tc.heartbeatFlag
++
++			opts, err := primaryDatastoreOptionsFromConfig(*cfg)
++			require.NoError(t, err)
++
++			pgCfg, err := generateConfig(opts)
++			require.NoError(t, err)
++
++			require.Equal(t, tc.wantHeartbeat, pgCfg.revisionHeartbeatEnabled, "revision heartbeat enabled")
++			require.Equal(t, tc.wantGCEnabled, pgCfg.gcEnabled, "garbage collection enabled")
 +		})
 +	}
-+
-+	workers.Wait()
-+	close(errors)
-+
-+	for err := range errors {
-+		require.NoError(t, err)
-+	}
-+
-+	a, _ := original.Value(querysignalstest.NewClock().Now())
-+	b, _ := cloned.Value(querysignalstest.NewClock().Now())
-+
-+	require.Equal(t, uint64(2100), a.Samples)
-+	require.Equal(t, a.Samples, b.Samples)
-+}
-+
-+func TestSparseDigestHonorsResidentBudget(t *testing.T) {
-+	accumulator := resultsize.NewAccumulator()
-+
-+	// Compression 100 reserves two 1,000-element slices before the first sample.
-+	require.GreaterOrEqual(t, accumulator.Size(), int64(16000))
-+	r, err := signals.NewRegistry(resultsize.New())
-+
-+	require.NoError(t, err)
-+	o, err := signals.NewOwner(r, signals.Options{MaxEntryBytes: 2048})
-+
-+	require.NoError(t, err)
-+	v := querysignalstest.View(t, o, "schema", 1)
-+	key := signal.ExecutionKey{Identity: "read", Operation: signal.IterSubjects}
-+
-+	require.NoError(t, signal.Observe(v, resultsize.Input, key, resultsize.Observation{Count: 1}))
-+	e, err := signal.Lookup(v, resultsize.Ref, key)
-+
-+	require.NoError(t, err)
-+	require.False(t, e.IsAvailable())
 +}
 ```
 
-**File**: `pkg/query/signals/resultsize/signal.go` (modified, +27/-2)
+**File**: `internal/datastore/postgres/readonly_heartbeat_test.go` (added, +94/-0)
 ```diff
-@@ -3,6 +3,7 @@ package resultsize
+@@ -0,0 +1,94 @@
++//go:build datastore && postgres
++
++package postgres
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/jackc/pgx/v5"
++	"github.com/stretchr/testify/require"
++
++	"github.com/authzed/spicedb/internal/datastore/postgres/schema"
++	testdatastore "github.com/authzed/spicedb/internal/testserver/datastore"
++	datastorecfg "github.com/authzed/spicedb/pkg/cmd/datastore/dsconfig"
++	"github.com/authzed/spicedb/pkg/datastore"
++)
++
++// TestRevisionHeartbeatDisabledWhenReadOnly verifies that a Postgres datastore
++// configured the way `spicedb serve --datastore-readonly` configures it does not
++// run the revision heartbeat, which INSERTs into relation_tuple_transaction and
++// fails against read-only credentials with SQLSTATE 25006.
++func TestRevisionHeartbeatDisabledWhenReadOnly(t *testing.T) {
++	t.Parallel()
++
++	b := testdatastore.RunPostgresForTesting(t, postgresConfig.pgVersion, postgresConfig.pgbouncer)
++
++	// newHeartbeatDatastore builds the datastore through the same engine
++	// constructor the CLI uses, and returns a raw connection for inspection.
++	newHeartbeatDatastore := func(t *testing.T, readOnly bool) *pgx.Conn {
++		t.Helper()
++
++		var conn *pgx.Conn
++		// The harness closes the datastore when the test ends.
++		b.NewDatastore(t, func(engine, uri string) datastore.Datastore {
++			cfg := datastorecfg.DefaultDatastoreConfig()
++			cfg.Engine = Engine
++			cfg.URI = uri
++			cfg.ReadOnly = readOnly
++			cfg.EnableRevisionHeartbeat = true
++			cfg.RevisionQuantization = 100 * time.Millisecond
++			// Metrics register globally; keep this test free of that side effect.
++			cfg.EnableDatastoreMetrics = false
++
++			ds, err := newDatastoreFromConfig(t.Context(), *cfg)
++			require.NoError(t, err)
++
++			conn, err = pgx.Connect(t.Context(), uri)
++			require.NoError(t, err)
++			t.Cleanup(func() { _ = conn.Close(context.Background()) })
++
++			return ds
++		})
++
++		return conn
++	}
++
++	countTransactions := func(t *testing.T, conn *pgx.Conn) int {
++		t.Helper()
++		var count int
++		require.NoError(t, conn.QueryRow(t.Context(), "SELECT COUNT(*) FROM "+schema.TableTransaction).Scan(&count))
++		return count
++	}
++
++	// waitForNewTransactions polls on the test goroutine (a pgx.Conn is not
++	// safe for concurrent use, so require.Eventually/Never would race with the
++	// connection being closed in cleanup). It reports whether the transaction
++	// count rose above initial within the observation window.
++	waitForNewTransactions := func(t *testing.T, conn *pgx.Conn, initial int) bool {
++		t.Helper()
++		// The heartbeat interval is max(1s, quantization), so a few seconds
++		// is enough for several heartbeat ticks.
++		deadline := time.Now().Add(4 * time.Second)
++		for time.Now().Before(deadline) {
++			if countTransactions(t, conn) > initial {
++				return true
++			}
++			time.Sleep(100 * time.Millisecond)
++		}
++		return false
++	}
++
++	t.Run("read-write datastore writes heartbeat revisions", func(t *testing.T) {
++		conn := newHeartbeatDatastore(t, false)
++		initial := countTransactions(t, conn)
++		require.True(t, waitForNewTransactions(t, conn, initial), "expected the revision heartbeat to insert transaction rows")
++	})
++
++	t.Run("read-only datastore does not write heartbeat revisions", func(t *testing.T) {
++		conn := newHeartbeatDatastore(t, true)
++		initial := countTransactions(t, conn)
++		require.False(t, waitForNewTransactions(t, conn, initial), "read-only datastore must not run the revision heartbeat")
++	})
++}
+```
+
+**File**: `pkg/cmd/serve.go` (modified, +1/-1)
+```diff
+@@ -125,7 +125,7 @@ func RegisterServeFlags(cmd *cobra.Command, config *server.Config) error {
+ 	apiFlags.Uint32Var(&config.MaxDeleteRelationshipsLimit, "max-delete-relationships-limit", 1000, "maximum number of relationships that can be deleted in a single request")
+ 	apiFlags.Uint32Var(&config.MaxLookupResourcesLimit, "max-lookup-resources-limit", 1000, "maximum number of resources that can be looked up in a single request")
+ 	apiFlags.Uint32Var(&config.MaxBulkExportRelationshipsLimit, "max-bulk-export-relationships-limit", 10_000, "maximum number of relationships that can be exported in a single request")
+-	apiFlags.BoolVar(&config.EnableRevisionHeartbeat, "enable-revision-heartbeat", true, "enables support for revision heartbeat, used to create a synthetic revision on an interval defined by the quantization window (Postgres driver only)")
++	apiFlags.BoolVar(&config.EnableRevisionHeartbeat, "enable-revision-heartbeat", true, "enables support for revision heartbeat, used to create a synthetic revision on an interval defined by the quantization window (Postgres driver only; always off when --datastore-readonly is set)")
+ 	apiFlags.BoolVar(&config.EnablePerformanceInsightMetrics, "enable-performance-insight-metrics", false, "enables performance insight metrics, which are used to track the latency of API calls by shape")
+ 	apiFlags.StringVar(&config.MismatchZedTokenBehavior, "mismatch-zed-token-behavior", "full-consistency", "behavior to enforce when an API call receives a zedtoken that was originally intended for a different kind of datastore. One of: full-consistency (treat as a full-consistency call, ignoring the zedtoken), min-latency (treat as a min-latency call, ignoring the zedtoken), error (return an error). defaults to full-consistency for safety.")
+ 	apiFlags.BoolVar(&config.EnableMemoryProtectionMiddleware, "enable-memory-protection-middleware", true, "enables middleware that does a best effort at preventing OOM (Out of Memory) if the server's memory usage is too high by returning ResourceExhausted on incoming requests")
+```
+
+---
+
+### Incident Patch 2: `539a7968` (2026-11-05)
+**Commit Message**: test(query): update signal integration fixtures for synctest
+
+**File**: `internal/querysignals/README.md` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ after an eager deduplicator exhausted its underlying iterator does not invalidat
+ that completed sample. Directly stopped, canceled or errored populations never train
+ result-size evidence. Unknown descriptors are dropped, not pooled with known ones.
+ 
+-Use the [shared fake-clock harness](../querysignalstest/README.md) for deterministic
++Use the [shared signal test harness](../querysignalstest/README.md) for deterministic
+ streams. Tests cover revision binding, context typing/truncation, idempotent flush
+ and incomplete observations. Run under the race detector. Benchmarks measure batch
+ and planning overhead, not overall QP speedup.
+```
+
+**File**: `internal/querysignals/observe_test.go` (modified, +9/-13)
+```diff
+@@ -2,6 +2,7 @@ package querysignals_test
  
  import (
- 	"errors"
-+	"math/rand/v2"
- 	"time"
+ 	"testing"
++	"time"
  
- 	"github.com/caio/go-tdigest/v4"
-@@ -78,8 +79,27 @@ func NewAccumulator() signal.Accumulator[Observation, Estimate] {
- 	return &accumulator{digest: mustDigest()}
+ 	"github.com/stretchr/testify/require"
+ 
+@@ -15,11 +16,10 @@ import (
+ )
+ 
+ func TestCollectorFlushIsIdempotent(t *testing.T) {
+-	c := querysignalstest.NewClock()
+-	v := querysignalstest.View(t, querysignalstest.Owner(t, c, resultsize.New()), "a", 1)
++	v := querysignalstest.View(t, querysignalstest.Owner(t, resultsize.New()), "a", 1)
+ 	collector := querysignals.NewCollector(v, querysignals.CollectorOptions{})
+ 	k := signal.ExecutionKey{Identity: "x", Operation: signal.IterSubjects}
+-	collector.ObserveExecution(query.ExecutionObservation{Invocation: 1, Key: k, Count: 7, Status: signal.Complete, Started: c.Now()})
++	collector.ObserveExecution(query.ExecutionObservation{Invocation: 1, Key: k, Count: 7, Status: signal.Complete, Started: time.Now()})
+ 	collector.Flush()
+ 	collector.Flush()
+ 	e, err := signal.Lookup(v, resultsize.Ref, k)
+@@ -42,8 +42,7 @@ func TestContextFingerprintOrderAndTypes(t *testing.T) {
  }
  
-+const digestCompression = 100
-+
-+// Digest clones share their RNG. The package-level generator is safe when
-+// independent schema accumulators continue learning on different goroutines.
-+type sharedRNG struct{}
-+
-+// Float32 returns a random value from the concurrent package-level generator.
-+func (sharedRNG) Float32() float32 {
-+	return rand.Float32() //nolint:gosec // Digest sampling does not require cryptographic randomness.
-+}
-+
-+// Intn returns a random index from the concurrent package-level generator.
-+func (sharedRNG) Intn(n int) int {
-+	return rand.IntN(n) //nolint:gosec // Digest sampling does not require cryptographic randomness.
-+}
-+
- func mustDigest() *tdigest.TDigest {
--	d, err := tdigest.New(tdigest.Compression(100))
-+	d, err := tdigest.New(
-+		tdigest.Compression(digestCompression),
-+		tdigest.RandomNumberGenerator(sharedRNG{}),
-+	)
- 	if err != nil {
- 		panic(err)
+ func TestMissingNullAndPresentFieldObservations(t *testing.T) {
+-	c := querysignalstest.NewClock()
+-	v := querysignalstest.View(t, querysignalstest.Owner(t, c, contextfield.New()), "a", 1)
++	v := querysignalstest.View(t, querysignalstest.Owner(t, contextfield.New()), "a", 1)
+ 	querysignals.ObserveRequestContext(
+ 		v,
+ 		map[string]any{"null": nil, "present": true},
+@@ -65,13 +64,12 @@ func TestMissingNullAndPresentFieldObservations(t *testing.T) {
+ }
+ 
+ func TestCollectorDropsTruncatedAndIncompleteObservations(t *testing.T) {
+-	c := querysignalstest.NewClock()
+-	v := querysignalstest.View(t, querysignalstest.Owner(t, c, resultsize.New()), "a", 1)
++	v := querysignalstest.View(t, querysignalstest.Owner(t, resultsize.New()), "a", 1)
+ 	k := signal.ExecutionKey{Identity: "x", Operation: signal.IterSubjects}
+ 	collector := querysignals.NewCollector(v, querysignals.CollectorOptions{MaxObservations: 2})
+ 
+ 	for _, status := range []signal.Terminal{signal.ConsumerStopped, signal.Canceled, signal.Complete} {
+-		collector.ObserveExecution(query.ExecutionObservation{Key: k, Count: 1, Status: status, Started: c.Now()})
++		collector.ObserveExecution(query.ExecutionObservation{Key: k, Count: 1, Status: status, Started: time.Now()})
  	}
-@@ -167,7 +187,12 @@ func (a *accumulator) Value(time.Time) (Estimate, signal.Availability) {
- func (a *accumulator) Size() int64 {
- 	n := int64(0)
- 	a.digest.ForEachCentroid(func(float64, uint64) bool { n++; return true })
--	return 128 + 32*n
-+	// go-tdigest v4 reserves two compression*10 slices of eight-byte elements.
-+	// Centroid growth can retain capacity beyond the live length. Reserve twice
-+	// that length once it exceeds the initial allocation; compression replaces
-+	// both buffers with a fresh initial allocation. Clones may need less, so this
-+	// deliberately remains a conservative bound rather than reporting live data.
-+	return 256 + 16*max(digestCompression*10, 2*n)
+ 
+ 	collector.Flush()
+@@ -82,8 +80,7 @@ func TestCollectorDropsTruncatedAndIncompleteObservations(t *testing.T) {
  }
  
- // Clone returns an independent copy of the accumulator state.
+ func TestContextTruncationIsNotMissingness(t *testing.T) {
+-	c := querysignalstest.NewClock()
+-	v := querysignalstest.View(t, querysignalstest.Owner(t, c, contextfield.New()), "a", 1)
++	v := querysignalstest.View(t, querysignalstest.Owner(t, contextfield.New()), "a", 1)
+ 	stats := querysignals.ObserveRequestContext(
+ 		v,
+ 		map[string]any{"a": "too large"},
+@@ -100,11 +97,10 @@ func TestContextTruncationIsNotMissingness(t *testing.T) {
+ }
+ 
+ func TestFailedBatchKeepsUnknownAttemptsSeparate(t *testing.T) {
+-	c := querysignalstest.NewClock()
+-	v := querysignalstest.View(t, querysignalstest.Owner(t, c, branchoutcome.New()), "a", 1)
++	v := querysignalstest.View(t, querysignalstest.Owner(t, branchoutcome.New()), "a", 1)
+ 	k := signal.ExecutionKey{Identity: "x", Operation: signal.Check, Mode: "many-subjects"}
+ 	collector := querysignals.NewCollector(v, querysignals.CollectorOptions{})
+-	collector.ObserveExecution(query.ExecutionObservation{Key: k, Status: signal.Errored, BatchSize: 7, Started: c.Now()})
++	collector.ObserveExecution(query.ExecutionObservation{Key: k, Status: signal.Errored, BatchSize: 7, Started: time.Now()})
+ 	collector.Flush()
+ 	e, err := signal.Lookup(v, branchoutcome.Ref, k)
+ 	require.NoError(t, err)
+```
+
+**File**: `internal/querysignals/planning_test.go` (modified, +33/-30)
+```diff
+@@ -2,6 +2,8 @@ package querysignals_test
+ 
+ import (
+ 	"testing"
++	"testing/synctest"
++	"time"
+ 
+ 	"github.com/stretchr/testify/require"
+ 
+@@ -21,35 +23,36 @@ type loadedSchema struct {
+ 
+ func (s loadedSchema) StoredSchema() *datastore.ReadOnlyStoredSchema { return s.stored }
+ func TestBoundRevisionAndHistoricalReuse(t *testing.T) {
+-	clock := querysignalstest.NewClock()
+-	registry, err := signals.NewDefaultRegistry()
+-	require.NoError(t, err)
+-	owner, err := signals.NewOwner(registry, signals.Options{Now: clock.Now})
+-	require.NoError(t, err)
+-	schema := loadedSchema{querysignalstest.Stored("a")}
+-	rev := revisions.NewForTransactionID(1)
+-	a, err := querysignals.Bind(owner, schema, rev, "a")
+-	require.NoError(t, err)
+-	k := signal.ExecutionKey{Identity: "x", Operation: signal.IterSubjects}
+-	require.NoError(t, signal.Observe(a, resultsize.Input, k, resultsize.Observation{Count: 12, Started: clock.Now()}))
+-	b, err := querysignals.Bind(owner, schema, revisions.NewForTransactionID(2), "a")
+-	require.NoError(t, err)
+-	exact, err := signal.Lookup(b, resultsize.Ref, k)
+-	require.NoError(t, err)
+-	require.Equal(t, signal.Missing, exact.Availability)
+-	old, err := signal.Lookup(b, historicalresultsize.Ref, k)
+-	require.NoError(t, err)
+-	require.InDelta(t, 12.0, old.Value.Mean, 1e-9)
+-	a2, err := querysignals.Bind(owner, schema, rev, "a")
+-	require.NoError(t, err)
+-	same, err := signal.Lookup(a2, resultsize.Ref, k)
+-	require.NoError(t, err)
+-	require.Equal(t, uint64(1), same.Value.Samples)
++	synctest.Test(t, func(t *testing.T) {
++		registry, err := signals.NewDefaultRegistry()
++		require.NoError(t, err)
++		owner, err := signals.NewOwner(registry, signals.Options{})
++		require.NoError(t, err)
++		schema := loadedSchema{querysignalstest.Stored("a")}
++		rev := revisions.NewForTransactionID(1)
++		a, err := querysignals.Bind(owner, schema, rev, "a")
++		require.NoError(t, err)
++		k := signal.ExecutionKey{Identity: "x", Operation: signal.IterSubjects}
++		require.NoError(t, signal.Observe(a, resultsize.Input, k, resultsize.Observation{Count: 12, Started: time.Now()}))
++		b, err := querysignals.Bind(owner, schema, revisions.NewForTransactionID(2), "a")
++		require.NoError(t, err)
++		exact, err := signal.Lookup(b, resultsize.Ref, k)
++		require.NoError(t, err)
++		require.Equal(t, signal.Missing, exact.Availability)
++		old, err := signal.Lookup(b, historicalresultsize.Ref, k)
++		require.NoError(t, err)
++		require.InDelta(t, 12.0, old.Value.Mean, 1e-9)
++		a2, err := querysignals.Bind(owner, schema, rev, "a")
++		require.NoError(t, err)
++		same, err := signal.Lookup(a2, resultsize.Ref, k)
++		require.NoError(t, err)
++		require.Equal(t, uint64(1), same.Value.Samples)
+ 
+-	// Unsupported schema readers get isolated request-local evidence without any reads.
+-	local, err := querysignals.Bind(owner, struct{}{}, rev, "a")
+-	require.NoError(t, err)
+-	empty, err := signal.Lookup(local, resultsize.Ref, k)
+-	require.NoError(t, err)
+-	require.Equal(t, signal.Missing, empty.Availability)
++		// Unsupported schema readers get isolated request-local evidence without any reads.
++		local, err := querysignals.Bind(owner, struct{}{}, rev, "a")
++		require.NoError(t, err)
++		empty, err := signal.Lookup(local, resultsize.Ref, k)
++		require.NoError(t, err)
++		require.Equal(t, signal.Missing, empty.Availability)
++	})
+ }
+```
+
+---
+
+### Incident Patch 3: `543afd63` (2026-11-09)
+**Commit Message**: style(query): wrap fixtures to satisfy optimizer line limits
+
+**File**: `internal/queryopttest/harness_test.go` (modified, +12/-2)
+```diff
+@@ -347,6 +347,16 @@ func TestCompareResultsEvaluationErrors(t *testing.T) {
+ 	conditional := testPath("o_a", "...")
+ 	conditional.Caveat = caveats.CaveatAsExpr(&core.ContextualizedCaveat{CaveatName: "enabled"})
+ 	plain := testPath("o_a", "...")
+-	require.NoError(t, compareResults(t.Context(), sr, query.OperationCheck, []*query.Path{conditional, plain}, []*query.Path{plain}, map[string]any{"ok": false}))
+-	require.NoError(t, compareResults(t.Context(), sr, query.OperationCheck, []*query.Path{conditional, conditional}, []*query.Path{conditional}, map[string]any{"ok": true}))
++	require.NoError(t, compareResults(
++		t.Context(), sr, query.OperationCheck,
++		[]*query.Path{conditional, plain},
++		[]*query.Path{plain},
++		map[string]any{"ok": false},
++	))
++	require.NoError(t, compareResults(
++		t.Context(), sr, query.OperationCheck,
++		[]*query.Path{conditional, conditional},
++		[]*query.Path{conditional},
++		map[string]any{"ok": true},
++	))
+ }
+```
+
+**File**: `pkg/query/signals/safety_test.go` (modified, +4/-1)
+```diff
+@@ -184,7 +184,10 @@ func TestSelectiveSchemaTransfer(t *testing.T) {
+ 				d := definition("sum")
+ 				d.Policy = signal.CrossRevision
+ 				d.Footprint = func(any) signal.Footprint {
+-					return signal.Footprint{Elements: []signal.Element{{Namespace: "doc", Relation: "read"}, {Namespace: "doc", Relation: "viewer"}}}
++					return signal.Footprint{Elements: []signal.Element{
++						{Namespace: "doc", Relation: "read"},
++						{Namespace: "doc", Relation: "viewer"},
++					}}
+ 				}
+ 				d.Transfer = signal.Unchanged
+ 				o := querysignalstest.Owner(t, d)
+```
+
+**File**: `pkg/query/signals/signal/schema_test.go` (modified, +5/-1)
+```diff
+@@ -49,7 +49,11 @@ definition document {
+ 		{"unrelated relation", strings.Replace(original, "permission view", "relation editor: user\npermission view", 1), signal.Retain},
+ 		{"changed caveat", strings.Replace(original, "{ flag }", "{ !flag }", 1), signal.Reset},
+ 		{"removed caveat", withoutCaveat, signal.Reset},
+-		{"definition comment", strings.Replace(original, "definition document", "/** Resources. */\ndefinition document", 1), signal.Retain},
++		{
++			"definition comment",
++			strings.Replace(original, "definition document", "/** Resources. */\ndefinition document", 1),
++			signal.Retain,
++		},
+ 		{"caveat comment", strings.Replace(original, "caveat gate", "/** Context gate. */\ncaveat gate", 1), signal.Retain},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+```
+
+**File**: `pkg/query/signals/transfer_test.go` (modified, +8/-2)
+```diff
+@@ -79,7 +79,10 @@ func TestHistoricalSelectiveSchemaTransfer(t *testing.T) {
+ func TestSchemaABADoesNotDoubleSeed(t *testing.T) {
+ 	synctest.Test(t, func(t *testing.T) {
+ 		o := querysignalstest.Owner(t, resultsize.New(), historicalresultsize.New())
+-		a, err := o.Bind(querysignalstest.Schema(t, "a", original), signal.Scope{SchemaHash: "a", Revision: revisions.NewForTransactionID(1)})
++		a, err := o.Bind(
++			querysignalstest.Schema(t, "a", original),
++			signal.Scope{SchemaHash: "a", Revision: revisions.NewForTransactionID(1)},
++		)
+ 		require.NoError(t, err)
+ 		k := signal.ExecutionKey{Identity: "x", Operation: signal.IterSubjects}
+ 
+@@ -112,7 +115,10 @@ func TestSchemaDiscountPreservesValueAndAge(t *testing.T) {
+ 			return signal.TransferDecision{Action: signal.Discount, Factor: .5, Reason: "test-compatible-change"}
+ 		}
+ 		o := querysignalstest.Owner(t, resultsize.New(), d)
+-		a, err := o.Bind(querysignalstest.Schema(t, "a", original), signal.Scope{SchemaHash: "a", Revision: revisions.NewForTransactionID(1)})
++		a, err := o.Bind(
++			querysignalstest.Schema(t, "a", original),
++			signal.Scope{SchemaHash: "a", Revision: revisions.NewForTransactionID(1)},
++		)
+ 		require.NoError(t, err)
+ 		k := signal.ExecutionKey{Identity: "x", Operation: signal.IterSubjects}
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3452** (2026-11-05): otel: add `--otel-ignore-remote-sampling` (@vroldanbet)
-- **PR #3445** (2026-11-05): feat(query): add context and execution planning signals (@josephschorr)
-- **PR #3444** (2026-10-30): feat(query): add reusable planning signals (@josephschorr)
-- **PR #3440** (2026-10-30): fix(schema): preserve annotations on unchanged definitions during schema writes (@josephschorr)
-- **PR #3437** (2026-10-28): chore: bump go-jose to v4.1.6 for CVE-2026-116587 (@vroldanbet)
-- **PR #3435** (2026-10-28): fix(dispatch): lock LookupResources cursors to the dispatcher that produced them (@vroldanbet)
+- **PR #3480** (2026-11-10): chore: roll changelog (@tstirrat15)
+- **PR #3479** (2026-11-10): fix(postgres): stop read-only SpiceDB from writing heartbeat rows (@vroldanbet)
+- **PR #3471** (2026-11-09): chore: use synctest for hedging tests (@tstirrat15)
+- **PR #3469** (2026-11-10): chore: get rid of gofumpt (@tstirrat15)
+- **PR #3466** (closed): chore(deps): bump the go-mod group across 2 directories with 43 updates (@dependabot[bot])
+- **PR #3463** (2026-11-09): chore: fix trivy/gosec issues (@tstirrat15)
 
 ---
 
@@ -1409,45 +1670,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): bound provider retention and isolate concurrent digest updates
+## X. postgres): stop read-only SpiceDB from writing heartbeat rows (#3479)
 
 **RULE**:
-When implementing operations in `pkg/query/signals/contextfield/ownership_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52ec6e3c`: query): bound provider retention and isolate concurrent digest updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `decb4729`: postgres): stop read-only SpiceDB from writing heartbeat rows (#3479). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/query/signals/contextfield/ownership_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package contextfield
-
-import (
-	"strings"
-	"testing"
-	"unsafe"
-
-	"github.com/stretchr/testify/require"
-)
-
-func TestRetainedFingerprintsOwnTheirBackingStorage(t *testing.T) {
-	a := &accumulator{frequencies: map[string]uint64{}}
-
-	for range 2 {
-		backing := strings.Repeat("x", 1<<20) + "same-value"
-		fingerprint := backing[len(backing)-len("same-value"):]
-
-		require.NoError(t, a.Add(Observation{Present: true, Fingerprint: fingerprint}))
-		require.NotSame(t, unsafe.StringData(fingerprint), unsafe.StringData(a.first))
-
-		for retained := range a.frequencies {
-			require.NotSame(t, unsafe.StringData(fingerprint), unsafe.StringData(retained))
-		}
-	}
-}
+- Postgres: SpiceDB started with `--datastore-readonly=true` no longer tries to write a "heartbeat" row to the database every few seconds. A read-only instance can't write, so every attempt failed and logged `cannot execute INSERT in a read-only transaction (SQLSTATE 25006)` followed by `failed to write heartbeat revision`, about once every 5 seconds per pod. The heartbeat is now turned off for read-only instances, the same way garbage collection already was. Instances that are not read-only are unchanged. (https://github.com/authzed/spicedb/pull/3479)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1457,4 +1694,4 @@ func TestRetainedFingerprintsOwnTheirBackingStorage(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52ec6e3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `decb4729` are properly handled with clean fallback behavior.

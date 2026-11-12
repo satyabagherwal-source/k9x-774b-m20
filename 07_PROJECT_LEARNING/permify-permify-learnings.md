@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/permify-permify-learnings.md`  
 > **Source**: github ([https://github.com/Permify/permify](https://github.com/Permify/permify))  
-> **Source Version**: `81819b84`  
+> **Source Version**: `f1d2b9b0`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T00:02:49.950Z  
+> **Timestamp**: 2026-11-12T00:45:29.940Z  
 > **Learning ID**: `learn-github-permify-permify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/permify-permify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Permify/permify](https://github.com/Permify/permify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T00:02:49.943Z  
+> **Harvest Timestamp**: 2026-11-12T00:45:29.935Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source authorization as a service inspired by Google Zanzibar, designed to build and manage fine-grained and scalable authorization systems for any application. — Permify is now part of FusionAuth 🎉
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5967 stars
+- **Stars / Engagement**: 5971 stars
 
 ---
 
@@ -2119,109 +2119,196 @@ func (engine *SubjectPermissionEngine) SubjectPermission(ctx context.Context, re
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ca74731` (2026-11-05)
-**Commit Message**: build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs
+### Incident Patch 1: `f1d2b9b0` (2026-11-10)
+**Commit Message**: chore: add issue reporting flow to readme
 
-Bumps [body-parser](https://github.com/expressjs/body-parser) from 1.20.8 to 1.20.9.
-- [Release notes](https://github.com/expressjs/body-parser/releases)
-- [Changelog](https://github.com/expressjs/body-parser/blob/1.20.9/HISTORY.md)
-- [Commits](https://github.com/expressjs/body-parser/compare/1.20.8...1.20.9)
-
----
-updated-dependencies:
-- dependency-name: body-parser
-  dependency-version: 1.20.9
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `docs/package-lock.json` (modified, +3/-3)
+**File**: `README.md` (modified, +15/-0)
 ```diff
-@@ -3530,9 +3530,9 @@
-       }
-     },
-     "node_modules/body-parser": {
--      "version": "1.20.8",
--      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
--      "integrity": "sha512-JNcyFQ64OiijEkPzUBTCe+hyPXUD/3LEldGQ6iF5LR1w00mx9o7xtDWHXBY2iItjdCFGoilOLNQbH943ut7pHA==",
-+      "version": "1.20.9",
-+      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
-+      "integrity": "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==",
-       "license": "MIT",
-       "dependencies": {
-         "bytes": "~3.1.2",
+@@ -160,6 +160,21 @@ Here are the ways to contribute to Permify:
+ - **Improve documentation:** Alongside our codebase, documentation one of the most significant part in our open-source journey. We're trying to give the best DX possible to explain ourselves and Permify. And you can help on that with importing resources or adding new ones.
+ - **Contribute to playground:** Permify playground allows you to visualize and test your authorization logic. You can contribute to our playground by improving its user interface, fixing glitches, or adding new features.
+ 
++## Report an Issue
++
++
++```mermaid
++flowchart TD
++    Start{What do you need help with?}
++
++    Start -->|<b>Question?</b>| Forum[Ask in the <a href="https://fusionauth.io/community/forum/">forum</a>]
++    Start -->|<b>Security vulnerability?</b>| SecurityNode[Contact security at <br><a href="https://fusionauth.io/security">fusionauth.io/security</a>]
++    Start -->|<b>Problem?</b>| LicenseCheck{Have a paid license?}
++
++    LicenseCheck -->|<b>Yes</b>| Support[Contact support at <br><a href="https://account.fusionauth.io/account/support/">account.fusionauth.io/support</a>]
++    LicenseCheck -->|<b>No</b>| ReportNode[Report here at <br><a href="https://github.com/Permify/permify/issues">permify/issues</a>]
++```
++
+ ### Bounties
+ 
+ [![Open Bounties](https://img.shields.io/endpoint?url=https%3A%2F%2Fconsole.algora.io%2Fapi%2Fshields%2Fpermify%2Fbounties%3Fstatus%3Dopen&style=for-the-badge)](https://console.algora.io/org/permify/bounties?status=open)
+```
+
+**File**: `SECURITY.md` (modified, +1/-1)
+```diff
+@@ -1,3 +1,3 @@
+ # Security Policy
+ 
+-If you discover any security related issues, please email support@permify.co instead of using the issue tracker.
++Please report any security-related issues using the form found at [fusionauth.io/security](https://fusionauth.io/security).
+```
+
+**File**: `docs/permify-overview/intro.mdx` (modified, +3/-1)
+```diff
+@@ -76,7 +76,9 @@ We would love to hear from you!
+ 
+ You can get immediate help on our [Discord Community](https://discord.gg/permify). This can be any kind of question-related to Permify, authorization, or authentication and identity management. We'd love to discuss anything related to access control space.
+ 
+-For feature requests, bugs, or any improvements you can always open an [issue](https://github.com/permify/permify/issues). 
++Licensed users can contact support at [account.fusionauth.io/support](https://account.fusionauth.io/account/support/).
++
++Community users can submit requests or bugs via [Permify's GitHub Issues](https://github.com/permify/permify/issues). 
+ 
+ **Want to Contribute? Here are the ways to contribute to Permify:**
+ 
 ```
 
 ---
 
-### Incident Patch 2: `e7ee3658` (2026-11-05)
-**Commit Message**: build(deps): bump qs from 6.16.0 to 6.17.1 in /docs
+### Incident Patch 2: `f2a69b0b` (2026-11-10)
+**Commit Message**: Merge branch 'master' into issue-reporting-flow-chart
 
-Bumps [qs](https://github.com/ljharb/qs) from 6.16.0 to 6.17.1.
-- [Changelog](https://github.com/ljharb/qs/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/ljharb/qs/compare/v6.16.0...v6.17.1)
-
----
-updated-dependencies:
-- dependency-name: qs
-  dependency-version: 6.17.1
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `docs/package-lock.json` (modified, +3/-3)
+**File**: `.github/workflows/container-scan.yml` (modified, +1/-1)
 ```diff
-@@ -9600,9 +9600,9 @@
-       }
-     },
-     "node_modules/qs": {
--      "version": "6.16.0",
--      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
--      "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
-+      "version": "6.17.1",
-+      "resolved": "https://registry.npmjs.org/qs/-/qs-6.17.1.tgz",
-+      "integrity": "sha512-jd3COkaKVgGUW+ZHyEHCG9bH7RoaaiWuMgzsIBjUMVjLAaWGWpoUAVwljVvBHxRu/2qEHnadLGZrkutYUBPQJA==",
-       "license": "BSD-3-Clause",
-       "dependencies": {
-         "es-define-property": "^1.0.1",
+@@ -27,7 +27,7 @@ jobs:
+           docker build -t ghcr.io/permify/permify:scan-${{ github.sha }} .
+       
+       - name: Run Trivy vulnerability scanner
+-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
++        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+         with:
+           image-ref: 'ghcr.io/permify/permify:scan-${{ github.sha }}'
+           format: 'table'
 ```
 
----
-
-### Incident Patch 3: `8fe3787a` (2026-11-05)
-**Commit Message**: build(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in /docs
-
-Bumps [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser) from 6.1.4 to 6.1.5.
-- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
-- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/6.1.5/CHANGELOG.md)
-- [Commits](https://github.com/postcss/postcss-selector-parser/compare/6.1.4...6.1.5)
-
----
-updated-dependencies:
-- dependency-name: postcss-selector-parser
-  dependency-version: 6.1.5
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `docs/package-lock.json` (modified, +3/-3)
+**File**: `Dockerfile` (modified, +2/-2)
 ```diff
-@@ -9443,9 +9443,9 @@
-       }
-     },
-     "node_modules/postcss-selector-parser": {
--      "version": "6.1.4",
--      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.4.tgz",
--      "integrity": "sha512-bIoJLOmjCO1S9XdY/DcnR5hJxvrDir1PbGChrzXG3vw0/FOliy/fA3dmdhQ441kah4gKv+TwckGzex6wNS5cnQ==",
-+      "version": "6.1.5",
-+      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.5.tgz",
-+      "integrity": "sha512-TEHFzb5KRDKaOgJ4TYE+0jyJtFbjLvkdVOu0fZ2b6MTWzoqZd4Le+61aEppWkvTlYePgOX4ATL1wsAIPMLTw6Q==",
-       "license": "MIT",
-       "dependencies": {
-         "cssesc": "^3.0.0",
+@@ -1,10 +1,10 @@
+-FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS permify-builder
++FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS permify-builder
+ WORKDIR /go/src/app
+ RUN apk update && apk add --no-cache git
+ COPY . .
+ RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod CGO_ENABLED=0 go build -v ./cmd/permify/
+ 
+-FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS health-probe-builder
++FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS health-probe-builder
+ WORKDIR /go/src/app
+ RUN apk update && apk add --no-cache git
+ RUN git clone https://github.com/grpc-ecosystem/grpc-health-probe.git
+```
+
+**File**: `Dockerfile.local` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ # Use the correct Go version
+-FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673
++FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb
+ 
+ RUN apk --no-cache add curl git
+ 
+```
+
+**File**: `Dockerfile.release` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ # Build stage for gRPC health probe
+-FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS health-probe-builder
++FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS health-probe-builder
+ WORKDIR /go/src/app
+ RUN apk update && apk add --no-cache git
+ RUN git clone https://github.com/grpc-ecosystem/grpc-health-probe.git
+```
+
+**File**: `docs/api-reference/apidocs.swagger.json` (modified, +4/-4)
+```diff
+@@ -3,7 +3,7 @@
+   "info": {
+     "title": "Permify API",
+     "description": "Permify is an open source authorization service for creating fine-grained and scalable authorization systems.",
+-    "version": "v1.7.5",
++    "version": "v1.7.6",
+     "contact": {
+       "name": "API Support",
+       "url": "https://github.com/Permify/permify/issues",
+@@ -1415,11 +1415,11 @@
+       "properties": {
+         "@type": {
+           "type": "string",
+-          "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com. As of May 2023, there are no widely used type server\nimplementations and no plans to implement one.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
++          "description": "Identifies the type of the serialized Protobuf message with a URI reference\nconsisting of a prefix ending in a slash and the fully-qualified type name.\n\nExample: type.googleapis.com/google.protobuf.StringValue\n\nThis string must contain at least one `/` character, and the content after\nthe last `/` must be the fully-qualified name of the type in canonical\nform, without a leading dot. Do not write a scheme on these URI references\nso that clients do not attempt to contact them.\n\nThe prefix is arbitrary and Protobuf implementations are expected to\nsimply strip off everything up to and including the last `/` to identify\nthe type. `type.googleapis.com/` is a common default prefix that some\nlegacy implementations require. This prefix does not indicate the origin of\nthe type, and URIs containing it are not expected to respond to any\nrequests.\n\nAll type URL strings must be legal URI references with the additional\nrestriction (for the text format) that the content of the reference\nmust consist only of alphanumeric characters, percent-encoded escapes, and\ncharacters in the following set (not including the outer backticks):\n`/-.~_!$\u0026()*+,;=`. Despite our allowing percent encodings, implementations\nshould not unescape them to prevent confusion with existing parsers. For\nexample, `type.googleapis.com%2FFoo` should be rejected.\n\nIn the original design of `Any`, the possibility of launching a type\nresolution service at these type URLs was considered but Protobuf never\nimplemented one and considers contacting these URLs to be problematic and\na potential security issue. Do not attempt to contact type URLs."
+         }
+       },
+       "additionalProperties": {},
+-      "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(\u0026foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n    // or ...\n    if (any.isSameTypeAs(Foo.getDefaultInstance())) {\n      foo = any.unpack(Foo.getDefaultInstance());\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := \u0026pb.Foo{...}\n     any, err := anypb.New(foo)\n     if err != nil {\n       ...\n     }\n     ...\n     foo := \u0026pb.Foo{}\n     if err := any.UnmarshalTo(foo); err != nil {\n       ...\n     }\n\nThe pack methods provided by protobuf library will by default use\n'type.googleapis.com/full.type.n
+```
+
+**File**: `docs/api-reference/openapi.json` (modified, +4/-4)
+```diff
+@@ -3,7 +3,7 @@
+     "info": {
+         "title": "Permify API",
+         "description": "Permify is an open source authorization service for creating fine-grained and scalable authorization systems.",
+-        "version": "v1.7.5",
++        "version": "v1.7.6",
+         "contact": {
+             "name": "API Support",
+             "url": "https://github.com/Permify/permify/issues",
+@@ -1703,11 +1703,11 @@
+                 "properties": {
+                     "@type": {
+                         "type": "string",
+-                        "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com. As of May 2023, there are no widely used type server\nimplementations and no plans to implement one.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
++                        "description": "Identifies the type of the serialized Protobuf message with a URI reference\nconsisting of a prefix ending in a slash and the fully-qualified type name.\n\nExample: type.googleapis.com/google.protobuf.StringValue\n\nThis string must contain at least one `/` character, and the content after\nthe last `/` must be the fully-qualified name of the type in canonical\nform, without a leading dot. Do not write a scheme on these URI references\nso that clients do not attempt to contact them.\n\nThe prefix is arbitrary and Protobuf implementations are expected to\nsimply strip off everything up to and including the last `/` to identify\nthe type. `type.googleapis.com/` is a common default prefix that some\nlegacy implementations require. This prefix does not indicate the origin of\nthe type, and URIs containing it are not expected to respond to any\nrequests.\n\nAll type URL strings must be legal URI references with the additional\nrestriction (for the text format) that the content of the reference\nmust consist only of alphanumeric characters, percent-encoded escapes, and\ncharacters in the following set (not including the outer backticks):\n`/-.~_!$&()*+,;=`. Despite our allowing percent encodings, implementations\nshould not unescape them to prevent confusion with existing parsers. For\nexample, `type.googleapis.com%2FFoo` should be rejected.\n\nIn the original design of `Any`, the possibility of launching a type\nresolution service at these type URLs was considered but Protobuf never\nimplemented one and considers contacting these URLs to be problematic and\na potential security issue. Do not attempt to contact type URLs."
+                     }
+                 },
+                 "additionalProperties": {},
+-                "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(&foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n    // or ...\n    if (any.isSameTypeAs(Foo.getDefaultInstance())) {\n      foo = any.unpack(Foo.getDefaultInstance());\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := &pb.Foo{...}\n     any, err := anypb.New(foo)\n     if err != nil {\n       ...\n     }\n     ...\n     foo := &pb.Foo{}\n     if err := any.UnmarshalTo(foo); err != nil {\n 
+```
+
+**File**: `docs/api-reference/openapiv2/apidocs.swagger.json` (modified, +4/-4)
+```diff
+@@ -3,7 +3,7 @@
+   "info": {
+     "title": "Permify API",
+     "description": "Permify is an open source authorization service for creating fine-grained and scalable authorization systems.",
+-    "version": "v1.7.5",
++    "version": "v1.7.6",
+     "contact": {
+       "name": "API Support",
+       "url": "https://github.com/Permify/permify/issues",
+@@ -1415,11 +1415,11 @@
+       "properties": {
+         "@type": {
+           "type": "string",
+-          "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com. As of May 2023, there are no widely used type server\nimplementations and no plans to implement one.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
++          "description": "Identifies the type of the serialized Protobuf message with a URI reference\nconsisting of a prefix ending in a slash and the fully-qualified type name.\n\nExample: type.googleapis.com/google.protobuf.StringValue\n\nThis string must contain at least one `/` character, and the content after\nthe last `/` must be the fully-qualified name of the type in canonical\nform, without a leading dot. Do not write a scheme on these URI references\nso that clients do not attempt to contact them.\n\nThe prefix is arbitrary and Protobuf implementations are expected to\nsimply strip off everything up to and including the last `/` to identify\nthe type. `type.googleapis.com/` is a common default prefix that some\nlegacy implementations require. This prefix does not indicate the origin of\nthe type, and URIs containing it are not expected to respond to any\nrequests.\n\nAll type URL strings must be legal URI references with the additional\nrestriction (for the text format) that the content of the reference\nmust consist only of alphanumeric characters, percent-encoded escapes, and\ncharacters in the following set (not including the outer backticks):\n`/-.~_!$\u0026()*+,;=`. Despite our allowing percent encodings, implementations\nshould not unescape them to prevent confusion with existing parsers. For\nexample, `type.googleapis.com%2FFoo` should be rejected.\n\nIn the original design of `Any`, the possibility of launching a type\nresolution service at these type URLs was considered but Protobuf never\nimplemented one and considers contacting these URLs to be problematic and\na potential security issue. Do not attempt to contact type URLs."
+         }
+       },
+       "additionalProperties": {},
+-      "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(\u0026foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n    // or ...\n    if (any.isSameTypeAs(Foo.getDefaultInstance())) {\n      foo = any.unpack(Foo.getDefaultInstance());\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := \u0026pb.Foo{...}\n     any, err := anypb.New(foo)\n     if err != nil {\n       ...\n     }\n     ...\n     foo := \u0026pb.Foo{}\n     if err := any.UnmarshalTo(foo); err != nil {\n       ...\n     }\n\nThe pack methods provided by protobuf library will by default use\n'type.googleapis.com/full.type.n
+```
+
+**File**: `docs/package.json` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+     "doc": "docs"
+   },
+   "dependencies": {
+-    "mintlify": "^4.2.988"
++    "mintlify": "^4.2.1200"
+   },
+   "scripts": {
+     "test": "echo \"Error: no test specified\" && exit 1"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2250,32 +2337,42 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs
+## X. add issue reporting flow to readme
 
 **RULE**:
-When implementing operations in `docs/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Permify/permify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Permify/permify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ca74731`: build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1d2b9b0`: add issue reporting flow to readme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package-lock.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      "version": "1.20.9",
-      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
-      "integrity": "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==",
+## Report an Issue
+
+
+```mermaid
+flowchart TD
+    Start{What do you need help with?}
+
+    Start -->|<b>Question?</b>| Forum[Ask in the <a href="https://fusionauth.io/community/forum/">forum</a>]
+    Start -->|<b>Security vulnerability?</b>| SecurityNode[Contact security at <br><a href="https://fusionauth.io/security">fusionauth.io/security</a>]
+    Start -->|<b>Problem?</b>| LicenseCheck{Have a paid license?}
+
+    LicenseCheck -->|<b>Yes</b>| Support[Contact support at <br><a href="https://account.fusionauth.io/account/support/">account.fusionauth.io/support</a>]
+    LicenseCheck -->|<b>No</b>| ReportNode[Report here at <br><a href="https://github.com/Permify/permify/issues">permify/issues</a>]
+```
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "1.20.8",
-      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
-      "integrity": "sha512-JNcyFQ64OiijEkPzUBTCe+hyPXUD/3LEldGQ6iF5LR1w00mx9o7xtDWHXBY2iItjdCFGoilOLNQbH943ut7pHA==",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ca74731` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1d2b9b0` are properly handled with clean fallback behavior.

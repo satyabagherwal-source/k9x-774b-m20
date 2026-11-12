@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `c23311a8`  
+> **Source Version**: `df52b4fe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T14:00:00.250Z  
+> **Timestamp**: 2026-11-11T17:46:13.826Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T13:59:59.962Z  
+> **Harvest Timestamp**: 2026-11-11T17:46:13.819Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1659 stars
+- **Stars / Engagement**: 1660 stars
 
 ---
 
@@ -1153,11 +1153,11 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1920** (2026-11-07): **docs: make the README hero the homepage's slider, readable in any theme**
-  *Symptoms*: ## Summary  The README hero is now pixeltable.com's before/after slider (`StackSlider.tsx` in pixeltable/pixeltable-cloud#636), redrawn as an animated SVG. It runs full width under the badges, replacing the small table animation that sat to the right of the tagline.  The PR also fixes washed-out images when the system's color scheme and the GitHub theme differ. `<picture>` picks its file from the browser's `prefers-color-scheme`, not the GitHub theme. On the live page with a dark system and GitHub set to light, both the logo and the hero loaded their dark files onto a white page. GitHub's `#gh-dark-mode-only` fragments do follow the theme, but PyPI renders this README too, strips `<source>`, and would show both copies. So each file now carries its own background.  ## Hero  - **Both sides of the slider.** The usual side shows 12 systems wired to the 13 jobs and "Your app talks to each system". The Pixeltable side shows the README's `app.py` from the class down, wired to the jobs, plus a `videos` table and the APIs the other jobs use (`EmbeddingIndex`, `--otel`, `invoke_tools`, `pxt errors` and more). - **Data.** The job list and the system wiring copy the homepage's `request-lifecycle.ts` and `SYSTEMS`. A comment in the generator says to keep them in step. - **Sweep.** It follows `StackSlider`'s timing: rest, the Pixeltable side whole, the usual side whole, then rest. Here it loops every 14 s. The resting frame is the base style, so reduced motion and PyPI show both sides. - *
+- **Issue #1925** (2026-11-10): **PXT-1755: Pin generate_video's Interactions API call to v1beta (google-genai 3.0 defaults to v1)**
+  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Root cause  Scheduled nightly run https://github.com/pixeltable/pixeltable/actions/runs/42550768976 (tested release tag v0.7.24, `a9e0d7bd`) failed only in `isolated-nb-tests (3.11 and 3.13)`. The cookbook `docs/release/howto/cookbooks/video/video-generate-ai.ipynb` calls `gemini.generate_video(prompt, model='gemini-omni-1.1-flash', ...)` and raised `NotFoundError: Model 'gemini-omni-1.1-flash' not found` from `client.aio.interactions.create(...)`.  The notebook env installs `google-genai>=2.22`, which now resolves [google-genai 3.0.0](https://github.com/googleapis/python-genai/releases/tag/v3.0.0) (released 2026-11-05). That release changes the default Gemini Developer API version from `v1beta` to `v1`. The Interactions client posts to `/{api_version}/interactions`, so requests go to `/v1/interactions`, where Gemini Omni is not served (Google documents only `POST /v1beta/interactions`). The model id itself is valid (GA).  `interactions.create` already accepts `api_version` in google-genai 2.22 (the current min in `require_package('google.genai', min_version=[2, 22])`), 2.34, and 3.0, so the min version was not bumped.  ## Fix  In `pixeltable/functions/gemini.py::generate_video`, pass `api_version='v1beta'` to `client.aio.interactions.create(...)`. The client-wide API version in the `@env.register_client('gemini')` factory is unchanged, so the other Gemini UDFs keep the SDK default.  A repo-wide search found no other `interactions.` call
 
-- **Issue #1915** (2026-11-07): **Add VLM Run Gateway integration (OCR, VQA, segmentation, embeddings, transcription) (takes over #1893)**
-  *Symptoms*: Replaces pixeltable/pixeltable#1893 by wbrennan899, which was approved but comes from an organization's fork that maintainers can't push to. This branch is #1893's commits plus a merge of `main`. The merge resolves the conflicts with #1892: both PRs added entries side by side in `docs/public_api.opml`, `docs/release/docs.json`, `configuration.mdx`, `pixeltable/config.py`, `pixeltable/functions/__init__.py` and `scripts/prepare-nb-tests.sh`, and both are kept. The `VLMRUN_API_KEY` line that #1893 added to `pytest.yml` is already on `main`, from #1892; the repo secret still has to be added for the live tests and the notebook to run in CI.  After the merge, `ruff check`, `ruff format` and `mypy` pass on the touched files, and the notebook checks pass. The tests weren't run locally; CI runs them.  The rest is #1893's description, by its author.  ## Summary  Adds `pixeltable.functions.vlmrun_gateway`, an integration with the [VLM Run Gateway](https://docs.vlm.run/gateway/introduction). The Gateway is an OpenAI-compatible API in front of vision and speech models (open-weight models plus paid partner models such as Gemini): OCR and document parsing, visual question answering, segmentation, pose estimation, multimodal embeddings, and speech-to-text. Most calls cost $0.001, and each response reports its cost in `usage.cost`.  | UDF | What it does | |---|---| | `chat_completions(messages, *, model, ...)` | Chat over image columns referenced in messages, and PDF and video by http(s) or 
+- **Issue #1924** (2026-11-10): **docs: replace retired Claude 3.x model IDs in docstrings, sample apps and tooling**
+  *Symptoms*: Replaces retired Claude 3.x model IDs in docstring examples and sample apps with a current one.  **Cause.** `pixeltable.functions.anthropic.messages` shows `claude-3-5-sonnet-20241022` in its docstring example (which also omits `max_tokens`, required by the signature), and the trading-insight and reddit-agentic-bot sample apps default to `claude-3-5-sonnet-20241022` / `claude-3-5-sonnet-latest`. Those models are retired, so copying the examples or running the sample apps fails at the API. The `openrouter` docstrings, `tool/perftest_providers.py` and the cookbook guidelines also reference retired Claude 3.x IDs.  **Fix.** The `anthropic.messages` docstring uses `claude-sonnet-5-5` with `max_tokens=1024`. Both sample-app configs use `claude-sonnet-4-6` rather than 5.5: the apps read `content[0].text`, which stays valid without extended thinking, and the trading app no longer passes `temperature`/`top_p`/`top_k` (rejected by newer models). OpenRouter docstrings use `anthropic/claude-sonnet-5.5`. `tool/perftest_providers.py` and `GUIDELINES_FOR_COOKBOOKS.md` move to `claude-haiku-4-5` / `anthropic.claude-haiku-4-5-20251001-v1:0` / `anthropic/claude-sonnet-5.5`.  **Test.** No runtime change in the library; `grep -rlnI "claude-3" . --exclude-dir=.git` lists 6 files before and none after. `ruff format --check` and `py_compile` pass on touched Python files.  --- This pull request was prepared with the assistance of an AI coding agent (Claude Code) and submitted by Alex Castillo, who 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1174,352 +1174,227 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c23311a8` (2026-11-08)
-**Commit Message**: Update README.md
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
- 
- # The backend agents build with
- 
--### Multimodal database, orchestration, and serving in one file, by the co-creators of Apache Parquet and Impala.
-+### Multimodal database, orchestration, and serving in one file
- 
- Pixeltable is an open-source multimodal database you use from Python. Build AI apps on video, images, audio and documents without writing scripts to keep files, model outputs and search indexes in sync.
- 
-```
-
----
-
-### Incident Patch 2: `1d77fdf3` (2026-11-07)
-**Commit Message**: docs: make the README hero the homepage's slider, readable in any theme (#1920)
+### Incident Patch 1: `b7661983` (2026-11-10)
+**Commit Message**: Fix Iceberg replace cleanup after catalog swap failure (#1889)
 
 ## Summary
 
-The README hero is now pixeltable.com's before/after slider
-(`StackSlider.tsx` in pixeltable/pixeltable-cloud#636), redrawn as an
-animated SVG. It runs full width under the badges, replacing the small
-table animation that sat to the right of the tagline.
+Fixes #1885.
 
-The PR also fixes washed-out images when the system's color scheme and
-the GitHub theme differ. `<picture>` picks its file from the browser's
-`prefers-color-scheme`, not the GitHub theme. On the live page with a
-dark system and GitHub set to light, both the logo and the hero loaded
-their dark files onto a white page. GitHub's `#gh-dark-mode-only`
-fragments do follow the theme, but PyPI renders this README too, strips
-`<source>`, and would show both copies. So each file now carries its own
-background.
+Preserve the fully written temporary Iceberg table if the
+`if_exists='replace'` catalog swap fails. The current implementation
+drops the old target and then renames the temporary table; its
+unconditional `finally` cleanup can delete the remaining export after
+either catalog operation fails.
 
-## Hero
+Track whether this invocation successfully created the temporary table
+and whether the non-transactional swap is in progress. Once the swap
+starts, leave the temporary identifier untouched on failure; after a
+successful rename, retain the existing cleanup behavior. The error
+message identifies the target and temporary identifier to inspect before
+retrying.
 
-- **Both sides of the slider.** The usual side shows 12 systems wired to
-the 13 jobs and "Your app talks to each system". The Pixeltable side
-shows the README's `app.py` from the class down, wired to the jobs, plus
-a `videos` table and the APIs the other jobs use (`EmbeddingIndex`,
-`--otel`, `invoke_tools`, `pxt errors` and more).
-- 
+This prevents the exporter from deleting the remaining temporary table
+after a swap failure; it does not make drop/rename atomic or restore the
+old target. A catalog operation may take effect before reporting
+failure, so the message asks callers to inspect both identifiers rather
+than assuming the temporary table still exists.
 
-**File**: `README.md` (modified, +9/-7)
+## Tests
+
+- Add local SQLite `SqlCatalog` regression coverage for rename failure
+with and without an existing target.
+- Add a p
+
+**File**: `pixeltable/io/iceberg.py` (modified, +29/-10)
 ```diff
-@@ -1,15 +1,10 @@
- <picture>
--  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/release/_logo/pxt-dark.svg">
--  <img alt="Pixeltable" src="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/release/_logo/pxt-light.svg" width="40%">
-+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/logo-dark.svg">
-+  <img alt="Pixeltable" src="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/logo-light.svg" width="40%">
- </picture>
+@@ -47,7 +47,9 @@ def export_iceberg(
+         if_exists: Determines the behavior if the table already exists. Must be one of the following:
  
- # The backend agents build with
+             - `'error'`: raise an error
+-            - `'replace'`: drop the existing table and create a new one
++            - `'replace'`: drop the existing table and create a new one. If the catalog swap fails, the new data
++              may be kept for recovery in a table named `<table_name>__pxt_tmp_<suffix>`. When the target is absent
++              or its status cannot be checked, the error message gives the exact temporary identifier to inspect.
+             - `'append'`: append to the existing table (source schema must be compatible)
+         schema_overrides: If specified, then for each (name, type) pair in `schema_overrides`, the column with
+             name `name` will be given type `type`, instead of being inferred from the Pixeltable schema. The keys in
+@@ -175,9 +177,12 @@ def export_iceberg(
+     # original untouched. Drop-then-rename is two catalog calls and not truly atomic; a crash
+     # between them leaves the original gone but the data preserved under the temp name.
+     temp_name = f'{table_name}__pxt_tmp_{uuid.uuid4().hex[:8]}'
++    temp_created = False
++    preserve_temp = False
  
--<picture>
--  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/table-build-dark.svg">
--  <img align="right" width="420" src="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/table-build-light.svg" alt="Animation: app.py declares a videos table one line at a time. Three videos are inserted, the transcript and summary columns fill in for each row, and a POST to /search returns the matching video from the same table.">
--</picture>
--
- ### Multimodal database, orchestration, and serving in one file, by the co-creators of Apache Parquet and Impala.
+     try:
+         temp_tbl = catalog.create_table(temp_name, schema=arrow_schema)
++        temp_created = True
+         fault_injection.process_fault(FaultLocation.IO_EXPORT_ICEBERG_WRITE_TEMP)
  
- Pixeltable is an open-source multimodal database you use from Python. Build AI apps on video, images, audio and documents without writing scripts to keep files, model outputs and search indexes in sync.
-@@ -32,6 +27,13 @@ pip install -U 'pixeltable[serve]'
- [![PyPI Package](https://img.shields.io/pypi/v/pixeltable?color=4D148C)](https://pypi.org/project/pixeltable/)
- [![Python](https://img.shields.io/pypi/pyversions/pixeltable)](https://pypi.org/project/pixeltable/)
+         with temp_tbl.transaction() as tx:
+@@ -186,20 +191,34 @@ def export_iceberg(
  
-+<picture>
-+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/stack-slider-narrow-dark.svg">
-+  <source media="(max-width: 600px)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/stack-slider-narrow-light.svg">
-+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/stack-slider-dark.svg">
-+  <img width="100%" src="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/stack-slider-light.svg" alt="Animation: a handle sweeps between two drawings of the same 13 jobs a request needs. Usually, they run across 12 systems (a bucket, a metadata database, queues and workers, a vector database, an API service and more) that your app talks to one by one. With Pixeltable, they live in one app.py, with its videos table and the APIs the other jobs use.">
-+</picture>
-+
- You declare tables, computed columns and HTTP routes in `app.py`. Insert a row and Pixeltable runs the computations, stores the results and updates the indexes.
+         fault_injection.process_fault(FaultLocation.IO_EXPORT_ICEBERG_BEFORE_SWAP)
  
- You can also use Pixeltable directly from Python or a notebook without an HTTP server. Start with the [10-minute tour](https://docs.pixeltable.com/overview/ten-minute-tour).
++        # Catalog drop/rename are not transactional. Preserve the completed export on failure
++        # unless we can confirm that the target is available.
++        preserve_temp = True
+         if existing_tbl is not None:
+             catalog.drop_table(table_name)
+         catalog.rename_table(temp_name, table_name)
++        preserve_temp = False
+ 
+     except excs.Error:
+         raise
+     except Exception as e:
+-        raise excs.InternalError(
+-            excs.ErrorCode.INTERNAL_ERROR, f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
+-        ) from e
++        if preserve_temp:
++            try:
++                preserve_temp = not catalog.table_exists(table_name)
++            except Exception:
++                # If the catalog is unavailable, keep the possible recovery copy.
++                pass
++        message = f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
++        if preserve_temp:
++            message += (
++                f'; the catalog swap may be incomplete. Inspect {table_name!r} and temporary identifier '
++                f'{temp_name!r} before retrying.'
++            )
++        raise excs.InternalError(excs.ErrorCode.INTERNAL_ERROR, message) from e
+     finally:
+-        # Drop temp if it still exists; covers mid-stream errors and BaseException paths
+-        # like KeyboardInterrupt. On success, rename consumed temp_name, so swallow NoSuchTableError.
+-        try:
+-            catalog.drop_table(temp_name)
+-        except NoSuchTableError:
+-            pass
++        # Clean up only a temp table we know this call created and do not need for recovery.
++        if temp_created and not preserve_temp:
++            try:
++                catalog.drop_table(temp_name)
++            except NoSuchTableError:
++                pass
 ```
 
-**File**: `docs/_hero/build-readme-images.mjs` (added, +363/-0)
+**File**: `tests/io/test_iceberg.py` (modified, +118/-2)
 ```diff
-@@ -0,0 +1,363 @@
-+// Renders the README's images, each in a light and a dark file chosen with <picture>:
-+// - the hero, pixeltable.com's before/after slider (StackSlider.tsx in pixeltable-cloud) as an animated SVG, with
-+//   the README's app.py on the Pixeltable side
-+// - a narrow hero for phones (<picture>'s max-width sources): the jobs as one list, each wiping from the systems it
-+//   usually takes to the line it takes in Pixeltable (RequestLifecycle.tsx's content)
-+// - the logo, on a plate of the page color
-+// <picture> follows the browser's color scheme, not the GitHub theme, and PyPI drops <source>, so either file can
-+// land on either page color; each one carries its own background. GitHub shows README SVGs as images: CSS
-+// animations play, scripts and web fonts do not. Every element's base style is the resting frame, so reduced
-+// motion (animations off) and PyPI show it whole.
-+//
-+//   node build-readme-images.mjs        writes stack-slider{,-narrow}-{light,dark}.svg and logo-{light,dark}.svg here
+@@ -1,5 +1,5 @@
+ import pathlib
+-from typing import Any
++from typing import TYPE_CHECKING, Any
+ 
+ import numpy as np
+ import pyarrow as pa
+@@ -19,6 +19,9 @@
+     validate_update_status,
+ )
+ 
++if TYPE_CHECKING:
++    from pyiceberg.catalog import Catalog
 +
-+import { readFileSync, writeFileSync } from 'node:fs';
-+import { dirname, join } from 'node:path';
-+import { fileURLToPath } from 'node:url';
-+
-+const HERE = dirname(fileURLToPath(import.meta.url));
-+
-+// the README's "Why we built it" table: each step, the systems it usually takes and its line in Pixeltable; keep in
-+// step with pixeltable-cloud's frontend/src/data/request-lifecycle.ts (two lines are cut to fit 360px)
-+const STEPS = [
-+  ['Store files and their results', ['bucket', 'sync script', 'metadata DB'], 'video: pxt.Video'],
-+  ['Split documents or sample frames', ['queue', 'preprocessing job'], 'iterator=frame_iterator(video, fps=1)'],
-+  ['Call models', ['queue', 'workers', 'status table'], 'transcript = openai.transcriptions(audio, …)'],
-+  ['Explore and query the results', ['download script', 'notebook', 'local copies'], 'frames.select(frames.frame, frames.detections)'],
-+  ['Search the results', ['embed job', 'vector DB'], 'pxt.EmbeddingIndex(summary, embedding=embed)'],
-+  ['Serve the results', ['API service', 'metadata DB', 'vector DB'], "api.add_query_route(path='/search', …)"],
-+  ['Let an agent call tools', ['agent framework', 'tool logs'], 'tool_output = invoke_tools(tools, response)'],
-+  ['Remember across sessions', ['chat cache', 'vector store'], 'memories = recall_memories(user_id, message)'],
-+  ['Trace a running app', ['tracing SDK', 'log store'], 'pxt service update app.py my_app --otel'],
-+  ['Evaluate model output', ['log export', 'eval notebook'], 'assistant.select(assistant.response.usage)'],
-+  ['Rerun what failed', ['dead-letter queue', 'retry script'], 'pxt errors my_app/docs'],
-+  ['Send results elsewhere', ['ETL job', 'second database', 'bucket sync'], "pxt.io.export_sql(q, 'dets', db_connect_str=…)"],
-+  ['Analyze and audit', ['ETL job', 'warehouse'], 'videos.history()'],
-+];
-+// each box on the usual side and the systems it stands for (StackSlider.tsx's SYSTEMS)
-+const SYSTEMS = [
-+  ['bucket', ['bucket']],
-+  ['metadata DB', ['metadata DB', 'status table']],
-+  ['queue + workers', ['queue', 'workers', 'dead-letter queue']],
-+  ['preprocess + embed jobs', ['preprocessing job', 'embed job']],
-+  ['vector DB', ['vector DB', 'vector store']],
-+  ['API service', ['API service']],
-+  ['agent framework', ['agent framework']],
-+  ['chat cache', ['chat cache']],
-+  ['tracing + log store', ['tracing SDK', 'log store', 'tool logs', 'log export']],
-+  ['notebooks + local copies', ['notebook', 'eval notebook', 'local copies']],
-+  ['ETL + warehouse', ['ETL job', 'second database', 'warehouse']],
-+  ['sync + retry scripts', ['sync script', 'download script', 'retry script', 'bucket sync']],
-+];
-+const jobSystems = (i) => [...new Set(STEPS[i][1].map((chip) => SYSTEMS.findIndex(([, chips]) => chips.includes(chip))))];
-+
-+// the README's app.py from the class down, rewrapped to 54 columns
-+const CODE_LINES = `class Videos(TableModel, name='videos'):
-+    video: pxt.Video
-+    audio = extract_audio(video, format='mp3')
-+    transcript = openai.transcriptions(
-+        audio, model='whisper-1')
-+    summary = openai.chat_completions(
-+        model='gpt-4o-mini',
-+        messages=[
-+            {'role': 'system', 'content':
-+            'Summarize this video in two sentences.'},
-+            {'role': 'user',
-+             'content': transcript.text},
+ 
+ class TestIceberg:
+     @classmethod
+@@ -190,9 +193,11 @@ def test_if_exists(self, db_root: DatabaseRoot, tmp_path: pathlib.Path) -> None:
+         with pxt_raises(pxt.ErrorCode.PATH_ALREADY_EXISTS, match='already exists'):
+             pxt.io.export_iceberg(t, catalog, 'pxt.if_exists')
+ 
+-        # Replace: drops + recreates, ends with same row count
++        # Replace: drops + recreates, ends with same row count and leaves no temp table.
+         pxt.io.export_iceberg(t.where(t.c_int < 3), catalog, 'pxt.if_exists', if_exists='replace')
+         assert catalog.load_table('pxt.if_exists').scan().to_arrow().num_rows == 3
++        leftover = [name for _, name in catalog.list_tables('pxt') if name.startswith('if_exists__pxt_tmp_')]
++        assert leftover == []
+ 
+         # Append: doubles the row count
+         pxt.io.export_iceberg(t.where(t.c_int < 3), catalog, 'pxt.if_exists', if_exists='append')
+@@ -248,6 +253,117 @@ def test_failure_handling(self, db_root: DatabaseRoot, fault_injection: None, tm
+         fault.assert_count(1)
+         assert catalog.load_table('pxt.faults').scan().to_arrow().num_rows == 5
+ 
++    @pytest.mark.db_roots('local', reason='Uses a local SQLite Iceberg catalog and does not need a hosted database.')
++    @pytest.mark.parametrize(
++        ('target_exists', 'fail_stage', 'check_fails'),
++        [
++            (False, 'rename', False),
++            (True, 'drop', False),
++            (True, 'rename', False),
++            (False, 'rename', True),
++            (True, 'drop_before', True),
 +        ],
-+    ).choices[0].message.content.astype(pxt.String)
++    )
++    def test_replace_swap_failure_preserves_temp(
++        self, db_root: DatabaseRoot, tmp_path: pathlib.Path, target_exists: bool, fail_stage: str, check_fails: bool
++    ) -> None:
++        """A failed catalog swap must not let cleanup remove the completed export."""
++        skip_test_if_not_installed('pyiceberg')
++        p = db_root.make_catalog_path
 +
-+    __indexes__ = [pxt.EmbeddingIndex(
-+        summary, embedding=embed)]
++        t = pxt.create_table(p('test_iceberg_swap_failure'), {'c_int': pxt.Int | None, 'c_string': pxt.String | None})
++        expected_rows = [{'c_int': i, 'c_string': f'row_{i}'} for i in range(3)]
++        t.insert(expected_rows)
 +
-+@pxt.query
-+def search(query: str):
-+    sim = Videos.summary.similarity(string=query)
-+    return (Videos.order_by(sim, asc=False).limit(3)
-+            .select(Videos.video, Videos.summary))
++        catalog = TestIceberg._catalog(tmp_path)
++        if target_exists:
++            pxt.io.export_iceberg(t.where(t.c_int == 0), catalog, 'pxt.swap_failure')
++            assert catalog.load_table('pxt.swap_failure').scan().to_arrow().num_rows == 1
 +
-+api = FastAPIRouter(name='video-api')
-+api.add_insert_route(
-+    Videos, path='/videos',
-+    uploadfile_inputs=[Videos.video],
-+    outputs=[Videos.summary])
-+api.add_query_route(path='/search', query=search)`.split('\n');
-+const ROWS = [
-+  ['tour-1.mp4', 'A table of images'],
-+  ['tou
-```
++        class FailingCatalog:
++            def __init__(self, inner: 'Catalog') -> None:
++                self._inner = inner
++
++            def __getattr__(self, name: str) -> Any:
++                return getattr(self._inner, name)
++
++            def drop_table(self, identifier: str, *args: Any, **kwargs: Any) -> Any:
++                if fail_stage == 'drop_before' and identifier == 'pxt.swap_failure':
++                    raise PermissionError('synthetic failure before dropping target')
++                result = self._inner.drop_table(identifier, *args, **kwargs)
++                if fail_stage == 'drop' and identifier == 'pxt.swap_failure':
++                    raise OSError('synthetic failure after dropping target')
++                return result
++
++            def table_exists(self, identifier: str) -> bool:
++                if check_fails:
++                    raise OSError('synthetic target lookup failure')
++                return self._inner.table_exists(identifier)
++
++            def rename_table(self, *args: Any, **kwargs: Any) -> None:
++                if fail_stage == 'rename':
++                    raise OSError('synthetic rename failure')
++                self._inner.rename_table(*args, **kwargs)
++
++        catalog_with_failure: Any = FailingCatalog(catalog)
++        with pxt_raises(pxt.ErrorCode.INTERNAL_ERROR, match='failed to write') as failure:
++            pxt.io.export_iceberg(t, catalog_with_failure, 'pxt.swap_failure', if_exists='replace')
++
++        from pyiceberg.exceptions import NoSuchTableError
++
++        if fail_stage == 'drop_before':
++            assert catalog.load_table('pxt.swap_failure').scan().to_arrow().to_pylist() == expected_rows[:1]
++        else:
++            with pytest.raises(NoSuchTableError):
++                catalog.load_table('pxt.swap_failure')
++
++        temp_names = [name for _, name in catalog.list_tables('pxt') if name.startswith('swap_failure__pxt_tmp_')]
++        assert len(temp_names) == 1
++        assert temp_names[0] in failure.value.message
++        temp_rows = catalog.load_table(f'pxt.{temp_names[0]}').scan().to_arrow().to_pylist()
++        assert sorted(temp_rows, key=lambda row: row['c_int']) == expected_rows
++
++    @pytest.mark.db_roots('local', reason='Uses a local SQLite Iceberg catalog and does not need a hosted database.')
 
-**File**: `docs/_hero/build-table-svg.mjs` (removed, +0/-173)
-```diff
-@@ -1,173 +0,0 @@
--// Renders the README hero, app.py's videos table filling in, as two animated SVGs (light and dark, chosen
--// with <picture>). GitHub shows README SVGs as images: CSS animations play, scripts and web fonts do not.
--// Every element's base style is the finished frame, so reduced motion (animations off) shows it whole.
--// The code lines are the README's app.py, shortened to fit. The rows are illustrative, named after parts of
--// docs/resources/10-minute tour of Pixeltable.mp3.
--//
--//   node build-table-svg.mjs        writes table-build-light.svg and table-build-dark.svg here
--
--import { writeFileSync } from 'node:fs';
--import { dirname, join } from 'node:path';
--import { fileURLToPath } from 'node:url';
--
--const HERE = dirname(fileURLToPath(import.meta.url));
--
--const STEPS = [
--  { at: 0, job: 'database', line: "class Videos(TableModel, name='videos'):" },
--  { at: 2600, job: 'orchestration', line: 'transcript = openai.transcriptions(', tail: '…)' },
--  { at: 5400, job: 'orchestration', line: 'summary = openai.chat_completions(', tail: '…)' },
--  { at: 8200, job: 'serving', line: "api.add_query_route(path='/search',", tail: ' …)' },
--];
--const ROWS = [
--  { video: 'tour-1.mp4', transcript: 'First, we create a table with an image column', summary: 'A table of images' },
--  { video: 'tour-2.mp4', transcript: 'Next, a computed column runs object detection', summary: 'Detection as a column' },
--  { video: 'tour-3.mp4', transcript: 'Then we ask GPT-4o about each image', summary: 'GPT-4o on each image' },
--];
--const QUERY = 'object detection';
--const ANSWER_ROW = 1;
--
--const ROW_GAP = 450;
--const COMPUTE_LAG = 500;
--const COMPUTE_TIME = 700;
--const REQUEST_AT = STEPS[3].at + 700;
--const ANSWER_AT = REQUEST_AT + 900;
--const FADE_IN = 500;
--const FADE_OUT = 700;
--const LOOP = ANSWER_AT + 4200;
--const END = LOOP - FADE_OUT;
--const rowAt = (row) => 600 + row * ROW_GAP;
--const fillAt = (step, row) => STEPS[step].at + COMPUTE_LAG + row * ROW_GAP;
--const filledAt = (step) => fillAt(step, ROWS.length - 1) + COMPUTE_TIME;
--
--// every text color clears 4.5:1 on GitHub's page background (#ffffff light, #0d1117 dark)
--const THEMES = {
--  light: { text: '#1f2328', muted: '#59636e', faint: '#6e7781', border: 'rgba(31,35,40,0.15)', rule: 'rgba(31,35,40,0.08)', bar: '#f6f8fa', accent: '#b45309', route: '#1d4ed8', hit: 'rgba(31,35,40,0.05)' },
--  dark: { text: '#e6edf3', muted: '#9198a1', faint: '#7d8590', border: 'rgba(240,246,252,0.14)', rule: 'rgba(240,246,252,0.07)', bar: 'rgba(240,246,252,0.04)', accent: '#f1ae03', route: '#93c5fd', hit: 'rgba(240,246,252,0.05)' },
--};
--
--// drawn at the 420px the README shows it at (W plus the 1px stroke margin on each side), so sizes are CSS pixels
--const W = 418;
--const MONO = "ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace";
--const SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif";
--
--const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
--// cuts at a word boundary, since a cell holds about 20 characters of 13px text
--function clip(s, n) {
--  if (s.length <= n) return s;
--  const head = s.slice(0, n - 1);
--  const cut = s[n - 1] === ' ' ? head : head.slice(0, head.lastIndexOf(' '));
--  return `${cut.trimEnd()}…`;
--}
--
--// One CSS animation per visibility window: opacity 0 → 1 at `from`, 1 → 0 at `to`, over `fade` ms.
--const animations = [];
--function shown(from, to, { fade = 400, finished = true } = {}) {
--  const pct = (ms) => `${Math.min(100, Math.max(0, (ms / LOOP) * 100)).toFixed(3)}%`;
--  const name = `a${animations.length}`;
--  const stops = [
--    ['0%', 0],
--    [pct(from), 0],
--    [pct(from + fade), 1],
--    [pct(to), 1],
--    [pct(to + fade), 0],
--    ['100%', 0],
--  ];
--  animations.push(`@keyframes ${name}{${stops.map(([at, o]) => `${at}{opacity:${o}}`).join('')}}`);
--  // The base opacity is the finished frame, which reduced motion keeps.
--  return `class="${name}" style="opacity:${finished ? 1 : 0}"`;
--}
--
--function render(themeName) {
--  animations.length = 0;
--  const c = THEMES[themeName];
--  const out = [];
--  const text = (x, y, body, { size = 13, font = SANS, fill = c.text, anim = '', anchor = 'start', weight = 400 } = {}) =>
--    `<text x="${x}" y="${y}" font-family="${font}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" ${anim}>${body}</text>`;
--
--  // Line bar: the app.py line being declared.
--  out.push(`<rect x="0.5" y="0.5" width="${W - 1}" height="39" rx="8" fill="${c.bar}" stroke="${c.border}"/>`);
--  out.push(`<path d="M13 13h6l4 4v10h-10z M19 13v4h4" fill="none" stroke="${c.muted}" stroke-width="1.2" stroke-linejoin="round"/>`);
--  out.push(text(30, 25, 'app.py', { font: MONO, size: 12, fill: c.muted }));
--  STEPS.forEach((step, i) => {
--    const from = Math.max(step.at, FADE_IN);
--    const to = i < STEPS.length - 1 ? STEPS[i + 1].at : END;
--    const tail = step.tail ? `<tspan fill="${c.
-```
-
-**File**: `docs/_hero/logo-dark.svg` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+<svg width="392" height="107" viewBox="0 0 392 107" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Pixeltable">
-+<rect width="392" height="107" rx="12" fill="#0d1117"/>
-+<g transform="translate(12 12)">
-+<rect width="368" height="83" fill="url(#pattern0_2_50)"/>
-+<defs>
-+<pattern id="pattern0_2_50" patternContentUnits="objectBoundingBox" width="1" height="1">
-+<use xlink:href="#image0_2_50" transform="matrix(0.00139224 0 0 0.00617284 -0.000511608 0)"/>
-+</pattern>
-+<image id="image0_2_50" width="719" height="162" xlink:href="data:image/png;base64,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
-```
-
-**File**: `docs/_hero/logo-light.svg` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+<svg width="318" height="75" viewBox="0 0 318 75" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Pixeltable">
-+<rect width="318" height="75" rx="9" fill="#ffffff"/>
-+<g transform="translate(9 9)">
-+<rect width="300" height="57" fill="url(#pattern0_3_47)"/>
-+<defs>
-+<pattern id="pattern0_3_47" patternContentUnits="objectBoundingBox" width="1" height="1">
-+<use xlink:href="#image0_3_47" transform="scale(0.00333333 0.0175439)"/>
-+</pattern>
-+<image id="image0_3_47" width="300" height="57" xlink:href="data:image/png;base64,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
-```
-
-**File**: `docs/_hero/stack-slider-dark.svg` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 624" width="920" height="624" role="img" aria-labelledby="t">
-+<title id="t">Usually, the 13 jobs of a request run across 12 systems that your app talks to one by one. With Pixeltable, the same 13 jobs live in one app.py, with its videos table and the APIs the other jobs use. A handle sweeps between the two sides.</title>
-+<style>@keyframes clip{0.00%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}57.14%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}64.29%{clip-path:inset(0 0 0 888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{clip-path:inset(0 0 0 888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}@keyframes move{0.00%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}57.14%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}64.29%{transform:translateX(888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{transform:translateX(888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}.pixeltable{clip-path:inset(0 0 0 644px);animation:clip 14s infinite}.handle{transform:translateX(644px);animation:move 14s infinite}@media (prefers-reduced-motion:reduce){.pixeltable,.handle{animation:none}}</style>
-+<rect x="0.5" y="0.5" width="919" height="623" rx="12" fill="#070807" stroke="#383838"/>
-+<path d="M24 17l-4 4 4 4" fill="none" stroke="#a6a6a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><text x="32" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#a6a6a6" text-anchor="start" >Usually</text>
-+<text x="888" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#a6a6a6" text-anchor="end" >With Pixeltable</text><path d="M896 17l4 4 -4 4" fill="none" stroke="#a6a6a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-+<g transform="translate(16 44)">
-+<g><path d="M396 103.5 C284 103.5 284 74.5 172 74.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 103.5 C284 103.5 284 426.5 172 426.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 103.5 C284 103.5 284 106.5 172 106.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 130.5 C284 130.5 284 138.5 172 138.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 130.5 C284 130.5 284 170.5 172 170.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 157.5 C284 157.5 284 138.5 172 138.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 157.5 C284 157.5 284 106.5 172 106.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 184.5 C284 184.5 284 426.5 172 426.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 184.5 C284 184.5 284 362.5 172 362.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 211.5 C284 211.5 284 170.5 172 170.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 211.5 C284 211.5 284 202.5 172 202.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 234.5 172 234.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 106.5 172 106.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 202.5 172 202.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 265.5 C284 265.5 284 266.5 172 266.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 265.5 C284 265.5 284 330.5 172 330.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 292.5 C284 292.5 284 298.5 172 298.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 292.5 C284 292.5 284 202.5 172 202.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 319.5 C284 319.5 284 330.5 172 330.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 346.5 C284 346.5 284 330.5 172 330.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 346.5 C284 346.5 284 362.5 172 362.5" fill="none" stroke="#a6a6a6" stroke-
-```
-
-**File**: `docs/_hero/stack-slider-light.svg` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 624" width="920" height="624" role="img" aria-labelledby="t">
-+<title id="t">Usually, the 13 jobs of a request run across 12 systems that your app talks to one by one. With Pixeltable, the same 13 jobs live in one app.py, with its videos table and the APIs the other jobs use. A handle sweeps between the two sides.</title>
-+<style>@keyframes clip{0.00%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}57.14%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}64.29%{clip-path:inset(0 0 0 888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{clip-path:inset(0 0 0 888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}@keyframes move{0.00%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}57.14%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}64.29%{transform:translateX(888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{transform:translateX(888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}.pixeltable{clip-path:inset(0 0 0 644px);animation:clip 14s infinite}.handle{transform:translateX(644px);animation:move 14s infinite}@media (prefers-reduced-motion:reduce){.pixeltable,.handle{animation:none}}</style>
-+<rect x="0.5" y="0.5" width="919" height="623" rx="12" fill="#fafaf9" stroke="#e0e0e0"/>
-+<path d="M24 17l-4 4 4 4" fill="none" stroke="#595959" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><text x="32" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#595959" text-anchor="start" >Usually</text>
-+<text x="888" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#595959" text-anchor="end" >With Pixeltable</text><path d="M896 17l4 4 -4 4" fill="none" stroke="#595959" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-+<g transform="translate(16 44)">
-+<g><path d="M396 103.5 C284 103.5 284 74.5 172 74.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 103.5 C284 103.5 284 426.5 172 426.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 103.5 C284 103.5 284 106.5 172 106.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 130.5 C284 130.5 284 138.5 172 138.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 130.5 C284 130.5 284 170.5 172 170.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 157.5 C284 157.5 284 138.5 172 138.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 157.5 C284 157.5 284 106.5 172 106.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 184.5 C284 184.5 284 426.5 172 426.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 184.5 C284 184.5 284 362.5 172 362.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 211.5 C284 211.5 284 170.5 172 170.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 211.5 C284 211.5 284 202.5 172 202.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 234.5 172 234.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 106.5 172 106.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 202.5 172 202.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 265.5 C284 265.5 284 266.5 172 266.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 265.5 C284 265.5 284 330.5 172 330.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 292.5 C284 292.5 284 298.5 172 298.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 292.5 C284 292.5 284 202.5 172 202.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 319.5 C284 319.5 284 330.5 172 330.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 346.5 C284 346.5 284 330.5 172 330.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 346.5 C284 346.5 284 362.5 172 362.5" fill="none" stroke="#595959" stroke-
-```
-
-**File**: `docs/_hero/stack-slider-narrow-dark.svg` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 676" width="372" height="676" role="img" aria-labelledby="t">
-+<title id="t">The 13 jobs a request needs. Under each, a handle sweeps between the systems it usually takes and the one line of app.py or pxt command it takes with Pixeltable.</title>
-+<style>@keyframes clip{0.00%{clip-path:inset(0 0 0 346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{clip-path:inset(0 0 0 346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{clip-path:inset(0 0 0 346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{clip-path:inset(0 0 0 346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}@keyframes move{0.00%{transform:translateX(346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{transform:translateX(346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{transform:translateX(346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{transform:translateX(346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}.pixeltable{clip-path:inset(0 0 0 0px);animation:clip 14s infinite}.handle{transform:translateX(0px);animation:move 14s infinite}@media (prefers-reduced-motion:reduce){.pixeltable,.handle{animation:none}}</style>
-+<rect x="0.5" y="0.5" width="371" height="675" rx="12" fill="#070807" stroke="#383838"/>
-+<path d="M20 17l-4 4 4 4" fill="none" stroke="#a6a6a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><text x="28" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#a6a6a6" text-anchor="start" >Usually</text>
-+<text x="344" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#a6a6a6" text-anchor="end" >With Pixeltable</text><path d="M352 17l4 4 -4 4" fill="none" stroke="#a6a6a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-+<rect x="12.5" y="40.5" width="347" height="575" rx="10" fill="#0e110e" stroke="#383838"/><path d="M12.5 70 V50.5 a10 10 0 0 1 10 -10 H349.5 a10 10 0 0 1 10 10 V70 Z" fill="#171b17"/><line x1="13" y1="70" x2="359" y2="70" stroke="#383838"/><text x="24" y="60" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#f2f2f2" text-anchor="start" >What a request needs</text><text x="24" y="87" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >01</text><text x="46" y="87" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#f2f2f2" text-anchor="start" >Store files and their results</text><line x1="13" y1="112" x2="359" y2="112" stroke="#383838" stroke-opacity="0.5"/><text x="24" y="129" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >02</text><text x="46" y="129" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#f2f2f2" text-anchor="start" >Split documents or sample frames</text><line x1="13" y1="154" x2="359" y2="154" stroke="#383838" stroke-opacity="0.5"/><text x="24" y="171" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >03</text><text x="46" y="171" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#f2f2f2" text-anchor="start" >Call models</text><line x1="13" y1="196" x2="359" y2="196" stroke="#383838" stroke-opacity="0.5"/><text x="24" y="213" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >04</text><text x="46" y="213" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#f2f2f2" text-anchor="start" >Explore and query the results</text><line x1="13" y1="238" x2="359" y2="238" stroke="#383838" stroke-opacity="0.5"/><text x="24" y="255" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >05</text><text x="46" y="
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1925** (closed): PXT-1755: Pin generate_video's Interactions API call to v1beta (google-genai 3.0 defaults to v1) (@pierrebrunelle)
+- **PR #1924** (2026-11-10): docs: replace retired Claude 3.x model IDs in docstrings, sample apps and tooling (@pcbeingused333)
 - **PR #1920** (2026-11-07): docs: make the README hero the homepage's slider, readable in any theme (@pierrebrunelle)
 - **PR #1915** (2026-11-07): Add VLM Run Gateway integration (OCR, VQA, segmentation, embeddings, transcription) (takes over #1893) (@aaron-siegel)
 - **PR #1914** (closed): Fix is_deterministic default when @pxt.udf() has keyword arguments (@sergey-mkhitaryan)
 - **PR #1913** (2026-11-07): Fix UDF and iterator issues found during #1907 review (@sergey-mkhitaryan)
-- **PR #1912** (2026-11-07): PXT-1748: Mirror OpenAI ImagesResponse.svg_usage (openai 3.46) (@pierrebrunelle)
-- **PR #1911** (closed): Require Pillow >= 13.0 (CVE-2026-112900) (@jacobweiss2305)
 
 ---
 
@@ -1539,28 +1414,59 @@ a `videos` table and the APIs the other jobs use (`EmbeddingIndex`,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update README.md
+## X. Iceberg replace cleanup after catalog swap failure (#1889)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixeltable/io/iceberg.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c23311a8`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7661983`: Iceberg replace cleanup after catalog swap failure (#1889). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/io/iceberg.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-### Multimodal database, orchestration, and serving in one file
+            - `'replace'`: drop the existing table and create a new one. If the catalog swap fails, the new data
+              may be kept for recovery in a table named `<table_name>__pxt_tmp_<suffix>`. When the target is absent
+              or its status cannot be checked, the error message gives the exact temporary identifier to inspect.
+    temp_created = False
+    preserve_temp = False
+        temp_created = True
+        # Catalog drop/rename are not transactional. Preserve the completed export on failure
+        # unless we can confirm that the target is available.
+        preserve_temp = True
+        preserve_temp = False
+        if preserve_temp:
+            try:
+                preserve_temp = not catalog.table_exists(table_name)
+            except Exception:
+                # If the catalog is unavailable, keep the possible recovery copy.
+                pass
+        message = f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
+        if preserve_temp:
+            message += (
+                f'; the catalog swap may be incomplete. Inspect {table_name!r} and temporary identifier '
+                f'{temp_name!r} before retrying.'
+            )
+        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-### Multimodal database, orchestration, and serving in one file, by the co-creators of Apache Parquet and Impala.
+            - `'replace'`: drop the existing table and create a new one
+        raise excs.InternalError(
+            excs.ErrorCode.INTERNAL_ERROR, f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
+        ) from e
+        # Drop temp if it still exists; covers mid-stream errors and BaseException paths
+        # like KeyboardInterrupt. On success, rename consumed temp_name, so swallow NoSuchTableError.
+        try:
+            catalog.drop_table(temp_name)
+        except NoSuchTableError:
+            pass
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c23311a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7661983` are properly handled with clean fallback behavior.

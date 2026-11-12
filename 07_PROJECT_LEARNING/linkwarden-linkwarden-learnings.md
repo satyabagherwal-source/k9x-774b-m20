@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md`  
 > **Source**: github ([https://github.com/linkwarden/linkwarden](https://github.com/linkwarden/linkwarden))  
-> **Source Version**: `eff7c6b7`  
+> **Source Version**: `24adcc14`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:29:08.443Z  
+> **Timestamp**: 2026-11-11T16:42:45.941Z  
 > **Learning ID**: `learn-github-linkwarden-linkwarden`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkwarden/linkwarden](https://github.com/linkwarden/linkwarden))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:29:08.224Z  
+> **Harvest Timestamp**: 2026-11-11T16:42:45.772Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡️⚡️⚡️ Self-hosted collaborative bookmark manager to collect, read, annotate, and fully preserve what matters, all in one place.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 20244 stars
+- **Stars / Engagement**: 20383 stars
 
 ---
 
@@ -723,6 +723,52 @@ export default function useInitialData() {
 
 ```
 
+### Core Architecture Module: `apps/web/hooks/useLinkSort.ts`
+```
+import { useCallback, useState } from "react";
+import { Sort } from "@linkwarden/types/global";
+
+// Written only when the reader picks a sort, so someone who never has keeps
+// getting the default.
+const STORAGE_KEY = "linkSort";
+
+// Where the sort used to be kept. Every list wrote it as soon as it opened, so a
+// stored newest first is only the old default, while any other value was picked.
+const LEGACY_STORAGE_KEY = "sortBy";
+
+const readSort = (): Sort => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved !== null && Number(saved) in Sort) return Number(saved);
+
+  const legacy = Number(localStorage.getItem(LEGACY_STORAGE_KEY));
+  if (legacy !== Sort.DateNewestFirst && legacy in Sort) return legacy;
+
+  return Sort.Custom;
+};
+
+/**
+ * The sort a list of links is shown in, shared by every list.
+ *
+ * Until the reader picks one it's the custom order. That only exists inside a
+ * single collection, so on any other list (`allowCustomOrder` false) it shows as
+ * newest first, without changing what's saved.
+ */
+export default function useLinkSort(allowCustomOrder = false) {
+  const [saved, setSaved] = useState(readSort);
+
+  const sortBy =
+    saved === Sort.Custom && !allowCustomOrder ? Sort.DateNewestFirst : saved;
+
+  const setSortBy = useCallback((sort: Sort) => {
+    localStorage.setItem(STORAGE_KEY, sort.toString());
+    setSaved(sort);
+  }, []);
+
+  return [sortBy, setSortBy] as const;
+}
+
+```
+
 ### Core Architecture Module: `apps/web/hooks/useMediaQuery.tsx`
 ```
 import { useEffect, useState } from "react";
@@ -744,43 +790,6 @@ export default function useMediaQuery(query: string): boolean {
     };
   }, [query]);
   return matches;
-}
-
-```
-
-### Core Architecture Module: `apps/web/hooks/usePermissions.tsx`
-```
-import { Member } from "@linkwarden/types/global";
-import { useEffect, useState } from "react";
-import { useCollections } from "@linkwarden/router/collections";
-import { useUser } from "@linkwarden/router/user";
-
-export default function usePermissions(collectionId: number) {
-  const { data: collections = [] } = useCollections();
-
-  const { data: user } = useUser();
-
-  const [permissions, setPermissions] = useState<Member | true>();
-  useEffect(() => {
-    const collection = collections.find((e) => e.id === collectionId);
-
-    if (collection) {
-      let getPermission: Member | undefined = collection.members.find(
-        (e) => e.userId === user?.id
-      );
-
-      if (
-        getPermission?.canCreate === false &&
-        getPermission?.canUpdate === false &&
-        getPermission?.canDelete === false
-      )
-        getPermission = undefined;
-
-      setPermissions(user?.id === collection.ownerId || getPermission);
-    }
-  }, [user, collections, collectionId]);
-
-  return permissions;
 }
 
 ```
@@ -814,421 +823,714 @@ export default function usePermissions(collectionId: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eff7c6b7` (2026-10-26)
-**Commit Message**: Merge pull request #1878 from linkwarden/hot-fix
+### Incident Patch 1: `24adcc14` (2026-11-10)
+**Commit Message**: Merge pull request #1893 from linkwarden/dev
 
-Hot fix
+v2.17.0
 
-**File**: `AGENTS.md` (added, +137/-0)
+**File**: `.env.sample` (modified, +6/-1)
 ```diff
-@@ -0,0 +1,137 @@
-+# AGENTS.md
+@@ -47,7 +47,6 @@ MEILI_TIMEOUT=
+ ALLOW_PRIVATE_NETWORK_ACCESS=
+ ALLOW_INSECURE_TLS=
+ NEXT_PUBLIC_USER_CONTENT_DOMAIN=
+-NEXT_PUBLIC_MOBILE_APP_REDIRECT_ENABLED=
+ 
+ # AI Settings
+ NEXT_PUBLIC_OLLAMA_ENDPOINT_URL=
+@@ -77,6 +76,12 @@ OPENROUTER_MODEL=
+ PERPLEXITY_API_KEY=
+ PERPLEXITY_MODEL=
+ 
++# Optional: Override the prompt sent to the model for each tagging method.
++# Use {{text}} for the page content and {{tags}} for the tag list.
++AI_GENERATE_TAGS_PROMPT=
++AI_PREDEFINED_TAGS_PROMPT=
++AI_EXISTING_TAGS_PROMPT=
 +
-+Linkwarden is a self-hosted, collaborative bookmark manager that collects, reads, annotates and preserves webpages. This file is the orientation map for agents working in this repository: what the pieces are, how they talk to each other, which commands to run, and where the public-facing sites live.
-+
-+## Repository layout
-+
-+Yarn 4 workspaces monorepo (`apps/*` and `packages/*`). No Turborepo; orchestration is plain root-level scripts.
-+
-+### Apps
-+
-+| Path | Workspace | What it is |
-+| --- | --- | --- |
-+| `apps/web` | `@linkwarden/web` | Next.js app (Pages Router). Serves the UI and the whole REST API. |
-+| `apps/worker` | `@linkwarden/worker` | Long-running Node/tsx process. Preservation, AI tagging, search indexing, RSS polling, data migrations. |
-+| `apps/mobile` | `@linkwarden/mobile` | Expo / React Native app (expo-router, NativeWind) for iOS and Android. |
-+| `apps/extension` | `@linkwarden/extension` | Vite + React browser extension (Chrome, Firefox, Safari). |
-+
-+### Packages
-+
-+Shared code, all plain TypeScript source with `main: index.ts` (no build step; consumers transpile them).
-+
-+| Path | Workspace | What it is |
-+| --- | --- | --- |
-+| `packages/prisma` | `@linkwarden/prisma` | `schema.prisma`, migrations, generated client, seed. The single source of truth for the data model. |
-+| `packages/types` | `@linkwarden/types` | Shared TypeScript types (`global.ts` is the big one). |
-+| `packages/lib` | `@linkwarden/lib` | Server and client helpers: Zod schemas (`schemaValidation.ts`), constants, SSRF guards (`ssrf.ts`, `safeFetch.ts`), Meilisearch client, mailer, RSS handling, format helpers. |
-+| `packages/filesystem` | `@linkwarden/filesystem` | Storage abstraction. Writes to local disk or S3-compatible object storage depending on whether S3 env vars are set. |
-+| `packages/router` | `@linkwarden/router` | TanStack Query hooks (`useLinks`, `useCollections`, `useTags`, ...). Shared by **web and mobile**, which is why it lives outside `apps/web`. |
-+
-+Dependency direction: `prisma` → `types` → `lib`/`filesystem` → `router` → apps. Nothing in `packages/` imports from `apps/`.
-+
-+## Architecture
-+
-+### Request path (web)
-+
-+1. `apps/web/pages/api/v1/**` (plus a small `v2/` for the new dashboard) are thin Next API route handlers. They authenticate via `verifyUser` / `getTokenFromRequest` (NextAuth session or API token), parse and coerce query params, and check demo mode.
-+2. Business logic lives in `apps/web/lib/api/controllers/<resource>/`. Routes stay dumb; controllers return `{ status, response }`.
-+3. Permissions for shared collections go through `apps/web/lib/api/getPermission.ts` and `getAccessibleCollectionIds.ts`. Any new link or collection query must respect collection membership, not just ownership.
-+4. Client components never call `axios` directly; they use the hooks in `packages/router`, so web and mobile share cache keys, optimistic updates and invalidation rules.
-+
-+### Preservation path (worker)
-+
-+The web app only records intent. The worker does the heavy lifting.
-+
-+- `apps/worker/index.ts` is a supervisor that respawns `worker.ts` on exit.
-+- `worker.ts` runs the migration worker once, then starts the loops: `linkProcessing`, `autoTagPreservedLinks`, `linkIndexing`, `rssPolling` (interval from `ARCHIVE_SCRIPT_INTERVAL`, default 10s).
-+- `linkProcessing` claims a batch of unpreserved links (`lib/getLinkBatch.ts`, `getLinkBatchFairly.ts` spreads work across users), drives a headless Chromium through `lib/preservationScheme/*` to produce a screenshot, PDF, readability text, preview image and single-file HTML (Rust `monolith` binary), and optionally pushes to the Wayback Machine.
-+- Artifacts are written through `@linkwarden/filesystem`, so they land on disk or in S3 without the callers caring.
-+- AI tagging uses the Vercel AI SDK with pluggable providers (Ollama, OpenAI and compatible, Azure, Anthropic, OpenRouter, Perplexity), selected by env vars.
-+- `linkIndexing` pushes link text into Meilisearch; full text search in the web app reads from there.
-+
-+### Infrastructure dependencies
-+
-+PostgreSQL (Prisma), Meilisearch (search), Chromium via Playwright plus the `monolith` binary (preservation), optional S3-compatible storage, optional SMTP, optional Stripe and Apple/Google IAP for the Cloud offering.
-+
-+## Commands
-+
-+Run everything from the repo root. Root scripts wrap `dotenv --` so the root `.env` is loaded for you; running a workspace script directly usually will not see those vars.
-+
-+**Setup**
-+
-+```bash
-+yarn install            # also runs prisma generate via postinstall + patch-package
-+yarn prisma:deploy      # apply migrations (use prisma:dev to create one)
-+```
-+
-+**Develop**
-+
-+```bash
-+yarn concurrently:dev   # web + worker together (the usual one)
-+yarn web:dev            # web only, localhost:3000
-+yarn worker:dev         # worker only, tsx watch
-+yarn prisma:studio      # inspect the database
-+```
-+
-+**Build and run production locally
+ # MeiliSearch Settings
+ MEILI_HOST=
+ MEILI_MASTER_KEY=
 ```
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `.github/SECURITY.md` (modified, +1/-8)
 ```diff
-@@ -96,4 +96,4 @@ HEALTHCHECK --interval=30s \
+@@ -8,12 +8,5 @@ The Linkwarden team and community take security bugs in Linkwarden seriously. We
  
- EXPOSE 3000
+ Instead, please use the GitHub Security Advisory ["Report a Vulnerability"](https://github.com/linkwarden/linkwarden/security/advisories/new) tab.
  
--CMD ["sh", "-c", "export PATH=/data/node_modules/.bin:$PATH && prisma migrate deploy --schema=/data/packages/prisma/schema.prisma && exec concurrently -k -n web,worker \"cd /data/apps/web && exec next start\" \"cd /data/apps/worker && exec tsx worker.ts\""]
+-You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message:
+-[security@linkwarden.app](mailto:security@linkwarden.app)
+ 
+-
+-After the initial reply to your report, the security team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
+-
+-# Preferred Languages
+-
+-We prefer all communications to be in English.
 \ No newline at end of file
-+CMD ["sh", "-c", "export PATH=/data/node_modules/.bin:$PATH && prisma migrate deploy --schema=/data/packages/prisma/schema.prisma && exec concurrently -k -n web,worker \"cd /data/apps/web && exec next start\" \"cd /data/apps/worker && exec tsx worker.ts\""]
++After the initial reply to your report, the security team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
+\ No newline at end of file
 ```
 
-**File**: `apps/web/components/LinkViews/LinkComponents/LinkIcon.tsx` (modified, +2/-2)
+**File**: `.github/actions/setup/action.yml` (added, +25/-0)
 ```diff
-@@ -19,9 +19,9 @@ function LinkIcon({
-   onClick?: Function;
- }) {
-   let iconClasses: string = clsx(
--    "rounded flex item-center justify-center shadow select-none z-10 w-12 h-12",
-+    "rounded flex item-center justify-center select-none z-10 w-12 h-12",
-     !hideBackground &&
--      "rounded-md backdrop-blur-xl bg-white/30 dark:bg-black/30 bg-opacity-50 p-1",
-+      "rounded-md shadow backdrop-blur-xl bg-white/30 dark:bg-black/30 bg-opacity-50 p-1",
-     className
-   );
- 
+@@ -0,0 +1,25 @@
++name: Set up
++description: Installs Node and the workspace dependencies.
++
++inputs:
++  browsers:
++    description: Also install Playwright's Chromium and its system packages (apps/web postinstall), which only the e2e jobs use.
++    default: "false"
++
++runs:
++  using: composite
++  steps:
++    - name: Setup Node
++      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
++      with:
++        node-version: 20
++
++    - name: Enable corepack (Yarn 4)
++      shell: bash
++      run: corepack enable
++
++    - name: Install dependencies
++      shell: bash
++      env:
++        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: ${{ inputs.browsers == 'true' && '0' || '1' }}
++      run: yarn install --immutable
 ```
 
-**File**: `apps/web/pages/settings/account.tsx` (modified, +0/-1)
+**File**: `.github/scripts/test-areas.mjs` (added, +166/-0)
 ```diff
-@@ -112,7 +112,6 @@ const Page: NextPageWithLayout = () => {
-         email: user.email,
-         locale: user.locale,
-         image: user.image,
--        isPrivate: user.isPrivate,
-         password: password ? password : undefined,
+@@ -0,0 +1,166 @@
++// Splits the tests into the areas CI runs as separate checks (see
++// .github/workflows/ci.yml).
++//
++// Every test file has to be in exactly one area of its suite. When one isn't,
++// all checks of that suite fail, so a new test file can't go unrun unnoticed.
++//
++// Usage: AREAS='["Web", ...]' node .github/scripts/test-areas.mjs <suite> <area> [-- <command>...]
++// Prints the area's test files, one per line, or runs the command with them
++// added to the end. AREAS is the list of areas ci.yml runs for the suite, which
++// has to match the areas below.
++
++import { execFileSync, spawnSync } from "node:child_process";
++import { fileURLToPath } from "node:url";
++
++// Vitest's and Playwright's default test file names
++const TEST_FILE = /\.(test|spec)\.[cm]?[jt]sx?$/;
++
++// Minus what vitest.config.mts excludes
++const isVitestTest = (path) =>
++  TEST_FILE.test(path) && !/(^|\/)(node_modules|dist|e2e|\.next)\//.test(path);
++
++// Each area lists the files or folders (ending in "/") it runs, relative to
++// the suite's dir.
++const suites = {
++  unit: {
++    dir: "",
++    files: (path) => isVitestTest(path) && !path.includes(".integration.test."),
++    areas: {
++      Web: ["apps/web/"],
++      Extension: ["apps/extension/"],
++      Mobile: ["apps/mobile/"],
++      "Worker and packages": ["apps/worker/", "packages/"],
++    },
++  },
++  integration: {
++    dir: "",
++    files: (path) => isVitestTest(path) && path.includes(".integration.test."),
++    areas: {
++      Database: ["apps/", "packages/"],
++    },
++  },
++  // Every project in apps/web/playwright.config.ts except "chromium email"
++  "e2e-web": {
++    dir: "apps/web/e2e/",
++    files: (path) =>
++      path.endsWith(".spec.ts") && !path.startsWith("tests/email/"),
++    areas: {
++      Login: [
++        "tests/public/login.spec.ts",
++        "tests/public/password-change-notice.spec.ts",
++        "tests/public/password-retries.spec.ts",
++      ],
++      Permissions: [
++        "tests/public/archive-upload-permissions.spec.ts",
++        "tests/public/collection-parents.spec.ts",
++        "tests/public/link-update-permissions.spec.ts",
++        "tests/public/session-revocation.spec.ts",
++      ],
++      "Search and no-email": [
++        "tests/public/no-email.spec.ts",
++        "tests/public/public-collection-links.spec.ts",
++        "tests/public/search-query.spec.ts",
++        "tests/public/usage-analytics.spec.ts",
++        "tests/public/usage-analytics-privacy.spec.ts",
++      ],
++      Imports: ["tests/public/import-order.spec.ts"],
++    },
++  },
++  "e2e-email": {
++    dir: "apps/web/e2e/tests/email/",
++    files: (path) => path.endsWith(".spec.ts"),
++    areas: {
++      "Verification and codes": [
++        "verification.spec.ts",
++        "edge-cases.spec.ts",
++        "email-change.spec.ts",
++      ],
++      "Pre-hijacking and OIDC": ["prehijack.spec.ts", "session-revocation.spec.ts"],
++      "Delivery and upgrades": [
++        "delivery.spec.ts",
++        "password-reset.spec.ts",
++        "upgrade.spec.ts",
++      ],
++    },
++  },
++  // apps/extension/playwright.config.ts keeps Playwright's default testMatch
++  "e2e-extension": {
++    dir: "apps/extension/e2e/",
++    files: (path) => TEST_FILE.test(path),
++    areas: {
++      Popup: ["tests/popup.spec.ts"],
++      Options: ["tests/options.spec.ts"],
++    },
++  },
++};
++
++const fail = (message) => {
++  console.error(message);
++  process.exit(1);
++};
++
++const [suiteName, area, , ...command] = process.argv.slice(2);
++const suite = suites[suiteName];
++if (!suite) fail(`Unknown suite "${suiteName}"`);
++
++const names = Object.keys(suite.areas);
++const listed = JSON.parse(process.env.AREAS || "[]");
++if ([...listed].sort().join("\n") !== [...names].sort().join("\n"))
++  fail(
++    `The ${suiteName} areas in ci.yml (${listed.join(", ")}) don't match ` +
++      `the ones in .github/scripts/test-areas.mjs (${names.join(", ")}).`
++  );
++if (!suite.areas[area]) fail(`Unknown ${suiteName} area "${area}"`);
++
++const root = fileURLToPath(new URL("../..", import.meta.url));
++const files = execFileSync("git", ["ls-files", "-z", "--", suite.dir || "."], {
++  cwd: root,
++  encoding: "utf8",
++})
++  .split("\0")
++  .filter(Boolean)
++  .map((path) => path.slice(suite.dir.length))
++  .filter(suite.files);
++
++const matches = (entry, file) =>
++  entry.endsWith("/") ? file.startsWith(entry) : file === entry;
++const inArea = (name, file) =>
++  suite.areas[name].some((entry) => matches(entry, file));
++
++const problems = [];
++for (const file of files) {
++  const areas = names.filter((name) => inArea(name, file));
++  if (areas.length === 0)
++    problems.push(`${suite.dir}${file} isn't in any ${suiteName} area.`);
++  if (areas.length > 1)
++    problems.push(
++      `${suite.dir}${file} is in more than one area: ${areas.join(", ")}.`
++    );
++}
++// A folder can be empty for now, but a file that's gone was renamed or removed.
++for (const name of names)
++  for (const entry of suite.areas[name])
++    if (!entry.endsWith
+```
+
+**File**: `.github/workflows/build.yml` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++name: Build
++
++on:
++  workflow_call:
++
++jobs:
++  web:
++    name: Web app
++    # Not ubuntu-latest: Playwright 1.57 (apps/web postinstall) can't install on Ubuntu 26.04.
++    runs-on: ubuntu-24.04
++    timeout-minutes: 20
++    env:
++      NEXTAUTH_SECRET: very_sensitive_secret
++      NEXTAUTH_URL: http://127.0.0.1:3000/api/v1/auth
++
++    steps:
++      - name: Checkout
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
++
++      - name: Set up
++        uses: ./.github/actions/setup
++
++      - name: Build
++        run: |
++          yarn prisma:generate
++          yarn web:build
++
++      # The e2e jobs start Linkwarden from this build.
++      - name: Upload build
++        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++        with:
++          name: web-build
++          path: |
++            apps/web/.next
++            !apps/web/.next/cache
++          include-hidden-files: true
++          retention-days: 1
+```
+
+**File**: `.github/workflows/ci.yml` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++name: CI
++
++on:
++  push:
++    branches:
++      - main
++      - qacomet/**
++  pull_request:
++  workflow_dispatch:
++
++# A new push to a pull request cancels the run still going for the previous one.
++concurrency:
++  group: ci-${{ github.event.pull_request.number || github.ref }}
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++
++permissions:
++  contents: read
++
++# Each area is a check of its own. .github/scripts/test-areas.mjs says which
++# test files an area runs, and its list of areas has to match the one here.
++jobs:
++  build:
++    name: Build
++    uses: ./.github/workflows/build.yml
++
++  unit:
++    name: Unit
++    uses: ./.github/workflows/unit-tests.yml
++    with:
++      areas: '["Web", "Extension", "Mobile", "Worker and packages"]'
++
++  integration:
++    name: Integration
++    uses: ./.github/workflows/integration-tests.yml
++    with:
++      areas: '["Database"]'
++
++  e2e-web:
++    name: E2E web
++    needs: build
++    uses: ./.github/workflows/e2e-tests.yml
++    with:
++      suite: e2e-web
++      areas: '["Login", "Permissions", "Search and no-email", "Imports"]'
++
++  e2e-email:
++    name: E2E email
++    needs: build
++    uses: ./.github/workflows/e2e-tests.yml
++    with:
++      suite: e2e-email
++      areas: '["Verification and codes", "Pre-hijacking and OIDC", "Delivery and upgrades"]'
++
++  e2e-extension:
++    name: E2E extension
++    needs: build
++    uses: ./.github/workflows/e2e-tests.yml
++    with:
++      suite: e2e-extension
++      areas: '["Popup", "Options"]'
++
++  # The only check branch protection needs to require.
++  required:
++    name: Required
++    if: ${{ !cancelled() }}
++    needs: [build, unit, integration, e2e-web, e2e-email, e2e-extension]
++    runs-on: ubuntu-latest
++    steps:
++      - name: Check that every job passed
++        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
++        run: exit 1
+```
+
+**File**: `.github/workflows/e2e-tests.yml` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
++name: E2E tests
++
++on:
++  workflow_call:
++    inputs:
++      suite:
++        description: e2e-web, e2e-email or e2e-extension (see .github/scripts/test-areas.mjs).
++        type: string
++        required: true
++      areas:
++        description: JSON list of the suite's areas to run, one check each.
++        type: string
++        required: true
++
++jobs:
++  e2e:
++    name: ${{ matrix.area }}
++    # Not ubuntu-latest: Playwright 1.57 (apps/web postinstall) can't install on Ubuntu 26.04.
++    runs-on: ubuntu-24.04
++    timeout-minutes: 30
++    strategy:
++      fail-fast: false
++      matrix:
++        area: ${{ fromJSON(inputs.areas) }}
++    services:
++      postgres:
++        image: postgres:16-alpine
++        env:
++          POSTGRES_PASSWORD: password
++          POSTGRES_DB: linkwarden
++        ports:
++          - 5432:5432
++        options: >-
++          --health-cmd pg_isready
++          --health-interval 10s
++          --health-timeout 5s
++          --health-retries 5
++    env:
++      DATABASE_URL: postgresql://postgres:password@localhost:5432/linkwarden
++      NEXTAUTH_SECRET: very_sensitive_secret
++      NEXTAUTH_URL: http://127.0.0.1:3000/api/v1/auth
++      E2E_BASE_URL: http://127.0.0.1:3000
++      TEST_USERNAME: test-user
++      TEST_PASSWORD: password
++
++    steps:
++      - name: Checkout
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
++
++      - name: Set up
++        uses: ./.github/actions/setup
++        with:
++          browsers: true
++
++      - name: Download the build
++        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
++        with:
++          name: web-build
++          path: apps/web/.next
++
++      - name: Set up the database
++        run: |
++          yarn prisma:generate
++          yarn prisma:deploy
++
++      - name: Start the mail sink and OpenID Connect provider
++        if: inputs.suite == 'e2e-email'
++        run: |
++          mkdir -p logs "$RUNNER_TEMP/mail"
++          node apps/web/e2e/support/mail-sink.mjs 2525 "$RUNNER_TEMP/mail" > logs/mail-sink.log 2>&1 &
++          node apps/web/e2e/support/oidc-provider.mjs 3999 > logs/oidc-provider.log 2>&1 &
++          # Read by the server (started next) and by the tests
++          {
++            echo "E2E_MAIL_DIR=$RUNNER_TEMP/mail"
++            echo "E2E_OIDC_URL=http://127.0.0.1:3999"
++            echo "EMAIL_FROM=e2e@lab.test"
++            echo "EMAIL_SERVER=smtp://127.0.0.1:2525"
++            echo "NEXT_PUBLIC_EMAIL_PROVIDER=true"
++            echo "NEXT_PUBLIC_OIDC_ENABLED=true"
++            echo "OIDC_CLIENT_ID=linkwarden-e2e"
++            echo "OIDC_CLIENT_SECRET=linkwarden-e2e-secret"
++            echo "OIDC_WELLKNOWN_URL=http://127.0.0.1:3999/.well-known/openid-configuration"
++          } >> "$GITHUB_ENV"
++
++      - name: Start Linkwarden
++        run: |
++          mkdir -p logs
++          yarn web:start > logs/server.log 2>&1 &
++          for i in $(seq 1 60); do
++            if curl -sf -o /dev/null "$E2E_BASE_URL/api/v1/config"; then exit 0; fi
++            sleep 1
++          done
++          echo "Linkwarden didn't respond within 60 seconds:"
++          cat logs/server.log
++          exit 1
++
++      - name: Run tests
++        env:
++          SUITE: ${{ inputs.suite }}
++          AREA: ${{ matrix.area }}
++          AREAS: ${{ inputs.areas }}
++        # Not the web e2e script: its "e2e" filter matches every test file, and
++        # Playwright runs a file when any filter matches it.
++        run: |
++          case "$SUITE" in
++            e2e-web) e2e=(yarn workspace @linkwarden/web playwright test) ;;
++            e2e-email) e2e=(yarn workspace @linkwarden/web playwright test --project="chromium email") ;;
++            e2e-extension) e2e=(yarn workspace @linkwarden/extension e2e) ;;
++          esac
++          node .github/scripts/test-areas.mjs "$SUITE" "$AREA" -- "${e2e[@]}" --reporter=list,html
++
++      - name: Upload report
++        if: ${{ !cancelled() }}
++        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
++        with:
++          name: ${{ inputs.suite }} ${{ matrix.area }}
++          path: |
++            apps/*/playwright-report
++            apps/*/test-results
++            logs
++          retention-days: 30
+```
+
+**File**: `.github/workflows/integration-tests.yml` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++name: Integration tests
++
++on:
++  workflow_call:
++    inputs:
++      areas:
++        description: JSON list of the areas to run, one check each (see .github/scripts/test-areas.mjs).
++        type: string
++        required: true
++
++jobs:
++  integration:
++    name: ${{ matrix.area }}
++    # Not ubuntu-latest: Playwright 1.57 (apps/web postinstall) can't install on Ubuntu 26.04.
++    runs-on: ubuntu-24.04
++    timeout-minutes: 15
++    strategy:
++      fail-fast: false
++      matrix:
++        area: ${{ fromJSON(inputs.areas) }}
++    services:
++      postgres:
++        image: postgres:16-alpine
++        env:
++          POSTGRES_PASSWORD: password
++          POSTGRES_DB: linkwarden
++        ports:
++          - 5432:5432
++        options: >-
++          --health-cmd pg_isready
++          --health-interval 10s
++          --health-timeout 5s
++          --health-retries 5
++    env:
++      DATABASE_URL: postgresql://postgres:password@localhost:5432/linkwarden
++      NEXTAUTH_SECRET: very_sensitive_secret
++      NEXTAUTH_URL: http://127.0.0.1:3000/api/v1/auth
++
++    steps:
++      - name: Checkout
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
++
++      - name: Set up
++        uses: ./.github/actions/setup
++
++      - name: Set up the database
++        run: |
++          yarn prisma:generate
++          yarn prisma:deploy
++
++      - name: Run tests
++        env:
++          AREA: ${{ matrix.area }}
++          AREAS: ${{ inputs.areas }}
++        run: node .github/scripts/test-areas.mjs integration "$AREA" -- yarn vitest run
+```
+
+---
+
+### Incident Patch 2: `258db4d9` (2026-11-10)
+**Commit Message**: update seeded data
+
+**File**: `apps/mobile/.maestro/delete-sub-collection.yaml` (modified, +7/-1)
+```diff
+@@ -31,7 +31,13 @@ name: Delete a sub-collection and keep its parent
+       - tapOn:
+           text: "Collections"
+           id: ".*navigation_bar_item_.*_label_view"
+-# A collection row reads as one element that starts with its name
++# A collection row reads as one element that starts with its name. Once the
++# account has a collection order (the web app saves one), new collections are
++# listed after the others, often below the bottom of the screen. Centering
++# keeps the row out from under the floating tab bar
++- scrollUntilVisible:
++    element: "${output.childName}.*"
++    centerElement: true
+ - longPressOn: "${output.childName}.*"
+ - tapOn: "Delete"
+ # Then the confirmation dialog's button
+```
+
+**File**: `packages/prisma/seed.js` (modified, +98/-6)
+```diff
+@@ -210,37 +210,57 @@ async function main() {
+         name: "Health and Wellness",
+         description: "Latest articles on health and wellness.",
+         ownerId: user1.id,
+-        color: "#ff1100",
++        color: "#ef4444",
++        icon: "Barbell",
++        iconWeight: "duotone",
        },
        {
-```
-
-**File**: `apps/worker/workers/linkIndexing.ts` (modified, +77/-16)
-```diff
-@@ -6,6 +6,41 @@ import { MEILI_INDEX_VERSION } from "@linkwarden/lib/constants";
+         name: "Research and Studies",
+         description: "Latest articles on research and studies.",
+         ownerId: user1.id,
+-        color: "#000dff",
++        color: "#818cf8",
++        icon: "Student",
++        iconWeight: "duotone",
+       },
+       {
+         name: "Technology",
+         description: "Latest articles on technology.",
+         ownerId: user1.id,
+-        color: "#0080ff",
++        color: "#3b82f6",
++        icon: "Devices",
++        iconWeight: "duotone",
+       },
+       {
+         name: "Personal Finance",
+         description: "Latest articles on personal finance.",
+         ownerId: user1.id,
+-        color: "#00ff40",
++        color: "#22c55e",
++        icon: "Money",
++        iconWeight: "duotone",
+       },
+       {
+         name: "Productivity",
+         description: "Latest articles on productivity.",
+         ownerId: user1.id,
+-        color: "#ff00f7",
++        color: "#e879f9",
++        icon: "ChartLineUp",
++        iconWeight: "duotone",
+       },
+       {
+         name: "Recipes",
+         description: "Latest recipes.",
+         ownerId: user1.id,
+-        color: "#eeff00",
++        color: "#facc15",
++        icon: "Cookie",
++        iconWeight: "duotone",
++      },
++      {
++        name: "Japan Trip",
++        description: "Two weeks, Tokyo to Hiroshima.",
++        ownerId: user1.id,
++        color: "#f472b6",
++        icon: "AirplaneTilt",
++        iconWeight: "duotone",
+       },
+     ];
  
- const takeCount = Number(process.env.INDEX_TAKE_COUNT || "") || 50;
- 
-+// Meilisearch rejects request bodies over its payload size limit (~95 MiB by
-+// default), which a batch holding a few links with very large `textContent`
-+// can exceed. Send the documents in smaller requests instead.
-+function chunkByPayloadSize<T>(items: T[]) {
-+  const maxBytes = 80 * 1024 * 1024;
-+  const chunks: T[][] = [];
-+  const oversized: T[] = [];
-+  let chunk: T[] = [];
-+  let chunkBytes = 2; // the enclosing "[]"
-+
-+  for (const item of items) {
-+    const itemBytes = Buffer.byteLength(JSON.stringify(item), "utf-8") + 1;
-+
-+    // A single item past the limit can't be split any further, so set it aside
-+    // instead of building a request that's bound to be rejected.
-+    if (2 + itemBytes > maxBytes) {
-+      oversized.push(item);
-+      continue;
-+    }
-+
-+    if (chunk.length > 0 && chunkBytes + itemBytes > maxBytes) {
-+      chunks.push(chunk);
-+      chunk = [];
-+      chunkBytes = 2;
-+    }
-+
-+    chunk.push(item);
-+    chunkBytes += itemBytes;
-+  }
-+
-+  if (chunk.length > 0) chunks.push(chunk);
-+
-+  return { chunks, oversized };
-+}
-+
- async function setupLinksIndexSchema() {
-   if (!meiliClient) return;
- 
-@@ -142,21 +177,47 @@ export async function startIndexing(interval = 10) {
-       indexVersion: MEILI_INDEX_VERSION,
-     }));
- 
--    const task = await meiliClient.index("links").addDocuments(docs);
--    await meiliClient
--      .index("links")
--      .waitForTask(task.taskUid, {
--        timeOutMs: Number(process.env.MEILI_TIMEOUT) || 1000000,
--      })
--      .catch((err) => {
--        console.error("\x1b[34m%s\x1b[0m", `Error indexing links:`, err);
--      });
-+    const { chunks, oversized } = chunkByPayloadSize(docs);
-+    const indexedIds: number[] = [];
- 
--    const ids = links.map((l) => l.id);
--    await prisma.link.updateMany({
--      where: { id: { in: ids } },
--      data: { indexVersion: MEILI_INDEX_VERSION },
--    });
-+    if (oversized.length > 0) {
-+      console.error(
-+        "\x1b[34m%s\x1b[0m",
-+        `Skipping ${oversized.length} link${
-+          oversized.length === 1 ? "" : "s"
-+        } too large to index: ${oversized.map((doc) => doc.id).join(", ")}`
-+      );
-+
-+      indexedIds.push(...oversized.map((doc) => doc.id));
-+    }
-+
-+    try {
-+      for (const chunk of chunks) {
-+        const task = await meiliClient.index("links").addDocuments(chunk);
-+        const result = await meiliClient
-+          .index("links")
-+          .waitForTask(task.taskUid, {
-+            timeOutMs: Number(process.env.MEILI_TIMEOUT) || 1000000,
-+          });
-+
-+        if (result.status !== "succeeded")
-+          throw new Error(
-+            `Indexing task ${task.taskUid} ${result.status}: ${
-+              result.error?.message ?? "no error message"
-+            }`
-+          );
-+
-+        indexedIds.push(...chunk.map((doc) => doc.id));
-+      }
-+    } catch (err) {
-+      console.error("\x1b[34m%s\x1b[0m", `Error indexing links:`, err);
-+    }
-+
-+    if (indexedIds.length > 0)
-+      await prisma.link.updateMany({
-+        where: { id: { in: indexedIds } },
-+        data: { indexVersion: MEILI_INDEX_VERSION },
-+      });
- 
-     const indexesLeft = await prisma.link.count({
-       where: {
-@@ -169,8 +230,8 @@ export async function startIndexing(interval = 10) {
- 
-     console.log(
-       "\x1b[34m%s\x1b[0m",
--      `Indexed ${links.length} link${
--        links.length === 1 ? "" : "s"
-+      `Indexed ${indexedIds.length} link${
-+        indexedIds.length === 1 ? "" : "s"
-       }, ${indexesLeft} left.`
-     );
- 
-```
-
-**File**: `packages/lib/schemaValidation.ts` (modified, +0/-1)
-```diff
-@@ -86,7 +86,6 @@ export const UpdateUserSchema = () => {
-     aiPredefinedTags: z.array(z.string().max(20).trim()).max(20).optional(),
-     aiTagExistingLinks: z.boolean().optional(),
-     locale: z.string().max(20).optional(),
--    isPrivate: z.boolean().optional(),
-     preventDuplicateLinks: z.boolean().optional(),
-     collectionOrder: z.array(z.number()).optional(),
-     linksRouteTo: z.enum(LinksRouteTo).optional(),
-```
-
-**File**: `packages/prisma/migrations/20260910181143_remove_unused_fields/migration.sql` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+/*
-+  Warnings:
-+
-+  - You are about to drop the column `isPrivate` on the `User` table. All the data in the column will be lost.
-+  - You are about to drop the `WhitelistedUser` table. If the table is not empty, all the data it contains will be lost.
-+
-+*/
-+-- DropForeignKey
-+ALTER TABLE "WhitelistedUser" DROP CONSTRAINT "WhitelistedUser_userId_fkey";
-+
-+-- AlterTable
-+ALTER TABLE "User" DROP COLUMN "isPrivate";
-+
-+-- DropTable
-+DROP TABLE "WhitelistedUser";
-```
-
-**File**: `packages/prisma/schema.prisma` (modified, +0/-11)
-```diff
-@@ -47,7 +47,6 @@ model User {
-   highlights              Highlight[]
-   collectionsJoined       UsersAndCollections[]
-   collectionOrder         Int[]                 @default([])
--  whitelistedUsers        WhitelistedUser[]
-   accessTokens            AccessToken[]
-   subscriptions           Subscription?
-   linksRouteTo            LinksRouteTo          @default(ORIGINAL)
-@@ -66,7 +65,6 @@ model User {
-   archiveAsPDF            Boolean               @default(true)
-   archiveAsReadable       Boolean               @default(true)
-   archiveAsWaybackMachine Boolean               @default(false)
--  isPrivate               Boolean               @default(false)
-   referredBy              String?
-   dashboardSections       DashboardSection[]
-   lastPickedAt            DateTime?
-@@ -98,15 +96,6 @@ enum LinksRouteTo {
-   DETAILS
- }
- 
--model WhitelistedUser {
--  id        Int      @id @default(autoincrement())
--  username  String   @default("")
--  User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
--  userId    Int?
--  createdAt DateTime @default(now())
--  updatedAt DateTime @default(now()) @updatedAt
--}
--
- model VerificationToken {
-   identifier String
-   token      String   @unique
-```
-
----
-
-### Incident Patch 2: `db0dfc62` (2026-10-26)
-**Commit Message**: Merge pull request #1877 from linkwarden/fix/bump-node
-
-bump node
-
-**File**: `Dockerfile` (modified, +2/-2)
-```diff
-@@ -8,7 +8,7 @@ RUN set -eux && cargo install --locked monolith@${MONOLITH_VERSION}
- # ==============================================================================
- # Stage 2: App Builder (Where the heavy building happens)
- # ==============================================================================
--FROM node:22.23-bookworm-slim AS app-builder
-+FROM node:22.23.4-bookworm-slim AS app-builder
- 
- ENV YARN_HTTP_TIMEOUT=10000000
- ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-@@ -47,7 +47,7 @@ RUN yarn workspaces focus --production linkwarden @linkwarden/web @linkwarden/wo
- # ==============================================================================
- # Stage 3: Final Runtime (This stage will be ~400MB total)
- # ==============================================================================
--FROM node:22.23-bookworm-slim AS main-app
-+FROM node:22.23.4-bookworm-slim AS main-app
- ENV NODE_ENV=production
- ENV PRISMA_HIDE_UPDATE_MESSAGE=1
- # Stable, copyable browser location shared by install and runtime
-```
-
----
-
-### Incident Patch 3: `cd0e918f` (2026-10-02)
-**Commit Message**: bug fix
-
-**File**: `apps/worker/workers/linkIndexing.ts` (modified, +24/-3)
-```diff
-@@ -10,14 +10,23 @@ const takeCount = Number(process.env.INDEX_TAKE_COUNT || "") || 50;
- // default), which a batch holding a few links with very large `textContent`
- // can exceed. Send the documents in smaller requests instead.
- function chunkByPayloadSize<T>(items: T[]) {
-+  const maxBytes = 80 * 1024 * 1024;
-   const chunks: T[][] = [];
-+  const oversized: T[] = [];
-   let chunk: T[] = [];
-   let chunkBytes = 2; // the enclosing "[]"
- 
-   for (const item of items) {
-     const itemBytes = Buffer.byteLength(JSON.stringify(item), "utf-8") + 1;
- 
--    if (chunk.length > 0 && chunkBytes + itemBytes > 80 * 1024 * 1024) {
-+    // A single item past the limit can't be split any further, so set it aside
-+    // instead of building a request that's bound to be rejected.
-+    if (2 + itemBytes > maxBytes) {
-+      oversized.push(item);
-+      continue;
-+    }
-+
-+    if (chunk.length > 0 && chunkBytes + itemBytes > maxBytes) {
-       chunks.push(chunk);
-       chunk = [];
-       chunkBytes = 2;
-@@ -29,7 +38,7 @@ function chunkByPayloadSize<T>(items: T[]) {
- 
-   if (chunk.length > 0) chunks.push(chunk);
- 
--  return chunks;
-+  return { chunks, oversized };
- }
- 
- async function setupLinksIndexSchema() {
-@@ -168,10 +177,22 @@ export async function startIndexing(interval = 10) {
-       indexVersion: MEILI_INDEX_VERSION,
-     }));
- 
-+    const { chunks, oversized } = chunkByPayloadSize(docs);
-     const indexedIds: number[] = [];
- 
-+    if (oversized.length > 0) {
-+      console.error(
-+        "\x1b[34m%s\x1b[0m",
-+        `Skipping ${oversized.length} link${
-+          oversized.length === 1 ? "" : "s"
-+        } too large to index: ${oversized.map((doc) => doc.id).join(", ")}`
-+      );
-+
-+      indexedIds.push(...oversized.map((doc) => doc.id));
-+    }
-+
-     try {
--      for (const chunk of chunkByPayloadSize(docs)) {
-+      for (const chunk of chunks) {
-         const task = await meiliClient.index("links").addDocuments(chunk);
-         const result = await meiliClient
-           .index("links")
+@@ -1256,4 +1276,76 @@ const linksAndCollections = {
+       tags: [{ name: "cooking" }, { name: "recipe" }],
+     },
+   ],
++  "Japan Trip": [
++    {
++      name: "Fushimi Inari Shrine",
++      url: "https://www.japan-guide.com/e/e3915.html",
++      tags: [{ name: "kyoto" }, { name: "temples" }],
++    },
++    {
++      name: "Mount Fuji",
++      url: "https://en.wikipedia.org/wiki/Mount_Fuji",
++      tags: [{ name: "hiking" }],
++    },
++    {
++      name: "The best things to do in Tokyo",
++      url: "https://www.timeout.com/tokyo",
++      tags: [{ name: "tokyo" }],
++    },
++    {
++      name: "Nara Park",
++      url: "https://en.wikipedia.org/wiki/Nara_Park",
++      tags: [{ name: "nara" }],
++    },
++    {
++      name: "Sensō-ji, Asakusa",
++      url: "https://en.wikipedia.org/wiki/Sens%C5%8D-ji",
++      tags: [{ name: "tokyo" }, { name: "temples" }],
++    },
++    {
++      name: "Arashiyama and Sagano",
++      url: "https://www.japan-guide.com/e/e3912.html",
++      tags: [{ name: "kyoto" }],
++    },
++    {
++      name: "Itsukushima Shrine",
++      url: "https://en.wikipedia.org/wiki/Itsukushima_Shrine",
++      tags: [{ name: "hiroshima" }, { name: "temples" }],
++    },
++    {
++      name: "Hakone travel guide",
++      url: "https://en.wikivoyage.org/wiki/Hakone",
++      tags: [{ name: "onsen" }],
++    },
++    {
++      name: "Kinkaku-ji, the Golden Pavilion",
++      url: "https://en.wikipedia.org/wiki/Kinkaku-ji",
++      tags: [{ name: "kyoto" }, { name: "temples" }],
++    },
++    {
++      name: "Shibuya Crossing",
++      url: "https://en.wikipedia.org/wiki/Shibuya_Crossing",
++      tags: [{ name: "tokyo" }],
++    },
++    {
++      name: "Osaka Castle",
++      url: "https://www.japan-guide.com/e/e4000.html",
++      tags: [{ name: "osaka" }],
++    },
++    {
++      name: "Best of Kyoto",
++      url: "https://www.japan.travel/en/destinations/kansai/kyoto/",
++      tags: [{ name: "kyoto" }],
++    },
++    {
++      name: "Dōtonbori food street",
++      url: "https://en.wikipedia.org/wiki/D%C5%8Dtonbori",
++      tags: [{ name: "osaka" }, { name: "food" }],
++    },
++    {
++      name: "Meiji Shrine",
++      url: "https://en.wikipedia.org/wiki/Meiji_Shrine",
++      tags: [{ name: "tokyo" }, { name: "temples" }],
++    },
++  ],
+ };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1893** (2026-11-10): v2.17.0 (@daniel31x13)
 - **PR #1878** (2026-10-26): Hot fix (@daniel31x13)
 - **PR #1877** (2026-10-26): bump node (@daniel31x13)
 - **PR #1862** (2026-10-11): Fix/ios27 darkmode bug (@daniel31x13)
 - **PR #1839** (closed): Significant changes to improve Browser Extension (@nicolaipre)
 - **PR #1836** (closed): Feat/editable publication date (@bvdbos)
-- **PR #1834** (2026-09-10): Dev (@daniel31x13)
 
 ---
 
@@ -1248,51 +1550,33 @@ bump node
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1878 from linkwarden/hot-fix
+## X. Merge pull request #1893 from linkwarden/dev
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkwarden/linkwarden. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.env.sample`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkwarden/linkwarden. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eff7c6b7`: Merge pull request #1878 from linkwarden/hot-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24adcc14`: Merge pull request #1893 from linkwarden/dev. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.sample`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# AGENTS.md
+# Optional: Override the prompt sent to the model for each tagging method.
+# Use {{text}} for the page content and {{tags}} for the tag list.
+AI_GENERATE_TAGS_PROMPT=
+AI_PREDEFINED_TAGS_PROMPT=
+AI_EXISTING_TAGS_PROMPT=
 
-Linkwarden is a self-hosted, collaborative bookmark manager that collects, reads, annotates and preserves webpages. This file is the orientation map for agents working in this repository: what the pieces are, how they talk to each other, which commands to run, and where the public-facing sites live.
-
-## Repository layout
-
-Yarn 4 workspaces monorepo (`apps/*` and `packages/*`). No Turborepo; orchestration is plain root-level scripts.
-
-### Apps
-
-| Path | Workspace | What it is |
-| --- | --- | --- |
-| `apps/web` | `@linkwarden/web` | Next.js app (Pages Router). Serves the UI and the whole REST API. |
-| `apps/worker` | `@linkwarden/worker` | Long-running Node/tsx process. Preservation, AI tagging, search indexing, RSS polling, data migrations. |
-| `apps/mobile` | `@linkwarden/mobile` | Expo / React Native app (expo-router, NativeWind) for iOS and Android. |
-| `apps/extension` | `@linkwarden/extension` | Vite + React browser extension (Chrome, Firefox, Safari). |
-
-### Packages
-
-Shared code, all plain TypeScript source with `main: index.ts` (no build step; consumers transpile them).
-
-| Path | Workspace | What it is |
-| --- | --- | --- |
-| `packages/prisma` | `@linkwarden/pri
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+NEXT_PUBLIC_MOBILE_APP_REDIRECT_ENABLED=
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eff7c6b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24adcc14` are properly handled with clean fallback behavior.

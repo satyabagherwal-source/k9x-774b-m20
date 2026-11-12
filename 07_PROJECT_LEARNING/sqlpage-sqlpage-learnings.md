@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `d4f206e3`  
+> **Source Version**: `3c673a3b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T11:39:11.267Z  
+> **Timestamp**: 2026-11-12T02:03:45.581Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T11:39:10.712Z  
+> **Harvest Timestamp**: 2026-11-12T02:03:45.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2580 stars
+- **Stars / Engagement**: 2584 stars
 
 ---
 
@@ -1161,62 +1161,413 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4f206e3` (2026-11-02)
-**Commit Message**: fix(modal) :: apply `height` to the model's content (#1585)
+### Incident Patch 1: `3c673a3b` (2026-11-11)
+**Commit Message**: Pin sqlparser until the upstream quoted-parameter fix is released
 
-The `height` of the modal component sets the height of its content. Overflow content scrolls.
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ ## unreleased
+ 
+-## v0.48.0 (2026-11-10)
++## v0.48.0 (2026-11-12)
+ 
+ - Updated Rust and browser dependencies, including ApexCharts 8.8.1, Tabler 1.7.4, Tabler icons 3.51, and Tom Select 2.7. Chart series names and labels now display HTML as text, fixing upstream script injection in legends and tooltips.
+ 
+```
 
-Fixes #1046
+**File**: `Cargo.toml` (modified, +3/-2)
+```diff
+@@ -77,8 +77,9 @@ lambda_http = { version = "1.3.0", default-features = false, features = [
+ actix-http = { version = "3", optional = true }
+ actix-service = { version = "2", optional = true }
+ http-body-util = { version = "0.1", optional = true }
+-# 0.64 rejects quoted parameter names: https://github.com/apache/datafusion-sqlparser-rs/pull/2539
+-sqlparser = { version = "0.63.0", default-features = false, features = [
++# Update after a sqlparser release includes the quoted-parameter fix:
++# https://github.com/apache/datafusion-sqlparser-rs/pull/2917
++sqlparser = { version = "=0.63.0", default-features = false, features = [
+     "std",
+     "visitor",
+ ] }
+```
 
-Assisted-By :: Claude Opus 5.5
+---
+
+### Incident Patch 2: `e391c05c` (2026-11-10)
+**Commit Message**: Keep compatible sqlparser version and remove local workaround
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ ## v0.48.0 (2026-11-10)
+ 
+-- Updated Rust and browser dependencies, including SQL parser 0.64, ApexCharts 8.8.1, Tabler 1.7.4, Tabler icons 3.51, and Tom Select 2.7. Chart series names and labels now display HTML as text, fixing upstream script injection in legends and tooltips.
++- Updated Rust and browser dependencies, including ApexCharts 8.8.1, Tabler 1.7.4, Tabler icons 3.51, and Tom Select 2.7. Chart series names and labels now display HTML as text, fixing upstream script injection in legends and tooltips.
+ 
+ - SQLPage no longer trusts the compromised eMudhra certificates. ([nixpkgs#576544](https://github.com/NixOS/nixpkgs/issues/576544))
+ 
+```
+
+**File**: `Cargo.lock` (modified, +4/-4)
+```diff
+@@ -4648,19 +4648,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "sqlparser"
+-version = "0.64.0"
++version = "0.63.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "92e0d273b4f8ddd14a35ed36862acbc9cc96cec578e36ee1881a9d42e0e0f2c8"
++checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
+ dependencies = [
+  "log",
+  "sqlparser_derive",
+ ]
+ 
+ [[package]]
+ name = "sqlparser_derive"
+-version = "0.7.0"
++version = "0.6.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5fa4939c717eaef717f244768d35a5f93c62e1d440865097d2edef7d86ddb7e0"
++checksum = "2905ae8e8148d8f7f5748ea95d1e949fa4fc1d7f5161547b758ad118b2e4b0aa"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -77,8 +77,8 @@ lambda_http = { version = "1.3.0", default-features = false, features = [
+ actix-http = { version = "3", optional = true }
+ actix-service = { version = "2", optional = true }
+ http-body-util = { version = "0.1", optional = true }
+-sqlparser = { version = "0.64.0", default-features = false, features = [
+-    "derive-dialect",
++# 0.64 rejects quoted parameter names: https://github.com/apache/datafusion-sqlparser-rs/pull/2539
++sqlparser = { version = "0.63.0", default-features = false, features = [
+     "std",
+     "visitor",
+ ] }
+```
+
+**File**: `fuzz/Cargo.lock` (modified, +4/-4)
+```diff
+@@ -4498,19 +4498,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "sqlparser"
+-version = "0.64.0"
++version = "0.63.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "92e0d273b4f8ddd14a35ed36862acbc9cc96cec578e36ee1881a9d42e0e0f2c8"
++checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
+ dependencies = [
+  "log",
+  "sqlparser_derive",
+ ]
+ 
+ [[package]]
+ name = "sqlparser_derive"
+-version = "0.7.0"
++version = "0.6.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5fa4939c717eaef717f244768d35a5f93c62e1d440865097d2edef7d86ddb7e0"
++checksum = "2905ae8e8148d8f7f5748ea95d1e949fa4fc1d7f5161547b758ad118b2e4b0aa"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+```
+
+**File**: `src/webserver/database/csv_import.rs` (modified, +3/-3)
+```diff
+@@ -90,11 +90,11 @@ pub(super) fn extract_csv_copy_statement(stmt: &mut Statement) -> Option<CsvImpo
+         target: source,
+         options,
+         legacy_options,
+-        payload,
++        values,
+     } = stmt
+     {
+-        if payload.is_some() {
+-            log::warn!("COPY with inline data not compatible with SQLPage: {stmt}");
++        if !values.is_empty() {
++            log::warn!("COPY ... VALUES not compatible with SQLPage: {stmt}");
+             return None;
+         }
+         let uploaded_file = match std::mem::replace(source, CopyTarget::Stdin) {
+```
+
+**File**: `src/webserver/database/sql.rs` (modified, +0/-56)
+```diff
+@@ -659,62 +659,6 @@ mod tests {
+         assert!(error.to_string().contains("GROUP BY"));
+     }
+ 
+-    #[test]
+-    fn quoted_form_parameters_keep_their_name_and_source() {
+-        use SupportedDatabase::{
+-            Duckdb, Generic, Mssql, MySql, Oracle, Postgres, Snowflake, Sqlite,
+-        };
+-
+-        for db in [
+-            Duckdb, Generic, Mssql, MySql, Oracle, Postgres, Snowflake, Sqlite,
+-        ] {
+-            let database = database(db);
+-            let quote = if db == MySql { '`' } else { '"' };
+-            let name = format!("First {quote}name{quote}");
+-            let quoted_name = name.replace(quote, &format!("{quote}{quote}"));
+-            let sql = format!("SELECT :{quote}{quoted_name}{quote} FROM t");
+-            let file = SqlFile::from_db_info(&database, &sql, Path::new("quoted.sql"));
+-            let [
+-                FileStatement::Query(Query {
+-                    body: QueryBody::Database(query),
+-                    ..
+-                }),
+-            ] = file.statements.as_ref()
+-            else {
+-                panic!("{db:?}: {:?}", file.statements);
+-            };
+-            assert_eq!(
+-                query.bindings.as_ref(),
+-                [SqlPageExpr::Variable(VariableRef {
+-                    name,
+-                    source: VariableSource::SetOrForm,
+-                })],
+-                "{db:?}"
+-            );
+-        }
+-    }
+-
+-    #[test]
+-    fn json_object_colon_preserves_quoted_columns() {
+-        let database = database(SupportedDatabase::Mssql);
+-        let file = SqlFile::from_db_info(
+-            &database,
+-            r#"SELECT JSON_OBJECT('key':"Column") AS data FROM t"#,
+-            Path::new("quoted.sql"),
+-        );
+-        let [
+-            FileStatement::Query(Query {
+-                body: QueryBody::Database(query),
+-                ..
+-            }),
+-        ] = file.statements.as_ref()
+-        else {
+-            panic!("{:?}", file.statements);
+-        };
+-        assert!(query.sql.contains(r#""Column""#), "{}", query.sql);
+-        assert!(query.bindings.is_empty());
+-    }
+-
+     #[test]
+     fn placeholder_like_literal_is_not_rewritten() {
+         let database = database(SupportedDatabase::MySql);
+```
+
+**File**: `src/webserver/database/sql/dialect.rs` (modified, +8/-66)
+```diff
+@@ -1,12 +1,9 @@
+ //! Database-specific parser dialects and bind-placeholder syntax.
+ 
+-use sqlparser::ast::{Expr, Value};
+ use sqlparser::dialect::{
+     Dialect, DuckDbDialect, GenericDialect, MsSqlDialect, MySqlDialect, OracleDialect,
+     PostgreSqlDialect, SQLiteDialect, SnowflakeDialect,
+ };
+-use sqlparser::parser::{Parser, ParserError};
+-use sqlparser::tokenizer::{Span, Token};
+ use sqlx::any::AnyKind;
+ 
+ use crate::webserver::database::SupportedDatabase;
+@@ -21,72 +18,17 @@ pub(super) enum PlaceholderStyle {
+ /// Returns the `sqlparser` dialect matching the configured database.
+ pub(super) fn parser_dialect(database: SupportedDatabase) -> Box<dyn Dialect> {
+     match database {
+-        SupportedDatabase::Duckdb => Box::new(extended::SqlPageDuckDbDialect::new()),
+-        SupportedDatabase::Oracle => Box::new(extended::SqlPageOracleDialect::new()),
+-        SupportedDatabase::Postgres => Box::new(extended::SqlPagePostgreSqlDialect::new()),
+-        SupportedDatabase::Generic => Box::new(extended::SqlPageGenericDialect::new()),
+-        SupportedDatabase::Mssql => Box::new(extended::SqlPageMsSqlDialect::new()),
+-        SupportedDatabase::MySql => Box::new(extended::SqlPageMySqlDialect::new()),
+-        SupportedDatabase::Sqlite => Box::new(extended::SqlPageSQLiteDialect::new()),
+-        SupportedDatabase::Snowflake => Box::new(extended::SqlPageSnowflakeDialect::new()),
++        SupportedDatabase::Duckdb => Box::new(DuckDbDialect {}),
++        SupportedDatabase::Oracle => Box::new(OracleDialect {}),
++        SupportedDatabase::Postgres => Box::new(PostgreSqlDialect {}),
++        SupportedDatabase::Generic => Box::new(GenericDialect {}),
++        SupportedDatabase::Mssql => Box::new(MsSqlDialect {}),
++        SupportedDatabase::MySql => Box::new(MySqlDialect {}),
++        SupportedDatabase::Sqlite => Box::new(SQLiteDialect {}),
++        SupportedDatabase::Snowflake => Box::new(SnowflakeDialect {}),
+     }
+ }
+ 
+-// sqlparser 0.64 only accepts unquoted placeholder names. SQLPage also accepts
+-// quoted form inputs such as :"First name". Handle these at expression boundaries
+-// so a JSON_OBJECT key/value separator followed by a quoted column stays intact.
+-fn parse_quoted_form_parameter(parser: &mut Parser<'_>) -> Option<Result<Expr, ParserError>> {
+-    let prefix = parser.peek_token();
+-    if prefix.token != Token::Colon {
+-        return None;
+-    }
+-    let name = parser.peek_nth_token(1);
+-    let Token::Word(word) = &name.token else {
+-        return None;
+-    };
+-    if word.quote_style.is_none() || prefix.span.end != name.span.start {
+-        return None;
+-    }
+-    let value = Value::Placeholder(format!(":{}", word.value));
+-    parser.next_token();
+-    parser.next_token();
+-    Some(Ok(Expr::Value(
+-        value.with_span(Span::new(prefix.span.start, name.span.end)),
+-    )))
+-}
+-
+-// derive_dialect! always emits public types and constructors.
+-#[allow(unreachable_pub)]
+-mod extended {
+-    use super::{
+-        DuckDbDialect, GenericDialect, MsSqlDialect, MySqlDialect, OracleDialect,
+-        PostgreSqlDialect, SQLiteDialect, SnowflakeDialect, parse_quoted_form_parameter,
+-    };
+-
+-    macro_rules! sqlpage_dialect {
+-        ($name:ident, $base:ty) => {
+-            sqlparser::derive_dialect!(
+-                $name,
+-                $base,
+-                preserve_type_id = true,
+-                overrides = {
+-                    parse_prefix = parse_quoted_form_parameter(_parser)
+-                        .or_else(|| self.dialect.parse_prefix(_parser))
+-                }
+-            );
+-        };
+-    }
+-
+-    sqlpage_dialect!(SqlPageDuckDbDialect, DuckDbDialect);
+-    sqlpage_dialect!(SqlPageOracleDialect, OracleDialect);
+-    sqlpage_dialect!(SqlPagePostgreSqlDialect, PostgreSqlDialect);
+-    sqlpage_dialect!(SqlPageGenericDialect, GenericDialect);
+-    sqlpage_dialect!(SqlPageMsSqlDialect, MsSqlDialect);
+-    sqlpage_dialect!(SqlPageMySqlDialect, MySqlDialect);
+-    sqlpage_dialect!(SqlPageSQLiteDialect, SQLiteDialect);
+-    sqlpage_dialect!(SqlPageSnowflakeDialect, SnowflakeDialect);
+-}
+-
+ /// Returns the native placeholder syntax emitted into rewritten SQL.
+ pub(super) fn placeholder_style(kind: AnyKind) -> PlaceholderStyle {
+     match kind {
+```
+
+**File**: `tests/sql_test_files/data/quoted_form_parameters_nomysql.sql` (removed, +0/-5)
+```diff
+@@ -1,5 +0,0 @@
+-SET "First name" = 'Ada';
+-SELECT :"First name" AS actual, 'Ada' AS expected;
+-SELECT LOWER(:"First name") AS actual, 'ada' AS expected;
+-SELECT sqlpage.url_encode(:"First name") AS actual, 'Ada' AS expected;
+-SELECT :"Missing name" AS actual, NULL AS expected;
+```
+
+---
+
+### Incident Patch 3: `88eaf4f5` (2026-11-10)
+**Commit Message**: fix(deps) :: stop trusting compromised eMudhra certificates (#1592)
+
+Update webpki-roots from 1.0.9 to 1.0.11 and rustls-webpki from 0.103.15 to 0.103.16.
+
+Refs: https://github.com/rustls/webpki/releases/tag/v%2F0.103.16
+Refs: https://github.com/rustls/webpki-roots/releases/tag/v%2F1.0.11
+Refs: https://github.com/NixOS/nixpkgs/issues/576544
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -24,6 +24,8 @@
+@@ -2,6 +2,8 @@
  
- - Each card of the card component accepts a `target`, such as `_blank` to open its link in a new tab. ([#820](https://github.com/sqlpage/SQLPage/issues/820))
+ ## unreleased
  
-+- The `height` of the modal component sets the height of its content. Overflow content scrolls. ([#1046](https://github.com/sqlpage/SQLPage/issues/1046))
++- SQLPage no longer trusts the compromised eMudhra certificates. ([nixpkgs#576544](https://github.com/NixOS/nixpkgs/issues/576544))
 +
- - Custom components can call inline partials inside `each_row` and after it, when the partials are defined before `each_row`. ([#846](https://github.com/sqlpage/SQLPage/issues/846))
+ - Now a tab with a `color` is underlined only when it is active. ([#791](https://github.com/sqlpage/SQLPage/issues/791))
  
- ## v0.47.0 (2026-10-15)
+ - Striped table rows are visible in dark mode again. Tabler was updated to [v1.7.3](https://github.com/tabler/tabler/releases/tag/%40tabler%2Fcore%401.7.3) to fix this. ([#957](https://github.com/sqlpage/SQLPage/issues/957))
 ```
 
-**File**: `examples/official-site/sqlpage/migrations/63_modal.sql` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +8/-8)
 ```diff
-@@ -18,7 +18,7 @@ INSERT INTO parameter(component, name, description, type, top_level, optional) S
-     ('small','Indicates that the modal box has a reduced width.','BOOLEAN',TRUE,TRUE),
-     ('embed','Embed remote content in an iframe.','TEXT',TRUE,TRUE),
-     ('embed_mode','Use "iframe" to display embedded content within an iframe.','TEXT',TRUE,TRUE),
--    ('height','Height of the embedded content.','INTEGER',TRUE,TRUE),
-+    ('height','Height of the modal content, in pixels. Overflow content scrolls.','INTEGER',TRUE,TRUE),
-     ('allow','For embedded content, this attribute specifies the features or permissions that can be used.','TEXT',TRUE,TRUE),
-     ('sandbox','For embedded content, this attribute specifies the security restrictions on the loaded content.','TEXT',TRUE,TRUE),
-     ('style','Applies CSS styles to the embedded content.','TEXT',TRUE,TRUE)
-```
-
-**File**: `sqlpage/templates/modal.handlebars` (modified, +2/-1)
-```diff
-@@ -10,7 +10,8 @@
-                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{default (default close_label close) "close"}}"></button>
-             </div>
-             <div class="modal-body">
--                <div class="card bg-transparent border-0"
-+                <div class="card bg-transparent border-0{{#if height}} overflow-auto{{/if}}"
-+                    {{~#if height}} style="height: {{height}}px"{{/if~}}
-                     {{~#if (and embed (ne embed_mode "iframe"))}} data-pre-init="card" data-embed="{{embed}}"{{/if ~}}
-                 >
-                     <div class="card-body p-0">
+@@ -2634,7 +2634,7 @@ dependencies = [
+  "tokio",
+  "tokio-rustls",
+  "url",
+- "webpki-roots 1.0.9",
++ "webpki-roots 1.0.11",
+ ]
+ 
+ [[package]]
+@@ -4082,7 +4082,7 @@ dependencies = [
+  "serde",
+  "serde_json",
+  "thiserror 2.0.21",
+- "webpki-roots 1.0.9",
++ "webpki-roots 1.0.11",
+  "x509-parser",
+ ]
+ 
+@@ -4109,9 +4109,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustls-webpki"
+-version = "0.103.15"
++version = "0.103.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
++checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ dependencies = [
+  "aws-lc-rs",
+  "ring",
+@@ -4655,7 +4655,7 @@ dependencies = [
+  "tokio-util",
+  "url",
+  "uuid",
+- "webpki-roots 1.0.9",
++ "webpki-roots 1.0.11",
+  "whoami",
+ ]
+ 
+@@ -5378,14 +5378,14 @@ version = "0.26.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
+ dependencies = [
+- "webpki-roots 1.0.9",
++ "webpki-roots 1.0.11",
+ ]
+ 
+ [[package]]
+ name = "webpki-roots"
+-version = "1.0.9"
++version = "1.0.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
++checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
+ dependencies = [
+  "rustls-pki-types",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1592** (2026-11-10): fix(deps) :: stop trusting compromised eMudhra certificates (@81reap)
+- **PR #1589** (closed): Supply one-click deploy templates under Hosting section (@cosark)
 - **PR #1586** (2026-10-31): feat(card) :: let a card's link open a new tab (@81reap)
 - **PR #1585** (2026-11-02): fix(modal) :: apply `height` to the model's content (@81reap)
 - **PR #1584** (2026-10-30): fix(frontend) :: drop source map comments from joined sylesheet (@81reap)
 - **PR #1583** (2026-10-30): fix(tab) :: underline only the active tab (@81reap)
-- **PR #1582** (2026-10-30): fix(hero) :: show image first on small screens when `reversed` (@81reap)
-- **PR #1581** (2026-10-30): build(deps): bump rustls from 0.23.45 to 0.23.46 in /fuzz (@dependabot[bot])
 
 ---
 
@@ -1236,13 +1587,13 @@ Assisted-By :: Claude Opus 5.5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. modal) :: apply `height` to the model's content (#1585)
+## X. Pin sqlparser until the upstream quoted-parameter fix is released
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d4f206e3`: modal) :: apply `height` to the model's content (#1585). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c673a3b`: Pin sqlparser until the upstream quoted-parameter fix is released. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1250,15 +1601,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The `height` of the modal component sets the height of its content. Overflow content scrolls. ([#1046](https://github.com/sqlpage/SQLPage/issues/1046))
-
+## v0.48.0 (2026-11-12)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+## v0.48.0 (2026-11-10)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d4f206e3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c673a3b` are properly handled with clean fallback behavior.

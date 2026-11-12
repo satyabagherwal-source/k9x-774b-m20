@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T16:36:02.876Z",
-  "total_verified_learnings": 1255,
+  "last_updated": "2026-11-12T03:10:45.739Z",
+  "total_verified_learnings": 1257,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -122,8 +122,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "47e426e5",
-      "content_hash": "dd639d46a09d2363ca1e77802267d72791f24ba998c8419890a208c02135e798",
+      "source_version": "02152f3a",
+      "content_hash": "45f9398e3350d6ece94872281dfb344020c89c30639420f5e89366629a7642c9",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -140,6 +140,11 @@
         {
           "number": null,
           "title": "ratatui-jcode: Buffer::diff skips unchanged narrow rows wholesale",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tui): keep the terminal in TUI mode when a draw panic is recovered",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -248,7 +253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:49:31.593Z",
+      "verified_at": "2026-11-11T19:46:16.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -2583,8 +2588,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "633ccf2e",
-      "content_hash": "1f329c73419736806b12a15742892947a838876bd5f51147f9a3d05f74438cd5",
+      "source_version": "7f808225",
+      "content_hash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2601,6 +2606,11 @@
         {
           "number": null,
           "title": "Add Grice guidance and require formal review for Git-visible changes (#40489)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Oracle parenthesized expression parsing (#40500)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2684,7 +2694,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:42:50.274Z",
+      "verified_at": "2026-11-12T02:48:56.632Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -2862,8 +2872,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "91a45282",
-      "content_hash": "e3df911e483a6e6cfed9835f556d9a2dbfa4865b38ad6f380a978ea519877f3c",
+      "source_version": "5431e621",
+      "content_hash": "6b1c1a0fdb06274053c266aa45f29f2855ceecc2fec835a4647af0a6734900ac",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2875,6 +2885,11 @@
         {
           "number": null,
           "title": "Reject starting a backup at a location used by another running backup (#14451)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2943,7 +2958,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:26:06.946Z",
+      "verified_at": "2026-11-12T03:10:45.724Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4474,14 +4489,19 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "4613dae4",
-      "content_hash": "ef569a41abbc6b68065d7d0b64c6ebcb393089475ba8b79eed10ced2699b3a70",
+      "source_version": "576278c9",
+      "content_hash": "aa233740ca5006e04310c3f265afbf20788dad9d6ee6ffcff02079220935d99a",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "query): bound provider retention and isolate concurrent digest updates",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "postgres): stop read-only SpiceDB from writing heartbeat rows (#3479)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4530,7 +4550,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:39:59.285Z",
+      "verified_at": "2026-11-11T20:18:40.135Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5019,8 +5039,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "ec498292",
-      "content_hash": "85bb04aedc010e220647d8d0156fa00c5d79a56e3948debbb9d466a08545bfe1",
+      "source_version": "36caf4ca",
+      "content_hash": "4731c5a82193f43b7de0c9033ad3da623f61e91d5c769a823e1c7cfc3fb5c005",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -5032,6 +5052,11 @@
         {
           "number": null,
           "title": "docs: add Cognee knowledge and internal MCP workflows (#4327)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "market(fix): refine catalog handling and api safeguards (#4436)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5135,7 +5160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:18:30.326Z",
+      "verified_at": "2026-11-12T01:52:07.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7256,8 +7281,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "1eefe2ef",
-      "content_hash": "c9877c344624fda9dd4061dc718b6738fcb5bcb6fd67fd468f54f74994f2ad09",
+      "source_version": "35a006bd",
+      "content_hash": "305cbe11fbe8908eeea71e796aa4ff4412aa0b9e280c4276d2f393f30b7210bb",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -7274,6 +7299,11 @@
         {
           "number": null,
           "title": "ci: separate integration and E2E test triggers (#5219)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "dashboard): add server-side pagination for events (#5222)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7342,7 +7372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T13:21:52.164Z",
+      "verified_at": "2026-11-11T19:28:41.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7742,8 +7772,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "523d26b3",
-      "content_hash": "4d4d8b52e07be09bdd66a42a998265563cf0a75f072b563d8412d7152e94020b",
+      "source_version": "f32bb49a",
+      "content_hash": "8b37cf3393503a562711200dc6861cbcb747602b4597b2bfec8b50761c1636d2",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7810,6 +7840,11 @@
         {
           "number": null,
           "title": "gha: raise Envoy and LB init timeouts in clustermesh upgrade test",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): update module golang.org/x/crypto to v0.59.0 [security]",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8058,7 +8093,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T16:20:43.891Z",
+      "verified_at": "2026-11-12T02:33:42.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8251,11 +8286,16 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "cc6facab",
-      "content_hash": "e3f7bb5af2559147a5969f7de4cb79671b5be38f6ce7ad0cff7c32f900b83ee7",
+      "source_version": "e0f4d211",
+      "content_hash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps: bump rustix to 1.1.6 (#2312)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1894,
           "title": "other: allow clippy lint for regex creation in loops (#2270)",
@@ -8297,7 +8337,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T04:21:46.485Z",
+      "verified_at": "2026-11-12T00:45:31.191Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9527,14 +9567,19 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "a3cdce35",
-      "content_hash": "a176072a8155b99a37a7a3552912f5f70e89d506f0fadf6ef5c91573e653a45a",
+      "source_version": "c3c5fe6a",
+      "content_hash": "cd232e3053530f38bc6494bf7e5a9740d5c6f46926b97163e51f6571d101988e",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": ":bug: show notifications as tray balloons on Windows while the main window is hi",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": ":bug: post notifications to Notification Center on macOS while the main window i",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9573,7 +9618,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:02:38.888Z",
+      "verified_at": "2026-11-11T17:46:20.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10064,11 +10109,16 @@
       "slug": "darrylmorley-whatcable",
       "platform": "github",
       "source_url": "https://github.com/darrylmorley/whatcable",
-      "source_version": "58e588ab",
-      "content_hash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
+      "source_version": "6d8580a0",
+      "content_hash": "3789f30ef3bcb7d8fca6eb9d66b50d22d1d4c1c7b3b4e3db99f0ed34cf2b93f7",
       "dossier_path": "07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Mirror from private (2ebfc38a)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2536,
           "title": "Mirror from private (a89a218b)",
@@ -10080,7 +10130,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:27:55.151Z",
+      "verified_at": "2026-11-12T01:12:06.157Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14241,8 +14291,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "d622ec57",
-      "content_hash": "14329acf04aff704e838b23833d888be23201eee0e3b0ebed886b3232641bafa",
+      "source_version": "d87ef4ce",
+      "content_hash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -14254,6 +14304,11 @@
         {
           "number": null,
           "title": "Merge pull request #22682 from fuweid/weifu/benchmark",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "etcdutl : Fix lint failure",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14322,7 +14377,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:23:08.181Z",
+      "verified_at": "2026-11-12T02:17:03.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14792,8 +14847,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "479c0a15",
-      "content_hash": "4012181ab373527484ac65f57b27e81e00a3527d9bc035d945e85df6faa3b719",
+      "source_version": "7016f77b",
+      "content_hash": "7fffa3d52373a17722724855ecaeb1a4641eec84432eab1c361910cee2259e19",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -14810,6 +14865,11 @@
         {
           "number": null,
           "title": "extract): bound nested type-argument candidates before parsing (#4365)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "mutation): add the opt-in nullish-fallback operator (#4507)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14888,7 +14948,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T03:35:19.072Z",
+      "verified_at": "2026-11-11T17:51:16.116Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15414,14 +15474,19 @@
       "slug": "fission-fission",
       "platform": "github",
       "source_url": "https://github.com/fission/fission",
-      "source_version": "9cac7b02",
-      "content_hash": "0b944e32c1e3becc96e9a8e7e3a0d0af24267dd718787f9707e77290fdf8d35b",
+      "source_version": "8152c961",
+      "content_hash": "051fdbd2d5f80888e2df0cd26e1dfdd1235bbe538c738a96766db4f00d0a33d2",
       "dossier_path": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Dependency security sweep 2026-11-09: k8s v0.37.2, x/net v0.62.0, brotli/klauspo",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): bump golang.org/x/sync (#3751)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15445,7 +15510,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T13:10:05.440Z",
+      "verified_at": "2026-11-11T19:15:25.986Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15515,11 +15580,16 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "120bc0ad",
-      "content_hash": "4e9907f4e3e383b10bfb7843e8855f8ad5dd8b7aa35794cca58d138a4b045f67",
+      "source_version": "9a1a9e7c",
+      "content_hash": "c1a49d371356d750113b45122f957825639972d9ee8829ab43a3938301232971",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "telemetry): keep metrics files out of the current directory on config errors (#4",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1817,
           "title": "buildenv): distinguish expired token from logged-out on empty store-info",
@@ -15556,7 +15626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:09:26.227Z",
+      "verified_at": "2026-11-11T18:16:58.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15777,8 +15847,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "653af09c",
-      "content_hash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
+      "source_version": "acae3b45",
+      "content_hash": "1bf2cab605ca8e61df295726eadda3dd6774e328bd05a1262be275a8fd0771a4",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15840,6 +15910,11 @@
         {
           "number": null,
           "title": "conformance): report a merge refusal that leaves peers apart (#6178)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): a loss gate in front of QUIC Cubic, so random loss does not collapse",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16058,7 +16133,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T06:33:46.164Z",
+      "verified_at": "2026-11-12T00:58:45.597Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16791,8 +16866,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "865a2448",
-      "content_hash": "149c1f894b674a0f91c99c90274e094fb3f83b908b90ce6cddf36867a4ea31a5",
+      "source_version": "d1e064e3",
+      "content_hash": "83484a7482d7d4dab1b3587f6044149c5a7cddad8ccf54fb70f9f564a3f2ca26",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -16809,6 +16884,11 @@
         {
           "number": null,
           "title": "gix-status): read rename candidate metadata from the open file",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "gix-diff): count existing destinations when inferring directory renames",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16877,7 +16957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T06:38:54.223Z",
+      "verified_at": "2026-11-12T01:31:20.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17028,8 +17108,8 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "fc736e32",
-      "content_hash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
+      "source_version": "fce8d5b9",
+      "content_hash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
@@ -17046,6 +17126,11 @@
         {
           "number": null,
           "title": "Update storage guides and automate README release links (#2070)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Unify Query Builder result assertions (#2075)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -17069,7 +17154,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T14:18:10.887Z",
+      "verified_at": "2026-11-12T01:23:37.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17427,8 +17512,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "bc458019",
-      "content_hash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
+      "source_version": "fac9abd1",
+      "content_hash": "3b35e68ee600c29af308e51a03367308387e658024111782a1d0bf088f717a47",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -17518,7 +17603,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T10:59:35.854Z",
+      "verified_at": "2026-11-11T16:55:57.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19218,8 +19303,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "06fcb151",
-      "content_hash": "f406eb6aaca63ab2f5e155e697b70a5cf7cccdcfdf1d9c75bdb759243973a620",
+      "source_version": "5be60bda",
+      "content_hash": "027d9b1fc3c7e3201366ee9733bd8cea6b2ba8e283f6ed5de908a96597c0b1a0",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -19231,6 +19316,11 @@
         {
           "number": null,
           "title": "Validate secondary builds without fencing writers (#1271)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "the durable wait limit contracts after commits moved to their own thread (#1287)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -19284,7 +19374,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:57:50.963Z",
+      "verified_at": "2026-11-11T18:55:10.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35484,8 +35574,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "942b6cfa",
-      "content_hash": "8339467fd1dada35e40655e7edeb5d1efd26295945e270603fadf2c8bc0b145a",
+      "source_version": "f0260049",
+      "content_hash": "79c87ef277ca63e1510c6971ec93e9812d48297f21ba0d3b36ead6264b484c3a",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -35550,7 +35640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T12:49:37.187Z",
+      "verified_at": "2026-11-11T18:54:54.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38433,8 +38523,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "705b459b",
-      "content_hash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
+      "source_version": "fa001f3a",
+      "content_hash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -38446,6 +38536,11 @@
         {
           "number": null,
           "title": "build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #8029 from lbarrosby/fix-ingress-tls-empty-secretname",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38524,7 +38619,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T15:29:01.852Z",
+      "verified_at": "2026-11-12T01:12:10.669Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38912,8 +39007,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "7490cf4b",
-      "content_hash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
+      "source_version": "42846c40",
+      "content_hash": "b97768bdf78231ed2ddd22d9e3854a8a2c1107f8a8d4670b7887f4e6304cf5ff",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -38925,6 +39020,11 @@
         {
           "number": null,
           "title": "test: fix five flakes that only passed in CI on rerun (#15002)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "envoy_modules: build from the dependency stage with --locked (#15024)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38998,7 +39098,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T15:51:36.318Z",
+      "verified_at": "2026-11-12T01:23:31.899Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40256,8 +40356,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "288e4a3e",
-      "content_hash": "6f0745c4dcc643074c4e50aaf03ae92f7ee28e4697db179c0c3f39df7a88ba47",
+      "source_version": "d79d5796",
+      "content_hash": "43784fc8fde93f2afe398ae855f57559a0006a845a543ea83398f58a46e4abcb",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -40302,7 +40402,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:10:25.975Z",
+      "verified_at": "2026-11-11T18:35:36.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40352,8 +40452,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "60b764b8",
-      "content_hash": "0ce39ae67cd5f940c86ffd2b22c5f7f099f4a747d82130ec6eb83a39094ddeec",
+      "source_version": "b65a7b2f",
+      "content_hash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -40413,7 +40513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:12:20.561Z",
+      "verified_at": "2026-11-12T02:56:23.219Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41479,11 +41579,16 @@
       "slug": "linkwarden-linkwarden",
       "platform": "github",
       "source_url": "https://github.com/linkwarden/linkwarden",
-      "source_version": "eff7c6b7",
-      "content_hash": "25c41a158cd8fec799a7e5a24eec270796aa35280c355ff0aaaf0b00422475e6",
+      "source_version": "24adcc14",
+      "content_hash": "fba74864324c80e393b68621af4dc7a5a222725ceffd92692f0641ca5c159072",
       "dossier_path": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #1893 from linkwarden/dev",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2459,
           "title": "mobile): fix \"waiting for connection\" persisting",
@@ -41495,7 +41600,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:29:08.554Z",
+      "verified_at": "2026-11-11T16:42:55.253Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41676,8 +41781,8 @@
       "slug": "llphant-llphant",
       "platform": "github",
       "source_url": "https://github.com/LLPhant/LLPhant",
-      "source_version": "1992a18d",
-      "content_hash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
+      "source_version": "d0a94b30",
+      "content_hash": "b1d1b24a1baf60e395a47982bf2563dc4a388a119674b51783132a7203b3a392",
       "dossier_path": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "promoted_rules": [
@@ -41695,6 +41800,11 @@
           "number": null,
           "title": "Agent Tool Call Polymorphic Result Normalization Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Make Anthropic endpoint and API version configurable (#568)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1852,
@@ -41722,7 +41832,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T12:35:09.162Z",
+      "verified_at": "2026-11-11T16:43:02.156Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41822,8 +41932,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "d353cc58",
-      "content_hash": "6c78f38e77fc62c6bd2c099d8eb53f4d8ad6778c18c6aa97c4da482853263fd5",
+      "source_version": "c5e9027e",
+      "content_hash": "0bd23d27cb6f4b0285bf21fe065d25c074beb131a2b48c1b5179875b961b7a5a",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -41846,6 +41956,11 @@
           "number": null,
           "title": "Fully Qualified Container Image Domain Encasement",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "CVE fixes (#2594)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2425,
@@ -41903,7 +42018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T12:16:14.435Z",
+      "verified_at": "2026-11-11T18:12:01.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42688,8 +42803,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "91b650ea",
-      "content_hash": "a9d41b1189d94a6da791be55f59ed92fd28640b24ef0341100c5072a131c2071",
+      "source_version": "a859dade",
+      "content_hash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -42711,6 +42826,11 @@
         {
           "number": null,
           "title": "deps): update dependency jsdom to v31 (#40576)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "storage: rate limit gauge regression error logs (#40589)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42799,7 +42919,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T11:16:31.505Z",
+      "verified_at": "2026-11-11T18:35:55.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43902,8 +44022,8 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "4b2503d2",
-      "content_hash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
+      "source_version": "157ef222",
+      "content_hash": "3cf8d6ebc7046004190a026cb68b74492b022e205d58011e3152616644b3a436",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
@@ -43921,6 +44041,11 @@
           "number": null,
           "title": "Metric Sentinel Zero vs Real Float Absence Rule",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "test(database): join the DataStore scope before deleting the fixture dir (#8014)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2517,
@@ -43958,7 +44083,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:36:02.396Z",
+      "verified_at": "2026-11-11T23:57:06.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43975,8 +44100,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "ba0b4a85",
-      "content_hash": "19baa6b96a016e4b507e9bcc9c4278d917f19e9d99ee3cf86ee576135ee5301c",
+      "source_version": "f28032b1",
+      "content_hash": "526830c2fd8321a1c8b9fef5e3faff3943b65b1ed41527e5a1637b448f293106",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -43994,6 +44119,11 @@
           "number": null,
           "title": "Backpressure-Bounded Asynchronous IO Streams via Semaphore Permits",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Enable linux fs fixes for all users (#5214)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1787,
@@ -44061,7 +44191,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T03:05:11.496Z",
+      "verified_at": "2026-11-11T16:56:00.156Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44683,14 +44813,19 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "41fef581",
-      "content_hash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
+      "source_version": "5ba45344",
+      "content_hash": "fd0a48d5ccde3a626e875af66de5350e41c75773f80c87536afb207d1bcf7187",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "crash when rendering zero sized text (#16579)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GitHub authentication for release source tags (#16592)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44729,7 +44864,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T23:55:22.686Z",
+      "verified_at": "2026-11-11T17:13:14.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45677,8 +45812,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "cedaeca8",
-      "content_hash": "e606a51ddeb5aaae1fc4d6c5c8cd00a2279526a5767422c7e5510b404a44ec91",
+      "source_version": "8cd4dbe1",
+      "content_hash": "119414c4fa5ea2bc0f7fcc382b01e17b50a349e875e54059fafc2b1d5dcf5024",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -45690,6 +45825,11 @@
         {
           "number": null,
           "title": "Merge pull request #7374 from crazy-max/fix-gha-close-layer-readers",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #7343 from locker95/fix-scratch-manifest-layers",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45753,7 +45893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T20:23:02.820Z",
+      "verified_at": "2026-11-11T18:35:49.628Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46114,11 +46254,16 @@
       "slug": "mohamedrejeb-compose-rich-editor",
       "platform": "github",
       "source_url": "https://github.com/MohamedRejeb/compose-rich-editor",
-      "source_version": "b972d50f",
-      "content_hash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
+      "source_version": "3254ff75",
+      "content_hash": "0abf8a1babb8ae033e462bd814c63bec2429d3f2c3f8da89bfacb26271c5268a",
       "dossier_path": "07_PROJECT_LEARNING/mohamedrejeb-compose-rich-editor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mohamedrejeb-compose-rich-editor-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #860 from MohamedRejeb/fix/issue-857-exit-list-paragraph-belo",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2515,
           "title": "Merge pull request #832 from MohamedRejeb/fix/heading-on-line-break-block",
@@ -46130,7 +46275,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:54:42.485Z",
+      "verified_at": "2026-11-11T20:23:08.588Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46147,8 +46292,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "14da8d0e",
-      "content_hash": "7cd0775f119ffc62ffb9c297e0d05213e6dc5aa0cc0422e9985512d6d93157c0",
+      "source_version": "61311f6a",
+      "content_hash": "02d6baf1e92f3110cae5f0dfee5e75a66d88094ca3fa0e284cce7fdcf0028639",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -46173,7 +46318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:35:46.445Z",
+      "verified_at": "2026-11-12T03:10:26.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46270,11 +46415,16 @@
       "slug": "mrkai77-loop",
       "platform": "github",
       "source_url": "https://github.com/mrkai77/Loop",
-      "source_version": "573ace30",
-      "content_hash": "c4f627683887fd104e91d95958b51bc3bd99fdaad5b5f5ffc5ca371afd617d96",
+      "source_version": "b041fcbb",
+      "content_hash": "c86f06af578c860a35da29746c5d01261576911246ff5bd9e10a09ed060151a7",
       "dossier_path": "07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "✨ Track the original radial menu gesture in the session",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2502,
           "title": "🐞 Fix updater crash when updating download progress off the main thread (#1166)",
@@ -46286,7 +46436,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:41:16.921Z",
+      "verified_at": "2026-11-11T19:46:23.491Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46303,11 +46453,16 @@
       "slug": "msasikanth-twine",
       "platform": "github",
       "source_url": "https://github.com/msasikanth/twine",
-      "source_version": "baf8d83c",
-      "content_hash": "8762b44902ab0c261fe4b3fd10e7bfe50e40eb70bfcbd64dabffa8f9ef41ddb7",
+      "source_version": "15d06cbe",
+      "content_hash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
       "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Animate screen corner radius during predictive back gesture",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2485,
           "title": "Bundle SQLite native libraries for macOS App Store builds",
@@ -46339,7 +46494,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T00:34:21.475Z",
+      "verified_at": "2026-11-11T18:28:49.781Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46721,11 +46876,16 @@
       "slug": "nasiko-labs-nasiko",
       "platform": "github",
       "source_url": "https://github.com/Nasiko-Labs/nasiko",
-      "source_version": "10a08581",
-      "content_hash": "d668d6a9b504220af26a3bc75d6be1802815ca3189eb97e80d74614fc7fab5b5",
+      "source_version": "9f84200c",
+      "content_hash": "c46b9aaf60fee835f78b5f389e6bcd2bf6a540244b3d5dc44f28cbb26213e161",
       "dossier_path": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Update SECURITY.md",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1946,
           "title": "failing ee tests",
@@ -46742,7 +46902,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:56:31.797Z",
+      "verified_at": "2026-11-12T02:33:32.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46855,8 +47015,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "c1a97cbd",
-      "content_hash": "1756b1d3992fd0063b1b83e0091780d81a9d800c6cff0b10f91828bba2f6b512",
+      "source_version": "0d4956f3",
+      "content_hash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -46873,6 +47033,11 @@
         {
           "number": null,
           "title": "ATS worker shutdown synchronization (#8794)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[FIXED] Filestore metadata and new directories not crash-safe (#8887)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46936,7 +47101,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T11:31:13.324Z",
+      "verified_at": "2026-11-11T17:51:35.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47922,8 +48087,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "cd5af882",
-      "content_hash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
+      "source_version": "cecd9f55",
+      "content_hash": "5addd5440ec9a1ad64707f9e64a9b1ec55ce1cf12caded425f0320ff2024cc81",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -47940,6 +48105,11 @@
         {
           "number": null,
           "title": "deps): upgrade aws-config and remove crypto-bigint audit exception",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "proxy): distinguish credential capture failures in HTTP responses",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48048,7 +48218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T11:19:11.822Z",
+      "verified_at": "2026-11-11T19:28:44.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50733,8 +50903,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "c0010d32",
-      "content_hash": "5026c055df172b98d0fb5aa1c51d4ef7881e0a03cb8cf5cdb3ccb7ddd70b0137",
+      "source_version": "9457c528",
+      "content_hash": "11b5bd09de4a6a03e63883ff86507a1f99d2ed5ac4a88aab47ba89f7df2a651c",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -50746,6 +50916,11 @@
         {
           "number": null,
           "title": "bad cache identifier for TLS certificate asserts.",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Align Ubuntu versions between build and package anatomy",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -50819,7 +50994,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T05:13:57.920Z",
+      "verified_at": "2026-11-11T20:23:35.746Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51842,8 +52017,8 @@
       "slug": "permify-permify",
       "platform": "github",
       "source_url": "https://github.com/Permify/permify",
-      "source_version": "81819b84",
-      "content_hash": "787baefbcdfaab56dd00b2a6f138d677a2800b84c78bfab779da8a496acbd789",
+      "source_version": "f1d2b9b0",
+      "content_hash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
       "dossier_path": "07_PROJECT_LEARNING/permify-permify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/permify-permify-learnings.md",
       "promoted_rules": [
@@ -51863,7 +52038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T00:02:51.398Z",
+      "verified_at": "2026-11-12T00:45:30.125Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52272,14 +52447,19 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "c23311a8",
-      "content_hash": "b1d6860ab9acd76ac0f6cdcf24aef9b2a7e3909c381d4aa1249734549aab84e5",
+      "source_version": "df52b4fe",
+      "content_hash": "039f0bb677fd5da847981474126aa0e5caa9fad8eba707bc3e46adb196968a1d",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "openrouter): forward parallel_tool_calls=False to the API (#1895)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Iceberg replace cleanup after catalog swap failure (#1889)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52333,7 +52513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T14:00:00.513Z",
+      "verified_at": "2026-11-11T17:46:24.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55429,8 +55609,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "51395ef8",
-      "content_hash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
+      "source_version": "26236216",
+      "content_hash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -55447,6 +55627,11 @@
         {
           "number": null,
           "title": "meta): preserve backup and time-travel references during GC (#27744)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "frontend): reject invalid rate limit in WITH options instead of panicking (#2790",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55530,7 +55715,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T10:07:56.937Z",
+      "verified_at": "2026-11-11T18:03:59.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55746,8 +55931,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "95a0477a",
-      "content_hash": "47d6ca5e739a8027bb9683646b42ee38fec985728b1ed57bc169c1e616c756ac",
+      "source_version": "d904ad91",
+      "content_hash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -55764,6 +55949,11 @@
         {
           "number": null,
           "title": "Merge pull request #3034 from rqlite/raft-dir-readme",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "sqlean Docker build",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55802,7 +55992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:18:36.215Z",
+      "verified_at": "2026-11-12T02:56:44.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56217,8 +56407,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "c805ecfe",
-      "content_hash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
+      "source_version": "f68d6d29",
+      "content_hash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -56240,6 +56430,11 @@
         {
           "number": null,
           "title": "Reject non-empty legacy_session_id in QUIC ClientHello",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "rustls-aws-lc-rs: reject non-canonical X25519 HPKE recipient keys",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56348,7 +56543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:26:52.086Z",
+      "verified_at": "2026-11-11T18:03:57.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57860,8 +58055,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "0297b7e9",
-      "content_hash": "fc454b91343c1e89653392e297196be451dcdb8083d240418ad0f71d786670e6",
+      "source_version": "ca4d8fa9",
+      "content_hash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -57883,6 +58078,11 @@
         {
           "number": null,
           "title": "security): let machined kexec into the new kernel",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "give the mdadm runtime map directory a dedicated SELinux type",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -57961,7 +58161,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T12:29:45.333Z",
+      "verified_at": "2026-11-11T18:23:48.853Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58122,14 +58322,19 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "c8a4781a",
-      "content_hash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
+      "source_version": "8fece0b2",
+      "content_hash": "36f9ed2d92a680c8a73cf9f31e64b2d9ec4778a1cfe56a51b1bc9c4646479c5c",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Verify blobs exclusively via sigstore-go (#5087)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Require new bundle format for attest-blob (#5088)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58213,7 +58418,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:19:28.657Z",
+      "verified_at": "2026-11-12T02:16:55.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58368,14 +58573,19 @@
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "bf7f6dc2",
-      "content_hash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
+      "source_version": "026a4532",
+      "content_hash": "cb94dc1e1a0f35afe6d32520600e7538b546d7c14e64264a50205874a6c80736",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58414,7 +58624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:17:54.812Z",
+      "verified_at": "2026-11-11T19:53:46.446Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58583,8 +58793,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "a9a8a317",
-      "content_hash": "ea414e3508093a660d34058e6b5a00aafe616634d8abafe5204f664441b25184",
+      "source_version": "bb49df41",
+      "content_hash": "f2c98b2c6e4af52cb5af7039b38cbc0c927f7052481efd715d109621ebbd7a00",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -58606,6 +58816,11 @@
         {
           "number": null,
           "title": "desktop): add AppImage build (#2293)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Read pod-level resources in rightsizing, crash-loop OOM, MCP overview and AI met",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58699,7 +58914,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:35:01.767Z",
+      "verified_at": "2026-11-12T03:10:39.098Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58782,8 +58997,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "0b705dc8",
-      "content_hash": "a3bf1b0fb5f83ac0202d7d1c040a6a1abf8b7d9b8ab0d1f5e4b92a5f1bb58682",
+      "source_version": "9aedb400",
+      "content_hash": "a4ec99c1335af934d00a7c3d06197879487c2a7354082964722c995c8b7c8b7d",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -58795,6 +59010,11 @@
         {
           "number": null,
           "title": "Use macOS 15 for release builds (#2236)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Share one clock in compactor test fixture (#2250)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58848,7 +59068,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:14:30.419Z",
+      "verified_at": "2026-11-12T00:58:46.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59580,8 +59800,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "d4f206e3",
-      "content_hash": "56ad5a69167283bb71fc2b9f0c4a2b4d1ba7b2baeab7b655a55b062b7bb5a7d2",
+      "source_version": "3c673a3b",
+      "content_hash": "2ce122bd971384009a5c1ee40501ebe523515b2e2fa8f34231627846ef1cf12f",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -59636,7 +59856,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T11:39:11.895Z",
+      "verified_at": "2026-11-12T02:03:45.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61861,11 +62081,16 @@
       "slug": "taubyte-tau",
       "platform": "github",
       "source_url": "https://github.com/taubyte/tau",
-      "source_version": "374537fb",
-      "content_hash": "3c66193e7d660af09ede5e0a46ef6932e9672bd16b568b5ceb006f9d5f6f868e",
+      "source_version": "59816f6f",
+      "content_hash": "1e19823b27f4f2c0ddbbc3a5c542e015afa2409fdfc0d5525f3ca5c15314d844",
       "dossier_path": "07_PROJECT_LEARNING/taubyte-tau-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taubyte-tau-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #565 from taubyte/fix/dream-push-wait-race",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1797,
           "title": "vm): clamp attacker-controlled HTTP status codes to avoid a gateway crash (#519)",
@@ -61882,7 +62107,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:00:09.178Z",
+      "verified_at": "2026-11-12T02:03:47.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62352,11 +62577,16 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "92c959b6",
-      "content_hash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
+      "source_version": "3cb96a01",
+      "content_hash": "134a3d23166a95568455bfc13c9ea51cdbfb9f896f663f3a2ecff2e71193e54f",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "capture, usability and motion follow-ups, real readings for the widget icon, and",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2526,
           "title": "Bidirectional Uniqueness Guard for Heuristic IPC Reconciliation",
@@ -62398,7 +62628,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:46:17.418Z",
+      "verified_at": "2026-11-12T00:23:18.799Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63424,8 +63654,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "047a8a24",
-      "content_hash": "2043a1da1cc20326b2aff4e35fa24da695cb8d94217d91afae5b76e73748ce28",
+      "source_version": "9e4c4967",
+      "content_hash": "475ff7ebc5f757296168b646663213b46230673aa5e588bc827818f84740b43f",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -63443,6 +63673,11 @@
           "number": null,
           "title": "Multi-Tier Secret Redaction on State Serialization",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Further simplify subscription state management. Avoid race between record-level",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1914,
@@ -63490,7 +63725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T11:54:13.012Z",
+      "verified_at": "2026-11-11T19:15:32.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63849,8 +64084,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "18876676",
-      "content_hash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
+      "source_version": "2c078840",
+      "content_hash": "4bd6b78ef69db35a29d22de15ac50c9b441212455e08a233b5446bde8234ceef",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -63862,6 +64097,11 @@
         {
           "number": null,
           "title": "Update github-actions (#5533)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update module golang.org/x/crypto to v0.59.0 [SECURITY] (#5544)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63970,7 +64210,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T09:49:10.145Z",
+      "verified_at": "2026-11-12T02:56:41.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64433,8 +64673,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "145de9c4",
-      "content_hash": "9a9cb7f76ab9a47fbeaa06080617f632a5fac35236520438e403653e204d24e1",
+      "source_version": "a99f0e28",
+      "content_hash": "c8157f2b1df0dac673230fbd82148c4f1a0358afd461b9a3d981d75e00de5225",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -64446,6 +64686,11 @@
         {
           "number": null,
           "title": "Replace unimplemented panic with error for Cascade (#8049)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Prepare release 3.15.0-rc0 (#8055)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64504,7 +64749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:24:58.568Z",
+      "verified_at": "2026-11-11T19:46:32.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64776,14 +65021,19 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "195ff5b6",
-      "content_hash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
+      "source_version": "b993537c",
+      "content_hash": "3dc7fd1227bb5507f0cbc626f559328e47bd16fb0c9b3c4b1d42a7f884163557",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #258 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #260 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64832,7 +65082,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:40:04.906Z",
+      "verified_at": "2026-11-11T17:13:09.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65499,11 +65749,16 @@
       "slug": "vi-websocat",
       "platform": "github",
       "source_url": "https://github.com/vi/websocat",
-      "source_version": "3a3574cd",
-      "content_hash": "fd20b733ab2d87ef6ac693befa8a07551bd578826f09f34bd45a547795ec9a04",
+      "source_version": "734de478",
+      "content_hash": "84feebe60d2749e442bd1594babe3632d0d7a95245a917bb6ab5ab8bf6c29f0c",
       "dossier_path": "07_PROJECT_LEARNING/vi-websocat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vi-websocat-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "help examples that use ws-l: where ws-u: is meant",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1958,
           "title": "Update OpenSSL to 3.5.4 for the pre-built executables",
@@ -65515,7 +65770,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:16:20.292Z",
+      "verified_at": "2026-11-12T03:10:29.140Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66773,11 +67028,16 @@
       "slug": "xcodesorg-xcodesapp",
       "platform": "github",
       "source_url": "https://github.com/XcodesOrg/XcodesApp",
-      "source_version": "45722c72",
-      "content_hash": "ca601c7dd52257c1c83926b5b5ed9f6cec064b7df9e1e1a89df547d6d0c0f887",
+      "source_version": "9836fd83",
+      "content_hash": "9564bc00ea98fe65773b3ab2c93adb74729cbb8ae1378cf00b62cc4ad8be55b2",
       "dossier_path": "07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xcodesorg-xcodesapp-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "installed and active state not refreshing after install, select, and uninstall",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2541,
           "title": "notify on new Xcode version identity, not array-count growth",
@@ -66789,7 +67049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:35:13.695Z",
+      "verified_at": "2026-11-12T01:23:28.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68639,8 +68899,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "533e89d6",
-      "content_hash": "9fc22120a8c140cf239fdb9193a730dba6e0af276c6b411e287f11b2e0fe3ae0",
+      "source_version": "7437e3e9",
+      "content_hash": "828db638a33df3b4e7504735e093ad4bdf914ffbf97f29fbc3ea24a82a6e7496",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -68657,6 +68917,11 @@
         {
           "number": null,
           "title": "Linux: a dropped image no longer crashes the window with \"texture must exist\" (#",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -68720,7 +68985,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:20:08.570Z",
+      "verified_at": "2026-11-11T18:54:57.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81002,8 +81267,8 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "1bc04739",
-      "content_hash": "1419417eaecdc86d1cb175180fe3b6455cfdeb482e8b7c085cdb186b5aa32b0b",
+      "source_version": "f7b1fd3f",
+      "content_hash": "7e0fac2a1484cb00ff99d3ed66df3097c090bd7c3f0cabc950cf48b3a0784f06",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
@@ -81011,6 +81276,11 @@
         {
           "number": null,
           "title": "Limit memory used by media pipeline and other download_async() requests (#8417)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Support coros in schedulers and dupefilters. (#8479)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81054,7 +81324,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:19:54.716Z",
+      "verified_at": "2026-11-11T19:28:34.167Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81428,14 +81698,19 @@
       "slug": "webrecorder-browsertrix-crawler",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/browsertrix-crawler",
-      "source_version": "7ed01936",
-      "content_hash": "cbc2521b34be00ae68b79a484df6a078944079f4998f80eb771264f29ee18829",
+      "source_version": "7ac9f642",
+      "content_hash": "fbf94cfbc53023a9ac8141196bba8f895eab1db0a59a28abeb1709464e5cffb8",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "WARC-Concurrent-To references for revisit records (#1199)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tests: attempt to make redis tests more resilient  (#1203)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81474,7 +81749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:54:24.455Z",
+      "verified_at": "2026-11-12T01:12:03.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81491,12 +81766,17 @@
       "slug": "archivebox-archivebox",
       "platform": "github",
       "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-      "source_version": "ee80665d",
-      "content_hash": "8efb7c7834af89ac8801a70846eb35c8b3854a61602c31b06a7279629ff5aaad",
+      "source_version": "2af81b9e",
+      "content_hash": "dd619f037f60ee4a27d6767fe49d315d82f551ada64e9660a40df331f9e9d9b5",
       "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "promoted_rules": [
         "Rule 1629",
+        {
+          "number": null,
+          "title": "Preserve CLI timeout diagnostics and clean up child processes",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2850,
           "title": "Use established isolated browser policy in gallery regression",
@@ -81528,7 +81808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T21:28:32.918Z",
+      "verified_at": "2026-11-12T01:31:23.547Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81579,14 +81859,19 @@
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "e4302f16",
-      "content_hash": "d0057fe1ea15178d1755436f0c6ab0d673d595b473cfb3761093f8d199557059",
+      "source_version": "ba82d526",
+      "content_hash": "47b8bac021feae427ec12f2f3ab1fd8c28097eb6e6068d7308cee11f58b4b8a4",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Build: bump the github-actions group across 1 directory with 2 updates (GH-540)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Build: Use security fixed zlib 1.4.",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81615,7 +81900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:29:38.365Z",
+      "verified_at": "2026-11-12T01:52:01.786Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81711,14 +81996,19 @@
       "slug": "fb55-htmlparser2",
       "platform": "github",
       "source_url": "https://github.com/fb55/htmlparser2",
-      "source_version": "56968892",
-      "content_hash": "21f33a24c4ddf6db145ff84c308e42b5aa85b7589425ebfc92b3d3d8860aa269",
+      "source_version": "8fe6e970",
+      "content_hash": "6a16a683cb04cbf87d9a72ab1c490d2ea905b4765821366ca6fb76d826207ca7",
       "dossier_path": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "parser): close an open <p> for li, dd, dt, listing, plaintext and xmp (#2547)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): Bump github/codeql-action from 4.39.2 to 4.39.3 (#2569)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81767,7 +82057,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:56:15.700Z",
+      "verified_at": "2026-11-12T02:33:33.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81784,14 +82074,19 @@
       "slug": "inikulin-parse5",
       "platform": "github",
       "source_url": "https://github.com/inikulin/parse5",
-      "source_version": "7bf0fc95",
-      "content_hash": "9622306459c34e9a59d4298c60215a831b2187f5acedf42a297c8e45c7da26c9",
+      "source_version": "48fb1533",
+      "content_hash": "eb97b42b22fc6bbde186d14d77bbc13692c9e22c95b1aebca1a67015c8aea035",
       "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "tokenizer): bound the duplicate-attribute check for wide tags (#1922)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs(security): name Tidelift as the only channel for reports",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81835,7 +82130,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:03:14.937Z",
+      "verified_at": "2026-11-12T02:48:47.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81852,14 +82147,19 @@
       "slug": "fb55-css-select",
       "platform": "github",
       "source_url": "https://github.com/fb55/css-select",
-      "source_version": "3a34d992",
-      "content_hash": "dbaced49ddbd27be812fa8390f87d6991bd0ba511a45a667c36c18faafcd10d5",
+      "source_version": "17d5d874",
+      "content_hash": "ffa44b0e6ed9a0515589ed18b7c418de5b0561ae2a8bbdf4f52d7cad3fba68a2",
       "dossier_path": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1939)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1941)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81888,7 +82188,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:10:26.751Z",
+      "verified_at": "2026-11-12T02:56:30.787Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81905,14 +82205,19 @@
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "9c682911",
-      "content_hash": "06b532650f7d94dd2251b226dfd496f19b08d3145efb4ae27b039a7317238bba",
+      "source_version": "70bfbf41",
+      "content_hash": "e603f3d2ecc2cf52b9796fe26d4b51eba07fb4944b4e23d9b31d5bcd18b47535",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump github/codeql-action from 4.39.2 to 4.39.3 (#1764)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81946,7 +82251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:22:26.292Z",
+      "verified_at": "2026-11-12T03:10:31.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165223,7 +165528,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
       "source_version": "hf-pika-labs-pika-h3-flex",
-      "content_hash": "cf5ac764e24e5108acf809e2a92f16b57bbb7fd03c3037859dcc2dce89289613",
+      "content_hash": "5f5708b3f45948bd3dba06a1a48f55751bd249527c5b654dcc65903522538e92",
       "dossier_path": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "promoted_rules": [
@@ -165253,7 +165558,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:12:02.445Z",
+      "verified_at": "2026-11-11T19:15:03.512Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166153,7 +166458,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
       "source_version": "hf-liquidai-lfm3-audio-2b",
-      "content_hash": "00e509e13616ea63ef8a670b28a67065edb24d7dc5b4997e004706014720d56f",
+      "content_hash": "d39ed7a70db5c3766e0a3ba00bc239d1d9993505b2ad0040067dc7ff9c3b9aef",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "promoted_rules": [
@@ -166193,7 +166498,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:02:02.946Z",
+      "verified_at": "2026-11-12T01:23:10.284Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179202,7 +179507,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
       "source_version": "hf-unsloth-deepseek-v4.1-flash-1017-gguf",
-      "content_hash": "c451f704f3f24396bf60e0b4ac15649de2aec019e7d708eb08f1113d5083d5a7",
+      "content_hash": "799b082c9e736f8bb9aff2af67f0c65ad1c393e72b585d6581e5ad79f2e057c1",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
       "promoted_rules": [
@@ -179227,7 +179532,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:02:42.419Z",
+      "verified_at": "2026-11-11T18:59:45.399Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -179880,7 +180185,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer",
       "source_version": "hf-divagr1925-qwen3.5-4b-qwenputer",
-      "content_hash": "fa04b8519097a0db139bb6bbee7d00b7d976b9a1abba205c54243c344a92f75c",
+      "content_hash": "89b57261595c7d6146405a8dfdd07f3cbab61b4ccc5062f6800d73020316399b",
       "dossier_path": "07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
       "promoted_rules": [
@@ -179920,7 +180225,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T03:49:04.888Z",
+      "verified_at": "2026-11-12T02:16:30.244Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190886,6 +191191,66 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-11T11:10:16.876Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-zyphra-zonos3-mini": {
+      "learning_id": "learn-huggingface-zyphra-zonos3-mini",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Zyphra/ZONOS3-Mini",
+      "repository": "Zyphra/ZONOS3-Mini",
+      "slug": "hf-zyphra-zonos3-mini",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Zyphra/ZONOS3-Mini",
+      "source_version": "hf-zyphra-zonos3-mini",
+      "content_hash": "455841dc8a71204014ec20819c4d78789787c468224c936d4abb1af27576b394",
+      "dossier_path": "07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-12T01:11:41.845Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-unovue-reka-ui": {
+      "learning_id": "learn-github-unovue-reka-ui",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unovue/reka-ui",
+      "repository": "unovue/reka-ui",
+      "slug": "unovue-reka-ui",
+      "platform": "github",
+      "source_url": "https://github.com/unovue/reka-ui",
+      "source_version": "7601c967",
+      "content_hash": "6a096eb2df0ec29c2b8e6535748e1afc30e677a7d72712d0948aa978affbf6b8",
+      "dossier_path": "07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unovue-reka-ui-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Select): select the typed match while the trigger is closed (#3061)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-12T02:48:40.145Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

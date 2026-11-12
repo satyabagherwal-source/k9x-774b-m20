@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `06fcb151`  
+> **Source Version**: `5be60bda`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T17:57:49.892Z  
+> **Timestamp**: 2026-11-11T18:54:58.595Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T17:57:48.592Z  
+> **Harvest Timestamp**: 2026-11-11T18:54:58.588Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6273 stars
+- **Stars / Engagement**: 6281 stars
 
 ---
 
@@ -2078,896 +2078,329 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4775f29a` (2026-11-06)
-**Commit Message**: Validate secondary builds without fencing writers (#1271)
+### Incident Patch 1: `b524727a` (2026-11-10)
+**Commit Message**: Fix the durable wait limit contracts after commits moved to their own thread (#1287)
 
-Stacked on #1270.
+Follow-up to #1284 and #1285. With both merged, the three contracts for
+requests without a deadline flake on main.
 
-## Problem
+They paused tokio's clock to skip the 30 s limit. Since #1285, commits
+apply on the writer's own thread, so paused time raced past setup that
+was waiting on that thread. Stress runs showed three failures: setup
+timeouts, measured waits of 4–11 s, and a racing index DDL losing a
+retryable conflict (the CI failure here).
 
-Every validation step held a write fence for its whole batch. That was
-needed because its in-transaction drain range-read the delta prefix.
-Validation visits one applied-state row per entity, so **writers stalled
-for time proportional to the table**: about 15-20 s at about 12% write
-throughput for 300k rows.
+- The contracts now wait the real 30 s; the three run in parallel.
+- They retry transaction conflicts.
+- The wait must fall between the limit and the limit plus the 30 s
+request allowance.
+- A stale comment on `Reservation::committed` is corrected: the commit
+it records is applied but may not be durable yet.
 
-## Fix
+Test-only plus a comment, and no stored data changes. On EC2 the
+contract suite passes 10 of 10 stress iterations, and clippy is clean.
 
-```text
-prepare(validate)
-  if the cursor has not moved for 8 preparations
-    fence writers, drain the whole backlog, validate one batch
-  else if backlog > gated reach
-    reconcile exact delta keys, keep the cursor          # like catch-up
-  else
-    observe the batch's applied-state keys outside any transaction
-stage(validate batch)
-  multi_get rows and deltas                              # point reads only
-  per group of 32: multi_get source rows and entries     # counted against the input budget
-  release rows with no pending delta                     # pending ones go to the drains
+**File**: `crates/db-testkit/tests/commit_durability.rs` (modified, +29/-18)
+```diff
+@@ -404,60 +404,71 @@ const DURABLE_WAIT_LIMIT: Duration = Duration::from_secs(30);
+ /// stops waiting for a held upload at the durable wait limit instead of
+ /// waiting as long as storage is unreachable.
+ ///
+-/// Paused time skips the wait. The limit counts on the real clock, so the time
+-/// paused tokio reports is the limit less what the test advanced before the
+-/// request, which is why each test makes one such request.
+-async fn assert_stops_at_the_durable_wait_limit(db: &Arc<HelixDB>, request: QueryRequest) {
+-    let started = tokio::time::Instant::now();
+-    let error = HelixQueryService::new(Arc::clone(db))
+-        .execute_query(request)
+-        .await
+-        .expect_err("nothing is durable while the upload is held");
++/// The wait runs on the real clock: commits apply on the writer's own thread,
++/// which paused tokio time would race past. A request that loses a retryable
++/// conflict to such a commit, as a racing index DDL can, is retried.
++async fn assert_stops_at_the_durable_wait_limit(
++    db: &Arc<HelixDB>,
++    request: impl Fn() -> QueryRequest,
++) {
++    let service = HelixQueryService::new(Arc::clone(db));
++    let mut conflicts = 0;
++    let (started, error) = loop {
++        let started = tokio::time::Instant::now();
++        let error = service
++            .execute_query(request())
++            .await
++            .expect_err("nothing is durable while the upload is held");
++        if !error.is_transaction_conflict() || conflicts == 100 {
++            break (started, error);
++        }
++        conflicts += 1;
++    };
+     assert!(error.is_deadline_exceeded(), "{error}");
+     let waited = started.elapsed();
+     assert!(
+-        waited > PENDING && waited <= DURABLE_WAIT_LIMIT + PENDING,
++        waited >= DURABLE_WAIT_LIMIT && waited < DURABLE_WAIT_LIMIT + RETURNS,
+         "waited {waited:?} on the held upload"
+     );
+ }
+ 
+ /// The write's commit stays applied.
+-#[tokio::test(start_paused = true)]
++#[tokio::test(flavor = "multi_thread")]
+ async fn a_write_without_a_deadline_stops_at_the_durable_wait_limit() {
+     let store = Arc::new(GatedWalStore::default());
+     let db = open_leased(&store).await;
+ 
+     store.hold();
+-    assert_stops_at_the_durable_wait_limit(&db, add("held")).await;
++    assert_stops_at_the_durable_wait_limit(&db, || add("held")).await;
+     assert_eq!(node_count(&db).await, 1, "the timed-out write is applied");
+     store.release();
+     db.close().await.unwrap();
+ }
+ 
+-#[tokio::test(start_paused = true)]
++#[tokio::test(flavor = "multi_thread")]
+ async fn an_empty_write_without_a_deadline_stops_at_the_durable_wait_limit() {
+     let store = Arc::new(GatedWalStore::default());
+     let db = open_leased(&store).await;
+ 
+     store.hold();
+     execute(&db, add("applied"), QueryMode::ExecuteWithoutDurableWait).await;
+-    assert_stops_at_the_durable_wait_limit(&db, observe()).await;
++    assert_stops_at_the_durable_wait_limit(&db, observe).await;
+     store.release();
+     db.close().await.unwrap();
+ }
+ 
+-#[tokio::test(start_paused = true)]
++#[tokio::test(flavor = "multi_thread")]
+ async fn a_no_op_index_ddl_without_a_deadline_stops_at_the_durable_wait_limit() {
+     let store = Arc::new(GatedWalStore::default());
+     let db = open_leased(&store).await;
+     let service = HelixQueryService::new(Arc::clone(&db));
+ 
+     store.hold();
+     let winner = assert_pending(Box::pin(service.execute_query(create_name_index()))).await;
+-    assert_stops_at_the_durable_wait_limit(&db, create_name_index()).await;
++    assert_stops_at_the_durable_wait_limit(&db, create_name_index).await;
+     store.release();
+-    // Paused time has run past the real clock, so the winner's own bounded
+-    // wait may end the moment its commit returns; only the loser is checked.
++    // The winner waited as long as the loser, so it may have timed out too;
++    // only the loser is checked.
+     drop(winner.await);
+     db.close().await.unwrap();
+ }
 ```
 
-- **Point reads keep conflicts local.** Only writes to the batch's own
-entities conflict. A transactional range read conflicts with every write
-ahead of the cursor: a 20k-row build under ste
-
-**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +1020/-270)
+**File**: `crates/db/src/index_lifecycle/queue/backlog.rs` (modified, +3/-3)
 ```diff
-@@ -115,18 +115,23 @@ pub(crate) fn record_equality_point_read() {
+@@ -1100,9 +1100,9 @@ impl BacklogReservation {
+         self.phase = ReservationPhase::Committing;
+     }
+ 
+-    /// Records a commit that was applied, and durable unless the request chose
+-    /// not to wait. A crash before its upload loses the enqueue and this charge
+-    /// together, since recovery rebuilds the ledger from storage.
++    /// Records a commit that was applied, which may not be durable yet. A crash
++    /// before its upload loses the enqueue and this charge together, since
++    /// recovery rebuilds the ledger from storage.
+     pub(crate) fn committed(mut self) {
+         self.finish(ReservationOutcome::Committed);
+     }
+```
+
+---
+
+### Incident Patch 2: `24b4eb7f` (2026-11-10)
+**Commit Message**: Keep a secondary build's activation pause short (#1283)
+
+Activation holds the lifecycle permit, which stops planning and every
+writer of the scope. Since #1271 stopped fencing writers during
+validation, activation inherited up to 8 batches of deltas and drained
+them under the permit. Each drain rescanned the delta prefix from the
+start. It then scanned an applied-state prefix full of deleted rows. At
+the end of a 300k-row unique build, writers and planning paused for
+about 2.3 s.
+
+```diff
+ prepare activation
++  while backlog > 1 batch and still shrinking, for at most 8 preparations
++    reconcile one batch by exact keys            # no permit
++  check every applied row has a pending delta    # no permit
+   take the lifecycle permit
+-  drain up to 8 batches, each from the prefix start
++  drain the rest, each transaction resuming after the last key
+-  step: drain from the prefix start, then check applied rows
++  step: drain from the resume key
+```
+
+Stall counts are now kept per stage. Activation tracks its exact drains
+separately and clears them when it takes the permit, so a finished build
+leaves no state behind.
+
+## Stored data
+
+None changed.
+
+## Measured
+
+In-process, release, loca
+
+**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +897/-141)
+```diff
+@@ -115,13 +115,26 @@ pub(crate) fn record_equality_point_read() {
  pub(crate) struct SecondaryIndexDriver {
      scope_gates: Arc<IndexScopeGates>,
      scan_tuning: IndexLifecycleScanTuning,
--    /// Consecutive preparations of each operation's scan that found its
--    /// cursor where the previous one left it, with that cursor.
-+    /// Consecutive preparations of each operation's scan or validation that
-+    /// found its cursor where the previous one left it, with that cursor.
-     stalled_preparations: parking_lot::Mutex<HashMap<IndexOperationId, (Option<IndexCursor>, u32)>>,
+-    /// Consecutive preparations of each operation's scan or validation that
+-    /// found its cursor where the previous one left it, with that cursor.
+-    stalled_preparations: parking_lot::Mutex<HashMap<IndexOperationId, (Option<IndexCursor>, u32)>>,
++    /// Consecutive preparations of each operation that found its build where
++    /// the previous one left it, with that point.
++    stalled_preparations: parking_lot::Mutex<HashMap<IndexOperationId, (StallPoint, u32)>>,
++    /// Each activating operation's exact drains so far: the backlog the last
++    /// one observed and how many ran.
++    activation_drains: parking_lot::Mutex<HashMap<IndexOperationId, (usize, u32)>>,
++}
++
++/// Where a preparation found its build, for counting preparations that made
++/// no progress: the stage, with its cursor where it has one. A preparation in
++/// another stage starts a new count even when both cursors are empty.
++#[derive(Debug, Clone, PartialEq, Eq)]
++enum StallPoint {
++    Scan(Option<IndexCursor>),
++    Validate(Option<IndexCursor>),
  }
  
--/// Unfenced preparations without progress before a scan fences writers.
-+/// Unfenced preparations without progress before a scan or validation step
-+/// fences writers.
+ /// Unfenced preparations without progress before a scan or validation step
+-/// fences writers.
++/// fences writers, and the most exact drains activation runs before it takes
++/// its permit.
  ///
  /// A unique scan conflicts with every claiming write to an entity of its
--/// batch (see [`claim_while_building`]), so writes that keep hitting one
--/// batch, such as a hot row, could otherwise stop it forever. The fenced
--/// preparation scans one batch with writers excluded, so the build always
--/// advances, and its stall is one batch.
-+/// batch (see [`claim_while_building`]), and a validation batch with every
-+/// write to an entity it releases, so writes that keep hitting one batch,
-+/// such as a hot row, could otherwise stop either forever. Validation also
-+/// makes no progress while writes keep the backlog beyond
-+/// [`GATED_BACKLOG_BATCHES`] faster than exact drains reduce it. The fenced
-+/// preparation handles one batch with writers excluded (validation first
-+/// drains the whole backlog), so the build always advances, and its stall is
-+/// bounded by one batch plus what this many preparations let accumulate.
- const PREPARATIONS_BEFORE_FENCE: u32 = 8;
+ /// batch (see [`claim_while_building`]), and a validation batch with every
+@@ -149,23 +162,20 @@ impl SecondaryIndexDriver {
+             scope_gates,
+             scan_tuning: IndexLifecycleScanTuning::default(),
+             stalled_preparations: parking_lot::Mutex::new(HashMap::new()),
++            activation_drains: parking_lot::Mutex::new(HashMap::new()),
+         }
+     }
  
- impl core::fmt::Debug for SecondaryIndexDriver {
-@@ -187,13 +192,20 @@ pub(crate) struct PreparedSecondaryOperationStep {
+-    /// Records one preparation at `cursor` and returns whether more than
+-    /// [`PREPARATIONS_BEFORE_FENCE`] consecutive preparations found the cursor
+-    /// unmoved, so this one must fence writers.
+-    fn preparation_stalled(
+-        &self,
+-        operation: &IndexOperationRecord,
+-        cursor: &Option<IndexCursor>,
+-    ) -> bool {
++    /// Records one preparation at `point` and returns whether more than
++    /// [`PREPARATIONS_BEFORE_FENCE`] consecutive preparations found the build
++    /// there, so this one must fence writers.
++    fn preparation_stalled(&self, operation: &IndexOperationRecord, point: StallPoint) -> bool {
+         let mut stalled = self.stalled_preparations.lock();
+         let entry = stalled
+             .entry(operation.operation_id())
+-            .or_insert_with(|| (cursor.clone(), 0));
+-        if entry.0 != *cursor {
+-            *entry = (cursor.clone(), 0);
++            .or_insert_with(|| (point.clone(), 0));
++        if entry.0 != point {
++            *entry = (point, 0);
+         }
+         entry.1 = entry.1.saturating_add(1);
+         entry.1 > PREPARATIONS_BEFORE_FENCE
+@@ -177,6 +187,33 @@ impl SecondaryIndexDriver {
+         self.stalled_preparations
+             .lock()
+             .remove(&operation.operation_id());
++        self.activation_drains
++            .lock()
++            .remove(&operation.operation_id());
++    }
++
++    /// Records an activation preparation that observed `backlog` entities,
++    /// `None` past the reach it counts to, and returns whether it should drain
++    /// by exact keys again: only while the backlog keeps shrinking, for at
++    /// most [`PREPARATIONS_BEFORE_FENCE`] drains. A backlog that writes regrow
++    /// as fast as exact drains remove it would otherwise leave the permit more
++    /// than it would have drained up front. An uncounted backlog shows no
++    /// trend, so only the bound stops it.
++    fn activation_drains_again(
++        &self,
++        operation: &IndexOperationRecord,
++        backlog: Option<usize>,
++    ) -> bool {
++        let mut drains = self.activation_drains.lock();
++        let entry = drains
++            .entry(operation.operation_id())
++            .or_insert((usize::MAX, 0));
++        if entry.1 >= PREPARATIONS_BEFORE_FENCE || backlog.is_some_and(|backlog| backlog >= entry.0)
++        {
++            return false;
++        }
++        *entry = (backlog.unwrap_or(usize::MAX), entry.1 + 1);
++        true
+     }
+ 
+     /// Applies runtime source-scan prefetching without admitting blocks to cache.
+@@ -192,8 +229,9 @@ pub(crate) struct PreparedSecondaryOperationStep {
  }
  
  enum PreparedSecondaryStep {
--    /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`]: exact durable
--    /// delta keys selected without adding an SSI range read, reconciled
--    /// while writes continue.
--    ExactCatchUp { keys: Vec<IndexEntityStateKey> },
--    /// A catch-up, validation, or activation step that fences the scope's
--    /// writers: catch-up and validation hold the write fence, activation the
--    /// lifecycle permit. Bounded drains committed under that permit left the
-+    /// A catch-up or validation backlog beyond [`GATED_BACKLOG_BATCHES`]:
-+    /// exact durable delta keys selected without adding an SSI range read,
-+    /// reconciled while writes continue.
-+    Exact { keys: Vec<IndexEntityStateKey> },
-+    /// One validation batch whose applied-state keys were observed before its
-+    /// transaction opened, with the counters it continues from. It fences
-+    /// writers only once validation stalls (see [`PREPARATIONS_BEFORE_FENCE`]).
-+    Validate {
-+        counters: OperationCounters,
-+        batch: ObservedValidationBatch,
-+    },
-+    /// A catch-up or activation step that fences the scope's writers:
-+    /// catch-up holds the write fence, activation the lifecycle permit.
-+    /// Bounded drains committed under that permit left the
-     /// prefix empty, or headed by the entity one blocked on, so the step's
-     /// own drain reaches the end of the prefix or blocks on that entity;
-     /// `counters` include their work.
-@@ -223,16 +235,27 @@ impl PreparedSecondaryOperationStep {
-             ));
-         };
-         let result = match (&self.step, stage) {
--            (
--                PreparedSecondaryStep::ExactCatchUp { keys },
--                SecondaryBuildStage::CatchUp(progress),
--            ) => {
-+            (PreparedSecondaryStep::Exact { keys }, SecondaryBuildStage::CatchUp(progress)) => {
-                 catch_up_exact(
-                     transaction,
-                     scope,
-                     operation,
-                     definition,
--                    progress,
-+                    progress.counters,
-+                    ExactDrain::CatchUp,
-+                    limits,
-+                    keys,
-+                )
-+                .await
-+            }
-+            (PreparedSecondaryStep::Exact { keys }, SecondaryBuildStage::Validate(progress)) => {
-+                catch_up_exact(
-+                    transaction,
-+                    scope,
-+                    operation,
-+                    definition,
-+                    progress.counters,
-+                    ExactDrain::Validation(progress.cursor.as_ref()),
-                     limits,
-                     keys,
-                 )
-@@ -246,35 +269,40 @@ impl PreparedSecondaryOperationStep {
-                 catch_up(transaction, scope, operation, definition, &progress, limits).await
-             }
-             (
--                PreparedSecondaryStep::Gated { counters },
-+                PreparedSecondaryStep::Validate { counters, batch },
-                 SecondaryBuildStage::Validate(progress),
-             ) => {
--               
+-    /// A catch-up or validation backlog beyond [`GATED_BACKLOG_BATCHES`]:
+-    /// exact durable delta keys selected without adding an SSI range read,
++    /// A catch-up or validation backlog beyond [`GATED_BACKLOG_BATCHES`], or
++    /// an activation backlog beyond [`ACTIVATION_BACKLOG_BATCHES`]: exact
++    /// durable delta keys selected without adding an SSI range read,
+     /// reconciled while writes continue.
+     Exact { k
 ```
 
 ---
 
-### Incident Patch 2: `45146201` (2026-11-06)
-**Commit Message**: Fence writers without blocking planning in build steps that keep the Active set (#1269)
+### Incident Patch 3: `01a6777d` (2026-11-10)
+**Commit Message**: Retry a unique-build test write that loses a conflict
 
-## Problem
+The test's mid-build writes raced the build's transactions only in name:
+on a current-thread runtime the batch writer shared the test's thread.
+With commits applied on their own thread they can now lose a retryable
+conflict, as the steady-writes test already allows.
 
-Every gated build step took the scope's lifecycle permit, which holds
-the catalog gate exclusively, so **all reads in the scope blocked** for
-the whole step. That covered:
-- secondary catch-up and validation;
-- vector adoption and descriptor validation;
-- abort and cleanup in every family.
-
-During a 300k-row secondary build, reads fell from about 200k/s to 8k/s,
-with the permit held 84-89% of every second. Catalog reloads cost about
-2 ms/s, so they were not the cause.
-
-## Fix
-
-The planning catalog holds only Active indexes. Writers read Building
-and Dropping state inside their own transaction. So only a step that
-changes the Active set needs the catalog gate.
-
+**File**: `crates/db/tests/unique_index_enforcement.rs` (modified, +11/-2)
 ```diff
- step gate per stage (one exhaustive match per family)
-   secondary  catch-up (gated), validate, abort, cleanup    - Lifecycle  + WriteFence
-   vector     adopt, validate directory/descriptor,
-              abort, cleanup                               - Lifecycle  + WriteFence
-   text       abort, cleanup                               - Lifecycle  + WriteFence
-   all        activate                                     
-
-**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +143/-0)
-```diff
-@@ -6,6 +6,11 @@
- //! until commit or abort. Active lifecycle publication takes both gates
- //! exclusively, while DROP takes only catalog exclusivity and relies on the
- //! graph transaction's canonical reads for serializable conflict detection.
-+//! Build steps that must see no concurrent graph write but leave the Active
-+//! index set unchanged take only mutation exclusivity
-+//! ([`IndexScopeWriteFencePermit`]), so planning and reads continue. Each
-+//! family names the gate of every step through one exhaustive [`StepGate`]
-+//! mapping.
- //! The mutation, refresh, and publication registries store weak references
- //! so one-off tenant scopes do not accumulate forever.
- //!
-@@ -95,6 +100,40 @@ pub(crate) struct IndexScopeLifecyclePermit {
-     _mutation_guard: OwnedRwLockWriteGuard<()>,
- }
- 
-+/// Exclusive mutation authority for a build step that leaves the Active index
-+/// set unchanged.
-+///
-+/// It excludes every graph transaction in the scope, so a step that drains or
-+/// validates a generation observes no new build delta. It does not exclude
-+/// planning: the planner-visible catalog holds only Active indexes, and graph
-+/// transactions read Building and Dropping records through their own
-+/// serializable transaction, so the step neither takes the catalog gate nor
-+/// advances the catalog version.
-+///
-+/// Lock order is catalog, then mutation. A holder must never wait for a
-+/// catalog permit: a graph transaction holding a shared catalog permit can be
-+/// queued for the mutation gate this permit holds, and an exclusive catalog
-+/// waiter queued behind that transaction blocks every later shared one.
-+#[derive(Debug)]
-+pub(crate) struct IndexScopeWriteFencePermit {
-+    _mutation_guard: OwnedRwLockWriteGuard<()>,
-+}
-+
-+/// The scope coordination one index operation step holds through its commit.
-+///
-+/// Every family maps each of its steps to exactly one gate in an exhaustive
-+/// match, so a new stage cannot inherit a gate by omission.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) enum StepGate {
-+    /// The step coordinates through its own transaction alone.
-+    None,
-+    /// The step must observe no concurrent graph write but leaves the Active
-+    /// index set unchanged.
-+    WriteFence,
-+    /// The step changes the scope's Active index set.
-+    Lifecycle,
-+}
-+
- /// Exclusive process-local ownership of one generation's physical publication.
- ///
- /// Queued publication into an Active generation, build steps, activation,
-@@ -183,6 +222,28 @@ impl IndexScopeGates {
-         }
-     }
- 
-+    /// Acquires mutation exclusivity only, for a step that leaves the Active
-+    /// index set unchanged. See [`IndexScopeWriteFencePermit`] for the lock
-+    /// order its holders must keep.
-+    pub(crate) async fn write_fence_permit(&self, scope: DataScope) -> IndexScopeWriteFencePermit {
-+        IndexScopeWriteFencePermit {
-+            _mutation_guard: self.mutation_gate(scope).write_owned().await,
-+        }
-+    }
-+
-+    /// Acquires the permit `gate` names for one operation step.
-+    pub(crate) async fn step_permit(
-+        &self,
-+        scope: DataScope,
-+        gate: StepGate,
-+    ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
-+        match gate {
-+            StepGate::None => Box::new(()),
-+            StepGate::WriteFence => Box::new(self.write_fence_permit(scope).await),
-+            StepGate::Lifecycle => Box::new(self.lifecycle_permit(scope).await),
-+        }
-+    }
-+
-     /// Serializes persisted-catalog refreshes for one handle and scope.
-     ///
-     /// Storage scans happen outside the synchronous runtime-state lock. This
-@@ -278,6 +339,7 @@ impl IndexScopeGates {
- #[cfg(test)]
- mod tests {
-     use std::sync::Arc;
-+    use std::time::Duration;
- 
-     use super::*;
- 
-@@ -325,6 +387,87 @@ mod tests {
-         drop(mutation);
-     }
- 
-+    /// Each step gate excludes exactly what its holder needs: none nothing,
-+    /// the write fence only graph transactions, and the lifecycle permit
-+    /// planning too. Only the lifecycle permit advances the catalog version.
-+    #[tokio::test]
-+    async fn step_gates_exclude_only_what_their_step_needs() {
-+        let gates = Arc::new(IndexScopeGates::default());
-+        let scope = DataScope::LegacyUnscoped;
-+        let wait = Duration::from_millis(50);
-+        for (gate, fences_writers, gates_planning) in [
-+            (StepGate::None, false, false),
-+            (StepGate::WriteFence, true, false),
-+            (StepGate::Lifecycle, true, true),
-+        ] {
-+            let before = gates.catalog_permit(scope).await.version();
-+            let held = gates.step_permit(scope, gate).await;
-+            let mutation = tokio::time::timeout(wait, gates.mutation_permit(scope)).await;
-+            assert_eq!(
-+                mutation.is_err(),
-+                fences_writers,
-+                "{gate:?} and graph writes"
-+            );
-+            drop(mutation);
-+            let planning = tokio::time::timeo
-```
-
-**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +119/-29)
-```diff
-@@ -74,7 +74,7 @@ use crate::index_lifecycle::{
-     ValidatedSecondaryIndexDefinition,
- };
- 
--use super::IndexScopeGates;
-+use super::{IndexScopeGates, StepGate};
- 
- mod exact;
- pub(crate) use exact::lookup_active_unique_equality_batch_admitted;
-@@ -151,8 +151,9 @@ enum PreparedSecondaryStep {
-     /// delta keys selected without adding an SSI range read, reconciled
-     /// while writes continue.
-     ExactCatchUp { keys: Vec<IndexEntityStateKey> },
--    /// A catch-up, validation, or activation step holding the scope's
--    /// exclusive permit. Bounded drains committed under that permit left the
-+    /// A catch-up, validation, or activation step that fences the scope's
-+    /// writers: catch-up and validation hold the write fence, activation the
-+    /// lifecycle permit. Bounded drains committed under that permit left the
-     /// prefix empty, or headed by the entity one blocked on, so the step's
-     /// own drain reaches the end of the prefix or blocks on that entity;
-     /// `counters` include their work.
-@@ -727,21 +728,32 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
--        // Constructing builds take their permit in `prepare_step`.
--        let needs_exclusive = matches!(
--            operation.progress(),
-+        let gate = match operation.progress() {
-+            // Constructing builds take their permit in `prepare_step`.
-+            IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Constructing(_)) => {
-+                StepGate::None
-+            }
-+            // Abort and cleanup delete rows of a generation that is not
-+            // Active: writers stay fenced, planning continues.
-             IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Aborting(_))
--                | IndexOperationProgress::SecondaryCleanup(_)
--        );
--        if needs_exclusive {
--            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
--        }
--        Ok(Box::new(()))
-+            | IndexOperationProgress::SecondaryCleanup(_) => StepGate::WriteFence,
-+            IndexOperationProgress::VectorBuild(_)
-+            | IndexOperationProgress::TextBuild(_)
-+            | IndexOperationProgress::VectorCleanup(_)
-+            | IndexOperationProgress::TextCleanup(_) => {
-+                return Err(corruption(
-+                    "secondary driver received another family progress",
-+                ));
-+            }
-+        };
-+        Ok(self.scope_gates.step_permit(scope, gate).await)
-     }
- 
--    /// Takes the scope's exclusive permit for every step that must end with
--    /// the delta prefix empty, and drains the backlog the writes it waited
--    /// for left behind before the step's own transaction opens.
-+    /// Fences the scope's writers for every step that must end with the delta
-+    /// prefix empty, and drains the backlog the writes it waited for left
-+    /// behind before the step's own transaction opens. Only activation also
-+    /// takes the catalog gate: catch-up and validation leave the Active index
-+    /// set unchanged, so planning and reads continue through them.
-     ///
-     /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`] is instead
-     /// reconciled by exact keys while writes continue. It is observed before
-@@ -771,7 +783,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-                 },
-             )
-         };
--        let (counters, disposition) = match stage {
-+        let (counters, disposition, gate) = match stage {
-             SecondaryBuildStage::Scan(_) => {
-                 return Ok(PreparedIndexOperationStep::driver_owned(
-                     self.family(),
-@@ -781,17 +793,25 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-             SecondaryBuildStage::CatchUp(progress) => {
-                 match observe_backlog(db, scope, operation, limits).await? {
-                     Some(keys) => return Ok(exact_catch_up(keys)),
--                    None => (progress.counters, AppliedStateDisposition::Retain),
-+                    None => (
-+                        progress.counters,
-+                        AppliedStateDisposition::Retain,
-+                        StepGate::WriteFence,
-+                    ),
-                 }
-             }
--            SecondaryBuildStage::Validate(progress) => {
--                (progress.counters, AppliedStateDisposition::Release)
--            }
--            SecondaryBuildStage::Activate(progress) => {
--                (progress.counters, AppliedStateDisposition::Release)
--            }
-+            SecondaryBuildStage::Validate(progress) => (
-+                progress.counters,
-+                AppliedStateDisposition::Release,
-+                StepGate::WriteFence,
-+            ),
-+            SecondaryBuildStage::Activate(progress) => (
-+                progress.counters,
-+                AppliedStateDisposition
-```
-
-**File**: `crates/db/src/index_lifecycle/text/driver.rs` (modified, +26/-13)
-```diff
-@@ -61,8 +61,9 @@ use crate::index_lifecycle::{
-     BuildOperationOutcome, IndexCursor, IndexElementKind, IndexEntityId, IndexOperationBlocker,
-     IndexOperationExecutionState, IndexOperationFamily, IndexOperationOutcome,
-     IndexOperationProgress, IndexOperationRecord, IndexRecordV2, OperationCounters,
--    PrefixScanProgress, SourceScanProgress, TextBuildProgress, TextBuildStage, TextLogicalVersion,
--    TextManifestValidationProgress, ValidatedDynamicIndexDefinition, ValidatedTextIndexDefinition,
-+    PrefixScanProgress, SourceScanProgress, StepGate, TextBuildProgress, TextBuildStage,
-+    TextLogicalVersion, TextManifestValidationProgress, ValidatedDynamicIndexDefinition,
-+    ValidatedTextIndexDefinition,
- };
- use crate::transaction::Mutation;
- 
-@@ -637,17 +638,29 @@ impl IndexOperationDriver for TextIndexDriver {
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
--        let needs_exclusive = matches!(
--            operation.progress(),
--            IndexOperationProgress::TextBuild(
--                TextBuildProgress::Constructing(TextBuildStage::Activate(_))
--                    | TextBuildProgress::Aborting(_)
--            ) | IndexOperationProgress::TextCleanup(_)
--        );
--        if needs_exclusive {
--            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
--        }
--        Ok(Box::new(()))
-+        let gate = match operation.progress() {
-+            IndexOperationProgress::TextBuild(TextBuildProgress::Constructing(stage)) => {
-+                match stage {
-+                    TextBuildStage::ScanSource(_)
-+                    | TextBuildStage::ScanPartitions(_)
-+                    | TextBuildStage::CatchUp(_)
-+                    | TextBuildStage::Compact(_)
-+                    | TextBuildStage::PrepareManifests(_)
-+                    | TextBuildStage::ValidateManifests(_) => StepGate::None,
-+                    TextBuildStage::Activate(_) => StepGate::Lifecycle,
+@@ -486,8 +486,17 @@ async fn moving_a_value_to_a_later_node_mid_build_does_not_block() {
+         let high = add(&db, "z@x").await.unwrap();
+         let operation = create_unique_index(&db).await;
+         tokio::time::sleep(Duration::from_millis(round * 2)).await;
+-        set_email(&db, low, "y@x").await.unwrap();
+-        set_email(&db, high, "x@x").await.unwrap();
++        // A write racing one of the build's transactions may lose with a
++        // retryable conflict; the move only has to land.
++        for (id, email) in [(low, "y@x"), (high, "x@x")] {
++            loop {
++                match set_email(&db, id, email).await {
++                    Ok(()) => break,
++                    Err(error) if error.is_transaction_conflict() => {}
++                    Err(error) => panic!("round {round}: {error}"),
 +                }
 +            }
-+            // Abort and cleanup delete rows of a generation that is not Active.
-+            IndexOperationProgress::TextBuild(TextBuildProgress::Aborting(_))
-+            | IndexOperationProgress::TextCleanup(_) => StepGate::WriteFence,
-+            IndexOperationProgress::SecondaryBuild(_)
-+            | IndexOperationProgress::VectorBuild(_)
-+            | IndexOperationProgress::SecondaryCleanup(_)
-+            | IndexOperationProgress::VectorCleanup(_) => {
-+                return Err(corruption("text driver received another family progress"));
-+            }
-+        };
-+        Ok(self.scope_gates.step_permit(scope, gate).await)
-     }
- 
-     async fn prepare_step(
-```
-
-**File**: `crates/db/src/index_lifecycle/vector/driver.rs` (modified, +26/-17)
-```diff
-@@ -75,10 +75,10 @@ use crate::index_lifecycle::{
-     IndexOperationRecord, IndexRecordV2, IndexV2MetadataValue,
-     LegacyVectorDirectoryValidationProgress, LegacyVectorPhysicalReservation,
-     LegacyVectorValidationLane, LegacyVectorValidationProgress, NoCursorProgress,
--    OperationCounters, PhysicalGeneration, PrefixScanProgress, SourceScanProgress, TextPartition,
--    ValidatedDynamicIndexDefinition, ValidatedVectorIndexDefinition, VectorBuildProgress,
--    VectorBuildStage, VectorCleanupProgress, VectorPhysicalIdWatermark, VectorPhysicalIndexId,
--    VectorPhysicalLayout, VectorRoutingLayoutV2,
-+    OperationCounters, PhysicalGeneration, PrefixScanProgress, SourceScanProgress, StepGate,
-+    TextPartition, ValidatedDynamicIndexDefinition, ValidatedVectorIndexDefinition,
-+    VectorBuildProgress, VectorBuildStage, VectorCleanupProgress, VectorPhysicalIdWatermark,
-+    VectorPhysicalIndexId, VectorPhysicalLayout, VectorRoutingLayoutV2,
- };
- use crate::transaction::Mutation;
- 
-@@ -1065,20 +1065,29 @@ impl IndexOperationDriver for VectorIndexDriver {
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
--        let needs_exclusive = matches!(
--            operation.progress(),
--            IndexOperationProgress::VectorBuild(VectorBuildProgress::Constructing(
--                VectorBuildStage::AdoptLegacy(_)
-+        let gate = match operation.progress() {
-+            IndexOperationProgress::VectorBuild(VectorBuildProgress::Constructing(stage)) => {
-+                match stage {
-+                    VectorBuildStage::Scan(_) | VectorBuildStage::CatchUp(_) => StepGate::None,
-+                    // Adoption and validation keep the generation Building, so
-+                    // they fence writers without blocking planning.
-+                    VectorBuildStage::AdoptLegacy(_)
-                     | VectorBuildStage::ValidateAdoptedDirectory(_)
--                    | VectorBuildStage::ValidateDescriptor(_)
--                    | VectorBuildStage::Activate(_)
--            )) | IndexOperationProgress::VectorBuild(VectorBuildProgress::Aborting(_))
--                | IndexOperationProgress::VectorCleanup(_)
--        );
--        if needs_exclusive {
--            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
--        }
--        Ok(Box::new(()))
-+                    | VectorBuildStage::ValidateDescriptor(_) => StepGate::WriteFence,
-+                    VectorBuildStage::Activate(_) => StepGate::Lifecycle,
-+                }
-+            }
-+            // Abort and cleanup delete rows of a generation that is not Active.
-+            IndexOperationProgress::VectorBuild(VectorBuildProgress::Aborting(_))
-+            | IndexOperationProgress::VectorCleanup(_) => StepGate::WriteFence,
-+            IndexOperationProgress::SecondaryBuild(_)
-+            | IndexOperationProgress::TextBuild(_)
-+            | IndexOperationProgress::SecondaryCleanup(_)
-+            | IndexOperationProgress::TextCleanup(_) => {
-+                return Err(corruption("vector driver received another family progress"));
-+            }
-+        };
-+        Ok(self.scope_gates.step_permit(scope, gate).await)
-     }
- 
-     async fn prepare_step(
-```
-
----
-
-### Incident Patch 3: `cf8ab9d0` (2026-11-06)
-**Commit Message**: Fence writers without blocking planning in build steps that keep the Active set
-
-Every gated secondary catch-up and validation step, and every secondary,
-vector and text abort or cleanup step, took the scope's lifecycle permit,
-which holds the catalog gate exclusively. That blocked all planning and
-reads in the scope for the step's whole duration. During a 300k-row
-secondary build, reads fell from about 200k/s to 8k/s while the permit
-was held 84-89% of each second.
-
-The planning catalog holds only Active indexes, and graph transactions
-read Building and Dropping records through their own transaction, so only
-a step that changes the Active set needs the catalog gate. Those steps
-now take a write fence: mutation exclusivity only, no catalog gate and no
-catalog version advance. Each family maps every stage to None,
-WriteFence or Lifecycle in one exhaustive match; only activation takes
-Lifecycle. A fence holder never waits for a catalog permit, so a queued
-activation cannot deadlock with the writers it waits for.
-
-Fixes HEL-1003.
-
-**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +143/-0)
-```diff
-@@ -6,6 +6,11 @@
- //! until commit or abort. Active lifecycle publication takes both gates
- //! exclusively, while DROP takes only catalog exclusivity and relies on the
- //! graph transaction's canonical reads for serializable conflict detection.
-+//! Build steps that must see no concurrent graph write but leave the Active
-+//! index set unchanged take only mutation exclusivity
-+//! ([`IndexScopeWriteFencePermit`]), so planning and reads continue. Each
-+//! family names the gate of every step through one exhaustive [`StepGate`]
-+//! mapping.
- //! The mutation, refresh, and publication registries store weak references
- //! so one-off tenant scopes do not accumulate forever.
- //!
-@@ -95,6 +100,40 @@ pub(crate) struct IndexScopeLifecyclePermit {
-     _mutation_guard: OwnedRwLockWriteGuard<()>,
- }
- 
-+/// Exclusive mutation authority for a build step that leaves the Active index
-+/// set unchanged.
-+///
-+/// It excludes every graph transaction in the scope, so a step that drains or
-+/// validates a generation observes no new build delta. It does not exclude
-+/// planning: the planner-visible catalog holds only Active indexes, and graph
-+/// transactions read Building and Dropping records through their own
-+/// serializable transaction, so the step neither takes the catalog gate nor
-+/// advances the catalog version.
-+///
-+/// Lock order is catalog, then mutation. A holder must never wait for a
-+/// catalog permit: a graph transaction holding a shared catalog permit can be
-+/// queued for the mutation gate this permit holds, and an exclusive catalog
-+/// waiter queued behind that transaction blocks every later shared one.
-+#[derive(Debug)]
-+pub(crate) struct IndexScopeWriteFencePermit {
-+    _mutation_guard: OwnedRwLockWriteGuard<()>,
-+}
-+
-+/// The scope coordination one index operation step holds through its commit.
-+///
-+/// Every family maps each of its steps to exactly one gate in an exhaustive
-+/// match, so a new stage cannot inherit a gate by omission.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) enum StepGate {
-+    /// The step coordinates through its own transaction alone.
-+    None,
-+    /// The step must observe no concurrent graph write but leaves the Active
-+    /// index set unchanged.
-+    WriteFence,
-+    /// The step changes the scope's Active index set.
-+    Lifecycle,
-+}
-+
- /// Exclusive process-local ownership of one generation's physical publication.
- ///
- /// Queued publication into an Active generation, build steps, activation,
-@@ -183,6 +222,28 @@ impl IndexScopeGates {
-         }
-     }
- 
-+    /// Acquires mutation exclusivity only, for a step that leaves the Active
-+    /// index set unchanged. See [`IndexScopeWriteFencePermit`] for the lock
-+    /// order its holders must keep.
-+    pub(crate) async fn write_fence_permit(&self, scope: DataScope) -> IndexScopeWriteFencePermit {
-+        IndexScopeWriteFencePermit {
-+            _mutation_guard: self.mutation_gate(scope).write_owned().await,
 +        }
-+    }
-+
-+    /// Acquires the permit `gate` names for one operation step.
-+    pub(crate) async fn step_permit(
-+        &self,
-+        scope: DataScope,
-+        gate: StepGate,
-+    ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
-+        match gate {
-+            StepGate::None => Box::new(()),
-+            StepGate::WriteFence => Box::new(self.write_fence_permit(scope).await),
-+            StepGate::Lifecycle => Box::new(self.lifecycle_permit(scope).await),
-+        }
-+    }
-+
-     /// Serializes persisted-catalog refreshes for one handle and scope.
-     ///
-     /// Storage scans happen outside the synchronous runtime-state lock. This
-@@ -278,6 +339,7 @@ impl IndexScopeGates {
- #[cfg(test)]
- mod tests {
-     use std::sync::Arc;
-+    use std::time::Duration;
- 
-     use super::*;
- 
-@@ -325,6 +387,87 @@ mod tests {
-         drop(mutation);
-     }
- 
-+    /// Each step gate excludes exactly what its holder needs: none nothing,
-+    /// the write fence only graph transactions, and the lifecycle permit
-+    /// planning too. Only the lifecycle permit advances the catalog version.
-+    #[tokio::test]
-+    async fn step_gates_exclude_only_what_their_step_needs() {
-+        let gates = Arc::new(IndexScopeGates::default());
-+        let scope = DataScope::LegacyUnscoped;
-+        let wait = Duration::from_millis(50);
-+        for (gate, fences_writers, gates_planning) in [
-+            (StepGate::None, false, false),
-+            (StepGate::WriteFence, true, false),
-+            (StepGate::Lifecycle, true, true),
-+        ] {
-+            let before = gates.catalog_permit(scope).await.version();
-+            let held = gates.step_permit(scope, gate).await;
-+            let mutation = tokio::time::timeout(wait, gates.mutation_permit(scope)).await;
-+            assert_eq!(
-+                mutation.is_err(),
-+                fences_writers,
-+                "{gate:?} and graph writes"
-+            );
-+            drop(mutation);
-+            let planning = tokio::time::timeo
-```
-
-**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +119/-29)
-```diff
-@@ -74,7 +74,7 @@ use crate::index_lifecycle::{
-     ValidatedSecondaryIndexDefinition,
- };
- 
--use super::IndexScopeGates;
-+use super::{IndexScopeGates, StepGate};
- 
- mod exact;
- pub(crate) use exact::lookup_active_unique_equality_batch_admitted;
-@@ -151,8 +151,9 @@ enum PreparedSecondaryStep {
-     /// delta keys selected without adding an SSI range read, reconciled
-     /// while writes continue.
-     ExactCatchUp { keys: Vec<IndexEntityStateKey> },
--    /// A catch-up, validation, or activation step holding the scope's
--    /// exclusive permit. Bounded drains committed under that permit left the
-+    /// A catch-up, validation, or activation step that fences the scope's
-+    /// writers: catch-up and validation hold the write fence, activation the
-+    /// lifecycle permit. Bounded drains committed under that permit left the
-     /// prefix empty, or headed by the entity one blocked on, so the step's
-     /// own drain reaches the end of the prefix or blocks on that entity;
-     /// `counters` include their work.
-@@ -727,21 +728,32 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
--        // Constructing builds take their permit in `prepare_step`.
--        let needs_exclusive = matches!(
--            operation.progress(),
-+        let gate = match operation.progress() {
-+            // Constructing builds take their permit in `prepare_step`.
-+            IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Constructing(_)) => {
-+                StepGate::None
-+            }
-+            // Abort and cleanup delete rows of a generation that is not
-+            // Active: writers stay fenced, planning continues.
-             IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Aborting(_))
--                | IndexOperationProgress::SecondaryCleanup(_)
--        );
--        if needs_exclusive {
--            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
--        }
--        Ok(Box::new(()))
-+            | IndexOperationProgress::SecondaryCleanup(_) => StepGate::WriteFence,
-+            IndexOperationProgress::VectorBuild(_)
-+            | IndexOperationProgress::TextBuild(_)
-+            | IndexOperationProgress::VectorCleanup(_)
-+            | IndexOperationProgress::TextCleanup(_) => {
-+                return Err(corruption(
-+                    "secondary driver received another family progress",
-+                ));
-+            }
-+        };
-+        Ok(self.scope_gates.step_permit(scope, gate).await)
-     }
- 
--    /// Takes the scope's exclusive permit for every step that must end with
--    /// the delta prefix empty, and drains the backlog the writes it waited
--    /// for left behind before the step's own transaction opens.
-+    /// Fences the scope's writers for every step that must end with the delta
-+    /// prefix empty, and drains the backlog the writes it waited for left
-+    /// behind before the step's own transaction opens. Only activation also
-+    /// takes the catalog gate: catch-up and validation leave the Active index
-+    /// set unchanged, so planning and reads continue through them.
-     ///
-     /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`] is instead
-     /// reconciled by exact keys while writes continue. It is observed before
-@@ -771,7 +783,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-                 },
-             )
-         };
--        let (counters, disposition) = match stage {
-+        let (counters, disposition, gate) = match stage {
-             SecondaryBuildStage::Scan(_) => {
-                 return Ok(PreparedIndexOperationStep::driver_owned(
-                     self.family(),
-@@ -781,17 +793,25 @@ impl IndexOperationDriver for SecondaryIndexDriver {
-             SecondaryBuildStage::CatchUp(progress) => {
-                 match observe_backlog(db, scope, operation, limits).await? {
-                     Some(keys) => return Ok(exact_catch_up(keys)),
--                    None => (progress.counters, AppliedStateDisposition::Retain),
-+                    None => (
-+                        progress.counters,
-+                        AppliedStateDisposition::Retain,
-+                        StepGate::WriteFence,
-+                    ),
-                 }
-             }
--            SecondaryBuildStage::Validate(progress) => {
--                (progress.counters, AppliedStateDisposition::Release)
--            }
--            SecondaryBuildStage::Activate(progress) => {
--                (progress.counters, AppliedStateDisposition::Release)
--            }
-+            SecondaryBuildStage::Validate(progress) => (
-+                progress.counters,
-+                AppliedStateDisposition::Release,
-+                StepGate::WriteFence,
-+            ),
-+            SecondaryBuildStage::Activate(progress) => (
-+                progress.counters,
-+                AppliedStateDisposition
-```
-
-**File**: `crates/db/src/index_lifecycle/text/driver.rs` (modified, +26/-13)
-```diff
-@@ -61,8 +61,9 @@ use crate::index_lifecycle::{
-     BuildOperationOutcome, IndexCursor, IndexElementKind, IndexEntityId, IndexOperationBlocker,
-     IndexOperationExecutionState, IndexOperationFamily, IndexOperationOutcome,
-     IndexOperationProgress, IndexOperationRecord, IndexRecordV2, OperationCounters,
--    PrefixScanProgress, SourceScanProgress, TextBuildProgress, TextBuildStage, TextLogicalVersion,
--    TextManifestValidationProgress, ValidatedDynamicIndexDefinition, ValidatedTextIndexDefinition,
-+    PrefixScanProgress, SourceScanProgress, StepGate, TextBuildProgress, TextBuildStage,
-+    TextLogicalVersion, TextManifestValidationProgress, ValidatedDynamicIndexDefinition,
-+    ValidatedTextIndexDefinition,
- };
- use crate::transaction::Mutation;
- 
-@@ -637,17 +638,29 @@ impl IndexOperationDriver for TextIndexDriver {
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
--        let needs_exclusive = matches!(
--            operation.progress(),
--            IndexOperationProgress::TextBuild(
--                TextBuildProgress::Constructing(TextBuildStage::Activate(_))
--                    | TextBuildProgress::Aborting(_)
--            ) | IndexOperationProgress::TextCleanup(_)
--        );
--        if needs_exclusive {
--            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
--        }
--        Ok(Box::new(()))
-+        let gate = match operation.progress() {
-+            IndexOperationProgress::TextBuild(TextBuildProgress::Constructing(stage)) => {
-+                match stage {
-+                    TextBuildStage::ScanSource(_)
-+                    | TextBuildStage::ScanPartitions(_)
-+                    | TextBuildStage::CatchUp(_)
-+                    | TextBuildStage::Compact(_)
-+                    | TextBuildStage::PrepareManifests(_)
-+                    | TextBuildStage::ValidateManifests(_) => StepGate::None,
-+                    TextBuildStage::Activate(_) => StepGate::Lifecycle,
-+                }
-+            }
-+            // Abort and cleanup delete rows of a generation that is not Active.
-+            IndexOperationProgress::TextBuild(TextBuildProgress::Aborting(_))
-+            | IndexOperationProgress::TextCleanup(_) => StepGate::WriteFence,
-+            IndexOperationProgress::SecondaryBuild(_)
-+            | IndexOperationProgress::VectorBuild(_)
-+            | IndexOperationProgress::SecondaryCleanup(_)
-+            | IndexOperationProgress::VectorCleanup(_) => {
-+                return Err(corruption("text driver received another family progress"));
-+            }
-+        };
-+        Ok(self.scope_gates.step_permit(scope, gate).await)
-     }
- 
-     async fn prepare_step(
-```
-
-**File**: `crates/db/src/index_lifecycle/vector/driver.rs` (modified, +26/-17)
-```diff
-@@ -75,10 +75,10 @@ use crate::index_lifecycle::{
-     IndexOperationRecord, IndexRecordV2, IndexV2MetadataValue,
-     LegacyVectorDirectoryValidationProgress, LegacyVectorPhysicalReservation,
-     LegacyVectorValidationLane, LegacyVectorValidationProgress, NoCursorProgress,
--    OperationCounters, PhysicalGeneration, PrefixScanProgress, SourceScanProgress, TextPartition,
--    ValidatedDynamicIndexDefinition, ValidatedVectorIndexDefinition, VectorBuildProgress,
--    VectorBuildStage, VectorCleanupProgress, VectorPhysicalIdWatermark, VectorPhysicalIndexId,
--    VectorPhysicalLayout, VectorRoutingLayoutV2,
-+    OperationCounters, PhysicalGeneration, PrefixScanProgress, SourceScanProgress, StepGate,
-+    TextPartition, ValidatedDynamicIndexDefinition, ValidatedVectorIndexDefinition,
-+    VectorBuildProgress, VectorBuildStage, VectorCleanupProgress, VectorPhysicalIdWatermark,
-+    VectorPhysicalIndexId, VectorPhysicalLayout, VectorRoutingLayoutV2,
- };
- use crate::transaction::Mutation;
- 
-@@ -1065,20 +1065,29 @@ impl IndexOperationDriver for VectorIndexDriver {
-         scope: DataScope,
-         operation: &IndexOperationRecord,
-     ) -> Result<Box<dyn IndexOperationStepPermit>> {
--        let needs_exclusive = matches!(
--            operation.progress(),
--            IndexOperationProgress::VectorBuild(VectorBuildProgress::Constructing(
--                VectorBuildStage::AdoptLegacy(_)
-+        let gate = match operation.progress() {
-+            IndexOperationProgress::VectorBuild(VectorBuildProgress::Constructing(stage)) => {
-+                match stage {
-+                    VectorBuildStage::Scan(_) | VectorBuildStage::CatchUp(_) => StepGate::None,
-+                    // Adoption and validation keep the generation Building, so
-+                    // they fence writers without blocking planning.
-+                    VectorBuildStage::AdoptLegacy(_)
-                     | VectorBuildStage::ValidateAdoptedDirectory(_)
--                    | VectorBuildStage::ValidateDescriptor(_)
--                    | VectorBuildStage::Activate(_)
--            )) | IndexOperationProgress::VectorBuild(VectorBuildProgress::Aborting(_))
--                | IndexOperationProgress::VectorCleanup(_)
--        );
--        if needs_exclusive {
--            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
--        }
--        Ok(Box::new(()))
-+                    | VectorBuildStage::ValidateDescriptor(_) => StepGate::WriteFence,
-+                    VectorBuildStage::Activate(_) => StepGate::Lifecycle,
-+                }
-+            }
-+            // Abort and cleanup delete rows of a generation that is not Active.
-+            IndexOperationProgress::VectorBuild(VectorBuildProgress::Aborting(_))
-+            | IndexOperationProgress::VectorCleanup(_) => StepGate::WriteFence,
-+            IndexOperationProgress::SecondaryBuild(_)
-+            | IndexOperationProgress::TextBuild(_)
-+            | IndexOperationProgress::SecondaryCleanup(_)
-+            | IndexOperationProgress::TextCleanup(_) => {
-+                return Err(corruption("vector driver received another family progress"));
-+            }
-+        };
-+        Ok(self.scope_gates.step_permit(scope, gate).await)
-     }
- 
-     async fn prepare_step(
+         let state = finished(&db, &operation).await;
+         assert_unique(&emails(&db).await);
+         assert_eq!(state, "succeeded", "round {round}");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1274** (2026-11-07): Pin the SlateDB fork with full index keys for very large rows (@xav-db)
-- **PR #1273** (2026-11-07): Default SST compression to none (@xav-db)
-- **PR #1272** (2026-11-06): docs: Helix Foundry access: share sources with people, teams and agent keys (@xav-db)
-- **PR #1271** (2026-11-06): Validate secondary builds without fencing writers (@xav-db)
-- **PR #1270** (2026-11-06): Reject duplicate writes while a unique secondary index builds (@xav-db)
-- **PR #1269** (2026-11-06): Fence writers without blocking planning in build steps that keep the Active set (@xav-db)
+- **PR #1290** (2026-11-11): Release CLI v3.7.0 with Docker v0.0.16 default (@xav-db)
+- **PR #1289** (2026-11-11): Hand docs readers off to the dashboard at app.helix-db.com (@xav-db)
+- **PR #1288** (2026-11-11): Attribute OSS telemetry to projects and deployments, and count every query (@xav-db)
+- **PR #1287** (2026-11-10): Fix the durable wait limit contracts after commits moved to their own thread (@xav-db)
+- **PR #1286** (2026-11-10): Re-export the embedded cache config types from the Rust SDK (@xav-db)
+- **PR #1285** (2026-11-10): Apply each writer's commits on a thread of its own (@xav-db)
 
 ---
 
@@ -2987,65 +2420,71 @@ Fixes HEL-1003.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Validate secondary builds without fencing writers (#1271)
+## X. the durable wait limit contracts after commits moved to their own thread (#1287)
 
 **RULE**:
-When implementing operations in `crates/db/src/index_lifecycle/secondary.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/db-testkit/tests/commit_durability.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4775f29a`: Validate secondary builds without fencing writers (#1271). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b524727a`: the durable wait limit contracts after commits moved to their own thread (#1287). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/index_lifecycle/secondary.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db-testkit/tests/commit_durability.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Consecutive preparations of each operation's scan or validation that
-    /// found its cursor where the previous one left it, with that cursor.
-/// Unfenced preparations without progress before a scan or validation step
-/// fences writers.
-/// batch (see [`claim_while_building`]), and a validation batch with every
-/// write to an entity it releases, so writes that keep hitting one batch,
-/// such as a hot row, could otherwise stop either forever. Validation also
-/// makes no progress while writes keep the backlog beyond
-/// [`GATED_BACKLOG_BATCHES`] faster than exact drains reduce it. The fenced
-/// preparation handles one batch with writers excluded (validation first
-/// drains the whole backlog), so the build always advances, and its stall is
-/// bounded by one batch plus what this many preparations let accumulate.
-    /// A catch-up or validation backlog beyond [`GATED_BACKLOG_BATCHES`]:
-    /// exact durable delta keys selected without adding an SSI range read,
-    /// reconciled while writes continue.
-    Exact { keys: Vec<IndexEntityStateKey> },
-    /// One validation batch whose applied-state keys were observed before its
-    /// transaction opened, with the counters
+/// The wait runs on the real clock: commits apply on the writer's own thread,
+/// which paused tokio time would race past. A request that loses a retryable
+/// conflict to such a commit, as a racing index DDL can, is retried.
+async fn assert_stops_at_the_durable_wait_limit(
+    db: &Arc<HelixDB>,
+    request: impl Fn() -> QueryRequest,
+) {
+    let service = HelixQueryService::new(Arc::clone(db));
+    let mut conflicts = 0;
+    let (started, error) = loop {
+        let started = tokio::time::Instant::now();
+        let error = service
+            .execute_query(request())
+            .await
+            .expect_err("nothing is durable while the upload is held");
+        if !error.is_transaction_conflict() || conflicts == 100 {
+            break (started, error);
+        }
+        conflicts += 1;
+    };
+        waited >= DURABLE_WAIT_LIMIT && waited < DURABLE_WAIT_LIMIT + RETURNS,
+#[tokio::test(flavor = "multi_thread")]
+    assert_stops_at_the_durable_wait_limit(&db, || add("held")).await;
+#[tokio::test(flavor = "multi_thread")]
+    assert_stops_at_the_durable_wait_limit(&db, observe).await;
+#[tokio::test(flavor = "multi_thread")]
+    assert_stops_at_the_durable_wait_limit(&db, creat
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// Consecutive preparations of each operation's scan that found its
-    /// cursor where the previous one left it, with that cursor.
-/// Unfenced preparations without progress before a scan fences writers.
-/// batch (see [`claim_while_building`]), so writes that keep hitting one
-/// batch, such as a hot row, could otherwise stop it forever. The fenced
-/// preparation scans one batch with writers excluded, so the build always
-/// advances, and its stall is one batch.
-    /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`]: exact durable
-    /// delta keys selected without adding an SSI range read, reconciled
-    /// while writes continue.
-    ExactCatchUp { keys: Vec<IndexEntityStateKey> },
-    /// A catch-up, validation, or activation step that fences the scope's
-    /// writers: catch-up and validation hold the write fence, activation the
-    /// lifecycle permit. Bounded drains committed under that permit left the
-            (
-                PreparedSecondaryStep::ExactCatchUp { keys },
-                SecondaryBuildStage::CatchUp(progress),
-            ) => {
-                    progress,
-                PreparedSecondaryStep::Gated { counters },
-               
+/// Paused time skips the wait. The limit counts on the real clock, so the time
+/// paused tokio reports is the limit less what the test advanced before the
+/// request, which is why each test makes one such request.
+async fn assert_stops_at_the_durable_wait_limit(db: &Arc<HelixDB>, request: QueryRequest) {
+    let started = tokio::time::Instant::now();
+    let error = HelixQueryService::new(Arc::clone(db))
+        .execute_query(request)
+        .await
+        .expect_err("nothing is durable while the upload is held");
+        waited > PENDING && waited <= DURABLE_WAIT_LIMIT + PENDING,
+#[tokio::test(start_paused = true)]
+    assert_stops_at_the_durable_wait_limit(&db, add("held")).await;
+#[tokio::test(start_paused = true)]
+    assert_stops_at_the_durable_wait_limit(&db, observe()).await;
+#[tokio::test(start_paused = true)]
+    assert_stops_at_the_durable_wait_limit(&db, create_name_index()).await;
+    // Paused time has run past the real clock, so the winner's own bounded
+    // wait may end the moment its commit returns; only the loser is checked.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4775f29a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b524727a` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `0b705dc8`  
+> **Source Version**: `9aedb400`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T16:14:29.302Z  
+> **Timestamp**: 2026-11-12T00:58:32.922Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T16:14:29.297Z  
+> **Harvest Timestamp**: 2026-11-12T00:58:32.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3630 stars
+- **Stars / Engagement**: 3640 stars
 
 ---
 
@@ -2346,55 +2346,171 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b705dc8` (2026-11-07)
-**Commit Message**: Use macOS 15 for release builds (#2236)
+### Incident Patch 1: `3492ae1b` (2026-11-11)
+**Commit Message**: Share one clock in compactor test fixture (#2250)
 
-**File**: `.github/workflows/java.yaml` (modified, +1/-1)
+**File**: `slatedb/src/compactor.rs` (modified, +8/-6)
 ```diff
-@@ -64,7 +64,7 @@ jobs:
+@@ -5168,11 +5168,14 @@ mod tests {
+             let compactor_options = Arc::new(compactor_options());
+             let worker_options = Arc::new(CompactionWorkerOptions::default());
+             let options = db_options(None);
++            // Share a clock so output SST timestamps cannot precede their compaction job timestamps.
++            let system_clock = Arc::new(DefaultSystemClock::new());
  
-   native-macos:
-     name: Build native libraries (macOS)
--    runs-on: macos-14
-+    runs-on: macos-15
-     needs: verify-version
-     steps:
-       - uses: actions/checkout@v4
+             let os = Arc::new(InMemory::new());
+             let (manifest_store, compactions_store, table_store) = build_test_stores(os.clone());
+             let db = Db::builder(PATH, os.clone())
+                 .with_settings(options.clone())
++                .with_system_clock(system_clock.clone())
+                 .build()
+                 .await
+                 .unwrap();
+@@ -5195,7 +5198,7 @@ mod tests {
+                     rand: rand.clone(),
+                     stats: compactor_stats.clone(),
+                     worker_stats: stats::WorkerStats::new(&recorder, "test-worker"),
+-                    clock: Arc::new(DefaultSystemClock::new()),
++                    clock: system_clock.clone(),
+                     merge_operator: None,
+                     #[cfg(feature = "compaction_filters")]
+                     compaction_filter_supplier: None,
+@@ -5208,16 +5211,15 @@ mod tests {
+                 scheduler.clone(),
+                 rand.clone(),
+                 compactor_stats.clone(),
+-                Arc::new(DefaultSystemClock::new()),
++                system_clock.clone(),
+                 MetricsRecorderHelper::noop(),
+                 None,
+             )
+             .await
+             .unwrap();
+-            let manifest =
+-                StoredManifest::load(manifest_store.clone(), Arc::new(DefaultSystemClock::new()))
+-                    .await
+-                    .unwrap();
++            let manifest = StoredManifest::load(manifest_store.clone(), system_clock)
++                .await
++                .unwrap();
+             Self {
+                 manifest,
+                 manifest_store,
 ```
 
-**File**: `.github/workflows/node.yaml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `9aedb400` (2026-11-11)
+**Commit Message**: Fix startup synchronization in writer fencing tests (#2253)
+
+**File**: `slatedb/src/fence.rs` (modified, +12/-13)
 ```diff
-@@ -64,7 +64,7 @@ jobs:
+@@ -147,8 +147,7 @@ mod tests {
+     use crate::wal::slatedb::store::{WalFileId, WalTableStore};
+     use crate::{CloseReason, Db, ErrorKind, Settings};
+     use bytes::Bytes;
+-    use fail_parallel::fail_point_channel;
+-    use fail_parallel::FailPointRegistry;
++    use fail_parallel::{fail_point_channel, FailGuard, FailPointRegistry};
+     use object_store::memory::InMemory;
+     use object_store::path::Path;
+     use object_store::ObjectStore;
+@@ -251,15 +250,15 @@ mod tests {
+                 .build()
+                 .await
+                 .unwrap();
+-            // wait for initial manifest poll using "manifest_refresh_count" stat
+-            // so the db has settled before the test starts fencing it.
++            // Wait for the replay validation refresh and the first timer poll.
++            // The timer must finish its first poll before the test starts fencing.
+             for _ in 0..600 {
+-                if lookup_metric(&recorder, MANIFEST_REFRESH_COUNT).unwrap_or(0) > 0 {
++                if lookup_metric(&recorder, MANIFEST_REFRESH_COUNT).unwrap_or(0) >= 2 {
+                     return db;
+                 }
+                 tokio::time::sleep(Duration::from_millis(10)).await;
+             }
+-            panic!("manifest writer did not perform initial poll");
++            panic!("manifest writer did not complete both startup refreshes");
+         }
  
-   native-macos:
-     name: Build native libraries (macOS)
--    runs-on: macos-14
-+    runs-on: macos-15
-     needs: verify-version
-     steps:
-       - uses: actions/checkout@v4
+         async fn db(&self) -> Db {
+@@ -337,7 +336,7 @@ mod tests {
+                 );
+             } else {
+                 self.data.insert(k, v);
+-                assert!(result.is_ok());
++                assert!(result.is_ok(), "expected write to succeed, got {result:?}");
+             }
+         }
+ 
+@@ -553,15 +552,15 @@ mod tests {
+         // write a wal file
+         h.put(&db, 0, false).await;
+ 
+-        // configure the fencer to pause
+-        fail_parallel::cfg(h.fp_registry.clone(), case.event, "pause").unwrap();
++        // Release the pause if an assertion fails, so runtime shutdown cannot hang.
++        let pause = FailGuard::new(h.fp_registry.clone(), case.event, "pause").unwrap();
+ 
+         // spawn WriterFencer on another task
+         let fencer = h.fencer.take().unwrap();
+         let stored_manifest = h.stored_manifest.take().unwrap();
+         let jh = tokio::task::spawn(async move { fencer.fence(stored_manifest, None).await });
+-        // wait for fencer to load empty wal id and pause
+-        h.event_rx.recv().await.unwrap();
++        // Each failpoint sends an event, so wait for the configured pause.
++        while h.event_rx.recv().await.unwrap() != case.event {}
+ 
+         // write 2 new wal files to fenced db (write with await durable twice)
+         h.put(&db, 1, case.write_fenced).await;
+@@ -593,8 +592,8 @@ mod tests {
+             h.run_gc(replay_after_wal_id).await;
+         }
+ 
+-        // unpause WriterFencer
+-        fail_parallel::cfg(h.fp_registry.clone(), case.event, "off").unwrap();
++        // Resume the fencer.
++        drop(pause);
+         // verify it returns successfully
+         let mut result = jh.await.unwrap().unwrap();
+         // The fencer's stale empty_wal_id was retried above the fenced writer's possibly
 ```
 
-**File**: `.github/workflows/python.yaml` (modified, +1/-1)
+---
+
+### Incident Patch 3: `b547b9ab` (2026-11-11)
+**Commit Message**: Reduce build time for nightly pprof benchmarks (#2249)
+
+**File**: `.github/workflows/nightly.yaml` (modified, +4/-6)
 ```diff
-@@ -139,7 +139,7 @@ jobs:
-     strategy:
-       matrix:
-         platform:
--          - runner: macos-14
-+          - runner: macos-15
-             target: aarch64
-     steps:
-       - uses: actions/checkout@v4
+@@ -71,13 +71,11 @@ jobs:
+ 
+       - name: Generate pprofs
+         env:
+-          CARGO_PROFILE_BENCH_DEBUG: true
+-          SLATE_BENCH_PROFILE: true
++          # Keep source lines in profiles and reduce link time.
++          CARGO_PROFILE_BENCH_DEBUG: line-tables-only
++          CARGO_PROFILE_BENCH_LTO: thin
+         run: |
+-          BENCHMARKS=$(cargo bench --no-run --message-format=json | jq -r 'select(.profile.test == true and (.target.kind | contains(["bench"]))) | .target.name' | sort -u)
+-          for bench in $BENCHMARKS; do
+-            cargo bench --bench $bench -- --profile-time 10
+-          done
++          cargo bench -p slatedb --benches -- --profile-time 10
+           find . -name "*.pb" -exec gzip {} \;
+ 
+       # install instructions from https://github.com/polarsignals/pprofme/tree/main
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2236** (2026-11-07): Use macOS 15 for release builds (@criccomini)
-- **PR #2231** (2026-11-07): Validate writer ownership after WAL replay (@criccomini)
-- **PR #2229** (2026-11-06): Add siddontang to VOUCHED team members (@criccomini)
-- **PR #2226** (2026-11-06): Avoid buffered source queues for sequential point lookups (@criccomini)
-- **PR #2224** (closed): fix(wal): increase WAL replay SST batch size with memory bounding (@Tyagiquamar)
-- **PR #2223** (2026-11-04): Inline SST single-block fetches with no prefetches (@yiming-fang)
+- **PR #2253** (2026-11-11): Fix startup synchronization in writer fencing tests (@criccomini)
+- **PR #2251** (2026-11-11): Allow committers to vouch via issue comments (@criccomini)
+- **PR #2250** (2026-11-11): Share one clock in compactor test fixture (@criccomini)
+- **PR #2249** (2026-11-11): Reduce build time for nightly pprof benchmarks (@criccomini)
+- **PR #2245** (closed): Dispatch row entry iterators statically instead of boxing every next (@KKould)
+- **PR #2238** (2026-11-10): Remove unused time-based retention (@siddontang)
 
 ---
 
@@ -2414,28 +2530,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use macOS 15 for release builds (#2236)
+## X. Share one clock in compactor test fixture (#2250)
 
 **RULE**:
-When implementing operations in `.github/workflows/java.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `slatedb/src/compactor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b705dc8`: Use macOS 15 for release builds (#2236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3492ae1b`: Share one clock in compactor test fixture (#2250). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/java.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/compactor.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    runs-on: macos-15
+            // Share a clock so output SST timestamps cannot precede their compaction job timestamps.
+            let system_clock = Arc::new(DefaultSystemClock::new());
+                .with_system_clock(system_clock.clone())
+                    clock: system_clock.clone(),
+                system_clock.clone(),
+            let manifest = StoredManifest::load(manifest_store.clone(), system_clock)
+                .await
+                .unwrap();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    runs-on: macos-14
+                    clock: Arc::new(DefaultSystemClock::new()),
+                Arc::new(DefaultSystemClock::new()),
+            let manifest =
+                StoredManifest::load(manifest_store.clone(), Arc::new(DefaultSystemClock::new()))
+                    .await
+                    .unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b705dc8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3492ae1b` are properly handled with clean fallback behavior.

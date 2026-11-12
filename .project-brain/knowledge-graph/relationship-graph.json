@@ -1,0 +1,243 @@
+{
+  "version": "1.0.0",
+  "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
+  "created_at": "2026-11-11T16:56:20.048Z",
+  "updated_at": "2026-11-12T03:10:59.806Z",
+  "statistics": {
+    "total_nodes": 9,
+    "total_edges": 3,
+    "domain_distribution": {
+      "D": 8,
+      "M": 1
+    },
+    "relation_distribution": {
+      "CONSTRAINED_BY_ARCHITECTURE": 3
+    }
+  },
+  "nodes": {
+    "DOM-D-62E0908D": {
+      "id": "DOM-D-62E0908D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): goharbor/harbor",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  \n> **Source**: github ([https://github.com/goharbor/h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  \n> **Source**: github ([https://github.com/goharbor/h",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://goharbor-harbor/goharbor-harbor-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T16:56:05.352Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (goharbor-harbor)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-11T16:56:20.048Z",
+      "updated_at": "2026-11-11T16:56:20.048Z"
+    },
+    "DOM-D-01CFC4FC": {
+      "id": "DOM-D-01CFC4FC",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md`  \n> **Source**: huggingface (",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-unsloth-deepseek-v4.1-flash-1017-gguf/hf-unsloth-deepseek-v4.1-flash-1017-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T18:59:48.233Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-deepseek-v4.1-flash-1017-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-11T19:00:03.099Z",
+      "updated_at": "2026-11-11T19:00:03.099Z"
+    },
+    "DOM-D-D2E2CA9E": {
+      "id": "DOM-D-D2E2CA9E",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Pika-Labs/Pika-H3-Flex",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-pika-labs-pika-h3-flex/hf-pika-labs-pika-h3-flex-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T19:15:37.675Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-pika-labs-pika-h3-flex)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-11T19:15:52.268Z",
+      "updated_at": "2026-11-11T19:15:52.268Z"
+    },
+    "NODE-M-domain-bridge-m": {
+      "id": "NODE-M-domain-bridge-m",
+      "domain": "M",
+      "type": "DOMAIN_CONCEPT_BRIDGE",
+      "title": "Domain M Concept Space",
+      "summary": "",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {},
+      "tags": [],
+      "created_at": "2026-11-11T19:15:52.268Z",
+      "updated_at": "2026-11-11T19:15:52.268Z"
+    },
+    "DOM-D-1A1383CC": {
+      "id": "DOM-D-1A1383CC",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Zyphra/ZONOS3-Mini",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-zyphra-zonos3-mini/hf-zyphra-zonos3-mini-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T01:12:16.486Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-zyphra-zonos3-mini)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T01:12:31.448Z",
+      "updated_at": "2026-11-12T01:12:31.448Z"
+    },
+    "DOM-D-66B0E6DD": {
+      "id": "DOM-D-66B0E6DD",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-Audio-2B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-audio-2b/hf-liquidai-lfm3-audio-2b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T01:23:44.247Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-audio-2b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-12T01:23:57.636Z",
+      "updated_at": "2026-11-12T01:23:57.636Z"
+    },
+    "DOM-D-1866CC44": {
+      "id": "DOM-D-1866CC44",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): divagr1925/Qwen3.5-4B-Qwenputer",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md`  \n> **Source**: huggingface ([https",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-divagr1925-qwen3.5-4b-qwenputer/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T02:17:08.847Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-divagr1925-qwen3.5-4b-qwenputer)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T02:17:25.219Z",
+      "updated_at": "2026-11-12T02:17:25.219Z"
+    },
+    "DOM-D-3429AF3D": {
+      "id": "DOM-D-3429AF3D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): kumahq/kuma",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://kumahq-kuma/kumahq-kuma-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T02:56:50.981Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kumahq-kuma)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T02:57:07.405Z",
+      "updated_at": "2026-11-12T02:57:07.405Z"
+    },
+    "DOM-D-E8885F06": {
+      "id": "DOM-D-E8885F06",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): momenbasel/PureMac",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://momenbasel-puremac/momenbasel-puremac-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-12T03:10:50.996Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (momenbasel-puremac)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-12T03:10:59.806Z",
+      "updated_at": "2026-11-12T03:10:59.806Z"
+    }
+  },
+  "edges": [
+    {
+      "id": "EDGE-C80E135DDB76",
+      "sourceId": "DOM-D-D2E2CA9E",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-D2E2CA9E [D] with Domain M",
+      "created_at": "2026-11-11T19:15:52.268Z"
+    },
+    {
+      "id": "EDGE-F36F8B97A4EA",
+      "sourceId": "DOM-D-1A1383CC",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-1A1383CC [D] with Domain M",
+      "created_at": "2026-11-12T01:12:31.448Z"
+    },
+    {
+      "id": "EDGE-2461B6E17B16",
+      "sourceId": "DOM-D-66B0E6DD",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-66B0E6DD [D] with Domain M",
+      "created_at": "2026-11-12T01:23:57.636Z"
+    }
+  ]
+}

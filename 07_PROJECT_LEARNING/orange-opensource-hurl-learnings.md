@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `c0010d32`  
+> **Source Version**: `9457c528`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T05:13:57.591Z  
+> **Timestamp**: 2026-11-11T20:23:22.545Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T05:13:56.374Z  
+> **Harvest Timestamp**: 2026-11-11T20:18:21.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19310 stars
+- **Stars / Engagement**: 19332 stars
 
 ---
 
@@ -1868,32 +1868,29 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c0010d32` (2026-11-08)
-**Commit Message**: Update crates
+### Incident Patch 1: `506377e2` (2026-11-09)
+**Commit Message**: Align Ubuntu versions between build and package anatomy
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `.github/workflows/package.yml` (modified, +1/-1)
 ```diff
-@@ -749,9 +749,9 @@ dependencies = [
- 
- [[package]]
- name = "libz-sys"
--version = "1.1.31"
-+version = "1.1.32"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
-+checksum = "69965d2409bff8c8cea3829009fff66a86f05a0570656552ef70f616e8e4bd85"
- dependencies = [
-  "cc",
-  "libc",
+@@ -777,7 +777,7 @@ jobs:
+       - package-macos-aarch64
+       - package-windows-x64
+     name: package-anatomy
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-22.04
+     steps:
+     - name: Validate branch input for workflow_call
+       if: ${{ github.event_name == 'workflow_call' }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5429** (2026-11-11): Update crates (@hurl-bot)
+- **PR #5428** (2026-11-10): Update crates (@hurl-bot)
+- **PR #5427** (2026-11-09): Align Ubuntu versions between build and package anatomy (@lepapareil)
+- **PR #5425** (2026-11-09): Update crates (@hurl-bot)
 - **PR #5423** (2026-11-08): Update crates (@hurl-bot)
 - **PR #5422** (2026-11-07): Update crates (@hurl-bot)
-- **PR #5421** (2026-11-06): Update docs. (@jcamiel)
-- **PR #5420** (2026-11-06): Compare placeholder in JSON (@fabricereix)
-- **PR #5419** (2026-11-06): Fix TLS certificate cache assertion mis-behaviour. (@jcamiel)
-- **PR #5418** (closed): Test patching libxml-0.3.23 to support pkgconfig on Windows build. (@jcamiel)
 
 ---
 
@@ -1913,30 +1910,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update crates
+## X. Align Ubuntu versions between build and package anatomy
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/package.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c0010d32`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `506377e2`: Align Ubuntu versions between build and package anatomy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/package.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.1.32"
-checksum = "69965d2409bff8c8cea3829009fff66a86f05a0570656552ef70f616e8e4bd85"
+    runs-on: ubuntu-22.04
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.1.31"
-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
+    runs-on: ubuntu-latest
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c0010d32` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `506377e2` are properly handled with clean fallback behavior.

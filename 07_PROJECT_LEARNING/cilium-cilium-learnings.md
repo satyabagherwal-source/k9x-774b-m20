@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `523d26b3`  
+> **Source Version**: `f32bb49a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:20:29.862Z  
+> **Timestamp**: 2026-11-12T02:33:28.897Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:20:29.852Z  
+> **Harvest Timestamp**: 2026-11-12T02:33:28.884Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25817 stars
+- **Stars / Engagement**: 25819 stars
 
 ---
 
@@ -1259,11 +1259,17 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49954** (2026-11-10): **fix(deps): update module github.com/gopacket/gopacket to v1.7.2 [security] (v1.18)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/gopacket/gopacket](https://redirect.github.com/gopacket/gopacket) | `v1.6.1` → `v1.7.2` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgopacket%2fgopacket/v1.7.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgopacket%2fgopacket/v1.6.1/v1.7.2?slim=true) |  ---  ### gopacket: SCTP chunk sub-decoder out-of-bounds panics on crafted segments [CVE-2026-119299](https://nvd.nist.gov/vuln/detail/CVE-2026-119299) / [GHSA-358w-w75h-x6rx](https://redirect.github.com/advisories/GHSA-358w-w75h-x6rx)  <details> <summary>More information</summary>  #### Details ##### Summary  gopacket decodes SCTP (IP protocol 132) by walking the chunk chain through per-chunk-type decoder functions (`decodeSCTPInit`, `decodeSCTPShutdown`, `decodeSCTPError`, `decodeSCTPSack`, in `layers/sctp.go`). Each of these reads fixed-size header fields and runs count-driven loops **without validating the chunk's declared length against the minimums those reads require**. A single crafted SCTP segment causes a runtime panic (out-of-bounds slice read, or inverted slice from unsigned length arithmetic) on any decode path that does not install gopacket's per-packet panic recovery (`gopacket.DecodeOptions.SkipDecodeRecovery: true`); with the defau
+- **Issue #49971** (2026-11-11): **fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (v1.20)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto) | [`v0.58.0` → `v0.59.0`](https://cs.opensource.google/go/x/crypto/+/refs/tags/v0.58.0...refs/tags/v0.59.0) | ![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fcrypto/v0.59.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fcrypto/v0.58.0/v0.59.0?slim=true) |  ---  ### The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues [GO-2026-5932](https://pkg.go.dev/vuln/GO-2026-5932)  <details> <summary>More information</summary>  #### Details The golang.org/x/crypto/openpgp package is unsafe by design, has numerous known security issues, is not maintained, and should not be used.  If you are required to interoperate with OpenPGP systems and need a maintained package, consider github.com/ProtonMail/go-crypto/openpgp which is a maintained fork that aims to be a drop-in replacement for this package.  #### Severity Unknown  #### References - [https://go.dev/issue/44226](https://go.dev/issue/44226) - [https://go.dev/issue/81227](https://go.dev/issue/81227)  This data is provided by [OSV](https://osv.dev/vulnerability/GO-2026-5932) and the [Go Vulnerability Database](https://redirect.github.com/golang/vulndb) ([CC
+  **Post-Mortem & Fix Analysis**:
+  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 7 additional dependencies were updated   Details:   | **Package**              | **Change**                                                                   | | :----------------------- | :--------------------------------------------------------------------------- | | `golang.org/x/mod`       | `v0.41.0` -> `v0.42.0`                                                       | | `golang.org/x/sync`      | `v0.24.0` -> `v0.25.0`                                                       | | `golang.org/x/sys`       | `v0.49.0` -> `v0.50.0`                                                       | | `golang.org/x/text`      | `v0.43.0` -> `v0.44.0`                                                       | | `golang.org/x/tools`     | `v0.51.0` -> `v0.52.0`                                    
+  > /test
 
-- **Issue #49953** (2026-11-10): **fix(deps): update module github.com/gopacket/gopacket to v1.7.2 [security] (v1.19)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/gopacket/gopacket](https://redirect.github.com/gopacket/gopacket) | `v1.6.1` → `v1.7.2` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgopacket%2fgopacket/v1.7.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgopacket%2fgopacket/v1.6.1/v1.7.2?slim=true) |  ---  ### gopacket: SCTP chunk sub-decoder out-of-bounds panics on crafted segments [CVE-2026-119299](https://nvd.nist.gov/vuln/detail/CVE-2026-119299) / [GHSA-358w-w75h-x6rx](https://redirect.github.com/advisories/GHSA-358w-w75h-x6rx)  <details> <summary>More information</summary>  #### Details ##### Summary  gopacket decodes SCTP (IP protocol 132) by walking the chunk chain through per-chunk-type decoder functions (`decodeSCTPInit`, `decodeSCTPShutdown`, `decodeSCTPError`, `decodeSCTPSack`, in `layers/sctp.go`). Each of these reads fixed-size header fields and runs count-driven loops **without validating the chunk's declared length against the minimums those reads require**. A single crafted SCTP segment causes a runtime panic (out-of-bounds slice read, or inverted slice from unsigned length arithmetic) on any decode path that does not install gopacket's per-packet panic recovery (`gopacket.DecodeOptions.SkipDecodeRecovery: true`); with the defau
+- **Issue #49970** (2026-11-11): **fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto) | [`v0.58.0` → `v0.59.0`](https://cs.opensource.google/go/x/crypto/+/refs/tags/v0.58.0...refs/tags/v0.59.0) | ![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fcrypto/v0.59.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fcrypto/v0.58.0/v0.59.0?slim=true) |  ---  ### The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues [GO-2026-5932](https://pkg.go.dev/vuln/GO-2026-5932)  <details> <summary>More information</summary>  #### Details The golang.org/x/crypto/openpgp package is unsafe by design, has numerous known security issues, is not maintained, and should not be used.  If you are required to interoperate with OpenPGP systems and need a maintained package, consider github.com/ProtonMail/go-crypto/openpgp which is a maintained fork that aims to be a drop-in replacement for this package.  #### Severity Unknown  #### References - [https://go.dev/issue/44226](https://go.dev/issue/44226) - [https://go.dev/issue/81227](https://go.dev/issue/81227)  This data is provided by [OSV](https://osv.dev/vulnerability/GO-2026-5932) and the [Go Vulnerability Database](https://redirect.github.com/golang/vulndb) ([CC
+  **Post-Mortem & Fix Analysis**:
+  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 4 additional dependencies were updated   Details:   | **Package**         | **Change**             | | :------------------ | :--------------------- | | `golang.org/x/sync` | `v0.24.0` -> `v0.25.0` | | `golang.org/x/sys`  | `v0.49.0` -> `v0.50.0` | | `golang.org/x/term` | `v0.47.0` -> `v0.48.0` | | `golang.org/x/text` | `v0.43.0` -> `v0.44.0` |
+  > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,125 +1286,838 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6104e149` (2026-11-10)
-**Commit Message**: gha: raise Envoy and LB init timeouts in clustermesh upgrade test
+### Incident Patch 1: `4a5cd2a2` (2026-11-11)
+**Commit Message**: fix(deps): update module golang.org/x/crypto to v0.59.0 [security]
 
-The stress test keeps the clustermesh-apiserver down for the whole
-agents rollout, which now takes longer, as agents become ready only
-once the `bpf_lxc` template is precompiled. As a result, the Envoy
-policy restoration (3m) and the load-balancing initialization (4m)
-timeouts expire before `clustermesh-sync-timeout` (10m), and the
-warnings they log fail `check-log-errors`. Raise both to 10m, so that
-they cannot expire first.
+Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/tests-clustermesh-upgrade.yaml` (modified, +7/-1)
+**File**: `go.mod` (modified, +5/-5)
 ```diff
-@@ -209,6 +209,11 @@ jobs:
-           # * We explicitly configure the sync timeout to a higher value to
-           #   give enough time to the clustermesh-apiserver to restart after
-           #   the upgrade/downgrade before that agents regenerate the endpoints.
-+          # * We explicitly configure the timeouts of the operations that wait for the
-+          #   clustermesh synchronization (policy restoration of the endpoints for Envoy,
-+          #   load-balancing initialization) to match the sync timeout, so that they
-+          #   don't expire first, logging a warning, while the clustermesh-apiserver is
-+          #   still unavailable or restoring (e.g., in the stress test below).
-           # * We configure the maximum number of unavailable agents to 1 to slow
-           #   down the rollout process and highlight possible connection disruption
-           #   occurring in the meanwhile.
-@@ -230,7 +235,8 @@ jobs:
-             --set=clustermesh.maxConnectedClusters=${{ matrix.max-connected-clusters }} \
-             --set=clustermesh.config.enabled=true \
-             --set=extraConfig.clustermesh-sync-timeout=10m \
--            --set=extraConfig.lb-init-wait-timeout=4m \
-+            --set=extraConfig.lb-init-wait-timeout=10m \
-+            --set=extraConfig.envoy-policy-restore-timeout=10m \
-             --set=clustermesh.apiserver.readinessProbe.periodSeconds=1 \
-             --set=clustermesh.apiserver.kvstoremesh.readinessProbe.periodSeconds=1 \
-             --set=clustermesh.apiserver.updateStrategy.rollingUpdate.maxSurge=1 `# Use surge update strategy to enable clients to failover` \
+@@ -113,14 +113,14 @@ require (
+ 	go.uber.org/zap v1.28.0
+ 	go.yaml.in/yaml/v3 v3.0.5
+ 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb
+-	golang.org/x/crypto v0.58.0
++	golang.org/x/crypto v0.59.0
+ 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e
+ 	golang.org/x/mod v0.42.0
+ 	golang.org/x/net v0.62.0
+-	golang.org/x/sync v0.24.0
+-	golang.org/x/sys v0.49.0
+-	golang.org/x/term v0.47.0
+-	golang.org/x/text v0.43.0
++	golang.org/x/sync v0.25.0
++	golang.org/x/sys v0.50.0
++	golang.org/x/term v0.48.0
++	golang.org/x/text v0.44.0
+ 	golang.org/x/time v0.16.0
+ 	golang.org/x/tools v0.52.0
+ 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20241231184526-a9ab2273dd10
 ```
 
----
-
-### Incident Patch 2: `0d05789d` (2026-11-10)
-**Commit Message**: bgp: Fix a flake in the svc-gateway-proxy-redirect.txtar
-
-Fix a flake caused by the propagation between the k8s fake client and
-service StateDB:
-
-```
-      scripttest.go:261: FAIL: testdata/svc-gateway-proxy-redirect.txtar:28: svc/set-proxy-redirect default/cilium-gateway-my-gateway: service default/cilium-gateway-my-gateway not found
-  2026/11/10 12:01:36 INFO Delete a peer configuration component=gobgp-server name=test Topic=Peer Key=10.99.5.102
-      logger.go:264: time=2026-11-10T12:01:36.076-08:00 level=INFO source=/home/yutaro.linux/WorkSpace/cilium/worktrees/renovate-fix/vendor/github.com/osrg/gobgp/v4/pkg/server/fsm.go:2487 msg="Peer Up" module=bgp-control-plane
-  instance=tor-65001 component=gobgp-server asn=65001 Topic=Peer Key=10.99.5.101
-  <...>
-  --- FAIL: TestPrivilegedScript (0.01s)
-      --- FAIL: TestPrivilegedScript/svc-gateway-proxy-redirect.txtar (0.3
-```
-
-If we execute testdata/svc-gateway-proxy-redirect.txtar before the
-service is propagated to the StateDB, the command fails with service not
-found. Explicitly wait for the service to be propagated.
-
-Signed-off-by: Yutaro Hayakawa <[REDACTED_EMAIL]>
-
-**File**: `pkg/bgp/test/testdata/svc-gateway-proxy-redirect.txtar` (modified, +6/-0)
+**File**: `go.sum` (modified, +10/-10)
 ```diff
-@@ -20,6 +20,9 @@ k8s/add service-gateway.yaml
- # Configure BGP on Cilium
- k8s/add cilium-node.yaml bgp-node-config.yaml bgp-peer-config.yaml bgp-advertisement.yaml
+@@ -823,8 +823,8 @@ golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392/go.mod h1:jdWPYTVW3xRLrWP
+ golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9/go.mod h1:jdWPYTVW3xRLrWPugEBEK3UY2ZEsg3UU495nc5E+M+I=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.7.0/go.mod h1:pYwdfH91IfpZVANVyUOhSIPZaFoJGxTFbZhFTx+dXZU=
+-golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+-golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
++golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
+ golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+@@ -880,8 +880,8 @@ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+-golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
++golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -911,25 +911,25 @@ golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+-golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
++golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a h1:wnveMBKHwx8/nIb8WYT5P9vtefdXOvIWxzycCkc5n6Q=
+ golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
+ golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
+ golang.org/x/term v0.6.0/go.mod h1:m6U89DPEgQRMq3DNkDClhWw02AUbt2daBVO4cn4Hv9U=
+-golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
+-golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
++golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.4/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
+ golang.org/x/text v0.8.0/go.mod h1:e1OnstbJyHTd6l/uOt8jFFHp6TRDWZR/bV3emEE/zU8=
+-golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+-golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
++golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
++golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
+ golang.org/x/time v0.16.0 h1:vMb6ptszcQMkcwiRTAuNNU50gom6++Q/6gY2hDM6VDE=
+ golang.org/x/time v0.16.0/go.mod h1:rVKOqvZeKvrDKTQiAHJ7wmwP0RzleSphoEA9RcdLA0s=
+ golang.org/x/tools v0.0.0-20180525024113-a5b4c53f6e8b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+```
+
+**File**: `vendor/golang.org/x/crypto/ssh/agent/client.go` (modified, +14/-55)
+```diff
+@@ -14,7 +14,6 @@ package agent
  
-+# Wait for the service to be reflected to the service table
-+db/cmp services services.expected
+ import (
+ 	"bytes"
+-	"crypto/dsa"
+ 	"crypto/ecdsa"
+ 	"crypto/ed25519"
+ 	"crypto/elliptic"
+@@ -103,9 +102,8 @@ type ConstraintExtension struct {
+ 
+ // AddedKey describes an SSH key to be added to an Agent.
+ type AddedKey struct {
+-	// PrivateKey must be a *rsa.PrivateKey, *dsa.PrivateKey,
+-	// ed25519.PrivateKey or *ecdsa.PrivateKey, which will be inserted into the
+-	// agent.
++	// PrivateKey must be a *rsa.PrivateKey, ed25519.PrivateKey or
++	// *ecdsa.PrivateKey, which will be inserted into the agent.
+ 	PrivateKey interface{}
+ 	// Certificate, if not nil, is communicated to the agent and will be
+ 	// stored with the key.
+@@ -551,17 +549,6 @@ type rsaKeyMsg struct {
+ 	Constraints []byte `ssh:"rest"`
+ }
+ 
+-type dsaKeyMsg struct {
+-	Type        string `sshtype:"17|25"`
+-	P           *big.Int
+-	Q           *big.Int
+-	G           *big.Int
+-	Y           *big.Int
+-	X           *big.Int
+-	Comments    string
+-	Constraints []byte `ssh:"rest"`
+-}
+-
+ type ecdsaKeyMsg struct {
+ 	Type        string `sshtype:"17|25"`
+ 	Curve       string
+@@ -599,17 +586,6 @@ func (c *client) insertKey(s interface{}, comment string, constraints []byte) er
+ 			Comments:    comment,
+ 			Constraints: constraints,
+ 		})
+-	case *dsa.PrivateKey:
+-		req = ssh.Marshal(dsaKeyMsg{
+-			Type:        ssh.InsecureKeyAlgoDSA,
+-			P:           k.P,
+-			Q:           k.Q,
+-			G:           k.G,
+-			Y:           k.Y,
+-			X:           k.X,
+-			Comments:    comment,
+-			Constraints: constraints,
+-		})
+ 	case *ecdsa.PrivateKey:
+ 		nistID := fmt.Sprintf("nistp%d", k.Params().BitSize)
+ 		req = ssh.Marshal(ecdsaKeyMsg{
+@@ -675,14 +651,6 @@ type rsaCertMsg struct {
+ 	Constraints []byte `ssh:"rest"`
+ }
+ 
+-type dsaCertMsg struct {
+-	Type        string `sshtype:"17|25"`
+-	CertBytes   []byte
+-	X           *big.Int
+-	Comments    string
+-	Constraints []byte `ssh:"rest"`
+-}
+-
+ type ecdsaCertMsg struct {
+ 	Type        string `sshtype:"17|25"`
+ 	CertBytes   []byte
+@@ -745,14 +713,6 @@ func (c *client) insertCert(s interface{}, cert *ssh.Certificate, comment string
+ 			Comments:    comment,
+ 			Constraints: constraints,
+ 		})
+-	case *dsa.PrivateKey:
+-		req = ssh.Marshal(dsaCertMsg{
+-			Type:        cert.Type(),
+-			CertBytes:   cert.Marshal(),
+-			X:           k.X,
+-			Comments:    comment,
+-			Constraints: constraints,
+-		})
+ 	case *ecdsa.PrivateKey:
+ 		req = ssh.Marshal(ecdsaCertMsg{
+ 			Type:        cert.Type(),
+@@ -868,19 +828,18 @@ var _ ssh.AlgorithmSigner = &agentKeyringSigner{}
+ //
+ // This map must be kept in sync with the one in certs.go.
+ var certKeyAlgoNames = map[string]string{
+-	ssh.CertAlgoRSAv01:         ssh.KeyAlgoRSA,
+-	ssh.CertAlgoRSASHA256v01:   ssh.KeyAlgoRSASHA256,
+-	ssh.CertAlgoRSASHA512v01:   ssh.KeyAlgoRSASHA512,
+-	ssh.InsecureCertAlgoDSAv01: ssh.InsecureKeyAlgoDSA,
+-	ssh.CertAlgoECDSA256v01:    ssh.KeyAlgoECDSA256,
+-	ssh.CertAlgoECDSA384v01:    ssh.KeyAlgoECDSA384,
+-	ssh.CertAlgoECDSA521v01:    ssh.KeyAlgoECDSA521,
+-	ssh.CertAlgoSKECDSA256v01:  ssh.KeyAlgoSKECDSA256,
+-	ssh.CertAlgoED25519v01:     ssh.KeyAlgoED25519,
+-	ssh.CertAlgoSKED25519v01:   ssh.KeyAlgoSKED25519,
+-	ssh.CertAlgoMLDSA44v01Go:   ssh.KeyAlgoMLDSA44,
+-	ssh.CertAlgoMLDSA65v01Go:   ssh.KeyAlgoMLDSA65,
+-	ssh.CertAlgoMLDSA87v01Go:   ssh.KeyAlgoMLDSA87,
++	ssh.CertAlgoRSAv01:        ssh.KeyAlgoRSA,
++	ssh.CertAlgoRSASHA256v01:  ssh.KeyAlgoRSASHA256,
++	ssh.CertAlgoRSASHA512v01:  ssh.KeyAlgoRSASHA512,
++	ssh.CertAlgoECDSA256v01:   ssh.KeyAlgoECDSA256,
++	ssh.CertAlgoECDSA384v01:   ssh.KeyAlgoECDSA384,
++	ssh.CertAlgoECDSA521v01:   ssh.KeyAlgoECDSA521,
++	ssh.CertAlgoSKECDSA256v01: ssh.KeyAlgoSKECDSA256,
++	ssh.CertAlgoED25519v01:    ssh.KeyAlgoED25519,
++	ssh.CertAlgoSKED25519v01:  ssh.KeyAlgoSKED25519,
++	ssh.CertAlgoMLDSA44v01Go:  ssh.KeyAlgoMLDSA44,
++	ssh.CertAlgoMLDSA65v01Go:  ssh.KeyAlgoMLDSA65,
++	ssh.CertAlgoMLDSA87v01Go:  ssh.KeyAlgoMLDSA87,
+ }
+ 
+ // underlyingAlgo returns the signature algorithm associated with algo (which is
+```
+
+**File**: `vendor/golang.org/x/crypto/ssh/agent/server.go` (modified, +0/-112)
+```diff
+@@ -5,7 +5,6 @@
+ package agent
+ 
+ import (
+-	"crypto/dsa"
+ 	"crypto/ecdsa"
+ 	"crypto/ed25519"
+ 	"crypto/elliptic"
+@@ -304,71 +303,6 @@ func parseEd25519Key(req []byte) (*AddedKey, error) {
+ 	return addedKey, nil
+ }
+ 
+-func checkDSAParams(param *dsa.Parameters) error {
+-	// SSH specifies FIPS 186-2, which only provided a single size
+-	// (1024 bits) DSA key. FIPS 186-3 allows for larger key
+-	// sizes, which would confuse SSH.
+-	if l := param.P.BitLen(); l != 1024 {
+-		return fmt.Errorf("ssh: unsupported DSA key size %d", l)
+-	}
+-
+-	// FIPS 186-2 specifies that Q must be exactly 160 bits. We must enforce
+-	// this to prevent DoS attacks where an attacker sends a huge Q which makes
+-	// verification slow.
+-	if l := param.Q.BitLen(); l != 160 {
+-		return fmt.Errorf("ssh: unsupported DSA sub-prime size %d", l)
+-	}
+-
+-	// The generator G is an element of the group, so it must be strictly less
+-	// than the modulus P.
+-	if param.G.Cmp(param.P) >= 0 {
+-		return errors.New("ssh: DSA generator larger than modulus")
+-	}
+-
+-	// G must be positive.
+-	if param.G.Sign() <= 0 {
+-		return errors.New("ssh: DSA generator must be positive")
+-	}
+-
+-	return nil
+-}
+-
+-func parseDSAKey(req []byte) (*AddedKey, error) {
+-	var k dsaKeyMsg
+-	if err := ssh.Unmarshal(req, &k); err != nil {
+-		return nil, err
+-	}
+-	params := dsa.Parameters{
+-		P: k.P,
+-		Q: k.Q,
+-		G: k.G,
+-	}
+-	if err := checkDSAParams(&params); err != nil {
+-		return nil, err
+-	}
+-
+-	// The public value Y must be a non-zero element of the group, i.e. strictly
+-	// between 0 and P, to prevent a maliciously oversized Y from slowing
+-	// signature operations.
+-	if k.Y.Sign() <= 0 || k.Y.Cmp(k.P) >= 0 {
+-		return nil, errors.New("agent: DSA public value Y out of range")
+-	}
+-
+-	priv := &dsa.PrivateKey{
+-		PublicKey: dsa.PublicKey{
+-			Parameters: params,
+-			Y:          k.Y,
+-		},
+-		X: k.X,
+-	}
+-
+-	addedKey := &AddedKey{PrivateKey: priv, Comment: k.Comments}
+-	if err := setConstraints(addedKey, k.Constraints); err != nil {
+-		return nil, err
+-	}
+-	return addedKey, nil
+-}
+-
+ func unmarshalECDSA(curveName string, keyBytes []byte, privScalar *big.Int) (priv *ecdsa.PrivateKey, err error) {
+ 	priv = &ecdsa.PrivateKey{
+ 		D: privScalar,
+@@ -483,48 +417,6 @@ func parseRSACert(req []byte) (*AddedKey, error) {
+ 	return addedKey, nil
+ }
+ 
+-func parseDSACert(req []byte) (*AddedKey, error) {
+-	var k dsaCertMsg
+-	if err := ssh.Unmarshal(req, &k); err != nil {
+-		return nil, err
+-	}
+-	pubKey, err := ssh.ParsePublicKey(k.CertBytes)
+-	if err != nil {
+-		return nil, err
+-	}
+-	cert, ok := pubKey.(*ssh.Certificate)
+-	if !ok {
+-		return nil, errors.New("agent: bad DSA certificate")
+-	}
+-
+-	// A DSA publickey as marshaled by dsaPublicKey.Marshal() in keys.go
+-	var w struct {
+-		Name       string
+-		P, Q, G, Y *big.Int
+-	}
+-	if err := ssh.Unmarshal(cert.Key.Marshal(), &w); err != nil {
+-		return nil, fmt.Errorf("agent: Unmarshal failed to parse public key: %v", err)
+-	}
+-
+-	priv := &dsa.PrivateKey{
+-		PublicKey: dsa.PublicKey{
+-			Parameters: dsa.Parameters{
+-				P: w.P,
+-				Q: w.Q,
+-				G: w.G,
+-			},
+-			Y: w.Y,
+-		},
+-		X: k.X,
+-	}
+-
+-	addedKey := &AddedKey{PrivateKey: priv, Certificate: cert, Comment: k.Comments}
+-	if err := setConstraints(addedKey, k.Constraints); err != nil {
+-		return nil, err
+-	}
+-	return addedKey, nil
+-}
+-
+ func parseECDSACert(req []byte) (*AddedKey, error) {
+ 	var k ecdsaCertMsg
+ 	if err := ssh.Unmarshal(req, &k); err != nil {
+@@ -578,16 +470,12 @@ func (s *server) insertIdentity(req []byte) error {
+ 	switch record.Type {
+ 	case ssh.KeyAlgoRSA:
+ 		addedKey, err = parseRSAKey(req)
+-	case ssh.InsecureKeyAlgoDSA:
+-		addedKey, err = parseDSAKey(req)
+ 	case ssh.KeyAlgoECDSA256, ssh.KeyAlgoECDSA384, ssh.KeyAlgoECDSA521:
+ 		addedKey, err = parseECDSAKey(req)
+ 	case ssh.KeyAlgoED25519:
+ 		addedKey, err = parseEd25519Key(req)
+ 	case ssh.CertAlgoRSAv01:
+ 		addedKey, err = parseRSACert(req)
+-	case ssh.InsecureCertAlgoDSAv01:
+-		addedKey, err = parseDSACert(req)
+ 	case ssh.CertAlgoECDSA256v01, ssh.CertAlgoECDSA384v01, ssh.CertAlgoECDSA521v01:
+ 		addedKey, err = parseECDSACert(req)
+ 	case ssh.CertAlgoED25519v01:
+```
+
+**File**: `vendor/golang.org/x/crypto/ssh/certs.go` (modified, +29/-31)
+```diff
+@@ -22,11 +22,9 @@ import (
+ // field.
+ const (
+ 	CertAlgoRSAv01 = "ssh-rsa-cert-v01@openssh.com"
+-	// Deprecated: DSA is only supported at insecure key sizes, and was removed
+-	// from major implementations.
++	// Deprecated: DSA is no longer supported.
+ 	CertAlgoDSAv01 = InsecureCertAlgoDSAv01
+-	// Deprecated: DSA is only supported at insecure key sizes, and was removed
+-	// from major implementations.
++	// Deprecated: DSA is no longer supported.
+ 	InsecureCertAlgoDSAv01 = "ssh-dss-cert-v01@openssh.com"
+ 	CertAlgoECDSA256v01    = "ecdsa-sha2-nistp256-cert-v01@openssh.com"
+ 	CertAlgoECDSA384v01    = "ecdsa-sha2-nistp384-cert-v01@openssh.com"
+@@ -416,7 +414,8 @@ func (c *CertChecker) Authenticate(conn ConnMetadata, pubKey PublicKey) (*Permis
+ 
+ // CheckCert checks CriticalOptions, ValidPrincipals, revocation, timestamp and
+ // the signature of the certificate. Critical options that are not listed in
+-// SupportedCriticalOptions are rejected.
++// SupportedCriticalOptions are rejected, as are an empty principal and a
++// certificate with an empty ValidPrincipals.
+ func (c *CertChecker) CheckCert(principal string, cert *Certificate) error {
+ 	if c.IsRevoked != nil && c.IsRevoked(cert) {
+ 		return fmt.Errorf("ssh: certificate serial %d revoked", cert.Serial)
+@@ -428,18 +427,11 @@ func (c *CertChecker) CheckCert(principal string, cert *Certificate) error {
+ 		}
+ 	}
+ 
+-	if len(cert.ValidPrincipals) > 0 {
+-		// By default, certs are valid for all users/hosts.
+-		found := false
+-		for _, p := range cert.ValidPrincipals {
+-			if p == principal {
+-				found = true
+-				break
+-			}
+-		}
+-		if !found {
+-			return fmt.Errorf("ssh: principal %q not in the set of valid principals for given certificate: %q", principal, cert.ValidPrincipals)
+-		}
++	if principal == "" {
++		return errors.New("ssh: empty principal")
++	}
++	if !slices.Contains(cert.ValidPrincipals, principal) {
++		return fmt.Errorf("ssh: principal %q not in the set of valid principals for given certificate: %q", principal, cert.ValidPrincipals)
+ 	}
+ 
+ 	clock := c.Clock
+@@ -475,8 +467,15 @@ func (c *CertChecker) CheckCert(principal string, cert *Certificate) error {
+ // SignatureKey, and Signature fields. If the authority implements the
+ // MultiAlgorithmSigner interface the first algorithm in the list is used. This
+ // is useful if you want to sign with a specific algorithm. As specified in
+-// [SSH-CERTS], Section 2.1.1, authority can't be a [Certificate].
++// [SSH-CERTS], Section 2.1.1, authority can't be a [Certificate]. An empty
++// ValidPrincipals, or an empty entry in it, is rejected.
+ func (c *Certificate) SignCert(rand io.Reader, authority Signer) error {
++	if len(c.ValidPrincipals) == 0 {
++		return errors.New("ssh: certificate has no principals")
++	}
++	if slices.Contains(c.ValidPrincipals, "") {
++		return errors.New("ssh: empty principal in certificate")
++	}
+ 	c.Nonce = make([]byte, 32)
+ 	if _, err := io.ReadFull(rand, c.Nonce); err != nil {
+ 		return err
+@@ -524,19 +523,18 @@ func (c *Certificate) SignCert(rand io.Reader, authority Signer) error {
+ //
+ // This map must be kept in sync with the one in agent/client.go.
+ var certKeyAlgoNames = map[string]string{
+-	CertAlgoRSAv01:         KeyAlgoRSA,
+-	CertAlgoRSASHA256v01:   KeyAlgoRSASHA256,
+-	CertAlgoRSASHA512v01:   KeyAlgoRSASHA512,
+-	InsecureCertAlgoDSAv01: InsecureKeyAlgoDSA,
+-	CertAlgoECDSA256v01:    KeyAlgoECDSA256,
+-	CertAlgoECDSA384v01:    KeyAlgoECDSA384,
+-	CertAlgoECDSA521v01:    KeyAlgoECDSA521,
+-	CertAlgoSKECDSA256v01:  KeyAlgoSKECDSA256,
+-	CertAlgoED25519v01:     KeyAlgoED25519,
+-	CertAlgoSKED25519v01:   KeyAlgoSKED25519,
+-	CertAlgoMLDSA44v01Go:   KeyAlgoMLDSA44,
+-	CertAlgoMLDSA65v01Go:   KeyAlgoMLDSA65,
+-	CertAlgoMLDSA87v01Go:   KeyAlgoMLDSA87,
++	CertAlgoRSAv01:        KeyAlgoRSA,
++	CertAlgoRSASHA256v01:  KeyAlgoRSASHA256,
++	CertAlgoRSASHA512v01:  KeyAlgoRSASHA512,
++	CertAlgoECDSA256v01:   KeyAlgoECDSA256,
++	CertAlgoECDSA384v01:   KeyAlgoECDSA384,
++	CertAlgoECDSA521v01:   KeyAlgoECDSA521,
++	CertAlgoSKECDSA256v01: KeyAlgoSKECDSA256,
++	CertAlgoED25519v01:    KeyAlgoED25519,
++	CertAlgoSKED25519v01:  KeyAlgoSKED25519,
++	CertAlgoMLDSA44v01Go:  KeyAlgoMLDSA44,
++	CertAlgoMLDSA65v01Go:  KeyAlgoMLDSA65,
++	CertAlgoMLDSA87v01Go:  KeyAlgoMLDSA87,
+ }
+ 
+ // underlyingAlgo returns the signature algorithm associated with algo (which is
+```
+
+**File**: `vendor/golang.org/x/crypto/ssh/channel.go` (modified, +23/-23)
+```diff
+@@ -160,12 +160,10 @@ type channel struct {
+ 	extraData         []byte
+ 	localId, remoteId uint32
+ 
+-	// maxIncomingPayload and maxRemotePayload are the maximum
+-	// payload sizes of normal and extended data packets for
+-	// receiving and sending, respectively. The wire packet will
+-	// be 9 or 13 bytes larger (excluding encryption overhead).
+-	maxIncomingPayload uint32
+-	maxRemotePayload   uint32
++	// maxRemotePayload is the maximum payload size of normal and extended data
++	// packets that we can send to the peer. The wire packet will be 9 or 13
++	// bytes larger (excluding encryption overhead).
++	maxRemotePayload uint32
+ 
+ 	mux *mux
+ 
+@@ -328,7 +326,7 @@ func (ch *channel) handleData(packet []byte) error {
+ 	if length == 0 {
+ 		return nil
+ 	}
+-	if length > ch.maxIncomingPayload {
++	if length > channelMaxPacket {
+ 		// TODO(hanwen): should send Disconnect?
+ 		return errors.New("ssh: incoming packet exceeds maximum payload size")
+ 	}
+@@ -374,7 +372,7 @@ func (c *channel) adjustWindow(adj uint32) error {
+ 	// exceed the initial window setting, we don't worry about overflow.
+ 	c.myConsumed += adj
+ 	var sendAdj uint32
+-	if (channelWindowSize-c.myWindow > 3*c.maxIncomingPayload) ||
++	if (channelWindowSize-c.myWindow > 3*channelMaxPacket) ||
+ 		(c.myWindow < channelWindowSize/2) {
+ 		sendAdj = c.myConsumed
+ 		c.myConsumed = 0
+@@ -527,20 +525,22 @@ func (ch *channel) handlePacket(packet []byte) error {
+ 
+ func (m *mux) newChannel(chanType string, direction channelDirection, extraData []byte) *channel {
+ 	ch := &channel{
+-		remoteWin:          window{Cond: newCond()},
+-		myWindow:           channelWindowSize,
+-		maxIncomingPayload: channelMaxPacket,
+-		pending:            newBuffer(),
+-		extPending:         newBuffer(),
+-		direction:          direction,
+-		incomingRequests:   make(chan *Request, chanSize),
+-		msg:                make(chan interface{}, chanSize),
+-		chanType:           chanType,
+-		extraData:          extraData,
+-		mux:                m,
+-		packetPool:         make(map[uint32][]byte),
+-	}
+-	m.chanList.add(ch)
++		remoteWin:        window{Cond: newCond()},
++		myWindow:         channelWindowSize,
++		pending:          newBuffer(),
++		extPending:       newBuffer(),
++		direction:        direction,
++		incomingRequests: make(chan *Request, chanSize),
++		msg:              make(chan interface{}, chanSize),
++		chanType:         chanType,
++		extraData:        extraData,
++		mux:              m,
++		packetPool:       make(map[uint32][]byte),
++	}
++	if !m.chanList.add(ch) {
++		// The mux has shut down and will not close the channel.
++		ch.close()
++	}
+ 	return ch
+ }
+ 
+@@ -568,7 +568,7 @@ func (ch *channel) Accept() (Channel, <-chan *Request, error) {
+ 		PeersID:       ch.remoteId,
+ 		MyID:          ch.localId,
+ 		MyWindow:      ch.myWindow,
+-		MaxPacketSize: ch.maxIncomingPayload,
++		MaxPacketSize: channelMaxPacket,
+ 	}
+ 	ch.decided = true
+ 	ch.established.Store(true)
+```
+
+**File**: `vendor/golang.org/x/crypto/ssh/client.go` (modified, +25/-2)
+```diff
+@@ -10,8 +10,11 @@ import (
+ 	"fmt"
+ 	"net"
+ 	"os"
++	"strings"
+ 	"sync"
+ 	"time"
++	"unicode"
++	"unicode/utf8"
+ )
+ 
+ // Client implements a traditional SSH client that supports shells,
+@@ -136,7 +139,6 @@ func (c *connection) clientHandshake(dialAddress string, config *ClientConfig) e
+ 	}
+ 
+ 	c.sessionID = c.transport.getSessionID()
+-	c.algorithms = c.transport.getAlgorithms()
+ 	return c.clientAuthenticate(config)
+ }
+ 
+@@ -359,10 +361,31 @@ func FixedHostKey(key PublicKey) HostKeyCallback {
+ 
+ // BannerDisplayStderr returns a function that can be used for
+ // ClientConfig.BannerCallback to display banners on os.Stderr.
++// Non-printable characters, other than newline, carriage return and
++// tab, and invalid UTF-8 sequences are replaced with U+FFFD.
+ func BannerDisplayStderr() BannerCallback {
+ 	return func(banner string) error {
+-		_, err := os.Stderr.WriteString(banner)
++		_, err := os.Stderr.WriteString(escapeBanner(banner))
+ 
+ 		return err
+ 	}
+ }
 +
- # Wait for peering to be established
- gobgp/wait-state 10.99.5.102 ESTABLISHED
++// escapeBanner replaces each non-printable character, and each byte of
++// an invalid UTF-8 sequence, with utf8.RuneError.
++func escapeBanner(s string) string {
++	return strings.Map(func(r rune) rune {
++		if isBannerPrintable(r) {
++			return r
++		}
++		return utf8.RuneError
++	}, s)
++}
++
++func isBannerPrintable(r rune) bool {
++	switch r {
++	case '\n', '\r', '\t':
++		return true
++	}
++	return unicode.IsGraphic(r) || unicode.In(r, unicode.Cf, unicode.Co)
++}
+```
+
+**File**: `vendor/golang.org/x/crypto/ssh/common.go` (modified, +7/-10)
+```diff
+@@ -180,7 +180,6 @@ var (
+ 		CertAlgoRSASHA256v01,
+ 		CertAlgoRSASHA512v01,
+ 		CertAlgoRSAv01,
+-		InsecureCertAlgoDSAv01,
+ 		CertAlgoECDSA256v01,
+ 		CertAlgoECDSA384v01,
+ 		CertAlgoECDSA521v01,
+@@ -191,16 +190,13 @@ var (
+ 		KeyAlgoRSASHA256,
+ 		KeyAlgoRSASHA512,
+ 		KeyAlgoRSA,
+-		InsecureKeyAlgoDSA,
+ 		KeyAlgoED25519,
+ 	}
+ 	// insecureHostKeyAlgos specifies host-key algorithms implemented by this
+ 	// package and which have security issues.
+ 	insecureHostKeyAlgos = []string{
+ 		KeyAlgoRSA,
+-		InsecureKeyAlgoDSA,
+ 		CertAlgoRSAv01,
+-		InsecureCertAlgoDSAv01,
+ 	}
+ 	// supportedPubKeyAuthAlgos specifies the supported client public key
+ 	// authentication algorithms. Note that this doesn't include certificate
+@@ -229,13 +225,11 @@ var (
+ 		KeyAlgoRSASHA256,
+ 		KeyAlgoRSASHA512,
+ 		KeyAlgoRSA,
+-		InsecureKeyAlgoDSA,
+ 	}
+ 	// insecurePubKeyAuthAlgos specifies client public key authentication
+ 	// algorithms implemented by this package and which have security issues.
+ 	insecurePubKeyAuthAlgos = []string{
+ 		KeyAlgoRSA,
+-		InsecureKeyAlgoDSA,
+ 	}
+ )
  
-@@ -144,6 +147,9 @@ status:
-     ingress:
-     - ip: 172.18.255.200
- 
-+-- services.expected --
-+Name                                Source   PortNames   TrafficPolicy            Flags
-+default/cilium-gateway-my-gateway   k8s      http=80     Ext=Local, Int=Cluster
- -- gobgp-routes-gateway.expected --
- Prefix              NextHop       Attrs
- 172.18.255.200/32   10.99.5.102   [{Origin: i} {AsPath: 65001} {Nexthop: 10.99.5.102}]
+@@ -290,7 +284,7 @@ func hashFunc(format string) (crypto.Hash, error) {
+ 		// ML-DSA doesn't pre-hash. This case is not build tagged, availability
+ 		// is decided by mldsaKeyAlgos.
+ 		return 0, nil
+-	case KeyAlgoRSA, InsecureKeyAlgoDSA:
++	case KeyAlgoRSA:
+ 		if fips140.Enabled() {
+ 			return 0, fmt.Errorf("ssh: hash algorithm for format %q not allowed in FIPS 140 mode", format)
+ 		}
+@@ -356,8 +350,6 @@ func keyFormatForAlgorithm(sigAlgo string) string {
+ 		KeyAlgoECDSA256,
+ 		KeyAlgoECDSA384,
+ 		KeyAlgoECDSA521,
+-		InsecureKeyAlgoDSA,
+-		InsecureCertAlgoDSAv01,
+ 		CertAlgoECDSA256v01,
+ 		CertAlgoECDSA384v01,
+ 		CertAlgoECDSA521v01,
+@@ -406,7 +398,12 @@ func findCommon(what string, client []string, server []string, isClient bool) (s
+ 	for _, c := range client {
+ 		for _, s := range server {
+ 			if c == s {
+-				return c, nil
++				// Return the name from the local list, not the peer's, which
++				// would keep the peer's whole name list alive (see parseNameList).
++				if isClient {
++					return c, nil
++				}
++				return s, nil
+ 			}
+ 		}
+ 	}
 ```
 
 ---
 
-### Incident Patch 3: `eac01e04` (2026-11-10)
-**Commit Message**: docs: add upgrade note for IPsec internal IP fix
+### Incident Patch 2: `6209c3a6` (2026-11-04)
+**Commit Message**: endpointmanager: avoid deadlocks during endpoint deletion
+
+A deletion callback may wait for another operation that needs to look up
+an endpoint. Holding the manager's read lock during the callback can
+deadlock if a writer is also waiting for that lock.
+
+Copy the subscriber list under the lock, then release it before running
+the callbacks. This follows the existing RestoreEndpoint pattern.
+Callbacks already copied may still run after Unsubscribe returns.
+
+Signed-off-by: Aaron Campbell <[REDACTED_EMAIL]>
+
+**File**: `pkg/endpointmanager/manager.go` (modified, +5/-2)
+```diff
+@@ -517,10 +517,13 @@ func (mgr *endpointManager) removeEndpoint(ep *endpoint.Endpoint, conf endpoint.
+ 	}
+ 
+ 	mgr.mutex.RLock()
+-	for s := range mgr.subscribers {
++	// Subscribers may wait for components that look endpoints up. Do not hold
++	// the manager lock across callbacks, as in RestoreEndpoint.
++	subscribers := maps.Clone(mgr.subscribers)
++	mgr.mutex.RUnlock()
++	for s := range subscribers {
+ 		s.EndpointDeleted(ep, conf)
+ 	}
+-	mgr.mutex.RUnlock()
+ 
+ 	return result
+ }
+```
+
+**File**: `pkg/endpointmanager/subscribe.go` (modified, +3/-2)
+```diff
+@@ -17,8 +17,9 @@ type Subscriber interface {
+ 	// EndpointDeleted is called at the end of endpoint deletion.
+ 	// Implementations must not attempt write operations on the
+ 	// EndpointManager from this callback.
+-	// This function is being called inside a RLock, so it must not attempt
+-	// to acquire a lock on the EndpointManager.
++	// Like RestoreEndpoint, deletion copies the subscriber list under the
++	// EndpointManager lock, then releases it before calling subscribers.
++	// Callbacks from that copy may start or finish after Unsubscribe returns.
+ 	EndpointDeleted(ep *endpoint.Endpoint, conf endpoint.DeleteConfig)
+ 
+ 	// EndpointRestored is called at the end of endpoint restoration.
+```
+
+---
+
+### Incident Patch 3: `e3440822` (2026-11-09)
+**Commit Message**: operator/ces: fix stale CES entry for recreated same-name pod
+
+Bootstrap matched CES entries to live CEPs/Pods by name only. A pod
+recreated with the same name (e.g. StatefulSet) while the operator was
+down was treated as unchanged, leaving its stale IP in the CES. Also
+compare PodUID so such entries are marked stale and reconciled. Entries
+without a PodUID cannot be verified and are treated as stale too.
 
 Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
 
-**File**: `Documentation/operations/upgrade-current.inc` (modified, +7/-0)
+**File**: `operator/pkg/ciliumendpointslice/endpointslice.go` (modified, +15/-2)
 ```diff
-@@ -41,6 +41,13 @@ notes carefully below to understand what to do during upgrade.
-   
-   Please backup your ``TLSRoute`` resources and ensure that Gateway API is upgraded to v1.6.1 before
-   upgrading Cilium to v1.20. See :ref:`gs_gateway_api` for installation instructions.
-+* In Cilium v1.20.0 - v1.20.4, ``--use-cilium-internal-ip-for-ipsec`` was silently
-+  ignored with IPsec encryption, so nodes used the Kubernetes ``InternalIP``
-+  instead of the ``CiliumInternalIP``. The flag is honored again from
-+  v1.20.5. If you set it, make sure ESP traffic is allowed between the
-+  ``CiliumInternalIP`` addresses of your nodes, or connectivity may break
-+  when upgrading from an affected version. Consider an IPsec key rotation
-+  afterwards to clean up stale XFRM states.
+@@ -563,7 +563,10 @@ cesLoop:
+ 			stale := false
+ 			for _, cep := range ces.Endpoints {
+ 				cepKey := NewCEPName(cep.Name, ces.Namespace).key()
+-				if _, exists := livecep[cepKey]; exists {
++				// A recreated pod (e.g. StatefulSet) keeps its name but gets
++				// a new UID, so compare the UID too.
++				liveCEP, exists := livecep[cepKey]
++				if exists && cep.PodUID == k8s.ConvertCEPToCoreCEP(liveCEP).PodUID {
+ 					c.manager.initializeMappingCEPtoCES(&cep, ces.Namespace, cesName)
+ 					delete(livecep, cepKey)
+ 				} else {
+@@ -696,13 +699,23 @@ cesLoop:
+ 				// If the Pod is not found (e.g., deleted during operator
+ 				// restart), skip restoring the CEP so it doesn't inflate
+ 				// the CES capacity count in the local cache.
+-				if _, ok := livepods[cepName]; !ok {
++				pod, ok := livepods[cepName]
++				if !ok {
+ 					c.logger.Debug("Pod not found for CEP during bootstrap; skipping",
+ 						logfields.CEPName, cep.Name)
+ 					stale = true
+ 					continue
+ 				}
  
- Informational Notes
- ~~~~~~~~~~~~~~~~~~~
++				// A recreated pod (e.g. StatefulSet) keeps its name but gets
++				// a new UID, so compare the UID too.
++				if cep.PodUID != string(pod.UID) {
++					c.logger.Debug("Pod UID differs from stale CES entry during bootstrap",
++						logfields.CEPName, cep.Name)
++					stale = true
++					continue
++				}
++
+ 				identityid := strconv.FormatInt(cep.IdentityID, 10)
+ 				labels, ok := cidToLabels[CID(identityid)]
+ 				// If the CID is not found (e.g., deleted during operator restart), we skip restoring the state of this CEP on startup.
+```
+
+**File**: `operator/pkg/ciliumendpointslice/testutils/test_utils.go` (modified, +5/-0)
+```diff
+@@ -4,6 +4,7 @@ package testutils
+ 
+ import (
+ 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	k8sTypes "k8s.io/apimachinery/pkg/types"
+ 
+ 	"github.com/cilium/cilium/pkg/defaults"
+ 	v2 "github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2"
+@@ -55,6 +56,10 @@ func CreateStoreEndpoint(name string, namespace string, identity int64) *v2.Cili
+ 		ObjectMeta: meta_v1.ObjectMeta{
+ 			Name:      name,
+ 			Namespace: namespace,
++			OwnerReferences: []meta_v1.OwnerReference{{
++				Kind: "Pod",
++				UID:  k8sTypes.UID(name + "-uid"),
++			}},
+ 		},
+ 		Status: v2.EndpointStatus{
+ 			Identity: &v2.EndpointIdentity{
+```
+
+**File**: `operator/pkg/ciliumidentity/testutils/test_utils.go` (modified, +2/-0)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"maps"
+ 
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	k8sTypes "k8s.io/apimachinery/pkg/types"
+ 
+ 	cestest "github.com/cilium/cilium/operator/pkg/ciliumendpointslice/testutils"
+ 	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
+@@ -41,6 +42,7 @@ func NewPod(name, namespace string, lbs map[string]string, node string) *slim_co
+ 		ObjectMeta: slim_metav1.ObjectMeta{
+ 			Name:        name,
+ 			Namespace:   namespace,
++			UID:         k8sTypes.UID(name + "-uid"),
+ 			Labels:      lbs,
+ 			Annotations: nil,
+ 		},
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49971** (2026-11-11): fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (v1.20) (@cilium-renovate[bot])
+- **PR #49970** (2026-11-11): fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (main) (@cilium-renovate[bot])
+- **PR #49961** (2026-11-11): docs: add note on wg port reservation (@darox)
+- **PR #49955** (2026-11-11): network driver: update RX queue steering as Pods change (@aarcamp)
 - **PR #49954** (2026-11-10): fix(deps): update module github.com/gopacket/gopacket to v1.7.2 [security] (v1.18) (@cilium-renovate[bot])
 - **PR #49953** (2026-11-10): fix(deps): update module github.com/gopacket/gopacket to v1.7.2 [security] (v1.19) (@cilium-renovate[bot])
-- **PR #49952** (2026-11-10): fix(deps): update module github.com/gopacket/gopacket to v1.7.2 [security] (v1.20) (@cilium-renovate[bot])
-- **PR #49951** (2026-11-11): bgp: Reorder expected path attribute in the pod-cidr.txtar (@YutaroHayakawa)
-- **PR #49950** (2026-11-11): bpf: migrate L2 responder maps to use mapregistry (@ekoops)
-- **PR #49947** (2026-11-11): daemon/cni: keep the agent not ready until bpf_lxc is precompiled (@ekoops)
 
 ---
 
@@ -1418,34 +2137,36 @@ Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gha: raise Envoy and LB init timeouts in clustermesh upgrade test
+## X. deps): update module golang.org/x/crypto to v0.59.0 [security]
 
 **RULE**:
-When implementing operations in `.github/workflows/tests-clustermesh-upgrade.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6104e149`: gha: raise Envoy and LB init timeouts in clustermesh upgrade test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4a5cd2a2`: deps): update module golang.org/x/crypto to v0.59.0 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests-clustermesh-upgrade.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          # * We explicitly configure the timeouts of the operations that wait for the
-          #   clustermesh synchronization (policy restoration of the endpoints for Envoy,
-          #   load-balancing initialization) to match the sync timeout, so that they
-          #   don't expire first, logging a warning, while the clustermesh-apiserver is
-          #   still unavailable or restoring (e.g., in the stress test below).
-            --set=extraConfig.lb-init-wait-timeout=10m \
-            --set=extraConfig.envoy-policy-restore-timeout=10m \
+	golang.org/x/crypto v0.59.0
+	golang.org/x/sync v0.25.0
+	golang.org/x/sys v0.50.0
+	golang.org/x/term v0.48.0
+	golang.org/x/text v0.44.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-            --set=extraConfig.lb-init-wait-timeout=4m \
+	golang.org/x/crypto v0.58.0
+	golang.org/x/sync v0.24.0
+	golang.org/x/sys v0.49.0
+	golang.org/x/term v0.47.0
+	golang.org/x/text v0.43.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6104e149` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4a5cd2a2` are properly handled with clean fallback behavior.

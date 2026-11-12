@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source**: github ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
-> **Source Version**: `ee80665d`  
+> **Source Version**: `2af81b9e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:28:32.281Z  
+> **Timestamp**: 2026-11-12T01:31:11.032Z  
 > **Learning ID**: `learn-github-archivebox-archivebox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:28:31.685Z  
+> **Harvest Timestamp**: 2026-11-12T01:31:11.026Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🗃 Open source self-hosted web archiving. Takes URLs/browser history/bookmarks/Pocket/Pinboard/etc., saves HTML, JS, PDFs, media, and more...
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 28941 stars
+- **Stars / Engagement**: 29008 stars
 
 ---
 
@@ -1642,11 +1642,13 @@ def register_admin(admin_site):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1930** (2026-10-23): **Bug: Security: public snapshot detail page leaks metadata (full UUID, owner, size) of private/unlisted snapshots of the same URL**
-  *Symptoms*: ### Provide a screenshot and describe the bug  This issue affects anonymous (non-logged-in) users on the default configuration. Per SECURITY.md: "Any reports related to non-logged-in users will be prioritized as this is a surface we care a lot about hardening."  Snapshot.get_html_details_context() (core/models.py:3866-3884) builds the "other captures of this URL" list with:      type(self).objects.filter(url=self.url).exclude(id=self.id)  and applies no permission filtering. templates/core/snapshot.html:1268 renders url_snapshots unconditionally, and snapshot_capture_list.html outputs {% snapshot_detail_url capture %} links containing the full UUID, owner username, and date, plus capture.url and output_size.  As a result, any anonymous visitor to a public snapshot detail page can read metadata of private/unlisted snapshots of the same URL, including: - full snapshot UUID - owner username - capture timestamp - output size - original URL  This is not a new design requirement: memento/views.py:23-30 already applies public_snapshots_queryset for the same kind of public discovery, with an explicit comment about not leaking unlisted snapshots. The related_snapshots path appears to be missing the same permission filter.  Suggested classification: CWE-639 (Authorization Bypass Through User-Controlled Key), related CWE-200 (Exposure of Sensitive Information). OWASP A01:2021 Broken Access Control.  ### Steps to reproduce  ```markdown 1. Start ArchiveBox dev 0.9.74rc338 (commit c55089ea
+- **Issue #1959** (2026-11-11): **Add Deploy on Nife badge to README**
+  *Symptoms*: Adds a Deploy on Nife badge to the self-hosting options, next to the existing deployment providers. Disclosure: I built Nife, so this is a self-interested contribution.  <!-- This is an auto-generated description by cubic. --> --- ## Summary by cubic Adds a "Deploy on Nife" badge to the deployment provider list in `README.md`, alongside the existing options with its pricing range. The contributor notes this is a self-interested addition since they built Nife.  <sup>Written for commit c27d6703780dc3347d53ed36ffd509ad7b6e0241. Summary will update on new commits.</sup>  <a href="https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1959?utm_source=github" target="_blank" rel="noopener noreferrer" data-no-image-dialog="true"><picture><source media="(prefers-color-scheme: dark)" srcset="https://www.cubic.dev/buttons/review-in-cubic-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://www.cubic.dev/buttons/review-in-cubic-light.svg"><img alt="View guided diff" src="https://www.cubic.dev/buttons/review-in-cubic-light.svg"></picture></a>  <!-- End of auto-generated description by cubic. -->  
+  **Post-Mortem & Fix Analysis**:
+  > try again https://github.com/ArchiveBox/ArchiveBox/discussions/1941#discussioncomment-19545917
 
-- **Issue #1929** (2026-10-30): **Bug: Security: anonymous UUID prefix on /archive/<path> leaks full UUID and allows reading unlisted snapshots**
-  *Symptoms*: ### Provide a screenshot and describe the bug  Both issues below affect anonymous (non-logged-in) users on the default config. Per SECURITY.md: "Any reports related to non-logged-in users will be prioritized as this is a surface we care a lot about hardening."  Anonymous GET /archive/<path> resolves snapshot IDs by prefix matching (id__istartswith / id__iendswith in SnapshotView.find_snapshots_for_id, misc/util.py:50) and filters the result only through direct_snapshots_queryset (anonymous sees public + unlisted). It never sets matched_by_prefix, then 302-redirects to the canonical snapshot path containing the full UUID.  Snapshot primary keys are UUIDv7, so the ID prefix is a linear function of creation time and can be enumerated without any credentials. This allows reading every unlisted snapshot, and a shared-prefix hit additionally renders a "Multiple Snapshots match" page that leaks UUIDs, timestamps and URLs in bulk.  Importantly, core/views.py:160-162 already sets matched_by_prefix = True for ID prefix hits and can_view_snapshot() rejects access based on it — that protection exists but is bypassed on this anonymous route.  ### Steps to reproduce  ```markdown 1. Start ArchiveBox dev 0.9.74rc38 (commit c55089eaefcacf3439322eec897763f518588f37) with default config (SERVER_SECURITY_MODE=auto, PUBLIC_INDEX=True). Have one user (carol) snapshot https://secret.example.org/ with permissions=unlisted, and note the snapshot UUID. 2. Take the first 12 hex characters of the UUIDv7
+- **Issue #1949** (2026-11-11): **Configure rclone destinations and verified archive copies in the UI**
+  *Symptoms*: Superseded by https://github.com/ArchiveBox/ArchiveBox/pull/1957, which configures primary archive storage using native settings and processes. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1663,113 +1665,235 @@ def register_admin(admin_site):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27536512` (2026-11-02)
-**Commit Message**: Verify directory ZIP downloads retain bounded ASGI memory
+### Incident Patch 1: `79c4840c` (2026-11-11)
+**Commit Message**: Preserve CLI timeout diagnostics and clean up child processes
 
-**File**: `archivebox/tests/test_zip_download_lifecycle.py` (modified, +62/-18)
+**File**: `archivebox/tests/conftest.py` (modified, +40/-2)
 ```diff
-@@ -1,7 +1,9 @@
- """Directory ZIPs release their real file handles when HTTP clients leave."""
+@@ -300,9 +300,47 @@ def run_archivebox_cmd(
+     if wait:
+         try:
+             result.communicate(input=input, timeout=timeout)
+-        except subprocess.TimeoutExpired:
++        except subprocess.TimeoutExpired as exc:
++            # Keep the original command deadline and drain pipes during
++            # shutdown: wait() alone can deadlock on a child's final logs.
++            try:
++                parent = psutil.Process(process.pid)
++                children = parent.children(recursive=True)
++            except psutil.NoSuchProcess:
++                children = []
++            for child in children:
++                try:
++                    exc.add_note(f"Child at timeout: pid={child.pid} name={child.name()} status={child.status()}")
++                    child.terminate()
++                except psutil.NoSuchProcess:
++                    pass
+             process.terminate()
+-            process.wait(timeout=5)
++            try:
++                result.communicate(timeout=5)
++            except subprocess.TimeoutExpired:
++                for child in children:
++                    try:
++                        child.kill()
++                    except psutil.NoSuchProcess:
++                        pass
++                process.kill()
++                result.communicate(timeout=5)
++            # A detached child may not keep either output pipe open.
++            for child in children:
++                try:
++                    if child.is_running():
++                        child.kill()
++                except psutil.NoSuchProcess:
++                    pass
++            psutil.wait_procs(children, timeout=5)
++            exc.output, exc.stderr = result.stdout, result.stderr
++            log_dir = cwd / "logs"
++            log_dir.mkdir(exist_ok=True)
++            for stream, output in (("stdout", exc.output), ("stderr", exc.stderr)):
++                if output is not None:
++                    (log_dir / f"cli-timeout-{process.pid}.{stream}.log").write_bytes(
++                        output.encode() if isinstance(output, str) else output,
++                    )
+             raise
+         if check and result.returncode:
+             raise subprocess.CalledProcessError(
+```
+
+**File**: `archivebox/tests/test_cli_shell.py` (modified, +45/-0)
+```diff
+@@ -5,12 +5,57 @@
+ """
  
-+import hashlib
- import os
- import time
-+import zipfile
- from pathlib import Path
- 
- import psutil
-@@ -17,7 +19,7 @@
- 
- 
- @pytest.mark.django_db(transaction=True)
--def test_uvicorn_zip_disconnect_releases_source_file(archivebox_daemon_server):
-+def test_uvicorn_zip_has_bounded_memory_and_releases_source_file(archivebox_daemon_server, tmp_path):
-     server = archivebox_daemon_server(SEARCH_BACKEND_ENGINE="sqlite", BASE_URL="http://archivebox.localhost")
-     state = server.wait_for_workers(("worker_uvicorn",))
-     uvicorn = psutil.Process(state["worker_uvicorn"]["pid"])
-@@ -33,28 +35,70 @@ def test_uvicorn_zip_disconnect_releases_source_file(archivebox_daemon_server):
-         snapshot_id = str(snapshot.id)
-         payload = snapshot.output_dir / "staticfile" / "payload.bin"
-     payload.parent.mkdir(parents=True)
--    # Exceed socket buffers so the server is still compressing when we close.
-+    # Incompressible bytes exceed both socket buffers and the memory allowance;
-+    # compressible input would hide whole-ZIP buffering under ASGI.
-+    digest = hashlib.sha256()
-     with payload.open("wb") as output:
--        for _ in range(32):
--            output.write(os.urandom(1024 * 1024))
-+        for _ in range(64):
-+            chunk = os.urandom(1024 * 1024)
-+            output.write(chunk)
-+            digest.update(chunk)
-     host = get_snapshot_host(snapshot_id, overrides={"BASE_URL": "http://archivebox.localhost"})
-     url = f"http://127.0.0.1:{server.port}/staticfile/?download=zip"
--    for _ in range(3):
--        with requests.get(url, headers={"Host": host}, stream=True, timeout=15) as response:
-+    with requests.Session() as client:
-+        client.trust_env = False
-+        warm = client.get(
-+            f"{url.removesuffix('?download=zip')}payload.bin?raw=1",
-+            headers={"Host": host, "Range": "bytes=0-65535"},
-+            timeout=15,
-+        )
-+        assert warm.status_code == 206
-+        with payload.open("rb") as source:
-+            assert warm.content == source.read(65536)
-+        baseline = uvicorn.memory_info().rss
-+        peak_growth = 0
-+        for _ in range(3):
-+            with client.get(url, headers={"Host": host}, stream=True, timeout=15) as response:
-+                assert response.status_code == 200
-+                assert response.headers["Content-Type"] == "application/zip"
-+                # Keep the generator alive: discarding it closes urllib3's socket
-+                # immediately, before we can observe the server's open source file.
-+                chunks = response.iter_content(64 * 1024)
-+                assert next(chunks).startswith(b"PK")
-+                assert not response.raw.closed, "ZIP connection closed before the deliberate disconnect"
-+                # A stalled real TCP reader must not make Django consume the
-+                # entire synchronous ZIP iterator. Use the raw-download test's
-+                # 16 MiB fixed-overhead allowance for this 64 MiB payload.
-+                deadline = time.monotonic() + 3
-+                while time.monotonic() < deadline:
-+                    peak_growth = max(peak_growth, uvicorn.memory_info().rss - baseline)
-+                    assert peak_growth < 16 * 1024 * 1024
-+                    time.sleep(0.05)
-+                assert str(payload) in {entry.path for entry in uvicorn.open_files()}
-+                health = client.get(f"http://127.0.0.1:{server.port}/health/", timeout=5)
-+                assert health.status_code == 200
-+                assert health.content == b"OK"
-+            chunks.close()
-+            deadline = time.monotonic() + 5
-+            while str(payload) in {entry.path for entry in uvicorn.open_files()}:
-+                assert time.monotonic() < deadline, "Disconnected ZIP download kept its source file open"
-+                time.sleep(0.05)
+ import re
++import json
++import subprocess
 +
-+        saved_zip = tmp_path / "download.zip"
-+        with client.get(url, headers={"Host": host}, stream=True, timeout=15) as response, saved_zip.open("wb") as output:
-             assert response.status_code == 200
-             assert response.headers["Content-Type"] == "application/zip"
--            # Keep the generator alive: discarding it closes urllib3's socket
--            # immediately, before we can observe the server's open source file.
--            chunks = response.iter_content(64 * 1024)
--            assert next(chunks).startswith(b"PK")
--            assert not response.raw.closed, "ZIP connection closed before the deliberate disconnect"
--            assert str(payload) in {entry.path for entry in uvicorn.open_files()}
--        chunks.close()
--        deadline = time.monotonic() + 5
--        while str(payload) in {entry.path for entry in uvicorn.open_files()}:
--            assert time.monotonic() < deadline, "Disconnected ZIP download kept its source file open"
--            time.sleep(0.05)
--    assert requests.get(f"
++import psutil
+ 
+ import pytest
+ 
+ from archivebox.tests.conftest import cli_env, run_archivebox_cmd
+ 
+ 
++@pytest.mark.parametrize("shutdown", ["flush", "ignore"])
++def test_cli_timeout_preserves_failure_output_and_reaps_children(initialized_archive, shutdown):
++    pid_file = initialized_archive / "timeout-pids.json"
++    script = f"""
++import json, os, signal, subprocess, sys, time
++from pathlib import Path
++def shutdown(signum, frame):
++    sys.stderr.write('cleanup-output:' + 'x' * 262144 + ':cleanup-finished\\n')
++    sys.stderr.flush()
++    raise SystemExit(0)
++signal.signal(signal.SIGTERM, {"shutdown" if shutdown == "flush" else "signal.SIG_IGN"})
++child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(120)'])
++Path({str(pid_file)!r}).write_text(json.dumps([os.getpid(), child.pid]))
++print('command-started', flush=True)
++time.sleep(120)
++"""
++    try:
++        with pytest.raises(subprocess.TimeoutExpired) as caught:
++            run_archivebox_cmd(["shell", "-c", script], cwd=initialized_archive, timeout=4)
++        assert pid_file.exists(), "the real CLI must start before testing its timeout"
++        assert caught.value.timeout == 4
++        assert caught.value.cmd[:2] == ["archivebox", "shell"]
++        stdout = caught.value.output
++        stderr = caught.value.stderr
++        assert "command-started" in (stdout.decode() if isinstance(stdout, bytes) else stdout)
++        if shutdown == "flush":
++            assert ":cleanup-finished" in (stderr.decode() if isinstance(stderr, bytes) else stderr)
++        pids = json.loads(pid_file.read_text())
++        assert all(not psutil.pid_exists(pid) or psutil.Process(pid).status() == psutil.STATUS_ZOMBIE for pid in pids)
++        for stream, output in (("stdout", stdout), ("stderr", stderr)):
++            saved = initialized_archive / "logs" / f"cli-timeout-{pids[0]}.{stream}.log"
++            assert saved.read_bytes() == (output.encode() if isinstance(output, str) else output)
++    finally:
++        if pid_file.exists():
++            for pid in json.loads(pid_file.read_text()):
++                try:
++                    psutil.Process(pid).kill()
++                except psutil.NoSuchProcess:
++                    pass
++
++
+ def test_shell_command_exists(initialized_archive):
+     """Test that shell command is recognized."""
+ 
+```
+
+---
+
+### Incident Patch 2: `aa7902c4` (2026-11-11)
+**Commit Message**: Keep learning capture memory costs while snapshots overlap
+
+**File**: `archivebox/services/runner.py` (modified, +11/-12)
+```diff
+@@ -581,11 +581,7 @@ async def enqueue_snapshot(self, snapshot_id: str, crawl_start_event: CrawlStart
+             if self._observed_snapshot_cost is None:
+                 self._warmup_snapshot_id = snapshot_id
+         else:
+-            # Whole-workload growth cannot identify one capture's cost once
+-            # captures overlap. Retain the largest isolated measurement and
+-            # resume learning only when a new capture starts from idle.
+             self._observe_snapshot_memory()
+-            self._memory_baseline = None
+         if isinstance(current_event, CrawlStartEvent):
+             task = asyncio.create_task(self.run_snapshot(snapshot_id, current_event), context=_runner_task_context())
+         else:
+@@ -679,22 +675,25 @@ def _observe_snapshot_memory(self) -> int | None:
+             return None
+         used = resource_admission.process_tree_memory()
+         if used is not None:
+-            # Only attribute this workload's growth to a capture. Other jobs on
+-            # the host reduce available headroom, but are not a per-capture cost
+-            # to multiply again for every snapshot we want to admit.
++            # Keep sampling overlapping captures: their average is a lower
++            # bound on the largest capture's cost, not a reason to stop learning.
++            # Count tracked tasks until their completion is consumed so finishing
++            # a task does not attribute its resident bytes to its siblings.
++            growth = max(0, used - self._memory_baseline)
+             self._memory_peak_cost = max(
+                 self._memory_peak_cost,
+-                used - self._memory_baseline,
++                growth // max(1, len(self.snapshot_tasks)),
+             )
+             if self._observed_snapshot_cost is not None:
+                 self._observed_snapshot_cost = max(self._observed_snapshot_cost, self._memory_peak_cost)
+-            return max(0, used - self._memory_baseline)
++            return growth
+         return None
+ 
+     def _finish_warmup_snapshot(self, snapshot_id: str) -> None:
+-        self._observe_snapshot_memory()
+-        # Only isolated captures teach a per-snapshot cost. Reuse it across
+-        # crawls, with slow decay so one expensive capture is not a lifetime cap.
++        if self.snapshot_tasks:
++            return
++        # Persist the batch's largest per-capture measurement when it drains.
++        # Slow decay keeps one expensive batch from becoming a lifetime cap.
+         if self._memory_baseline is not None and self._memory_baseline > 0:
+             # A short child between 2s samples or shared Chrome heap shrinkage can hide growth; reserve the measured whole-tree baseline.
+             observed_cost = self._memory_peak_cost or self._memory_baseline
+```
+
+**File**: `archivebox/tests/test_crawl_memory_admission.py` (modified, +19/-3)
+```diff
+@@ -13,8 +13,21 @@
+ from archivebox.services.runner import CrawlRunner
+ 
+ 
++@pytest.fixture
++def fresh_memory_history():
++    from archivebox.services.resource_admission import resource_admission
++
++    previous = resource_admission.observed_snapshot_cost
++    resource_admission.observed_snapshot_cost = None
++    try:
++        yield
++    finally:
++        resource_admission.observed_snapshot_cost = previous
++
++
+ @pytest.mark.django_db(transaction=True)
+-def test_parallel_capture_growth_is_not_reused_as_one_snapshot_cost(tmp_path):
++@pytest.mark.parametrize("heavy_overlap", [False, True])
++def test_parallel_capture_growth_is_not_reused_as_one_snapshot_cost(tmp_path, heavy_overlap, fresh_memory_history):
+     crawl = Crawl.objects.create(
+         urls="\n".join(f"https://example.com/admission/{index}" for index in range(3)),
+         config={"PLUGINS": "parse_txt_urls", "CRAWL_MAX_CONCURRENT_SNAPSHOTS": 2},
+@@ -39,7 +52,7 @@ async def observe(event: SnapshotEvent) -> None:
+         previous_cost = runner._observed_snapshot_cost
+         # Real allocations expose the accounting error independently of how
+         # much RAM the installed parser happens to need on this platform.
+-        allocation_size = size * (3 if index == 3 else 1)
++        allocation_size = size * (5 if index == 3 else 3 if heavy_overlap and index == 2 else 1)
+         child = subprocess.Popen(
+             [
+                 "uv",
+@@ -124,7 +137,10 @@ def release(event: SnapshotCompletedEvent) -> None:
+     assert measurements[2]["active_allocations"] == 2, measurements
+     isolated_cost = measurements[1]["cost"]
+     assert isolated_cost > size // 2, measurements
+-    assert measurements[2]["cost"] == measurements[2]["previous_cost"], measurements
++    if heavy_overlap:
++        assert measurements[2]["cost"] > measurements[1]["previous_cost"] + size // 2, measurements
++    else:
++        assert measurements[2]["cost"] == measurements[2]["previous_cost"], measurements
+     assert measurements[3]["previous_cost"] == learned_before_heavy, measurements
+     # The final crawl contains just one heavier capture; it must still teach
+     # admission a larger cost rather than freezing the initial warmup forever.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1926** (2026-10-18): docs: mark sonic as the SEARCH_BACKEND_ENGINE default (@pcbeingused333)
-- **PR #1925** (2026-10-18): Add RepoCloud one-click deploy option (@cosark)
-- **PR #1924** (2026-10-16): Report importer CLI failures and honor selected sources (@pirate)
-- **PR #1923** (2026-10-16): Report capture attempt failures without starving remaining work (@pirate)
-- **PR #1922** (closed): fix(admin): keep bulk crawl resume scheduling set-based (@anirudhqwerty)
-- **PR #1921** (2026-10-15): Add Pethost as a paid hosting option (@sadfun)
+- **PR #1959** (closed): Add Deploy on Nife badge to README (@nida)
+- **PR #1949** (closed): Configure rclone destinations and verified archive copies in the UI (@pirate)
+- **PR #1948** (closed): Detect duplicate captures and check broken links (@pirate)
+- **PR #1947** (closed): Add bounded whole-domain cloning in the admin (@pirate)
+- **PR #1946** (closed): Enrich saved captures with OpenCode summaries and tags (@pirate)
+- **PR #1945** (closed): Add previewable rules for automatic snapshot management (@pirate)
 
 ---
 
@@ -1789,71 +1913,56 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Verify directory ZIP downloads retain bounded ASGI memory
+## X. Preserve CLI timeout diagnostics and clean up child processes
 
 **RULE**:
-When implementing operations in `archivebox/tests/test_zip_download_lifecycle.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `archivebox/tests/conftest.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27536512`: Verify directory ZIP downloads retain bounded ASGI memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79c4840c`: Preserve CLI timeout diagnostics and clean up child processes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `archivebox/tests/test_zip_download_lifecycle.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `archivebox/tests/conftest.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import hashlib
-import zipfile
-def test_uvicorn_zip_has_bounded_memory_and_releases_source_file(archivebox_daemon_server, tmp_path):
-    # Incompressible bytes exceed both socket buffers and the memory allowance;
-    # compressible input would hide whole-ZIP buffering under ASGI.
-    digest = hashlib.sha256()
-        for _ in range(64):
-            chunk = os.urandom(1024 * 1024)
-            output.write(chunk)
-            digest.update(chunk)
-    with requests.Session() as client:
-        client.trust_env = False
-        warm = client.get(
-            f"{url.removesuffix('?download=zip')}payload.bin?raw=1",
-            headers={"Host": host, "Range": "bytes=0-65535"},
-            timeout=15,
-        )
-        assert warm.status_code == 206
-        with payload.open("rb") as source:
-            assert warm.content == source.read(65536)
-        baseline = uvicorn.memory_info().rss
-        peak_growth = 0
-        for _ in range(3):
-            with client.get(url, headers={"Host": host}, stream=True, timeout=15) as response:
-                assert response.status_code == 200
-                assert response.headers["Content-Type"] == "application/zip"
-                # Keep the generat
+        except subprocess.TimeoutExpired as exc:
+            # Keep the original command deadline and drain pipes during
+            # shutdown: wait() alone can deadlock on a child's final logs.
+            try:
+                parent = psutil.Process(process.pid)
+                children = parent.children(recursive=True)
+            except psutil.NoSuchProcess:
+                children = []
+            for child in children:
+                try:
+                    exc.add_note(f"Child at timeout: pid={child.pid} name={child.name()} status={child.status()}")
+                    child.terminate()
+                except psutil.NoSuchProcess:
+                    pass
+            try:
+                result.communicate(timeout=5)
+            except subprocess.TimeoutExpired:
+                for child in children:
+                    try:
+                        child.kill()
+                    except psutil.NoSuchProcess:
+                        pass
+                process.kill()
+                result.communicate(timeout=5)
+            # A detached child may not keep either output pipe open.
+            for child in children:
+                try:
+                    if child.is_run
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-def test_uvicorn_zip_disconnect_releases_source_file(archivebox_daemon_server):
-    # Exceed socket buffers so the server is still compressing when we close.
-        for _ in range(32):
-            output.write(os.urandom(1024 * 1024))
-    for _ in range(3):
-        with requests.get(url, headers={"Host": host}, stream=True, timeout=15) as response:
-            # Keep the generator alive: discarding it closes urllib3's socket
-            # immediately, before we can observe the server's open source file.
-            chunks = response.iter_content(64 * 1024)
-            assert next(chunks).startswith(b"PK")
-            assert not response.raw.closed, "ZIP connection closed before the deliberate disconnect"
-            assert str(payload) in {entry.path for entry in uvicorn.open_files()}
-        chunks.close()
-        deadline = time.monotonic() + 5
-        while str(payload) in {entry.path for entry in uvicorn.open_files()}:
-            assert time.monotonic() < deadline, "Disconnected ZIP download kept its source file open"
-            time.sleep(0.05)
-    assert requests.get(f"
+        except subprocess.TimeoutExpired:
+            process.wait(timeout=5)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27536512` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79c4840c` are properly handled with clean fallback behavior.

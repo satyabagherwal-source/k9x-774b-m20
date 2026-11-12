@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/taubyte-tau-learnings.md`  
 > **Source**: github ([https://github.com/taubyte/tau](https://github.com/taubyte/tau))  
-> **Source Version**: `374537fb`  
+> **Source Version**: `59816f6f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:00:08.561Z  
+> **Timestamp**: 2026-11-12T02:03:40.877Z  
 > **Learning ID**: `learn-github-taubyte-tau`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/taubyte-tau-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/taubyte/tau](https://github.com/taubyte/tau))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:00:08.554Z  
+> **Harvest Timestamp**: 2026-11-12T02:03:40.689Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fullstack Workspace for Humans & Machines
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5183 stars
+- **Stars / Engagement**: 5171 stars
 
 ---
 
@@ -444,6 +444,7 @@ import (
 
 type Client interface {
 	InjectStaticCertificate(domain string, data []byte) error
+	DeleteCertificate(domain string) error
 	GetCertificate(domain string) (*tls.Certificate, error)
 	GetStaticCertificate(domain string) (*tls.Certificate, error)
 	GetRawCertificate(domain string) ([]byte, error)
@@ -591,183 +592,424 @@ type Service interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `276a0fac` (2026-11-01)
-**Commit Message**: fix(http-auto): resolve a host's project from its own links key (#521)
+### Incident Patch 1: `59816f6f` (2026-11-10)
+**Commit Message**: Merge pull request #565 from taubyte/fix/dream-push-wait-race
 
-getProjectId fetched the bare HTTP index path for the host. TNS returns
-every key under that path and collapses a single key to its bare value,
-so an apex domain with indexed subdomains below it (ac.dz above the
-generated *.at.ac.dz hosts) resolved to its only subdomain's links, then
-failed with "did not find `links` inside map" as soon as a second
-subdomain got a function indexed. Fetch <path>/links instead, the same
-key substrate's CheckTns routes on.
+dream: push-wait test adds its late job under a lock
 
-**File**: `pkg/http-auto/helpers.go` (modified, +5/-3)
+**File**: `services/patrick/dream/push_wait_test.go` (modified, +29/-4)
 ```diff
-@@ -57,15 +57,17 @@ func (s *Service) getProjectId(name string) (string, error) {
- 		return "", fmt.Errorf("failed functionSpec HttpPath with %v", err)
- 	}
+@@ -2,29 +2,54 @@ package dream
  
--	// Check function to grab projcetID. If fails check website. If fails then not found
--	tnsPath, err = s.tnsClient.Fetch(p)
-+	// Fetch the host's own links key: fetching the bare host path returns the
-+	// subtree of every subdomain below it, so an apex with indexed subdomains
-+	// would resolve to (or fail on) its children instead of itself.
-+	tnsPath, err = s.tnsClient.Fetch(p.Versioning().Links())
- 	if err != nil || tnsPath.Interface() == nil {
- 		p, err = websiteSpec.Tns().HttpPath(name)
- 		if err != nil {
- 			return "", fmt.Errorf("failed websiteSpec HttpPath with %v", err)
- 		}
+ import (
+ 	"context"
++	"sync"
+ 	"testing"
+ 	"time"
  
--		tnsPath, err = s.tnsClient.Fetch(p)
-+		tnsPath, err = s.tnsClient.Fetch(p.Versioning().Links())
- 		if err != nil {
- 			return "", fmt.Errorf("failed tns fetch with %v", err)
- 		}
-```
-
-**File**: `pkg/http-auto/helpers_test.go` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+package auto
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	tns "github.com/taubyte/tau/core/services/tns"
-+	"gotest.tools/v3/assert"
-+)
-+
-+// flatTNS mimics the TNS engine's Get: every key under the fetched path is
-+// returned, a single key collapses to its bare value, several keys become a
-+// nested map.
-+type flatTNS struct {
-+	tns.Client
-+	keys map[string]any
+ 	patrickIface "github.com/taubyte/tau/core/services/patrick"
+ 	"gotest.tools/v3/assert"
+ )
+ 
++// lockedPatrick lets a test add jobs while waitForJob polls.
++type lockedPatrick struct {
++	lock sync.Mutex
++	fakePatrick
 +}
 +
-+type flatObject struct {
-+	MockTNSObject
-+	value any
++func (p *lockedPatrick) List() ([]string, error) {
++	p.lock.Lock()
++	defer p.lock.Unlock()
++	return p.fakePatrick.List()
 +}
 +
-+func (o *flatObject) Interface() any { return o.value }
-+
-+func (f *flatTNS) Fetch(path tns.Path) (tns.Object, error) {
-+	prefix := path.String()
-+	matches := map[string]any{}
-+	for k, v := range f.keys {
-+		if k == prefix || strings.HasPrefix(k, prefix+"/") {
-+			matches[strings.TrimPrefix(strings.TrimPrefix(k, prefix), "/")] = v
-+		}
-+	}
-+
-+	var value any
-+	switch len(matches) {
-+	case 0:
-+	case 1:
-+		for _, v := range matches {
-+			value = v
-+		}
-+	default:
-+		root := map[string]any{}
-+		for rel, v := range matches {
-+			cur := root
-+			parts := strings.Split(rel, "/")
-+			for _, part := range parts[:len(parts)-1] {
-+				next, ok := cur[part].(map[string]any)
-+				if !ok {
-+					next = map[string]any{}
-+					cur[part] = next
-+				}
-+				cur = next
-+			}
-+			cur[parts[len(parts)-1]] = v
-+		}
-+		value = root
-+	}
-+
-+	return &flatObject{MockTNSObject: MockTNSObject{path: path}, value: value}, nil
++func (p *lockedPatrick) Get(id string) (*patrickIface.Job, error) {
++	p.lock.Lock()
++	defer p.lock.Unlock()
++	return p.fakePatrick.Get(id)
 +}
 +
-+const (
-+	apexProject = "QmTgYkGBqTjodax63a8fGZR9eagMKkXjv7L32fHLm9dqCw"
-+	subProjectA = "QmXrAk1VW8FvgNbjXYydsJuwfKYqYqanztM61QGBR8v4Wq"
-+)
-+
-+func TestGetProjectIdApexWithSubdomainFunctions(t *testing.T) {
-+	keys := map[string]any{
-+		"http/websites/dz/ac/links":               []any{"branches/main/projects/" + apexProject + "/websites/QmYdX7uAaUq3AF9Ap5VJ69dx5J7u3HQekVoJbXCXQt2abo"},
-+		"http/websites/dz/ac/at/hlm9dqcw0/links":  []any{"branches/main/projects/" + apexProject + "/websites/QmYdX7uAaUq3AF9Ap5VJ69dx5J7u3HQekVoJbXCXQt2abo"},
-+		"http/functions/dz/ac/at/hlm9dqcw0/links": []any{"branches/main/projects/" + apexProject + "/functions/QmaaU9tsqUGHMD1VsrmByjzHVwrX9Urm6aZNDK3n8jFcVh"},
-+		"http/functions/dz/ac/at/gbr8v4wq0/links": []any{"branches/main/projects/" + subProjectA + "/applications/QmZ2r6zb3XiWvLzhww5mdKs3KYii2sr6KG9ZbvpfFBNDPE/functions/QmXyTgtc1xfNsm3GUW2utgDzrYLW4EZXe4xuyFXVf1Hpom"},
-+	}
-+	s := &Service{tnsClient: &flatTNS{keys: keys}}
-+
-+	pid, err := s.getProjectId("ac.dz")
-+	assert.NilError(t, err)
-+	assert.Equal(t, pid, strings.ToLower(apexProject))
-+
-+	pid, err = s.getProjectId("gbr8v4wq0.at.ac.dz")
-+	assert.NilError(t, err)
-+	assert.Equal(t, pid, strings.ToLower(subProjectA))
++func (p *lockedPatrick) add(id string, j *patrickIface.Job) {
++	p.lock.Lock()
++	defer p.lock.Unlock()
++	p.jobs[id] = j
 +}
 +
-+func TestGetProjectIdUnknownHost(t *testing.T) {
-+	s := &Service{tnsClient: &flatTNS{keys: map[string]any{
-+		"http/functions/dz/ac/at/hlm9dqcw0/links": []any{"branches/main/projects/" + apexProject + "/functions/QmaaU9tsqUGHMD1VsrmByjzHVwrX9Urm6aZNDK3n8jFcVh"},
+ // A website added to an imported project's config is only listed once the
+ // config job has published: push-all must wait for that job to finish.
+ func TestPushAllWaitsForConfigJob(t *testing.T) {
+ 	ctx := context.Background()
+-	p := fakePatrick{jobs: map[string]*patrickIface.Job{
++	p := &lockedPatrick{fakePatrick: fakePatrick{jobs: map[string]*patrickIface.Job{
+ 		"old": job(1, 5, "a", patrickIface.JobStatusSuccess), // an earlier build
+ 		"new": job(1, 10, "b", patrickIface.JobStatusLocked), // this push's job, building
+-	}}
 +	}}}
-+
-+	_, err := s.getProjectId("ac.dz")
-+	assert.ErrorContains(t, err, "nil interface")
-+}
+ 	assert.Assert(t, !waitForJob(ctx, p, 1, 10, 0), "config job still building")
+-	p.jobs["new"].Status = patrickIface.JobStatusSuccess
++	p.add("new", job(1, 10, "b", patrickIface.JobStatusSuccess))
+ 	assert.Assert(t, waitForJob(ctx, p, 1, 10, 0), "config job done")
+ 	assert.Assert(t, !waitForJob(ctx, p, 1, 11, 0), "a job older than the push does not count")
+ 
+ 	go func() {
+ 		time.Sleep(1500 * time.Millisecond)
+-		p.jobs["late"] = job(2, 20, "c", patrickIface.JobStatusFailed)
++		p.add("late", job(2, 20, "c", patrickIface.JobStatusFailed))
+ 	}()
+ 	assert.Assert(t, waitForJob(ctx, p, 2, 20, 5*time.Second), "waits until the job finishes")
+ }
 ```
 
 ---
 
-### Incident Patch 2: `374537fb` (2026-11-01)
-**Commit Message**: fix(ci): publish releases with the workflow's own token (#522)
+### Incident Patch 2: `543b8c2d` (2026-11-10)
+**Commit Message**: Merge pull request #562 from taubyte/v1.3/39-cli-fixes
 
-The release job published with GORELEASER_TOKEN, a personal access token
-that has stopped authenticating (401 Bad credentials on the v1.2.0 run).
-GoReleaser only creates the GitHub release in this repository, and no
-workflow listens for release events, so the built-in GITHUB_TOKEN with
-contents:write is enough and has nothing to expire.
+[39/39] CLI: log file names on Windows, empty flag values, pushes with nothing new
 
-**File**: `.github/workflows/release.yml` (modified, +3/-4)
+**File**: `pkg/git/push.go` (modified, +15/-5)
 ```diff
-@@ -4,10 +4,9 @@ on:
-     tags:
-       - '*'
+@@ -13,21 +13,31 @@ import (
+  * Returns error if something goes wrong.
+  */
+ func (c *Repository) Push() error {
++	_, err := c.PushNew()
++	return err
++}
++
++// PushNew is Push, and also says whether anything was sent: a remote that
++// already has this commit gets no webhook, so no build follows.
++func (c *Repository) PushNew() (bool, error) {
+ 	head, err := c.repo.Head()
+ 	if err != nil {
+-		return fmt.Errorf("getting HEAD failed: %w", err)
++		return false, fmt.Errorf("getting HEAD failed: %w", err)
+ 	}
+ 	branchName := head.Name()
+ 	if !branchName.IsBranch() {
+-		return fmt.Errorf("HEAD is not on a branch")
++		return false, fmt.Errorf("HEAD is not on a branch")
+ 	}
+ 	refSpec := config.RefSpec(branchName.String() + ":" + branchName.String())
+ 	err = c.repo.PushContext(c.ctx, &git.PushOptions{
+ 		Auth:     c.auth,
+ 		RefSpecs: []config.RefSpec{refSpec},
+ 	})
+-	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
+-		return fmt.Errorf("push failed: %w", err)
++	if errors.Is(err, git.NoErrAlreadyUpToDate) {
++		return false, nil
++	}
++	if err != nil {
++		return false, fmt.Errorf("push failed: %w", err)
+ 	}
+-	return nil
++	return true, nil
+ }
+```
+
+**File**: `pkg/git/push_new_test.go` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++package git
++
++import (
++	"context"
++	"os"
++	"path/filepath"
++	"testing"
++
++	gogit "github.com/go-git/go-git/v5"
++	"github.com/go-git/go-git/v5/config"
++)
++
++func TestPushNewSaysWhenNothingWasSent(t *testing.T) {
++	tmp := t.TempDir()
++	bare := filepath.Join(tmp, "bare.git")
++	if _, err := gogit.PlainInit(bare, true); err != nil {
++		t.Fatal(err)
++	}
++	seedDir := filepath.Join(tmp, "seed")
++	seed, err := gogit.PlainInit(seedDir, false)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if _, err = seed.CreateRemote(&config.RemoteConfig{Name: "origin", URLs: []string{bare}}); err != nil {
++		t.Fatal(err)
++	}
++	commitAndPush(t, seed, seedDir, "a")
++
++	clone := filepath.Join(tmp, "clone")
++	repo, err := New(context.Background(), URL(bare), Root(clone), Author("t", "t@t"))
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	if sent, err := repo.PushNew(); err != nil || sent {
++		t.Fatalf("remote already has this commit: sent %v, err %v", sent, err)
++	}
++
++	if err = os.WriteFile(filepath.Join(clone, "b"), []byte("b"), 0644); err != nil {
++		t.Fatal(err)
++	}
++	if err = repo.Commit("b", "."); err != nil {
++		t.Fatal(err)
++	}
++	if sent, err := repo.PushNew(); err != nil || !sent {
++		t.Fatalf("a new commit: sent %v, err %v", sent, err)
++	}
++}
+```
+
+**File**: `tools/tau/cli/args/args_values_test.go` (modified, +12/-0)
+```diff
+@@ -52,3 +52,15 @@ func TestFlagValueIsNotACommand(t *testing.T) {
+ 		}
+ 	}
+ }
++
++// An empty value belongs to its flag; moved on its own it became the command.
++func TestEmptyFlagValueStaysWithItsFlag(t *testing.T) {
++	commands := []*cli.Command{{Name: "new", Subcommands: []*cli.Command{{
++		Name:  "function",
++		Flags: []cli.Flag{&cli.StringFlag{Name: "description", Aliases: []string{"d"}}},
++	}}}}
++	got := ParseArguments(nil, commands, "tau", "new", "function", "--description", "", "foo")
++	if want := []string{"tau", "new", "function", "--description", "", "foo"}; !slices.Equal(got, want) {
++		t.Fatalf("got %q, want %q", got, want)
++	}
++}
+```
+
+**File**: `tools/tau/cli/args/move_postfix.go` (modified, +1/-6)
+```diff
+@@ -33,12 +33,7 @@ func MovePostfixOptions(args []string, validFlags []ParsedFlag) []string {
+ 			continue
+ 		}
  
--# GoReleaser publishes with GORELEASER_TOKEN (see env below); the default
--# token is only used by checkout, so read is enough.
-+# GoReleaser publishes the GitHub release with the job's own token.
- permissions:
--  contents: read
-+  contents: write
+-		if len(arg) == 0 {
+-			new_args = append(new_args, arg)
+-			continue
+-		}
+-
+-		if arg[:1] == "-" {
++		if strings.HasPrefix(arg, "-") {
+ 			flagIsBool, ok := flagBoolMap[arg]
+ 			if ok {
+ 				if flagIsBool || strings.Contains(arg, "=") || len(args) == idx+1 {
+```
+
+**File**: `tools/tau/cli/commands/resources/generic/repo_git_test.go` (modified, +20/-0)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"os"
+ 	"path/filepath"
++	"strings"
+ 	"testing"
  
- jobs:
-   tau:
-@@ -31,4 +30,4 @@ jobs:
-           version: latest
-           args: release --clean --config .goreleaser.yml
-         env:
--          GITHUB_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
-\ No newline at end of file
-+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-\ No newline at end of file
+ 	"github.com/taubyte/tau/pkg/git"
+@@ -17,11 +18,13 @@ import (
+ type fakeGit struct {
+ 	root                 string
+ 	pushed, pulled       bool
++	upToDate             bool
+ 	committed, checkedTo string
+ }
+ 
+ func (f *fakeGit) Commit(message, files string) error { f.committed = message; return nil }
+ func (f *fakeGit) Push() error                        { f.pushed = true; return nil }
++func (f *fakeGit) PushNew() (bool, error)             { f.pushed = true; return !f.upToDate, nil }
+ func (f *fakeGit) Pull() error                        { f.pulled = true; return nil }
+ func (f *fakeGit) Checkout(branch string) error       { f.checkedTo = branch; return nil }
+ func (f *fakeGit) Root() string                       { return f.root }
+@@ -85,6 +88,23 @@ func TestWebsitePushPullCheckout(t *testing.T) {
+ 	assert.Equal(t, fake.checkedTo, "dev")
+ }
+ 
++// A push the remote already has starts no build, and tau says so.
++func TestWebsitePushWithNothingNew(t *testing.T) {
++	defer testutil.ActivateAuthMock()()
++	dir, projectPath, cfg := withRepoProject(t)
++	repoDir := websiteRepoDir(projectPath)
++	fake := withFakeGit(t, repoDir)
++	fake.upToDate = true
++	assert.NilError(t, os.MkdirAll(repoDir, 0o755))
++
++	stdout, stderr, err := testutil.RunCLIWithDirAndCwdWithAuthMock(t, cli.Run, dir, projectPath, cfg,
++		"--defaults", "-y", "push", "website", "--name", "test_website1", "--message", "wip", "--color", "never")
++	assert.NilError(t, err)
++	out := stdout + stderr
++	assert.Assert(t, strings.Contains(out, "so no build starts"), out)
++	assert.Assert(t, !strings.Contains(out, "Pushed"), out)
++}
++
+ // new --clone attaches an existing repo and clones it in one shot.
+ func TestWebsiteNewWithClone(t *testing.T) {
+ 	defer testutil.ActivateAuthMock()()
+```
+
+**File**: `tools/tau/cli/commands/resources/logs/filename_test.go` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++package logs
++
++import (
++	"testing"
++
++	"gotest.tools/v3/assert"
++)
++
++func TestLogFileNameIsValidOnWindows(t *testing.T) {
++	assert.Equal(t, logFileName("2026-11-07T16:27:54Z"), "2026-11-07T16_27_54Z")
++	assert.Equal(t, logFileName(`a/..\b`), "a_.._b")
++	assert.Equal(t, logFileName("j1"), "j1")
++}
+```
+
+**File**: `tools/tau/cli/commands/resources/logs/query.go` (modified, +10/-1)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"io"
+ 	"os"
+ 	"path"
++	"regexp"
+ 
+ 	"github.com/taubyte/tau/tools/tau/cli/common"
+ 	patrickClient "github.com/taubyte/tau/tools/tau/clients/patrick_client"
+@@ -36,6 +37,14 @@ func (link) Query() common.Command {
+ 	)
+ }
+ 
++// logFileName makes a log's id a valid file name: its ids can be timestamps,
++// whose colons Windows refuses, and they come from the server.
++func logFileName(id string) string {
++	return notInFileName.ReplaceAllString(id, "_")
++}
++
++var notInFileName = regexp.MustCompile(`[<>:"/\\|?*]`)
++
+ func query(ctx *cli.Context) error {
+ 	patrickC, err := patrickClient.Load()
+ 	if err != nil {
+@@ -79,7 +88,7 @@ func query(ctx *cli.Context) error {
+ 		}
+ 
+ 		if writeFile {
+-			if err = os.WriteFile(path.Join(outputDir, resourceId), data, 0666); err != nil {
++			if err = os.WriteFile(path.Join(outputDir, logFileName(resourceId)), data, 0666); err != nil {
+ 				return err
+ 			}
+ 		} else {
+```
+
+**File**: `tools/tau/cli/commands/resources/project/push.go` (modified, +5/-1)
+```diff
+@@ -112,9 +112,13 @@ func pushRepo(r *git.Repository, message string) (follow.Repo, error) {
+ 		return follow.Repo{}, err
+ 	}
+ 	since := time.Now().Unix()
+-	if err := r.Push(); err != nil {
++	sent, err := r.PushNew()
++	if err != nil {
+ 		return follow.Repo{}, err
+ 	}
++	if !sent {
++		fmt.Fprintf(os.Stderr, "nothing new to push to %s, so no build starts\n", name)
++	}
+ 	out := follow.Repo{Name: name, Since: since}
+ 	if head, err := r.Repo().Head(); err == nil {
+ 		out.Commit, out.Branch = head.Hash().String(), head.Name().Short()
+```
+
+---
+
+### Incident Patch 3: `4eb00408` (2026-11-10)
+**Commit Message**: Merge pull request #559 from taubyte/v1.3/36-build-swap
+
+[36/39] Small nodes let builds use the host's swap
+
+**File**: `pkg/builder/buildmem_test.go` (modified, +16/-0)
+```diff
+@@ -17,3 +17,19 @@ func TestBuildMemoryLeavesRoomOnSmallNodes(t *testing.T) {
+ 		}
+ 	}
+ }
++
++func TestBuildSwap(t *testing.T) {
++	const gib = 1 << 30
++	cases := map[uint64]int64{
++		0:         4 * gib, // unknown size: the default, no swap
++		2 * gib:   -1,
++		5*gib - 1: -1,
++		5 * gib:   4 * gib,
++		32 * gib:  4 * gib,
++	}
++	for total, want := range cases {
++		if got := buildSwap(buildMemory(total)); got != want {
++			t.Errorf("buildSwap at total %d = %d, want %d", total, got, want)
++		}
++	}
++}
+```
+
+**File**: `pkg/builder/types.go` (modified, +17/-5)
+```diff
+@@ -37,14 +37,14 @@ func (b *builder) restrictEgress() bool {
+ }
+ 
+ // buildLimits caps a confined build so one build.sh cannot starve the node or
+-// its other tenants: buildMemory, no swap beyond it, 4096 processes, half the
++// its other tenants: buildMemory of RAM, buildSwap, 4096 processes, half the
+ // cores.
+ func buildLimits() core.ResourceLimits {
+ 	const period = 100_000
+ 	mem := buildMemory(memory.TotalMemory())
+ 	return core.ResourceLimits{
+ 		Memory:     mem,
+-		MemorySwap: mem,
++		MemorySwap: buildSwap(mem),
+ 		PIDs:       4096,
+ 		CPUPeriod:  period,
+ 		CPUQuota:   int64(max(runtime.NumCPU()/2, 1)) * period,
+@@ -93,13 +93,25 @@ type logs struct {
+ 	*os.File
+ }
+ 
++const buildMemoryLimit = 4 << 30
++
+ // buildMemory is a build's memory limit: 4 GiB, but on a small node at most its
+ // memory less 1 GiB, so the build is killed before tau and Docker are. Never
+ // under 512 MiB; an unknown total gets the 4 GiB default.
+ func buildMemory(total uint64) int64 {
+-	const limit, reserve, floor = 4 << 30, 1 << 30, 512 << 20
+-	if total == 0 || total >= limit+reserve {
+-		return limit
++	const reserve, floor = 1 << 30, 512 << 20
++	if total == 0 || total >= buildMemoryLimit+reserve {
++		return buildMemoryLimit
+ 	}
+ 	return max(int64(total)-reserve, floor)
+ }
++
++// buildSwap is a build's memory-plus-swap limit. A node too small to give a
++// build the full limit lets it use the host's swap (-1), or large libraries
++// cannot compile there at all; larger nodes keep builds to RAM.
++func buildSwap(mem int64) int64 {
++	if mem < buildMemoryLimit {
++		return -1
++	}
++	return mem
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #522** (2026-11-01): fix(ci): publish releases with the workflow's own token (@samyfodil)
-- **PR #521** (2026-11-01): fix(http-auto): resolve a host's project from its own links key (@samyfodil)
-- **PR #520** (2026-08-16): feat(netguard): confine untrusted code egress to the public internet (@samyfodil)
-- **PR #519** (2026-08-08): fix(vm): clamp attacker-controlled HTTP status codes to avoid a gateway crash (@samyfodil)
-- **PR #518** (2026-08-08): fix(vm): harden WASM host-ABI boundary and read into guest memory in place (@samyfodil)
-- **PR #517** (2026-08-07): feat(containers): build images on containerd, by running BuildKit as a container (@samyfodil)
+- **PR #565** (2026-11-10): dream: push-wait test adds its late job under a lock (@samyfodil)
+- **PR #564** (2026-11-10): [41/43] Dream's push-all reads only its own project and answers once jobs are queued (@ZaouiAmine)
+- **PR #563** (2026-11-10): [40/43] An interrupted tau new project can be finished by running it again (@ZaouiAmine)
+- **PR #562** (2026-11-10): [39/39] CLI: log file names on Windows, empty flag values, pushes with nothing new (@ZaouiAmine)
+- **PR #561** (2026-11-10): [38/39] Only a confirmed out of memory kill skips the retry, and it names the limit (@ZaouiAmine)
+- **PR #560** (2026-11-10): [37/39] A failed job with a try left reads as open, and an unclaimed repository gets one job (@ZaouiAmine)
 
 ---
 
@@ -787,34 +1029,59 @@ contents:write is enough and has nothing to expire.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. http-auto): resolve a host's project from its own links key (#521)
+## X. Merge pull request #565 from taubyte/fix/dream-push-wait-race
 
 **RULE**:
-When implementing operations in `pkg/http-auto/helpers.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in taubyte/tau. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `services/patrick/dream/push_wait_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in taubyte/tau. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `276a0fac`: http-auto): resolve a host's project from its own links key (#521). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59816f6f`: Merge pull request #565 from taubyte/fix/dream-push-wait-race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/http-auto/helpers.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `services/patrick/dream/push_wait_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Fetch the host's own links key: fetching the bare host path returns the
-	// subtree of every subdomain below it, so an apex with indexed subdomains
-	// would resolve to (or fail on) its children instead of itself.
-	tnsPath, err = s.tnsClient.Fetch(p.Versioning().Links())
-		tnsPath, err = s.tnsClient.Fetch(p.Versioning().Links())
+	"sync"
+// lockedPatrick lets a test add jobs while waitForJob polls.
+type lockedPatrick struct {
+	lock sync.Mutex
+	fakePatrick
+}
+
+func (p *lockedPatrick) List() ([]string, error) {
+	p.lock.Lock()
+	defer p.lock.Unlock()
+	return p.fakePatrick.List()
+}
+
+func (p *lockedPatrick) Get(id string) (*patrickIface.Job, error) {
+	p.lock.Lock()
+	defer p.lock.Unlock()
+	return p.fakePatrick.Get(id)
+}
+
+func (p *lockedPatrick) add(id string, j *patrickIface.Job) {
+	p.lock.Lock()
+	defer p.lock.Unlock()
+	p.jobs[id] = j
+}
+
+	p := &lockedPatrick{fakePatrick: fakePatrick{jobs: map[string]*patrickIface.Job{
+	}}}
+	p.add("new", job(1, 10, "b", patrickIface.JobStatusSuccess))
+		p.add("late", job(2, 20, "c", patrickIface.JobStatusFailed))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// Check function to grab projcetID. If fails check website. If fails then not found
-	tnsPath, err = s.tnsClient.Fetch(p)
-		tnsPath, err = s.tnsClient.Fetch(p)
+	p := fakePatrick{jobs: map[string]*patrickIface.Job{
+	}}
+	p.jobs["new"].Status = patrickIface.JobStatusSuccess
+		p.jobs["late"] = job(2, 20, "c", patrickIface.JobStatusFailed)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `276a0fac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59816f6f` are properly handled with clean fallback behavior.

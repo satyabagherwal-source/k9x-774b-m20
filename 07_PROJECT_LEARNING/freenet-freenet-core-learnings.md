@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `653af09c`  
+> **Source Version**: `acae3b45`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T06:33:21.623Z  
+> **Timestamp**: 2026-11-12T00:58:31.533Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T06:33:21.608Z  
+> **Harvest Timestamp**: 2026-11-12T00:58:31.320Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,16 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6182** (2026-11-11): **docs(rules): report scope bundling and subject length as INFO**
-  *Symptoms*: ## Problem  The CI rule review (`claude-pr-review.yml`) reads `.claude/rules/git-workflow.md`, which phrases two author expectations as "→ NO: split it" and "→ NO: Shorten it". The reviewer turns those into **WARNING** findings, which its prompt says must be fixed or overridden with `review-override`.  Between 2026-07-17 and 2026-09-27, the last stretch in which the review was running, it reviewed about 250 PRs and flagged 25. I read the findings on 6 of those 25, and "bundles more than one logical change" was among them on four (#5303, #5438, #5513, #4915); a commit subject of 77 characters was flagged on #5513. I did not tabulate the other 19. 13 of the 25 flagged PRs were merged on a `review-override` label.  Being overridden does not mean the finding was wrong: a bundled PR that a maintainer overrides is a true positive that was waved through. What it does show is that these two checks were being treated as advisory in practice while being reported as blocking, and a rule that is overridden about half the time trains everyone to click past it.  ## Solution  One short paragraph in `.claude/rules/git-workflow.md` saying the reviewer reports these two checks as **INFO**, never WARNING, and that they are still expected of authors. The paragraph also says what actually enforces them: the `conventional_commits` job validates the PR **title** only, the opt-in `.githooks/commit-msg` hook checks a commit subject's form, scope is a human-review call, and nothing checks subject leng
+- **Issue #6189** (2026-11-11): **feat(transport): handshake format 2 expresses a floor in the previous version series**
+  *Symptoms*: ## Problem The handshake version field can only carry a floor in the sender's own major.minor series (`build.rs` enforced it), so a 1.0.0 node and any 0.2.x node reject each other and a major/minor bump is a flag day. See #6187. Ian approved the bridge-release approach (option A) on 2026-11-11.  ## Approach - Same 8 bytes, same framing. New format byte `2`, emitted **only** when the floor is in a different series than the version. Otherwise output is format 1, byte-identical to 0.2.156 (pinned against frozen arrays). - Format 2 packs the floor in bytes 5-6 as `0x8000 | major_back<<14 | minor<<8 | patch` (floor major at most one below ours, minor < 64, patch < 256). Releases through 0.2.156 ignore the format byte and read that as `min_patch >= 32768`, so they reject cleanly and take the existing "remote requires newer" path. No misparse as compatible. - `build.rs`: cross-series floor allowed only if encodable and not above the version; `encode_wire` also panics at compile time otherwise. - `MIN_COMPATIBLE_VERSION` and the crate version are untouched; the 1.0.0 floor change is a later PR. The bridge must reach the fleet before that. - Consumers checked: `visited_peers`, `testing_impl`, the ack-version floor, the urgent-update path and `report_peer_version` all compare full `(major, minor, patch)` tuples; `release.sh`/docs assume nothing about a shared series.  ## Testing - Frozen format-1 bytes; frozen format-2 bytes; roundtrip; rejection of floor > version, two majors back, pa
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No blocking issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, transport.md **Files reviewed:** 5 (`crates/core/build.rs`, `crates/core/build/version_floor.rs`, `crates/core/src/transport/connection_handler/version_cmp.rs`, `docs/RELEASING.md`, `docs/architecture/transport/security.md`)  I read the diff and checked it against the four rule files. I didn't build the code or run the tests.  - **Docs:** The edits to `docs/RELEASING.md` and `docs/architecture/transport/security.md` match the new behavior. A search for other text still saying the floor must share major.minor turned up nothing stale. - **Tests:** Coverage goes beyond the happy path. It includes:   - frozen byte pins;   - round-trips;   - the boundaries minor 63/64, patch 255/256 and two majors back;   - a floor above the version;   - an unknown future format byte;   - a malformed format 2;   - a frozen copy of the old parser;   - a mixed-population matrix
+  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/43081602396)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/43081602396)
 
-- **Issue #6180** (2026-11-11): **ci(rule-review): report a non-run as a failure and track the outage**
-  *Symptoms*: ## Problem  `Claude Rule Review` is failing to run, and a PR that was not reviewed looks the same as one that was. #5628 documents this: the run dies on its first API call (about 2 s, 1 turn, $0, empty `modelUsage`, `is_error: true`), and the workflow still posts `rule-review/warnings` as **success** ("Review failed to run — not blocking merge"). The job is green because the review step is `continue-on-error`.  Current state: all 8 runs I spot-checked from 2026-11-09 and 2026-11-10 fail this way, and I found no retained review comment on a PR created after 2026-09-27 (comments are edited in place, so a later failed re-run overwrites an earlier good review; this is a lower bound on the outage, not a measurement). #5628 records the same failure as intermittent in October (18 of 24 runs failing).  I have **not** established why. The log hides the API error (`show_full_output: false`). The signature points at the credential or account usage rather than the diff. The secret `CLAUDE_CODE_OAUTH_TOKEN` was last set 2025-09-27, which would fit a one-year expiry, but October's intermittent pattern fits a usage limit better. Neither is confirmed.  ## Solution  Follows the resolution #5628 asks for ("do not report `pass` for a review that did not run"), in `.github/workflows/claude-pr-review.yml`:  1. **A non-run is a failure status, not a success.** Every way of not running goes through one `reportNotRun`: the step failed, the execution file is unreadable, there is no report, or the fin
+- **Issue #6188** (2026-11-11): **fix(server): tighten client API request validation**
+  *Symptoms*: ## Problem The client API WebSocket, contract web pages, dashboard pages and permission endpoints validated the request Origin and Host loosely.  ## Approach Validate Origin and Host more strictly on those surfaces and mark the app token cookie HttpOnly. Native app grant connections (header token, no Origin, loopback Host) are unaffected.  ## Behaviour changes (release notes) - Reverse proxies that rewrite the Host header need `--allowed-host` for browser WebSocket access. - On a loopback bind, a hosts-file alias for the machine hostname no longer works; use `localhost` or `--allowed-host`. - Non-http Origins, such as browser-extension origins, are refused. - When `X-Forwarded-Proto` is present, the client-API Origin scheme must match it. - An IPv4-mapped loopback bind (`::ffff:127.0.0.1`) counts as loopback.  ## Testing Unit tests for the Origin/Host rules, forwarded-proto variants, and native grant connections; Playwright `websocket-origin` and shell specs (run by the browser workflow, which now also triggers on changes to the upgrade code and allowlist builder). Locally: `cargo fmt`, clippy `-D warnings` (default and all-features), `cargo test -p freenet --lib` (8321 passed).  ## Review Reviewed before opening by code-first, skeptical and testing lenses plus a skeptical delta pass; all findings addressed. Codex was unavailable (out of quota), so Claude lenses substituted.  [AI-assisted - Claude]
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> Checking the diff against the rule files is done; here is the review.  ### Rule Review: No blocking issues found, 3 informational notes  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 11  #### Warnings None.  - **Regression tests:** this is a `fix:` PR and it adds many specific tests, including negative and boundary cases. The Origin tests cover `null`, hostname look-alikes, and port mismatches. The Host tests cover `localhost.`, `localhost:`, `localhost:80x`, `localhost:+1`, `evil.localhost`, and a missing Host. There are also tests for IPv4-mapped loopback, scheme comparison against `X-Forwarded-Proto`, and a "dashboard-only" layer scope. A Playwright spec checks real browser behavior. (rule: testing.md) - **No new production `.unwrap()`:** the new production code (`trusted_host_header_ip`, `is_localhost_host`, `request_host_trusted`, `shell_token_cookie`, `require_trusted_host`) uses `?`, `let ... else`, and `Option` com
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,839 +1764,965 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `291950ed` (2026-11-10)
-**Commit Message**: fix(conformance): report a merge refusal that leaves peers apart (#6178)
+### Incident Patch 1: `acae3b45` (2026-11-11)
+**Commit Message**: fix(transport): a loss gate in front of QUIC Cubic, so random loss does not collapse the window (#6185)
 
-**File**: `crates/core/src/conformance/minimize.rs` (modified, +24/-0)
+**File**: `.claude/rules/transport.md` (modified, +48/-6)
 ```diff
-@@ -278,6 +278,10 @@ mod tests {
-     struct LastWriteWins;
+@@ -1434,6 +1434,15 @@ a test passes its own; tests read their own, never the global).
+   level in the period, and the highest count a reset in the period took a path
+   to). They are for the fixed charge, which takes quinn's stopped map at
+   SEND_ABORT_LIMIT x QUIC_STOPPED_ENTRY_BYTES until field data justifies less.
++  quic_gate_loss_<queue|share|persistent|ecn|no_sample|ignored> (congestion
++  events by the loss gate's verdict, recycle::loss_gate, reported by the path's
++  report at each tick; over a path's life they sum to its quic_congestion_events,
++  since quinn counts an event where it calls the controller, while one period's
++  sums can differ by the events between a tick's two reads) and quic_gate_ended_queue_<lt_10pct|lt_50pct|
++  ge_50pct> (paths that ended in the period after at least 20 verdicts, by the
++  share passed as a queue). A path whose losses mostly read as a queue runs as
++  plain Cubic, from a real queue or from jitter; with the path's loss rate this
++  sizes how often jitter defeats the gate in the field.
+   A family is the keys of one label list under one prefix
+   (`QuicDataSnapshot::keys_by_family`). No other key starts with a family's
+   prefix or with the prefix sibling families share (`quic_data_` for the send,
+@@ -1557,8 +1566,10 @@ exposes (its module doc lists the few it does not):
+   grease_quic_bit(false) (the demux rule depends on it), versions [1],
+   max_udp_payload / initial and min MTU 1200, no MTU discovery, no GSO,
+   keepalive 15 s (None when the TimeSource disables keepalive), idle = the
+-  TimeSource's connection idle timeout, Cubic with its window capped to the
+-  configured bandwidth (recycle::CappedCubic), 64 uni / 0 bidi streams,
++  TimeSource's connection idle timeout, Cubic behind the loss gate
++  (recycle::loss_gate::LossGate, see below) with its window capped to the
++  configured bandwidth (recycle::CappedCubic; QuicRateLimit::without_loss_gate,
++  test-only, gives plain capped Cubic), 64 uni / 0 bidi streams,
+   stream / receive / send window = clamp(5% of memory / (2 x
+   max-number-of-connections), 128 KiB, 2 MiB), no unreliable datagrams, no
+   spin bit, migration off, max_incoming 64, incoming buffers 64 KiB / 1 MiB,
+@@ -1571,6 +1582,35 @@ Connection IDs (quic/cid.rs) carry a keyed BLAKE3 MAC, so quinn drops a
+   generator can be spoofed and would answer it with a stateless reset.
+ ```
  
-     impl ConformanceOracle for LastWriteWins {
-+        fn reads_host_clock(&self) -> bool {
-+            false
-+        }
++QUIC loss gate (quic/recycle/loss_gate.rs, every QUIC path by default): Cubic
++cuts its window on every loss, so under a few percent of random loss (Wi-Fi,
++cheap routers) its window collapses and large messages take minutes. The gate
++passes a congestion event to Cubic only when: quinn declares persistent
++congestion; it is an ECN mark (lost_bytes 0; the socket reads no ECN today);
++there is no RTT sample yet; the queue estimated around the lost packet's send
++time is at least queue_threshold = max(10% of min RTT, 2 ms) (QUEUE_FRACTION,
++QUEUE_FLOOR); or the smoothed per-round loss share is at least 0.25
++(LOSS_SHARE_CEILING). Otherwise the loss is ignored (quinn still retransmits,
++the window stays). Limits, all known and measured in the e5b-9 lab (tables in
++#6185 and #6183, which tracks the follow-up):
++- min RTT is never forgotten (deliberately: a windowed minimum would let the
++  gate's own standing queue become the baseline). A route that grows longer
++  reads the extra delay as a queue and the path runs as plain Cubic.
++- On a drop-tail queue deeper than the threshold, with no random loss, it is
++  exactly Cubic. On a queue shallower than the threshold (or an AQM such as
++  CoDel/PIE whose target is below it, the common case for 100-250 ms node
++  RTTs) congestion losses look random and only the 0.25 share ceiling stops
++  the flow, so it holds a standing queue near the threshold and a competing
++  flow keeps less of the link than next to Cubic (still far more than next
++  to legacy UDP).
++- Jitter above the threshold reads as a queue, so the gate passes random
++  losses and the path behaves as Cubic (30 ms of jitter on a 100 ms path;
++  10 ms of jitter there is still absorbed).
++Verdicts are exported as quic_gate_loss_<verdict> and
++quic_gate_ended_queue_<bucket> (see the telemetry keys above). Do not raise
++the threshold, add a threshold cap or a windowed min RTT without lab cells
++for jitter, AQM and shallow queues: each was tried and broke one of them.
 +
-         fn validate_state(
-             &mut self,
-             _state: &[u8],
-@@ -323,6 +327,10 @@ mod tests {
-     struct AlwaysConforming;
- 
-     impl ConformanceOracle for AlwaysConforming {
-+        fn reads_host_clock(&self) -> bool {
-+            false
-+        }
-+
-         fn validate_state(
-             &mut self,
-             _state: &[u8],
-@@ -442,6 +450,10 @@ mod tests {
-         // Order-dependent apply: concatenation. Any two distinct deltas witness it.
-         struct Concat;
-         impl ConformanceOracle for Concat {
-+            fn reads_host_clock(&self) -> bool {
-+                false
-+            }
-+
-             fn validate_state(
-                 &mut self,
-                 _state: &[u8],
-@@ -509,6 +521,10 @@ mod tests {
-         // DeltaPermutationInvariance fails and there is a witness to shrink.
-         struct Append;
-         impl ConformanceOracle for Append {
-+            fn reads_host_clock(&self) -> bool {
-+                false
-+            }
-+
-             fn validate_state(
-                 &mut self,
-                 _state: &[u8],
-@@ -623,6 +639,10 @@ mod tests {
-     struct SettlesOnlyWhenShort;
- 
-     impl ConformanceOracle for SettlesOnlyWhenShort {
-+        fn reads_host_clock(&self) -> bool {
-+            false
-+        }
-+
-         fn validate_state(
-             &mut self,
-             _state: &[u8],
-@@ -708,6 +728,10 @@ mod tests {
-     }
- 
-     impl ConformanceOracle for Flips {
-+        fn reads_host_clock(&self) -> bool {
-+            false
-+        }
-+
-         fn validate_state(
-             &mut self,
-             _state: &[u8],
+ QUIC memory: the flow-control windows (connection receive, stream receive,
+ send; all one value from `connection_window_bytes`) are clamped and capped
+ at `MAX_INBOUND_STREAM_BYTES_PER_CONNECTION`; the stream window never
+@@ -1921,10 +1961,12 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
+   connection's own probes wait for a saturated cap too, and counted without
+   that limit they kept a dark send going for 32 s. For the
+   credit after its last ack a dark path's own held probes do still count (on
+-  main they counted for as long as they were held). Under random loss the 384 KiB s
 ```
 
-**File**: `crates/core/src/conformance/oracle.rs` (modified, +12/-0)
+**File**: `crates/core/src/contract/executor.rs` (modified, +5/-0)
 ```diff
-@@ -102,4 +102,16 @@ pub trait ConformanceOracle {
-     /// leakage reachable again. If that happens, this is where it gets handled, and
-     /// the determinism checks start covering a second class of bug for free.
-     fn reset_instance(&mut self) {}
-+
-+    /// Does the contract's code import the host clock
-+    /// ([`imports_host_clock`](super::imports_host_clock))?
-+    ///
-+    /// Read by the commutativity check's refusal exchange (#5725): a refusal that
-+    /// leaves two peers apart is not reported against a contract that reads the
-+    /// clock, because a clock-gated refusal (a timestamp too far in the future)
-+    /// reproduces on a re-run and still clears as time passes.
-+    ///
-+    /// Required, with no default: `false` is the answer that lets a refusal be
-+    /// reported, so an oracle must choose it deliberately rather than inherit it.
-+    fn reads_host_clock(&self) -> bool;
- }
+@@ -3128,6 +3128,11 @@ mod tests {
+                 "free-DISK threshold the state directory must have before the node stages \
+                  a release (#5791), not memory",
+             ),
++            (
++                "SHARE_MIN_BYTES",
++                "QUIC loss gate: bytes a round trip must acknowledge or lose before its \
++                 loss share is sampled (quic::recycle::loss_gate), a threshold, not memory",
++            ),
+         ];
+ 
+         // WHAT THE SUM ACTUALLY CONSUMED, not what its source text mentions.
 ```
 
-**File**: `crates/core/src/conformance/property.rs` (modified, +28/-1)
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +2/-0)
 ```diff
-@@ -15,6 +15,27 @@ pub enum ConformanceProperty {
-     /// `merge(A, A) == A`
-     StateIdempotence,
-     /// `merge(A, B) == merge(B, A)`
-+    ///
-+    /// When the contract REFUSES one of the two merges (a `ContractError`) for two
-+    /// states it validates, the two peers holding them are simulated exchanging
-+    /// states until they agree or neither moves (#5725). Each receive tries the delta
-+    /// computed from the receiver's summary first, as production does, and then the
-+    /// whole state whenever the delta does not get through. That is deliberately
-+    /// more generous than the protocol, which sends nothing more after an empty or
-+    /// no-op delta, so "stuck" means neither route gets through.
-+    /// Agreeing is the honest transient refusal (River's ban-cap skew) and stays
-+    /// [`Inconclusive::ContractError`]. Stopping while apart is a stable
-+    /// disagreement, the freenet/river#423 class, and is a violation of this law
-+    /// between the two states the peers end on, unless the contract reads the host
-+    /// clock, where it stays [`Inconclusive::ContractError`] because a clock-gated
-+    /// refusal clears as time passes. Running out of `MAX_REFUSAL_EXCHANGE_ROUNDS`
-+    /// is [`Inconclusive::RoundLimit`].
-+    ///
-+    /// Unlike the plain comparison, this part rests on a model of the protocol, the
-+    /// same one [`ConformanceProperty::ReconciliationCycle`] uses. It also makes
-+    /// [`Inconclusive::InputNotValid`] and [`Inconclusive::RelatedRequired`]
-+    /// reachable for a commutativity case whose inputs validate: a state reached
-+    /// during the exchange can be invalid or need related state.
-     StateCommutativity,
-     /// `merge(merge(A, B), C) == merge(A, merge(B, C))`, or the two groupings heal:
-     /// they converge in one exchange to a state that, re-merged with both groupings
-@@ -220,7 +241,7 @@ pub enum ConformanceProperty {
-     ///
-     /// # Open decision: is this severity right?
-     ///
--    /// This is the only check here that is not pure algebra. It rests on a MODEL of
-+    /// Unlike the algebraic laws, this check rests on a MODEL of
-     /// how the protocol reconciles — which side sends what, when the full-state
-     /// fallback triggers, how the delta size gate behaves — so a finding depends on
-     /// that model being faithful, not just on the contract being wrong. Two model
-@@ -926,6 +947,12 @@ pub enum Inconclusive {
-     RelatedRequired,
-     /// The contract returned an error. A single rejection is not a conformance
-     /// failure — contracts are supposed to reject updates they consider illegitimate.
-+    ///
-+    /// Two places report a refusal instead (#5725): a refused associativity
-+    /// heal-step merge, and a refused commutativity merge after which the two
-+    /// peers, exchanging states, stop moving while still holding different states.
-+    /// See [`ConformanceProperty::StateCommutativity`]. A commutativity refusal
-+    /// that clears on the exchange is reported here.
-     ContractError(String),
-     /// `update_state` returned neither a new state nor a related-contract request.
-     NoOutputState,
+@@ -7830,6 +7830,8 @@ mod tests {
+         data.path_ms = 1037;
+         data.send_resets_reached = (1038..1042).collect();
+         data.send_resets_path_max = 1042;
++        data.gate_loss = (1043..1049).collect();
++        data.gate_ended_queue = (1049..1052).collect();
+         let want: std::collections::BTreeMap<String, u64> =
+             snapshot.quic_data.keys().into_iter().collect();
+         assert!(want.values().all(|value| *value != 0));
 ```
 
-**File**: `crates/core/src/conformance/runtime_oracle.rs` (modified, +17/-0)
+**File**: `crates/core/src/transport/metrics.rs` (modified, +1/-1)
 ```diff
-@@ -46,6 +46,8 @@ pub struct RuntimeOracle {
-     runtime: Runtime,
-     key: ContractKey,
-     parameters: Parameters<'static>,
-+    /// Whether the code imports the host clock, read once at construction.
-+    reads_host_clock: bool,
-     /// Kept alive for as long as the oracle runs: dropping it deletes the store the
-     /// runtime reads the contract from.
-     _scratch: Option<tempfile::TempDir>,
-@@ -102,6 +104,7 @@ impl RuntimeOracle {
-         )?;
+@@ -32,7 +32,7 @@ use crate::tracing::{TransferDirection, TransferEvent};
  
-         let parameters = Parameters::from(parameters);
-+        let reads_host_clock = super::imports_host_clock(&wasm);
-         let container = ContractContainer::Wasm(ContractWasmAPIVersion::V1(WrappedContract::new(
-             Arc::new(ContractCode::from(wasm)),
-             parameters.clone(),
-@@ -141,6 +144,7 @@ impl RuntimeOracle {
-             runtime,
-             key,
-             parameters,
-+            reads_host_clock,
-             _scratch: Some(scratch),
-         })
-     }
-@@ -197,6 +201,10 @@ impl ConformanceOracle for RuntimeOracle {
-             .map(|delta| delta.into_bytes())
-             .map_err(classify)
-     }
-+
-+    fn reads_host_clock(&self) -> bool {
-+        self.reads_host_clock
-+    }
- }
+ mod quic_data;
+ pub use quic_data::QuicDataSnapshot;
+-pub(crate) use quic_data::{PathLossWindow, QuicDataCounters, StreamsOpenPeak};
++pub(crate) use quic_data::{PathGateWindow, PathLossWindow, QuicDataCounters, StreamsOpenPeak};
  
- /// An oracle over a runtime someone else owns, for one contract.
-@@ -205,6 +213,11 @@ impl ConformanceOracle for RuntimeOracle {
- /// ([`super::verifier::associativity_heals`]) on the runtime that just performed the
- /// merge, so the probe's verdict comes from the same law the verifier checks rather
- /// than from a second copy of it.
-+///
-+/// It has no code bytes in hand, so it answers
-+/// [`ConformanceOracle::reads_host_clock`] with `false`. That is safe only while its
-+/// one caller runs the associativity heal step and never the commutativity refusal
-+/// exchange, which is the only reader of that answer.
- pub(crate) struct BorrowedRuntimeOracle<'a, 'p, R: ?Sized> {
-     runtime: &'a mut R,
-     key: &'a ContractKey,
-@@ -226,6 +239,10 @@ impl<'a, 'p, R: ContractRuntimeInterface + ?Sized> BorrowedRuntimeOracle<'a, 'p,
- }
- 
- impl<R: ContractRuntimeInterface + ?Sized> ConformanceOracle for BorrowedRuntimeOracle<'_, '_, R> {
-+    fn reads_host_clock(&self) -> bool {
-+        false
-+    }
-+
-     fn validate_state(
-         &mut self,
-         state: &[u8],
-```
-
-**File**: `crates/core/src/conformance/shadow.rs` (modified, +3/-1)
-```diff
-@@ -99,7 +99,9 @@ const MAX_CASES_PER_PROBE: usize = 64;
- /// each WASM call traps at the runtime's epoch deadline (`max_execution_seconds`,
- /// 5s by default), and a reconciliation case drives up to `MAX_RECONCILIATION_ROUNDS`
- /// rounds of them, so a deliberately-slow contract can hold one case for far longer
--/// than ten seconds. It cannot run unbounded.
-+/// than ten seconds. It cannot run unbounded. A commutativity case whose merge the
-+/// contract refuses is the other long case: the refusal exchange (#5725) adds up to
-+/// `MAX_REFUSAL_EXCHANGE_ROUNDS` rounds of at most ten contract calls each.
+ /// Global transport metrics instance.
  ///
- /// Two reasons this is left as it is rather than tightened. The probe runs on a
- /// blocking thread, so an overshoot costs CPU rather than event-loop latency, which is
 ```
 
-**File**: `crates/core/src/conformance/tests.rs` (modified, +656/-6)
+**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +154/-0)
 ```diff
-@@ -45,6 +45,7 @@ struct Fake {
-     apply: BinaryFn,
-     summarize: UnaryFn,
-     delta: BinaryFn,
-+    reads_clock: bool,
+@@ -25,6 +25,8 @@
+ //! | `quic_ended_loss_rate_<bucket>` | paths that ended in the period, by the bucket they were in at the end (same buckets) |
+ //! | `quic_ended_paths_below_floor` | paths that ended in the period before sending 200 packets, so in no bucket |
+ //! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
++//! | `quic_gate_loss_<verdict>` | congestion events by the loss gate's verdict (`recycle::loss_gate`): passed to Cubic as `queue`, `share` (loss share above the ceiling), `persistent`, `ecn` (a congestion mark), `no_sample`, or `ignored` as random loss; summed over the node's paths up to each path's last tick. Over a path's life they sum to its `quic_congestion_events`; within one period they can differ by the events between the two reads of a tick |
++//! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
+ //! | `quic_send_resets`, `quic_path_ms` | sends a path reset on this side, and the time QUIC paths were up, shadow paths included, up to each path's last tick: resets per connection-hour is their ratio |
+ //! | `quic_send_resets_reached_<n>`, `quic_send_resets_path_max` | paths whose lifetime reset count reached each level in the period, and the highest count a reset in the period took a path to: how close paths get to `recycle::SEND_ABORT_LIMIT` |
+ //!
+@@ -65,6 +67,7 @@ use super::QuicPathAge;
+ use crate::transport::quic::path::{
+     QuicInboundOutcome, QuicSendEvent, QuicSendResult, SendKind, stop_code,
+ };
++use crate::transport::quic::recycle::loss_gate::{GATE_VERDICTS, VERDICT_LABELS, Verdict};
+ 
+ /// The gauge's key, uploaded in every snapshot ([`QuicDataSnapshot::upload_keys`]).
+ const LIVE_DATA_PATHS: &str = "quic_live_data_paths";
+@@ -105,6 +108,58 @@ fn loss_rate_bucket(lost: u64, sent: u64) -> usize {
+         .count()
  }
  
- impl Fake {
-@@ -63,9 +64,22 @@ impl Fake {
-             apply: Box::new(|a, d| Ok(union(a, d))),
-             summarize: Box::new(|a| Ok(a.to_vec())),
-             delta: Box::new(|a, summary| Ok(difference(a, summary))),
-+            reads_clock: false,
++/// A path enters a `quic_gate_ended_queue_` bucket only after this many gate
++/// verdicts; below it the share says too little.
++pub(crate) const GATE_MIN_VERDICTS: u64 = 20;
++
++/// The labels of the gate's per-path buckets
++/// (`quic_gate_ended_queue_<label>`), by the share of verdicts passed as a
++/// queue: under 10%, under 50%, 50% or more.
++pub(crate) const GATE_QUEUE_LABELS: [&str; 3] = ["lt_10pct", "lt_50pct", "ge_50pct"];
++
++/// The bucket of a path that had `queue` of `total` verdicts passed as a queue.
++fn gate_queue_bucket(queue: u64, total: u64) -> usize {
++    if queue.saturating_mul(10) < total {
++        0
++    } else if queue.saturating_mul(2) < total {
++        1
++    } else {
++        2
++    }
++}
++
++/// One path's loss-gate verdicts since it started. Owned by the path's report
++/// (`recycle::PathReport`); dropping it, when the path ends, counts the path in
++/// its `quic_gate_ended_queue_` bucket.
++#[derive(Debug)]
++pub(crate) struct PathGateWindow {
++    node: &'static QuicDataCounters,
++    verdicts: [u64; GATE_VERDICTS],
++}
++
++impl PathGateWindow {
++    pub(crate) fn new(node: &'static QuicDataCounters) -> Self {
++        Self {
++            node,
++            verdicts: [0; GATE_VERDICTS],
++        }
++    }
++}
++
++impl Drop for PathGateWindow {
++    fn drop(&mut self) {
++        let total: u64 = self.verdicts.iter().sum();
++        if total >= GATE_MIN_VERDICTS {
++            let bucket = gate_queue_bucket(self.verdicts[GATE_QUEUE], total);
++            self.node.gate_ended_queue[bucket].fetch_add(1, Ordering::Relaxed);
++        }
++    }
++}
++
++/// The index of `queue` among the gate's verdicts (`loss_gate::Verdict::ALL`).
++const GATE_QUEUE: usize = 0;
++const _: () = assert!(matches!(Verdict::ALL[GATE_QUEUE], Verdict::Queue));
++
+ /// One path's packets since it started, and the loss-rate bucket it is counted
+ /// in. Owned by the path's acknowledgement watch; dropping it, however the watch
+ /// ends, takes the path out of its bucket.
+@@ -228,6 +283,8 @@ pub(crate) struct QuicDataCounters {
+     path_ms: AtomicU64,
+     send_resets_reached: [AtomicU64; QUIC_SEND_RESET_LEVELS.len()],
+     send_resets_path_max: AtomicU64,
++    gate_loss: [AtomicU64; GATE_VERDICTS],
++    gate_ended_queue: [AtomicU64; GATE_QUEUE_LABELS.len()],
+ }
+ 
+ impl QuicDataCounters {
+@@ -254,6 +311,8 @@ impl QuicDataCounters {
+             path_ms: zero(),
+             send_resets_reached: std::array::from_fn(|_| zero()),
+             send_resets_path_max: zero(),
++            gate_loss: std::array::from_fn(|_| zero()),
++            gate_ended_queue: std::array::from_fn(|_| zero()),
          }
      }
  
-+    /// No usable delta path, so every update in a refusal exchange travels as a whole
-+    /// state. Tests of the exchange's merge logic use this to keep the default
-+    /// union delta from carrying the states together.
-+    fn full_state_only(self) -> Self {
-+        self.deltaing(|_, _| Ok(Vec::new()))
-+    }
-+
-+    fn reading_clock(mut self) -> Self {
-+        self.reads_clock = true;
-+        self
-+    }
-+
-     fn merging(
-         mut self,
-         f: impl FnMut(&[u8], &[u8]) -> Result<Vec<u8>, OracleError> + 'static,
-@@ -150,6 +164,10 @@ impl ConformanceOracle for Fake {
-     fn get_state_delta(&mut self, state: &[u8], summary: &[u8]) -> Result<Vec<u8>, OracleError> {
-         (self.delta)(state, summary)
+@@ -404,6 +463,22 @@ impl QuicDataCounters {
+             .fetch_max(path_count, Ordering::Relaxed);
      }
-+
-+    fn reads_host_clock(&self) -> bool {
-+        self.reads_clock
-+    }
- }
  
- fn is_canonical(state: &[u8]) -> bool {
-@@ -1743,24 +1761,656 @@ fn an_intermediate_the_contract_rejects_is_inconclusive() {
-     );
- }
- 
--/// A contract that rejects an update it considers unauthorized (the River-style
--/// signature-chain case) returns an error. One rejection is not a merge-law failure.
-+/// A contract that refuses to merge two states it validates, in both directions and
-+/// by every route (whole state and delta), every time, leaves the two peers holding
-+/// them apart for good (#5725, the freenet/river#423 class). Exchanging the states
-+/// again changes nothing, so this is a stable disagreement and is reported under
-+/// `StateCommutativity`.
-+///
-+/// Until #5725 this case was pinned as inconclusive ("one rejection is not a
-+/// merge-law failure"). That holds for an update the other side can move past, and
-+/// is covered below by `a_refusal_that_clears_on_the_next_exchange_is_not_reported`;
-+/// it does not hold for a refusal between two valid states that never clears.
- #[test]
--fn a_rejected_update_is_inconclusive_not_a_violation() {
--    let mut fake = Fake::conforming().merging(|_a, _b| {
-+fn a_refusal_that_leaves_the_peers_apart_is_a_violation() {
-+    let refuse = |_: &[u8], _: &[u8]| -> Result<Vec<u8>, OracleError> {
-         Err(OracleError::contract(
-             "signature does not chain to the owner",
-         ))
--    });
-+    };
-+    let mut fake = Fake::conforming().merging(refuse).applying(refuse);
-+    let outcome = verify_case(
-+        &mut fake,
-+        &case(ConformanceProperty::StateCommutativity, &[&[1, 2], &[2, 3]]),
-+    );
-+    let violation = outcome.violation().cloned();
-+    assert_violates(outcome, ConformanceProperty::StateCommutativity);
-+    let violation = violation.expect("violation");
-+    // The two sides of the finding are the states each peer ends up holding.
-+    assert_eq!(violation.left, OutputDigest::of(&[1, 2]));
-+    assert_eq!(violation.right, OutputDigest::of(&[2, 3]));
-+    assert!(
-+        violation
-+            .detail
-+            .contains("signature does not chain to the owner"),
-+        "the finding must name the contract's own refusal: {}",
-+        violation.detail
-+    );
-+}
-+
-+/// A contract that refuses the WHOLE state but accepts the delta computed from the
-+/// receiver's summary converges on the network, because production sends the delta
-+/// first. Not a finding: the exchange must follow the same order.
-+#[test]
-+fn a_refusal_of_the_whole_state_that_the_delta_gets_past_is_not_reported() {
-+    let mut fake = Fake::conforming().merging(|_, _| Err(OracleError::contract("no whole states")));
-     assert_inconclusive(
-         verify_case(
-             &mut fake,
-             &case(ConformanceProperty::StateCommutativity, &[&[1, 2], &[2, 3]]),
-         ),
--        Inconclusive::ContractError("signature does not chain to the owner".into()),
-+        Inconclusive::ContractError("no whole states".into()),
-+    );
-+}
-+
-+/// A refusal on one side where the other side moves, and the two then agree, is the
-+/// honest transient case (River's ban-cap skew): not a finding. It stays
-+/// inconclusive with the contract's own reason, as before #5725.
-+///
-+/// This test guards against OVER-reporting, so it passes with or without the
-+/// exchange: what it pins is that the exchange does not turn a transient refusal
-+/// into a finding.
-+///
-+/// Union, except that the holder of `[1]` refuses `[2]` alone. The holder of `[2]`
-+/// accepts `[1]` and reaches `[1, 2]`, which the holder of `[1]` then accepts.
-+#[test]
-+fn a_refusal_that_clears_on_the_next_exchange_is_not_reported() {
-+    let mut fake = Fake::conforming()
-+        .merging(|a, b| {
-+            if a == [1] && b == [2] {
-+                return Err(OracleError::contract("ban c
++    /// A path's loss gate gave `delta` more verdicts, in the
 ```
 
-**File**: `crates/core/src/conformance/verifier.rs` (modified, +289/-20)
+**File**: `crates/core/src/transport/quic/config.rs` (modified, +7/-0)
 ```diff
-@@ -463,14 +463,27 @@ fn run<O: ConformanceOracle + ?Sized>(
+@@ -414,6 +414,11 @@ const WINDOW_MEMORY_DIVISOR: usize = 20;
+ pub(crate) struct QuicRateLimit {
+     bandwidth_limit: Option<usize>,
+     global: Option<Arc<GlobalBandwidthManager>>,
++    /// Tests only: build plain Cubic without the loss gate
++    /// (`recycle::loss_gate`), for tests of what the path does when Cubic's
++    /// window collapses under loss.
++    #[cfg(test)]
++    pub(crate) without_loss_gate: bool,
+ }
  
-         ConformanceProperty::StateCommutativity => {
-             let (a, b) = (&case.states[0], &case.states[1]);
--            let ab = merge(oracle, a, b)?;
--            let ba = merge(oracle, b, a)?;
--            Ok(compare(
--                case.property,
--                &ab,
--                &ba,
--                "merge(A, B) must equal merge(B, A)",
--            ))
-+            // A refusal is the contract's own `ContractError`; a runtime or resource
-+            // failure still propagates as inconclusive (#5509), in the same order
-+            // as before: `merge(A, B)` first.
-+            let ab = heal_merge(oracle, a, b)?;
-+            let ba = heal_merge(oracle, b, a)?;
-+            match (ab, ba) {
-+                (Ok(ab), Ok(ba)) => Ok(compare(
-+                    case.property,
-+                    &ab,
-+                    &ba,
-+                    "merge(A, B) must equal merge(B, A)",
-+                )),
-+                (ab, ba) => refused_merge_outcome(
-+                    oracle,
-+                    case.property,
-+                    a,
-+                    b,
-+                    FirstMerges { ab, ba },
-+                    &case.related,
-+                ),
-+            }
+ impl QuicRateLimit {
+@@ -424,6 +429,8 @@ impl QuicRateLimit {
+         Self {
+             bandwidth_limit,
+             global,
++            #[cfg(test)]
++            without_loss_gate: false,
          }
- 
-         ConformanceProperty::StateAssociativity => {
-@@ -958,20 +971,280 @@ pub(crate) fn associativity_heals<O: ConformanceOracle + ?Sized>(
-     Ok(Heal::OutOfPasses)
- }
- 
--/// A heal-step merge: the contract's own rejection comes back as `Ok(Err(reason))`
--/// so the caller can report it, and every other failure as `Err`, inconclusive.
-+/// A merge whose refusal the caller acts on (the associativity heal step, and the
-+/// commutativity refusal exchange): the contract's own rejection comes back as
-+/// `Ok(Err(reason))` so the caller can judge it, and every other failure as `Err`,
-+/// inconclusive.
- fn heal_merge<O: ConformanceOracle + ?Sized>(
-     oracle: &mut O,
-     base: &[u8],
-     other: &[u8],
- ) -> Result<Result<Vec<u8>, String>, Inconclusive> {
--    match merge(oracle, base, other) {
-+    refusable(merge(oracle, base, other))
-+}
-+
-+/// Split a contract call's result into the contract's own refusal, `Ok(Err(reason))`,
-+/// and every other failure, `Err`, which stays inconclusive.
-+fn refusable(
-+    result: Result<Vec<u8>, Inconclusive>,
-+) -> Result<Result<Vec<u8>, String>, Inconclusive> {
-+    match result {
-         Ok(state) => Ok(Ok(state)),
-         Err(Inconclusive::ContractError(reason)) => Ok(Err(reason)),
-         Err(other) => Err(other),
-     }
- }
- 
-+/// What a commutativity case reports when the contract refused `merge(A, B)` or
-+/// `merge(B, A)` for two states it validates (#5725).
-+///
-+/// A refusal on its own is not a finding: a contract may reject an update the other
-+/// side then moves past (River's transient ban-cap skew clears after the reverse
-+/// merge and one more exchange). What is a finding is a refusal that leaves the two
-+/// peers holding different states for good, the freenet/river#423 class. A node
-+/// that refuses an update keeps its own state, so if neither peer accepts what the
-+/// other sends, by delta or by whole state, they never converge.
-+///
-+/// So the two peers are simulated exchanging states, see [`refusal_exchange`]:
-+///
-+/// - They agree: the refusal was transient. Inconclusive with the contract's reason,
-+///   as before #5725.
-+/// - They stop moving while still apart: a stable disagreement, reported as a
-+///   [`ConformanceProperty::StateCommutativity`] violation between the two states
-+///   they end on. This is the same law a contract breaks when it keeps its own state
-+///   by returning it (mutual rejection, see [`ConformanceProperty`]); refusing by
-+///   error is the same behaviour reached by a different return value. It is
-+///   checkable from the evidence bytes alone, and `verify_case` re-runs it before
-+///   reporting, so the refusal must reproduce with the same outcome.
-+/// - The rounds run out: [`Inconclusive::RoundLimit`]. A cycle lands here too,
-+///   deliberately: the exchange follows one delivery order, and a different order
-+///   might converge. A fixpoint does not have that problem, because two peers
-+///   holding states neither will accept from the other stay put under every order.
-+///
-+/// # A contract that reads the host clock is not accused
-+///
-+/// A clock-gated refusal (the common shape is rejecting a timestamp more than K
-+/// seconds in the future, #5465) reproduces on the re-run, yet the network
-+/// converges once time passes. Re-running cannot tell that apart from a permanent
-+/// refusal, so when [`ConformanceOracle::reads_host_clock`] says the contract imports
-+/// the clock, a stuck exchange stays [`Inconclusive::ContractError`], with a reason
-+/// that says why it was not reported. That leaves a residual: a clock-reading
-+/// contract whose refusal is permanent is not reported here.
-+fn refused_merge_outcome<O: ConformanceOracle
-```
-
-**File**: `crates/core/src/conformance/wasm_tests.rs` (modified, +32/-0)
-```diff
-@@ -128,6 +128,14 @@ async fn verifier_matches_real_wasm_for_every_planted_defect()
-     // non-trivial number of generated cases — the false-positive gate against
-     // real WASM execution, not just against the pure-Rust fakes in `tests.rs`.
-     let mut conforming = RuntimeOracle::standalone(wasm.clone(), vec![CONFORMING]).await?;
-+    // The oracle answers `reads_host_clock` from the code it was built over, which
-+    // is what keeps a clock-gated refusal from being reported (#5725). This fixture
-+    // imports the clock (mode 4 reads it), so the answer must be `true` here.
-+    {
-+        use super::oracle::ConformanceOracle;
-+        assert!(super::imports_host_clock(&wasm));
-+        assert!(conforming.reads_host_clock());
-+    }
-     let corpus = Corpus {
-         deltas: vec![bytes(&[9]), bytes(&[7])],
-         ..Corpus::from_states(vec![
-@@ -572,3 +580,27 @@ async fn a_contract_sees_the_overridden_clock_through_real_wasm()
- 
-     Ok(())
- }
-+
-+/// `RuntimeOracle` answers `reads_host_clock` from the code: `false` for a module
-+/// that does not import the clock. The fixture used elsewhere in this file imports
-+/// it, so without this test a hard-coded `true` would pass.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn a_clock_free_contract_does_not_read_the_host_clock()
-+-> Result<(), Box<dyn std::error::Error>> {
-+    use super::oracle::ConformanceOracle;
-+    // The smallest module `RuntimeOracle::standalone` accepts as a contract: a
-+    // memory and the four entry points, and no imports at all.
-+    let wasm = wat::parse_str(
-+        "(module\n  \
-+           (memory (export \"memory\") 1)\n  \
-+           (func (export \"validate_state\") (result i32) i32.const 0)\n  \
-+           (func (export \"update_state\") (result i32) i32.const 0)\n  \
-+           (func (export \"summarize_state\") (result i32) i32.const 0)\n  \
-+           (func (export \"get_state_delta\") (result i32) i32.const 0)\n\
-+         )\n",
-+    )?;
-+    assert!(!super::imports_host_clock(&wasm));
-+    let oracle = RuntimeOracle::standalone(wasm, vec![]).await?;
-+    assert!(!oracle.reads_host_clock());
-+    Ok(())
-+}
-```
-
----
-
-### Incident Patch 2: `277a308d` (2026-11-10)
-**Commit Message**: feat(transport): make QUIC shadow the default on Windows (#6174)
-
-**File**: `.claude/rules/transport.md` (modified, +22/-15)
-```diff
-@@ -1117,16 +1117,16 @@ it must not wait unless it is a pacing point.
- #### QUIC endpoint (`transport/quic.rs`, #5940 step c2)
- 
- `transport-quic` (config key: `off`, `shadow` or `prefer`; unset is
--`QuicMode::default_mode`, shadow on Linux and macOS and off elsewhere, since
--the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
-+`QuicMode::default_mode`, shadow on Linux, macOS and Windows and off
-+elsewhere, since the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
- `prefer` negotiates data with the release's share of pairs ("Data slice" below;
- `upgrade::policy::log_startup` reports the share at INFO once per node), and a pair
- with both bits sends its data on the path ("QUIC send route" below). At a share of
- 0, with no `quic-data-percent`, `prefer` differs from `shadow` only by the bit, which
- stays 0. The release that raises the share above 0 must say in its notes that
- existing `prefer` configs start carrying data. Off: no endpoint, no QUIC ingress, nothing
--changes. QUIC must stay off by default on Windows until the crash-loop
--breaker has been confirmed on a real Windows machine (#6031). The default is
-+changes. Windows is shadow by default too since its crash-loop breaker was
-+confirmed on a real Windows machine (#6031). The default is
- read, never written to config.toml: a node that did not set the key follows the
- release it runs, so a default-off release is the kill switch. It does not reach
- a node that ever ran with `--transport-quic` or `FREENET_TRANSPORT_QUIC`: those
-@@ -1679,24 +1679,31 @@ peer presents a key that is not its transport key.
- 
- #### QUIC rollout (#5940)
- 
--There are no opt-in stages; releases do the rollout. QUIC stays off by default
--on Windows throughout, until its breaker is confirmed on a real Windows machine
--(#6031). Before default-on there, run on real Windows 10 and 11: the
--`quic_breaker_windows` test; logoff, shutdown and restart with Fast Startup on
--and off; tray Restart, Stop and Quit; `freenet service stop` and `restart`; an
--update exit; a real abort; and sleep during a run. Then weigh what that breaker
--never catches: a crash loop with runs of 10 minutes or more, and a fault that
--crashes once a day. Every step watches: peers disappearing per version
-+There are no opt-in stages; releases do the rollout. Windows is shadow by
-+default since its breaker (a short run counts only if it panicked in QUIC code)
-+was confirmed on a real Windows machine (#6031: Windows Server 2022, kills, a
-+reboot, a logoff, `service restart`/`stop` never counted; injected aborts and a
-+crash loop under the run wrapper tripped). Not run on a machine, covered by the
-+rule that only a QUIC panic counts: Fast Startup, sleep, tray Restart/Stop/Quit
-+and an update exit. What it never catches: a crash not preceded by a QUIC
-+panic, a crash loop with runs of 10 minutes or more, and a fault that crashes
-+once a day. Every step watches: peers disappearing per version
- against the previous rollout (a node that dies before reporting is absent from
- every rate), endpoint-down, panics and breaker trips, RSS against
- `quic_paths_active`, CPU and egress, and NAT success, connections and transfers.
-+From the first release with the Windows default, the release watch also reads
-+Windows separately: `quic_adapter_panicked` and `quic_breaker_trips` by version
-+against the previous release, and peers with `quic_breaker_suppressed`. A
-+Windows QUIC panic in the field is read (location, version) before the next
-+release goes out.
- 
- - Step 0: the first negotiating release ships with QUIC off. Its nodes answer
-   offers (`Decline{disabled}` with the key off); `upgrade_control_received`
-   stays near 0 and UDP metrics do not change.
- - Step 1: nova gateways and framework in shadow for 24-48 h. The 24 h gateway
-   A/B runs only if something looks odd. Rollback: set the key to off and restart.
--- Step 2: shadow on by default on Linux and macOS (`QuicMode::default_mode`). Gate: at least 95% upgrade
-+- Step 2: shadow on by default on Linux and macOS, then Windows once its
-+  breaker was confirmed on a real machine (`QuicMode::default_mode`). Gate: at least 95% upgrade
-   success by `established_as_offerer / accepted`; fewer than 1 fallback per
-   path-day excluding endpoint and restart causes; memory within the measured
-   terms (about 0.3 to 0.5 MiB per idle path). An abort spike stops the step.
-@@ -2295,7 +2302,7 @@ QUIC send route (#5940 e5b-6, quic/upgrade/data_route.rs,
-   waiting for its source does not count (WatchedSource). It costs a normal
-   backoff.
-   Fast path: Session::routed is an atomic set only while the live attempt holds a
--  route, so a connection with no route (shadow, the default on Linux and macOS)
-+  route, so a connection with no route (shadow, the default on Linux, macOS and Windows)
-   sends without taking the session's lock. enable_
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -119,8 +119,8 @@ rustls-native-certs = "0.8.4"
- # Keep it semver-compatible with reqwest's rustls: os_trust probes certificates
- # with it on the assumption that reqwest validates them identically.
- rustls = { version = "0.23", default-features = false, features = ["std"] }
--# QUIC endpoint (transport/quic.rs, #5940): on in shadow by default on Linux
--# and macOS, off elsewhere (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
-+# QUIC endpoint (transport/quic.rs, #5940): on in shadow by default on Linux,
-+# macOS and Windows, off elsewhere (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
- # crate's own Runtime over TimeSource, so simulation drives it), no
- # platform-verifier (peers are authenticated by raw public keys, never by a CA
- # root store), and no aws-lc-rs (deny.toml bans it).
-```
-
-**File**: `crates/core/src/bin/commands/service.rs` (modified, +2/-2)
-```diff
-@@ -3900,8 +3900,8 @@ echo "RC=$?"
-     /// crash-loop breaker's stop note to its child, and records the child's
-     /// pid in it as the statement right before every kill of any form
-     /// (`child.kill()`, `start_kill`, a `taskkill` of `child.id()`), so a
--    /// tray Restart, Stop, Quit or update is not read as a crash. The breaker
--    /// is off on Windows.
-+    /// tray Restart, Stop, Quit or update is not read as a crash. Windows has
-+    /// no stop note: its breaker counts only runs that panicked in QUIC code.
-     #[test]
-     fn wrapper_records_every_deliberate_child_kill_for_the_quic_breaker() {
-         let body = quic_breaker_pin_body(
-```
-
-**File**: `crates/core/src/config.rs` (modified, +13/-9)
-```diff
-@@ -359,7 +359,7 @@ impl Default for ConfigArgs {
-                 ledbat_min_ssthresh: None, // Uses default from NetworkApiConfig
-                 congestion_control: None,  // Default: fixedrate (set in NetworkApiConfig)
-                 bbr_startup_rate: None,    // Uses default from BBR config
--                transport_quic: None,      // Default: shadow on Linux and macOS
-+                transport_quic: None,      // Default: shadow on Linux, macOS and Windows
-                 quic_max_paths: None,      // Default: max-number-of-connections
-                 quic_data_percent: None,   // Default: this release's share of pairs
-                 quic_ignore_crash_breaker: None,
-@@ -2578,7 +2578,7 @@ pub struct NetworkArgs {
-     pub bbr_startup_rate: Option<u64>,
- 
-     /// QUIC transport (#5940): `off`, `shadow` or `prefer`. Unset means
--    /// `shadow` on Linux and macOS, and `off` elsewhere, Windows included.
-+    /// `shadow` on Linux, macOS and Windows, and `off` elsewhere.
-     ///
-     /// `shadow` builds a QUIC endpoint on the network port and upgrades
-     /// connections to peers that also run it to a QUIC path. The path carries
-@@ -2963,7 +2963,7 @@ pub struct NetworkApiConfig {
-     pub bbr_startup_rate: Option<u64>,
- 
-     /// QUIC transport (#5940): `off`, `shadow` or `prefer`; unset reads as
--    /// `QuicMode::default_mode` (shadow on Linux and macOS). Kept as written, so a value from a later release
-+    /// `QuicMode::default_mode` (shadow on Linux, macOS and Windows). Kept as written, so a value from a later release
-     /// round-trips; see [`Self::quic_settings`] for how it is read.
-     #[serde(
-         default,
-@@ -7548,16 +7548,20 @@ shutdown-drain-secs = 42
-         assert_seeded_values_bound(&cfg);
      }
  
--    /// An unset `transport-quic` is shadow, and off on Windows, which must stay
--    /// off until its crash-loop breaker has been confirmed on a real Windows
-+    /// An unset `transport-quic` is shadow on Linux, macOS and Windows; Windows
-+    /// joined once its crash-loop breaker was confirmed on a real Windows
-     /// machine (#6031). The lib tests do not compile on Windows, so
-     /// `tests/quic_breaker_windows.rs` pins the Windows half through the real
-     /// binary. The default is not written into the config, so a default-off
-     /// release turns QUIC off on every node that did not set the key.
-     #[test]
--    fn quic_is_shadow_by_default_except_on_windows() {
-+    fn quic_is_shadow_by_default_on_linux_macos_and_windows() {
-         use crate::transport::quic::QuicMode;
--        let expected = if cfg!(any(target_os = "linux", target_os = "macos")) {
-+        let expected = if cfg!(any(
-+            target_os = "linux",
-+            target_os = "macos",
-+            target_os = "windows"
-+        )) {
-             QuicMode::Shadow
-         } else {
-             QuicMode::Off
-@@ -7587,8 +7591,8 @@ shutdown-drain-secs = 42
-         assert_eq!(unset.network_api.transport_quic, None);
-         assert_eq!(
-             unset.network_api.quic_settings().is_some(),
--            cfg!(any(target_os = "linux", target_os = "macos")),
--            "an unset key builds an endpoint on Linux and macOS only"
-+            crate::transport::quic::QuicMode::default_mode().builds_endpoint(),
-+            "an unset key builds an endpoint where the platform default does"
-         );
-         assert!(
-             !toml::to_string(&unset).unwrap().contains("transport-quic"),
 ```
 
-**File**: `crates/core/src/transport/quic.rs` (modified, +18/-12)
+**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +92/-5)
 ```diff
-@@ -83,12 +83,12 @@ pub(crate) use liveness::QuicAvailabilityWatch;
+@@ -9,7 +9,7 @@ use std::time::Duration;
+ use bytes::Bytes;
  
- /// Whether the node may use QUIC: the `transport-quic` config key.
- ///
--/// An unset key is [`QuicMode::default_mode`]: shadow on Linux and macOS, and
--/// off elsewhere. Windows stays off until the crash-loop breaker has been
--/// confirmed on a real Windows machine (#6031), and other platforms because
--/// the breaker reads no boot identity there and so cannot trip. The Windows
--/// breaker counts short runs that panicked in QUIC code instead of detecting
--/// crashes ([`breaker`]). The default is decided when the value is read and
-+/// An unset key is [`QuicMode::default_mode`]: shadow on Linux, macOS and
-+/// Windows, and off elsewhere, because the breaker reads no boot identity
-+/// there and so cannot trip. The Windows breaker counts short runs that
-+/// panicked in QUIC code instead of detecting crashes ([`breaker`]); it was
-+/// confirmed on a real Windows machine before Windows defaulted to shadow
-+/// (#6031). The default is decided when the value is read and
- /// never written to `config.toml`, so a later release can change it
- /// for every node that did not set the key, which is how a default-off
- /// release turns QUIC off. A value given with `--transport-quic` or
-@@ -97,7 +97,7 @@ pub(crate) use liveness::QuicAvailabilityWatch;
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub enum QuicMode {
-     /// No QUIC endpoint is built and no QUIC datagram is read. The default on
--    /// platforms other than Linux and macOS.
-+    /// platforms other than Linux, macOS and Windows.
-     Off,
-     /// The node builds a QUIC endpoint on its UDP port and upgrades a UDP
-     /// session to a QUIC path that carries only control frames: all
-@@ -108,7 +108,8 @@ pub enum QuicMode {
-     /// endpoint driver and one upgrade task per connection run; a promoted
-     /// connection's higher key sends `Upgrade` messages on its UDP session; and
-     /// the endpoint's memory. If the endpoint cannot be built the node logs a
--    /// warning and runs with QUIC off. The default on Linux and macOS.
-+    /// warning and runs with QUIC off. The default on Linux, macOS and
-+    /// Windows.
-     Shadow,
-     /// Negotiates data on a path to a peer in the release's slice
-     /// (`upgrade::slice`), and sends its data on a path where both sides did. At a
-@@ -132,11 +133,16 @@ impl QuicMode {
-     /// See [`QuicMode::Prefer`].
-     pub const PREFER: &'static str = "prefer";
+ use super::super::framing::{HEADER_LEN, MAX_CONTROL_BYTES, MAX_METADATA_BYTES};
+-use super::super::tests::{MIB, Pair, SEED, bounded, drive, pair, payload};
++use super::super::tests::{MIB, Pair, SEED, bounded, drive, pair_with, payload};
+ use super::*;
+ use crate::config::GlobalRng;
+ use crate::simulation::{TimeSource, VirtualTime};
+@@ -76,12 +76,27 @@ async fn paths_with(
+     b_limits: QuicPathLimits,
+     b_budget: Option<SharedInboundBudget>,
+ ) -> Paths {
+-    paths_built(network, subnet, b_limits, b_budget, None).await
++    paths_built(network, subnet, b_limits, b_budget, None, true).await
+ }
  
--    /// What an unset `transport-quic` means on this platform: shadow on Linux
--    /// and macOS, and off elsewhere (Windows until #6031; other platforms
--    /// because the crash-loop breaker cannot trip there).
-+    /// What an unset `transport-quic` means on this platform: shadow on Linux,
-+    /// macOS and Windows, and off elsewhere, because the crash-loop breaker
-+    /// cannot trip there. Windows joined once its breaker was confirmed on a
-+    /// real Windows machine (#6031).
-     pub const fn default_mode() -> Self {
--        if cfg!(any(target_os = "linux", target_os = "macos")) {
-+        if cfg!(any(
-+            target_os = "linux",
-+            target_os = "macos",
-+            target_os = "windows"
-+        )) {
-             Self::Shadow
-         } else {
-             Self::Off
-```
-
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +3/-3)
-```diff
-@@ -18,9 +18,9 @@
- //!
- //! **Windows is weaker than unix.** There, a crash not preceded by a panic in
- //! QUIC code is not counted, a crash loop whose runs each last ten minutes or
--//! more never trips, and neither does a fault that crashes once a day. That must be weighed before QUIC goes on by default on Windows. QUIC
--//! stays off by default there until the breaker has been confirmed on a real
--//! Windows machine (#6031).
-+//! more never trips, and neither does a fault that crashes once a day. QUIC
-+//! became shadow by default on Windows after this breaker was confirmed on a
-+//! real Windows machine (#6031), with those limits weighed.
- //!
- //! # The marker
- //!
-```
-
-**File**: `crates/core/src/transport/quic/upgrade/driver/tests.rs` (modified, +1/-1)
-```diff
-@@ -930,7 +930,7 @@ fn data_route_takes_no_lock(session: &Arc<Session>) -> bool {
+ /// [`paths`] with an egress cap of `a_cap` bytes per second on `a`'s socket.
+ async fn paths_capped(network: &str, subnet: u8, a_cap: u64) -> Paths {
+-    paths_built(network, subnet, QuicPathLimits::DEFAULT, None, Some(a_cap)).await
++    paths_built(
++        network,
++        subnet,
++        QuicPathLimits::DEFAULT,
++        None,
++        Some(a_cap),
++        true,
++    )
++    .await
++}
++
++/// [`paths`] with plain Cubic, no loss gate (`recycle::loss_gate`), so
++/// random loss collapses the window: for the path's rules on a connection
++/// that drains slowly while it is still acknowledged.
++async fn paths_without_loss_gate(network: &str, subnet: u8) -> Paths {
++    paths_built(network, subnet, QuicPathLimits::DEFAULT, None, None, false).await
+ }
  
- /// With no route, as on a path without both data bits, a send reads one atomic
- /// and never waits for the session's lock, which the driver also takes. Shadow is
--/// the default on Linux and macOS, so this is every connection there.
-+/// the default on Linux, macOS and Windows, so this is every connection there.
+ async fn paths_built(
+@@ -90,10 +105,13 @@ async fn paths_built(
+     b_limits: QuicPathLimits,
+     b_budget: Option<SharedInboundBudget>,
+     a_cap: Option<u64>,
++    loss_gate: bool,
+ ) -> Paths {
+     let a_addr: SocketAddr = format!("10.203.{subnet}.1:5000").parse().unwrap();
+     let b_addr: SocketAddr = format!("10.203.{subnet}.2:5000").parse().unwrap();
+-    let pair = pair(network, a_addr, b_addr, a_cap).await;
++    let mut settings = super::super::tests::settings();
++    settings.rate_limit.without_loss_gate = !loss_gate;
++    let pair = pair_with(network, a_addr, b_addr, a_cap, settings).await;
+     let permit = pair
+         .b
+         .allow_peer(pair.a_addr, pair.a_keys.public())
+@@ -3325,13 +3343,18 @@ fn seeded_loss_from(
+ /// nothing on the connection was acknowledged for `STALL_PROGRESS_WINDOW`, so
+ /// the send completes. Before, it timed out (`SendFailure::TimedOut`) and went
+ /// to UDP from the start.
++///
++/// The path runs plain Cubic: the loss gate (`recycle::loss_gate`) ignores
++/// random loss with no queue, so through it this send is not slowed at all.
++/// Cubic's collapse is still what happens when the gate passes losses (a
++/// queue, or a loss share above its ceiling), and that is the case tested.
  #[test]
- fn a_connection_without_a_route_takes_no_lock_to_send() {
+ fn a_lossy_path_finishes_a_stream_whose_writes_wait_past_the_gap() {
      bounded(|| async move {
-```
-
-**File**: `crates/core/tests/quic_breaker_windows.rs` (modified, +11/-7)
-```diff
-@@ -100,6 +100,9 @@ impl Node {
-             .env_remove("FREENET_DISABLE_LOGS")
-             .env_remove("FREENET_LOG_FORMAT")
-             .env_remove("FREENET_TEST_QUIC_PANIC")
-+            // An ambient setting would make the default test pass without
-+            // testing the default.
-+            .env_remove("FREENET_TRANSPORT_QUIC")
-             .envs(env.iter().copied())
-             .args(["--ws-api-address", "127.0.0.1"])
-             .args(["--ws-api-port", &ws_port])
-@@ -310,14 +313,15 @@ fn three_quic_panics_keep_quic_off_for_the_cooldown() -> anyhow::Result<()> {
-     Ok(())
+         let _seed = GlobalRng::seed_guard(SEED);
+         let network = "quic-path-lossy-gap";
+         let loss = seeded_loss_from(network, 5, 0x5940_0007, Some(Duration::from_millis(100)));
+-        let p = paths(network, 47, QuicPathLimits::DEFAULT).await;
++        let p = paths_without_loss_gate(network, 47).await;
+         let (a, time) = (p.a.clone(), p.time());
+         const LEN: usize = 8 * MIB;
+         let gaps = Arc::new(WriteGaps::new(time.clone()));
+@@ -3371,6 +3394,70 @@ fn a_lossy_path_finishes_a_stream_whose_writes_wait_past_the_gap() {
+     })
  }
  
--/// QUIC stays off by default on Windows until the breaker has been confirmed on
--/// a real Windows machine (#6031). This fails if the default changes.
-+/// QUIC is shadow by default on Windows, as on Linux and macOS, now that the
-+/// breaker has been confirmed on a real Windows machine (#6031): a node with
-+/// no `transport-quic` builds the endpoint and arms the breaker's marker. This
-+/// fails if the default changes.
++/// The loss gate's verdicts reach the node counters (`quic_gate_loss_<verdict>`)
++/// from the path's report, one per congestion event: quinn counts an event in
++/// `congestion_events` exactly where it calls the controller, so the verdicts
++/// sum to it. With random loss and no queue most losses are ignored.
++#[test]
++fn the_loss_gates_verdicts_reach_the_node_counters() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let counters: &'static crate::transport::metrics::QuicDataCounters =
++            Box::leak(Box::new(crate::transport::metrics::QuicDataCounters::new()));
++        let network = "quic-path-gate-verdicts";
++        let _loss = seeded_loss_from(network, 5, 0x5940_0011, Some(Duration::from_millis(50)));
++        let limits = QuicPathLimits {
++            counters: Some(counters),
++            ..QuicPathLimits::DEFAULT
++        };
++        let p = paths(network, 200, limits).await;
++        let (a, time) = (p.a.clone(), p.time());
++        const LEN: usize = MIB;
++        let (sent, snap) = p
++            .drive(async move {
++                let sent = a
++                    .send_stream_bounded(
++                        &time,
++                        SendDeadlines::stream(LEN as u64),
++                        StreamId::next(),
++                        None,
++                        payload(LEN).into(),
++                        None,
++                    )
++                    .await;
++                // Two ticks of the acknowledgement watch report the counts.
++                time.sleep(2 * recycle::ACK_WATCH_TICK).await;
++                (sent, c
+```
+
+**File**: `crates/core/src/transport/quic/path/tests/pacer.rs` (modified, +3/-2)
+```diff
+@@ -669,14 +669,15 @@ impl SendPacer for Honest {
+ /// quinn makes writes wait past the gap and the connection's window carries
+ /// the send, every reservation is offered at most 5 s and the send completes:
+ /// the long waits are quinn's, after a reservation, and the write they end in
+-/// is a step, so the next reservation is offered a fresh gap.
++/// is a step, so the next reservation is offered a fresh gap. Plain Cubic,
++/// as in that test.
  #[test]
--fn quic_is_off_by_default_on_windows() -> anyhow::Result<()> {
-+fn quic_is_shadow_by_default_on_windows() -> anyhow::Result<()> {
-     let dir = tempfile::tempdir()?;
--    let node = Node::start(dir.path(), dir.path().join("logs"), &[])?;
--    let logs = node.logs();
--    assert!(!logs.contains(QUIC_BUILT), "{logs}");
--    assert_eq!(read_marker(dir.path())?, None, "no marker with QUIC off");
-+    let mut node = Node::start(dir.path(), dir.path().join("logs"), &[])?;
-+    node.wait_for_log(QUIC_BUILT)?;
-+    node.wait_for_marker(dir.path(), 0)?;
-     Ok(())
- }
+ fn a_pacer_is_offered_at_most_the_gap_on_a_lossy_live_path() {
+     bounded(|| async move {
+         let _seed = GlobalRng::seed_guard(SEED);
+         let network = "quic-pacer-lossy-window";
+         let loss = seeded_loss_from(network, 5, 0x5940_0007, Some(Duration::from_millis(100)));
+-        let p = paths(network, 47, QuicPathLimits::DEFAULT).await;
++        let p = paths_without_loss_gate(network, 47).await;
+         let pacer = Scripted::new(&p.time(), usize::MAX, Duration::ZERO);
+         p.a.pace_with(pacer.clone());
+         let (elapsed, outcome) = time_a_stream(&p, 8 * MIB).await;
 ```
 
 ---
 
-### Incident Patch 3: `2a209ef1` (2026-11-10)
-**Commit Message**: ci: list Windows Check among the required contexts (#6172)
+### Incident Patch 2: `104a05c3` (2026-11-11)
+**Commit Message**: fix(server): tighten client API request validation (#6188)
 
-**File**: `.github/scripts/check_required_check_path_filters.py` (modified, +1/-0)
+**File**: `.github/workflows/playwright-shell.yml` (modified, +8/-0)
 ```diff
-@@ -105,6 +105,7 @@
-         "Rule Lint",
-         "Claude Rule Review",
-         "macOS bundle-swap E2E",
-+        "Windows Check",
-     }
- )
+@@ -29,6 +29,10 @@ on:
+     branches: [main]
+     paths:
+       - 'crates/core/src/server/**'
++      # The WebSocket upgrade's Origin/Host gate and the Host allowlist it
++      # reads live outside server/; websocket-origin.spec.ts exercises both.
++      - 'crates/core/src/server.rs'
++      - 'crates/core/src/client_events/websocket.rs'
+       - 'crates/core/tests/playwright/**'
+       - 'crates/core/tests/playwright_shell.rs'
+       # fdev is the publish path the harness shells out to; a regression in
+@@ -38,6 +42,10 @@ on:
+   pull_request:
+     paths:
+       - 'crates/core/src/server/**'
++      # The WebSocket upgrade's Origin/Host gate and the Host allowlist it
++      # reads live outside server/; websocket-origin.spec.ts exercises both.
++      - 'crates/core/src/server.rs'
++      - 'crates/core/src/client_events/websocket.rs'
+       - 'crates/core/tests/playwright/**'
+       - 'crates/core/tests/playwright_shell.rs'
+       - 'crates/fdev/**'
+```
+
+**File**: `crates/core/src/client_events/websocket.rs` (modified, +420/-114)
+```diff
+@@ -395,31 +395,24 @@ pub(crate) fn is_allowed_host(
+ }
  
+ /// Returns `true` if the request's `Host` header IP is acceptable for a
+-/// privileged WS upgrade **and** the `Origin` is compatible with it.
++/// privileged WS upgrade **and** the `Origin` is a same-IP literal for it.
+ ///
+-/// Two acceptance branches with **different Origin policies**:
++/// The Host IP qualifies on either of two branches:
+ ///
+ /// 1. **Operator-configured CIDR** (`--allowed-source-cidrs` / config
+-///    `allowed-source-cidrs`): accepts the upgrade when the Host IP is in
+-///    the CIDR and the Origin is **either** `null` (sandboxed iframe
+-///    served from the same node) **or** a same-IP literal (direct browser
+-///    access). The operator has explicitly opted into the null-origin
+-///    risk surface — see `origin_compatible_with_host_ip`.
++///    `allowed-source-cidrs`), e.g. a Tailnet range.
++/// 2. **Default LAN/private** (no operator config required): the Host IP
++///    is private (RFC 1918 / loopback / link-local / IPv6 ULA, but **not**
++///    the unspecified `0.0.0.0` / `::`).
+ ///
+-/// 2. **Default LAN/private** (no operator config required): accepts the
+-///    upgrade when the Host IP is private (RFC 1918 / loopback /
+-///    link-local / IPv6 ULA, but **not** the unspecified `0.0.0.0` / `::`)
+-///    and the Origin is a **same-IP literal** matching the Host IP.
+-///    `Origin: null` is **rejected** on this branch because any site can
+-///    serve a `<iframe sandbox>` whose origin is null and use it to probe
+-///    LAN-bound nodes — a default-on CSWSH would expose every desktop
+-///    install on a LAN. Operators who genuinely need null-origin
+-///    sandboxed access from non-localhost contexts must opt in via
+-///    `--allowed-source-cidrs`.
++/// On both branches the Origin must be an IP literal equal to the Host IP
++/// (direct browser access, or the shell page served from that address).
++/// `Origin: null` is **rejected** on both: it identifies no page, and the
++/// node's own dApp iframe never needs it because the shell page opens the
++/// real WebSocket on its behalf (its Origin is the node's own address).
+ ///
+-/// This dual policy closes #3957 (LAN access works out of the box)
+-/// without widening CSWSH exposure beyond what an explicit operator
+-/// opt-in already accepts. The default-LAN branch matches what
++/// This closes #3957 (LAN access works out of the box). The default-LAN
++/// branch matches what
+ /// [`is_private_ip`](crate::server::is_private_ip) and the
+ /// `private_network_filter` accept for **source** IPs, modulo the
+ /// unspecified-address exclusion, so the HTTP and WS layers agree on
+@@ -430,40 +423,72 @@ pub(crate) fn is_allowed_host(
+ /// CGNAT, and other non-private but operator-controlled ranges still
+ /// require `--allowed-source-cidrs` (see `host_header_ip_in_tailscale_cidr_allowed`).
+ ///
+-/// CSWSH defence (both branches): `https://evil.com`'s JS opening
+-/// `ws://<victim-lan-ip>:7509/...` sends `Origin: https://evil.com`, which
+-/// parses to a hostname — not an IP, not matching the Host IP — so it's
+-/// refused. DNS rebinding is defeated because no DNS resolution happens
+-/// at this layer; only string-parseable IP literals are compared.
++/// An `Origin` that is a hostname (for example `https://example.com`) is
++/// refused: only an IP literal matching the Host IP is accepted. No DNS
++/// resolution happens at this layer; only string-parseable IP literals are
++/// compared.
+ pub(crate) fn host_header_ip_in_cidrs(
+     headers: &axum::http::HeaderMap,
+     origin_str: &str,
+     allowed_cidrs: &crate::server::AllowedSourceCidrs,
+ ) -> bool {
+-    let Some(host_header) = headers
++    let Some(host_ip) = trusted_host_header_ip(headers, allowed_cidrs) else {
++        return false;
++    };
++    origin_is_same_ip_literal(origin_str, host_ip)
++}
++
++/// Returns `true` if the request's `Host` header names this node: `localhost`
++/// on any port (so an SSH tunnel or port map such as `localhost:8000`
++/// qualifies), an entry in `allowed_hosts`, or an IP literal on either branch
++/// of [`host_header_ip_in_cidrs`] (private/LAN, or inside
++/// `allowed-source-cidrs`).
++///
++/// This is the Host half of the check without an Origin, for endpoints a
++/// browser reaches by top-level navigation (which carries no `Origin`),
++/// such as the contract shell page that issues an app-identity token. A
++/// browser sets `Host` from the URL it loads, so a page can only produce one
++/// of these values from an origin that is that value: `localhost:<port>` is
++/// no broader than `127.0.0.1:<port>`. Any other name, including
++/// `*.localhost`, is refused unless it is on the allowlist; names are never
++/// resolved.
++pub(crate) fn is_host_acceptable(
++    headers: &axum::http::HeaderMap,
++    allowed_hosts: &HashSet<String>,
++    allowed_cidrs: &crate::server::AllowedSourceCidrs,
++) -> bool {
++    is_localhost_host(headers)
++        || is_allowed_host(headers, allowed_hosts)
++        || truste
+```
+
+**File**: `crates/core/src/config.rs` (modified, +2/-1)
+```diff
+@@ -3810,7 +3810,8 @@ pub struct WebsocketApiConfig {
+     pub token_cleanup_interval_seconds: u64,
+ 
+     /// Additional hostnames allowed in the Host header for WebSocket connections.
+-    /// Empty means only auto-detected hostnames (machine hostname + bound IP) are allowed.
++    /// Empty means only auto-detected hosts are allowed: the loopback names, the bound
++    /// IP, and (for a non-loopback bind only) the machine hostname and its IPs.
+     #[serde(default, rename = "allowed-host")]
+     pub allowed_hosts: Vec<String>,
+ 
+```
+
+**File**: `crates/core/src/server.rs` (modified, +89/-13)
+```diff
+@@ -429,7 +429,8 @@ pub(crate) fn is_source_allowed(ip: IpAddr, allowed: &AllowedSourceCidrs) -> boo
+ }
+ 
+ /// Whether a client could reach this bind address directly at the machine's
+-/// own IPs.
++/// own IPs (and so whether the machine hostname is allowed at all; see
++/// `HostAllowlistBuilder::add_hostname`).
+ ///
+ /// A loopback listener cannot be reached at a LAN address, so resolving the
+ /// machine's hostname to allow those addresses as `Host` values gains nothing
+@@ -438,6 +439,12 @@ pub(crate) fn is_source_allowed(ip: IpAddr, allowed: &AllowedSourceCidrs) -> boo
+ /// before the API starts listening, which took about 35 s on a macOS 26 CI
+ /// runner and left the node unreachable for all of it (see #5956).
+ fn hostname_ips_are_reachable(bind_addr: IpAddr) -> bool {
++    // `::ffff:127.0.0.1` is loopback too, though `Ipv6Addr::is_loopback`
++    // says otherwise.
++    let bind_addr = match bind_addr {
++        IpAddr::V6(v6) => v6.to_ipv4_mapped().map(IpAddr::V4).unwrap_or(bind_addr),
++        v4 => v4,
++    };
+     !bind_addr.is_loopback()
+ }
+ 
+@@ -451,7 +458,7 @@ fn resolve_hostname_ips(hostname: &str, port: u16) -> Vec<IpAddr> {
+ ///
+ /// Each entry is stored with and without the port suffix so both
+ /// `Host: myhost` and `Host: myhost:7509` are accepted.
+-fn build_allowed_hosts(
++pub(crate) fn build_allowed_hosts(
+     bind_addr: IpAddr,
+     port: u16,
+     extra_allowed_hosts: &[String],
+@@ -529,17 +536,23 @@ impl HostAllowlistBuilder {
+         self.add_hostname(name_str, bind_addr, resolve);
+     }
+ 
++    /// Allows the machine's hostname, and the IPs it resolves to, as `Host`
++    /// values, but only for a bind reachable at those IPs.
++    ///
++    /// A loopback bind gets neither; local browsers use `localhost` or
++    /// `127.0.0.1`. Use `--allowed-host` to add the name.
+     fn add_hostname(
+         &mut self,
+         hostname: &str,
+         bind_addr: IpAddr,
+         resolve: impl FnOnce(&str, u16) -> Vec<IpAddr>,
+     ) {
++        if !hostname_ips_are_reachable(bind_addr) {
++            return;
++        }
+         self.add(hostname);
+-        if hostname_ips_are_reachable(bind_addr) {
+-            for ip in resolve(hostname, self.port) {
+-                self.add(&ip.to_string());
+-            }
++        for ip in resolve(hostname, self.port) {
++            self.add(&ip.to_string());
+         }
+     }
+ 
+@@ -942,18 +955,34 @@ mod tests {
+             IpAddr::V4(Ipv4Addr::LOCALHOST),
+             IpAddr::V4(Ipv4Addr::new(127, 0, 0, 2)),
+             IpAddr::V6(std::net::Ipv6Addr::LOCALHOST),
++            // IPv4-mapped loopback.
++            IpAddr::V6(Ipv4Addr::LOCALHOST.to_ipv6_mapped()),
+         ] {
+             assert!(!hostname_ips_are_reachable(loopback), "{loopback}");
+         }
+         for reachable in [
+             IpAddr::V4(Ipv4Addr::UNSPECIFIED),
+             IpAddr::V6(std::net::Ipv6Addr::UNSPECIFIED),
+             IpAddr::V4(Ipv4Addr::new(192, 168, 1, 2)),
++            IpAddr::V6(Ipv4Addr::new(192, 168, 1, 2).to_ipv6_mapped()),
+         ] {
+             assert!(hostname_ips_are_reachable(reachable), "{reachable}");
+         }
+     }
+ 
++    #[test]
++    fn a_mapped_loopback_bind_does_not_allow_the_machine_hostname() {
++        let mut hosts = HostAllowlistBuilder::new(7509);
++        hosts.add_hostname(
++            "myhost",
++            IpAddr::V6(Ipv4Addr::LOCALHOST.to_ipv6_mapped()),
++            |_, _| panic!("a loopback bind must not resolve the hostname"),
++        );
++        let hosts = hosts.build();
++        assert!(!hosts.contains("myhost"));
++        assert!(!hosts.contains("myhost:7509"));
++    }
++
+     #[test]
+     fn a_loopback_bind_does_not_look_up_the_machine_hostname() {
+         // The guard is what keeps a slow resolver from delaying the API.
+@@ -962,8 +991,8 @@ mod tests {
+             panic!("a loopback bind must not resolve the hostname")
+         });
+         let hosts = hosts.build();
+-        assert!(hosts.contains("myhost"));
+-        assert!(hosts.contains("myhost:7509"));
++        assert!(!hosts.contains("myhost"));
++        assert!(!hosts.contains("myhost:7509"));
+     }
+ 
+     #[test]
+@@ -1004,18 +1033,65 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn a_loopback_bind_still_allows_the_machine_hostname() {
+-        // The name stays allowed: a hosts-file entry can map it to loopback,
+-        // and such a client sends `Host: <hostname>:7509`.
++    fn a_loopback_bind_does_not_allow_the_machine_hostname() {
++        // Through the production builder with the real hostname: a loopback
++        // bind allows only the loopback names.
+         let hosts = build_allowed_hosts(IpAddr::V4(Ipv4Addr::LOCALHOST), 7509, &[]);
+         if let Ok(name) = hostname::get() {
+             if let Some(name_str) = name.to_str() {
+-                assert!(hosts.contains(&name_str.to_lowercase()));
+-                assert!(hosts.contains(&format!("{}:7509", name_str.to_lowercase())));
++                let name = name_str.to_lowercase();
++                if
+```
+
+**File**: `crates/core/src/server/client_api.rs` (modified, +485/-12)
+```diff
+@@ -168,6 +168,8 @@ mod permission_prompts;
+ mod v1;
+ mod v2;
+ 
++pub(crate) use permission_prompts::is_origin_trusted;
++
+ #[derive(Clone)]
+ pub(super) struct HttpClientApiRequest(mpsc::Sender<ClientConnection>);
+ 
+@@ -320,6 +322,8 @@ impl HttpClientApi {
+                 "/contract/{key}",
+                 axum::routing::get(home_page::contract_detail),
+             )
++            // Applies to the four dashboard routes above only.
++            .route_layer(axum::middleware::from_fn(require_trusted_host))
+             // Notification service worker, served at the origin root so its
+             // default scope (`/`) covers every contract shell page. The shell
+             // registers it to show notifications via showNotification() — the
+@@ -519,6 +523,7 @@ async fn web_home(
+     query_string: Option<String>,
+     hosted_mode: bool,
+     source_addr: Option<std::net::SocketAddr>,
++    host_trusted: bool,
+ ) -> Result<axum::response::Response, WebSocketApiError> {
+     // Check if this is the sandboxed iframe requesting its content
+     let is_sandbox = query_string
+@@ -549,6 +554,7 @@ async fn web_home(
+         rs,
+         hosted_mode,
+         source_addr,
++        host_trusted,
+     )
+     .await
+ }
+@@ -576,9 +582,19 @@ async fn render_shell_response(
+     // Peer address of the requesting connection, for the issuance audit log.
+     // `None` only where no `ConnectInfo` is installed (standalone test routers).
+     source_addr: Option<std::net::SocketAddr>,
++    // Result of [`request_host_trusted`] for this request.
++    host_trusted: bool,
+ ) -> Result<axum::response::Response, WebSocketApiError> {
+     use headers::{Header, HeaderMapExt};
+ 
++    // The token below attests its holder as this contract's app. Issue it
++    // only when the request's `Host` names this node, the same allowlist the WebSocket
++    // upgrade and `/permission` endpoints apply. Checked before minting so a
++    // refused request leaves no token behind.
++    if !host_trusted {
++        return Ok(untrusted_host_response());
++    }
++
+     // Shell page: generate auth token, serve iframe wrapper with CSP
+     let token = AuthToken::generate();
+ 
+@@ -611,17 +627,7 @@ async fn render_shell_response(
+         );
+     }
+ 
+-    let auth_header = headers::Authorization::<headers::authorization::Bearer>::name().to_string();
+-    let version_prefix = api_version.prefix();
+-    // Don't set a cookie domain — the browser will default to the request's origin host,
+-    // which works for both localhost and remote access.
+-    let cookie = cookie::Cookie::build((auth_header, format!("Bearer {}", token.as_str())))
+-        .path(format!("/{version_prefix}/contract/web/{key}"))
+-        .same_site(cookie::SameSite::Strict)
+-        .max_age(cookie::time::Duration::days(1))
+-        .secure(!config.localhost)
+-        .http_only(false)
+-        .build();
++    let cookie = shell_token_cookie(&token, &key, api_version, config.localhost);
+ 
+     let token_header = headers::Authorization::bearer(token.as_str()).unwrap();
+     let contract_response = path_handlers::contract_home(
+@@ -687,6 +693,80 @@ fn hosted_mode_or_default(ext: Option<Extension<crate::server::HostedMode>>) ->
+     ext.map(|Extension(hm)| hm.0).unwrap_or(false)
+ }
+ 
++/// The cookie carrying a shell page's app-identity token.
++///
++/// `HttpOnly`: nothing in the shell or in a webapp reads it from script (the
++/// shell gets the token from the page body, the sandboxed app from its URL).
++fn shell_token_cookie(
++    token: &AuthToken,
++    key: &str,
++    api_version: ApiVersion,
++    localhost: bool,
++) -> cookie::Cookie<'static> {
++    use headers::Header;
++    let auth_header = headers::Authorization::<headers::authorization::Bearer>::name().to_string();
++    let version_prefix = api_version.prefix();
++    // Don't set a cookie domain — the browser will default to the request's origin host,
++    // which works for both localhost and remote access.
++    cookie::Cookie::build((auth_header, format!("Bearer {}", token.as_str())))
++        .path(format!("/{version_prefix}/contract/web/{key}"))
++        .same_site(cookie::SameSite::Strict)
++        .max_age(cookie::time::Duration::days(1))
++        .secure(!localhost)
++        .http_only(true)
++        .build()
++}
++
++/// The refusal for [`request_host_trusted`]. Not logged; the body tells the
++/// user what to change.
++fn untrusted_host_response() -> axum::response::Response {
++    (
++        axum::http::StatusCode::FORBIDDEN,
++        "Host header not allowed for this node. To use a hostname or public address, \
++         start the node with --allowed-host <name>; a reverse proxy must pass the \
++         browser's Host header through unchanged.",
++    )
++        .into_response()
++}
++
++/// Middleware for the node dashboard pages, which show the node's identity,
++/// peers and hosted contracts: refuse them for an untrusted `Host`.
++async fn require_trusted_host(
++    req: axum::extract::Request,
++    next: axum::middleware::Next,
++) -
+```
+
+**File**: `crates/core/src/server/client_api/permission_prompts.rs` (modified, +204/-74)
+```diff
+@@ -117,7 +117,7 @@ use tokio_stream::wrappers::errors::BroadcastStreamRecvError;
+ 
+ use crate::client_events::websocket::{
+     UserTokenDecision, decide_user_token, derive_user_context, host_header_ip_in_cidrs,
+-    is_allowed_host, is_localhost_origin, is_loopback_source,
++    is_allowed_host, is_host_acceptable, is_localhost_origin, is_loopback_source,
+ };
+ use crate::contract::delegate_capabilities::{AppIdentity, Grant, capability_description};
+ use crate::contract::user_input::{
+@@ -602,7 +602,8 @@ fn caller_to_json(caller: &CallerIdentity) -> serde_json::Value {
+ ///   cross-origin probes (e.g. a sandboxed iframe whose origin is
+ ///   `null`). The body itself reveals nothing.
+ /// * **Trusted callers** (loopback / LAN-with-same-IP-Origin /
+-///   `allowed-host`-with-matching-Origin / no Origin same-origin GET):
++///   `allowed-host`-with-matching-Origin / no-Origin same-origin GET whose
++///   Host names this node, see [`grants_read_trusted`]):
+ ///   reply `200 OK` with the real prompt list and **no**
+ ///   `Access-Control-Allow-Origin` header. The legitimate consumer (the
+ ///   gateway shell page) is same-origin, so it doesn't need CORS to
+@@ -628,18 +629,9 @@ async fn pending_prompts(
+     let allowed_hosts = allowed_hosts.as_ref().map(|Extension(v)| v);
+     let allowed_source_cidrs = allowed_source_cidrs.as_ref().map(|Extension(v)| v);
+ 
+-    // Missing Origin (e.g. same-origin top-level fetch from some
+-    // browsers) is treated as trusted: the source-IP filter in
+-    // `server.rs::private_network_filter` and the operator-configured
+-    // `allowed-source-cidrs` policy already gate which networks can
+-    // reach this endpoint, and the poll payload is not a capability.
+-    let trusted = match headers.get("origin") {
+-        Some(value) => value
+-            .to_str()
+-            .map(|s| is_origin_trusted(&headers, s, allowed_hosts, allowed_source_cidrs))
+-            .unwrap_or(false),
+-        None => true,
+-    };
++    // A same-origin GET often carries no Origin; then the Host must pass
++    // `host_trusted_without_origin` (see `grants_read_trusted`).
++    let trusted = grants_read_trusted(&headers, allowed_hosts, allowed_source_cidrs);
+ 
+     if !trusted {
+         let mut resp = Json(serde_json::json!([])).into_response();
+@@ -786,15 +778,18 @@ async fn list_grants(
+     let allowed_hosts = allowed_hosts.as_ref().map(|Extension(v)| v);
+     let allowed_source_cidrs = allowed_source_cidrs.as_ref().map(|Extension(v)| v);
+     // A same-origin GET often carries no Origin. Without one, require a Host
+-    // naming this machine (or an operator-allowed host), so a DNS-rebound
+-    // page, whose Host is its own name, reads nothing: which apps a user has
+-    // granted is a fingerprint worth keeping.
++    // that passes `host_trusted_without_origin`, so a request whose
++    // Host is an arbitrary hostname reads nothing: the list of granted apps
++    // is not public.
+     if !grants_read_trusted(&headers, allowed_hosts, allowed_source_cidrs) {
+         return Json(grants_body(None)).into_response();
+     }
+     Json(grants_body(capabilities_of(op_manager).as_deref())).into_response()
+ }
+ 
++/// Read gate shared by `/permission/pending` and `/permission/grants`: a
++/// present Origin must pass [`is_origin_trusted`]; without one, the Host must
++/// pass [`host_trusted_without_origin`].
+ pub(super) fn grants_read_trusted(
+     headers: &HeaderMap,
+     allowed_hosts: Option<&AllowedHosts>,
+@@ -805,10 +800,7 @@ pub(super) fn grants_read_trusted(
+             .to_str()
+             .map(|s| is_origin_trusted(headers, s, allowed_hosts, allowed_source_cidrs))
+             .unwrap_or(false),
+-        None => {
+-            host_is_loopback(headers)
+-                || allowed_hosts.is_some_and(|hosts| is_allowed_host(headers, hosts))
+-        }
++        None => host_trusted_without_origin(headers, allowed_hosts, allowed_source_cidrs),
+     }
+ }
+ 
+@@ -833,6 +825,25 @@ pub(super) fn host_is_loopback(headers: &HeaderMap) -> bool {
+     matches!(name.as_str(), "localhost" | "127.0.0.1" | "[::1]")
+ }
+ 
++/// For a request with no `Origin` (a same-origin GET or `EventSource`): the
++/// Host must pass the same check as the shell page ([`is_host_acceptable`]:
++/// `localhost`, an `allowed-host` entry, or a private or
++/// `allowed-source-cidrs` IP literal). Names are never resolved, so a name
++/// that is neither `localhost` nor on the allowlist does not qualify.
++fn host_trusted_without_origin(
++    headers: &HeaderMap,
++    allowed_hosts: Option<&AllowedHosts>,
++    allowed_source_cidrs: Option<&AllowedSourceCidrs>,
++) -> bool {
++    let no_hosts = AllowedHosts::default();
++    let no_cidrs = AllowedSourceCidrs::default();
++    is_host_acceptable(
++        headers,
++        allowed_hosts.unwrap_or(&no_hosts),
++        allowed_source_cidrs.unwrap_or(&no_cidrs),
++    )
++}
++
+ /// `{ "grants": [...], "stats": {...} }`. The stats are the capability
+ /// counters (lifecycle runs delivered, deferred, d
+```
+
+**File**: `crates/core/src/server/client_api/v1.rs` (modified, +4/-0)
+```diff
+@@ -71,6 +71,7 @@ async fn web_home_v1(
+     // Same tolerance as `hosted_mode` above.
+     extensions: axum::http::Extensions,
+ ) -> Result<axum::response::Response, WebSocketApiError> {
++    let host_trusted = request_host_trusted(&headers, &extensions);
+     web_home(
+         key,
+         rs,
+@@ -82,6 +83,7 @@ async fn web_home_v1(
+         extensions
+             .get::<axum::extract::ConnectInfo<std::net::SocketAddr>>()
+             .map(|ci| ci.0),
++        host_trusted,
+     )
+     .await
+ }
+@@ -97,6 +99,7 @@ async fn web_subpages_v1(
+     // See `web_home_*`: read from extensions so standalone routers do not 500.
+     extensions: axum::http::Extensions,
+ ) -> Result<axum::response::Response, WebSocketApiError> {
++    let host_trusted = request_host_trusted(&headers, &extensions);
+     web_subpages(
+         key,
+         last_path,
+@@ -109,6 +112,7 @@ async fn web_subpages_v1(
+         extensions
+             .get::<axum::extract::ConnectInfo<std::net::SocketAddr>>()
+             .map(|ci| ci.0),
++        host_trusted,
+     )
+     .await
+ }
+```
+
+**File**: `crates/core/src/server/client_api/v2.rs` (modified, +4/-0)
+```diff
+@@ -42,6 +42,7 @@ async fn web_home_v2(
+     // Same tolerance as `hosted_mode` above.
+     extensions: axum::http::Extensions,
+ ) -> Result<axum::response::Response, WebSocketApiError> {
++    let host_trusted = request_host_trusted(&headers, &extensions);
+     web_home(
+         key,
+         rs,
+@@ -53,6 +54,7 @@ async fn web_home_v2(
+         extensions
+             .get::<axum::extract::ConnectInfo<std::net::SocketAddr>>()
+             .map(|ci| ci.0),
++        host_trusted,
+     )
+     .await
+ }
+@@ -68,6 +70,7 @@ async fn web_subpages_v2(
+     // See `web_home_*`: read from extensions so standalone routers do not 500.
+     extensions: axum::http::Extensions,
+ ) -> Result<axum::response::Response, WebSocketApiError> {
++    let host_trusted = request_host_trusted(&headers, &extensions);
+     web_subpages(
+         key,
+         last_path,
+@@ -80,6 +83,7 @@ async fn web_subpages_v2(
+         extensions
+             .get::<axum::extract::ConnectInfo<std::net::SocketAddr>>()
+             .map(|ci| ci.0),
++        host_trusted,
+     )
+     .await
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6189** (2026-11-11): feat(transport): handshake format 2 expresses a floor in the previous version series (@sanity)
+- **PR #6188** (2026-11-11): fix(server): tighten client API request validation (@sanity)
+- **PR #6185** (2026-11-11): fix(transport): a loss gate in front of QUIC Cubic, so random loss does not collapse the window (@sanity)
 - **PR #6182** (2026-11-11): docs(rules): report scope bundling and subject length as INFO (@sanity)
 - **PR #6180** (2026-11-11): ci(rule-review): report a non-run as a failure and track the outage (@sanity)
 - **PR #6179** (2026-11-10): docs(conformance): drop the stale install-canonicalisation sequencing note (@sanity)
-- **PR #6178** (2026-11-10): fix(conformance): report a merge refusal that leaves peers apart (@sanity)
-- **PR #6177** (2026-11-10): chore(conformance): delete the unreachable contract-removal path (@sanity)
-- **PR #6175** (2026-11-10): chore(config): add gw3 to the compiled-in fallback gateways (@sanity)
 
 ---
 
@@ -2611,51 +2742,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. conformance): report a merge refusal that leaves peers apart (#6178)
+## X. transport): a loss gate in front of QUIC Cubic, so random loss does not collapse
 
 **RULE**:
-When implementing operations in `crates/core/src/conformance/minimize.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `291950ed`: conformance): report a merge refusal that leaves peers apart (#6178). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `acae3b45`: transport): a loss gate in front of QUIC Cubic, so random loss does not collapse the window (#6185). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/conformance/minimize.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        fn reads_host_clock(&self) -> bool {
-            false
-        }
-
-        fn reads_host_clock(&self) -> bool {
-            false
-        }
-
-            fn reads_host_clock(&self) -> bool {
-                false
-            }
-
-            fn reads_host_clock(&self) -> bool {
-                false
-            }
-
-        fn reads_host_clock(&self) -> bool {
-            false
-        }
-
-        fn reads_host_clock(&self) -> bool {
-            false
-        }
-
+  quic_gate_loss_<queue|share|persistent|ecn|no_sample|ignored> (congestion
+  events by the loss gate's verdict, recycle::loss_gate, reported by the path's
+  report at each tick; over a path's life they sum to its quic_congestion_events,
+  since quinn counts an event where it calls the controller, while one period's
+  sums can differ by the events between a tick's two reads) and quic_gate_ended_queue_<lt_10pct|lt_50pct|
+  ge_50pct> (paths that ended in the period after at least 20 verdicts, by the
+  share passed as a queue). A path whose losses mostly read as a queue runs as
+  plain Cubic, from a real queue or from jitter; with the path's loss rate this
+  sizes how often jitter defeats the gate in the field.
+  TimeSource's connection idle timeout, Cubic behind the loss gate
+  (recycle::loss_gate::LossGate, see below) with its window capped to the
+  configured bandwidth (recycle::CappedCubic; QuicRateLimit::without_loss_gate,
+  test-only, gives plain capped Cubic), 64 uni / 0 bidi streams,
+QUIC loss gate (quic/recycle/loss_gate.rs, every QUIC path by default): Cubic
+cuts its window on every loss, so under a few percent of random loss (Wi-Fi,
+cheap routers) its window collapses and l
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  TimeSource's connection idle timeout, Cubic with its window capped to the
+  configured bandwidth (recycle::CappedCubic), 64 uni / 0 bidi streams,
+  main they counted for as long as they were held). Under random loss the 384 KiB s
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `291950ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `acae3b45` are properly handled with clean fallback behavior.
