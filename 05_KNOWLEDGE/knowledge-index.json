@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T05:47:34.703Z",
+  "last_updated": "2026-11-12T05:57:18.962Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -82814,11 +82814,16 @@
       "slug": "urllib3-urllib3",
       "platform": "github",
       "source_url": "https://github.com/urllib3/urllib3",
-      "source_version": "c5347bbd",
-      "content_hash": "ac3415559fffc34f5577f474f46acda9aac8bd014c39c73afb39aefcf6933b8a",
+      "source_version": "6da1f821",
+      "content_hash": "fff051ed7e74cce05151125c11a1260bfe45d4cfa9a4086e76ec3501581f0366",
       "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Upgrade dev dependencies to fix alerts (#5360)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2914,
           "title": "HTTP/2 probe cache lock leak (#5254)",
@@ -82850,7 +82855,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T00:10:46.953Z",
+      "verified_at": "2026-11-12T05:57:18.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

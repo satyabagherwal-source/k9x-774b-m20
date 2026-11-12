@@ -9093,3 +9093,4 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `9495f482` | Multi-dimensional audit evidence | 2026-11-12T05:35:15.908Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-12T05:47:34.813Z |
 | `learn-dom-d-0c67c5db` | `project://hf-abenzerps-qwen-image-2.1-turbo-quantized` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | 2026-11-12T05:47:56.937Z |
+| `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `6da1f821` | Multi-dimensional audit evidence | 2026-11-12T05:57:19.113Z |

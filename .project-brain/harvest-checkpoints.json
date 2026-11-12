@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-12T05:47:34.824Z",
+  "last_updated": "2026-11-12T05:57:19.126Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14496,14 +14496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-urllib3-urllib3",
-      "content_hash": "ac3415559fffc34f5577f474f46acda9aac8bd014c39c73afb39aefcf6933b8a",
-      "verified_at": "2026-11-04T00:10:47.081Z",
+      "content_hash": "fff051ed7e74cce05151125c11a1260bfe45d4cfa9a4086e76ec3501581f0366",
+      "verified_at": "2026-11-12T05:57:19.125Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T00:10:47.081Z"
+      "last_updated": "2026-11-12T05:57:19.125Z"
     },
     "simibac/ConfettiSwiftUI": {
       "repository": "simibac/ConfettiSwiftUI",

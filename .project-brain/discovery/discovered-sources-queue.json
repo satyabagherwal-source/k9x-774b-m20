@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T05:47:56.941Z",
+  "updated_at": "2026-11-12T05:57:23.729Z",
   "stats": {
-    "total_discovered": 848,
-    "approved_pending_harvest": 770,
+    "total_discovered": 859,
+    "approved_pending_harvest": 779,
     "harvested_count": 0,
-    "rejected_count": 78,
+    "rejected_count": 80,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 796,
-      "OFFICIAL_DOCUMENTATION": 22,
-      "STANDARDS_AND_SPECIFICATIONS": 28,
+      "COMMUNITY_AND_EXPERT": 803,
+      "OFFICIAL_DOCUMENTATION": 23,
+      "STANDARDS_AND_SPECIFICATIONS": 31,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 1
     }
@@ -18127,6 +18127,234 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
         "fileName": "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md"
+      }
+    },
+    "SRC-1E1BF8B13D33": {
+      "id": "SRC-1E1BF8B13D33",
+      "url": "https://github.com/urllib3/urllib3",
+      "title": "https://github.com/urllib3/urllib3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.677Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-01CFFD3242F4": {
+      "id": "SRC-01CFFD3242F4",
+      "url": "https://github.com/urllib3/urllib3/pull/611",
+      "title": "https://github.com/urllib3/urllib3/pull/611",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.683Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-22C6E7901D25": {
+      "id": "SRC-22C6E7901D25",
+      "url": "https://bugs.python.org/issue658327",
+      "title": "https://bugs.python.org/issue658327",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-74149D7E9EF3": {
+      "id": "SRC-74149D7E9EF3",
+      "url": "https://github.com/urllib3/urllib3/issues/800",
+      "title": "https://github.com/urllib3/urllib3/issues/800",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.693Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-3B3D1925F130": {
+      "id": "SRC-3B3D1925F130",
+      "url": "https://github.com/urllib3/urllib3/pull/3024",
+      "title": "https://github.com/urllib3/urllib3/pull/3024",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.700Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-E2F91B733210": {
+      "id": "SRC-E2F91B733210",
+      "url": "http://docs.python.org/3/license.html",
+      "title": "http://docs.python.org/3/license.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "OFFICIAL_DOCUMENTATION",
+      "discovered_at": "2026-11-12T05:57:23.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-1BCCA3558B8A": {
+      "id": "SRC-1BCCA3558B8A",
+      "url": "http://tools.ietf.org/html/rfc6125",
+      "title": "http://tools.ietf.org/html/rfc6125",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-12T05:57:23.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-AEA65FAE51D6": {
+      "id": "SRC-AEA65FAE51D6",
+      "url": "https://github.com/urllib3/urllib3/security/dependabot",
+      "title": "https://github.com/urllib3/urllib3/security/dependabot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.715Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-0449B72D7A71": {
+      "id": "SRC-0449B72D7A71",
+      "url": "https://www.rfc-editor.org/rfc/rfc6125",
+      "title": "IETF RFC 6125",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.720Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-E593C606C957": {
+      "id": "SRC-E593C606C957",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110",
+      "title": "IETF RFC 9110",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.724Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-67B738E690C4": {
+      "id": "SRC-67B738E690C4",
+      "url": "https://www.rfc-editor.org/rfc/rfc2818",
+      "title": "IETF RFC 2818",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T05:57:23.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
       }
     }
   }

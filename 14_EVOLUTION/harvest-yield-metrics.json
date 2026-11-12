@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T05:47:34.819Z",
-  "total_cycles_completed": 8918,
-  "total_learnings_persisted": 8918,
-  "total_rules_promoted": 8764,
+  "last_updated": "2026-11-12T05:57:19.121Z",
+  "total_cycles_completed": 8919,
+  "total_learnings_persisted": 8919,
+  "total_rules_promoted": 8765,
   "history": [
-    {
-      "timestamp": "2026-11-11T06:24:02.924Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T06:33:33.905Z",
       "repository": "react-native-webrtc/react-native-webrtc",
@@ -1403,6 +1396,13 @@
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T05:57:19.121Z",
+      "repository": "urllib3/urllib3",
+      "learningId": "learn-github-urllib3-urllib3",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

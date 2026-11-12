@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source**: github ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
-> **Source Version**: `c5347bbd`  
+> **Source Version**: `6da1f821`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:10:46.271Z  
+> **Timestamp**: 2026-11-12T05:57:07.376Z  
 > **Learning ID**: `learn-github-urllib3-urllib3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:10:45.749Z  
+> **Harvest Timestamp**: 2026-11-12T05:57:07.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1795,11 +1795,11 @@ class SSLTransport:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5353** (2026-11-02): **Bump the github-actions group with 10 updates**
-  *Symptoms*: Bumps the github-actions group with 10 updates:  | Package | From | To | | --- | --- | --- | | [actions/setup-python](https://github.com/actions/setup-python) | `7.0.0` | `7.1.0` | | [astral-sh/setup-uv](https://github.com/astral-sh/setup-uv) | `10.2.0` | `10.3.2` | | [actions/setup-node](https://github.com/actions/setup-node) | `7.0.0` | `7.1.0` | | [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` | | [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` | | [github/codeql-action/init](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` | | [github/codeql-action/autobuild](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` | | [github/codeql-action/analyze](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` | | [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) | `1.14.2` | `1.14.3` | | [ossf/scorecard-action](https://github.com/ossf/scorecard-action) | `2.4.4` | `2.5.0` |  Updates `actions/setup-python` from 7.0.0 to 7.1.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-python/releases">actions/setup-python's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Add <code>mirror</code> and <code>mirror-token</code> inputs for custom Python distribution sources by <a href="https://github.com/luhenry"><code>@​luhenry</code></a>
+- **Issue #5372** (2026-11-11): **Run dummyserver tests over both HTTP and HTTPS**
+  *Symptoms*: Many existing connection pool, retry, and pool manager tests run only over HTTP. This change runs the applicable tests over HTTPS too, using shared fixtures.  These fixtures also prepare the tests for HTTP/2 coverage in #5278. That PR can add protocol selection to the shared configuration:  ```python @pytest.fixture def connection_pool_kw(     server_scheme: str, http_version: str ) -> dict[str, typing.Any]:     options: dict[str, typing.Any] = {         "http1": http_version == "h11",         "http2": http_version == "h2",     }     if server_scheme == "https":         options["ca_certs"] = DEFAULT_CA     return options ```  Tests using the pool factories can then cover both protocols without changing their bodies.
 
-- **Issue #5349** (2026-11-01): **Fix HTTPConnectionPool._prepare_proxy to set up CONNECT tunnel (#2730)**
-  *Symptoms*: ## Summary of changes  `HTTPConnectionPool._prepare_proxy()` was empty (`pass`), so even when `connection_requires_http_tunnel()` returned `True` for an HTTP destination through a proxy, no HTTP CONNECT tunnel was ever established. A CONNECT-based proxy could not be used for `http://` destinations.  `HTTPSConnectionPool._prepare_proxy` already implemented this correctly; mirror it here so the tunnel is set up for HTTP connections too.  ## Root cause  `_prepare_proxy` in `HTTPConnectionPool` was a no-op:  ```python def _prepare_proxy(self, conn: BaseHTTPConnection) -> None:     # Nothing to do for HTTP connections.     pass ```  The fix mirrors `HTTPSConnectionPool._prepare_proxy`:  ```python def _prepare_proxy(self, conn: BaseHTTPConnection) -> None:     """Establishes a tunnel connection through HTTP CONNECT."""     if self.proxy and self.proxy.scheme == "https":         tunnel_scheme = "https"     else:         tunnel_scheme = "http"      conn.set_tunnel(         scheme=tunnel_scheme,         host=self._tunnel_host,         port=self.port,         headers=self.proxy_headers,     )     conn.connect() ```  ## Verification  Before (unpatched main, commit `2aa7e9c3`):  ``` BEFORE (unpatched):   set_tunnel called: False   connect called: False ```  After (this branch, commit `48a039f9`):  ``` AFTER (patched):   set_tunnel called: True   connect called: True   set_tunnel call_args: call(scheme='http', host='example.com', port=8080, headers={'X-Proxy': 'test'}) ```  Two parametriz
+- **Issue #5360** (2026-11-11): **Upgrade dev dependencies to fix alerts**
+  *Symptoms*: Bumped all dev dependencies with `uv lock --upgrade --upgrade-package mypy==1.20.2` to fix alerts on https://github.com/urllib3/urllib3/security/dependabot mainly. mypy was skipped because newer versions require changes to a few annotations. Also, bumped uv.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1816,245 +1816,171 @@ class SSLTransport:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5347bbd` (2026-11-02)
-**Commit Message**: Bump the github-actions group with 10 updates (#5353)
+### Incident Patch 1: `a35bf900` (2026-11-11)
+**Commit Message**: Upgrade dev dependencies to fix alerts (#5360)
 
-Bumps the github-actions group with 10 updates:
+* Upgrade all dev dependencies except mypy
 
-| Package | From | To |
-| --- | --- | --- |
-| [actions/setup-python](https://github.com/actions/setup-python) | `7.0.0` | `7.1.0` |
-| [astral-sh/setup-uv](https://github.com/astral-sh/setup-uv) | `10.2.0` | `10.3.2` |
-| [actions/setup-node](https://github.com/actions/setup-node) | `7.0.0` | `7.1.0` |
-| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` |
-| [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` |
-| [github/codeql-action/init](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
-| [github/codeql-action/autobuild](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
-| [github/codeql-action/analyze](https://github.com/github/codeql-action) | `4.38.2` | `4.39.1` |
-| [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) | `1.14.2` | `1.14.3` |
-| [ossf/scorecard-action](https://github.com/ossf/scorecard-action) | `2.4.4` | `2.5.0` |
+* Fix upload parameter typing for newer Quart versions
+dummyserver/app.py:82: error: Argument 1 to "getlist" of "MultiDict" has incompatible type "Any | None"; expected "str"  [arg-type]
 
+* Set asyncio fixture loop scope for Emscripten tests
 
-Updates `actions/setup-python` from 7.0.0 to 7.1.0
-- [Release notes](https://github.com/actions/setup-python/rele
+* Bump uv to a version unaffected by eMudhra certs
 
-**File**: `.github/workflows/ci.yml` (modified, +9/-9)
+**File**: `.github/workflows/ci.yml` (modified, +2/-2)
 ```diff
-@@ -28,7 +28,7 @@ jobs:
-           persist-credentials: false
- 
-       - name: "Setup Python"
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: "3.x"
-           cache: "pip"
-@@ -108,7 +108,7 @@ jobs:
-           persist-credentials: false
- 
-       - name: "Setup Python ${{ matrix.python-version }}"
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         # pip will emit a warning about running as root if setup-python
-         # is used in a container.
-         if: ${{ matrix.container == '' }}
-@@ -118,7 +118,7 @@ jobs:
-           check-latest: true
- 
+@@ -120,7 +120,7 @@ jobs:
        - name: "Install uv"
--        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
          with:
-           version: "0.12.22"
+-          version: "0.12.22"
++          version: "0.13.7"
  
-@@ -143,7 +143,7 @@ jobs:
-         uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1.7.2
-         if: ${{ matrix.nox-session == 'emscripten(firefox)' }}
-       - name: "Install node.js"
--        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-         if: ${{ matrix.nox-session == 'emscripten(node)' }}
-         with:
-           node-version: 22
-@@ -169,7 +169,7 @@ jobs:
-           NOX_SESSION: ${{ matrix.nox-session != '' && matrix.nox-session || format('test-{0}', matrix.python-version) }}
- 
-       - name: "Upload coverage data"
--        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-           name: coverage-data-${{ matrix.python-version }}-${{ matrix.os }}-${{ matrix.experimental }}-${{ matrix.nox-session }}
-           path: ".coverage.*"
-@@ -188,12 +188,12 @@ jobs:
-           persist-credentials: false
- 
-       - name: "Setup Python"
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: "3.x"
- 
+       - name: "Install Chrome"
+         uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2.2.0
+@@ -195,7 +195,7 @@ jobs:
        - name: "Install uv"
--        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
          with:
-           version: "0.12.22"
+-          version: "0.12.22"
++          version: "0.13.7"
  
-@@ -202,7 +202,7 @@ jobs:
-         run: uv sync --dev --frozen
- 
-       - name: "Download coverage data"
--        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-         with:
-           pattern: coverage-data-*
-           merge-multiple: true
-@@ -216,7 +216,7 @@ jobs:
- 
-       - if: ${{ failure() }}
-         name: "Upload report if check failed"
--        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-           name: coverage-report
-           path: htmlcov
+       - name: "Install coverage"
+         # Install the same version of coverage as in the lock file.
 ```
 
-**File**: `.github/workflows/codeql.yml` (modified, +3/-3)
+**File**: `.github/workflows/downstream.yml` (modified, +1/-1)
 ```diff
-@@ -28,13 +28,13 @@ jobs:
-         persist-credentials: false
- 
-     - name: "Run CodeQL init"
--      uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-       with:
-         config-file: "./.github/codeql.yml"
-         languages: "python,javascript-typescript,actions"
- 
-     - name: "Run CodeQL autobuild"
--      uses: github/codeql-action/autobuild@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+      uses: github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
- 
-     - name: "Run CodeQL analyze"
--      uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-```
-
-**File**: `.github/workflows/downstream.yml` (modified, +2/-2)
-```diff
-@@ -26,12 +26,12 @@ jobs:
-           persist-credentials: false
- 
-       - name: "Setup Python"
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: "3.14"
- 
+@@ -33,7 +33,7 @@ jobs:
        - name: "Install uv"
--        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
-+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e  # v10.3.2
+         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e  # v10.3.2
          with:
-           version: "0.12.22"
+-          version: "0.12.22"
++          version: "0.13.7"
  
+       - name: "Run downstream tests"
+         run: uvx nox -s downstream_${{ matrix.downstream }}
 ```
 
-**File**: `.github/workflows/lint.yml` (modified, +2/-2)
+**File**: `.github/workflows/lint.yml` (modified, +1/-1)
 ```diff
-@@ -22,12 +22,12 @@ jobs:
-           persist-credentials: false
- 
-       - name: "Setup Python"
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: "3.x"
- 
+@@ -29,7 +29,7 @@ jobs:
        - name: "Install uv"
--        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+         uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
          with:
-           version: "0.12.22"
+-          version: "0.12.22"
++          version: "0.13.7"
+ 
+       - name: "Lint code"
+         run: uvx nox -s lint
+```
+
+**File**: `dummyserver/app.py` (modified, +1/-1)
+```diff
+@@ -76,7 +76,7 @@ async def upload() -> ResponseReturnValue:
+     "Confirm that the uploaded file conforms to specification"
+     await request.get_data(parse_form_data=True)
+     params = await request.form
+-    param = params.get("upload_param")
++    param = params["upload_param"]
+     filename_param = params.get("upload_filename")
+     size = int(params.get("upload_size", "0"))
+     files_ = (await request.files).getlist(param)
+```
+
+**File**: `noxfile.py` (modified, +3/-0)
+```diff
+@@ -320,6 +320,9 @@ def emscripten(session: nox.Session, runner: str) -> None:
+         session,
+         extras="",
+         pytest_extra_args=[
++            # pytest-pyodide brings in pytest-asyncio, which warns if this is unset.
++            "-o",
++            "asyncio_default_fixture_loop_scope=function",
+             "--runtime",
+             f"{runner}-no-host",
+             "--dist-dir",
+```
+
+---
+
+### Incident Patch 2: `fdbc9b70` (2026-11-11)
+**Commit Message**: Fix gzip multi-member decoding after a bounded read (#5315)
+
+When read(amt) stopped exactly at the end of a gzip member, the decoder
+kept the finished decompressor and fed the remaining data to it again.
+zlib appended that data to unused_data a second time, so the next member
+came back repeatedly and read() never reached EOF. Create the new
+decompressor before the max_length stop.
+
+**File**: `changelog/5315.bugfix.rst` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++Fixed ``HTTPResponse.read(amt)``, ``read1(amt)`` and ``stream(amt)`` returning
++the last member of a multi-member gzip response repeatedly when a read ended
++exactly at the end of a member.
+```
+
+**File**: `src/urllib3/response.py` (modified, +6/-5)
+```diff
+@@ -200,16 +200,17 @@ def decompress(self, data: bytes, max_length: int = -1) -> bytes:
+             self._unconsumed_tail = data = (
+                 self._obj.unconsumed_tail or self._obj.unused_data
+             )
++            # When the end of a gzip member is reached, a new decompressor
++            # must be created for unused (possibly future) data.
++            if data and self._obj.eof:
++                self._state = GzipDecoderState.OTHER_MEMBERS
++                self._obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
++
+             if max_length > 0 and len(ret) >= max_length:
+                 break
+ 
+             if not data:
+                 return ret if isinstance(ret, bytes) else bytes(ret)
+-            # When the end of a gzip member is reached, a new decompressor
+-            # must be created for unused (possibly future) data.
+-            if self._obj.eof:
+-                self._state = GzipDecoderState.OTHER_MEMBERS
+-                self._obj = zlib.decompressobj(16 + zlib.MAX_WBITS)
+ 
+         return ret if isinstance(ret, bytes) else bytes(ret)
  
 ```
 
-**File**: `.github/workflows/publish.yml` (modified, +6/-6)
+**File**: `test/test_response.py` (modified, +14/-0)
 ```diff
-@@ -27,7 +27,7 @@ jobs:
-           persist-credentials: false
+@@ -470,6 +470,20 @@ def test_decode_gzip_multi_member(self) -> None:
  
-       - name: "Setup Python"
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: "3.x"
+         assert r.data == b"foofoofoo"
  
-@@ -45,7 +45,7 @@ jobs:
-           cd dist && echo "hashes=$(sha256sum * | base64 -w0)" >> $GITHUB_OUTPUT
- 
-       - name: "Upload dists"
--        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         id: upload-artifact
-         with:
-           name: "dist"
-@@ -66,7 +66,7 @@ jobs:
- 
-     steps:
-     - name: "Download dists"
--      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-       with:
-         artifact-ids: ${{ needs.build.outputs.artifact-id }}
-         path: "dist/"
-@@ -84,7 +84,7 @@ jobs:
-         gh release upload "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY"
- 
-     - name: "Publish dists to PyPI"
--      uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
-+      uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
-       with:
-         attestations: true
- 
-@@ -99,13 +99,13 @@ jobs:
- 
-     steps:
-     - name: "Download dists"
--      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-       with:
-         artifact-ids: ${{ needs.build.outputs.artifact-id }}
-         path: "dist/"
- 
-     - name: "Publish dists to Test PyPI"
--      uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
-+      uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
-       with:
-         repository-url: https://test.pypi.org/legacy/
-         attestations: true
-```
-
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ jobs:
-           persist-credentials: false
- 
-       - name: "Run Scorecard"
--        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
-+        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
-         with:
-           results_file: results.sarif
-           results_format: sarif
++    @pytest.mark.parametrize("read_method", ("read", "read1"))
++    def test_decode_gzip_multi_member_with_max_length(self, read_method: str) -> None:
++        data = gzip.compress(b"x" * 1024) + gzip.compress(b"y" * 1024)
++
++        fp = BytesIO(data)
++        r = HTTPResponse(
++            fp, headers={"content-encoding": "gzip"}, preload_content=False
++        )
++        read = getattr(r, read_method)
++
++        assert read(1024) == b"x" * 1024
++        assert read(1024) == b"y" * 1024
++        assert read() == b""
++
+     def test_decode_gzip_error(self) -> None:
+         fp = BytesIO(b"foo")
+         with pytest.raises(DecodeError):
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5372** (2026-11-11): Run dummyserver tests over both HTTP and HTTPS (@illia-v)
+- **PR #5360** (2026-11-11): Upgrade dev dependencies to fix alerts (@illia-v)
+- **PR #5357** (closed): Treat empty allowed_methods as no retries (@DawnofGenX)
 - **PR #5353** (2026-11-02): Bump the github-actions group with 10 updates (@dependabot[bot])
 - **PR #5349** (closed): Fix HTTPConnectionPool._prepare_proxy to set up CONNECT tunnel (#2730) (@faresrafat3)
 - **PR #5348** (closed): fix(poolmanager): rewind seekable file-like body on body-preserving redirects (#5181) (@voidstackloop)
-- **PR #5347** (2026-10-29): Keep the cached PoolKey when PoolManager looks up a pool (@zek)
-- **PR #5335** (closed): Honor `check_hostname=False` on user-provided SSLContexts (@smoltafet)
-- **PR #5333** (closed): Avoid building with vulnerable version of brotli & brotlicffi (@loganaden)
 
 ---
 
@@ -2074,13 +2000,13 @@ Updates `actions/setup-python` from 7.0.0 to 7.1.0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump the github-actions group with 10 updates (#5353)
+## X. Upgrade dev dependencies to fix alerts (#5360)
 
 **RULE**:
 When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5347bbd`: Bump the github-actions group with 10 updates (#5353). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a35bf900`: Upgrade dev dependencies to fix alerts (#5360). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
@@ -2088,30 +2014,16 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+          version: "0.13.7"
+          version: "0.13.7"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          version: "0.12.22"
+          version: "0.12.22"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5347bbd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a35bf900` are properly handled with clean fallback behavior.

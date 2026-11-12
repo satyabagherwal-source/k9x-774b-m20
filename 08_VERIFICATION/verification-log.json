@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-GW0R",
-    "timestamp": "2026-11-09T01:12:34.587Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "2aef9b2fc44b981e7a6d69fba9a80b2a04e0482cdf686b956cc1b5f763a6779b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-GZWX",
     "timestamp": "2026-11-09T01:12:39.633Z",
     "repository": "mikelikesdesign/SwiftUI-experiments",
@@ -7492,6 +7477,21 @@
     "contentHash": "08974c3bd711aa2d89357c8af8edac40a97a280c59a786bc8d5c46204e47cd63",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-YMIT",
+    "timestamp": "2026-11-12T05:57:19.109Z",
+    "repository": "urllib3/urllib3",
+    "learningId": "learn-github-urllib3-urllib3",
+    "contentHash": "fff051ed7e74cce05151125c11a1260bfe45d4cfa9a4086e76ec3501581f0366",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
