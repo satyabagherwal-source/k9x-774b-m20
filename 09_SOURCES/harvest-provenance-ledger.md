@@ -9027,3 +9027,5 @@ Every entry in this ledger must capture:
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `3cb96a01` | Multi-dimensional audit evidence | 2026-11-12T00:23:19.029Z |
 | `learn-github-permify-permify` | `https://github.com/Permify/permify` | `f1d2b9b0` | Multi-dimensional audit evidence | 2026-11-12T00:45:30.265Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `e0f4d211` | Multi-dimensional audit evidence | 2026-11-12T00:45:31.373Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `acae3b45` | Multi-dimensional audit evidence | 2026-11-12T00:58:45.811Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `9aedb400` | Multi-dimensional audit evidence | 2026-11-12T00:58:47.006Z |

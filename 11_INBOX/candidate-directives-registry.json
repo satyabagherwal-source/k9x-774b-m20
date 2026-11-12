@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T00:45:36.011Z",
+  "last_updated": "2026-11-12T00:58:53.220Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5675,6 +5675,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0B0DBD-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-0BE246",
+      "directive_title": "transport): a loss gate in front of QUIC Cubic, so random loss does not collapse",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0BE246-transport-a-loss-gate-in-front-of-quic-c.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-D77096",
+      "directive_title": "Share one clock in compactor test fixture (#2250)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "slatedb-slatedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D77096-share-one-clock-in-compactor-test-fixtur.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-1C53D8",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1C53D8-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-12"
     }
   ]

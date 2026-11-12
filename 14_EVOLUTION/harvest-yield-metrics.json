@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T00:45:31.389Z",
-  "total_cycles_completed": 8860,
-  "total_learnings_persisted": 8860,
-  "total_rules_promoted": 8715,
+  "last_updated": "2026-11-12T00:58:47.012Z",
+  "total_cycles_completed": 8862,
+  "total_learnings_persisted": 8862,
+  "total_rules_promoted": 8717,
   "history": [
-    {
-      "timestamp": "2026-11-10T00:31:59.923Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-10T00:44:55.259Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T00:45:08.924Z",
       "repository": "duckdb/duckdb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-12T00:45:31.389Z",
       "repository": "ClementTsang/bottom",
       "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T00:58:45.838Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T00:58:47.012Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T00:45:31.223Z",
+  "last_updated": "2026-11-12T00:58:46.889Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15817,8 +15817,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "653af09c",
-      "content_hash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
+      "source_version": "acae3b45",
+      "content_hash": "1bf2cab605ca8e61df295726eadda3dd6774e328bd05a1262be275a8fd0771a4",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -15880,6 +15880,11 @@
         {
           "number": null,
           "title": "conformance): report a merge refusal that leaves peers apart (#6178)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): a loss gate in front of QUIC Cubic, so random loss does not collapse",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16098,7 +16103,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T06:33:46.164Z",
+      "verified_at": "2026-11-12T00:58:45.597Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58922,8 +58927,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "0b705dc8",
-      "content_hash": "a3bf1b0fb5f83ac0202d7d1c040a6a1abf8b7d9b8ab0d1f5e4b92a5f1bb58682",
+      "source_version": "9aedb400",
+      "content_hash": "a4ec99c1335af934d00a7c3d06197879487c2a7354082964722c995c8b7c8b7d",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -58935,6 +58940,11 @@
         {
           "number": null,
           "title": "Use macOS 15 for release builds (#2236)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Share one clock in compactor test fixture (#2250)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58988,7 +58998,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:14:30.419Z",
+      "verified_at": "2026-11-12T00:58:46.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

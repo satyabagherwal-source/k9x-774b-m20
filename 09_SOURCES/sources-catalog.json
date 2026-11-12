@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "653af09c",
+    "sourceVersion": "acae3b45",
     "license": "NOASSERTION",
-    "contentHash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
-    "lastHarvestedAt": "2026-11-11T06:33:46.439Z",
+    "contentHash": "1bf2cab605ca8e61df295726eadda3dd6774e328bd05a1262be275a8fd0771a4",
+    "lastHarvestedAt": "2026-11-12T00:58:45.811Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "0b705dc8",
+    "sourceVersion": "9aedb400",
     "license": "Apache-2.0",
-    "contentHash": "a3bf1b0fb5f83ac0202d7d1c040a6a1abf8b7d9b8ab0d1f5e4b92a5f1bb58682",
-    "lastHarvestedAt": "2026-11-08T16:14:30.511Z",
+    "contentHash": "a4ec99c1335af934d00a7c3d06197879487c2a7354082964722c995c8b7c8b7d",
+    "lastHarvestedAt": "2026-11-12T00:58:47.006Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
