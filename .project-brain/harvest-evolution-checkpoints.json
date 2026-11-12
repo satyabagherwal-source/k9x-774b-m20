@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T13:15:27.408Z",
+  "last_updated": "2026-11-12T13:33:26.549Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-12T11:51:15.265Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-12T12:58:09.348Z",
+      "processed_at": "2026-11-12T13:33:26.480Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-12T05:35:19.783Z",
+      "processed_at": "2026-11-12T13:33:26.528Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1136,9 +1136,14 @@
       "processed_at": "2026-11-12T13:15:27.334Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "dnscontrol-dnscontrol-learnings.md": {
+      "processed_at": "2026-11-12T13:33:26.305Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 306,
+  "total_dossiers_evaluated": 309,
   "total_canonical_promoted": 39,
-  "total_staged_for_review": 266
+  "total_staged_for_review": 269
 }

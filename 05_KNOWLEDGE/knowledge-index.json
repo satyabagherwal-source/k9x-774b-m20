@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T13:15:09.941Z",
+  "last_updated": "2026-11-12T13:33:20.924Z",
   "total_verified_learnings": 1258,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11781,8 +11781,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "c42c4fa3",
-      "content_hash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
+      "source_version": "a866511c",
+      "content_hash": "c2420d1344f4f18bf6fc3ac89a13ab695fc6005e7279f0eb45f460494d6664b2",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -11799,6 +11799,11 @@
         {
           "number": null,
           "title": "share one builderOptions() for the options-object builders (#5072)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11847,7 +11852,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T06:33:41.672Z",
+      "verified_at": "2026-11-12T13:33:20.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

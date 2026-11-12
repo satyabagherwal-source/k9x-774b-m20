@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T13:15:10.046Z",
-  "total_cycles_completed": 8995,
-  "total_learnings_persisted": 8995,
-  "total_rules_promoted": 8837,
+  "last_updated": "2026-11-12T13:33:21.081Z",
+  "total_cycles_completed": 8996,
+  "total_learnings_persisted": 8996,
+  "total_rules_promoted": 8838,
   "history": [
-    {
-      "timestamp": "2026-11-11T13:29:12.688Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-11T13:52:28.814Z",
       "repository": "necolas/react-native-web",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
       "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T13:33:21.081Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T13:15:27.361Z",
+  "last_updated": "2026-11-12T13:33:26.527Z",
   "directives": [
     {
       "id": "CD-001",
@@ -6923,6 +6923,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-16EA67-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-5F843B",
+      "directive_title": "build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dnscontrol-dnscontrol",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F843B-build-deps-bump-github-codeql-action-upl.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-72A12A",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-72A12A-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-F6E93D",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F6E93D-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-12"
     }
   ]

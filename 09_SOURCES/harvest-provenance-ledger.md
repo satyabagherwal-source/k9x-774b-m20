@@ -9182,3 +9182,4 @@ Every entry in this ledger must capture:
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `013ddb1c` | Multi-dimensional audit evidence | 2026-11-12T13:10:23.048Z |
 | `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-12T13:15:10.040Z |
 | `learn-dom-d-a3aabf62` | `project://hf-liquidai-lfm3-1.7b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | 2026-11-12T13:15:27.334Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `a866511c` | Multi-dimensional audit evidence | 2026-11-12T13:33:21.061Z |

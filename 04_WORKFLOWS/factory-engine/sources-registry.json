@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T13:15:12.582Z",
-    "lastVerified": "2026-11-12T13:15:12.582Z",
+    "lastChecked": "2026-11-12T13:33:26.176Z",
+    "lastVerified": "2026-11-12T13:33:26.176Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -152,8 +152,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T12:32:46.174Z",
-    "lastVerified": "2026-11-12T12:32:46.174Z",
+    "lastChecked": "2026-11-12T13:33:12.021Z",
+    "lastVerified": "2026-11-12T13:33:12.021Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -822,8 +822,8 @@
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-10T05:21:55.629Z",
-    "lastVerified": "2026-11-10T05:21:55.629Z",
+    "lastChecked": "2026-11-12T13:33:09.545Z",
+    "lastVerified": "2026-11-12T13:33:09.545Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
@@ -998,8 +998,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T06:19:37.300Z",
-    "lastVerified": "2026-11-12T06:19:37.300Z",
+    "lastChecked": "2026-11-12T13:33:06.987Z",
+    "lastVerified": "2026-11-12T13:33:06.987Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -6321,14 +6321,14 @@
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T06:33:19.159Z",
-    "lastVerified": "2026-11-11T06:33:19.159Z",
+    "lastChecked": "2026-11-12T13:33:09.467Z",
+    "lastVerified": "2026-11-12T13:33:09.467Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
+    "contentHash": "c2420d1344f4f18bf6fc3ac89a13ab695fc6005e7279f0eb45f460494d6664b2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6648,9 +6648,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-09T22:26:52.528Z",
+    "lastChecked": "2026-11-12T13:32:57.006Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-09T22:26:52.528Z"
+    "lastVerified": "2026-11-12T13:32:57.006Z"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -10393,9 +10393,9 @@
   "ehpanda-team-ehpanda": {
     "name": "EhPanda",
     "officialUrl": "https://github.com/EhPanda-Team/EhPanda",
-    "lastChecked": "2026-11-08T12:21:36.448Z",
+    "lastChecked": "2026-11-12T13:33:02.008Z",
     "revisionIdentifier": "37b97996",
-    "lastVerified": "2026-11-08T12:21:36.448Z"
+    "lastVerified": "2026-11-12T13:33:02.008Z"
   },
   "hf-liconstudio-minimax-h3-vbvr": {
     "name": "LiconStudio/Minimax-H3-VBVR",
@@ -12250,9 +12250,9 @@
   "evanw-esbuild": {
     "name": "esbuild",
     "officialUrl": "https://github.com/evanw/esbuild",
-    "lastChecked": "2026-11-07T20:55:55.009Z",
+    "lastChecked": "2026-11-12T13:32:59.500Z",
     "revisionIdentifier": "f6058f83",
-    "lastVerified": "2026-11-07T20:55:55.009Z"
+    "lastVerified": "2026-11-12T13:32:59.500Z"
   },
   "zekunyan-ttgtagcollectionview": {
     "name": "TTGTagCollectionView",
