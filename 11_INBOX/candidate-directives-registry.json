@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T15:25:51.643Z",
+  "last_updated": "2026-11-12T15:34:17.972Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7148,6 +7148,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CB0166-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-95C44F",
+      "directive_title": "update `@mswjs/interceptors` to 0.45.11",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mswjs-msw",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-95C44F-update-mswjs-interceptors-to-0-45-11.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-BCB461",
+      "directive_title": "integer): reject unexpected last block in modulus switched radix conformance (#4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zama-ai-tfhe-rs",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BCB461-integer-reject-unexpected-last-block-in-.md",
+      "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-108AE9",
+      "directive_title": "deps(viz): driver.js 1.12.1 for the Data Schematic Tour (#5038)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-108AE9-deps-viz-driver-js-1-12-1-for-the-data-s.md",
       "staged_date": "2026-11-12"
     }
   ]

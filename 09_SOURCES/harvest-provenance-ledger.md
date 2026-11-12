@@ -9203,3 +9203,6 @@ Every entry in this ledger must capture:
 | `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `1870103c` | Multi-dimensional audit evidence | 2026-11-12T15:25:09.789Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `04ccf364` | Multi-dimensional audit evidence | 2026-11-12T15:25:30.839Z |
 | `learn-dom-d-2297b13c` | `project://devexpress-testcafe` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md` | 2026-11-12T15:25:51.481Z |
+| `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `ec5e8777` | Multi-dimensional audit evidence | 2026-11-12T15:33:58.747Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `0f0b3e7e` | Multi-dimensional audit evidence | 2026-11-12T15:34:10.587Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a90bee6a` | Multi-dimensional audit evidence | 2026-11-12T15:34:12.028Z |

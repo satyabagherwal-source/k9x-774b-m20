@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T15:25:36.063Z",
-    "lastVerified": "2026-11-12T15:25:36.063Z",
+    "lastChecked": "2026-11-12T15:34:17.626Z",
+    "lastVerified": "2026-11-12T15:34:17.626Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,22 +249,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T14:44:38.747Z",
-    "lastVerified": "2026-11-12T14:44:38.747Z",
+    "lastChecked": "2026-11-12T15:33:54.583Z",
+    "lastVerified": "2026-11-12T15:33:54.583Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "560bde33cd9597e1326a7aa59b03e7fdb8c12564992631578874686d42766f11",
+    "contentHash": "8875915d9dc62963da9990b2e926047b7cea90ba32fa0e732a7e8a87fb89d8af",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "746348d7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1650,8 +1649,8 @@
     "officialUrl": "https://github.com/valeriansaliou/sonic",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T07:37:43.535Z",
-    "lastVerified": "2026-11-11T07:37:43.535Z",
+    "lastChecked": "2026-11-12T15:33:46.156Z",
+    "lastVerified": "2026-11-12T15:33:46.156Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-valeriansaliou-sonic",
@@ -1815,22 +1814,21 @@
     "lastVerified": "2026-11-11T18:03:36.306Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "tfhe-rs",
+    "name": "zama-ai/tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T08:14:37.060Z",
-    "lastVerified": "2026-11-12T08:14:37.060Z",
+    "lastChecked": "2026-11-12T15:33:53.271Z",
+    "lastVerified": "2026-11-12T15:33:53.271Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "4cd111ae3b52589c0d5001c46ec3ab668dc87647602a94b005614093cef55379",
-    "promotedRulesCount": 3,
+    "contentHash": "236425e8b7010ba3c9063c1979c5040f4c47c704b34acf79905bdacf085cbeb0",
+    "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "dff19644"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -6934,9 +6932,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-11T09:39:37.863Z",
+    "lastChecked": "2026-11-12T15:33:41.158Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-11T09:39:37.863Z"
+    "lastVerified": "2026-11-12T15:33:41.158Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -7188,9 +7186,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-09T23:52:30.132Z",
+    "lastChecked": "2026-11-12T15:33:33.579Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-09T23:52:30.132Z"
+    "lastVerified": "2026-11-12T15:33:33.579Z"
   },
   "hf-google-gemma-4-31b-it": {
     "name": "google/gemma-4-31B-it",
@@ -10599,9 +10597,9 @@
   "android-kotlin-multiplatform-samples": {
     "name": "kotlin-multiplatform-samples",
     "officialUrl": "https://github.com/android/kotlin-multiplatform-samples",
-    "lastChecked": "2026-11-08T15:12:18.467Z",
+    "lastChecked": "2026-11-12T15:33:38.569Z",
     "revisionIdentifier": "7844c733",
-    "lastVerified": "2026-11-08T15:12:18.467Z"
+    "lastVerified": "2026-11-12T15:33:38.569Z"
   },
   "samvelik-sitemap-checker": {
     "name": "sitemap-checker",
@@ -12508,12 +12506,12 @@
     "officialUrl": "https://github.com/mswjs/msw",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T22:16:03.279Z",
-    "lastVerified": "2026-11-07T22:16:03.279Z",
+    "lastChecked": "2026-11-12T15:33:44.597Z",
+    "lastVerified": "2026-11-12T15:33:44.597Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mswjs-msw",
-    "contentHash": "f939d3f7d3a6f314fe2d34183163ef1221e8b50d707706bc187af0d1671d3198",
+    "contentHash": "0ad88efd48ce2a815d3b2fb586808aebf37b11e3ab14a7808d1fbb41dc778d4a",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,

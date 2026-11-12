@@ -9194,3 +9194,6 @@
 | `CYCLE-20261112-8VMG` | `2026-11-12T15:25:09.784Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md` | Yes (`e775f605...`) |
 | `CYCLE-20261112-9BV7` | `2026-11-12T15:25:30.835Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a98fb75...`) |
 | `CYCLE-2026-11-12-PROJ-EVOLVE` | `2026-11-12T15:25:51.481Z` | `devexpress-testcafe` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2297B13C` [Domain D] | Yes (`5299036d...`) |
+| `CYCLE-20261112-K7QZ` | `2026-11-12T15:33:58.715Z` | `mswjs/msw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ad88efd...`) |
+| `CYCLE-20261112-KGWN` | `2026-11-12T15:34:10.583Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`236425e8...`) |
+| `CYCLE-20261112-KI0N` | `2026-11-12T15:34:12.023Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8875915d...`) |
