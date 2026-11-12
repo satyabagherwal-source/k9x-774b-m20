@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-1JUB",
-    "timestamp": "2026-11-08T21:16:42.035Z",
-    "repository": "hmlongco/Factory",
-    "learningId": "learn-github-hmlongco-factory",
-    "contentHash": "0cb83928fcbfbe8f0b21ebcb6c77a7908ad6ead0fcdf8b3baf95366ae0349c25",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-BPSX",
     "timestamp": "2026-11-08T21:24:36.321Z",
     "repository": "biomejs/biome",
@@ -7490,6 +7475,21 @@
     "repository": "meshtastic/Meshtastic-Android",
     "learningId": "learn-github-meshtastic-meshtastic-android",
     "contentHash": "3cf8d6ebc7046004190a026cb68b74492b022e205d58011e3152616644b3a436",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261112-13HT",
+    "timestamp": "2026-11-12T00:23:19.025Z",
+    "repository": "thaw-app/Thaw",
+    "learningId": "learn-github-thaw-app-thaw",
+    "contentHash": "134a3d23166a95568455bfc13c9ea51cdbfb9f896f663f3a2ecff2e71193e54f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

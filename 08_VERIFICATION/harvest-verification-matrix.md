@@ -9015,3 +9015,4 @@
 | `CYCLE-20261111-G8GG` | `2026-11-11T20:23:08.752Z` | `MohamedRejeb/compose-rich-editor` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0abf8a1b...`) |
 | `CYCLE-20261111-GTEC` | `2026-11-11T20:23:35.892Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`11b5bd09...`) |
 | `CYCLE-20261111-3EDZ` | `2026-11-11T23:57:06.839Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3cf8d6eb...`) |
+| `CYCLE-20261112-13HT` | `2026-11-12T00:23:19.025Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`134a3d23...`) |

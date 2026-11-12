@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source**: github ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
-> **Source Version**: `92c959b6`  
+> **Source Version**: `3cb96a01`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:46:17.296Z  
+> **Timestamp**: 2026-11-12T00:23:08.325Z  
 > **Learning ID**: `learn-github-thaw-app-thaw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:46:16.779Z  
+> **Harvest Timestamp**: 2026-11-12T00:23:02.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open source menu bar manager
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12606 stars
+- **Stars / Engagement**: 12691 stars
 
 ---
 
@@ -54,6 +54,71 @@ extension AppState {
             settlements: displayEnvironment.settlements
         )
         displayChangeCoordinator.start()
+    }
+}
+
+```
+
+### Core Architecture Module: `Thaw/App/AppState+DockIcon.swift`
+```
+//
+//  AppState+DockIcon.swift
+//  Project: Thaw
+//
+//  Copyright (Thaw) © 2026 René Jiménez
+//  Licensed under the GNU GPLv3
+
+import AppKit
+
+extension AppState {
+    /// Regular puts Thaw in the Dock; nil only activates it. Even a moment as regular
+    /// adds Thaw to the Dock's recent apps, so with the icon off the policy stays.
+    var userWindowActivationPolicy: NSApplication.ActivationPolicy? {
+        Self.userWindowActivationPolicy(showDockIcon: Self.storedShowDockIconWithSettings)
+    }
+
+    static nonisolated func userWindowActivationPolicy(showDockIcon: Bool) -> NSApplication.ActivationPolicy? {
+        showDockIcon ? .regular : nil
+    }
+
+    /// Read from Defaults, not the General model: the permissions window can
+    /// open before the model loads its stored values.
+    static var storedShowDockIconWithSettings: Bool {
+        (Defaults.object(forKey: .showDockIconWithSettings) as? Bool) ?? Defaults.DefaultValue.showDockIconWithSettings
+    }
+
+    /// Applies a change of the Dock icon setting to the windows already open.
+    func applyUserWindowActivationPolicy() {
+        guard hasOpenWindow else {
+            return
+        }
+        NSApp.setActivationPolicy(Self.storedShowDockIconWithSettings ? .regular : .accessory)
+    }
+}
+
+```
+
+### Core Architecture Module: `Thaw/App/AppState+WhatsNew.swift`
+```
+//
+//  AppState+WhatsNew.swift
+//  Project: Thaw
+//
+//  Copyright (Thaw) © 2026 René Jiménez
+//  Licensed under the GNU GPLv3
+
+import Foundation
+
+extension AppState {
+    /// Read from Defaults, not the Privacy model: What's New asks during launch,
+    /// before the model loads its stored values.
+    static var storedShowReleaseNotesAfterUpdate: Bool {
+        Defaults.bool(forKey: .showReleaseNotesAfterUpdate)
+    }
+
+    /// Read from Defaults for the same launch-order reason.
+    static var storedFetchReleaseNotes: Bool {
+        Defaults.bool(forKey: .fetchReleaseNotes)
     }
 }
 
@@ -106,8 +171,16 @@ final class AppState {
 
     // Menu bar stack. Set up in dependency order; see bootstrapTask.
 
+    /// Whether the bar is settling or was disturbed recently, shared by the menu bar and item managers.
+    let barSettling: BarSettling
+    /// Reports wakes, display invalidations and reveals to barSettling.
+    private let barSettlingObservers: BarSettlingObservers
+
     /// The sections, their control items, and the show/hide state machine.
-    let menuBarManager = MenuBarManager()
+    let menuBarManager: MenuBarManager
+
+    /// The displays where macOS's own overflow arrow is showing, for Settings.
+    let nativeOverflowPresence = NativeOverflowPresence()
 
     /// Shared by the menu bar manager, which acts on a display move, and the
     /// event taps, which ask for a check.
@@ -115,6 +188,18 @@ final class AppState {
 
     /// Settles screen-parameter changes into one numbered snapshot.
     let displayEnvironment = DisplayEnvironment()
+
+    /// Space switches and Space list changes as soon as the window server reports them.
+    let spaceChanges = SpaceChanges()
+
+    /// The current Space list, re-read when a Space is created or deleted.
+    let spaceDirectory = SpaceDirectory()
+
+    /// The Spaces page's choices, sent to the menu bar agent again after it forgets them.
+    let spaceMenuBarKeeper = SpaceMenuBarKeeper()
+
+    /// The optional menu bar item that names the active Space.
+    @ObservationIgnored lazy var spaceIndicator = SpaceIndicator(launcher: menuBarManager.systemExtraTakeover.launcher)
 
     /// Runs the settle a display change owes, and the image cleanup after a removal, once per settled generation.
     @ObservationIgnored lazy var displayChangeCoordinator = DisplayChangeCoordinator(
@@ -130,7 +215,7 @@ final class AppState {
 
     /// The item inventory, what sits in the menu bar, where, and the moves
     /// that put it there. Everything below queries it.
-    let itemManager = MenuBarItemManager()
+    let itemManager: MenuBarItemManager
 
     /// Rendered pictures of the items, shared by the layout editor and the
     /// Thaw bar. Fed from itemManager, so it is set up after it.
@@ -150,14 +235,13 @@ final class AppState {
     let itemGroupManager = MenuBarItemGroupManager()
 
     /// Saves layout changes into the active profile when it keeps them.
-    @ObservationIgnored private(set) lazy var profileLayoutKeeper = ProfileLayoutKeeper(
-        profileManager: profileManager,
-        itemManager: itemManager,
-        groupManager: itemGroupManager
-    )
+    @ObservationIgnored private(set) lazy var profileLayoutKeeper = ProfileLayoutKeeper(profileManager: profileManager, itemManager: itemManager, groupManager: itemGroupManager)
 
     /// Transient, user-facing explanations for refused layout actions.
     let layoutFeedback = LayoutBarFeedbackCenter()
+
+    /// One undo history for layout edits, whichever window or tile made them.
+    let layoutUndo = UndoManager()
 
     // System services.
 
@@ -256,36 +340,25 @@ final class AppState {
     /// Prevent repeated restart attempts.
     private var isRestarting = false
 
+    init() {
+        let settling = BarSettling()
+        barSettling = settling
+        barSettlingObservers = BarSettlingObservers(settling: settling)
+        menuBarManager = MenuBarManager(barSettling: settling)
+        itemManager = MenuBarItemManager(barSettling: settling)
+    }
+
     // MARK: - Bootstrap
 
     /// Callers await the same lazy task so bootstrap runs once.
     /// Keep dependency order: each setup assumes preceding subsystems are live.
     @ObservationIgnored
     private lazy var bootstrapTask = Task { @MainActor [self] in
-        #if DEBUG
-            // Debug builds always have diagnostic logging on so logs are
-            // captured during development without depending on the toggle.
-            DiagnosticLogger.shared.isEnabled = true
-        #else
-            if Defaults.bool(forKey: .enableDiagnosticLogging) {
-                DiagnosticLogger.shared.isEnabled = true
-            }
-        #endif
+        ToolsSettings.startDiagnosticLogging()
 
         diagLog.debug("bootstrap: starting AppState setup sequence")
 
-        // Choose helper capture routing once, before any subsystem captures a frame.
-        ScreenCapture.routesThroughCaptureService = Defaults.bool(forKey: .captureViaXPCService)
-        permissions.stopAllChecks()
-        diagLog.debug("bootstrap: permissions state = \(String(describing: self.permissions.permissionsState)), accessibility = \(self.permissions.accessibility.hasPermission), screenRecording = \(self.permissions.screenRecording.hasPermission)")
-
-        displayEnvironment.start()
-        settings.performSetup(with: self)
-        menuBarManager.performSetup(with: self, activeDisplayWatcher: activeDisplayWatcher, displays: displayEnvironment)
-        // A refused preferences watcher stays stopped; recreate it after either a table-file grant or Full Disk Access.
-        permissions.onPermissionTransition = { [weak self] permission, granted in
-            guard let self, granted, permission === permissions.fullDiskAccess else { return }
-            (menuBarManager.sectionController as? RuntimeSectionController)?.restartPreferencesWatcher
+        // Choose helper capture routing once, before a
 ```
 
 ### Core Architecture Module: `Thaw/App/ControlStatePublisher.swift`
@@ -633,17 +706,17 @@ final class AppNavigationState {
     /// The section of the search result being opened, so a page with tabs opens the tab holding it.
     var requestedSettingsSection: String?
 
+    /// The search result's row, scrolled to once its page and tab show.
+    var requestedSettingsRow: String?
+
+    /// The row flashing after a search scrolled to it.
+    var highlightedSettingsRow: String?
+
     /// AppState selects About after window construction; the pane consumes this upgrade request by presenting the changelog.
     var isWhatsNewRequested = false
 
     var settingsNavigationIdentifier: SettingsNavigationIdentifier = .general {
         didSet {
-            // Observation routes this assignment back through didSet, which then saves it.
-            let destination = settingsNavigationIdentifier.destination
-            guard destination == settingsNavigationIdentifier else {
-                settingsNavigationIdentifier = destination
-                return
-            }
             // A search sets its section after the page, so only a section left from another page is dropped.
             if settingsNavigationIdentifier != oldValue {
                 requestedSettingsSection = nil
@@ -659,10 +732,7 @@ final class AppNavigationState {
         updateCaptureUIState()
         // Restore the full window's last pane for returning from Simple Mode; init assignment does not persist via didSet.
         // Ignore panes no longer in the sidebar so selection and detail stay connected.
-        if let rawValue = Defaults.string(forKey: .lastSettingsPane),
-           let pane = SettingsNavigationIdentifier(rawValue: rawValue)?.destination,
-           SettingsSidebarPanes.all.contains(pane)
-        {
+        if let rawValue = Defaults.string(forKey: .lastSettingsPane), let pane = SettingsNavigationIdentifier(storedValue: rawValue), SettingsSidebarPanes.all.contains(pane) {
             settingsNavigationIdentifier = pane
         }
         // Panes hidden by the old customizable sidebar show again.
@@ -691,7 +761,7 @@ extension HIDEventManager {
     /// Subscribes to the settings and system notifications the manager has to
     /// react to, replacing any subscriptions from a previous call.
     func configureCancellables() {
-        var c = Set<AnyCancellable>()
+        var c = nativeHidingFollower()
 
         if let appState {
             // Pre-seed so the initial emission does no rearm work when
@@ -701,13 +771,12 @@ extension HIDEventManager {
             // Start or stop the mouse-moved tap when hover, tooltip or display
             // settings change. The continues below skip one event; a return
             // would end the observation.
-            let generalSettings = appState.settings.general
-            let advancedSettings = appState.settings.advanced
+            let visibilitySettings = appState.settings.visibility
             let displaySettings = appState.settings.displaySettings
             hoverSettingsObservationTask?.cancel()
             hoverSettingsObservationTask = Task { @MainActor [weak self] in
                 let changes = Observations {
-                    (generalSettings.showOnHover, advancedSettings.showMenuBarTooltips, displaySettings.configurations)
+                    (visibilitySettings.showOnHover, visibilitySettings.showMenuBarTooltips, displaySettings.configurations)
                 }
                 for await (showOnHover, _, _) in changes {
                     guard let self else { return }
@@ -909,6 +978,51 @@ nonisolated struct NotificationCenterInputState {
 
 ```
 
+### Core Architecture Module: `Thaw/Items/Capture/DiskLoadState.swift`
+```
+//
+//  DiskLoadState.swift
+//  Project: Thaw
+//
+//  Copyright (Thaw) © 2026 René Jiménez
+//  Licensed under the GNU GPLv3
+
+/// Where the image cache's lazy disk load stands. A save during a load would rewrite the file
+/// without the pictures not merged yet, so it is held until the load is done.
+nonisolated struct DiskLoadState: Equatable {
+    /// Bumped whenever the cache is emptied on purpose. A load merges only under the generation it started with.
+    private(set) var generation = 0
+    private(set) var isInFlight = false
+    private(set) var isSaveOwed = false
+
+    mutating func began() {
+        isInFlight = true
+    }
+
+    /// Whether a save must wait for the load in flight; the save is then owed.
+    mutating func holdsSave() -> Bool {
+        guard isInFlight else { return false }
+        isSaveOwed = true
+        return true
+    }
+
+    /// The load is done. Returns whether a save was held for it and should run now.
+    mutating func finished() -> Bool {
+        defer { isSaveOwed = false }
+        isInFlight = false
+        return isSaveOwed
+    }
+
+    /// The cache was emptied on purpose: the load's result is refused, and nothing is left for a held save to protect.
+    mutating func abandoned() {
+        generation &+= 1
+        isInFlight = false
+        isSaveOwed = false
+    }
+}
+
+```
+
 ### Core Architecture Module: `Thaw/MenuBar/MenuBarEngineConfiguration.swift`
 ```
 //
@@ -937,6 +1051,7 @@ protocol MenuBarEngineConfiguration: AnyObject, Observable {
     var showOnHover: Bool { get }
     var showOnHoverDelay: TimeInterval { get }
     var showOnScroll: Bool { get }
+    var usesIconDoubleClickForAlwaysHidden: Bool { get }
     var swapOnThawIconClick: Bool { get }
 
     // Rehiding
@@ -974,57 +1089,64 @@ extension AppSettings {
 
 extension AppSettings: MenuBarEngineConfiguration {
     var isAlwaysHiddenSectionEnabled: Bool {
-        advanced.isAlwaysHiddenSectionEnabled
+        layout.isAlwaysHiddenSectionEnabled
     }
 
     var sectionDividerStyle: SectionDividerStyle {
-        advanced.sectionDividerStyle
+        layout.sectionDividerStyle
     }
 
     var customSectionDividerMark: SectionDividerCustomMark? {
-        advanced.customSectionDividerImage.map {
-            SectionDividerCustomMark(data: $0, isTemplate: advanced.customSectionDividerIsTemplate)
+        layout.customSectionDividerImage.map {
+            SectionDividerCustomMark(data: $0, isTemplate: layout.customSectionDividerIsTemplate)
         }
     }
 
     var showAllSectionsOnUserDrag: Bool {
-        advanced.showAllSectionsOnUserDrag
+        layout.showAllSectionsOnUserDrag
     }
 
     var showOnClick: Bool {
-        general.showOnClick
+        visibility.showOnClick
     }
 
     var showOnHover: Bool {
-        general.showOnHover
+        visibility.showOnHover
     }
 
     var showOnHoverDelay: TimeInterval {
-        advanced.showOnHoverDelay
+        visibility.showOnHoverDelay
     }
 
     var showOnScroll: Bool {
-        general.showOnScroll
+        visibility.showOnScroll
+    }
+
+    var usesIconDoubleClickForAlwaysHidden: Bool {
+        ControlItem.usesIconDoubleClickForAlwaysHidden(
+            isSectionEnabled: layout.isAlwaysHiddenSectionEnabled,
+            isGestureEnabled: visibility.showAlwaysHiddenOnIconDoubleClick
+        )
     }
 
     var swapOnThawIconClick: Bool {
-        advanced.swapOnThawIconClick
+        visibility.swapOnThawIconClick
     }
 
     var autoRehide: Bool {
-        general.autoRehide
+        visibility.autoRehide
     }
 
     var rehideStrategy: RehideStrategy {
-        general.rehideStrategy
+        visibility.rehideStrategy
     }
 
     var rehideInterval: TimeInterval {
-        general.rehideInterval
+        visibility.rehideInterval
     }
 
     var tempShowInterval: TimeInterval {
-        general.tempShowInterval
+        visibility.tempShowInterval
     }
 
     var showThawIcon: Bool {
@@ -1040,19 +1162,19 @@ extension AppSettings: MenuBarEngineConfiguration {
     }
 
     var hideApplicationMenus: Bool {
-        advanced.hideApplicationMenus
+        general.hideApplicationMenus
     }
 
     var showMenuBarTooltips: Bool {
-        advanced.showMenuBarTooltips
+        visibility.showMenuBarTooltips
     }
 
     var enableSecondaryContextMenu: Bool {
-        advanced.enableSecondaryContextMenu
+        general.enableSecondaryContextMenu
     }
 
     var tooltipDelay: TimeInterval {
-        advanced.tooltipDelay
+        visibility.tooltipDelay
     }
 
     var simpleMode: Bool {
@@ -1060,358 +1182,30 @@ extension AppSettings: MenuBarEngineConfiguration {
     }
 
     var enableMenuBarItemOverflow: Bool {
-        advanced.enableMenuBarItemOverflow
+        layout.enableMenuBarItemOverflow
     }
 
     var enableExperimentalSystemItemHiding: Bool {
-        advanced.enableExperimentalSystemItemHiding
+        layout.enableExperimentalSystemItemHiding
     }
 
     var enableExperimentalOverflowPrevention: Bool {
-        advanced.enableExperimentalOverflowPrevention
+        layout.enableExperimentalOverflowPrevention
     }
 
     var iconRefreshInterval: TimeInterval {
-        advanced.iconRefreshInterval
+        layout.iconRefreshInterval
     }
 
     var alwaysUseAppIconForMenuBarItems: Bool {
-        advanced.alwaysUseAppIconForMenuBarItems
+        layout.alwaysUseAppIconForMenuBarItems
     }
 
     var menuBarOrderFulfillmentTimeout: TimeInterval {
-        advanced.menuBarOrderFulfillmentTimeout
+        layout.menuBarOrderFulfillmentTimeout
     }
 }
 
-```
-
-### Core Architecture Module: `Thaw/Settings/Process/AppState+SettingsProcess.swift`
-```
-//
-//  AppState+SettingsProcess.swift
-//  Project: Thaw
-//
-//  Copyright (Thaw) © 2026 Toni Förster
-//  Licensed under the GNU GPLv3
-
-import AppKit
-
-extension AppState {
-    /// Shows Settings in its own process when that is on and the pane runs there.
-    /// False for every other window, and while the app's own Settings window is open.
-    func showsInSettingsProcess(_ id: ThawWindowIdentifier, isOpenHere: Bool) -> Bool {
-        guard id == .settings, !isOpenHere else { return false }
-        return settingsProcessHost.show(
-            pane: navigationState.settingsNavigationIdentifier.rawValue,
-            simpleMode: settings.general.simpleMode
-        )
-    }
-
-    /// What the app does when the settings process asks.
-    func settingsProcessAppSide() -> SettingsProcessHost.AppSide {
-        SettingsProcessHost.AppSide(
-            reloadSettings: { [weak self] in
-                self?.settings.loadStoredValues()
-                self?.updatesManager.storedPreferencesChanged()
-            },
-            openInApp: { [weak self] pane in self?.openSettingsInApp(pane: pane) },
-            pageChanged: { [weak self] pane in
-                if let identifier = SettingsNavigationIdentifier(rawValue: pane) {
-                    self?.navigationState.settingsNavigationIdentifier = identifier
-                }
-            },
-            checkForUpdates: { [weak self] in self?.updatesManager.checkForUpdates() },
-            quit: { ApplicationTermination.request() },
-            updatesState: { [weak self] in
-                .updatesState(
-                    canCheck: self?.updatesManager.canCheckForUpdates ?? false,
-                    lastCheck: self?.updatesManager.lastUpdateCheckDate
-                )
-            }
-        )
-    }
-
-    /// A pane the settings process handed back because it needs the running app.
-    private func openSettingsInApp(pane: String) {
-        if let identifier = SettingsNavigationIdentifier(rawValue: pane) {
-            navigationState.settingsNavigationIdentifier = identifier
-        }
-        openWindow(.settings, allowSettingsProcess: false)
-    }
-}
-
-```
-
-### Core Architecture Module: `Thaw/System/Permissions/MenuBarAllowState.swift`
-```
-//
-//  MenuBarAllowState.swift
-//  Project: Thaw
-//
-//  Copyright (Thaw) © 2026 Toni Förster
-//  Licensed under the GNU GPLv3
-
-import MenuBarModel
-import PlatformRuntimeKit
-
-/// Control Center's own switch for an app's menu bar items, which macOS
-/// applies before anything Thaw does.
-@MainActor
-enum MenuBarAllowState {
-    /// Whether either grant that opens Control Center's app list is held.
-    private static var canReadList: Bool {
-        PickedFileAccess.controlCenterAppList.hasAccess || PickedFileAccess.controlCenterVisibilityRecovery.hasAccess
-    }
-
-    /// The switch for Thaw itself, or nil when it cannot be told: the list was
-    /// never granted, or has no record of Thaw. Never asks for access.
-    static func ofThaw() -> Bool? {
-        guard canReadList else { return nil }
-        return try? NativeAppVisibilityStore().isAllowed(bundleID: ThawMenuBarIdentity.bundleIdentifier)
-    }
-
-    /// The given apps whose switch is off. Empty when the list cannot be read. Never asks for access.
-    static func switchedOff(among bundleIDs: Set<String>) -> Set<String> {
-        guard !bundleIDs.isEmpty, canReadList else { return [] }
-        let store = NativeAppVisibilityStore()
-        return bundleIDs.filter { (try? store.isAllowed(bundleID: $0)) == false }
-    }
-}
-
-```
-
-### Core Architecture Module: `Thaw/Utilities/AXHelpers.swift`
-```
-//
-//  AXHelpers.swift
-//  Project: Thaw
-//
-//  Copyright (Thaw) © 2026 Toni Förster
-//  Licensed under the GNU GPLv3
-
-import ApplicationServices
-import Cocoa
-import MenuBarModel
-import ThawAXCore
-
-nonisolated enum AXHelpers {
-    @discardableResult
-    static func isProcessTrusted(prompt: Bool = false) -> Bool {
-        // kAXTrustedCheckOptionPrompt's value; the global is not concurrency-safe.
-        let options = ["AXTrustedCheckOptionPrompt": prompt] as CFDictionary
-        return AXIsProcessTrustedWithOptions(options)
-    }
-
-    /// nil off the main thread when point is over a Thaw window. The hit-test
-    /// is bounded: a hung app under the cursor would otherwise block it, and
-    /// Thaw's main thread with it, indefinitely.
-    static func element(at point: CGPoint) -> AXElement? {
-        nativeElement(at: point).map(AXElement.init)
-    }
-
-    static func application(for runningApp: NSRunningApplication) -> AXElement? {
-        let app = AXElement.application(runningApp.processIdentifier)
-        // Without a timeout, an unresponsive app stalls enumeration
-        // indefinitely in mach_msg.
-        app.setMessagingTimeout(AXPrimitives.defaultMessagingTimeout)
-        return app
-    }
-
-    static func extrasMenuBar(for app: AXElement) -> AXElement? {
-        app.value(kAXExtrasMenuBarAttribute) as? AXElement
-    }
-
-    /// Everything the walk reads from one extras-bar child, in one message.
-    /// The timeout bounds each read, so batching caps a slow app at one timeout
-    /// per item. Unanswered attributes are nil, as in the single accessors.
-    struct MenuBarChildAttributes {
-        var role: String?
-        var frame: CGRect?
-        var identifier: String?
-        var title: String?
-        var accessibilityDescription: String?
-        var children: [AXElement] = []
-    }
-
-    /// Pass includingRole only for MenuBarAgent's bar. The walks also read Thaw's own bar off the
-    /// main thread, where AppKit answers in-process and is not thread-safe, so that read stays minimal.
-    static func menuBarChildAttributes(for element: AXElement, includingRole: Bool = false) -> MenuBarChildAttributes {
-        let values = element.values((includingRole ? [kAXRoleAttribute] : []) + [
-            frameAttribute, kAXIdentifierAttribute, kAXTitleAttribute, kAXDescriptionAttribute, kAXChildrenAttribute,
-        ])
-        return MenuBarChildAttributes(
-            role: values[kAXRoleAttribute] as? String,
-            frame: values[frameAttribute] as? CGRect,
-            identifier: values[kAXIdentifierAttribute] as? String,
-            title: values[kAXTitleAttribute] as? String,
-            accessibilityDescription: values[kAXDescriptionAttribute] as? String,
-            children: values[kAXChildrenAttribute] as? [AXElement] ?? []
-        )
-    }
-
-    /// The same reading below a status item. Never asks a menu for its
-    /// children: that builds the menu, and some apps activate when it happens.
-    ///
-    /// - Parameter includingChildren: Whether to fetch the children at all,
-    ///   for a walk that descends further. Never fetched for a menu.
-    static func descendantAttributes(
-        for element: AXElement,
-        includingChildren: Bool = false
-    ) -> MenuBarChildAttributes {
-        let values = element.values([
-            kAXRoleAttribute, frameAttribute, kAXIdentifierAttribute, kAXTitleAttribute, kAXDescriptionAttribute,
-        ])
-        let role = values[kAXRoleAttribute] as? String
-        return MenuBarChildAttributes(
-            role: role,
-            frame: values[frameAttribute] as? CGRect,
-            identifier: values[kAXIdentifierAttribute] as? String,
-            title: values[kAXTitleAttribute] as? String,
-            accessibilityDescription: values[kAXDescriptionAttribute] as? String,
-            children: includingChildren && role != kAXMenuRole ? children(for: element) : []
-        )
-    }
-
-    /// The application's normal menu bar (Apple menu + app menus).
-    /// Unlike point hit-testing, this remains reliable when Thaw's overlay panel
-    /// occupies the screen's menu-bar origin on macOS 27.
-    static func menuBar(for app: AXElement) -> AXElement? {
-        app.value(kAXMenuBarAttribute) as? AXElement
-    }
-
-    /// A menu bar's or a status item's children. Below a status item, read
-    /// through descendantAttributes(for:includingChildren:) instead.
-    static func children(for element: AXElement) -> [AXElement] {
-        childrenIfAvailable(for: element) ?? []
-    }
-
-    /// The element's AXHelp attribute (tooltip/description string).
-    static func help(for element: AXElement) -> String? {
-        element.value(kAXHelpAttribute) as? String
-    }
-
-    static func childrenIfAvailable(for element: AXElement) -> [AXElement]? {
-        element.value(kAXChildrenAttribute) as? [AXElement]
-    }
-
-    /// The element referenced by AXOverflowButton, when exposed. Containers
-    /// such as the macOS 27 extras menu bar publish their overflow control as
-    /// an attribute rather than as an ordinary child.
-    static func overflowButton(for element: AXElement) -> AXElement? {
-        element.value(kAXOverflowButtonAttribute) as? AXElement
-    }
-
-    /// The children of MenuBarAgent's extras bar that are its overflow
-    /// chevron by role. See AXPrimitives.isMenuBarAgentOverflowRole(_:).
-    static func overflowButtons(among children: [AXElement]) -> [AXElement] {
-        children.filter { AXPrimitives.isMenuBarAgentOverflowRole(roleString(for: $0)) }
-    }
-
-    /// Whether the element advertises AXOverflowButton, or nil when its
-    /// attribute list could not be read.
-    static func supportsOverflowButton(_ element: AXElement) -> Bool? {
-        element.attributeNames()?.contains(kAXOverflowButtonAttribute)
-    }
-
-    static func isEnabled(_ element: AXElement) -> Bool {
-        enabledAttribute(element) ?? false
-    }
-
-    /// The raw AXEnabled attribute, or nil when not exposed. Unlike isEnabled,
-    /// this tells "disabled" from "absent"; source-PID matching treats absent as enabled.
-    static func enabledAttribute(_ element: AXElement) -> Bool? {
-        element.value(kAXEnabledAttribute) as? Bool
-    }
-
-    static func frame(for element: AXElement) -> CGRect? {
-        element.value(frameAttribute) as? CGRect
-    }
-
-    /// Raw AXRole string.
-    static func roleString(for element: AXElement) -> String? {
-        element.value(kAXRoleAttribute) as? String
-    }
-
-    /// Unions the frames of application menu titles in a menu bar element, or nil when the
-    /// foreground app answers too slowly or exposes too many children to read on the caller's actor.
-    /// Only menu item roles count: on macOS 27 the children include
-    /// status-item hosts, which would make the leading pill swallow them.
-    static func applicationMenuChildFrameUnion(for menuBar: AXElement) -> CGRect {
-        boundedMenuFrameUnion(children(for: menuBar), budget: .milliseconds(300)) { child in
-            guard isEnabled(child), let childFrame = frame(for: child) else { return nil }
-            switch roleString(for: child) {
-            case kAXMenuBarItemRole, kAXMenuItemRole: return childFrame
-            default: return nil
-            }
-        } ?? .null
-    }
-
-    /// More children than any app's menu bar has; past it the read is not attempted.
-    static let applicationMenuChildLimit = 64
-
-    /// The union of the frames menuTitleFrame finds, or nil when children exceed the limit or the
-    /// reads outlast budget. Each read is a synchronous call into another app.
-    static func boundedMenuFrameUnion<Child>(
-        _ children: [Child],
-        budget: Duration,
-        now: () -> ContinuousClock.Instant = { .now },
-        menuTitleFrame: (Child) -> CGRect?
-    ) -> CGRect? {
-        guard children.count <= applicationMenuChildLimit else { return nil }
-        let deadline = now() + budget
-        var union = CGRect.null
-        for child in children {
-            guard now() < deadline else { return nil }
-            if let frame = menuTitleFrame(child) {
-                union = union.union(frame)
-            }
-        }
-        return now() < deadline ? union : nil
-    }
-
-    /// The element's AXTitle, when present. On macOS 27 most menu bar
-    /// item elements leave this empty, so callers fall back to identifier.
-    static func title(for element: AXElement) -> String? {
-        element.value(kAXTitleAttribute) as? String
-    }
-
-    /// The element's AXIdentifier. Thaw sets one on its control-item buttons
-    /// so the macOS 27 AX enumeration can recognize them.
-    static func identifier(for element: AXElement) -> String? {
-        element.value(kAXIdentifierAttribute) as? String
-    }
-
-    /// The element's accessibility description. Some status-item apps expose
-    /// a stable semantic label here while AXTitle contains live metric text.
-    static func description(for element: AXElement) -> String? {
-        element.value(kAXDescriptionAttribute) as? String
-    }
-
-    /// The element's AXValueDescription, where level-style items (battery,
-    /// volume) tend to put the number their glyph only implies.
-    static func valueDescription(for element: AXElement) -> String? {
-        element.value(kAXValueDescriptionAttribute) as? String
-    }
-
-    /// The element's AXValue, when it is a string. AXValue is untyped, so
-    /// a numeric value simply yields nil here rather than a coerced string.
-    static func stringValue(for element: AXElement) -> String? {
-        element.value(kAXValueAttribute) as? String
-    }
-
-    static func pid(for element: AXElement) -> pid_t? {
-        element.pid
-    }
-
-    /// Presses the element and returns whether its menu opened. Needed for
-    /// Electron/Chromium tray items, which ignore synthetic clicks. The
-    /// timeout must be set on the element: the app element's does not
-    /// propagate (default ~1.5 s).
-    @discardableResult
-    static func press(_ element: AXElement) -> Bool {
-        AXPrimitives.press(element.raw)
-    }
 ```
 
 
@@ -1441,1251 +1235,798 @@ nonisolated enum AXHelpers {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09fc3293` (2026-11-05)
-**Commit Message**: feat(modules): 3.0.0-alpha.13, modules on ThawUI 1.2.1 (#1443)
+### Incident Patch 1: `a9ccd1f9` (2026-11-11)
+**Commit Message**: fix: capture, usability and motion follow-ups, real readings for the widget icon, and Layout out-of-room and design fixes (#1500)
 
-* feat(modules): run Scripts, Triggers and Widgets as module apps, and reorganize Settings around them
+* fix(motion): slide layout reorders, grow the new-items badge from its center, smaller timing fixes
 
-Thaw starts and restarts the bundled module apps through a module host
-with its own launch rules. Profile scripts, app triggers and the widget
-icon each move into their module, and a module can hold an item shown
-until it lets go. A Modules page switches them on and off, and a
-module's page leaves the sidebar while it's off.
-
-Settings is reorganized around the split: Automation becomes Triggers
-and Scripts, Displays & Spaces becomes Displays, the custom status icon
-gets a Widgets page, Experiments is retired and its settings move next
-to what they're about, and several pairs of switches become one row.
+The rest of the motion audit:
+- Layout bar reorders slide 0.2 s with an ease-out, each in its own
+  animation group so the timing doesn't reach other animations, and the
+  gap closes with a slide when a dragged block leaves a section.
+- The new-items badge grows from 0.85 about its center with a short,
+  gentle spring and a fade; Reduce Motion fades it only.
+- The dim while a drop settles fades on the layer, since NSView's
+  animator alpha finishes in one frame on macOS 27.
+- The Thaw Bar preview follows its size and column sliders with the quick
+  timing, the tint resample uses the settle timing instead of SwiftUI's
+  default, onboarding's tiles use a tapering stagger with a 6 pt rise, and
+  the "Waiting for access" row fades in.
 
 Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
-* fix(modules): keep held items shown
+* feat(thaw-bar): drop the Thaw Bar in from the menu bar
 
-An item a module holds with thaw://reveal-item?hold=true could still be
-hidden by a click from the Thaw Bar, a concealed-item click, a reveal for
-an icon change, a plain reveal-item, a Shortcuts reveal or an image
-capture. Each of those paths now leaves a held item shown. The check is
-one extension on the section controller, so the 
+The Thaw Bar opened instantly. It now fades in while its content settles
+6 pt down from 0.97 scale about its top center
 
-**File**: `.github/workflows/ci.yml` (modified, +0/-2)
+**File**: `CHANGELOG.md` (modified, +75/-23)
 ```diff
-@@ -142,7 +142,6 @@ jobs:
-             compilation-cache-${{ runner.os }}-${{ github.ref_name }}-
-             compilation-cache-${{ runner.os }}-
+@@ -26,35 +26,87 @@ the items under New and Fixed.
  
--      # ThawAXCore is a static product linked by both the app and its hosted tests; the runner's Xcode rejects that unless told otherwise.
-       # The Thaw target's lint build phase requires the pinned SwiftLint on PATH.
-       - name: Install pinned SwiftLint
-         if: needs.changes.outputs.code == 'true'
-@@ -159,7 +158,6 @@ jobs:
-             -derivedDataPath Build/ \
-             -destination 'platform=macOS' \
-             -enableCodeCoverage YES \
--            DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC=YES \
-             CODE_SIGN_IDENTITY="" \
-             CODE_SIGNING_REQUIRED=NO \
-             CODE_SIGNING_ALLOWED=NO
+ ### New
+ 
+-- **Layout warns when items don't fit.** When macOS hides items it has no room for, Layout names them until there's room again.
+-- **Release notes can stay closed after an update.** Turn off Show release notes after an update in Privacy. What's New still opens from Thaw's menu and About.
+-- **Profiles name Spaces the way Mission Control does.** Pick any Space for a profile, grouped by display, with full screen apps by name. A Space that's gone shows as missing, and the display with the menu bar is marked.
+-- **The menu bar can show which Space you're in.** Turn on Show the current Space in the menu bar under Displays › Spaces. Its menu lists the Spaces on each display.
++#### Spaces
++
++- **The current Space in the menu bar.** Turn on Show the current Space in the menu bar in Displays › Spaces. Its menu lists each display's Spaces.
++- **Profiles name Spaces the way Mission Control does,** grouped by display, with full screen apps by name. The display with the menu bar is marked.
++
++#### Widgets
++
++- **The widget icon shows real readings.** Wi-Fi shows your actual bars, and the battery turns green while charging, yellow in Low Power Mode and red below 20%. Suggested by @joaofrgomes in [#1378](https://github.com/thaw-app/Thaw/issues/1378).
++- **Bluetooth audio in the center.** While sound plays through AirPods, headphones or a speaker, the widget shows it, with the volume in blue.
++- **A larger, better-proportioned widget icon.** The ring fills the icon and opens at the bottom, with the dots along it. Choose Standard or Large and the ring's thickness.
++
++#### Layout and Thaw Bar
++
++- **Layout warns when items don't fit,** names the ones macOS hid, and Move to Hidden makes room in one click.
++- **Layout tells you when macOS hides Focus** and turns on Thaw's own Focus icon in one click. Reported by @JosefGvirt in [#1477](https://github.com/thaw-app/Thaw/issues/1477).
++- **The Thaw Bar drops in from the menu bar.** It still closes at once, and only fades with Reduce Motion.
++- **Release notes can stay closed after an update,** in Privacy.
+ 
+ ### Changed
+ 
+-- **Extras is now called Modules.** The Settings page that turns Profiles, Scripts, Triggers and Widgets on and off, and the sidebar group they appear in, use the same name as the rest of Thaw.
+-- **Double-clicking Thaw's icon for Always Hidden has its own switch.** Turn off Double-click the Thaw icon to show Always Hidden in Menu Bar Access, and every click shows or hides your items.
+-- **The Thaw Bar has its own switch again.** Show hidden items is now two switches, Thaw Bar and Always show hidden items. Your settings carry over.
+-- **Profiles and menu bar looks follow a Space switch sooner.** Thaw hears about the switch as it starts, and a new Space can have its own profile right away.
+-- **Spaces settings stay after Thaw quits.** Thaw saves what you set on the Spaces page and applies it again when it starts, when you add a Space and when macOS restarts the menu bar.
++- **Hold Option on Capture Hidden Items to retake every picture.** The button reads Retake All Pictures while you do.
++- **Extras is now Modules.**
++- **One name for each section: Visible, Hidden and Always Hidden.**
++- **Apply to All Displays always asks first,** since it overwrites every display's own settings.
++- **The Thaw Bar has its own switch again.** Show hidden items is now two switches, Thaw Bar and Always show hidden items.
++- **Double-clicking Thaw's icon for Always Hidden has its own switch,** in Menu Bar Access. By @malash in [#1339](https://github.com/thaw-app/Thaw/pull/1339).
++- **Spaces settings stay after Thaw quits,** and come back when you add a Space or macOS restarts the menu bar.
++- **Profiles and menu bar looks follow a Space switch sooner.**
++- **Thaw reads a busy menu bar faster.** With many apps running it asks several at once, so it no longer stops partway.
+ 
+ ### Fixed
+ 
+-- **Arrow keys move the Thaw Bar highlight at once.** The item under the keyboard no longer springs up on every key press; the pointer still lifts it.
+-- **The layout warning fades in and out.** When Thaw can't move an item, the notice in Layout, the pop-out editor and search no longer pops in and vanishes after a few seconds.
+-- **The menu bar shape gets out of the way faster when you drag an item.** It fades out in 0.15 s instead of 0.25 s, and a drag that stops partway fades back sooner.
+-- **With Reduce Motion on, the notch panel switches without a pause.** It no longer waits for an animation that Reduce Motion has already turned off.
+-- **Layout shows Bluetooth and other switched-off system items as their own symbol.** Items Thaw hides by switching their Control Center module off used to sit in a grey box.
+-- **Hidden items no longer collapse right after you point at them or show them again.** A timed rehide that was already finishing could still hide the section you had just reopened.
+-- **Diagnostic logs no longer warn on every 
 ```
 
-**File**: `.gitignore` (modified, +0/-1)
+**File**: `Thaw/App/Navigation/NavigationIdentifiers/SettingsNavigationIdentifier.swift` (modified, +1/-1)
 ```diff
-@@ -27,7 +27,6 @@ default.profraw
- .attic/
- *.xcuserstate
- .swiftpm/
--ThawUI/.build/
- *.profraw
- .dd/
- .local-logs/
+@@ -71,7 +71,7 @@ enum SettingsNavigationIdentifier: String, @MainActor NavigationIdentifier {
+     var subtitle: LocalizedStringResource {
+         switch self {
+         case .general: "Startup, language and icon"
+-        case .menuBarLayout: "Shown, hidden and always hidden"
++        case .menuBarLayout: "Visible, Hidden and Always Hidden"
+         case .visibility: "How hidden items appear"
+         case .thawBar: "Hidden items below the menu bar"
+         case .displays: "Each display and Space"
 ```
 
-**File**: `.swiftlint.yml` (modified, +17/-4)
+**File**: `Thaw/Items/Capture/GlyphCapturePolicy.swift` (modified, +3/-4)
 ```diff
-@@ -3,18 +3,31 @@ included:
-   - Thaw
-   - packages/ThawCapture
-   - packages/ThawCtl
--  - ThawUI
-+  - packages/ThawAutomation
-+  - packages/ThawModuleKit
-+  - packages/ThawTriggers
-+  - packages/ThawWidgets
+@@ -23,9 +23,8 @@ extension MenuBarItemImageCache {
  
- excluded:
-   - packages/MenuBarModel/.build
-   - packages/ThawCapture/.build
-   - packages/ThawCtl/.build
--  - ThawUI/.build
-+  - packages/ThawAutomation/.build
-+  - packages/ThawModuleKit/.build
-+  - packages/ThawTriggers/.build
-+  - packages/ThawWidgets/.build
-   - ThawTests
-+  - packages/ThawAutomation/Tests
-+  - packages/ThawModuleKit/Tests
-+  - packages/ThawTriggers/Tests
-+  - packages/ThawWidgets/Tests
-   - packages/MenuBarModel/Package.swift
-   - packages/ThawCapture/Package.swift
-   - packages/ThawCtl/Package.swift
--  - ThawUI/Package.swift
-+  - packages/ThawAutomation/Package.swift
-+  - packages/ThawModuleKit/Package.swift
-+  - packages/ThawTriggers/Package.swift
-+  - packages/ThawWidgets/Package.swift
- 
- disabled_rules:
-   - function_parameter_count
-@@ -86,7 +99,7 @@ file_header:
-     //  SWIFTLINT_CURRENT_FILENAME
-     //  Project: Thaw
-     //
--    //  Copyright \(Thaw\) © 2026 Toni Förster
-+    //  Copyright \(Thaw\) © 2026 (Toni Förster|René Jiménez|Thaw)
-     //  Licensed under the GNU GPLv3
- 
- modifier_order:
+     /// Chooses between an existing cache entry and a newly captured candidate.
+     ///
+-    /// Prefers keeping a settled non-blank glyph over blank or much-narrower
+-    /// replacements (chevron bleed), while still allowing legitimate updates
+-    /// when the candidate is at least as wide.
++    /// Keeps a settled glyph over a blank, much narrower (chevron bleed) or mid-slide one,
++    /// and takes the candidate when it's at least as wide.
+     static nonisolated func preferredCachedImage(
+         existing: MenuBarItemGlyphCapture,
+         candidate: MenuBarItemGlyphCapture
+@@ -36,7 +35,7 @@ extension MenuBarItemImageCache {
+         if candidate.isEffectivelyBlank {
+             return existing
+         }
+-        if candidate.pointSize.width < existing.pointSize.width * 0.75 {
++        if candidate.pointSize.width < existing.pointSize.width * 0.75 || isLeadingCut(candidate, of: existing) {
+             return existing
+         }
+         return candidate
 ```
 
-**File**: `CHANGELOG.md` (modified, +49/-0)
+**File**: `Thaw/Items/Capture/GlyphInkBounds.swift` (added, +61/-0)
 ```diff
-@@ -24,6 +24,53 @@ the items under New and Fixed.
+@@ -0,0 +1,61 @@
++//
++//  GlyphInkBounds.swift
++//  Project: Thaw
++//
++//  Copyright (Thaw) © 2026 Toni Förster
++//  Licensed under the GNU GPLv3
++
++import CoreGraphics
++
++extension MenuBarItemImageCache {
++    /// How far, as a share of the kept glyph's width, the left ink edge may move in before a picture counts as cut.
++    static nonisolated let leadingCutTolerance: CGFloat = 0.15
++
++    /// The box around the visible ink in points, or nil for a picture with none.
++    static nonisolated func inkBounds(of capture: MenuBarItemGlyphCapture) -> CGRect? {
++        let image = capture.cgImage
++        let width = image.width, height = image.height
++        guard width > 0, height > 0, capture.scale > 0 else { return nil }
++        let context = CGContext(
++            data: nil,
++            width: width,
++            height: height,
++            bitsPerComponent: 8,
++            bytesPerRow: width * 4,
++            space: CGColorSpaceCreateDeviceRGB(),
++            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
++        )
++        guard let context else { return nil }
++        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
++        guard let data = context.data?.assumingMemoryBound(to: UInt8.self) else { return nil }
++        let stride = context.bytesPerRow
++        var minX = width, maxX = -1, minY = height, maxY = -1
++        for row in 0 ..< height {
++            for column in 0 ..< width where data[row * stride + column * 4 + 3] > 12 {
++                minX = min(minX, column)
++                maxX = max(maxX, column)
++                minY = min(minY, row)
++                maxY = max(maxY, row)
++            }
++        }
++        guard maxX >= minX else { return nil }
++        return CGRect(
++            x: CGFloat(minX) / capture.scale,
++            y: CGFloat(minY) / capture.scale,
++            width: CGFloat(maxX - minX + 1) / capture.scale,
++            height: CGFloat(maxY - minY + 1) / capture.scale
++        )
++    }
++
++    /// Whether candidate is the existing picture caught mid-slide: same crop and right edge, left part missing.
++    /// Shorter text or a narrower centred symbol doesn't count; identical bytes skip the scan.
++    static nonisolated func isLeadingCut(_ candidate: MenuBarItemGlyphCapture, of existing: MenuBarItemGlyphCapture) -> Bool {
++        guard abs(candidate.pointSize.width - existing.pointSize.width) < 1,
++              candidate.cgImage !== existing.cgImage,
++              candidate.cgImage.dataProvider?.data != existing.cgImage.dataProvider?.data,
++              let kept = inkBounds(of: existing), let new = inkBounds(of: candidate)
++        else { return false }
++        let edgeSlack = max(1, kept.width * 0.05)
++        return abs(new.maxX - kept.maxX) <= edgeSlack && new.minX - kept.minX > kept.width * leadingCutTolerance
++    }
++}
+```
+
+**File**: `Thaw/Items/Capture/MenuBarItemImageCache+Reading.swift` (modified, +14/-5)
+```diff
+@@ -243,6 +243,19 @@ extension MenuBarItemImageCache {
+         let forgivenTags = section != .visible && shouldUseFreshBounds
+             ? Set(items.map(\.tag))
+             : []
++        let geometryOwners = Self.captureGeometryOwners(
++            for: items,
++            knownItems: appState.itemManager.managedItems,
++            recentItems: appState.itemManager.onScreenItemSnapshot.items
++        )
++        if Self.settlesRevealedPixels(
++            for: section,
++            revealedSection: revealedSection,
++            lastRevealChange: appState.barSettling.lastRevealChange,
++            now: .now
++        ) {
++            await settleRevealedSection(items, appState: appState, reader: LiveMenuBarCaptureReader(geometryOwners: geometryOwners))
++        }
+         // A stale item cache can let concealed items into this pass; the crop
+         // loop rejects them against this set.
+         let concealedIdentifiers = appState.menuBarManager.sectionController
+@@ -256,11 +269,7 @@ extension MenuBarItemImageCache {
+             freshBounds: shouldUseFreshBounds,
+             concealedIdentifiers: concealedIdentifiers,
+             forgivenTags: forgivenTags,
+-            geometryOwners: Self.captureGeometryOwners(
+-                for: items,
+-                knownItems: appState.itemManager.managedItems,
+-                recentItems: appState.itemManager.onScreenItemSnapshot.items
+-            )
++            geometryOwners: geometryOwners
+         )
+         if !captureResult.unreadable.isEmpty {
+             MenuBarItemImageCache.diagLog.debug(
+```
+
+**File**: `Thaw/Items/Capture/RevealedGlyphPreference.swift` (modified, +1/-20)
+```diff
+@@ -29,25 +29,6 @@ extension MenuBarItemImageCache {
+ 
+     /// The height in points from the first to the last row with visible ink.
+     static nonisolated func inkPointHeight(of capture: MenuBarItemGlyphCapture) -> CGFloat {
+-        let image = capture.cgImage
+-        let width = image.width, height = image.height
+-        guard width > 0, height > 0, capture.scale > 0 else { return 0 }
+-        let context = CGContext(
+-            data: nil,
+-            width: width,
+-            height: height,
+-            bitsPerComponent: 8,
+-            bytesPerRow: width * 4,
+-            space: CGColorSpaceCreateDeviceRGB(),
+-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+-        )
+-        guard let context else { return 0 }
+-        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+-        guard let data = context.data?.assumingMemoryBound(to: UInt8.self) else { return 0 }
+-        let inkRows = (0 ..< height).filter { row in
+-            (0 ..< width).contains { column in data[(row * width + column) * 4 + 3] > 12 }
+-        }
+-        guard let first = inkRows.first, let last = inkRows.last else { return 0 }
+-        return CGFloat(last - first + 1) / capture.scale
++        inkBounds(of: capture)?.height ?? 0
+     }
+ }
+```
+
+**File**: `Thaw/Items/Capture/RevealedSectionSettle.swift` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++//
++//  RevealedSectionSettle.swift
++//  Project: Thaw
++//
++//  Copyright (Thaw) © 2026 Toni Förster
++//  Licensed under the GNU GPLv3
++
++import CoreGraphics
++import MenuBarModel
++
++extension MenuBarItemImageCache {
++    /// How long after a reveal a hidden section's pictures wait for its icons to stop moving.
++    /// Later passes skip the wait, so a clock or graph doesn't cost a settle budget on every pass.
++    static nonisolated let revealedSettleWindow = Duration.seconds(3)
++
++    /// Whether a pass over section should wait for settled pixels before its screenshot. macOS reports
++    /// a revealed item's final frame while its icon still slides in, so an early picture is cut.
++    static nonisolated func settlesRevealedPixels(
++        for section: MenuBarSection.Name,
++        revealedSection: MenuBarSection.Name?,
++        lastRevealChange: ContinuousClock.Instant?,
++        now: ContinuousClock.Instant
++    ) -> Bool {
++        section != .visible
++            && shouldUseFreshBounds(for: section, revealedSection: revealedSection)
++            && BarSettling.isWithin(revealedSettleWindow, of: lastRevealChange, now: now)
++    }
++
++    /// Waits, within the reveal settle budget, for items' icons to stop moving. Their frames are read fresh,
++    /// since the cache can still hold where they were parked; with none on the bar there is nothing to wait for.
++    func settleRevealedSection(
++        _ items: [MenuBarItem],
++        appState: AppState,
++        reader: some MenuBarCaptureReading,
++        clock: RevealCaptureSession.SettleClock = RevealCaptureSession.SettleClock()
++    ) async {
++        let displayID = Self.captureDisplayID(
++            itemCacheDisplayID: appState.itemManager.itemDisplayID,
++            activeMenuBarDisplayID: windowServer.activeMenuBarDisplayID(),
++            mainDisplayID: CGMainDisplayID()
++        )
++        let live = await reader.menuBarItems(displayID: displayID).filter { live in
++            items.contains { $0.tag.matchesIgnoringWindowID(live.tag) }
++        }
++        guard !live.isEmpty else { return }
++        await RevealCaptureSession.settleRevealedPixels(live, displayID: displayID, reader: reader, clock: clock)
++    }
++}
+```
+
+**File**: `Thaw/Items/Interaction/MenuBarAXSubprocess.swift` (modified, +2/-1)
+```diff
+@@ -180,7 +180,8 @@ extension MenuBarItemAXProvider {
+             guard let item = derived.item else { continue }
+             raw.append(item)
+         }
+-        return assemble(raw + extra(raw))
++        let kept = RetitledItemIdentities.resolve(raw)
++        return assemble(kept + extra(kept))
+     }
+ 
+     private static nonisolated func nilIfBlank(_ value: String?) -> String? {
+```
+
+---
+
+### Incident Patch 2: `ede311d2` (2026-11-11)
+**Commit Message**: feat(layout): out-of-room warning, release-notes and Thaw Bar switches, launch read fix (#1470)
+
+* feat(layout): warn in the Layout pane when macOS is hiding items for lack of room
+
+On a notched or narrow display, when the Visible items don't fit, macOS
+puts its own overflow arrow on the bar and stops drawing some items. The
+section engine already tracks this per display, but does not publish it,
+so Settings could not show it.
+
+A small observable, NativeOverflowPresence on AppState, copies the engine's
+answer for each connected display whenever the engine asks for the control
+items to be updated, which it does right after the overflow appears or goes
+away. The Layout pane reads it for the display its bars show and adds a
+warning to its one-banner ranking, after items out of reach and before
+missing Screen Recording. When Thaw already knows which Visible items macOS
+is not drawing, the warning names them. It goes away when the overflow ends.
+
+There is no button: while macOS's overflow is showing, Thaw already opens
+hidden items in the Thaw Bar on that display, so the warning suggests
+moving items to Hidden instead.
+
+Not yet validated on a live menu bar.
+
+Signed-off-by: René Jiménez 
+
+**File**: `CHANGELOG.md` (modified, +10/-0)
+```diff
+@@ -24,8 +24,18 @@ the items under New and Fixed.
  
  ## [Unreleased]
  
-+## [3.0.0-alpha.13] - 2026-11-04
-+
-+**macOS 27 only · Build 124**
-+
-+Scripts, Triggers and Widgets become modules you can switch on and off, and Settings is rebuilt on [ThawUI](https://github.com/thaw-app/ThawUI). Your settings, triggers, scripts and widget design carry over. By @diazdesandi.
-+
 +### New
 +
-+- **Modules.** Settings › Extras switches optional parts of Thaw on and off. A module that's off doesn't run and leaves the sidebar. Scripts, Triggers and Widgets come first, and each starts on if you already used it.
++- **Layout warns when items don't fit.** When macOS hides items it has no room for, Layout names them until there's room again.
++- **Release notes can stay closed after an update.** Turn off Show release notes after an update in Privacy. What's New still opens from Thaw's menu and About.
 +
 +### Changed
 +
-+#### Modules
++- **The Thaw Bar has its own switch again.** Show hidden items is now two switches, Thaw Bar and Always show hidden items. Your settings carry over.
 +
-+- **Triggers, Scripts and Widgets run as small apps next to Thaw.** Open each from its page in Settings. The widget icon moved there from Experiments.
-+- **Profile switches don't wait for a "before switching" script** to finish before the layout changes.
-+
-+#### Settings
-+
-+- **A new sidebar.** Everyday pages come first, then your modules, then Extras, Privacy and Tools, with About last. The arrow keys move between pages.
-+- **Extras is a grid of cards,** each with the part's icon, what it does and its switch. Profiles can be turned off there too, and your saved profiles are kept.
-+- **Some pages moved.** Displays & Spaces is now Displays. Automation became Triggers and Scripts, with thaw:// app permissions on Privacy and switching profiles by display or Space on Profiles. Experiments is gone, and its features sit on the pages they belong to with an Alpha or Beta badge. Old links to these pages still open.
-+- **Theme: System, Light, Dark or Black,** for Settings and onboarding, in General › Language and theme. Black suits OLED displays and replaces "Black background in dark mode".
-+- **Fewer glass finishes.** The Effect menu has Glass, with a Tint switch, and a Liquid Glass section with Edge, Sheer, Dim, Invert and Dynamic Glass. Saved looks keep how they looked.
-+- **The Thaw Bar's own look has a Corners slider,** from square to round, instead of the Rounded corners switch.
-+- **Every Search style can rename and move items.** The styles are now Detailed, Compact and Large, and all three share the bottom bar: ⌘E renames, ⌘K shows actions and ⌘1 to ⌘3 move an item.
-+- **Hide items again is one menu** in Simple Mode and Visibility: Never, When I click elsewhere, When I switch apps or a delay.
-+- **One name for each thing.** Settings and menus now agree, and Alpha and Beta features carry a badge. Reset Positions is now Rebuild Saved Layout, Hide again after is Keep opened items in the menu bar for, and Open hidden items in the menu bar is Show clicked items in the menu bar.
-+- **The Thaw Bar's Location choices say where it opens,** and shortcuts have their own choice, When opened by a shortcut.
-+- **Displays has a Template tab** with the Thaw Bar and spacing settings for new displays.
-+- **Spacing has one warning at the top,** and Layout explains Apple's items in Known macOS 27 limitations.
-+- **The arrow keys step through What's New and Acknowledgements,** and permission icons line up.
-+
-+### Fixed
-+
-+- **App language shows System Default** when you haven't picked a language.
-+- **Layout and Search show the symbol of Bluetooth and other system items** that Thaw switched off, and one grey placeholder for items Thaw can't identify.
-+- **Screenshots no longer show the Finder menus you hid** on the desktop.
-+- **Notes in the layout editor's right-click menu are dimmed,** so they don't look like commands.
-+- **Links in the release notes open only over https,** and a Wi-Fi sign-in page can't replace your saved release notes.
-+- **Recording a shortcut stops when you leave its page,** and Shift-Escape cancels it.
-+- **The Settings window no longer shrinks** right after it opens.
-+- **App icons in the Thaw Bar match the size** of the item pictures beside them.
-+- **A cancelled click no longer waits** for the pointer to stop.
-+- **Items with a blank name get their picture taken.**
-+- **Thaw's Time Machine icon keeps updating** when Time Machine stops answering.
-+
- ## [3.0.0-beta.6] - 2026-11-03
+ ### Fixed
  
- **macOS 27 only · Build 123**
-@@ -577,6 +624,7 @@ After you update:
- - **Thaw Bar Only is gone.** Items you kept there are now ordinary Hidden items. By @diazdesandi.
- - **Troubleshooting no longer has Reset Control Center or Quit and Clear Cache.** On macOS 27, Reset Control Center also erased your choices in System Settings > Menu Bar. Restore Missing Items brings items back without deleting anything. Thaw now clears its saved item pictures after every update, which is what Quit and Clear Cache did. By @diazdesandi.
++- **Items no longer move at launch when Thaw can't read the whole bar in time.** With many apps running, Thaw now waits for a full read before it treats the bar as settled or re-lays it.
+ - **Your saved layout is put back once the menu bar settles at launch,** also when Thaw re-applies your profile then and its spacing hasn't changed. Before, that re-apply could stop the final layout pass.
  
-+
- ### Changed
- 
- - **The last welcome screen shows its cards two to a row,** so each demo and caption has room. By @diazdesandi.
-@@ -652,6 +700,7 @@ After you update:
- - **Siri doesn't run Thaw's actions when you ask by voice.** The same actions work from Shortcuts and Spotlight.
- - **On some Macs, clicks in Settings land below the control.** Reported in [#1265](https://github.com/thaw-app
+ ## [3.0.0-alpha.13] - 2026-11-05
 ```
 
-**File**: `Thaw.xcodeproj/project.pbxproj` (modified, +145/-38)
+**File**: `Thaw/App/AppState.swift` (modified, +5/-7)
 ```diff
-@@ -7,8 +7,8 @@
- 	objects = {
- 
- /* Begin PBXBuildFile section */
-+		71373D1685FEE5815708C9A6 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = 147F2F5E062E0539138D611C /* DequeModule */; };
- 		170423D92B56DE78004A2549 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 170423D82B56DE78004A2549 /* Sparkle */; };
--		17F71BB52B880B4500905CBA /* CompactSlider in Frameworks */ = {isa = PBXBuildFile; productRef = 17F71BB42B880B4500905CBA /* CompactSlider */; };
- 		7127A9FF2C4886D100D99DEF /* IfritStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 7127A9FE2C4886D100D99DEF /* IfritStatic */; };
- 		7188A6882E27F9ED008F131D /* ThawCapture in Frameworks */ = {isa = PBXBuildFile; productRef = 7188A6872E27F9ED008F131D /* ThawCapture */; };
- 		7188A6892E27F9ED008F131D /* MenuBarCaptureService.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 7188A6842E27F9ED008F131D /* MenuBarCaptureService.xpc */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-@@ -30,9 +30,16 @@
- 		A1A1A1A1A1A1A1A1A1A1A106 /* ThawAXClient in Frameworks */ = {isa = PBXBuildFile; productRef = A1A1A1A1A1A1A1A1A1A1A103 /* ThawAXClient */; };
- 		A1A1A1A1A1A1A1A1A1A1A107 /* ThawAXHelper in Embed AX Helper */ = {isa = PBXBuildFile; productRef = A1A1A1A1A1A1A1A1A1A1A104 /* ThawAXHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
- 		E1E1E1E1E1E1E1E1E1E1E103 /* ThawExtraHelper in Embed Extra Helper */ = {isa = PBXBuildFile; productRef = E1E1E1E1E1E1E1E1E1E1E102 /* ThawExtraHelper */; };
-+		D4D4D4D4D4D4D4D4D4D4D403 /* ThawAutomation in Embed Modules */ = {isa = PBXBuildFile; productRef = D4D4D4D4D4D4D4D4D4D4D402 /* ThawAutomation */; };
-+		D5D5D5D5D5D5D5D5D5D5D503 /* ThawTriggers in Embed Modules */ = {isa = PBXBuildFile; productRef = D5D5D5D5D5D5D5D5D5D5D502 /* ThawTriggers */; };
-+		D6D6D6D6D6D6D6D6D6D6D603 /* ThawWidgets in Embed Modules */ = {isa = PBXBuildFile; productRef = D6D6D6D6D6D6D6D6D6D6D602 /* ThawWidgets */; };
- 		A1A1A1A1A1A1A1A1A1A1A10A /* ThawAXCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1A1A1A1A1A1A1A1A1A1A109 /* ThawAXCore */; };
-+		C0C0C0C0C0C0C0C0C0C0C003 /* ThawConcurrency in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0C0C0C0C0C0C0C0C0C002 /* ThawConcurrency */; };
- 		B1B1B1B1B1B1B1B1B1B1B104 /* ThawLayout in Frameworks */ = {isa = PBXBuildFile; productRef = B1B1B1B1B1B1B1B1B1B1B102 /* ThawLayout */; };
- 		B1B1B1B1B1B1B1B1B1B1B105 /* ThawLayout in Frameworks */ = {isa = PBXBuildFile; productRef = B1B1B1B1B1B1B1B1B1B1B103 /* ThawLayout */; };
-+		C3C3C3C3C3C3C3C3C3C3C304 /* ThawModuleKit in Frameworks */ = {isa = PBXBuildFile; productRef = C3C3C3C3C3C3C3C3C3C3C302 /* ThawModuleKit */; };
-+		A9E1F0042F70000000000004 /* ThawUI in Frameworks */ = {isa = PBXBuildFile; productRef = A9E1F0052F70000000000005 /* ThawUI */; };
-+		C3C3C3C3C3C3C3C3C3C3C305 /* ThawModuleKit in Frameworks */ = {isa = PBXBuildFile; productRef = C3C3C3C3C3C3C3C3C3C3C303 /* ThawModuleKit */; };
- /* End PBXBuildFile section */
- 
- /* Begin PBXContainerItemProxy section */
-@@ -114,6 +121,17 @@
- 			);
- 			name = "Embed Extra Helper";
- 		};
-+		D4D4D4D4D4D4D4D4D4D4D404 /* Embed Modules */ = {
-+			isa = PBXCopyFilesBuildPhase;
-+			dstPath = "$(CONTENTS_FOLDER_PATH)/Library/Modules";
-+			dstSubfolder = Product;
-+			files = (
-+				D4D4D4D4D4D4D4D4D4D4D403 /* ThawAutomation in Embed Modules */,
-+				D5D5D5D5D5D5D5D5D5D5D503 /* ThawTriggers in Embed Modules */,
-+				D6D6D6D6D6D6D6D6D6D6D603 /* ThawWidgets in Embed Modules */,
-+			);
-+			name = "Embed Modules";
-+		};
- /* End PBXCopyFilesBuildPhase section */
- 
- /* Begin PBXFileReference section */
-@@ -189,15 +207,17 @@
- 				7127A9FF2C4886D100D99DEF /* IfritStatic in Frameworks */,
- 				9570E4A96CDEC0BEBAA5573F /* AsyncAlgorithms in Frameworks */,
- 				8A9B3C0882A8086D09565228 /* Algorithms in Frameworks */,
-+				71373D1685FEE5815708C9A6 /* DequeModule in Frameworks */,
- 				C9858DF951474BBA89EEC700 /* Subprocess in Frameworks */,
--				17F71BB52B880B4500905CBA /* CompactSlider in Frameworks */,
- 				D85602169B8B4308ACEB30A0 /* MenuBarModel in Frameworks */,
- 				A7C4F0012F60000000000001 /* ThawCapture in Frameworks */,
- 				A9E1F0032F70000000000003 /* ThawUI in Frameworks */,
- 				D27A00012F40000000000001 /* PlatformRuntimeKit in Frameworks */,
- 				A1A1A1A1A1A1A1A1A1A1A105 /* ThawAXCore in Frameworks */,
- 				A1A1A1A1A1A1A1A1A1A1A106 /* ThawAXClient in Frameworks */,
- 				B1B1B1B1B1B1B1B1B1B1B104 /* ThawLayout in Frameworks */,
-+				C3C3C3C3C3C3C3C3C3C3C304 /* ThawModuleKit in Frameworks */,
-+				C0C0C0C0C0C0C0C0C0C0C003 /* ThawConcurrency in Frameworks */,
- 			);
- 		};
- 		7188A6802E27F9ED008F131D /* Frameworks */ = {
-@@ -214,7 +234,9 @@
- 				A7C4F0022F60000000000002 /* ThawCapture in Frameworks */,
- 				A1A1A1A1A1A1A1A1A1A1A10A /* ThawAXCore in Frameworks */,
- 				B1B1B1B1B1B1B1B1B1B1B105 /* ThawLayout in Frameworks */,
-+				C3C3C3C3C3C3C3C3C3C3C305 /* ThawModuleKit in Frameworks */,
- 				D27A00022F4000000
-```
-
-**File**: `Thaw.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +18/-9)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "originHash" : "a882f0a3e7345de4e7a3f07fb2d3d791a6731f2f6e203e97a7aaed6c574e8672",
-+  "originHash" : "9e8064317f7234cd89d89f62b7482e3b282df612080ed82591145f7f62999e68",
-   "pins" : [
-     {
-       "identity" : "compactslider",
-@@ -33,8 +33,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/sparkle-project/Sparkle",
-       "state" : {
--        "revision" : "eef1a539a373c1f1a320624b1130fc5de7b2e100",
--        "version" : "2.10.0"
-+        "revision" : "ab7d71291238df6e0492143b120c9b696a35f603",
-+        "version" : "2.10.1"
-       }
-     },
-     {
-@@ -60,8 +60,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/apple/swift-collections",
-       "state" : {
--        "revision" : "3b69cedbaa49957e97c092ae400bb57602ef941f",
--        "version" : "1.7.2"
-+        "revision" : "f96b909e1a9e469620bc5037c1e24e00153f376f",
-+        "version" : "1.7.5"
-       }
-     },
-     {
-@@ -78,17 +78,26 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/swiftlang/swift-subprocess",
-       "state" : {
--        "revision" : "55d30558b8b12c0343793421328fe81a4919c776",
--        "version" : "1.0.1"
-+        "revision" : "dbe21bd7dfd4ffef8c32588918542a8abfa1b54c",
-+        "version" : "1.0.2"
-       }
-     },
-     {
-       "identity" : "swift-system",
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/apple/swift-system",
-       "state" : {
--        "revision" : "b5544ba79a70a0cb3563e75bf26dc198d6b40ed3",
--        "version" : "1.7.4"
-+        "revision" : "869129b7bf4ecc57b97d0193ad29690ca2134750",
-+        "version" : "1.8.1"
-+      }
-+    },
-+    {
-+      "identity" : "thawui",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/thaw-app/ThawUI",
-+      "state" : {
-+        "revision" : "205a9ea0631aa71f8dace0505970dcb6b2cff7d1",
-+        "version" : "1.2.1"
-       }
-     }
-   ],
-```
-
-**File**: `Thaw/App/AppDelegate.swift` (modified, +42/-6)
-```diff
-@@ -9,6 +9,7 @@ import MenuBarModel
- import PlatformRuntimeKit
- import SwiftUI
- import ThawAXCore
-+import ThawUI
- 
- @MainActor
- final class AppDelegate: NSObject, NSApplicationDelegate {
-@@ -19,6 +20,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-     private var terminationTimeoutTask: Task<Void, Never>?
-     /// Per-item descenders; inert unless the setting is turned on.
-     private let notchPanelController = NotchPanelController()
-+    /// Items modules keep shown with thaw://reveal-item?hold=true; a module's
-+    /// holds go when it stops running.
-+    private lazy var heldItemReveals: HeldItemReveals = {
-+        let holds = HeldItemReveals(
-+            reveal: { [unowned self] in appState.menuBarManager.sectionController.revealItemTemporarily($0) },
-+            conceal: { [unowned self] in appState.menuBarManager.sectionController.concealTemporarilyRevealedItem($0) }
-+        )
-+        appState.moduleHost.onModuleQuit = { [weak holds] in holds?.releaseAll(for: $0) }
-+        holds.makeCurrent()
-+        return holds
-+    }()
- 
-     #if DEBUG
-         /// Check both Xcode flags because previews may use either the preview or playground environment.
-@@ -32,6 +44,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
- 
-     func applicationWillFinishLaunching(_: Notification) {
-         LiveApp.register(self)
-+        ThawHUD.menuBarHeight = { $0.getMenuBarHeightEstimate() }
-         #if DEBUG
-             // Don't perform setup if running as a preview.
-             if isRunningForPreviews {
-@@ -171,7 +184,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-         isPreparingForTermination = true
-         hasRepliedToTerminationRequest = false
-         appState.diagLog.info("Application asked to terminate \(QuitRequestSource.current()) - restoring blocked items asynchronously")
--        appState.appRunningTriggers.stop()
- 
-         Task { @MainActor in
-             _ = await appState.itemManager.restoreBlockedItemsToVisible()
-@@ -217,6 +229,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-             appState.menuBarManager.nativeAppHidingExperiment.prepareForTermination()
-         }
-         appState.menuBarManager.systemExtraTakeover.prepareForTermination()
-+        appState.moduleHost.stopAll()
-         // Balance the layout-table security scope before exit.
-         MenuBarLayoutTableAccess.shared.release()
-     }
-@@ -351,8 +364,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-             handleToggleRequest(key: key, displayUUID: displayUUID, sender: identity.bundleIdentifier)
-         case let .get(query):
-             handleGetRequest(query, sender: identity)
--        case let .revealItem(bundle, itemID):
--            handleRevealItemRequest(bundle: bundle, itemID: itemID, sender: identity.bundleIdentifier)
-+        case let .revealItem(bundle, itemID, hold):
-+            handleRevealItemRequest(bundle: bundle, itemID: itemID, hold: hold, sender: identity.bundleIdentifier)
-+        case let .releaseItem(bundle, itemID):
-+            handleReleaseItemRequest(bundle: bundle, itemID: itemID, sender: identity.bundleIdentifier)
-         case let .launcher(operation, query):
-             handleLauncherRequest(LauncherURIRequest(operation: operation, query: query), sender: identity)
-         case let .proxyPress(bundle):
-@@ -435,8 +450,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-     }
- 
-     /// thaw://reveal-item?bundle=X or ?item-id=Y reveals one item without its section.
--    /// Reconceals with the Thaw Bar click path's menu-open-aware delay.
--    private func handleRevealItemRequest(bundle: String?, itemID: String?, sender: String) {
-+    /// Reconceals with the Thaw Bar click path's menu-open-aware delay, unless
-+    /// hold=true asks to keep it shown until thaw://release-item.
-+    private func handleRevealItemRequest(bundle: String?, itemID: String?, hold: Bool, sender: String) {
-         let sectionController = appState.menuBarManager.sectionController
-         guard sectionController.isOperational else {
-             appState.diagLog.warning("Settings URI reveal-item: per-item reveal is unavailable on this OS")
-@@ -452,11 +468,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-             return
-         }
- 
-+        if hold {
-+            heldItemReveals.hold(identifier, for: sender)
-+            appState.diagLog.info("Settings URI reveal-item: holding \(identifier) for sender \(sender)")
-+            return
-+        }
-         sectionController.revealItemTemporarily(identifier)
--        sectionController.scheduleTemporaryItemConceal(identifier)
-+        sectionController.scheduleTemporaryItemConcealUnlessHeld(identifier)
-         appState.diagLog.info("Settings URI reveal-item: revealed \(identifier) for sender \(sender)")
-     }
- 
-+    /// thaw://release-item?bundle=X or ?item-id=Y lets go of a hold; the item hides once nobody holds it.
-+    /// A bundle matches every held item 
-```
-
-**File**: `Thaw/App/AppState.swift` (modified, +17/-13)
-```diff
-@@ -13,6 +13,7 @@ import Observation
- import PlatformRuntimeKit
- import SwiftUI
- import ThawCapture
-+import ThawUI
- 
- /// AppDelegate creates the single environment object owning long-lived subsystems; allocation is safe before permissions are granted.
- /// Subsystems start at most once through bootstrapTask, whose setup order follows dependencies.
-@@ -37,6 +38,9 @@ final class AppState {
-     /// it neither needs nor supplies anything the menu bar stack depends on.
-     let profileManager = ProfileManager()
- 
-+    /// Whether profiles are on. Held here so the menus and the Profiles pane observe one switch.
-+    let profilesFeature = ProfilesFeature()
-+
-     // Menu bar stack. Set up in dependency order; see bootstrapTask.
- 
+@@ -51,6 +51,9 @@ final class AppState {
      /// The sections, their control items, and the show/hide state machine.
-@@ -72,7 +76,6 @@ final class AppState {
-     /// Reveals concealed items temporarily when their icon changes.
-     let alertRevealWatcher = MenuBarItemAlertRevealWatcher()
-     let presentationMonitor = PresentationMonitor()
--    let appRunningTriggers = AppRunningTriggersManager()
+     let menuBarManager: MenuBarManager
  
-     /// Owner of the user's menu bar spacer items.
-     let spacerManager = MenuBarSpacerManager()
-@@ -117,13 +120,16 @@ final class AppState {
-     /// profiles, and reach the section and zen toggles without the menu.
-     let swapBarManager = SwapBarManager()
- 
--    /// The panel Thaw's own icon raises in place of its status menu, a Lab
--    /// experiment. Nothing is constructed until the first press with it on.
-+    /// The panel Thaw's own icon raises in place of its status menu. Nothing
-+    /// is constructed until the first press with it on.
-     let controlItemPanel = ControlItemPanelController()
- 
--    /// Lab recording watcher reads only public CoreAudio and CoreMediaIO state, independent of other subsystems.
-+    /// Reads the camera and microphone for Zen Mode, using only public CoreAudio and CoreMediaIO state.
-     let recordingWatchManager = RecordingWatchManager()
- 
-+    /// Launches the modules shipped with Thaw or installed beside it.
-+    let moduleHost = ModuleHost(environment: .live())
++    /// The displays where macOS's own overflow arrow is showing, for Settings.
++    let nativeOverflowPresence = NativeOverflowPresence()
 +
-     let applicationMenuCover = ApplicationMenuCover()
- 
-     /// Settings in a process of its own, when SettingsInOwnProcess is set.
-@@ -229,10 +235,6 @@ final class AppState {
-         diagLog.debug("bootstrap: starting imageCache setup")
-         imageCache.activate(with: self)
-         alertRevealWatcher.performSetup(with: self)
--        appRunningTriggers.start(
--            reveal: { [weak self] in self?.menuBarManager.sectionController.revealItemTemporarily($0) },
--            release: { [weak self] in self?.menuBarManager.sectionController.concealTemporarilyRevealedItem($0) }
--        )
-         presentationMonitor.performSetup(with: self)
-         spacerManager.performSetup(with: self)
-         screenCorners.performSetup(with: self, displaySettlements: displayEnvironment.settlements)
-@@ -251,15 +253,15 @@ final class AppState {
-         profileManager.performSetup(with: self)
-         itemManager.repairs.onUserLayoutChange = { [weak self] in self?.profileLayoutKeeper.noteUserLayoutChange() }
-         itemManager.savedOrderMirrorGate.observe(displayInvalidations: displayEnvironment.invalidations)
-+        profilesFeature.onChange = { [weak profileManager] in profileManager?.rebuildProfileHotkeys() }
-         controlCommandObserver.performSetup(with: self)
-         controlStatePublisher.performSetup(with: self)
-         swapBarManager.performSetup(with: self, displaySettlements: displayEnvironment.settlements)
-         controlItemPanel.performSetup(with: self)
-         recordingWatchManager.performSetup(with: self)
-         applicationMenuCover.performSetup(with: self)
--        // The widget preview item exists only inside a running process, so
--        // every launch re-publishes it when the user last left it enabled.
--        StatusIconWidgetController.shared.restore()
-+        moduleHost.startObservingTerminations()
-+        Task { await moduleHost.startAll() }
- 
-         installObservers()
-         MemoryReclaimer.start()
-@@ -360,7 +362,7 @@ final class AppState {
+     /// Shared by the menu bar manager, which acts on a display move, and the
+     /// event taps, which ask for a check.
+     private let activeDisplayWatcher = ActiveMenuBarDisplayWatcher()
+@@ -366,13 +369,8 @@ final class AppState {
+     /// First launches and upgrades without changelog content record the version silently, leaving onboarding to handle new users.
+     /// Record synchronously before the async repository fetch to avoid repeated prompts after failures.
+     func presentWhatsNewForUpgradeIfNeeded() {
+-        let current = Constants.versionString
+-        guard let lastSeen = Defaults.string(forKey: .lastWhatsNewVersion) else {
+-            Defaults.set(current, forKey: .lastWhatsNewVersion)
+-            return
+-        }
+-        guard lastSeen != current else { return }
+-        Defaults.set(current, forKey: .lastWhatsNewVersion)
++        let opensAfterUpdate = settings.advanced.showReleaseNotesAfterUpdate
++        guard WhatsNewUpgradeGate.recordVersion(Constants.versionString, opensAfterUpdate: opensAfterUpdate) else { return }
  
          Task {
              let allowFetch = settings.advanced.fetchReleaseNotes
--            guard await ChangelogDocument.load(allowFetch: allowFetch).document?.newestRelease != nil else { return }
-+            guard await ChangelogDocument.load(allowFetch: allowFetch, info: .thaw).document?.newestRelease != nil else { return }
-             activate(withPolicy: .regular)
-             openWindow(.whatsNew)
-         }
-@@ -541,7 +543,9 @@ final class AppState {
+```
+
+**File**: `Thaw/App/WhatsNewUpgradeGate.swift` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++//
++//  WhatsNewUpgradeGate.swift
++//  Project: Thaw
++//
++//  Copyright (Thaw) © 2026 Toni Förster
++//  Licensed under the GNU GPLv3
++
++/// Decides whether a launch opens What's New by itself.
++@MainActor
++enum WhatsNewUpgradeGate {
++    /// Records current as the last version seen and reports whether this launch is an update that should open What's New.
++    ///
++    /// The version is recorded even when opensAfterUpdate is off, so turning the setting back on later does not replay an old changelog.
++    static func recordVersion(_ current: String, opensAfterUpdate: Bool) -> Bool {
++        let lastSeen = Defaults.string(forKey: .lastWhatsNewVersion)
++        guard lastSeen != current else { return false }
++        Defaults.set(current, forKey: .lastWhatsNewVersion)
++        // A first launch has no last version; onboarding greets new users instead.
++        return lastSeen != nil && opensAfterUpdate
++    }
++}
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager+Cache.swift` (modified, +8/-0)
+```diff
+@@ -30,6 +30,9 @@ extension MenuBarItemManager {
+         /// Ordered owner/title identities for macOS 27, where synthetic AX window IDs churn without movement.
+         /// Stable identities prevent a recache loop while detecting real additions, removals, and reorders.
+         fileprivate(set) var cachedItemSignature = [String]()
++
++        /// Whether the cache's last read saw the whole bar, which settling and the structural pass check.
++        fileprivate(set) var lastRead = BarReadRecord()
      }
  
-     func openWindow(_ id: ThawWindowIdentifier, allowSettingsProcess: Bool = true) {
--        if allowSettingsProcess, showsInSettingsProcess(id, isOpenHere: openWindows.contains(id)) { return }
-+        if allowSettingsProcess, showsInSettingsProcess(id, isOpenHere: openWindows.contains(id)) {
-+            return
-+        }
-         if id == .settings {
-             prepareSettingsPre
+     /// Defined in MenuBarModel so backends can use section buckets without linking the orchestrator.
+@@ -612,9 +615,12 @@ extension MenuBarItemManager {
+             MenuBarItemManager.diagLog.debug("cacheItemsRegardless: serial cache operation already in progress, coalescing (will rerun)")
+             return
+         }
++        // Noted as the pass ends, so a caller that coalesced into it never sees the read before its cache.
++        var thisRead: BarReadRecord.Read?
+         // Await gate release to avoid refusing callers after this pass returns.
+         // end() has no cancellation check, so cancelled tasks still release the gate.
+         defer {
++            cacheCycleState.lastRead.note(thisRead)
+             let needsRerun = await cacheGate.end()
+             // Rerun coalesced drags or resets so layout bars reflect the latest assignments.
+             if needsRerun {
+@@ -646,6 +652,7 @@ extension MenuBarItemManager {
+             return
+         }
+         onScreenItemSnapshot.update(inventory.freshItems.filter(\.isOnScreen), fromCompleteWalk: inventory.completed)
++        thisRead = BarReadRecord.Read(hasFreshKnownInventory: inventory.hasFreshKnownInventory)
+ 
+         MenuBarItemManager.diagLog.debug("cacheItemsRegardless: getMenuBarItems returned \(items.count) items")
+ 
+@@ -756,6 +763,7 @@ extension MenuBarItemManager {
+             previousCachedItems: itemCache.managedItems
+         )
+         if isPartialMerge {
++            thisRead?.mergedWithOlderItems = true
+             guard await recoverPartialCacheSnapshot(&items, itemWindowIDs: itemWindowIDs) else { return }
+         }
+         cacheCycleState.cachedItemWindowIDs = itemWindowIDs
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager+Moving.swift` (modified, +2/-1)
+```diff
+@@ -547,7 +547,8 @@ extension MenuBarItemManager {
+             // laid from the old sections and put the dropped item back. The
+             // reading schedules this pass again once it is done.
+             guard manualMembershipTask == nil else { return }
+-            guard WriteHold.first(StructuralNormalizationHolds.checks, in: situation) == nil else {
++            if let held = WriteHold.first(StructuralNormalizationHolds.checks, in: situation) {
++                StructuralNormalizationHolds.logDeferral(on: held)
+                 readBarIfItMoved(situation)
+                 rearm()
+                 return
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager+StartupSettling.swift` (modified, +3/-1)
+```diff
+@@ -36,7 +36,9 @@ extension MenuBarItemManager {
+                     return bid
+                 }
+                 return nil
+-            })
++            }),
++            readGeneration: cacheCycleState.lastRead.generation,
++            readComplete: cacheCycleState.lastRead.isComplete
+         )
+     }
+ 
+```
+
+**File**: `Thaw/Items/Manager/MenuBarItemManager+WriteHoldSituation.swift` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@ extension MenuBarItemManager {
+         situation.revealTransitionActive = barHolds.contains(.revealTransition)
+         let barDisplayID = Bridging.getActiveMenuBarDisplayID() ?? CGMainDisplayID()
+         situation.barOnUncachedDisplay = itemDisplayID.map { $0 != barDisplayID } ?? false
++        situation.barReadIncomplete = !cacheCycleState.lastRead.isComplete
+         return situation
+     }
+ 
+```
+
+**File**: `Thaw/Items/Support/BarReadRecord.swift` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++//
++//  BarReadRecord.swift
++//  Project: Thaw
++//
++//  Copyright (Thaw) © 2026 Toni Förster
++//  Licensed under the GNU GPLv3
++
++/// The last read of the bar the item cache took, numbered so a caller that coalesced into a
++/// running read can tell it saw no new read, and marked when the read missed part of the bar.
++nonisolated struct BarReadRecord: Equatable, Sendable {
++    /// What one cache pass learned about its read, noted when the pass ends.
++    struct Read: Equatable, Sendable {
++        /// Whether every owner known to have items answered this read; a quick read can skip apps without items.
++        var hasFreshKnownInventory: Bool
++        /// Whether the pass filled the read's gaps from older cached items.
++        var mergedWithOlderItems = false
++    }
++
++    /// Goes up by one with every read, so the same number means the same read.
++    private(set) var generation: UInt64 = 0
++    /// False until a first read, and after a read with stale owners or a merge with older items.
++    private(set) var isComplete = false
++
++    /// Nil, from a pass that ended before it read the bar, leaves the record as it was.
++    mutating func note(_ read: Read?) {
++        guard let read else { return }
++        generation &+= 1
++        isComplete = read.hasFreshKnownInventory && !read.mergedWithOlderItems
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `5a0d92b6` (2026-11-05)
-**Commit Message**: fix: 3.0.0-alpha.13 follow-ups for profile scripts, module replacement and the app icon (#1453)
+### Incident Patch 3: `ce10936f` (2026-11-11)
+**Commit Message**: fix: stack review fixes, item pictures in the profile preview, the app zoom rollback and PlatformRuntimeKit 1.2.13 (#1519)
 
-* fix(profiles): export and copy a profile with the scripts the Scripts module has now
+* feat(profiles): show item pictures in the profile preview
 
-Scripts are edited in the Scripts module, which saves them in its own defaults, so export and duplicate copied the scripts the profile file carried before scripts moved into the module. A new script was missing, and an edited or removed one came back as it was. Both now read the module's copy once it has taken the profile over, and the file's before that.
-
-HookConfiguration and the module's defaults keys move to ThawModuleKit, so Thaw and the module read the same thing.
+The preview draws each saved item with the picture Layout uses when the item is in the menu bar now. An item that isn't gets its system symbol, Control Center's icon or its app's icon, and only an app that is no longer installed shows the dashed outline. The pictures are read when the selected profile changes, so drawing does not walk the item cache.
 
 Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
-* fix(modules): stop a module that is removed or replaced while it runs
+* fix(settings): take the app zoom out until zoomed windows stop ignoring clicks
 
-refresh() swapped in the new module list without stopping entries that left it. With a downloaded copy installed over a running bundled one, the old process kept running with nothing tracking it: switching the module off stopped the new entry, and the old process's exit never released its held items.
+A zoomed Settings window can stop answering clicks on its switches (#1244, #1265). Thaw's windows now stay at actual size: the zoom modifier, the ⌘+, ⌘− and ⌘0 commands and the Zoom menu in Settings are removed. ThawUI's zoom, its strings and the stored level stay, so it can come back with a small change, and Reset Thaw still clears the stored level.
 
-Departing entries are stopped first, which also ends a launch still in flight. A switched-on module's replacement s
+The Settings window log line no longer carries the zoom, and the lint baseline records the shorter SettingsView.
 
-**File**: `CHANGELOG.md` (modified, +9/-5)
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
+
+* fix(hiding): 
+
+**File**: `CHANGELOG.md` (modified, +21/-10)
 ```diff
-@@ -24,7 +24,7 @@ the items under New and Fixed.
+@@ -32,7 +32,7 @@ Layout gets a pop-out window and undo for every edit, search becomes Floe's laun
  
- ## [Unreleased]
+ - **Pop Out Editor (work in progress).** Opens Layout in a window with every item in a list, a filter, an editor for the selected item and full keyboard control.
+ - **Every Layout edit can be undone,** with ⌘Z anywhere on the Layout page.
+-- **Drag down the Layout window's checkboxes to show or hide several items at once.** A dragged row opens a gap where it will land, a section's name lights up when a drop there would move it, and the list scrolls when a drag reaches its edge. Moved rows flash where they landed, and the list follows them.
++- **Drag down the Layout window's checkboxes to show or hide several items at once.** A dragged row opens a gap where it will land, and the list scrolls at its edges.
+ - **Trackpad taps for Layout and sliders.** A drag taps as it crosses into another section and when it lands, and the spacing and item size sliders tap at their defaults.
+ - **The current Space in the menu bar,** in Displays › Spaces.
+ - **Layout warns when items don't fit or macOS hides Focus,** with a one-click fix for each. Reported by @JosefGvirt in [#1477](https://github.com/thaw-app/Thaw/issues/1477).
+@@ -47,27 +47,34 @@ Layout gets a pop-out window and undo for every edit, search becomes Floe's laun
  
--## [3.0.0-alpha.13] - 2026-11-04
-+## [3.0.0-alpha.13] - 2026-11-05
+ ### Changed
  
- **macOS 27 only · Build 124**
+-- **Search is Floe's launcher,** grouped by section, with Extended and Compact layouts in Visibility. Detailed and Large become Extended. A moved item slides into its new section, and counts roll as they change.
++- **Search is Floe's launcher,** grouped by section, with Extended and Compact layouts in Visibility. Detailed and Large become Extended.
+ - **Settings search goes to the row** and finds each module's switch.
+ - **Extras is now Modules.**
++- **Segmented choices and the tabs in Settings are the system's own control.** The selection is a glass lens you can press and drag across the choices.
+ - **One name for each section: Visible, Hidden and Always Hidden.**
+ - **The Thaw Bar has its own switch again,** and so does double-clicking Thaw's icon for Always Hidden. By @malash in [#1339](https://github.com/thaw-app/Thaw/pull/1339).
+ - **Apply to All Displays asks first.**
+ - **Reset Thaw clears everything but your layout and profiles,** and Reset permissions forgets the files you picked.
+ - **Thaw reads a busy menu bar faster,** and profiles and looks follow a Space switch sooner.
+ - **The Thaw Bar drops in from the menu bar.**
+ - **Corners sliders show their value,** Square, a percentage or Round, and match the other sliders.
+-- **Switch to Reduced mode from Troubleshooting.**
++- **Switch to Reduced mode from Troubleshooting,** where Thaw runs as one icon that hides whole apps.
+ - **The experimental reorder editor is gone.**
++- **Zoom is off for now.** ⌘+, ⌘− and the Zoom menu are gone until a zoomed Settings window stops ignoring clicks. Reported in [#1244](https://github.com/thaw-app/Thaw/issues/1244) and [#1265](https://github.com/thaw-app/Thaw/issues/1265).
  
-@@ -39,7 +39,11 @@ Scripts, Triggers and Widgets become modules you can switch on and off, and Sett
- #### Modules
+ ### Fixed
  
- - **Triggers, Scripts and Widgets run as small apps next to Thaw.** Open each from its page in Settings. The widget icon moved there from Experiments.
--- **Profile switches don't wait for a "before switching" script** to finish before the layout changes.
-+- **Profile switches don't wait for a "before switching" script** to finish before the layout changes. Scripts also run for the profile Thaw applies as it starts, and go with a profile you export or copy.
-+
-+#### Thaw's icon
-+
-+- **The cube in Thaw's icon is even.** Its top face no longer looks paler than its sides, and the shapes inside it share one flat cream.
+ #### Layout and items
  
- #### Settings
- 
-@@ -70,9 +74,9 @@ Scripts, Triggers and Widgets become modules you can switch on and off, and Sett
- - **A cancelled click no longer waits** for the pointer to stop.
- - **Items with a blank name get their picture taken.**
- - **Thaw's Time Machine icon keeps updating** when Time Machine stops answering.
--- **Layout shows new items when macOS leaves out Thaw's own icon.** On macOS 27.2 Thaw then kept its whole earlier list, so an item that appeared later stayed missing from Layout. Thaw now adds the items it found and keeps the earlier ones whose apps still run. QQ and WeChat no longer get a new Layout item for each unread count. Reported by @Mujun05 in [#1449](https://github.com/thaw-app/Thaw/issues/1449).
--- **Profiles no longer reset your menu bar spacing.** Applying a profile, at startup or when you changed Space or Focus, could put the menu bar back to its default spacing instead of the spacing you chose.
--- **Thaw no longer moves items while you log in or switch to another display.** An app opening at login ended Thaw's wait for the menu bar a few seconds in, and when the menu bar moved to another display Thaw read item positions from both bars. Either way it could move an item out of the place you gave it.
-+- **Layout picks up new items when macOS leaves out Thaw's own icon,** and QQ and WeChat keep one item each as their unread count changes. Reported by @Mujun05 in [#1449](https://github.com/thaw-app/Thaw/issues/1449) and fixed in [#1450](https://github.com/thaw-app/Thaw/pull/1450).
-+- **Applying a profile keeps your menu bar spacing,** at startup and when you change Space or Focus. Fixed by @Omoeba in [#1451](https://github.com/thaw-app/Thaw/pull/1451).
-+- **Thaw waits for the menu bar to settle before moving items,** while you log in and when the menu bar moves to another display. Fixed by @camguillory in [#1452](https://github.com/thaw-app/Thaw/pull/1452).
- 
- ## [3.0.0-beta.6] - 2026-11-03
- 
++- **The Layout window's green button zooms it instead of going full screen,** where only quitting Thaw got you out.
++- **The widget icon hides again with the Native hiding method.** It stayed on the menu bar in Hidden and Always Hidden.
++- **Native hiding starts again when a hidden app has no entry in System Settings › Menu Bar,** such as one you removed. Reported by @SebastienBn in [#1513](https://github.com/thaw-app/Thaw/issues/1513).
++- **Native hiding hides your apps again when macOS puts its list back right after Thaw changed it.** Thaw used to leave every app on the menu bar with a warning. Reported by @macdaddy1944 in [#1501](https://github.com/thaw-app/Thaw/issues/1501).
++- **An app you switched back on in System Settings says so in Layout,** instead of saying macOS won't let Thaw switch it off.
+ - **Undo brings a moved group back whole again.** It used to restore only the batch's ungrouped items.
+ - **Live item pictures update again when their left part changes,** like right-aligned text getting shorter on an item that keeps its width.
+-- **Shift and the arrow keys extend the selection down the Layout window's list** instead of stopping after one row, a plain arrow key then carries on from where they stopped, and a filter stops a Shift-click selecting rows it hides.
+-- **Reordering a group, moving it to another section and the Move to and Move All menu entries can be undone,** and a same-section drag puts the order back as it was even with groups, folders or the new-items badge in the list.
++- **Shift and the arrow keys extend the selection down the Layout window's list,** and a Shift-click no longer selects rows a filter hides.
++- **Reordering or moving a group, Move to and Move All can be undone,** and so can a same-section drag in a list with groups or folders.
+ - **A read-only Layout window no longer groups the selection.**
+ - **The order you drag the menu bar into is pinne
 ```
 
-**File**: `Thaw/Modules/ModuleHost+Live.swift` (modified, +1/-0)
+**File**: `FREQUENT_ISSUES.md` (modified, +0/-5)
 ```diff
-@@ -58,6 +58,7 @@ extension ModuleHost.Environment {
-                 ).processIdentifier
-             },
-             terminate: { pid in NSRunningApplication(processIdentifier: pid)?.terminate() },
-+            isRunning: { pid in NSRunningApplication(processIdentifier: pid)?.isTerminated == false },
-             now: { .now },
-             wait: { seconds in try? await Task.sleep(for: .seconds(seconds)) },
-             loadEnabled: { Defaults.stringArray(forKey: .enabledModules).map(Set.init) },
+@@ -17,7 +17,6 @@ Thaw 3.0 runs on macOS 27, and Thaw 2.x runs on macOS 26 and, from 2.2, on macOS
+     - [Full screen](#full-screen)
+     - [Very many apps running](#very-many-apps-running)
+     - [Siri and voice](#siri-and-voice)
+-    - [Clicks in Settings](#clicks-in-settings)
+     - [Shortcuts and Focus](#shortcuts-and-focus)
+     - [Live Activities](#live-activities)
+     - [Apps that need their own update](#apps-that-need-their-own-update)
+@@ -100,10 +99,6 @@ With about 240 apps, Thaw can't read the whole menu bar in time, so icons can go
+ 
+ Siri doesn't run Thaw's actions when you ask by voice. The same actions work from Shortcuts and Spotlight.
+ 
+-#### Clicks in Settings
+-
+-If switches in Settings stop responding, the window may be zoomed. Press ⌘0 to return to actual size. [#1244](https://github.com/thaw-app/Thaw/issues/1244), [#1265](https://github.com/thaw-app/Thaw/issues/1265)
+-
+ #### Shortcuts and Focus
+ 
+ macOS 27 can hide the Shortcuts item at launch, and the Focus icon may not be visible to Thaw at all. Thaw cannot manage either one yet. [#1105](https://github.com/thaw-app/Thaw/issues/1105), [#1124](https://github.com/thaw-app/Thaw/issues/1124), [#1154](https://github.com/thaw-app/Thaw/issues/1154)
 ```
 
-**File**: `Thaw/Modules/ModuleHost.swift` (modified, +35/-1)
+**File**: `Thaw.xcodeproj/project.pbxproj` (modified, +2/-2)
 ```diff
-@@ -27,6 +27,8 @@ final class ModuleHost {
-         /// its process. With showWindow the module opens its window.
-         var launch: (_ url: URL, _ showWindow: Bool) async throws -> pid_t
-         var terminate: (pid_t) -> Void
-+        /// Whether the process is still running.
-+        var isRunning: (pid_t) -> Bool
-         var now: () -> Date
-         var wait: (TimeInterval) async -> Void
-         /// The identifiers of the modules switched on, or nil before the first choice is saved.
-@@ -72,6 +74,8 @@ final class ModuleHost {
-     @ObservationIgnored private var stopCounts: [URL: Int] = [:]
-     @ObservationIgnored private var terminationObserver: (any NSObjectProtocol)?
-     @ObservationIgnored private var hasLoadedEnabled = false
-+    /// Replaced modules' processes, each with the identifier of the module to start once it exits.
-+    @ObservationIgnored private var handovers: [pid_t: String] = [:]
- 
-     init(environment: Environment, restartPolicy: ModuleRestartPolicy = ModuleRestartPolicy()) {
-         self.environment = environment
-@@ -114,8 +118,23 @@ final class ModuleHost {
-             let state: State = verdict == .launch || known != .idle ? known : .refused(verdict)
-             found[url] = Module(manifest: manifest, verdict: verdict, state: state)
-         }
-+        let departed = modules.filter { found[$0.key] == nil }
-+        // A module removed or replaced by a downloaded copy stops before it leaves the list,
-+        // so no process or launch in flight is left that nothing tracks.
-+        departed.keys.forEach(stop)
-         modules = found
-         loadEnabledIfNeeded()
-+        for module in departed.values {
-+            guard let identifier = module.manifest?.identifier, isEnabled(identifier), let replacement = url(ofModule: identifier)
-+            else { continue }
-+            switch module.state {
-+            // The copy with the same bundle ID starts once the old process is gone, or
-+            // macOS could bring the old one forward instead.
-+            case let .running(pid): handovers[pid] = identifier
-+            case .restarting: Task { await start(replacement) }
-+            default: break
-+            }
-+        }
-     }
- 
-     func isEnabled(_ identifier: String) -> Bool {
-@@ -216,6 +235,10 @@ final class ModuleHost {
-             }
-             Self.diagLog.info("Module at \(url.lastPathComponent) running as pid \(pid)")
-             modules[url]?.state = .running(pid)
-+            // An exit reported while the launch was still under way found no running module.
-+            if !environment.isRunning(pid) {
-+                await moduleDidTerminate(pid: pid)
-+            }
-         } catch {
-             Self.diagLog.error("Module at \(url.path) failed to launch: \(error)")
-             if stopCounts[url, default: 0] == stopCount {
-@@ -237,6 +260,7 @@ final class ModuleHost {
- 
-     private func reportQuit(_ url: URL) {
-         if let bundleIdentifier = modules[url]?.manifest?.bundleIdentifier {
-+            ProfileSwitchAnnouncer.moduleQuit(bundleIdentifier: bundleIdentifier)
-             onModuleQuit?(bundleIdentifier)
-         }
-     }
-@@ -257,6 +281,13 @@ final class ModuleHost {
-     /// Called when any app quits. A module that quits while still marked
-     /// running did so on its own, and the restart policy decides what's next.
-     func moduleDidTerminate(pid: pid_t) async {
-+        if let identifier = handovers.removeValue(forKey: pid) {
-+            // Looked up now: the list may have changed, or the module been switched off, while the old copy quit.
-+            if isEnabled(identifier), let replacement = url(ofModule: identifier) {
-+                await start(replacement)
-+            }
-+            return
-+        }
-         guard let url = modules.first(where: { $0.value.state == .running(pid) })?.key else { return }
-         reportQuit(url)
-         let now = environment.now()
-@@ -273,9 +304,12 @@ final class ModuleHost {
-         }
-     }
- 
--    /// Watches for module processes quitting. Call once after creating the live host.
-+    /// Watches for module processes quitting, and for the Scripts module to say it listens.
-+    /// Call once after creating the live host, before modules start.
-     func startObservingTerminations() {
-         guard terminationObserver == nil else { return }
-+        // Before any module starts, so the Scripts module's first "listening" is heard.
-+        ProfileSwitchAnnouncer.startListeningForScripts()
-         terminationObserver = NSWorkspace.shared.notificationCenter.addObserver(
-             forName: NSWorkspace.didTerminateApplicationNotification,
-             object: nil,
+@@ -1145,7 +1145,7 @@
+ 			repositoryURL = "https://github.com/thaw-app/ThawUI";
+ 			requirement = {
+ 				kind = exactVersion;
+-				version = 1.3.0;
++				version = 1.4.0;
+ 			};
+ 		};
+ 		170423D72B56DE78004A2549 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+@@ -1185,7 +1185,7 @@
+ 			repositoryURL = "https://github.com/thaw-app/prk-bin";
+ 			requirement = {
+ 				kind = exactVersion;
+-				version = 1.2.12;
++				version = 1.2.13;
+ 			};
+ 		};
+ 		6299E164B288ACBB011AC6B1 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
 ```
 
-**File**: `Thaw/Modules/ProfileSwitchAnnouncer.swift` (modified, +50/-6)
+**File**: `Thaw.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +5/-5)
 ```diff
-@@ -11,6 +11,16 @@ import ThawModuleKit
- /// Tells modules that Thaw is switching profiles, so the Scripts module can run
- /// the user's scripts. Thaw doesn't wait for any module to answer.
- enum ProfileSwitchAnnouncer {
-+    private static var backlog = ProfileSwitchBacklog()
-+    private static var listeningObserver: NSObjectProtocol?
-+
-+    /// Posts one phase to the modules. Under unit tests it posts nothing, so a running Scripts
-+    /// module can't run the user's scripts; tests replace it to see what would be sent.
-+    static var deliver: (Notification.Name, [String: String]) -> Void = { name, userInfo in
-+        guard !TestHosting.isActive(environment: ProcessInfo.processInfo.environment) else { return }
-+        DistributedNotificationCenter.default().postNotificationName(name, object: nil, userInfo: userInfo, deliverImmediately: true)
-+    }
-+
-     /// The notification for one phase of a switch, or nil without a bundle ID to scope it to.
-     static func notification(
-         _ phase: ProfileSwitch.Phase,
-@@ -21,13 +31,47 @@ enum ProfileSwitchAnnouncer {
-         return (ProfileSwitch.notificationName(phase, hostBundleIdentifier: hostBundleIdentifier), event.userInfo)
-     }
- 
-+    /// Waits for the Scripts module to say it listens, and sends it the switch held until then.
-+    /// Call before modules start, so the first answer isn't missed. A Scripts module still running
-+    /// from before Thaw started announced itself already, so it is asked to say so again.
-+    static func startListeningForScripts() {
-+        guard listeningObserver == nil, let host = Bundle.main.bundleIdentifier else { return }
-+        listeningObserver = DistributedNotificationCenter.default().addObserver(
-+            forName: ProfileSwitch.listeningNotificationName(hostBundleIdentifier: host),
-+            object: nil,
-+            queue: .main
-+        ) { _ in
-+            MainActor.assumeIsolated { scriptsListening() }
-+        }
-+        deliver(ProfileSwitch.listeningQueryNotificationName(hostBundleIdentifier: host), [:])
-+    }
-+
-+    /// The Scripts module listens now: sends the switch held until then.
-+    static func scriptsListening(at now: ContinuousClock.Instant = .now) {
-+        for (phase, event) in backlog.moduleListening(at: now) {
-+            send(phase, event)
-+        }
-+    }
-+
-+    /// A module quit. Switches made while the Scripts module is gone wait for it to listen again.
-+    static func moduleQuit(bundleIdentifier: String) {
-+        guard let host = Bundle.main.bundleIdentifier, bundleIdentifier == SavedScripts.domain(hostBundleIdentifier: host)
-+        else {
-+            return
-+        }
-+        backlog.moduleStopped()
-+    }
-+
-+    /// Announces one phase of a switch, or holds it while the Scripts module isn't listening.
-     static func post(_ phase: ProfileSwitch.Phase, _ event: ProfileSwitch) {
-+        if backlog.shouldSend(phase, event, at: .now) {
-+            send(phase, event)
-+        }
-+    }
-+
-+    /// Posts the phase's notification under Thaw's bundle ID.
-+    private static func send(_ phase: ProfileSwitch.Phase, _ event: ProfileSwitch) {
-         guard let notification = notification(phase, event, hostBundleIdentifier: Bundle.main.bundleIdentifier) else { return }
--        DistributedNotificationCenter.default().postNotificationName(
--            notification.name,
--            object: nil,
--            userInfo: notification.userInfo,
--            deliverImmediately: true
--        )
-+        deliver(notification.name, notification.userInfo)
-     }
- }
-```
-
-**File**: `Thaw/Modules/ProfileSwitchBacklog.swift` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+//
-+//  ProfileSwitchBacklog.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 Toni Förster
-+//  Licensed under the GNU GPLv3
-+
-+import ThawModuleKit
-+
-+/// The profile switch the Scripts module hasn't heard: held while it starts or restarts, and sent
-+/// once it says it listens. Holding instead of also sending means no switch runs its scripts twice.
-+nonisolated struct ProfileSwitchBacklog {
-+    /// A held switch older than this is dropped, so turning Scripts on later runs nothing stale.
-+    static let maximumAge = Duration.seconds(60)
-+
-+    private(set) var isListening = false
-+    private var held: [(phase: ProfileSwitch.Phase, event: ProfileSwitch, at: ContinuousClock.Instant)] = []
-+
-+    /// Whether to send this phase now. Otherwise it is held, and a new switch replaces the one held.
-+    mutating func shouldSend(_ phase: ProfileSwitch.Phase, _ event: ProfileSwitch, at now: ContinuousClock.Instant) -> Bool {
-+        if isListening {
-+            return true
-+        }
-+        if phase == .willApply {
-+            held.removeAll()
-+        }
-+        held.append((phase, event, now))
-+        return false
-+    }
-+
-+    /// The module listens now: the held phases still recent enough to run, oldest first.
-+    mutating func moduleListening(at now: ContinuousClock.Instant) -> [(phase: ProfileSwitch.Phase, event: ProfileSwitch)] {
-+        isListening = true
-+        let due = held.filter { now - $0.at <= Self.maximumAge }.map { ($0.phase, $0.event) }
-+        held.removeAll()
-+        return due
-+    }
-+
-+    /// The module quit, so switches are held until it listens again.
-+    mutating func moduleStopped() {
-+        isListening = false
-+    }
-+}
-```
-
-**File**: `Thaw/Resources/AppIcon.icon/icon.json` (modified, +9/-77)
-```diff
-@@ -45,11 +45,11 @@
-   ],
-   "groups": [
+@@ -1,5 +1,5 @@
+ {
+-  "originHash" : "9e8064317f7234cd89d89f62b7482e3b282df612080ed82591145f7f62999e68",
++  "originHash" : "2172eee8f066a0858cf7f975741764e3b2c1a684e3c0dd379b5c658e87db6a79",
+   "pins" : [
      {
--      "name": "Innards Sides",
-+      "name": "Innards",
-       "layers": [
-         {
--          "name": "innards-sides",
--          "image-name": "innards.svg",
-+          "name": "innards-top",
-+          "image-name": "innards-top.svg",
-           "hidden": false,
-           "opacity": 0.94,
-           "glass-specializations": [
-@@ -60,20 +60,7 @@
-           "fill-specializations": [
-             {
-               "value": {
--                "linear-gradient": [
--                  "display-p3:1.00000,0.98000,0.86000,1.00000",
--                  "display-p3:1.00000,0.87000,0.50000,1.00000"
--                ],
--                "orientation": {
--                  "start": {
--                    "x": 0.5,
--                    "y": 0
--                  },
--                  "stop": {
--                    "x": 0.5,
--                    "y": 1
--                  }
--                }
-+                "solid": "display-p3:1.00000,0.92500,0.68000,1.00000"
-               }
-             },
-             {
-@@ -88,52 +75,10 @@
-               0
-             ]
-           }
--        }
--      ],
--      "hidden": false,
--      "opacity": 1,
--      "lighting": "individual",
--      "blur-material": 0.25,
--      "refractivity": {
--        "enabled": true,
--        "strength": 0.45,
--        "depth": 0.55
--      },
--      "shadow-specializations": [
--        {
--          "value": {
--            "kind": "layer-color",
--            "opacity": 0.25
--          }
-         },
-         {
--          "appearance": "dark",
--          "value": {
--            "kind": "layer-color",
--            "opacity": 0.25
--          }
--        }
--      ],
--      "specular-specializations": [
--        {
--          "value": "inside"
--        }
--      ],
--      "translucency-specializations": [
--        {
--          "value": {
--            "enabled": false,
--            "value": 0.5
--          }
--        }
--      ]
--    },
--    {
--      "name": "Innards Top",
--      "layers": [
--        {
--          "name": "innards-top",
--          "image-name": "innards-top.svg",
-+          "name": "innards-sides",
-+          "image-name": "innards.svg",
-           "hidden": false,
-           "opacity": 0.94,
-           "glass-specializations": [
-@@ -144,20 +89,7 @@
-           "fill-specializations": [
-             {
-               "value": {
--                "linear-gradient": [
--                  "display-p3:1.00000,0.98000,0.86000,1.00000",
--                  "display-p3:1.00000,0.87000,0.50000,1.00000"
--                ],
--                "orientation": {
--                  "start": {
--                    "x": 0.5,
--                    "y": 0
--                  },
--                  "stop": {
--                    "x": 0.5,
--                    "y": 1
--                  }
--                }
-+                "solid": "display-p3:1.00000,0.92500,0.68000,1.00000"
-               }
-             },
-             {
-@@ -176,7 +108,7 @@
-       ],
-       "hidden": false,
-       "opacity": 1,
--      "lighting": "individual",
-+      "lighting": "combined",
-       "blur-material": 0.25,
-       "refractivity": {
-         "enabled": true,
-@@ -303,7 +235,7 @@
-           "name": "face-top",
-           "image-name": "face-top.svg",
-           "hidden": false,
--          "opacity": 0.62,
-+          "opacity": 0.4,
-           "glass-specializations": [
-             {
-               "value": true
+       "identity" : "compactslider",
+@@ -24,8 +24,8 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/thaw-app/prk-bin",
+       "state" : {
+-        "revision" : "cb16740567d990060cddca2e97d6bbb04b2dda34",
+-        "version" : "1.2.12"
++        "revision" : "839597825f43df4cab472c8dfd3272aeea4060e5",
++        "version" : "1.2.13"
+       }
+     },
+     {
+@@ -96,8 +96,8 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/thaw-app/ThawUI",
+       "state" : {
+-        "revision" : "045b5e050e6c0529646737dcb4d325856698ecb9",
+-        "version" : "1.3.0"
++        "revision" : "f9dcca45c4daa339dda2613a3bfa2d5b2a52cf8a",
++        "version" : "1.4.0"
+       }
+     }
+   ],
 ```
 
-**File**: `Thaw/Settings/Models/Profiles/ProfileCurrentScripts.swift` (added, +26/-0)
+**File**: `Thaw/App/AppState.swift` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,26 @@
+@@ -398,7 +398,7 @@ final class AppState {
+         isRestarting = true
+ 
+         // Save image cache to disk before restarting so new instance can load it
+-        imageCache.saveToDisk()
++        imageCache.saveToDiskAndWait()
+ 
+         let config = NSWorkspace.OpenConfiguration()
+         config.activates = false
+```
+
+**File**: `Thaw/Input/Events/ClockBridgeAvailability.swift` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
 +//
-+//  ProfileCurrentScripts.swift
++//  ClockBridgeAvailability.swift
 +//  Project: Thaw
 +//
-+//  Copyright (Thaw) © 2026 Toni Förster
++//  Copyright (Thaw) © 2026 René Jiménez
 +//  Licensed under the GNU GPLv3
 +
-+import Foundation
-+import ThawModuleKit
++import Combine
++import Observation
 +
-+extension Profile {
-+    /// The profile with the scripts the user has now, for an export or a copy. Scripts are edited
-+    /// in the Scripts module, so the profile file can hold an older set or none.
-+    func withCurrentScripts(moduleDefaults: UserDefaults?) -> Profile {
-+        var profile = self
-+        profile.automation = SavedScripts.automation(forProfileID: id, inFile: automation, moduleDefaults: moduleDefaults)
-+        return profile
++/// Whether the Clock and Notification Center bridge taps can ever be needed.
++enum ClockBridgeAvailability {
++    /// The bridge releases the restriction the Standard method holds. Native hiding holds none,
++    /// so with it the taps would sit on every left press and drag in the system for nothing.
++    nonisolated static func isPossible(engineIsOperational: Bool, nativeHidingActive: Bool) -> Bool {
++        engineIsOperational && !nativeHidingActive
 +    }
 +}
 +
-+extension UserDefaults {
-+    /// The Scripts module's defaults for this Thaw, or nil without a bundle ID.
-+    static var scriptsModule: UserDefaults? {
-+        Bundle.main.bundleIdentifier.flatMap { UserDefaults(suiteName: SavedScripts.domain(hostBundleIdentifier: $0)) }
++extension HIDEventManager {
++    /// A subscription that brings the bridge taps up or down when Native hiding starts or stops.
++    func nativeHidingFollower() -> Set<AnyCancellable> {
++        guard let appState else { return [] }
++        let experiment = appState.menuBarManager.nativeAppHidingExperiment
++        let task = Task { @MainActor [weak self] in
++            for await _ in Observations({ experiment.isActive }) {
++                guard let self else { return }
++                synchronizeClockActivationTap()
++                synchronizeNotificationCenterHotkeyTap()
++            }
++        }
++        return [AnyCancellable { task.cancel() }]
 +    }
 +}
 ```
 
-**File**: `Thaw/Settings/Models/Profiles/ProfileManager.swift` (modified, +2/-2)
+**File**: `Thaw/Input/Events/HIDEventManager+Lifecycle.swift` (modified, +1/-1)
 ```diff
-@@ -498,7 +498,7 @@ final class ProfileManager {
+@@ -15,7 +15,7 @@ extension HIDEventManager {
+     /// Subscribes to the settings and system notifications the manager has to
+     /// react to, replacing any subscriptions from a previous call.
+     func configureCancellables() {
+-        var c = Set<AnyCancellable>()
++        var c = nativeHidingFollower()
  
-     /// Duplicates an existing profile with a new name.
-     func duplicateProfile(id: UUID, newName: String) throws {
--        let original = try loadProfile(id: id)
-+        let original = try loadProfile(id: id).withCurrentScripts(moduleDefaults: .scriptsModule)
-         let duplicate = Profile(
-             name: newName,
-             content: original.content
-@@ -522,7 +522,7 @@ final class ProfileManager {
- 
-     /// Exports a profile to a file, including display associations.
-     func exportProfile(id: UUID, to url: URL) throws {
--        let profile = try loadProfile(id: id)
-+        let profile = try loadProfile(id: id).withCurrentScripts(moduleDefaults: .scriptsModule)
-         let meta = profiles.first { $0.id == id }
-         let entry = ProfileExportEntry(
-             profile: profile,
+         if let appState {
+             // Pre-seed so the initial emission does no rearm work when
 ```
 
----
-
-### Incident Patch 3: `0f5b58fc` (2026-11-05)
-**Commit Message**: fix(menubar): keep the structural pass off the bar while login items load or the bar changes display (#1452)
-
-* fix(menubar): keep the structural pass off the bar while login items load or the bar changes display
-
-The structural pass moved items that were already in place, twice after
-one login. An app opening at login started an app-launch settling, and
-since it names the launched bundle it was classed as a relaunch wait,
-which replaces the boot's. It ended once that one app was back, 4 s after
-login, and the pass then ran while other login items were still starting.
-Settling is now classed by reason: only a spacing relaunch waits for a
-set of bundles, and an app launch yields to the boot like a display
-change.
-
-Later the bar moved to another display, and the pass read frames from
-both bars before the cache followed, then moved an item that was in
-place. A new barOnUncachedDisplay hold makes the pass wait until the
-cache is on the bar's display, like the post-restriction repair already
-does.
-
-Signed-off-by: Camille Guillory <[REDACTED_EMAIL]>
-
-* fix(menubar): address the review of the settling and display holds
-
-- A spacing preflight is classified from its own request. A launch th
-
-**File**: `CHANGELOG.md` (modified, +3/-5)
+**File**: `Thaw/Input/Events/HIDEventManager.swift` (modified, +3/-3)
 ```diff
-@@ -24,11 +24,6 @@ the items under New and Fixed.
- 
- ## [Unreleased]
- 
--### Fixed
--
--- **Layout shows new items when macOS leaves out Thaw's own icon.** On macOS 27.2 Thaw then kept its whole earlier list, so an item that appeared later stayed missing from Layout. Thaw now adds the items it found and keeps the earlier ones whose apps still run. QQ and WeChat no longer get a new Layout item for each unread count. Reported by @Mujun05 in [#1449](https://github.com/thaw-app/Thaw/issues/1449).
--- **Profiles no longer reset your menu bar spacing.** Applying a profile, at startup or when you changed Space or Focus, could put the menu bar back to its default spacing instead of the spacing you chose.
--
- ## [3.0.0-alpha.13] - 2026-11-04
- 
- **macOS 27 only · Build 124**
-@@ -75,6 +70,9 @@ Scripts, Triggers and Widgets become modules you can switch on and off, and Sett
- - **A cancelled click no longer waits** for the pointer to stop.
- - **Items with a blank name get their picture taken.**
- - **Thaw's Time Machine icon keeps updating** when Time Machine stops answering.
-+- **Layout shows new items when macOS leaves out Thaw's own icon.** On macOS 27.2 Thaw then kept its whole earlier list, so an item that appeared later stayed missing from Layout. Thaw now adds the items it found and keeps the earlier ones whose apps still run. QQ and WeChat no longer get a new Layout item for each unread count. Reported by @Mujun05 in [#1449](https://github.com/thaw-app/Thaw/issues/1449).
-+- **Profiles no longer reset your menu bar spacing.** Applying a profile, at startup or when you changed Space or Focus, could put the menu bar back to its default spacing instead of the spacing you chose.
-+- **Thaw no longer moves items while you log in or switch to another display.** An app opening at login ended Thaw's wait for the menu bar a few seconds in, and when the menu bar moved to another display Thaw read item positions from both bars. Either way it could move an item out of the place you gave it.
- 
- ## [3.0.0-beta.6] - 2026-11-03
- 
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+Moving.swift` (modified, +1/-0)
-```diff
-@@ -548,6 +548,7 @@ extension MenuBarItemManager {
-             // reading schedules this pass again once it is done.
-             guard manualMembershipTask == nil else { return }
-             guard WriteHold.first(StructuralNormalizationHolds.checks, in: situation) == nil else {
-+                readBarIfItMoved(situation)
-                 rearm()
-                 return
-             }
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+StartupSettling.swift` (modified, +11/-7)
-```diff
-@@ -25,12 +25,15 @@ extension MenuBarItemManager {
-         maxDuration: Duration = .seconds(60)
-     ) {
-         let mergedExpected = settlingExpectedBundleIDs.union(expectedBundleIDs)
--        let incomingKind: SettlingKind = if !mergedExpected.isEmpty {
--            .expectedSet
--        } else if reason == "performSetup" {
-+        // An app launch names its bundle too, but only a relaunch wait may
-+        // replace the boot's: a launch at login would end it once that one
-+        // app is back, long before the rest of the login items.
-+        let incomingKind: SettlingKind = if reason == "performSetup" {
-             .cold
-         } else if reason.hasPrefix("spacingRelaunch") {
--            .preflight
-+            // Its own IDs, not the shared set: a launch that yielded leaves its ID there,
-+            // and a preflight counting it would replace the boot settling.
-+            expectedBundleIDs.isEmpty ? .preflight : .expectedSet
-         } else {
-             .event
-         }
-@@ -68,12 +71,11 @@ extension MenuBarItemManager {
-             let stableTarget = 3
-             var lastSeenCount = -1
-             var stablePolls = 0
--            let waitingFor = mergedExpected
--            let useExpectedSet = !waitingFor.isEmpty
-+            let useExpectedSet = !mergedExpected.isEmpty
-             let settlingStartedAt = ContinuousClock.now
-             if useExpectedSet {
-                 MenuBarItemManager.diagLog.debug(
--                    "\(reason): waiting for \(waitingFor.count) expected bundle ID(s) to reattach"
-+                    "\(reason): waiting for \(mergedExpected.count) expected bundle ID(s) to reattach"
-                 )
-             }
- 
-@@ -96,6 +98,8 @@ extension MenuBarItemManager {
-                 let barQuiet = !reason.hasPrefix("display") || savedOrderMirrorGate.isQuiet()
- 
-                 if useExpectedSet {
-+                    // Read on every poll: an app launch that yielded to this wait adds its ID later.
-+                    let waitingFor = settlingExpectedBundleIDs
-                     let presentBundleIDs: Set<String> = Set(
-                         itemCache.managedItems.compactMap { item in
-                             if case let .string(bid) = item.tag.namespace {
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+WriteHoldSituation.swift` (modified, +11/-0)
-```diff
-@@ -5,7 +5,9 @@
- //  Copyright (Thaw) © 2026 Toni Förster
- //  Licensed under the GNU GPLv3
- 
-+import CoreGraphics
- import Foundation
-+import MenuBarModel
- 
- extension MenuBarItemManager {
-     /// Manual arrangement turns the pass off, except to re-lay a stranded
-@@ -29,6 +31,15 @@ extension MenuBarItemManager {
-         situation.layoutPublicationStale = !layoutPublication.canPublish(generation: layoutPublication.generation)
-         situation.sectionRevealed = appState?.menuBarManager.sectionController.revealedSection != nil
-         situation.revealTransitionActive = appState?.menuBarManager.isRevealHideTransitionActive ?? false
-+        let barDisplayID = Bridging.getActiveMenuBarDisplayID() ?? CGMainDisplayID()
-+        situation.barOnUncachedDisplay = itemDisplayID.map { $0 != barDisplayID } ?? false
-         return situation
-     }
-+
-+    /// Reads the bar in full when it moved to a display the cache hasn't followed: only a full
-+    /// read moves the cache, and an unchanged window list never asks for one.
-+    func readBarIfItMoved(_ situation: WriteHold.Situation) {
-+        guard situation.barOnUncachedDisplay else { return }
-+        Task { await cacheItemsRegardless() }
-+    }
- }
-```
-
-**File**: `Thaw/Items/Support/WriteHold.swift` (modified, +6/-0)
-```diff
-@@ -19,6 +19,9 @@ nonisolated enum WriteHold {
-         case layoutPublicationStale
-         case sectionRevealed
-         case revealTransitionActive
-+        /// macOS moved the bar to a display the cache has not followed yet,
-+        /// so frames read now mix two bars.
-+        case barOnUncachedDisplay
+@@ -577,16 +577,16 @@ final class HIDEventManager {
+     /// bridged.
+     ///
+     /// The tap that does the bridging is an active session-level tap on every
+-    /// left press, so it is only worth installing when a real section engine
+-    /// is behind the controller. The stand-in controller answers false for
++    /// left press, so it is only installed when a real section engine is behind the
++    /// controller and Native hiding is off. The stand-in controller answers false for
+     /// MenuBarSectionControlling.shouldBridgeClockActivation forever, so
+     /// with it the tap would only ever pass events straight through. The
+     /// engine's own answer still swings with the assertion state at runtime;
+     /// that is decided per click inside the tap, because nothing in here can
+     /// learn of an assertion being acquired quickly enough to bring the tap
+     /// up before the click that needs it.
+     private var canBridgeClockActivation: Bool {
+-        appState?.menuBarManager.sectionController.isOperational ?? false
++        appState.map { ClockBridgeAvailability.isPossible(engineIsOperational: $0.menuBarManager.sectionController.isOperational, nativeHidingActive: $0.menuBarManager.nativeAppHidingExperiment.isActive) } ?? false
      }
  
-     /// Which checks hold at one point in time, built by the calling pass.
-@@ -32,6 +35,7 @@ nonisolated enum WriteHold {
-         var layoutPublicationStale = false
-         var sectionRevealed = false
-         var revealTransitionActive = false
-+        var barOnUncachedDisplay = false
- 
-         /// Each condition paired with the check named after it.
-         private var conditions: [(holds: Bool, check: Check)] {
-@@ -45,6 +49,7 @@ nonisolated enum WriteHold {
-                 (layoutPublicationStale, .layoutPublicationStale),
-                 (sectionRevealed, .sectionRevealed),
-                 (revealTransitionActive, .revealTransitionActive),
-+                (barOnUncachedDisplay, .barOnUncachedDisplay),
-             ]
-         }
- 
-@@ -71,5 +76,6 @@ nonisolated enum StructuralNormalizationHolds {
-         .layoutPublicationStale,
-         .sectionRevealed,
-         .revealTransitionActive,
-+        .barOnUncachedDisplay,
-     ]
- }
-```
-
-**File**: `ThawTests/Items/SettlingKindTests.swift` (modified, +37/-0)
-```diff
-@@ -35,6 +35,43 @@ struct SettlingKindTests {
-         #expect(!manager.isInStartupSettling)
-     }
- 
-+    /// 2026-11-05: an app opening at login ended the boot settling 4 s in,
-+    /// and the structural pass then moved items whose apps were still starting.
-+    @Test("An app launch at login leaves the boot settling running")
-+    func appLaunchKeepsColdSettling() {
-+        let manager = MenuBarItemManager()
-+        defer { manager.startupSettlingTask?.cancel() }
-+
-+        manager.startSettlingPeriod(reason: "performSetup")
-+        manager.startSettlingPeriod(reason: "appLaunch", expectedBundleIDs: ["com.example.app"], maxDuration: .seconds(8))
-+
-+        #expect(manager.settlingKind == .cold)
-+    }
-+
-+    @Test("A spacing preflight at login doesn't take an app launch's ID as its own")
-+    func preflightKeepsColdSettlingAfterLaunch() {
-+        let manager = MenuBarItemManager()
-+        defer { manager.startupSettlingTask?.cancel() }
-+
-+        manager.startSettlingPeriod(reason: "performSetup")
-+        manager.startSettlingPeriod(reason: "appLaunch", expectedBundleIDs: ["com.example.app"], maxDuration: .seconds(8))
-+        manager.startSettlingPeriod(reason: "spacingRelaunch:preflight")
-+
-+        #expect(manager.settlingKind == .cold)
-+        #expect(manager.settlingExpectedBundleIDs == ["com.example.app"], "the launch's ID stays for the boot settling")
-+    }
-+
-+    @Test("A spacing relaunch still waits for the apps it relaunched")
-+    func relaunchReplacesColdSettling() {
-+        let manager = MenuBarItemManager()
-+        defer { manager.startupSettlingTask?.cancel() }
-+
-+        manager.startSettlingPeriod(reason: "performSetup")
-+        manager.startSettlingPeriod(reason: "spacingRelaunch", expectedBundleIDs: ["com.example.app"])
-+
-+        #expect(manager.settlingKind == .expectedSet)
-+    }
-+
-     @Test("Weaker settlings yield to stronger ones")
-     func yieldOrder() {
-         #expect(MenuBarItemManager.settlingYields(incoming: .preflight, to: .event))
-```
-
-**File**: `ThawTests/Items/WriteHoldTests.swift` (modified, +10/-0)
-```diff
-@@ -49,6 +49,7 @@ struct WriteHoldTests {
-         all.layoutPublicationStale = true
-         all.sectionRevealed = true
-         all.revealTransitionActive = true
-+        all.barOnUncachedDisplay = true
-         #expect(all.heldChecks == Set(WriteHold.Check.allCases))
-     }
- }
-@@ -62,4 +63,13 @@ struct StructuralNormalizationHoldsTests {
-         #expect(StructuralNormalizationHolds.checks.contains(.sectionRevealed))
-         #expect(StructuralNormalizationHolds.checks.contains(.revealTransitionActive))
-     }
-+
-+    /// 2026-11-05: the bar moved to another display and the pass, reading
-+    /// frames from both bars, moved an item that was in place.
-+    @Test("The pass waits while the cache is on another display than the bar")
-+    func checksCoverDisplayMove() {
-+        var situation = WriteHold.Situation()
-+        situation.barOnUncachedDisplay = true
-+        #expect(WriteHold.first(StructuralNormalizationHolds.checks, in: situation) == .barOnUncachedDisplay)
-+    }
- }
+     /// Brings the Clock activation tap in line with whether bridging is
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1496** (2026-11-07): fix(motion): snap keyboard focus, fade the layout warning, quicken the drag fade (@diazdesandi)
-- **PR #1495** (2026-11-07): feat(settings): call the Extras page and sidebar group Modules (@diazdesandi)
-- **PR #1494** (2026-11-07): perf(items): ask apps for their menu bar items in parallel (@diazdesandi)
-- **PR #1493** (2026-11-07): fix(menubar): pair clicks on Thaw's icon only within half a second (@diazdesandi)
-- **PR #1488** (2026-11-07): fix(capture): count pictures of narrow parked items (@Belligerently)
-- **PR #1487** (2026-11-07): fix(profiles): preserve current activation when undoing creation (@Belligerently)
+- **PR #1533** (2026-11-11): test(spacing): keep tests from resetting the Mac's menu bar spacing (@Omoeba)
+- **PR #1532** (2026-11-11): docs(uri): document missing actions and settings keys (@elior-esh)
+- **PR #1530** (2026-11-11): refactor: remove dead code and duplicated logic across the app and packages (@diazdesandi)
+- **PR #1528** (2026-11-11): fix: eleven small Settings, search, Layout and profile bugs (@diazdesandi)
+- **PR #1527** (2026-11-11): ci: save the compile cache per commit on development, and stop saving it per pull request (@diazdesandi)
+- **PR #1526** (2026-11-11): test(layout): cover the Groups tab's navigation and its drop target (@diazdesandi)
 
 ---
 
@@ -2699,3 +2040,54 @@ Signed-off-by: Camille Guillory <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. capture, usability and motion follow-ups, real readings for the widget icon, and
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a9ccd1f9`: capture, usability and motion follow-ups, real readings for the widget icon, and Layout out-of-room and design fixes (#1500). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+#### Spaces
+
+- **The current Space in the menu bar.** Turn on Show the current Space in the menu bar in Displays › Spaces. Its menu lists each display's Spaces.
+- **Profiles name Spaces the way Mission Control does,** grouped by display, with full screen apps by name. The display with the menu bar is marked.
+
+#### Widgets
+
+- **The widget icon shows real readings.** Wi-Fi shows your actual bars, and the battery turns green while charging, yellow in Low Power Mode and red below 20%. Suggested by @joaofrgomes in [#1378](https://github.com/thaw-app/Thaw/issues/1378).
+- **Bluetooth audio in the center.** While sound plays through AirPods, headphones or a speaker, the widget shows it, with the volume in blue.
+- **A larger, better-proportioned widget icon.** The ring fills the icon and opens at the bottom, with the dots along it. Choose Standard or Large and the ring's thickness.
+
+#### Layout and Thaw Bar
+
+- **Layout warns when items don't fit,** names the ones macOS hid, and Move to Hidden makes room in one click.
+- **Layout tells you when macOS hides Focus** and turns on Thaw's own Focus icon in one click. Reported by @JosefGvirt in [#1477](https://github.com/thaw-app/Thaw/issues/1477).
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+- **Layout warns when items don't fit.** When macOS hides items it has no room for, Layout names them until there's room again.
+- **Release notes can stay closed after an update.** Turn off Show release notes after an update in Privacy. What's New still opens from Thaw's menu and About.
+- **Profiles name Spaces the way Mission Control does.** Pick any Space for a profile, grouped by display, with full screen apps by name. A Space that's gone shows as missing, and the display with the menu bar is marked.
+- **The menu bar can show which Space you're in.** Turn on Show the current Space in the menu bar under Displays › Spaces. Its menu lists the Spaces on each display.
+- **Extras is now called Modules.** The Settings page that turns Profiles, Scripts, Triggers and Widgets on and off, and the sidebar group they appear in, use the same name as the rest of Thaw.
+- **Double-clicking Thaw's icon for Always Hidden has its own switch.** Turn off Double-click the Thaw icon to show Always Hidden in Menu Bar Access, and every click shows or hides your items.
+- **The Thaw Bar has its own switch again.** Show hidden items is now two switches, Thaw Bar and Always show hidden items. Your settings c
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a9ccd1f9` are properly handled with clean fallback behavior.

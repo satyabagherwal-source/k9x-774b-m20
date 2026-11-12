@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T23:57:06.710Z",
+  "last_updated": "2026-11-12T00:23:18.847Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -62487,11 +62487,16 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "92c959b6",
-      "content_hash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
+      "source_version": "3cb96a01",
+      "content_hash": "134a3d23166a95568455bfc13c9ea51cdbfb9f896f663f3a2ecff2e71193e54f",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "capture, usability and motion follow-ups, real readings for the widget icon, and",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2526,
           "title": "Bidirectional Uniqueness Guard for Heuristic IPC Reconciliation",
@@ -62533,7 +62538,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:46:17.418Z",
+      "verified_at": "2026-11-12T00:23:18.799Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

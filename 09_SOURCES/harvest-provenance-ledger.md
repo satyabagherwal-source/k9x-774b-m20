@@ -9024,3 +9024,4 @@ Every entry in this ledger must capture:
 | `learn-github-mohamedrejeb-compose-rich-editor` | `https://github.com/MohamedRejeb/compose-rich-editor` | `3254ff75` | Multi-dimensional audit evidence | 2026-11-11T20:23:08.756Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `9457c528` | Multi-dimensional audit evidence | 2026-11-11T20:23:35.896Z |
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `157ef222` | Multi-dimensional audit evidence | 2026-11-11T23:57:06.842Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `3cb96a01` | Multi-dimensional audit evidence | 2026-11-12T00:23:19.029Z |

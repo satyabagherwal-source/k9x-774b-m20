@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "92c959b6",
+    "sourceVersion": "3cb96a01",
     "license": "GPL-3.0",
-    "contentHash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
-    "lastHarvestedAt": "2026-11-08T01:46:17.503Z",
+    "contentHash": "134a3d23166a95568455bfc13c9ea51cdbfb9f896f663f3a2ecff2e71193e54f",
+    "lastHarvestedAt": "2026-11-12T00:23:19.029Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {

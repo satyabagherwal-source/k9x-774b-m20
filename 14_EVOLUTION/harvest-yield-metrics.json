@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T23:57:06.848Z",
-  "total_cycles_completed": 8857,
-  "total_learnings_persisted": 8857,
-  "total_rules_promoted": 8713,
+  "last_updated": "2026-11-12T00:23:19.047Z",
+  "total_cycles_completed": 8858,
+  "total_learnings_persisted": 8858,
+  "total_rules_promoted": 8714,
   "history": [
-    {
-      "timestamp": "2026-11-09T23:52:49.246Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-10T00:13:46.826Z",
       "repository": "RediSearch/RediSearch",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-11T23:57:06.848Z",
       "repository": "meshtastic/Meshtastic-Android",
       "learningId": "learn-github-meshtastic-meshtastic-android",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-12T00:23:19.047Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

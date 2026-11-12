@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T23:57:11.661Z",
+  "updated_at": "2026-11-12T00:23:23.323Z",
   "stats": {
-    "total_discovered": 310,
-    "approved_pending_harvest": 277,
+    "total_discovered": 324,
+    "approved_pending_harvest": 291,
     "harvested_count": 0,
     "rejected_count": 33,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 284,
+      "COMMUNITY_AND_EXPERT": 298,
       "OFFICIAL_DOCUMENTATION": 14,
       "STANDARDS_AND_SPECIFICATIONS": 11,
       "ENGINEERING_BLOGS": 1
@@ -6604,6 +6604,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
         "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-9801A88BBBA1": {
+      "id": "SRC-9801A88BBBA1",
+      "url": "https://github.com/thaw-app/Thaw",
+      "title": "https://github.com/thaw-app/Thaw",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.292Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-85F39AB72F41": {
+      "id": "SRC-85F39AB72F41",
+      "url": "https://github.com/user-attachments/files/30792643/thaw_2026-08-06_14-03-56.log",
+      "title": "https://github.com/user-attachments/files/30792643/thaw_2026-08-06_14-03-56.log",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.295Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-E0EBC73A45CC": {
+      "id": "SRC-E0EBC73A45CC",
+      "url": "https://github.com/thaw-app/Thaw/issues/1378",
+      "title": "https://github.com/thaw-app/Thaw/issues/1378",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-B27B267B0A63": {
+      "id": "SRC-B27B267B0A63",
+      "url": "https://github.com/thaw-app/Thaw/issues/1477",
+      "title": "https://github.com/thaw-app/Thaw/issues/1477",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.299Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-3BA8B5875848": {
+      "id": "SRC-3BA8B5875848",
+      "url": "https://github.com/thaw-app/Thaw/pull/1339",
+      "title": "https://github.com/thaw-app/Thaw/pull/1339",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-0D73DB4BE1A4": {
+      "id": "SRC-0D73DB4BE1A4",
+      "url": "https://github.com/thaw-app/Thaw/issues/1244",
+      "title": "https://github.com/thaw-app/Thaw/issues/1244",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-AE168F9D06DA": {
+      "id": "SRC-AE168F9D06DA",
+      "url": "https://github.com/thaw-app/Thaw/issues/1265",
+      "title": "https://github.com/thaw-app/Thaw/issues/1265",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.307Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-FCDD5AEC6462": {
+      "id": "SRC-FCDD5AEC6462",
+      "url": "https://github.com/thaw-app/Thaw/issues/1513",
+      "title": "https://github.com/thaw-app/Thaw/issues/1513",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-853CA87E32AC": {
+      "id": "SRC-853CA87E32AC",
+      "url": "https://github.com/thaw-app/Thaw/issues/1501",
+      "title": "https://github.com/thaw-app/Thaw/issues/1501",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-9EAD2B9F784A": {
+      "id": "SRC-9EAD2B9F784A",
+      "url": "https://github.com/thaw-app/Thaw/issues/1105",
+      "title": "https://github.com/thaw-app/Thaw/issues/1105",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-BD52EEFA318E": {
+      "id": "SRC-BD52EEFA318E",
+      "url": "https://github.com/thaw-app/Thaw/issues/1124",
+      "title": "https://github.com/thaw-app/Thaw/issues/1124",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-CB8B91872C78": {
+      "id": "SRC-CB8B91872C78",
+      "url": "https://github.com/thaw-app/Thaw/issues/1154",
+      "title": "https://github.com/thaw-app/Thaw/issues/1154",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-C16EBFFB914C": {
+      "id": "SRC-C16EBFFB914C",
+      "url": "https://github.com/thaw-app/ThawUI",
+      "title": "https://github.com/thaw-app/ThawUI",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.321Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-5489BA1D3BD7": {
+      "id": "SRC-5489BA1D3BD7",
+      "url": "https://github.com/thaw-app/prk-bin",
+      "title": "https://github.com/thaw-app/prk-bin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-12T00:23:23.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
       }
     }
   }

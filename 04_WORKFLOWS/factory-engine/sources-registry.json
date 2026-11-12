@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T23:57:11.489Z",
-    "lastVerified": "2026-11-11T23:57:11.489Z",
+    "lastChecked": "2026-11-12T00:23:23.166Z",
+    "lastVerified": "2026-11-12T00:23:23.166Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -458,8 +458,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T19:46:13.799Z",
-    "lastVerified": "2026-11-11T19:46:13.799Z",
+    "lastChecked": "2026-11-12T00:23:07.711Z",
+    "lastVerified": "2026-11-12T00:23:07.711Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1105,9 +1105,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-11T13:17:06.658Z",
+    "lastChecked": "2026-11-12T00:23:02.731Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-11T13:17:06.658Z"
+    "lastVerified": "2026-11-12T00:23:02.731Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2761,8 +2761,8 @@
     "officialUrl": "https://github.com/goodrain/rainbond",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T14:35:29.530Z",
-    "lastVerified": "2026-11-09T14:35:29.530Z",
+    "lastChecked": "2026-11-12T00:23:00.238Z",
+    "lastVerified": "2026-11-12T00:23:00.238Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goodrain-rainbond",
@@ -3242,9 +3242,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-11-09T05:40:32.893Z",
+    "lastChecked": "2026-11-12T00:22:52.710Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-11-09T05:40:32.893Z"
+    "lastVerified": "2026-11-12T00:22:52.710Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -5234,9 +5234,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-11-09T13:21:50.745Z",
+    "lastChecked": "2026-11-12T00:23:05.226Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-11-09T13:21:50.745Z"
+    "lastVerified": "2026-11-12T00:23:05.226Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -9122,14 +9122,14 @@
     "officialUrl": "https://github.com/thaw-app/Thaw",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T01:46:16.779Z",
-    "lastVerified": "2026-11-08T01:46:16.779Z",
+    "lastChecked": "2026-11-12T00:23:02.121Z",
+    "lastVerified": "2026-11-12T00:23:02.121Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "6b972a7d8c48cc8202f790cdb928667c64558d57fa50e8dae0554792826294b6",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 7,
+    "contentHash": "134a3d23166a95568455bfc13c9ea51cdbfb9f896f663f3a2ecff2e71193e54f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11087,12 +11087,12 @@
     "lastVerified": "2026-11-08T18:55:42.085Z"
   },
   "scrapy-plugins-scrapy-zyte-api": {
-    "name": "scrapy-plugins/scrapy-zyte-api",
+    "name": "scrapy-zyte-api",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-07T02:21:57.597Z",
-    "lastVerified": "2026-11-07T02:21:57.597Z",
+    "lastChecked": "2026-11-12T00:22:55.237Z",
+    "lastVerified": "2026-11-12T00:22:55.237Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
@@ -11101,7 +11101,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8fcb6177"
   },
   "krzysztofzablocki-inject": {
     "name": "Inject",
