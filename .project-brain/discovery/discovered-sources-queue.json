@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T11:40:43.588Z",
+  "updated_at": "2026-11-13T11:55:59.658Z",
   "stats": {
-    "total_discovered": 2363,
-    "approved_pending_harvest": 2195,
+    "total_discovered": 2392,
+    "approved_pending_harvest": 2224,
     "harvested_count": 0,
     "rejected_count": 168,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2186,
+      "COMMUNITY_AND_EXPERT": 2215,
       "OFFICIAL_DOCUMENTATION": 93,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
@@ -50829,6 +50829,644 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
         "fileName": "krakend-krakend-ce-learnings.md"
+      }
+    },
+    "SRC-CB996F4D9524": {
+      "id": "SRC-CB996F4D9524",
+      "url": "https://github.com/user-attachments/assets/b9cee252-62ae-4070-af0c-634bed93ffc0",
+      "title": "https://github.com/user-attachments/assets/b9cee252-62ae-4070-af0c-634bed93ffc0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:47.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-30D29C210A59": {
+      "id": "SRC-30D29C210A59",
+      "url": "https://github.com/linuxdeploy/linuxdeploy/releases/download/$LINUXDEPLOY_VERSION/linuxdeploy-x86_64.AppImage",
+      "title": "https://github.com/linuxdeploy/linuxdeploy/releases/download/$LINUXDEPLOY_VERSION/linuxdeploy-x86_64.AppImage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:47.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-0AB015B469E3": {
+      "id": "SRC-0AB015B469E3",
+      "url": "https://github.com/Kuddev/pebrel/pull/767",
+      "title": "https://github.com/Kuddev/pebrel/pull/767",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:47.949Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-EAF22212699E": {
+      "id": "SRC-EAF22212699E",
+      "url": "https://github.com/Kuddev/pebrel/pull/814",
+      "title": "https://github.com/Kuddev/pebrel/pull/814",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:47.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-3112417AC7A3": {
+      "id": "SRC-3112417AC7A3",
+      "url": "https://github.com/Kuddev/pebrel/pull/872",
+      "title": "https://github.com/Kuddev/pebrel/pull/872",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:47.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-C82B787670A5": {
+      "id": "SRC-C82B787670A5",
+      "url": "https://github.com/Kuddev/nebula/issues/797",
+      "title": "https://github.com/Kuddev/nebula/issues/797",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:47.986Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-746FE2D6EC6E": {
+      "id": "SRC-746FE2D6EC6E",
+      "url": "https://github.com/Kuddev/nebula/issues/807",
+      "title": "https://github.com/Kuddev/nebula/issues/807",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:47.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-31A76544144A": {
+      "id": "SRC-31A76544144A",
+      "url": "https://github.com/Kuddev/nebula/issues/788",
+      "title": "https://github.com/Kuddev/nebula/issues/788",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-3F1793609305": {
+      "id": "SRC-3F1793609305",
+      "url": "https://github.com/Kuddev/nebula/issues/803",
+      "title": "https://github.com/Kuddev/nebula/issues/803",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-050A6776D005": {
+      "id": "SRC-050A6776D005",
+      "url": "https://github.com/Kuddev/nebula/issues/774",
+      "title": "https://github.com/Kuddev/nebula/issues/774",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-047BB456D31D": {
+      "id": "SRC-047BB456D31D",
+      "url": "https://github.com/Kuddev/nebula/issues/821",
+      "title": "https://github.com/Kuddev/nebula/issues/821",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-FA4622C0A7F8": {
+      "id": "SRC-FA4622C0A7F8",
+      "url": "https://github.com/Kuddev/nebula/issues/676",
+      "title": "https://github.com/Kuddev/nebula/issues/676",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.058Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-1F34C4B6532C": {
+      "id": "SRC-1F34C4B6532C",
+      "url": "https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949",
+      "title": "https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.069Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-E86916B66548": {
+      "id": "SRC-E86916B66548",
+      "url": "https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df",
+      "title": "https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.082Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-9C8FD9BDE6FB": {
+      "id": "SRC-9C8FD9BDE6FB",
+      "url": "https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146",
+      "title": "https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-B8A6DA9F3D28": {
+      "id": "SRC-B8A6DA9F3D28",
+      "url": "https://github.com/Kuddev/gpui-component?rev=4b62121bac83e103b4176708a98aecf0b51c84ab",
+      "title": "https://github.com/Kuddev/gpui-component?rev=4b62121bac83e103b4176708a98aecf0b51c84ab",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.106Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-93E01A3C1463": {
+      "id": "SRC-93E01A3C1463",
+      "url": "https://github.com/Kuddev/zed",
+      "title": "https://github.com/Kuddev/zed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-B4CEEE0B101B": {
+      "id": "SRC-B4CEEE0B101B",
+      "url": "https://github.com/Kuddev/gpui-component",
+      "title": "https://github.com/Kuddev/gpui-component",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-0CD3E995A4C8": {
+      "id": "SRC-0CD3E995A4C8",
+      "url": "https://pebrel.com/",
+      "title": "https://pebrel.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.144Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-DD1681F6B01E": {
+      "id": "SRC-DD1681F6B01E",
+      "url": "https://img.shields.io/badge/%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white",
+      "title": "https://img.shields.io/badge/%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-9F65DF9BEC55": {
+      "id": "SRC-9F65DF9BEC55",
+      "url": "https://img.shields.io/github/stars/Kuddev/pebrel?style=flat-square&color=ffd33d&logo=github",
+      "title": "https://img.shields.io/github/stars/Kuddev/pebrel?style=flat-square&color=ffd33d&logo=github",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.169Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-B7FDCE7EB975": {
+      "id": "SRC-B7FDCE7EB975",
+      "url": "https://atomgit.com/kettys/pebrel",
+      "title": "https://atomgit.com/kettys/pebrel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.185Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-B03255E02C74": {
+      "id": "SRC-B03255E02C74",
+      "url": "https://atomgit.com/kettys/pebrel/star/badge.svg",
+      "title": "https://atomgit.com/kettys/pebrel/star/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.196Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-5A14D505821D": {
+      "id": "SRC-5A14D505821D",
+      "url": "https://hub.xerj.org/contributors/Kuddev",
+      "title": "https://hub.xerj.org/contributors/Kuddev",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.208Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-4F920C7943C8": {
+      "id": "SRC-4F920C7943C8",
+      "url": "https://hub.xerj.org/contributors/Kuddev/badge.svg",
+      "title": "https://hub.xerj.org/contributors/Kuddev/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.220Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-E4594AE641BF": {
+      "id": "SRC-E4594AE641BF",
+      "url": "https://img.shields.io/badge/Website-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white",
+      "title": "https://img.shields.io/badge/Website-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-F3621D5E6C3E": {
+      "id": "SRC-F3621D5E6C3E",
+      "url": "https://img.shields.io/badge/%E5%AE%98%E7%BD%91-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white",
+      "title": "https://img.shields.io/badge/%E5%AE%98%E7%BD%91-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.262Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-812F78D7B415": {
+      "id": "SRC-812F78D7B415",
+      "url": "https://github.com/subframe7536/maple-font",
+      "title": "https://github.com/subframe7536/maple-font",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:48.274Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-535D66FDD9EB": {
+      "id": "SRC-535D66FDD9EB",
+      "url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "title": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:55:59.658Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
+        "fileName": "hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md"
       }
     }
   }

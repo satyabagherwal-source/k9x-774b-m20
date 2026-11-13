@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T11:40:43.238Z",
+  "updated_at": "2026-11-13T11:56:17.762Z",
   "statistics": {
-    "total_nodes": 78,
+    "total_nodes": 80,
     "total_edges": 41,
     "domain_distribution": {
-      "D": 60,
+      "D": 62,
       "M": 1,
       "H": 9,
       "J": 2,
@@ -1731,6 +1731,50 @@
       ],
       "created_at": "2026-11-13T11:40:43.238Z",
       "updated_at": "2026-11-13T11:40:43.238Z"
+    },
+    "DOM-D-BC1FB9A1": {
+      "id": "DOM-D-BC1FB9A1",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): tencent/Hy-SimulMT-30B-A3B-FP8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md`  \n> **Source**: huggingface ([https:",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-tencent-hy-simulmt-30b-a3b-fp8/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T11:55:48.281Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tencent-hy-simulmt-30b-a3b-fp8)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T11:55:59.652Z",
+      "updated_at": "2026-11-13T11:55:59.652Z"
+    },
+    "DOM-D-9BACEDC2": {
+      "id": "DOM-D-9BACEDC2",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): apache/pinot",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  \n> **Source**: github ([https://github.com/apache/pinot] -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  \n> **Source**: github ([https://github.com/apache/pinot]",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://apache-pinot/apache-pinot-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T11:55:59.666Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (apache-pinot)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T11:56:17.762Z",
+      "updated_at": "2026-11-13T11:56:17.762Z"
     }
   },
   "edges": [

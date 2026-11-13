@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "d79d5796",
+    "sourceVersion": "09e5eb47",
     "license": "GPL-3.0",
-    "contentHash": "43784fc8fde93f2afe398ae855f57559a0006a845a543ea83398f58a46e4abcb",
-    "lastHarvestedAt": "2026-11-11T18:35:36.790Z",
+    "contentHash": "d791e2c727e0eec1fd6c40728d2781da26ef65f8868ce6f24a7bfd6dd909b03c",
+    "lastHarvestedAt": "2026-11-13T11:55:43.254Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -11395,8 +11395,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceVersion": "hf-tencent-hy-simulmt-30b-a3b-fp8",
     "license": "Open-Source",
-    "contentHash": "6672d4fba3bd3d22a2f449614519586d398689fd5d3ca7eb6d8ebd6bfc6ba57a",
-    "lastHarvestedAt": "2026-11-08T09:55:00.473Z",
+    "contentHash": "362967b4a3bf6c26a8efccdcf45cd2bdebc982d17f4b15252247f8b526ed5ecf",
+    "lastHarvestedAt": "2026-11-13T11:55:29.225Z",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "18e46648",
+    "sourceVersion": "b09fec33",
     "license": "Apache-2.0",
-    "contentHash": "32c85bdaf3d088fd7b9cf07f0b42214cdf260496f312bade3b20ad6deae0052d",
-    "lastHarvestedAt": "2026-11-12T04:50:41.496Z",
+    "contentHash": "a37300ee698820d98dedb5a2c19668dc7f1be9f3edfdb964674fbf4bf79aaf29",
+    "lastHarvestedAt": "2026-11-13T11:55:45.272Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

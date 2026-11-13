@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T11:40:43.599Z",
+  "last_updated": "2026-11-13T11:56:17.806Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T11:14:09.154Z",
@@ -488,7 +488,7 @@
       "staged_for_review": 1
     },
     "kuddev-pebrel-learnings.md": {
-      "processed_at": "2026-11-11T18:36:00.947Z",
+      "processed_at": "2026-11-13T11:55:47.907Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -808,9 +808,9 @@
       "staged_for_review": 1
     },
     "apache-pinot-learnings.md": {
-      "processed_at": "2026-11-12T04:50:47.079Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-13T11:56:17.762Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md": {
       "processed_at": "2026-11-12T05:13:50.798Z",
@@ -1761,9 +1761,14 @@
       "processed_at": "2026-11-13T11:40:43.468Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md": {
+      "processed_at": "2026-11-13T11:55:59.653Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 540,
-  "total_canonical_promoted": 89,
-  "total_staged_for_review": 448
+  "total_dossiers_evaluated": 543,
+  "total_canonical_promoted": 91,
+  "total_staged_for_review": 449
 }

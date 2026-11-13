@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T11:40:43.466Z",
+  "last_updated": "2026-11-13T11:55:47.906Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8651,6 +8651,15 @@
       "source_repo": "krakend-krakend-ce",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F961A1-merge-pull-request-1136-from-krakend-dev.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-832106",
+      "directive_title": "Merge pull request #615 from WilliamWang1721/fix/issue-549-5gzczi",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kuddev-pebrel",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-832106-merge-pull-request-615-from-williamwang1.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `d79d5796`  
+> **Source Version**: `09e5eb47`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:35:36.501Z  
+> **Timestamp**: 2026-11-13T11:55:34.444Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:35:36.313Z  
+> **Harvest Timestamp**: 2026-11-13T11:55:34.439Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3758 stars
+- **Stars / Engagement**: 3768 stars
 
 ---
 
@@ -1494,11 +1494,11 @@ def destinations(owner, deadline):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #924** (2026-11-11): **[Bug] 删除仍在占用的文件时程序崩溃**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  24h2  ### Pebrel version / 版本号  v2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Not sure / 不确定  ### Program running in the pane / 面板里正在跑的程序  Other / 其他  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Startup crash / hang / cannot exit — 启动崩溃、卡死、无法退出  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤   比如一个db文件正被后端服务占用着，此时通过侧边栏删除该文件直接系统崩溃。  ### Expected behavior / 期望结果  当然是不崩溃，并提醒一下正在被占用  ### Actual behavior / 实际结果  崩溃  ### Logs / screenshots / 日志或截图  <img width="686" height="340" alt="Image" src="https://github.com/user-attachments/assets/aace50eb-a95b-4347-a71c-c0d30799fc6b" />  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #960** (2026-11-12): **[Bug] 2.5.0+手机无法正确连接至电脑同时无法正常匹配**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Win11 26H2 （OS 内部版本 26320.9877）  ### Pebrel version / 版本号  2.5.3  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Not sure / 不确定  ### Program running in the pane / 面板里正在跑的程序  Other / 其他  ### Connection type / 连接方式  Other / 其他  ### Affected area / 影响范围  Other / 其他  ### Did it work in a previous version? / 旧版本是否正常？  Yes, it worked before / 旧版本正常，新版本坏了  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  **测试环境**：电脑端为 Windows 11 + Pebrel `2.5.3`，手机端为 Android + Pebrel `2.5.0` / `2.5.3`。电脑端“设置 → 手机远程”中配置了自建中转（无论“局域网 / Tailscale 直连”开关开启或关闭、无论两台设备处于同一局域网还是移动网络下，均 100% 复现）。  #### 场景 A：全新配对（手机端无该电脑的历史配对记录） 1. 在电脑端点击“添加手机”，使用 Android 手机端扫描二维码发起全新配对； 2. 电脑端弹出请求后点击批准（电脑端显示配对成功）； 3. 观察手机端配对结果。  #### 场景 B：在旧版本（2.4.0）已有记录的基础上再次扫码匹配 1. 手机端保留着 `2.4.0` 时期配对过的同一台电脑的历史记录； 2. 电脑端升级至 `2.5.0`~`2.5.3` 后，手机端先后扫描该电脑的“局域网”和“自建中转”二维码进行重新匹配； 3. 电脑端点击批准后，观察手机端等待耗时及最终保存的状态； 4. 点击该电脑卡片发起连接，观察两端连接表现。  ### Expected behavior / 期望结果  1. 全新配对时，电脑端点击批准后，手机端应立即完成配对并正常进入会话页面； 2. 已有旧记录重新扫码叠加连接方式时，电脑端批准后手机端应立即完成保存（无需等待数十秒），且保存“局域网 + 中转”后能够正常建立连接，不会出现连接被占用的报错死循环。  ### Actual behavior / 实际结果  #### 场景 A：全新配对根本无法匹配成功 - 电脑端点击批准并已显示配对成功，但手机端持续等待批准，最终配对直接失败； - 手机端状态显示 `失败`，并弹出错误提示：   > 操作失败   > 电脑会话服务尚未就绪。请打开 Pebrel，检查「设置 → 手机远程」后重新连接。[cite: 6]  #### 场景 B：基于旧记录重新扫码时异常延迟，保存双通道后无法连接并陷入死循环 - **异常延迟保存**：由于手机端原本存有同一台电脑的历史记录，重新
 
-- **Issue #870** (2026-11-07): **[Bug] 文件管理器图标乱码**
-  *Symptoms*: ### Operating system / 操作系统  macOS  ### OS version and display / 系统版本与显示  macos 26.0  ### Pebrel version / 版本号  2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  zsh  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  File tree / drag-and-drop upload — 文件树、拖拽上传  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  <img width="425" height="293" alt="Image" src="https://github.com/user-attachments/assets/b79f6e67-9b1c-4eef-a239-ebc55bc004fb" />  ### Expected behavior / 期望结果  图标显示  ### Actual behavior / 实际结果  无  ### Logs / screenshots / 日志或截图  无  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #958** (2026-11-12): **[Bug] 打字后删除会出现黑条**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  win10 22h2  ### Pebrel version / 版本号  2.5.3  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Windows PowerShell 5.1  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Terminal rendering / scrolling / selection / garbled text — 终端渲染、滚动、选区、乱码  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  随便在终端输入一些内容，然后删掉，就会出现黑条 只有在PowerShell5中才有这个现象。 主题是slate light。其他主题也会出现类似的问题。  <img width="1174" height="546" alt="image" src="https://github.com/user-attachments/assets/b9cee252-62ae-4070-af0c-634bed93ffc0" />  ### Expected behavior / 期望结果  不出现黑条。  ### Actual behavior / 实际结果  出现黑条。  ### Logs / screenshots / 日志或截图  无  ### Non-default settings / 改过的设置  只有主题。  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1515,1257 +1515,494 @@ def destinations(owner, deadline):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fe45e0d` (2026-11-11)
-**Commit Message**: Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111
+### Incident Patch 1: `4807f289` (2026-11-11)
+**Commit Message**: Merge pull request #615 from WilliamWang1721/fix/issue-549-5gzczi
 
-fix: integrate reviewed rendering, workspace and hook regressions
+feat(windows): let PowerShell keep its own ls/dir via builtin_ls=0
 
-**File**: `architecture/notes/nebula_app/ai_hook/2026-11-11-detached-claude-session-end.md` (added, +77/-0)
+**File**: `nebula_terminal/src/tty/windows/mod.rs` (modified, +18/-6)
 ```diff
-@@ -0,0 +1,77 @@
-+# Deliver detached Claude SessionEnd to its verified Linux terminal
-+
-+## Status
-+
-+Proposed for review with implementation.
-+
-+## Context
-+
-+Issue #434 reports a WSL zsh pane retaining its Claude identity after a double
-+Ctrl+C exit. Closing and reopening Pebrel then resumes an already exited CLI.
-+The shared pane lifecycle clears the saved identity on SessionEnd or OSC 133;D,
-+but either signal must first reach the pane.
-+
-+## Evidence
-+
-+A real zsh PTY running Claude Code 2.1.310 invoked both SessionStart and SessionEnd
-+hooks. Claude detached each hook from its controlling terminal. The bridge
-+returned authenticated OSC frames in terminalSequence JSON in both cases.
-+Claude relayed SessionStart to the terminal, but discarded SessionEnd during
-+both double Ctrl+C and /exit.
-+
-+The shared zsh integration still emitted OSC 133;D. Starting the same zsh without
-+that integration demonstrated the missing second exit signal. These observations
-+come from Linux ARM64; the reported Windows 11 WSL desktop path remains to be
-+verified.
-+
-+## Decision
-+
-+For a Claude SessionEnd whose hook has no controlling terminal, recover the
-+verified ancestor CLI's Linux devpts terminal from its stdin descriptor. Require
-+the process epoch, foreground process group, controlling device, descriptor
-+identity and device ownership to match before writing. Open without following
-+symlinks or acquiring a controlling terminal.
-+
-+Reuse the existing bounded OSC write and pane token. When verification fails,
-+retain the terminalSequence response. Existing controlling-terminal and tmux
-+routes keep their delivery rules. Other hook events keep their existing path.
-+The application continues to use its shared SessionEnd lifecycle and session-save
-+logic.
-+
-+## Rejected alternatives
-+
-+- Clear state on Ctrl+C: interruption can stop one turn while leaving Claude open.
-+- Rely only on a matching shell prompt: guest shell integration and prompt
-+  recognition can be unavailable.
-+- Scan every terminal or use a PID supplied in hook JSON: neither establishes the
-+  owning terminal.
-+- Return more SessionEnd JSON: the real CLI does not relay this response on exit.
-+- Add a background relay: the current short-lived hook can deliver the event.
-+
-+## Consequences
-+
-+The additional procfs reads and device open occur only on detached Claude exit.
-+There is no new persisted route, token, worker or setting. Linux devpts is the
-+supported recovery path; other hosts retain their existing transport.
-+
-+## Validation
-+
-+- The real-PTY regression fails before the change and passes after it. A detached
-+  hook reaches its foreground Claude ancestor, while redirected stdin and a
-+  background process group retain the JSON fallback.
-+- The remote-hook Python suite covers authenticated delivery, partial writes,
-+  detached JSON responses, native hooks and configuration preservation.
-+- Real Claude Code 2.1.310 delivers SessionStart and SessionEnd with the same
-+  process identity after the change: double Ctrl+C with and without zsh
-+  integration, and /exit with integration.
-+- The GPUI regression checks that a WSL SessionEnd without shell markers removes
-+  the foreground and saved recovery identities before window close.
-+
-+## Supersedes
-+
-+None. Extends the [WSL hook transport](../platform/wsl_hooks/2026-09-20-wsl-hook-transport.md).
-+
-+## Revisit when
-+
-+Claude relays terminalSequence during SessionEnd, or supplies an authenticated
-+terminal endpoint for detached hooks.
-```
-
-**File**: `architecture/notes/nebula_app/display/file_operations/2026-11-11-recycle-bin-reentrancy.md` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+# Recycle-bin operations outside the GPUI update
-+
-+## Status
-+
-+Proposed in the fix for issue #924.
-+
-+## Context
-+
-+The file-tree confirmation invoked `SHFileOperationW` synchronously inside a
-+workspace update. The Windows Shell can pump messages while handling a locked
-+file, re-entering GPUI while its application `RefCell` is already borrowed.
-+
-+## Evidence
-+
-+[Issue #924](https://github.com/Kuddev/pebrel/issues/924) reports deleting a database
-+held open by a service. Its screenshot identifies `gpui/src/app/async_context.rs`
-+at `AsyncApp::update`, with `RefCell already borrowed`. The confirmation callback
-+held the workspace update across the native operation.
-+
-+## Decision
-+
-+Dispatch the synchronous file operation through the existing background executor.
-+The task owns the requested path; only its result returns to the foreground.
-+Use the existing weak workspace handle so closing the window prevents a late
-+result from updating a destroyed view. Refresh the tree after success and retain
-+the existing localized failure notice on error.
-+
-+Initialize and uninitialize the worker's COM apartment around the synchronous
-+Windows Shell call. Balance both successful COM initialization return codes;
-+report initialization failure before invoking the Shell.
-+
-+## Rejected alternatives
-+
-+- A foreground async task still executes the native call on the UI thread and
-+  permits its nested message loop to re-enter GPUI.
-+- Catching a panic leaves the reentrant borrow and UI blockage in place.
-+- Permanently deleting the file would change the Windows recycle-bin contract.
-+
-+## Consequences
-+
-+The confirmation closes while the operation runs. A confirmed deletion finishes
-+even if the workspace closes; its result is then discarded. The native call is
-+synchronous within one worker poll, keeping COM initialization on one thread.
-+Sharing and lock violations use the operating system's error text.
-+
-+## Validation
-+
-+The Windows regression holds a real file with sharing disabled, runs the recycle
-+operation on a fresh worker, and checks the error and retained file contents.
-+Native GPUI message-loop acceptance is tracked in the PR's validation record.
-+
-+## Supersedes
-+
-+None.
-+
-+## Revisit when
-+
-+The shared native file-operation adapter gains a cancellable asynchronous API.
-```
-
-**File**: `architecture/notes/nebula_app/gpui_shell/file_editor/2026-11-11-markdown-reload-snapshot.md` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+# Markdown ranges belong to the loaded snapshot
-+
-+## Status
-+
-+Implemented for document reloads.
-+
-+## Context
-+
-+Reopening a Markdown file starts an asynchronous read. The old outline and
-+live edit used to survive after the source input was cleared, so a frame
-+between the two load stages could slice the empty buffer with old byte ranges.
-+
-+## Evidence
-+
-+Ropey 2.0.0-beta.1 calls `is_char_boundary` before its bounds check in
-+`try_slice`. Slicing an empty rope at the old paragraph's range panics at
-+`rope.rs:694:22`, matching the later panics reported in #911. A range ending
-+inside a multibyte character returns `NonCharBoundary` in the same probe.
-+The first string-slicing panic in #911 has not been attributed.
-+
-+## Decision
-+
-+Discard the old outline and edit sessions before clearing the source. Keep the
-+scroll position separately and apply it when the new input and outline are
-+installed together. Range readers check bounds before calling Ropey.
-+
-+## Rejected alternatives
-+
-+Bounds checks alone would still leave old actions and ranges active while the
-+source is unavailable. Rechecking the file's modification time would not
-+prevent a frame from using those ranges during a reload.
-+
-+## Consequences
-+
-+The loading frame has no document rows. A successful load restores the prior
-+reading position within the new document; a failed read leaves no old ranges
-+active.
-+
-+## Validation
-+
-+`reloading_rewritten_markdown_replaces_the_visible_snapshot` draws before
-+the reload completes and after a shorter UTF-8 snapshot is installed. A
-+standalone probe exercises the slice guard with the locked Ropey version.
-+
-+## Supersedes
-+
-+None.
-+
-+## Revisit when
-+
-+Remove the explicit Ropey bounds workaround when the pinned version guarantees
-+that `try_slice` handles out-of-bounds offsets without panicking.
-```
-
-**File**: `architecture/notes/nebula_app/gpui_shell/workspace/2026-10-03-ordinary-window-geometry.md` (modified, +2/-0)
-```diff
-@@ -1,5 +1,7 @@
- # Ordinary-window startup geometry
- 
-+Superseded for Windows directory-launch size by [Directory launches retain their normal window size](windowing/2026-11-11-directory-launch-window-size.md).
-+
- ## Status
- 
- Proposed for review.
-```
-
-**File**: `architecture/notes/nebula_app/gpui_shell/workspace/windowing/2026-11-11-directory-launch-window-size.md` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+# Directory launches retain their normal window size
-+
-+## Status
-+
-+Proposed for [#922](https://github.com/Kuddev/pebrel/issues/922).
-+
-+## Context
-+
-+Explorer opens Pebrel with an explicit working directory. A new regular window
-+should use the last normal size and open a terminal in that directory.
-+
-+## Evidence
-+
-+Both cold startup and the resident runtime fallback choose
-+`WorkspaceStartup::NewTerminal` for this request. The geometry loader accepted
-+only `RestoreOrDefault`, so the first window in either path used the default
-+grid. A resident process allocates a new window ID after the last window closes.
-+
-+## Decision
-+
-+When an explicit directory opens the only regular window on Windows, load the
-+saved normal width and height through the existing session geometry reader.
-+Scope the values to the allocated window ID, which also tells the workspace to
-+size its initial terminal grid from the window. Explicit grid configuration
-+still takes precedence. An isolated process cannot use ordinary geometry.
-+
-+## Rejected alternatives
-+
-+- Use `RestoreOrDefault` for Explorer launches: restoring old tabs can override
-+  the requested directory and start programs the user did not ask to reopen.
-+- Extend the first-window ID check: that ID is already consumed when a
-+  resident process creates a replacement window.
-+- Persist another size setting: the ordinary session snapshot already stores
-+  the normal bounds at close.
-+
-+## Consequences
-+
-+Directory launches restore size while using ordinary placement for a new
-+window. Opening a second regular window retains the existing defaults.
-+
-+## Validation
-+
-+`directory_launch_uses_saved_size_without_restoring_the_old_window` exercises
-+both startup constructors, the geometry loader, and window options with a
-+saved maximized rectangle. The existing explicit-grid regression covers
-+configured dimensions.
-+
-+## Supersedes
-+
-+The Windows directory-launch eligibility rule in
-+[Ordinary-window startup geometry](../2026-10-03-ordinary-window-geometry.md).
-+
-+## Revisit when
-+
-+Regular geometry has a persistence owner independent of the session snapshot.
-```
-
-**File**: `nebula_app/AGENTS.md` (modified, +2/-0)
-```diff
-@@ -5,6 +5,7 @@
- - GLSL/WGSL 源码转换、Luau shader 参数与帧 ABI 边界见 [`shader_source`](../architecture/notes/nebula_app/gpui_shell/shader_source/)。
- - `src/gpui_shell` 负责 GPUI 呈现、命令和订阅。交互改动必须覆盖默认、hover、pressed、键盘焦点、disabled/loading 以及成功/失败中实际需要的状态。
- - 首帧窗口尺寸、非阻塞 logo 准备与原生呈现顺序的因果记录见 [`workspace`](../architecture/notes/nebula_app/gpui_shell/workspace/)。
-+- Windows 指定目录启动时的窗口尺寸恢复见 [`startup geometry`](../architecture/notes/nebula_app/gpui_shell/workspace/windowing/2026-11-11-directory-launch-window-size.md)。
- - 本地启动失败的诊断保留与显式 Shell 选择见 [`terminal/view`](../architecture/notes/nebula_app/gpui_shell/terminal/view/2026-10-24-failed-local-session-retention.md)。
- - 独立本地草稿写入的 canonical target 并发合同见 [`file_editor writers`](../architecture/notes/nebula_app/gpui_shell/file_editor/2026-10-11-canonical-target-writers.md)。
- - GPUI 图片解码帧与 zoom/pan 几何一致性见 [`doc_tabs`](../architecture/notes/nebula_app/gpui_shell/doc_tabs/)。
-@@ -18,6 +19,7 @@
- - 只有跨层所有权、持久化、协议、线程/生命周期或重要性能取舍才写 note，路径镜像到 `architecture/notes/nebula_app/<capability>/`。
- - Agent 集成、改键输入与 SSH 认证的因果记录分别位于 [`ai_hook`](../architecture/notes/nebula_app/ai_hook/)、[`input`](../architecture/notes/nebula_app/input/) 和 [`ssh_session`](../architecture/notes/nebula_app/ssh_session/)。
- - Windows PowerShell 剪贴板粘贴与当前编辑器能力的边界见 [`terminal/view`](../architecture/notes/nebula_app/gpui_shell/terminal/view/)。
-+- Windows 回收站调用的消息重入与后台 COM 生命周期见 [`file_operations`](../architecture/notes/nebula_app/display/file_operations/2026-11-11-recycle-bin-reentrancy.md)。
- - Runtime 地址发现与隔离实例的生命周期边界见 [`runtime_api`](../architecture/notes/nebula_app/runtime_api/)。
- - 补齐数据源选择和请求快照归 `completion.rs`，界面仅拥有任务与交互；边界依据见 [`completion`](../architecture/notes/nebula_app/completion/)。
- - 旧渲染入口的窗口动画状态归 `display/animations.rs`；迁移及显式 legacy 验证依据见 [`display`](../architecture/notes/nebula_app/display/)。
-```
-
-**File**: `nebula_app/res/hooks/remote_bridge.py` (modified, +40/-8)
-```diff
-@@ -161,20 +161,52 @@ def send(source, native, mode, payload, token, owner=None, route=None, deadline=
-         if len(envelope) > MAX_ENVELOPE:
-             return
-         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
--        write_terminal(osc, source, route, deadline)
-+        exit_owner = owner if source == "claude" and payload.get("hook_event_name") == "SessionEnd" else None
-+        write_terminal(osc, source, route, deadline, exit_owner=exit_owner)
- 
- 
--def write_terminal(osc, source=None, route=None, deadline=None):
-+def open_claude_exit_terminal(owner, flags):
-+    """A detached SessionEnd can still reach Claude's verified Linux terminal."""
-+    if sys.platform != "linux" or not owner:
-+        return None
-+    pid, _, epoch = owner.partition(":")
-+    proc = Path("/proc") / pid
-+    stdin = proc / "fd/0"
-     try:
--        fd = os.open(route["tty"] if route else "/dev/tty",
--                     os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
-+        tty = stdin.readlink()
-+        if not re.fullmatch(r"/dev/pts/[0-9]+", str(tty)):
-+            return None
-+        fd = os.open(tty, flags | os.O_NOCTTY)
-+    except OSError:
-+        return None
-+    try:
-+        info = os.fstat(fd)
-+        raw = (proc / "stat").read_text(encoding="utf-8")
-+        fields = raw[raw.rfind(")") + 2:].split()
-+        if (stat.S_ISCHR(info.st_mode) and info.st_uid == os.geteuid()
-+                and fields[19] == epoch and int(fields[2]) > 0 and fields[2] == fields[5]
-+                and info.st_rdev == (int(fields[4]) & 0xffffffff)
-+                and os.path.samestat(info, stdin.stat())):
-+            return fd
-+    except (OSError, ValueError, IndexError):
-+        pass
-+    os.close(fd)
-+    return None
-+
-+
-+def write_terminal(osc, source=None, route=None, deadline=None, *, exit_owner=None):
-+    flags = os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW
-+    try:
-+        fd = os.open(route["tty"] if route else "/dev/tty", flags)
-     except OSError as error:
-         if route or source != "claude" or error.errno != errno.ENXIO:
-             raise
--        # Interactive Claude consumes hook JSON even when its hook has no TTY.
--        # This fallback is only possible before any part of the OSC was written.
--        print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
--        return
-+        fd = open_claude_exit_terminal(exit_owner, flags)
-+        if fd is None:
-+            # Interactive Claude consumes terminalSequence for other hooks but
-+            # does not relay it during SessionEnd.
-+            print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
-+            return
-     offset = 0
-     deadline = min(deadline or float("inf"), time.monotonic() + 0.5)
-     try:
-```
-
-**File**: `nebula_app/src/display/file_operations.rs` (modified, +35/-0)
-```diff
-@@ -4,6 +4,9 @@
- pub(crate) fn send_to_recycle_bin(path: &std::path::Path) -> Result<(), String> {
-     use std::os::windows::ffi::OsStrExt;
- 
-+    use windows_sys::Win32::System::Com::{
-+        COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE, CoInitializeEx, CoUninitialize,
-+    };
-     use windows_sys::Win32::UI::Shell::{
-         FO_DELETE, FOF_ALLOWUNDO, FOF_NOCONFIRMATION, FOF_NOERRORUI, FOF_SILENT, SHFILEOPSTRUCTW,
-         SHFileOperationW,
-@@ -25,14 +28,46 @@ pub(crate) fn send_to_recycle_bin(path: &std::path::Path) -> Result<(), String>
-         hNameMappings: std::ptr::null_mut(),
-         lpszProgressTitle: std::ptr::null(),
-     };
-+    // Background executor threads do not inherit the UI thread's COM apartment.
-+    // Keep initialization and the synchronous Shell operation on this thread.
-+    let initialized = unsafe {
-+        CoInitializeEx(std::ptr::null(), (COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) as u32)
-+    };
-+    if initialized < 0 {
-+        return Err(format!("COM initialization failed (HRESULT {initialized:#010x})"));
-+    }
-     let code = unsafe { SHFileOperationW(&mut operation) };
-+    // Both S_OK and S_FALSE acquire an initialization reference.
-+    unsafe { CoUninitialize() };
-     if code == 0 && operation.fAnyOperationsAborted == 0 {
-         Ok(())
-+    } else if matches!(code, 32 | 33) {
-+        Err(std::io::Error::from_raw_os_error(code).to_string())
-     } else {
-         Err(format!("\u{7cfb}\u{7edf}\u{62d2}\u{7edd}\u{ff08}\u{4ee3}\u{7801} {code}\u{ff09}"))
+@@ -658,12 +658,15 @@ function global:Nebula-List {
+         "$meta$mode$e[0m  $muted$size$e[0m  $muted$date$e[0m  $e]8;;$uri$b$col$($i.Name)$e[0m$e]8;;$b"
      }
  }
+-Remove-Item Alias:ls  -Force -ErrorAction SilentlyContinue
+-Remove-Item Alias:dir -Force -ErrorAction SilentlyContinue
+-Remove-Item Alias:ll  -Force -ErrorAction SilentlyContinue
+-Set-Alias -Name ls  -Value Nebula-List -Scope Global -Option AllScope -Force
+-Set-Alias -Name ll  -Value Nebula-List -Scope Global -Option AllScope -Force
+-Set-Alias -Name dir -Value Nebula-List -Scope Global -Option AllScope -Force
++# builtin_ls=0 in the settings file keeps PowerShell's own ls/dir.
++if (Get-NebulaBoolSetting 'builtin_ls' $true) {
++    Remove-Item Alias:ls  -Force -ErrorAction SilentlyContinue
++    Remove-Item Alias:dir -Force -ErrorAction SilentlyContinue
++    Remove-Item Alias:ll  -Force -ErrorAction SilentlyContinue
++    Set-Alias -Name ls  -Value Nebula-List -Scope Global -Option AllScope -Force
++    Set-Alias -Name ll  -Value Nebula-List -Scope Global -Option AllScope -Force
++    Set-Alias -Name dir -Value Nebula-List -Scope Global -Option AllScope -Force
++}
  
-+#[cfg(all(test, windows))]
-+mod tests {
-+    use super::*;
-+    use std::os::windows::fs::OpenOptionsExt;
-+
+ function global:Convert-NebulaBareEnvAssignment {
+     param([string]$Line)
+@@ -1293,6 +1296,15 @@ mod test {
+         );
+     }
+ 
 +    #[test]
-+    fn recycling_a_locked_file_on_a_worker_returns_an_error_and_keeps_the_file() {
-+        let directory = tempfile::tempdir().unwrap();
-+        let path = directory.path().join("locked.db");
-+        std::fs::write(&path, b"in use").unwrap();
-+        let locked = std::fs::OpenOptions::new().read(true).share_mode(0).open(&path).unwrap();
-+        let worker_path = path.clone();
-+        let result = std::thread::spawn(move || send_to_recycle_bin(&worker_path)).join().unwrap();
-+        assert!(result.is_err(), "a locked file must report a deletion failure");
-+        assert!(path.exists());
-+        drop(locked);
-+        assert_eq!(std::fs::read(&path).unwrap(), b"in use");
++    fn builtin_ls_aliases_can_be_opted_out() {
++        let gate = NEBULA_PROMPT_PS1
++            .find("if (Get-NebulaBoolSetting 'builtin_ls' $true) {")
++            .expect("builtin_ls gate");
++        let alias = NEBULA_PROMPT_PS1.find("Set-Alias -Name ls ").expect("ls alias");
++        assert!(gate < alias, "the ls/ll/dir aliases must sit behind the builtin_ls gate");
 +    }
-+}
 +
- #[cfg(not(windows))]
- pub(crate) fn send_to_recycle_bin(path: &std::path::Path) -> Result<(), String> {
-     let result =
+     #[test]
+     fn disabling_powerline_keeps_the_complete_osc_lifecycle() {
+         let toggle = NEBULA_PROMPT_PS1
 ```
 
 ---
 
-### Incident Patch 2: `d79d5796` (2026-11-11)
-**Commit Message**: Merge pull request #948 from Kuddev/fix/settings-card-palette-20261111
+### Incident Patch 2: `589d1f86` (2026-11-11)
+**Commit Message**: Merge branch 'main' into fix/issue-549-5gzczi
 
-Use theme palettes for grouped settings cards
-
-**File**: `nebula_app/src/gpui_shell/network_settings.rs` (modified, +5/-4)
+**File**: `.github/workflows/release-2.4.0.yml` (added, +498/-0)
 ```diff
-@@ -176,9 +176,9 @@ impl SettingsPane {
-     pub(super) fn section_network(&mut self, cx: &mut Context<Self>) -> gpui::Div {
-         let custom = shows_manual_proxy_address(self.runtime.ssh_proxy_mode);
-         let language = crate::gpui_shell::config::ui_language(cx);
--        self.group(language.tr("settings.network.title"), cx)
--            .child(self.proxy_test_banner(cx))
--            .child(div().h(px(PROXY_TEST_GAP)).w_full().flex_shrink_0())
-+        // 连通性检测是页面级状态，放在卡片之上；卡内只放设置行。
-+        let settings = self
-+            .group(language.tr("settings.network.title"), cx)
-             .child(self.proxy_mode_row(cx))
-             .when(custom, |page| page.child(self.proxy_address_row(cx)))
-             .child(self.switch_row(
-@@ -187,7 +187,8 @@ impl SettingsPane {
-                 language.text(crate::i18n::Message::SettingsNetworkTerminalDescription),
-                 self.runtime.terminal_proxy,
-                 cx,
--            ))
-+            ));
-+        v_flex().w_full().gap(px(PROXY_TEST_GAP)).child(self.proxy_test_banner(cx)).child(settings)
-     }
- 
-     fn proxy_test_banner(&self, cx: &mut Context<Self>) -> gpui::Div {
+@@ -0,0 +1,498 @@
++name: Pebrel 2.4.0 requested build and publication
++run-name: Pebrel 2.4.0 release handoff ${{ github.run_number }}
++'on':
++  push:
++    branches:
++    - release/2.4.0-20261102
++permissions:
++  contents: read
++concurrency:
++  group: pebrel-release-2.4.0
++  cancel-in-progress: false
++env:
++  PYTHONUTF8: '1'
++  RUST_TOOLCHAIN: 1.97.1
++  CARGO_TERM_COLOR: always
++  RUST_BACKTRACE: '1'
++jobs:
++  prepare:
++    name: Validate requested release phase
++    runs-on: ubuntu-22.04
++    outputs:
++      phase: ${{ steps.request.outputs.phase }}
++      version: ${{ steps.request.outputs.version }}
++      source_commit: ${{ steps.request.outputs.source_commit }}
++      build_run_id: ${{ steps.request.outputs.build_run_id }}
++    steps:
++    - uses: actions/checkout@v4
++      with:
++        fetch-depth: 0
++        persist-credentials: false
++    - uses: actions/setup-python@v5
++      with:
++        python-version: '3.13'
++    - name: Read the scoped release request
++      id: request
++      run: python3 scripts/release_240.py prepare
++  linux:
++    name: Build Linux x64 package
++    needs: prepare
++    if: ${{ needs.prepare.outputs.phase == 'build' }}
++    runs-on: ubuntu-22.04
++    timeout-minutes: 120
++    env:
++      PACKAGE_VERSION: ${{ needs.prepare.outputs.version }}
++      LINUXDEPLOY_VERSION: 1-alpha-20251107-1
++      LINUXDEPLOY_SHA256: c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d
++    steps:
++    - uses: actions/checkout@v4
++      with:
++        fetch-depth: 0
++        persist-credentials: false
++    - uses: actions/setup-python@v5
++      with:
++        python-version: '3.13'
++    - name: Install build, package, and headless runtime dependencies
++      run: |
++        sudo apt-get update
++        sudo apt-get install -y --no-install-recommends \
++          appstream build-essential cmake curl desktop-file-utils dpkg-dev \
++          imagemagick libasound2-dev libdbus-1-dev libegl1-mesa-dev \
++          libfontconfig1-dev libfreetype6-dev libgl1-mesa-dev libudev-dev \
++          libvulkan1 libwayland-dev libx11-dev libx11-xcb-dev \
++          libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev \
++          libxcb-xinput-dev libxcb-xkb-dev libxcb1-dev libxi-dev \
++          libxkbcommon-dev libxkbcommon-x11-dev mesa-vulkan-drivers \
++          patchelf pkg-config weston xauth xvfb zsh
++    - uses: dtolnay/rust-toolchain@stable
++      with:
++        toolchain: ${{ env.RUST_TOOLCHAIN }}
++    - uses: ./.github/actions/rust-cache
++      id: rust-cache
++      with:
++        key: release
++        target: target/release
++        legacy-key: linux
++    - name: Build GPUI release binary
++      run: cargo build --locked --release -p nebula --bin pebrel -p nebula_hook --bin pebrel-hook --features nebula/gpui-shell --timings
++    - name: Save compiled workload
++      if: ${{ always() && steps.rust-cache.outcome == 'success' && steps.rust-cache.outputs.cache-hit != 'true' }}
++      uses: actions/cache/save@v4
++      with:
++        path: target/release
++        key: ${{ steps.rust-cache.outputs.cache-key }}
++    - name: Download pinned linuxdeploy
++      env:
++        LINUXDEPLOY: ${{ runner.temp }}/linuxdeploy-x86_64.AppImage
++      run: |
++        curl --fail --location --retry 3 --retry-all-errors --show-error \
++          --output "$LINUXDEPLOY" \
++          "https://github.com/linuxdeploy/linuxdeploy/releases/download/$LINUXDEPLOY_VERSION/linuxdeploy-x86_64.AppImage"
++        echo "$LINUXDEPLOY_SHA256  $LINUXDEPLOY" | sha256sum --check --strict
++        chmod 0755 "$LINUXDEPLOY"
++        echo "LINUXDEPLOY=$LINUXDEPLOY" >>"$GITHUB_ENV"
++    - name: Package stable Linux assets
++      run: |
++        SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$GITHUB_SHA")"
++        export SOURCE_DATE_EPOCH
++        bash scripts/package-linux.sh \
++          --channel stable \
++          --binary target/release/pebrel \
++          --version "$PACKAGE_VERSION" \
++          --output-directory dist \
++          --linuxdeploy "$LINUXDEPLOY" \
++          --force
++    - name: Verify built Linux version and Debian metadata
++      run: |
++        target/release/pebrel --version
++        version="$(dpkg-deb --field dist/*.deb Version)"
++        test "$version" = "$PACKAGE_VERSION"
++    - uses: actions/upload-artifact@v4
++      with:
++        name: release-240-package-linux-x64
++        path: |
++          dist/*.AppImage
++          dist/*.deb
++          dist/*.tar.gz
++        if-no-files-found: error
++        retention-days: 14
++        compression-level: 0
++  macos:
++    name: Build macOS ${{ matrix.asset_architecture }} package
++    needs: prepare
++    if: ${{ needs.prepare.outputs.phase == 'build' }}
++    strategy:
++      fail-fast: false
++      matrix:
++        include:
++        - runner: macos-26
++          architecture: aarch64
++          native_architecture: arm64
++          asset_architecture: arm64
++        - runner: macos-26-intel
++          architecture: x86_64
++          native_architecture: x86
 ```
 
-**File**: `nebula_app/src/gpui_shell/settings_pane.rs` (modified, +27/-43)
+**File**: `CHANGELOG.md` (modified, +230/-55)
 ```diff
-@@ -900,9 +900,9 @@ impl SettingsPane {
-                     cx,
-                 )
-                 .into_any_element(),
--            None => self
--                .row_shell(label, desc.into(), None, false, layout, control, cx)
--                .into_any_element(),
-+            None => {
-+                self.row_shell(label, desc.into(), None, layout, control, cx).into_any_element()
-+            },
-         }
-     }
+@@ -4,89 +4,264 @@ Every release entry is provided in English and Simplified Chinese.
  
-@@ -1433,7 +1433,8 @@ impl SettingsPane {
-         // 平台没实现的开关整行不画：开着却没效果比没有更糟（见
-         // `platform::capabilities` 的说明）。
-         let caps = crate::platform::CAPABILITIES;
--        self.group(language.pick("会话生命周期", "Session lifecycle"), cx)
-+        let lifecycle = self
-+            .group(language.pick("会话生命周期", "Session lifecycle"), cx)
-             .when(caps.launch_at_login, |group| {
-                 group.child(self.switch_row(
-                     "launch_at_login",
-@@ -1486,7 +1487,8 @@ impl SettingsPane {
-                     self.runtime.tray,
-                     cx,
-                 ))
--            })
-+            });
-+        v_flex().w_full().child(lifecycle)
-     }
+ 每个版本条目均同时提供英文和简体中文说明。
  
-     fn section_content(&mut self, window: &mut Window, cx: &mut Context<Self>) -> gpui::AnyElement {
-@@ -1655,6 +1657,8 @@ impl Render for SettingsPane {
-         let provider_drawer = self.provider_drawer(window, cx);
-         let application_page = self.active_section == 0;
-         let mobile_page = self.active_section == MOBILE_SECTION;
-+        let form_page = matches!(self.active_section, 1 | 2 | 5 | 6 | 8);
-+        let has_cards = form_page || mobile_page || self.active_section == 9;
- 
-         div()
-             .size_full()
-@@ -1704,57 +1708,37 @@ impl Render for SettingsPane {
-                     .flex_1()
-                     .min_w_0()
-                     .h_full()
-+                    .when(has_cards, |pane| pane.bg(crate::gpui_shell::theme::settings_canvas_tint(cx)))
-                     .child(
-                         v_flex()
-                             .flex_1()
-                             .min_h_0()
--                            .px_5()
--                            // 内容与页头线之间的一口气。分组之间的 24 由各
--                            // section 容器的 `gap` 提供，不放在这里，也不放在
--                            // 组自己身上——组自带 `pt` 时，首个元素不是分组的
--                            // 页（按键映射开头是搜索框）就会直接贴到线上。
--                            .pt(px(20.0))
--                            .pb(px(22.0))
--                            .when(!application_page, |content| content.pt(px(28.0)).pb(px(30.0)))
--                            .when(mobile_page, |content| content.p_0())
--                            .when(self.active_section == 3, |content| content.p_0())
--                            // 注意这层包装 `v_flex` 的 `w_full` 不能删（2026-08-23
--                            // 又栽了一次）：`overflow_y_scrollbar` 把内容层清成
--                            // `Display::Block`，而 flex 容器在 block 父里
--                            // `width:auto` 是 shrink-to-fit——不写 `w_full` 就退回
--                            // 按内容取宽，每行各算一个宽度。判据是"窗口拖宽拖窄
--                            // 都齐、卡在中间某个宽度不齐"：内容自然宽超过可用宽
--                            // 时被压住反而对齐，没超过就各取各的。
--                            //
--                            // 不设行宽上限：内容跟着窗口延伸。标签与值离得
--                            // 太远的问题由控件列定宽 + 右对齐解决（见
--                            // design::CTRL_COL_W），不靠把整页钉窄。
--                            // 正文继承设置根的统一主字号；只有说明、徽标、
--                            // 快捷键提示等次级信息在各自元素上显式缩小。
-+                            .when(!form_page, |content| {
-+                                content.px_5().pt(px(20.0)).pb(px(22.0))
-+                            })
-+                            .when(!form_page && !application_page, |content| {
-+                                content.pt(px(28.0)).pb(px(30.0))
-+                            })
-+                            .when(mobile_page || self.active_section == 3, |content| content.p_0())
-                             .overflow_y_scrollbar()
--                            // 这层 v_flex 不能省。`overflow_y_scrollbar` 不是
--                            // 就地加滚动条：它把本容器的样式 clone 到自己新建
--                            // 的外层 div，再把这层样式清空、只补 flex_1（见
--                            // gpui-component scroll/scrollable.rs）。于是真正
--                            // 承载正文的那层退回 gpui 默认的 Display::Block，
--                            // 各分组的 `w_full` 不再撑满，而是各自按内容取宽：
--                            // 2026-08-17 A/B 实测，去掉这层后预览组右缘停在
--                            // 1356 而主题组到 1762，一组一个宽度，控件既不贴左
--                            // 也不贴右。补一层竖向 flex 后分组走交叉轴 stretch
--                            // 取宽，症状消失。
--                            //
--                            // 行宽上限：控件贴的是这个上限的右边，不是窗口的右
--                            // 边。没有它时标签在最左、值在最右，1080px 宽的窗口
--                            // 里眼睛要横跨一整屏才能把"这一项"和"它现在是什么"
--                            // 配上，扫到第三行就串行。窗口再宽只是两侧留白变多。
-+                            // Scrollable wraps the content in a block; the full-width flex
-+                            // column keeps cards aligned when the windo
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/appearance.rs` (modified, +2/-2)
-```diff
-@@ -219,8 +219,8 @@ impl SettingsPane {
-         let theme = self.appearance_trigger(true, window, cx);
-         let icon = self.appearance_trigger(false, window, cx);
-         // 与开关、字体等设置共用行原语，字号、字重和说明缩放只维护一份。
--        let selectors = v_flex()
--            .w_full()
-+        let selectors = self
-+            .group(language.text(crate::i18n::Message::CommonTheme), cx)
-             .child(self.row(
-                 language.text(crate::i18n::Message::CommonTheme),
-                 language.text(crate::i18n::Message::SettingsAppearanceOnePaletteForTheTerminal),
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/backup/view.rs` (modified, +38/-61)
-```diff
-@@ -1,8 +1,8 @@
- //! 原型的阅读顺序：状态 → 存储 → 时间线；低频操作放在面板下面。
- use super::*;
- 
--pub(super) fn panel(_cx: &App) -> gpui::Div {
--    v_flex().w_full().min_w_0().flex_shrink_0().overflow_hidden()
-+pub(super) fn panel(cx: &App) -> gpui::Div {
-+    super::super::design::settings_card(cx).flex_shrink_0().overflow_hidden()
- }
- 
- pub(super) fn caption(text: impl Into<SharedString>, cx: &App) -> gpui::Div {
-@@ -57,7 +57,7 @@ impl SettingsPane {
-             .w_full()
-             .flex_shrink_0()
-             .max_w(px(700.0))
--            .gap(px(48.0))
-+            .gap(px(super::super::design::GROUP_GAP))
-             .text_size(px(14.0))
-             .child(
-                 v_flex()
-@@ -376,21 +376,13 @@ impl SettingsPane {
-     fn backup_encryption_row(&self, cx: &mut Context<Self>) -> gpui::Div {
-         let l = crate::gpui_shell::config::ui_language(cx);
-         let ready = cx.try_global::<BackupPassword>().is_some_and(|p| p.0.is_some());
--        v_flex()
--            .debug_selector(|| "backup-encryption".into())
--            .w_full()
--            .flex_shrink_0()
--            .gap(px(20.0))
--            .child(super::super::design::group_heading(
--                l.text(Message::BackupFlowEncryption),
--                14.0,
--                cx,
--            ))
--            .child(
-+        v_flex().debug_selector(|| "backup-encryption".into()).w_full().flex_shrink_0().child(
-+            self.group(l.text(Message::BackupFlowEncryption), cx).child(
-                 v_flex()
-                     .w_full()
-                     .flex_shrink_0()
-                     .gap_2()
-+                    .px(px(super::super::design::CARD_PAD_X))
-                     .py(px(self.row_padding_y()))
-                     .child(
-                         h_flex()
-@@ -445,57 +437,42 @@ impl SettingsPane {
-                         caption(l.text(Message::BackupFlowPasswordHint), cx)
-                             .debug_selector(|| "backup-password-description".into())
-                             .w_full()
--                            .max_w(px(560.0))
-                             .flex_shrink_0(),
-                     ),
--            )
-+            ),
-+        )
-     }
- 
--    fn backup_file_rows(&self, cx: &mut Context<Self>) -> gpui::Div {
-+    fn backup_file_rows(&self, cx: &mut Context<Self>) -> super::super::design::SettingsGroup {
-         let l = crate::gpui_shell::config::ui_language(cx);
--        v_flex()
--            .gap(px(20.0))
--            .child(super::super::design::group_heading(l.text(Message::BackupFlowFiles), 14.0, cx))
--            .children(
--                [
--                    (true, Message::CloudExport, Message::BackupFlowExportHint),
--                    (false, Message::CloudImport, Message::BackupFlowImportHint),
--                ]
--                .into_iter()
--                .map(|(export, title, hint)| {
--                    h_flex()
--                        .gap_4()
--                        .items_center()
--                        .flex_wrap()
--                        .py(px(self.row_padding_y()))
--                        .child(
--                            v_flex()
--                                .flex_1()
--                                .min_w(px(180.0))
--                                .gap_1()
--                                .child(l.text(title))
--                                .child(caption(l.text(hint), cx)),
--                        )
--                        .child(
--                            Button::new(if export { "backup-export" } else { "backup-import" })
--                                .map(|button| {
--                                    crate::gpui_shell::widgets::settings_button(button, true, cx)
--                                })
--                                .label(l.text(if export {
--                                    Message::CloudExport
--                                } else {
--                                    Message::BackupFlowChooseFile
--                                }))
--                                .disabled(self.backup_busy)
--                                .on_click(cx.listener(move |this, _, window, cx| {
--                                    if export {
--                                        this.open_backup_sheet(BackupSheet::Export, window, cx);
--                                    } else {
--                                        this.restore_backup(window, cx);
--                                    }
--                                })),
--                        )
--                }),
--            )
-+        self.group(l.text(Message::BackupFlowFiles), cx).children(
-+            [
-+                (true, Message::CloudExport, Message::BackupFlowExportHint),
-+                (false, Message::CloudImport, Message::BackupFlowImportHint),
-+            ]
-+            .into_iter()
-+            .map(|(export, title, hint)| {
-+                self.row(
-+                    l.text(title),
-+                    l.text(hint),
-+                    Butto
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/design.rs` (modified, +110/-95)
-```diff
-@@ -1,12 +1,10 @@
- //! 设置页的设计 token 与行原语。
- //!
--//! 分组标题使用更大、加粗的主文本；设置项名称和说明留在左列，控件在右列
--//! 垂直居中。标准密度沿用原紧凑间距，紧凑档只再微收；字号、命中区域和窗口
--//! 标题栏不随内容密度缩小。分组通过留白表达，不添加标题下横线。
-+//! 每组设置使用一张卡片，标题在卡外，组内分隔线与行内容对齐。
-+//! 窄窗中的控件可以换行；内容密度只调整留白，不改变字号和命中区域。
- 
--use std::time::Duration;
+-## 2.3.2 - 2026-11-01
 -
--use gpui::{Animation, AnimationExt as _, ElementId, FontWeight, ease_out_quint, relative};
-+use gpui::FontWeight;
-+use gpui_component::button::ButtonCustomVariant;
+-- `Pebrel-v2.3.2-linux-x64-preview.AppImage`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-linux-x64-preview.deb`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-linux-x64-preview.tar.gz`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-macos-arm64-preview.dmg`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-macos-x64-preview.dmg`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-windows-x64.zip`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-windows-x64-setup.exe`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-windows-arm64.zip`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-windows-arm64-setup.exe`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-android-universal-preview.apk`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.2-relay-manual.tar.gz`: `PENDING FINAL BUILD`
++## 2.5.0 - 2026-11-09
++
++```text
++PENDING FINAL BUILD  Pebrel-v2.5.0-android-universal-preview.apk
++PENDING FINAL BUILD  Pebrel-v2.5.0-linux-x64-preview.AppImage
++PENDING FINAL BUILD  Pebrel-v2.5.0-linux-x64-preview.deb
++PENDING FINAL BUILD  Pebrel-v2.5.0-linux-x64-preview.tar.gz
++PENDING FINAL BUILD  Pebrel-v2.5.0-macos-arm64-preview.dmg
++PENDING FINAL BUILD  Pebrel-v2.5.0-macos-x64-preview.dmg
++PENDING FINAL BUILD  Pebrel-v2.5.0-relay-manual.tar.gz
++PENDING FINAL BUILD  Pebrel-v2.5.0-windows-arm64-setup.exe
++PENDING FINAL BUILD  Pebrel-v2.5.0-windows-arm64.zip
++PENDING FINAL BUILD  Pebrel-v2.5.0-windows-x64-setup.exe
++PENDING FINAL BUILD  Pebrel-v2.5.0-windows-x64.zip
++```
  
- use super::*;
+ ### English
  
-@@ -15,24 +13,26 @@ use super::*;
- pub(super) const DESC_SCALE: f32 = 0.82;
- /// Parent headings stay above item labels in the visual hierarchy.
- const GROUP_TITLE_SCALE: f32 = 16.0 / 14.0;
-+/// 卡外分组标题比卡内条目略小、更淡：卡片本身已经说明了“这是一组”。
-+const CARD_TITLE_SCALE: f32 = 12.5 / 14.0;
-+const CARD_RADIUS: f32 = 10.0;
-+/// 卡内行的左右留白，同时是行间细线的内缩量。
-+pub(super) const CARD_PAD_X: f32 = 16.0;
- /// label ↔ 说明。这 4px 在说"这两行是同一件事"。
- const LABEL_DESC_GAP: f32 = 4.0;
- /// 标准密度沿用原紧凑档的行留白；间距只由行内 padding 提供。
- const ROW_PAD_Y: f32 = 12.0;
- /// 紧凑档只再收紧少量留白，字号与控件命中区域保持不变。
- const ROW_PAD_Y_COMPACT: f32 = 10.0;
- /// 组与组。
--pub(super) const GROUP_GAP: f32 = 48.0;
--/// 轨道宽度。
--const RAIL_W: f32 = 2.0;
--/// 内容相对轨道的缩进。标题左对齐轨道本身、行内容缩进这么多——标题是命名者
--/// 而不是组员，这个位置差比任何字重都更能表达层级。
--pub(super) const RAIL_INDENT: f32 = 13.0;
-+pub(super) const GROUP_GAP: f32 = 28.0;
-+pub(super) const CONTENT_MAX_WIDTH: f32 = 960.0;
-+pub(super) const CONTENT_PAD_X: f32 = 32.0;
-+pub(super) const CONTENT_PAD_TOP: f32 = 36.0;
-+pub(super) const CONTENT_PAD_BOTTOM: f32 = 64.0;
- /// 控件列宽。够放下最宽的下拉（220）加一点余量；开关这类窄控件在列内右对齐，
- /// 右缘与下拉保持一致。文字列允许收缩换行，避免窄窗口被旧的 320px 下限撑宽。
- const CTRL_COL_W: f32 = 232.0;
--/// 脏值段升起的时长。
--const MARK_RISE: Duration = Duration::from_millis(260);
+-This release brings independently configurable next-prompt prediction to supported native AI CLI editors, native shell pointer editing, and fixes for startup, SSH, input, tabs and settings. This is a Windows x64 release candidate; publication remains pending.
++macOS, Linux, and Android downloads are Preview builds.
  
- #[derive(Clone, Copy)]
- pub(super) enum RowLayout {
-@@ -62,30 +62,13 @@ impl SettingsPane {
-         }
-     }
+ #### Added
  
--    /// 一组设置的开头：标题出线。轨道不在这里画——它由组内每一行自己接续，
--    /// 这样才能做到"同一条线，某几段是亮的"。
--    pub(crate) fn group(&self, title: &'static str, cx: &Context<Self>) -> gpui::Div {
--        let base_px = self.font_size_px(cx);
--        // 组间距归 section 容器的 `gap`（HTML 原型里就是 `.a-main` 自己
--        // `gap:24`），组不自带 `pt`：自带的话，首个元素不是分组的页会拿不到
--        // 那段留白而直接贴住页头线，而首组又会拿到"正文上留白 + 组上留白"的
--        // 双份。间距是**容器**的事，不是组的事。
--        // 这里**不能**写 `w_full()`。`width:100%` 依赖父的已解析宽度，链条上
--        // 任何一层是 auto / max-content，100% 就解析成内容宽——于是每个分组、
--        // 每一行各按自己的文字长度取宽，控件右缘参差不齐（宽窗口下差到 280px，
--        // 窄窗口反而齐，因为那时被可用宽度压住了）。
--        //
--        // 不设宽度则走 flex 交叉轴 stretch：布局算法直接拉伸，不依赖父宽解析。
--        v_flex().w_full().child(group_heading(title, base_px, cx).pb(px(20.0)))
-+    /// 一组设置：标题在卡外，行在卡内。返回的构建器照常 `.child(row)`。
-+    pub(crate) fn group(&self, title: &'static str, cx: &Context<Self>) -> SettingsGroup {
-+        SettingsGroup { title, rows: Vec::new(), base_px: self.font_size_px(cx) }
-     }
+-- Predict the next message when the native input is empty in supported local Claude Code, Pi and OpenCode sessions launched or resumed through Pebrel. Choose a separate provider and model without changing the agent's main model. Bundled adapters handle installation, Tab fills the suggestion without submitting it, and Pi/OpenCode display the selected model with animated dots while waiting. Prediction is off by default and uses recent conversation context and the application's language.
+-- Click to position the cursor and drag to select a range for deletion in supported Bash/Readline, Zsh/ZLE and PowerShell/PSReadLine input. Edits stay in the shell's native buffer and undo history; unsupported keymaps and ambiguous layouts retain ordinary terminal selection.
+-- Display directly transmitted, uncompressed RGB/RGBA images using the Kitty graphics protocol with bounded storage, chunked transfers, cropping and independent placements. This supported profile does not include file/shared-memory transport, PNG payloads, Unicode placeholders or animation. Existing OSC 1337 image support remains available. ([#767](https://github.com/Kuddev/pebrel/pull/767))
++- Add a Community page to the theme picker for browsing, previewing, and installing community themes.
++- Add `pebrel theme catalog` and `pebrel theme install` for community themes.
++- Add a Plugins page in Settings to install plugins from a folder, enable, disable, and uninstall them.
++- Add `pebrel plugin install`, `list`, `enable`, `disable`, and `uninstall`.
++- Add plugins that bundle or generate themes, with theme library access granted at install and nothing applied automatically.
++- Add Shift+Insert paste on Windows and Linux. ([#814](https://github.com/Kuddev/pebrel/pull/814))
++- Add a Japanese README. ([#872](https://github.com/Kuddev/pebrel/pull/872))
  
-     /// 组与组之间的间隔。
-     ///
--    /// 原来这里是 32px 容器夹一条 1px 细线。线现在多余了：分组的范围由左侧
--    /// 轨道表达，横线再圈一道等于同一件事说两遍，而且横线会把"一组"读成
--    /// "一段到此为止"——前者是归属，后者是切断。
--    /// 保留给"两块内容之间需要一口气"的非分组场景（关于页把外链沉到下面就
--    /// 用它）。分组之间**不要**用它——组自己带上留白，再插一段就是两倍。
-     pub(crate) fn group_divider(_cx: &Context<Self>) -> gpui::Div {
-         div().w_full().h(px(GROUP_GAP - 8.0)).flex_shrink_0()
-     }
-@@ -98,14 +81,10 @@ impl SettingsPane {
-         control: impl IntoElement,
-         cx: &Context<Self>,
-     ) -> impl IntoElement {
--        self.row_shell(label, desc.into(), None, false, RowLayout::Standard, control, cx)
-+        self.row_shell(label, desc.into(), None, RowLayout::Standard, control, cx)
-     }
+ #### Fixed
  
--    /// 带撤销的设置行：该项被覆盖过时，左侧轨道这一段亮起来，行内出现 ↶。
--    ///
--    /// 两个信号的时态不同，所以显示时机也不同：
--    /// - 轨道亮色是**状态**（"这台机器上我动过它"），必须常显才能一眼扫完；
--    /// - ↶ 是**动作**，只有真想撤销时才有用，常显就是噪音——所以 hover 才现。
-+    /// 偏离默认值的设置项常驻显示恢复按钮，恢复后移除。
-     pub(crate) fn row_with_reset(
-         &self,
-         label: &'static str,
-@@ -128,35 +107,41 @@ impl SettingsPane {
-         control: impl IntoElement,
-         cx: &mut Context<Self>,
-     ) -> impl IntoElement {
--        let hover_group = Self::row_hover_group(label);
-         let reset = dirty.then(|| {
--            div()
--                .id(SharedString::from(format!("setting-reset-{label}")))
-+            let action = crate::gpui_shell::config::ui_language(cx)
-+                .text(crate::i18n::Message::SettingsPaneRestoreDefault);
-+            let id: SharedString = format!("setting-reset-{label}").into();
-+            let ink = cx.theme().foreground;
-+            let hover = crate::gpui_shell::theme::neutral_hover(cx);
-+            Button::new(id.clone())
-+                .debug_selector(move || format!("setting-reset-{label}"))
-+                .group(id.clone())
-+                .custom(ButtonCustomVariant::new(cx).foreground(cx.theme().muted_foreground))
-                 .size(px(32.0))
--                .rounded_md()
--                .flex()
--                .items_center()
--                .justify_center()
-+                .px_0()
-+                .rounded(px(6.0))
-                 .cursor_pointer()
--                .invisible()
--                .group_hover(hover_group, |el| el.
+-- Prevent dozens of duplicate tabs when a launch request reaches the resident process but its acknowledgement is lost. Addresses [#797](https://github.com/Kuddev/nebula/issues/797).
+-- Keep localhost HTTP clients working when terminal proxying is enabled with an empty bypass list, including local OpenCode startup. Addresses [#807](https://github.com/Kuddev/nebula/issues/807).
+-- Prevent an out-of-bounds crash when rendering a stale cursor during terminal resize and selection. Addresses [#788](https://github.com/Kuddev/nebula/issues/788).
+-- Run the welcome command correctly from fish, both with Fastfetch installed and with the fallback output. Addresses [#803](https://github.com/Kuddev/nebula/issues/803).
+-- Restore workspace keyboard shortcuts while an image tab has focus. Addresses [#774](https://github.com/Kuddev/nebula/issues/774).
+-- Find settings and shortcut actions using Japanese text and current-language action labels while retaining English/Chinese aliases and prediction search terms. Addresses [#821](https://github.com/Kuddev/nebula/issues/821).
+-- Preserve nested file paths after native Tab completion instead of treating a path suffix as a new command. Addresses [#676](https://github.com/Kuddev/nebula/issues/676).
+-- Preserve the c
 ```
 
-**File**: `nebula_app/src/gpui_shell/settings_pane/mobile/view.rs` (modified, +86/-80)
+**File**: `Cargo.lock` (modified, +52/-32)
 ```diff
-@@ -1,5 +1,6 @@
- //! 三态共享同一份运行快照；二维码、在线状态和批准请求均来自实际连接。
+@@ -1552,7 +1552,7 @@ dependencies = [
+ [[package]]
+ name = "collections"
+ version = "0.1.0"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "gpui_util",
+  "indexmap",
+@@ -2201,7 +2201,7 @@ dependencies = [
+ [[package]]
+ name = "derive_refineable"
+ version = "0.1.0"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -3300,7 +3300,7 @@ dependencies = [
+ [[package]]
+ name = "gpui"
+ version = "0.2.2"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "accesskit",
+  "anyhow",
+@@ -3387,7 +3387,7 @@ dependencies = [
+ [[package]]
+ name = "gpui-component"
+ version = "0.5.2"
+-source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
++source = "git+https://github.com/Kuddev/gpui-component?rev=4b62121bac83e103b4176708a98aecf0b51c84ab#4b62121bac83e103b4176708a98aecf0b51c84ab"
+ dependencies = [
+  "aho-corasick",
+  "anyhow",
+@@ -3470,7 +3470,7 @@ dependencies = [
+ [[package]]
+ name = "gpui-component-assets"
+ version = "0.5.1"
+-source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
++source = "git+https://github.com/Kuddev/gpui-component?rev=4b62121bac83e103b4176708a98aecf0b51c84ab#4b62121bac83e103b4176708a98aecf0b51c84ab"
+ dependencies = [
+  "anyhow",
+  "gpui",
+@@ -3484,7 +3484,7 @@ dependencies = [
+ [[package]]
+ name = "gpui-component-macros"
+ version = "0.5.1"
+-source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
++source = "git+https://github.com/Kuddev/gpui-component?rev=4b62121bac83e103b4176708a98aecf0b51c84ab#4b62121bac83e103b4176708a98aecf0b51c84ab"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -3494,7 +3494,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_linux"
+ version = "0.1.0"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "accesskit",
+  "accesskit_unix",
+@@ -3546,7 +3546,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_macos"
+ version = "0.1.0"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "accesskit",
+  "accesskit_macos",
+@@ -3596,7 +3596,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_macros"
+ version = "0.1.0"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "heck 0.5.0",
+  "proc-macro2",
+@@ -3607,7 +3607,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_platform"
+ version = "0.1.0"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "console_error_panic_hook",
+  "gpui",
+@@ -3620,7 +3620,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_shared_string"
+ version = "0.1.0"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "schemars",
+  "serde",
+@@ -3630,7 +3630,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_util"
+ version = "0.1.0"
+-source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
++source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
+ dependencies = [
+  "anyhow",
+  "log",
+@@ -3640,7 +3640,7 @@ dependencies = [
+ [[package]]
  
-+use super::super::design::settings_card;
- use super::*;
- use crate::gpui_shell::widgets::NebulaSwitch;
- use gpui::{Animation, AnimationExt as _, relative};
-@@ -188,15 +189,12 @@ impl SettingsPane {
-     fn mobile_off(&self, cx: &Context<Self>) -> gpui::Stateful<gpui::Div> {
-         let language = crate::gpui_shell::config::ui_language(cx);
-         let busy = self.mobile.operation || self.mobile.loading;
--        v_flex()
-+        settings_card(cx)
-             .id("mobile-off")
-             .debug_selector(|| "mobile-off".into())
-             .w_full()
-             .mt(px(28.0))
-             .p(px(24.0))
--            .border_1()
--            .border_color(cx.theme().border)
--            .rounded(px(10.0))
-             .gap_1()
-             .child(
-                 div()
-@@ -455,17 +453,15 @@ impl SettingsPane {
-                     ),
-             );
-         }
--        h_flex()
-+        settings_card(cx)
-+            .flex_row()
-             .id("mobile-pairing")
-             .debug_selector(|| "mobile-pairing".into())
-             .w_full()
-             .mt(px(28.0))
-             .p(px(24.0))
-             .gap(px(32.0))
-             .items_start()
--            .border_1()
--            .border_color(cx.theme().border)
--            .rounded(px(10.0))
-             .when(narrow, |hero| hero.flex_col())
-             .child(left)
-             .child(qr)
-@@ -493,17 +489,16 @@ impl SettingsPane {
-                 ("code", &request.verification_code),
-             ],
-         );
--        h_flex()
-+        settings_card(cx)
-+            .flex_row()
-+            .items_center()
-             .id(SharedString::from(format!("mobile-request-{}", request.id)))
-             .debug_selector(|| "mobile-pairing-request".into())
-             .w_full()
-             .mt(px(16.0))
-             .px(px(16.0))
-             .py(px(14.0))
-             .gap(px(14.0))
--            .border_1()
--            .border_color(cx.theme().border)
--            .rounded(px(10.0))
-             .flex_wrap()
-             .child(Icon::default().path(crate::gpui_shell::assets::nav::PHONE).size(px(20.0)))
-             .child(
-@@ -616,7 +611,7 @@ impl SettingsPane {
- 
-     fn mobile_devices(&self, cx: &Context<Self>) -> gpui::Stateful<gpui::Div> {
-         let language = crate::gpui_shell::config::ui_language(cx);
--        let mut group = v_flex().id("mobile-devices").w_full().mt(px(36.0)).child(
-+        let group = v_flex().id("mobile-devices").w_full().mt(px(36.0)).child(
-             h_flex()
-                 .w_full()
-                 .justify_between()
-@@ -639,10 +634,11 @@ impl SettingsPane {
-         );
-         let devices =
-             self.mobile.snapshot.as_ref().map(|s| s.devices.as_slice()).unwrap_or_default();
-+        let mut card = settings_card(cx).debug_selector(|| "mobile-devices-card".into());
-         if devices.is_empty() {
--            return group.child(
-+            return group.child(card.child(
-                 description(language.text(Message::MobileNoDevices), cx).px(px(13.0)).py(px(12.0)),
--            );
-+            ));
-         }
-         for device in devices {
-             let id = device.id.clone();
-@@ -664,7 +660,7 @@ impl SettingsPane {
-             } else {
-                 status.to_owned()
-             };
--            group = group.child(
-+            card = card.child(
-                 h_flex()
-                     .id(SharedString::from(format!("mobile-device-{id}")))
-                     .debug_selector(|| "mobile-device-row".into())
-@@ -706,7 +702,7 @@ impl SettingsPane {
-                     ),
-             );
-         }
--        group
-+        group.child(card)
-     }
- 
-     fn mobile_lan_options(&self, compact: bool, cx: &Context<Self>) -> gpui::Div {
-@@ -796,19 +792,17 @@ impl SettingsPane {
-         let language = crate::gpui_shell::config::ui_language(cx);
-         let preferences = self.mobile.preferences();
-         let busy = self.mobile.operation;
--        let mut group = v_flex()
--            .w_full()
--            .mt(px(36.0))
--            .child(
--                h_flex()
--                    .w_full()
--                    .justify_between()
--                    .gap_3()
--                    .pb(px(6.0))
--                    .child(group_heading(language.text(Message::MobileConnections), cx))
--                    .child(description(language.text(Message::MobileConnectionsHint), cx)),
--            )
--            .child(row(
-+        let group = v_flex().w_full().mt(px(36.0)).child(
-+            h_flex()
-+                .w_full()
-+                .justify_between()
-+                .gap_3()
-+                .pb(px(6.0))
-+                .child(group_heading(language.text(Message::MobileConnections), cx))
-+                .child(description(language.text(Message::MobileConnectionsHint), cx)),
-+        );
-+        let mut card =
-+            settings_card(cx).debug_selector(|| "mobile-connections-card".into()).child(row(
-               
 ```
 
-**File**: `nebula_app/src/gpui_shell/settings_pane/terminal_effect.rs` (modified, +1/-2)
+**File**: `Cargo.toml` (modified, +13/-5)
 ```diff
-@@ -276,8 +276,7 @@ impl SettingsPane {
-             panel.child(
-                 v_flex()
-                     .w_full()
--                    .pl(px(super::design::RAIL_INDENT))
--                    .pr_4()
-+                    .px(px(super::design::CARD_PAD_X))
-                     .pb(px(self.row_padding_y()))
-                     .gap_2()
-                     .children(sources),
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/terminal_effect_tests.rs` (modified, +1/-0)
-```diff
-@@ -77,6 +77,7 @@ fn keyboard_picker_enable_reload_and_remove_use_rendered_controls(cx: &mut TestA
-         focus.focus(window, cx);
-     });
-     draw(&mut window);
-+    press("shift-tab", &mut window); // Restore the modified animation setting.
-     press("shift-tab", &mut window); // Enable; disabled Reload is skipped.
-     press("shift-tab", &mut window); // Add WGSL.
-     press("enter", &mut window);
-```
-
----
-
-### Incident Patch 3: `898c4c39` (2026-11-11)
-**Commit Message**: Merge reviewed bug fix #945
-
-**File**: `architecture/notes/nebula_app/ai_hook/2026-11-11-detached-claude-session-end.md` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+# Deliver detached Claude SessionEnd to its verified Linux terminal
-+
-+## Status
-+
-+Proposed for review with implementation.
-+
-+## Context
-+
-+Issue #434 reports a WSL zsh pane retaining its Claude identity after a double
-+Ctrl+C exit. Closing and reopening Pebrel then resumes an already exited CLI.
-+The shared pane lifecycle clears the saved identity on SessionEnd or OSC 133;D,
-+but either signal must first reach the pane.
-+
-+## Evidence
-+
-+A real zsh PTY running Claude Code 2.1.310 invoked both SessionStart and SessionEnd
-+hooks. Claude detached each hook from its controlling terminal. The bridge
-+returned authenticated OSC frames in terminalSequence JSON in both cases.
-+Claude relayed SessionStart to the terminal, but discarded SessionEnd during
-+both double Ctrl+C and /exit.
-+
-+The shared zsh integration still emitted OSC 133;D. Starting the same zsh without
-+that integration demonstrated the missing second exit signal. These observations
-+come from Linux ARM64; the reported Windows 11 WSL desktop path remains to be
-+verified.
-+
-+## Decision
-+
-+For a Claude SessionEnd whose hook has no controlling terminal, recover the
-+verified ancestor CLI's Linux devpts terminal from its stdin descriptor. Require
-+the process epoch, foreground process group, controlling device, descriptor
-+identity and device ownership to match before writing. Open without following
-+symlinks or acquiring a controlling terminal.
-+
-+Reuse the existing bounded OSC write and pane token. When verification fails,
-+retain the terminalSequence response. Existing controlling-terminal and tmux
-+routes keep their delivery rules. Other hook events keep their existing path.
-+The application continues to use its shared SessionEnd lifecycle and session-save
-+logic.
-+
-+## Rejected alternatives
-+
-+- Clear state on Ctrl+C: interruption can stop one turn while leaving Claude open.
-+- Rely only on a matching shell prompt: guest shell integration and prompt
-+  recognition can be unavailable.
-+- Scan every terminal or use a PID supplied in hook JSON: neither establishes the
-+  owning terminal.
-+- Return more SessionEnd JSON: the real CLI does not relay this response on exit.
-+- Add a background relay: the current short-lived hook can deliver the event.
-+
-+## Consequences
-+
-+The additional procfs reads and device open occur only on detached Claude exit.
-+There is no new persisted route, token, worker or setting. Linux devpts is the
-+supported recovery path; other hosts retain their existing transport.
-+
-+## Validation
-+
-+- The real-PTY regression fails before the change and passes after it. A detached
-+  hook reaches its foreground Claude ancestor, while redirected stdin and a
-+  background process group retain the JSON fallback.
-+- The remote-hook Python suite covers authenticated delivery, partial writes,
-+  detached JSON responses, native hooks and configuration preservation.
-+- Real Claude Code 2.1.310 delivers SessionStart and SessionEnd with the same
-+  process identity after the change: double Ctrl+C with and without zsh
-+  integration, and /exit with integration.
-+- The GPUI regression checks that a WSL SessionEnd without shell markers removes
-+  the foreground and saved recovery identities before window close.
-+
-+## Supersedes
-+
-+None. Extends the [WSL hook transport](../platform/wsl_hooks/2026-09-20-wsl-hook-transport.md).
-+
-+## Revisit when
-+
-+Claude relays terminalSequence during SessionEnd, or supplies an authenticated
-+terminal endpoint for detached hooks.
-```
-
-**File**: `nebula_app/res/hooks/remote_bridge.py` (modified, +40/-8)
-```diff
-@@ -161,20 +161,52 @@ def send(source, native, mode, payload, token, owner=None, route=None, deadline=
-         if len(envelope) > MAX_ENVELOPE:
-             return
-         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
--        write_terminal(osc, source, route, deadline)
-+        exit_owner = owner if source == "claude" and payload.get("hook_event_name") == "SessionEnd" else None
-+        write_terminal(osc, source, route, deadline, exit_owner=exit_owner)
+@@ -71,14 +71,14 @@ nebula_terminal = { opt-level = 3 }
  
+ nebula-gpui = { opt-level = 3, codegen-units = 16 }
+ [workspace.dependencies]
+-mlua = { version = "0.11.4", features = ["lua54", "vendored", "serialize", "send"] }
++mlua = { version = "0.11.4", features = ["luau", "vendored", "serialize", "send"] }
+ serde_path_to_error = "0.1.20"
+ toml = "0.9.11"
+ toml_edit = "0.24.0"
+ # GPUI v1.16.1 把平台启动入口拆到独立 crate。它必须与 `gpui` 使用完全相同
+ # 的 Git URL 和 rev，否则 Cargo 会把同名类型解析成两套互不兼容的 crate。
+ # Without font-kit, the macOS platform uses NoopTextSystem and renders no text.
+-gpui_platform = { git = "https://github.com/Kuddev/zed", rev = "1e716d16ec54b361499931b4278903cdcaae8949", version = "=0.1.0", features = ["font-kit"] }
++gpui_platform = { git = "https://github.com/Kuddev/zed", rev = "4f2c269fd288d29b58b641da56a0dd5608fb22df", version = "=0.1.0", features = ["font-kit"] }
  
--def write_terminal(osc, source=None, route=None, deadline=None):
-+def open_claude_exit_terminal(owner, flags):
-+    """A detached SessionEnd can still reach Claude's verified Linux terminal."""
-+    if sys.platform != "linux" or not owner:
-+        return None
-+    pid, _, epoch = owner.partition(":")
-+    proc = Path("/proc") / pid
-+    stdin = proc / "fd/0"
-     try:
--        fd = os.open(route["tty"] if route else "/dev/tty",
--                     os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
-+        tty = stdin.readlink()
-+        if not re.fullmatch(r"/dev/pts/[0-9]+", str(tty)):
-+            return None
-+        fd = os.open(tty, flags | os.O_NOCTTY)
-+    except OSError:
-+        return None
-+    try:
-+        info = os.fstat(fd)
-+        raw = (proc / "stat").read_text(encoding="utf-8")
-+        fields = raw[raw.rfind(")") + 2:].split()
-+        if (stat.S_ISCHR(info.st_mode) and info.st_uid == os.geteuid()
-+                and fields[19] == epoch and int(fields[2]) > 0 and fields[2] == fields[5]
-+                and info.st_rdev == (int(fields[4]) & 0xffffffff)
-+                and os.path.samestat(info, stdin.stat())):
-+            return fd
-+    except (OSError, ValueError, IndexError):
-+        pass
-+    os.close(fd)
-+    return None
-+
-+
-+def write_terminal(osc, source=None, route=None, deadline=None, *, exit_owner=None):
-+    flags = os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW
-+    try:
-+        fd = os.open(route["tty"] if route else "/dev/tty", flags)
-     except OSError as error:
-         if route or source != "claude" or error.errno != errno.ENXIO:
-             raise
--        # Interactive Claude consumes hook JSON even when its hook has no TTY.
--        # This fallback is only possible before any part of the OSC was written.
--        print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
--        return
-+        fd = open_claude_exit_terminal(exit_owner, flags)
-+        if fd is None:
-+            # Interactive Claude consumes terminalSequence for other hooks but
-+            # does not relay it during SessionEnd.
-+            print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
-+            return
-     offset = 0
-     deadline = min(deadline or float("inf"), time.monotonic() + 0.5)
-     try:
+ # TODO: Drop this pin and return to the crates.io release once the fix ships there.
+ [patch.crates-io]
+@@ -193,12 +193,20 @@ winit = { path = "third_party/winit-0.30.13" }
+ # 当前精确引用包含补丁 1-3、6、字体内存修补及 Windows 彩色 emoji 枚举修复。
+ # DirectWrite 必须先 MoveNext 再 GetCurrentRun，否则回退为黑色字形（issue #317）。
+ # 修复来源：WilliamWang1721/zed codex/issue-317-color-emoji；维护分支吸收后改回其固定点。
++# DirectWrite 字形 run 按字体面 COM 地址缓存 FontId；缓存必须持有该字体面。
++# run 的字体面可能不是 FontId 背后的对象（如同一字族既内存注册又系统安装），
++# 布局释放后地址被另一字体复用，中文粗体/斜体会画成错字（issue #744）。
++# Windows 打字后自动隐藏的鼠标指针只在屏幕坐标真正改变后恢复；Win32 在指针
++# 未移动时补发的 WM_MOUSEMOVE 不再让它每次按键闪一下（issue #868）。
++# 原因与撤销条件见 architecture/notes/nebula_app/input/2026-11-05-windows-pointer-auto-hide.md。
++# 这两项修复经 Kuddev/zed#2、#3 并入维护分支 fix/native-window-input-lifetime-20261015；
++# 组件经 Kuddev/gpui-component#2、#3 只同步五个 Zed 引用。
+ # Input 补丁 4-5 仍保持独立。
+ # 背景流式纹理和 WGSL 原生适配已固定到公开的渲染器基线；组件同步引用
+ # 同一提交，避免一套窗口里出现两份不兼容的 GPUI 类型。功能仍显式启用。
+-gpui = { git = "https://github.com/Kuddev/zed", rev = "1e716d16ec54b361499931b4278903cdcaae8949", version = "=0.2.2" }
++gpui = { git = "https://github.com/Kuddev/zed", rev = "4f2c269fd288d29b58b641da56a0dd5608fb22df", version = "=0.2.2" }
+ # Native inputs share rendered text's device-pixel line height and expose a
+ # post-paint point lookup. Window selection ends on release even when a child
+ # consumes MouseUp or the platform reports the next move without a held button.
+-gpui-component = { git = "https://github.com/Kuddev/gpui-component", rev = "78e1d0c48867f69fec297d9016f48b0ce1b8c146", version = "=0.5.2" }
+-gpui-component-assets = { git = "https://github.com/Kuddev/gpui-component", rev = "78e1d0c48867f69fec297d9016f48b0ce1b8c146", version = "=0.5.1" }
++gpui-component = { git = "https://github.com/Kuddev/gpui-component", rev = "4b62121bac83e103b4176708a98aecf0b51c84ab", version = "=0.5.2" }
++gpui-component-assets = { git = "https://github.com/Kuddev/gpui-component", rev = "4b62121bac83e103b4176708a98aecf0b51c84ab", version = "=0.5.1" }
 ```
 
-**File**: `nebula_app/src/gpui_shell/terminal/view/activity_tests.rs` (modified, +22/-0)
+**File**: `README.ja.md` (modified, +1/-0)
 ```diff
-@@ -26,6 +26,28 @@ fn remote_hook(session: &str, name: &str, process: &str, sequence: u64) -> AiHoo
-     crate::ai_hook::parse_remote_envelope(wire.as_bytes(), None).unwrap()
- }
+@@ -18,6 +18,7 @@
+ </p>
  
-+#[gpui::test]
-+fn wsl_claude_session_end_without_shell_markers_clears_the_saved_agent(cx: &mut TestAppContext) {
-+    let (view, window, _) = open(cx);
-+    view.update(window, |view, cx| {
-+        view.suggest.suggest_env =
-+            crate::display::SuggestEnv::Wsl { distro: "session-end-434".into() };
-+        assert!(view.handle_ai_hook(&remote_hook("exited", "SessionStart", "434:1", 1), cx));
-+        let saved = view.session_agent().expect("running conversation is restorable");
-+        assert_eq!(saved.source, "claude");
-+        assert_eq!(saved.session_id.as_deref(), Some("exited"));
-+        assert_eq!(view.running_program.as_deref(), Some("claude"));
-+        assert!(view.handle_ai_hook(&remote_hook("exited", "SessionEnd", "434:1", 2), cx));
-+        view.prepare_ai_session_save(cx);
-+        assert!(view.session_agent().is_none(), "window close must not resume an exited CLI");
-+        assert!(view.ai_session.is_none());
-+        assert!(view.recovery.target.is_none());
-+        assert!(view.running_program.is_none());
-+        assert!(!view.ai_session_save_pending());
-+        assert_eq!(view.sidebar_activity(), SidebarActivity::Idle);
-+    });
-+}
-+
- #[gpui::test]
- fn pi_redraw_anchor_follows_accepted_hook_and_command_lifecycle(cx: &mut TestAppContext) {
-     use nebula_terminal::term::test::TermSize;
+ <p align="center">
++  <a href="https://pebrel.com"><img src="https://img.shields.io/badge/%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white" alt="公式サイト：pebrel.com" /></a>
+   <img src="https://img.shields.io/github/stars/Kuddev/pebrel?style=flat-square&color=ffd33d&logo=github" alt="Stars" />
+   <a href="https://atomgit.com/kettys/pebrel"><img src="https://atomgit.com/kettys/pebrel/star/badge.svg" alt="AtomGitStars" /></a>
+   <a href="https://hub.xerj.org/contributors/Kuddev"><img src="https://hub.xerj.org/contributors/Kuddev/badge.svg" alt="XERJ Corpus Hub contributor" /></a>
 ```
 
-**File**: `scripts/tests/test_remote_hooks.py` (modified, +62/-0)
+**File**: `README.md` (modified, +7/-0)
 ```diff
-@@ -93,6 +93,68 @@ def test_claude_with_controlling_terminal_does_not_duplicate_stdout(self):
-             write.assert_called_once_with(42, b"\x07")
-             self.assertEqual(output.getvalue(), "")
+@@ -18,6 +18,7 @@
+ </p>
  
-+    @unittest.skipUnless(sys.platform == "linux", "requires Linux procfs and a devpts terminal")
-+    def test_detached_claude_session_end_reaches_its_foreground_terminal(self):
-+        import pty
+ <p align="center">
++  <a href="https://pebrel.com"><img src="https://img.shields.io/badge/Website-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white" alt="Website: pebrel.com" /></a>
+   <img src="https://img.shields.io/github/stars/Kuddev/pebrel?style=flat-square&color=ffd33d&logo=github" alt="Stars" />
+   <a href="https://atomgit.com/kettys/pebrel"><img src="https://atomgit.com/kettys/pebrel/star/badge.svg" alt="AtomGitStars" /></a>
+   <a href="https://hub.xerj.org/contributors/Kuddev"><img src="https://hub.xerj.org/contributors/Kuddev/badge.svg" alt="XERJ Corpus Hub contributor" /></a>
+@@ -147,6 +148,12 @@ Choose **Inline** (Tab accepts the suggestion), **List** (Tab accepts the select
+ candidate), or **Hybrid** (→ accepts the inline suggestion; Tab opens the list)
+ in Settings.
+ 
++When Pebrel can query the pane's filesystem, file arguments to `nvim`, `code`, and
++`cat` use its current directory; history only ranks the discovered candidates.
++To choose among several files, select **Hybrid**: Tab opens the
++list, subsequent Tab presses cycle candidates, and Enter inserts the selection
++without running the command. Right arrow accepts the inline suggestion directly.
 +
-+        provider = self.root / "claude"
-+        bridge = ASSETS / "remote_bridge.py"
-+        provider.write_text(
-+            "import json, os, subprocess, sys\n"
-+            "if sys.argv[1] == 'background':\n"
-+            " raise SystemExit(subprocess.run([sys.executable, __file__, 'worker'], process_group=0, timeout=5).returncode)\n"
-+            "if sys.argv[1] == 'redirected':\n"
-+            " fd = os.open(os.devnull, os.O_RDONLY)\n"
-+            " os.dup2(fd, 0)\n"
-+            " os.close(fd)\n"
-+            "payload = json.dumps({'hook_event_name': 'SessionEnd', 'session_id': 'fixture', 'pid': 1})\n"
-+            f"result = subprocess.run([sys.executable, {str(bridge)!r}, 'claude'], input=payload, "
-+            "text=True, capture_output=True, start_new_session=True, check=True, timeout=4)\n"
-+            # Claude ignores the terminalSequence response during SessionEnd.
-+            "print('response=' + ('fallback' if result.stdout else 'empty'))\n"
-+        )
-+        for mode in ("foreground", "redirected", "background"):
-+            with self.subTest(mode=mode):
-+                pid, master = pty.fork()
-+                if pid == 0:
-+                    os.execv(sys.executable, [sys.executable, str(provider), mode])
-+                output = bytearray()
-+                try:
-+                    deadline = time.monotonic() + 6
-+                    while time.monotonic() < deadline:
-+                        if select.select([master], [], [], 0.1)[0]:
-+                            try:
-+                                part = os.read(master, 65536)
-+                            except OSError as error:
-+                                if error.errno != errno.EIO:
-+                                    raise
-+                                break
-+                            if not part:
-+                                break
-+                            output.extend(part)
-+                    waited, status = os.waitpid(pid, os.WNOHANG)
-+                    self.assertEqual(waited, pid, "provider did not finish within the PTY budget")
-+                    self.assertEqual(status, 0, output)
-+                finally:
-+                    os.close(master)
-+                    try:
-+                        os.kill(pid, 9)
-+                        os.waitpid(pid, 0)
-+                    except ProcessLookupError:
-+                        pass
-+                frames = re.findall(
-+                    rb"\x1b\]777;nebula-hook;" + TOKEN.encode() + rb";([^\x07]+)\x07", output
-+                )
-+                if mode != "foreground":
-+                    self.assertEqual(frames, [])
-+                    self.assertIn(b"response=fallback", output)
-+                    continue
-+                self.assertEqual(len(frames), 1, output)
-+                header, body = base64.b64decode(frames[0]).split(b"\n", 1)
-+                self.assertTrue(header.startswith(f"nebula-hook/1 source=claude process={pid}:".encode()))
-+                self.assertEqual(json.loads(body)["hook_event_name"], "SessionEnd")
-+                self.assertIn(b"response=empty", output)
+ <details>
+ <summary>How history completion differs</summary>
+ 
+```
+
+**File**: `README.zh-CN.md` (modified, +5/-0)
+```diff
+@@ -18,6 +18,7 @@
+ </p>
+ 
+ <p align="center">
++  <a href="https://pebrel.com"><img src="https://img.shields.io/badge/%E5%AE%98%E7%BD%91-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white" alt="官网：pebrel.com" /></a>
+   <img src="https://img.shields.io/github/stars/Kuddev/pebrel?style=flat-square&color=ffd33d&logo=github" alt="Stars" />
+   <a href="https://atomgit.com/kettys/pebrel"><img src="https://atomgit.com/kettys/pebrel/star/badge.svg" alt="AtomGitStars" /></a>
+   <a href="https://hub.xerj.org/contributors/Kuddev"><img src="https://hub.xerj.org/contributors/Kuddev/badge.svg" alt="XERJ Corpus Hub contributor" /></a>
+@@ -133,6 +134,10 @@ WSL 发行版，以及 `cat` 读取带空格的文件名。使用内置 Powerlin
+ 设置中可选择**行内补齐**（Tab 接受灰字）、**列表补齐**（Tab 接受选中候选），
+ 或**混合补齐**（→ 接受灰字，Tab 打开列表）。
+ 
++Pebrel 能查询窗格的文件系统时，`nvim`、`code` 和 `cat` 的文件参数从当前目录获取候选，
++历史只给已发现的候选排序。需要在多个文件间选择时，选用**混合补齐**：
++Tab 打开列表，再次按 Tab 轮换候选，Enter 插入选中项但不执行命令；→ 直接接受灰字。
 +
-     def test_claude_partial_terminal_frame_is_cancelled_without_stdout_retry(self):
-         bridge = module("remote_bridge")
-         writes = []
+ <details>
+ <summary>历史补齐有什么不同？</summary>
+ 
+```
+
+**File**: `THIRD-PARTY-NOTICES` (modified, +5/-0)
+```diff
+@@ -421,4 +421,9 @@ Normal NF CN Regular font (SIL Open Font License 1.1). The original copyright
+ and license metadata are retained in the font; see licenses/LICENSE-PEBREL-SYMBOLS.
+ Source: https://github.com/subframe7536/maple-font
+ Regeneration: python scripts/build_symbol_font.py (requires fontTools).
++It also keeps Maple's unchanged `m` glyph, required by GPUI's macOS font loader.
+ The complete Maple face remains unchanged and separately selectable.
++
++nebula-waiting-hand.svg preserves the U+F256 outline from that bundled font,
++translated and flipped into a centered SVG viewBox without changing the outline.
++Copyright (c) 2022, subframe7536. See licenses/LICENSE-PEBREL-SYMBOLS (OFL 1.1).
 ```
 
 #### Recent Merged Pull Requests:
@@ -2794,58 +2031,50 @@ Use theme palettes for grouped settings cards
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111
+## X. Merge pull request #615 from WilliamWang1721/fix/issue-549-5gzczi
 
 **RULE**:
-When implementing operations in `architecture/notes/nebula_app/ai_hook/2026-11-11-detached-claude-session-end.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `nebula_terminal/src/tty/windows/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fe45e0d`: Merge pull request #946 from Kuddev/merge/reviewed-bugs-936-945-20261111. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4807f289`: Merge pull request #615 from WilliamWang1721/fix/issue-549-5gzczi. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_app/ai_hook/2026-11-11-detached-claude-session-end.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nebula_terminal/src/tty/windows/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Deliver detached Claude SessionEnd to its verified Linux terminal
+# builtin_ls=0 in the settings file keeps PowerShell's own ls/dir.
+if (Get-NebulaBoolSetting 'builtin_ls' $true) {
+    Remove-Item Alias:ls  -Force -ErrorAction SilentlyContinue
+    Remove-Item Alias:dir -Force -ErrorAction SilentlyContinue
+    Remove-Item Alias:ll  -Force -ErrorAction SilentlyContinue
+    Set-Alias -Name ls  -Value Nebula-List -Scope Global -Option AllScope -Force
+    Set-Alias -Name ll  -Value Nebula-List -Scope Global -Option AllScope -Force
+    Set-Alias -Name dir -Value Nebula-List -Scope Global -Option AllScope -Force
+}
+    #[test]
+    fn builtin_ls_aliases_can_be_opted_out() {
+        let gate = NEBULA_PROMPT_PS1
+            .find("if (Get-NebulaBoolSetting 'builtin_ls' $true) {")
+            .expect("builtin_ls gate");
+        let alias = NEBULA_PROMPT_PS1.find("Set-Alias -Name ls ").expect("ls alias");
+        assert!(gate < alias, "the ls/ll/dir aliases must sit behind the builtin_ls gate");
+    }
 
-## Status
-
-Proposed for review with implementation.
-
-## Context
-
-Issue #434 reports a WSL zsh pane retaining its Claude identity after a double
-Ctrl+C exit. Closing and reopening Pebrel then resumes an already exited CLI.
-The shared pane lifecycle clears the saved identity on SessionEnd or OSC 133;D,
-but either signal must first reach the pane.
-
-## Evidence
-
-A real zsh PTY running Claude Code 2.1.310 invoked both SessionStart and SessionEnd
-hooks. Claude detached each hook from its controlling terminal. The bridge
-returned authenticated OSC frames in terminalSequence JSON in both cases.
-Claude relayed SessionStart to the terminal, but discarded SessionEnd during
-both double Ctrl+C and /exit.
-
-The shared zsh integration still emitted OSC 133;D. Starting the same zsh without
-that integration demonstrated the missing second exit signal. These observations
-come from Linux ARM64; the reported Windows 11 WSL desktop path remains to be
-verified.
-
-## Decision
-
-For a Claude SessionEnd whose hook has no controlling terminal, recover the
-verified ancestor CLI's Linux devpts terminal from its stdin descriptor. Require
-the pro
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Remove-Item Alias:ls  -Force -ErrorAction SilentlyContinue
+Remove-Item Alias:dir -Force -ErrorAction SilentlyContinue
+Remove-Item Alias:ll  -Force -ErrorAction SilentlyContinue
+Set-Alias -Name ls  -Value Nebula-List -Scope Global -Option AllScope -Force
+Set-Alias -Name ll  -Value Nebula-List -Scope Global -Option AllScope -Force
+Set-Alias -Name dir -Value Nebula-List -Scope Global -Option AllScope -Force
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fe45e0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4807f289` are properly handled with clean fallback behavior.

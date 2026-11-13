@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T11:40:21.070Z",
-  "total_cycles_completed": 9216,
-  "total_learnings_persisted": 9216,
-  "total_rules_promoted": 8999,
+  "last_updated": "2026-11-13T11:55:45.278Z",
+  "total_cycles_completed": 9219,
+  "total_learnings_persisted": 9219,
+  "total_rules_promoted": 9000,
   "history": [
-    {
-      "timestamp": "2026-11-12T15:34:12.035Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:02:16.604Z",
-      "repository": "facebook/sam-3d-body-dinov3",
-      "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:02:21.435Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T21:02:24.057Z",
       "repository": "sigstore/cosign",
@@ -1403,6 +1382,27 @@
       "repository": "krakend/krakend-ce",
       "learningId": "learn-github-krakend-krakend-ce",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T11:55:29.229Z",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T11:55:43.271Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T11:55:45.278Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

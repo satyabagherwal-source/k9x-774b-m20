@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T11:40:43.235Z",
-  "total_records": 122,
+  "last_updated": "2026-11-13T11:56:17.760Z",
+  "total_records": 124,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 78,
+      "total": 80,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -103,7 +103,9 @@
         "DOM-D-57460E8B",
         "DOM-D-9703D9B4",
         "DOM-D-785F48FA",
-        "DOM-D-7CAAEABC"
+        "DOM-D-7CAAEABC",
+        "DOM-D-BC1FB9A1",
+        "DOM-D-9BACEDC2"
       ]
     },
     "E": {
@@ -5087,6 +5089,90 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T11:40:43.232Z"
+    },
+    "DOM-D-BC1FB9A1": {
+      "record_id": "DOM-D-BC1FB9A1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): tencent/Hy-SimulMT-30B-A3B-FP8",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8](https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8))  \n> **Source Version**: `hf-tencent-h`  \n> **License**:",
+      "content_hash": "a98908343454ad96034a5f6472ebdf6a77107cc5868ecf717e6fe7278446170b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-tencent-hy-simulmt-30b-a3b-fp8/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T11:55:48.281Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tencent-hy-simulmt-30b-a3b-fp8)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-tencent-hy-simulmt-30b-a3b-fp8"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T11:55:59.648Z"
+    },
+    "DOM-D-9BACEDC2": {
+      "record_id": "DOM-D-9BACEDC2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): apache/pinot",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  \n> **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  \n> **Source Version**: `b09fec33`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n>",
+      "content_hash": "7d2a332778945e0919aef3b085ef008f48d5a1cbe4deecf4fc3557ce52d79cd6",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  \n> **Source**: github ([https://github.com/apache/pinot] -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  \n> **Source**: github ([https://github.com/apache/pinot]",
+      "provenance": {
+        "source_uri": "project://apache-pinot/apache-pinot-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T11:55:59.666Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (apache-pinot)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of apache-pinot"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T11:56:17.758Z"
     }
   }
 }

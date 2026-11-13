@@ -9444,3 +9444,8 @@
 | `CYCLE-20261113-NARL` | `2026-11-13T11:40:06.081Z` | `pointfreeco/sqlite-data` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md` | Yes (`ee80359e...`) |
 | `CYCLE-20261113-NMBM` | `2026-11-13T11:40:21.058Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3af1175a...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:40:43.239Z` | `hf-qwen-qwen3.8-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7CAAEABC` [Domain D] | Yes (`561f6a33...`) |
+| `CYCLE-20261113-732E` | `2026-11-13T11:55:29.222Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md` | Yes (`362967b4...`) |
+| `CYCLE-20261113-7DW3` | `2026-11-13T11:55:43.251Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d791e2c7...`) |
+| `CYCLE-20261113-7FG4` | `2026-11-13T11:55:45.268Z` | `apache/pinot` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-pinot-learnings.md` | Yes (`a37300ee...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:55:59.653Z` | `hf-tencent-hy-simulmt-30b-a3b-fp8` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BC1FB9A1` [Domain D] | Yes (`a9890834...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:56:17.762Z` | `apache-pinot` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9BACEDC2` [Domain D] | Yes (`7d2a3327...`) |

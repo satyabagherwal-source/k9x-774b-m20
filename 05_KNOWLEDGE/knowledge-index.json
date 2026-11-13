@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T11:40:20.939Z",
+  "last_updated": "2026-11-13T11:55:45.122Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40841,14 +40841,19 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "d79d5796",
-      "content_hash": "43784fc8fde93f2afe398ae855f57559a0006a845a543ea83398f58a46e4abcb",
+      "source_version": "09e5eb47",
+      "content_hash": "d791e2c727e0eec1fd6c40728d2781da26ef65f8868ce6f24a7bfd6dd909b03c",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Allow the tmux name in the naming gate (#916)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #615 from WilliamWang1721/fix/issue-549-5gzczi",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40887,7 +40892,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:35:36.677Z",
+      "verified_at": "2026-11-13T11:55:43.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158668,7 +158673,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
       "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
-      "content_hash": "6672d4fba3bd3d22a2f449614519586d398689fd5d3ca7eb6d8ebd6bfc6ba57a",
+      "content_hash": "362967b4a3bf6c26a8efccdcf45cd2bdebc982d17f4b15252247f8b526ed5ecf",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
       "promoted_rules": [
@@ -158723,7 +158728,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T09:55:00.301Z",
+      "verified_at": "2026-11-13T11:55:29.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189064,8 +189069,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "18e46648",
-      "content_hash": "32c85bdaf3d088fd7b9cf07f0b42214cdf260496f312bade3b20ad6deae0052d",
+      "source_version": "b09fec33",
+      "content_hash": "a37300ee698820d98dedb5a2c19668dc7f1be9f3edfdb964674fbf4bf79aaf29",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -189110,7 +189115,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T04:50:41.354Z",
+      "verified_at": "2026-11-13T11:55:45.097Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

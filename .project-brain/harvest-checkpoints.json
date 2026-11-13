@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T11:40:21.074Z",
+  "last_updated": "2026-11-13T11:55:45.282Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "43784fc8fde93f2afe398ae855f57559a0006a845a543ea83398f58a46e4abcb",
-      "verified_at": "2026-11-11T18:35:36.799Z",
+      "content_hash": "d791e2c727e0eec1fd6c40728d2781da26ef65f8868ce6f24a7bfd6dd909b03c",
+      "verified_at": "2026-11-13T11:55:43.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:35:36.799Z"
+      "last_updated": "2026-11-13T11:55:43.274Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -17121,14 +17121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "content_hash": "6672d4fba3bd3d22a2f449614519586d398689fd5d3ca7eb6d8ebd6bfc6ba57a",
-      "verified_at": "2026-11-08T09:55:00.481Z",
+      "content_hash": "362967b4a3bf6c26a8efccdcf45cd2bdebc982d17f4b15252247f8b526ed5ecf",
+      "verified_at": "2026-11-13T11:55:29.232Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T09:55:00.481Z"
+      "last_updated": "2026-11-13T11:55:29.232Z"
     },
     "prithivMLmods/Gender-Classifier-Mini": {
       "repository": "prithivMLmods/Gender-Classifier-Mini",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "32c85bdaf3d088fd7b9cf07f0b42214cdf260496f312bade3b20ad6deae0052d",
-      "verified_at": "2026-11-12T04:50:41.519Z",
+      "content_hash": "a37300ee698820d98dedb5a2c19668dc7f1be9f3edfdb964674fbf4bf79aaf29",
+      "verified_at": "2026-11-13T11:55:45.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T04:50:41.519Z"
+      "last_updated": "2026-11-13T11:55:45.282Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

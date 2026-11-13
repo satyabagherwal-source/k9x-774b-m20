@@ -9453,3 +9453,8 @@ Every entry in this ledger must capture:
 | `learn-github-pointfreeco-sqlite-data` | `https://github.com/pointfreeco/sqlite-data` | `e72164ce` | Multi-dimensional audit evidence | 2026-11-13T11:40:06.085Z |
 | `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `fd0eac09` | Multi-dimensional audit evidence | 2026-11-13T11:40:21.062Z |
 | `learn-dom-d-7caaeabc` | `project://hf-qwen-qwen3.8-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | 2026-11-13T11:40:43.239Z |
+| `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-13T11:55:29.225Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `09e5eb47` | Multi-dimensional audit evidence | 2026-11-13T11:55:43.254Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `b09fec33` | Multi-dimensional audit evidence | 2026-11-13T11:55:45.272Z |
+| `learn-dom-d-bc1fb9a1` | `project://hf-tencent-hy-simulmt-30b-a3b-fp8` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md` | 2026-11-13T11:55:59.653Z |
+| `learn-dom-d-9bacedc2` | `project://apache-pinot` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md` | 2026-11-13T11:56:17.762Z |
