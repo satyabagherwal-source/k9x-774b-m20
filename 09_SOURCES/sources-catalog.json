@@ -2085,8 +2085,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
     "sourceVersion": "hf-comfy-org-moss-image",
     "license": "Open-Source",
-    "contentHash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
-    "lastHarvestedAt": "2026-11-08T02:25:33.244Z",
+    "contentHash": "9acb786a32930ca364954cd58ade9499b5f2cda4ea276035695d71a62dbd1f56",
+    "lastHarvestedAt": "2026-11-13T01:38:50.919Z",
     "learningId": "learn-huggingface-comfy-org-moss-image"
   },
   "bvaughn-react-virtualized": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "7b0bff2f",
+    "sourceVersion": "19cceb3b",
     "license": "MIT",
-    "contentHash": "8ccbe2df717164cef86e144049ba8b2d56d6706fc8d0970cec7b7102c3b76ff5",
-    "lastHarvestedAt": "2026-11-11T16:20:38.460Z",
+    "contentHash": "ce1ea69f72a6da4217801c78f5d7a570240e3db0c93c9bda2d109c3d28588588",
+    "lastHarvestedAt": "2026-11-13T01:39:13.078Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "ecfbdbcc",
+    "sourceVersion": "8aa7707d",
     "license": "MIT",
-    "contentHash": "5097ed16c67a11323aea2322929986d99608c69e858063b36ce5e63e22aa82f8",
-    "lastHarvestedAt": "2026-11-11T07:37:49.436Z",
+    "contentHash": "3d4f8c2ceac51a4c3e8aab70488ea0292cdb08f3c350d43ad40a948103c652ef",
+    "lastHarvestedAt": "2026-11-13T01:39:06.656Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

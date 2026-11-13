@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T01:31:17.931Z",
+  "last_updated": "2026-11-13T01:39:12.907Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9044,13 +9044,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "1e2106e6",
-      "content_hash": "0a8e501d40fcbdb3aef99f891cc59cb174929fd2286617b2bc2803269201c4f9",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "8aa7707d",
+      "content_hash": "3d4f8c2ceac51a4c3e8aab70488ea0292cdb08f3c350d43ad40a948103c652ef",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -9070,6 +9070,11 @@
         {
           "number": null,
           "title": "receipts): a thread receipt carries tokens only, with no provider-call count (CW",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "state,snapshot): keep index entries after a torn line and clamp prune age (#7316",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9188,7 +9193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T14:56:37.585Z",
+      "verified_at": "2026-11-13T01:39:06.446Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13599,8 +13604,8 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "7b0bff2f",
-      "content_hash": "8ccbe2df717164cef86e144049ba8b2d56d6706fc8d0970cec7b7102c3b76ff5",
+      "source_version": "19cceb3b",
+      "content_hash": "ce1ea69f72a6da4217801c78f5d7a570240e3db0c93c9bda2d109c3d28588588",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
@@ -13612,6 +13617,11 @@
         {
           "number": null,
           "title": "build(deps): bump docker/login-action (#729)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Bump the all-dependencies group with 1 update (#732)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -13685,7 +13695,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T16:20:38.288Z",
+      "verified_at": "2026-11-13T01:39:12.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104079,7 +104089,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
+      "content_hash": "9acb786a32930ca364954cd58ade9499b5f2cda4ea276035695d71a62dbd1f56",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "promoted_rules": [
@@ -104144,7 +104154,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:25:33.077Z",
+      "verified_at": "2026-11-13T01:38:50.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:31:37.328Z",
+  "last_updated": "2026-11-13T01:39:34.276Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7823,6 +7823,24 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0E0AD1-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-C9CA20",
+      "directive_title": "state,snapshot): keep index entries after a torn line and clamp prune age (#7316",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "codewhale-hq-codewhale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C9CA20-state-snapshot-keep-index-entries-after-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-751C67",
+      "directive_title": "Bump the all-dependencies group with 1 update (#732)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "emberstack-kubernetes-reflector",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-751C67-bump-the-all-dependencies-group-with-1-u.md",
       "staged_date": "2026-11-13"
     }
   ]

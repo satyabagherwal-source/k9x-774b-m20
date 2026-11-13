@@ -9275,3 +9275,7 @@
 | `CYCLE-20261113-AQ9Z` | `2026-11-13T01:14:28.103Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fff64374...`) |
 | `CYCLE-20261113-WDJS` | `2026-11-13T01:31:18.040Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | Yes (`014f79f8...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T01:31:37.279Z` | `hf-autogluon-chronos-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3EB7AC49` [Domain D] | Yes (`6e213093...`) |
+| `CYCLE-20261113-62ZM` | `2026-11-13T01:38:50.914Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | Yes (`9acb786a...`) |
+| `CYCLE-20261113-6F4P` | `2026-11-13T01:39:06.649Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d4f8c2c...`) |
+| `CYCLE-20261113-6K32` | `2026-11-13T01:39:13.070Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ce1ea69f...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T01:39:34.253Z` | `hf-comfy-org-moss-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E9BE8727` [Domain D] | Yes (`d8c0985f...`) |

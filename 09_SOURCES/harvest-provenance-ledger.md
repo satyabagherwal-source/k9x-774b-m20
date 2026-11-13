@@ -9284,3 +9284,7 @@ Every entry in this ledger must capture:
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `ef5a7724` | Multi-dimensional audit evidence | 2026-11-13T01:14:28.107Z |
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-13T01:31:18.043Z |
 | `learn-dom-d-3eb7ac49` | `project://hf-autogluon-chronos-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | 2026-11-13T01:31:37.279Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-13T01:38:50.919Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `8aa7707d` | Multi-dimensional audit evidence | 2026-11-13T01:39:06.656Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `19cceb3b` | Multi-dimensional audit evidence | 2026-11-13T01:39:13.078Z |
+| `learn-dom-d-e9be8727` | `project://hf-comfy-org-moss-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | 2026-11-13T01:39:34.253Z |

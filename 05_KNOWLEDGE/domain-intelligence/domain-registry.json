@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T01:31:37.277Z",
-  "total_records": 79,
+  "last_updated": "2026-11-13T01:39:34.250Z",
+  "total_records": 80,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 40,
+      "total": 41,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -65,7 +65,8 @@
         "DOM-D-34E068C1",
         "DOM-D-B36C340C",
         "DOM-D-CDB84B7D",
-        "DOM-D-3EB7AC49"
+        "DOM-D-3EB7AC49",
+        "DOM-D-E9BE8727"
       ]
     },
     "E": {
@@ -3220,6 +3221,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T01:31:37.276Z"
+    },
+    "DOM-D-E9BE8727": {
+      "record_id": "DOM-D-E9BE8727",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/MOSS-Image",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/MOSS-Image](https://huggingface.co/Comfy-Org/MOSS-Image))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "d8c0985fdf0434d9d6d5b5ebd1d4904c15fe23012a8e022a1417411cb50bca26",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-moss-image/hf-comfy-org-moss-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T01:39:18.840Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-moss-image)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-moss-image"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T01:39:34.248Z"
     }
   }
 }

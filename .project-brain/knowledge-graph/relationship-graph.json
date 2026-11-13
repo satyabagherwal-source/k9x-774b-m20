@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T01:31:37.279Z",
+  "updated_at": "2026-11-13T01:39:34.252Z",
   "statistics": {
-    "total_nodes": 32,
-    "total_edges": 12,
+    "total_nodes": 33,
+    "total_edges": 13,
     "domain_distribution": {
-      "D": 21,
+      "D": 22,
       "M": 1,
       "H": 6,
       "J": 1,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 12
+      "CONSTRAINED_BY_ARCHITECTURE": 13
     }
   },
   "nodes": {
@@ -717,6 +717,29 @@
       ],
       "created_at": "2026-11-13T01:31:37.279Z",
       "updated_at": "2026-11-13T01:31:37.279Z"
+    },
+    "DOM-D-E9BE8727": {
+      "id": "DOM-D-E9BE8727",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/MOSS-Image",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-comfy-org-moss-image/hf-comfy-org-moss-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T01:39:18.840Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-moss-image)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T01:39:34.252Z",
+      "updated_at": "2026-11-13T01:39:34.252Z"
     }
   },
   "edges": [
@@ -839,6 +862,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-3EB7AC49 [D] with Domain M",
       "created_at": "2026-11-13T01:31:37.279Z"
+    },
+    {
+      "id": "EDGE-3B7F5C1A63E7",
+      "sourceId": "DOM-D-E9BE8727",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-E9BE8727 [D] with Domain M",
+      "created_at": "2026-11-13T01:39:34.252Z"
     }
   ]
 }

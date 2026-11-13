@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T01:31:37.285Z",
+  "updated_at": "2026-11-13T01:39:34.313Z",
   "stats": {
-    "total_discovered": 1953,
-    "approved_pending_harvest": 1799,
+    "total_discovered": 1960,
+    "approved_pending_harvest": 1804,
     "harvested_count": 0,
-    "rejected_count": 154,
+    "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1796,
+      "COMMUNITY_AND_EXPERT": 1803,
       "OFFICIAL_DOCUMENTATION": 80,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -41905,6 +41905,146 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
         "fileName": "hf-autogluon-chronos-2-learnings.md"
+      }
+    },
+    "SRC-C72F4D09F7E1": {
+      "id": "SRC-C72F4D09F7E1",
+      "url": "https://github.com/codewhale-hq/Codewhale",
+      "title": "https://github.com/codewhale-hq/Codewhale",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:39:18.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-C8CB705F3DB5": {
+      "id": "SRC-C8CB705F3DB5",
+      "url": "https://github.com/MannXo",
+      "title": "https://github.com/MannXo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:39:18.799Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-324F87841091": {
+      "id": "SRC-324F87841091",
+      "url": "https://codewhale.net/install.sh",
+      "title": "https://codewhale.net/install.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T01:39:18.814Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-9ACD321F6420": {
+      "id": "SRC-9ACD321F6420",
+      "url": "http://{addr/",
+      "title": "http://{addr/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T01:39:18.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-609F8BCF76A1": {
+      "id": "SRC-609F8BCF76A1",
+      "url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "title": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:39:34.260Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
+        "fileName": "hf-comfy-org-moss-image-learnings.md"
+      }
+    },
+    "SRC-2BD63B1992E0": {
+      "id": "SRC-2BD63B1992E0",
+      "url": "https://github.com/emberstack/kubernetes-reflector",
+      "title": "https://github.com/emberstack/kubernetes-reflector",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:39:34.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
+        "fileName": "emberstack-kubernetes-reflector-learnings.md"
+      }
+    },
+    "SRC-BC7553E787ED": {
+      "id": "SRC-BC7553E787ED",
+      "url": "https://github.com/emberstack/kubernetes-reflector/blob/0134c897407e2e0f87a618afabf5baa6791b299a/src/helm/reflector/templates/clusterRole.yaml",
+      "title": "https://github.com/emberstack/kubernetes-reflector/blob/0134c897407e2e0f87a618afabf5baa6791b299a/src/helm/reflector/templates/clusterRole.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:39:34.313Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
+        "fileName": "emberstack-kubernetes-reflector-learnings.md"
       }
     }
   }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:31:18.048Z",
-  "total_cycles_completed": 9090,
-  "total_learnings_persisted": 9090,
-  "total_rules_promoted": 8925,
+  "last_updated": "2026-11-13T01:39:13.104Z",
+  "total_cycles_completed": 9093,
+  "total_learnings_persisted": 9093,
+  "total_rules_promoted": 8927,
   "history": [
-    {
-      "timestamp": "2026-11-12T03:10:29.255Z",
-      "repository": "vi/websocat",
-      "learningId": "learn-github-vi-websocat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T03:10:31.541Z",
-      "repository": "cheeriojs/dom-serializer",
-      "learningId": "learn-github-cheeriojs-dom-serializer",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T03:10:39.243Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T03:10:45.848Z",
       "repository": "apple/foundationdb",
@@ -1403,6 +1382,27 @@
       "repository": "autogluon/chronos-2",
       "learningId": "learn-huggingface-autogluon-chronos-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:38:50.925Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:39:06.686Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:39:13.104Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

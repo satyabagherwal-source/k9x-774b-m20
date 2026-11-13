@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `ecfbdbcc`  
+> **Source Version**: `8aa7707d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T07:37:35.888Z  
+> **Timestamp**: 2026-11-13T01:38:53.455Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T07:37:35.618Z  
+> **Harvest Timestamp**: 2026-11-13T01:38:53.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `codewhale-hq/Codewhale`
-- **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
+- **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41176 stars
+- **Stars / Engagement**: 41178 stars
 
 ---
 
@@ -1824,11 +1824,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7276** (2026-11-10): **fix(engine): match search include globs in linear time**
-  *Symptoms*: ## What and why  For each `*`, `matches_simple_glob` retried the rest of the pattern at every remaining position. It kept no memo and built a new `String` on every attempt. With an include pattern such as `*a*a*a*a*a*a*a*a*a*a*b`, a file named 40 `a`s plus `.rs` took on the order of C(40,10) ≈ 8·10^8 recursive calls. That cost repeats for every similar file in the walk. #7254 already bounded brace expansion and repeated globstars; this was the last unbounded path.  The function now uses the standard iterative two-pointer wildcard match: it remembers the last `*` and backtracks to it, so it runs in O(text × pattern). The matching rules are unchanged:  - `*` matches zero or more characters, including `/` as before. - `?` matches exactly one character. - Literals are compared by `char`, so multi-byte names stay safe (#249).  ## Related issue (optional)  Refs #7274 (partial: the glob item)  ## How I tested it  - I extended `pathological_globs_stay_bounded` with the many-stars case. On `main` it does not finish within the test's 2 s bound; I stopped it after 60 s. With the fix it passes, and a positive match for the same pattern still holds. - `cargo test -p codewhale-engine --lib tools::search`: 31 passed - `cargo clippy -p codewhale-engine --all-targets --all-features --locked -- -D warnings`: clean - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and t
+- **Issue #7323** (2026-11-12): **fix(app-server): read the original path of a worktree-side rename**
+  *Symptoms*: ## What and why  `parse_porcelain` in `crates/app-server/src/runtime_api/git.rs` read the extra original-path record of a rename/copy only when the **index** column was `R` or `C`.  Git reports a rename in either column, and since 2.18 the worktree column carries one when only the working tree moved — for example `git mv` followed by `git reset` and `git add -N`, which reports `" R new.md\0old.md\0"`. The original-path record was then parsed as a status row of its own:  - With a non-ASCII source (`ab说明.md`), `record[3..]` sliced at byte 3, inside `说` (`E8 AF B4`), and panicked. The panic happens inside `spawn_blocking`, so every `GET /v1/git` and `GET /v1/changes` returned 500 `git status failed` until the worktree changed. - With an ASCII source, a phantom row appeared (`index = 'a'`, `worktree = '.'`, `path = "xt"`), corrupting the file list, the staged/unstaged counts and the row revision tokens.  The parser now reads the original path when either column reports a rename or copy, and slices the path through `get` before consuming the next field, so a malformed record is skipped instead of panicking and the record stream stays in sync.  ## Where this came from  Refs #7309  ## How I tested it  Two new tests in the existing `runtime_api::git::tests` module. Both use a real temporary repository and drive the same sequence the issue describes (`git mv`, `git reset`, `git add -N`), so neither mocks the parser input.  `cargo test -p codewhale-app-server --lib -- worktree_column_r
 
-- **Issue #7275** (2026-11-10): **fix: reject negative retry delays at config load instead of panicking on retry**
-  *Symptoms*: ## What and why  With `[retry] jitter = false` and a negative `max_delay` or `initial_delay`, `RetryConfig::delay_for_attempt` called `Duration::from_secs_f64` with a negative value, which panicked on the first transport retry. With jitter on, the `.max(0.0)` clamp hid the problem.  - `Config::validate` now rejects a negative or non-finite `initial_delay`, `max_delay` or `exponential_base` when the config loads. This matches how `[retry.rate_limit]` already rejects invalid values. - `delay_for_attempt` and `TokenBucket::delay_until_available` keep a no-panic fallback for the public builders and for environment input:   - a negative delay becomes zero;   - a delay too large for a `Duration` becomes `Duration::MAX`. Every caller already caps or saturates the value.   - As a result, a tiny `CODEWHALE_RATE_LIMIT_RPS`, such as `1e-30`, now waits indefinitely instead of panicking.  ## Related issue (optional)  Refs #7274 (partial: the retry item)  ## How I tested it  - New tests, all of which fail on `main`:   - `negative_retry_delay_is_invalid` (runtime)   - `delay_for_attempt_survives_negative_and_huge_configured_delays` (engine)   - `token_bucket_saturates_delay_for_a_tiny_refill_rate` (engine) - `cargo test -p codewhale-runtime --lib negative_retry_delay`: 1 passed - `cargo test -p codewhale-engine --lib -- delay_for_attempt token_bucket`: 7 passed - `cargo clippy -p codewhale-runtime -p codewhale-engine --all-targets --all-features --locked -- -D warnings`: clean - `cargo fmt 
+- **Issue #7322** (2026-11-12): **fix(tui): count characters, not bytes, for the session title limit**
+  *Symptoms*: ## What and why  Renaming a session in the session picker rejected a 36-character Chinese title as too long ("1–100 characters").  - **Root cause**: `SessionPickerView::rename_selected` checked `new_title.len() > 100`, which counts bytes. A CJK character is three bytes in UTF-8, so a Chinese title over 33 characters failed the check. The engine's own rename validation already counts characters against `MAX_SESSION_TITLE_CHARS`. - **Fix**: the picker counts characters and uses `MAX_SESSION_TITLE_CHARS` instead of the literal `100`, so it matches the engine and the message.  ## Where this came from  Bug fix, no issue.  ## How I tested it  - New regression test `rename_selected_limits_title_by_characters` (36 Chinese characters, 108 bytes). It fails on `main` (the rename is rejected) and passes with the fix. - With the branch merged onto current `main`: `RUST_MIN_STACK=16777216 cargo test --locked -p codewhale-tui --lib -- session_picker::tests::rename_selected`: 2 passed, 0 failed. With the old byte check put back: 1 passed, 1 failed (`rename_selected_limits_title_by_characters`). - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and tests cover new or changed behavior - [ ] If this adds or changes a user-facing feature, I updated its docs and its row in `docs/features.toml` (not applicable: bug fix only) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,394 +1845,924 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a7db594` (2026-11-11)
-**Commit Message**: fix(web): hanging indent only on single-line install commands; align the wrapped pipe (CW-8048 INSTALL)
+### Incident Patch 1: `3f2a0194` (2026-11-12)
+**Commit Message**: fix(state,snapshot): keep index entries after a torn line and clamp prune age (#7316)
 
-Under 35rem text-indent -2ch moved only the first line, so every line after a
-hard newline in the PATH and npm-prefix blocks sat 2ch right of the first and
-read as one soft-wrapped line. The indent now applies to a .code-block-single
-modifier set when the command has no newline; multi-line blocks keep pre-wrap
-with no indent. The pipe segment is sliced at pipeAt + 1 so "| sh" aligns with
-the URL continuation. At 375 the hero command wraps onto three lines.
+* fix(state,snapshot): keep index entries after a torn line and clamp prune age
 
-Checks from web/ under the heavy lock: tsc 0, lint 0, check:locales 0, full
-vitest 90 files / 1314 of 1314 passed, build 0, shoot.mjs 16 screenshots, 0
-problems, 0 overflow. /en/install at 375 checked by eye (PATH block aligned).
+Session index: a crash mid-append leaves a final line with no trailing
+newline. The next append_thread_name wrote straight after it, so the new
+entry joined the fragment, failed to parse and was skipped, and the name
+the caller had just saved was lost. Start the entry on a new line when
+the file does not end in one. The existing torn-line test wrote its
+fragment with writeln!, so it never covered the unterminated case.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Snapshot prune: cutoff was `now - max_age.as_secs() as i64`. A
+max_age_days above about 1.07e14 (for example i64::MAX as "keep
+forever") gives more than i64::MAX seconds after saturating_mul, the
+cast wraps negative, the cutoff lands in the future and every snapshot
+is pruned at boot. Clamp to i64::MAX and use saturating_sub.
 
-**File**: `web/app/styles/primitives.css` (modified, +4/-2)
+Both new tests fail on main (thread-3 lookup None; 1 snapshot removed
+instead of 0) and pass here: codewhale-state 28 passed,
+codewhale-snapshot 92 passed.
+
+Refs #7298
+
+* chore: keep changelog edits out of the branch
+
+**File**: `crates/snapshot/src/repo.rs` (modified, +17/-1)
 ```diff
-@@ -591,11 +591,13 @@ a.dir-row:hover .dir-action { color: var(--text); }
- @media (max-width: 35rem) {
-   .code pre.code-block {
-     padding-right: var(--space-4);
--    padding-left: calc(var(--space-4) + 2ch);
--    text-indent: -2ch;
-     white-space: pre-wrap;
-     overflow-wrap: anywhere;
-   }
-+  .code pre.code-block-single {
-+    padding-left: calc(var(--space-4) + 2ch);
-+    text-indent: -2ch;
-+  }
-   .code .code-seg-pipe { display: block; text-indent: 0; }
-   .code .code-copy {
-     position: static;
+@@ -1851,7 +1851,7 @@ impl SnapshotRepo {
+             .duration_since(UNIX_EPOCH)
+             .map_err(|e| io_other(format!("clock error: {e}")))?
+             .as_secs() as i64;
+-        let cutoff = now - max_age.as_secs() as i64;
++        let cutoff = now.saturating_sub(i64::try_from(max_age.as_secs()).unwrap_or(i64::MAX));
+ 
+         let snapshots = self.list(usize::MAX)?;
+         if snapshots.is_empty() {
+@@ -3949,6 +3949,22 @@ mod tests {
+         assert_eq!(list[0].label, "turn:1");
+     }
+ 
++    #[test]
++    fn prune_with_an_age_beyond_i64_keeps_every_snapshot() {
++        let tmp = tempdir().unwrap();
++        let (repo, _home) = make_repo(tmp.path());
++        std::fs::write(repo.work_tree().join("f.txt"), "v0").unwrap();
++        repo.snapshot("turn:0").unwrap();
++        std::thread::sleep(Duration::from_millis(1100));
++
++        let removed = repo
++            .prune_older_than(Duration::from_secs(u64::MAX))
++            .unwrap();
++
++        assert_eq!(removed, 0);
++        assert_eq!(repo.list(10).unwrap().len(), 1);
++    }
++
+     /// The 2026-08-04 regression: with a cut in the MIDDLE of history,
+     /// `prune_older_than` used to `update-ref HEAD <oldest survivor>`, which
+     /// orphaned (and gc destroyed) the NEWEST snapshots while keeping the
 ```
 
-**File**: `web/components/install-code-block.tsx` (modified, +3/-2)
+**File**: `crates/state/src/lib.rs` (modified, +37/-2)
 ```diff
-@@ -37,12 +37,13 @@ export function InstallCodeBlock({ cmd, copyLabel = "Copy", copiedLabel = "Copie
+@@ -11,7 +11,7 @@ mod runtime_aliases;
+ 
+ use std::collections::HashMap;
+ use std::fs::{self, OpenOptions};
+-use std::io::{BufRead, BufReader, Write};
++use std::io::{BufRead, BufReader, Read, Seek, SeekFrom, Write};
+ use std::path::{Path, PathBuf};
+ use std::sync::{Arc, LazyLock, Mutex, MutexGuard};
+ 
+@@ -1453,6 +1453,7 @@ impl StateStore {
+         self.with_session_index_lock(|| {
+             let mut file = OpenOptions::new()
+                 .create(true)
++                .read(true)
+                 .append(true)
+                 .open(&self.session_index_path)
+                 .with_context(|| {
+@@ -1461,7 +1462,14 @@ impl StateStore {
+                         self.session_index_path.display()
+                     )
+                 })?;
+-            writeln!(file, "{encoded}").context("failed to append session index entry")?;
++            let mut last = *b"\n";
++            if file.metadata()?.len() > 0 {
++                file.seek(SeekFrom::End(-1))?;
++                file.read_exact(&mut last)?;
++            }
++            let separator = if last[0] == b'\n' { "" } else { "\n" };
++            writeln!(file, "{separator}{encoded}")
++                .context("failed to append session index entry")?;
+             // Durability: without this a crash mid-write can leave a torn
+             // final line. Reads tolerate one (see `session_index_map`), but
+             // not losing the entry beats recovering from having lost it.
+@@ -2922,6 +2930,33 @@ mod tests {
+         );
      }
-   };
  
--  const pipeAt = cmd.includes("\n") ? -1 : cmd.indexOf(" | ");
-+  const multiline = cmd.includes("\n");
-+  const pipeAt = multiline ? -1 : cmd.indexOf(" | ");
-   const copiedWord = copiedLabel.replace(/\s*✓\s*$/u, "");
- 
-   return (
-     <div className="code">
--      <pre tabIndex={0} className="code-block">{pipeAt < 0 ? cmd : (<><span className="code-seg">{cmd.slice(0, pipeAt)}</span><span className="code-seg code-seg-pipe">{cmd.slice(pipeAt)}</span></>)}</pre>
-+      <pre tabIndex={0} className={multiline ? "code-block" : "code-block code-block-single"}>{pipeAt < 0 ? cmd : (<><span className="code-seg">{cmd.slice(0, pipeAt)}</span><span className="code-seg code-seg-pipe">{cmd.slice(pipeAt + 1)}</span></>)}</pre>
-       <button
-         type="button"
-         lang={copyLocale}
++    #[test]
++    fn session_index_append_after_an_unterminated_torn_line_is_kept() {
++        let store = temp_state_store("session-index-unterminated");
++        store
++            .append_thread_name("thread-1", Some("first".to_string()), 1, None)
++            .expect("append first entry");
++        {
++            let mut file = OpenOptions::new()
++                .append(true)
++                .open(&store.session_index_path)
++                .expect("open session index");
++            write!(file, "{{\"thread_id\":\"thread-2\",\"thread_na").expect("write torn line");
++        }
++
++        store
++            .append_thread_name("thread-3", Some("third".to_string()), 3, None)
++            .expect("append third entry");
++
++        assert_eq!(
++            store
++                .find_thread_name_by_id("thread-3")
++                .expect("lookup thread-3")
++                .as_deref(),
++            Some("third"),
++        );
++    }
++
+     /// Hook fired by compaction between writing the snapshot and renaming it
+     /// over the live index — the window a concurrent append can be lost in.
+     /// Only the store whose path a test registered is affected, so tests
 ```
 
 ---
 
-### Incident Patch 2: `12f91724` (2026-11-11)
-**Commit Message**: tui: connecting a route after "explore offline" ends offline queueing (CW-8031)
+### Incident Patch 2: `97c1ad92` (2026-11-13)
+**Commit Message**: feat(web): first-time guide for people who have never used a terminal (CW-8181)
 
-choose_offline_explore sets offline_mode, but route activation through
-switch_provider only cleared the explore label, so every later message was
-held as "Saved for later" until restart. clear_offline_explore_on_route_activation
-now also clears offline_mode and returns a held message to the composer; the
-rejected-key path (apply.rs) still sets offline_mode and is unchanged.
+New docs page /docs/first-time ("Use Codewhale for the first time", en + zh)
+on the existing DocArticle renderer and docs-map registry. It covers opening a
+terminal on macOS, Windows and Linux; installing and checking the version;
+choosing the folder Codewhale works in and when that choice matters; opening a
+terminal in a folder from Finder (Services > New Terminal at Folder),
+File Explorer (Open in Terminal / Open PowerShell window here), `cd` + drag,
+or `codewhale -C <dir>`; first run and provider choice; a first task; and
+Esc, /undo, /diff, /receipts, /exit and `codewhale --continue`.
 
-Checks (Boat farm, RUST_MIN_STACK=64MiB, cargo test -p codewhale-tui --lib,
-filters tui::onboarding, route_activation_after_offline, tui::ui::tests::failed_,
-provider_, reselecting): 68 passed, 0 failed. Without RUST_MIN_STACK two
-failed_*_activation tests overflow the stack on unmodified main too.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Every claim was checked against the v0.10.2 release, not main:
+- workspace = current directory or -C/--workspace (resolve_workspace)
+- file tools stay in the workspace unless /trust add, /trust on or Full Access
+- Seatbelt on macOS, bubblewrap on Linux only when installed, no Windows sandbox
+- snapshots and /undo are off in /, home, and ~/Desktop, Documents,
+  Downloads, Library, Movies, Music and Pictures themselves
+  (unsafe_workspace_snapshot_reason); snapshots do not need git
+- no-git folders ask before edits ("No
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - The install guide's note for a first message that gets no answer now describes v0.10.2: connect a model with `/provider`, and restart if messages stay saved for later after you connect. It described v0.10.0's key screen. The Chinese guide carries the same correction.
- - Project activity on the site now comes from a server-side snapshot with a freshness record, the browser no longer calls GitHub, and count sentences use the right plural form in every language.
- - The install page now gives the exact steps for the released version on every platform, including what the installer adds to PATH, how to turn off usage counting, and how to remove it, and the install command no longer gets cut off on phones.
-+- After choosing "explore offline" on first run, connecting a provider or Custom endpoint with /provider now takes effect immediately; messages are no longer held as "Saved for later" until restart, and a message held while offline returns to the composer.
- - The pet browser view opens with a one-time code instead of the long-lived owner token, so the token no longer appears in the URL or the launcher command line. The code lasts 30 seconds and works once; the owner token itself is still stored in the cookie and connection file and is not rotated. Not run in a real browser.
- - On Windows with Caps Lock on, Ctrl+E moves to the end of the line again instead of opening the file tree; the file tree now needs an explicit Shift (Ctrl+Shift+E or Cmd+Shift+E), so a terminal that reports an uppercase E with Ctrl but no Shift flag can no longer toggle it. The Caps Lock key event is simulated from the input library source; no native Windows run.
- - External agents installed through npm on Windows (`claude.cmd`, `codex.cmd`, ...) are now found instead of the unrunnable shell shim, `GET /v1/agents/external` says whether an agent answered with an unsupported protocol rather than reporting every failure as no answer, and a hung `--version` or handshake probe no longer leaves the agent's child processes running. Verified on macOS and Linux; the Windows code has never been compiled or run, and no agent row is qualified by this change.
+@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Qwen Code as an external agent:** Codewhale now finds an installed Qwen Code CLI (`qwen`, 0.6.1 or newer) and can run it as a session over ACP with `qwen --acp`. `GET /v1/agents/external` lists it, an older install is reported as needing `npm i -g @qwen-code/qwen-code@latest`, and sign-in stays inside Qwen Code (`/auth`). Thanks [@MannXo](https://github.com/MannXo) (#7293).
+ - **README and contributor credit:** the repository front page now opens the way the website does: the line "The model can be anyone's. The agent should be yours.", one sentence on what Codewhale is, the install command and one picture, with reference detail moved into the linked guides; the 18 translated READMEs follow the same structure and say they are machine-drafted. The contributor wall and the website now count the same 433 people (407 GitHub accounts and the commit authors whose email is not linked to an account), where the website had counted accounts only. `DEPENDENCY_SECURITY.md` moved into `docs/dependency-maintenance.md`, and `.github/SUPPORT.md` says where to ask for help.
+ - **Website Plugins page:** The website's Plugins page now describes what the released version does, and a labelled section says what 0.10.3 adds: one Plugins place, Standard and Creator mode, and the Permissions control.
++- **First-time guide on the website:** a new docs page, "Use Codewhale for the first time" (`/docs/first-time`, English and Simplified Chinese), walks someone who has never used a terminal through opening one, installing, choosing the folder Codewhale works in and when that choice matters, opening a terminal in a folder from Finder or File Explorer, connecting a model, a first task, and stopping, undoing and quitting. The install page gains a short "New to the terminal?" block for macOS and Windows that links to it, and `llms.txt` carries the same steps.
+ - **Plugin docs and plugin-creator:** Docs now say everything you add is a plugin. The bundled plugin-creator skill no longer tells an agent never to trust or enable a plugin (in Full Access it may, for one it wrote and installed from its project), points code and screen plugins at cordis-plugin-development, and an untouched copy from 0.10.2 now upgrades. The Chinese extension and Runtime API docs now say editor ACP sessions get plugin tools and configured MCP servers.
+ - **Model thinking:** New installs show model thinking by default: it streams live in the transcript and collapses under a "Thought for …" header when the answer starts. Existing installs keep their saved setting; turn it on under Model reasoning in chat in /config.
+ - **Footer clock:** The footer clock and phase now say "thinking", matching the transcript.
 ```
 
-**File**: `crates/tui/src/tui/onboarding/mod.rs` (modified, +44/-3)
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -507,12 +507,20 @@ pub fn choose_offline_explore(app: &mut App) {
-     app.needs_redraw = true;
- }
- 
--/// Clear the offline-explore label once a real route is activated (#3927).
-+/// Retire the offline-explore state once a real route is activated (#3927).
- ///
--/// This is the *only* thing that retires the label: it is not time-based and
--/// not cleared by dismissing a screen.
-+/// This is the *only* thing that retires the label and the offline queueing it
-+/// armed: it is not time-based and not cleared by dismissing a screen. A
-+/// message held while offline is returned to the composer so the person can
-+/// send it on the route that just became active; any further held messages
-+/// drain after that turn completes.
- pub fn clear_offline_explore_on_route_activation(app: &mut App) {
-     app.onboarding_explore_offline = false;
-+    if app.offline_mode {
-+        app.offline_mode = false;
-+        app.pop_last_queued_into_draft();
-+        app.needs_redraw = true;
-+    }
- }
- 
- /// Finish first run from the ready screen and land in the real composer,
-@@ -699,6 +707,39 @@ mod tests {
- 
-         clear_offline_explore_on_route_activation(&mut app);
-         assert!(!app.onboarding_explore_offline);
-+        assert!(!app.offline_mode);
-+        assert_eq!(
-+            app.decide_submit_disposition(),
-+            crate::tui::app::SubmitDisposition::Immediate
-+        );
-+    }
-+
-+    #[test]
-+    fn route_activation_returns_the_held_message_to_the_composer() {
-+        let mut app = test_app_with_locale(Locale::En);
-+        app.trust_mode = true;
-+        choose_offline_explore(&mut app);
-+        app.input.clear();
-+        app.queue_message(crate::tui::app::QueuedMessage::new("first task".to_string(), None));
-+        assert_eq!(
-+            app.decide_submit_disposition(),
-+            crate::tui::app::SubmitDisposition::Queue
-+        );
-+
-+        clear_offline_explore_on_route_activation(&mut app);
-+
-+        assert_eq!(app.input, "first task");
-+        assert!(app.queued_messages.is_empty());
-+    }
-+
-+    #[test]
-+    fn rejected_key_offline_stays_queued_without_route_activation() {
-+        let mut app = test_app_with_locale(Locale::En);
-+        app.offline_mode = true;
-+        assert_eq!(
-+            app.decide_submit_disposition(),
-+            crate::tui::app::SubmitDisposition::Queue
-+        );
-     }
- 
-     // ── Conditional required steps: the counter ──────────────────────────
+@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Qwen Code as an external agent:** Codewhale now finds an installed Qwen Code CLI (`qwen`, 0.6.1 or newer) and can run it as a session over ACP with `qwen --acp`. `GET /v1/agents/external` lists it, an older install is reported as needing `npm i -g @qwen-code/qwen-code@latest`, and sign-in stays inside Qwen Code (`/auth`). Thanks [@MannXo](https://github.com/MannXo) (#7293).
+ - **README and contributor credit:** the repository front page now opens the way the website does: the line "The model can be anyone's. The agent should be yours.", one sentence on what Codewhale is, the install command and one picture, with reference detail moved into the linked guides; the 18 translated READMEs follow the same structure and say they are machine-drafted. The contributor wall and the website now count the same 433 people (407 GitHub accounts and the commit authors whose email is not linked to an account), where the website had counted accounts only. `DEPENDENCY_SECURITY.md` moved into `docs/dependency-maintenance.md`, and `.github/SUPPORT.md` says where to ask for help.
+ - **Website Plugins page:** The website's Plugins page now describes what the released version does, and a labelled section says what 0.10.3 adds: one Plugins place, Standard and Creator mode, and the Permissions control.
++- **First-time guide on the website:** a new docs page, "Use Codewhale for the first time" (`/docs/first-time`, English and Simplified Chinese), walks someone who has never used a terminal through opening one, installing, choosing the folder Codewhale works in and when that choice matters, opening a terminal in a folder from Finder or File Explorer, connecting a model, a first task, and stopping, undoing and quitting. The install page gains a short "New to the terminal?" block for macOS and Windows that links to it, and `llms.txt` carries the same steps.
+ - **Plugin docs and plugin-creator:** Docs now say everything you add is a plugin. The bundled plugin-creator skill no longer tells an agent never to trust or enable a plugin (in Full Access it may, for one it wrote and installed from its project), points code and screen plugins at cordis-plugin-development, and an untouched copy from 0.10.2 now upgrades. The Chinese extension and Runtime API docs now say editor ACP sessions get plugin tools and configured MCP servers.
+ - **Model thinking:** New installs show model thinking by default: it streams live in the transcript and collapses under a "Thought for …" header when the answer starts. Existing installs keep their saved setting; turn it on under Model reasoning in chat in /config.
+ - **Footer clock:** The footer clock and phase now say "thinking", matching the transcript.
 ```
 
-**File**: `crates/tui/src/tui/ui/tests.rs` (modified, +34/-0)
+**File**: `web/app/[locale]/docs/first-time/page.tsx` (added, +19/-0)
 ```diff
-@@ -11043,6 +11043,40 @@ async fn provider_switch_clears_turn_cache_history() {
-     assert!(app.session.turn_cache_history.is_empty());
- }
- 
-+#[tokio::test]
-+async fn route_activation_after_offline_explore_sends_instead_of_holding() {
-+    let _home = SettingsHomeGuard::new();
-+    let mut app = create_test_app();
-+    app.trust_mode = true;
-+    crate::tui::onboarding::choose_offline_explore(&mut app);
-+    app.input.clear();
-+    app.queue_message(QueuedMessage::new("first task".to_string(), None));
-+    assert_eq!(
-+        app.decide_submit_disposition(),
-+        crate::tui::app::SubmitDisposition::Queue
-+    );
+@@ -0,0 +1,19 @@
++import { DocArticle } from "../_components/doc-article";
++import { getDocsFirstTime } from "@/lib/i18n/dictionaries";
++import { buildPageMetadata } from "@/lib/page-meta";
 +
-+    let mut engine = mock_engine_handle();
-+    let mut config = Config::default();
-+    let identity = (config).test_identity_for_kind(ProviderKind::Ollama);
-+    switch_provider(
-+        &mut app,
-+        &mut engine.handle,
-+        &mut config,
-+        identity,
-+        Some("fixture-local:tag".to_string()),
-+    )
-+    .await;
-+
-+    assert!(!app.offline_mode);
-+    assert_eq!(
-+        app.decide_submit_disposition(),
-+        crate::tui::app::SubmitDisposition::Immediate
-+    );
-+    assert_eq!(app.input, "first task");
-+    assert!(app.queued_messages.is_empty());
++export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
++  const { locale } = await params;
++  const t = getDocsFirstTime(locale);
++  return buildPageMetadata({
++    path: "/docs/first-time",
++    locale,
++    title: t.metaTitle,
++    description: t.metaDescription,
++  });
 +}
 +
- /// #6566: re-selecting the provider already in use (first-run key entry)
- /// reads as a connection, not as a switch from a provider to itself.
- #[tokio::test]
++export default async function FirstTimePage({ params }: { params: Promise<{ locale: string }> }) {
++  const { locale } = await params;
++  return <DocArticle t={getDocsFirstTime(locale)} locale={locale} />;
++}
+```
+
+**File**: `web/app/[locale]/install/page.tsx` (modified, +24/-0)
+```diff
+@@ -97,6 +97,30 @@ export default async function InstallPage({ params }: { params: Promise<{ locale
+         <div lang={copyLocale}>
+           {locale === "zh" ? mirrors : null}
+ 
++          <Block id="install-new-to-terminal" title={t(INSTALL_COPY.newTitle)}>
++            {p(INSTALL_COPY.newLead)}
++            <Channel id="install-new-macos" title={t(INSTALL_COPY.newMacTitle)}>
++              <ol>
++                <li><Rich text={t(INSTALL_COPY.newMac1)} /></li>
++                <li><Rich text={t(INSTALL_COPY.newMac2)} />{code(INSTALL_COMMANDS.shell)}</li>
++                <li><Rich text={t(INSTALL_COPY.newMac3)} /></li>
++              </ol>
++            </Channel>
++            <Channel id="install-new-windows" title={t(INSTALL_COPY.newWinTitle)}>
++              <ol>
++                <li><Rich text={t(INSTALL_COPY.newWin1)} /></li>
++                <li><Rich text={t(INSTALL_COPY.newWin2)} />{code(INSTALL_COMMANDS.windows)}</li>
++                <li><Rich text={t(INSTALL_COPY.newWin3)} /></li>
++              </ol>
++            </Channel>
++            <p>
++              <Link href={`/${locale}/docs/first-time`} className="section-link">
++                {t(INSTALL_COPY.newNext)}
++                <Icon name="arrow-right" className="icon icon-flip" />
++              </Link>
++            </p>
++          </Block>
++
+           <Block id="install-path" title={t(INSTALL_COPY.pathTitle)}>
+             {p(INSTALL_COPY.pathPlaces)}
+             <ul>
+```
+
+**File**: `web/app/styles/install-guide.css` (modified, +1/-0)
+```diff
+@@ -23,6 +23,7 @@
+ .install-guide ul { list-style: disc; }
+ .install-guide ol { list-style: decimal; }
+ .install-guide li { margin-block: var(--space-1); }
++.install-guide li > .code { margin-block: var(--space-3); }
+ .install-guide ::marker { color: var(--muted); }
+ .install-guide a:not(.btn) { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); text-underline-offset: 0.2em; }
+ .install-guide a:not(.btn):hover { text-decoration-color: var(--accent); }
+```
+
+**File**: `web/data/agent-docs.release-index.json` (modified, +1/-0)
+```diff
+@@ -1,6 +1,7 @@
+ {
+   "tag": "v0.10.2",
+   "slugs": [
++    "first-time",
+     "install",
+     "guide",
+     "auth",
+```
+
+**File**: `web/gt-catalog/en.json` (modified, +273/-0)
+```diff
+@@ -2299,6 +2299,279 @@
+     ],
+     "sourceNote": "Source documents: docs/public-surface-facts.json (trust), docs/TELEMETRY.md, docs/SANDBOX.md · Update docs-map.ts when changing."
+   },
++  "docs-first-time": {
++    "metaTitle": "Use Codewhale for the first time · Codewhale Docs",
++    "metaDescription": "Open a terminal, install Codewhale, pick the folder it works in, connect a model and finish a first task, with no terminal experience needed.",
++    "bodyClassName": "text-ink-soft leading-relaxed",
++    "title": "Use Codewhale for the first time",
++    "lede": "This page takes you from opening a terminal for the first time to finishing a small task with Codewhale. It also explains which folder to start in, because that folder decides what Codewhale can change.",
++    "sections": [
++      {
++        "id": "what-you-need",
++        "title": "Check what you need",
++        "blocks": [
++          {
++            "p": "You need a Mac, a Windows x64 PC or a Linux computer, and an internet connection for the install. To get answers you also need a model: an API key from a hosted provider such as DeepSeek, or a model running on your own computer with Ollama."
++          },
++          {
++            "p": "Codewhale is free and needs no account. A hosted provider bills you directly for what you use, and a model you run yourself needs no key."
++          }
++        ]
++      },
++      {
++        "id": "open-terminal",
++        "title": "Open a terminal",
++        "blocks": [
++          {
++            "p": "A terminal is a window where you type commands instead of clicking. A command runs when you press Return, which is Enter on Windows."
++          },
++          {
++            "rows": [
++              [
++                "macOS",
++                "Press Cmd+Space, type Terminal and press Return."
++              ],
++              [
++                "Windows",
++                "Open the Start menu, type PowerShell and press Enter."
++              ],
++              [
++                "Linux",
++                "Open your applications menu and search for Terminal. On Ubuntu, Ctrl+Alt+T opens one."
++              ]
++            ]
++          },
++          {
++            "note": "Paste with Cmd+V on a Mac and Ctrl+V on Windows. Most Linux terminals paste with Ctrl+Shift+V."
++          }
++        ]
++      },
++      {
++        "id": "install",
++        "title": "Install Codewhale",
++        "blocks": [
++          {
++            "p": "On a Mac or Linux, paste this command and press Return. It downloads Codewhale, checks the download, and adds Codewhale to your PATH, the list of folders your terminal searches for commands."
++          },
++          {
++            "code": "curl -fsSL https://codewhale.net/install.sh | sh",
++            "lang": "macOS · Linux"
++          },
++          {
++            "p": "On Windows, paste this command and press Enter:"
++          },
++          {
++            "code": "winget install --id HunterBown.CodeWhale --exact --source winget",
++            "lang": "Windows"
++          },
++          {
++            "p": "When it finishes, open a new terminal window so it picks up the new PATH. Then check that it worked: a version number means Codewhale is installed."
++          },
++          {
++            "code": "codewhale --version",
++            "lang": "Terminal"
++          },
++          {
++            "p": "If the terminal says `command not found`, follow [the PATH steps on the install page](/install#install-path)."
++          }
++        ]
++      },
++      {
++        "id": "choose-folder",
++        "title": "Choose the folder to work in",
++        "blocks": [
++          {
++            "p": "Codewhale works in the folder your terminal is in when you start it. That folder is its workspace: Codewhale reads and changes files there, and its file tools cannot reach other folders unless you allow it."
++          },
++          {
++            "p": "On a Mac, an operating-system sandbox also stops its commands from writing outside the workspace, apart from temporary files. Linux gets the same sandbox when bubblewrap is installed. Windows has no such sandbox yet, so Codewhale relies on asking you first."
++          },
++          {
++            "rows": [
++              [
++                "A folder for one project",
++                "The best choice for most work. Codewhale sees only that project, and `/undo` can take back what it changed."
++              ],
++              [
++                "A new, empty folder",
++                "A good start for something new, such as a website or a script. The next section shows how to make one."
++              ],
++              [
++                "A folder that holds several projects",
++                "Lets one task read and change files across all of them. Pick the smallest folder that holds everything the task needs; in a very large folder Codewhale turns snapshots off and tells you."
++              ],
++              [
++                "Your home folder, Desktop, Documents or
+```
+
+**File**: `web/gt-catalog/zh.json` (modified, +273/-0)
+```diff
+@@ -2296,6 +2296,279 @@
+     ],
+     "sourceNote": "来源文档：docs/public-surface-facts.json（trust）、docs/TELEMETRY.md、docs/SANDBOX.md · 修改时同步更新 docs-map.ts。"
+   },
++  "docs-first-time": {
++    "metaTitle": "第一次使用 Codewhale · Codewhale 文档",
++    "metaDescription": "打开终端、安装 Codewhale、选择它工作的文件夹、连接模型并完成第一个任务，不需要任何终端经验。",
++    "bodyClassName": "text-ink-soft leading-[1.9] tracking-wide",
++    "title": "第一次使用 Codewhale",
++    "lede": "这一页带你从第一次打开终端开始，一直到用 Codewhale 完成一个小任务。它还会说明应该从哪个文件夹启动，因为这个文件夹决定了 Codewhale 能修改什么。",
++    "sections": [
++      {
++        "id": "what-you-need",
++        "title": "确认你需要准备什么",
++        "blocks": [
++          {
++            "p": "你需要一台 Mac、一台 Windows x64 电脑或一台 Linux 电脑，安装时还需要联网。要得到回答，你还需要一个模型：来自 DeepSeek 等托管提供商的 API 密钥，或者用 Ollama 在你自己电脑上运行的模型。"
++          },
++          {
++            "p": "Codewhale 免费，也不需要账号。托管提供商会按你的用量直接向你收费；你自己运行的模型不需要密钥。"
++          }
++        ]
++      },
++      {
++        "id": "open-terminal",
++        "title": "打开终端",
++        "blocks": [
++          {
++            "p": "终端是一个用输入命令代替点击的窗口。按下回车键后，命令就会运行。"
++          },
++          {
++            "rows": [
++              [
++                "macOS",
++                "按 Cmd+空格键，输入 Terminal，然后按回车键。"
++              ],
++              [
++                "Windows",
++                "打开“开始”菜单，输入 PowerShell，然后按回车键。"
++              ],
++              [
++                "Linux",
++                "打开应用程序菜单并搜索“终端”。在 Ubuntu 上，按 Ctrl+Alt+T 也能打开。"
++              ]
++            ]
++          },
++          {
++            "note": "在 Mac 上用 Cmd+V 粘贴，在 Windows 上用 Ctrl+V 粘贴。大多数 Linux 终端用 Ctrl+Shift+V 粘贴。"
++          }
++        ]
++      },
++      {
++        "id": "install",
++        "title": "安装 Codewhale",
++        "blocks": [
++          {
++            "p": "在 Mac 或 Linux 上，粘贴下面这条命令并按回车键。它会下载 Codewhale、校验下载内容，并把 Codewhale 加入 PATH，也就是终端查找命令时会搜索的文件夹列表。"
++          },
++          {
++            "code": "curl -fsSL https://codewhale.net/install.sh | sh",
++            "lang": "macOS · Linux"
++          },
++          {
++            "p": "在 Windows 上，粘贴下面这条命令并按回车键："
++          },
++          {
++            "code": "winget install --id HunterBown.CodeWhale --exact --source winget",
++            "lang": "Windows"
++          },
++          {
++            "p": "安装完成后，打开一个新的终端窗口，让它读取新的 PATH。然后确认安装成功：显示版本号就说明 Codewhale 已经安装好了。"
++          },
++          {
++            "code": "codewhale --version",
++            "lang": "终端"
++          },
++          {
++            "p": "如果终端提示 `command not found`，请按照[安装页面上的 PATH 步骤](/install#install-path)操作。"
++          }
++        ]
++      },
++      {
++        "id": "choose-folder",
++        "title": "选择工作的文件夹",
++        "blocks": [
++          {
++            "p": "Codewhale 在你启动它时终端所在的文件夹里工作。这个文件夹就是它的工作区：Codewhale 在这里读取和修改文件，除非你允许，它的文件工具无法访问其他文件夹。"
++          },
++          {
++            "p": "在 Mac 上，操作系统沙箱还会阻止它的命令写入工作区以外的位置（临时文件除外）。在 Linux 上，安装 bubblewrap 后也有同样的沙箱。Windows 目前还没有这种沙箱，因此 Codewhale 依靠先征求你的同意。"
++          },
++          {
++            "rows": [
++              [
++                "只放一个项目的文件夹",
++                "大多数情况下的最佳选择。Codewhale 只看到这个项目，`/undo` 可以撤回它做的修改。"
++              ],
++              [
++                "一个新的空文件夹",
++                "适合开始做新东西，比如一个网站或一个脚本。下一节会说明如何创建。"
++              ],
++              [
++                "包含多个项目的文件夹",
++                "让一个任务可以读取和修改所有这些项目里的文件。请选择能装下任务所需全部内容的最小文件夹；文件夹非常大时，Codewhale 会关闭快照并告诉你。"
++              ],
++              [
++                "你的主文件夹、桌面、文稿或下载",
++                "Codewhale 可以在这里运行，但在这些文件夹本身中 `/undo` 和快照是关闭的，因为它们范围太大，无法安全地做快照。它们里面的子文件夹可以正常使用。"
++              ]
++            ]
++          },
++          {
++            "note": "快照是 Codewhale 为它修改的文件保存的副本。它们保存在 Codewhale 的设置文件夹里，而不是你的项目里，并且不需要 git。"
++          },
++          {
++            "p": "要让 Codewhale 多访问一个文件夹，请在 Codewhale 中输入 `/trust add` 和该文件夹的路径。Full Access 模式可以访问所有文件夹，并且在没有沙箱的情况下运行命令，所以只有在你希望 Codewhale 在整台电脑范围内工作时才使用它。"
++          },
++          {
++            "p": "默认情况下，在 git 仓库中 Codewhale 会直接修改文件，并向你展示改了什么。在没有 git 的文件夹中，它会在每次修改前询问你。"
++          }
++        ]
++      },
++      {
++        "id": "open-in-folder",
++        "title": "在那个文件夹中打开终端",
++        "blocks": [
++          {
++            "rows": [
++              [
++                "macOS 访达",
++                "按住 Control 点按该文件夹，选择“服务”>“新建位于文件夹位置的终端窗口”。如果没有这一项，请在“系统设置”>“键盘”>“键盘快捷键”>“服务”>“文件和文件夹”中打开它。"
++              ],
++              [
++                "Windows 文件资源管理器",
++                "右键点击该文件夹，选择“在终端中打开”。在 Windows 10 上，按住 Shift 再右键点击，选择“在此处打开 PowerShell 窗口”。"
++              ],
++              [
++                "任意终端",
++                "输入 `cd` 和一个空格，把文件夹从访达或文件资源管理器拖进窗口，然后按回车键。"
++              ],
++              [
++                "不切换文件夹",
++                "启动 Codewhale 时加上 `-C` 和文件夹路径，例如在 Mac 上输入 `codewhale -C ~/Projects/my-site`。"
++              ]
++            ]
++          },
++          {
++            "p": "下面这些命令可以在终端里切换和查看文件夹。它们在 Mac、Linux 和 PowerShell 中都能用。"
++          },
++          {
++            "codeTerms": true,
++            "rows": [
++            
 ```
 
 ---
 
-### Incident Patch 3: `97014b29` (2026-11-11)
-**Commit Message**: fix(web): announce the read date on /contribute and drop unused feed code (CW-8048 FACTS-D)
+### Incident Patch 3: `30952497` (2026-11-12)
+**Commit Message**: fix(mcp,lsp): answer server requests instead of taking them as replies (#7319)
 
-The merged-count paragraph carried its read date in aria-label, which
-ARIA does not allow on a paragraph, and the milestone progress had only
-a title. Both now keep the title and add the read date as visually
-hidden text (the site's sr-only class), so screen readers announce it.
-The visible text is unchanged. The repo-activity test now asserts the
-hidden read date on the count and on every milestone progress, and no
-aria-label on a paragraph; it fails against the previous page.
+* fix(mcp,lsp): answer server requests instead of taking them as replies
 
-Removes the JSDoc line added on extractPluralBlocks in
-check-locales.mjs (the repository takes no new code comments).
+A JSON-RPC message with a `method` is a request or a notification, never
+a reply, but both clients matched any message carrying an `id` against
+their own pending requests. Servers number their requests independently,
+so a server `ping` (MCP) or `workspace/configuration` (LSP) that shared an
+id with an in-flight request resolved that request with no result, the
+real reply was then dropped, and the server's request was never answered.
 
-git grep shows nothing uses the .feed-card* classes or imports
-lib/truncate.ts (only its own test did) after the feed card was
-removed, so the seven CSS rules, lib/truncate.ts and its test go.
+Both clients now skip messages with a `method` when matching replies and
+answer server requests: MCP replies to `ping` with an empty result and to
+anything else with -32601; LSP replies -32601 through the outbound queue
+without blocking the dispatcher.
 
-Checks from web/: vitest lib/repo-activity.test.ts 20/20 passed;
-check:facts, check:docs, check:locales, tsc --noEmit, lint all exit 0.
+Tests: cargo test -p codewhale-lsp (65 passed); cargo test -p
+codewhale-engine --lib mcp:: (371 passed). The two new tests fail on main.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Fixes #7306
 
-**File**: `web/app/[locale]/contribute/page.tsx` (modified, +2/-1)
+* fix(mcp): keep the in-flight reply when answering a server request fails
+
+The reply to a server request (`ping`, or -32601 for anything else) was
+sent with `self.send(reply).await?`. A failed send fail
+
+**File**: `crates/engine/src/mcp.rs` (modified, +44/-0)
 ```diff
-@@ -169,7 +169,7 @@ export default async function ContributePage({ params }: { params: Promise<{ loc
-             scope={pickText(PROJECT_COPY.mergedPageScope, locale)}
-             link={<Link href="#milestones" className="btn btn-secondary">{pickText(PROJECT_COPY.goalsLink, locale)}<Icon name="arrow-right" className="icon icon-flip" /></Link>}
-           >
--            {mergedCount ? <p className="page-meta tabular" title={countAsOf} aria-label={countAsOf ? `${mergedCount} ${countAsOf}` : undefined}>{mergedCount}</p> : null}
-+            {mergedCount ? <p className="page-meta tabular" title={countAsOf}>{mergedCount}{countAsOf ? <span className="sr-only"> {countAsOf}</span> : null}</p> : null}
-             <MergedList items={pulse.merged} locale={locale} />
-           </Section>
-         ) : null}
-@@ -197,6 +197,7 @@ export default async function ContributePage({ params }: { params: Promise<{ loc
-                       <span className="tide-progress" title={countAsOf}>
-                         <span className="tide-track" aria-hidden="true"><span style={{ inlineSize: `${Math.round((progress.closed / total) * 100)}%` }} /></span>
-                         <span className="tabular">{fill(pickText(PROJECT_COPY.milestoneProgress, locale), { closed: progress.closed, total })}</span>
-+                        {countAsOf ? <span className="sr-only">, {countAsOf}</span> : null}
-                       </span>
-                     ) : null}
-                   </dd>
-```
-
-**File**: `web/app/styles/pages.css` (modified, +0/-7)
-```diff
-@@ -128,13 +128,6 @@
- .feed-column-head h2 { font-size: var(--text-heading); }
- .feed-items > li + li { border-top: 1px solid var(--line); }
- .feed-empty { padding: var(--space-4); }
--.feed-card { display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); }
--.feed-card-meta,
--.feed-card-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); color: var(--muted); font-size: var(--text-caption); }
--.feed-card-time,
--.feed-card-author { margin-inline-start: auto; }
--.feed-card-title { font-size: var(--text-ui); font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
--.feed-card-title a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 0.2em; }
- .feed-action { border: 1px solid var(--line); border-radius: var(--radius-surface); background: color-mix(in srgb, var(--panel) 72%, transparent); }
+@@ -1669,6 +1669,10 @@ pub trait McpTransport: Send + Sync {
  
- /* Account and utility pages: one centred column. */
-```
-
-**File**: `web/lib/repo-activity.test.ts` (modified, +15/-0)
-```diff
-@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
- import { authorsBetween, creditedPairs, releaseCredits } from "../scripts/repo-activity-lib.mjs";
- import ContributePage from "../app/[locale]/contribute/page";
- import HomePage from "../app/[locale]/page";
-+import { readAsOf } from "../components/project-pulse";
- import { GET as factsRoute } from "../app/api/facts/route";
- import { ALL_LOCALES } from "./i18n/config";
- import { getContribute } from "./i18n/dictionaries";
-@@ -79,6 +80,20 @@ describe("pages with every GitHub call failing", () => {
-     expect(html).toContain(`alt="${person?.login}"`);
-     expect(html).toContain(view!.pulls[0].url);
-   });
-+
-+  it("announces the read date of the count and the milestone progress to assistive technology", async () => {
-+    const html = await render(ContributePage as Page, "en");
-+    const asOf = readAsOf(String(snapshot.readAt), "en");
-+    expect(asOf).toBeTruthy();
-+    expect(html).toMatch(new RegExp(`<p class="page-meta tabular" title="${asOf}">[^<]+<span class="sr-only"> ${asOf}</span></p>`));
-+    const progress = html.match(/<span class="tide-progress"[\s\S]*?<\/dd>/g) ?? [];
-+    expect(progress.length).toBeGreaterThan(0);
-+    for (const block of progress) {
-+      expect(block).toContain(`title="${asOf}"`);
-+      expect(block).toContain(`<span class="sr-only">, ${asOf}</span></span></dd>`);
+     async fn recv(&mut self) -> Result<Vec<u8>>;
+ 
++    async fn send_reply(&mut self, msg: Vec<u8>) -> Result<()> {
++        self.send(msg).await
 +    }
-+    expect(html).not.toMatch(/<p[^>]*aria-label=/);
-+  });
- });
++
+     /// Record the protocol revision negotiated at `initialize`. Only the
+     /// Streamable HTTP transport uses it (the `MCP-Protocol-Version` header on
+     /// subsequent requests); stdio and legacy SSE have no header channel, so
+@@ -3125,6 +3129,30 @@ impl McpConnection {
+         result
+     }
  
- describe("no browser call to GitHub", () => {
++    async fn answer_server_request(&mut self, reply: &serde_json::Value) {
++        let result = match serde_json::to_vec(reply) {
++            Ok(bytes) => {
++                let cancel_token = self.cancel_token.clone();
++                tokio::select! {
++                    biased;
++                    _ = cancel_token.cancelled() => {
++                        Err(anyhow::anyhow!("MCP connection was cancelled"))
++                    }
++                    result = self.transport.send_reply(bytes) => result,
++                }
++            }
++            Err(err) => Err(err.into()),
++        };
++        if let Err(err) = result {
++            tracing::debug!(
++                target: "mcp",
++                server = %self.name,
++                error = %err,
++                "could not answer an MCP server request"
++            );
++        }
++    }
++
+     /// Handshake and discovery receive: each frame wait is bounded by the read
+     /// knob, and a server that stays silent past it is treated as dead.
+     async fn recv(&mut self, expected_id: String) -> Result<serde_json::Value> {
+@@ -3202,6 +3230,22 @@ impl McpConnection {
+             {
+                 self.catalog_stale = true;
+             }
++            if let Some(method) = value.get("method") {
++                if let Some(id) = value.get("id") {
++                    let method = method.as_str().unwrap_or_default();
++                    let reply = if method == "ping" {
++                        serde_json::json!({"jsonrpc": "2.0", "id": id, "result": {}})
++                    } else {
++                        serde_json::json!({
++                            "jsonrpc": "2.0",
++                            "id": id,
++                            "error": {"code": -32601, "message": format!("Method not found: {method}")}
++                        })
++                    };
++                    self.answer_server_request(&reply).await;
++                }
++                continue;
++            }
+             if response_id_matches(value.get("id"), &expected_id) {
+                 // Marks the connection stale so it is rebuilt, but this is a
+                 // reply to the request, so it never qualifies for a replay.
 ```
 
-**File**: `web/lib/truncate.test.ts` (removed, +0/-34)
+**File**: `crates/engine/src/mcp/http.rs` (modified, +15/-0)
 ```diff
-@@ -1,34 +0,0 @@
--import { describe, expect, it } from "vitest";
--import { truncateChars } from "./truncate";
--
--describe("truncateChars", () => {
--  it("leaves text at or under the limit untouched", () => {
--    expect(truncateChars("short", 70)).toBe("short");
--    expect(truncateChars("x".repeat(70), 70)).toBe("x".repeat(70));
--  });
--
--  it("never splits an astral character in half", () => {
--    // `"…🐋".slice(0, 70)` cuts between the surrogates and emits a lone
--    // U+D83D, which renders as U+FFFD next to the ellipsis.
--    const title = `${"x".repeat(69)}🐋 whale support`;
--    const cut = truncateChars(title, 70);
--    expect(cut).toBe(`${"x".repeat(69)}🐋…`);
--    // No surrogate survives that is not half of a well-formed pair.
--    const unpaired = cut.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "");
--    expect(/[\uD800-\uDFFF]/.test(unpaired), "lone surrogate in output").toBe(false);
--    expect(title.slice(0, 70).charCodeAt(69)).toBe(0xd83d);
--  });
--
--  it("counts code points, not UTF-16 code units", () => {
--    // Forty whales are forty characters and eighty code units. The old
--    // `title.length > 70` test called this an 80-character title and cut it.
--    const whales = "🐋".repeat(40);
--    expect(whales.length).toBe(80);
--    expect(truncateChars(whales, 70)).toBe(whales);
--  });
--
--  it("supports a keep budget below the limit", () => {
--    expect(truncateChars("y".repeat(139), 140, 137)).toBe("y".repeat(139));
--    expect(truncateChars("y".repeat(141), 140, 137)).toBe(`${"y".repeat(137)}…`);
--  });
--});
+@@ -177,6 +177,21 @@ impl McpTransport for HttpTransport {
+         }
+     }
+ 
++    async fn send_reply(&mut self, msg: Vec<u8>) -> Result<()> {
++        match &mut self.mode {
++            HttpTransportMode::Streamable(transport) => {
++                transport.send(msg).await.map_err(|err| match err {
++                    StreamableSendError::Incompatible(detail)
++                    | StreamableSendError::StaleSession(detail) => anyhow::anyhow!(
++                        "MCP Streamable HTTP refused a reply to a server request: {detail}"
++                    ),
++                    StreamableSendError::Other(err) => err,
++                })
++            }
++            HttpTransportMode::Sse(transport) => transport.send(msg).await,
++        }
++    }
++
+     async fn recv(&mut self) -> Result<Vec<u8>> {
+         match &mut self.mode {
+             HttpTransportMode::Streamable(transport) => transport.recv().await,
 ```
 
-**File**: `web/lib/truncate.ts` (removed, +0/-29)
+**File**: `crates/engine/src/mcp/tests.rs` (modified, +128/-0)
 ```diff
-@@ -1,29 +0,0 @@
--/**
-- * truncate.ts — code-point-safe truncation for text the repository owns
-- * rather than the site.
-- *
-- * `String.prototype.slice` counts UTF-16 code units, so a cut can land
-- * between the two halves of a surrogate pair. GitHub issue, pull request,
-- * and release titles routinely carry emoji, and the resulting lone surrogate
-- * is not a character: it renders as U+FFFD (the black-diamond question
-- * mark) in every browser, immediately before the ellipsis that says the text
-- * was shortened.
-- */
--
--/**
-- * `value` unchanged when it is at most `limit` characters long; otherwise its
-- * first `keep` characters (default: `limit`) followed by `ellipsis`.
-- *
-- * Characters are Unicode code points, so an astral character is either kept
-- * whole or dropped whole.
-- */
--export function truncateChars(
--  value: string,
--  limit: number,
--  keep: number = limit,
--  ellipsis = "…",
--): string {
--  const chars = Array.from(value);
--  if (chars.length <= limit) return value;
--  return chars.slice(0, Math.max(0, keep)).join("") + ellipsis;
--}
+@@ -3314,6 +3314,80 @@ async fn call_method_skips_notifications_and_unmatched_responses() {
+     assert_eq!(sent[0]["method"], "tools/call");
+ }
+ 
++#[tokio::test]
++async fn call_method_answers_server_requests_instead_of_taking_them_as_the_reply() {
++    let sent = Arc::new(Mutex::new(Vec::new()));
++    let transport = ScriptedValueTransport {
++        sent: Arc::clone(&sent),
++        responses: VecDeque::from([
++            json_frame(serde_json::json!({"jsonrpc": "2.0", "id": 1, "method": "ping"})),
++            json_frame(serde_json::json!({"jsonrpc": "2.0", "id": "1", "method": "roots/list"})),
++            json_frame(serde_json::json!({"jsonrpc": "2.0", "id": 1, "result": {"ok": true}})),
++        ]),
++    };
++    let mut conn = test_connection(Box::new(transport));
++
++    let result = conn
++        .call_method("tools/call", serde_json::json!({"name": "echo"}), 1)
++        .await
++        .unwrap();
++
++    assert_eq!(result, serde_json::json!({"ok": true}));
++    let sent = sent.lock().unwrap();
++    assert_eq!(sent.len(), 3);
++    assert_eq!(
++        sent[1],
++        serde_json::json!({"jsonrpc": "2.0", "id": 1, "result": {}})
++    );
++    assert_eq!(sent[2]["id"], "1");
++    assert_eq!(sent[2]["error"]["code"], -32601);
++}
++
++struct ReplyRefusingTransport {
++    sent: Arc<Mutex<Vec<serde_json::Value>>>,
++    responses: VecDeque<Vec<u8>>,
++}
++
++#[async_trait::async_trait]
++impl McpTransport for ReplyRefusingTransport {
++    async fn send(&mut self, msg: Vec<u8>) -> Result<()> {
++        let msg: serde_json::Value = serde_json::from_slice(&msg)?;
++        anyhow::ensure!(msg.get("method").is_some(), "status=405 Method Not Allowed");
++        self.sent.lock().unwrap().push(msg);
++        Ok(())
++    }
++
++    async fn recv(&mut self) -> Result<Vec<u8>> {
++        self.responses
++            .pop_front()
++            .context("scripted transport exhausted")
++    }
++}
++
++#[tokio::test]
++async fn call_method_keeps_its_reply_when_answering_a_server_request_fails() {
++    let sent = Arc::new(Mutex::new(Vec::new()));
++    let transport = ReplyRefusingTransport {
++        sent: Arc::clone(&sent),
++        responses: VecDeque::from([
++            json_frame(serde_json::json!({"jsonrpc": "2.0", "id": 1, "method": "ping"})),
++            json_frame(serde_json::json!({"jsonrpc": "2.0", "id": 1, "result": {"ok": true}})),
++        ]),
++    };
++    let mut conn = test_connection(Box::new(transport));
++
++    let result = conn
++        .call_method("tools/call", serde_json::json!({"name": "echo"}), 1)
++        .await
++        .unwrap();
++
++    assert_eq!(result, serde_json::json!({"ok": true}));
++    assert_eq!(conn.state, ConnectionState::Ready);
++    let sent = sent.lock().unwrap();
++    assert_eq!(sent.len(), 1);
++    assert_eq!(sent[0]["method"], "tools/call");
++}
++
+ #[tokio::test]
+ async fn call_method_invalid_json_includes_server_output_preview() {
+     let sent = Arc::new(Mutex::new(Vec::new()));
+@@ -6770,6 +6844,60 @@ async fn custom_headers_applied_to_get_preflight() {
+     );
+ }
+ 
++#[tokio::test]
++async fn refused_reply_to_a_server_request_does_not_fall_back_to_sse() {
++    use tokio::io::{AsyncReadExt, AsyncWriteExt};
++    use tokio::net::TcpListener;
++
++    let _env = crate::test_support::lock_test_env();
++    let _lock = lock_mcp_loopback_tests().await;
++    let _no_proxy = crate::test_support::EnvVarGuard::set("NO_PROXY", "*,127.0.0.1");
++    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
++    let addr = listener.local_addr().unwrap();
++    let requests = Arc::new(Mutex::new(Vec::new()));
++    let requests_srv = Arc::clone(&requests);
++
++    let server = tokio::spawn(async move {
++        loop {
++            let (mut socket, _) = listener.accept().await.unwrap();
++            let mut buf = [0u8; 4096];
++            let n = socket.read(&mut buf).await.unwrap();
++            let request_line = String::from_utf8_lossy(&buf[..n])
++                .lines()
++                .next()
++                .unwrap_or_default()
++                .to_string();
++            requests_srv.lock().unwrap().push(request_line);
++            socket
++                .write_all(
++                    b"HTTP/1.1 405 Method Not Allowed\r\nConnection: close\r\nContent-Length: 0\r\n\r\n",
++                )
++                .await
++                .unwrap();
++        }
++    });
++
++    let url = format!("http://{addr}/mcp");
++    let mut transport = HttpTransport::new(
++        test_mcp_http_client(&url),
++        url,
++        tokio_util::sync::CancellationToken::new(),
++        Duration::from_secs(2),
++    );
++
++    let result = transport
++        .send_reply(json_frame(
++            serde_json::json!({"jsonrpc": "2.0", "id": 1, "result": {}}),
++        ))
++        .await;
++
++    server.abort();
++    assert!(result.is_err(), "a refused reply reports the refusal");
++    let requests = requests.lock().unwrap();
++    assert_eq!(requests.len(), 1, "requests seen: {requests:?}");
++    assert!(requests[0].starts_with("POS
 ```
 
-**File**: `web/scripts/check-locales.mjs` (modified, +0/-1)
+**File**: `crates/lsp/src/client.rs` (modified, +51/-6)
 ```diff
-@@ -67,7 +67,6 @@ function extractKeys(source) {
+@@ -255,11 +255,12 @@ impl StdioLspTransport {
+         let child = Arc::new(AsyncMutex::new(Some(child)));
+         let dispatcher_child = child.clone();
+         let dispatcher_pending = pending.clone();
++        let dispatcher_outbound = tx_outbound.clone();
+         let dispatcher_task = spawn_supervised(
+             "lsp-dispatcher",
+             std::panic::Location::caller(),
+             async move {
+-                dispatcher_task(rx_inbound, tx_diag, dispatcher_pending).await;
++                dispatcher_task(rx_inbound, tx_diag, dispatcher_outbound, dispatcher_pending).await;
+                 // EOF, malformed frames, or an overflowing diagnostics queue
+                 // terminate the producer too, so its pipes cannot stay stuck.
+                 if let Some(mut child) = dispatcher_child.lock().await.take() {
+@@ -536,15 +537,19 @@ impl LspTransport for StdioLspTransport {
  
- const PLURAL_CATEGORIES = ["zero", "one", "two", "few", "many", "other"];
+ /// Send a JSON value as one Content-Length-framed JSON-RPC message.
+ async fn send_message(tx: &mpsc::Sender<Vec<u8>>, value: &Value) -> Result<()> {
++    tx.send(frame_message(value)?)
++        .await
++        .map_err(|_| anyhow!("LSP outbound channel closed"))?;
++    Ok(())
++}
++
++fn frame_message(value: &Value) -> Result<Vec<u8>> {
+     let body = serde_json::to_vec(value).context("serialize LSP message")?;
+     let header = format!("Content-Length: {}\r\n\r\n", body.len());
+     let mut frame = Vec::with_capacity(header.len() + body.len());
+     frame.extend_from_slice(header.as_bytes());
+     frame.extend_from_slice(&body);
+-    tx.send(frame)
+-        .await
+-        .map_err(|_| anyhow!("LSP outbound channel closed"))?;
+-    Ok(())
++    Ok(frame)
+ }
  
--/** Keys whose value is an object of plural categories (`key: {` then `one: "…"` lines). */
- function extractPluralBlocks(source) {
-   const blocks = new Map();
-   let key = null;
+ /// Background task that drains the outbound queue and writes each frame to
+@@ -638,6 +643,7 @@ fn parse_header(buf: &[u8]) -> Result<Option<(usize, usize)>> {
+ async fn dispatcher_task(
+     mut rx: mpsc::Receiver<Value>,
+     tx_diag: mpsc::Sender<DiagnosticMessage>,
++    tx_outbound: mpsc::Sender<Vec<u8>>,
+     pending: Arc<AsyncMutex<HashMap<i64, oneshot::Sender<Value>>>>,
+ ) {
+     while let Some(value) = rx.recv().await {
+@@ -654,6 +660,19 @@ async fn dispatcher_task(
+             }
+             continue;
+         }
++        if let Some(method) = method {
++            if let Some(id) = value.get("id") {
++                let reply = json!({
++                    "jsonrpc": "2.0",
++                    "id": id,
++                    "error": {"code": -32601, "message": format!("unsupported method {method}")},
++                });
++                if let Ok(frame) = frame_message(&reply) {
++                    let _ = tx_outbound.try_send(frame);
++                }
++            }
++            continue;
++        }
+         // Replies have an `id` and a `result` or `error`.
+         if let Some(id) = value.get("id").and_then(|v| v.as_i64()) {
+             let mut map = pending.lock().await;
+@@ -780,6 +799,31 @@ pub(super) mod tests {
+         assert_eq!(diags[0].message, "missing semicolon");
+     }
+ 
++    #[tokio::test]
++    async fn server_request_sharing_a_pending_id_is_answered_not_taken_as_the_reply() {
++        let (tx_in, rx_in) = mpsc::channel(4);
++        let (tx_out, mut rx_out) = mpsc::channel::<Vec<u8>>(4);
++        let (tx_diag, _rx_diag) = mpsc::channel(4);
++        let pending = Arc::new(AsyncMutex::new(HashMap::new()));
++        let (reply_tx, reply_rx) = oneshot::channel();
++        pending.lock().await.insert(2, reply_tx);
++        let dispatcher = tokio::spawn(dispatcher_task(rx_in, tx_diag, tx_out, pending));
++        tx_in
++            .send(json!({"jsonrpc":"2.0","id":2,"method":"workspace/configuration","params":{"items":[]}}))
++            .await
++            .unwrap();
++        tx_in
++            .send(json!({"jsonrpc":"2.0","id":2,"result":"definition"}))
++            .await
++            .unwrap();
++        assert_eq!(reply_rx.await.unwrap()["result"], "definition");
++        let answer = next_document(&mut rx_out).await;
++        assert_eq!(answer["id"], 2);
++        assert_eq!(answer["error"]["code"], -32601);
++        drop(tx_in);
++        dispatcher.await.unwrap();
++    }
++
+     #[test]
+     fn round_trips_uri_path() {
+         let path = fixture_path("example/foo.rs");
+@@ -1309,11 +1353,12 @@ while True:
+             let (mut producer, reader) = tokio::io::duplex(MAX_LSP_HEADER_BYTES * 2);
+             let (tx, rx) = mpsc::channel(8);
+             let (diag, _diagnostics) = mpsc::channel(8);
++            let (outbound, _outbound_rx) = mpsc::channel(8);
+             let pending = Arc::new(AsyncMutex::new(HashMap::new()));
+             let (reply, receiver) = oneshot::channel();
+             pending.lock().await.insert(1, reply);
+             let read_task = tokio::spawn(reader_task(reader, tx));
+-            let dispatch = tokio::spawn(dispatcher_task(rx, diag, pending.clone()));
++            let dispatch = tokio::spawn(dispatcher_task(rx, diag, outbound, pending.clone()));
+             producer.write_all(&frame).await.unwrap();
+        
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7286** (closed): chore(catalog): refresh the Models.dev offline seed (@codewhale-agent[bot])
-- **PR #7277** (2026-11-11): feat(app-server,tui): run read-only builtins over the Runtime API (@gaord)
-- **PR #7276** (2026-11-10): fix(engine): match search include globs in linear time (@luochen211)
-- **PR #7275** (2026-11-10): fix: reject negative retry delays at config load instead of panicking on retry (@luochen211)
-- **PR #7273** (2026-11-10): fix(tui): pad and truncate CJK text by display width (@luochen211)
-- **PR #7272** (2026-11-10): chore: remove unreferenced code and stale dead_code allows (@luochen211)
+- **PR #7323** (closed): fix(app-server): read the original path of a worktree-side rename (@SparkofSpike)
+- **PR #7322** (2026-11-12): fix(tui): count characters, not bytes, for the session title limit (@luochen211)
+- **PR #7319** (2026-11-12): fix(mcp,lsp): answer server requests instead of taking them as replies (@luochen211)
+- **PR #7317** (2026-11-12): fix: show non-ASCII paths as written in /diff and git mentions (@luochen211)
+- **PR #7316** (2026-11-12): fix(state,snapshot): keep index entries after a torn line and clamp prune age (@luochen211)
+- **PR #7315** (2026-11-12): fix(config): read every env alias chain through env_non_blank (@luochen211)
 
 ---
 
@@ -2252,32 +2782,44 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): hanging indent only on single-line install commands; align the wrapped pip
+## X. state,snapshot): keep index entries after a torn line and clamp prune age (#7316
 
 **RULE**:
-When implementing operations in `web/app/styles/primitives.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/snapshot/src/repo.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a7db594`: web): hanging indent only on single-line install commands; align the wrapped pipe (CW-8048 INSTALL). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f2a0194`: state,snapshot): keep index entries after a torn line and clamp prune age (#7316). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/app/styles/primitives.css`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/snapshot/src/repo.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  .code pre.code-block-single {
-    padding-left: calc(var(--space-4) + 2ch);
-    text-indent: -2ch;
-  }
+        let cutoff = now.saturating_sub(i64::try_from(max_age.as_secs()).unwrap_or(i64::MAX));
+    #[test]
+    fn prune_with_an_age_beyond_i64_keeps_every_snapshot() {
+        let tmp = tempdir().unwrap();
+        let (repo, _home) = make_repo(tmp.path());
+        std::fs::write(repo.work_tree().join("f.txt"), "v0").unwrap();
+        repo.snapshot("turn:0").unwrap();
+        std::thread::sleep(Duration::from_millis(1100));
+
+        let removed = repo
+            .prune_older_than(Duration::from_secs(u64::MAX))
+            .unwrap();
+
+        assert_eq!(removed, 0);
+        assert_eq!(repo.list(10).unwrap().len(), 1);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    padding-left: calc(var(--space-4) + 2ch);
-    text-indent: -2ch;
+        let cutoff = now - max_age.as_secs() as i64;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a7db594` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f2a0194` are properly handled with clean fallback behavior.

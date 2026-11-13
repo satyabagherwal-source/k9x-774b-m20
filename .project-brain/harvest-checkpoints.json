@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T01:31:18.051Z",
+  "last_updated": "2026-11-13T01:39:13.109Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3261,14 +3261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-moss-image",
-      "content_hash": "035a0036483d1fdd41b82f1c4593fc65c269699637a7630e5d1f31d9f334d1ea",
-      "verified_at": "2026-11-08T02:25:33.253Z",
+      "content_hash": "9acb786a32930ca364954cd58ade9499b5f2cda4ea276035695d71a62dbd1f56",
+      "verified_at": "2026-11-13T01:38:50.928Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:25:33.253Z"
+      "last_updated": "2026-11-13T01:38:50.928Z"
     },
     "bvaughn/react-virtualized": {
       "repository": "bvaughn/react-virtualized",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "0a8e501d40fcbdb3aef99f891cc59cb174929fd2286617b2bc2803269201c4f9",
-      "verified_at": "2026-11-11T14:56:37.861Z",
+      "content_hash": "3d4f8c2ceac51a4c3e8aab70488ea0292cdb08f3c350d43ad40a948103c652ef",
+      "verified_at": "2026-11-13T01:39:06.692Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T14:56:37.861Z"
+      "last_updated": "2026-11-13T01:39:06.692Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "8ccbe2df717164cef86e144049ba8b2d56d6706fc8d0970cec7b7102c3b76ff5",
-      "verified_at": "2026-11-11T16:20:38.473Z",
+      "content_hash": "ce1ea69f72a6da4217801c78f5d7a570240e3db0c93c9bda2d109c3d28588588",
+      "verified_at": "2026-11-13T01:39:13.108Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T16:20:38.473Z"
+      "last_updated": "2026-11-13T01:39:13.108Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",
