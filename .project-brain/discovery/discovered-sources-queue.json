@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T00:43:32.914Z",
+  "updated_at": "2026-11-13T01:01:41.544Z",
   "stats": {
-    "total_discovered": 1913,
-    "approved_pending_harvest": 1764,
+    "total_discovered": 1922,
+    "approved_pending_harvest": 1768,
     "harvested_count": 0,
-    "rejected_count": 149,
+    "rejected_count": 154,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1760,
+      "COMMUNITY_AND_EXPERT": 1769,
       "OFFICIAL_DOCUMENTATION": 80,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -41060,6 +41060,169 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
         "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-DC4D68D7B3BE": {
+      "id": "SRC-DC4D68D7B3BE",
+      "url": "https://github.com/yyjeqhc/webcodex",
+      "title": "https://github.com/yyjeqhc/webcodex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:01:41.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-E87F700BACFE": {
+      "id": "SRC-E87F700BACFE",
+      "url": "http://127.0.0.1:1/",
+      "title": "http://127.0.0.1:1/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T01:01:41.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-72499EC56C00": {
+      "id": "SRC-72499EC56C00",
+      "url": "https://github.com/samuelgursky/davinci-resolve-mcp",
+      "title": "https://github.com/samuelgursky/davinci-resolve-mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:01:41.488Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-ED843CFEE76E": {
+      "id": "SRC-ED843CFEE76E",
+      "url": "http://127.0.0.1:PORT`",
+      "title": "http://127.0.0.1:PORT`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T01:01:41.495Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-1E7DBE62AEE5": {
+      "id": "SRC-1E7DBE62AEE5",
+      "url": "http://127.0.0.1:PORT`，然后重启",
+      "title": "http://127.0.0.1:PORT`，然后重启",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T01:01:41.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-1D0404ED4D86": {
+      "id": "SRC-1D0404ED4D86",
+      "url": "http://127.0.0.1:{local_port",
+      "title": "http://127.0.0.1:{local_port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T01:01:41.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-355DFE828E9D": {
+      "id": "SRC-355DFE828E9D",
+      "url": "https://files.oaiusercontent.com/file",
+      "title": "https://files.oaiusercontent.com/file",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:01:41.522Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-5A0AD9A36A3D": {
+      "id": "SRC-5A0AD9A36A3D",
+      "url": "http://127.0.0.1:PORT",
+      "title": "http://127.0.0.1:PORT",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T01:01:41.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+        "fileName": "yyjeqhc-webcodex-learnings.md"
+      }
+    },
+    "SRC-6432F52D4ED7": {
+      "id": "SRC-6432F52D4ED7",
+      "url": "https://github.com/lioensky/VCPToolBox",
+      "title": "https://github.com/lioensky/VCPToolBox",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:01:41.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
       }
     }
   }

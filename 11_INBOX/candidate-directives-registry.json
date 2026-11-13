@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T00:43:32.986Z",
+  "last_updated": "2026-11-13T01:01:41.550Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7751,6 +7751,33 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0FD31D-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-0664E9",
+      "directive_title": "import): support opt-in loopback proxy for OpenAI host-file downloads (#1418)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yyjeqhc-webcodex",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0664E9-import-support-opt-in-loopback-proxy-for.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-4292F9",
+      "directive_title": "docs(TVStxt): 精炼 VchatRendering 流式渲染规范并确立按钮双轨与多模态契约",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lioensky-vcptoolbox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4292F9-docs-tvstxt-vchatrendering-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-71A093",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-71A093-engine-restore-text-fallback-for-unknown.md",
       "staged_date": "2026-11-13"
     }
   ]

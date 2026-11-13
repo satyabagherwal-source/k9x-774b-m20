@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-2AS2",
-    "timestamp": "2026-11-09T15:29:01.970Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-VBWB",
-    "timestamp": "2026-11-09T15:51:36.443Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-VSY5",
     "timestamp": "2026-11-09T15:51:58.541Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
@@ -7490,6 +7460,36 @@
     "repository": "gardener/gardener",
     "learningId": "learn-github-gardener-gardener",
     "contentHash": "f5e8cb4a2e0c04a7f5db3b797cf23ca047c89c0cf20507c9471e478bccc88d88",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-TTD0",
+    "timestamp": "2026-11-13T01:01:18.948Z",
+    "repository": "yyjeqhc/webcodex",
+    "learningId": "learn-github-yyjeqhc-webcodex",
+    "contentHash": "bf2e2e0040ab377dfd84c2ac137cdd55376fbd980f4f70410f8023836a9c87ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-U6KN",
+    "timestamp": "2026-11-13T01:01:36.071Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "d88fc978d7070c1d898b0bc2d20a7b2af30cab812d3d1048f1a678e40887b2b8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

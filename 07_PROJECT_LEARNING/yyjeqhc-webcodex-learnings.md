@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source**: github ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
-> **Source Version**: `f8228b6a`  
+> **Source Version**: `3c141967`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T06:13:23.612Z  
+> **Timestamp**: 2026-11-13T01:01:11.810Z  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T06:13:23.335Z  
+> **Harvest Timestamp**: 2026-11-13T01:01:11.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Give cloud AI agents a real development environment on your own machines.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2504 stars
+- **Stars / Engagement**: 2509 stars
 
 ---
 
@@ -2191,584 +2191,241 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7277fe18` (2026-11-09)
-**Commit Message**: test(auth): make the blocking-boundary regression fail without hanging (#1399)
+### Incident Patch 1: `3c141967` (2026-11-11)
+**Commit Message**: fix(import): support opt-in loopback proxy for OpenAI host-file downloads (#1418)
 
-Co-authored-by: vincent <[REDACTED_EMAIL]>
-
-**File**: `src/auth/tests.rs` (modified, +48/-24)
+**File**: `docs/MCP.md` (modified, +15/-0)
 ```diff
-@@ -2520,36 +2520,60 @@ async fn auth_middleware_no_challenge_when_oauth2_disabled() {
+@@ -99,6 +99,21 @@ authorization; users should not copy or expose that credential. Independent/netw
+ accessible Servers remain off by default and must not use this as a substitute for
+ OAuth.
+ 
++
++When a loopback-only Desktop Server is behind a local HTTP proxy and OpenAI
++attachment domains resolve to a proxy-managed fake IP, direct TLS connections
++may fail even after the trusted tunnel's fake-IP admission succeeds. Operators
++may opt in to the **OpenAI host-file import only** proxy by setting
++`WEBCODEX_OPENAI_FILE_IMPORT_PROXY=http://127.0.0.1:PORT` in the Server
++environment and restarting the Server. IPv6 `http://[::1]:PORT` is also
++accepted. The setting defaults to off and is ignored for ordinary trusted MCP
++URLs and remote authenticated imports; it requires an explicitly trusted
++loopback MCP source and an allowlisted OpenAI attachment hostname. TLS server
++certificate verification and redirect rejection remain enabled. The HTTP
++CONNECT proxy chooses the upstream address instead of WebCodex's directly
++pinned DNS addresses, so use only a proxy you control and trust; no remote
++proxy endpoints, credentials, or hostnames are accepted as proxy settings.
++
+ For a regular independent Windows Server + Runner reached through OpenAI Tunnel, or to troubleshoot a case where local MCP is healthy but ChatGPT Connector creation still fails, see the [Windows + OpenAI Secure MCP Tunnel deep dive](WINDOWS_OPENAI_TUNNEL.md). It is advanced setup/troubleshooting material, not required reading for a first-time user.
+ 
+ ## Result cards
+```
+
+**File**: `docs/MCP.zh-CN.md` (modified, +11/-0)
+```diff
+@@ -296,6 +296,17 @@ credential 认证的 ChatGPT host-file rewrite。WebCodex Desktop 自 v0.4.2 起
+ 该 credential，并只把它注入原生 Tunnel 的固定本地 Authorization；用户不应复制或暴露该
+ credential。独立/network-accessible Server 仍默认关闭，不应使用它替代 OAuth。
+ 
++
++如果仅监听 loopback 的 Desktop Server 通过本地 HTTP 代理访问外网，并且 OpenAI
++附件域名被代理 DNS 解析成 Fake-IP，可信 tunnel 已通过 Fake-IP 准入检查后，
++直接建立 TLS 连接仍可能失败。运维者可以在 Server 环境中显式设置
++`WEBCODEX_OPENAI_FILE_IMPORT_PROXY=http://127.0.0.1:PORT`，然后重启 Server；
++也支持 `http://[::1]:PORT`。该配置默认关闭，只作用于可信本机 MCP 来源的
++OpenAI 附件域名，不会代理普通 trusted MCP URL 或远程认证导入。
++TLS 证书验证和禁止重定向仍然生效。不过，HTTP CONNECT 代理会自行选择上游地址，
++不会使用 WebCodex 直连模式固定的 DNS 地址，因此只能配置自己控制且信任的本机代理。
++配置不接受远程代理地址、带凭据的 URL 或主机名形式的代理端点。
++
+ 如果在 Windows 上使用普通独立 Server + Runner 并通过 OpenAI Tunnel 接入，或排查“本地 MCP 正常但 ChatGPT Connector 创建失败”的情况，见 [Windows + OpenAI Secure MCP Tunnel 深入实操](WINDOWS_OPENAI_TUNNEL.zh-CN.md)。它是深入配置/排障文档，不是普通用户第一次必须阅读的教程。
+ 
+ ## 结果卡片
+```
+
+**File**: `src/mcp_tests/file_import.rs` (modified, +41/-0)
+```diff
+@@ -185,6 +185,47 @@ async fn start_mcp_import_mock_server(response: Vec<u8>) -> McpImportMockServer
+     }
  }
  
- /// Structural proof that the verifier chain's database work crosses the
--/// blocking boundary: with the store's writer connection held from the runtime
--/// thread, authentication must still complete on a current-thread runtime. If
--/// the database work ran inline on the runtime thread, the await below could
--/// never make progress and the deadline fires (a deadlock, not a timing
--/// measurement).
--#[tokio::test(flavor = "current_thread")]
--async fn authenticate_database_work_runs_on_the_blocking_pool() {
-+/// blocking boundary. The main test thread holds the store's writer
-+/// connection while the auth chain runs on a separate thread's single-thread
-+/// runtime with a heartbeat task: the heartbeat can only fire while the
-+/// writer lock is still held if the runtime thread stayed free — i.e. the
-+/// database work ran on the blocking pool. With inline database work (the
-+/// pre-fix behavior) the runtime thread blocks inside the task poll, the
-+/// heartbeat never fires, and the bounded wait below fails the test
-+/// deterministically; unwinding drops the lock, the leaked probe finishes,
-+/// and the process exits normally instead of hanging.
-+#[test]
-+fn authenticate_database_work_runs_on_the_blocking_pool() {
-+    use std::sync::mpsc;
-     use std::time::Duration;
-     let config = gate_test_config(Some("secret"));
-     let (_tmp, db) = gate_test_db();
-     let user = gate_seed_user(&db, "alice");
-     let token = gate_mint_user_token(&db, &user);
- 
-+    let (started, started_rx) = mpsc::channel();
-+    let (responsive, responsive_rx) = mpsc::channel::<()>();
-+    let db_worker = db.clone();
-     let guard = db.conn_for_tests();
--    let db_task = db.clone();
--    let token = token.to_string();
--    let task =
--        tokio::spawn(async move { authenticate(config.clone(), Some(&db_task), &token).await });
--    tokio::time::timeout(Duration::from_secs(5), async {
--        // Let the blocking task park on the writer mutex, then release it.
--        tokio::time::sleep(Duration::from_millis(100)).await;
--        drop(guard);
--    })
--    .await
--    .expect("runtime thread must stay responsive while auth waits for the store lock");
--    let result = tokio::time::timeout(Duration::from_secs(5), task)
--        .await
--        .expect("authenticate must complete once the store lock is released")
--        .unwrap()
--        .expect("valid token must authenticate");
--    let context = result.expect("valid token must yield a context");
-+    let worker = std::thread::spawn(move || {
-+        let runtime = tokio::runtime::Builder::new_current_thread()
-+            .enable_all()
-+            .build()
-+            .expect("auth probe runtime");
-+        runtime.block_on(async move {
-+            started.send(()).expect("probe start signal");
-+            // Fires only if this runtime thread stays free while the auth
-+            // chain waits for the writer lock.
-+            tokio::spawn(async move {
-+                tokio::time::sleep(Duration::from_millis(300)).await;
-+                let _ = responsive.send(());
-+            });
-+            tokio::time::timeout(Duration::from_secs(10), async {
-+                authenticate(config, Some(&db_worker), &token).await
-+            })
++#[tokio::test]
++async fn mcp_import_loopback_proxy_sends_https_connect() {
++    use tokio::io::{AsyncReadExt, AsyncWriteExt};
++
++    let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
++        .await
++        .expect("local test listener");
++    let local_port = listener.local_addr().unwrap().port();
++    let client = crate::tool_runtime::conversation_import::build_loopback_proxy_client_for_test(
++        &format!("http://127.0.0.1:{local_port}"),
++    )
++    .expect("client must accept an explicit loopback proxy");
++    let probe = tokio::spawn(async move {
++        let (mut connection, _) = listener.accept().await.expect("CONNECT should arrive");
++        let mut buf = [0u8; 2048];
++        let count = connection
++            .read(&mut buf)
 +            .await
-+            .expect("auth chain must finish once the lock is released")
-+        })
++            .expect("read CONNECT request");
++        let request = String::from_utf8_lossy(&buf[..count]);
++        assert!(
++            request.starts_with("CONNECT files.oaiusercontent.com:443 HTTP/1.1"),
++            "unexpected CONNECT target"
++        );
++        connection
++            .write_all(b"HTTP/1.1 407 Proxy Authentication Required\r\nContent-Length: 0\r\n\r\n")
++            .await
++            .expect("reply to CONNECT");
 +    });
++    let _ = tokio::time::timeout(
++        std::time::Duration::from_secs(5),
++        client.get("https://files.oaiusercontent.com/file").send(),
++    )
++    .await
++    .expect("the mocked proxy must respond promptly");
++    tokio::time::timeout(std::time::Duration::from_secs(5), probe)
++        .await
++        .expect("the local proxy was not contacted")
++        .expect("proxy probe failed");
++}
 +
-+    started_rx
-+        .recv_timeout(Duration::from_secs(10))
-+        .expect("auth probe must start");
-+    responsive_rx
-+        .recv_timeout(Duration::from_secs(2))
-+        .expect("runtime thread must stay responsive while the writer lock is held; inline database work deadlocks it");
-+    drop(guard);
-+
-+    let result = worker.join().expect("auth probe thread must not panic");
-+    let context = result
-+        .expect("valid token must authenticate")
-+        .expect("valid token must yield a context");
-     assert_eq!(context.username.as_deref(), Some("alice"));
- }
+ fn mcp_import_config(trusted_client_ids: &[&str]) -> Arc<crate::Config> {
+     let mut config = (*test_config_oauth2(Some("secret"))).clone();
+     config.oauth2.trusted_mcp_file_client_ids = trusted_client_ids
 ```
 
----
-
-### Incident Patch 2: `6d50934b` (2026-11-09)
-**Commit Message**: fix(tunnel): keep embedded tunnels alive through heartbeat write failures (#1411)
-
-Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +6/-0)
+**File**: `src/tool_runtime/conversation_import.rs` (modified, +180/-4)
 ```diff
-@@ -797,6 +797,12 @@ jobs:
-           if ($LASTEXITCODE -ne 0) { throw "Computer helper ownership tests failed" }
-           cargo test --locked -p webcodex-environment --lib windows_helper_task_scheduler_roundtrip_is_owned -- --ignored
-           if ($LASTEXITCODE -ne 0) { throw "Computer helper Task Scheduler roundtrip failed" }
-+      - name: Test Windows Tunnel heartbeat contention and recovery
-+        run: |
-+          cargo test --locked -p webcodex-environment --lib tunnel::health_tests
-+          if ($LASTEXITCODE -ne 0) { throw "Windows Tunnel health file tests failed" }
-+          cargo test --locked -p webcodex --lib server_tunnels
-+          if ($LASTEXITCODE -ne 0) { throw "Windows Tunnel heartbeat supervision tests failed" }
-       - name: Test Windows unified installer routing and Desktop build freshness
-         run: python -m unittest scripts.tests.test_prepare_windows_unified_installer scripts.tests.test_desktop_runtime_manifest scripts.tests.test_desktop_frontend_build
-       - name: Test optional Codex observation adapter on Windows
-```
-
-**File**: `crates/webcodex-environment/src/tunnel.rs` (modified, +1/-1)
-```diff
-@@ -1893,7 +1893,7 @@ pub(crate) fn read_tunnel_health(
+@@ -392,13 +392,97 @@ async fn validate_trusted_mcp_download_url(
      })
  }
  
--#[cfg(all(test, unix))]
-+#[cfg(test)]
- mod health_tests;
- 
- #[cfg(test)]
-```
-
-**File**: `crates/webcodex-environment/src/tunnel/health_tests.rs` (modified, +43/-0)
-```diff
-@@ -1,6 +1,7 @@
- use super::*;
- 
- #[test]
-+#[cfg(unix)]
- fn health_locks_release_without_waiting_for_inherited_handles() {
-     for exclusive in [false, true] {
-         for fail_after_lock in [false, true] {
-@@ -53,3 +54,45 @@ fn health_locks_release_without_waiting_for_inherited_handles() {
-         }
-     }
- }
++const LOOPBACK_OPENAI_FILE_PROXY_ENV: &str = "WEBCODEX_OPENAI_FILE_IMPORT_PROXY";
 +
-+#[test]
-+fn missed_heartbeats_expire_during_contention_and_recover_after_unlock() {
-+    let temp = crate::test_tempdir().unwrap();
-+    let store = EnvironmentStore::open(temp.path().join("environment")).unwrap();
-+    let path = store.root().join("readiness.json");
-+    let stale = serde_json::json!({
-+        "schema_version": 1,
-+        "observed_at_ms": 0,
-+        "service_pid": std::process::id(),
-+        "profile_revision": 7,
-+        "state": "running",
-+        "tunnel_ready": true,
-+        "local_mcp_ready": true,
-+    });
-+    atomic_private_write(&path, stale.to_string().as_bytes()).unwrap();
-+    let file = std::fs::File::open(&path).unwrap();
-+    fs2::FileExt::try_lock_shared(&file).unwrap();
-+    let reader = TunnelHealthFileLock { file };
-+    for _ in 0..4 {
-+        assert!(write_embedded_tunnel_observation(
-+            &path,
-+            7,
-+            TunnelState::Running,
-+            true,
-+            true,
-+            None,
-+        )
-+        .is_err());
-+        let health = read_tunnel_health(&path).unwrap();
-+        assert!(!health.fresh);
-+        assert!(!health.tunnel_ready && !health.local_mcp_ready);
-+        assert_eq!(health.state, Some(TunnelState::Running));
-+        assert_eq!(health.profile_revision, Some(7));
-+    }
-+    drop(reader);
-+    write_embedded_tunnel_observation(&path, 7, TunnelState::Running, true, true, None).unwrap();
-+    let health = read_tunnel_health(&path).unwrap();
-+    assert!(health.fresh && health.tunnel_ready && health.local_mcp_ready);
-+    assert_eq!(health.service_pid, Some(std::process::id()));
-+    assert_eq!(health.profile_revision, Some(7));
-+}
-```
-
-**File**: `docs/architecture/server-owned-tunnels.md` (modified, +10/-0)
-```diff
-@@ -106,6 +106,16 @@ existing per-profile service for standalone. Readiness files keep the existing
- freshness contract. Transport readiness is not evidence of a successful client
- operation, and process liveness is not either readiness bit.
- 
-+The initial status write must succeed before a profile launches. Once its Tunnel
-+task is owned, a heartbeat publication error (including a concurrent reader's
-+shared file lock) does not end or restart that task. Runtime status keeps the live
-+readiness bits and reports `tunnel_health_unavailable` until publication succeeds
-+at a later normal two-second health tick. Only failure/recovery transitions are
-+logged. A missed write does not refresh the saved observation: readers still
-+reject it after seven seconds. The writer retains the precreated file, its private
-+ACL and its nonblocking lock; it never replaces the file or bypasses validation.
-+Task failure, startup deadlines, shutdown and restart-fence semantics are unchanged.
-+
- Server termination runs these phases in order:
- 
- 1. Stop new Tunnel polling/admission.
-```
-
-**File**: `src/server_tunnels.rs` (modified, +31/-5)
-```diff
-@@ -259,11 +259,7 @@ async fn run_profile(
-                     state.state = if reached_ready { TunnelState::Running } else { TunnelState::Starting };
-                     state.tunnel_ready = ready; state.local_mcp_ready = local;
-                 });
--                if persist_status(&profile, &status, index)
--                .is_err()
--                {
--                    break Some("tunnel_health_unavailable".into());
--                }
-+                persist_heartbeat(&profile, &status, index);
-             }
-         }
-     };
-@@ -294,6 +290,33 @@ fn persist_status(
-     index: usize,
- ) -> webcodex_environment::SetupResultValue<()> {
-     let state = &status.snapshot()[index];
-+    write_status(profile, state)
-+}
-+
-+/// A saved heartbeat is an observation, not the owned task's execution state.
-+/// Retry publication at the next normal tick without restarting or replaying work.
-+/// Readers still reject stale observations using the existing freshness bound.
-+fn persist_heartbeat(profile: &EmbeddedTunnelProfile, status: &TunnelStatus, index: usize) {
-+    let mut state = status.snapshot()[index].clone();
-+    let was_unavailable = state.diagnostic.as_deref() == Some("tunnel_health_unavailable");
-+    state.diagnostic = None;
-+    let unavailable = write_status(profile, &state).is_err();
-+    status.update(index, |state| {
-+        state.diagnostic = unavailable.then(|| "tunnel_health_unavailable".into());
-+    });
-+    // Log transitions, not every failed tick. Never include filesystem errors or
-+    // private profile bindings in diagnostics.
-+    if unavailable && !was_unavailable {
-+        tracing::warn!(profile = %profile.profile_id, "Tunnel heartbeat unavailable; retrying at the next health tick");
-+    } else if !unavailable && was_unavailable {
-+        tracing::info!(profile = %profile.profile_id, "Tunnel heartbeat publication recovered");
-+    }
-+}
-+
-+fn write_status(
-+    profile: &EmbeddedTunnelProfile,
-+    state: &ProfileStatus,
-+) -> webcodex_environment::SetupResultValue<()> {
-     write_embedded_tunnel_observation(
-         &profile.readiness_path,
-         profile.runtime_revision,
-@@ -303,3 +326,6 @@ fn persist_status(
-         state.diagnostic.as_deref(),
-     )
- }
-+
-+#[cfg(test)]
-+mod tests;
-```
-
-**File**: `src/server_tunnels/tests.rs` (added, +145/-0)
-```diff
-@@ -0,0 +1,145 @@
-+use super::*;
-+use webcodex_environment::{EnvironmentStore, Secret, TunnelCredentials};
-+
-+fn fixture() -> (tempfile::TempDir, EmbeddedTunnelProfile, TunnelStatus) {
-+    let temp = tempfile::tempdir().unwrap();
-+    let root = temp.path().canonicalize().unwrap().join("environment");
-+    let store = EnvironmentStore::open(root).unwrap();
-+    let path = store.root().join("readiness.json");
-+    create_health_file(&path);
-+    let profile = EmbeddedTunnelProfile {
-+        profile_id: "primary".into(),
-+        autostart: true,
-+        runtime_revision: 7,
-+        credentials: TunnelCredentials {
-+            tunnel_id: Secret::new("tunnel_0123456789abcdef0123456789abcdef".into()),
-+            api_key: Secret::new("fixture-control".into()),
-+        },
-+        local_token: Secret::new("fixture-local".into()),
-+        proxy: None,
-+        readiness_path: path,
++fn parse_loopback_openai_file_proxy(raw: &str) -> Result<reqwest::Url, String> {
++    let proxy = reqwest::Url::parse(raw)
++        .map_err(|_| "OpenAI file proxy must be a valid loopback HTTP URL".to_string())?;
++    let loopback = match proxy.host() {
++        Some(url::Host::Ipv4(ip)) => ip == Ipv4Addr::LOCALHOST,
++        Some(url::Host::Ipv6(ip)) => ip == Ipv6Addr::LOCALHOST,
++        _ => false,
 +    };
-+    let status = TunnelStatus(Arc::new(Mutex::new(vec![ProfileStatus {
-+        profile_id: profile.profile_id.clone(),
-+        host_mode: "embedded",
-+        state: TunnelState::Running,
-+        tunnel_ready: true,
-+        local_mcp_ready: true,
-+        shutdown_outcome: None,
-+        diagnostic: None,
-+    }])));
-+    (temp, profile, status)
-+}
-+
-+fn create_health_file(path: &Path) {
-+    let mut options = std::fs::OpenOptions::new();
-+    options.write(true).create_new(true);
-+    #[cfg(unix)]
++    // url::Url normalizes explicit HTTP :80 to no stored port, so inspect
++    // the original authority to distinguish :80 from an omitted port.
++    let explicit_port = raw
++        .split_once("://")
++        .and_then(|(_, rest)| rest.split(['/', '?', '#']).next())
++        .and_then(|authority| authority.rsplit_once(':'))
++        .and_then(|(_, port)| port.parse::<u16>().ok());
++    if proxy.scheme() != "http"
++        || !loopback
++        || explicit_port.is_none()
++        || !proxy.username().is_empty()
++        || proxy.password().is_some()
++        || proxy.path() != "/"
++        || proxy.query().is_some()
++        || proxy.fragment().is_some()
 +    {
-+        use std::os::unix::fs::OpenOptionsExt;
-+        options.mode(0o600);
-+    }
-+    // On Windows the file inherits the EnvironmentStore directory's private ACL.
-+    options.open(path).unwrap();
-+}
-+
-+#[test]
-+fn reader_contention_preserves_live_status_and_publication_recovers() {
-+    let (_temp, profile, status) = fixture();
-+    persist_status(&profile, &status, 0).unwrap();
-+    let previous = std::fs::read(&profile.readiness_path).unwrap();
-+    let reader = std::fs::File::open(&profile.readiness_path).unwrap();
-+    reader.try_lock_shared().unwrap();
-+    // A separately opened handle exercises the same lock conflict as a Desktop
-+    // or CLI reader, deterministically and without timing or external services.
-+    assert!(persist_status(&profile, &status, 0).is_err());
-+    for _ in 0..4 {
-+        persist_heartbeat(&profile, &status, 0);
-+        let state = &status.snapshot()[0];
-+        assert_eq!(state.state, TunnelState::Running);
-+        assert!(state.tunnel_ready && state.local_mcp_ready);
-+        assert_eq!(state.shutdown_outcome, None);
-+        assert_eq!(
-+            state.diagnostic.as_deref(),
-+            Some("tunnel_health_unavailable")
++        return Err(
++            "OpenAI file proxy must be http://127.0.0.1:PORT or http://[::1]:PORT".to_string(),
 +        );
-+        assert_eq!(std::fs::read(&profile.readiness_path).unwrap(), previous);
 +    }
-+
-+    // Live observations continue changing while publication is unavailable.
-+    status.update(0, |state| state.local_mcp_ready = false);
-+    persist_heartbeat(&profile, &status, 0);
-+    assert!(!status.snapshot()[0].local_mcp_ready);
-+    reader.unlock().unwrap();
-+    persist_heartbeat(&profile, &status, 0);
-+    let recovered: serde_json::Value =
-+        serde_json::from_slice(&std::fs::read(&profile.readiness_path).unwrap()).unwrap();
-+    assert_eq!(recovered["state"], "running");
-+    assert_eq!(recovered["service_pid"], std::process::id());
-+    assert_eq!(recovered["profile_revision"], 7);
-+    assert_eq!(recovered["tunnel_ready"], true);
-+    assert_eq!(recovered["local_mcp_ready"], false);
-+    assert!(recovered["diagnostic"].is_null());
-+    assert!(status.snapshot()[0].diagnostic.is_none());
++    Ok(proxy)
 +}
 +
-+#[test]
-+fn missing_heartbeat_file_preserves_live_status_without_recreating_it() {
-+    let (_temp, profile, status) = fixture();
-+    std::fs::remove_file(&profile.readiness_path).unwrap();
-+    persist_heartbeat(&profile, &status, 0);
-+    assert_eq!(status.snapshot()[0].state, TunnelState::Running);
-+    assert_eq!(
-+        status.snapshot()[0].diagnostic.as_deref(),
-+        Some("tunnel_health_unavailable")
-+    );
-+    assert!(!profile.readiness_path.exists());
-+    // Only repair of the precreated private file allows publication to recover.
-+    create_health_file(&profile.readiness_path);
-+    persist_heartbeat(&profile, &status, 0);
-+    assert!(status.snapshot()[0].diagnostic.is_none());
++fn select_loopback_openai_file_proxy(
++    target: &TrustedDownloadTarget,
++    policy: ConversationImportDownloadPolicy,
++    value: Option<&str>,
++) -> Result<Option<reqwest::Url>, String> {
++    if policy != ConversationImportDownloadPolicy::LoopbackTrustedMcpHostFile {
++        return Ok(None);
++    }
++    let Some(value) = value.filter(|value| !value.is_empty()) else {
++        return Ok(None);
++    };
++    if !target
++        .resolver_host
++        .as_deref()
++        .is_some_and(is_openai_download_host)
++    {
++        // Preserve the normal direct-download path for unrelated trusted MCP
++        // URLs even when the operator enables the OpenAI-specific proxy.
++        return Ok(None);
++    }
++    Ok(Some(parse_loopback_openai_file_proxy(value)?))
++}
 +
-+    // A real terminal failure still owns the final diagnostic and lifecycle.
-+    status.update(0, |state| {
-+        state.state = TunnelState::Failed;
-+        state.tunnel_ready = false;
-+        state.local_mcp_ready = false;
-+        state.shutdown_outcome = Some("uncertain");
-+        state.diagnostic = Some("tunnel_restart_uncertain".into());
-+    });
-+    persist_status(&profile, &status, 0).unwrap();
-+    let terminal: serde_json::Value =
-+        serde_json::from_slice(&std::fs::read(&profile.readiness_path).unwrap()).unwrap();
-+    assert_eq!(terminal["state"], "failed");
-+    assert_eq!(terminal["diagnostic"], "tunnel_restart_uncertain");
-+    assert_eq!(terminal["tunnel_ready"], false);
-+    assert_eq!(terminal["local_mcp_ready"
-```
-
----
-
-### Incident Patch 3: `3c3c2162` (2026-11-08)
-**Commit Message**: fix(computer): tolerate macOS AXDescription failure for verified controls (#1392)
-
-**File**: `crates/webcodex-computer/src/macos_observation_tests.rs` (modified, +33/-0)
-```diff
-@@ -153,6 +153,39 @@ fn ax_unverified_subrole_redacts_text_blocks_input_and_cannot_attest_identity()
-     assert!(!sibling.protected);
++fn configured_loopback_openai_file_proxy(
++    target: &TrustedDownloadTarget,
++    policy: ConversationImportDownloadPolicy,
++) -> Result<Option<reqwest::Url>, String> {
++    // Never proxy arbitrary trusted-MCP URLs or remote OAuth imports. The
++    // explicit local proxy is an opt-in trust boundary for OpenAI attachments
++    // on the local Desktop/Secure-Tunnel session only.
++    if policy != ConversationImportDownloadPolicy::LoopbackTrustedMcpHostFile {
++        return Ok(None);
++    }
++    let value = match std::env::var(LOOPBACK_OPENAI_FILE_PROXY_ENV) {
++        Ok(value) => value,
++        Err(std::env::VarError::NotPresent) => return Ok(None),
++        Err(_) => return Err("OpenAI file proxy setting is not valid UTF-8".to_string()),
++    };
++    select_loopback_openai_file_proxy(target, policy, Some(&value))
++}
++
+ fn build_download_client(
+     trusted_target: Option<&TrustedDownloadTarget>,
++    local_proxy: Option<&reqwest::Url>,
+ ) -> Result<reqwest::Client, String> {
+     let mut builder = reqwest::Client::builder()
+         .no_proxy()
+         .redirect(reqwest::redirect::Policy::none());
+-    if let Some(target) = trusted_target {
++    if let Some(proxy) = local_proxy {
++        // An HTTP CONNECT proxy cannot guarantee that the proxy-selected
++        // upstream IP equals the prevalidated DNS answer. Restrict this opt-in
++        // path to an explicit loopback proxy, authenticated local-session
++        // provenance, and allowlisted OpenAI hosts; HTTPS verification remains
++        // enabled. The default direct path retains DNS address pinning.
++        let proxy = reqwest::Proxy::https(proxy.as_str())
++            .map_err(|_| "failed to configure loopback OpenAI file proxy".to_string())?;
++        builder = builder.proxy(proxy);
++    } else if let Some(target) = trusted_target {
+         if let Some(host) = target.resolver_host.as_deref() {
+             builder = builder.resolve_to_addrs(host, &target.pinned_addrs);
+         }
+@@ -408,6 +492,14 @@ fn build_download_client(
+         .map_err(|_| "failed to build bounded import HTTP client".to_string())
  }
  
-+// Optional metadata must not weaken protected fields or other errors.
-+#[test]
-+fn ax_description_regression_preserves_protected_fields_and_errors() {
-+    for (role, subrole, inherited_protected) in [
-+        ("AXSecureTextField", None, false),
-+        ("AXTextField", Some("AXSecureTextField"), false),
-+        ("AXTextArea", None, true),
-+        ("AXRadioButton", None, true),
-+    ] {
-+        let observed =
-+            finish_ax_fingerprint(fingerprint(role, subrole, inherited_protected), |_| {
-+                panic!("protected text must never be read")
-+            })
-+            .unwrap();
-+        assert_redacted(&observed);
-+    }
-+
-+    for failed_attribute in ["AXTitle", "AXDescription", "AXPlaceholderValue"] {
-+        let error = finish_ax_fingerprint(fingerprint("AXTextArea", None, false), |attribute| {
-+            if attribute == failed_attribute {
-+                Err("permission_denied: macOS Accessibility permission is not granted".into())
-+            } else {
-+                Ok(None)
-+            }
-+        })
-+        .unwrap_err();
-+        assert_eq!(
-+            error,
-+            "permission_denied: macOS Accessibility permission is not granted"
-+        );
-+    }
++#[cfg(test)]
++pub(crate) fn build_loopback_proxy_client_for_test(
++    endpoint: &str,
++) -> Result<reqwest::Client, String> {
++    let proxy = parse_loopback_openai_file_proxy(endpoint)?;
++    build_download_client(None, Some(&proxy))
 +}
 +
- #[test]
- fn ax_observation_nonsecure_text_and_provider_errors_are_preserved() {
-     let mut read = Vec::new();
-```
-
-**File**: `crates/webcodex-computer/src/platform/macos/accessibility.rs` (modified, +213/-3)
-```diff
-@@ -185,11 +185,201 @@ pub(super) fn prepare_ax_call(
-     deadline.ensure_remaining()
- }
- 
-+#[cfg(target_os = "macos")]
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+enum AxValueReadPolicy {
-+    Strict,
-+    AllowOptionalDescriptionFailure,
-+}
-+
-+#[cfg(target_os = "macos")]
-+fn missing_optional_ax_value(
-+    attribute_name: &'static str,
-+    error: AXError,
-+    policy: AxValueReadPolicy,
-+) -> bool {
-+    matches!(error, AXError::AttributeUnsupported | AXError::NoValue)
-+        || (policy == AxValueReadPolicy::AllowOptionalDescriptionFailure
-+            && attribute_name == "AXDescription"
-+            && error == AXError::Failure)
-+}
-+
-+#[cfg(target_os = "macos")]
-+fn description_read_policy(role: &str, protected: bool) -> AxValueReadPolicy {
-+    if !protected && matches!(role, "AXTextArea" | "AXRadioButton") {
-+        AxValueReadPolicy::AllowOptionalDescriptionFailure
-+    } else {
-+        AxValueReadPolicy::Strict
-+    }
-+}
-+
-+#[cfg(all(test, target_os = "macos"))]
-+mod ax_textedit_description_policy_tests {
-+    use super::*;
-+
-+    #[test]
-+    fn optional_description_policy_excludes_protected_and_unrelated_roles() {
-+        use AxValueReadPolicy::{AllowOptionalDescriptionFailure, Strict};
-+        for role in ["AXTextArea", "AXRadioButton"] {
-+            assert_eq!(
-+                description_read_policy(role, false),
-+                AllowOptionalDescriptionFailure
-+            );
-+            assert_eq!(description_read_policy(role, true), Strict);
-+        }
-+        for role in ["AXTextField", "AXSecureTextField", "AXButton", "AXGroup"] {
-+            assert_eq!(description_read_policy(role, false), Strict);
-+        }
-+    }
-+
-+    #[test]
-+    fn generic_provider_failure_is_optional_only_for_exact_typed_description_policy() {
-+        use AxValueReadPolicy::{AllowOptionalDescriptionFailure, Strict};
-+
-+        assert!(missing_optional_ax_value(
-+            "AXDescription",
-+            AXError::Failure,
-+            AllowOptionalDescriptionFailure,
-+        ));
-+        for (attribute, error, policy) in [
-+            ("AXDescription", AXError::Failure, Strict),
-+            ("AXTitle", AXError::Failure, AllowOptionalDescriptionFailure),
-+            ("AXValue", AXError::Failure, AllowOptionalDescriptionFailure),
-+            (
-+                "AXProtectedContent",
-+                AXError::Failure,
-+                AllowOptionalDescriptionFailure,
-+            ),
-+            (
-+                "AXDescription",
-+                AXError::CannotComplete,
-+                AllowOptionalDescriptionFailure,
-+            ),
-+            (
-+                "AXDescription",
-+                AXError::InvalidUIElement,
-+                AllowOptionalDescriptionFailure,
-+            ),
-+            (
-+                "AXDescription",
-+                AXError::APIDisabled,
-+                AllowOptionalDescriptionFailure,
-+            ),
-+        ] {
-+            assert!(
-+                !missing_optional_ax_value(attribute, error, policy),
-+                "must preserve {attribute} / {error:?} / {policy:?}",
-+            );
-+        }
-+        for error in [AXError::NoValue, AXError::AttributeUnsupported] {
-+            assert!(missing_optional_ax_value("AXDescription", error, Strict));
-+        }
-+    }
-+
-+    // Runs only when explicitly requested. Never calls AXValue or the full
-+    // accessibility_tree: the user's document contents must not be fetched.
-+    #[test]
-+    #[ignore = "requires unlocked macOS desktop, visible TextEdit and Accessibility trust"]
-+    fn unlocked_textedit_fingerprints_without_document_value_reads() {
-+        assert!(
-+            unsafe { AXIsProcessTrusted() },
-+            "test process has no Accessibility trust"
-+        );
-+        let candidate = crate::platform::list_windows(crate::MAX_WINDOWS)
-+            .expect("enumerate live macOS windows")
-+            .into_iter()
-+            .find(|window| window.application.eq_ignore_ascii_case("TextEdit"))
-+            .expect("visible TextEdit window required");
-+        let surface = SurfaceRecord {
-+            native_id: candidate.native_id,
-+            pid: candidate.pid,
-+            identity_hash: candidate.identity_hash,
-+            application: bounded_text(&candidate.application),
-+            title: bounded_text(&candidate.title),
-+            width: candidate.width,
-+            height: candidate.height,
-+        };
-+        let deadline = AxObservationDeadline::new();
-+        let window = exact_ax_window(&surface, &deadline).expect("exact TextEdit AXWindow");
-+        let count = ax_array_count(&deadline, &window, "AXChildren")
-+            .expect("bounded TextEdit root child count")
-+            .min(16);
-+        let children = ax_elements(&deadline, &window, "AXChildren", count)
-+            .expect("bounded TextEdit root children");
-+        let mut text_areas = 0usize;
-+        let mut radio_buttons = 0usize;
-+        let mut observed_native_description_failures = 0usize;
-+        
+ async fn prepare_download_request(
+     download_link: &str,
+     policy: ConversationImportDownloadPolicy,
+@@ -420,7 +512,7 @@ async fn prepare_download_request(
+                 TrustedMcpAddressPolicy::PublicOnly,
+             )
+             .await?;
+-            let client = build_download_client(Some(&target))?;
++            let client = build_download_client(Some(&target), None)?;
+             Ok((client, request_url_for_download(target.url)))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1418** (2026-11-11): fix(import): support opt-in loopback proxy for OpenAI host-file downloads (@mo-lin-yuan)
 - **PR #1416** (2026-11-10): chore(desktop): remove dead code warnings on non-Windows builds (@HarpeLm)
 - **PR #1415** (2026-11-10): feat(runner): publish the project catalog before Git enrichment (@HarpeLm)
 - **PR #1414** (2026-11-10): Add optional managed worktree root policy (@HarpeLm)
 - **PR #1413** (2026-11-09): fix(admin): accept native Windows project paths (@swjnxyf)
 - **PR #1412** (closed): fix(tunnel): retry heartbeat status persistence (@HarpeLm)
-- **PR #1411** (2026-11-09): fix(tunnel): keep embedded tunnels alive through heartbeat write failures (@swjnxyf)
 
 ---
 
@@ -2788,73 +2445,42 @@ Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(auth): make the blocking-boundary regression fail without hanging (#1399)
+## X. import): support opt-in loopback proxy for OpenAI host-file downloads (#1418)
 
 **RULE**:
-When implementing operations in `src/auth/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/MCP.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7277fe18`: test(auth): make the blocking-boundary regression fail without hanging (#1399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c141967`: import): support opt-in loopback proxy for OpenAI host-file downloads (#1418). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/auth/tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/MCP.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// blocking boundary. The main test thread holds the store's writer
-/// connection while the auth chain runs on a separate thread's single-thread
-/// runtime with a heartbeat task: the heartbeat can only fire while the
-/// writer lock is still held if the runtime thread stayed free — i.e. the
-/// database work ran on the blocking pool. With inline database work (the
-/// pre-fix behavior) the runtime thread blocks inside the task poll, the
-/// heartbeat never fires, and the bounded wait below fails the test
-/// deterministically; unwinding drops the lock, the leaked probe finishes,
-/// and the process exits normally instead of hanging.
-#[test]
-fn authenticate_database_work_runs_on_the_blocking_pool() {
-    use std::sync::mpsc;
-    let (started, started_rx) = mpsc::channel();
-    let (responsive, responsive_rx) = mpsc::channel::<()>();
-    let db_worker = db.clone();
-    let worker = std::thread::spawn(move || {
-        let runtime = tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .expect("auth probe runtime");
-        runtime.block_on(async move {
-            started.send(()).expect("probe start signal");
-            // Fires
+
+When a loopback-only Desktop Server is behind a local HTTP proxy and OpenAI
+attachment domains resolve to a proxy-managed fake IP, direct TLS connections
+may fail even after the trusted tunnel's fake-IP admission succeeds. Operators
+may opt in to the **OpenAI host-file import only** proxy by setting
+`WEBCODEX_OPENAI_FILE_IMPORT_PROXY=http://127.0.0.1:PORT` in the Server
+environment and restarting the Server. IPv6 `http://[::1]:PORT` is also
+accepted. The setting defaults to off and is ignored for ordinary trusted MCP
+URLs and remote authenticated imports; it requires an explicitly trusted
+loopback MCP source and an allowlisted OpenAI attachment hostname. TLS server
+certificate verification and redirect rejection remain enabled. The HTTP
+CONNECT proxy chooses the upstream address instead of WebCodex's directly
+pinned DNS addresses, so use only a proxy you control and trust; no remote
+proxy endpoints, credentials, or hostnames are accepted as proxy settings.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// blocking boundary: with the store's writer connection held from the runtime
-/// thread, authentication must still complete on a current-thread runtime. If
-/// the database work ran inline on the runtime thread, the await below could
-/// never make progress and the deadline fires (a deadlock, not a timing
-/// measurement).
-#[tokio::test(flavor = "current_thread")]
-async fn authenticate_database_work_runs_on_the_blocking_pool() {
-    let db_task = db.clone();
-    let token = token.to_string();
-    let task =
-        tokio::spawn(async move { authenticate(config.clone(), Some(&db_task), &token).await });
-    tokio::time::timeout(Duration::from_secs(5), async {
-        // Let the blocking task park on the writer mutex, then release it.
-        tokio::time::sleep(Duration::from_millis(100)).await;
-        drop(guard);
-    })
-    .await
-    .expect("runtime thread must stay responsive while auth waits for the store lock");
-    let result = tokio::time::timeout(Duration::from_secs(5), task)
-        .await
-        .expect("authenticate must complete once the store lock is released")
-        .unwrap()
-        .expect("valid token must authenticate");
-    let context = result.expect("val
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7277fe18` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c141967` are properly handled with clean fallback behavior.

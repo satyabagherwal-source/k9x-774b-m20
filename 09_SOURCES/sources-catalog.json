@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "a8560b0a",
+    "sourceVersion": "a6bb9bc5",
     "license": "NOASSERTION",
-    "contentHash": "ec50654ceab3fb9f5713ce4a39835f6772378937e1c6613f4f9fce733400661e",
-    "lastHarvestedAt": "2026-11-11T13:29:07.409Z",
+    "contentHash": "d88fc978d7070c1d898b0bc2d20a7b2af30cab812d3d1048f1a678e40887b2b8",
+    "lastHarvestedAt": "2026-11-13T01:01:36.077Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -12303,10 +12303,10 @@
     "repository": "yyjeqhc/webcodex",
     "platform": "github",
     "sourceUrl": "https://github.com/yyjeqhc/webcodex",
-    "sourceVersion": "f8228b6a",
+    "sourceVersion": "3c141967",
     "license": "Apache-2.0",
-    "contentHash": "d0ca4f23593c5bd95843a7d308d66d80e6e3c849a7f76659956cc28f7d47f74d",
-    "lastHarvestedAt": "2026-11-11T06:13:35.581Z",
+    "contentHash": "bf2e2e0040ab377dfd84c2ac137cdd55376fbd980f4f70410f8023836a9c87ef",
+    "lastHarvestedAt": "2026-11-13T01:01:18.950Z",
     "learningId": "learn-github-yyjeqhc-webcodex"
   },
   "hf-minimaxai-minimax-h3-image": {

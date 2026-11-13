@@ -9278,3 +9278,5 @@ Every entry in this ledger must capture:
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `fc801fba` | Multi-dimensional audit evidence | 2026-11-13T00:31:10.414Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `620db4dd` | Multi-dimensional audit evidence | 2026-11-13T00:31:14.720Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `01921cba` | Multi-dimensional audit evidence | 2026-11-13T00:43:28.304Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `3c141967` | Multi-dimensional audit evidence | 2026-11-13T01:01:18.950Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a6bb9bc5` | Multi-dimensional audit evidence | 2026-11-13T01:01:36.077Z |

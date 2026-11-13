@@ -9269,3 +9269,5 @@
 | `CYCLE-20261113-R1VU` | `2026-11-13T00:31:10.410Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`83fa1a01...`) |
 | `CYCLE-20261113-R57G` | `2026-11-13T00:31:14.716Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3e78a7b9...`) |
 | `CYCLE-20261113-6V8S` | `2026-11-13T00:43:28.300Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5e8cb4a...`) |
+| `CYCLE-20261113-TTD0` | `2026-11-13T01:01:18.948Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bf2e2e00...`) |
+| `CYCLE-20261113-U6KN` | `2026-11-13T01:01:36.071Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d88fc978...`) |
