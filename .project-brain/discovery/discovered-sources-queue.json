@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T01:01:41.544Z",
+  "updated_at": "2026-11-13T01:14:34.391Z",
   "stats": {
-    "total_discovered": 1922,
-    "approved_pending_harvest": 1768,
+    "total_discovered": 1952,
+    "approved_pending_harvest": 1798,
     "harvested_count": 0,
     "rejected_count": 154,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1769,
+      "COMMUNITY_AND_EXPERT": 1795,
       "OFFICIAL_DOCUMENTATION": 80,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
-      "SECURITY_ADVISORIES": 3
+      "SECURITY_ADVISORIES": 7
     }
   },
   "sources": {
@@ -41223,6 +41223,666 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
         "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-68C89894EAE4": {
+      "id": "SRC-68C89894EAE4",
+      "url": "https://github.com/facebook/docusaurus",
+      "title": "https://github.com/facebook/docusaurus",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:33.935Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-F706A95B06DF": {
+      "id": "SRC-F706A95B06DF",
+      "url": "https://codesandbox.io/p/sandbox/github/meta/docusaurus/tree/main/examples/classic?file=%2FREADME.md&privacy=public",
+      "title": "https://codesandbox.io/p/sandbox/github/meta/docusaurus/tree/main/examples/classic?file=%2FREADME.md&privacy=public",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:33.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-7722BC7B8C79": {
+      "id": "SRC-7722BC7B8C79",
+      "url": "https://codesandbox.io/p/sandbox/github/meta/docusaurus/tree/main/examples/classic-typescript?file=%2FREADME.md&privacy=public",
+      "title": "https://codesandbox.io/p/sandbox/github/meta/docusaurus/tree/main/examples/classic-typescript?file=%2FREADME.md&privacy=public",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:33.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-87C695DB6691": {
+      "id": "SRC-87C695DB6691",
+      "url": "https://stackblitz.com/github/meta/docusaurus/tree/main/examples/classic",
+      "title": "https://stackblitz.com/github/meta/docusaurus/tree/main/examples/classic",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:33.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-8E1EC4077438": {
+      "id": "SRC-8E1EC4077438",
+      "url": "https://stackblitz.com/github/meta/docusaurus/tree/starter",
+      "title": "https://stackblitz.com/github/meta/docusaurus/tree/starter",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:33.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-F86532311A13": {
+      "id": "SRC-F86532311A13",
+      "url": "https://stackblitz.com/github/meta/docusaurus/tree/main/examples/classic-typescript",
+      "title": "https://stackblitz.com/github/meta/docusaurus/tree/main/examples/classic-typescript",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.013Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-04E3BE3CC204": {
+      "id": "SRC-04E3BE3CC204",
+      "url": "https://docusaurus.io/docs/playground",
+      "title": "https://docusaurus.io/docs/playground",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.028Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-869CA194DAB5": {
+      "id": "SRC-869CA194DAB5",
+      "url": "https://stackoverflow.com/a/3409200/82609",
+      "title": "https://stackoverflow.com/a/3409200/82609",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-2A612593B079": {
+      "id": "SRC-2A612593B079",
+      "url": "https://github.com/meta/docusaurus/pull/11653",
+      "title": "https://github.com/meta/docusaurus/pull/11653",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-C325A3A131A1": {
+      "id": "SRC-C325A3A131A1",
+      "url": "https://github.com/sindresorhus/slash/blob/main/index.js",
+      "title": "https://github.com/sindresorhus/slash/blob/main/index.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-9D23E26A5A6B": {
+      "id": "SRC-9D23E26A5A6B",
+      "url": "https://github.com/meta/docusaurus/pull/4222",
+      "title": "https://github.com/meta/docusaurus/pull/4222",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-93D332F27306": {
+      "id": "SRC-93D332F27306",
+      "url": "https://github.com/meta/docusaurus/pull/9684",
+      "title": "https://github.com/meta/docusaurus/pull/9684",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.107Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-BCC9DD676404": {
+      "id": "SRC-BCC9DD676404",
+      "url": "https://github.com/meta/docusaurus/issues/11003",
+      "title": "https://github.com/meta/docusaurus/issues/11003",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.123Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-94740032DC44": {
+      "id": "SRC-94740032DC44",
+      "url": "https://github.com/facebook/docusaurus/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/facebook/docusaurus/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-8983AB52D516": {
+      "id": "SRC-8983AB52D516",
+      "url": "https://new.docusaurus.io/",
+      "title": "https://new.docusaurus.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.153Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-070C73D3A55E": {
+      "id": "SRC-070C73D3A55E",
+      "url": "https://docusaurus.io/",
+      "title": "https://docusaurus.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-066CC531268A": {
+      "id": "SRC-066CC531268A",
+      "url": "https://github.com/advisories/GHSA-85c8-ppgw-ccpr",
+      "title": "https://github.com/advisories/GHSA-85c8-ppgw-ccpr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-37BA162D10FB": {
+      "id": "SRC-37BA162D10FB",
+      "url": "https://nvd.nist.gov/vuln/detail/cve-2026-104849",
+      "title": "https://nvd.nist.gov/vuln/detail/cve-2026-104849",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.198Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-ADDC2A323822": {
+      "id": "SRC-ADDC2A323822",
+      "url": "https://github.com/advisories/GHSA-5gmw-xhrv-c9v3",
+      "title": "https://github.com/advisories/GHSA-5gmw-xhrv-c9v3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.213Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-644214B308C4": {
+      "id": "SRC-644214B308C4",
+      "url": "https://nvd.nist.gov/vuln/detail/cve-2026-104848",
+      "title": "https://nvd.nist.gov/vuln/detail/cve-2026-104848",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.229Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-F27346025447": {
+      "id": "SRC-F27346025447",
+      "url": "https://github.com/meta/docusaurus/pull/12448",
+      "title": "https://github.com/meta/docusaurus/pull/12448",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-D8CC9BA55F02": {
+      "id": "SRC-D8CC9BA55F02",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-104848",
+      "title": "Vulnerability Advisory CVE-2026-104848",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.261Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-1ECE7092442A": {
+      "id": "SRC-1ECE7092442A",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-104849",
+      "title": "Vulnerability Advisory CVE-2026-104849",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-4005F861E1FB": {
+      "id": "SRC-4005F861E1FB",
+      "url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "title": "https://github.com/Kong/kubernetes-ingress-controller",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-F4CE6D7AD001": {
+      "id": "SRC-F4CE6D7AD001",
+      "url": "https://github.com/Kong/kubernetes-ingress-controller/issues/6270",
+      "title": "https://github.com/Kong/kubernetes-ingress-controller/issues/6270",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-D52872629684": {
+      "id": "SRC-D52872629684",
+      "url": "https://github.com/Kong/kubernetes-ingress-controller/issues/2556",
+      "title": "https://github.com/Kong/kubernetes-ingress-controller/issues/2556",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-FF8EAF98F164": {
+      "id": "SRC-FF8EAF98F164",
+      "url": "https://github.com/Kong/kubernetes-ingress-controller/issues/2080",
+      "title": "https://github.com/Kong/kubernetes-ingress-controller/issues/2080",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.345Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-76748C996BBC": {
+      "id": "SRC-76748C996BBC",
+      "url": "https://github.com/Kong/kubernetes-ingress-controller/issues/5322",
+      "title": "https://github.com/Kong/kubernetes-ingress-controller/issues/5322",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-B1055BAEA09D": {
+      "id": "SRC-B1055BAEA09D",
+      "url": "https://github.com/Kong/kong/discussions/14628",
+      "title": "https://github.com/Kong/kong/discussions/14628",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-4EBE9E8423DB": {
+      "id": "SRC-4EBE9E8423DB",
+      "url": "https://github.com/Kong/kubernetes-ingress-controller/blob/247aeb9006abd52f92ae6d7ee306842bae098a54/internal/dataplane/testdata/golden/ingress-v1-rule-with-tls-and-consumer-ee/note.txt",
+      "title": "https://github.com/Kong/kubernetes-ingress-controller/blob/247aeb9006abd52f92ae6d7ee306842bae098a54/internal/dataplane/testdata/golden/ingress-v1-rule-with-tls-and-consumer-ee/note.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:14:34.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
       }
     }
   }

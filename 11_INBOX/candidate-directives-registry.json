@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:01:41.550Z",
+  "last_updated": "2026-11-13T01:14:34.402Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7778,6 +7778,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-71A093-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-97FFFA",
+      "directive_title": "ci): skip the security workflows on forks (#13006)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "facebook-docusaurus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-97FFFA-ci-skip-the-security-workflows-on-forks-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-EE8187",
+      "directive_title": "security): use stepsecurity harden-runner in all workflows (#8146)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kong-kubernetes-ingress-controller",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EE8187-security-use-stepsecurity-harden-runner-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-AF92C4",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AF92C4-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-13"
     }
   ]

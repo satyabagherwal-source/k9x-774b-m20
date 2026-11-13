@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T01:01:41.387Z",
-    "lastVerified": "2026-11-13T01:01:41.387Z",
+    "lastChecked": "2026-11-13T01:14:33.701Z",
+    "lastVerified": "2026-11-13T01:14:33.701Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -254,8 +254,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T00:23:47.189Z",
-    "lastVerified": "2026-11-13T00:23:47.189Z",
+    "lastChecked": "2026-11-13T01:14:17.364Z",
+    "lastVerified": "2026-11-13T01:14:17.364Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1092,22 +1092,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kong-kubernetes-ingress-controller": {
-    "name": "kubernetes-ingress-controller",
+    "name": "Kong/kubernetes-ingress-controller",
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T15:27:02.546Z",
-    "lastVerified": "2026-11-11T15:27:02.546Z",
+    "lastChecked": "2026-11-13T01:14:14.090Z",
+    "lastVerified": "2026-11-13T01:14:14.090Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
-    "contentHash": "fa4949a8cee5c0ceb5864cd296a17b5688ac07c91a27ea6549db3a49d78d5e49",
+    "contentHash": "fff643747d360489c6b5bac9a9c9bfa4b3531f5b13e56f390a2180ace461a25a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "79b7d505"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mimblewimble-grin": {
     "name": "grin",
@@ -1577,9 +1576,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-12T14:59:31.159Z",
+    "lastChecked": "2026-11-13T01:14:12.322Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-12T14:59:31.159Z"
+    "lastVerified": "2026-11-13T01:14:12.322Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -3563,9 +3562,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-11T13:52:18.684Z",
+    "lastChecked": "2026-11-13T01:14:14.917Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-11T13:52:18.684Z"
+    "lastVerified": "2026-11-13T01:14:14.917Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -8527,9 +8526,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-11-11T06:33:06.374Z",
+    "lastChecked": "2026-11-13T01:14:02.314Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-11-11T06:33:06.374Z"
+    "lastVerified": "2026-11-13T01:14:02.314Z"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",
@@ -11154,9 +11153,9 @@
   "lessica-trollfools": {
     "name": "TrollFools",
     "officialUrl": "https://github.com/Lessica/TrollFools",
-    "lastChecked": "2026-11-08T18:45:51.057Z",
+    "lastChecked": "2026-11-13T01:14:07.245Z",
     "revisionIdentifier": "c5c87b85",
-    "lastVerified": "2026-11-08T18:45:51.057Z"
+    "lastVerified": "2026-11-13T01:14:07.245Z"
   },
   "scrapy-plugins-scrapy-deltafetch": {
     "name": "scrapy-deltafetch",
@@ -13097,14 +13096,14 @@
     "officialUrl": "https://github.com/facebook/docusaurus",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T02:02:57.564Z",
-    "lastVerified": "2026-11-08T02:02:57.564Z",
+    "lastChecked": "2026-11-13T01:14:11.795Z",
+    "lastVerified": "2026-11-13T01:14:11.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-docusaurus",
-    "contentHash": "4e8dba8373053b346bcb6ae281bff6e64dde04d22ac6401d7ec7a0dd2bf98848",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 15,
+    "contentHash": "fbf247a2fc30082cdd538255789f0aff52f0de8e90b038c4f09bf2daabe13f2e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

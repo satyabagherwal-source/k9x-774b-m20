@@ -9271,3 +9271,5 @@
 | `CYCLE-20261113-6V8S` | `2026-11-13T00:43:28.300Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5e8cb4a...`) |
 | `CYCLE-20261113-TTD0` | `2026-11-13T01:01:18.948Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bf2e2e00...`) |
 | `CYCLE-20261113-U6KN` | `2026-11-13T01:01:36.071Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d88fc978...`) |
+| `CYCLE-20261113-AOIP` | `2026-11-13T01:14:25.825Z` | `meta/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fbf247a2...`) |
+| `CYCLE-20261113-AQ9Z` | `2026-11-13T01:14:28.103Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fff64374...`) |

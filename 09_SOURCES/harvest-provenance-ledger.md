@@ -9280,3 +9280,5 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `01921cba` | Multi-dimensional audit evidence | 2026-11-13T00:43:28.304Z |
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `3c141967` | Multi-dimensional audit evidence | 2026-11-13T01:01:18.950Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a6bb9bc5` | Multi-dimensional audit evidence | 2026-11-13T01:01:36.077Z |
+| `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `9e7ac3c0` | Multi-dimensional audit evidence | 2026-11-13T01:14:25.829Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `ef5a7724` | Multi-dimensional audit evidence | 2026-11-13T01:14:28.107Z |

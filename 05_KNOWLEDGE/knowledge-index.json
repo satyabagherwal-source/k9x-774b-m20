@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T01:01:35.982Z",
+  "last_updated": "2026-11-13T01:14:27.989Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39760,14 +39760,19 @@
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "79b7d505",
-      "content_hash": "fa4949a8cee5c0ceb5864cd296a17b5688ac07c91a27ea6549db3a49d78d5e49",
+      "source_version": "ef5a7724",
+      "content_hash": "fff643747d360489c6b5bac9a9c9bfa4b3531f5b13e56f390a2180ace461a25a",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "security): use stepsecurity harden-runner in all workflows (#8146)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39821,7 +39826,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:57:13.764Z",
+      "verified_at": "2026-11-13T01:14:27.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -170479,8 +170484,8 @@
       "slug": "facebook-docusaurus",
       "platform": "github",
       "source_url": "https://github.com/facebook/docusaurus",
-      "source_version": "c00f04e2",
-      "content_hash": "4e8dba8373053b346bcb6ae281bff6e64dde04d22ac6401d7ec7a0dd2bf98848",
+      "source_version": "9e7ac3c0",
+      "content_hash": "fbf247a2fc30082cdd538255789f0aff52f0de8e90b038c4f09bf2daabe13f2e",
       "dossier_path": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
       "promoted_rules": [
@@ -170500,6 +170505,11 @@
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
+          "number": null,
+          "title": "ci): skip the security workflows on forks (#13006)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 5942,
           "title": "ci): don't proxy our unscoped packages in the E2E Verdaccio registry (AI-assiste",
           "status": "PROMOTED_AND_VERIFIED"
@@ -170515,7 +170525,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:05:41.140Z",
+      "verified_at": "2026-11-13T01:14:25.640Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

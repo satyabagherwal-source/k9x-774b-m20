@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:01:36.081Z",
-  "total_cycles_completed": 9087,
-  "total_learnings_persisted": 9087,
-  "total_rules_promoted": 8923,
+  "last_updated": "2026-11-13T01:14:28.114Z",
+  "total_cycles_completed": 9089,
+  "total_learnings_persisted": 9089,
+  "total_rules_promoted": 8925,
   "history": [
-    {
-      "timestamp": "2026-11-12T02:56:41.160Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T02:56:44.590Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T03:10:26.225Z",
       "repository": "momenbasel/PureMac",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T01:01:36.081Z",
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:14:25.851Z",
+      "repository": "meta/docusaurus",
+      "learningId": "learn-github-meta-docusaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:14:28.114Z",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "learningId": "learn-github-kong-kubernetes-ingress-controller",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

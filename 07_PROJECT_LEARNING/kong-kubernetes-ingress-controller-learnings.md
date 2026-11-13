@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source**: github ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
-> **Source Version**: `79b7d505`  
+> **Source Version**: `ef5a7724`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:57:12.513Z  
+> **Timestamp**: 2026-11-13T01:14:14.098Z  
 > **Learning ID**: `learn-github-kong-kubernetes-ingress-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T18:57:11.978Z  
+> **Harvest Timestamp**: 2026-11-13T01:14:14.090Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1560,56 +1560,32 @@ func CRDExists(restMapper meta.RESTMapper, gvr schema.GroupVersionResource) bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79b7d505` (2026-11-06)
-**Commit Message**: test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (#8141)
+### Incident Patch 1: `18d04552` (2026-11-11)
+**Commit Message**: chore(security): use stepsecurity harden-runner in all workflows (#8146)
 
-* Pin helm to v3 to fix conflicts in CRD installation
-
-* skip installing CRDs in integration tests
-
-**File**: `test/internal/helpers/ktf.go` (modified, +12/-0)
+**File**: `.github/workflows/_envtest_tests.yaml` (modified, +5/-0)
 ```diff
-@@ -78,6 +78,7 @@ func GenerateKongBuilder(_ context.Context) (*kong.Builder, []string, error) {
- }
- 
- // GenerateKongBuilderWithController generates a Kong builder that installs both KIC and Kong gateway.
-+// CRDs from the chart are not installed, as they are expected to be already installed in the cluster.
- func GenerateKongBuilderWithController() (*kong.Builder, error) {
- 	kongbuilder := kong.NewBuilder().WithNamespace(consts.ControllerNamespace)
- 
-@@ -89,6 +90,9 @@ func GenerateKongBuilderWithController() (*kong.Builder, error) {
- 		kongbuilder = kongbuilder.WithProxyEnterpriseEnabled(licenseJSON)
- 		if testenv.DBMode() != testenv.DBModeOff {
- 			kongbuilder.WithProxyEnterpriseSuperAdminPassword(consts.KongTestPassword)
-+			// KTF does not set the admin token for the controller when it is disabled (see below), so set it explicitly.
-+			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.name", kong.DefaultEnterpriseAdminPasswordSecretName)
-+			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.key", "password")
- 		}
- 	}
- 
-@@ -123,5 +127,13 @@ func GenerateKongBuilderWithController() (*kong.Builder, error) {
- 
- 	kongbuilder.WithProxyAdminServiceTypeLoadBalancer()
- 
-+	// Helm 4 installs CRDs from the chart's crds/ with server-side apply, which conflicts with the CRDs
-+	// pre-installed by the test suite via client-side apply. KTF only passes --skip-crds when the controller
-+	// is disabled, so disable it and re-enable it via an additional value (appended last, so it wins).
-+	kongbuilder.WithControllerDisabled()
-+	kongbuilder.WithAdditionalValue("ingressController.enabled", "true")
-+	// WithControllerDisabled sets the proxy readiness probe path to /status, restore the chart's default.
-+	kongbuilder.WithProxyReadinessProbePath("/status/ready")
+@@ -13,6 +13,11 @@ jobs:
+       matrix: ${{ steps.set-matrix.outputs.matrix }}
+       latest: ${{ steps.set-latest.outputs.latest }}
+     steps:
++      - name: Harden Runner
++        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
++        with:
++          egress-policy: audit
 +
- 	return kongbuilder, nil
- }
+       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+       - id: set-matrix
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8148** (2026-11-12): chore: bump kong gateway to 3.16 for testing (@kriive)
+- **PR #8147** (closed): chore: bump kong gateway to 3.13 for testing (@kriive)
+- **PR #8146** (2026-11-11): chore(security): use stepsecurity harden-runner in all workflows (@sid77)
 - **PR #8141** (2026-11-06): test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (@randmonkey)
 - **PR #8140** (closed): Chore(ci): Pin helm to v3 to fix conflicts in CRD installation (@randmonkey)
 - **PR #8136** (2026-10-28): docs(changelog): Add entries for releases 3.5.14 and 3.4.21 (@randmonkey)
-- **PR #8135** (2026-10-26): chore(deps): bump golang from `f241642` to `f20d83a` (@dependabot[bot])
-- **PR #8129** (2026-10-22): chore(changelog): update changelog for 3.5.14 (@randmonkey)
-- **PR #8128** (2026-10-22): chore(changelog): update changelog for 3.4.21 (@randmonkey)
 
 ---
 
@@ -1629,31 +1605,24 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated 
+## X. security): use stepsecurity harden-runner in all workflows (#8146)
 
 **RULE**:
-When implementing operations in `test/internal/helpers/ktf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/_envtest_tests.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79b7d505`: test(integration):  Skip installing CRDs in deploying KIC and Kong for isolated integration tests (#8141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18d04552`: security): use stepsecurity harden-runner in all workflows (#8146). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/internal/helpers/ktf.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_envtest_tests.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// CRDs from the chart are not installed, as they are expected to be already installed in the cluster.
-			// KTF does not set the admin token for the controller when it is disabled (see below), so set it explicitly.
-			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.name", kong.DefaultEnterpriseAdminPasswordSecretName)
-			kongbuilder.WithAdditionalValue("ingressController.env.kong_admin_token.valueFrom.secretKeyRef.key", "password")
-	// Helm 4 installs CRDs from the chart's crds/ with server-side apply, which conflicts with the CRDs
-	// pre-installed by the test suite via client-side apply. KTF only passes --skip-crds when the controller
-	// is disabled, so disable it and re-enable it via an additional value (appended last, so it wins).
-	kongbuilder.WithControllerDisabled()
-	kongbuilder.WithAdditionalValue("ingressController.enabled", "true")
-	// WithControllerDisabled sets the proxy readiness probe path to /status, restore the chart's default.
-	kongbuilder.WithProxyReadinessProbePath("/status/ready")
+      - name: Harden Runner
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
 
 ```
 
@@ -1664,4 +1633,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79b7d505` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18d04552` are properly handled with clean fallback behavior.

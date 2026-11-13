@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:01:41.575Z",
+  "last_updated": "2026-11-13T01:14:34.483Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T00:43:32.988Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-13T00:43:32.927Z",
+      "processed_at": "2026-11-13T01:14:34.404Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1401,9 +1401,19 @@
       "processed_at": "2026-11-13T01:01:41.539Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "facebook-docusaurus-learnings.md": {
+      "processed_at": "2026-11-13T01:14:33.922Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "kong-kubernetes-ingress-controller-learnings.md": {
+      "processed_at": "2026-11-13T01:14:34.291Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 405,
+  "total_dossiers_evaluated": 408,
   "total_canonical_promoted": 45,
-  "total_staged_for_review": 359
+  "total_staged_for_review": 362
 }

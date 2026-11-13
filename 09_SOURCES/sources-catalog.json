@@ -2143,10 +2143,10 @@
     "repository": "meta/docusaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/docusaurus",
-    "sourceVersion": "c00f04e2",
+    "sourceVersion": "9e7ac3c0",
     "license": "MIT",
-    "contentHash": "4e8dba8373053b346bcb6ae281bff6e64dde04d22ac6401d7ec7a0dd2bf98848",
-    "lastHarvestedAt": "2026-11-08T02:05:41.237Z",
+    "contentHash": "fbf247a2fc30082cdd538255789f0aff52f0de8e90b038c4f09bf2daabe13f2e",
+    "lastHarvestedAt": "2026-11-13T01:14:25.829Z",
     "learningId": "learn-github-meta-docusaurus"
   },
   "tabbyml-tabby": {
@@ -6993,10 +6993,10 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "sourceVersion": "79b7d505",
+    "sourceVersion": "ef5a7724",
     "license": "Apache-2.0",
-    "contentHash": "fa4949a8cee5c0ceb5864cd296a17b5688ac07c91a27ea6549db3a49d78d5e49",
-    "lastHarvestedAt": "2026-11-07T18:57:13.863Z",
+    "contentHash": "fff643747d360489c6b5bac9a9c9bfa4b3531f5b13e56f390a2180ace461a25a",
+    "lastHarvestedAt": "2026-11-13T01:14:28.107Z",
     "learningId": "learn-github-kong-kubernetes-ingress-controller"
   },
   "hf-comfy-org-z_image_turbo": {

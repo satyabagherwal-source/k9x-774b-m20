@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T01:01:36.084Z",
+  "last_updated": "2026-11-13T01:14:28.119Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10551,14 +10551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
-      "content_hash": "fa4949a8cee5c0ceb5864cd296a17b5688ac07c91a27ea6549db3a49d78d5e49",
-      "verified_at": "2026-11-07T18:57:13.871Z",
+      "content_hash": "fff643747d360489c6b5bac9a9c9bfa4b3531f5b13e56f390a2180ace461a25a",
+      "verified_at": "2026-11-13T01:14:28.118Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:57:13.871Z"
+      "last_updated": "2026-11-13T01:14:28.118Z"
     },
     "Comfy-Org/z_image_turbo": {
       "repository": "Comfy-Org/z_image_turbo",
@@ -17466,14 +17466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-docusaurus",
-      "content_hash": "4e8dba8373053b346bcb6ae281bff6e64dde04d22ac6401d7ec7a0dd2bf98848",
-      "verified_at": "2026-11-08T02:05:41.252Z",
+      "content_hash": "fbf247a2fc30082cdd538255789f0aff52f0de8e90b038c4f09bf2daabe13f2e",
+      "verified_at": "2026-11-13T01:14:25.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:05:41.252Z"
+      "last_updated": "2026-11-13T01:14:25.855Z"
     },
     "krishhgg/Insomnia": {
       "repository": "krishhgg/Insomnia",
