@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T05:52:03.012Z",
-  "total_records": 99,
+  "last_updated": "2026-11-13T06:21:14.006Z",
+  "total_records": 100,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 58,
+      "total": 59,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -83,7 +83,8 @@
         "DOM-D-F4EF37A7",
         "DOM-D-6C43F0F5",
         "DOM-D-7D4C4039",
-        "DOM-D-80F82307"
+        "DOM-D-80F82307",
+        "DOM-D-B83FE1C6"
       ]
     },
     "E": {
@@ -4086,6 +4087,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T05:52:03.010Z"
+    },
+    "DOM-D-B83FE1C6": {
+      "record_id": "DOM-D-B83FE1C6",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/Fibo-2.0",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/Fibo-2.0](https://huggingface.co/Comfy-Org/Fibo-2.0))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "d0f12508682d5acef0679620c5015919972902b41ad4cc6ba3c80f847c11c553",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-fibo-2.0/hf-comfy-org-fibo-2.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T06:20:58.673Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-fibo-2.0)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-fibo-2.0"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T06:21:14.003Z"
     }
   }
 }

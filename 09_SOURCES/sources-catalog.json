@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "bb5390b6",
+    "sourceVersion": "fd9719fa",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "79f65bcd0d03ca74eb5c3d1d5ee0a7f286b95abe4f99e651531347c1e6f862a4",
-    "lastHarvestedAt": "2026-11-11T12:53:26.292Z",
+    "contentHash": "27212f9b0afa4bd23247e0c29f6a4f1522803cdb250d26b4aa5fcc3a7f0f158c",
+    "lastHarvestedAt": "2026-11-13T06:20:42.330Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "42846c40",
+    "sourceVersion": "74fb6231",
     "license": "Apache-2.0",
-    "contentHash": "b97768bdf78231ed2ddd22d9e3854a8a2c1107f8a8d4670b7887f4e6304cf5ff",
-    "lastHarvestedAt": "2026-11-12T01:23:32.213Z",
+    "contentHash": "59c5e3c427f223782736c0bc7c125e1690dd2c63168d5f3c83c0191fafdf464a",
+    "lastHarvestedAt": "2026-11-13T06:20:51.771Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -9503,10 +9503,10 @@
     "repository": "StikDebug/StikDebug",
     "platform": "github",
     "sourceUrl": "https://github.com/StikDebug/StikDebug",
-    "sourceVersion": "0393dcaf",
+    "sourceVersion": "7a80dfce",
     "license": "AGPL-3.0",
-    "contentHash": "9fc771b0c7021e9606927476747c5e65baee4fa4165b473d2ed183d344fac0e5",
-    "lastHarvestedAt": "2026-11-08T22:26:19.809Z",
+    "contentHash": "d4c63a725b8e17a44caf1ee22d6c215125e48c2dc079870710cfbb36df5af038",
+    "lastHarvestedAt": "2026-11-13T06:20:48.761Z",
     "learningId": "learn-github-stikdebug-stikdebug"
   },
   "remarkjs-remark": {
@@ -10615,8 +10615,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceVersion": "hf-comfy-org-fibo-2.0",
     "license": "Open-Source",
-    "contentHash": "4bd769bfa6070c46158db477f0d0ba25690e516718c5b7e5f4df52c6be812ea3",
-    "lastHarvestedAt": "2026-11-08T05:18:09.358Z",
+    "contentHash": "b602c78e67d3185f3b5daa04a6ee151d5f67e703320f599b628ebc5a0a5302f9",
+    "lastHarvestedAt": "2026-11-13T06:20:26.825Z",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0"
   },
   "hf-ornith-ai-ornith-1.5-122b": {

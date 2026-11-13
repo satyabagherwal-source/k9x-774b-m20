@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `bb5390b6`  
+> **Source Version**: `fd9719fa`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T12:53:16.438Z  
+> **Timestamp**: 2026-11-13T06:20:27.604Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,14 +17,14 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T12:53:16.247Z  
+> **Harvest Timestamp**: 2026-11-13T06:20:27.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `iii-hq/iii`
-- **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
+- **Description**: Effortlessly compose, extend, observe, discover, and react to every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
 - **Stars / Engagement**: 18936 stars
@@ -2111,10 +2111,6 @@ pub fn print_err(problem: &str, cause: &str, fix: &str) -> i32 {
 //! definition. Constants are also drawn from [`runtime::tool::iii_tool`]
 //! where possible to keep docs/install URLs in a single place.
 //!
-//! See `crates/motia-tools/src/main.rs` for the parallel `MotiaConfig` impl
-//! (which lives in its own binary because that binary is published
-//! separately as `motia-tools`).
-//!
 //! [`ProductConfig`]: crate::ProductConfig
 
 use crate::product::ProductConfig;
@@ -2186,7 +2182,7 @@ mod tests {
 //! Scaffolder Core - Shared library for project scaffolding CLIs
 //!
 //! This library provides the core functionality for scaffolding projects from templates.
-//! It is designed to be used by multiple CLI binaries (e.g., `motia`, `iii`) that share
+//! It is designed to be used by multiple CLI binaries (e.g., `iii`) that share
 //! the same underlying scaffolding logic but have different product configurations.
 //!
 //! # Architecture
@@ -2241,427 +2237,844 @@ pub use tui::run;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69f3520b` (2026-11-10)
-**Commit Message**: fix(subscribe): install from bun.lock before the worker starts (#2511)
-
-**File**: `services/subscribe/README.md` (modified, +6/-5)
-```diff
-@@ -30,13 +30,14 @@ Set in `worker-compose.yaml`, except the key:
- 
- ## Develop
- 
--Bun, not pnpm: this directory is deployed on its own (iii Cloud installs at the environment's root
--directory), so it keeps its own `bun.lock` outside the pnpm workspace.
-+Bun, not pnpm: the worker is deployed on its own, so it keeps its own `package.json` and
-+`bun.lock` in `workers/subscribe/`, outside the pnpm workspace. Its start command installs from
-+that lockfile before running, both on iii Cloud and in a local compose VM (which sees only the
-+worker's directory).
- 
- ```bash
--bun install
--bun test
--RESEND_API_KEY=re_... iii compose --up   # engine + http worker + this worker
-+cd workers/subscribe && bun install && bun test
-+RESEND_API_KEY=re_... iii compose --up   # from services/subscribe: engine + http worker + this worker
- ```
- 
- ## Deploy
-```
-
-**File**: `services/subscribe/workers/subscribe/iii.worker.yaml` (modified, +7/-1)
-```diff
-@@ -3,4 +3,10 @@ description: iii.dev email signup, POST /api/subscribe (Resend contact + welcome
- runtime:
-   base_image: oven/bun:1.3
- scripts:
--  start: bun run index.ts
-+  # Install from bun.lock before starting. Without node_modules, Bun falls back to
-+  # auto-install, which fetches the latest versions and leaves peer dependencies
-+  # unresolved: iii-sdk's OpenTelemetry packages then fail on '@opentelemetry/api'.
-+  # The manifest and lockfile live in this directory, so this works wherever the
-+  # worker runs: iii Cloud's image, or the /workspace of a local compose VM, which
-+  # holds this directory alone. When node_modules is current this is a no-op.
-+  start: bun install --frozen-lockfile --production && exec bun run index.ts
-```
-
----
-
-### Incident Patch 2: `6806db60` (2026-11-09)
-**Commit Message**: fix(deps): bump zstd chain, rusqlite and async-executor for Supply Chain advisories (#2498)
-
-Fix the Rust advisories job of the Supply Chain workflow:
-
-- zstd 0.13.4, zstd-safe 7.4.0 and zstd-sys 2.1.2 (RUSTSEC-2026-0391,
-  -0398, -0403, -0410) with a lockfile-only update; msb_krun stays
-  pinned at =0.1.16.
-- rusqlite 0.41.1 / libsqlite3-sys 0.39.1 (RUSTSEC-2026-0459, bundled
-  SQLite).
-- async-executor 1.14.1 (1.14.0 was yanked).
-- Both CONTRIBUTING.md guides now ask for Rust 1.91+.
+### Incident Patch 1: `175858b5` (2026-11-12)
+**Commit Message**: fix(docs): point the 0.21.x reference tab at the existing reference pages (#2539)
 
 Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+**File**: `docs/0-21-0/reference/helpers-python.mdx` (modified, +1/-1)
 ```diff
-@@ -61,7 +61,7 @@ their behalf, or your employer must have waived such rights for your contributio
+@@ -363,7 +363,7 @@ redact_and_truncate(value: Any, max_bytes: Optional[int] = None) -> tuple[str, b
+ </ParamField>
  
- ### Prerequisites
+ <ParamField body="max_bytes" type="Optional[int]">
+-  Optional cap on the serialized byte length; unset or <= 0 means no cap.
++  Optional cap on the serialized byte length; unset, zero, or negative means no cap.
+ </ParamField>
  
--- Rust 1.80+ (edition 2024)
-+- Rust 1.91+ (edition 2024)
- - Redis (only if you enable the event/cron/stream workers)
  
- ### Setting Up Your Development Environment
 ```
 
-**File**: `Cargo.lock` (modified, +24/-24)
+**File**: `docs/0-21-0/reference/helpers-python.mdx.skill.md` (modified, +1/-1)
 ```diff
-@@ -151,7 +151,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
+@@ -360,7 +360,7 @@ redact_and_truncate(value: Any, max_bytes: Optional[int] = None) -> tuple[str, b
+ </ParamField>
  
- [[package]]
-@@ -162,7 +162,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
+ <ParamField body="max_bytes" type="Optional[int]">
+-  Optional cap on the serialized byte length; unset or <= 0 means no cap.
++  Optional cap on the serialized byte length; unset, zero, or negative means no cap.
+ </ParamField>
  
- [[package]]
-@@ -271,9 +271,9 @@ dependencies = [
  
- [[package]]
- name = "async-executor"
--version = "1.14.0"
-+version = "1.14.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c96bf972d85afc50bf5ab8fe2d54d1586b4e0b46c97c50a0c9e71e2f7bcd812a"
-+checksum = "f426a31126c735126297bc5ea7a521263c9faff4f63ca415267ee625651c4f37"
- dependencies = [
-  "async-task",
-  "concurrent-queue",
-@@ -989,7 +989,7 @@ version = "3.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
- dependencies = [
-- "windows-sys 0.48.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -1648,7 +1648,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users 0.5.2",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -1767,7 +1767,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3213,7 +3213,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi",
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3561,9 +3561,9 @@ dependencies = [
- 
- [[package]]
- name = "libsqlite3-sys"
--version = "0.38.2"
-+version = "0.39.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f1d20bef17f513b9b3004532233187769cd072d790971f4e4da0e346eb6401e8"
-+checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
- dependencies = [
-  "cc",
-  "pkg-config",
-@@ -4090,7 +4090,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5332,9 +5332,9 @@ dependencies = [
- 
- [[package]]
- name = "rusqlite"
--version = "0.40.2"
-+version = "0.41.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "23f2a97da3e3873c73cb2a2e71b35c40ff95e0b1eefa8d72d8499a6928c3b5b3"
-+checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
- dependencies = [
-  "bitflags 2.11.1",
-  "fallible-iterator",
-@@ -5379,7 +5379,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5462,7 +5462,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5957,7 +5957,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
- dependencies = [
-  "libc",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -6209,7 +6209,7 @@ dependencies = [
-  "getrandom 0.4.2",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -7278,7 +7278,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.48.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -8018,27 +8018,27 @@ checksum = "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
- 
- [[package]]
- name = "zstd"
--version = "0.13.3"
-+version = "0.13.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a"
-+checksum = "cdb02c3132d251ab1606e9fc913a7da6c6ed08cc263df15edf082e1dc497d157"
- dependencies = [
-  "zstd-safe",
- ]
- 
- [[package]]
- name = "zstd-safe"
--version = "7.2.4"
-+version = "7.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8f49c4d5f0abb602a93fb8736af2a4f4dd9512e36f7f570d66e65ff867ed3b9d"
-+checksum = "1c8ea04668f5de8d8d51051714ba560c9536519cadcdb8829bba4fe2ad159b03"
- dependencies = [
-  "zstd-sys",
- ]
- 
- [[package]]
- name = "zstd-sys"
--version = "2.0.16+zstd.1.5.7"
-+version = "2.1.2+zstd.1.5.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "91e19ebc2adc8f83e43039e79776e3fda8ca919132d68a1fed6a5faca2683748"
-+checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
- dependencies = [
-  "cc",
-  "pkg-config",
 ```
 
-**File**: `engine/CONTRIBUTING.md` (modified, +1/-1)
+**File**: `docs/docs.json` (modified, +8/-8)
 ```diff
-@@ -26,7 +26,7 @@ respectful and constructive in all interactions.
- 
- ### Prerequisites
- 
--- **Rust 1.80+** - Install via [rustup](https://rustup.rs/)
-+- **Rust 1.91+** - Install via [rustup](https://rustup.rs/)
- - **Redis** (optional) - Required for event bus, state, and cron modules
- - **RabbitMQ** (optional) - Alternative event bus adapter
- - **pre-commit** - For Git hooks (`pip install pre-commit`)
-```
-
-**File**: `engine/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -110,7 +110,7 @@ hyper = { version = "1", features = ["http1", "server"] }
- hyper-util = { version = "0.1", features = ["tokio", "service"] }
- serde = { version = "1", features = ["derive", "rc"] }
- serde_json = "1"
--rusqlite = { version = "0.40.2", features = ["bundled", "hooks"] }
-+rusqlite = { version = "0.41.1", features = ["bundled", "hooks"] }
- schemars = "0.8"
- serde_yaml = "0.9"
- url = { workspace = true }
+@@ -1002,26 +1002,26 @@
+               {
+                 "group": "Engine protocol",
+                 "pages": [
+-                  "0-21-0/sdk-reference/engine-sdk"
++                  "0-21-0/reference/engine-protocol"
+                 ]
+               },
+               {
+                 "group": "Language SDKs",
+                 "expanded": true,
+                 "pages": [
+-                  "0-21-0/api-reference/sdk-node",
+-                  "0-21-0/api-reference/sdk-python",
+-                  "0-21-0/api-reference/sdk-rust",
+-                  "0-21-0/api-reference/sdk-browser"
++                  "0-21-0/reference/sdk-node",
++                  "0-21-0/reference/sdk-python",
++                  "0-21-0/reference/sdk-rust",
++                  "0-21-0/reference/sdk-browser"
+                 ]
+               },
+               {
+                 "group": "Helpers",
+                 "expanded": true,
+                 "pages": [
+-                  "0-21-0/api-reference/helpers-node",
+-                  "0-21-0/api-reference/helpers-python",
+-                  "0-21-0/api-reference/helpers-rust"
++                  "0-21-0/reference/helpers-node",
++                  "0-21-0/reference/helpers-python",
++                  "0-21-0/reference/helpers-rust"
+                 ]
+               },
+               {
 ```
 
 ---
 
-### Incident Patch 3: `bb5390b6` (2026-11-11)
-**Commit Message**: fix: license headers on two observer tests and a stale state event in the Python SDK (#2523)
+### Incident Patch 2: `e6b09eea` (2026-11-12)
+**Commit Message**: perf: take the fixed waits out of the quickstart (curl → "Press b") (#2555)
 
-**File**: `engine/src/observer/dispatch/metadata_tests.rs` (modified, +6/-0)
+**File**: `crates/iii-compose/src/daemon.rs` (modified, +45/-38)
 ```diff
-@@ -1,3 +1,9 @@
-+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-+// contributor license agreements. Licensed under the Elastic License 2.0;
-+// you may not use this file except in compliance with the Elastic License 2.0.
-+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-+// See LICENSE and PATENTS files for details.
-+
- //! Decision 62: a call's metadata is shared (`Arc<Value>`), not deep-copied,
- //! by the observed call that keeps it and by the activation envelopes built
- //! from it, and what the observers receive is unchanged.
+@@ -767,45 +767,52 @@ impl Daemon {
+             crate::sandbox::require_declared_adapter(&compose, &namespace)?;
+             (prepared, None)
+         } else {
+-            let mut prepared =
+-                crate::lockfile::prepare_metadata(&mut compose, &BTreeSet::new()).await?;
+-            let path = compose.path.clone();
+-            let change = crate::sandbox::apply_adapter_change(
+-                &path,
+-                &mut edited,
+-                &mut compose,
+-                &namespace,
+-                &mut prepared,
+-                &mut BTreeSet::new(),
+-                &mut BTreeMap::new(),
+-                false,
+-                false,
+-            )
+-            .await?;
+-            let ahead = if vms_ahead {
+-                crate::sandbox::ahead(&compose, &namespace)?
+-            } else {
+-                None
+-            };
+-            match &ahead {
+-                Some((adapter, bundles)) => {
+-                    let first = bundles.iter().chain([adapter]).cloned().collect();
+-                    prepared.install_only(&package_cache, &first).await?;
+-                }
+-                None => prepared.install(&package_cache).await?,
+-            }
+-            if let Some(crate::sandbox::AdapterChange::Upsert(adapter)) = change {
+-                let needs = crate::sandbox::needs(&compose, &namespace);
+-                crate::report::daemon_line(
+-                    &format!(
+-                        "{}: sandbox adapter for: {}",
+-                        adapter.key,
+-                        crate::sandbox::needed_by(&needs).join(", ")
+-                    ),
++            // A first lock-less start learns only from this pass that a VM
++            // needs the adapter: resolving the adapter beside it saves the
++            // round trip that would follow it.
++            crate::registry::remembering(async {
++                let mut prepared =
++                    crate::sandbox::prepare_metadata_with_adapter_ahead(&mut compose, &namespace)
++                        .await?;
++                let path = compose.path.clone();
++                let change = crate::sandbox::apply_adapter_change(
++                    &path,
++                    &mut edited,
++                    &mut compose,
++                    &namespace,
++                    &mut prepared,
++                    &mut BTreeSet::new(),
++                    &mut BTreeMap::new(),
+                     false,
+-                );
+-            }
+-            (prepared, ahead)
++                    false,
++                )
++                .await?;
++                let ahead = if vms_ahead {
++                    crate::sandbox::ahead(&compose, &namespace)?
++                } else {
++                    None
++                };
++                match &ahead {
++                    Some((adapter, bundles)) => {
++                        let first = bundles.iter().chain([adapter]).cloned().collect();
++                        prepared.install_only(&package_cache, &first).await?;
++                    }
++                    None => prepared.install(&package_cache).await?,
++                }
++                if let Some(crate::sandbox::AdapterChange::Upsert(adapter)) = change {
++                    let needs = crate::sandbox::needs(&compose, &namespace);
++                    crate::report::daemon_line(
++                        &format!(
++                            "{}: sandbox adapter for: {}",
++                            adapter.key,
++                            crate::sandbox::needed_by(&needs).join(", ")
++                        ),
++                        false,
++                    );
++                }
++                Ok::<_, ComposeError>((prepared, ahead))
++            })
++            .await?
+         };
+         let project = self.project(file).await?;
+         if edited != text {
 ```
 
-**File**: `engine/src/observer/legacy_matrix_tests.rs` (modified, +6/-0)
+**File**: `crates/iii-compose/src/lockfile.rs` (modified, +3/-3)
 ```diff
-@@ -1,3 +1,9 @@
-+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-+// contributor license agreements. Licensed under the Elastic License 2.0;
-+// you may not use this file except in compliance with the Elastic License 2.0.
-+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-+// See LICENSE and PATENTS files for details.
-+
- //! Decision 60: an older SDK's `source.on` / `source.deliver` are translated
- //! at registration instead of refused, and every one of the 528 old
- //! `on` x `deliver` x `capture` combinations fires on exactly the outcomes it
+@@ -430,7 +430,7 @@ where
+             }
+         }))
+         // Overlap registry requests without changing which declared failure is reported first.
+-        .buffered(crate::parallelism::max_parallel_workers());
++        .buffered(crate::parallelism::max_parallel_resolves());
+ 
+     while let Some(result) = resolutions.next().await {
+         let (key, entry) = result?;
+@@ -897,11 +897,11 @@ mod tests {
+     }
+ 
+     #[tokio::test]
+-    async fn metadata_resolution_overlaps_requests_with_the_compose_limit() {
++    async fn metadata_resolution_overlaps_requests_with_the_resolve_limit() {
+         use std::cell::Cell;
+ 
+         let dir = tempfile::tempdir().unwrap();
+-        let limit = crate::parallelism::max_parallel_workers();
++        let limit = crate::parallelism::max_parallel_resolves();
+         let count = limit + 1;
+         let mut yaml = String::from("containers:\n");
+         for index in 0..count {
 ```
 
-**File**: `sdk/packages/python/iii/src/iii/observer_handle.py` (modified, +23/-11)
+**File**: `crates/iii-compose/src/parallelism.rs` (modified, +24/-1)
 ```diff
-@@ -57,7 +57,8 @@ def __init__(
-         self._reason: ObserveReason | None = None
-         self._listeners: list[StateListener] = []
-         self._schedule = schedule
--        self._undelivered: deque[tuple[ObserverState, ObserveReason | None]] = deque()
-+        # Each change with the listeners subscribed when it happened.
-+        self._undelivered: deque[tuple[ObserverState, ObserveReason | None, tuple[StateListener, ...]]] = deque()
-         self._delivering = False
-         self._changed = threading.Condition()
-         #: Sent on some connection: the engine may hold it, so disposing it needs an ``unobserve``.
-@@ -155,15 +156,18 @@ def wake(_state: ObserverState, _reason: ObserveReason | None) -> None:
-             raise error
+@@ -14,10 +14,26 @@ pub(crate) fn max_parallel_workers() -> usize {
+ }
  
-     def on_state_change(self, listener: StateListener) -> Callable[[], None]:
--        """Calls ``listener(state, reason)`` on every state change, in order,
--        on the SDK's callback thread. Returns the unsubscribe function."""
--        self._listeners.append(listener)
-+        """Calls ``listener(state, reason)`` on every state change after it
-+        subscribes, in order, on the SDK's callback thread. Returns the
-+        unsubscribe function; a change still queued then is not delivered to it."""
-+        with self._changed:
-+            self._listeners.append(listener)
+ fn parse_max_parallel_workers(value: Option<&str>) -> usize {
++    parse(value).unwrap_or(DEFAULT_MAX_PARALLEL_WORKERS)
++}
++
++/// A registry `/resolve` is one small request: a whole project's go out at
++/// once, not eight at a time, unless the operator set the limit.
++const DEFAULT_MAX_PARALLEL_RESOLVES: usize = 32;
++
++pub(crate) fn max_parallel_resolves() -> usize {
++    let value = std::env::var(MAX_PARALLEL_WORKERS_ENV).ok();
++    parse_max_parallel_resolves(value.as_deref())
++}
++
++fn parse_max_parallel_resolves(value: Option<&str>) -> usize {
++    parse(value).unwrap_or(DEFAULT_MAX_PARALLEL_RESOLVES)
++}
++
++fn parse(value: Option<&str>) -> Option<usize> {
+     value
+         .and_then(|value| value.trim().parse::<usize>().ok())
+         .filter(|value| *value > 0)
+-        .unwrap_or(DEFAULT_MAX_PARALLEL_WORKERS)
+ }
  
-         def off() -> None:
--            try:
--                self._listeners.remove(listener)
--            except ValueError:
--                pass
-+            with self._changed:
-+                try:
-+                    self._listeners.remove(listener)
-+                except ValueError:
-+                    pass
+ #[cfg(test)]
+@@ -29,6 +45,13 @@ mod tests {
+         assert_eq!(parse_max_parallel_workers(None), 8);
+     }
  
-         return off
- 
-@@ -194,7 +198,12 @@ def _set_state(self, state: ObserverState, reason: ObserveReason | None = None)
-                 return
-             # Delivered later, in order: a listener never runs on the read path
-             # (or inside dispose()), so it may call the client freely.
--            self._undelivered.append((state, reason))
-+            # The listeners now: one that subscribes after this change, before
-+            # it is delivered, must not hear it.
-+            listeners = tuple(self._listeners)
-+            if not listeners:
-+                return
-+            self._undelivered.append((state, reason, listeners))
-             if self._delivering:
-                 return
-             self._delivering = True
-@@ -206,8 +215,11 @@ def _deliver(self) -> None:
-                 if not self._undelivered:
-                     self._delivering = False
-                     return
--                state, reason = self._undelivered.popleft()
--            for listener in list(self._listeners):
-+                state, reason, listeners = self._undelivered.popleft()
-+            for listener in listeners:
-+                with self._changed:
-+                    if listener not in self._listeners:
-+                        continue
-                 try:
-                     listener(state, reason)
-                 except Exception:
++    #[test]
++    fn resolves_default_to_thirty_two_and_follow_the_operator_limit() {
++        assert_eq!(parse_max_parallel_resolves(None), 32);
++        assert_eq!(parse_max_parallel_resolves(Some("2")), 2);
++        assert_eq!(parse_max_parallel_resolves(Some("0")), 32);
++    }
++
+     #[test]
+     fn parallel_worker_limit_accepts_a_positive_environment_value() {
+         assert_eq!(parse_max_parallel_workers(Some("16")), 16);
 ```
 
-**File**: `sdk/packages/python/iii/tests/test_observe_observer.py` (modified, +21/-0)
+**File**: `crates/iii-compose/src/registry.rs` (modified, +200/-33)
 ```diff
-@@ -385,6 +385,27 @@ def bad(state: str, reason: Any) -> None:
-     wait_until(lambda: seen == ["active"], what="the second listener")
+@@ -48,6 +48,19 @@ const RESOLVE_RETRY_DELAY: Duration = Duration::from_millis(250);
+ /// Downloads get their own budget: an artefact is megabytes over a link we do
+ /// not control.
+ const DOWNLOAD_TIMEOUT: Duration = Duration::from_secs(300);
++/// A download whose connection fails or breaks off mid-body (a CDN reset reads
++/// as "error decoding response body"), or that gets a 5xx, starts over: one
++/// such break no longer fails a whole `up`.
++const DOWNLOAD_ATTEMPTS: usize = 3;
++const DOWNLOAD_RETRY_DELAY: Duration = Duration::from_millis(500);
++/// A body that sends nothing for this long counts as broken off: a stalled CDN
++/// connection otherwise sat about 30 s before it reset. Even a slow link
++/// delivers some bytes every fraction of a second.
++const DOWNLOAD_STALL_TIMEOUT: Duration = Duration::from_secs(10);
++/// How long one attempt waits for the response headers: a server that took
++/// the connection and answers nothing is tried again, not waited out for the
++/// whole [`DOWNLOAD_TIMEOUT`] three times.
++const DOWNLOAD_HEADERS_TIMEOUT: Duration = Duration::from_secs(if cfg!(test) { 1 } else { 30 });
+ const INTEGRITY_FILE: &str = ".iii-compose-integrity.json";
  
+ #[derive(Debug, Serialize, Deserialize)]
+@@ -74,7 +87,7 @@ struct ResolvedEdge {
+     to: String,
+ }
  
-+def test_a_listener_hears_only_the_changes_made_after_it_subscribed() -> None:
-+    from iii.observer_handle import ObserverHandle
+-#[derive(Debug, Deserialize)]
++#[derive(Debug, Clone, Deserialize)]
+ struct ResolvedWorker {
+     name: String,
+     #[serde(default)]
+@@ -565,6 +578,26 @@ tokio::task_local! {
+     pub(crate) static TEST_REGISTRY: String;
+ }
+ 
++tokio::task_local! {
++    /// The workers [`resolve`] already received inside [`remembering`], by
++    /// `(registry, name, range)`.
++    static RESOLVED: std::sync::Mutex<std::collections::HashMap<(String, String, String), ResolvedWorker>>;
++}
 +
-+    queued: list[Any] = []  # the callback thread, run by hand
-+    handle = ObserverHandle("x", {}, lambda handle: None, lambda: False, queued.append)
-+    early: list[str] = []
-+    handle.on_state_change(lambda state, reason: early.append(state))
-+    handle._set_state("active")
-+    late: list[str] = []
-+    handle.on_state_change(lambda state, reason: late.append(state))  # before "active" is delivered
-+    gone: list[str] = []
-+    off = handle.on_state_change(lambda state, reason: gone.append(state))
-+    handle._set_state("suspended")
-+    off()  # before "suspended" is delivered
-+    for deliver in queued:
-+        deliver()
-+    assert early == ["active", "suspended"]
-+    assert late == ["suspended"]
-+    assert gone == []
++/// Runs `future` with [`resolve`] answering again from what it already
++/// received in it: the same worker and range, or the exact version an earlier
++/// answer chose, makes no second request. Inside another `remembering`, it
++/// shares that one.
++///
++/// Scoped to one preparation, so a daemon that runs for days still sees a
++/// release published after its last operation.
++pub(crate) async fn remembering<F: std::future::Future>(future: F) -> F::Output {
++    if RESOLVED.try_with(|_| ()).is_ok() {
++        return future.await;
++    }
++    RESOLVED.scope(Default::default(), future).await
++}
 +
+ /// Everything a worker needs, resolved in one request.
+ ///
+ /// The registry answers `/resolve` with the whole graph, not just the worker
+@@ -1073,8 +1106,22 @@ async fn resolve(
+     version_range: &str,
+     candidates: &[&str],
+ ) -> Result<ResolvedWorker> {
++    let key = |range: &str| (registry.to_string(), name.to_string(), range.to_string());
++    let remembered = RESOLVED
++        .try_with(|resolved| {
++            resolved
++                .lock()
++                .unwrap_or_else(|poisoned| poisoned.into_inner())
++                .get(&key(version_range))
++                .cloned()
++        })
++        .ok()
++        .flatten();
++    if let Some(worker) = remembered {
++        return Ok(worker);
++    }
+     let resolved = resolve_response(container, registry, name, version_range, candidates).await?;
+-    resolved
++    let worker = resolved
+         .graph
+         .into_iter()
+         .find(|worker| worker.name == name)
+@@ -1083,7 +1130,15 @@ async fn resolve(
+             name: name.to_string(),
+             range: version_range.to_string(),
+             message: "the registry resolved a graph that does not contain it".to_string(),
+-        })
++        })?;
++    let _ = RESOLVED.try_with(|resolved| {
++        let mut resolved = resolved
++            .lock()
++            .unwrap_or_else(|poisoned| poisoned.into_inner());
++        resolved.insert(key(&worker.version), worker.clone());
++        resolved.insert(key(version_range), worker.clone());
++    });
++    Ok(worker)
+ }
+ 
+ /// Turns the registry's failure body into one sentence.
+@@ -1149,38 +1204,20 @@ async fn download_and_extract(
+         .build()
+         .map_err(|err| download_error(container, &artifact.url, &err.to_string()))?;
+ 
+-    let mut response = client
+-        .get(&artifact.url)
+-        .send()
+-        .await
+-        .and_then(|response| response.error_for_status())
+-        .map_err(|err| download_error(container, &artifact.url, &err.to_string()))?;
+-    crate::report::download_started(container, response.content_length());
+-
+-    let capacity = response
+-        .content_length()
+-        .and_then(|length| usize::try_from(length).ok())
+-        .unwrap_or_default()
+-        .min(8 * 1024 * 1024);
+-    let mut bytes = Vec::with_capacity(capacity);
+-    let mut hasher = Sha256::new();
+-    let mut downloaded = 0_u64;
+-    loop {
+-        let chunk = match response.chunk().await {
+-            Ok(Some(chunk)) => chunk,
+-            Ok(None) => break,
+-            Err(err) => {
++    let mut attempt = 1;
++    let (bytes, digest, downloaded) = loop {
++        match fetch_artifact(&client, co
+```
+
+**File**: `crates/iii-compose/src/sandbox.rs` (modified, +246/-34)
+```diff
+@@ -309,6 +309,63 @@ pub(crate) async fn adapter_request(adapter: &str) -> Result<NewContainer> {
+     Ok(request)
+ }
+ 
++/// The first pass ([`crate::lockfile::prepare_metadata`]), with the adapter a
++/// project with no lock yet would add resolved alongside it, so that inside
++/// [`crate::registry::remembering`] adding it costs no round trip after the
++/// pass.
++///
++/// It is waited for only when the pass succeeded and the adapter is to be
++/// added: a failed pass, or a project that needs no adapter, does not wait on
++/// it. A failure of it is the later, real request's to report.
++pub(crate) async fn prepare_metadata_with_adapter_ahead(
++    compose: &mut ComposeFile,
++    project_namespace: &str,
++) -> Result<crate::lockfile::PreparedLock> {
++    let adapter = adapter_to_resolve_ahead(compose);
++    let ahead = async move {
++        if let Some(adapter) = adapter {
++            let _ = adapter_request(&adapter).await;
++        }
++    };
++    tokio::pin!(ahead);
++    let mut resolved_ahead = false;
++    let prepared = {
++        let none = BTreeSet::new();
++        let first = crate::lockfile::prepare_metadata(compose, &none);
++        tokio::pin!(first);
++        loop {
++            tokio::select! {
++                prepared = &mut first => break prepared?,
++                () = &mut ahead, if !resolved_ahead => resolved_ahead = true,
++            }
++        }
++    };
++    let adds = !needs(compose, project_namespace).is_empty()
++        && adapter_key(compose, adapter_name(compose))?.is_none();
++    if adds && !resolved_ahead {
++        ahead.await;
++    }
++    Ok(prepared)
++}
 +
- def test_ready_from_the_sdk_loop_thread_is_refused(engine: FakeEngine, connect: Any) -> None:
-     client = connect(engine)
-     handle = client.observe({"function_id": "f::a"}, "t::a")
++/// The adapter [`prepare_metadata_with_adapter_ahead`] resolves for `file`, if
++/// any.
++pub(crate) fn adapter_to_resolve_ahead(file: &ComposeFile) -> Option<String> {
++    let adapter = adapter_name(file);
++    // The first pass goes to the registry only for a package with no lock, and
++    // the adapter takes a resolve slot of its own: only a spare one, so the
++    // two never exceed the operator's limit.
++    let packages = file
++        .containers
++        .values()
++        .filter(|container| matches!(container.worker, WorkerSource::Package { .. }))
++        .count();
++    let spare = packages < crate::parallelism::max_parallel_resolves();
++    let undeclared = adapter_key(file, adapter).ok()?.is_none();
++    (packages > 0 && spare && undeclared && !crate::lockfile::lock_path(&file.path).exists())
++        .then(|| adapter.to_string())
++}
++
+ /// What the sandbox step does to the file.
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub(crate) enum AdapterChange {
+@@ -418,43 +475,47 @@ pub(crate) async fn apply_adapter_change(
+     refresh: bool,
+     allow_remove: bool,
+ ) -> Result<Option<AdapterChange>> {
+-    let Some(change) =
+-        adapter_change(edited, current, project_namespace, refresh, allow_remove).await?
+-    else {
+-        return Ok(None);
+-    };
+-    let next = match &change {
+-        AdapterChange::Upsert(request) => {
+-            if let Source::Package {
+-                version: Some(version),
+-                ..
+-            } = &request.source
+-            {
+-                force.insert(request.key.clone());
+-                selected.insert(request.key.clone(), version.clone());
+-            }
+-            match edit::upsert_container(edited, request)? {
+-                edit::Outcome::Added(text) | edit::Outcome::Replaced { text, .. } => Some(text),
+-                edit::Outcome::Unchanged => None,
++    // The adapter's range and then its exact version: one request, not two.
++    crate::registry::remembering(async move {
++        let Some(change) =
++            adapter_change(edited, current, project_namespace, refresh, allow_remove).await?
++        else {
++            return Ok(None);
++        };
++        let next = match &change {
++            AdapterChange::Upsert(request) => {
++                if let Source::Package {
++                    version: Some(version),
++                    ..
++                } = &request.source
++                {
++                    force.insert(request.key.clone());
++                    selected.insert(request.key.clone(), version.clone());
++                }
++                match edit::upsert_container(edited, request)? {
++                    edit::Outcome::Added(text) | edit::Outcome::Replaced { text, .. } => Some(text),
++                    edit::Outcome::Unchanged => None,
++                }
+             }
++            AdapterChange::Remove(key) => edit::remove_container(edited, key)?,
++        };
++        if let Some(next) = next {
++            *edited = next;
+         }
+-        AdapterChange::Remove(key) => edit::remove_container(edited, key)?,
+-    };
+-    if let Some(next) = next {
+-        *edited = next;
+-    }
+-    *current = ComposeFile::parse(edited, path)?;
+-    let mut versions = selected.clone();
+-    for key in current.containers.keys() {
+-        if let Some(version) = prepared.resolved_version(key) {
+-            versions
+-              
+```
+
+**File**: `engine/install.sh` (modified, +22/-8)
+```diff
+@@ -118,6 +118,15 @@ iii_emit_event() {
+     >/dev/null 2>&1 || true
+ }
+ 
++# The success path's events go out while the install carries on: the binary
++# sends each on its own and gives up after 3 s, and nothing here waits for the
++# network. The telemetry IDs exist before the first one (see below), so these
++# sends only read them and race nothing. A non-interactive shell runs them
++# with SIGINT ignored, so a Ctrl+C at the next prompt does not cut them short.
++iii_emit_event_in_background() {
++  iii_emit_event "$1" "$2" &
++}
++
+ # ---------------------------------------------------------------------------
+ # GitHub API
+ # ---------------------------------------------------------------------------
+@@ -634,16 +643,20 @@ fi
+ # ---------------------------------------------------------------------------
+ 
+ telemetry_emitter="$bin_file"
++# Best-effort: have the binary initialize its telemetry IDs, in the foreground
++# and with no network, before any event is sent beside the install.
++# Older binaries won't have this flag — silently skip.
++"$bin_file" --install-only-generate-ids >/dev/null 2>&1 || true
+ if [ "$install_event_prefix" = "upgrade" ]; then
+   payload=$(printf '{"from_version":%s,"to_version":%s,"install_method":"sh","target_binary":%s}' \
+     "$(json_str "$from_version")" "$(json_str "$release_version")" "$(json_str "$BIN_NAME")")
+-  iii_emit_event "upgrade_started" "$payload"
++  iii_emit_event_in_background "upgrade_started" "$payload"
+ else
+   payload=$(printf '{"install_method":"sh","target_binary":%s,"os":%s,"arch":%s}' \
+     "$(json_str "$BIN_NAME")" \
+     "$(json_str "$(echo "$uname_s" | tr '[:upper:]' '[:lower:]')")" \
+     "$(json_str "$uname_m")")
+-  iii_emit_event "install_started" "$payload"
++  iii_emit_event_in_background "install_started" "$payload"
+ fi
+ 
+ install_bin "$bin_file" "$bin_dir/$BIN_NAME" \
+@@ -661,20 +674,21 @@ fi
+ # Telemetry: success
+ # ---------------------------------------------------------------------------
+ 
++# Sent from the installed binary: the one in $tmpdir goes with the EXIT trap,
++# maybe before a job started this late has run it. A `*_started` job was
++# started before the copy, and the only early exit after it (`err`) first
++# runs a synchronous event from that same binary.
++telemetry_emitter="$bin_dir/$BIN_NAME"
+ if [ "$install_event_prefix" = "upgrade" ]; then
+   payload=$(printf '{"from_version":%s,"to_version":%s,"install_method":"sh","target_binary":%s}' \
+     "$(json_str "$from_version")" "$(json_str "$installed_version")" "$(json_str "$BIN_NAME")")
+-  iii_emit_event "upgrade_succeeded" "$payload"
++  iii_emit_event_in_background "upgrade_succeeded" "$payload"
+ else
+   payload=$(printf '{"installed_version":%s,"install_method":"sh","target_binary":%s}' \
+     "$(json_str "$installed_version")" "$(json_str "$BIN_NAME")")
+-  iii_emit_event "install_succeeded" "$payload"
++  iii_emit_event_in_background "install_succeeded" "$payload"
+ fi
+ 
+-# Best-effort: have the binary initialize its telemetry IDs.
+-# Older binaries won't have this flag — silently skip.
+-"$bin_dir/$BIN_NAME" --install-only-generate-ids >/dev/null 2>&1 || true
+-
+ # ---------------------------------------------------------------------------
+ # Post-install verification
+ # ---------------------------------------------------------------------------
+```
+
+**File**: `engine/src/cli/project/mod.rs` (modified, +36/-14)
+```diff
+@@ -124,7 +124,14 @@ async fn run_init(args: InitArgs) -> i32 {
+         return run_learn_iii(args).await;
+     }
+     if template_flow_requested(&args) {
+-        return run_init_with_template(args).await;
++        let docker = args.docker;
++        return match run_init_with_template(args).await {
++            Ok(project_id) => {
++                crate::cli::telemetry::send_project_init_succeeded(docker, &project_id).await;
++                0
++            }
++            Err(code) => code,
++        };
+     }
+ 
+     let target = args.target_dir().map(|s| s.to_string());
+@@ -252,7 +259,10 @@ async fn run_init(args: InitArgs) -> i32 {
+     0
+ }
+ 
+-async fn run_init_with_template(args: InitArgs) -> i32 {
++/// The template flow up to its `project_init_succeeded`, which is the
++/// caller's to send: the id it reports for, or the exit code of a failure
++/// already reported.
++async fn run_init_with_template(args: InitArgs) -> Result<String, i32> {
+     // Restore terminal cursor on panic and on Ctrl+C — scaffolder runs an
+     // interactive TUI via cliclack and we don't want to leave the cursor hidden.
+     let default_panic = std::panic::take_hook();
+@@ -298,7 +308,7 @@ async fn run_init_with_template(args: InitArgs) -> i32 {
+             "see scaffolder output above",
+         );
+         crate::cli::telemetry::send_project_init_failed("scaffolder", &e.to_string()).await;
+-        return code;
++        return Err(code);
+     }
+ 
+     let project_id_for_event = if let Some(root) = target_dir.as_ref() {
+@@ -326,7 +336,7 @@ async fn run_init_with_template(args: InitArgs) -> i32 {
+                         );
+                         crate::cli::telemetry::send_project_init_failed("fetcher", &e.to_string())
+                             .await;
+-                        return code;
++                        return Err(code);
+                     }
+                 };
+                 if let Err(e) = apply_docker(&mut fetcher, root, &device_id).await {
+@@ -337,7 +347,7 @@ async fn run_init_with_template(args: InitArgs) -> i32 {
+                     );
+                     crate::cli::telemetry::send_project_init_failed("apply_docker", &e.to_string())
+                         .await;
+-                    return code;
++                    return Err(code);
+                 }
+             }
+ 
+@@ -350,8 +360,7 @@ async fn run_init_with_template(args: InitArgs) -> i32 {
+         String::new()
+     };
+ 
+-    crate::cli::telemetry::send_project_init_succeeded(args.docker, &project_id_for_event).await;
+-    0
++    Ok(project_id_for_event)
+ }
+ 
+ const LEARN_III_TEMPLATE: &str = "harness";
+@@ -369,14 +378,25 @@ async fn run_learn_iii(mut args: InitArgs) -> i32 {
+     args.template = Some(LEARN_III_TEMPLATE.to_string());
+     args.directory = Some(dir.to_string_lossy().into_owned());
+ 
+-    let code = run_init_with_template(args).await;
+-    if code != 0 {
+-        return code;
+-    }
++    let docker = args.docker;
++    // Sent while the tour runs, and waited for only once it ends: the process
++    // stays up for the whole tour, so nothing is lost by not holding the tour
++    // for it.
++    let succeeded = match run_init_with_template(args).await {
++        Ok(project_id) => crate::cli::telemetry::spawn_project_init_succeeded(docker, &project_id),
++        Err(code) => return code,
++    };
++    let code = run_tour(&dir).await;
++    crate::cli::telemetry::wait_for_report(succeeded).await;
++    code
++}
+ 
++/// Seeds the tour's container into the project at `dir` and runs
++/// `iii compose --up` there, for as long as the tour lasts.
++async fn run_tour(dir: &Path) -> i32 {
+     // The tour's own worker is declared in the compose file, not added at
+     // runtime.
+-    seed_onboarding_container(&dir);
++    seed_onboarding_container(dir);
+ 
+     let exe = match std::env::current_exe() {
+         Ok(p) => p,
+@@ -405,7 +425,7 @@ async fn run_learn_iii(mut args: InitArgs) -> i32 {
+ 
+     let code = match tokio::process::Command::new(exe)
+         .args(["compose", "--up"])
+-        .current_dir(&dir)
++        .current_dir(dir)
+         .status()
+         .await
+     {
+@@ -496,7 +516,9 @@ static CHILD_OWNS_TERMINAL: AtomicBool = AtomicBool::new(false);
+ /// its own default port for when that entry has no `http_port` yet.
+ const CONSOLE_CONFIG: &str = "console";
+ const DEFAULT_CONSOLE_PORT: u16 = 3113;
+-const READY_POLL_INTERVAL: std::time::Duration = std::time::Duration::from_millis(500);
++/// A local `compose::status` call: polled often, so the console link follows
++/// the project's last container by tens of milliseconds, not half a second.
++const READY_POLL_INTERVAL: std::time::Duration = std::time::Duration::from_millis(100);
+ /// Room for compose's startup renderer to print its closing line and stop
+ /// repainting before anything else writes to the terminal.
+ const BLOCK_SETTLE: std::time::Duration = std::time::Duration::from_millis(1_000);
+```
+
+**File**: `engine/src/cli/telemetry.rs` (modified, +56/-4)
+```diff
+@@ -249,17 +249,32 @@ pub async fn send_cli_update_failed(target_binary: &str, from_version: &str, err
+ }
+ 
+ pub async fn send_project_init_succeeded(with_docker: bool, project_id: &str) {
+-    if let Some(event) = build_event(
++    if let Some(event) = project_init_succeeded(with_docker, project_id) {
++        send_before_exit(event).await;
++    }
++}
++
++/// [`send_project_init_succeeded`] on a task of its own, for a command that
++/// goes on running after it: wait for it with [`wait_for_report`] before the
++/// command exits.
++pub(crate) fn spawn_project_init_succeeded(
++    with_docker: bool,
++    project_id: &str,
++) -> Option<tokio::task::JoinHandle<()>> {
++    let event = project_init_succeeded(with_docker, project_id)?;
++    Some(tokio::spawn(send_direct(event)))
++}
++
++fn project_init_succeeded(with_docker: bool, project_id: &str) -> Option<ProductEvent> {
++    build_event(
+         "project_init_succeeded",
+         serde_json::json!({
+             "with_docker": with_docker,
+             "project_id": project_id,
+             "install_method": environment::detect_install_method(),
+         }),
+         None,
+-    ) {
+-        send_before_exit(event).await;
+-    }
++    )
+ }
+ 
+ pub async fn send_project_init_failed(stage: &str, error: &str) {
+@@ -460,6 +475,43 @@ mod tests {
+         assert_eq!(delivered, vec![1, 2, 3, 4]);
+     }
+ 
++    #[tokio::test]
++    #[serial]
++    async fn a_success_sent_beside_the_tour_holds_nothing_and_still_arrives() {
++        use wiremock::matchers::{method, path};
++        use wiremock::{Mock, MockServer, ResponseTemplate};
++
++        clear_opt_out_vars();
++        let _home = isolated_home();
++        let server = MockServer::start().await;
++        Mock::given(method("POST"))
++            .and(path("/batch/"))
++            .respond_with(
++                ResponseTemplate::new(200).set_delay(std::time::Duration::from_millis(500)),
++            )
++            .mount(&server)
++            .await;
++        unsafe {
++            env::set_var("POSTHOG_HOST", server.uri());
++        }
++
++        let began = std::time::Instant::now();
++        let sending = spawn_project_init_succeeded(false, "project-1");
++        let held = began.elapsed();
++        wait_for_report(sending).await;
++        let delivered = server.received_requests().await.unwrap_or_default().len();
++
++        unsafe {
++            env::remove_var("POSTHOG_HOST");
++        }
++        restore_home();
++        assert!(
++            held < std::time::Duration::from_millis(100),
++            "held for {held:?}"
++        );
++        assert_eq!(delivered, 1);
++    }
++
+     #[tokio::test]
+     #[serial]
+     async fn project_init_events_to_an_unreachable_host_release_within_the_report_timeout() {
+```
+
+---
+
+### Incident Patch 3: `8715eb66` (2026-11-11)
+**Commit Message**: fix(website): center the subscribe pages and give them a full screen (#2529)
+
+**File**: `website/app/(site)/subscribe-expired/page.tsx` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ export default function SubscribeExpiredPage() {
+       <p>
+         This confirmation link has expired or is no longer valid. Enter your email again and we'll send you a new one.
+       </p>
+-      <EmailSignup location="subscribe-expired" className="max-w-md" />
++      <EmailSignup location="subscribe-expired" className="w-full max-w-md" />
+     </SubscribeStatus>
+   )
+ }
+```
+
+**File**: `website/components/site/confirm-subscription.tsx` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ export function ConfirmSubscription() {
+   }
+ 
+   return (
+-    <div className="space-y-3">
++    <div className="flex flex-col items-center space-y-3">
+       <Button size="lg" className="px-4" onClick={confirm} disabled={!token || state === 'sending'}>
+         {state === 'sending' ? 'Confirming…' : 'Confirm subscription'}
+       </Button>
+```
+
+**File**: `website/components/site/subscribe-status.tsx` (modified, +7/-3)
+```diff
+@@ -14,12 +14,16 @@ export function SubscribeStatus({ title, children }: { title: string; children:
+   return (
+     <>
+       <SiteHeader />
+-      <main className={cn(wideContainer, 'py-40')}>
+-        <div className="max-w-xl">
++      {/* At least a full screen, so the footer starts below the fold; the message sits in its middle (the header is
++          fixed over it). */}
++      <main className={cn(wideContainer, 'flex min-h-svh items-center justify-center py-32')}>
++        <div className="flex w-full max-w-xl flex-col items-center text-center">
+           <PixelHeading as="h1" className="text-[40px]">
+             {title}
+           </PixelHeading>
+-          <div className="mt-6 space-y-6 text-pretty text-[15px] text-muted-foreground leading-relaxed">{children}</div>
++          <div className="mt-6 flex flex-col items-center space-y-6 text-balance text-[15px] text-muted-foreground leading-relaxed">
++            {children}
++          </div>
+         </div>
+       </main>
+       <Footer container={wideContainer} />
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2524** (2026-11-11): feat(compose)!: explicit VM mode replaces the implicit VM path (@guibeira)
-- **PR #2523** (2026-11-11): fix: license headers on two observer tests and a stale state event in the Python SDK (@ytallo)
-- **PR #2518** (2026-11-11): chore(compose): scaffold the explicit VM mode interfaces (@guibeira)
-- **PR #2517** (2026-11-11): feat(sandbox-contract): contract 1.3 with worker::build (@guibeira)
-- **PR #2514** (2026-11-10): fix(subscribe): bind the route with observe for the iii 0.26 engine (@arihantcodes)
-- **PR #2513** (2026-11-10): docs(tech-specs): explicit VM mode for Compose (@guibeira)
+- **PR #2558** (2026-11-12): ci: warn about unused dependencies (Rust, Node, Python, Go) (@guibeira)
+- **PR #2556** (2026-11-12): feat(subscribe): accept server-to-server signups from ade (@arihantcodes)
+- **PR #2555** (2026-11-12): perf: take the fixed waits out of the quickstart (curl → "Press b") (@ytallo)
+- **PR #2554** (2026-11-12): chore: mirror the browser SDK, Go SDK and iii-filter CI checks in make ci-local (@guibeira)
+- **PR #2546** (closed): chore(deps): bump the actions group across 1 directory with 22 updates (@dependabot[bot])
+- **PR #2541** (2026-11-12): chore(cli): remove the iii console stub (@guibeira)
 
 ---
 
@@ -2681,37 +3094,28 @@ Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. subscribe): install from bun.lock before the worker starts (#2511)
+## X. docs): point the 0.21.x reference tab at the existing reference pages (#2539)
 
 **RULE**:
-When implementing operations in `services/subscribe/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/0-21-0/reference/helpers-python.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69f3520b`: subscribe): install from bun.lock before the worker starts (#2511). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `175858b5`: docs): point the 0.21.x reference tab at the existing reference pages (#2539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `services/subscribe/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/0-21-0/reference/helpers-python.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Bun, not pnpm: the worker is deployed on its own, so it keeps its own `package.json` and
-`bun.lock` in `workers/subscribe/`, outside the pnpm workspace. Its start command installs from
-that lockfile before running, both on iii Cloud and in a local compose VM (which sees only the
-worker's directory).
-cd workers/subscribe && bun install && bun test
-RESEND_API_KEY=re_... iii compose --up   # from services/subscribe: engine + http worker + this worker
+  Optional cap on the serialized byte length; unset, zero, or negative means no cap.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Bun, not pnpm: this directory is deployed on its own (iii Cloud installs at the environment's root
-directory), so it keeps its own `bun.lock` outside the pnpm workspace.
-bun install
-bun test
-RESEND_API_KEY=re_... iii compose --up   # engine + http worker + this worker
+  Optional cap on the serialized byte length; unset or <= 0 means no cap.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69f3520b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `175858b5` are properly handled with clean fallback behavior.

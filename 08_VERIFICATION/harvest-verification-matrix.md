@@ -9361,3 +9361,8 @@
 | `CYCLE-20261113-QW2H` | `2026-11-13T06:06:58.265Z` | `wquguru/cicada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`74a9479e...`) |
 | `CYCLE-20261113-QXYV` | `2026-11-13T06:07:00.727Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d60a676a...`) |
 | `CYCLE-20261113-QZO7` | `2026-11-13T06:07:02.935Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md` | Yes (`93acd0c7...`) |
+| `CYCLE-20261113-87YC` | `2026-11-13T06:20:26.820Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md` | Yes (`b602c78e...`) |
+| `CYCLE-20261113-8JWT` | `2026-11-13T06:20:42.317Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`27212f9b...`) |
+| `CYCLE-20261113-8OVO` | `2026-11-13T06:20:48.756Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d4c63a72...`) |
+| `CYCLE-20261113-8R7A` | `2026-11-13T06:20:51.766Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`59c5e3c4...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T06:21:14.009Z` | `hf-comfy-org-fibo-2.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B83FE1C6` [Domain D] | Yes (`d0f12508...`) |

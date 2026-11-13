@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:07:02.968Z",
-  "total_cycles_completed": 9156,
-  "total_learnings_persisted": 9156,
-  "total_rules_promoted": 8964,
+  "last_updated": "2026-11-13T06:20:51.778Z",
+  "total_cycles_completed": 9160,
+  "total_learnings_persisted": 9160,
+  "total_rules_promoted": 8967,
   "history": [
-    {
-      "timestamp": "2026-11-12T09:46:20.441Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T09:54:51.598Z",
-      "repository": "Viggle/Viggle-Remake",
-      "learningId": "learn-huggingface-viggle-viggle-remake",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T09:55:07.689Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T09:55:17.729Z",
-      "repository": "buresdv/Cork",
-      "learningId": "learn-github-buresdv-cork",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T09:55:22.214Z",
       "repository": "saltstack/salt",
@@ -1403,6 +1375,34 @@
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:20:26.831Z",
+      "repository": "Comfy-Org/Fibo-2.0",
+      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:20:42.377Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:20:48.782Z",
+      "repository": "StikDebug/StikDebug",
+      "learningId": "learn-github-stikdebug-stikdebug",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:20:51.778Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

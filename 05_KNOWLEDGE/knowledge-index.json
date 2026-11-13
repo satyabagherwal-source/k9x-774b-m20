@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T06:07:02.770Z",
+  "last_updated": "2026-11-13T06:20:51.598Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36623,8 +36623,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "bb5390b6",
-      "content_hash": "79f65bcd0d03ca74eb5c3d1d5ee0a7f286b95abe4f99e651531347c1e6f862a4",
+      "source_version": "fd9719fa",
+      "content_hash": "27212f9b0afa4bd23247e0c29f6a4f1522803cdb250d26b4aa5fcc3a7f0f158c",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -36641,6 +36641,11 @@
         {
           "number": null,
           "title": "subscribe): install from bun.lock before the worker starts (#2511)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs): point the 0.21.x reference tab at the existing reference pages (#2539)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -36714,7 +36719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T12:53:26.111Z",
+      "verified_at": "2026-11-13T06:20:42.081Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39367,8 +39372,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "42846c40",
-      "content_hash": "b97768bdf78231ed2ddd22d9e3854a8a2c1107f8a8d4670b7887f4e6304cf5ff",
+      "source_version": "74fb6231",
+      "content_hash": "59c5e3c427f223782736c0bc7c125e1690dd2c63168d5f3c83c0191fafdf464a",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -39385,6 +39390,11 @@
         {
           "number": null,
           "title": "envoy_modules: build from the dependency stage with --locked (#15024)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "CVE fixes: bump Go to 1.27.4, rustix, klauspost/compress (#15030)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39458,7 +39468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T01:23:31.899Z",
+      "verified_at": "2026-11-13T06:20:51.564Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61010,14 +61020,19 @@
       "slug": "stikdebug-stikdebug",
       "platform": "github",
       "source_url": "https://github.com/StikDebug/StikDebug",
-      "source_version": "0393dcaf",
-      "content_hash": "9fc771b0c7021e9606927476747c5e65baee4fa4165b473d2ed183d344fac0e5",
+      "source_version": "7a80dfce",
+      "content_hash": "d4c63a725b8e17a44caf1ee22d6c215125e48c2dc079870710cfbb36df5af038",
       "dossier_path": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "diagnose connection failures with targeted guidance",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Change download link to latest StikDebug release",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61041,7 +61056,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:26:19.719Z",
+      "verified_at": "2026-11-13T06:20:48.513Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138072,7 +138087,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
       "source_version": "hf-comfy-org-fibo-2.0",
-      "content_hash": "4bd769bfa6070c46158db477f0d0ba25690e516718c5b7e5f4df52c6be812ea3",
+      "content_hash": "b602c78e67d3185f3b5daa04a6ee151d5f67e703320f599b628ebc5a0a5302f9",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "promoted_rules": [
@@ -138137,7 +138152,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:18:09.242Z",
+      "verified_at": "2026-11-13T06:20:26.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

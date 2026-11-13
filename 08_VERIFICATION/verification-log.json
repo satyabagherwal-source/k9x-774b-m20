@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-MSF6",
-    "timestamp": "2026-11-09T23:40:51.426Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "dbb844c1d572d61d03c4ba0c64784de1cf0d573f0a500f0c6d8bf4a1e41344c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-SNVC",
-    "timestamp": "2026-11-09T23:45:25.464Z",
-    "repository": "dalance/procs",
-    "learningId": "learn-github-dalance-procs",
-    "contentHash": "db5d357075705122b0ea98ff6f146d443770f56c33b263e5bae53f1e8f76b4cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-26AB",
-    "timestamp": "2026-11-09T23:52:49.235Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "92fe3126c4bda76281396026a2b2de25c97d86c5d8955ee1499824c22b34b5f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-T4MU",
-    "timestamp": "2026-11-10T00:13:46.806Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "71a906d828d40ab8d38bae761aad27d958055531dc2a98be31f0de0687570566",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-GH7V",
     "timestamp": "2026-11-10T00:31:56.203Z",
     "repository": "zarf-dev/zarf",
@@ -7492,6 +7432,66 @@
     "contentHash": "93acd0c7211a785f554f2c987517f6c3a02286de52632b3187a06328f95142ac",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-87YC",
+    "timestamp": "2026-11-13T06:20:26.820Z",
+    "repository": "Comfy-Org/Fibo-2.0",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+    "contentHash": "b602c78e67d3185f3b5daa04a6ee151d5f67e703320f599b628ebc5a0a5302f9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8JWT",
+    "timestamp": "2026-11-13T06:20:42.317Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "27212f9b0afa4bd23247e0c29f6a4f1522803cdb250d26b4aa5fcc3a7f0f158c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8OVO",
+    "timestamp": "2026-11-13T06:20:48.756Z",
+    "repository": "StikDebug/StikDebug",
+    "learningId": "learn-github-stikdebug-stikdebug",
+    "contentHash": "d4c63a725b8e17a44caf1ee22d6c215125e48c2dc079870710cfbb36df5af038",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8R7A",
+    "timestamp": "2026-11-13T06:20:51.766Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "59c5e3c427f223782736c0bc7c125e1690dd2c63168d5f3c83c0191fafdf464a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

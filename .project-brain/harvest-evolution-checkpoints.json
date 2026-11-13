@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:07:07.383Z",
+  "last_updated": "2026-11-13T06:21:14.145Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T05:23:59.465Z",
@@ -273,7 +273,7 @@
       "staged_for_review": 1
     },
     "iii-hq-iii-learnings.md": {
-      "processed_at": "2026-11-11T12:53:40.697Z",
+      "processed_at": "2026-11-13T06:20:58.596Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1586,9 +1586,19 @@
       "processed_at": "2026-11-13T06:07:07.317Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-comfy-org-fibo-2.0-learnings.md": {
+      "processed_at": "2026-11-13T06:21:14.009Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "stikdebug-stikdebug-learnings.md": {
+      "processed_at": "2026-11-13T06:21:14.035Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 474,
-  "total_canonical_promoted": 66,
-  "total_staged_for_review": 405
+  "total_dossiers_evaluated": 477,
+  "total_canonical_promoted": 67,
+  "total_staged_for_review": 407
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T06:07:07.371Z",
+  "updated_at": "2026-11-13T06:21:14.131Z",
   "stats": {
-    "total_discovered": 2213,
-    "approved_pending_harvest": 2055,
+    "total_discovered": 2224,
+    "approved_pending_harvest": 2066,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2044,
+      "COMMUNITY_AND_EXPERT": 2055,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 70,
       "ENGINEERING_BLOGS": 1,
@@ -47598,6 +47598,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
         "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-DE22FB294F8E": {
+      "id": "SRC-DE22FB294F8E",
+      "url": "https://github.com/iii-hq/iii",
+      "title": "https://github.com/iii-hq/iii",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:20:58.609Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-12B506302820": {
+      "id": "SRC-12B506302820",
+      "url": "https://github.com/iii-hq/templates.git",
+      "title": "https://github.com/iii-hq/templates.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:20:58.627Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-189477D8C9B0": {
+      "id": "SRC-189477D8C9B0",
+      "url": "https://iii.dev/docs",
+      "title": "https://iii.dev/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:20:58.646Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-2190B7E18690": {
+      "id": "SRC-2190B7E18690",
+      "url": "https://github.com/iii-hq/iii/blob/2e872b7cd01252ac3e7e86d0dafdbe85f20430b7/engine/src/trigger.rs",
+      "title": "https://github.com/iii-hq/iii/blob/2e872b7cd01252ac3e7e86d0dafdbe85f20430b7/engine/src/trigger.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:20:58.662Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-7C242665D36A": {
+      "id": "SRC-7C242665D36A",
+      "url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "title": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:21:14.017Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
+        "fileName": "hf-comfy-org-fibo-2.0-learnings.md"
+      }
+    },
+    "SRC-2BBCF74CFCB7": {
+      "id": "SRC-2BBCF74CFCB7",
+      "url": "https://github.com/StikDebug/StikDebug",
+      "title": "https://github.com/StikDebug/StikDebug",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:21:14.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-CD6144CB5E38": {
+      "id": "SRC-CD6144CB5E38",
+      "url": "https://altdirect.app/?url=https%3A%2F%2Fstikdebug.xyz%2Findex.json",
+      "title": "https://altdirect.app/?url=https%3A%2F%2Fstikdebug.xyz%2Findex.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:21:14.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-ACCB0F3B8C87": {
+      "id": "SRC-ACCB0F3B8C87",
+      "url": "https://altdirect.app/assets/png/AltSource_Blue.png",
+      "title": "https://altdirect.app/assets/png/AltSource_Blue.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:21:14.078Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-B436AFAB042A": {
+      "id": "SRC-B436AFAB042A",
+      "url": "https://github.com/StikDebug/StikDebug/releases/latest/download/StikDebug-3.1.15.ipa",
+      "title": "https://github.com/StikDebug/StikDebug/releases/latest/download/StikDebug-3.1.15.ipa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:21:14.094Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-8462DDCB86F5": {
+      "id": "SRC-8462DDCB86F5",
+      "url": "https://altdirect.app/assets/png/Download_Blue.png",
+      "title": "https://altdirect.app/assets/png/Download_Blue.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:21:14.116Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-555347B72FFC": {
+      "id": "SRC-555347B72FFC",
+      "url": "https://github.com/StikDebug/StikDebug/releases/latest",
+      "title": "https://github.com/StikDebug/StikDebug/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:21:14.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
+        "fileName": "stikdebug-stikdebug-learnings.md"
       }
     }
   }

@@ -9370,3 +9370,8 @@ Every entry in this ledger must capture:
 | `learn-github-wquguru-cicada` | `https://github.com/wquguru/cicada` | `f119ba61` | Multi-dimensional audit evidence | 2026-11-13T06:06:58.271Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `aad59e11` | Multi-dimensional audit evidence | 2026-11-13T06:07:00.731Z |
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-13T06:07:02.960Z |
+| `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-13T06:20:26.825Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `fd9719fa` | Multi-dimensional audit evidence | 2026-11-13T06:20:42.330Z |
+| `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `7a80dfce` | Multi-dimensional audit evidence | 2026-11-13T06:20:48.761Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `74fb6231` | Multi-dimensional audit evidence | 2026-11-13T06:20:51.771Z |
+| `learn-dom-d-b83fe1c6` | `project://hf-comfy-org-fibo-2.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md` | 2026-11-13T06:21:14.009Z |

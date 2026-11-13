@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T06:07:02.975Z",
+  "last_updated": "2026-11-13T06:20:51.782Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "79f65bcd0d03ca74eb5c3d1d5ee0a7f286b95abe4f99e651531347c1e6f862a4",
-      "verified_at": "2026-11-11T12:53:26.321Z",
+      "content_hash": "27212f9b0afa4bd23247e0c29f6a4f1522803cdb250d26b4aa5fcc3a7f0f158c",
+      "verified_at": "2026-11-13T06:20:42.386Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T12:53:26.321Z"
+      "last_updated": "2026-11-13T06:20:42.386Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "b97768bdf78231ed2ddd22d9e3854a8a2c1107f8a8d4670b7887f4e6304cf5ff",
-      "verified_at": "2026-11-12T01:23:32.245Z",
+      "content_hash": "59c5e3c427f223782736c0bc7c125e1690dd2c63168d5f3c83c0191fafdf464a",
+      "verified_at": "2026-11-13T06:20:51.781Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T01:23:32.245Z"
+      "last_updated": "2026-11-13T06:20:51.781Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -14301,14 +14301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stikdebug-stikdebug",
-      "content_hash": "9fc771b0c7021e9606927476747c5e65baee4fa4165b473d2ed183d344fac0e5",
-      "verified_at": "2026-11-08T22:26:19.816Z",
+      "content_hash": "d4c63a725b8e17a44caf1ee22d6c215125e48c2dc079870710cfbb36df5af038",
+      "verified_at": "2026-11-13T06:20:48.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:26:19.816Z"
+      "last_updated": "2026-11-13T06:20:48.786Z"
     },
     "remarkjs/remark": {
       "repository": "remarkjs/remark",
@@ -15951,14 +15951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
-      "content_hash": "4bd769bfa6070c46158db477f0d0ba25690e516718c5b7e5f4df52c6be812ea3",
-      "verified_at": "2026-11-08T05:18:09.366Z",
+      "content_hash": "b602c78e67d3185f3b5daa04a6ee151d5f67e703320f599b628ebc5a0a5302f9",
+      "verified_at": "2026-11-13T06:20:26.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T05:18:09.366Z"
+      "last_updated": "2026-11-13T06:20:26.835Z"
     },
     "ornith-ai/Ornith-1.5-122B": {
       "repository": "ornith-ai/Ornith-1.5-122B",

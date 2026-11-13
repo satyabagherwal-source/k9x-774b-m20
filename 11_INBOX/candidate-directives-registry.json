@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:07:07.315Z",
+  "last_updated": "2026-11-13T06:21:14.033Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8246,6 +8246,24 @@
       "source_repo": "karmada-io-karmada",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D3474D-merge-pull-request-8044-from-arbaaz12367.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-BCC130",
+      "directive_title": "docs): point the 0.21.x reference tab at the existing reference pages (#2539)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "iii-hq-iii",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BCC130-docs-point-the-0-21-x-reference-tab-at-t.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-BDAF4A",
+      "directive_title": "Change download link to latest StikDebug release",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "stikdebug-stikdebug",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BDAF4A-change-download-link-to-latest-stikdebug.md",
       "staged_date": "2026-11-13"
     }
   ]

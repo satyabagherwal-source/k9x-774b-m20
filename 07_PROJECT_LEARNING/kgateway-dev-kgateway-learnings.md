@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `42846c40`  
+> **Source Version**: `74fb6231`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T01:23:18.781Z  
+> **Timestamp**: 2026-11-13T06:20:34.965Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T01:23:18.775Z  
+> **Harvest Timestamp**: 2026-11-13T06:20:34.957Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5737 stars
+- **Stars / Engagement**: 5735 stars
 
 ---
 
@@ -1120,11 +1120,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15024** (2026-11-11): **envoy_modules: build from the dependency stage with --locked**
-  *Symptoms*: # Description  Speeds up and tightens the Envoy dynamic module Docker build:  - **Stage 2 continues from `rust_build_deps`.** Previously it started a fresh image, reinstalled clang, and copied `/usr/local/cargo`, `/usr/local/rustup` and `/build/target` into new layers. Those copies duplicated the largest layers in the build and in the `mode=max` registry cache. - **`--locked` on `cargo fetch` and `cargo zigbuild`.** A `Cargo.lock` that is out of date with `Cargo.toml` now fails the build instead of being re-resolved inside the image. - **Removed dead `$?` checks** in `generate-dockerfile.sh`; `set -euo pipefail` already exits first.  `Dockerfile` is regenerated from the template.  # Change Type  /kind cleanup  # Changelog  ```release-note NONE ``` 
+- **Issue #15037** (2026-11-12): **docs(api): document BackendConfigPolicy tls.secretRef data keys**
+  *Symptoms*: # Description  The `BackendConfigPolicy` `tls.secretRef` field comment said only "the TLS secret containing the certificate, key, and optionally the root CA". It did not name the keys the plugin reads, so users had to guess.  This documents the keys read in `extractFromSecret`: - `tls.crt`: the client certificate chain (mTLS) - `tls.key`: the client private key (mTLS) - `ca.crt`: the root CA for verifying the backend  It also documents two behaviors from the plugin: - `tls.crt` and `tls.key` must be set together or both omitted. - Without `ca.crt`, the backend's certificate is not verified, and `verifySubjectAltNames` is rejected.  Other keys are ignored. Only the comment and the regenerated CRD description change; behavior is unchanged.  # Change Type  /kind documentation  # Changelog  ```release-note Documented the Secret data keys (`tls.crt`, `tls.key`, `ca.crt`) read by BackendConfigPolicy `tls.secretRef`. ```  # Additional Notes  Omitting `ca.crt` currently produces no warning or status condition, so a `kubernetes.io/tls` Secret without a CA gives mTLS with no server verification. This PR only documents that behavior and does not change it. 
 
-- **Issue #15023** (2026-11-11): **[2.4] docs: correct HTTP/2 initial window size defaults**
-  *Symptoms*: # Description  Envoy defaults `initial_stream_window_size` to 16 MiB and `initial_connection_window_size` to 24 MiB. 256 MiB is the legacy default, used only when the `envoy.reloadable_features.safe_http2_options` runtime guard is disabled; every Envoy version kgateway ships enables it, and Envoy 1.40 removes the legacy path. kgateway leaves both fields unset when they are not configured, so Envoy's defaults apply to both `BackendConfigPolicy` and `ListenerPolicy`.  # Change Type  /kind documentation  # Changelog  ```release-note NONE ```  # Additional Notes  - Envoy constants: [`http_option_limits.h`](https://github.com/envoyproxy/envoy/blob/v1.39.6/source/common/http/http_option_limits.h) and their use in [`utility.cc`](https://github.com/envoyproxy/envoy/blob/v1.39.6/source/common/http/utility.cc). - I verified this on a live kgateway v2.4.7 proxy (Envoy 1.38.7). The cluster had `http2_protocol_options: {}`, and `/runtime` showed no overrides. - The CRD descriptions were checked against `controller-gen` + `crdbounds` output. - Backport of #15021 to v2.4.x. 
+- **Issue #15034** (2026-11-12): **fix(deployer): filter denied listener and sort allowed**
+  *Symptoms*: <!-- Thanks for opening a PR! Please delete any sections that don’t apply. -->  # Description  <!-- A concise explanation of the change. You may include: - **Motivation:** why this change is needed - **What changed:** key implementation details - **Related issues:** e.g., `Fixes #123` -->  Fix the deployer including ports from ListenerSets that should be denied given Gateway’s allowedListeners. Deployment now uses the same attachment checks as translation, so denied ListenerSets no longer contribute ports.  ## Changes  - Share ListenerSet attachment checks between deployment and translation. - Reuse the precedence comparator. - Add unit and e2e tests.  # Change Type  <!-- Select one or more of the following by including the corresponding slash-command.  If you pick more than one, the release note is filed under whichever appears first here (manual reordering does not have any effect): ``` /kind breaking_change /kind feature /kind fix /kind deprecation /kind documentation /kind cleanup /kind install /kind bump (the following kinds are not included in release notes) /kind design /kind flake /kind test ``` -->  /kind fix  # Changelog  <!-- Provide the exact line to appear in the release notes for this PR.  A PR gets one release note, filed under the highest-precedence /kind above. If this change needs no release note, write "NONE" in the block below. -->  ```release-note Fix ports from ListenerSets denied by allowedListeners appearing in generated resource ports. ```  # Addition
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1141,621 +1141,400 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53ad7a5e` (2026-11-11)
-**Commit Message**: envoy_modules: build from the dependency stage with --locked (#15024)
+### Incident Patch 1: `b47420e4` (2026-11-12)
+**Commit Message**: CVE fixes: bump Go to 1.27.4, rustix, klauspost/compress (#15030)
 
-Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
+Signed-off-by: Andy Fong <[REDACTED_EMAIL]>
+Co-authored-by: David L. Chandler <[REDACTED_EMAIL]>
 
-**File**: `internal/envoy_modules/Dockerfile` (modified, +7/-15)
+**File**: `.oss-scanner/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -44,8 +44,8 @@ RUN rustup target add ${RUST_BUILD_ARCH}-unknown-linux-gnu
- # source code, so it never re-compiles the real lib.
- # The following section is generated by internal/envoy_modules/generate-dockerfile.sh when the make
- # target is run. Do not edit by hand.
--RUN cargo fetch \
--    && cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \
-+RUN cargo fetch --locked \
-+    && cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \
-     && find /build/target \( -name librust_module.so \
-         -o -name 'librustformation_filter-*.rlib' \
-         -o -name 'libhttp_acl_filter-*.rlib' \
-@@ -54,24 +54,16 @@ RUN cargo fetch \
-         -o -name 'libacl-*.rlib' \
-     \) -type f -delete
+@@ -1,4 +1,4 @@
+-FROM docker.io/library/golang:1.27.3-trixie
++FROM docker.io/library/golang:1.27.4-trixie
+ # Pinned Debian package versions break on every point release.
+ # hadolint ignore=DL3008
+ RUN apt-get update && apt-get install -y --no-install-recommends \
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/kgateway-dev/kgateway/v2
  
--# Stage 2: build envoy dynamic module
--FROM --platform=$TARGETPLATFORM ${CARGO_ZBUILD_IMAGE} AS rust_builder
--WORKDIR /build
--RUN sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list 2>/dev/null || true \
--    && sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true \
--    && apt-get -o Acquire::Retries=5 update \
--    && apt-get -o Acquire::Retries=5 install --no-install-recommends -y clang
--
--# Copy cached cargo, rustup toolchain, and build target from rust_build_deps
--COPY --from=rust_build_deps /usr/local/cargo /usr/local/cargo
--COPY --from=rust_build_deps /usr/local/rustup /usr/local/rustup
--COPY --from=rust_build_deps /build/target /build/target
-+# Stage 2: build envoy dynamic module. Continue from the dependency stage so
-+# BuildKit does not reinstall clang or copy cargo, rustup, and target into new
-+# layers before compiling the real source.
-+FROM rust_build_deps AS rust_builder
+-go 1.27.3
++go 1.27.4
  
- # Copy the source code and build the module.
- ARG ENVOY_MODULES_DIR=.
- COPY ${ENVOY_MODULES_DIR} .
- ARG RUST_BUILD_ARCH=x86_64 # set this to "aarch64" for local arm build
--RUN cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
-+RUN cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
- 
- RUN cp /build/target/${RUST_BUILD_ARCH}-unknown-linux-gnu/debug/librust_module.so /build/librust_module.so
+ godebug x509negativeserial=1
  
 ```
 
-**File**: `internal/envoy_modules/Dockerfile.tmpl` (modified, +5/-13)
+**File**: `internal/envoy_modules/Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -28,24 +28,16 @@ RUN rustup target add ${RUST_BUILD_ARCH}-unknown-linux-gnu
- # target is run. Do not edit by hand.
- # __CRATE_CACHE_BUST_RUN__
+@@ -269,9 +269,9 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
  
--# Stage 2: build envoy dynamic module
--FROM --platform=$TARGETPLATFORM ${CARGO_ZBUILD_IMAGE} AS rust_builder
--WORKDIR /build
--RUN sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list 2>/dev/null || true \
--    && sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true \
--    && apt-get -o Acquire::Retries=5 update \
--    && apt-get -o Acquire::Retries=5 install --no-install-recommends -y clang
--
--# Copy cached cargo, rustup toolchain, and build target from rust_build_deps
--COPY --from=rust_build_deps /usr/local/cargo /usr/local/cargo
--COPY --from=rust_build_deps /usr/local/rustup /usr/local/rustup
--COPY --from=rust_build_deps /build/target /build/target
-+# Stage 2: build envoy dynamic module. Continue from the dependency stage so
-+# BuildKit does not reinstall clang or copy cargo, rustup, and target into new
-+# layers before compiling the real source.
-+FROM rust_build_deps AS rust_builder
+ [[package]]
+ name = "libc"
+-version = "0.2.177"
++version = "0.2.191"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2874a2af47a2325c2001a6e6fad9b16a53b802102b528163885171cf92b15976"
++checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
  
- # Copy the source code and build the module.
- ARG ENVOY_MODULES_DIR=.
- COPY ${ENVOY_MODULES_DIR} .
- ARG RUST_BUILD_ARCH=x86_64 # set this to "aarch64" for local arm build
--RUN cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
-+RUN cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
+ [[package]]
+ name = "libloading"
+@@ -285,9 +285,9 @@ dependencies = [
  
- RUN cp /build/target/${RUST_BUILD_ARCH}-unknown-linux-gnu/debug/librust_module.so /build/librust_module.so
+ [[package]]
+ name = "linux-raw-sys"
+-version = "0.11.0"
++version = "0.12.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "df1d3c3b53da64cf5760482273a98e575c651a67eec7f77df96b5b642de8f039"
++checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
  
+ [[package]]
+ name = "log"
+@@ -578,9 +578,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustix"
+-version = "1.1.2"
++version = "1.1.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cd15f8a2c5551a84d56efdc1cd049089e409ac19a3072d5037a17fd70719ff3e"
++checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
+ dependencies = [
+  "bitflags",
+  "errno",
 ```
 
-**File**: `internal/envoy_modules/generate-dockerfile.sh` (modified, +2/-14)
+**File**: `tools/go.mod` (modified, +2/-2)
 ```diff
-@@ -79,8 +79,8 @@ trap 'rm -rf "$TMPDIR_GENERATED"' EXIT
+@@ -1,6 +1,6 @@
+ module github.com/kgateway-dev/kgateway/v2/tools
  
- # Section 3: RUN cargo fetch && cargo zigbuild && find ... -delete
- {
--    printf 'RUN cargo fetch \\\n'
--    printf '    && cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \\\n'
-+    printf 'RUN cargo fetch --locked \\\n'
-+    printf '    && cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \\\n'
-     printf '    && find /build/target \\( '
-     first=true
-     for member in $members; do
-@@ -106,10 +106,6 @@ cat << EOF > "$temp_output"
- # This file is generated by internal/envoy_modules/generate-dockerfile.sh when the 'generate-all' make target is run.
- # DO NOT EDIT BY HAND! Edit ${TEMPLATE} instead.
- EOF
--if [ $? != 0 ]; then
--    echo "failed to create tempfile $temp_output"
--    exit 1
--fi
- # Replace markers in the template using sed's r (read file) command.
- sed \
-     -e "/^# __CRATE_DUMMY_SETUP__$/r $TMPDIR_GENERATED/crate_dummy_setup" \
-@@ -119,13 +115,5 @@ sed \
-     -e "/^# __CRATE_CACHE_BUST_RUN__$/r $TMPDIR_GENERATED/crate_cache_bust_run" \
-     -e "/^# __CRATE_CACHE_BUST_RUN__$/d" \
-     "$TEMPLATE" >> "$temp_output"
--if [ $? != 0 ]; then
--    echo "failed to generate Dockerfile from $TEMPLATE"
--    exit 1
--fi
+-go 1.27.3
++go 1.27.4
  
- mv "$temp_output" "$OUTPUT"
--if [ $? != 0 ]; then
--    echo "failed to move $temp_output to $OUTPUT"
--    exit 1
--fi
+ tool (
+ 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
+@@ -322,7 +322,7 @@ require (
+ 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+ 	github.com/kisielk/errcheck v1.20.0 // indirect
+ 	github.com/kkHAIKE/contextcheck v1.1.6 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
+ 	github.com/klauspost/pgzip v1.2.6 // indirect
+ 	github.com/kulti/thelper v0.7.1 // indirect
+```
+
+**File**: `tools/go.sum` (modified, +2/-2)
+```diff
+@@ -817,8 +817,8 @@ github.com/kisielk/errcheck v1.20.0/go.mod h1:O+f80MKNwX8Oor2jwgpeQ9An7uJm+hRSgT
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+ github.com/kkHAIKE/contextcheck v1.1.6 h1:7HIyRcnyzxL9Lz06NGhiKvenXq7Zw6Q0UQu/ttjfJCE=
+ github.com/kkHAIKE/contextcheck v1.1.6/go.mod h1:3dDbMRNBFaq8HFXWC1JyvDSPm43CmE6IuHam8Wr0rkg=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
+ github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
+ github.com/klauspost/pgzip v1.2.6 h1:8RXeL5crjEUFnR2/Sn6GJNWtSQ3Dk8pq4CL3jvdDyjU=
 ```
 
 ---
 
-### Incident Patch 2: `2f678804` (2026-11-11)
-**Commit Message**: fix(trafficpolicy): allow retry.perTryTimeout with timeouts.request 0s (#15016)
+### Incident Patch 2: `db7efc10` (2026-11-12)
+**Commit Message**: fix(deployer): filter denied listener and sort allowed (#15034)
 
-Signed-off-by: Duncan Doyle <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Alexander Liu <[REDACTED_EMAIL]>
 
-**File**: `api/tests/testdata/trafficpolicy.yaml` (modified, +44/-2)
+**File**: `pkg/deployer/deployer_test.go` (modified, +13/-5)
 ```diff
-@@ -172,8 +172,8 @@ spec:
-     attempts: 2
-     perTryTimeout: 2s
- ---
--# TrafficPolicy: retry.perTryTimeout must be less than timeouts.request
--_err: retry.perTryTimeout must be less than timeouts.request
-+# TrafficPolicy: retry.perTryTimeout cannot be longer than timeouts.request
-+_err: retry.perTryTimeout cannot be longer than timeouts.request
- apiVersion: gateway.kgateway.dev/v1alpha1
- kind: TrafficPolicy
- metadata:
-@@ -190,6 +190,48 @@ spec:
-     request: 5s
-     streamIdle: 60s
- ---
-+# TrafficPolicy: retry.perTryTimeout may equal timeouts.request
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: TrafficPolicy
-+metadata:
-+  name: retry-pertrytimeout-equal-to-timeouts-request
-+spec:
-+  retry:
-+    retryOn:
-+    - gateway-error
-+    attempts: 2
-+    perTryTimeout: 5s
-+  timeouts:
-+    request: 5s
-+---
-+# TrafficPolicy: retry.perTryTimeout with timeouts.request disabled (0s)
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: TrafficPolicy
-+metadata:
-+  name: retry-pertrytimeout-with-timeouts-request-0s
-+spec:
-+  retry:
-+    retryOn:
-+    - gateway-error
-+    attempts: 3
-+    perTryTimeout: 2s
-+  timeouts:
-+    request: 0s
-+---
-+# TrafficPolicy: retry.perTryTimeout with timeouts.request disabled (0ms)
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: TrafficPolicy
-+metadata:
-+  name: retry-pertrytimeout-with-timeouts-request-0ms
-+spec:
-+  retry:
-+    retryOn:
-+    - gateway-error
-+    attempts: 3
-+    perTryTimeout: 2s
-+  timeouts:
-+    request: 0ms
-+---
- # TrafficPolicy: retry.perTryTimeout must be at least 1ms
- _err: perTryTimeout must be at least 1ms
- apiVersion: gateway.kgateway.dev/v1alpha1
-```
-
-**File**: `api/v1alpha1/kgateway/retries.go` (modified, +1/-2)
-```diff
-@@ -30,8 +30,7 @@ type Retry struct {
- 	Attempts int32 `json:"attempts,omitempty"` //nolint:kubeapilinter
+@@ -2260,8 +2260,9 @@ var _ = Describe("Deployer", func() {
  
- 	// PerTryTimeout specifies the timeout per retry attempt (including the initial attempt).
--	// If a global timeout is configured on a route, this timeout must be less than the global
--	// route timeout.
-+	// It cannot be longer than the route's request timeout, unless that timeout is 0s (disabled).
- 	// It is specified as a sequence of decimal numbers, each with optional fraction and a unit suffix, such as "1s" or "500ms".
- 	// +optional
- 	//
+ 	Context("with listener sets", func() {
+ 		var (
+-			listenerSetPort int32 = 4567
+-			listenerPort    int32 = 1234
++			listenerSetPort       int32 = 4567
++			listenerPort          int32 = 1234
++			deniedListenerSetPort int32 = 7890
+ 		)
+ 
+ 		render := func(gw *gwv1.Gateway, extra ...client.Object) clientObjects {
+@@ -2294,7 +2295,7 @@ var _ = Describe("Deployer", func() {
+ 		}
+ 
+ 		It("exposes all necessary ports", func() {
+-			allNamespaces := gwv1.NamespacesFromAll
++			sameNamespace := gwv1.NamespacesFromSame
+ 			gw := &gwv1.Gateway{
+ 				ObjectMeta: metav1.ObjectMeta{
+ 					Name:      "foo",
+@@ -2305,7 +2306,7 @@ var _ = Describe("Deployer", func() {
+ 					GatewayClassName: wellknown.DefaultGatewayClassName,
+ 					AllowedListeners: &gwv1.AllowedListeners{
+ 						Namespaces: &gwv1.ListenerNamespaces{
+-							From: &allNamespaces,
++							From: &sameNamespace,
+ 						},
+ 					},
+ 					Listeners: []gwv1.Listener{
+@@ -2338,7 +2339,13 @@ var _ = Describe("Deployer", func() {
+ 				},
+ 			}
+ 
+-			objs := render(gw, ls)
++			// Denied ListenerSet in another namespace should have its port not exposed.
++			deniedLS := ls.DeepCopy()
++			deniedLS.Name = "denied-ls"
++			deniedLS.Namespace = "other-ns"
++			deniedLS.Spec.Listeners[0].Port = gwv1.PortNumber(deniedListenerSetPort)
++
++			objs := render(gw, ls, deniedLS)
+ 
+ 			Expect(objs).To(HaveLen(4))
+ 			Expect(objs.findConfigMap(defaultNamespace, gw.Name)).ToNot(BeNil())
+@@ -2349,6 +2356,7 @@ var _ = Describe("Deployer", func() {
+ 			Expect(servicePorts[0].Port).To(Equal(listenerPort))
+ 			Expect(servicePorts[1].Name).To(Equal(fmt.Sprintf("listener-%d", listenerSetPort)))
+ 			Expect(servicePorts[1].Port).To(Equal(listenerSetPort))
++			Expect(servicePorts).To(HaveLen(2), "a ListenerSet the Gateway does not allow adds no Service port")
+ 
+ 			deploymentPorts := objs.findDeployment(gw.Name).Spec.Template.Spec.Containers[0].Ports
+ 			Expect(deploymentPorts).To(ConsistOf(HaveField("Name", "http-monitoring")),
 ```
 
-**File**: `api/v1alpha1/kgateway/traffic_policy_types.go` (modified, +1/-1)
+**File**: `pkg/krtcollections/gateway_index_test.go` (modified, +6/-1)
 ```diff
-@@ -46,7 +46,7 @@ type TrafficPolicyList struct {
- // +kubebuilder:validation:XValidation:rule="!has(self.statPrefix) || ((!has(self.targetRefs) || self.targetRefs.all(r, r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute')) && (!has(self.targetSelectors) || self.targetSelectors.all(r, r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute')))",message="statPrefix can only be used when targeting HTTPRoute or GRPCRoute resources"
- // +kubebuilder:validation:XValidation:rule="!has(self.httpUpgrade) || ((!has(self.targetRefs) || self.targetRefs.all(r, r.kind == 'Gateway' || r.kind == 'HTTPRoute' || r.kind.endsWith('ListenerSet'))) && (!has(self.targetSelectors) || self.targetSelectors.all(r, r.kind == 'Gateway' || r.kind == 'HTTPRoute' || r.kind.endsWith('ListenerSet'))))",message="httpUpgrade can only be used when targeting Gateway, HTTPRoute, or ListenerSet resources"
- // +kubebuilder:validation:XValidation:rule="!has(self.httpUpgrade) || self.httpUpgrade.all(x, self.httpUpgrade.exists_one(y, y.type.lowerAscii() == x.type.lowerAscii()))",message="httpUpgrade types must be unique ignoring ASCII case"
--// +kubebuilder:validation:XValidation:rule="has(self.retry) && has(self.timeouts) ? (has(self.retry.perTryTimeout) && has(self.timeouts.request) ? duration(self.retry.perTryTimeout) < duration(self.timeouts.request) : true) : true",message="retry.perTryTimeout must be less than timeouts.request"
-+// +kubebuilder:validation:XValidation:rule="!(has(self.retry) && has(self.retry.perTryTimeout) && has(self.timeouts) && has(self.timeouts.request) && duration(self.timeouts.request) != duration('0s') && duration(self.retry.perTryTimeout) > duration(self.timeouts.request))",message="retry.perTryTimeout cannot be longer than timeouts.request unless timeouts.request is 0s"
- // +kubebuilder:validation:XValidation:rule="!has(self.buffer) || has(self.buffer.disable) || !has(self.httpUpgrade) || self.httpUpgrade.size() == 0",message="buffer cannot be used together with httpUpgrade unless buffering is disabled"
- type TrafficPolicySpec struct {
- 	// TargetRefs specifies the target resources by reference to attach the policy to.
+@@ -174,11 +174,16 @@ func TestGatewayForDeployerIgnoresListenerSetStatusWrites(t *testing.T) {
+ 	const barrier = "barrier"
+ 	ls := testListenerSet("ls", "gw")
+ 	barrierLS := testListenerSet("barrier-ls", barrier)
++	// Not allowed by the Gateway so its port should not show up.
++	denied := testListenerSet("denied", "gw")
++	denied.Namespace = "other"
++	denied.Spec.ParentRef.Namespace = new(gwv1.Namespace("default"))
++	denied.Spec.Listeners[0].Port = 7070
+ 
+ 	config := getConfig(t)
+ 	config.PolicyIndex = nil
+ 	gateways := krt.NewMutableCollection(nil, []*gwv1.Gateway{testGateway("gw"), testGateway(barrier)}, config.KrtOpts.ToOptions("Gateways")...)
+-	listenerSets := krt.NewMutableCollection(nil, []*gwv1.ListenerSet{ls, barrierLS}, config.KrtOpts.ToOptions("ListenerSets")...)
++	listenerSets := krt.NewMutableCollection(nil, []*gwv1.ListenerSet{ls, barrierLS, denied}, config.KrtOpts.ToOptions("ListenerSets")...)
+ 	config.Gateways = gateways.AsCollection()
+ 	config.ListenerSets = listenerSets.AsCollection()
+ 	config.GatewayClasses = krt.NewStaticCollection(nil, []*gwv1.GatewayClass{{
 ```
 
-**File**: `install/helm/kgateway-crds/templates/gateway.kgateway.dev_trafficpolicies.yaml` (modified, +6/-6)
+**File**: `pkg/krtcollections/policy.go` (modified, +84/-61)
 ```diff
-@@ -2154,8 +2154,7 @@ spec:
-                   perTryTimeout:
-                     description: |-
-                       PerTryTimeout specifies the timeout per retry attempt (including the initial attempt).
--                      If a global timeout is configured on a route, this timeout must be less than the global
--                      route timeout.
-+                      It cannot be longer than the route's request timeout, unless that timeout is 0s (disabled).
-                       It is specified as a sequence of decimal numbers, each with optional fraction and a unit suffix, such as "1s" or "500ms".
-                     maxLength: 32
-                     type: string
-@@ -2846,10 +2845,11 @@ spec:
-             - message: httpUpgrade types must be unique ignoring ASCII case
-               rule: '!has(self.httpUpgrade) || self.httpUpgrade.all(x, self.httpUpgrade.exists_one(y,
-                 y.type.lowerAscii() == x.type.lowerAscii()))'
--            - message: retry.perTryTimeout must be less than timeouts.request
--              rule: 'has(self.retry) && has(self.timeouts) ? (has(self.retry.perTryTimeout)
--                && has(self.timeouts.request) ? duration(self.retry.perTryTimeout)
--                < duration(self.timeouts.request) : true) : true'
-+            - message: retry.perTryTimeout cannot be longer than timeouts.request
-+                unless timeouts.request is 0s
-+              rule: '!(has(self.retry) && has(self.retry.perTryTimeout) && has(self.timeouts)
-+                && has(self.timeouts.request) && duration(self.timeouts.request) !=
-+                duration(''0s'') && duration(self.retry.perTryTimeout) > duration(self.timeouts.request))'
-             - message: buffer cannot be used together with httpUpgrade unless buffering
-                 is disabled
-               rule: '!has(self.buffer) || has(self.buffer.disable) || !has(self.httpUpgrade)
+@@ -39,6 +39,11 @@ var (
+ 	ErrMissingReferenceGrant = errors.New("missing reference grant")
+ 	ErrUnknownBackendKind    = errors.New("unknown backend kind")
+ 	ErrPolicyNotFound        = errors.New("policy not found")
++
++	// ListenerSet denial errors
++	errListenerSetsNotEnabled  = errors.New("Unable to attach to parent, gateway has not enabled allowedListeners")
++	errAllowedListenersInvalid = errors.New("Unable to parse allowedListeners")
++	errListenerSetNotAllowed   = errors.New("Attachment not allowed")
+ )
+ 
+ type NotFoundError struct {
+@@ -549,6 +554,72 @@ func (r listenerSetIRRef) Equals(in listenerSetIRRef) bool {
+ 	return r.ListenerSet.Equals(*in.ListenerSet)
+ }
+ 
++// ListenerSetAttachment decides whether a Gateway's allowedListeners admit a ListenerSet.
++type ListenerSetAttachment struct {
++	enabled bool
++	// allowedNs is nil when allowedListeners could not be parsed.
++	allowedNs func(kctx krt.HandlerContext, namespace string) bool
++}
++
++// NewListenerSetAttachment builds the check for a Gateway in parentNamespace.
++func NewListenerSetAttachment(allowedListeners *gwv1.AllowedListeners, parentNamespace string, namespaces krt.Collection[NamespaceMetadata]) (ListenerSetAttachment, error) {
++	allowedNs, err := AllowedListenerSet(allowedListeners, parentNamespace, namespaces)
++	return ListenerSetAttachment{enabled: allowedListeners != nil, allowedNs: allowedNs}, err
++}
++
++// Denial returns why the Gateway denies a ListenerSet in namespace.
++func (a ListenerSetAttachment) Denial(kctx krt.HandlerContext, namespace string) error {
++	if !a.enabled {
++		return errListenerSetsNotEnabled
++	}
++	if a.allowedNs == nil {
++		return errAllowedListenersInvalid
++	}
++	if !a.allowedNs(kctx, namespace) {
++		return errListenerSetNotAllowed
++	}
++	return nil
++}
++
++func AllowedListenerSet(allowedListeners *gwv1.AllowedListeners, parentNamespace string, namespaces krt.Collection[NamespaceMetadata]) (func(kctx krt.HandlerContext, namespace string) bool, error) {
++	// Default to None. Ref: https://gateway-api.sigs.k8s.io/geps/gep-1713/#gateway-listenerset-handshake
++	allowedNs := NoNamespace()
++
++	if allowedListeners != nil {
++		// Determine the allowed namespaces if specified
++		if allowedListeners.Namespaces != nil && allowedListeners.Namespaces.From != nil {
++			switch *allowedListeners.Namespaces.From {
++			case gwv1.NamespacesFromAll:
++				allowedNs = AllNamespace()
++			case gwv1.NamespacesFromSame:
++				allowedNs = SameNamespace(parentNamespace)
++			case gwv1.NamespacesFromSelector:
++				if allowedListeners.Namespaces.Selector == nil {
++					return nil, errors.New("selector must be set")
++				}
++				selector, err := metav1.LabelSelectorAsSelector(allowedListeners.Namespaces.Selector)
++				if err != nil {
++					return nil, err
++				}
++				allowedNs = NamespaceSelector(namespaces, selector)
++			}
++		}
++	}
++
++	return allowedNs, nil
++}
++
++// ListenerSetPrecedence compares ListenerSets by precedence:
++// Ref: https://gateway-api.sigs.k8s.io/geps/gep-1713/#listener-precedence
++// - ListenerSet ordered by creation time (oldest first)
++// - ListenerSet ordered alphabetically by “{namespace}/{name}”
++func ListenerSetPrecedence(a, b metav1.Object) int {
++	if c := a.GetCreationTimestamp().Compare(b.GetCreationTimestamp().Time); c != 0 {
++		return c
++	}
++	return strings.Compare(a.GetNamespace()+"/"+a.GetName(), b.GetNamespace()+"/"+b.GetName())
++}
++
+ func GatewaysForDeployerTransformationFunc(config *GatewayIndexConfig) func(kctx krt.HandlerContext, gw *gwv1.Gateway) *ir.GatewayForDeployer {
+ 	return func(kctx krt.HandlerContext, gw *gwv1.Gateway) *ir.GatewayForDeployer {
+ 		// only care about gateways that use a class controlled by us
+@@ -574,6 +645,14 @@ func GatewaysForDeployerTransformationFunc(config *GatewayIndexConfig) func(kctx
+ 			Namespace: gw.GetNamespace(),
+ 		}))
+ 
++		// ListenerSet denied adds no listener to the proxy and no port.
++		attachment, _ := NewListenerSetAttachment(gw.Spec.AllowedListeners, gw.GetNamespace(), config.Namespaces)
++		listenerSets = slices.FilterInPlace(listenerSets, func(ls *gwv1.ListenerSet) bool {
++			return attachment.Denial(kctx, ls.GetNamespace()) == nil
++		})
++		// Sort ListenerSets to match the precedence used by Envoy translation.
++		slices.SortFunc(listenerSets, func(a, b *gwv1.ListenerSet) int { return ListenerSetPrecedence(a, b) })
++
+ 		for _, ls := range listenerSets {
+ 			for _, l := range ls.Spec.Listeners {
+ 				port, portErr := kubeutils.DetectListenerPortNumber(l.Protocol, l.Port)
+@@ -638,7 +717,7 @@ func GatewaysForEnvoyTransformationFunc(config *GatewayIndexConfig) func(kctx kr
+ 			})
+ 		}
+ 
+-		allowedNs, err := AllowedListenerSet(gw.Spec.AllowedListeners, gw.GetNamespace(), config.Namespaces)
++		attachment, err := NewListenerSetAttachment(gw.Spec.AllowedListeners, gw.GetNamespace(), config.Namespaces)
+ 		if err != nil {
+ 			logger.Error("unable to parse allowedListeners", "error", err)
+ 		}
+@@ -656,44 +735,16 @@ func GatewaysForEnvoyTransformationFunc(config *GatewayIndexConfig) f
 ```
 
-**File**: `pkg/kgateway/translator/gateway/testutils/inputs/traffic-policy/timeout-retry.yaml` (modified, +32/-1)
+**File**: `test/e2e/features/listenerset/suite.go` (modified, +21/-0)
 ```diff
-@@ -201,4 +201,35 @@ spec:
-     - 409
-     backoffBaseInterval: 2s
-   timeouts:
--    request: 2s      
-\ No newline at end of file
-+    request: 2s      
-+---
+@@ -5,8 +5,13 @@ package listenerset
+ import (
+ 	"context"
+ 
++	"github.com/onsi/gomega"
+ 	"github.com/stretchr/testify/suite"
++	"istio.io/istio/pkg/slices"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/types"
++	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
+ 
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e"
+@@ -78,4 +83,20 @@ func (s *testingSuite) TestPolicies() {
+ 		curl.WithPort(ls2Listener1Port),
+ 		curl.WithHostHeader("listenerset-2.com"),
+ 	)
++
++	// denied-ls is in a namespace the Gateway's allowedListeners selector does not match.
++	s.TestInstallation.AssertionsT(s.T()).EventuallyListenerSetStatus(s.Ctx, "denied-ls", "default", gwv1.ListenerSetStatus{
++		Conditions: []metav1.Condition{{
++			Type:   string(gwv1.ListenerSetConditionAccepted),
++			Status: metav1.ConditionFalse,
++			Reason: string(gwv1.ListenerSetReasonNotAllowed),
++		}},
++	})
++	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
++		svc := &corev1.Service{}
++		g.Expect(s.TestInstallation.ClusterContext.Client.Get(s.Ctx, types.NamespacedName{Name: proxyObjectMeta.Name, Namespace: proxyObjectMeta.Namespace}, svc)).To(gomega.Succeed())
++		g.Expect(slices.Map(svc.Spec.Ports, func(p corev1.ServicePort) int { return int(p.Port) })).To(gomega.ConsistOf(
++			gwListener1Port, gwListener2Port, ls1Listener1Port, ls1Listener2Port, ls2Listener1Port,
++		), "the proxy Service exposes the Gateway's and the allowed ListenerSets' ports only")
++	}, "30s", "1s").Should(gomega.Succeed())
+ }
+```
+
+**File**: `test/e2e/features/listenerset/testdata/denied-listenerset.yaml` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++# A ListenerSet the Gateway does not allow: the default namespace lacks the
++# `allowed: ns` label that gw's allowedListeners selector requires.
 +apiVersion: gateway.networking.k8s.io/v1
-+kind: HTTPRoute
++kind: ListenerSet
 +metadata:
-+  name: example-route-retry-no-request-timeout
++  name: denied-ls
++  namespace: default
 +spec:
-+  parentRefs:
-+  - name: example-gateway
-+  hostnames:
-+  - "example-retry-no-request-timeout.com"
-+  rules:
-+  - backendRefs:
-+    - name: example-svc
-+      port: 80
-+---
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: TrafficPolicy
-+metadata:
-+  name: example-route-retry-no-request-timeout
-+spec:
-+  targetRefs:
-+  - group: gateway.networking.k8s.io
-+    kind: HTTPRoute
-+    name: example-route-retry-no-request-timeout
-+  retry:
-+    retryOn:
-+    - gateway-error
-+    attempts: 3
-+    perTryTimeout: 2s
-+  timeouts:
-+    request: 0s
++  parentRef:
++    name: gw
++    kind: Gateway
++    group: gateway.networking.k8s.io
++  listeners:
++  - name: http
++    protocol: HTTP
++    port: 8097
++    allowedRoutes:
++      namespaces:
++        from: All
 ```
 
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/traffic-policy/timeout-retry.yaml` (modified, +72/-1)
+**File**: `test/e2e/features/listenerset/types.go` (modified, +2/-0)
 ```diff
-@@ -125,6 +125,35 @@ Routes:
-             baseInterval: 0.010s
-           retryOn: gateway-error,reset,retriable-status-codes
-         timeout: 10s
-+  - domains:
-+    - example-retry-no-request-timeout.com
-+    metadata:
-+      filterMetadata:
-+        merge.TrafficPolicy.gateway.kgateway.dev:
-+          retry:
-+          - gateway.kgateway.dev/TrafficPolicy/default/example-gateway-retry-and-timeout
-+    name: listener~80~example-retry-no-request-timeout_com
-+    routes:
-+    - match:
-+        prefix: /
-+      metadata:
-+        filterMetadata:
-+          merge.TrafficPolicy.gateway.kgateway.dev:
-+            retry:
-+            - gateway.kgateway.dev/TrafficPolicy/default/example-route-retry-no-request-timeout
-+            timeouts:
-+            - gateway.kgateway.dev/TrafficPolicy/default/example-route-retry-no-request-timeout
-+      name: listener~80~example-retry-no-request-timeout_com-route-0-httproute-example-route-retry-no-request-timeout-default-0-0-matcher-0
-+      route:
-+        cluster: kube_default_example-svc_80
-+        clusterNotFoundResponseCode: INTERNAL_SERVER_ERROR
-+        retryPolicy:
-+          numRetries: 3
-+          perTryTimeout: 2s
-+          retryBackOff:
-+            baseInterval: 0.025s
-+          retryOn: gateway-error
-+        timeout: 0s
-   - domains:
-     - example-retry.com
-     metadata:
-@@ -201,7 +230,7 @@ Statuses:
-         status: "True"
-         type: ResolvedRefs
-       listeners:
--      - attachedRoutes: 5
-+      - attachedRoutes: 6
-         conditions:
-         - lastTransitionTime: null
-           message: Successfully accepted Listener
-@@ -300,6 +329,29 @@ Statuses:
-           group: ""
-           kind: ""
-           name: example-gateway
-+    default/example-route-retry-no-request-timeout:
-+      parents:
-+      - conditions:
-+        - lastTransitionTime: null
-+          message: Successfully accepted Route
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Successfully resolved all references
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: null
-+          message: Successfully programmed Route
-+          reason: Programmed
-+          status: "True"
-+          type: kgateway.dev/Programmed
-+        controllerName: kgateway
-+        parentRef:
-+          group: ""
-+          kind: ""
-+          name: example-gateway
-     default/example-route-timeout:
-       parents:
-       - conditions:
-@@ -404,6 +456,25 @@ Statuses:
-           status: "True"
-           type: Attached
-         controllerName: kgateway.dev/kgateway
-+    TrafficPolicy/default/example-route-retry-no-request-timeout:
-+      ancestors:
-+      - ancestorRef:
-+          group: gateway.networking.k8s.io
-+          kind: Gateway
-+          name: example-gateway
-+          namespace: default
-+        conditions:
-+        - lastTransitionTime: null
-+          message: Policy accepted
-+          reason: Valid
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Attached to all targets
-+          reason: Attached
-+          status: "True"
-+          type: Attached
-+        controllerName: kgateway.dev/kgateway
-     TrafficPolicy/default/example-route-timeout:
-       ancestors:
-       - ancestorRef:
-```
-
----
-
-### Incident Patch 3: `a49ab582` (2026-11-10)
-**Commit Message**: test(e2e): speed up e2e by overlapping setup with image builds (#15007)
-
-Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/README.md` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ Uses the upstream [Kubernetes Gateway API Conformance suite](https://github.com/
+@@ -19,6 +19,7 @@ var (
+ 	setupManifest             = filepath.Join(fsutils.MustGetThisDir(), "testdata", "setup.yaml")
+ 	validListenerSetManifest  = filepath.Join(fsutils.MustGetThisDir(), "testdata", "valid-listenerset.yaml")
+ 	validListenerSetManifest2 = filepath.Join(fsutils.MustGetThisDir(), "testdata", "valid-listenerset-2.yaml")
++	deniedListenerSetManifest = filepath.Join(fsutils.MustGetThisDir(), "testdata", "denied-listenerset.yaml")
+ 	policyManifest            = filepath.Join(fsutils.MustGetThisDir(), "testdata", "policies.yaml")
  
- ### [Kubernetes End-to-End Tests](./e2e.yaml)
- Runs the suite of [Kubernetes End-To-End Tests](/test/e2e).
-+Shard runner preparation, test compilation, and cluster creation run alongside the shared image build. Each shard waits for the image build in the same workflow run to upload its images before downloading and loading them; a build that fails or is cancelled first fails the waiting shards.
- 
- ## Scheduled Workflows
- 
-```
-
-**File**: `.github/workflows/e2e.yaml` (modified, +30/-14)
-```diff
-@@ -43,9 +43,11 @@ jobs:
-           compression-level: 0
-   end_to_end_tests:
-     name: End-to-End (${{ matrix.test.cluster-name }})
--    needs: build_e2e_images
-+    # Prepare runners, compile tests and create clusters alongside the image build.
-     runs-on: ubuntu-22.04
--    timeout-minutes: 60
-+    # The image build wait now counts against this budget, so allow for a slow
-+    # build on top of the 60 minutes the shard itself used to get.
-+    timeout-minutes: 90
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -168,21 +170,13 @@ jobs:
-         with:
-           path: ${{ matrix.version-files.file }}
-           log-variables: true
--      - name: Download shared e2e images
--        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
--        with:
--          name: e2e-shared-images
--          path: _output/e2e-images
--      - name: Load shared e2e images
--        shell: bash
--        run: docker load --input _output/e2e-images/shared-images.tar
-       - id: setup-kind-cluster
-         name: Setup KinD Cluster
-         if: ${{ steps.dotenv.outputs.cluster_type != 'k3d' }}
-         uses: ./.github/actions/setup-kind-cluster
-         env:
-           SKIP_DOCKER: "true"
--          LOAD_DOCKER_IMAGES: "true"
-+          LOAD_DOCKER_IMAGES: "false"
-         with:
-           cluster-name: ${{ matrix.test.cluster-name }}
-           kind-node-version: ${{ steps.dotenv.outputs.node_version }}
-@@ -197,20 +191,42 @@ jobs:
-         uses: ./.github/actions/setup-k3d-cluster
-         env:
-           SKIP_DOCKER: "true"
--          LOAD_DOCKER_IMAGES: "true"
-+          LOAD_DOCKER_IMAGES: "false"
-         with:
-           cluster-name: ${{ matrix.test.cluster-name }}
-           node-version: ${{ steps.dotenv.outputs.node_version }}
-           kubectl-version: ${{ steps.dotenv.outputs.kubectl_version }}
-           istio-version: ${{ steps.dotenv.outputs.istio_version }}
-           localstack: ${{ matrix.test.localstack }}
-           github-token: ${{ github.token }}
--      - name: Load shared extproc server
-+      # Job-level needs would delay all cluster preparation until images finish.
-+      # Wait here instead, checking the latest build execution in this run.
-+      - name: Wait for shared e2e image build
-+        # Backstop for a hung API call; the script's own 45-minute deadline reports first.
-+        timeout-minutes: 50
-+        shell: bash
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          # Poll faster in the upstream repo, which has a larger API rate limit than forks.
-+          IS_FORK: ${{ github.event.repository.fork }}
-+          # Keep in sync with the build_e2e_images job and its upload step.
-+          BUILD_JOB_NAME: Build End-to-End Images
-+          UPLOAD_STEP_NAME: Upload shared e2e images
-+        run: bash hack/ci/wait-for-e2e-images.sh
-+      - name: Download shared e2e images
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-+        with:
-+          name: e2e-shared-images
-+          path: _output/e2e-images
-+      - name: Load shared e2e images
-+        shell: bash
-+        run: docker load --input _output/e2e-images/shared-images.tar
-+      - name: Load shared images into cluster
-         shell: bash
-         env:
-           CLUSTER_NAME: ${{ matrix.test.cluster-name }}
-           CLUSTER_TYPE: ${{ steps.dotenv.outputs.cluster_type || 'kind' }}
--        run: make cluster-load-extproc-server
-+        run: make cluster-load cluster-load-extproc-server
-       - name: Disable ordered ADS escape hatch
-         if: ${{ matrix.test.ordered-ads == 'false' }}
-         shell: bash
-```
-
-**File**: `Makefile` (modified, +8/-0)
-```diff
-@@ -437,6 +437,14 @@ E2E_SHARED_IMAGE_TAGS = \
- 	$(IMAGE_REGISTRY)/$(DUMMY_IDP_IMAGE_REPO):$(DUMMY_IDP_VERSION) \
- 	$(IMAGE_REGISTRY)/$(EXTPROC_SERVER_IMAGE_REPO):$(EXTPROC_SERVER_VERSION)
- 
-+# Load prebuilt kgateway images into the kind or k3d cluster named by CLUSTER_NAME.
-+.PHONY: cluster-load
-+ifeq ($(CLUSTER_TYPE),k3d)
-+cluster-load: k3d-load
-+else
-+cluster-load: kind-load
-+endif
-+
- .PHONY: cluster-load-extproc-server
- ifeq ($(CLUSTER_TYPE),k3d)
- cluster-load-extproc-server: k3d-load-extproc-server
-```
-
-**File**: `hack/ci/wait-for-e2e-images.sh` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+#!/usr/bin/env bash
-+
-+# Wait at the point images are needed, allowing cluster setup to overlap their build.
-+set -euo pipefail
-+
-+: "${GITHUB_REPOSITORY:?}"
-+: "${GITHUB_RUN_ID:?}"
-+# The image build job's name, and the name of its step that uploads the image archive.
-+: "${BUILD_JOB_NAME:?}"
-+: "${UPLOAD_STEP_NAME:?}"
-+
-+# GITHUB_TOKEN requests per hour per repository are shared by every shard of
-+# every concurrent run. kgateway-dev is on GitHub Enterprise (15,000 per hour),
-+# which can afford a short interval: about 240 requests per run, and about 5s
-+# of average lag after the upload. Forks may be on plans limited to 1,000 per
-+# hour, so they poll gently. IS_FORK is unset outside the workflow; treat that
-+# like a fork.
-+if [[ "${IS_FORK:-}" == "false" ]]; then
-+  poll_interval=10
-+else
-+  poll_interval=30
-+fi
-+# Ride out transient API failures (5xx, rate limiting) for about ten minutes.
-+max_api_errors=$((600 / poll_interval))
-+# The build job exists from the start of the run, so a job missing for about a
-+# minute means BUILD_JOB_NAME no longer matches the workflow.
-+max_missing=$((60 / poll_interval))
-+
-+api_errors=0
-+missing=0
-+# The workflow step has a slightly longer timeout as a second bound on API calls.
-+deadline=$((SECONDS + 2700))
-+while (( SECONDS < deadline )); do
-+  # Inspect the latest execution of the build job in this run. This also supports
-+  # rerunning only failed shards, which reuse the successful build and its artifact.
-+  # The artifact can be downloaded as soon as its upload step succeeds, about a
-+  # minute before the job's post-job cache saves finish, so that is enough.
-+  if ! state=$(gh api --paginate \
-+    "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=latest&per_page=100" \
-+    --jq '.jobs[] | select(.name == env.BUILD_JOB_NAME)
-+      | if any(.steps[]?; .name == env.UPLOAD_STEP_NAME and .conclusion == "success") then "success"
-+        elif .status == "completed" then .conclusion
-+        else .status end'); then
-+    api_errors=$((api_errors + 1))
-+    if (( api_errors >= max_api_errors )); then
-+      echo "Giving up after $api_errors consecutive GitHub API failures." >&2
-+      exit 1
-+    fi
-+    sleep "$poll_interval"
-+    continue
-+  fi
-+  api_errors=0
-+  state=${state%%$'\n'*}
-+  case "$state" in
-+    success)
-+      echo "Shared e2e images uploaded."
-+      exit 0
-+      ;;
-+    "")
-+      missing=$((missing + 1))
-+      if (( missing >= max_missing )); then
-+        echo "No job named '$BUILD_JOB_NAME' in run $GITHUB_RUN_ID." >&2
-+        exit 1
-+      fi
-+      ;;
-+    queued|in_progress|waiting|pending|requested)
-+      missing=0
-+      ;;
-+    *)
-+      echo "Shared e2e image build did not succeed: $state" >&2
-+      exit 1
-+      ;;
-+  esac
-+  sleep "$poll_interval"
-+done
-+
-+echo "Timed out waiting for shared e2e image build." >&2
-+exit 1
+ 	gwListener1Port  = 80
+@@ -52,6 +53,7 @@ var (
+ 			ManifestsWithTransform: map[string]func(string) string{
+ 				validListenerSetManifest:  base.TransformListenerSetManifest,
+ 				validListenerSetManifest2: base.TransformListenerSetManifest,
++				deniedListenerSetManifest: base.TransformListenerSetManifest,
+ 				policyManifest:            base.TransformListenerSetManifest,
+ 			},
+ 		},
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15037** (2026-11-12): docs(api): document BackendConfigPolicy tls.secretRef data keys (@puertomontt)
+- **PR #15034** (2026-11-12): fix(deployer): filter denied listener and sort allowed (@alexliu541)
+- **PR #15032** (2026-11-12): [2.4] CVE fixes: bump Go to 1.26.11, rustix, klauspost/compress (@andy-fong)
+- **PR #15031** (2026-11-12): [2.5] CVE fixes: bump Go to 1.27.4, rustix, klauspost/compress (@andy-fong)
+- **PR #15030** (2026-11-12): CVE fixes: bump Go to 1.27.4, rustix, klauspost/compress (@andy-fong)
 - **PR #15024** (2026-11-11): envoy_modules: build from the dependency stage with --locked (@chandler-solo)
-- **PR #15023** (2026-11-11): [2.4] docs: correct HTTP/2 initial window size defaults (@davidxia)
-- **PR #15022** (2026-11-11): [2.5] docs: correct HTTP/2 initial window size defaults (@davidxia)
-- **PR #15021** (2026-11-11): docs: correct HTTP/2 initial window size defaults (@davidxia)
-- **PR #15016** (2026-11-11): fix(trafficpolicy): allow retry.perTryTimeout with timeouts.request 0s (@DuncanDoyle)
-- **PR #15007** (2026-11-10): test(e2e): speed up e2e by overlapping setup with image builds (@chandler-solo)
 
 ---
 
@@ -1775,48 +1554,28 @@ Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. envoy_modules: build from the dependency stage with --locked (#15024)
+## X. CVE fixes: bump Go to 1.27.4, rustix, klauspost/compress (#15030)
 
 **RULE**:
-When implementing operations in `internal/envoy_modules/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.oss-scanner/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `53ad7a5e`: envoy_modules: build from the dependency stage with --locked (#15024). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b47420e4`: CVE fixes: bump Go to 1.27.4, rustix, klauspost/compress (#15030). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/envoy_modules/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oss-scanner/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-RUN cargo fetch --locked \
-    && cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \
-# Stage 2: build envoy dynamic module. Continue from the dependency stage so
-# BuildKit does not reinstall clang or copy cargo, rustup, and target into new
-# layers before compiling the real source.
-FROM rust_build_deps AS rust_builder
-RUN cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
+FROM docker.io/library/golang:1.27.4-trixie
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-RUN cargo fetch \
-    && cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \
-# Stage 2: build envoy dynamic module
-FROM --platform=$TARGETPLATFORM ${CARGO_ZBUILD_IMAGE} AS rust_builder
-WORKDIR /build
-RUN sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list 2>/dev/null || true \
-    && sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true \
-    && apt-get -o Acquire::Retries=5 update \
-    && apt-get -o Acquire::Retries=5 install --no-install-recommends -y clang
-
-# Copy cached cargo, rustup toolchain, and build target from rust_build_deps
-COPY --from=rust_build_deps /usr/local/cargo /usr/local/cargo
-COPY --from=rust_build_deps /usr/local/rustup /usr/local/rustup
-COPY --from=rust_build_deps /build/target /build/target
-RUN cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
+FROM docker.io/library/golang:1.27.3-trixie
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `53ad7a5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b47420e4` are properly handled with clean fallback behavior.
