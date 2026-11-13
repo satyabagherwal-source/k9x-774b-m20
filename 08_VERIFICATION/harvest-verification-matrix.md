@@ -9496,3 +9496,5 @@
 | `CYCLE-20261113-MVLL` | `2026-11-13T14:55:43.737Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`672c544d...`) |
 | `CYCLE-20261113-X6E9` | `2026-11-13T15:03:44.289Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`a7225e60...`) |
 | `CYCLE-20261113-XJG0` | `2026-11-13T15:04:01.200Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`909b9c49...`) |
+| `CYCLE-20261113-6ABJ` | `2026-11-13T15:10:49.279Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`7b4bf424...`) |
+| `CYCLE-20261113-6LJX` | `2026-11-13T15:11:03.837Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9b59296e...`) |

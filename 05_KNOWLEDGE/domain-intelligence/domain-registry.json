@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T15:04:05.864Z",
-  "total_records": 150,
+  "last_updated": "2026-11-13T15:11:07.569Z",
+  "total_records": 154,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 99,
+      "total": 101,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -126,7 +126,9 @@
         "domain_intelligence-research-knowledge-intelligence-viggle-qwen-image-2-1-viggle-turbo-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
         "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i"
+        "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
+        "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria"
       ]
     },
     "E": {
@@ -150,7 +152,7 @@
       ]
     },
     "H": {
-      "total": 22,
+      "total": 24,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -173,7 +175,9 @@
         "DOM-H-B77A0FED",
         "DOM-H-8C53C2BF",
         "DOM-H-414482D7",
-        "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria"
       ]
     },
     "I": {
@@ -5965,8 +5969,44 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "769c228683be8d0bb4b64242c39035352317e52d5a511025e0030fec7c9fc0bd",
-      "created_at": "2026-11-13T15:04:05.864Z"
+      "content_hash": "f8e82eca538539b57ccedec9fa7d64347d16e5b431a05fc0fb8a504aeebad7de",
+      "created_at": "2026-11-13T15:11:07.569Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: SupersonicLabs/Julia-1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-research-knowledge-intelligence-supersoniclabs-julia-1.md",
+      "repository": "SupersonicLabs/Julia-1",
+      "content_hash": "3ec05099bbbb7f24dca282eb79b571cd83c996235b0a255974a22a4debdb1722",
+      "created_at": "2026-11-13T15:10:49.410Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
+      "repository": "dragonflydb/dragonfly",
+      "content_hash": "6e72a920d9eecbec176dc4b85638ee55553cac65850d46f5292cbb092eaf8ee3",
+      "created_at": "2026-11-13T15:11:04.048Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-supersoniclabs-julia-1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-learnings-research-knowledge-intelligence-hf-supersoni.md",
+      "repository": "hf-supersoniclabs-julia-1-learnings",
+      "content_hash": "ca55f831113e3f33ebc4532bf522d0e07a3c2c51fca14e3ab0bb34db5b7563f2",
+      "created_at": "2026-11-13T15:11:06.929Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-learnings-technical-construction-intelligence-dragonflydb-.md",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "content_hash": "733274ac588f88c2004a041713eb55c7de082820672c8c9a990102ae54225cd8",
+      "created_at": "2026-11-13T15:11:07.288Z"
     }
   }
 }

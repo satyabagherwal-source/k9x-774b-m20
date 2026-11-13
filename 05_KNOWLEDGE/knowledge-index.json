@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T15:04:05.964Z",
+  "last_updated": "2026-11-13T15:11:07.626Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12587,8 +12587,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "e00dd078",
-      "content_hash": "da9c34972bcd3507e0c22e20dc393690558e435190bf779fc236f3ea5306800e",
+      "source_version": "383694c5",
+      "content_hash": "9b59296e40577994fa05e0c4e3662ca9318471bc684dd6ff09440b7d95cf99ab",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -12620,6 +12620,11 @@
         {
           "number": null,
           "title": "search): hold the HNSW resize lock in removals and vector updates (#8804)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "search): drain pending vector updates safely across suspensions (#8810)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12718,7 +12723,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T14:34:08.066Z",
+      "verified_at": "2026-11-13T15:11:03.726Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34023,7 +34028,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "35b31d5f2ef3a70d5efe7dd6af3a152867e2cad82fa3dd46759aa6578efc2649",
+      "content_hash": "7b4bf42418fe70b421e7c60ede05c3293a6084ef10e83a9c62afc281d1c860eb",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -34139,7 +34144,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-11-13T14:33:40.188Z",
+      "verified_at": "2026-11-13T15:10:49.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -193089,13 +193094,13 @@
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XMYP-export-fix-consent-of-former-subscribers-covering-private-channels.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6OE0-export-fix-consent-of-former-subscribers-covering-private-channels.md",
       "title": "export: Fix consent of former subscribers covering private channels.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "772b17bd951c75ed3a5ebf75bee6fb9d2e26941e50736dca1db85cbf450e2226",
+      "content_hash": "f6afe1cd372199a574da73627ae4fcaf4764918e17ede84499566317e799e8bd",
       "domain_letter": "A",
-      "persisted_at": "2026-11-13T15:04:05.761Z"
+      "persisted_at": "2026-11-13T15:11:07.513Z"
     },
     "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -193105,9 +193110,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "769c228683be8d0bb4b64242c39035352317e52d5a511025e0030fec7c9fc0bd",
+      "content_hash": "f8e82eca538539b57ccedec9fa7d64347d16e5b431a05fc0fb8a504aeebad7de",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:04:05.864Z"
+      "persisted_at": "2026-11-13T15:11:07.569Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -193117,9 +193122,93 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c31b42fa342d36816ca8ffd13ea44c6bbec53c01754f0b38689935bba70d661e",
+      "content_hash": "06495f20889a9060e084e96c7aae8a414099cc16e465e0a120c4e147cedede22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:04:05.964Z"
+      "persisted_at": "2026-11-13T15:11:07.626Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-research-knowledge-intelligence-supersoniclabs-julia-1.md",
+      "title": "Research & Knowledge Intelligence: SupersonicLabs/Julia-1 Core Invariants",
+      "repository": "SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "content_hash": "3ec05099bbbb7f24dca282eb79b571cd83c996235b0a255974a22a4debdb1722",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T15:10:49.410Z"
+    },
+    "candidate_directive-search-drain-pending-vector-updates-safely-across-suspensions-8810": {
+      "item_id": "candidate_directive-search-drain-pending-vector-updates-safely-across-suspensions-8810",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6O65-search-drain-pending-vector-updates-safely-across-suspensions-8810.md",
+      "title": "search): drain pending vector updates safely across suspensions (#8810)",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f8923f1a4aa6f23b85ee0ead6fb3a81bb86457db47eaaa4b2b60d45cfd89e5ea",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-13T15:11:07.233Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
+      "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "383694c5",
+      "content_hash": "6e72a920d9eecbec176dc4b85638ee55553cac65850d46f5292cbb092eaf8ee3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:11:04.048Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "383694c5",
+      "content_hash": "bcb97b7163b0fe9c4a927d8bed0aac078abbe1c4365cae0aa95f439bd63872dd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:11:04.126Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-learnings-research-knowledge-intelligence-hf-supersoni.md",
+      "title": "Research & Knowledge Intelligence: hf-supersoniclabs-julia-1-learnings Core Invariants",
+      "repository": "hf-supersoniclabs-julia-1-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca55f831113e3f33ebc4532bf522d0e07a3c2c51fca14e3ab0bb34db5b7563f2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T15:11:06.929Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-learnings-technical-construction-intelligence-dragonflydb-.md",
+      "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "733274ac588f88c2004a041713eb55c7de082820672c8c9a990102ae54225cd8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:11:07.288Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dragonflydb-dragonfly-learnings",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d9c69a44d9e9865b36b4ef06e1204664c8d1ed91f6e5fc7dcacd974ad38f1ff",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:11:07.345Z"
     }
   },
   "aliases": {
@@ -199118,5 +199207,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9054
+  "total_items": 9061
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T15:04:05.055Z",
+  "updated_at": "2026-11-13T15:11:07.088Z",
   "stats": {
-    "total_discovered": 2559,
-    "approved_pending_harvest": 2388,
+    "total_discovered": 2564,
+    "approved_pending_harvest": 2393,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2378,
+      "COMMUNITY_AND_EXPERT": 2383,
       "OFFICIAL_DOCUMENTATION": 95,
       "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
@@ -55120,6 +55120,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-8B1FDA582B4B": {
+      "id": "SRC-8B1FDA582B4B",
+      "url": "https://github.com/dragonflydb/dragonfly",
+      "title": "https://github.com/dragonflydb/dragonfly",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:11:07.026Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
+        "fileName": "dragonflydb-dragonfly-learnings.md"
+      }
+    },
+    "SRC-4F0C355D81BB": {
+      "id": "SRC-4F0C355D81BB",
+      "url": "https://github.com/jvirkki/libbloom",
+      "title": "https://github.com/jvirkki/libbloom",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:11:07.037Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
+        "fileName": "dragonflydb-dragonfly-learnings.md"
+      }
+    },
+    "SRC-FBB1FAF9DF40": {
+      "id": "SRC-FBB1FAF9DF40",
+      "url": "https://gsd.di.uminho.pt/members/cbm/ps/dbloom.pdf",
+      "title": "https://gsd.di.uminho.pt/members/cbm/ps/dbloom.pdf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:11:07.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
+        "fileName": "dragonflydb-dragonfly-learnings.md"
+      }
+    },
+    "SRC-096B9545986D": {
+      "id": "SRC-096B9545986D",
+      "url": "https://stackoverflow.com/questions/19915303/packed-qualifier-ignored",
+      "title": "https://stackoverflow.com/questions/19915303/packed-qualifier-ignored",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:11:07.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
+        "fileName": "dragonflydb-dragonfly-learnings.md"
+      }
+    },
+    "SRC-C8EC88D6135F": {
+      "id": "SRC-C8EC88D6135F",
+      "url": "https://github.com/dragonflydb/dragonfly/actions/runs/42001650757/job/127158081546",
+      "title": "https://github.com/dragonflydb/dragonfly/actions/runs/42001650757/job/127158081546",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:11:07.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
+        "fileName": "dragonflydb-dragonfly-learnings.md"
       }
     }
   }

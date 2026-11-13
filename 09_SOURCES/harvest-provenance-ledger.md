@@ -9529,3 +9529,5 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `294cd0ad` | Multi-dimensional audit evidence | 2026-11-13T14:55:43.741Z |
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-13T15:03:44.294Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ce4f6857` | Multi-dimensional audit evidence | 2026-11-13T15:04:01.205Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-13T15:10:49.283Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `383694c5` | Multi-dimensional audit evidence | 2026-11-13T15:11:03.840Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `e00dd078`  
+> **Source Version**: `383694c5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T14:33:54.373Z  
+> **Timestamp**: 2026-11-13T15:11:03.441Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:33:54.363Z  
+> **Harvest Timestamp**: 2026-11-13T15:11:03.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2321,338 +2321,105 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1d175fa` (2026-11-13)
-**Commit Message**: fix(search): hold the HNSW resize lock in removals and vector updates (#8804)
+### Incident Patch 1: `383694c5` (2026-11-13)
+**Commit Message**: fix(search): drain pending vector updates safely across suspensions (#8810)
 
-Writers share the graph lock, so removals on one shard run while insertions on another grow
-the graph. DoAdd holds resize_mutex_ while it writes a node, because resizeIndex reallocates
-the level-0 block, but DoRemove and UpdateVectorData wrote the delete mark and the vector
-pointer into that block without it, and looked the label up without label_lookup_lock while
-other shards insert. A capacity doubling or a rehash on another shard could make them write
-into freed memory or lose the stub that keeps a deleted node from pointing into a freed value.
+DrainPendingVectorUpdates looked a document's DocId up before FindMutable, which can expire
+the document on the way and free that id, and then freed it again from the stale value, so two
+later documents shared one DocId and one of them vanished from the index. It also iterated the
+pending set itself while FindMutable may suspend: a serializer window opening meanwhile
+inserted into the set being iterated, lost its keys to the final clear and had its preserved
+field data freed early.
 
-Take resize_mutex_ for reading in both, and let markDelete hand out the internal id it finds
-under the lock.
+Look the id up after FindMutable, take the pending set before the loop and keep the preserved
+data while something is buffered again.
 
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-**File**: `src/core/search/hnsw_alg.h` (modified, +3/-1)
+**File**: `src/server/search/doc_index.cc` (modified, +8/-5)
 ```diff
-@@ -788,7 +788,7 @@ template <typename dist_t> class HierarchicalNSW : public hnswlib::AlgorithmInte
-   /*
-    * Marks an element with the given label deleted, does NOT really change the current graph.
-    */
--  HnswErrorStatus markDelete(labeltype label) {
-+  HnswErrorStatus markDelete(labeltype label, tableint* internal_id = nullptr) {
-     // lock all operations with element by label
-     std::unique_lock<std::mutex> lock_label(getLabelOpMutex(label));
+@@ -1032,18 +1032,21 @@ void ShardDocIndex::DrainPendingVectorUpdates(const OpArgs& op_args) {
  
-@@ -798,6 +798,8 @@ template <typename dist_t> class HierarchicalNSW : public hnswlib::AlgorithmInte
-       return HnswErrorStatus::LABEL_NOT_FOUND;
-     }
-     tableint internalId = search->second;
-+    if (internal_id)
-+      *internal_id = internalId;
-     lock_table.unlock();
-     if (!markDeletedInternal(internalId)) {
-       return HnswErrorStatus::ELEMENT_ALREADY_DELETED;
-```
-
-**File**: `src/core/search/hnsw_index.cc` (modified, +20/-11)
-```diff
-@@ -11,6 +11,7 @@
+   auto& db_slice = op_args.GetDbSlice();
  
- #include <atomic>
- #include <cstddef>
-+#include <mutex>
+-  LOG(INFO) << "Draining " << pending_vector_updates_.size() << " pending vector updates on shard "
++  // FindMutable may suspend, and a serializer window opening meanwhile buffers into the members.
++  auto pending = std::exchange(pending_vector_updates_, {});
++  LOG(INFO) << "Draining " << pending.size() << " pending vector updates on shard "
+             << EngineShard::tlocal()->shard_id();
  
- #include "base/logging.h"
- #include "core/search/hnsw_alg.h"
-@@ -241,9 +242,9 @@ struct HnswlibAdapter {
-   }
+   // Remove stale nodes before additions: their DocIds may already belong to different keys.
+   for (DocId id : pending_hnsw_removals_)
+     RemoveFromAllHnswIndices(id);
+   pending_hnsw_removals_.clear();
  
-   void DoRemove(GlobalDocId id) {
--    auto it = copy_vector_ ? world_.label_lookup_.end() : world_.label_lookup_.find(id);
--
--    HnswErrorStatus status = world_.markDelete(id);
-+    absl::ReaderMutexLock resize_lock(&resize_mutex_);
-+    hnswlib::tableint internal_id = 0;
-+    HnswErrorStatus status = world_.markDelete(id, &internal_id);
-     if (status != HnswErrorStatus::SUCCESS) {
-       VLOG(1) << "HnswlibAdapter::Remove failed with status: " << static_cast<int>(status)
-               << " for global id: " << id;
-@@ -255,9 +256,9 @@ struct HnswlibAdapter {
-     // pointer with stub_vector_ so the caller can free the original data.
-     // Uses a native-encoded 1.0 (not zero) because a zero-norm vector yields
-     // cosine distance 0 and would bias traversal toward deleted nodes.
--    if (it != world_.label_lookup_.end()) {
-+    if (!copy_vector_) {
-       const char* safe_ptr = reinterpret_cast<const char*>(stub_vector_.data());
--      char* ptr_location = world_.getDataPtrByInternalId(it->second);
-+      char* ptr_location = world_.getDataPtrByInternalId(internal_id);
-       memcpy(ptr_location, &safe_ptr, sizeof(void*));
+-  for (const auto& key : pending_vector_updates_) {
+-    auto local_id = key_index_.Find(key);
++  for (const auto& key : pending) {
+     auto it = db_slice.FindMutable(op_args.db_cntx, key, base_->GetObjCode());
+ 
++    // Looked up after FindMutable: an expiry inside it removes the document and frees the id.
++    auto local_id = key_index_.Find(key);
+     if (it && IsValid(it->it)) {
+       PrimeValue& pv = it->it->second;
+ 
+@@ -1061,8 +1064,8 @@ void ShardDocIndex::DrainPendingVectorUpdates(const OpArgs& op_args) {
+       key_index_.Remove(*local_id);
      }
    }
-@@ -425,16 +426,20 @@ struct HnswlibAdapter {
-   // Returns false if the node doesn't exist in the index.
-   bool UpdateVectorData(GlobalDocId id, const void* data) {
-     MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kWriteLock);
-+    absl::ReaderMutexLock resize_lock(&resize_mutex_);
- 
-     // Find the internal id for this label
--    auto it = world_.label_lookup_.find(id);
--    if (it == world_.label_lookup_.end()) {
--      VLOG(1) << "UpdateVectorData: label " << id << " not found in index";
--      return false;
-+    size_t internal_id;
-+    {
-+      std::lock_guard<std::mutex> lock_table(world_.label_lookup_lock);
-+      auto it = world_.label_lookup_.find(id);
-+      if (it == world_.label_lookup_.end()) {
-+        VLOG(1) << "UpdateVectorData: label " << id << " not found in index";
-+        return false;
-+      }
-+      internal_id = it->second;
-     }
- 
--    size_t internal_id = it->second;
--
-     // Copy/store the vector data based on copy_vector_ mode
-     if (world_.copy_vector_) {
-       // Owned mode: copy data into world's vector memory
-@@ -470,6 +475,10 @@ struct HnswlibAdapter {
-  private:
-   HnswSpace space_;
-   HierarchicalNSW<float> world_;
-+
-+  // Writers share mrmw_mutex_, and resizeIndex moves the level-0 block under them: readers of
-+  // this mutex touch nodes (DoAdd, DoRemove, UpdateVectorData), writers replace the memory
-+  // (ResizeIfFull, RestoreFromNodes).
-   absl::Mutex resize_mutex_;
-   mutable MRMWMutex mrmw_mutex_;
-   std::atomic_bool retired_ = false;
-```
-
-**File**: `src/core/search/search_test.cc` (modified, +45/-0)
-```diff
-@@ -17,6 +17,7 @@
- 
- #include <algorithm>
- #include <array>
-+#include <atomic>
- #include <cmath>
- #include <memory_resource>
- #include <random>
-@@ -32,6 +33,7 @@
- #include "core/search/scoring.h"
- #include "core/search/stateless_allocator.h"
- #include "core/search/vector_utils.h"
-+#include "util/fibers/pool.h"
- 
- extern "C" {
- #include "redis/zmalloc.h"
-@@ -1539,6 +1541,49 @@ TEST(HnswBorrowedMode, RetiredIndexReadsNoVectors) {
-   EXPECT_EQ(index.GetNodeCount(), kN);
+-  pending_vector_updates_.clear();
+-  ClearAllHnswPreservedData();
++  if (pending_vector_updates_.empty())
++    ClearAllHnswPreservedData();
  }
  
-+// Removals on one thread run while insertions on another grow the graph. Every removal must
-+// still mark its node and swap in the stub, so the search after the buffers are freed reads
-+// no vector.
-+TEST(HnswBorrowedMode, ConcurrentRemoveWhileGrowing) {
-+  constexpr size_t kDim = 256;
-+  constexpr size_t kN = 2000;
-+
-+  SchemaField::VectorParams params;
-+  params.use_hnsw = true;
-+  params.dim = kDim;
-+  params.capacity = 16;  // Grows at every doubling.
-+  HnswVectorIndex index(params, /*copy_vector=*/false);
-+
-+  std::vector<std::unique_ptr<float[]>> bufs(kN);
-+  std::atomic_size_t added = 0;
-+
-+  std::unique_ptr<util::ProactorPool> pp(util::fb2::Pool::Epoll(2));
-+  pp->Run();
-+  auto adder = pp->at(0)->LaunchFiber([&] {
-+    for (size_t i = 0; i < kN; i++) {
-+      bufs[i] = std::make_unique<float[]>(kDim);
-+      bufs[i][0] = static_cast<float>(i);
-+      index.Add(i, BorrowedDoc{reinterpret_cast<const char*>(bufs[i].get())}, "vec");
-+      added.store(i + 1);
-+    }
-+  });
-+  auto remover = pp->at(1)->LaunchFiber([&] {
-+    for (size_t i = 0; i < kN; i++) {
-+      while (added.load() <= i)
-+        util::ThisFiber::Yield();
-+      index.Remove(i);
-+    }
-+  });
-+  adder.Join();
-+  remover.Join();
-+  pp->Stop();
-+  bufs.clear();
-+
-+  vector<float> query(kDim, 0.0f);
-+  EXPECT_EQ(index.GetNodeCount(), kN);
-+  EXPECT_THAT(index.Knn(query.data(), 5, std::nullopt), testing::IsEmpty());
-+}
-+
- INSTANTIATE_TEST_SUITE_P(HnswSer, HnswSerializationTest,
-                          testing::Values(HnswSerParam{0, 2, VectorSimilarity::L2},
-                                          HnswSerParam{10, 2, VectorSimilarity::L2},
+ ShardDocIndex::SerializedEntryWithKey ShardDocIndex::SerializeDocWithKey(
 ```
 
----
-
-### Incident Patch 2: `0490613e` (2026-11-12)
-**Commit Message**: fix(rdb): load integer-root JSON documents as JSON (#8803)
-
-The saver integer-encodes a short JSON text such as , and the loader turned every
-integer-encoded value into a string key regardless of the RDB type. A JSON document with
-an int32 root therefore became a string after DUMP/RESTORE, COPY, cross-shard RENAME,
-DEBUG RELOAD, restart, full sync or slot migration, and JSON.TYPE and JSON.NUMINCRBY
-then failed with WRONGTYPE.
-
-Parse such values as JSON text when the RDB type is JSON. Snapshots written by earlier
-versions and ReJSON-RL module values load correctly as well
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-**File**: `src/server/rdb_load.cc` (modified, +5/-0)
+**File**: `src/server/search/search_family_test.cc` (modified, +14/-0)
 ```diff
-@@ -348,6 +348,11 @@ class RdbLoaderBase::OpaqueObjLoader {
-   }
+@@ -6263,6 +6263,10 @@ TEST_F(SearchFamilyTest, HnswListpackUpdatesWhileGraphBusy) {
+   EXPECT_THAT(Run({"HSET", "h:5", "v", vec(5)}), IntArg(1));
+   EXPECT_THAT(Run({"DEL", "h:4"}), IntArg(1));
  
-   void operator()(long long val) {
-+    // A JSON document with an int32 root is saved as an integer-encoded string.
-+    if (rdb_type_ == RDB_TYPE_JSON) {
-+      HandleBlob(absl::StrCat(val));
-+      return;
-+    }
-     pv_->SetInt(val);
-   }
- 
-```
-
-**File**: `src/server/rdb_test.cc` (modified, +5/-1)
-```diff
-@@ -885,7 +885,8 @@ TEST_F(RdbTest, JsonTest) {
-       R"({"a":1})"sv,                          //
-       R"([1,2,3,4,5,6])"sv,                    //
-       R"({"a":1.0,"b":[1,2],"c":"value"})"sv,  //
--      R"({"a":{"a":{"a":{"a":1}}}})"sv         //
-+      R"({"a":{"a":{"a":{"a":1}}}})"sv,        //
-+      "5"sv                                    //
++  // h:6 expires inside the drain's FindMutable, which frees its DocId before the drain does.
++  EXPECT_THAT(Run({"HSET", "h:6", "v", vec(6)}), IntArg(1));
++  EXPECT_THAT(Run({"PEXPIRE", "h:6", "100"}), IntArg(1));
++
+   string query = vec(0);
+   auto distances = [&](string_view name) {
+     vector<long> out;
+@@ -6273,6 +6277,7 @@ TEST_F(SearchFamilyTest, HnswListpackUpdatesWhileGraphBusy) {
    };
- 
-   for (auto test : data) {
-@@ -895,6 +896,9 @@ TEST_F(RdbTest, JsonTest) {
-     Run({"restore", "doc", "0", facade::ToSV(dump.GetBuf())});
-     auto res = Run({"json.get", "doc"});
-     ASSERT_EQ(res, test);
-+
-+    // JSON.GET reads plain strings too, so check that the value is still JSON.
-+    EXPECT_EQ(Run({"type", "doc"}), "ReJSON-RL");
+   auto drain = [&](string_view name) {
+     pp_->at(0)->Await([&] {
++      AdvanceTime(200);
+       auto* shard = EngineShard::tlocal();
+       DbContext db_cntx{&namespaces->GetDefaultNamespace(), 0, GetCurrentTimeMs()};
+       index(name)->DrainSerializationUpdates(OpArgs{shard, nullptr, db_cntx});
+@@ -6291,6 +6296,15 @@ TEST_F(SearchFamilyTest, HnswListpackUpdatesWhileGraphBusy) {
+         AreNoContentDocIds("h:1", "h:2", "h:5"));
    }
- }
  
-```
-
----
-
-### Incident Patch 3: `e00dd078` (2026-11-13)
-**Commit Message**: fix: multi-exec data loss during slot migration (#8805)
-
-**File**: `src/server/cluster/cluster_family_test.cc` (modified, +45/-0)
-```diff
-@@ -722,6 +722,51 @@ TEST_F(ClusterFamilyTest, ClusterMultiExec) {
-   Run({"SET", "{tag}key", "value"});
-   Run({"MOVE", "{tag}key", "1"});
-   EXPECT_THAT(Run({"EXEC"}), RespElementsAre("OK", IntArg(1)));
-+
-+  Run({"MULTI"});
-+  Run({"SET", "X1", "queued"});
-+
-+  // Change ownership on another connection while the transaction is queued.
-+  pp_->at(1)->Await([&] { ConfigSingleNodeCluster("other-node"); });
-+  EXPECT_THAT(Run({"EXEC"}), ErrArg("MOVED"));
-+  EXPECT_THAT(Run({"DBSIZE"}), IntArg(0));
-+}
-+
-+TEST_F(ClusterFamilyTest, ClusterMultiExecShardedPubSub) {
-+  single_response_ = false;
-+  ConfigSingleNodeCluster(GetMyId());
-+
-+  auto subscribe_resp = pp_->at(2)->Await([&] { return Run({"SSUBSCRIBE", "X1"}); });
-+  ASSERT_THAT(subscribe_resp, RespElementsAre("ssubscribe", "X1", IntArg(1)));
-+
-+  EXPECT_EQ(Run({"MULTI"}), "OK");
-+  EXPECT_EQ(Run({"SPUBLISH", "X1", "a transactional message"}), "QUEUED");
-+  EXPECT_THAT(Run({"EXEC"}), RespElementsAre(IntArg(1)));
-+  pp_->AwaitFiberOnAll([](util::ProactorBase* pb) {});
-+  ASSERT_EQ(1, SubscriberMessagesLen("IO2"));
-+  EXPECT_EQ("a transactional message", GetPublishedMessage("IO2", 0).message);
-+
-+  for (string_view command : {"SET", "SPUBLISH"}) {
-+    EXPECT_EQ(Run({"MULTI"}), "OK");
-+    EXPECT_EQ(Run({"SPUBLISH", "X1", "message"}), "QUEUED");
-+    EXPECT_EQ(Run({command, "X2", "value"}), "QUEUED");
-+    EXPECT_THAT(Run({"EXEC"}), ErrArg("CROSSSLOT"));
++  // The expired DocId must be free once, so the next two documents get distinct ids.
++  EXPECT_THAT(Run({"HSET", "h:7", "v", vec(7)}), IntArg(1));
++  EXPECT_THAT(Run({"HSET", "h:8", "v", vec(8)}), IntArg(1));
++  for (string_view name : {"hx", "hy"}) {
++    EXPECT_THAT(Run({"FT.SEARCH", name, "*", "NOCONTENT"}),
++                AreNoContentDocIds("h:1", "h:2", "h:5", "h:7", "h:8"));
 +  }
-+  pp_->AwaitFiberOnAll([](util::ProactorBase* pb) {});
-+  EXPECT_EQ(1, SubscriberMessagesLen("IO2"));
-+  EXPECT_THAT(Run({"DBSIZE"}), IntArg(0));
++  EXPECT_THAT(Run({"DEL", "h:7", "h:8"}), IntArg(2));
 +
-+  EXPECT_EQ(Run({"MULTI"}), "OK");
-+  EXPECT_EQ(Run({"SPUBLISH", "X1", "queued"}), "QUEUED");
-+
-+  // Change ownership on another connection while the transaction is queued.
-+  pp_->at(1)->Await([&] { ConfigSingleNodeCluster("other-node"); });
-+  EXPECT_THAT(Run({"EXEC"}), ErrArg("MOVED"));
-+  pp_->AwaitFiberOnAll([](util::ProactorBase* pb) {});
-+
-+  // Slot migration sends a forced unsubscribe notification.
-+  ASSERT_EQ(2, SubscriberMessagesLen("IO2"));
-+  EXPECT_TRUE(GetPublishedMessage("IO2", 1).force_unsubscribe);
- }
- 
- TEST_F(ClusterFamilyTest, ClusterConfigDeleteSlots) {
-```
-
-**File**: `src/server/main_service.cc` (modified, +12/-0)
-```diff
-@@ -2603,9 +2603,21 @@ void Service::Exec(CmdArgParser, CommandContext* cmd_cntx) {
-       slot_checker.Add(s);
-     }
- 
-+    // Sharded publish channels participate in slot checks without requiring database key locks.
-+    for (const auto& scmd : exec_info.body) {
-+      if (scmd.Cid()->IsSPublish())
-+        slot_checker.Add(scmd.Args()[0]);
-+    }
-+
-     if (slot_checker.IsCrossSlot()) {
-       return rb->SendError(kCrossSlotError);
-     }
-+
-+    // Commands were validated when queued, but a migration may have moved their slot before EXEC.
-+    if (auto slot = slot_checker.GetUniqueSlotId()) {
-+      if (auto error = cluster::SlotOwnershipError(*slot); error.status != OpStatus::OK)
-+        return rb->SendError(std::move(error));
-+    }
-   }
- 
-   // The transaction can contain script load script execution, determine their presence ahead to
+   // Update a listpack and delete a converted hash while a search holds hx.
+   Fiber searcher;
+   {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8810** (2026-11-13): fix(search): drain pending vector updates safely across suspensions (@vyavdoshenko)
 - **PR #8808** (2026-11-13): feat(search): index empty TEXT values with INDEXEMPTY and answer phrases on NOOFFSETS (@vyavdoshenko)
 - **PR #8805** (2026-11-13): fix: multi-exec data loss during slot migration (@BorysTheDev)
 - **PR #8804** (2026-11-13): fix(search): hold the HNSW resize lock in removals and vector updates (@vyavdoshenko)
 - **PR #8803** (2026-11-12): fix(rdb): load integer-root JSON documents as JSON (@vyavdoshenko)
 - **PR #8799** (2026-11-12): ci: skip flaky BullMQ waiting-children event test (@vyavdoshenko)
-- **PR #8798** (2026-11-12): feat(server): Handle restore,copy,replace,rename x-shard in new mem. metric (@abhijat)
 
 ---
 
@@ -2672,30 +2439,39 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): hold the HNSW resize lock in removals and vector updates (#8804)
+## X. search): drain pending vector updates safely across suspensions (#8810)
 
 **RULE**:
-When implementing operations in `src/core/search/hnsw_alg.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/search/doc_index.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1d175fa`: search): hold the HNSW resize lock in removals and vector updates (#8804). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `383694c5`: search): drain pending vector updates safely across suspensions (#8810). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/search/hnsw_alg.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/search/doc_index.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  HnswErrorStatus markDelete(labeltype label, tableint* internal_id = nullptr) {
-    if (internal_id)
-      *internal_id = internalId;
+  // FindMutable may suspend, and a serializer window opening meanwhile buffers into the members.
+  auto pending = std::exchange(pending_vector_updates_, {});
+  LOG(INFO) << "Draining " << pending.size() << " pending vector updates on shard "
+  for (const auto& key : pending) {
+    // Looked up after FindMutable: an expiry inside it removes the document and frees the id.
+    auto local_id = key_index_.Find(key);
+  if (pending_vector_updates_.empty())
+    ClearAllHnswPreservedData();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  HnswErrorStatus markDelete(labeltype label) {
+  LOG(INFO) << "Draining " << pending_vector_updates_.size() << " pending vector updates on shard "
+  for (const auto& key : pending_vector_updates_) {
+    auto local_id = key_index_.Find(key);
+  pending_vector_updates_.clear();
+  ClearAllHnswPreservedData();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1d175fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `383694c5` are properly handled with clean fallback behavior.

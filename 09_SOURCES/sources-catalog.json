@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "35b31d5f2ef3a70d5efe7dd6af3a152867e2cad82fa3dd46759aa6578efc2649",
-    "lastHarvestedAt": "2026-11-13T14:33:40.305Z",
+    "contentHash": "7b4bf42418fe70b421e7c60ede05c3293a6084ef10e83a9c62afc281d1c860eb",
+    "lastHarvestedAt": "2026-11-13T15:10:49.283Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "e00dd078",
+    "sourceVersion": "383694c5",
     "license": "NOASSERTION",
-    "contentHash": "da9c34972bcd3507e0c22e20dc393690558e435190bf779fc236f3ea5306800e",
-    "lastHarvestedAt": "2026-11-13T14:34:08.257Z",
+    "contentHash": "9b59296e40577994fa05e0c4e3662ca9318471bc684dd6ff09440b7d95cf99ab",
+    "lastHarvestedAt": "2026-11-13T15:11:03.840Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
