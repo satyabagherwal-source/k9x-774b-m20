@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T21:16:46.227Z",
-  "total_records": 370,
+  "last_updated": "2026-11-13T21:28:54.454Z",
+  "total_records": 373,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 194,
+      "total": 197,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -227,7 +227,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants",
         "DOM-D-86956AB2",
-        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-0-6b-core-invariants",
+        "DOM-D-7BD861BF",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -6185,8 +6188,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "30aa87c94435b0b9810f3219c7801644812af7e0c10ba66117e6c665d7ad80f4",
-      "created_at": "2026-11-13T20:37:27.295Z"
+      "content_hash": "b436a8a2c4b4d668347d23dac11b889fcb6833852f66702d3ea5b0574d4fb9f9",
+      "created_at": "2026-11-13T21:28:54.454Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7103,8 +7106,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "030511ac52c4c76c3299bb56d43b0e0696a3757947e242237e3363cac10cdcfb",
-      "created_at": "2026-11-13T19:19:48.199Z"
+      "content_hash": "e42ef9117133a48130939aed8822294ad6cbafa60d243eeb31426affc1d1b816",
+      "created_at": "2026-11-13T21:28:53.816Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9196,6 +9199,66 @@
       "repository": "infinitered-reactotron-learnings",
       "content_hash": "4e3d3fab7d266fbc06c8c711e7428236bffea776d79d179d6bfb23490d3c8801",
       "created_at": "2026-11-13T21:16:46.227Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-0-6b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-0-6b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-0.6B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-0-6b-research-knowledge-intelligence-qwen-qwen3-0-6b-core-invarian.md",
+      "repository": "Qwen/Qwen3-0.6B",
+      "content_hash": "def543af5e1001f20e212d4dc1fb7bdc3db60e6c10ee0873ccd838f49db5f3a2",
+      "created_at": "2026-11-13T21:28:08.413Z"
+    },
+    "DOM-D-7BD861BF": {
+      "record_id": "DOM-D-7BD861BF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3-0.6B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Qwen/Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B))  \n> **Source Version**: `hf-qwen-qwen`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clo",
+      "content_hash": "dca45c8289132b250dbdc338af5b2953a0c28fd434145ec5bd38ebcbea0f93ee",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen3-0.6b/hf-qwen-qwen3-0.6b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:28:19.595Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3-0.6b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-qwen-qwen3-0.6b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T21:28:52.883Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-0-6b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-.md",
+      "repository": "hf-qwen-qwen3-0.6b-learnings",
+      "content_hash": "89155d168482dd6a3854c27a41aa55a107429278c72d85e19b8b339cb0e67b94",
+      "created_at": "2026-11-13T21:28:53.129Z"
     }
   }
 }

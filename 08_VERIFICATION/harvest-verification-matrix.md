@@ -9636,3 +9636,5 @@
 | `CYCLE-20261113-87AE` | `2026-11-13T21:16:13.670Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8386` | Yes (`abec00e5...`) |
 | `CYCLE-20261113-8AQ2` | `2026-11-13T21:16:18.122Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8387` | Yes (`395b32b2...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:16:45.591Z` | `hf-baai-bge-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-86956AB2` [Domain D] | Yes (`289bd4a1...`) |
+| `CYCLE-20261113-NIMG` | `2026-11-13T21:28:08.200Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`482ba5ac...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:28:52.902Z` | `hf-qwen-qwen3-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7BD861BF` [Domain D] | Yes (`dca45c82...`) |

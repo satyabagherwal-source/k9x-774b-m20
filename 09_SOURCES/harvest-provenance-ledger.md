@@ -9669,3 +9669,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `8e974df2` | Multi-dimensional audit evidence | 2026-11-13T21:16:13.673Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `7d50d2d2` | Multi-dimensional audit evidence | 2026-11-13T21:16:18.125Z |
 | `learn-dom-d-86956ab2` | `project://hf-baai-bge-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | 2026-11-13T21:16:45.591Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-13T21:28:08.205Z |
+| `learn-dom-d-7bd861bf` | `project://hf-qwen-qwen3-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | 2026-11-13T21:28:52.902Z |

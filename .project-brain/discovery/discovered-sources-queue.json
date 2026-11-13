@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T21:16:46.014Z",
+  "updated_at": "2026-11-13T21:28:52.917Z",
   "stats": {
-    "total_discovered": 2929,
-    "approved_pending_harvest": 2731,
+    "total_discovered": 2930,
+    "approved_pending_harvest": 2732,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2732,
+      "COMMUNITY_AND_EXPERT": 2733,
       "OFFICIAL_DOCUMENTATION": 105,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -63072,6 +63072,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
         "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-259970C95BD7": {
+      "id": "SRC-259970C95BD7",
+      "url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "title": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:28:52.917Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
+        "fileName": "hf-qwen-qwen3-0.6b-learnings.md"
       }
     }
   }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-TF2Y",
-    "timestamp": "2026-11-13T02:24:59.290Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "1df137b71a5530c3826bcd8c95c08280057eab6da2c61ab6fb61671e8312a32e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-2HBK",
     "timestamp": "2026-11-13T02:32:02.096Z",
     "repository": "astral-sh/ruff",
@@ -7492,6 +7477,21 @@
     "contentHash": "395b32b2c2df240bb7d1f791d851e22c7803589d21a5c179ed772cc9461fc9f7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-NIMG",
+    "timestamp": "2026-11-13T21:28:08.200Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+    "contentHash": "482ba5ac952555a806646df31bb76c0290ddc6d49b8053f0cfb17380d6fb45b4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
