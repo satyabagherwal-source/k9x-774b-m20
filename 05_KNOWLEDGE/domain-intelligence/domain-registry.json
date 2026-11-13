@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T15:39:04.287Z",
-  "total_records": 179,
+  "last_updated": "2026-11-13T15:47:56.779Z",
+  "total_records": 187,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 110,
+      "total": 113,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -137,7 +137,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants",
         "DOM-D-7123D3B0",
-        "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
+        "DOM-D-991F9C3C",
+        "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian"
       ]
     },
     "E": {
@@ -168,7 +171,7 @@
       ]
     },
     "H": {
-      "total": 29,
+      "total": 32,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -198,7 +201,10 @@
         "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants",
         "domain_intelligence-technical-construction-intelligence-meshery-meshery-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian"
       ]
     },
     "I": {
@@ -225,13 +231,15 @@
       ]
     },
     "K": {
-      "total": 5,
+      "total": 7,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
         "DOM-K-232F5AD4",
         "DOM-K-AE91E0B9",
-        "DOM-K-66271FDB"
+        "DOM-K-66271FDB",
+        "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants"
       ]
     },
     "L": {
@@ -6356,6 +6364,111 @@
       "repository": "meshery-meshery-learnings",
       "content_hash": "43efd8b4bd7732553825d35683af9cd0f8e8183ec1d0be9796fc2ad0f0c32224",
       "created_at": "2026-11-13T15:39:04.287Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: HemmingwayAI/Hemmingway-1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-research-knowledge-intelligence-hemmingwayai-hemmingway.md",
+      "repository": "HemmingwayAI/Hemmingway-1",
+      "content_hash": "557fdac03f691373e37800f256a8067e6f3f3019dff0cc190de3258c97fe3efd",
+      "created_at": "2026-11-13T15:47:04.111Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: Saffsanity/sill Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-quality-verification-intelligence-saffsanity-sill-core-invariant.md",
+      "repository": "Saffsanity/sill",
+      "content_hash": "e24065e57cb959b1b9a3abd19dcb4718875cf3f66f8eac6db6200c3e3419fe7b",
+      "created_at": "2026-11-13T15:47:11.895Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
+      "repository": "bridgecrewio/checkov",
+      "content_hash": "71bcd3bfad01b29b5e519c304009840c821e5f851da34394284e0bd3a4c20de5",
+      "created_at": "2026-11-13T15:47:14.628Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "repository": "tursodatabase/turso",
+      "content_hash": "22c5edb637e8ec301542fe0083363a36fb84b0f4ab4647c1e63f23678604b4e5",
+      "created_at": "2026-11-13T15:47:21.155Z"
+    },
+    "DOM-D-991F9C3C": {
+      "record_id": "DOM-D-991F9C3C",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): HemmingwayAI/Hemmingway-1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1))  \n> **Source Version**: `hf-altworld-`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "5a409976a3e69404cd6f928e365a6c6c73b043c85a6dcfd6f732484a4696ec18",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-altworld-hemmingway-1/hf-altworld-hemmingway-1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T15:47:23.893Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-altworld-hemmingway-1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-altworld-hemmingway-1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T15:47:55.863Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-altworld-hemmingway-1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-learnings-research-knowledge-intelligence-hf-altworld-h.md",
+      "repository": "hf-altworld-hemmingway-1-learnings",
+      "content_hash": "e3d16f31aa5fbc943eb49dce19f5b3394d3e2208cec5cce479df30f1149a723c",
+      "created_at": "2026-11-13T15:47:56.016Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: saffsanity-sill-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-learnings-quality-verification-intelligence-saffsanity-sill-lear.md",
+      "repository": "saffsanity-sill-learnings",
+      "content_hash": "160b71c61fa15bfb85f3ecebf45168bcace6fb31b25e956c875ad2da32242f67",
+      "created_at": "2026-11-13T15:47:56.385Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-learnings-technical-construction-intelligence-bridgecrewio-.md",
+      "repository": "bridgecrewio-checkov-learnings",
+      "content_hash": "db33ac444145dbf3e2dcc4502e4017f43074c888340b49e435cf055317c6463e",
+      "created_at": "2026-11-13T15:47:56.779Z"
     }
   }
 }

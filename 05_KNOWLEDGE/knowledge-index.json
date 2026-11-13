@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T15:39:04.396Z",
+  "last_updated": "2026-11-13T15:47:56.925Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6232,14 +6232,19 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "4c2e88a3",
-      "content_hash": "fafee00dc6f00f4108047b765995e220d451b88cc9c09a094257ae68f81c92b0",
+      "source_version": "e55b089e",
+      "content_hash": "900727d689109bcc61882c5fe023754b010b24fe994ef61c3213dfa16f742ae6",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "bicep): resolve references within the declaring file (#7794)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "general): harden request error logging (#7795)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -6268,7 +6273,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T11:37:36.571Z",
+      "verified_at": "2026-11-13T15:47:14.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20760,7 +20765,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "38d57757252cc27fd282f2868d6d5948efa0faddd285e3f4b09d991bef845451",
+      "content_hash": "2b44b08c4f0c2595bb4780dd40e0d0e5f7f8eb4cf3d31cc45486ea3827065faa",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -21039,7 +21044,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-11-08T15:35:13.365Z",
+      "verified_at": "2026-11-13T15:47:03.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65419,13 +65424,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "444dc948",
-      "content_hash": "c88d5a658de72a9743c9acd49bbaa9a1bddb008e41b1d663e8ecd0ea60a3700f",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "072456f5",
+      "content_hash": "7e6d7049ba4d9402d638d1af117c372b0eb161fe542462e10330ae09584193ac",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -65465,6 +65470,11 @@
         {
           "number": null,
           "title": "postgres/conformance: test that security_invoker views are refused",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge 'core: parse SQL only in the engine dialect module' from Pekka Enberg",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65618,7 +65628,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T14:59:56.752Z",
+      "verified_at": "2026-11-13T15:47:20.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79783,11 +79793,16 @@
       "slug": "saffsanity-sill",
       "platform": "github",
       "source_url": "https://github.com/Saffsanity/sill",
-      "source_version": "41e8cb88",
-      "content_hash": "c57d935e5a726a003289a2e90510d3896ffdd0095adaf21b3ff6c9bb3a49e207",
+      "source_version": "bf69067f",
+      "content_hash": "a5ff7c7469b0b9371f80838b84828523a0f68c867682134523ba7a7e3c0f4b46",
       "dossier_path": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Full screen's plan and step file: the live loopback gate's result",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1126,
           "title": "Docs for #69: the review's findings, their fixes and the numbers after them",
@@ -79814,7 +79829,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:32:01.372Z",
+      "verified_at": "2026-11-13T15:47:11.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -193859,6 +193874,210 @@
       "content_hash": "d5c72b2501b8f86d38c2134fe0ae7bbe7aafde19682a24f490e6dfa6e12e63be",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T15:39:04.396Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-research-knowledge-intelligence-hemmingwayai-hemmingway.md",
+      "title": "Research & Knowledge Intelligence: HemmingwayAI/Hemmingway-1 Core Invariants",
+      "repository": "HemmingwayAI/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "content_hash": "557fdac03f691373e37800f256a8067e6f3f3019dff0cc190de3258c97fe3efd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T15:47:04.111Z"
+    },
+    "candidate_directive-full-screen-s-plan-and-step-file-the-live-loopback-gate-s-result": {
+      "item_id": "candidate_directive-full-screen-s-plan-and-step-file-the-live-loopback-gate-s-result",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I0P1-full-screen-s-plan-and-step-file-the-live-loopback-gate-s-result.md",
+      "title": "Full screen's plan and step file: the live loopback gate's result",
+      "repository": "saffsanity-sill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5a96823def5af5700ed1ff8d674da8aa7942809a5207b7d5424a25de69db336b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:47:56.303Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-quality-verification-intelligence-saffsanity-sill-core-invariant.md",
+      "title": "Quality & Verification Intelligence: Saffsanity/sill Core Invariants",
+      "repository": "Saffsanity/sill",
+      "source_version": "bf69067f",
+      "content_hash": "e24065e57cb959b1b9a3abd19dcb4718875cf3f66f8eac6db6200c3e3419fe7b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:47:11.895Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-saffsanity-sill": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-saffsanity-sill",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/saffsanity-sill-verification-protocol-empirical-defect-shield-for-saffsanity-sil.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Saffsanity/sill",
+      "repository": "Saffsanity/sill",
+      "source_version": "bf69067f",
+      "content_hash": "ed07f2faf5b8776ea8c0bef6f422bcc7b5a8e072182c3d51f41fb7806fede4fc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:47:11.957Z"
+    },
+    "candidate_directive-general-harden-request-error-logging-7795": {
+      "item_id": "candidate_directive-general-harden-request-error-logging-7795",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I10J-general-harden-request-error-logging-7795.md",
+      "title": "general): harden request error logging (#7795)",
+      "repository": "bridgecrewio-checkov-learnings",
+      "source_version": "HEAD",
+      "content_hash": "48a91c08b3f819238c652dd1f9544af6d3a82c4e6b756d27790c0567e660ae47",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:47:56.708Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
+      "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
+      "repository": "bridgecrewio/checkov",
+      "source_version": "e55b089e",
+      "content_hash": "71bcd3bfad01b29b5e519c304009840c821e5f851da34394284e0bd3a4c20de5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:47:14.628Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/bridgecrewio-checkov-skill-operational-integration-playbook-for-bridgecrewio-che.md",
+      "title": "Skill: Operational & Integration Playbook for bridgecrewio/checkov",
+      "repository": "bridgecrewio/checkov",
+      "source_version": "e55b089e",
+      "content_hash": "f446998d219d29c73eb989c59862563b15c418eee3131a12e4e61d290db9ec6d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:47:14.692Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/bridgecrewio-checkov-verification-protocol-empirical-defect-shield-for-bridgecre.md",
+      "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio/checkov",
+      "repository": "bridgecrewio/checkov",
+      "source_version": "e55b089e",
+      "content_hash": "35cf16bc5f72f55bb94c2cbf6894f7f8e1722b8ec44c67b875e3d026a3c945ff",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:47:14.751Z"
+    },
+    "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg": {
+      "item_id": "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H9J7-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg.md",
+      "title": "Merge 'core: parse SQL only in the engine dialect module' from Pekka Enberg",
+      "repository": "tursodatabase/turso",
+      "source_version": "072456f5",
+      "content_hash": "3adbe8fe97325c573bce5a93c1cb122d5a9b20c84e6bbb212b2fdf5b6f42ca1f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:47:21.096Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
+      "repository": "tursodatabase/turso",
+      "source_version": "072456f5",
+      "content_hash": "22c5edb637e8ec301542fe0083363a36fb84b0f4ab4647c1e63f23678604b4e5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:47:21.155Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
+      "repository": "tursodatabase/turso",
+      "source_version": "072456f5",
+      "content_hash": "dbd451f863c90dd0cffab9cbe1ae31c150829e8e866ce704bb39a8725f8ec4ec",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:47:21.216Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-learnings-research-knowledge-intelligence-hf-altworld-h.md",
+      "title": "Research & Knowledge Intelligence: hf-altworld-hemmingway-1-learnings Core Invariants",
+      "repository": "hf-altworld-hemmingway-1-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e3d16f31aa5fbc943eb49dce19f5b3394d3e2208cec5cce479df30f1149a723c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T15:47:56.016Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-learnings-quality-verification-intelligence-saffsanity-sill-lear.md",
+      "title": "Quality & Verification Intelligence: saffsanity-sill-learnings Core Invariants",
+      "repository": "saffsanity-sill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "160b71c61fa15bfb85f3ecebf45168bcace6fb31b25e956c875ad2da32242f67",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:47:56.385Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-saffsanity-sill-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-saffsanity-sill-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/saffsanity-sill-learnings-verification-protocol-empirical-defect-shield-for-saff.md",
+      "title": "Verification Protocol: Empirical Defect Shield for saffsanity-sill-learnings",
+      "repository": "saffsanity-sill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e2e7d6e2fbab449887abf6c0d31ad74edac634560d4291547a38cfaf405c0aa",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:47:56.456Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-learnings-technical-construction-intelligence-bridgecrewio-.md",
+      "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
+      "repository": "bridgecrewio-checkov-learnings",
+      "source_version": "HEAD",
+      "content_hash": "db33ac444145dbf3e2dcc4502e4017f43074c888340b49e435cf055317c6463e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:47:56.779Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/bridgecrewio-checkov-learnings-skill-operational-integration-playbook-for-bridge.md",
+      "title": "Skill: Operational & Integration Playbook for bridgecrewio-checkov-learnings",
+      "repository": "bridgecrewio-checkov-learnings",
+      "source_version": "HEAD",
+      "content_hash": "78f960731c33e33a83dd5129ba29ba40565a604eca286bbd84872a335840c90c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:47:56.857Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/bridgecrewio-checkov-learnings-verification-protocol-empirical-defect-shield-for.md",
+      "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio-checkov-learnings",
+      "repository": "bridgecrewio-checkov-learnings",
+      "source_version": "HEAD",
+      "content_hash": "227b5049623dd6590bed0dd2e1375978c4b5c9cd5c314ea0987df9abefef8f06",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:47:56.925Z"
     }
   },
   "aliases": {
@@ -199857,5 +200076,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9111
+  "total_items": 9128
 }

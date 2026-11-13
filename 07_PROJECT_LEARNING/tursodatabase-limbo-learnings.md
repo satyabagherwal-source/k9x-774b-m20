@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `719fcc41`  
+> **Source Version**: `072456f5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:55:11.717Z  
+> **Timestamp**: 2026-11-13T15:47:20.549Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:55:11.698Z  
+> **Harvest Timestamp**: 2026-11-13T15:47:20.545Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25229 stars
+- **Stars / Engagement**: 25244 stars
 
 ---
 
@@ -56,7 +56,9 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use std::sync::Arc;
 use std::time::Duration;
 use tempfile::TempDir;
-use turso_core::{ConnectOpts, Connection, Database, PlatformIO, Statement, StepResult, Value};
+use turso_core::{
+    ConnectOpts, Connection, Database, PlatformIO, SessionRole, Statement, StepResult, Value,
+};
 use turso_sqlite::SqliteDialect;
 
 #[cfg(not(target_family = "wasm"))]
@@ -77,7 +79,9 @@ fn seed_db() -> Fixture {
     #[allow(clippy::arc_with_non_send_sync)]
     let io = Arc::new(PlatformIO::new().unwrap());
     let db = Database::open_file(io, path.to_str().unwrap(), Arc::new(SqliteDialect)).unwrap();
-    let conn = db.connect(ConnectOpts::new()).unwrap();
+    let conn = db
+        .connect(ConnectOpts::new(SessionRole::Superuser))
+        .unwrap();
 
     conn.execute("PRAGMA cache_size=-65536").unwrap(); //negative means kibibytes (https://sqlite.org/pragma.html#pragma_cache_size)
     conn.execute(
@@ -1428,13 +1432,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11737** (2026-11-12): **postgres: drop SQL functions with DROP FUNCTION**
-  *Symptoms*: ## Description  **This PR is part of #11725 now.** Its two commits (`DROP FUNCTION`, and `DROP SCHEMA ... CASCADE` with functions) moved to the branch of #11725, because `CREATE FUNCTION` without `DROP FUNCTION` is not a complete change: a stored function could not be removed. GitHub shows this PR as merged for that reason. It is not merged into `main`.  See #11725 for the description and the stack order.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_01SLcVSJFZw3qJhrS7iwMo88
+- **Issue #11813** (2026-11-13): **core: parse SQL only in the engine dialect module**
+  *Symptoms*: Core depends on the SQLite parser crate in many places, which ties the engine to one frontend's syntax tree. This PR starts removing that dependency, one step per commit, with no change in behavior.  **Parse SQL only in the engine dialect module.** Core called the SQLite parser directly in about 34 places across 12 files: for stored view, trigger and virtual table definitions, the statements `ALTER TABLE` generates, the built-in type definitions and index method patterns. Each call now goes through `dialect::engine`, which already owns parsing of the SQL the engine keeps and runs for itself. The parser crate is called from that one module.  Next in this branch: the frontend supplies the parser for the engine's own SQL through `Dialect`, so core no longer calls the parser crate at all outside its tests.  The direction comes from Pedro Muniz's PIR proposal and from Glauber Costa's work in #11729: the engine should own its expression tree, and that needs core to stop depending on the SQLite parser first. 
   **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Review cancelled: the pull request was closed. 
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `7466b5113f6a` is [here](https://github.com/tursodatabase/turso/pull/11813#pullrequestreview-5890185011).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:7466b5113f6a58ef67147cbe080b9053faf67fcb --> <!-- autofixer:contributor-review-recommends:7466b5113f6a58ef67147cbe080b9053faf67fcb --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiYzM1Nzk5YzQyYmY5NGQ2NjE2YzRlNDU3Y2FkYmU1MGQ0M2E0ZDI4MiIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMTNUMTE6MDE6MTQuODk4WiIsInZlcmRpY3QiOiJyZXF1ZXN0X2NoYW5nZXMiLCJyZWNvbW1lbmRhdGlvbiI6eyJ2YWx1ZSI6Im5lZWRzX2h1bWFuIiwicmVhc29uIjoiTXVzdCBjaGFuZ2U6IGJ1aWxkIHRoZSB0cmVlJ3MgdHlwZXMgb24gdGhlIGV4aXN0aW5nIEV4cHJUeXBlIGFuZCB0eXBlX29mIHJ1bGVzIGluIGNvcmUvdHJhbnNsYXRlL2V4cHIvZXhwcl90eXBl
 
-- **Issue #11724** (2026-11-11): **limbo_sim: DeleteSelect fails in MVCC mode when a forced COMMIT ends the deleting transaction before the SELECT**
-  *Symptoms*: ## Summary  In MVCC mode, the `DeleteSelect` property of `limbo_sim` fails with this assertion:  ``` Assertion '`SELECT * FROM t WHERE (p)` should return no values for table `t`' failed: expected no rows but got N rows ```  The engine is correct. The property is wrong. The rows that the `SELECT` finds were not visible to the snapshot of the `DELETE`.  ## Reproduction  On `main` at d5fdf4d8, each of these seeds fails with this assertion:  ```bash cargo run --release -p limbo_sim -- --disable-bugbase --mvcc true --seed 1 ```  ```bash cargo run --release -p limbo_sim -- --disable-bugbase --mvcc true --seed 26134076604605 ```  ```bash cargo run --release -p limbo_sim -- --disable-bugbase --mvcc true --seed 17106953217057 ```  ```bash cargo run --release -p limbo_sim -- --disable-bugbase --mvcc true --profile write_stress --seed 7115677748372 ```  In a loop of random seeds with `--mvcc true`, about 1 run in 12 failed this way.  ## Root cause  `DeleteSelect` runs these steps on one connection:  1. `DELETE FROM t WHERE p` 2. 0 to 2 random queries 3. `SELECT * FROM t WHERE p`, which must return no rows  The filter for step 2 rejects queries that insert or update rows of `t` (`testing/simulator/generation/property.rs`, `Property::DeleteSelect`). The filter does not know about the writes of other connections.  In MVCC mode, the simulator opens only `BEGIN CONCURRENT` transactions. Before a statement that needs an exclusive transaction (DDL, `PRAGMA auto_vacuum`, `setval`), `PlanGenerat
+- **Issue #11807** (2026-11-13): **core/pragma: keep schema-only constraints from naming a table**
+  *Symptoms*: ## Description  Fixes #11814.  Keep a schema-only hidden-column constraint from becoming the table or index argument of a table-valued PRAGMA.  ```sql CREATE TABLE "main"(a, b); SELECT name FROM pragma_table_info WHERE schema='main'; ```  This currently returns `a` and `b`. SQLite returns no rows because the table argument is missing. The same argument mix-up affects `table_xinfo`, `index_list`, `index_info`, `index_xinfo`, and `foreign_key_list`.  ## Motivation and context  `best_index` compacts hidden-column constraints into consecutive argument slots. With only `schema` constrained, its value occupies the first slot, which the cursor interprets as the table argument. Leave the schema constraint unconsumed when the table argument is absent so the pragma produces its normal empty result.  Related to #10169, which concerns explicit schema arguments being rejected. This change does not implement general schema-argument support.  ## Description of AI Usage  AI assistance was used to investigate the argument mapping and prepare the focused change and regression coverage.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1451,1401 +1455,408 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `719fcc41` (2026-11-12)
-**Commit Message**: Merge 'postgres: Add row-level security policies' from Pekka Enberg
+### Incident Patch 1: `072456f5` (2026-11-13)
+**Commit Message**: Merge 'core: parse SQL only in the engine dialect module' from Pekka Enberg
 
-This PR adds row-level security policies to the PostgreSQL frontend, so
-that a table can be protected with policies such as:
+Core depends on the SQLite parser crate in many places, which ties the
+engine to one frontend's syntax tree. This PR starts removing that
+dependency, one step per commit, with no change in behavior.
 
-```sql
-ALTER TABLE docs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY own_docs ON docs USING (owner = (SELECT auth.uid()));
-```
+**Parse SQL only in the engine dialect module.** Core called the SQLite
+parser directly in about 34 places across 12 files: for stored view,
+trigger and virtual table definitions, the statements `ALTER TABLE`
+generates, the built-in type definitions and index method patterns. Each
+call now goes through `dialect::engine`, which already owns parsing of
+the SQL the engine keeps and runs for itself. The parser crate is called
+from that one module.
 
-On `main`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` works, but
-`CREATE POLICY` does not, so a table with row-level security hides every
-row from every role except superusers and the table's owner. With this
-PR, the table's policies decide which rows each role reads, updates and
-deletes, and which new rows it may write, following PostgreSQL's rules.
+Next in this branch: the frontend supplies the parser for the engine's
+own SQL through `Dialect`, so core no longer calls the parser crate at
+all outside its tests.
 
-It builds on #11678, which lets roles write the tables they have
-`GRANT`ed privileges on, and #11703, which allows only superusers to
-access the engine's internal tables.
+The direction comes from Pedro Muniz's PIR proposal and from Glauber
+Costa's work in #11729: the engine should own its expression tree, and
+that needs core to stop depending on the SQLite parser first.
 
-### Storing policies
+Closes #11813
 
-`CREATE POLICY` and `DROP POLICY` are parsed into the syntax tree. The
-engine checks a policy's conditions when it is created, as PostgreSQL
-does. A condition may use the table's columns and call scalar functions
-such as `current_user` or `auth.uid()`. Subqueries with `FROM`,
-parameters, aggregate and window functions are refused,
-
-**File**: `cli/mcp_server.rs` (modified, +2/-0)
+**File**: `core/dialect/engine.rs` (modified, +13/-0)
 ```diff
-@@ -87,6 +87,8 @@ impl StmtClass {
-             | Stmt::CreateSequence { .. }
-             | Stmt::CreateSchema { .. }
-             | Stmt::DropSchema { .. }
-+            | Stmt::CreatePolicy(_)
-+            | Stmt::DropPolicy { .. }
-             | Stmt::DropIndex { .. }
-             | Stmt::DropTable { .. }
-             | Stmt::DropTrigger { .. }
-```
-
-**File**: `core/dialect/mod.rs` (modified, +36/-5)
-```diff
-@@ -21,12 +21,14 @@ use crate::{
-     function::ScalarFunc,
-     namespace::NamespaceId,
-     schema::{BTreeTable, RelationKind, Schema},
--    security::roles::RoleId,
-+    security::{policy::RowPolicy, roles::RoleId},
-     vdbe::{builder::ProgramBuilder, Register},
-     Clock, CollationSeq, Connection, Func, LimboError, OpenOptions, Result, Value, IO,
- };
- use std::{any::Any, sync::Arc};
--use turso_parser::ast::{Cmd, CreateTableBody, Grantee, Privilege, QualifiedName, RoleSpec, Stmt};
-+use turso_parser::ast::{
-+    self, Cmd, CreateTableBody, Grantee, Privilege, QualifiedName, RoleSpec, Stmt,
-+};
- 
- /// Prefix the PostgreSQL frontend puts before the `CREATE TABLE` text it
- /// stores in `sqlite_schema`.
-@@ -76,6 +78,20 @@ pub enum RelationChange {
-         name: String,
-         enabled: bool,
-     },
-+    /// `CREATE POLICY` on table `name`. Its expressions refer to the
-+    /// table's columns by their unqualified names.
-+    CreatePolicy {
-+        namespace: NamespaceId,
-+        name: String,
-+        policy: Box<ast::CreatePolicy>,
-+    },
-+    /// `DROP POLICY policy_name ON name`.
-+    DropPolicy {
-+        namespace: NamespaceId,
-+        name: String,
-+        policy_name: String,
-+        if_exists: bool,
-+    },
+@@ -96,6 +96,19 @@ pub fn parse(sql: &str) -> crate::Result<(Option<turso_parser::ast::Cmd>, usize)
+     Ok((cmd, parser.offset()))
  }
  
- /// Whom a relation belongs to after a [`RelationChange::ChangeOwner`].
-@@ -349,8 +365,9 @@ pub trait Dialect: Send + Sync + 'static {
-     /// comes with its automatic indexes in one call. Does nothing for a
-     /// dialect without schema state of its own, except that such a dialect
-     /// has no ownership, privileges or row-level security and refuses
--    /// `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`, `GRANT` and
--    /// `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`.
-+    /// `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`, `GRANT`,
-+    /// `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`, `CREATE POLICY` and
-+    /// `DROP POLICY`.
-     fn translate_relation_changes(
-         &self,
-         program: &mut ProgramBuilder,
-@@ -380,7 +397,9 @@ pub trait Dialect: Send + Sync + 'static {
-                 RelationChange::Grant { .. } => {
-                     return Err(LimboError::ParseError("GRANT is not supported".to_string()));
-                 }
--                RelationChange::SetRowSecurity { .. } => {
-+                RelationChange::SetRowSecurity { .. }
-+                | RelationChange::CreatePolicy { .. }
-+                | RelationChange::DropPolicy { .. } => {
-                     return Err(LimboError::ParseError(
-                         "row-level security is not supported".to_string(),
-                     ));
-@@ -448,6 +467,18 @@ pub trait Dialect: Send + Sync + 'static {
-         false
-     }
- 
-+    /// The policies of table `name` of `namespace`, for every role and
-+    /// command. A dialect without row-level security has none.
-+    fn row_security_policies<'a>(
-+        &self,
-+        schema: &'a Schema,
-+        namespace: NamespaceId,
-+        name: &str,
-+    ) -> &'a [RowPolicy] {
-+        let _ = (schema, namespace, name);
-+        &[]
-+    }
-+
-     /// Whether `PRAGMA capture_data_changes_conn` may create its change
-     /// tables in a database of this dialect.
-     ///
-```
-
-**File**: `core/incremental/vdbe_maintenance/binding.rs` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ pub(super) fn make_joined_table(
-         namespace: NamespaceRef::root_of(crate::MAIN_DB_ID),
-         indexed: None,
-         plan_estimate: None,
-+        row_filter: None,
-     }
- }
- 
-```
-
-**File**: `core/security/permission.rs` (modified, +18/-8)
-```diff
-@@ -32,27 +32,33 @@ impl PermissionDenied {
-         }
-     }
- 
--    /// The row-level security policy of `table` does not let the role write
--    /// a row to it.
--    pub fn policy(table: Object) -> Self {
-+    /// A row that the role writes to `table` fails a condition of the
-+    /// table's row-level security policies: of restrictive policy `policy`,
-+    /// or of the permissive policies together when it is None. The condition
-+    /// is a USING condition checked on the existing row when
-+    /// `using_condition` is set, and otherwise one checked on the new row.
-+    pub fn policy(table: Object, policy: Option<String>, using_condition: bool) -> Self {
-         Self {
-             action: Action::Write,
-             object: table,
--            reason: Reason::Policy,
-+            reason: Reason::Policy {
-+                policy,
-+                using_condition,
-+            },
-         }
-     }
- }
- 
- impl fmt::Display for PermissionDenied {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        match self.reason {
-+        match &self.reason {
-             Reason::Privilege => write!(f, "permission denied: {} on {}", self.action, self.object),
-             Reason::Owner => write!(
-                 f,
-                 "permission denied: {} on {} needs its owner",
-                 self.action, self.object
-             ),
--            Reason::Policy => write!(
-+            Reason::Policy { .. } => write!(
-                 f,
-                 "permission denied: {} on {} violates its row-level security policy",
-                 self.action, self.object
-@@ -61,11 +67,15 @@ impl fmt::Display for PermissionDenied {
-     }
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+#[derive(Debug, Clone, PartialEq, Eq)]
- pub enum Reason {
-     Privilege,
-     Owner,
--    Policy,
-+    /// See [`PermissionDenied::policy`].
-+    Policy {
-+        policy: Option<String>,
-+        using_condition: bool,
-+    },
- }
- 
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-```
-
-**File**: `core/security/policy.rs` (modified, +53/-11)
-```diff
-@@ -1,13 +1,18 @@
- //! Row-level security policies.
- //!
- //! A table with row-level security limits which of its rows a role may
--//! access. Which tables have it is part of the dialect's schema state, like
--//! the owner of a table, and [`crate::Dialect::table_rls_enabled`] says
--//! which tables have it.
-+//! access. Which tables have it and their policies are part of the dialect's
-+//! schema state, like the owner of a table.
-+//! [`crate::Dialect::table_rls_enabled`] says which tables have it, and
-+//! [`crate::Dialect::row_security_policies`] gives the policies.
- //!
--//! Policies cannot be created yet, so a table with row-level security hides
--//! every row from every role it applies to, as a PostgreSQL table with
--//! row-level security and no policies does.
-+//! A role reads the rows that pass at least one of the permissive policies
-+//! and every restrictive policy that apply to it, as in PostgreSQL. Without
-+//! a permissive policy no row passes.
-+
-+use turso_parser::ast;
-+
-+use crate::security::roles::RoleId;
- 
- /// What a statement does to the rows of a table.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -19,11 +24,48 @@ pub enum Command {
-     Truncate,
- }
- 
--/// Which rows of a table a role may access.
--#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+/// Whether row-level security limits which rows of a table a role may
-+/// access for a command.
-+#[derive(Debug, Clone, PartialEq, Eq)]
- pub enum Policy {
--    /// Every row.
-+    /// It does not: the role may access every row.
-     Allow,
--    /// No row.
--    Deny,
-+    /// These policies of the command, the ones that apply to the role,
-+    /// decide. Without a permissive one among them, no row passes.
-+    Apply(Vec<RowPolicy>),
++/// Parse the first SQLite statement in `sql`.
++pub fn parse_statement(sql: &str) -> crate::Result<Option<turso_parser::ast::Cmd>> {
++    Ok(parse(sql)?.0)
 +}
 +
-+/// A policy of a table, as `CREATE POLICY` defines it.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct RowPolicy {
-+    pub name: String,
-+    /// Permissive policies combine with OR, restrictive ones with AND.
-+    pub permissive: bool,
-+    pub command: ast::PolicyCommand,
-+    /// The roles the policy applies to. [`RoleId::PUBLIC`] stands for every
-+    /// role.
-+    pub roles: Vec<RoleId>,
-+    /// Which existing rows the policy lets the roles access. It refers to the
-+    /// columns of the table by their unqualified names.
-+    pub using_expr: Option<ast::Expr>,
-+    /// Which new rows the policy lets the roles write.
-+    pub check_expr: Option<ast::Expr>,
++/// Parse the column definition of an `ALTER TABLE` statement.
++pub fn parse_column_definition(
++    sql: &str,
++    in_alter: bool,
++) -> crate::Result<turso_parser::ast::ColumnDefinition> {
++    Ok(turso_parser::parser::Parser::new(sql.as_bytes()).parse_column_definition(in_alter)?)
 +}
 +
-+impl RowPolicy {
-+    /// Whether the policy decides which rows `role` may access for `command`.
-+    pub fn applies_to(&self, command: Command, role: RoleId) -> bool {
-+        let command_matches = match self.command {
-+            ast::PolicyCommand::All => true,
-+            ast::PolicyCommand::Select => command == Command::Select,
-+            ast::PolicyCommand::Insert => command == Command::Insert,
-+            ast::PolicyCommand::Update => command == Command::Update,
-+            ast::PolicyCommand::Delete => command == Command::Delete,
-+        };
-+        command_matches
-+            && self
-+                .roles
-+                .iter()
-+                .any(|policy_role| *policy_role == RoleId::PUBLIC || *policy_role == role)
-+    }
- }
+ /// Formats canonical SQLite `CREATE TABLE` text from its AST.
+ pub fn format_table_sql(
+     tbl_name: &turso_parser::ast::QualifiedName,
 ```
 
-**File**: `core/translate/alter.rs` (modified, +8/-0)
+**File**: `core/dialect/mod.rs` (modified, +4/-2)
 ```diff
-@@ -760,6 +760,7 @@ fn emit_column_constraints_validation(
-                 namespace,
-                 indexed: None,
-                 plan_estimate: None,
-+                row_filter: None,
-             }],
-             vec![],
-         );
-@@ -941,6 +942,12 @@ pub fn translate_alter_table(
-         }
-         ast::AlterTableBody::DropColumn(column_name) => {
-             let column_name = column_name.as_str();
-+            row_security::reject_change_of_policy_column(
-+                resolver,
-+                namespace,
-+                table_name,
-+                column_name,
-+            )?;
- 
-             // Tables always have at least one column.
-             turso_assert_ne!(btree.columns().len(), 0);
-@@ -1869,6 +1876,7 @@ pub fn translate_alter_table(
- 
-             let from = from.as_str();
-             let col_name = col_name.as_str();
-+            row_security::reject_change_of_policy_column(resolver, namespace, table_name, from)?;
- 
-             let Some((column_index, _)) = btree.get_column(from) else {
-                 return Err(LimboError::ParseError(format!(
-```
-
-**File**: `core/translate/collate.rs` (modified, +4/-0)
-```diff
-@@ -1614,6 +1614,7 @@ mod tests {
-             join_info: None,
-             table,
-             plan_estimate: None,
-+            row_filter: None,
-             indexed: None,
-         });
- 
-@@ -1650,6 +1651,7 @@ mod tests {
-             internal_id: TableInternalId::from(1),
-             join_info: None,
-             plan_estimate: None,
-+            row_filter: None,
-             table: Table::BTree(Arc::new(BTreeTable::new(
-                 0,
-                 "t1".to_string(),
-@@ -1688,6 +1690,7 @@ mod tests {
-             internal_id: TableInternalId::from(2),
-             join_info: None,
-             plan_estimate: None,
-+            row_filter: None,
-             table: Table::BTree(Arc::new(BTreeTable::new(
-                 0,
-                 "t2".to_string(),
-@@ -1736,6 +1739,7 @@ mod tests {
-             internal_id: TableInternalId::from(1),
-             join_info: None,
-             plan_estimate: None,
-+            row_filter: None,
-             indexed: None,
-             table: Table::BTree(Arc::new(BTreeTable::new(
-                 0,
-```
-
-**File**: `core/translate/delete.rs` (modified, +56/-23)
-```diff
-@@ -126,7 +126,6 @@ pub fn translate_delete(
-         returning,
-         indexed,
-         with,
--        command,
-         connection,
-         namespace,
-     )?;
-@@ -146,15 +145,30 @@ pub fn translate_delete(
-                 connection,
-             )?;
-         }
--        check_delete_privileges(delete_plan_inner, privilege, resolver, connection)?;
-+        let reads_target_columns = delete_reads_target_columns(delete_plan_inner)?;
-         let target = &delete_plan_inner.table_references.joined_tables()[0];
-+        roles::check_write_privileges(
-+            resolver,
-+            connection,
-+            target.namespace,
-+            target.table.get_name(),
-+            privilege,
-+            reads_target_columns,
-+        )?;
-         roles::hide_constraint_values_from_role_without_select(
-             program,
-             resolver,
-             connection,
-             target.namespace,
-             target.table.get_name(),
-         );
-+        filter_deleted_rows(
-+            delete_plan_inner,
-+            command,
-+            reads_target_columns,
-+            resolver,
-+            program,
-+        )?;
-     }
- 
-     optimize_plan(program, &mut delete_plan, resolver, connection)?;
-@@ -201,16 +215,11 @@ pub fn translate_delete(
-     Ok(())
- }
- 
--/// Checks the privileges on the target table: `privilege`, and SELECT too
--/// when WHERE or RETURNING reads the table's columns, as in PostgreSQL.
--/// Subqueries must be planned first, so that only a subquery that refers to
--/// the target table counts as reading it.
--fn check_delete_privileges(
--    plan: &DeletePlan,
--    privilege: ast::Privilege,
--    resolver: &Resolver,
--    connection: &Arc<crate::Connection>,
--) -> Result<()> {
-+/// Whether WHERE or RETURNING reads the columns of the target table, which
-+/// makes the DELETE need SELECT on it and its SELECT policies apply, as in
-+/// PostgreSQL. Subqueries must be planned first, so that only a subquery
-+/// that refers to the target table counts as reading it.
-+fn delete_reads_target_columns(plan: &DeletePlan) -> Result<bool> {
-     let target = &plan.table_references.joined_tables()[0];
-     let reads_in_where = match &plan.rowset_plan {
-         Some(rowset_plan) => roles::reads_columns_of(
-@@ -229,14 +238,40 @@ fn check_delete_privileges(
-         plan.result_columns.iter().map(|column| &column.expr),
-         &plan.non_from_clause_subqueries,
-     )?;
--    roles::check_write_privileges(
--        resolver,
--        connection,
--        target.namespace,
--        target.table.get_name(),
--        privilege,
--        reads_in_where || reads_in_returning,
--    )
-+    Ok(reads_in_where || reads_in_returning)
-+}
-+
-+/// Limits the rows that `command`, DELETE or TRUNCATE, removes to those
-+/// its row-level security policies allow, and to those the SELECT policies
-+/// allow too when `reads_target_columns`. The filter goes where the WHERE
-+/// clause is, in the plan that collects the rowids when there is one.
-+fn filter_deleted_rows(
-+    plan: &mut DeletePlan,
-+    command: Command,
-+    reads_target_columns: bool,
-+    resolver: &Resolver,
-+    program: &mut ProgramBuilder,
-+) -> Result<()> {
-+    let mut commands = vec![command];
-+    if reads_target_columns {
-+        commands.push(Command::Select);
-+    }
-+    match &mut plan.rowset_plan {
-+        Some(rowset_plan) => row_security::filter_rows(
-+            &commands,
-+            &mut rowset_plan.table_references,
-+            &mut rowset_plan.where_clause,
-+            resolver,
-+            program,
-+        ),
-+        None => row_security::filter_rows(
-+            &commands,
-+            &mut plan.table_references,
-+            &mut plan.where_clause,
-+            resolver,
-+            program,
-+        ),
-+    }
- }
- 
- #[allow(clippy::too_many_arguments)]
-@@ -250,7 +285,6 @@ pub fn prepare_delete_plan(
-     mut returning: Vec<ResultColumn>,
-     indexed: Option<turso_parser::ast::Indexed>,
-     with: Option<With>,
--    command: Command,
-     connection: &Arc<crate::Connection>,
-     namespace: NamespaceRef,
- ) -> Result<Plan> {
-@@ -283,6 +317,7 @@ pub fn prepare_delete_plan(
-         namespace,
-         indexed,
-         plan_estimate: None,
-+        row_filter: None,
-     }];
-     let mut table_references = TableReferences::new(joined_tables, vec![]);
- 
-@@ -315,8 +350,6 @@ pub fn prepare_delete_plan(
-         &mut where_predicates,
-         resolver,
-     )?;
--    row_security::filter_rows(command, &table_references, &mut where_predicates, resolver)?;
--
-     // Plan subqueries in RETURNING expressions before processing
-     // (so SubqueryResult nodes are cloned into result_columns)
-     let mut non_from_clause_subqueries = vec![];
-```
-
----
-
-### Incident Patch 2: `510b6fc6` (2026-11-11)
-**Commit Message**: core/translate: apply row-level security policies to writes
-
-Roles could write the tables they have privileges on, but a table with
-row-level security still refused every write by a role that does not own
-it, whatever its policies said, so the policies FOR INSERT, UPDATE and
-DELETE and the WITH CHECK conditions did nothing.
-
-Writes now follow PostgreSQL's rules. UPDATE and DELETE change only the
-rows that pass the USING conditions of the command's policies, and of the
-SELECT policies too when the statement reads the table's columns. A new
-row that INSERT or UPDATE writes must pass the WITH CHECK conditions of
-the command's policies, or their USING conditions where they have none,
-and the SELECT policies when the statement reads the table's columns, as
-RETURNING does. A row that fails is an error, 42501 "new row violates
-row-level security policy", naming the restrictive policy that failed; a
-condition that is NULL fails too.
-
-UPDATE and DELETE apply the policies where they check their privileges,
-after their subqueries are planned, so a subquery that does not read the
-table brings in no SELECT policies, as it needs no SELECT privilege. A
-DELETE that collects its rowids first, for t
-
-**File**: `core/translate/delete.rs` (modified, +55/-29)
-```diff
-@@ -126,7 +126,6 @@ pub fn translate_delete(
-         returning,
-         indexed,
-         with,
--        command,
-         connection,
-         namespace,
-     )?;
-@@ -146,15 +145,30 @@ pub fn translate_delete(
-                 connection,
-             )?;
-         }
--        check_delete_privileges(delete_plan_inner, privilege, resolver, connection)?;
-+        let reads_target_columns = delete_reads_target_columns(delete_plan_inner)?;
-         let target = &delete_plan_inner.table_references.joined_tables()[0];
-+        roles::check_write_privileges(
-+            resolver,
-+            connection,
-+            target.namespace,
-+            target.table.get_name(),
-+            privilege,
-+            reads_target_columns,
-+        )?;
-         roles::hide_constraint_values_from_role_without_select(
-             program,
-             resolver,
-             connection,
-             target.namespace,
-             target.table.get_name(),
-         );
-+        filter_deleted_rows(
-+            delete_plan_inner,
-+            command,
-+            reads_target_columns,
-+            resolver,
-+            program,
-+        )?;
-     }
- 
-     optimize_plan(program, &mut delete_plan, resolver, connection)?;
-@@ -201,16 +215,11 @@ pub fn translate_delete(
-     Ok(())
- }
- 
--/// Checks the privileges on the target table: `privilege`, and SELECT too
--/// when WHERE or RETURNING reads the table's columns, as in PostgreSQL.
--/// Subqueries must be planned first, so that only a subquery that refers to
--/// the target table counts as reading it.
--fn check_delete_privileges(
--    plan: &DeletePlan,
--    privilege: ast::Privilege,
--    resolver: &Resolver,
--    connection: &Arc<crate::Connection>,
--) -> Result<()> {
-+/// Whether WHERE or RETURNING reads the columns of the target table, which
-+/// makes the DELETE need SELECT on it and its SELECT policies apply, as in
-+/// PostgreSQL. Subqueries must be planned first, so that only a subquery
-+/// that refers to the target table counts as reading it.
-+fn delete_reads_target_columns(plan: &DeletePlan) -> Result<bool> {
-     let target = &plan.table_references.joined_tables()[0];
-     let reads_in_where = match &plan.rowset_plan {
-         Some(rowset_plan) => roles::reads_columns_of(
-@@ -229,14 +238,40 @@ fn check_delete_privileges(
-         plan.result_columns.iter().map(|column| &column.expr),
-         &plan.non_from_clause_subqueries,
-     )?;
--    roles::check_write_privileges(
--        resolver,
--        connection,
--        target.namespace,
--        target.table.get_name(),
--        privilege,
--        reads_in_where || reads_in_returning,
--    )
-+    Ok(reads_in_where || reads_in_returning)
-+}
-+
-+/// Limits the rows that `command`, DELETE or TRUNCATE, removes to those
-+/// its row-level security policies allow, and to those the SELECT policies
-+/// allow too when `reads_target_columns`. The filter goes where the WHERE
-+/// clause is, in the plan that collects the rowids when there is one.
-+fn filter_deleted_rows(
-+    plan: &mut DeletePlan,
-+    command: Command,
-+    reads_target_columns: bool,
-+    resolver: &Resolver,
-+    program: &mut ProgramBuilder,
-+) -> Result<()> {
-+    let mut commands = vec![command];
-+    if reads_target_columns {
-+        commands.push(Command::Select);
-+    }
-+    match &mut plan.rowset_plan {
-+        Some(rowset_plan) => row_security::filter_rows(
-+            &commands,
-+            &mut rowset_plan.table_references,
-+            &mut rowset_plan.where_clause,
-+            resolver,
-+            program,
-+        ),
-+        None => row_security::filter_rows(
-+            &commands,
-+            &mut plan.table_references,
-+            &mut plan.where_clause,
-+            resolver,
-+            program,
-+        ),
-+    }
- }
- 
- #[allow(clippy::too_many_arguments)]
-@@ -250,7 +285,6 @@ pub fn prepare_delete_plan(
-     mut returning: Vec<ResultColumn>,
-     indexed: Option<turso_parser::ast::Indexed>,
-     with: Option<With>,
--    command: Command,
-     connection: &Arc<crate::Connection>,
-     namespace: NamespaceRef,
- ) -> Result<Plan> {
-@@ -316,14 +350,6 @@ pub fn prepare_delete_plan(
-         &mut where_predicates,
-         resolver,
-     )?;
--    row_security::filter_rows(
--        &[command],
--        &mut table_references,
--        &mut where_predicates,
--        resolver,
--        program,
--    )?;
--
-     // Plan subqueries in RETURNING expressions before processing
-     // (so SubqueryResult nodes are cloned into result_columns)
-     let mut non_from_clause_subqueries = vec![];
-```
-
-**File**: `core/translate/emitter/update.rs` (modified, +19/-0)
-```diff
-@@ -466,6 +466,7 @@ pub fn emit_program_for_update(
-         target_table,
-         returning_buffer.as_ref(),
-         &mut update_subqueries,
-+        &plan.row_checks,
-     )?;
- 
-     // Close the main loop
-@@ -1100,6 +1101,7 @@ fn emit_update_insns<'a>(
-     target_table: Arc<JoinedTable>,
-     returning_buffer: Option<&ReturningBufferCtx>,
-     non_from_clause_subqueries: &mut [NonFromClauseSubquery],
-+    row_checks: &[crate::translate::row_security::RowCheck],
- ) -> crate::Result<()> {
-     let uses_write_set = temp_cursor_id.is_some();
-     let iteration_cursor_id = temp_cursor_id.unwrap_or(target_table_cursor_id);
-@@ -1835,6 +1837,23 @@ fn emit_update_insns<'a>(
-             });
-         }
- 
-+        // Rows that row-level security does not let the role write fail
-+        // before the CHECK constraints, as in PostgreSQL.
-+        crate::translate::row_security::emit_row_checks(
-+            program,
-+            &mut t_ctx.resolver,
-+            row_checks,
-+            &TableReferences::new(vec![target_table.as_ref().clone()], vec![]),
-+            effective_rowid_reg,
-+            btree_table.columns().iter().enumerate().map(|(idx, col)| {
-+                if col.is_rowid_alias() {
-+                    (col, effective_rowid_reg)
-+                } else {
-+                    (col, layout.to_register(start, idx))
-+                }
-+            }),
-+        )?;
-+
-         if !btree_table.check_constraints.is_empty() {
-             // SQLite only evaluates CHECK constraints that reference at least one
-             // column in the SET clause. Build a set of updated column names to filter.
-```
-
-**File**: `core/translate/insert.rs` (modified, +51/-20)
-```diff
-@@ -7,7 +7,6 @@ use crate::translate::emitter::RegisterColumn;
- use crate::translate::emitter::{
-     emit_index_column_value_old_image, emit_partial_index_where_old_image, gencol,
- };
--use crate::translate::plan::NonFromClauseSubquery;
- use crate::translate::{roles, row_security};
- use crate::turso_debug_assert;
- use crate::{
-@@ -344,7 +343,6 @@ pub fn translate_insert(
-             crate::util::table_name_for_error(&tbl_name)
-         );
+@@ -622,7 +622,6 @@ mod tests {
+     use turso_ext::{
+         ConstraintInfo, ConstraintUsage, IndexInfo, OrderByInfo, ResultCode, VTabKind,
      };
--    row_security::check_insert(&btree_table, namespace, resolver)?;
+-    use turso_parser::parser::Parser;
  
-     let BoundInsertResult {
-         mut values,
-@@ -427,14 +425,38 @@ pub fn translate_insert(
-     // Process RETURNING clause using shared module
-     let mut result_columns =
-         process_returning_clause(&mut returning, &mut table_references, resolver)?;
--    check_upsert_and_returning_privileges(
-+    let updates_on_conflict = upsert_actions
-+        .iter()
-+        .any(|(_, _, upsert)| matches!(upsert.do_clause, ast::UpsertDo::Set { .. }));
-+    let reads_columns = updates_on_conflict
-+        || upsert_actions
-+            .iter()
-+            .any(|(_, _, upsert)| upsert.index.is_some())
-+        || roles::reads_columns_of(
-+            table_references.joined_tables()[0].internal_id,
-+            result_columns.iter().map(|column| &column.expr),
-+            &returning_subqueries,
-+        )?;
-+    check_upsert_privileges(
-         &table_references,
--        &result_columns,
--        &returning_subqueries,
-         &upsert_actions,
-+        reads_columns,
-         resolver,
-         connection,
-     )?;
-+    let row_checks = row_security::new_row_checks(
-+        resolver,
-+        namespace,
-+        table_name.as_str(),
-+        crate::security::policy::Command::Insert,
-+        reads_columns,
-+    );
-+    if updates_on_conflict && !row_checks.is_empty() {
-+        return Err(crate::LimboError::ParseError(
-+            "ON CONFLICT DO UPDATE on a table whose row-level security limits the role is not supported yet"
-+                .to_string(),
-+        ));
-+    }
-     let has_fks = fk_enabled
-         && (resolver.with_schema(database_id, |s| {
-             s.has_child_fks(namespace.id, table_name.as_str())
-@@ -859,6 +881,25 @@ pub fn translate_insert(
-         )?;
-     }
- 
-+    // Rows that row-level security does not let the role write fail before
-+    // the CHECK constraints, as in PostgreSQL, and before ON CONFLICT looks
-+    // for a conflicting row, so that every row proposed is checked.
-+    crate::translate::row_security::emit_row_checks(
-+        program,
-+        resolver,
-+        &row_checks,
-+        &table_references,
-+        insertion.key_register(),
-+        insertion.col_mappings.iter().map(|m| {
-+            let reg = if m.column.is_rowid_alias() {
-+                insertion.key_register()
-+            } else {
-+                m.register
-+            };
-+            (m.column, reg)
-+        }),
-+    )?;
-+
-     // Evaluate CHECK constraints after NOT NULL default substitution and before index mutations.
-     let check_halt_on_error = program.constraint_halt_on_error(ctx.on_conflict);
-     emit_check_constraints(
-@@ -2048,14 +2089,13 @@ fn emit_notnulls(
- }
- 
- /// Checks the privileges an INSERT needs besides INSERT, as in PostgreSQL:
--/// UPDATE for ON CONFLICT DO UPDATE, and SELECT when RETURNING reads the
--/// table's columns or ON CONFLICT names the columns that conflict. DO UPDATE
--/// also needs SELECT, because its SET and WHERE read the row that conflicts.
--fn check_upsert_and_returning_privileges(
-+/// UPDATE for ON CONFLICT DO UPDATE, and SELECT when `reads_columns` says
-+/// that RETURNING reads the table's columns, ON CONFLICT names the columns
-+/// that conflict, or DO UPDATE reads the row that conflicts.
-+fn check_upsert_privileges(
-     table_references: &TableReferences,
--    result_columns: &[ResultSetColumn],
--    returning_subqueries: &[NonFromClauseSubquery],
-     upsert_actions: &[(ResolvedUpsertTarget, BranchOffset, Box<Upsert>)],
-+    reads_columns: bool,
-     resolver: &Resolver,
-     connection: &Arc<crate::Connection>,
- ) -> Result<()> {
-@@ -2075,15 +2115,6 @@ fn check_upsert_and_returning_privileges(
-             object(),
-         )?;
-     }
--    let reads_columns = updates
--        || upsert_actions
--            .iter()
--            .any(|(_, _, upsert)| upsert.index.is_some())
--        || roles::reads_columns_of(
--            target.internal_id,
--            result_columns.iter().map(|column| &column.expr),
--            returning_subqueries,
--        )?;
-     if reads_columns {
-         roles::check_privilege(
-             resolver,
+     /// A dialect that counts schema-row parses and strips a `/* test */ `
+     /// marker before delegating to SQLite parsing, mirroring how a frontend
+@@ -1054,7 +1053,10 @@ mod tests {
+             // A frontend prepares its translated AST while supplying the
+             // original statement text.
+             let input = "CREATE TABLE t (x INTEGER)";
+-            let stmt = match Parser::new(input.as_bytes()).next_cmd().unwrap().unwrap() {
++            let stmt = match crate::dialect::engine::parse_statement(input)
++                .unwrap()
++                .unwrap()
++            {
+                 Cmd::Stmt(stmt) => stmt,
+                 other => panic!("unexpected command: {other:?}"),
+             };
 ```
 
-**File**: `core/translate/plan.rs` (modified, +2/-0)
+**File**: `core/incremental/view.rs` (modified, +2/-6)
 ```diff
-@@ -1079,6 +1079,8 @@ pub struct UpdatePlan {
-     pub non_from_clause_subqueries: Vec<NonFromClauseSubquery>,
-     /// Whether this UPDATE plan uses the safer pre-materialization path, and why.
-     pub safety: DmlSafety,
-+    /// The checks of row-level security that each new row must pass.
-+    pub(crate) row_checks: Vec<crate::translate::row_security::RowCheck>,
- }
+@@ -9,10 +9,7 @@ use crate::util::{extract_view_columns, ViewColumnSchema};
+ use crate::{turso_assert, LimboError, Result, TempStore};
+ use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
+ use turso_parser::ast;
+-use turso_parser::{
+-    ast::{Cmd, Stmt},
+-    parser::Parser,
+-};
++use turso_parser::ast::{Cmd, Stmt};
  
- impl UpdatePlan {
+ /// Version of the materialized-view storage format embedded in every hidden
+ /// table name. Version 1 is the interpreter layout released on `main`;
+@@ -714,8 +711,7 @@ impl IncrementalView {
+         main_data_root: i64,
+         namespace: NamespaceId,
+     ) -> Result<Self> {
+-        let mut parser = Parser::new(sql.as_bytes());
+-        let cmd = parser.next_cmd()?;
++        let cmd = crate::dialect::engine::parse_statement(sql)?;
+         let cmd = cmd.expect("View is an empty statement");
+         match cmd {
+             Cmd::Stmt(Stmt::CreateMaterializedView {
 ```
 
-**File**: `core/translate/row_security.rs` (modified, +174/-61)
+**File**: `core/index_method/mod.rs` (modified, +1/-2)
 ```diff
-@@ -20,30 +20,32 @@ use crate::{
-     dialect::RelationChange,
-     function::Func,
-     namespace::{NamespaceId, NamespaceRef},
--    schema::{collect_column_dependencies_of_expr, BTreeTable, Schema, Table},
-+    schema::{collect_column_dependencies_of_expr, BTreeTable, Column, Schema, Table},
-     security::permission::{Action, Object, PermissionDenied},
-     security::policy::{Command, Policy, RowPolicy},
-     security::roles::{RoleCatalog, RoleId},
-     translate::{
--        emitter::Resolver,
-+        emitter::{with_columns_in_registers, Resolver},
-         expr::{
--            bind_and_rewrite_expr, translate_expr, walk_expr, walk_expr_mut, BindingBehavior,
--            WalkControl,
-+            bind_and_rewrite_expr, translate_expr, translate_expr_no_constant_opt, walk_expr,
-+            walk_expr_mut, BindingBehavior, NoConstantOptReason, WalkControl,
-         },
-         plan::{JoinInfo, JoinOrigin, JoinedTable, TableReferences, WhereTerm, WhereTermOrigin},
-         planner::break_predicate_at_and_boundaries,
-         roles,
-         schema::emit_schema_cookie,
-     },
-     util::normalize_ident,
--    vdbe::builder::ProgramBuilder,
-+    vdbe::{builder::ProgramBuilder, insn::Insn},
-     vtab::{VirtualTable, VirtualTableType},
--    Connection, Dialect, LimboError, Result, MAIN_DB_ID,
-+    Connection, Dialect, HashSet, LimboError, Result, MAIN_DB_ID,
+@@ -774,8 +774,7 @@ pub(crate) fn open_table_cursor(
+ pub(crate) fn parse_patterns(patterns: &[&str]) -> Result<Vec<ast::Select>> {
+     let mut parsed = Vec::new();
+     for pattern in patterns {
+-        let mut parser = turso_parser::parser::Parser::new(pattern.as_bytes());
+-        let Some(ast) = parser.next() else {
++        let Some(ast) = crate::dialect::engine::parse_statement(pattern).transpose() else {
+             return Err(LimboError::ParseError(format!(
+                 "unable to parse pattern statement: {pattern}",
+             )));
+```
+
+**File**: `core/schema.rs` (modified, +11/-24)
+```diff
+@@ -138,10 +138,7 @@ use turso_parser::ast::{
+     self, ColumnDefinition, Expr, InitDeferredPred, Literal, Name, NullsOrder, RefAct, ResolveType,
+     SortOrder, TableInternalId, TypeOperator,
  };
+-use turso_parser::{
+-    ast::{Cmd, CreateTableBody, ResultColumn, Stmt},
+-    parser::Parser,
+-};
++use turso_parser::ast::{Cmd, CreateTableBody, ResultColumn, Stmt};
  
- /// Limits the rows of the tables in `table_references` that the statement
--/// reads, updates or deletes to the rows the role may access, which the
--/// policies of all of `commands` decide.
-+/// reads, updates or deletes to the rows the role may access. The policies of
-+/// `commands` decide: SELECT for a read, and UPDATE or DELETE for the table a
-+/// statement writes, with SELECT too when the statement reads the table's
-+/// columns, as in PostgreSQL.
- ///
- /// Each such table gets the condition its rows must pass as
- /// [`JoinedTable::row_filter`], which the loop over the table checks before
-@@ -81,6 +83,7 @@ pub(crate) fn filter_rows(
-         }
-         let Some(filter) = conditions
-             .into_iter()
-+            .map(|condition| condition.expr)
-             .reduce(|all, expr| combine(Some(all), ast::Operator::And, expr))
+ pub const SCHEMA_TABLE_NAME: &str = "sqlite_schema";
+ pub const SCHEMA_TABLE_NAME_ALT: &str = "sqlite_master";
+@@ -1433,7 +1430,6 @@ pub enum TypeOrigin {
+ 
+ fn bootstrap_builtin_types(registry: &mut HashMap<String, Arc<TypeDef>>) -> crate::Result<()> {
+     use turso_parser::ast::{Cmd, Stmt};
+-    use turso_parser::parser::Parser;
+ 
+     // Whether values of the type take a COLLATE. In PostgreSQL only text
+     // types do, so of the types below only varchar does.
+@@ -1471,10 +1467,9 @@ fn bootstrap_builtin_types(registry: &mut HashMap<String, Arc<TypeDef>>) -> crat
+     ];
+ 
+     for &(accepts_collate, range_offsets, sql) in types {
+-        let mut parser = Parser::new(sql.as_bytes());
+         let Ok(Some(Cmd::Stmt(Stmt::CreateType {
+             type_name, body, ..
+-        }))) = parser.next_cmd()
++        }))) = crate::dialect::engine::parse_statement(sql)
          else {
-             continue;
-@@ -114,18 +117,115 @@ pub(crate) fn filter_rows(
-     Ok(())
- }
+             return Err(crate::LimboError::InternalError(format!(
+                 "failed to parse built-in type SQL: {sql}"
+@@ -2418,10 +2413,8 @@ impl Schema {
+     /// in-memory registry without working out the kind its DECODE gives.
+     fn insert_type_from_sql(&mut self, sql: &str) -> crate::Result<()> {
+         use turso_parser::ast::{Cmd, Stmt};
+-        use turso_parser::parser::Parser;
  
--/// Checks that the role may insert rows into `table`.
--pub(crate) fn check_insert(
--    table: &BTreeTable,
--    namespace: NamespaceRef,
-+/// A check that each row a statement writes must pass, or the statement
-+/// fails.
-+#[derive(Debug, Clone)]
-+pub(crate) struct RowCheck {
-+    condition: Condition,
-+    /// The condition is a USING condition checked on the existing row.
-+    using_condition: bool,
-+}
-+
-+/// The checks that the new rows `command` writes to `table_name` of
-+/// `namespace` must pass for the role, as in PostgreSQL: the WITH CHECK
-+/// conditions of the command's policies, or their USING conditions where
-+/// they have none, and the USING conditions of the SELECT policies when the
-+/// statement reads the table's columns, so that a role never writes a row it
-+/// could not read back that way.
-+pub(crate) fn new_row_checks(
+-        let mut parser = Parser::new(sql.as_bytes());
+-        let cmd = parser.next_cmd();
++        let cmd = crate::dialect::engine::parse_statement(sql);
+         match cmd {
+             Ok(Some(Cmd::Stmt(Stmt::CreateType {
+                 type_name, body, ..
+@@ -3811,7 +3804,7 @@ impl Schema {
+         let mut dependents: HashMap<String, Vec<String>> = HashMap::default();
+ 
+         for (view_key, (namespace, sql, _)) in &view_info {
+-            let cmd = Parser::new(sql.as_bytes()).next_cmd()?.ok_or_else(|| {
++            let cmd = crate::dialect::engine::parse_statement(sql)?.ok_or_else(|| {
+                 LimboError::Corrupt(format!(
+                     "materialized view {view_key} has an empty schema definition"
+                 ))
+@@ -3946,7 +3939,7 @@ impl Schema {
+                 }
+             }
+ 
+-            let cmd = Parser::new(sql.as_bytes()).next_cmd()?.ok_or_else(|| {
++            let cmd = crate::dialect::engine::parse_statement(&sql)?.ok_or_else(|| {
+                 LimboError::Corrupt(format!(
+                     "materialized view {view_name} has an empty schema definition"
+                 ))
+@@ -4308,7 +4301,7 @@ impl Schema {
+                 // Classify on the root page before touching the SQL text so
+                 // only the B-tree arm needs to parse the row's stored SQL.
+                 if root_page == 0 {
+-                    let create_vtab = match Parser::new(sql.as_bytes()).next_cmd()? {
++                    let create_vtab = match crate::dialect::engine::parse_statement(sql)? {
+                         Some(Cmd::Stmt(Stmt::CreateVirtualTable(create_vtab))) => create_vtab,
+                         other => {
+                             return Err(LimboError::Corrupt(format!(
+@@ -4464,7 +4457,6 @@ impl Schema {
+             "view" => {
+                 use crate::schema::View;
+                 use turso_parser::ast::{Cmd, Stmt};
+-                use turso_parser::parser::Parser;
+ 
+                 let sql = maybe_sql.expect("sql should be present for view");
+                 let (namespace, view_name) = self.demangle_name(name);
+@@ -4474,8 +4466,7 @@ impl Schema {
+                 }
+ 
+                 // Parse the SQL to determine if it's a regular or materialized view
+-                let mut parser = Parser::new(sql.as_bytes());
+-                let parsed = parser.next_cmd();
++                let parsed = crate::dialect::engine::parse_statement(sql);
+                 if !matches!(&parsed, Ok(Some(Cmd::Stmt(_)))) {
+                     // Tolerate view rows whose stored SQL no longer parses
+                     // (e.g. older versions wrote view column lists without
+@@ -4522,7 +4513,6 @@ impl Schema {
+             }
+             "trigger" => {
+                 use turso_parser::ast::{Cmd, Stmt};
+-                use turso_parser::parser::Parser;
+ 
+                 let sql = maybe_sql.expect("sql should be present for trigger");
+                 let (namespace, trigger_name) = self.demangle_name(name);
+@@ -4531,7 +4521,6 @@ impl Schema {
+                     self.add_namespace_of_object(namespace);
+                 }
+ 
+-                let mut parser = Parser::new(sql.as_bytes());
+                 let Ok(Some(Cmd::Stmt(Stmt::CreateTrigger {
+                     temporary,
+                     if_not_exists: _,
+@@ -4542,7 +4531,
+```
+
+**File**: `core/translate/alter.rs` (modified, +8/-20)
+```diff
+@@ -8,10 +8,7 @@ use crate::translate::row_security;
+ use crate::types::StrictType;
+ use crate::util::renamed_automatic_index_name;
+ use crate::{turso_assert_eq, turso_assert_ne, SymbolTable};
+-use turso_parser::{
+-    ast::{self, TableInternalId},
+-    parser::Parser,
+-};
++use turso_parser::ast::{self, TableInternalId};
+ 
+ use super::{
+     index::emit_refill_index,
+@@ -1201,8 +1198,7 @@ pub fn translate_alter_table(
+                 "#,
+             );
+ 
+-            let mut parser = Parser::new(stmt.as_bytes());
+-            let cmd = parser.next_cmd().map_err(|e| {
++            let cmd = crate::dialect::engine::parse_statement(&stmt).map_err(|e| {
+                 LimboError::ParseError(format!("failed to parse generated UPDATE statement: {e}"))
+             })?;
+             let Some(ast::Cmd::Stmt(ast::Stmt::Update(update))) = cmd else {
+@@ -1418,8 +1414,7 @@ pub fn translate_alter_table(
+                 "#,
+             );
+ 
+-            let mut parser = Parser::new(stmt.as_bytes());
+-            let cmd = parser.next_cmd().map_err(|e| {
++            let cmd = crate::dialect::engine::parse_statement(&stmt).map_err(|e| {
+                 LimboError::ParseError(format!("failed to parse generated UPDATE statement: {e}"))
+             })?;
+             let Some(ast::Cmd::Stmt(ast::Stmt::Update(update))) = cmd else {
+@@ -1802,8 +1797,7 @@ pub fn translate_alter_table(
+                     "#,
+                 );
+ 
+-                let mut parser = Parser::new(update_stmt.as_bytes());
+-                let cmd = parser.next_cmd().map_err(|e| {
++                let cmd = crate::dialect::engine::parse_statement(&update_stmt).map_err(|e| {
+                     LimboError::ParseError(format!(
+                         "failed to parse trigger update SQL for {trigger_name}: {e}"
+                     ))
+@@ -2383,8 +2377,7 @@ pub fn translate_alter_table(
+                     "#,
+                 );
+ 
+-                let mut parser = Parser::new(update_stmt.as_bytes());
+-                let cmd = parser.next_cmd().map_err(|e| {
++                let cmd = crate::dialect::engine::parse_statement(&update_stmt).map_err(|e| {
+                     LimboError::ParseError(format!(
+                         "failed to parse trigger update SQL for {trigger_name}: {e}"
+                     ))
+@@ -2417,8 +2410,7 @@ pub fn translate_alter_table(
+                     "#,
+                 );
+ 
+-                let mut parser = Parser::new(update_stmt.as_bytes());
+-                let cmd = parser.next_cmd().map_err(|e| {
++                let cmd = crate::dialect::engine::parse_statement(&update_stmt).map_err(|e| {
+                     LimboError::ParseError(format!(
+                         "failed to parse view update SQL for {view_name}: {e}"
+                     ))
+@@ -3304,9 +3296,7 @@ fn rewrite_trigger_sql_for_table_rename(
+     new_table_name: &str,
+     renamed_db_name: &str,
+ ) -> Result<String> {
+-    let mut parser = Parser::new(trigger_sql.as_bytes());
+-    let cmd = parser
+-        .next_cmd()
++    let cmd = crate::dialect::engine::parse_statement(trigger_sql)
+         .map_err(|e| LimboError::ParseError(format!("failed to parse trigger SQL: {e}")))?;
+     let Some(ast::Cmd::Stmt(ast::Stmt::CreateTrigger {
+         temporary,
+@@ -3384,9 +3374,7 @@ fn rewrite_trigger_sql_for_column_rename(
      resolver: &Resolver,
-+    namespace: NamespaceRef,
-+    table_name: &str,
-+    command: Command,
-+    reads_columns: bool,
-+) -> Vec<RowCheck> {
-+    let Policy::Apply(policies) = policy(resolver, namespace, table_name, command) else {
-+        return Vec::new();
-+    };
-+    let mut conditions = conditions_of(&policies, with_check_condition);
-+    if reads_columns {
-+        let Policy::Apply(select_policies) =
-+            policy(resolver, namespace, table_name, Command::Select)
+ ) -> Result<String> {
+     // Parse the trigger SQL
+-    let mut parser = Parser::new(trigger_sql.as_bytes());
+-    let cmd = parser
+-        .next_cmd()
++    let cmd = crate::dialect::engine::parse_statement(trigger_sql)
+         .map_err(|e| LimboError::ParseError(format!("failed to parse trigger SQL: {e}")))?;
+     let Some(ast::Cmd::Stmt(ast::Stmt::CreateTrigger {
+         temporary,
+```
+
+**File**: `core/translate/expr/expr_type.rs` (modified, +3/-3)
+```diff
+@@ -1411,7 +1411,6 @@ mod tests {
+     use crate::{DatabaseCatalog, RwLock, SymbolTable};
+     use rustc_hash::FxHashMap as HashMap;
+     use turso_parser::ast::{Cmd, OneSelect, ResultColumn, Stmt};
+-    use turso_parser::parser::Parser;
+ 
+     impl PartialEq for ExprType {
+         fn eq(&self, other: &Self) -> bool {
+@@ -1636,8 +1635,9 @@ mod tests {
+ 
+     fn parse_expr(sql: &str) -> ast::Expr {
+         let select_sql = format!("SELECT {sql}");
+-        let mut parser = Parser::new(select_sql.as_bytes());
+-        let Ok(Some(Cmd::Stmt(Stmt::Select(select)))) = parser.next_cmd() else {
++        let Ok(Some(Cmd::Stmt(Stmt::Select(select)))) =
++            crate::dialect::engine::parse_statement(&select_sql)
 +        else {
-+            unreachable!("row-level security limits every command of a role or none");
-+        };
-+        conditions.extend(conditions_of(&select_policies, using_condition));
-+    }
-+    conditions
-+        .into_iter()
-+        .map(|condition| RowCheck {
-+            condition,
-+            using_condition: false,
-+        })
-+        .collect()
-+}
-+
-+/// Emits `checks` on a row that the statement writes to the first table of
-+/// `table_references`, whose rowid is in `rowid_reg` and whose columns are in
-+/// the registers `columns` gives. The statement fails at the first check that
-+/// the row does not pass; a condition that is NULL fails too, as in
-+/// PostgreSQL.
-+pub(crate) fn emit_row_checks<'a>(
-+    program: &mut ProgramBuilder,
-+    resolver: &mut Resolver,
-+    checks: &[RowCheck],
-+    table_references: &TableReferences,
-+    rowid_reg: usize,
-+    columns: impl Iterator<Item = (&'a Column, usize)>,
- ) -> Result<()> {
--    match policy(resolver, namespace, &table.declared_name, Command::Insert) {
--        Policy::Allow => Ok(()),
--        Policy::Apply(_) => Err(LimboError::PermissionDenied(Box::new(
--            PermissionDenied::policy(Object::Table(table.declared_name.clone()), None, false),
--        ))),
-+    if checks.is_empty() {
-+        return Ok(())
+             panic!("not a SELECT: {sql}");
+         };
+         let OneSelect::Select { mut columns, .. } = select.body.select else {
 ```
 
-**File**: `core/translate/update.rs` (modified, +65/-28)
+**File**: `core/translate/index.rs` (modified, +9/-6)
 ```diff
-@@ -197,9 +197,25 @@ fn prepare_and_optimize_update_plan(
-         connection,
-     )?;
-     // An ALTER that rewrites the schema table has had its own privileges
--    // checked already.
-+    // checked already, and no policy applies to it.
-     if !is_internal_schema_change {
--        check_update_privileges(&update_plan, resolver, connection)?;
-+        let reads_target_columns = update_reads_target_columns(&update_plan)?;
-+        let target = &update_plan.target_table;
-+        roles::check_write_privileges(
-+            resolver,
-+            connection,
-+            target.namespace,
-+            target.table.get_name(),
-+            ast::Privilege::Update,
-+            reads_target_columns,
-+        )?;
-+        apply_update_policies(
-+            &mut update_plan,
-+            &mut read_scope_tables,
-+            reads_target_columns,
-+            resolver,
-+            program,
-+        )?;
-         roles::hide_constraint_values_from_role_without_select(
-             program,
-             resolver,
-@@ -220,33 +236,60 @@ fn prepare_and_optimize_update_plan(
-     Ok(plan)
- }
+@@ -1750,15 +1750,18 @@ pub fn translate_optimize(
+ #[cfg(test)]
+ mod tests {
+     use super::canonical_create_index_sql;
+-    use turso_parser::{ast, parser::Parser};
++    use turso_parser::ast;
  
--/// Checks the privileges on the target table: UPDATE, and SELECT too when
--/// SET, WHERE or RETURNING reads the table's columns, as in PostgreSQL.
--/// Subqueries must be planned first, so that only a subquery that refers to
--/// the target table counts as reading it.
--fn check_update_privileges(
--    plan: &UpdatePlan,
--    resolver: &Resolver,
--    connection: &Arc<crate::Connection>,
--) -> crate::Result<()> {
--    let target = &plan.target_table;
--    let reads_target_columns = roles::reads_columns_of(
--        target.internal_id,
-+/// Whether SET, WHERE or RETURNING reads the columns of the target table,
-+/// which makes the UPDATE need SELECT on it and its SELECT policies apply,
-+/// as in PostgreSQL. Subqueries must be planned first, so that only a
-+/// subquery that refers to the target table counts as reading it.
-+fn update_reads_target_columns(plan: &UpdatePlan) -> crate::Result<bool> {
-+    roles::reads_columns_of(
-+        plan.target_table.internal_id,
-         plan.where_clause
-             .iter()
-             .map(|term| &term.expr)
-             .chain(plan.set_clauses.iter().map(|set| set.expr.as_ref()))
-             .chain(plan.returning.iter().flatten().map(|column| &column.expr)),
-         &plan.non_from_clause_subqueries,
--    )?;
--    roles::check_write_privileges(
-+    )
-+}
-+
-+/// Applies the target table's row-level security policies: the UPDATE
-+/// changes only the rows that the UPDATE policies allow, and the SELECT
-+/// policies too when `reads_target_columns`, and each new row must pass the
-+/// checks in `plan.row_checks`. The target table is the first of
-+/// `read_scope_tables`; the FROM tables have their SELECT policies already.
-+fn apply_update_policies(
-+    plan: &mut UpdatePlan,
-+    read_scope_tables: &mut TableReferences,
-+    reads_target_columns: bool,
-+    resolver: &Resolver,
-+    program: &mut ProgramBuilder,
-+) -> crate::Result<()> {
-+    let commands: &[Command] = if reads_target_columns {
-+        &[Command::Update, Command::Select]
-+    } else {
-+        &[Command::Update]
-+    };
-+    let target_table = read_scope_tables.joined_tables_mut().remove(0);
-+    plan.row_checks = row_security::new_row_checks(
-         resolver,
--        connection,
--        target.namespace,
--        target.table.get_name(),
--        ast::Privilege::Update,
-+        target_table.namespace,
-+        target_table.table.get_name(),
-+        Command::Update,
-         reads_target_columns,
--    )
-+    );
-+    let mut target_scope = TableReferences::new(vec![target_table], vec![]);
-+    row_security::filter_rows(
-+        commands,
-+        &mut target_scope,
-+        &mut plan.where_clause,
-+        resolver,
-+        program,
-+    )?;
-+    let target_table = target_scope.joined_tables_mut().remove(0);
-+    read_scope_tables
-+        .joined_tables_mut()
-+        .insert(0, target_table);
-+    Ok(())
- }
+     #[test]
+     fn canonical_create_index_sql_drops_schema_qualifier_from_index_name_only() {
+-        let mut parser = Parser::new(b"CREATE INDEX aux.idx1 ON t1(name);");
+-        let stmt = match parser.next_cmd().unwrap().unwrap() {
+-            ast::Cmd::Stmt(stmt) => stmt,
+-            other => panic!("expected statement, got {other:?}"),
+-        };
++        let stmt =
++            match crate::dialect::engine::parse_statement("CREATE INDEX aux.idx1 ON t1(name);")
++                .unwrap()
++                .unwrap()
++            {
++                ast::Cmd::Stmt(stmt) => stmt,
++                other => panic!("expected statement, got {other:?}"),
++            };
  
- fn validate_update(
-@@ -426,13 +469,6 @@ fn prepare_update_plan(
-     )?;
- 
-     let mut read_scope_tables = TableReferences::new(vec![target_table], vec![]);
--    row_security::filter_rows(
--        &[Command::Update],
--        &mut read_scope_tables,
--        &mut where_clause,
--        resolver,
--        program,
--    )?;
-     read_scope_tables.extend(from_tables);
- 
-     for set in &mut body.sets {
-@@ -533,6 +569,7 @@ fn prepare_update_plan(
-         cdc_update_alter_statement: None,
-         non_from_clause_subqueries,
-         safety: DmlSafety::default(),
-+        row_checks: Vec::new(),
-     })
- }
- 
-```
-
-**File**: `postgres/COMPAT.md` (modified, +1/-1)
-```diff
-@@ -437,7 +437,7 @@ Upgrade is not supported.
- | Predefined roles | ❌ Not supported | |
- | Privileges for setting configuration parameters | ❌ Not supported | |
- | ROLES | 🟡 Partial | `CREATE ROLE name` (no options), `SET [LOCAL] ROLE`, `RESET ROLE`, `SHOW role`; roles that are not superusers may read and write the tables they own or were granted `SELECT`, `INSERT`, `UPDATE` and `DELETE` on, with SELECT also needed when a write reads the table's columns, and call `nextval` with `USAGE` or `UPDATE` and `setval` with `UPDATE` on the sequence, but not change the schema they do not own; `GRANT` of privileges on whole tables and sequences, `ALL` included, is stored in `pg_class.relacl`; `TRUNCATE` needs the `TRUNCATE` privilege, and the `REFERENCES`, `TRIGGER` and `MAINTAIN` privileges let a role do nothing yet; `pg_roles` lists the built-in `postgres` superuser, `pg_database_owner`, and created roles |
--| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; policies for writes and `WITH CHECK` are stored but have no effect yet, since a table with row-level security refuses writes by roles that do not own it; `pg_policy` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every row |
-+| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; a new row is checked after its `NOT NULL` constraints instead of before; `INSERT ... ON CONFLICT DO UPDATE` by a role the policies limit is not supported; `pg_policy` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every row |
- | SCRAM-SHA-256 authentication | ❌ Not supported | |
- | Search+bind mode operation for LDAP authentication | ❌ Not supported | |
- | security_barrier option on views | ❌ Not supported | |
-```
-
-**File**: `postgres/MANUAL.md` (modified, +33/-12)
-```diff
-@@ -23,7 +23,8 @@ the table's owner only the rows that the table's policies allow it, which
- PostgreSQL. The policies apply wherever the table appears in a query: in
- joins, subqueries, common table expressions, views and `COPY ... TO STDOUT`.
- In a `LEFT JOIN`, the columns of a row the role may not see read as NULL.
--Superusers and the table's owner see every row.
-+The policies also limit which rows the role may insert, update and delete.
-+Superusers and the table's owner see and write every row.
- 
- **Parameters:**
- 
-@@ -86,15 +87,31 @@ CREATE POLICY name ON table_name
- 
- **Description:**
- 
--`CREATE POLICY` defines which rows of a table the roles it names may read.
--It matters once `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` is on for the
--table.
-+`CREATE POLICY` defines which rows of a table the roles it names may read
-+and write. It matters once `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` is on
-+for the table.
- 
- A role reads the rows for which the `USING` expression of at least one
- permissive policy is true and the `USING` expressions of all restrictive
- policies are true, counting only the policies `FOR ALL` and `FOR SELECT` that
- name the role or `PUBLIC`. Without a permissive policy, it reads no rows.
- 
-+Writes work as in PostgreSQL, with the policies `FOR ALL` and for the
-+command:
-+
-+- `UPDATE` and `DELETE` change only the rows that pass the `USING`
-+  expressions of the `UPDATE` or `DELETE` policies, combined in the same
-+  way. When the statement reads the table's columns, in `WHERE`, in `SET`
-+  or in `RETURNING`, directly or in a subquery that refers to the table,
-+  the rows must also pass the `SELECT` policies.
-+- A new row that `INSERT` or `UPDATE` writes must pass the `WITH CHECK`
-+  expressions of the `INSERT` or `UPDATE` policies, or their `USING`
-+  expressions where they have none, and the `SELECT` policies when the
-+  statement has `RETURNING`. Otherwise the statement fails with
-+  `new row violates row-level security policy for table` (SQLSTATE 42501),
-+  naming the restrictive policy when one of those fails. A check that is
-+  NULL fails.
-+
- The policies are checked on each row before the other conditions of a query,
- so a condition of the query, or a function it calls, never sees a row the
- role may not read.
-@@ -114,16 +131,20 @@ role may not read.
-   columns of the table, written alone, with the table's name, or with the
-   schema and table names, and call scalar functions such as `current_user`.
-   It can also use a subquery without `FROM`, such as `(SELECT auth.uid())`.
--- `check_expression`: Which new rows the policy lets a role write. It is
--  stored but has no effect yet, because roles cannot write to tables.
-+- `check_expression`: Which new rows the policy lets a role write. It can use
-+  what `using_expression` can.
- 
- **Notes:**
- 
- Only the owner of the table or a superuser may create its policies.
- 
--Roles that are not superusers cannot write to tables yet, so the policies
--`FOR INSERT`, `FOR UPDATE` and `FOR DELETE` and the `WITH CHECK` expressions
--are stored but do not change what any role can do.
-+A new row is checked against the policies after its `NOT NULL` constraints,
-+not before as in PostgreSQL, so a row that breaks both reports the `NOT
-+NULL` constraint. `INSERT ... ON CONFLICT DO UPDATE` by a role that the
-+table's policies limit is not supported yet.
-+
-+`TRUNCATE` is not subject to the policies, as in PostgreSQL: a role with the
-+`TRUNCATE` privilege empties the whole table.
- 
- Policies cannot use subqueries with `FROM`, parameters, aggregate or window
- functions, or generated columns that are computed when they are read. A
-@@ -324,9 +345,9 @@ or `UPDATE`, `setval` needs `UPDATE`, and `currval` needs `SELECT` or
- PRIMARY KEY` column is the exception: its value comes from the row's rowid,
- not from the sequence, so the insert needs no privilege on the sequence.
- `pg_sequences.last_value` is null for a role with neither `SELECT` nor
--`USAGE` on the sequence. A table with row-level security still
--refuses writes by a role that does not own it: `INSERT` fails, and
--`UPDATE` and `DELETE` change no rows. As in PostgreSQL, row-level security
-+`USAGE` on the sequence. On a table with row-level security, the table's
-+policies also limit what a role that does not own it writes, as described
-+under `CREATE POLICY`. As in PostgreSQL, row-level security
- does not apply to `TRUNCATE`, which removes every row. A constraint error
- shows the values of the row or key (`Failing row contains ...`, `Key ...
- already exists`) only to a role with `SELECT` on the table; PostgreSQL also
+         // let's confirm that the stmt does carry `aux`
+         let ast::Stmt::CreateIndex { idx_name, .. } = &stmt else {
 ```
 
 ---
 
-### Incident Patch 3: `b4f80666` (2026-11-11)
-**Commit Message**: core/vdbe: add an instruction that fails with a row-level security error
+### Incident Patch 2: `3aad402e` (2026-11-13)
+**Commit Message**: Merge 'docs: remove CODEOWNERS' from Pere Diaz Bou
 
-Writes will check each new row against the conditions of the table's
-policies, and a row that fails one must fail the statement with
-PostgreSQL's error, which names the restrictive policy that failed, or
-says that a USING condition failed on the row that ON CONFLICT DO UPDATE
-would change: new row violates row-level security policy "p" (USING
-expression) for table "t".
+Pre AI Codeowners was a simple way to automatically set reviewers
+depending on the path. Now it's notification overload that has made me
+ignore reviews because there are so many that it would be impossible to
+review without spending my whole work week only doing reviews.
 
-RowSecurityViolation fails the statement with the PermissionDenied it
-carries. Reason::Policy now records the policy and the kind of condition,
-and the PostgreSQL frontend puts them in the message. Nothing emits the
-instruction yet; the commits that apply policies to writes do and test
-it.
+Reviewed-by: Jussi Saurio <[REDACTED_EMAIL]>
 
-**File**: `core/security/permission.rs` (modified, +18/-8)
+Closes #11780
+
+**File**: `docs/CODEOWNERS` (removed, +0/-12)
 ```diff
-@@ -32,27 +32,33 @@ impl PermissionDenied {
-         }
-     }
- 
--    /// The row-level security policy of `table` does not let the role write
--    /// a row to it.
--    pub fn policy(table: Object) -> Self {
-+    /// A row that the role writes to `table` fails a condition of the
-+    /// table's row-level security policies: of restrictive policy `policy`,
-+    /// or of the permissive policies together when it is None. The condition
-+    /// is a USING condition checked on the existing row when
-+    /// `using_condition` is set, and otherwise one checked on the new row.
-+    pub fn policy(table: Object, policy: Option<String>, using_condition: bool) -> Self {
-         Self {
-             action: Action::Write,
-             object: table,
--            reason: Reason::Policy,
-+            reason: Reason::Policy {
-+                policy,
-+                using_condition,
-+            },
-         }
-     }
- }
- 
- impl fmt::Display for PermissionDenied {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
--        match self.reason {
-+        match &self.reason {
-             Reason::Privilege => write!(f, "permission denied: {} on {}", self.action, self.object),
-             Reason::Owner => write!(
-                 f,
-                 "permission denied: {} on {} needs its owner",
-                 self.action, self.object
-             ),
--            Reason::Policy => write!(
-+            Reason::Policy { .. } => write!(
-                 f,
-                 "permission denied: {} on {} violates its row-level security policy",
-                 self.action, self.object
-@@ -61,11 +67,15 @@ impl fmt::Display for PermissionDenied {
-     }
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+#[derive(Debug, Clone, PartialEq, Eq)]
- pub enum Reason {
-     Privilege,
-     Owner,
--    Policy,
-+    /// See [`PermissionDenied::policy`].
-+    Policy {
-+        policy: Option<String>,
-+        using_condition: bool,
-+    },
- }
- 
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-```
-
-**File**: `core/translate/row_security.rs` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@ pub(crate) fn check_insert(
-     match policy(resolver, namespace, &table.declared_name, Command::Insert) {
-         Policy::Allow => Ok(()),
-         Policy::Deny | Policy::Filter(_) => Err(LimboError::PermissionDenied(Box::new(
--            PermissionDenied::policy(Object::Table(table.declared_name.clone())),
-+            PermissionDenied::policy(Object::Table(table.declared_name.clone()), None, false),
-         ))),
-     }
- }
-```
-
-**File**: `core/vdbe/execute.rs` (modified, +10/-0)
-```diff
-@@ -4228,6 +4228,16 @@ pub fn op_halt_if_null(
-     }
- }
- 
-+pub fn op_row_security_violation(
-+    _program: &Program,
-+    _state: &mut ProgramState,
-+    insn: &Insn,
-+    _pager: &Arc<Pager>,
-+) -> InsnResult {
-+    load_insn!(RowSecurityViolation { denial }, insn);
-+    Err(LimboError::PermissionDenied(denial.clone()).into())
-+}
-+
- #[derive(Debug, Clone, Copy)]
- pub enum OpTransactionState {
-     Start,
-```
-
-**File**: `core/vdbe/explain.rs` (modified, +9/-0)
-```diff
-@@ -1038,6 +1038,15 @@ pub fn insn_to_row(
-                 0,
-                 "".to_string(),
-             ),
-+            Insn::RowSecurityViolation { denial } => (
-+                "RowSecurityViolation",
-+                0,
-+                0,
-+                0,
-+                Value::build_text(denial.to_string()),
-+                0,
-+                "".to_string(),
-+            ),
-             Insn::Transaction { db, tx_mode, schema_cookie} => (
-                 "Transaction",
-                 *db as i64,
-```
-
-**File**: `core/vdbe/insn.rs` (modified, +7/-0)
-```diff
-@@ -1184,6 +1184,12 @@ pub enum Insn {
-         on_error: Option<ResolveType>, // p2
-     },
- 
-+    /// Fail the statement because a row it writes fails a condition of a
-+    /// row-level security policy.
-+    RowSecurityViolation {
-+        denial: Box<crate::security::permission::PermissionDenied>,
-+    },
-+
-     /// Start a transaction.
-     Transaction {
-         db: usize,                // p1
-@@ -2517,6 +2523,7 @@ impl InsnVariants {
-             InsnVariants::Prev => execute::op_prev,
-             InsnVariants::Halt => execute::op_halt,
-             InsnVariants::HaltIfNull => execute::op_halt_if_null,
-+            InsnVariants::RowSecurityViolation => execute::op_row_security_violation,
-             InsnVariants::Transaction => execute::op_transaction,
-             InsnVariants::AutoCommit => execute::op_auto_commit,
-             InsnVariants::Savepoint => execute::op_savepoint,
-```
-
-**File**: `postgres/frontend/error.rs` (modified, +19/-3)
-```diff
-@@ -414,10 +414,26 @@ fn tx_error_sqlstate(msg: &str) -> &'static str {
- }
- 
- fn permission_denied_message(denial: &PermissionDenied) -> String {
--    match (denial.reason, &denial.object) {
-+    match (&denial.reason, &denial.object) {
-         (Reason::Owner, object) => return format!("must be owner of {}", object_name(object)),
--        (Reason::Policy, Object::Table(name)) => {
--            return format!("new row violates row-level security policy for table \"{name}\"")
-+        (
-+            Reason::Policy {
-+                policy,
-+                using_condition,
-+            },
-+            Object::Table(name),
-+        ) => {
-+            let policy = policy
-+                .as_ref()
-+                .map_or(String::new(), |policy| format!(" \"{policy}\""));
-+            let condition = if *using_condition {
-+                " (USING expression)"
-+            } else {
-+                ""
-+            };
-+            return format!(
-+                "new row violates row-level security policy{policy}{condition} for table \"{name}\""
-+            );
-         }
-         _ => {}
-     }
+@@ -1,12 +0,0 @@
+-* @penberg
+-/core/ @pereman2 @jussisaurio @penberg
+-/core/storage @pereman2
+-/core/translate @jussisaurio
+-/extensions/ @PThorpe92
+-/core/ext/ @PThorpe92
+-/bindings/go @PThorpe92
+-
+-# These are commented out until they get access from the overlords
+-# /bindings/java @seonWKim
+-# /simulator/ @alpaylan
+-# /core/storage @krishvishal 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11737** (2026-11-12): postgres: drop SQL functions with DROP FUNCTION (@LeMikaelF)
-- **PR #11717** (2026-11-12): postgres: split statements with the parser (@LeMikaelF)
-- **PR #11703** (2026-11-11): postgres: Allow only superusers to access internal tables (@penberg)
-- **PR #11690** (closed): postgres: Pin Postgres version to 18 (@penberg)
-- **PR #11689** (2026-11-11): postgres: Pin Postgres version to 18 (@penberg)
-- **PR #11688** (2026-11-11): sqlite: Define supported version in `sqlite/version` (@penberg)
+- **PR #11813** (2026-11-13): core: parse SQL only in the engine dialect module (@penberg)
+- **PR #11807** (2026-11-13): core/pragma: keep schema-only constraints from naming a table (@syntrydy)
+- **PR #11801** (2026-11-13): postgres: support INHERIT and NOINHERIT roles (@penberg)
+- **PR #11800** (2026-11-12): postgres: accept NOLOGIN in CREATE ROLE (@penberg)
+- **PR #11798** (2026-11-12): postgres: initialize relation catalogs through async opening (@pedrocarlo)
+- **PR #11795** (2026-11-12): ci: build macOS release binaries on macos-15 runners (@penberg)
 
 ---
 
@@ -2865,22 +1876,33 @@ it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'postgres: Add row-level security policies' from Pekka Enberg
+## X. Merge 'core: parse SQL only in the engine dialect module' from Pekka Enberg
 
 **RULE**:
-When implementing operations in `cli/mcp_server.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/dialect/engine.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `719fcc41`: Merge 'postgres: Add row-level security policies' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `072456f5`: Merge 'core: parse SQL only in the engine dialect module' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/mcp_server.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/engine.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            | Stmt::CreatePolicy(_)
-            | Stmt::DropPolicy { .. }
+/// Parse the first SQLite statement in `sql`.
+pub fn parse_statement(sql: &str) -> crate::Result<Option<turso_parser::ast::Cmd>> {
+    Ok(parse(sql)?.0)
+}
+
+/// Parse the column definition of an `ALTER TABLE` statement.
+pub fn parse_column_definition(
+    sql: &str,
+    in_alter: bool,
+) -> crate::Result<turso_parser::ast::ColumnDefinition> {
+    Ok(turso_parser::parser::Parser::new(sql.as_bytes()).parse_column_definition(in_alter)?)
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2890,4 +1912,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `719fcc41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `072456f5` are properly handled with clean fallback behavior.

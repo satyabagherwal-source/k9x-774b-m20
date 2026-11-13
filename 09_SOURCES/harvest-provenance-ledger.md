@@ -9547,3 +9547,8 @@ Every entry in this ledger must capture:
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `20743f10` | Multi-dimensional audit evidence | 2026-11-13T15:38:17.470Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `e3b97728` | Multi-dimensional audit evidence | 2026-11-13T15:38:18.070Z |
 | `learn-dom-d-7123d3b0` | `project://hf-fastino-gliner2.5-decide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | 2026-11-13T15:39:02.277Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-13T15:47:03.983Z |
+| `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `bf69067f` | Multi-dimensional audit evidence | 2026-11-13T15:47:11.686Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `e55b089e` | Multi-dimensional audit evidence | 2026-11-13T15:47:14.420Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `072456f5` | Multi-dimensional audit evidence | 2026-11-13T15:47:20.953Z |
+| `learn-dom-d-991f9c3c` | `project://hf-altworld-hemmingway-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | 2026-11-13T15:47:55.868Z |

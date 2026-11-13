@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T15:39:02.276Z",
+  "updated_at": "2026-11-13T15:47:55.867Z",
   "statistics": {
-    "total_nodes": 99,
-    "total_edges": 54,
+    "total_nodes": 100,
+    "total_edges": 55,
     "domain_distribution": {
-      "D": 80,
+      "D": 81,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 54
+      "CONSTRAINED_BY_ARCHITECTURE": 55
     }
   },
   "nodes": {
@@ -2206,6 +2206,29 @@
       ],
       "created_at": "2026-11-13T15:39:02.276Z",
       "updated_at": "2026-11-13T15:39:02.276Z"
+    },
+    "DOM-D-991F9C3C": {
+      "id": "DOM-D-991F9C3C",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): HemmingwayAI/Hemmingway-1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-altworld-hemmingway-1/hf-altworld-hemmingway-1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T15:47:23.893Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-altworld-hemmingway-1)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T15:47:55.867Z",
+      "updated_at": "2026-11-13T15:47:55.867Z"
     }
   },
   "edges": [
@@ -2748,6 +2771,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-7123D3B0 [D] with Domain M",
       "created_at": "2026-11-13T15:39:02.276Z"
+    },
+    {
+      "id": "EDGE-57326E3331B5",
+      "sourceId": "DOM-D-991F9C3C",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-991F9C3C [D] with Domain M",
+      "created_at": "2026-11-13T15:47:55.867Z"
     }
   ]
 }

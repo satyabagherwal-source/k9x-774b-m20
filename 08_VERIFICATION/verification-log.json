@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-IHO6",
-    "timestamp": "2026-11-12T15:04:38.646Z",
-    "repository": "tonhowtf/omniget",
-    "learningId": "learn-github-tonhowtf-omniget",
-    "contentHash": "23685f9a43a5f05e63461fb3c22fb1df800f5904512764274ca4596549a8f31d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-Z1Q4",
-    "timestamp": "2026-11-12T15:17:31.132Z",
-    "repository": "webdriverio/webdriverio",
-    "learningId": "learn-github-webdriverio-webdriverio",
-    "contentHash": "f580c7726cd388db0057b256fcef8d10934726f12af68422a4a76b29ad9b51a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-8VMG",
-    "timestamp": "2026-11-12T15:25:09.784Z",
-    "repository": "DevExpress/testcafe",
-    "learningId": "learn-github-devexpress-testcafe",
-    "contentHash": "e775f6056872480cf06555afe9735542eea2e6af8376353e18f53df297760c20",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-9BV7",
-    "timestamp": "2026-11-12T15:25:30.835Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "0a98fb75ad40a75b93957e7b05701ce23381e22c81359f05ace5573a5a24b6d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-K7QZ",
     "timestamp": "2026-11-12T15:33:58.715Z",
     "repository": "mswjs/msw",
@@ -7490,6 +7430,66 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "253ac5030fd64005a10b7eda7bb4dedba11c31f669357c312670e7450c0a52fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-GWBW",
+    "timestamp": "2026-11-13T15:47:03.980Z",
+    "repository": "HemmingwayAI/Hemmingway-1",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "2b44b08c4f0c2595bb4780dd40e0d0e5f7f8eb4cf3d31cc45486ea3827065faa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-H29U",
+    "timestamp": "2026-11-13T15:47:11.682Z",
+    "repository": "Saffsanity/sill",
+    "learningId": "learn-github-saffsanity-sill",
+    "contentHash": "a5ff7c7469b0b9371f80838b84828523a0f68c867682134523ba7a7e3c0f4b46",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-H4DT",
+    "timestamp": "2026-11-13T15:47:14.417Z",
+    "repository": "bridgecrewio/checkov",
+    "learningId": "learn-github-bridgecrewio-checkov",
+    "contentHash": "900727d689109bcc61882c5fe023754b010b24fe994ef61c3213dfa16f742ae6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-H9FA",
+    "timestamp": "2026-11-13T15:47:20.950Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "7e6d7049ba4d9402d638d1af117c372b0eb161fe542462e10330ae09584193ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

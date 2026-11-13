@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T15:39:04.499Z",
+  "last_updated": "2026-11-13T15:47:56.994Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T15:11:07.403Z",
@@ -1073,7 +1073,7 @@
       "staged_for_review": 1
     },
     "bridgecrewio-checkov-learnings.md": {
-      "processed_at": "2026-11-12T11:38:00.981Z",
+      "processed_at": "2026-11-13T15:47:56.528Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1941,9 +1941,19 @@
       "processed_at": "2026-11-13T15:39:02.592Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-altworld-hemmingway-1-learnings.md": {
+      "processed_at": "2026-11-13T15:47:55.868Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "saffsanity-sill-learnings.md": {
+      "processed_at": "2026-11-13T15:47:56.112Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 609,
-  "total_canonical_promoted": 110,
-  "total_staged_for_review": 493
+  "total_dossiers_evaluated": 612,
+  "total_canonical_promoted": 111,
+  "total_staged_for_review": 495
 }

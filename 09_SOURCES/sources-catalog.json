@@ -415,8 +415,8 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "38d57757252cc27fd282f2868d6d5948efa0faddd285e3f4b09d991bef845451",
-    "lastHarvestedAt": "2026-11-08T15:35:13.464Z",
+    "contentHash": "2b44b08c4f0c2595bb4780dd40e0d0e5f7f8eb4cf3d31cc45486ea3827065faa",
+    "lastHarvestedAt": "2026-11-13T15:47:03.983Z",
     "learningId": "learn-huggingface-altworld-hemmingway-1"
   },
   "hf-fastino-gliner2.5-decide": {
@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "41e8cb88",
+    "sourceVersion": "bf69067f",
     "license": "Apache-2.0",
-    "contentHash": "c57d935e5a726a003289a2e90510d3896ffdd0095adaf21b3ff6c9bb3a49e207",
-    "lastHarvestedAt": "2026-11-03T22:32:01.528Z",
+    "contentHash": "a5ff7c7469b0b9371f80838b84828523a0f68c867682134523ba7a7e3c0f4b46",
+    "lastHarvestedAt": "2026-11-13T15:47:11.686Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "4c2e88a3",
+    "sourceVersion": "e55b089e",
     "license": "Apache-2.0",
-    "contentHash": "fafee00dc6f00f4108047b765995e220d451b88cc9c09a094257ae68f81c92b0",
-    "lastHarvestedAt": "2026-11-12T11:37:36.729Z",
+    "contentHash": "900727d689109bcc61882c5fe023754b010b24fe994ef61c3213dfa16f742ae6",
+    "lastHarvestedAt": "2026-11-13T15:47:14.420Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "719fcc41",
+    "sourceVersion": "072456f5",
     "license": "MIT",
-    "contentHash": "fca586e8119109f6d6af9a4127f0eb896be38bbdbdb9cecea7da90b47c8c3070",
-    "lastHarvestedAt": "2026-11-12T09:55:28.885Z",
+    "contentHash": "7e6d7049ba4d9402d638d1af117c372b0eb161fe542462e10330ae09584193ac",
+    "lastHarvestedAt": "2026-11-13T15:47:20.953Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

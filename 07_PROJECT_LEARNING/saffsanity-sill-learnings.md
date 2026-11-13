@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source**: github ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
-> **Source Version**: `41e8cb88`  
+> **Source Version**: `bf69067f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:32:01.198Z  
+> **Timestamp**: 2026-11-13T15:47:11.290Z  
 > **Learning ID**: `learn-github-saffsanity-sill`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:31:59.380Z  
+> **Harvest Timestamp**: 2026-11-13T15:47:11.285Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trackpad and keys. Free, open source, no servers.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4445 stars
+- **Stars / Engagement**: 4868 stars
 
 ---
 
@@ -36,6 +36,73 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `Sources/SillHost/DesktopDisplaysHook.swift`
+```
+import CoreGraphics
+import Foundation
+import StreamProtocol
+
+/// TEST ONLY: `SILL_TEST_DISPLAYS='Built-in Retina Display:1512x982@2:120:0,0;DELL U2723QE:2560x1440@1:60:1512,0'`
+/// on a --synthetic host (docs/virtual-desktop-plan.md, "The CLI and the test hooks"): the stops it lists in
+/// place of this Mac's displays (DesktopDisplays), the first of them its main display, each a name, its size
+/// in points at a scale (1 or 2), its refresh rate in Hz (0: none reported) and its origin in global points.
+/// The test pattern then shows the stop the Desktop is on, at its size and scale, with its number and name
+/// drawn on it, its rate held to the stop's; kind 47 steps through them; input lands in each one's own
+/// space (the dry run's log under SILL_TEST_INPUT_LOG); the window list's fields and the lines are as on a
+/// real Mac. Nothing of this Mac's displays is read for it, and nothing is posted or warped. Honoured only by
+/// a test host (`--synthetic`, and never Sill.app's own executable: DoorPolicy.isTestHost): anywhere else one
+/// line says it is ignored.
+enum DesktopDisplaysHook {
+    static let variable = "SILL_TEST_DISPLAYS"
+
+    /// A test stop: the display DesktopDisplays judges, and its pixel scale (the test pattern's size).
+    struct Stop: Equatable {
+        var display: DesktopDisplays.Display
+        var scale: CGFloat
+    }
+
+    /// The stops a test host takes, and the one line it prints at start (nil when the variable is not set).
+    static func read(testHost: Bool, environment: [String: String]) -> (stops: [Stop]?, line: String?) {
+        guard let raw = environment[variable], !raw.isEmpty else { return (nil, nil) }
+        guard testHost else { return (nil, "\(variable) ignored: only a --synthetic test host takes it, never Sill.app.") }
+        guard let stops = parse(raw) else {
+            return (nil, "\(variable) ignored: it takes NAME:WxH@SCALE:HZ:X,Y entries separated by ';', the first the main display.")
+        }
+        let words = stops.enumerated().map { i, s -> String in
+            let d = s.display
+            return "\(i + 1) \(d.name ?? "unnamed") \(Int(d.frame.width))×\(Int(d.frame.height)) pt @\(Int(s.scale))x, "
+                + (d.refreshHz.map { "\(Int($0.rounded())) Hz" } ?? "no rate") + " at \(Int(d.frame.minX)),\(Int(d.frame.minY))"
+        }
+        return (stops, "Test displays: \(stops.count) in place of this Mac's (\(variable)): " + words.joined(separator: "; ") + ".")
+    }
+
+    /// Entries separated by ';', each NAME:WxH@SCALE:HZ:X,Y; IDs 101, 102… and UUIDs TEST-1, TEST-2… in the
+    /// order given. Nil when any entry does not parse, a size is under 64 or over 8192 points, a scale is
+    /// not 1 or 2, a rate is not 0 to 500, or there are none or more than 16.
+    static func parse(_ raw: String) -> [Stop]? {
+        var stops: [Stop] = []
+        for (i, entry) in raw.split(separator: ";", omittingEmptySubsequences: true).enumerated() {
+            let parts = entry.split(separator: ":", omittingEmptySubsequences: false)
+            guard parts.count == 4 else { return nil }
+            let name = parts[0].trimmingCharacters(in: .whitespaces)
+            let sizeScale = parts[1].split(separator: "@")
+            guard sizeScale.count == 2, let scale = Double(sizeScale[1]), scale == 1 || scale == 2 else { return nil }
+            let wh = sizeScale[0].split(separator: "x")
+            guard wh.count == 2, let w = Double(wh[0]), let h = Double(wh[1]), (64...8192).contains(w), (64...8192).contains(h) else { return nil }
+            guard let hz = Double(parts[2]), (0...500).contains(hz) else { return nil }
+            let xy = parts[3].split(separator: ",")
+            guard xy.count == 2, let x = Double(xy[0]), let y = Double(xy[1]), abs(x) <= 65_536, abs(y) <= 65_536 else { return nil }
+            let display = DesktopDisplays.Display(id: UInt32(101 + i), uuid: "TEST-\(i + 1)", frame: CGRect(x: x, y: y, width: w, height: h),
+                                                  refreshHz: hz > 0 ? hz : nil, name: name.isEmpty ? nil : name)
+            stops.append(Stop(display: display, scale: CGFloat(scale)))
+        }
+        guard !stops.isEmpty, stops.count <= 16 else { return nil }
+        return stops
+    }
+}
+
+```
 
 ### Core Architecture Module: `Sources/SillHost/EncoderSlowState.swift`
 ```
@@ -245,7 +312,7 @@ import StreamProtocol
 ///                                              awayBitrate, awayCaptureScale,
 ///                                              prioritizeSpeed, virtualDisplay, directWireless,
 ///                                              sendAudio, remoteAccess, remotePort, internetAccess,
-///                                              shareClipboard, remoteAddressName=host[:port],
+///                                              shareClipboard, offConsoleView, remoteAddressName=host[:port],
 ///                                              updateCheck, showPairingWindowToScreenSharing=0|1,
 ///                                              requirePairing=0|1). Saved like any change
 ///                                              (requirePairing in the identity store: memory, or
@@ -351,7 +418,7 @@ enum DebugHooks {
     /// TEST ONLY (-SillTestScreenHeight <points>, and -SillSettingsAfter's height=): the Settings
     /// window fits the top <points> of its screen's visible frame (SettingsWindowFit.visible). Nil in
     /// Sill.app itself, and without it.
-    static var testScreenHeight
+    static var 
 ```
 
 ### Core Architecture Module: `iOSClient/MacMenuState.swift`
@@ -606,11 +673,13 @@ let package = Package(
 //       prints one word on stdout: missing (App Store Connect lists no such build yet), PROCESSING,
 //       VALID, FAILED or INVALID. Reads only.
 //   asc whats-new   --key-file F --key-id ID --issuer ID --version 0.6.0 --build 983 --whats-new FILE
-//       waits for the build to be processed, then gives it FILE as What to Test (English, U.S.).
+//       waits for the build to be processed, then gives it FILE as What to Test (English, U.S.),
+//       replacing what it had.
 //   asc distribute  --key-file F --key-id ID --issuer ID --version 0.6.0 --build 983 --whats-new FILE
-//                   [--public-beta [--public-beta-group NAME]]
-//       the same, then the build goes to every internal group, and with --public-beta to the public
-//       beta group too, and to Beta App Review when TestFlight asks for that.
+//                   [--replace-whats-new] [--public-beta [--public-beta-group NAME]]
+//       the same, but FILE only for a build with no What to Test yet (below), then the build goes to
+//       every internal group, and with --public-beta to the public beta group too, and to Beta App
+//       Review when TestFlight asks for that.
 //
 // Options for all four:
 //   --bundle-id ID        the app, by default me.saffer.sill
@@ -637,6 +706,14 @@ let package = Package(
 //   version is reviewed in full; a later build of the same version is submitted the same way and
 //   usually approved within minutes. A build already in review or approved is left as it is.
 //
+// What to Test, in `distribute`: a build that has some already, in any language, keeps it, and FILE
+// is sent only to a build with none (no localization, or only empty ones), unless --replace-whats-new
+// asks for FILE whatever the build has. The nightly asks for that only for a build its own run
+// uploaded; one it finds in App Store Connect already (uploaded by hand with its own text, or by an
+// earlier run of the same night) keeps what it has (2026-11-09: build 1304, uploaded by hand with its
+// What to Test, had it replaced by that night's notes). `whats-new` always replaces: it is how a
+// build's text is set or put back by hand.
+//
 // The token: an ES256 JWT (header alg ES256, kid the Key ID, typ JWT; claims iss the Issuer ID, iat,
 // exp 15 minutes later, aud appstoreconnect-v1; App Store Connect refuses more than 20 minutes) signed
 // with the .p8 key, made again every 10 minutes during a long wait. It goes only into the
@@ -658,7 +735,7 @@ let usageText = """
            asc build-state --key-file F --key-id ID --issuer ID --version V --build N
            asc whats-new   --key-file F --key-id ID --issuer ID --version V --build N --whats-new FILE
            asc distribute  --key-file F --key-id ID --issuer ID --version V --build N --whats-new FILE
-                           [--public-beta [--public-beta-group NAME]]
+                           [--replace-whats-new] [--public-beta [--public-beta-group NAME]]
            [--wait-minutes 90] [--poll-seconds 60] [--retry-seconds 5] [--api-base URL]
     Scripts/asc.swift's header says what each does; docs/release-checklist.md, "Nightlies".
     """
@@ -704,6 +781,7 @@ struct Options {
     var version = ""
     var build = ""
     var whatsNewFile = ""
+    var replaceWhatsNew = false
     var publicBeta = false
     var publicBetaGroup: String?
     var waitMinutes = 90.0
@@ -742,6 +820,11 @@ func parseOptions(_ arguments: [String]) -> Options {
             options.publicBeta = true
             continue
         }
+        if name == "--replace-whats-new" {
+            if value != nil { usageError("--replace-whats-new takes no value") }
+            options.replaceWhatsNew = true
+            continue
+        }
         if name == "-h" || name == "--help" { print(usageText); exit(0) }
         let flags = ["--key-file", "--key-id", "--issuer", "--bundle-id", "--version", "--build", "--whats-new",
                      "--public-beta-group", "--wait-minutes", "--poll-seconds", "--retry-seconds", "--api-base"]
@@ -757,28 +840,7 @@ func parseOptions(_ arguments: [String]) -> Options {
         case "--issuer": options.issuer = text
         case "--bundle-id": options.bundleID = text
         case "--version": options.version = text
-        case "--build": options.build = text
-        case "--whats-new": options.whatsNewFile = text
-        case "--public-beta-group": options.publicBetaGroup = text
-        case "--wait-minutes": options.waitMinutes = number(name, text)
-        case "--poll-seconds": options.pollSeconds = number(name, text)
-        case "--retry-seconds": options.retrySeconds = number(name, text)
-        case "--api-base": options.apiBase = text
-        default: usageError("unknown option '\(clean(argument))'")
-        }
-    }
-    return options
-}
-
-func matches(_ text: String, _ pattern: String) -> Bool {
-    text.range(of: pattern, options: .regularExpression) != nil
-}
-
-/// The default base, or a stand-in on this Mac for tests: the token is never sent anywhere else.
-func allowedBase(_ url: URL) -> Bool {
-    if url.scheme == "https", url.host == "api.appstoreconnect.apple.com", url.port == nil,
-       url.path.isEmpty || url.path == "/" { return true }
-    guard url.scheme == "http" || url.scheme == "https", url.user == nil, url
+       
 ```
 
 ### Core Architecture Module: `Scripts/audio/main.swift`
@@ -1448,183 +1510,22 @@ func took(_ header: StreamHeader, _ payload: Data) {
                 guard let (left, _) = dec.decode(packet) else { t.decodeFai
 ```
 
-### Core Architecture Module: `Scripts/dmg-layout/DMGLayout.swift`
-```
-import Foundation
-
-/// The window a disk image opens in, as .DS_Store records: icon view with no toolbar, sidebar,
-/// path bar or status bar, a background picture the size of its content, and each item's icon at a
-/// point of that picture.
-struct DMGLayout: Equatable {
-    struct Item: Equatable {
-        var name: String
-        var x: Int
-        var y: Int
-    }
-
-    /// The window's content in points: the background picture's size at 1x.
-    var width: Int
-    var height: Int
-    /// The window's top-left corner on the screen.
-    var left: Int
-    var top: Int
-    var iconSize: Int
-    var textSize: Int
-    /// The picture's path on the volume, such as ".background/background.tiff".
-    var background: String
-    /// The view's colour behind the picture, for where the window is larger than it: the picture's
-    /// edge colour. (Finder may show its own fill there instead: white in Light Mode, so a picture
-    /// white to its edges, as Sill's is, looks the same either way.)
-    var backgroundColor: (red: Int, green: Int, blue: Int)
-    /// Where each icon's centre sits, in points from the content's top-left corner.
-    var items: [Item]
-    /// Hidden items (.background, .VolumeIcon.icns), put below the window, out of sight for anyone
-    /// who shows hidden files in Finder; otherwise Finder would place them among the others.
-    var hidden: [String]
-
-    /// Finder's WindowBounds is the whole window, its title bar included, and a window with no
-    /// toolbar has only that bar above its content: 32 points on macOS 27 (AppKit's
-    /// NSWindow.frameRect(forContentRect:styleMask:) for a titled window, on a Mac whose Finder is
-    /// built with the same SDK), 28 on macOS 11 to 15 (not measured here). The window is sized for
-    /// the taller bar: on macOS 27 its content is exactly the picture, and under a 28-point bar it
-    /// is 4 points taller, a strip below the picture that shows white, as every edge of the picture
-    /// is (make-dmg.sh's backgroundColor, and Finder's own fill in Light Mode). Sized for 28, the
-    /// window would hide the picture's bottom 4 points on macOS 27; sized to the picture alone, as
-    /// some images are (a Finder-made one of 2023: 512 x 400 for a 512 x 400 picture), 32.
-    static let titleBar = 32
-
-    static func == (a: DMGLayout, b: DMGLayout) -> Bool {
-        a.width == b.width && a.height == b.height && a.left == b.left && a.top == b.top
-            && a.iconSize == b.iconSize && a.textSize == b.textSize && a.background == b.background
-            && a.backgroundColor == b.backgroundColor && a.items == b.items && a.hidden == b.hidden
-    }
-
-    var windowBounds: String { "{{\(left), \(top)}, {\(width), \(height + Self.titleBar)}}" }
-
-    /// Browser window settings: the window's place and size, and no bars.
-    var browserWindowSettings: [String: Any] {
-        [
-            "ContainerShowSidebar": false,
-            "PreviewPaneVisibility": false,
-            "ShowPathbar": false,
-            "ShowSidebar": false,
-            "ShowStatusBar": false,
-            "ShowTabView": false,
-            "ShowToolbar": false,
-            "SidebarWidth": 0,
-            "WindowBounds": windowBounds,
-        ]
-    }
-
-    /// Icon view options: the picture (type 2) through its alias, icon and text size, no grid
-    /// arrangement, names below the icons.
-    func iconViewSettings(backgroundAlias: Data) -> [String: Any] {
-        [
-            "arrangeBy": "none",
-            "backgroundColorBlue": Double(backgroundColor.blue) / 255,
-            "backgroundColorGreen": Double(backgroundColor.green) / 255,
-            "backgroundColorRed": Double(backgroundColor.red) / 255,
-            "backgroundImageAlias": backgroundAlias,
-            "backgroundType": 2,
-            "gridOffsetX": 0.0,
-            "gridOffsetY": 0.0,
-            "gridSpacing": 100.0,
-            "iconSize": Double(iconSize),
-            "labelOnBottom": true,
-            "showIconPreview": true,
-            "showItemInfo": false,
-            "textSize": Double(textSize),
-            "viewOptionsVersion": 1,
-        ]
-    }
-
-    /// An icon's place: its centre, then the four bytes ff ff ff ff and ff ff 00 00 Finder writes.
-    static func location(x: Int, y: Int) -> Data {
-        var data = Data()
-        data.appendWord(UInt32(x))
-        data.appendWord(UInt32(y))
-        data.append(contentsOf: [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0, 0])
-        return data
-    }
-
-    /// Where the hidden items go: a row below the window's content.
-    func hiddenLocation(_ index: Int) -> (x: Int, y: Int) {
-        (x: iconSize + index * (iconSize + 60), y: height + iconSize * 2)
-    }
-
-    /// The .DS_Store records for this window, the background named by `backgroundAlias`.
-    func records(backgroundAlias: Data) throws -> [DSRecord] {
-        func plist(_ value: [String: Any]) throws -> Data {
-            try PropertyListSerialization.data(fromPropertyList: value, format: .binary, options: 0)
-        }
-        var records = [
-            DSRecord(name: ".", code: "bwsp", value: .blob(try plist(browserWindowSettings))),
-            DSRecord(name: ".", code: "icvp", value: .blob(try plist(iconViewSettings(backgroundAlias: backgroundAlias)))),
-            DSRecord(name: ".", code: "vSrn", value: .long(1)),
-            DSRecord(name: ".", code: "vstl", value: .type("icnv")),   // icon view, whatever the Mac's default view
-        ]
-        for item in items {
-            records.append(DSRecord(name: item.name, code: "Iloc", value: .blob(Self.location(x: item.x, y: item.y))))
-        }
-        for (index, name) in hidden.enumerated() {
-            let place = hiddenLocation(index)
-            records.append(DSRecord(name: name, code: "Iloc", value: .blob(Self.location(x: place.x, y: place.y))))
-        }
-        return records.sorted(by: DSStore.precedes)
-    }
-
-    /// The whole .DS_Store for the volume mounted at `volume`, whose background file must be there.
-    func dsStore(onVolumeAt volume: String, timeZone: TimeZone = .current) throws -> Data {
-        let alias = try FinderAlias.forFile(background, onVolumeAt: volume)
-        return try DSStore.encode(try records(backgroundAlias: try alias.encoded(timeZone: timeZone)))
-    }
-}
-
-/// The volume's own icon: .VolumeIcon.icns at its root, shown only while the root folder's Finder
-/// info has the custom-icon flag (kHasCustomIcon, 0x0400, the 2-byte Finder flags at offset 8 of
-/// the 32-byte com.apple.FinderInfo). SetFile -a C sets it; SetFile ships with Xcode's command line
-/// tools only, so this sets the attribute itself, keeping the other 30 bytes.
-enum VolumeIcon {
-    static let attribute = "com.apple.FinderInfo"
-    static let hasCustomIcon: UInt16 = 0x0400
-
-    static func finderInfo(_ path: String) -> [UInt8] {
-        var bytes = [UInt8](repeating: 0, count: 32)
-        let read = getxattr(path, attribute, &bytes, 32, 0, XATTR_NOFOLLOW)
-        return read == 32 ? bytes : [UInt8](repeating: 0, count: 32)
-    }
-
-    static func flags(_ path: String) -> UInt16 {
-        let info = finderInfo(path)
-        return UInt16(info[8]) << 8 | UInt16(info[9])
-    }
-
-    static func setCustomIcon(_ path: String) throws {
-        var info = finderInfo(path)
-        let flags = (UInt16(info[8]) << 8 | UInt16(info[9])) | hasCustomIcon
-        info[8] = UInt8(flags >> 8)
-        info[9] = UInt8(flags & 0xff)
-        guard setxattr(path, attribute, info, 32, 0, XATTR_NOFOLLOW) == 0 else {
-            throw DSStoreError("can't set \(path)'s custom-icon flag: \(String(cString: strerror(errno)))")
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #215** (2026-11-09): **Keyboard covers keyboard button on iPhone Duo "laptop mode"**
+  *Symptoms*: ### What happened  Keyboard covers keyboard button on iPhone Duo "laptop mode" Meaning you can't dismiss the keyboard after you have summoned it.  <img width="1004" height="1427" alt="Image" src="https://github.com/user-attachments/assets/d013cc01-409b-4eca-ad63-8954b5e16114" />  ### How to make it happen again  Put duo in laptop mode Summon keyboard with toggle button  ### Your Mac and its macOS  MacBook Pro M1 Max, macOS 27  ### Sill for Mac's version  0.5.1 (563)  ### Your iPhone or iPad and its iOS or iPadOS  iPhone Duo iOS 27.2  ### The Sill app's version  0.5.1  ### How the device reached the Mac  Wi-Fi  ### Sill's log on your Mac  ```text  ```
+  **Post-Mortem & Fix Analysis**:
+  > Opened #220 to fix this: in laptop mode on the iPhone Duo, the window bar now shows a **Keyboard** button alongside **Apps**, **Aa**, **Desktop**, and **Settings**, and drops its 12 pt top padding while the software keyboard is up so the buttons stay above the keyboard.
+  > @matt-cahill  This is a bad one. I will see about pushing a new build in the next day or two to resolve this bug. Really sorry about this. Thank you for reporting and bearing with me. Maybe at some point I had the hardware in hand to test!
+
 - **Issue #162** (2026-10-30): **Option/CMD + left/right arrows sends the keys just once**
   *Symptoms*: ### What happened  holding down combos like this should send the combo repeatedly. doesnt happen for non-combo keystrokes.  ### How to make it happen again  _No response_  ### Your Mac and its macOS  macbook pro m4 27.2 beta 3  ### Sill for Mac's version  latest as of filing  ### Your iPhone or iPad and its iOS or iPadOS  ipad m4 pro  ### The Sill app's version  _No response_  ### How the device reached the Mac  Wi-Fi  ### Sill's log on your Mac  ```text  ```
   **Post-Mortem & Fix Analysis**:
   > Opened #163 so held keys and `Option`/`Command` + arrow key chords repeat properly on iPad.
-
-- **Issue #138** (2026-10-27): **Chinese input (Zhuyin keyboard) and dictation (any language) can't be used to type on the Mac**
-  *Symptoms*: ### What happened  Through Sill on my iPad, I can't type Chinese on my Mac, and I can't use dictation at all:  1. Zhuyin (Bopomofo) keyboard: nothing reaches the Mac — not the chosen characters, and not even the Bopomofo symbols (ㄅㄆㄇ) as I type them. 2. Dictation, in any language: dictated text doesn't reach the Mac, whether I dictate in Chinese or in English.  English typing works normally, including while the Mac's input source is Zhuyin. So the keyboard path itself works, and only composed input (an input method's candidates, dictation) is lost.  Expected: Chinese composed on the iPad (through the keyboard's candidates or through dictation) arrives in the focused Mac window, the same way English text does.  Workaround: type in another iPad app, copy, then use Sill's Paste and press ⌘V. This works but is slow.   Possible cause (from reading the source at 5c323e6; not verified with a debugger)  InputOverlayView adopts only UIKeyInput (iOSClient/InputOverlay.swift:16), not UITextInput. CJK input methods compose through marked text (setMarkedText / unmarkText) and commit the chosen candidate, and dictation inserts its result through the same UITextInput machinery. With UIKeyInput alone, iPadOS never commits anything to insertText(_:), so nothing is sent to the Mac. docs/hardware-keyboard-plan.md (item 11) already lists input methods as untested.  A possible fix: adopt UITextInput with marked-text support, keep the composition on the device, and send only the committed text as 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1641,361 +1542,135 @@ enum VolumeIcon {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `241aa1a2` (2026-10-31)
-**Commit Message**: The plan, CLAUDE.md and the guides: a locked Mac after the review, its results and Noah's steps
+### Incident Patch 1: `1b04b5f7` (2026-11-12)
+**Commit Message**: Full screen's plan and step file: the live loopback gate's result
 
-The review's findings 5 and 11, and the record of the rest. docs/locked-mac-plan.md: Noah's test of
-2026-10-31 read again (it ran main's Sill.app 0.5.5 (1232), not this branch; the blocked-main-actor
-diagnosis was wrong; the second login screen is macOS's own lock), the rule as built (three readings, the
-witnesses, the settle, the gate, what each reading allows, the requests, the stream, the device), the review
-and what was done for each finding, the open questions with the default taken for each, the results (what a
-test host proved, what was only read) and Noah's steps. CLAUDE.md: the entry, the Layout, Build and run, the
-harness's -SillMacLocked, and the compatibility floor's line (the fields; a device that knows them says why;
-a locked host sends no picture of the Mac, a placeholder frame at most). docs/DEVELOPMENT.md's "A locked
-Mac" and its test hooks; Tests/checks/README.md's row and the check's header.
+Run at 67039ddd once Noah's devices were off Sill.app: five cases (an iPhone upright, an iPad mini on its side, the
+Desktop on screen 2, Shake to Show Controls off, a swipe in taken back), one viewport per change, none for the
+swipe in taken back, every scripted input at the host, the Desktop kept on screen 2.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CLAUDE.md` (modified, +134/-84)
+**File**: `docs/full-screen-plan.md` (modified, +27/-7)
 ```diff
-@@ -8,63 +8,81 @@ Formerly winstream; the folder still carries the old name.
+@@ -364,13 +364,33 @@ after it.
+     its way out on an iPhone on its side, about 16 % in, with nothing drawn under it; the photos' timing is too loose
+     to catch more frames, so the static previews above are the evidence for every stage.
+ - **G6:** `Tests/checks/repo-rules`, every rule holds.
+-- **G4, live on loopback: not run.** Noah was testing on his devices: a device was streaming from Sill.app at 16:30
+-  and at 16:56, and the gate keeps the rule (`Scripts/encoder-check/no-device.sh`: nothing that could share the
+-  Mac's encoder while a device is connected), though its host uses the software encoder. The first build's run of
+-  it (below) covered the same paths a hide and a show take (the viewport one per change, input around each change,
+-  the Desktop kept on screen 2); what is new since is the swipe in's own recognizer, which the touch rig drove with
+-  real synthesized touches in both orientations, and Shake to Show Controls, whose off case the gate adds
+-  (`phone-up-shake-off`).
++- **G4, live on loopback**, at 67039ddd from 18:12 to 18:17, once Noah had disconnected his devices (a device was on
++  Sill.app at 16:30 and 16:56, so it waited; `Scripts/encoder-check/no-device.sh` said "OK: no device connected"
++  before every case): `SillHost --synthetic` (loopback only, the software encoder, no router, no screen, the
++  dry-run input log) and the app's Debug build under `-SillLive 1` on the agents' iPad simulator, an input script
++  tapping, pressing keys and typing every 0.1 s for a second around each change. Five cases, every one as it should:
++  - An iPhone 15 Pro's size upright: hidden at 4 s, back at 7, hidden at 10, back by a shake at 13 (Shake to Show
++    Controls on), hidden at 16, back by a played swipe in at 18.8: the viewport 377×235 twice as it connected, then
++    393×793 and 377×235, one per change, six; every input at the host (39 taps, each down and up; 24 keys and 12
++    letters).
++  - An iPad mini on its side, the same: 1117×618 as it connected, then 1133×744 and 1117×618, one per change; every
++    input at the host.
++  - The Desktop on the Mac's second screen (two test screens): the device's own Desktop button ("Desktop 1") stepped
++    the host to display 2, then hidden, back, hidden, back by a shake: one viewport each, and the host's only stream
++    start after the step was display 2's; the 12 taps arrived.
++  - Shake to Show Controls off: hidden at 4, a shake at 7 left the controls hidden ("full screen: a shake, and Shake
++    to Show Controls is off: the controls stay hidden"), a played swipe in at 10 brought them back: one viewport per
++    change; the 12 taps arrived.
++  - A swipe in taken back: hidden at 4, a played swipe in taken back at 7 ("reveal: lifted after 619 pt at -1500
++    pt/s …: springs back"): the controls stayed hidden, no viewport and nothing sent for it; back by a shake at 10,
++    hidden at 13, back by a played swipe in at 16: one viewport per change, four; every input at the host (39 taps,
++    24 keys and letters). In every case the one `pointer: this device has it (a pointer move)` line is the session's
++    first tap, at 3.5 s; none follows a swipe in, finished or taken back.
++  - Against round one: the same viewports and the same input, change for change. Once, in the taken-back case, the
++    connect sent its 377×235 a third time, before anything of full screen happened. Played, not swiped: the swipe in
++    reaches the stream screen as the recognizer's moves and lift (`revealMoved`), which the touch rig drove with real
++    synthesized touches; the hide is the harness's, the same `hideChrome` that Settings › Full Screen calls once its
++    panel has closed.
  
- ## Current step
+ ### The first build (the flick; superseded)
  
--**A locked Mac shows its lock screen (2026-10-31, branch `locked-mac` from main at e4d30349; Noah's finding of
--2026-10-31, a security fix: no public issue; the rule, the open questions with the default taken for each, the
--results and Noah's steps are in `docs/locked-mac-plan.md`).** Sill read the console's lock (SessionLock) only for
--the pairing ask and the cable's pairing: with the screen locked, or another user selected at the login screen
--while Noah's session ran in the background, a paired device (and at a door that lets any device in, an unpaired
--one) could still pick a window and see it (window capture ignores what covers it, and the virtual display's app
--filter leaves the lock screen out), see every thumbnail, launch apps (Noah saw it), use the Mac's menus, gestures,
--sound and clipboard, and any session typed into the password field. Now as Screen Sharing: the lock screen and
--nothing else, and only a paired device types. Host, wire (additive) and device.
--- The rule (`LockPolicy`, pure, Sources/SillHost/LockPolicy.swift; `Tests/checks/lock-policy`): while locked a
--  window picked, an app launched, kind 15, kinds 27 with an id and 25 ("The Mac is locked."), kind 28 and a
--  device's clipboard text are refused; input lands from a paired session (`sessionPaired`, PR #253's), from any
--  other only the up of a key or a button it holds down (`letGo`, where the pointer is); the menus' and the
--  clipboard's subscriptions, settings, the viewport, a keyframe and Pair This iPad… as ever. Shown: the Desktop
--  alone (the lock screen, or the login window); the list with no windows, no `clipboard` and `locked`; no
--  thumbnail, icon or installed app; the menus with no app; no sound; the pasteboard neither read nor written.
--  One line at each change ("Locked: this Mac's screen is locked; devices see the lock screen until it is
--  unlocked." / "Unlocked: …") and one a minute at most per refused kind (RefusalSummary); Stats `lock.refused`
--  and `in.locked`. Unlocked: nothing changes, nothing prints.
--- Host (StreamCoordinator's `readLock`, `lockChanged`, `enforceLock`, `afterUnlock`, `lockedMidSwitch`,
--  `lockDecision`): the lock read once a second while a device is connected, as a device connects (before its
--  catalog), before each request the lock may refuse and at each select, and in Sill.app at once on
--  `com.apple.screenIsLocked`/`Unlocked` and NSWorkspace's session switches (`SessionLock.onChange`). At the lock
--  a window that streams goes home (the stage's way, WindowRestore's) and the Desktop streams, the window
--  remembered (`LockPolicy.State`); while locked `select` turns any window into the Desktop (a restart, a launched
--  app's first window, a pick queued before the lock), and a switch to a window that finds the Mac locked before
--  its pipeline starts streams none of it; at the unlock the catalog is looked at afresh, the withheld icons and
--  apps go out (all of them to a device that connected while locked; WindowCatalog.takeWithheld), every
--  thumbnail is taken again, and the window comes back as a restart (nothing comes forward) if still listed, the
--  Desktop still streams and a device is connected; a pick made after the unlock, or the last device leaving,
--  forgets it. WindowCatalog.locked (no thumbnail, icon or apps sent), HostClipboard.setLocked (no look, no
--  write, subscriptions kept, what was copied meanwhile never sent), MenuMirror.refuse, the held key's repeat
--  stopped, held input and queued gestures judged by the lock too; a refused message wakes no display.
--- Wire: `WindowList.locked` (Switcher.swift; true while locked, left out otherwise: an unlocked list is byte for
--  byte what it was), and StreamProtocol's `LockedMac.line` for the device. The compatibility floor has its line.
--- Device: `StreamClient.macLocked`; the Apps drawer shows "‹Mac› is locked. Unlock it to see its windows." in place
--  of its search field and lists, the Settings panel's header under its readout, each read by VoiceOver; nothing
--  else changes (no `clipboard`: no Paste; an empty top level: no Menus button). DEBUG `-SillMacLocked 1` (the mock).
--- TEST ONLY: `SILL_TEST_LOCKED_FILE=<path>` (locked while the file holds 1, read at each reading; a test host
--  only, TestHooks lists it; "Test lock: …" at start); `SILL_TEST_LOCKED=1` as before. sillclient: `locked=1` on the
--  list's line, `--raw7` (a launch, only for a bundle under `me.saffer.sill.test.`) and `--raw15`.
--- Verified (the plan's Results): `lock-policy` 141 checks and 57 of 57 mutants (13 scenarios and 5,000 random
--  sessions of the glue; the model found the switch under way at the lock, fixed by `lockedMidSwitch` before the
--  first host commit); `run-all.sh`, all 63; `swift build -c release` from `git archive`, only the CaptureProbe
--  warning; the iOS app Debug and Release for the simulator and Debug for a device, only the known `
 ```
 
-**File**: `Tests/checks/README.md` (modified, +1/-1)
+**File**: `docs/steps/2026-11-12-full-screen.md` (modified, +5/-1)
 ```diff
-@@ -106,7 +106,7 @@ exit status is the number of checks that failed. Binaries, data and logs go to
- | `keyframe-recovery` | `iOSClient/KeyframeRecovery.swift` alone (`swiftc`) | when the device asks the Mac for a keyframe (kind 44) after its picture was interrupted (issue #101): one ask per interruption while its keyframe is due, asked again when none came within its wait (4 s, or four round trips), so a Mac that never answers is asked after 4, 8 and 16 s, then every 32 s; a keyframe the layer's flush threw away as the picture back and lost again; a trip to the background owing the ask again and starting the spacing at 2 s, keyframes shown while away never repeats; only while Sill is active and something streams; 2 s apart at least, an ask held back going at the time it is due (not a rounding later); a picture that fails again within 10 s of its keyframe waiting 4, 8, 16, then 32 s; a keyframe with nothing open and a clock gone back; then 20,000 random sessions against a model of the event history (never stuck while open, active and streaming) | 95 and 20,000 sessions | 39 |
- | `ledger` | `iOSClient/HostSettingsLedger.swift`, `Sources/StreamProtocol/HostSettings.swift` | the device's settings ledger against a model host, scenarios and 5,000 random runs (some against a host without sound: Send Audio never sent there; some against a host from the sound's beta, which refuses a device's Send Audio: the switch goes back; some against a host from before 2026-10-29, which takes Direct Wireless from any session). Rule 10 (2026-10-29): Direct Wireless never sent on a session the Mac says is not paired (`sessionPaired` false), on or off, the rest of a pick still sent; sent as before to a Mac that does not say; each connection's own state, devices paired during their session and removed, and a test client's pick refused and answered with the Mac's value | 116 | 16 |
- | `link-judge` | `Sources/SillHost/LinkJudge.swift` with StreamProtocol's `HostSettings.swift` (`build.sh`) | each device's link as the host judges it once a second: a short second, behind at 3 short of 5 and fine after 5 clean, stalled after 3 s with bytes waiting, none taken and nothing heard, a restart's reset and which restarts judge afresh (another bitrate, rate or resolution, or no stream; never one that keeps the quality), the carried rate (a mean of the measured seconds) and when it is reported again, the suggestion at 60 and 120 fps, the host's lines; a model against 20,000 random runs | 82 | 26 |
--| `lock-policy` | `Sources/SillHost/LockPolicy.swift` with `Sources/StreamProtocol` (`module.txt`) | a locked Mac (docs/locked-mac-plan.md, Noah's finding of 2026-10-31): every request locked and unlocked, paired and not (a window picked, an app launched, a window's buttons, a menu, a gesture, a clipboard text refused; an unpaired session's input only as the up of what it holds down); the window list (no windows, no clipboard, `locked`) and its JSON both ways, an older reader's; what else is shown; the TEST ONLY file's words; the State's readings, select gate and the window that comes back at the unlock; the lines; the device's line (StreamProtocol's `LockedMac`); a copy of the coordinator's glue through 13 directed scenarios and 5,000 random sessions (no window starts streaming while locked, none streams once settled locked, the remembered window comes back) | 141 | 57 |
-+| `lock-policy` | `Sources/SillHost/LockPolicy.swift` with `Sources/StreamProtocol` (`module.txt`; AppKit for NSWorkspace's names) | a locked Mac (docs/locked-mac-plan.md, Noah's finding of 2026-10-31): the three readings and every combination of the witnesses (unknown counts as locked), what each notification sets (and AppKit's own names), the settle (an unlock only after 2 s and a session read since; the flap of a return to the console), 4,000 random witness sequences, when SessionLock reads, what each reading allows, what the server's gate withholds by kind and picture, each request at each reading paired and not (judged at the more restrictive of its arrival and now), the list (`locked`, `offConsole`) and its JSON both ways, the placeholder's size, reconciling coalesced changes, the window that comes back, the TEST ONLY hooks' words, the lines, LockGate, the device's words and cover (StreamProtocol's `LockedMac`, 2,000 random sessions of lists and frames), and a copy of the coordinator's glue through 15 directed scenarios and 5,000 random sessions (no window or display starts while the gate reads locked, a locked Mac settles on the placeholder, the remembered window comes back) | 531 | 137 |
- | `menu-state` | `iOSClient/MacMenuState.swift` with `Sources/StreamProtocol` (`build.sh`) | the device's view of the Mac's menus (docs/menu-bar-plan.md §7.2): the top level, fetches joined, answered, refused, timed out, a new tree and a move's hand-over, choices and their refusals, stale menus, a bar menu built from an older top level keeping its id only while the menu there has its title (
-```
-
-**File**: `Tests/checks/lock-policy/run.sh` (modified, +7/-4)
-```diff
-@@ -1,8 +1,11 @@
- #!/bin/bash
--# LockPolicy (Sources/SillHost/LockPolicy.swift; docs/locked-mac-plan.md): what a locked Mac shows and what
--# a device may do at it. Each request locked and unlocked, paired and not; the window list (no windows, no
--# clipboard, `locked`) and its JSON both ways; what else is shown; the TEST ONLY file's words; the State's
--# readings, the select gate, the window that comes back at the unlock; the lines; the device's line
-+# LockPolicy (Sources/SillHost/LockPolicy.swift; docs/locked-mac-plan.md): a locked Mac. The three readings
-+# and every combination of the witnesses (unknown counts as locked); what each notification sets; the settle
-+# before an unlock (the flap of a return to the console; random witness sequences); when SessionLock reads;
-+# what each reading allows; what the server's gate withholds by kind and picture; each request at each
-+# reading, paired and not, judged at the more restrictive of its arrival and now; the window list
-+# (`locked`, `offConsole`) and its JSON both ways; the placeholder's size; `reconciles`; the window that comes
-+# back (`Restore`); the TEST ONLY hooks' words; the lines; LockGate; the device's words and cover
- # (StreamProtocol's LockedMac); and a copy of the coordinator's glue run through directed and random
- # sessions against the rule's invariants.
- # Compiled with the files in module.txt as one module (../module.py drops their `import StreamProtocol`).
-```
-
-**File**: `docs/DEVELOPMENT.md` (modified, +57/-25)
-```diff
-@@ -1239,33 +1239,65 @@ picture.
- 
- ## A locked Mac
- 
--While the Mac's screen is locked, or another user is selected at the login
--screen while your session runs in the background, a device sees the lock screen
--and nothing else, as with Screen Sharing (docs/locked-mac-plan.md): the Desktop
--alone streams, and it shows the lock screen or the login window; the window
--list is empty (the Apps drawer and the Settings panel's header say "Mac mini is
--locked. Unlock it to see its windows."), no thumbnail is taken, no icon or
--installed app is sent, a window picked, an app launched, a window's traffic
--lights, the Mac's menus and trackpad gestures are refused, the clipboard waits
--(nothing read or written, no Paste offered), and no sound is captured. Only a
--paired device types at a locked Mac, so you can type its password from the
--iPad or iPhone; a device at a door that lets any device in (Require pairing
--off, or the command-line host's plain door) types nothing then. A window that
--streamed when the lock began goes home and comes back once the Mac is unlocked,
--unless something else was picked meanwhile. Sill.log says "Locked: …" and
-+While the Mac's screen is locked, or it is switched to another user (or to the
-+login window) while your session runs in the background, a device sees none of
-+it (docs/locked-mac-plan.md). The host streams a placeholder, a black still with
-+no capture at all, in place of the window or the Desktop; the window list is
-+empty and says `locked` (and `offConsole` while another user is on the
-+console); no thumbnail is taken, no icon, installed app, sound, clipboard,
-+pointer or cursor shape goes out; a window picked, an app launched, a window's
-+traffic lights, the Mac's menus and trackpad gestures are refused; no virtual
-+display is made, and the display is not woken from a switched-out session. The
-+device covers its picture: "Mac mini is locked" (a paired iPad or iPhone is told
-+it can type the Mac's password there) or "Mac mini is switched to another user",
-+and the Apps drawer and the Settings panel's header say the same in one line.
-+Only a paired device's keys and taps reach a locked screen; while the Mac is
-+switched to another user nothing does, but the up of a key or a button held
-+down. A window that streamed when the lock began goes home and comes back once
-+the Mac is unlocked, unless something else was picked meanwhile; the unlock
-+counts only after every witness has said so for 2 s (macOS locks itself again a
-+second after each return to the console). Sill.log says "Locked: …" and
- "Unlocked: …", and at most one line a minute for each kind of request it
--refused. The CLI reads the lock once a second while a device is connected;
--Sill.app also hears it at once.
--
--Testing it headless: `SILL_TEST_LOCKED=1` makes a test host (`--synthetic`, as
--the pairing hooks) locked for the run, and `SILL_TEST_LOCKED_FILE=<path>`
--locked while that file holds `1`, read every second, so `echo 1 > $F` and
--`echo 0 > $F` lock and unlock a running host. Sill.app ignores both, with a
--line. `sillclient.py`'s window list line ends in `locked=1` while the host says
--it is locked; `--raw7` (an app launch, for a bundle under
-+refused.
-+
-+The host reads the lock on a queue of its own, never on the main actor: the
-+console's user (the dynamic store), the screen's lock state (notify(3)'s
-+`com.apple.sessionagent.screenIsLocked`), both watched, and the session
-+dictionary, bounded, read at start and to confirm an unlock; Sill.app also hears loginwindow's and
-+NSWorkspace's notifications, delivered at once whether it is active or not. The
-+server drops everything of the Mac the moment the reading says locked, whatever
-+the main actor is doing. Anything it cannot read counts as locked.
-+
-+Testing it headless (test hosts only: `--synthetic`, as the pairing hooks;
-+Sill.app ignores each with a line):
-+
-+- `SILL_TEST_LOCKED=1`: the screen locked for the run.
-+- `SILL_TEST_LOCKED_FILE=<path>`: read at each look, once a second while a
-+  device is connected: `1` the screen locked, `2` switched to another user,
-+  anything else nothing. `echo 1 > $F`, `echo 2 > $F`, `echo 0 > $F` lock,
-+  switch and unlock a running host.
-+- `SILL_TEST_LOCK_NOTIFY=<name>`: the screen's lock state from a notify name of
-+  your own, under `me.saffer.sill.test.`; set it with `notify_set_state` and
-+  `notify_post` (Python's ctypes has both) for the immediate path the CLI has.
-+- `SILL_TEST_LOCK_NOTE='<s> <name>[; <s> <name>]'`: a notification delivered
-+  to the host's handler s seconds after it starts (`screenIsLocked`,
-+  `screenIsUnlocked`, `sessionDidMoveOffConsole`, `sessionDidMoveOnConsole`,
-+  `sessionDidResignActive`, `sessionDidBecomeActive`, or their full names), as
-+  it would be: nothing is posted, so no other app hears it.
-+- `SILL_TEST_LOCK_LOG=1`: each look's witnesses and reading.
-+
-+`sillclient.py`'s window list line ends in `locked=1` (and `offConsole=1`)
-+while the host says so; `--dump=DIR` saves what ar
-```
-
-**File**: `docs/locked-mac-plan.md` (modified, +344/-226)
-```diff
-@@ -1,253 +1,371 @@
--# A locked Mac shows its lock screen: the plan
-+# A locked Mac shows nothing of itself: the plan
- 
- Branch `locked-mac` from main at e4d30349. Noah's finding of 2026-10-31, a security fix: no public
--issue.
-+issue. Noah's rule, the same morning: "When the user is locked, it should only show the lock screen, no
-+virtual desktop, no desktop, no apps, nothing other than the login screen." And: "make sure this fixes
-+it for good!"
- 
- ## The finding
- 
--Sill.app asks whether this Mac's console is unlocked (`Sources/SillHost/SessionLock.swift`:
--`CGSessionCopyCurrentDictionary`'s `kCGSSessionOnConsoleKey` and `CGSSessionScreenIsLocked`, and in
--Sill.app the `com.apple.screenIsLocked` and `com.apple.screenIsUnlocked` notifications; TEST ONLY
--`SILL_TEST_LOCKED=1` on a test host) for two things only: the pairing ask rule (`DoorPolicy.ask`'s
--step 1) and the cable's automatic pairing. Everything else ignores the lock. With the screen locked,
--or with another user selected at the login screen while Noah's session runs in the background, a
--paired device (and, at a door that lets any device in, an unpaired one) can still:
-+Sill asked whether this Mac's console was unlocked (`SessionLock`) for two things only: the pairing
-+ask rule (`DoorPolicy.ask`'s step 1) and the cable's automatic pairing. Everything else ignored the
-+lock. With the screen locked, or with another user selected at the login screen while Noah's session
-+ran in the background, a paired device (and, at a door that lets any device in, an unpaired one) could
-+still:
- 
- - pick a window and see its content: window capture (`SCContentFilter(desktopIndependentWindow:)`)
-   draws the window whatever covers it, and the virtual display's app filter
--  (`SCContentFilter(display:including:)`) leaves the lock screen, which is on the main display, out;
--- see every window's thumbnail (the catalog's poll takes them every 2 to 6 s while a device is
--  connected), the icons of the running apps and the installed apps;
--- launch apps from the Apps drawer (Noah saw these, with another user selected at the login screen),
--  press a window's traffic lights, read the streamed app's menus and choose items in them (Open
--  Recent lists file names), post trackpad gestures, and read and write the clipboard;
--- hear the Mac's sound;
--- type, an unpaired device too, which at a locked Mac types into its password field.
--
--Expected: what Screen Sharing does. A locked Mac shows its lock screen and nothing else until it is
--unlocked, and only its owner types at it: here, a paired device.
-+  (`SCContentFilter(display:including:)`) leaves the lock screen out;
-+- stream the Desktop, which off console is this session's own desktop, not the login window (main's
-+  build streamed it on 2026-10-30 and 31, below);
-+- see every window's thumbnail, the running apps' icons and the installed apps;
-+- launch apps (Noah saw it, another user selected at the login screen), press a window's traffic
-+  lights, read and choose the streamed app's menus, post trackpad gestures, read and write the
-+  clipboard, hear the Mac's sound, see the Mac's pointer and cursor shape;
-+- type and click: off console into another session's world, at a locked screen into its password
-+  field, an unpaired device too;
-+- wake the console's display (DisplayWake's activity), and make a virtual display that joins the
-+  console's display set.
-+
-+### Noah's test of 2026-10-31, read again
-+
-+The Sill.app that ran through Noah's fast user switch (04:25:36 to 04:26:57 local) was main's, 0.5.5
-+(1232), running since 2026-10-30 01:47 (1232 is `git rev-list --count e4d30349`). This branch's first
-+build, 1245 (b1404215), started at 04:27:23, 26 s after his unlock, and has seen no lock or switch since
-+(loginwindow's notifications, checked to 05:11). So what he saw ("I could see a desktop when I switched
-+users", "could still launch apps") was main's behaviour, and the missing "Locked:" lines say nothing of
-+this branch: it was not running. The diagnosis given the review that morning, a main actor blocked in
-+WindowServer calls, was wrong: build 1232's main actor printed all through the switched-out minutes
-+(the catalog, "Desktop: display 147 → 151", "Selecting window 12882 Calculator", the virtual display's
-+fallback, clicks, "Window 12882 close: done", "Capture started"). No main-actor heartbeat gate was
-+built. The second login screen Noah saw is macOS's own: this Mac locks itself 1 to 1.6 s after every
-+return to the console (loginwindow: sessionDidMoveOnConsole, then screenIsLocked; also on 2026-10-28
-+and 29 with no device connected), and Sill posted no input then. **Noah's next test is the first one of
-+this fix.**
-+
-+What build 1232 showed off console, from its log and the system's: ScreenCaptureKit's display and
-+window captures deliver frames (40, 41, 20, 18 and 52 complete frames a second of this session's own
-+display, while the login window drew the same panel as display 0x9a); CGVirtualDisplay neve
+@@ -44,5 +44,9 @@ no wire change, nothing on the Mac, nothing stored but how often the hint has sh
+   but the Settings panel (and the thumbnail strip's fade on an upright iPad mini, which differs between two builds
+   of main itself), the Settings panel after the merge with main's Quality row and these rows after Frame Rate, and
+   32 previews in every layout and Duo pose, the controls on their own black and nothing of the picture's place.
+-- **Not run:** the live loopback gate (a device was on Sill.app both times; the rule holds it).
++- Live on loopback at 67039ddd once Noah's devices were off Sill.app (18:12): five cases (an iPhone upright, an iPad
++  mini on its side, the Desktop on screen 2, Shake to Show Controls off, a swipe in taken back), one viewport per
++  change in each, none for the swipe in taken back, every scripted tap, key and letter at the host, the Desktop kept
++  on screen 2, a shake with the switch off leaving the controls hidden; the same as round one's run but for one
++  extra identical viewport at one connect.
+ - **Untested, for Noah:** the plan's "Noah's test" on the iPad mini and the iPhone 15 Pro.
 ```
 
 ---
 
-### Incident Patch 2: `148ea9c5` (2026-10-31)
-**Commit Message**: The icons and the apps that raced the lock go out at the unlock
-
-Found re-reading the gate: the coordinator reads the gate, then sends a device's icons and the installed
-apps (its catalog at connect, a new app's icon), and the network queue reads the gate again as it sends.
-A lock between the two dropped them there while the coordinator counted them sent, so after the unlock
-that device had no icons until it reconnected. StreamServer now reports an icon or the app list it
-withheld (`onCatalogWithheld`: the connection, or every one for a broadcast), and the unlock sends that
-device every icon and the apps (`sendWithheldAppsAndIcons`). Nothing more of the Mac goes out: only
-what the unlock would send anyway, after it.
+### Incident Patch 2: `1442d8ac` (2026-11-12)
+**Commit Message**: CLAUDE.md Layout: the edge recognizers' watchers and held landing, the rig's trace
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Sources/SillHost/StreamCoordinator.swift` (modified, +8/-0)
+**File**: `CLAUDE.md` (modified, +6/-3)
 ```diff
-@@ -451,6 +451,14 @@ package final class StreamCoordinator {
-         // first reading the gate reads off console.
-         let gate = lockGate
-         server.lockGate = gate
-+        // An icon or the apps that raced the lock (the gate withheld them on the network queue after this
-+        // side had sent them): the device they were for gets every icon and the apps at the unlock.
-+        server.onCatalogWithheld = { [weak self] id in
-+            Task { @MainActor in
-+                guard let self else { return }
-+                if let id { self.appsAndIconsSent.remove(id) } else { self.appsAndIconsSent.removeAll() }
-+            }
-+        }
-         catalog.isLocked = { gate.locked }
-         clipboard.isLocked = { gate.locked }
-         menus.isLocked = { gate.locked }
+@@ -794,8 +794,9 @@ Rules found in the steps that hold for all work (each where it is written):
+   the pointer's dwell at the edge, when it is offered and armed, when the controls come back by
+   themselves, the hint, the room, the words; pure, `Tests/checks/full-screen`; pbxproj A279/F279),
+   `EdgeFlickRecognizer` (the flick's recognizer and the swipe in's, `RevealEdgePan`, on Sill's window,
+-  which other recognizers wait for them, `EdgeRecognizers.waits`, and a stroke they held until its lift,
+-  `releasedAtLift`; UIKit only, so Tests/touchrig compiles it; A27B/F27B) and `FullScreen`
++  which other recognizers wait for them, `EdgeRecognizers.waits` (never one that only watches,
++  `WatchesTouchesOnly`), where a held stroke landed, `heldLanding`, for the picture's scroll, and a stroke
++  they held until its lift, `releasedAtLift`; UIKit only, so Tests/touchrig compiles it; A27B/F27B) and `FullScreen`
+   (`FullScreenEdges`, which puts them and a hover on the window and says whether it covers the screen and
+   its safe area, `FullScreenSystem` for the status bar, the home indicator and the deferred left edge, the
+   shake through `UIWindow.motionEnded`, the hint, the swipe in's preview hole, the hidden picture's
+@@ -1086,7 +1087,9 @@ Rules found in the steps that hold for all work (each where it is written):
+   made fresh; `compare.py --all` every stroke against main's, and, where the
+   sources have full screen's EdgeFlickRecognizer (on the rig's window),
+   `compare.py --edge` its strokes at the left edge (`RIG_ONLY=edge`): a flick
+-  hides and sends nothing, anything else goes on whole and in order.
++  hides and sends nothing, anything else goes on whole and in order;
++  `RIG_TRACE=1` logs every recognizer's state (and the flick's trace). It
++  compiles StreamProtocol whole, and DuoPosture.swift, as the surfaces need.
+ - `Tests/duorig/` — TEST ONLY, private interfaces, simulator only: folds and
+   turns the iPhone Duo simulator with Device Hub's own events (usage page
+   0xFF61, usage 0x5B, an IOCFSerialize dictionary from
 ```
 
-**File**: `Sources/SillHost/StreamServer.swift` (modified, +15/-4)
+---
+
+### Incident Patch 3: `efc4ccfc` (2026-11-12)
+**Commit Message**: Touch rig: compare.py leaves RIG_TRACE's recognizer states out of the events
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Tests/touchrig/compare.py` (modified, +1/-0)
 ```diff
-@@ -172,6 +172,10 @@ final class StreamServer {
-     /// icon, app list, sound, clipboard, pointer or cursor shape (`LockPolicy.withheld`), whatever the main
-     /// actor is doing; and the Mac's pointer is not even read. The default never locks (the harnesses).
-     var lockGate = LockGate()
-+    /// An icon or the installed apps the gate withheld: a send that left the coordinator just before the
-+    /// Mac read locked. The connection it was for, nil for a broadcast's (every device): the unlock sends
-+    /// that device every icon and the apps again. Called on the network queue.
-+    var onCatalogWithheld: ((ObjectIdentifier?) -> Void)?
-     /// A client fell behind and lost a delta frame; the encoder should produce a keyframe now
-     /// rather than in up to 4 s. Called on the network queue.
-     var onKeyframeNeeded: (() -> Void)?
-@@ -1410,7 +1414,7 @@ final class StreamServer {
-         queue.async { [self] in
-             for (id, kind, data) in items {
-                 guard let client = clients[id], client.connection.state == .ready else { continue }
--                if lockGate.withholds(kind) { Stats.shared.bump("lock.withheld"); continue }   // a locked Mac (LockPolicy)
-+                if lockGate.withholds(kind) { withheld(kind, for: id); continue }   // a locked Mac (LockPolicy)
-                 send(data, to: client)
-             }
-         }
-@@ -1425,11 +1429,18 @@ final class StreamServer {
-                 print("send: no client for \(connection.endpoint) (\(clients.count) known)")
-                 return
-             }
--            if lockGate.withholds(kind) { Stats.shared.bump("lock.withheld"); return }   // a locked Mac (LockPolicy)
-+            if lockGate.withholds(kind) { withheld(kind, for: ObjectIdentifier(connection)); return }   // a locked Mac (LockPolicy)
-             send(data, to: client)
-         }
-     }
- 
-+    /// A message the gate withheld (LockPolicy): counted, and an icon's or the apps' reported
-+    /// (`onCatalogWithheld`). On the network queue.
-+    private func withheld(_ kind: StreamMessageKind, for id: ObjectIdentifier?) {
-+        Stats.shared.bump("lock.withheld")
-+        if kind == .appIcon || kind == .appList { onCatalogWithheld?(id) }
-+    }
-+
-     /// Client → host messages share the same framing. Small and rare, so read them one at a time.
-     private func receiveLoop(_ client: Client) {
-         let c = client.connection
-@@ -1557,7 +1568,7 @@ final class StreamServer {
-     func broadcast(_ message: StreamMessage, picture: LockPolicy.Picture? = nil) {
-         let data = message.serialized()
-         queue.async { [self] in
--            if lockGate.withholds(message.kind, picture: picture) { Stats.shared.bump("lock.withheld"); return }
-+            if lockGate.withholds(message.kind, picture: picture) { withheld(message.kind, for: nil); return }
-             if message.kind == .parameterSets { lastParameterSets = data }
-             if message.kind == .frame, message.isKeyframe { lastKeyframeAt = Date().timeIntervalSince1970 }
-             var wantKeyframe = false
-@@ -1639,7 +1650,7 @@ final class StreamServer {
-     /// has `audioCap` messages untaken. None while the Mac reads locked (LockPolicy). Thread-safe.
-     func broadcastAudio(packets: Data, epoch: Int) {
-         queue.async { [self] in
--            if lockGate.withholds(.audio) { Stats.shared.bump("lock.withheld"); return }
-+            if lockGate.withholds(.audio) { withheld(.audio, for: nil); return }
-             for client in clients.values where client.audioCodec == AudioCodec.aacELD && client.connection.state == .ready {
-                 if client.audioEpochSent != epoch {
-                     guard let format = audioFormat, format.epoch == epoch else { continue }
+@@ -40,6 +40,7 @@ def normal(events):
+     out, coasting = [], False
+     for e in events:
+         if e.startswith("[touch]") or e.startswith("[edge]") or e.startswith("[measure]"): continue
++        if re.match(r"\s*\[[TOWB]\.", e): continue      # RIG_TRACE's recognizer states, not events
+         who, _, what = e.partition(" send ")
+         who = who.strip()
+         if not what:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #299** (2026-11-03): Site: a contribute page, getsill.app/contribute (@Saffsanity)
-- **PR #290** (closed): Audio: Play on the Mac too, the choice of where the sound plays (on top of #288) (@addhumal)
-- **PR #288** (closed): Audio: a quiet Mac while devices play its sound (Core Audio process tap) (@addhumal)
-- **PR #286** (2026-11-02): Version 0.6.1 for both apps (merge right after 0.6.0's App Store approval) (@Saffsanity)
-- **PR #285** (2026-11-02): Docs: the 0.6.0 release (@Saffsanity)
-- **PR #274** (2026-11-02): Sill 0.6.0: the tour once more, and a locked Mac shows only its lock screen (@Saffsanity)
+- **PR #364** (2026-11-13): Version 0.6.2 for both apps, after 0.6.1 (@Saffsanity)
+- **PR #363** (2026-11-12): Settings: the Quality row shows the quality's name, and its menu the rates (@Saffsanity)
+- **PR #361** (2026-11-13): pointer-watch: the stale mutant applies again, and SILL_TEST_NO_SCREEN is checked (@Saffsanity)
+- **PR #360** (2026-11-12): Full screen: Settings › Full Screen hides Sill's controls; a swipe in from the left edge or a shake brings them back (@Saffsanity)
+- **PR #358** (2026-11-12): A staged window goes home before Sill's display goes (@Saffsanity)
+- **PR #356** (2026-11-12): Notes in a file per branch, checks that describe themselves, harness photos on shared simulators (@Saffsanity)
 
 ---
 
@@ -2009,3 +1684,52 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Full screen's plan and step file: the live loopback gate's result
+
+**RULE**:
+When implementing operations in `docs/full-screen-plan.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1b04b5f7`: Full screen's plan and step file: the live loopback gate's result. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/full-screen-plan.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+- **G4, live on loopback**, at 67039ddd from 18:12 to 18:17, once Noah had disconnected his devices (a device was on
+  Sill.app at 16:30 and 16:56, so it waited; `Scripts/encoder-check/no-device.sh` said "OK: no device connected"
+  before every case): `SillHost --synthetic` (loopback only, the software encoder, no router, no screen, the
+  dry-run input log) and the app's Debug build under `-SillLive 1` on the agents' iPad simulator, an input script
+  tapping, pressing keys and typing every 0.1 s for a second around each change. Five cases, every one as it should:
+  - An iPhone 15 Pro's size upright: hidden at 4 s, back at 7, hidden at 10, back by a shake at 13 (Shake to Show
+    Controls on), hidden at 16, back by a played swipe in at 18.8: the viewport 377×235 twice as it connected, then
+    393×793 and 377×235, one per change, six; every input at the host (39 taps, each down and up; 24 keys and 12
+    letters).
+  - An iPad mini on its side, the same: 1117×618 as it connected, then 1133×744 and 1117×618, one per change; every
+    input at the host.
+  - The Desktop on the Mac's second screen (two test screens): the device's own Desktop button ("Desktop 1") stepped
+    the host to d
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+- **G4, live on loopback: not run.** Noah was testing on his devices: a device was streaming from Sill.app at 16:30
+  and at 16:56, and the gate keeps the rule (`Scripts/encoder-check/no-device.sh`: nothing that could share the
+  Mac's encoder while a device is connected), though its host uses the software encoder. The first build's run of
+  it (below) covered the same paths a hide and a show take (the viewport one per change, input around each change,
+  the Desktop kept on screen 2); what is new since is the swipe in's own recognizer, which the touch rig drove with
+  real synthesized touches in both orientations, and Shake to Show Controls, whose off case the gate adds
+  (`phone-up-shake-off`).
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1b04b5f7` are properly handled with clean fallback behavior.

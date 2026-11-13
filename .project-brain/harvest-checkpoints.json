@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T15:38:18.097Z",
+  "last_updated": "2026-11-13T15:47:20.972Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2556,14 +2556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saffsanity-sill",
-      "content_hash": "c57d935e5a726a003289a2e90510d3896ffdd0095adaf21b3ff6c9bb3a49e207",
-      "verified_at": "2026-11-03T22:32:01.538Z",
+      "content_hash": "a5ff7c7469b0b9371f80838b84828523a0f68c867682134523ba7a7e3c0f4b46",
+      "verified_at": "2026-11-13T15:47:11.704Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T22:32:01.538Z"
+      "last_updated": "2026-11-13T15:47:11.704Z"
     },
     "textbee/textbee": {
       "repository": "textbee/textbee",
@@ -7791,14 +7791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bridgecrewio-checkov",
-      "content_hash": "fafee00dc6f00f4108047b765995e220d451b88cc9c09a094257ae68f81c92b0",
-      "verified_at": "2026-11-12T11:37:36.836Z",
+      "content_hash": "900727d689109bcc61882c5fe023754b010b24fe994ef61c3213dfa16f742ae6",
+      "verified_at": "2026-11-13T15:47:14.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:37:36.836Z"
+      "last_updated": "2026-11-13T15:47:14.438Z"
     },
     "apache/zookeeper": {
       "repository": "apache/zookeeper",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "c88d5a658de72a9743c9acd49bbaa9a1bddb008e41b1d663e8ecd0ea60a3700f",
-      "verified_at": "2026-11-12T14:59:57.163Z",
+      "content_hash": "7e6d7049ba4d9402d638d1af117c372b0eb161fe542462e10330ae09584193ac",
+      "verified_at": "2026-11-13T15:47:20.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T14:59:57.163Z"
+      "last_updated": "2026-11-13T15:47:20.972Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -15636,14 +15636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
-      "content_hash": "38d57757252cc27fd282f2868d6d5948efa0faddd285e3f4b09d991bef845451",
-      "verified_at": "2026-11-08T15:35:13.484Z",
+      "content_hash": "2b44b08c4f0c2595bb4780dd40e0d0e5f7f8eb4cf3d31cc45486ea3827065faa",
+      "verified_at": "2026-11-13T15:47:03.990Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:35:13.484Z"
+      "last_updated": "2026-11-13T15:47:03.990Z"
     },
     "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16": {
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",

@@ -4,18 +4,18 @@
 {
   "source_repository": "bridgecrewio/checkov",
   "source_url": "https://github.com/bridgecrewio/checkov",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "e55b089e",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T15:47:14.565Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-bridgecrewio-checkov",
   "canonical_classification": "skill_playbook"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `e55b089e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T15:47:14.565Z`  
+> **Learning ID**: `learn-github-bridgecrewio-checkov`
 
 
 ## 1. Skill Overview & Purpose
@@ -24,30 +24,16 @@ Procedural playbook defining verified operational and implementation patterns fo
 - **Model Independence**: Universal (Applies across Claude, Gemini, GPT, and Local agents)
 
 ## 2. Prerequisites & Technical Boundary
-- Runtime ecosystem: Verified against bridgecrewio/checkov revision `historical`.
+- Runtime ecosystem: Verified against bridgecrewio/checkov revision `e55b089e`.
 - Required security tier: Sanitized against PII/secrets.
 
 ## 3. Step-by-Step Procedural Workflow
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
-> **Source**: github ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
-> **Source Version**: `4c2e88a3`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:37:18.876Z  
-> **Learning ID**: `learn-github-bridgecrewio-checkov`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): bridgecrewio/checkov
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:37:18.869Z  
+> **Harvest Timestamp**: 2026-11-13T15:47:14.055Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -57,7 +43,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9151 stars
+- **Stars / Engagement**: 9157 stars
 
 ---
 
@@ -985,209 +971,160 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80d66edd` (2026-11-11)
+### Incident Patch 1: `af20f73b` (2026-11-11)
 **Commit Message**: Merge remote-tracking branch 'origin/main' into fix/request-logging-hardening
 
 **File**: `checkov/version.py` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--version = '3.4.3'
-+version = '3.4.4'
+-version = '3.4.4'
++version = '3.4.5'
 ```
 
 **File**: `kubernetes/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--checkov==3.4.3
-+checkov==3.4.4
+-checkov==3.4.4
++checkov==3.4.5
 ```
 
 ---
 
-### Incident Patch 2: `c7f1a45f` (2026-11-10)
-**Commit Message**: fix(bicep): resolve references within the declaring file (#7794)
+### Incident Patch 2: `8c795c44` (2026-11-12)
+**Commit Message**: fix(general): harden request error logging (#7795)
 
-Bicep symbols (params, vars, resources, modules, outputs) are scoped to the file they are declared in. The graph builder looked up references by name across all scanned files, so when two files declared the same name, a reference could be linked to the other file's declaration. Which file won depended on processing order, which made results of Python and graph checks differ between runs.
-
-References are now resolved against the referencing vertex's own file. This also fixes references to the vertex at index 0 being skipped.
-
-**File**: `checkov/bicep/graph_builder/local_graph.py` (modified, +7/-2)
+**File**: `checkov/common/bridgecrew/integration_features/features/fixes_integration.py` (modified, +2/-2)
 ```diff
-@@ -50,6 +50,9 @@ def __init__(self, definitions: dict[Path, BicepJson]) -> None:
-         self.vertices: list[BicepBlock] = []
-         self.definitions = definitions
-         self.vertices_by_name: dict[str, int] = {}
-+        # Bicep symbols (params, vars, resources, modules, outputs) are scoped to the file they are declared in,
-+        # so references must be resolved against the same file
-+        self.vertices_by_path_and_name: dict[tuple[str, str], int] = {}
+@@ -13,7 +13,7 @@
+ from checkov.common.bridgecrew.integration_features.features.policy_metadata_integration import integration as metadata_integration
+ from checkov.common.bridgecrew.platform_integration import bc_integration
+ from checkov.common.util.data_structures_utils import merge_dicts
+-from checkov.common.util.http_utils import extract_error_message, get_default_post_headers
++from checkov.common.util.http_utils import extract_error_message, get_default_post_headers, redact_headers
  
-     def build_graph(self, render_variables: bool) -> None:
-         self._create_vertices()
-@@ -74,6 +77,7 @@ def _create_vertices(self) -> None:
-             self.vertices_by_block_type[vertex.block_type].append(i)
-             self.vertices_block_name_map[vertex.block_type][vertex.name].append(i)
-             self.vertices_by_name[vertex.name] = i
-+            self.vertices_by_path_and_name[(vertex.path, vertex.name)] = i
+ if TYPE_CHECKING:
+     from checkov.common.bridgecrew.platform_integration import BcPlatformIntegration
+@@ -119,7 +119,7 @@ def _get_fixes_for_file(
+             raise AttributeError("HTTP manager was not correctly created")
  
-             self.in_edges[i] = []
-             self.out_edges[i] = []
-@@ -236,8 +240,9 @@ def _create_edge(self, element_name: str, origin_vertex_index: int, label: str)
-             # special case for`bicep elements, when properties are accessed
-             vertex_name = vertex_name.split(".")[0]
+         try:
+-            logging.debug(f'Calling fixes API with payload: {json.dumps(payload)}, headers: {headers}, url: {self.fixes_url}')
++            logging.debug(f'Calling fixes API with payload: {json.dumps(payload)}, headers: {redact_headers(headers)}, url: {self.fixes_url}')
+             request = self.bc_integration.http.request("POST", self.fixes_url, headers=headers, body=json.dumps(payload))  # type:ignore[no-untyped-call]
  
--        dest_vertex_index = self.vertices_by_name.get(vertex_name)
--        if dest_vertex_index:
-+        origin_path = self.vertices[origin_vertex_index].path
-+        dest_vertex_index = self.vertices_by_path_and_name.get((origin_path, vertex_name))
-+        if dest_vertex_index is not None:
-             if origin_vertex_index == dest_vertex_index:
-                 return
-             edge = Edge(origin_vertex_index, dest_vertex_index, label)
+         # When running via IDE we can fail here in case of running with -d when the poolManager is broken
 ```
 
-**File**: `tests/bicep/graph/graph_builder/examples/same_name_in_multiple_files/event_hub/main.bicep` (added, +9/-0)
+**File**: `checkov/common/util/http_utils.py` (modified, +12/-2)
 ```diff
-@@ -0,0 +1,9 @@
-+param minimumTlsVersion string = '1.2'
+@@ -187,6 +187,16 @@ def get_prisma_get_headers() -> dict[str, str]:
+     return merge_dicts(PRISMA_API_GET_HEADERS, get_user_agent_header())
+ 
+ 
++SENSITIVE_HEADER_NAMES = frozenset(('authorization', 'x-redlock-auth', 'proxy-authorization', 'cookie'))
 +
-+resource eventHubNamespace 'Microsoft.EventHub/namespaces@2022-01-01-preview' = {
-+  name: 'example-namespace'
-+  location: 'westeurope'
-+  properties: {
-+    minimumTlsVersion: minimumTlsVersion
-+  }
++
++def redact_headers(headers: dict[str, Any] | None) -> dict[str, Any]:
++    """Return a copy of the headers with credential values masked, safe for logging."""
++    if not headers:
++        return {}
++    return {k: '***' if str(k).lower() in SENSITIVE_HEADER_NAMES else v for k, v in headers.items()}
++
++
+ def valid_url(url: str | None) -> bool:
+     """Checks for a valid URL, otherwise returns False"""
+ 
+@@ -238,7 +248,7 @@ def request_wrapper(
+                 response.raise_for_status()
+             return response
+         except requests.exceptions.ConnectionError as connection_error:
+-            logging.error(f"Connection error on request {method}:{url},\ndata:\n{data}\njson:{json if log_json_body else 'Redacted'}\nheaders:{headers}")
++            logging.error(f"Connection error on request {method}:{url},\ndata:\n{data}\njson:{json if log_json_body else 'Redacted'}\nheaders:{redact_headers(headers)}")
+             if i != request_max_tries - 1:
+                 sleep_secs = sleep_between_request_tries * (i + 1)
+                 logging.info(f"retrying attempt number {i + 2} in {sleep_secs} seconds")
+@@ -252,7 +262,7 @@ def request_wrapper(
+             if http_error.response is not None:
+                 status_code = http_error.response.status_code
+ 
+-            logging.error(f"HTTP error on request {method}:{url},\ndata:\n{data}\njson:{json if log_json_body else 'Redacted'}\nheaders:{headers}")
++            logging.error(f"HTTP error on request {method}:{url},\ndata:\n{data}\njson:{json if log_json_body else 'Redacted'}\nheaders:{redact_headers(headers)}")
+             if (status_code >= 500 or status_code == 403) and i != request_max_tries - 1:
+                 sleep_secs = sleep_between_request_tries * (i + 1)
+                 logging.info(f"retrying attempt number {i + 2} in {sleep_secs} seconds")
+```
+
+**File**: `tests/common/utils/test_http_utils.py` (modified, +45/-1)
+```diff
+@@ -7,7 +7,7 @@
+ from aioresponses import aioresponses
+ import aiohttp
+ 
+-from checkov.common.util.http_utils import request_wrapper, aiohttp_client_session_wrapper, valid_url
++from checkov.common.util.http_utils import request_wrapper, aiohttp_client_session_wrapper, valid_url, redact_headers
+ 
+ 
+ def get_report_url() -> str:
+@@ -82,6 +82,50 @@ def test_request_wrapper_all_fail_with_http_error_should_call_raise_for_status(m
+         responses.assert_call_count(mock_url, 5)
+ 
+ 
++SENSITIVE_HEADERS = {
++    "Authorization": "test-token-value-1",
++    "x-redlock-auth": "test-token-value-2",
++    "Accept": "application/json",
 +}
-```
-
-**File**: `tests/bicep/graph/graph_builder/examples/same_name_in_multiple_files/storage/main.bicep` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+var minimumTlsVersion = 'TLS1_2'
-+
-+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
-+  name: 'examplestorage'
-+  location: 'westeurope'
-+  kind: 'StorageV2'
-+  sku: {
-+    name: 'Standard_LRS'
-+  }
-+  properties: {
-+    minimumTlsVersion: minimumTlsVersion
-+  }
-+}
-```
-
-**File**: `tests/bicep/graph/graph_builder/test_reference_scoping.py` (added, +84/-0)
-```diff
-@@ -0,0 +1,84 @@
-+from pathlib import Path
-+
-+import pytest
-+
-+from checkov.arm.runner import Runner as ArmRunner
-+from checkov.bicep.graph_builder.local_graph import BicepLocalGraph
-+from checkov.bicep.parser import Parser
-+from checkov.bicep.runner import Runner
-+from checkov.common.models.enums import CheckResult
-+from checkov.runner_filter import RunnerFilter
-+
-+EXAMPLES_DIR = Path(__file__).parent / "examples" / "same_name_in_multiple_files"
-+EVENT_HUB_FILE = EXAMPLES_DIR / "event_hub" / "main.bicep"
-+STORAGE_FILE = EXAMPLES_DIR / "storage" / "main.bicep"
-+
-+
-+def _build_rendered_graph(file_order: list[Path]) -> BicepLocalGraph:
-+    definitions = {}
-+    for file_path in file_order:
-+        template, _ = Parser().parse(file_path)
-+        definitions[file_path] = template
-+
-+    local_graph = BicepLocalGraph(definitions=definitions)
-+    local_graph.build_graph(render_variables=True)
-+    return local_graph
-+
-+
-+def _resource_config(local_graph: BicepLocalGraph, file_path: Path, name: str) -> dict:
-+    vertex = local_graph.vertices[local_graph.vertices_by_path_and_name[(str(file_path), name)]]
-+    return vertex.config["config"]
 +
 +
 +@pytest.mark.parametrize(
-+    "file_order",
++    "body,status",
 +    [
-+        pytest.param([EVENT_HUB_FILE, STORAGE_FILE], id="event_hub_first"),
-+        pytest.param([STORAGE_FILE, EVENT_HUB_FILE], id="storage_first"),
++        (requests.exceptions.ConnectionError(), 200),
++        ({"error": "mocked client error"}, 403),
 +    ],
++    ids=["connection_error", "http_error"],
 +)
-+def test_same_name_in_multiple_files_resolves_within_own_file(file_order: list[Path]) -> None:
-+    # when
-+    local_graph = _build_rendered_graph(file_order)
++@responses.activate
++@mock.patch.dict(os.environ, {"REQUEST_MAX_TRIES": "2", "SLEEP_BETWEEN_REQUEST_TRIES": "0.01"})
++def test_request_wrapper_error_logging(mock_bc_integration, caplog, body, status):
++    mock_url = mock_bc_integration.api_url + "/api/v1/some-endpoint"
++    if isinstance(body, Exception):
++        responses.add(method=responses.GET, url=mock_url, body=body)
++    else:
++        responses.add(method=responses.GET, url=mock_url, json=body, status=status)
 +
-+    # then
-+    event_hub_config = _resource_config(local_graph, EVENT_HUB_FILE, "eventHubNamespace")
-+    storage_config = _resource_config(local_graph, STORAGE_FILE, "storageAccount")
++    headers = dict(SENSITIVE_HEADERS)
++    with pytest.raises(requests.exceptions.RequestException):
++        request_wrapper("GET", mock_url, headers, should_call_raise_for_status=True)
 +
-+    assert event_hub_config["properties"]["minimumTlsVersion"] == "1.2"
-+    assert storage_config["properties"]["minimumTlsVersion"] == "TLS1_2"
-+
-+
-+@pytest.mark.parametrize(
-+    "file_order",
-+    [
-+        pytest.param([EVENT_HUB_FILE, STORAGE_FILE], id="event_hub_first"),
-+        pytest.param([STORAGE_FILE, EVENT_HUB_FILE], id="storage_first"),
-+    ],
-+)
-+def test_edges_do_not_cross_files(file_order: list[Path]) -> None:
-+    # when
-+    local_graph = _build_rendered_graph(file_order)
-+
-+    # then
-+    for edge in local_graph.edges:
-+        assert local_graph.vertices[edge.origin].path == local_graph.vertices[edge.dest].path
++    assert "test-token-value-1" not in caplog.text
++    assert "test-token-value-2" not in caplog.text
++    assert "application/json" in caplog.text
++    assert headers["Authorization"] == "test-token-value-1"
++    assert headers["x-redlock-auth"] == "test-token-value-2"
 +
 +
-+def test_runner_check_uses_value_from_own_file() -> None:
-+    # given: initialize the ARM runner to add the ARM checks to the Bicep registry
-+    ArmRunner()
++def test_redact_headers():
++    redacted = redact_headers({**SENSITIVE_HEADERS, "authorization": "lower", "Cookie": "c"})
++    assert redacted["Authorization"] == "***"
++    assert redacted["authorization"] == "***"
++    assert redacted["x-redlock-auth"] == "***"
++    assert redacted["Cookie"] == "***"
++    assert redacted["Accept"] == "application/json"
 +
-+    # when
-+    report = Runner().run(
-+        root_folder=str(EXAMPLES_DIR),
-+        runner_filter=RunnerFilter(framework=["bicep"], checks=["CKV_AZURE_223"]),
-+    )
 +
-+    # then
-+    event_hub_results = [
-+        record.check_result["result"]
-+        for record in report.passed_checks + report.failed_checks
-+        if record.resource == "Microsoft.EventHub/namespaces.eventHubNamespace"
-+    ]
-+    assert event_hub_results == [CheckResult.PASSED]
-```
-
-**File**: `tests/bicep/test_graph_manager.py` (modified, +3/-1)
-```diff
-@@ -23,7 +23,9 @@ def test_build_graph_from_source_directory():
-     assert set(definitions.keys()) == {existing_file, playground_file, graph_file, loop_file}  # should not include 'malformed.bicep' file
- 
-     assert len(local_graph.vertices) == 48
--    assert len(local_graph.edges) == 47
-+    # references are resolved within the declaring file only, 'graph.bicep' and 'loop.bicep' use 'location'
-+    # and 'storageAccountType' without declaring them, therefore no edges to the params in 'playground.bicep'
-+    assert len(local_graph.edges) == 42
- 
-     storage_account_idx = local_graph.vertices_by_name["diagsAccount"]  # vertices_by_name exists for BicepGraphManager
-     storage_account = local_graph.vertices[storage_account_idx]
+ @responses.activate
+ @mock.patch.dict(os.environ, {"REQUEST_MAX_TRIES": "3", "SLEEP_BETWEEN_REQUEST_TRIES": "0.01"})
+ def test_request_wrapper_with_success_for_get_scan_result(mock_bc_integration, scan_result_success_response):
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7795** (2026-11-12): fix(general): harden request error logging (@Saarett)
 - **PR #7794** (2026-11-10): fix(bicep): resolve references within the declaring file (@itrocki)
 - **PR #7776** (2026-11-02): fix(terraform): build userinfo test URLs dynamically (@talazuri)
 - **PR #7759** (closed): Test Migration of CI Jobs to GitHub-Hosted Runners (@amitz)
 - **PR #7758** (2026-11-02): fix(terraform): add optional allowlist for external module download sources (@talazuri)
 - **PR #7757** (2026-10-20): fix(secrets): load platform-provided detectors in spawn-mode secrets … (@Saarett)
-- **PR #7742** (2026-11-11): chore(general): Drop Python 3.9 support (@Saarett)
 
 ---
 
@@ -1207,38 +1144,33 @@ References are now resolved against the referencing vertex's own file. This also
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bicep): resolve references within the declaring file (#7794)
+## X. general): harden request error logging (#7795)
 
 **RULE**:
-When implementing operations in `checkov/bicep/graph_builder/local_graph.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `checkov/common/bridgecrew/integration_features/features/fixes_integration.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7f1a45f`: bicep): resolve references within the declaring file (#7794). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c795c44`: general): harden request error logging (#7795). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/bicep/graph_builder/local_graph.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/common/bridgecrew/integration_features/features/fixes_integration.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        # Bicep symbols (params, vars, resources, modules, outputs) are scoped to the file they are declared in,
-        # so references must be resolved against the same file
-        self.vertices_by_path_and_name: dict[tuple[str, str], int] = {}
-            self.vertices_by_path_and_name[(vertex.path, vertex.name)] = i
-        origin_path = self.vertices[origin_vertex_index].path
-        dest_vertex_index = self.vertices_by_path_and_name.get((origin_path, vertex_name))
-        if dest_vertex_index is not None:
+from checkov.common.util.http_utils import extract_error_message, get_default_post_headers, redact_headers
+            logging.debug(f'Calling fixes API with payload: {json.dumps(payload)}, headers: {redact_headers(headers)}, url: {self.fixes_url}')
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        dest_vertex_index = self.vertices_by_name.get(vertex_name)
-        if dest_vertex_index:
+from checkov.common.util.http_utils import extract_error_message, get_default_post_headers
+            logging.debug(f'Calling fixes API with payload: {json.dumps(payload)}, headers: {headers}, url: {self.fixes_url}')
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7f1a45f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c795c44` are properly handled with clean fallback behavior.
 
 
 ## 4. Empirical Verification & Quality Gate

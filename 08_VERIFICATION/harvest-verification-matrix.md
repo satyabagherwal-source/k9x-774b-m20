@@ -9514,3 +9514,8 @@
 | `CYCLE-20261113-5M2I` | `2026-11-13T15:38:17.466Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d10f14e5...`) |
 | `CYCLE-20261113-5MJ6` | `2026-11-13T15:38:18.066Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`253ac503...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T15:39:02.277Z` | `hf-fastino-gliner2.5-decide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7123D3B0` [Domain D] | Yes (`82f8833a...`) |
+| `CYCLE-20261113-GWBW` | `2026-11-13T15:47:03.980Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | Yes (`2b44b08c...`) |
+| `CYCLE-20261113-H29U` | `2026-11-13T15:47:11.682Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a5ff7c74...`) |
+| `CYCLE-20261113-H4DT` | `2026-11-13T15:47:14.417Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`900727d6...`) |
+| `CYCLE-20261113-H9FA` | `2026-11-13T15:47:20.950Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e6d7049...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T15:47:55.868Z` | `hf-altworld-hemmingway-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-991F9C3C` [Domain D] | Yes (`5a409976...`) |
