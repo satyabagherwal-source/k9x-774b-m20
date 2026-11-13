@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T14:06:12.644Z",
+  "last_updated": "2026-11-13T14:17:47.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "bc4708800f4b3fc6f57c2b22b8ce9250483bdae65903350f312e6078364a479c",
-      "verified_at": "2026-11-08T14:41:46.891Z",
+      "content_hash": "911cb94cd8452cba318b70a9c3af2200450e0d387d20682794d0d067a365e741",
+      "verified_at": "2026-11-13T14:17:21.442Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T14:41:46.891Z"
+      "last_updated": "2026-11-13T14:17:21.442Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "1df137b71a5530c3826bcd8c95c08280057eab6da2c61ab6fb61671e8312a32e",
-      "verified_at": "2026-11-13T02:24:59.309Z",
+      "content_hash": "098662001841d4e02e7db9f7273c0ac6b87ae6e4c14f9c1806d9bc4e44d90e9c",
+      "verified_at": "2026-11-13T14:17:46.005Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T02:24:59.309Z"
+      "last_updated": "2026-11-13T14:17:46.005Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "85e5a69ced15b20fab77b0bfc9e6f949e86e63d8aed1f7d40a8650bde97f7d5a",
-      "verified_at": "2026-11-12T08:07:07.597Z",
+      "content_hash": "4e2e4029dce9b9e37ea6e87d9069dcc1e5a1ffca31f45c8e14adc37439c092ef",
+      "verified_at": "2026-11-13T14:17:47.490Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:07:07.597Z"
+      "last_updated": "2026-11-13T14:17:47.490Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",

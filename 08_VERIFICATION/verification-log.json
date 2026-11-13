@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-TDYV",
-    "timestamp": "2026-11-11T10:17:30.871Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "5938d8cea6ca764e4b123bffae881521cf9c0e0683efc2e6a5578fa368dd79a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-TLXQ",
-    "timestamp": "2026-11-11T10:17:41.198Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "3d96f5cc84413df255e870ae5d320f379d432bd447d26584092fb5ff6248bcfc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-TNPP",
-    "timestamp": "2026-11-11T10:17:43.501Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "09cef6d029d39b72c53e4b2d9d0c3170f41390a8ec4763204bd6f5f5660c0a1f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-5CNS",
     "timestamp": "2026-11-11T10:26:49.048Z",
     "repository": "open-policy-agent/opa",
@@ -7490,6 +7445,51 @@
     "repository": "pulumi/pulumi",
     "learningId": "learn-github-pulumi-pulumi",
     "contentHash": "f5b0f48434501de20c44175fb97281eeb5955469ede98aa70497f71ad3d0cd68",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-9J4L",
+    "timestamp": "2026-11-13T14:17:21.429Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "911cb94cd8452cba318b70a9c3af2200450e0d387d20682794d0d067a365e741",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-A22H",
+    "timestamp": "2026-11-13T14:17:45.977Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "098662001841d4e02e7db9f7273c0ac6b87ae6e4c14f9c1806d9bc4e44d90e9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-A37P",
+    "timestamp": "2026-11-13T14:17:47.461Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "4e2e4029dce9b9e37ea6e87d9069dcc1e5a1ffca31f45c8e14adc37439c092ef",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

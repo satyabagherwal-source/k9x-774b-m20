@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:06:34.623Z",
+  "last_updated": "2026-11-13T14:18:06.090Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T13:34:34.562Z",
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-12T21:10:54.613Z",
+      "processed_at": "2026-11-13T14:18:05.935Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -953,7 +953,7 @@
       "staged_for_review": 1
     },
     "genkit-ai-genkit-learnings.md": {
-      "processed_at": "2026-11-12T08:07:22.784Z",
+      "processed_at": "2026-11-13T14:18:06.012Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1876,9 +1876,14 @@
       "processed_at": "2026-11-13T14:06:34.317Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md": {
+      "processed_at": "2026-11-13T14:18:05.915Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 582,
-  "total_canonical_promoted": 104,
-  "total_staged_for_review": 475
+  "total_dossiers_evaluated": 585,
+  "total_canonical_promoted": 105,
+  "total_staged_for_review": 477
 }

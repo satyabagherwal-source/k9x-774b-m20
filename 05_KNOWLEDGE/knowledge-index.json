@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T14:06:12.505Z",
+  "last_updated": "2026-11-13T14:17:47.341Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7917,8 +7917,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "28fc5a3a",
-      "content_hash": "1df137b71a5530c3826bcd8c95c08280057eab6da2c61ab6fb61671e8312a32e",
+      "source_version": "294cd0ad",
+      "content_hash": "098662001841d4e02e7db9f7273c0ac6b87ae6e4c14f9c1806d9bc4e44d90e9c",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -8000,6 +8000,11 @@
         {
           "number": null,
           "title": "gha: Disable legacy host routing on EKS netkit legs",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ciliumenvoyconfig: clone resources retained by the script fixture",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8248,7 +8253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T02:24:59.139Z",
+      "verified_at": "2026-11-13T14:17:45.843Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16914,8 +16919,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "2e9dbfd6",
-      "content_hash": "85e5a69ced15b20fab77b0bfc9e6f949e86e63d8aed1f7d40a8650bde97f7d5a",
+      "source_version": "9eadfa99",
+      "content_hash": "4e2e4029dce9b9e37ea6e87d9069dcc1e5a1ffca31f45c8e14adc37439c092ef",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -16942,6 +16947,11 @@
         {
           "number": null,
           "title": "py/plugins/mcp): say which server failed and why (#6930)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): override undici and bump angular testapp to resolve airlock blocks (#7154",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -17025,7 +17035,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T08:07:07.400Z",
+      "verified_at": "2026-11-13T14:17:47.313Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35066,7 +35076,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "bc4708800f4b3fc6f57c2b22b8ce9250483bdae65903350f312e6078364a479c",
+      "content_hash": "911cb94cd8452cba318b70a9c3af2200450e0d387d20682794d0d067a365e741",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [
@@ -35121,7 +35131,7 @@
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
       ],
-      "verified_at": "2026-11-08T14:41:46.772Z",
+      "verified_at": "2026-11-13T14:17:21.337Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

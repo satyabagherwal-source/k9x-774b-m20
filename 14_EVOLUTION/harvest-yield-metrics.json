@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:06:12.639Z",
-  "total_cycles_completed": 9259,
-  "total_learnings_persisted": 9259,
-  "total_rules_promoted": 9024,
+  "last_updated": "2026-11-13T14:17:47.486Z",
+  "total_cycles_completed": 9262,
+  "total_learnings_persisted": 9262,
+  "total_rules_promoted": 9026,
   "history": [
-    {
-      "timestamp": "2026-11-12T22:48:47.531Z",
-      "repository": "openziti/zrok",
-      "learningId": "learn-github-openziti-zrok",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T22:48:49.972Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:08:44.147Z",
-      "repository": "speridlabs/idol",
-      "learningId": "learn-huggingface-speridlabs-idol",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T23:16:53.681Z",
       "repository": "chrisbanes/skills",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T14:06:12.639Z",
       "repository": "pulumi/pulumi",
       "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:17:21.439Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:17:46.001Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:17:47.486Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

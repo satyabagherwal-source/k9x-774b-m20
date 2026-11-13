@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `28fc5a3a`  
+> **Source Version**: `294cd0ad`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T02:24:43.074Z  
+> **Timestamp**: 2026-11-13T14:17:35.983Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T02:24:43.066Z  
+> **Harvest Timestamp**: 2026-11-13T14:17:35.979Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25826 stars
+- **Stars / Engagement**: 25827 stars
 
 ---
 
@@ -1283,54 +1283,91 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28fc5a3a` (2026-11-02)
-**Commit Message**: gha: Disable legacy host routing on EKS netkit legs
+### Incident Patch 1: `3b61ed8f` (2026-11-03)
+**Commit Message**: ciliumenvoyconfig: clone resources retained by the script fixture
 
-Since e92e788718dc ("defaults: Disable BPF Host Routing by default"),
-the agent defaults to legacy host routing. That commit set
-bpf.hostLegacyRouting=false in the kind netkit configurations, but the
-EKS conformance workflow only sets bpf.datapathMode. On every netkit
-and netkit-l2 leg of ci-kpr-eks, the agent fatals on startup:
+The fake Envoy server retained caller-owned protobufs that the reconciler
+could later modify outside the fixture's lock. This raced with resource
+comparison and formatting in the script tests.
 
-  netkit connector not available: netkit devices cannot be used with --enable-host-legacy-routing=true
+Clone resources when storing them so the fixture owns independent
+snapshots. The existing CEC tests pass 20 race-enabled runs after the fix.
 
-The nodes never become Ready and "Create EKS nodegroups" times out
-after 25 minutes. The quarantine on those legs hides it. Seen in the
-scheduled ci-kpr-eks runs[1].
+Signed-off-by: Jarno Rajahalme <[REDACTED_EMAIL]>
 
-This commit sets bpf.hostLegacyRouting=false next to bpf.datapathMode,
-as the kind netkit configurations do. Both callers already enable KPR
-and BPF masquerading, so the legs get back the BPF host routing they
-ran with before. They then reach the connectivity tests, where they
-also failed before e92e788718dc, so the quarantine stays.
-
-This commit was prepared with AIL:3. I personally checked the diff.
-
-1: https://github.com/cilium/cilium/actions/runs/41387168353
-Fixes: e92e788718dc ("defaults: Disable BPF Host Routing by default")
-
-Signed
-
-**File**: `.github/workflows/conformance-eks.yaml` (modified, +1/-1)
+**File**: `pkg/ciliumenvoyconfig/script_test.go` (modified, +7/-5)
 ```diff
-@@ -396,7 +396,7 @@ jobs:
-           # Pass any bpf-datapath values verbatim. Note this is validated as our matrix
-           # is being computed, so we assume this contains a valid datapath mode.
-           if [ "${BPF_DATAPATH}" != "" ]; then
--            CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.datapathMode=${BPF_DATAPATH}"
-+            CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.datapathMode=${BPF_DATAPATH} --helm-set bpf.hostLegacyRouting=false"
-           fi
+@@ -290,21 +290,23 @@ func (rs resourceStore) equal(other resourceStore) bool {
+ 	return maps.EqualFunc(rs, other, proto.Equal)
+ }
  
-           echo cluster_name=${CLUSTER_NAME} >> $GITHUB_OUTPUT
++// Retain independent snapshots: the reconciler may reuse and modify its
++// protobufs after this call returns, outside the fake server's lock.
+ func (rs resourceStore) update(res *xds.Resources) {
+ 	for _, l := range res.Listeners {
+-		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = l
++		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = proto.Clone(l)
+ 	}
+ 	for _, s := range res.Secrets {
+-		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = s
++		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = proto.Clone(s)
+ 	}
+ 	for _, r := range res.Routes {
+-		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = r
++		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = proto.Clone(r)
+ 	}
+ 	for _, c := range res.Clusters {
+-		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = c
++		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = proto.Clone(c)
+ 	}
+ 	for _, e := range res.Endpoints {
+-		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = e
++		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = proto.Clone(e)
+ 	}
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `9b96f436` (2026-11-12)
+**Commit Message**: ci: update docs-builder
+
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
+```diff
+@@ -70,7 +70,7 @@ jobs:
+         uses: ./.github/actions/disk-cleanup
+ 
+       - name: Build HTML
+-        uses: docker://quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
++        uses: docker://quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
+         with:
+           entrypoint: ./Documentation/check-build.sh
+           args: html
+```
+
+**File**: `Documentation/Makefile` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
+ 
+ .PHONY: default clean help cilium-build cmdref epub latex html
+ 
+-DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
++DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
+ 
+ .PHONY: update-docs-builder-image
+ update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #49999** (2026-11-12): fix(linux/adnr): reconcile direct routes before node table initialization (@andreaterzolo)
 - **PR #49998** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.19) (@cilium-renovate[bot])
 - **PR #49997** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.20) (@cilium-renovate[bot])
+- **PR #49995** (2026-11-13): gha: install the delegated IPAM conflist once Cilium is ready (@ekoops)
+- **PR #49994** (2026-11-13): rbac: restrict agents to only accessing their own Node and CiliumNodes (@squeed)
 - **PR #49987** (2026-11-12): datapath: correctly set nodeport/ipv4 configs in tests (@ekoops)
-- **PR #49985** (2026-11-12): wireguard: fix nil map write when injecting node encryption define (@smagnani96)
-- **PR #49978** (2026-11-12): [v1.20] - operator/ces: fix stale CES entry for recreated same-name pod (@smagnani96)
 
 ---
 
@@ -1350,28 +1387,38 @@ Signed
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gha: Disable legacy host routing on EKS netkit legs
+## X. ciliumenvoyconfig: clone resources retained by the script fixture
 
 **RULE**:
-When implementing operations in `.github/workflows/conformance-eks.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ciliumenvoyconfig/script_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28fc5a3a`: gha: Disable legacy host routing on EKS netkit legs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b61ed8f`: ciliumenvoyconfig: clone resources retained by the script fixture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/conformance-eks.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ciliumenvoyconfig/script_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.datapathMode=${BPF_DATAPATH} --helm-set bpf.hostLegacyRouting=false"
+// Retain independent snapshots: the reconciler may reuse and modify its
+// protobufs after this call returns, outside the fake server's lock.
+		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = proto.Clone(l)
+		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = proto.Clone(s)
+		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = proto.Clone(r)
+		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = proto.Clone(c)
+		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = proto.Clone(e)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-            CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.datapathMode=${BPF_DATAPATH}"
+		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = l
+		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = s
+		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = r
+		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = c
+		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = e
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28fc5a3a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b61ed8f` are properly handled with clean fallback behavior.

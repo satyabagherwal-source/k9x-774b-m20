@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T14:06:18.519Z",
-    "lastVerified": "2026-11-13T14:06:18.519Z",
+    "lastChecked": "2026-11-13T14:17:53.950Z",
+    "lastVerified": "2026-11-13T14:17:53.950Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T13:34:34.390Z",
-    "lastVerified": "2026-11-13T13:34:34.390Z",
+    "lastChecked": "2026-11-13T14:17:33.321Z",
+    "lastVerified": "2026-11-13T14:17:33.321Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1797,12 +1797,12 @@
     "officialUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T14:41:41.572Z",
-    "lastVerified": "2026-11-08T14:41:41.572Z",
+    "lastChecked": "2026-11-13T14:17:20.995Z",
+    "lastVerified": "2026-11-13T14:17:20.995Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "bc4708800f4b3fc6f57c2b22b8ce9250483bdae65903350f312e6078364a479c",
+    "contentHash": "911cb94cd8452cba318b70a9c3af2200450e0d387d20682794d0d067a365e741",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2021,22 +2021,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T07:55:09.003Z",
-    "lastVerified": "2026-11-13T07:55:09.003Z",
+    "lastChecked": "2026-11-13T14:17:35.979Z",
+    "lastVerified": "2026-11-13T14:17:35.979Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "1df137b71a5530c3826bcd8c95c08280057eab6da2c61ab6fb61671e8312a32e",
+    "contentHash": "098662001841d4e02e7db9f7273c0ac6b87ae6e4c14f9c1806d9bc4e44d90e9c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "28fc5a3a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -3585,9 +3584,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-12T01:44:15.097Z",
+    "lastChecked": "2026-11-13T14:17:18.292Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-12T01:44:15.097Z"
+    "lastVerified": "2026-11-13T14:17:18.292Z"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "name": "unsloth/Qwen3.8-27B-GGUF",
@@ -5452,12 +5451,12 @@
     "lastVerified": "2026-11-10T04:44:21.194Z"
   },
   "saltstack-salt": {
-    "name": "saltstack/salt",
+    "name": "salt",
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T09:55:03.387Z",
-    "lastVerified": "2026-11-12T09:55:03.387Z",
+    "lastChecked": "2026-11-13T14:17:25.971Z",
+    "lastVerified": "2026-11-13T14:17:25.971Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
@@ -5466,7 +5465,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "390d168f"
   },
   "tako8ki-gobang": {
     "name": "gobang",
@@ -7568,14 +7568,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T08:04:37.744Z",
-    "lastVerified": "2026-11-12T08:04:37.744Z",
+    "lastChecked": "2026-11-13T14:17:37.121Z",
+    "lastVerified": "2026-11-13T14:17:37.121Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "85e5a69ced15b20fab77b0bfc9e6f949e86e63d8aed1f7d40a8650bde97f7d5a",
+    "contentHash": "4e2e4029dce9b9e37ea6e87d9069dcc1e5a1ffca31f45c8e14adc37439c092ef",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12703,9 +12703,9 @@
   "callstack-react-native-builder-bob": {
     "name": "react-native-builder-bob",
     "officialUrl": "https://github.com/callstack/react-native-builder-bob",
-    "lastChecked": "2026-11-09T04:20:08.397Z",
+    "lastChecked": "2026-11-13T14:17:23.391Z",
     "revisionIdentifier": "a73fd95b",
-    "lastVerified": "2026-11-09T04:20:08.397Z"
+    "lastVerified": "2026-11-13T14:17:23.391Z"
   },
   "mochajs-mocha": {
     "name": "mocha",

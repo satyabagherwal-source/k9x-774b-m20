@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T14:06:34.611Z",
+  "updated_at": "2026-11-13T14:18:05.922Z",
   "stats": {
-    "total_discovered": 2507,
-    "approved_pending_harvest": 2336,
+    "total_discovered": 2508,
+    "approved_pending_harvest": 2337,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2329,
+      "COMMUNITY_AND_EXPERT": 2330,
       "OFFICIAL_DOCUMENTATION": 94,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
@@ -53976,6 +53976,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
         "fileName": "wcandillon-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-CC02CA5D84B0": {
+      "id": "SRC-CC02CA5D84B0",
+      "url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+      "title": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:18:05.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
+        "fileName": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md"
       }
     }
   }

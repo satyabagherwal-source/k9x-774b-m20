@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T14:06:34.282Z",
-  "total_records": 137,
+  "last_updated": "2026-11-13T14:18:05.912Z",
+  "total_records": 138,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 92,
+      "total": 93,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -117,7 +117,8 @@
         "DOM-D-F5A07C9A",
         "DOM-D-B9912729",
         "DOM-D-E7FD79E5",
-        "DOM-D-B39F30BA"
+        "DOM-D-B39F30BA",
+        "DOM-D-9522FB5E"
       ]
     },
     "E": {
@@ -5738,6 +5739,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T14:06:34.278Z"
+    },
+    "DOM-D-9522FB5E": {
+      "record_id": "DOM-D-9522FB5E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Viggle/Qwen-Image-2.1-viggle-turbo",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo))  \n> **Source Version**: `hf-viggle-qw`  \n>",
+      "content_hash": "009b4292f5103a7fd4823565dd26ec695747ba468818aab8fdf9692f0a43ea0c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md`  \n> **Source**: huggingface ([ht -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md`  \n> **Source**: huggingface ([ht",
+      "provenance": {
+        "source_uri": "project://hf-viggle-qwen-image-2.1-viggle-turbo/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T14:17:54.038Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-viggle-qwen-image-2.1-viggle-turbo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-viggle-qwen-image-2.1-viggle-turbo"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T14:18:05.909Z"
     }
   }
 }

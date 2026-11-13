@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:06:34.315Z",
+  "last_updated": "2026-11-13T14:18:06.008Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8930,6 +8930,24 @@
       "source_repo": "wcandillon-react-native-skia",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0474C8--drop-an-e2e-reply-that-comes-after-its-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-EBCC82",
+      "directive_title": "ciliumenvoyconfig: clone resources retained by the script fixture",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EBCC82-ciliumenvoyconfig-clone-resources-retain.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-39FD07",
+      "directive_title": "deps): override undici and bump angular testapp to resolve airlock blocks (#7154",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "genkit-ai-genkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-39FD07-deps-override-undici-and-bump-angular-te.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -9511,3 +9511,7 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `1e2c676a` | Multi-dimensional audit evidence | 2026-11-13T14:06:08.478Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `9e3190a8` | Multi-dimensional audit evidence | 2026-11-13T14:06:12.633Z |
 | `learn-dom-d-b39f30ba` | `project://hf-prism-ml-ternary-bonsai-2-27b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | 2026-11-13T14:06:34.285Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-13T14:17:21.432Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `294cd0ad` | Multi-dimensional audit evidence | 2026-11-13T14:17:45.981Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `9eadfa99` | Multi-dimensional audit evidence | 2026-11-13T14:17:47.464Z |
+| `learn-dom-d-9522fb5e` | `project://hf-viggle-qwen-image-2.1-viggle-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | 2026-11-13T14:18:05.914Z |
