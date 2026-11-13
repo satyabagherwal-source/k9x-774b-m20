@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T19:27:35.597Z",
+  "updated_at": "2026-11-13T19:40:46.701Z",
   "stats": {
-    "total_discovered": 2835,
-    "approved_pending_harvest": 2650,
+    "total_discovered": 2842,
+    "approved_pending_harvest": 2657,
     "harvested_count": 0,
     "rejected_count": 185,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2646,
-      "OFFICIAL_DOCUMENTATION": 97,
+      "COMMUNITY_AND_EXPERT": 2652,
+      "OFFICIAL_DOCUMENTATION": 98,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
@@ -61095,6 +61095,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
         "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-2247C471274E": {
+      "id": "SRC-2247C471274E",
+      "url": "https://github.com/embassy-rs/embassy/issues/6394",
+      "title": "https://github.com/embassy-rs/embassy/issues/6394",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:40:07.026Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
+        "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-77C95917E2BD": {
+      "id": "SRC-77C95917E2BD",
+      "url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "title": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:40:46.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
+        "fileName": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md"
+      }
+    },
+    "SRC-32D763B759B4": {
+      "id": "SRC-32D763B759B4",
+      "url": "https://github.com/NervJS/taro",
+      "title": "https://github.com/NervJS/taro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:40:46.588Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-0301C33F6BFD": {
+      "id": "SRC-0301C33F6BFD",
+      "url": "https://github.com/user-attachments/assets/c7881b12-a1f7-4d06-959c-8163f515aafd",
+      "title": "https://github.com/user-attachments/assets/c7881b12-a1f7-4d06-959c-8163f515aafd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:40:46.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-5413F9C66C04": {
+      "id": "SRC-5413F9C66C04",
+      "url": "https://docs.taro.zone/docs",
+      "title": "https://docs.taro.zone/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:40:46.652Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-9EAD1667FAC0": {
+      "id": "SRC-9EAD1667FAC0",
+      "url": "https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:40:46.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-F51A9E16FA76": {
+      "id": "SRC-F51A9E16FA76",
+      "url": "https://apis.map.qq.com/tools/locpicker?%24%7BqueryString.stringify%28query=",
+      "title": "https://apis.map.qq.com/tools/locpicker?%24%7BqueryString.stringify%28query=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:40:46.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
       }
     }
   }

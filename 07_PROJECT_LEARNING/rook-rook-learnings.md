@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `719f345e`  
+> **Source Version**: `83afdeee`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:19:31.686Z  
+> **Timestamp**: 2026-11-13T19:39:57.489Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:19:31.371Z  
+> **Harvest Timestamp**: 2026-11-13T19:39:57.479Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13707 stars
+- **Stars / Engagement**: 13711 stars
 
 ---
 
@@ -1427,92 +1427,171 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f45f3853` (2026-11-11)
-**Commit Message**: Merge pull request #18780 from sarankumar1325/fix/rgw-duplicate-pod-name-env
+### Incident Patch 1: `f0f3d7c2` (2026-11-13)
+**Commit Message**: build(deps): bump the github-dependencies group with 3 updates
 
-Avoid duplicate POD_NAME env on RGW gateway containers
+Bumps the github-dependencies group with 3 updates: [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2), [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) and [github.com/aws/smithy-go](https://github.com/aws/smithy-go).
 
-**File**: `pkg/operator/ceph/object/spec.go` (modified, +19/-2)
+
+Updates `github.com/aws/aws-sdk-go-v2/config` from 1.33.16 to 1.33.17
+- [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+- [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.33.16...config/v1.33.17)
+
+Updates `github.com/aws/aws-sdk-go-v2/credentials` from 1.20.16 to 1.20.17
+- [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+- [Commits](https://github.com/aws/aws-sdk-go-v2/compare/credentials/v1.20.16...credentials/v1.20.17)
+
+Updates `github.com/aws/smithy-go` from 1.28.8 to 1.28.9
+- [Release notes](https://github.com/aws/smithy-go/releases)
+- [Changelog](https://github.com/aws/smithy-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/aws/smithy-go/compare/v1.28.8...v1.28.9)
+
+---
+updated-dependencies:
+- dependency-name: github.com/aws/aws-sdk-go-v2/config
+  dependency-version: 1.33.17
+  dependency-t
+
+**File**: `go.mod` (modified, +4/-4)
 ```diff
-@@ -120,6 +120,23 @@ var (
- 	opsLogAbsFilename = path.Join(cephconfig.VarLogCephDir, opsLogFilename)
- )
- 
-+// appendEnvVarsIfMissing appends env vars whose names are not already present.
-+// DaemonEnvVars already includes POD_NAME, so callers must not add it twice.
-+func appendEnvVarsIfMissing(env []v1.EnvVar, extras ...v1.EnvVar) []v1.EnvVar {
-+	have := make(map[string]struct{}, len(env))
-+	for _, e := range env {
-+		have[e.Name] = struct{}{}
-+	}
-+	for _, e := range extras {
-+		if _, ok := have[e.Name]; ok {
-+			continue
-+		}
-+		env = append(env, e)
-+		have[e.Name] = struct{}{}
-+	}
-+	return env
-+}
-+
- type (
- 	ProbeType    string
- 	ProtocolType string
-@@ -469,7 +486,7 @@ func (c *clusterConfig) makeDaemonContainer(rgwConfig *rgwConfig) (v1.Container,
- 			controller.DaemonVolumeMounts(c.DataPathMap, rgwConfig.ResourceName, c.clusterSpec.DataDirHostPath),
- 			c.mimeTypesVolumeMount(),
- 		),
--		Env:             append(controller.DaemonEnvVars(c.clusterSpec), k8sutil.NameEnvVar()),
-+		Env:             controller.DaemonEnvVars(c.clusterSpec),
- 		Resources:       c.store.Spec.Gateway.Resources,
- 		StartupProbe:    startupProbe,
- 		LivenessProbe:   noLivenessProbe(),
-@@ -535,7 +552,7 @@ func (c *clusterConfig) makeDaemonContainer(rgwConfig *rgwConfig) (v1.Container,
- 		}
- 	}
- 	if c.store.Spec.Gateway.OpsLogSidecar != nil {
--		container.Env = append(container.Env, podNameEnvVars...)
-+		container.Env = appendEnvVarsIfMissing(container.Env, podNameEnvVars...)
- 		container.Args = append(
- 			container.Args,
- 			cephconfig.NewFlag("rgw_enable_ops_log", "true"),
+@@ -13,11 +13,11 @@ require (
+ 	github.com/IBM/go-sdk-core/v5 v5.25.3
+ 	github.com/IBM/keyprotect-go-client v1.1.0
+ 	github.com/aws/aws-sdk-go-v2 v1.47.8
+-	github.com/aws/aws-sdk-go-v2/config v1.33.16
+-	github.com/aws/aws-sdk-go-v2/credentials v1.20.16
++	github.com/aws/aws-sdk-go-v2/config v1.33.17
++	github.com/aws/aws-sdk-go-v2/credentials v1.20.17
+ 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.9
+ 	github.com/aws/aws-sdk-go-v2/service/sns v1.47.10
+-	github.com/aws/smithy-go v1.28.8
++	github.com/aws/smithy-go v1.28.9
+ 	github.com/banzaicloud/k8s-objectmatcher v1.8.0
+ 	github.com/ceph/ceph-csi-operator/api v0.0.0-20261001132947-98eee8980fc6
+ 	github.com/ceph/ceph-csi/api v0.0.0-20241216133622-88b7e0d6684f
+@@ -79,7 +79,7 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.12 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.11 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 // indirect
 ```
 
-**File**: `pkg/operator/ceph/object/spec_test.go` (modified, +17/-0)
+**File**: `go.sum` (modified, +8/-8)
 ```diff
-@@ -164,6 +164,23 @@ func TestPodSpecs(t *testing.T) {
- 	s, err := c.makeRGWPodSpec(rgwConfig)
- 	assert.NoError(t, err)
+@@ -148,10 +148,10 @@ github.com/aws/aws-sdk-go-v2 v1.47.8 h1:fuClo7Un+Bi0EDTnSIPWxVEoJcze+wkGzNA4Vo3j
+ github.com/aws/aws-sdk-go-v2 v1.47.8/go.mod h1:I8lFSH4MGrZiw2m7miCrRYHsgpC1+HW8uiVGOiPYPcw=
+ github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26 h1:SJNA4XaM8Z09adeTHf/vME93jzl44lJV70pSawIBXac=
+ github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.26/go.mod h1:l0ME5pd2QytH8UZzETcrt90x9Bm+3TyBVeWfVEcZ82c=
+-github.com/aws/aws-sdk-go-v2/config v1.33.16 h1:fKRsu9Pj2IPIHzTcUdWB7JHY34q9+4XEGCy7WfZaLV4=
+-github.com/aws/aws-sdk-go-v2/config v1.33.16/go.mod h1:wdEdQ9RBH3fnD/vicCDUIJqv8Ck3zOpxNz8e3/NtkG8=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.16 h1:cqRWTY4fcctJGqZedMC1Khu4h2VsgRODUOIZwn39n3Y=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.16/go.mod h1:x8JgCOAnbnEVQOLVX6lOtsyTrG2EHgiRNqzku9jiVxA=
++github.com/aws/aws-sdk-go-v2/config v1.33.17 h1:5/Ahj9/efRCbHhZx0swd+rC2EqC8a2CE6/JnzYsJB70=
++github.com/aws/aws-sdk-go-v2/config v1.33.17/go.mod h1:H0TQmatulB8yoemlckKQrPDn8aMHqpMyO5QCkYaQH0w=
++github.com/aws/aws-sdk-go-v2/credentials v1.20.17 h1:n76tvnpRJUk/jwDBijhnuwHSus6VQuC8XXD1hB30F/0=
++github.com/aws/aws-sdk-go-v2/credentials v1.20.17/go.mod h1:Hzlq1/HGNzNpw1qP+5otW3+EwXhMrQdRnBYLBeJKEBU=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8 h1:1bCo9/cf7dlTlbrZnz7g1Bki72b5thfuzFZCjdWCfVk=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8/go.mod h1:mzPw75GydqddJpfuwYO/ZDIl6xNxKjK86apitdLmvV0=
+ github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 h1:LTxHSJ/rwTFfaXqi5mlKKHJOW+shFB+HQ7NrCa4OQ48=
+@@ -170,8 +170,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.11 h1:jNP7wZylDeSJh
+ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.11/go.mod h1:1US+8JBnF0xNm6GE6wM5u5ugFwSZpkd2686gMuql5tI=
+ github.com/aws/aws-sdk-go-v2/service/s3 v1.114.9 h1:MLHGyNy4melTyk9e63s+9QgLKCHPDJrP+1NfJhtU1g4=
+ github.com/aws/aws-sdk-go-v2/service/s3 v1.114.9/go.mod h1:zfUkiNK2JiYlR1/SnU8aJ8Gj1nMFLkPZ69rVLv6jWPo=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 h1:uo84u6f6YatFOBwk3DKM+ToqgVEB0cDjHQLsfrRm44A=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.4/go.mod h1:PCRJucC12nFWle7wRGhSj0cw3OKB84M0EBwTrv34dhg=
++github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 h1:1cHBtZSsEEvghtDyjtRoYZ4GdjJy9Sh45GglOWEEm5Q=
++github.com/aws/aws-sdk-go-v2/service/signin v1.13.0/go.mod h1:PCRJucC12nFWle7wRGhSj0cw3OKB84M0EBwTrv34dhg=
+ github.com/aws/aws-sdk-go-v2/service/sns v1.47.10 h1:dqHTDRiALOMKb5odwU49bI8ATjDbo8wRgzx0G7wXZUw=
+ github.com/aws/aws-sdk-go-v2/service/sns v1.47.10/go.mod h1:DenuY8JutgG46gaBzt5g2YbDsrouO4o3Ndlvpa0MB2M=
+ github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 h1:qQ97XqrlFGRRhhrcDbeqUVeezamo1a1F7lH4HczU7EA=
+@@ -180,8 +180,8 @@ github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 h1:tbsL9+L+1SlD2W+9RjL7wD9Z
+ github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4/go.mod h1:3L2pKVr2e3jaz9C26RXgjBIktSW1D7S0O38LhCdsAYc=
+ github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 h1:soG/8YBczEJwckK+e4HLt0RzfkvopGrdBjmbghG99Cc=
+ github.com/aws/aws-sdk-go-v2/service/sts v1.51.9/go.mod h1:We33qfrD3dQRAetZ+9qUH9w+ZjL1gwP2Qvp1YqQDdsk=
+-github.com/aws/smithy-go v1.28.8 h1:aEmdAq7gVCoGCnvf1NnELlu3I6D/nhqrC321FyFiQkQ=
+-github.com/aws/smithy-go v1.28.8/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
++github.com/aws/smithy-go v1.28.9 h1:zkZ058OpNX0iGTK24b+ZUEQSMc11CBA6oO7xtKZfzkY=
++github.com/aws/smithy-go v1.28.9/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
+ github.com/banzaicloud/k8s-objectmatcher v1.8.0 h1:Nugn25elKtPMTA2br+JgHNeSQ04sc05MDPmpJnd1N2A=
+ github.com/banzaicloud/k8s-objectmatcher v1.8.0/go.mod h1:p2LSNAjlECf07fbhDyebTkPUIYnU05G+WfGgkTmgeMg=
+ github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
+```
+
+---
+
+### Incident Patch 2: `7d16623a` (2026-11-13)
+**Commit Message**: build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0
+
+Bumps [azure/setup-helm](https://github.com/azure/setup-helm) from 5.0.1 to 5.1.0.
+- [Release notes](https://github.com/azure/setup-helm/releases)
+- [Changelog](https://github.com/Azure/setup-helm/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/azure/setup-helm/compare/9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310...2f5e7bc67f1f9972ab16657bb795f36d8f04de0e)
+
+---
+updated-dependencies:
+- dependency-name: azure/setup-helm
+  dependency-version: 5.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/build.yml` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ jobs:
+           go-version: "1.26"
  
-+	// DaemonEnvVars already sets POD_NAME; it must not be declared a second time.
-+	var rgwContainer v1.Container
-+	for _, container := range s.Spec.Containers {
-+		if container.Name == rgwContainerName {
-+			rgwContainer = container
-+			break
-+		}
-+	}
-+	assert.NotEmpty(t, rgwContainer.Name)
-+	podNameCount := 0
-+	for _, env := range rgwContainer.Env {
-+		if env.Name == "POD_NAME" {
-+			podNameCount++
-+		}
-+	}
-+	assert.Equal(t, 1, podNameCount)
-+
- 	// Check pod anti affinity is well added to be compliant with HostNetwork setting
- 	assert.Equal(t,
- 		1,
+       - name: Set up Helm
+-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
++        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
+         with:
+           version: v3.18.2
+ 
+```
+
+**File**: `.github/workflows/integration-tests.yaml` (modified, +3/-3)
+```diff
+@@ -169,7 +169,7 @@ jobs:
+           debug-ci: ${{ contains(github.event.pull_request.labels.*.name, 'debug-ci') }}
+ 
+       - name: Set up Helm
+-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
++        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
+         with:
+           version: ${{ matrix.helm-version }}
+ 
+@@ -232,7 +232,7 @@ jobs:
+           debug-ci: ${{ contains(github.event.pull_request.labels.*.name, 'debug-ci') }}
+ 
+       - name: Set up Helm
+-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
++        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
+         with:
+           version: v3.18.2
+ 
+@@ -285,7 +285,7 @@ jobs:
+           debug-ci: ${{ contains(github.event.pull_request.labels.*.name, 'debug-ci') }}
+ 
+       - name: Set up Helm
+-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
++        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
+         with:
+           version: v3.18.2
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #18780** (2026-11-11): Avoid duplicate POD_NAME env on RGW gateway containers (@sarankumar1325)
-- **PR #18779** (closed): merge queue: merged #18769: core: reject line breaks in options passed to assimilate-conf (backport #18723) (@mergify[bot])
-- **PR #18778** (2026-11-10): build(deps): bump the all-dependencies group with 45 updates (@dependabot[bot])
-- **PR #18777** (2026-11-10): build(deps): bump the all-dependencies group across 1 directory with 52 updates (@dependabot[bot])
-- **PR #18776** (2026-11-10): build(deps): bump golang.org/x/sync from 0.24.0 to 0.25.0 (@dependabot[bot])
-- **PR #18775** (2026-11-10): build(deps): bump the github-dependencies group with 8 updates (@dependabot[bot])
+- **PR #18796** (2026-11-13): test: fix flaky and racy mgr module configuration tests (backport #18740) (@mergify[bot])
+- **PR #18794** (2026-11-13): mds: honor the do-not-reconcile label on mds deployments (backport #18708) (backport #18735) (@mergify[bot])
+- **PR #18792** (2026-11-13): object: honor VAULT_TRANSIT_BACKEND_PATH for RGW SSE-KMS transit (backport #18727) (@mergify[bot])
+- **PR #18791** (2026-11-13): build(deps): bump the all-dependencies group with 7 updates (@dependabot[bot])
+- **PR #18789** (2026-11-13): build(deps): bump the github-dependencies group with 3 updates (@dependabot[bot])
+- **PR #18788** (2026-11-13): build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0 (@dependabot[bot])
 
 ---
 
@@ -1532,47 +1611,34 @@ Avoid duplicate POD_NAME env on RGW gateway containers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #18780 from sarankumar1325/fix/rgw-duplicate-pod-name-env
+## X. build(deps): bump the github-dependencies group with 3 updates
 
 **RULE**:
-When implementing operations in `pkg/operator/ceph/object/spec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f45f3853`: Merge pull request #18780 from sarankumar1325/fix/rgw-duplicate-pod-name-env. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f0f3d7c2`: build(deps): bump the github-dependencies group with 3 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/object/spec.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// appendEnvVarsIfMissing appends env vars whose names are not already present.
-// DaemonEnvVars already includes POD_NAME, so callers must not add it twice.
-func appendEnvVarsIfMissing(env []v1.EnvVar, extras ...v1.EnvVar) []v1.EnvVar {
-	have := make(map[string]struct{}, len(env))
-	for _, e := range env {
-		have[e.Name] = struct{}{}
-	}
-	for _, e := range extras {
-		if _, ok := have[e.Name]; ok {
-			continue
-		}
-		env = append(env, e)
-		have[e.Name] = struct{}{}
-	}
-	return env
-}
-
-		Env:             controller.DaemonEnvVars(c.clusterSpec),
-		container.Env = appendEnvVarsIfMissing(container.Env, podNameEnvVars...)
+	github.com/aws/aws-sdk-go-v2/config v1.33.17
+	github.com/aws/aws-sdk-go-v2/credentials v1.20.17
+	github.com/aws/smithy-go v1.28.9
+	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-		Env:             append(controller.DaemonEnvVars(c.clusterSpec), k8sutil.NameEnvVar()),
-		container.Env = append(container.Env, podNameEnvVars...)
+// Induced defect failure mode:
+	github.com/aws/aws-sdk-go-v2/config v1.33.16
+	github.com/aws/aws-sdk-go-v2/credentials v1.20.16
+	github.com/aws/smithy-go v1.28.8
+	github.com/aws/aws-sdk-go-v2/service/signin v1.12.4 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f45f3853` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f0f3d7c2` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T19:27:35.837Z",
-  "total_records": 297,
+  "last_updated": "2026-11-13T19:40:47.054Z",
+  "total_records": 306,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 163,
+      "total": 166,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -196,7 +196,10 @@
         "DOM-D-3A0F1688",
         "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu",
-        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-"
+        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
+        "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
+        "DOM-D-4AA06C1E",
+        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l"
       ]
     },
     "E": {
@@ -214,7 +217,7 @@
       ]
     },
     "G": {
-      "total": 31,
+      "total": 34,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -246,11 +249,14 @@
         "domain_intelligence-architecture-intelligence-grpc-grpc-rust-core-invariants",
         "domain_intelligence-architecture-intelligence-juicedata-juicefs-core-invariants",
         "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants",
-        "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-embassy-rs-embassy-core-invariants",
+        "domain_intelligence-architecture-intelligence-rook-rook-core-invariants",
+        "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 60,
+      "total": 63,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -311,7 +317,10 @@
         "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants",
         "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-nervjs-taro-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nervjs-taro-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6506,10 +6515,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "22c5edb637e8ec301542fe0083363a36fb84b0f4ab4647c1e63f23678604b4e5",
-      "created_at": "2026-11-13T15:47:21.155Z"
+      "content_hash": "bddbc0d76ef3ecc7bd61de1fd1d2374ecec1685c10f34a54b4d4a9cf9ddf3efb",
+      "created_at": "2026-11-13T19:40:04.067Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -8103,6 +8112,120 @@
       "repository": "mattermost-mattermost-learnings",
       "content_hash": "cf39afa43e032c1265c8ca1b78301a5e44040603b4ccaf980f8124ad99f82595",
       "created_at": "2026-11-13T19:27:35.837Z"
+    },
+    "domain_intelligence-architecture-intelligence-embassy-rs-embassy-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
+      "repository": "embassy-rs/embassy",
+      "content_hash": "2cd7a752b9427b51e0a3cf6991fcb4ed86785153ea914e5a7d4b666eb0db09f7",
+      "created_at": "2026-11-13T19:39:51.442Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-research-knowledge-intelligence-i.md",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "content_hash": "fe795df0bbbb26c63d6269eca97c256f5890ddca6dc9c6bc56ee3086dd0d9634",
+      "created_at": "2026-11-13T19:39:54.624Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nervjs-taro-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nervjs-taro-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: NervJS/taro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-technical-construction-intelligence-nervjs-taro-core-invariants.md",
+      "repository": "NervJS/taro",
+      "content_hash": "3cccd2c14792e6b759b1cf8ff3a313910e65867d063f8eddcaaaa9e39c7ec6e3",
+      "created_at": "2026-11-13T19:39:57.844Z"
+    },
+    "domain_intelligence-architecture-intelligence-rook-rook-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rook-rook-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rook/rook Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
+      "repository": "rook/rook",
+      "content_hash": "3dc0282a42fa87ffbfbf30727a7312c5d25caab88190613dcfd51c3273c69bf7",
+      "created_at": "2026-11-13T19:39:58.920Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
+      "repository": "zama-ai/tfhe-rs",
+      "content_hash": "f0877b0ea5d3aa92945ab27dba4c0ada5317621dffe1b11f3b936761835b8396",
+      "created_at": "2026-11-13T19:40:01.981Z"
+    },
+    "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
+      "repository": "embassy-rs-embassy-learnings",
+      "content_hash": "4f491cb3d71e2095dbddf495af274d22f8f744376be10b57cfcb11e66e6e4d95",
+      "created_at": "2026-11-13T19:40:07.356Z"
+    },
+    "DOM-D-4AA06C1E": {
+      "record_id": "DOM-D-4AA06C1E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF))  \n> **Source Ver",
+      "content_hash": "43efe3b645c2b0ec2629553a7eaeaeec805f195b738344effa763b82ef786faa",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md`  \n> **Source**: hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md`  \n> **Source**: hugging",
+      "provenance": {
+        "source_uri": "project://hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T19:40:07.584Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T19:40:46.206Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-learnings-research-knowledge-inte.md",
+      "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
+      "content_hash": "7bfba192207e4dbf24fbea71e589b4ca725d8891430b9c611229ea7b2e82bd16",
+      "created_at": "2026-11-13T19:40:46.434Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nervjs-taro-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nervjs-taro-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nervjs-taro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-learnings-technical-construction-intelligence-nervjs-taro-learnings-.md",
+      "repository": "nervjs-taro-learnings",
+      "content_hash": "86e1bf497a084276cae33def5ee2c0fb31c7807f996fc1f4c9418b8de77d7047",
+      "created_at": "2026-11-13T19:40:47.054Z"
     }
   }
 }

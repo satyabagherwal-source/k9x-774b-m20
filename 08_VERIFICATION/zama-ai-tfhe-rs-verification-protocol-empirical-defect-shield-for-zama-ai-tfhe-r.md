@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for zama/ai/tfhe/rs
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "zama/ai/tfhe/rs",
-  "source_url": "https://github.com/zama/ai/tfhe/rs",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "zama-ai/tfhe-rs",
+  "source_url": "https://github.com/zama-ai/tfhe-rs",
+  "source_version": "b07e249c",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-13T19:40:01.867Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama/ai/tfhe/rs](https://github.com/zama/ai/tfhe/rs) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `b07e249c`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-13T19:40:01.867Z`  
+> **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zama/ai/tfhe/rs` (Commit: `historical`)
+- **Target Repository**: `zama-ai/tfhe-rs` (Commit: `b07e249c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
-> **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `0f0b3e7e`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T15:33:53.278Z  
-> **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): zama-ai/tfhe-rs
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T15:33:53.271Z  
+> **Harvest Timestamp**: 2026-11-13T19:40:00.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1679 stars
+- **Stars / Engagement**: 1680 stars
 
 ---
 
@@ -68,62 +54,108 @@ PROVENANCE_END -->
 #define AES_UTILITIES
 #include "../integer/integer_utilities.h"
 
-/**
- * This structure holds pre-computed LUTs for essential bitwise operations
- * required by the homomorphic AES circuit. Pre-computing these tables allows
- * for efficient application of non-linear functions like AND during the PBS
- * process. It includes LUTs for:
- * - AND: for the non-linear part of the S-Box.
- * - FLUSH: to clear carry bits and isolate the message bit (x -> x & 1).
- * - CARRY: to extract the carry bit for additions (x -> (x >> 1) & 1).
- */
+// AES state dimensions
+
+/// @brief Bits per state byte
+static constexpr uint32_t AES_BITS_PER_BYTE = 8;
+/// @brief State bytes
+static constexpr uint32_t AES_STATE_BYTES = 16;
+/// @brief State bits, one radix block each once bitsliced
+static constexpr uint32_t AES_STATE_BITS = AES_STATE_BYTES * AES_BITS_PER_BYTE;
+
+/// @brief S-box wires (22 a, 68 b, 18 c), sizes the S-box workspace. Kept in
+/// sync with the circuit by a static_assert in the S-box
+static constexpr uint32_t AES_SBOX_WIRE_SLOTS = 108;
+
+/// @brief ANDs in the widest S-box layer (the c wires), sizes and_lut and the
+/// batch staging buffer. Also checked by a static_assert in the S-box
+static constexpr uint32_t AES_SBOX_AND_GATES = 18;
+
+/// @brief What an int_aes_encrypt_buffer is for. FULL_ENCRYPTION for the CTR
+/// loop, SBOX_ONLY for the key schedule which only needs the S-box
+enum class aes_buffer_scope { FULL_ENCRYPTION, SBOX_ONLY };
+
+// state_lut slots. Slot 0 is the resting one, whoever picks another must put
+// AES_LUT_FLUSH back before returning
+
+/// @brief Flush, x & 1, resting slot
+static constexpr uint32_t AES_LUT_FLUSH = 0;
+/// @brief Carry combine of the CTR adder on kill 0, propagate 1, generate 2.
+/// With that encoding the symbol is just a + b, no PBS needed to build it
+static constexpr uint32_t AES_LUT_CTR_SELECT = 1;
+/// @brief Sum bit of the CTR adder, propagate xor carry
+static constexpr uint32_t AES_LUT_CTR_SUM = 2;
+/// @brief state_lut slots under FULL_ENCRYPTION
+static constexpr uint32_t AES_NUM_STATE_LUTS = 3;
+
+// and_lut slots, same resting slot rule
+
+/// @brief AND on a levelled sum, x == 2, resting slot
+static constexpr uint32_t AES_ANDLUT_AND = 0;
+/// @brief Flush, for batches too wide for state_lut
+static constexpr uint32_t AES_ANDLUT_FLUSH = 1;
+/// @brief and_lut slots
+static constexpr uint32_t AES_NUM_ANDLUT_SLOTS = 2;
+
+/// @brief The two multi slot LUTs every PBS of the encryption goes through.
+/// and_lut for the S-box ANDs and wide flushes, state_lut for state wide
+/// flushes and the CTR adder.
 template <typename Torus> struct int_aes_lut_buffers {
+  /// @brief Sized for the widest AND layer, AES_SBOX_AND_GATES *
+  /// num_aes_inputs * sbox_parallelism blocks
   int_radix_lut<Torus> *and_lut;
-  int_radix_lut<Torus> *flush_lut;
-  int_radix_lut<Torus> *carry_lut;
+  /// @brief One state worth of blocks, AES_STATE_BITS * num_aes_inputs. Only
+  /// the flush slot under SBOX_ONLY
+  int_radix_lut<Torus> *state_lut;
 
   int_aes_lut_buffers(CudaStreams streams, const int_radix_params &params,
                       bool allocate_gpu_memory, uint32_t num_aes_inputs,
-                      uint32_t sbox_parallelism, uint64_t &size_tracker) {
-
-    constexpr uint32_t AES_STATE_BITS = 128;
-    constexpr uint32_t SBOX_MAX_AND_GATES = 18;
+                      uint32_t sbox_parallelism, uint64_t &size_tracker,
+                      aes_buffer_scope scope) {
 
     this->and_lut = new int_radix_lut<Torus>(
-        streams, params, 1,
-        SBOX_MAX_AND_GATES * num_aes_inputs * sbox_parallelism,
+        streams, params, AES_NUM_ANDLUT_SLOTS,
+        AES_SBOX_AND_GATES * num_aes_inputs * sbox_parallelism,
         allocate_gpu_memory, size_tracker);
-    std::function<Torus(Torus, Torus)> and_lambda =
-        [](Torus a, Torus b) -> Torus { return a & b; };
 
-    auto active_streams_and_lut = streams.active_gpu_subset(
-        SBOX_MAX_AND_GATES * num_aes_inputs * sbox_parallelism,
-        params.pbs_type());
-    this->and_lut->generate_and_broadcast_bivariate_lut(
-        active_streams_and_lut, {0}, {and_lambda}, LUT_0_FOR_ALL_BLOCKS);
-
-    this->flush_lut = new int_radix_lut<Torus>(
-        streams, params, 1, AES_STATE_BITS * num_aes_inputs,
-        allocate_gpu_memory, size_tracker);
+    std::function<Torus(Torus)> and_lambda = [](Torus x) -> Torus {
+      return x == 2 ? 1 : 0;
+    };
     std::function<Torus(Torus)> flush_lambda = [](Torus x) -> Torus {
       return x & 1;
     };
 
-    auto active_streams_flush_lut = streams.active_gpu_subset(
+    auto active_streams_and_lut = streams.active_gpu_subset(
+        AES_SBOX_AND_GATES * num_aes_inputs * sbox_parallelism,
+        params.pbs_type());
+    this->and_lut->generate_and_broadcast_lut(
+        active_streams_and_lut, {AES_ANDLUT_AND, AES_ANDLUT_FLUSH},
+        {and_lambda, flush_lambda}, LUT_0_FOR_ALL_BLOCKS);
+
+    const bool needs_ctr_luts = (scope == aes_buffer_scope::FULL_ENCRYPTION);
+    this->state_lut = new int_radix_lut<Torus>(
+        streams, params, needs_ctr_luts ? AES_NUM_STATE_LUTS : 1,
+        AES_STATE_BITS * num_aes_inputs, allocate_gpu_memory, size_tracker);
+
+    auto active_streams_state_lut = streams.active_gpu_subset(
         AES_STATE_BITS * num_aes_inputs, params.pbs_type());
-    this->flush_lut->generate_and_broadcast_lut(
-        active_streams_flush_lut, {0}, {flush_lambda}, LUT_0_FOR_ALL_BLOCKS);
+    this->state_lut->generate_and_broadcast_lut(active_streams_state_lut,
+                                                {AES_LUT_FLUSH}, {flush_lambda},
+                                                LUT_0_FOR_ALL_BLOCKS);
 
-    this->carry_lut = new int_radix_lut<Torus>(
-        streams, params, 1, num_aes_inputs, allocate_gpu_memory, size_tracker);
-    std::function<Torus(Torus)> carry_lambda = [](Torus x) -> Torus {
-      return (x >> 1) & 1;
-    };
+    if (needs_ctr_luts) {
+      std::function<Torus(Torus, Torus)> select_lambda =
+          [](Torus hi, Torus lo) -> Torus { return hi == 1 ? lo : hi; };
 
-    auto active_streams_carry_lut =
-        streams.active_gpu_subset(num_aes_inputs, params.pbs_type());
-    this->carry_lut->generate_and_broadcast_lut(
-        active_streams_carry_lut, {0}, {carry_lambda}, LUT_0_FOR_ALL_BLOCKS);
+      std::function<Torus(Torus, Torus)> sum_lambda = [](Torus p,
+                                                         Torus c) -> Torus {
+        return (p == 1 ? 1 : 0) ^ (c == 2 ? 1 : 0);
+      };
+
+      this->state_lut->generate_and_broadcast_bivariate_lut(
+          active_streams_state_lut, {AES_LUT_CTR_SELECT, AES_LUT_CTR_SUM},
+          {select_lambda, sum_lambda}, LUT_0_FOR_ALL_BLOCKS);
+    }
   }
 
   void release(CudaStreams streams) {
@@ -131,169 +163,124 @@ template <typename Torus> struct int_aes_lut_buffers {
     delete this->and_lut;
     this->and_lut = nullptr;
 
-    this->flush_lut->release(streams);
-    delete this->flush_lut;
-    this->flush_lut = nullptr;
-
-    this->carry_lut->release(streams);
-    delete this->carry_lut;
-    this->carry_lut = nullptr;
+    this->state_lut->release(streams);
+    delete this->state_lut;
+    this->state_lut = nullptr;
     cuda_synchronize_stream(streams.stream(0), streams.gpu_index(0));
   }
 };
 
-/**
- * The operations within an AES round, particularly MixColumns, require
- * intermediate storage for calculations. These buffers are designed to hold
- * temporary values like copies of columns or the results of multiplications,
- * avoiding overwriting data that is still needed in the same round.
- */
-template <typename Torus> struct int_aes_round_workspaces {
-  CudaRadixCiphertextFFI *mix_columns_col_copy_buffer;
-  CudaRadixCiphertextFFI *mix_columns_mul_workspace_buffer;
-  CudaRadixCiphertextFFI *vec_tmp_bit_buffer;
+/// @brief The fixed GF(2) maps of AES as index tables, each one a single
+/// levelled launch through host_radix_gather_sum.
+///
+/// A permutation or a 5 term sum costs the same, one launch and no PBS.
+/// Written in bit positions, the table repeats them for every input, so they
+/// don't grow with num_aes_inputs.
+struct int_aes_linear_tables {
+  /// @brief Where the xtime half starts in the MixColumns workspace, i +
+  /// XTIME_BASE is bit i doubled
+  static constexpr uint32_t XTIME_BASE = AES_STATE_BITS;
+  /// @brief Terms per xtime output bit, the shifted bit plus bit 0 where the
+  /// modulus folds back
+  static constexpr uint32_t XTIME_TERMS = 2;
+  /// @brief Terms per MixColumns output bit, 3a = 2a + a expanded
+  static constexpr uint32_t MIX_COLUMNS_TERMS = 5;
 
-  int_aes_round_workspaces(CudaStreams streams, const int_radix_params &params,
-                           bool allocate_gpu_memory, uint32_t num_aes_inputs,
-                           uint64_t &size_tracker) {
+  /// @brief Owner of the maps below
+  radix_index_tables<uint32_t> maps;
 
-    constexpr uint32_t BITS_PER_BYTE = 8;
-    constexpr uint32_t BYTES_PER_COLUMN = 4;
-    constexpr uint32_t BITS_PER_COLUMN = BITS_PER_BYTE * BYTES_PER_COLUMN;
-    constexpr uint32_t MIX_COLUMNS_MUL_WORKSPACE_BYTES = BYTES_PER_COLUMN + 1;
+  /// @brief ShiftRows, a permutation of the state bits. Round tables only
+  radix_index_table<uint32_t> shift_rows;
+  /// @brief xtime of every state byte. Round tables only
+  radix_index_table<uint32_t> xtime;
+  /// @brief MixColumns over [shifted | xtime of shifted], the four columns at
+  /// once. Round tables only
+  radix_index_table<uint32_t> mix_columns;
+  /// @brief Byte major to bit major, so the S-box sees one contiguous run per
+  /// bit
+  radix_index_table<uint32_t> sbox_gather;
+  /// @brief Back from bit major once the S-box is done
+  radix_index_table<uint32_t> sbox_scatter;
+  /// @brief Copies the IV to every input. Round tables only
+  radix_index_table<uint32_t> iv_broadcast;
+  /// @brief Bitsliced back to the block order callers expect. Round tables
+  /// only
+  radix_index_table<uint32_t> to_blocks;
 
-    this->mix_columns_col_copy_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0),
-        this->mix_columns_col_copy_buffer, BITS_PER_COLUMN * num_aes_inputs,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
+  /// @brief Rows of sbox_gather and sbox_scatter, 8 * sbox_parallelism
+  uint32_t sbox_reorder_len;
 
-    this->mix_columns_mul_workspace_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0),
-        this->mix_columns_mul_workspace_buffer,
-        MIX_COLUMNS_MUL_WORKSPACE_BYTES * BITS_PER_BYTE * num_aes_inputs,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
+  /// @brief Whether the round tables were built (FULL_ENCRYPTION)
+  bool has_round_tables;
 
-    this->vec_tmp_bit_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->vec_tmp_bit_buffer,
-        num_aes_inputs, params.big_lwe_dimension, size_tracker,
-        allocate_gpu_memory);
-  }
+  int_aes_linear_tables(CudaStreams streams, bool allocate_gpu_memory,
+                        uint32_t num_aes_inputs, uint32_t sbox_parallelism,
+                        uint64_t &size_tracker, aes_buffer_scope scope) {
 
-  void release(CudaStreams streams, bool allocate_gpu_memory) {
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->mix_columns_col_copy_buffer,
-                                   allocate_gpu_memory);
-    delete this->mix_columns_col_copy_buffer;
-    this->mix_columns_col_copy_buffer = nullptr;
+    const uint32_t N = num_aes_inputs;
+    this->sbox_reorder_len = AES_BITS_PER_BYTE * sbox_parallelism;
+    this->has_round_tables = (scope == aes_buffer_scope::FULL_ENCRYPTION);
 
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->mix_columns_mul_workspace_buffer,
-                                   allocate_gpu_memory);
-    delete this->mix_columns_mul_workspace_buffer;
-    this->mix_columns_mul_workspace_buffer = nullptr;
+    auto build = [&](radix_index_table<uint32_t> &map, uint32_t num_out_bits,
+                     uint32_t num_terms,
+                     const std::function<uint32_t(uint32_t, uint32_t)> &src) {
+      maps.create(streams, allocate_gpu_memory, size_tracker, map, num_out_bits,
+                  num_terms, N, N, src);
+    };
 
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->vec_tmp_bit_buffer,
-                                   allocate_gpu_memory);
-    delete this->vec_tmp_bit_buffer;
-    this->vec_tmp_bit_buffer = nullptr;
-    cuda_synchronize_stream(streams.stream(0), streams.gpu_index(0));
-  }
-};
+    if (has_round_tables) {
+      // ShiftRows rotates row r left by r bytes
+      //
+      //      c=0  c=1  c=2  c=3            c=0  c=1  c=2  c=3
+      // r=0 |  0 |  4 |  8 | 12 |     r=0 |  0 |  4 |  8 | 12 |
+      // r=1 |  1 |  5 |  9 | 13 |  -> r=1 |  5 |  9 | 13 |  1 |
+      // r=2 |  2 |  6 | 10 | 14 |     r=2 | 10 | 14 |  2 |  6 |
+      // r=3 |  3 |  7 | 11 | 15 |     r=3 | 15 |  3 |  7 | 11 |
+      //
+      // Reading the right side column major gives the table below
+      //
+      build(shift_rows, AES_STATE_BITS, 1, [](uint32_t bit, uint32_t) {
+        constexpr uint32_t shift_rows_map[AES_STATE_BYTES] = {
+            0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11};
+        return shift_rows_map[bit / AES_BITS_PER_BYTE] * AES_BITS_PER_BYTE +
+               bit % AES_BITS_PER_BYTE;
+      });
 
-/**
- * In CTR mode, a counter is homomorphically added to the encrypted IV. This
- * structure holds the necessary buffers for this 128-bit ripple-carry
- * addition, such as the buffer for the propagating carry bit
- * (`vec_tmp_carry_buffer`) across the addition chain.
- */
-template <typename Torus> struct int_aes_counter_workspaces {
-  CudaRadixCiphertextFFI *vec_tmp_carry_buffer;
-  CudaRadixCiphertextFFI *vec_tmp_sum_buffer;
-  CudaRadixCiphertextFFI *vec_trivial_b_bits_buffer;
-  Torus *h_counter_bits_buffer;
-  Torus *d_counter_bits_buffer;
+      // xtime multiplies by x in GF(2^8). Bits are MSB first and the modulus
+      // x^8 + x^4 + x^3 + x + 1 folds bit 0 back onto j = 3, 4, 6, 7
+      //
+      //   out[j] = a[j + 1]     j < 7
+      //   out[j] += a[0]        j = 3, 4, 6, 7
+      //
+      build(xtime, AES_STATE_BITS, XTIME_TERMS,
+            [](uint32_t bit, uint32_t term) {
+              uint32_t j = bit % AES_BITS_PER_BYTE, base = bit - j;
+              if (term == 0)
+                return (j == AES_BITS_PER_BYTE - 1) ? base : base + j + 1;
+              const bool reduced = (j == 3 || j == 4 || j == 6);
+              return reduced ? base : RADIX_INDEX_NO_TERM;
+            });
 
-  int_aes_counter_workspaces(CudaStreams streams,
-                             const int_radix_params &params,
-                             bool allocate_gpu_memory, uint32_t num_aes_inputs,
-                             uint64_t &size_tracker) {
-
-    this->vec_tmp_carry_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->vec_tmp_carry_buffer,
-        num_aes_inputs, params.big_lwe_dimension, size_tracker,
-        allocate_gpu_memory);
-
-    this->vec_tmp_sum_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->vec_tmp_sum_buffer,
-        num_aes_inputs, params.big_lwe_dimension, size_tracker,
-        allocate_gpu_memory);
-
-    this->vec_trivial_b_bits_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0),
-        this->vec_trivial_b_bits_buffer, num_aes_inputs,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-
-    this->h_counter_bits_buffer =
-        (Torus *)malloc(safe_mul_sizeof<Torus>(num_aes_inputs));
-    size_tracker += safe_mul_sizeof<Torus>(num_aes_inputs);
-    this->d_counter_bits_buffer = (Torus *)cuda_malloc_with_size_tracking_async(
-        safe_mul_sizeof<Torus>(num_aes_inputs), streams.stream(0),
-        streams.gpu_index(0), size_tracker, allocate_gpu_memory);
-  }
-
-  void release(CudaStreams streams, bool allocate_gpu_memory) {
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->vec_tmp_carry_buffer,
-                                   allocate_gpu_memory);
-    delete this->vec_tmp_carry_buffer;
-    this->vec_tmp_carry_buffer = nullptr;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->vec_tmp_sum_buffer,
-                                   allocate_gpu_memory);
-    delete this->vec_tmp_sum_buffer;
-    this->vec_tmp_sum_buffer = nullptr;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->vec_trivial_b_bits_buffer,
-                                   allocate_gpu_memory);
-    delete this->vec_trivial_b_bits_buffer;
-    this->vec_trivial_b_bits_buffer = nullptr;
-
-    if (allocate_gpu_memory) {
-      cuda_drop_async(this->d_counter_bits_buffer, streams.stream(0),
-                      streams.gpu_index(0));
-    }
-    cuda_synchronize_stream(streams.stream(0), streams.gpu_index(0));
-    free(this->h_counter_bits_buffer);
-  }
-};
-
-/**
- * This structure allocates the most significant memory blocks:
- * - `sbox_internal_workspace`: A large workspace for the complex, parallel
- * evaluation of the S-Box circuit.
- * - `main_bitsliced_states_buffer`: Holds the entire set of AES states in a
- * bitsliced layout, which is optimal for parallel bitwise operations on the
- * GPU.
- * - Other buffers are used for data layout transformations (transposition) and
- * for batching small operations into larger, more efficient launches.
- */
-template <typename Torus> struct int_aes_main_workspaces {
-  CudaRadixCiphertextFFI *sbox_internal_workspace;
-  CudaRadixCiphertextFFI *initial_states_and_jit_key_workspace;
-  CudaRadixCiphertextFFI *main_bitsliced_states_buffer;
-  CudaRadixCiphertextFFI *tmp_tiled_key_buffer;
-  CudaRadixCiphertextFFI *batch_processing_buffer;
-
-  int_aes_main_workspaces(CudaSt
+      // MixColumns multiplies each column by a fixed matrix over GF(2^8)
+      //
+      //   | b0 |   | 2 3 1 1 |   | a0 |
+      //   | b1 | = | 1 2 3 1 | * | a1 |
+      //   | b2 |   | 1 1 2 3 |   | a2 |
+      //   | b3 |   | 3 1 1 2 |   | a3 |
+      //
+      // With 3a = 2a + a that's 5 terms per output. The workspace holds
+      // [shifted | xtime of it], so a doubled term is just index + XTIME_BASE
+      build(mix_columns, AES_STATE_BITS, MIX_COLUMNS_TERMS,
+            [](uint32_t bit, uint32_t term) {
+              uint32_t byte = bit / AES_BITS_PER_BYTE;
+              uint32_t t = bit % AES_BITS_PER_BYTE;
+              uint32_t c = byte & ~3u, b = byte & 3u;
+              auto orig = [c, t](uint32_t i) {
+                return (c + i) * AES_BITS_PER_BYTE + t;
+              };
+              auto mul2 = [&orig](uint32_t i) { return XTIME_BASE + orig(i); };
+              const uint32_t rows[4][MIX_COLUMNS_TERMS] = {
+   
 ```
 
 ### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/integer/compression/compression_utilities.h`
@@ -1692,14 +1679,14 @@ template <typename Torus> struct int_kreyvium_buffer {
 #ifndef CUDA_BOOTSTRAP_128_H
 #define CUDA_BOOTSTRAP_128_H
 
+#include "bootstrap_key_params.h"
 #include "pbs_enums.h"
 #include <stdint.h>
 
 uint64_t scratch_cuda_programmable_bootstrap_128_vector_64(
     void *stream, uint32_t gpu_index, int8_t **pbs_buffer,
-    uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-    uint32_t level_count, uint32_t input_lwe_ciphertext_count,
-    bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type);
+    const CudaLweBootstrapKeyParamsFFI &bsk_params,
+    uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory);
 
 #endif // CUDA_BOOTSTRAP_128_H
 
@@ -1719,14 +1706,14 @@ bool supports_distributed_shared_memory_on_multibit_programmable_bootstrap(
 
 template <typename Torus>
 bool has_support_to_cuda_programmable_bootstrap_tbc_multi_bit(
-    uint32_t num_samples, uint32_t glwe_dimension, uint32_t polynomial_size,
-    uint32_t level_count, uint32_t max_shared_memory);
+    uint32_t num_samples, const CudaLweBootstrapKeyParamsFFI &bsk_params,
+    uint32_t max_shared_memory);
 
 #if CUDA_ARCH >= 900
 template <typename Torus>
 uint64_t scratch_cuda_tbc_multi_bit_programmable_bootstrap(
     void *stream, uint32_t gpu_index, pbs_buffer<Torus, MULTI_BIT> **buffer,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params,
     uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory);
 
 template <typename Torus>
@@ -1735,16 +1722,15 @@ void cuda_tbc_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
     Torus const *lwe_output_indexes, Torus const *lut_vector,
     Torus const *lut_vector_indexes, Torus const *lwe_array_in,
     Torus const *lwe_input_indexes, Torus const *bootstrapping_key,
-    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer, uint32_t lwe_dimension,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t grouping_factor,
-    uint32_t base_log, uint32_t level_count, uint32_t num_samples,
+    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params, uint32_t num_samples,
     uint32_t num_many_lut, uint32_t lut_stride);
 #endif
 
 template <typename Torus>
 uint64_t scratch_cuda_cg_multi_bit_programmable_bootstrap(
     void *stream, uint32_t gpu_index, pbs_buffer<Torus, MULTI_BIT> **pbs_buffer,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params,
     uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory);
 
 template <typename Torus>
@@ -1753,15 +1739,14 @@ void cuda_cg_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
     Torus const *lwe_output_indexes, Torus const *lut_vector,
     Torus const *lut_vector_indexes, Torus const *lwe_array_in,
     Torus const *lwe_input_indexes, Torus const *bootstrapping_key,
-    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer, uint32_t lwe_dimension,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t grouping_factor,
-    uint32_t base_log, uint32_t level_count, uint32_t num_samples,
+    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params, uint32_t num_samples,
     uint32_t num_many_lut, uint32_t lut_stride);
 
 template <typename Torus>
 uint64_t scratch_cuda_multi_bit_programmable_bootstrap(
     void *stream, uint32_t gpu_index, pbs_buffer<Torus, MULTI_BIT> **pbs_buffer,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params,
     uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory);
 
 template <typename Torus>
@@ -1770,9 +1755,8 @@ void cuda_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
     Torus const *lwe_output_indexes, Torus const *lut_vector,
     Torus const *lut_vector_indexes, Torus const *lwe_array_in,
     Torus const *lwe_input_indexes, Torus const *bootstrapping_key,
-    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer, uint32_t lwe_dimension,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t grouping_factor,
-    uint32_t base_log, uint32_t level_count, uint32_t num_samples,
+    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params, uint32_t num_samples,
     uint32_t num_many_lut, uint32_t lut_stride);
 
 template <typename Torus>
@@ -1805,12 +1789,11 @@ uint64_t get_buffer_size_full_sm_tbc_multibit_programmable_bootstrap(
 
 template <typename Torus, class params>
 uint64_t get_lwe_chunk_size(uint32_t gpu_index, uint32_t max_num_pbs,
-                            uint32_t polynomial_size, uint32_t glwe_dimension,
-                            uint32_t level_count, uint64_t full_sm_keybundle);
+                            const CudaLweBootstrapKeyParamsFFI &bsk_params,
+                            uint64_t full_sm_keybundle);
 template <typename Torus, class params>
 uint64_t get_lwe_chunk_size_128(uint32_t gpu_index, uint32_t max_num_pbs,
-                                uint32_t polynomial_size,
-                                uint32_t glwe_dimension, uint32_t level_count,
+                                const CudaLweBootstrapKeyParamsFFI &bsk_params,
                                 uint64_t full_sm_keybundle);
 template <typename Torus>
 struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
@@ -1838,14 +1821,15 @@ struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
 private:
   // Variant-free part: shared fields plus the buffers every multi-bit variant
   // uses (keybundle scratch, keybundle FFT, accumulator, join buffer).
-  pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t glwe_dimension,
-             uint32_t polynomial_size, uint32_t level_count,
+  pbs_buffer(cudaStream_t stream, uint32_t gpu_index,
+             const CudaLweBootstrapKeyParamsFFI &bsk_params,
              uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
              bool allocate_gpu_memory, uint64_t &size_tracker)
       : lwe_chunk_size(lwe_chunk_size),
         gpu_memory_allocated(allocate_gpu_memory),
-        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
-        level_count(level_count),
+        glwe_dimension(bsk_params.glwe_dimension),
+        polynomial_size(bsk_params.polynomial_size),
+        level_count(bsk_params.level_count),
         input_lwe_ciphertext_count(input_lwe_ciphertext_count) {
     cuda_set_device(gpu_index);
     max_shared_memory = cuda_get_max_shared_memory(gpu_index);
@@ -1914,12 +1898,21 @@ private:
   }
 
 public:
-  pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t glwe_dimension,
-             uint32_t polynomial_size, uint32_t level_count,
+  pbs_buffer(cudaStream_t stream, uint32_t gpu_index,
+             const CudaLweBootstrapKeyParamsFFI &bsk_params,
              uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
              pbs_variant_tag<PBS_VARIANT::DEFAULT>, bool allocate_gpu_memory,
              uint64_t &size_tracker)
-  
+      : pbs_buffer(stream, gpu_index, bsk_params, input_lwe_ciphertext_count,
+                   lwe_chunk_size, allocate_gpu_memory, size_tracker) {
+    pbs_variant = PBS_VARIANT::DEFAULT;
+
+    uint64_t full_sm_accumulate_step_one =
+        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_one<Torus>(
+            polynomial_size);
+    uint64_t partial_sm_accumulate_step_one =
+        get_buffer_size_partial_sm_multibit_programmable_bootstrap_step_one<
+            Torus>(
 ```
 
 
@@ -1952,129 +1945,114 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f014579e` (2026-11-12)
-**Commit Message**: fix(integer): reject unexpected last block in modulus switched radix conformance (#4157)
+### Incident Patch 1: `5bc9c334` (2026-11-13)
+**Commit Message**: fix(integer): signed radix squashing could pack unclean ciphertexts (#4156)
 
-**File**: `tfhe/src/integer/ciphertext/compressed_modulus_switched_ciphertext.rs` (modified, +110/-1)
+- the packing would lead to invalid values if the ciphertexts are not clean
+- mutualized the code for unsigned and signed radix ciphertexts
+
+**File**: `tfhe/src/integer/noise_squashing/keys.rs` (modified, +16/-18)
 ```diff
-@@ -162,9 +162,118 @@ impl ParameterSetConformant for CompressedModulusSwitchedRadixCiphertextGeneric
-                 .as_ref()
-                 .is_some_and(|last_block| last_block.is_conformant(&params.shortint_params))
-         } else {
--            true
-+            last_block.is_none()
-         };
+@@ -301,15 +301,12 @@ impl NoiseSquashingKey {
+         Self { key }
+     }
  
-         paired_blocks_len_ok && paired_blocks_ok && last_item_ok
+-    pub fn squash_radix_ciphertext_noise(
++    fn pack_and_squash_ct_blocks(
+         &self,
++        blocks: &[crate::shortint::Ciphertext],
+         src_server_key: &ServerKey,
+-        ciphertext: &RadixCiphertext,
+-    ) -> crate::Result<SquashedNoiseRadixCiphertext> {
+-        let original_block_count = ciphertext.blocks.len();
+-
+-        let packed_blocks = ciphertext
+-            .blocks
++    ) -> crate::Result<Vec<crate::shortint::ciphertext::SquashedNoiseCiphertext>> {
++        blocks
+             .par_chunks(2)
+             .map(|two_values| {
+                 let packed = src_server_key
+@@ -319,7 +316,17 @@ impl NoiseSquashingKey {
+                 self.key
+                     .checked_squash_ciphertext_noise(&packed, &src_server_key.key)
+             })
+-            .collect::<crate::Result<Vec<_>>>()?;
++            .collect::<crate::Result<Vec<_>>>()
++    }
++
++    pub fn squash_radix_ciphertext_noise(
++        &self,
++        src_server_key: &ServerKey,
++        ciphertext: &RadixCiphertext,
++    ) -> crate::Result<SquashedNoiseRadixCiphertext> {
++        let original_block_count = ciphertext.blocks.len();
++
++        let packed_blocks = self.pack_and_squash_ct_blocks(&ciphertext.blocks, src_server_key)?;
+ 
+         Ok(SquashedNoiseRadixCiphertext {
+             packed_blocks,
+@@ -334,16 +341,7 @@ impl NoiseSquashingKey {
+     ) -> crate::Result<SquashedNoiseSignedRadixCiphertext> {
+         let original_block_count = ciphertext.blocks.len();
+ 
+-        let packed_blocks = ciphertext
+-            .blocks
+-            .par_chunks(2)
+-            .map(|two_values| {
+-                let packed = src_server_key.pack_block_chunk(two_values);
+-
+-                self.key
+-                    .checked_squash_ciphertext_noise(&packed, &src_server_key.key)
+-            })
+-            .collect::<crate::Result<Vec<_>>>()?;
++        let packed_blocks = self.pack_and_squash_ct_blocks(&ciphertext.blocks, src_server_key)?;
+ 
+         Ok(SquashedNoiseSignedRadixCiphertext {
+             packed_blocks,
+```
+
+**File**: `tfhe/src/integer/noise_squashing/tests.rs` (modified, +37/-0)
+```diff
+@@ -104,3 +104,40 @@ fn test_integer_noise_squashing_decrypt_auto_cast_and_bool() {
+         assert_eq!(val, d);
      }
  }
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::integer::keycache::KEY_CACHE;
-+    use crate::integer::{IntegerKeyKind, RadixCiphertext, ServerKey};
-+    use crate::shortint::parameters::test_params::TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
++#[test]
++fn test_repro_noise_squashing_degree_handling() {
++    use crate::integer::noise_squashing::{NoiseSquashingKey, NoiseSquashingPrivateKey};
++    use crate::integer::{gen_keys_radix, ClientKey, IntegerCiphertext};
++    use crate::shortint::parameters::{
++        NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128 as NSP,
++        PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128 as P22,
++    };
 +
-+    #[test]
-+    fn test_even_blocks_rejects_unexpected_last_block_conformance() {
-+        let num_blocks = 4;
-+        let (cks, sks) = KEY_CACHE.get_from_params(
-+            TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+            IntegerKeyKind::Radix,
-+        );
++    let (rck, sks) = gen_keys_radix(P22, 4);
++    let cks: &ClientKey = rck.as_ref();
++    // public handle on the underlying shortint key (integer ServerKey::key is private)
++    let shortint_sks = sks.clone().into_raw_parts();
++    let nspk = NoiseSquashingPrivateKey::new(NSP);
++    let nsk = NoiseSquashingKey::new(cks, &nspk);
 +
-+        let conformance_params = CompressedModulusSwitchedRadixCiphertextConformanceParams {
-+            shortint_params: sks.key.compressed_modswitched_conformance_params(),
-+            num_blocks_per_integer: num_blocks,
-+        };
-+
-+        let ct = cks.encrypt_radix(3u64, num_blocks);
-+        let mut compressed = sks.switch_modulus_and_compress_parallelized(&ct);
-+        assert!(compressed.0.last_block.is_none());
-+        assert!(compressed.is_conformant(&conformance_params));
-+
-+        // An even number of blocks is fully stored in paired_blocks, an extra block would
-+        // decompress to num_blocks + 1 blocks
-+        let extra_block = sks
-+            .key
-+            .switch_modulus_and_compress(&cks.encrypt_one_block(1u64));
-+        compressed.0.last_block = Some(extra_block.clone());
-+        assert!(!compressed.is_conformant(&conformance_params));
-+
-+        let signed_ct = cks.encrypt_signed_radix(-3i64, num_blocks);
-+        let mut signed_compressed = sks.switch_modulus_and_compress_signed_parallelized(&signed_ct);
-+        assert!(signed_compressed.is_conformant(&conformance_params));
-+
-+        signed_compressed.0.last_block = Some(extra_block);
-+        assert!(!signed_compressed.is_conformant(&conformance_params));
++    // --- non-canonical but valid radix encoding of 17 -> blocks [1, 4, 0, 0] ---
++    {
++        let mut ct = cks.encrypt_signed_radix(1i8, 4);
++        shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[1], 4);
++        let dec_signed: i8 = cks.decrypt_signed_radix(&ct);
++        assert_eq!(dec_signed, 17);
++        let should_fail_signed = nsk.squash_signed_radix_ciphertext_noise(&sks, &ct);
++        assert!(should_fail_signed.is_err());
 +    }
 +
-+    /// Mimics a server handling untrusted inputs: anything that passes conformance is then
-+    /// decompressed and computed on, so it must not be able to make the server panic
-+    fn conformant_decompress_and_add(
-+        sks: &ServerKey,
-+        conformance_params: &CompressedModulusSwitchedRadixCiphertextConformanceParams,
-+        lhs: &CompressedModulusSwitchedRadixCiphertext,
-+        rhs: &CompressedModulusSwitchedRadixCiphertext,
-+    ) -> Option<RadixCiphertext> {
-+        if !lhs.is_conformant(conformance_params) || !rhs.is_conformant(conformance_params) {
-+            return None;
-+        }
-+
-+        let lhs = sks.decompress_parallelized(lhs);
-+        let rhs = sks.decompress_parallelized(rhs);
-+
-+        Some(sks.add_parallelized(&lhs, &rhs))
-+    }
-+
-+    #[test]
-+    fn test_even_blocks_extra_last_block_does_not_panic_after_conformance() {
-+        let num_blocks = 4;
-+        let (cks, sks) = KEY_CACHE.get_from_params(
-+            TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+            IntegerKeyKind::Radix,
-+        );
-+
-+        let conformance_params = CompressedModulusSwitchedRadixCiphertextConformanceParams {
-+            shortint_params: sks.key.compressed_modswitched_conformance_params(),
-+            num_blocks_per_integer: num_blocks,
-+        };
-+
-+        let honest = cks.encrypt_radix(3u64, num_blocks);
-+
-+        // num_blocks + 2 blocks give one more paired_block than expected
-+        let too_many_pairs = cks.encrypt_radix(3u64, num_blocks + 2);
-+
-+        // num_blocks + 1 blocks give the same number of paired_blocks as num_blocks, plus a
-+        // last_block that would decompress to an extra block
-+        let extra_last_block = cks.encrypt_radix(3u64, num_blocks + 1);
-+
-+        let res = conformant_decompress_and_add(
-+            &sks,
-+            &conformance_params,
-+            &sks.switch_modulus_and_compress_parallelized(&honest),
-+            &sks.switch_modulus_and_compress_parallelized(&honest),
-+        )
-+        .unwrap();
-+        let dec: u64 = cks.decrypt_radix(&res);
-+        assert_eq!(dec, 6);
-+
-+        assert!(conformant_decompress_and_add(
-+            &sks,
-+            &conformance_params,
-+            &sks.switch_modulus_and_compress_parallelized(&honest),
-+            &sks.switch_modulus_and_compress_parallelized(&too_many_pairs),
-+        )
-+        .is_none());
-+
-+        assert!(conformant_decompress_and_add(
-+            &sks,
-+            &conformance_params,
-+            &sks.switch_modulus_and_compress_parallelized(&honest),
-+            &sks.switch_modulus_and_compress_parallelized(&extra_last_block),
-+        )
-+        .is_none());
++    // unsigned mirror of the identical construction
++    {
++        let mut ctu = cks.encrypt_radix(1u8, 4);
++        shortint_sks.unchecked_scalar_add_assign(&mut ctu.blocks_mut()[1], 4);
++        let dec_unsigned: u8 = cks.decrypt_radix(&ctu);
++        assert_eq!(dec_unsigned, 17);
++        let should_fail_unsigned = nsk.squash_radix_ciphertext_noise(&sks, &ctu);
++        assert!(should_fail_unsigned.is_err());
 +    }
 +}
 ```
@@ -2083,9 +2061,9 @@ Observed empirical fixes and code patches:
 - **PR #4163** (2026-11-12): chore: make codeowners more flexible (@IceTDrinker)
 - **PR #4162** (2026-11-12): chore: bump rustix to 1.1.6 (@nsarlin-zama)
 - **PR #4157** (2026-11-12): fix(integer): reject unexpected last block in modulus switched radix … (@mayeul-zama)
+- **PR #4156** (2026-11-13): fix(integer): signed radix squashing could pack unclean ciphertexts (@IceTDrinker)
 - **PR #4154** (2026-11-12): chore(integer): add filering before cleaning noise (@tmontaigu)
 - **PR #4153** (2026-11-09): Am/chore/lock cargo installs (@IceTDrinker)
-- **PR #4151** (2026-11-10): fix(js): pass missing metadata to build_with_proof_packed in test (@SouchonTheo)
 
 ---
 
@@ -2105,60 +2083,63 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. integer): reject unexpected last block in modulus switched radix conformance (#4
+## X. integer): signed radix squashing could pack unclean ciphertexts
 
 **RULE**:
-When implementing operations in `tfhe/src/integer/ciphertext/compressed_modulus_switched_ciphertext.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/integer/noise_squashing/keys.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f014579e`: integer): reject unexpected last block in modulus switched radix conformance (#4157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5bc9c334`: integer): signed radix squashing could pack unclean ciphertexts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/ciphertext/compressed_modulus_switched_ciphertext.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/noise_squashing/keys.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            last_block.is_none()
+    fn pack_and_squash_ct_blocks(
+        blocks: &[crate::shortint::Ciphertext],
+    ) -> crate::Result<Vec<crate::shortint::ciphertext::SquashedNoiseCiphertext>> {
+        blocks
+            .collect::<crate::Result<Vec<_>>>()
+    }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::integer::keycache::KEY_CACHE;
-    use crate::integer::{IntegerKeyKind, RadixCiphertext, ServerKey};
-    use crate::shortint::parameters::test_params::TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
+    pub fn squash_radix_ciphertext_noise(
+        &self,
+        src_server_key: &ServerKey,
+        ciphertext: &RadixCiphertext,
+    ) -> crate::Result<SquashedNoiseRadixCiphertext> {
+        let original_block_count = ciphertext.blocks.len();
 
-    #[test]
-    fn test_even_blocks_rejects_unexpected_last_block_conformance() {
-        let num_blocks = 4;
-        let (cks, sks) = KEY_CACHE.get_from_params(
-            TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-            IntegerKeyKind::Radix,
-        );
-
-        let conformance_params = CompressedModulusSwitchedRadixCiphertextConformanceParams {
-            shortint_params: sks.key.compressed_modswitched_conformance_params(),
-            num_blocks_per_integer: num_blocks,
-        };
-
-        let ct = cks.encrypt_radix(3u64, num_blocks);
-        let mut compressed = sks.switch_modulus_and_compress_parallelized(&ct);
-        assert!(compressed.0.last_block.is_none());
-        assert!(compressed.is_conformant(&conformance_params));
-
-        // An even number of blocks is fully stored in paired_blocks, an extra block would
-        // decompress to num_blocks + 1 blocks
-        
+        let packed_blocks = self.pack_and_squash_ct_blocks(&ciphertext.blocks, src_server_key)?;
+        let packed_blocks = self.pack_and_squash_ct_blocks(&ciphertext.blocks, src_server_key)?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-            true
+// Induced defect failure mode:
+    pub fn squash_radix_ciphertext_noise(
+        ciphertext: &RadixCiphertext,
+    ) -> crate::Result<SquashedNoiseRadixCiphertext> {
+        let original_block_count = ciphertext.blocks.len();
+
+        let packed_blocks = ciphertext
+            .blocks
+            .collect::<crate::Result<Vec<_>>>()?;
+        let packed_blocks = ciphertext
+            .blocks
+            .par_chunks(2)
+            .map(|two_values| {
+                let packed = src_server_key.pack_block_chunk(two_values);
+
+                self.key
+                    .checked_squash_ciphertext_noise(&packed, &src_server_key.key)
+            })
+            .collect::<crate::Result<Vec<_>>>()?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f014579e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5bc9c334` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

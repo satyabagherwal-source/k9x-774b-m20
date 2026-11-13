@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `90a50e46`  
+> **Source Version**: `a96b178b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:37:48.558Z  
+> **Timestamp**: 2026-11-13T19:39:50.400Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:37:48.552Z  
+> **Harvest Timestamp**: 2026-11-13T19:39:50.143Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10105 stars
+- **Stars / Engagement**: 10109 stars
 
 ---
 
@@ -1435,16 +1435,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7510** (2026-11-11): **nrf: check pin-peripheral compatibility at compile time for nrf54.**
-  *Symptoms*:   nrf: check pin-peripheral compatibility at compile time for nrf54.  This adds TxPin, RxPin, etc traits similar to what stm32, rp and other HALs already have. The impls are a bit different since they're made per domain but the idea is the same.  This also adds support for the funny "Select P2 pins can be used for some serial interfaces in the peripheral domain" edge case, behind a Cargo feature to opt in to the "constant latency" power mode.  For nRFs other than nRF54 the traits are implemented for all pins.  Fixes #4854 Fixes #7470
-  **Post-Mortem & Fix Analysis**:
-  > Does it really have to be so explicit and verbose like implemented?  I think, you just need these boundaries: - Each pin has to be marked if it is usable for a certain SERIAL peripheral. - Some pins are clock pins. Clock signals require a pin also to be a clock pin.  Something like this for a SPIM:  ```rs pub fn new<S, T: SpimInstance<S>>(     spim: Peri<'d, T>,     sck: Peri<'d, impl SerialPin<S> + impl ClockPin>,     mosi: Peri<'d, impl SerialPin<S>>,     miso: Peri<'d, impl SerialPin<S>>,     cs: Peri<'d, impl SerialPin<S>>,     _irq: impl interrupt::typelevel::Binding<T::Interrupt, InterruptHandler<T>> + 'd,     config: Config, ) -> Self; ```  Or do I misunderstand your PR?  Maybe this tool is handy to verify the changes: https://pinplanner.app  
-  > > Each pin has to be marked if it is usable for a certain SERIAL peripheral.  Yes, this is exactly what the traits do. `RxPin<SERIAL20>` marks a pin as "this is usable as RX pin for peripheral SERIAL20".  It's not enough to do one trait for all pin functions like  `PinUsableWith<SERIAL20>` because some peripherals have fixed mappings, see QSPI for example. Also doing it this way would be inconsistent with what other HALs (stm32, rp...) do.  > Some pins are clock pins. Clock signals require a pin also to be a clock pin.  This PR intentionally doesn't enforce this, putting clocks on non-clock pins still works, just not very well at high frequencies.  (also note this restriction is in all nRFs, not just nrf54. For example in nrf52 many pins are marked "not for high-frequency IO". So not enforcing this in nRF54 is consistent with what we were already doing)
+- **Issue #7537** (2026-11-13): **stm32: subghz: simplify the API after review**
+  *Symptoms*: Follow-up to #7524's review: removes the `Subghz` factory (construct `SubghzSpi` and `SubghzControl` directly) and the `RfSwitch` helpers, which are board-specific and now live in the examples. `SubghzRadio` is renamed to `SubghzControl`, since it handles reset, `RFBUSY` and interrupts and not the radio's commands.
 
-- **Issue #7509** (2026-11-11): **nrf: remove Any types on ppi, gpiote. Remove instance generic on ppi.**
-  *Symptoms*: - **nrf/gpiote: remove AnyChannel** - **nrf/ppi: remove instance generics and the Anys.** 
-  **Post-Mortem & Fix Analysis**:
-  > bender run
+- **Issue #7536** (2026-11-13): **wpan: reset WBA BLE platform state when the controller is dropped**
+  *Symptoms*: `HCI::deinit()` zeroes the host stack, but events the app never read stay in the event queue. So after `HCI::new()`, the new stack gets the old stack's events first.  here's a simple repro: ```rust // directed advertising to a peer that doesn't exist, times out after 1.28 s let params = AdvParams {     adv_type: AdvType::ConnectableDirectedHighDuty,     peer_addr: Some(BdAddrType::Random(BdAddr::new([1, 2, 3, 4, 5, 0xC0]))),     ..AdvParams::default() }; ble.start_advertising(params, AdvData::new(), None).await.unwrap(); Timer::after_secs(2).await; // timeout event is now in the queue, unread ble.deinit().await.unwrap();  let mut ble = HCI::new(platform, runtime, Irqs).await.unwrap(); let mut buf = EventBuffer::new(); info!("{:?}", ble.read_event(&mut buf).await); // LeEnhancedConnectionComplete { status: Advertising Timeout, .. } ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1461,330 +1456,269 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `455ca7b9` (2026-11-12)
-**Commit Message**: usb: minor fixes
+### Incident Patch 1: `798395dd` (2026-11-13)
+**Commit Message**: Merge pull request #7531 from OueslatiGhaith/wba-ble-adv-timeout
 
-**File**: `embassy-usb/src/class/midi/device/mod.rs` (modified, +50/-5)
-```diff
-@@ -2,6 +2,8 @@
- 
- use core::sync::atomic::{AtomicU8, Ordering};
- 
-+use embassy_futures::select::select;
-+
- use super::{
-     CS_GR_TRM_BLOCK, GR_TRM_BLOCK_HEADER_LEN, GR_TRM_BLOCK_LEN, GroupTerminalBlock, GroupTerminalBlockConfig, MAX_GTBS,
-     MAX_MIDI_JACKS, MAX_UMP_BYTES, MIDI_IN_JACK_LEN, MIDI_IN_JACK_SUBTYPE, MIDI_OUT_JACK_BASE_LEN,
-@@ -692,11 +694,7 @@ impl<'d, D: Driver<'d>> MidiClass<'d, D> {
- 
-     /// Waits for the USB host to enable this interface.
-     pub async fn wait_connection(&mut self) {
--        if let Some(read_ep) = &mut self.read_ep {
--            read_ep.wait_enabled().await;
--        } else if let Some(write_ep) = &mut self.write_ep {
--            write_ep.wait_enabled().await;
--        }
-+        wait_any_enabled(&mut self.read_ep, &mut self.write_ep).await;
-     }
- 
-     /// Split the endpoints into a sender and receiver.
-@@ -711,6 +709,18 @@ impl<'d, D: Driver<'d>> MidiClass<'d, D> {
-     }
- }
- 
-+/// Wait until either endpoint is enabled; the alternate setting in use may need only one.
-+async fn wait_any_enabled<R: Endpoint, W: Endpoint>(read_ep: &mut Option<R>, write_ep: &mut Option<W>) {
-+    match (read_ep, write_ep) {
-+        (Some(read_ep), Some(write_ep)) => {
-+            select(read_ep.wait_enabled(), write_ep.wait_enabled()).await;
-+        }
-+        (Some(read_ep), None) => read_ep.wait_enabled().await,
-+        (None, Some(write_ep)) => write_ep.wait_enabled().await,
-+        (None, None) => {}
-+    }
-+}
-+
- /// Write UMPs in transfers of whole packets, ending one that exactly fills the last packet with a ZLP.
- async fn write_umps<E: EndpointIn>(ep: &mut E, packets: &[UmpPacket]) -> Result<(), EndpointError> {
-     let max_packet_size = usize::from(ep.info().max_packet_size);
-@@ -881,4 +891,39 @@ mod tests {
-         ));
-         assert!(ep.writes.is_empty());
-     }
-+
-+    #[test]
-+    fn wait_connection_ends_when_only_one_of_the_endpoints_is_enabled() {
-+        use embassy_futures::block_on;
-+        use embassy_usb_driver::{Endpoint, EndpointAddress, EndpointInfo, EndpointType};
-+
-+        // `Never` is the OUT endpoint after switching to an IN-only setting.
-+        struct Never(EndpointInfo);
-+        struct Enabled(EndpointInfo);
-+        impl Endpoint for Never {
-+            fn info(&self) -> &EndpointInfo {
-+                &self.0
-+            }
-+            async fn wait_enabled(&mut self) {
-+                core::future::pending::<()>().await
-+            }
-+        }
-+        impl Endpoint for Enabled {
-+            fn info(&self) -> &EndpointInfo {
-+                &self.0
-+            }
-+            async fn wait_enabled(&mut self) {}
-+        }
-+        let info = EndpointInfo {
-+            addr: EndpointAddress::from(0x01),
-+            ep_type: EndpointType::Bulk,
-+            max_packet_size: 64,
-+            interval_ms: 0,
-+            max_burst: 0,
-+        };
-+
-+        block_on(wait_any_enabled(&mut Some(Never(info)), &mut Some(Enabled(info))));
-+        block_on(wait_any_enabled(&mut Some(Enabled(info)), &mut Some(Never(info))));
-+        block_on(wait_any_enabled(&mut None::<Never>, &mut None::<Never>));
-+    }
- }
-```
+wpan: clear WBA advertising state on directed advertising timeout
 
-**File**: `embassy-usb/src/class/midi/host/mod.rs` (modified, +238/-19)
+**File**: `embassy-stm32-wpan/src/bluetooth/mod.rs` (modified, +15/-3)
 ```diff
-@@ -911,6 +911,9 @@ fn groups(mask: u16) -> impl Iterator<Item = u8> {
-     (0..16).filter(move |group| mask & (1 << group) != 0)
- }
+@@ -21,7 +21,7 @@ use bt_hci::event::le::{
+     LePhyUpdateComplete, LeRemoteConnectionParameterRequest,
+ };
+ use bt_hci::event::{DisconnectionComplete, Event, EventKind, EventPacket};
+-use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions};
++use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions, Status};
+ use bt_hci::{ControllerToHostPacket, FromHciBytes};
+ use embassy_futures::yield_now;
+ use embassy_stm32::interrupt;
+@@ -633,7 +633,7 @@ impl<'d> HCI<'d, Normal> {
+                     let conn = Connection::new(*handle, *role, peer_address, interval);
+                     self.on_connected(conn).await
+                 } else {
+-                    None
++                    self.on_connection_failed(*status)
+                 }
+             }
+             Event::Le(LeEvent::LeEnhancedConnectionComplete(LeEnhancedConnectionComplete {
+@@ -662,7 +662,7 @@ impl<'d> HCI<'d, Normal> {
+                     );
+                     self.on_connected(conn).await
+                 } else {
+-                    None
++                    self.on_connection_failed(*status)
+                 }
+             }
+             Event::DisconnectionComplete(DisconnectionComplete { status, handle, reason }) => {
+@@ -772,6 +772,18 @@ impl<'d> HCI<'d, Normal> {
+         Some(GapEvent::Connected(conn))
+     }
  
-+/// Size of a UMP word in bytes.
-+const UMP_WORD_BYTES: usize = 4;
++    fn on_connection_failed(&mut self, status: Status) -> Option<GapEvent> {
++        // High duty cycle directed advertising reports this status when no central
++        // connected in time (Core Spec Vol 4, Part E, 7.7.65.1). The controller has stopped
++        // advertising by then. Without clearing the flag, the next `start_advertising`
++        // tries to stop it first, which the stack refuses.
++        if status.to_result() == Err(bt_hci::param::Error::ADV_TIMEOUT) {
++            self.is_advertising = false;
++        }
 +
- /// Device-to-host half of a [`Midi2Host`].
- pub struct Midi2Receiver<'d, A: UsbHostAllocator<'d>> {
-     pipe: raw::UmpInputPipe<'d, A>,
-@@ -936,9 +939,16 @@ impl<'d, A: UsbHostAllocator<'d>> Midi2Receiver<'d, A> {
-         self.groups
-     }
- 
--    /// Receive one transfer of raw UMP bytes.
-+    /// Receive one transfer of raw UMP bytes, preceded by any partial packet [`read_packets`](Self::read_packets) holds.
-     pub async fn read(&mut self, buf: &mut [u8]) -> Result<usize, MidiError> {
--        self.pipe.read(buf).await
-+        if buf.len() < self.carried + UMP_WORD_BYTES {
-+            return Err(UmpError::BufferTooSmall.into());
-+        }
-+        buf[..self.carried].copy_from_slice(&self.carry[..self.carried]);
-+        let len = self.pipe.read(&mut buf[self.carried..]).await?;
-+        let total = self.carried + len;
-+        self.carried = 0;
-+        Ok(total)
-     }
- 
-     /// Receive into `buf` and return the length of the complete UMPs at its start; a packet cut by
-@@ -1071,6 +1081,9 @@ impl<'d, A: UsbHostAllocator<'d>> Midi2Host<'d, A> {
-     }
- 
-     /// Discover, activate and open the first MIDI 2.0 function, with its topology.
-+    ///
-+    /// `control_pipe` stays allocated, so a bidirectional function needs three pipes at once; a constrained
-+    /// host can call [`MidiInfo::activate`], drop its control pipe, then [`Midi2Host::new`].
-     pub async fn connect<P>(
-         alloc: &A,
-         control_pipe: &mut P,
-@@ -1082,32 +1095,52 @@ impl<'d, A: UsbHostAllocator<'d>> Midi2Host<'d, A> {
-     {
-         let info = MidiInfo::midi2_from_config(config_desc, enum_info)?;
-         let topology = info.activate(control_pipe).await?;
--        Ok(Self::new(alloc, info, enum_info)?.with_topology(topology))
-+        match Self::new(alloc, info, enum_info) {
-+            Ok(host) => Ok(host.with_topology(topology)),
-+            Err(error) => {
-+                // Best effort; the allocation error is the one reported.
-+                let _ = info.deactivate(control_pipe).await;
-+                Err(error)
-+            }
-+        }
-     }
- 
--    /// Activate the function on a control pipe of its own, then allocate the pipes.
-+    /// Activate on a control pipe of its own, free it, then allocate the data pipes, so two free pipes
-+    /// suffice. If that fails, a fresh control pipe puts the device back on alternate setting 0.
-     async fn connect_with_own_control_pipe(
-         alloc: &A,
-         info: MidiInfo,
-         enum_info: &EnumerationInfo,
-     ) -> Result<Self, MidiError> {
--        let mut control = alloc
--            .alloc_pipe::<pipe::Control, pipe::InOut>(
--                enum_info.device_address,
--                &embassy_usb_driver::EndpointInfo {
--                    addr: 0.into(),
--                    ep_type: embassy_usb_driver::EndpointType::Control,
--                    max_packet_size: (enum_info.device_desc.max_packet_size0 as u16)
--                        .min(enum_info.speed().max_packet_size()),
--                    interval_ms: 0,
--                    max_burst: 0,
--                },
--                enum_info.split(),
--            )
--            .map_err(|_| MidiError::NoPipe)?;
-+        let alloc_control = || {
-+            alloc
-+                .alloc_pipe::<pipe::Control, pipe::InOut>(
-+                    enum_info.device_address,
-+                    &embassy_usb_driver::EndpointInfo {
-+                        addr: 0.into(),
-+                        ep_type: embassy_usb_driver::EndpointType::Control,
-+                        max_packet_size: (enum_info.device_desc.max_packet_size0 as u16)
-+                            .min(enum_info.speed().max_packet_size()),
-+                        interval_ms: 0,
-+                        max_burst: 0,
-+                    },
-+                    enum_info.split(),
-+                )
-+                .map_err(|_| MidiError::NoPipe)
-+        };
-+        let mut control = alloc_control()?;
-         let topology = info.activate(&mut control).await?;
-         drop(control);
--        Ok(Self::new(alloc, info, enum_info)?.with_topology(topology))
-+        match Self::new(alloc, info, enum_info) {
-+            Ok(host) => Ok(host.with_topology(topology)),
-+            Err(error) => {
-+                // Best effort, on a fresh control pipe.
-+                if let Ok(mut control) = alloc_control() {
-+                    let _ = info.deactivate(&mut control).await;
-+                }
-+                Err(error)
-+            }
-+        }
-     }
- 
-     /// The function this host was opened from.
-@@ -1851,4 +1884,190 @@ mod tests {
-             assert!(SysexPackets::new(0, bad).is_err());
-         }
-     }
-+
-+    #[test]
-+    fn a_failed_pipe_allocation_puts_the_device_back_on_alternate_setting_0() {
-+        use embassy_future
-```
-
-**File**: `embassy-usb/src/class/midi/host/transport.rs` (modified, +35/-6)
-```diff
-@@ -5,7 +5,7 @@
- //! interrupt IN). The MIDI 1.0 and UMP pipes differ only in their framing checks.
- 
- use embassy_usb_driver::host::{UsbHostAllocator, UsbPipe, pipe};
--use embassy_usb_driver::{EndpointAddress, EndpointInfo, EndpointType};
-+use embassy_usb_driver::{EndpointAddress, EndpointInfo, EndpointType, Speed};
- 
- use super::{MidiEndpointDescriptor, MidiError};
- use crate::class::midi::packet::check_transfer_len;
-@@ -22,13 +22,28 @@ fn check_ump_len(len: usize) -> Result<(), MidiPacketError> {
-     Ok(())
- }
- 
--fn endpoint_info(endpoint: &MidiEndpointDescriptor) -> EndpointInfo {
-+/// Polling interval in ms for an interrupt endpoint's raw `bInterval`: frames at low and full speed,
-+/// `2^(n-4)` ms at high speed (USB 2.0 §9.6.6). Sub-millisecond values round up to 1 ms.
-+fn polling_interval_ms(speed: Speed, b_interval: u8) -> u8 {
-+    match speed {
-+        Speed::Low | Speed::Full => b_interval,
-+        Speed::High => 1u32
-+            .checked_shl(u32::from(b_interval).saturating_sub(4))
-+            .map_or(u8::MAX, |ms| ms.min(255) as u8),
++        None
 +    }
-+}
 +
-+fn endpoint_info(endpoint: &MidiEndpointDescriptor, speed: Speed) -> EndpointInfo {
-     EndpointInfo {
-         addr: EndpointAddress::from(endpoint.address),
-         ep_type: endpoint.ep_type,
-         max_packet_size: endpoint.max_packet_size,
--        // Full-speed interrupt `bInterval` is a frame count (Appendix B.8). Bulk leaves it at 0 (§5.3.1).
--        interval_ms: endpoint.interval,
-+        // Bulk has no polling interval (§5.3.1).
-+        interval_ms: if endpoint.ep_type == EndpointType::Interrupt {
-+            polling_interval_ms(speed, endpoint.interval)
-+        } else {
-+            0
-+        },
-         max_burst: 0,
-     }
- }
-@@ -48,7 +63,7 @@ impl<'d, A: UsbHostAllocator<'d>> DataIn<'d, A> {
-         if !endpoint.is_in() {
-             return Err(MidiError::WrongDirection);
-         }
--        let info = endpoint_info(endpoint);
-+        let info = endpoint_info(endpoint, enum_info.speed());
-         match endpoint.ep_type {
-             EndpointType::Interrupt => alloc
-                 .alloc_pipe::<pipe::Interrupt, pipe::In>(enum_info.device_address, &info, enum_info.split())
-@@ -75,7 +90,7 @@ impl<'d, A: UsbHostAllocator<'d>> DataOut<'d, A> {
-         if endpoint.is_in() {
-             return Err(MidiError::WrongDirection);
-         }
--        let info = endpoint_info(endpoint);
-+        let info = endpoint_info(endpoint, enum_info.speed());
-         match endpoint.ep_type {
-             EndpointType::Interrupt => alloc
-                 .alloc_pipe::<pipe::Interrupt, pipe::Out>(enum_info.device_address, &info, enum_info.split())
-@@ -304,4 +319,18 @@ mod tests {
-             assert_eq!(check_transfer_len(len), Err(MidiPacketError::InvalidPacketLength));
-         }
-     }
-+
-+    #[test]
-+    fn interrupt_intervals_follow_the_bus_speed() {
-+        // Low and full speed: already milliseconds.
-+        assert_eq!(
-+            (polling_interval_ms(Speed::Full, 1), polling_interval_ms(Speed::Low, 10)),
-+            (1, 10)
-+        );
-+        // High speed: 4 is 1 ms, 7 is 8 ms, and faster than 1 ms rounds up.
-+        assert_eq!(
-+            [1, 3, 4, 7, 12, 16].map(|n| polling_interval_ms(Speed::High, n)),
-+            [1, 1, 1, 8, 255, 255]
-+        );
-+    }
- }
+     /// Convert a raw HCI event into a high-level GATT event when applicable.
+     pub fn process_gatt_event(&self, event: &BleEvent<'_>) -> Option<GattEvent> {
+         match event {
 ```
 
 ---
 
-### Incident Patch 2: `ef06e0e9` (2026-11-11)
-**Commit Message**: stm32/flash: fix flakiness caused by the ecc hil test.
+### Incident Patch 2: `e41ae95a` (2026-11-13)
+**Commit Message**: wpan: clear WBA advertising state on directed advertising timeout
 
-**File**: `tests/stm32/src/bin/flash.rs` (modified, +10/-0)
+**File**: `embassy-stm32-wpan/src/bluetooth/mod.rs` (modified, +15/-3)
 ```diff
-@@ -73,6 +73,16 @@ struct Sector {
- )]
- #[cfg_attr(not(feature = "stop"), embassy_executor::main)]
- async fn main(_spawner: Spawner) {
-+    // This image stays in flash after the test. teleprobe power-cycles the board before every
-+    // run, so it boots again while teleprobe attaches for the next test. Resetting in the middle
-+    // of erases during the attach makes it time out. A power cycle clears C_DEBUGEN, the test's
-+    // own resets don't, so park until the debugger takes over.
-+    // Cortex-M0+ (G0, U0) software can't read DHCSR.
-+    #[cfg(all(ecc_reset, not(any(feature = "stm32g071rb", feature = "stm32u083rc"))))]
-+    while !cortex_m::peripheral::DCB::is_debugger_attached() {
-+        core::hint::spin_loop();
+@@ -21,7 +21,7 @@ use bt_hci::event::le::{
+     LePhyUpdateComplete, LeRemoteConnectionParameterRequest,
+ };
+ use bt_hci::event::{DisconnectionComplete, Event, EventKind, EventPacket};
+-use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions};
++use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions, Status};
+ use bt_hci::{ControllerToHostPacket, FromHciBytes};
+ use embassy_futures::yield_now;
+ use embassy_stm32::interrupt;
+@@ -633,7 +633,7 @@ impl<'d> HCI<'d, Normal> {
+                     let conn = Connection::new(*handle, *role, peer_address, interval);
+                     self.on_connected(conn).await
+                 } else {
+-                    None
++                    self.on_connection_failed(*status)
+                 }
+             }
+             Event::Le(LeEvent::LeEnhancedConnectionComplete(LeEnhancedConnectionComplete {
+@@ -662,7 +662,7 @@ impl<'d> HCI<'d, Normal> {
+                     );
+                     self.on_connected(conn).await
+                 } else {
+-                    None
++                    self.on_connection_failed(*status)
+                 }
+             }
+             Event::DisconnectionComplete(DisconnectionComplete { status, handle, reason }) => {
+@@ -772,6 +772,18 @@ impl<'d> HCI<'d, Normal> {
+         Some(GapEvent::Connected(conn))
+     }
+ 
++    fn on_connection_failed(&mut self, status: Status) -> Option<GapEvent> {
++        // High duty cycle directed advertising reports this status when no central
++        // connected in time (Core Spec Vol 4, Part E, 7.7.65.1). The controller has stopped
++        // advertising by then. Without clearing the flag, the next `start_advertising`
++        // tries to stop it first, which the stack refuses.
++        if status.to_result() == Err(bt_hci::param::Error::ADV_TIMEOUT) {
++            self.is_advertising = false;
++        }
++
++        None
 +    }
 +
-     let mut p = init();
+     /// Convert a raw HCI event into a high-level GATT event when applicable.
+     pub fn process_gatt_event(&self, event: &BleEvent<'_>) -> Option<GattEvent> {
+         match event {
+```
+
+---
+
+### Incident Patch 3: `97a3a529` (2026-11-13)
+**Commit Message**: Merge pull request #7471 from Finomnis/stm32-ucpd-races
+
+stm32/ucpd: fix races between CcPhy and PdPhy
+
+**File**: `embassy-stm32/CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -17,6 +17,8 @@ UCPD:
+ - fix: stm32/ucpd: `CcPhy::wait_for_vstate_change` no longer misses CC changes. It compared against a state read when it was called, so a change just before or at the start of the call was ignored, and so was a change that reverted before the task ran. It now uses the latched TYPECEVT flags, and returns immediately if a change happened since the previous call.
+ - change: stm32/ucpd: `CcPhy::wait_for_vstate_change` takes `&mut self`. Two concurrent waits disabled each other's interrupt when the first one finished.
+ - change: stm32/ucpd: `CcPhy::vstate` marks the state as seen, so `CcPhy::wait_for_vstate_change` reports changes since the last `vstate()` call instead of since its own last return ([#6394](https://github.com/embassy-rs/embassy/issues/6394)).
++- fix: stm32/ucpd: when `CcPhy` and `PdPhy` were dropped at the same time from different priority levels, the peripheral could be left enabled.
++- fix: stm32/ucpd: update the control register (CR) without lost updates or repeated commands. `CcPhy` and `PdPhy` could overwrite each other's settings, and any CR update could write back a `TXSEND` or `TXHRST` the hardware had just cleared, sending a message or Hard Reset twice.
  
-     info!(
+ VREFBUF:
+ - feat: stm32/vrefbuf g0x1: enable the VREFBUF clock. On G0x1, including G0B1, it is `SYSCFGEN` in `RCC_APBENR2`, shared with SYSCFG and COMP (RM0444 5.4.16). Without it `VoltageReferenceBuffer::new` never sees `VRR` and waits forever.
+```
+
+**File**: `embassy-stm32/src/ucpd.rs` (modified, +29/-18)
+```diff
+@@ -23,7 +23,7 @@ use embassy_hal_internal::PeripheralType;
+ use embassy_hal_internal::drop::OnDrop;
+ use embassy_sync::waitqueue::AtomicWaker;
+ 
+-use crate::atomic::AtomicModify;
++use crate::atomic::{AtomicClear, AtomicModify};
+ use crate::dma::{ChannelAndRequest, TransferOptions};
+ use crate::interrupt::typelevel::Interrupt;
+ use crate::pac::ucpd::vals::{Anamode, Ccenable, PscUsbpdclk, Txmode};
+@@ -234,13 +234,13 @@ impl<'d, T: Instance> Ucpd<'d, T> {
+         let r = T::REGS;
+ 
+         // Enable the receiver on one of the two CC lines.
+-        r.cr().modify(|w| w.set_phyccsel(cc_sel));
++        modify_cr::<T>(|w| w.set_phyccsel(cc_sel));
+ 
+         // Enable hard reset receive interrupt.
+         r.imr().set_bits(|w| w.set_rxhrstdetie(true));
+ 
+         // Enable PD packet reception
+-        r.cr().modify(|w| w.set_phyrxen(true));
++        modify_cr::<T>(|w| w.set_phyrxen(true));
+ 
+         // Both parts must be dropped before the peripheral can be disabled.
+         T::state().drop_not_ready.store(true, Ordering::Relaxed);
+@@ -266,17 +266,14 @@ pub struct CcPhy<'d, T: Instance> {
+ impl<'d, T: Instance> Drop for CcPhy<'d, T> {
+     fn drop(&mut self) {
+         let r = T::REGS;
+-        r.cr().modify(|w| {
++        modify_cr::<T>(|w| {
+             w.set_cc1tcdis(true);
+             w.set_cc2tcdis(true);
+             w.set_ccenable(Ccenable::Disabled);
+         });
+ 
+         // Check if the PdPhy part was dropped already.
+-        let drop_not_ready = &T::state().drop_not_ready;
+-        if drop_not_ready.load(Ordering::Relaxed) {
+-            drop_not_ready.store(false, Ordering::Relaxed);
+-        } else {
++        if !T::state().drop_not_ready.clear() {
+             r.cfgr1().write(|w| w.set_ucpden(false));
+             rcc::disable::<T>();
+             T::Interrupt::disable();
+@@ -287,7 +284,7 @@ impl<'d, T: Instance> Drop for CcPhy<'d, T> {
+ impl<'d, T: Instance> CcPhy<'d, T> {
+     /// Sets the pull-up/pull-down resistor values exposed on the CC pins.
+     pub fn set_pull(&mut self, cc_pull: CcPull) {
+-        T::REGS.cr().modify(|w| {
++        modify_cr::<T>(|w| {
+             w.set_anamode(if cc_pull == CcPull::Sink {
+                 Anamode::Sink
+             } else {
+@@ -483,12 +480,9 @@ pub struct PdPhy<'d, T: Instance> {
+ impl<'d, T: Instance> Drop for PdPhy<'d, T> {
+     fn drop(&mut self) {
+         let r = T::REGS;
+-        r.cr().modify(|w| w.set_phyrxen(false));
++        modify_cr::<T>(|w| w.set_phyrxen(false));
+         // Check if the CcPhy part was dropped already.
+-        let drop_not_ready = &T::state().drop_not_ready;
+-        if drop_not_ready.load(Ordering::Relaxed) {
+-            drop_not_ready.store(false, Ordering::Relaxed);
+-        } else {
++        if !T::state().drop_not_ready.clear() {
+             r.cfgr1().write(|w| w.set_ucpden(false));
+             rcc::disable::<T>();
+             T::Interrupt::disable();
+@@ -622,7 +616,7 @@ impl<'d, T: Instance> PdPhy<'d, T> {
+ 
+         // Configure and start the transmission.
+         r.tx_payszr().write(|w| w.set_txpaysz(buf.len() as _));
+-        r.cr().modify(|w| {
++        modify_cr::<T>(|w| {
+             w.set_txmode(Txmode::Packet);
+             w.set_txsend(true);
+         });
+@@ -669,16 +663,14 @@ impl<'d, T: Instance> PdPhy<'d, T> {
+ 
+     /// Transmit a hard reset.
+     pub async fn transmit_hardreset(&mut self) -> Result<(), TxError> {
+-        let r = T::REGS;
+-
+         // Clear the hardreset interrupt flags.
+         T::REGS.icr().write(|w| {
+             w.set_hrstdisccf(true);
+             w.set_hrstsentcf(true);
+         });
+ 
+         // Trigger hard reset transmission.
+-        r.cr().modify(|w| {
++        modify_cr::<T>(|w| {
+             w.set_txhrst(true);
+         });
+ 
+@@ -719,6 +711,25 @@ impl<'d, T: Instance> PdPhy<'d, T> {
+     }
+ }
+ 
++/// Modifies CR.
++///
++/// CR is written by both the CC part and the PD part, which may run at different priorities, so
++/// the read-modify-write runs in a critical section to keep them from overwriting each other.
++///
++/// TXSEND, TXHRST and FRSTX are commands that the hardware clears once it acts on them. A value
++/// read while one of them was still set must not be written back, as that would issue the command
++/// again (e.g. send a message twice), so they are written as 0 unless `f` sets them.
++fn modify_cr<T: Instance>(f: impl FnOnce(&mut crate::pac::ucpd::regs::Cr)) {
++    critical_section::with(|_| {
++        T::REGS.cr().modify(|w| {
++            w.set_txsend(false);
++            w.set_txhrst(false);
++            w.set_frstx(false);
++            f(w);
++        });
++    });
++}
++
+ /// Interrupt handler.
+ pub struct InterruptHandler<T: Instance> {
+     _marker: PhantomData<T>,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7510** (2026-11-11): nrf: check pin-peripheral compatibility at compile time for nrf54. (@Dirbaio)
-- **PR #7509** (2026-11-11): nrf: remove Any types on ppi, gpiote. Remove instance generic on ppi. (@Dirbaio)
-- **PR #7508** (2026-11-11): stm32/flash: fix flakiness caused by the ecc hil test. (@Dirbaio)
-- **PR #7507** (2026-11-11): usb: simplify driver alloc methods, add EndpointOptions (@Dirbaio)
-- **PR #7506** (2026-11-11): gpio: remove AnyPin, simplify internals (@Dirbaio)
-- **PR #7505** (2026-11-11): stm32/gpdma: cleanup and use source/destination (@pufmat)
+- **PR #7537** (2026-11-13): stm32: subghz: simplify the API after review (@leftger)
+- **PR #7536** (2026-11-13): wpan: reset WBA BLE platform state when the controller is dropped (@OueslatiGhaith)
+- **PR #7533** (2026-11-13): [MCXA] separate RTC clock reads from alarm ownership (@felipebalbi)
+- **PR #7531** (2026-11-13): wpan: clear WBA advertising state on directed advertising timeout (@OueslatiGhaith)
+- **PR #7528** (2026-11-13): chore: update rustc and use drop guard from core (@lulf)
+- **PR #7524** (2026-11-13): embassy-stm32: add native SUBGHZ radio driver for STM32WL / STM32WLE5 (@leftger)
 
 ---
 
@@ -1804,61 +1738,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. usb: minor fixes
+## X. Empirical Invariant Guard in mod.rs
 
 **RULE**:
-When implementing operations in `embassy-usb/src/class/midi/device/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-stm32-wpan/src/bluetooth/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `455ca7b9`: usb: minor fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `798395dd`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-usb/src/class/midi/device/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32-wpan/src/bluetooth/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use embassy_futures::select::select;
-
-        wait_any_enabled(&mut self.read_ep, &mut self.write_ep).await;
-/// Wait until either endpoint is enabled; the alternate setting in use may need only one.
-async fn wait_any_enabled<R: Endpoint, W: Endpoint>(read_ep: &mut Option<R>, write_ep: &mut Option<W>) {
-    match (read_ep, write_ep) {
-        (Some(read_ep), Some(write_ep)) => {
-            select(read_ep.wait_enabled(), write_ep.wait_enabled()).await;
+use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions, Status};
+                    self.on_connection_failed(*status)
+                    self.on_connection_failed(*status)
+    fn on_connection_failed(&mut self, status: Status) -> Option<GapEvent> {
+        // High duty cycle directed advertising reports this status when no central
+        // connected in time (Core Spec Vol 4, Part E, 7.7.65.1). The controller has stopped
+        // advertising by then. Without clearing the flag, the next `start_advertising`
+        // tries to stop it first, which the stack refuses.
+        if status.to_result() == Err(bt_hci::param::Error::ADV_TIMEOUT) {
+            self.is_advertising = false;
         }
-        (Some(read_ep), None) => read_ep.wait_enabled().await,
-        (None, Some(write_ep)) => write_ep.wait_enabled().await,
-        (None, None) => {}
+
+        None
     }
-}
 
-
-    #[test]
-    fn wait_connection_ends_when_only_one_of_the_endpoints_is_enabled() {
-        use embassy_futures::block_on;
-        use embassy_usb_driver::{Endpoint, EndpointAddress, EndpointInfo, EndpointType};
-
-        // `Never` is the OUT endpoint after switching to an IN-only setting.
-        struct Never(EndpointInfo);
-        struct Enabled(EndpointInfo);
-        impl Endpoint for Never {
-            fn info(&self) -> &EndpointInfo {
-                &self.0
-            }
-            async fn wait_enabled(&mut self) {
-                core::future::pendin
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        if let Some(read_ep) = &mut self.read_ep {
-            read_ep.wait_enabled().await;
-        } else if let Some(write_ep) = &mut self.write_ep {
-            write_ep.wait_enabled().await;
-        }
+// Induced defect failure mode:
+use bt_hci::param::{ConnHandle, Duration, EventMask, LeEventMask, PhyOptions};
+                    None
+                    None
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `455ca7b9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `798395dd` are properly handled with clean fallback behavior.

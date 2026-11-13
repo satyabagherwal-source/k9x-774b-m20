@@ -9587,3 +9587,10 @@
 | `CYCLE-20261113-C9YQ` | `2026-11-13T19:27:25.298Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8362` | Yes (`b31e046c...`) |
 | `CYCLE-20261113-CBA3` | `2026-11-13T19:27:27.003Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md` | Yes (`884334c4...`) |
 | `CYCLE-20261113-CEXA` | `2026-11-13T19:27:31.726Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8363` | Yes (`3d96506b...`) |
+| `CYCLE-20261113-S9FD` | `2026-11-13T19:39:51.097Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7938` | Yes (`046becf7...`) |
+| `CYCLE-20261113-SBZ8` | `2026-11-13T19:39:54.404Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`cfd88c0e...`) |
+| `CYCLE-20261113-SEC8` | `2026-11-13T19:39:57.464Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8364` | Yes (`78ce4a97...`) |
+| `CYCLE-20261113-SF7F` | `2026-11-13T19:39:58.587Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8365` | Yes (`23431232...`) |
+| `CYCLE-20261113-SHJL` | `2026-11-13T19:40:01.617Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8366` | Yes (`8dbf8f2b...`) |
+| `CYCLE-20261113-SJ66` | `2026-11-13T19:40:03.726Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8367` | Yes (`75c8c045...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T19:40:46.216Z` | `hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4AA06C1E` [Domain D] | Yes (`43efe3b6...`) |

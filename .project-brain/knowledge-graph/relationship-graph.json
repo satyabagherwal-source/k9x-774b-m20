@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T19:19:47.062Z",
+  "updated_at": "2026-11-13T19:40:46.215Z",
   "statistics": {
-    "total_nodes": 116,
+    "total_nodes": 117,
     "total_edges": 62,
     "domain_distribution": {
-      "D": 95,
+      "D": 96,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -2589,6 +2589,28 @@
       ],
       "created_at": "2026-11-13T19:19:47.062Z",
       "updated_at": "2026-11-13T19:19:47.062Z"
+    },
+    "DOM-D-4AA06C1E": {
+      "id": "DOM-D-4AA06C1E",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md`  \n> **Source**: hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md`  \n> **Source**: hugging",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T19:40:07.584Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T19:40:46.215Z",
+      "updated_at": "2026-11-13T19:40:46.215Z"
     }
   },
   "edges": [

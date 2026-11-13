@@ -615,8 +615,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "11c85175ddff27f7eafaa885478afe97dfffe7fee70c78e052296a052943e8bc",
-    "lastHarvestedAt": "2026-11-08T18:27:57.943Z",
+    "contentHash": "cfd88c0efc3d62cd133926f2feeea8ab865a51259d0d61ee1e9f3246523a4096",
+    "lastHarvestedAt": "2026-11-13T19:39:54.408Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf"
   },
   "hf-facebook-sam3": {
@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "4380c4e2",
+    "sourceVersion": "c8c25e58",
     "license": "NOASSERTION",
-    "contentHash": "385071d303d68c9378b2d0b8b383ec703f30bbc3230054783ed6419e99fc2a1d",
-    "lastHarvestedAt": "2026-11-09T10:31:21.777Z",
+    "contentHash": "78ce4a9773d7c4ddc47a3f3d9257e79f1f74bcab58442fbda77c6d9ccb877127",
+    "lastHarvestedAt": "2026-11-13T19:39:57.469Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "6767731b",
+    "sourceVersion": "b07e249c",
     "license": "NOASSERTION",
-    "contentHash": "a944044c9d84b6647d62c8b1fca630d64e48cfe37d65df7f2cd113ce045baf19",
-    "lastHarvestedAt": "2026-11-13T13:50:43.881Z",
+    "contentHash": "8dbf8f2bacdd79c7f37611a950a335f9f58f1de3a44a8c0c3ee55e004d68d4c0",
+    "lastHarvestedAt": "2026-11-13T19:40:01.622Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "90a50e46",
+    "sourceVersion": "a96b178b",
     "license": "Apache-2.0",
-    "contentHash": "18882c2567cc4000d4948aacdb171511069343ef782d6cfc88ad1b088f52f91c",
-    "lastHarvestedAt": "2026-11-12T07:38:00.624Z",
+    "contentHash": "046becf7566120cff061cec5e68f18fbae4b106064620ac133237cad79691d53",
+    "lastHarvestedAt": "2026-11-13T19:39:51.101Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "719f345e",
+    "sourceVersion": "83afdeee",
     "license": "Apache-2.0",
-    "contentHash": "a7293b29d11a05c1eddee77793828c2daca5186626b2bf8769366c1ed74771b4",
-    "lastHarvestedAt": "2026-11-12T21:19:41.401Z",
+    "contentHash": "23431232df306e9a0de2dab6ecb9377b334cffef5a437ce56437a03769c630be",
+    "lastHarvestedAt": "2026-11-13T19:39:58.591Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "444dc948",
+    "sourceVersion": "13626c16",
     "license": "MIT",
-    "contentHash": "c88d5a658de72a9743c9acd49bbaa9a1bddb008e41b1d663e8ecd0ea60a3700f",
-    "lastHarvestedAt": "2026-11-12T14:59:56.952Z",
+    "contentHash": "75c8c045c175b983e4796e5560984be060ab152716dbb26b11f6d82c23fe66b8",
+    "lastHarvestedAt": "2026-11-13T19:40:03.731Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

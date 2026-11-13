@@ -9620,3 +9620,10 @@ Every entry in this ledger must capture:
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `2c67adc2` | Multi-dimensional audit evidence | 2026-11-13T19:27:25.302Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `f086a159` | Multi-dimensional audit evidence | 2026-11-13T19:27:27.007Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `07e99d13` | Multi-dimensional audit evidence | 2026-11-13T19:27:31.729Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `a96b178b` | Multi-dimensional audit evidence | 2026-11-13T19:39:51.101Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-13T19:39:54.408Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `c8c25e58` | Multi-dimensional audit evidence | 2026-11-13T19:39:57.469Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `83afdeee` | Multi-dimensional audit evidence | 2026-11-13T19:39:58.591Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `b07e249c` | Multi-dimensional audit evidence | 2026-11-13T19:40:01.622Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `13626c16` | Multi-dimensional audit evidence | 2026-11-13T19:40:03.731Z |
+| `learn-dom-d-4aa06c1e` | `project://hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | 2026-11-13T19:40:46.216Z |

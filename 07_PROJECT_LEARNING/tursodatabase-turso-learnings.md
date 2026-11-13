@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `444dc948`  
+> **Source Version**: `13626c16`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:59:38.423Z  
+> **Timestamp**: 2026-11-13T19:40:02.729Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:59:38.411Z  
+> **Harvest Timestamp**: 2026-11-13T19:40:02.721Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25232 stars
+- **Stars / Engagement**: 25246 stars
 
 ---
 
@@ -1432,11 +1432,14 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11772** (2026-11-12): **postgres: report reserved role names with SQLSTATE 42939**
-  *Symptoms*: CREATE ROLE with a name that PostgreSQL reserves failed with SQLSTATE 42601 (syntax_error) instead of 42939 (reserved_name).  | Statement | Before | After | |---|---|---| | CREATE ROLE public, CREATE ROLE none | 42601, Invalid statement: role name "none" is reserved | 42939, role name "none" is reserved | | CREATE ROLE current_user and the other role keywords | 42601, Invalid statement: CURRENT_USER cannot be used as a role name here | 42939, CURRENT_USER cannot be used as a role name here | | CREATE ROLE pg_anything | 42601, role name "pg_anything" is reserved | 42939, role name "pg_anything" is reserved |  PostgreSQL's grammar refuses public, none and the role keywords, and pg_query reports these errors with only a message, no SQLSTATE. The parser now recognizes them by their message where it converts pg_query's errors. The translator's own check for the pg_ prefix now carries the SQLSTATE too.  The frontend and the wire server both turned every parser error into a plain parse error, which dropped any SQLSTATE the parser had set. They now share a conversion that keeps it.
+- **Issue #11820** (2026-11-13): **core: keep the sequences of every namespace across VACUUM**
+  *Symptoms*: Some VACUUM paths reparse the schema and keep the sequence descriptors it had before, but they kept only the sequences of the root namespace. PostgreSQL sequences live in the namespace of their schema, so the reparsed schema lost them. The copy SELECT of a `bigserial` or `smallserial` column (a custom integer type) reads it through its encoded default, and with the sequence gone it could no longer resolve the `nextval()` default and failed with `sequence "__turso_ns1_t_id_seq" does not exist`.  The descriptors are now kept for every namespace, both for the reparse of the source and for the schema installed after the copy.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `0933a948955c` is [here](https://github.com/tursodatabase/turso/pull/11820#pullrequestreview-5895672097).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:0933a948955cb50132bb5e56050b136fc4be6334 --> <!-- autofixer:contributor-review-recommends:0933a948955cb50132bb5e56050b136fc4be6334 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiMDkzM2E5NDg5NTVjYjUwMTMyYmI1ZTU2MDUwYjEzNmZjNGJlNjMzNCIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMTNUMTc6NDU6MjAuMjQ0WiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
+  > ### Autofixer follow-ups  - Not filed: VACUUM of any database that has __turso_internal_classes leaves out the empty…. The input cannot be run with the shipped tools: tursodb refuses to open a database that tursopg created, and tursopg rejects VACUUM, so the SQLite-connection-then-PostgreSQL-connection sequence needs a Rust test written for it.  <!-- autofixer:follow-ups-done -->
 
-- **Issue #11770** (2026-11-12): **postgres: refuse renames of objects other than tables and columns with 0A000**
-  *Symptoms*: ALTER ... RENAME is supported only for tables and columns. The translator looked for a relation before it checked what kind of object was being renamed. So renaming any other object failed with SQLSTATE 42601 (syntax_error) and a message that did not say what was wrong.  | Statement | Before | After | |---|---|---| | ALTER ROLE, ALTER SCHEMA, ALTER TYPE ... RENAME | 42601, RENAME missing relation | 0A000, ALTER ROLE ... RENAME is not supported | | ALTER VIEW, ALTER INDEX, ALTER SEQUENCE ... RENAME | 42601, Unsupported RENAME type: ObjectView | 0A000, ALTER VIEW ... RENAME is not supported | | ALTER POLICY ... RENAME | 42601, Unsupported RENAME type: ObjectPolicy | 0A000, ALTER POLICY ... RENAME is not supported | | ALTER TABLE ... RENAME CONSTRAINT | 42601, Unsupported RENAME type: ObjectTabconstraint | 0A000, ALTER TABLE ... RENAME CONSTRAINT is not supported |  Renaming tables and columns does not change.
+- **Issue #11819** (2026-11-13): **tests: move blob I/O, native extension and statement lifecycle tests out of core**
+  *Symptoms*: Unit tests in core that open a database or run SQL need a dialect that can parse SQL. In core that is `EngineDialect`, which exists mostly for those tests and keeps the SQL parser inside core. This is the first of five PRs that move such tests out of core, so that the engine dialect can be removed afterwards in a small PR (#11816) that touches almost no tests.  This PR moves three test files to the integration tests, where they open databases with `SqliteDialect`:  - `core/vdbe/blob_io_tests.rs` to `tests/integration/blob_io.rs` - `core/vdbe/native_extension_tests.rs` to `tests/integration/native_extension.rs` - `core/vdbe/statement_lifecycle_tests.rs` to `tests/integration/statement_lifecycle.rs`  The test bodies change only in their paths: `crate::` becomes `turso_core::`, and `EngineDialect` becomes `SqliteDialect`.  ## What changes in core  - The tests use items of `turso_core` that were private to the crate, so those become public: a few modules (`connection`, `function`, `vtab`, `attach`, `sync`) and some functions, fields and types. No logic changes. - A few hooks that were compiled only for the crate's own tests (`#[cfg(test)]`) are now also compiled with the `test_helper` feature.  ## What changes in the integration test crate  - It gets the features core enables by default (`json`, `series`, `uuid` and so on), so the feature checks in the moved tests keep their meaning. - It gets `branches` as a dev-dependency, because the `return_if_io!` macro expands to a call int
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1453,152 +1456,598 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae542a8c` (2026-11-12)
-**Commit Message**: postgres/conformance: test that security_invoker views are refused
+### Incident Patch 1: `13626c16` (2026-11-13)
+**Commit Message**: Merge 'core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE' from Glauber Costa
 
-A view reads its tables as its owner, and views that read as their
-reader are not supported. Test that they fail with 0A000 rather than
-being created as views that read as their owner.
+The PostgreSQL translator already turns `UPDATE ... SET col = DEFAULT`
+into `Expr::Default`, but UPDATE and upsert never replaced it. Binding
+rejected it for every column with "DEFAULT is only valid in INSERT
+VALUES". Both paths now replace it with the column default, the same
+value `VALUES (DEFAULT)` uses, through a helper shared with INSERT.
 
-**File**: `postgres/conformance/pg-sqltests/row-security/bypass.sqltest` (modified, +10/-0)
+`DEFAULT` must be the whole expression of the assignment, or one element
+of a row value, so `SET (a, c) = (DEFAULT, 5)` works in UPDATE and in
+`ON CONFLICT DO UPDATE`. An expression that contains it still fails with
+the same error.
+
+**Both dialects.** sqlite3 does not accept `DEFAULT` in `VALUES` either,
+and Turso accepts it there on purpose as a documented extension that
+follows the SQL standard. This extends the same extension to `SET`, so
+the engine resolves `Expr::Default` wherever the AST holds one and no
+dialect decision is needed. The SQLite-runner tests are marked `@skip-if
+sqlite`, and `update.mdx` and `insert.mdx` mark the new form as a Turso
+extension. Maintainers should decide whether they want it in the SQLite
+dialect or only in PostgreSQL.
+
+**File**: `core/translate/insert.rs` (modified, +21/-12)
 ```diff
-@@ -226,6 +226,16 @@ expect {
-     2
+@@ -7,6 +7,7 @@ use crate::translate::emitter::RegisterColumn;
+ use crate::translate::emitter::{
+     emit_index_column_value_old_image, emit_partial_index_where_old_image, gencol,
+ };
++use crate::translate::update::bind_set_expr;
+ use crate::translate::{roles, row_security};
+ use crate::turso_debug_assert;
+ use crate::{
+@@ -1762,7 +1763,7 @@ fn resolve_upserts(
+         } = upsert.do_clause
+         {
+             // Normalize SET pairs once
+-            let mut rewritten_sets = collect_set_clauses_for_upsert(table, sets)?;
++            let mut rewritten_sets = collect_set_clauses_for_upsert(table, sets, resolver)?;
+             let set_column_names: Vec<_> = sets
+                 .iter()
+                 .flat_map(|set| set.col_names.iter().cloned())
+@@ -2179,19 +2180,28 @@ fn resolve_defaults_in_row(
+             })
+         };
+         *expr = match col {
+-            Some(col) => col.default.clone().unwrap_or_else(|| {
+-                if let Ok(Some(resolved)) = resolver.schema().resolve_type(&col.ty_str, is_strict) {
+-                    if let Some(default_expr) = resolved.default_expr() {
+-                        return Box::new(default_expr.clone());
+-                    }
+-                }
+-                Box::new(ast::Expr::Literal(ast::Literal::Null))
+-            }),
++            Some(col) => column_default_expr(col, is_strict, resolver),
+             None => Box::new(ast::Expr::Literal(ast::Literal::Null)),
+         };
+     }
  }
  
-+@skip-if postgres "PostgreSQL supports security_invoker views"
-+test view-that-reads-as-its-reader-is-not-supported {
-+    CREATE TABLE by_invoker_base (id INT);
-+    CREATE VIEW by_invoker_view WITH (security_invoker = true) AS SELECT id FROM by_invoker_base;
-+}
-+@sqlstate 0A000
-+expect error {
-+    CREATE VIEW ... WITH \(options\) is not supported
++/// The value a column takes when a statement writes DEFAULT to it.
++pub(crate) fn column_default_expr(
++    column: &Column,
++    is_strict: bool,
++    resolver: &Resolver,
++) -> Box<Expr> {
++    column.default.clone().unwrap_or_else(|| {
++        if let Ok(Some(resolved)) = resolver.schema().resolve_type(&column.ty_str, is_strict) {
++            if let Some(default_expr) = resolved.default_expr() {
++                return Box::new(default_expr.clone());
++            }
++        }
++        Box::new(ast::Expr::Literal(ast::Literal::Null))
++    })
 +}
 +
- test owner-writes-every-row-of-its-table-with-row-security {
-     CREATE ROLE rw_owner_20;
-     CREATE TABLE rw_docs_20 (id INT PRIMARY KEY, owner TEXT);
+ #[turso_macros::trace_stack]
+ fn bind_insert(
+     program: &mut ProgramBuilder,
+@@ -2314,12 +2324,11 @@ fn bind_insert(
+         } = &mut upsert_opt.do_clause
+         {
+             for set in sets.iter_mut() {
+-                bind_and_rewrite_expr(
++                bind_set_expr(
+                     &mut set.expr,
+                     None,
+-                    None,
+-                    resolver,
+                     BindingBehavior::AllowUnboundIdentifiers,
++                    resolver,
+                 )?;
+             }
+             if let Some(ref mut where_expr) = where_clause {
 ```
 
----
-
-### Incident Patch 2: `c8bcab22` (2026-11-12)
-**Commit Message**: postgres/conformance: test that the owner enables row-level security and FORCE is refused
-
-Only the refusal for a role that does not own the table was tested. FORCE
-ROW LEVEL SECURITY was only tested from Rust, so add a .sqltest that it
-fails as not supported (0A000).
-
-**File**: `postgres/conformance/pg-sqltests/row-security/enable.sqltest` (modified, +22/-0)
+**File**: `core/translate/update.rs` (modified, +37/-6)
 ```diff
-@@ -209,3 +209,25 @@ test role-that-does-not-own-the-table-cannot-enable-row-security {
+@@ -21,6 +21,7 @@ use turso_parser::ast::{self, Expr};
+ 
+ use super::emitter::emit_program;
+ use super::expr::process_returning_clause;
++use super::insert::column_default_expr;
+ use super::optimizer::optimize_plan;
+ use super::plan::{
+     ColumnUsedMask, DmlSafety, JoinedTable, Plan, TableReferences, UpdatePlan, UpdateSetClause,
+@@ -472,12 +473,11 @@ fn prepare_update_plan(
+     read_scope_tables.extend(from_tables);
+ 
+     for set in &mut body.sets {
+-        bind_and_rewrite_expr(
++        bind_set_expr(
+             &mut set.expr,
+             Some(&mut read_scope_tables),
+-            None,
+-            resolver,
+             BindingBehavior::ResultColumnsNotAllowed,
++            resolver,
+         )?;
+     }
+ 
+@@ -490,7 +490,7 @@ fn prepare_update_plan(
+         connection,
+     )?;
+ 
+-    let set_clauses = collect_update_set_clauses(&mut body.sets, &table, table_name)?;
++    let set_clauses = collect_update_set_clauses(&mut body.sets, &table, table_name, resolver)?;
+ 
+     let result_columns = if !body.returning.is_empty() {
+         // Plan subqueries in RETURNING expressions before processing
+@@ -573,10 +573,37 @@ fn prepare_update_plan(
+     })
+ }
+ 
++pub(super) fn bind_set_expr(
++    expr: &mut Box<Expr>,
++    mut read_scope_tables: Option<&mut TableReferences>,
++    behavior: BindingBehavior,
++    resolver: &Resolver,
++) -> crate::Result<()> {
++    if matches!(expr.as_ref(), Expr::Default) {
++        return Ok(());
++    }
++    if let Expr::Parenthesized(exprs) = expr.as_mut() {
++        if exprs.len() > 1 {
++            for expr in exprs.iter_mut() {
++                bind_set_expr(
++                    expr,
++                    read_scope_tables.as_deref_mut(),
++                    behavior.clone(),
++                    resolver,
++                )?;
++            }
++            return Ok(());
++        }
++    }
++    bind_and_rewrite_expr(expr, read_scope_tables, None, resolver, behavior)?;
++    Ok(())
++}
++
+ fn collect_update_set_clauses(
+     sets: &mut [ast::Set],
+     table: &Table,
+     table_name: &str,
++    resolver: &Resolver,
+ ) -> crate::Result<Vec<UpdateSetClause>> {
+     let column_lookup: HashMap<String, usize> = table
+         .columns()
+@@ -591,12 +618,16 @@ fn collect_update_set_clauses(
+         let values = split_update_set_values(*expr, set.col_names.len())?;
+ 
+         for (col_name, expr) in set.col_names.iter().zip(values.into_iter()) {
+-            let expr = Box::new(expr);
++            let mut expr = Box::new(expr);
+             let ident = normalize_ident(col_name.as_str());
+ 
+             let col_index = match column_lookup.get(&ident) {
+                 Some(idx) => {
+-                    table.columns()[*idx].ensure_not_generated("UPDATE", col_name.as_str())?;
++                    let col = &table.columns()[*idx];
++                    col.ensure_not_generated("UPDATE", col_name.as_str())?;
++                    if matches!(expr.as_ref(), Expr::Default) {
++                        expr = column_default_expr(col, table.is_strict(), resolver);
++                    }
+                     *idx
+                 }
+                 None => match rowid_name_column_index(table, &ident) {
+```
+
+**File**: `core/translate/upsert.rs` (modified, +8/-3)
+```diff
+@@ -7,6 +7,7 @@ use std::sync::Arc;
+ use turso_parser::ast::{self, TriggerEvent, TriggerTime, Upsert};
+ 
+ use super::emitter::gencol::compute_generated_columns;
++use super::insert::column_default_expr;
+ use crate::alloc::{TryClone, TursoIteratorExt};
+ use crate::error::{SQLITE_CONSTRAINT_PRIMARYKEY, SQLITE_ERROR};
+ use crate::namespace::{NamespaceId, NamespaceRef};
+@@ -1790,6 +1791,7 @@ fn emit_generated_column_notnull_checks(
+ pub fn collect_set_clauses_for_upsert(
+     table: &Table,
+     set_items: &mut [ast::Set],
++    resolver: &Resolver,
+ ) -> crate::Result<Vec<(usize, Box<ast::Expr>)>> {
+     let lookup: HashMap<String, usize> = table
+         .columns()
+@@ -1812,12 +1814,15 @@ pub fn collect_set_clauses_for_upsert(
+                 values.len()
+             );
+         }
+-        for (cn, e) in set.col_names.iter().zip(values.into_iter()) {
++        for (cn, mut e) in set.col_names.iter().zip(values.into_iter()) {
+             let ident = normalize_ident(cn.as_str());
+             let idx = match lookup.get(&ident) {
+                 Some(idx) => {
+-                    // cannot upsert generated column
+-                    table.columns()[*idx].ensure_not_generated("UPDATE", cn.as_str())?;
++                    let col = &table.columns()[*idx];
++                    col.ensure_not_generated("UPDATE", cn.as_str())?;
++                    if matches!(e.as_ref(), ast::Expr::Default) {
++                        e = column_default_expr(col, table.is_strict(), resolver);
++                    }
+                     *idx
+                 }
+                 None => match rowid_name_column_index(table, &ident) {
+```
+
+**File**: `docs/sql-reference/statements/insert.mdx` (modified, +1/-1)
+```diff
+@@ -155,7 +155,7 @@ INSERT INTO tasks (id, title, status, priority) VALUES
+ --          (3, 'Code review', 'in_progress', 0)
+ ```
+ 
+-The `DEFAULT` keyword is only valid inside INSERT VALUES lists. Using it in other contexts (SELECT, WHERE, UPDATE) produces an error.
++The `DEFAULT` keyword is valid inside INSERT VALUES lists and as the whole expression of an assignment in the `SET` clause of an [UPDATE](/docs/sql-reference/statements/update#default-keyword-in-set) or of `ON CONFLICT DO UPDATE`. Using it in other contexts (SELECT, WHERE) produces an error.
+ 
+ ## Conflict Handling
+ 
+```
+
+**File**: `docs/sql-reference/statements/update.mdx` (modified, +22/-0)
+```diff
+@@ -57,6 +57,28 @@ UPDATE products
+ SET (price, updated_at) = (price * 1.10, datetime('now'));
+ ```
+ 
++### DEFAULT Keyword in SET
++
++<Info>
++**Turso extension** -- This feature follows the SQL standard (SQL:2016) but is not supported by SQLite. It is the same extension as [`DEFAULT` in INSERT VALUES](/docs/sql-reference/statements/insert#default-keyword-in-values).
++</Info>
++
++The `DEFAULT` keyword can be used in place of the whole expression of an assignment. It sets the column to its default value as defined in the CREATE TABLE statement, or to NULL if no default is defined. It works in the single-column form and for a column in a parenthesized column list, and also in the `DO UPDATE SET` clause of an `ON CONFLICT` upsert.
++
++```sql
++CREATE TABLE tasks (
++  id INTEGER PRIMARY KEY,
++  status TEXT DEFAULT 'pending',
++  priority INTEGER DEFAULT 0
++);
++
++UPDATE tasks SET status = DEFAULT WHERE id = 1;
++
++UPDATE tasks SET (status, priority) = (DEFAULT, 5) WHERE id = 2;
++```
++
++`DEFAULT` is only accepted as the whole expression. An expression that contains it, such as `priority = DEFAULT + 1`, produces an error.
++
+ ### FROM Clause
+ 
+ The `FROM` clause allows the `UPDATE` to reference other tables. Columns from the joined tables can be used in `SET` expressions and the `WHERE` clause. This is useful for updating a table based on matching rows from another table.
+```
+
+**File**: `postgres/conformance/pg-sqltests/table.sqltest` (modified, +22/-0)
+```diff
+@@ -926,3 +926,25 @@ test alter-table-rename-constraint-is-not-supported {
  expect error {
-     must be owner of table rp_docs_17
+     ALTER TABLE ... RENAME CONSTRAINT is not supported
  }
 +
-+test owner-may-enable-row-security {
-+    CREATE ROLE en_owner;
-+    CREATE TABLE en_owned (id INT);
-+    ALTER TABLE en_owned OWNER TO en_owner;
-+    SET ROLE en_owner;
-+    ALTER TABLE en_owned ENABLE ROW LEVEL SECURITY;
-+    SELECT relrowsecurity FROM pg_class WHERE relname = 'en_owned';
++test update-set-default-uses-column-default {
++    DROP TABLE IF EXISTS defaults_t;
++    CREATE TABLE defaults_t (a int DEFAULT 7, b text);
++    INSERT INTO defaults_t (a, b) VALUES (1, 'x');
++    UPDATE defaults_t SET a = DEFAULT;
++    SELECT a, b FROM defaults_t;
 +}
 +expect {
-+    t
++    7|x
 +}
 +
-+@skip-if postgres "PostgreSQL supports FORCE ROW LEVEL SECURITY"
-+test force-row-level-security-is-not-supported {
-+    CREATE TABLE en_forced (id INT);
-+    ALTER TABLE en_forced FORCE ROW LEVEL SECURITY;
++test update-set-default-without-column-default-sets-null {
++    DROP TABLE IF EXISTS defaults_t;
++    CREATE TABLE defaults_t (a int, b text);
++    INSERT INTO defaults_t (a, b) VALUES (1, 'x');
++    UPDATE defaults_t SET a = DEFAULT;
++    SELECT CASE WHEN a IS NULL THEN 1 ELSE 0 END, b FROM defaults_t;
 +}
-+@sqlstate 0A000
-+expect error {
-+    ALTER TABLE ... FORCE ROW LEVEL SECURITY is not supported
++expect {
++    1|x
 +}
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/default_value.sqltest` (modified, +62/-0)
+```diff
+@@ -133,3 +133,65 @@ test scalar-function-in-default-control {
+ expect {
+     1
+ }
++
++@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
++test update-set-default-writes-the-column-default {
++    CREATE TABLE ud1 (a INTEGER DEFAULT 7, b INTEGER);
++    INSERT INTO ud1 VALUES (1, 2);
++    UPDATE ud1 SET a = DEFAULT;
++    SELECT a, b FROM ud1;
++}
++expect {
++    7|2
++}
++
++@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
++test update-set-default-without-a-column-default-writes-null {
++    CREATE TABLE ud4 (a INTEGER, b INTEGER);
++    INSERT INTO ud4 VALUES (1, 2);
++    UPDATE ud4 SET a = DEFAULT;
++    SELECT a IS NULL, b FROM ud4;
++}
++expect {
++    1|2
++}
++
++@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
++test update-set-row-value-default-writes-the-column-default {
++    CREATE TABLE ud2 (a INTEGER DEFAULT 7, b INTEGER);
++    INSERT INTO ud2 VALUES (1, 2);
++    UPDATE ud2 SET (a, b) = (DEFAULT, 3);
++    SELECT a, b FROM ud2;
++}
++expect {
++    7|3
++}
++
++@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
++test upsert-set-default-writes-the-column-default {
++    CREATE TABLE ud3 (a INTEGER DEFAULT 7, b INTEGER UNIQUE);
++    INSERT INTO ud3 VALUES (1, 2);
++    INSERT INTO ud3 VALUES (3, 2) ON CONFLICT (b) DO UPDATE SET a = DEFAULT;
++    SELECT a, b FROM ud3;
++}
++expect {
++    7|2
++}
++
++@skip-if sqlite "DEFAULT in a SET clause is a Turso extension"
++test upsert-set-default-inside-a-row-value {
++    CREATE TABLE ud4 (a INTEGER DEFAULT 7, b INTEGER UNIQUE, c INTEGER);
++    INSERT INTO ud4 VALUES (1, 2, 3);
++    INSERT INTO ud4 VALUES (4, 2, 5) ON CONFLICT (b) DO UPDATE SET (a, c) = (DEFAULT, 9);
++    SELECT a, b, c FROM ud4;
++}
++expect {
++    7|2|9
++}
++
++test update-set-expression-containing-default-is-rejected {
++    CREATE TABLE ud5 (a INTEGER DEFAULT 7);
++    INSERT INTO ud5 VALUES (1);
++    UPDATE ud5 SET a = DEFAULT + 1;
++}
++expect error {}
 ```
 
 ---
 
-### Incident Patch 3: `be784bfd` (2026-11-12)
-**Commit Message**: postgres/conformance: test policies that call auth.uid()
+### Incident Patch 2: `65d61c2e` (2026-11-13)
+**Commit Message**: Merge 'core: keep the sequences of every namespace across VACUUM' from Glauber Costa
 
-USING (user_id = auth.uid()) is the policy most Supabase projects write,
-but no test called auth.uid() from a policy. Test that it limits the
-rows a user reads, and that WITH CHECK refuses a row of another user.
+Some VACUUM paths reparse the schema and keep the sequence descriptors
+it had before, but they kept only the sequences of the root namespace.
+PostgreSQL sequences live in the namespace of their schema, so the
+reparsed schema lost them. The copy SELECT of a `bigserial` or
+`smallserial` column (a custom integer type) reads it through its
+encoded default, and with the sequence gone it could no longer resolve
+the `nextval()` default and failed with `sequence "__turso_ns1_t_id_seq"
+does not exist`.
 
-On PostgreSQL, the setup now grants USAGE on schema auth to every role,
-as Supabase does, so that a role may call the functions.
+The descriptors are now kept for every namespace, both for the reparse
+of the source and for the schema installed after the copy.
 
-**File**: `postgres/conformance/pg-sqltests/auth.sqltest` (modified, +37/-2)
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Closes #11820
+
+**File**: `core/connection.rs` (modified, +5/-4)
 ```diff
-@@ -2,11 +2,13 @@
- 
- @database :memory:
- 
--# The SQL definitions of the functions. tursopg has the functions built in,
--# so this setup runs only on PostgreSQL.
-+# The SQL definitions of the functions, and USAGE on their schema for every
-+# role, as Supabase grants it. tursopg has the functions built in, so this
-+# setup runs only on PostgreSQL.
- @backend postgres
- setup auth_functions {
-     create schema auth;
-+    grant usage on schema auth to public;
- 
-     create or replace function auth.uid()
-     returns uuid
-@@ -794,6 +796,39 @@ expect {
-     mine
+@@ -4,6 +4,7 @@ use crate::error::io_error;
+ #[cfg(any(test, injected_yields))]
+ use crate::mvcc::yield_points::{FailureInjector, YieldInjector};
+ use crate::namespace::{NamespaceId, NamespaceRef, Qualifier, Qualifiers};
++use crate::schema::SequencesByNamespace;
+ use crate::security::roles::RoleId;
+ use crate::state_machine::StateMachine;
+ use crate::statement::StatementOrigin;
+@@ -212,7 +213,7 @@ pub struct ReparseSchemaInner {
+     /// VACUUM-supplied sequence descriptors to graft onto the rebuilt schema
+     /// instead of re-reading each backing table. `None` for a normal reparse,
+     /// which recovers descriptors from disk in the `PopulateSequences` phase.
+-    preserved_sequences: Option<rustc_hash::FxHashMap<String, Arc<crate::schema::Sequence>>>,
++    preserved_sequences: Option<SequencesByNamespace>,
+     /// The `sqlite_schema` scan, which also collects the indexes and
+     /// materialized views that are built once the types are loaded.
+     parse: Box<crate::util::ParseSchemaRowsState>,
+@@ -1458,7 +1459,7 @@ impl Connection {
+     pub(crate) fn reparse_schema_with_cookie_keeping_sequences(
+         self: &Arc<Connection>,
+         cookie: u32,
+-        sequences: rustc_hash::FxHashMap<String, Arc<crate::schema::Sequence>>,
++        sequences: SequencesByNamespace,
+     ) -> Result<()> {
+         let io = self.pager.load().io.clone();
+         let mut state = ReparseSchemaState::default();
+@@ -1502,7 +1503,7 @@ impl Connection {
+     fn init_reparse_building(
+         self: &Arc<Connection>,
+         cookie: u32,
+-        preserved_sequences: Option<rustc_hash::FxHashMap<String, Arc<crate::schema::Sequence>>>,
++        preserved_sequences: Option<SequencesByNamespace>,
+     ) -> Result<ReparseSchemaInner> {
+         let guard = self.schema_reparse_guard();
+         self.pager.load().set_schema_cookie(Some(cookie));
+@@ -1613,7 +1614,7 @@ impl Connection {
+                     // descriptor SELECTs can resolve the backing tables.
+                     if pending.is_none() {
+                         if let Some(sequences) = inner.preserved_sequences.take() {
+-                            inner.fresh.set_sequences(NamespaceId::ROOT, sequences);
++                            inner.fresh.set_sequences_by_namespace(sequences);
+                             *pending = Some(crate::alloc::vec![]);
+                         } else {
+                             let work = inner.fresh.sequence_backing_table_names();
+```
+
+**File**: `core/schema.rs` (modified, +18/-8)
+```diff
+@@ -1208,6 +1208,9 @@ pub struct Sequence {
+     pub cycle: bool,
  }
  
-+@setup auth_functions
-+test auth-uid-in-a-policy-shows-the-user-its-rows {
-+    CREATE ROLE au_reader;
-+    CREATE TABLE au_read_todos (id int, user_id uuid, task text);
-+    INSERT INTO au_read_todos VALUES (1, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'mine'), (2, '11111111-1111-1111-1111-111111111111', 'theirs');
-+    ALTER TABLE au_read_todos ENABLE ROW LEVEL SECURITY;
-+    CREATE POLICY own ON au_read_todos USING (user_id = auth.uid());
-+    GRANT SELECT ON au_read_todos TO au_reader;
-+    SET ROLE au_reader;
-+    SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
-+    SELECT task FROM au_read_todos;
-+}
-+expect {
-+    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
-+    mine
++/// Sequences grouped by namespace, each by normalized name.
++pub type SequencesByNamespace = std::vec::Vec<(NamespaceId, HashMap<String, Arc<Sequence>>)>;
++
+ impl Sequence {
+     pub fn new(
+         name: String,
+@@ -2067,14 +2070,21 @@ impl Schema {
+         &self.namespace(namespace).sequences
+     }
+ 
+-    /// Replaces the sequences of the namespace with `sequences`, by
+-    /// normalized name.
+-    pub fn set_sequences(
+-        &mut self,
+-        namespace: NamespaceId,
+-        sequences: HashMap<String, Arc<Sequence>>,
+-    ) {
+-        self.namespace_mut(namespace).sequences = sequences;
++    /// The sequences of every namespace that has any, by namespace and normalized name.
++    pub fn sequences_by_namespace(&self) -> SequencesByNamespace {
++        self.namespaces
++            .iter()
++            .filter(|(_, objects)| !objects.sequences.is_empty())
++            .map(|(namespace, objects)| (*namespace, objects.sequences.clone()))
++            .collect()
++    }
++
++    /// Replaces the sequences of each namespace in `sequences`.
++    pub fn set_sequences_by_namespace(&mut self, sequences: SequencesByNamespace) {
++        for (namespace, sequences) in sequences {
++            self.add_namespace_of_object(namespace);
++            self.namespace_mut(namespace).sequences = sequences;
++        }
+     }
+ 
+     pub fn add_sequence(&mut self, namespace: NamespaceId, sequence: Sequence) {
+```
+
+**File**: `core/vdbe/vacuum.rs` (modified, +5/-14)
+```diff
+@@ -1,11 +1,10 @@
+ use crate::namespace::NamespaceId;
+ use crate::types::IOResultOr;
+-use rustc_hash::FxHashMap;
+ use std::sync::{atomic::Ordering, Arc};
+ 
+ use crate::error::LimboError;
+ use crate::io::{Buffer, Completion, CompletionGroup, WriteBatch as IOWriteBatch};
+-use crate::schema::{BTreeTable, Schema, TypeDef};
++use crate::schema::{BTreeTable, Schema, SequencesByNamespace, TypeDef};
+ use crate::security::roles::SessionRole;
+ use crate::storage::pager::{AutoVacuumMode, Page, PageRef, Pager};
+ use crate::storage::sqlite3_ondisk::{
+@@ -1781,7 +1780,7 @@ fn install_mvcc_state_after_vacuum_commit(
+ /// state machine.
+ fn capture_target_metadata(
+     temp_db: &VacuumTempDb,
+-    source_sequences: FxHashMap<String, Arc<crate::schema::Sequence>>,
++    source_sequences: SequencesByNamespace,
+ ) -> Result<VacuumCommittedImageMeta> {
+     let temp_conn = &temp_db.conn;
+     let temp_pager = temp_conn.get_pager();
+@@ -1850,11 +1849,7 @@ fn reload_physical_schema_for_mvcc_vacuum(
+     // blocking `Schema::populate_sequences` and `populate_sequences_via_sql`
+     // helpers, which violate the vdbe async contract from inside the
+     // VACUUM state machine.
+-    let preserved_sequences = connection
+-        .schema
+-        .read()
+-        .sequences_by_name(NamespaceId::ROOT)
+-        .clone();
++    let preserved_sequences = connection.schema.read().sequences_by_namespace();
+     let reparse_result = connection.read_current_schema_cookie().and_then(|cookie| {
+         connection.reparse_schema_with_cookie_keeping_sequences(cookie, preserved_sequences)
+     });
+@@ -2069,11 +2064,7 @@ fn vacuum_in_place_step(
+                 let temp_db_ref = temp_db
+                     .as_ref()
+                     .expect("VACUUM CaptureTargetMetadata phase requires temp db");
+-                let source_sequences = connection
+-                    .schema
+-                    .read()
+-                    .sequences_by_name(NamespaceId::ROOT)
+-                    .clone();
++                let source_sequences = connection.schema.read().sequences_by_namespace();
+                 *committed_image = Some(capture_target_metadata(temp_db_ref, source_sequences)?);
+                 *phase = VacuumInPlacePhase::BeginTempReadTx;
+                 continue;
+@@ -3058,7 +3049,7 @@ mod tests {
+         }
+         temp.conn.execute("COMMIT")?;
+ 
+-        let committed = capture_target_metadata(&temp, FxHashMap::default())?;
++        let committed = capture_target_metadata(&temp, SequencesByNamespace::new())?;
+ 
+         assert_eq!(committed.header.schema_cookie.get(), 42);
+         assert_eq!(committed.header.read_version, mvcc_version);
+```
+
+**File**: `postgres/tests/integration/postgres/namespace.rs` (modified, +26/-0)
+```diff
+@@ -494,6 +494,32 @@ fn serial_tables_of_two_schemas_keep_their_sequences(db: TempDatabase) {
+     }
+ }
+ 
++#[turso_macros::test(mvcc)]
++fn vacuum_keeps_the_sequences_of_bigserial_columns_of_a_namespace(db: TempDatabase) {
++    let conn = db.connect_postgres();
++    conn.execute("CREATE SCHEMA app").unwrap();
++    conn.execute("CREATE TABLE t (id bigserial, v text)")
++        .unwrap();
++    conn.execute("CREATE TABLE app.t (id smallserial, v text)")
++        .unwrap();
++    conn.execute("INSERT INTO t (v) VALUES ('a'), ('b')")
++        .unwrap();
++    conn.execute("INSERT INTO app.t (v) VALUES ('c')").unwrap();
++    conn.inner()
++        .execute("PRAGMA wal_checkpoint(TRUNCATE)")
++        .unwrap();
++    conn.inner().execute("VACUUM").unwrap();
++
++    assert_eq!(
++        pg_query_i64(&conn, "INSERT INTO t (v) VALUES ('d') RETURNING id"),
++        3
++    );
++    assert_eq!(
++        pg_query_i64(&conn, "INSERT INTO app.t (v) VALUES ('e') RETURNING id"),
++        2
++    );
 +}
 +
-+@setup auth_functions
-+test auth-uid-in-a-policy-refuses-a-row-of-another-user {
-+    CREATE ROLE au_writer;
-+    CREATE TABLE au_written_todos (id int, user_id uuid, task text);
-+    ALTER TABLE au_written_todos ENABLE ROW LEVEL SECURITY;
-+    CREATE POLICY own ON au_written_todos USING (user_id = (SELECT auth.uid())) WITH CHECK (user_id = (SELECT auth.uid()));
-+    GRANT SELECT, INSERT ON au_written_todos TO au_writer;
-+    SET ROLE au_writer;
-+    SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
-+    INSERT INTO au_written_todos VALUES (1, '11111111-1111-1111-1111-111111111111', 'theirs');
-+}
-+@sqlstate 42501
-+expect error {
-+    new row violates row-level security policy for table "au_written_todos"
-+}
-+
- @setup auth_functions
- test auth-uid-in-a-column-default {
-     SELECT set_config('request.jwt.claim.sub', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
+ /// VACUUM INTO copies the indexes of the tables of every schema, public
+ /// included, whose stored text names the table by its mangled name.
+ #[turso_macros::test]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11772** (2026-11-12): postgres: report reserved role names with SQLSTATE 42939 (@penberg)
-- **PR #11770** (2026-11-12): postgres: refuse renames of objects other than tables and columns with 0A000 (@penberg)
-- **PR #11769** (2026-11-12): postgres: refuse unsupported statements with SQLSTATE 0A000 (@penberg)
-- **PR #11766** (2026-11-12): postgres: move roles from core to the frontend (@penberg)
-- **PR #11764** (2026-11-12): postgres/conformance: Improve access control test coverage (@penberg)
-- **PR #11757** (2026-11-12): core: Connect to database with explicit role (@penberg)
+- **PR #11820** (2026-11-13): core: keep the sequences of every namespace across VACUUM (@glommer)
+- **PR #11819** (2026-11-13): tests: move blob I/O, native extension and statement lifecycle tests out of core (@penberg)
+- **PR #11818** (2026-11-13): core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE (@glommer)
+- **PR #11813** (2026-11-13): core: parse SQL only in the engine dialect module (@penberg)
+- **PR #11807** (2026-11-13): core/pragma: keep schema-only constraints from naming a table (@syntrydy)
+- **PR #11801** (2026-11-13): postgres: support INHERIT and NOINHERIT roles (@penberg)
 
 ---
 
@@ -1618,37 +2067,59 @@ as Supabase does, so that a role may call the functions.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres/conformance: test that security_invoker views are refused
+## X. Merge 'core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE' from Glaub
 
 **RULE**:
-When implementing operations in `postgres/conformance/pg-sqltests/row-security/bypass.sqltest`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/translate/insert.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae542a8c`: postgres/conformance: test that security_invoker views are refused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13626c16`: Merge 'core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE' from Glauber Costa. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `postgres/conformance/pg-sqltests/row-security/bypass.sqltest`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/insert.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-@skip-if postgres "PostgreSQL supports security_invoker views"
-test view-that-reads-as-its-reader-is-not-supported {
-    CREATE TABLE by_invoker_base (id INT);
-    CREATE VIEW by_invoker_view WITH (security_invoker = true) AS SELECT id FROM by_invoker_base;
-}
-@sqlstate 0A000
-expect error {
-    CREATE VIEW ... WITH \(options\) is not supported
+use crate::translate::update::bind_set_expr;
+            let mut rewritten_sets = collect_set_clauses_for_upsert(table, sets, resolver)?;
+            Some(col) => column_default_expr(col, is_strict, resolver),
+/// The value a column takes when a statement writes DEFAULT to it.
+pub(crate) fn column_default_expr(
+    column: &Column,
+    is_strict: bool,
+    resolver: &Resolver,
+) -> Box<Expr> {
+    column.default.clone().unwrap_or_else(|| {
+        if let Ok(Some(resolved)) = resolver.schema().resolve_type(&column.ty_str, is_strict) {
+            if let Some(default_expr) = resolved.default_expr() {
+                return Box::new(default_expr.clone());
+            }
+        }
+        Box::new(ast::Expr::Literal(ast::Literal::Null))
+    })
 }
 
+                bind_set_expr(
+                    resolver,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+            let mut rewritten_sets = collect_set_clauses_for_upsert(table, sets)?;
+            Some(col) => col.default.clone().unwrap_or_else(|| {
+                if let Ok(Some(resolved)) = resolver.schema().resolve_type(&col.ty_str, is_strict) {
+                    if let Some(default_expr) = resolved.default_expr() {
+                        return Box::new(default_expr.clone());
+                    }
+                }
+                Box::new(ast::Expr::Literal(ast::Literal::Null))
+            }),
+                bind_and_rewrite_expr(
+                    None,
+                    resolver,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae542a8c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13626c16` are properly handled with clean fallback behavior.
