@@ -9477,3 +9477,6 @@
 | `CYCLE-20261113-LU8C` | `2026-11-13T13:02:56.844Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`50afdb8e...`) |
 | `CYCLE-20261113-LUTV` | `2026-11-13T13:02:57.619Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`04a7886f...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:03:17.758Z` | `hf-xingchen-agi-teleocr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DD9B1ABE` [Domain D] | Yes (`a01df40b...`) |
+| `CYCLE-20261113-W0OA` | `2026-11-13T13:10:51.754Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`fb32d57e...`) |
+| `CYCLE-20261113-WMIX` | `2026-11-13T13:11:20.073Z` | `apache/incubator-pegasus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ac801a7c...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:11:40.983Z` | `hf-qwen-qwen-image-2.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A29F5946` [Domain D] | Yes (`347f24af...`) |

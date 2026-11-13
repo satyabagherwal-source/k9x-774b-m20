@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T13:02:57.646Z",
+  "last_updated": "2026-11-13T13:11:20.102Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -365,14 +365,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "a4b6fa3c78dcaec7ae5999af54c558782be20f47837951e31dda34c34b325769",
-      "verified_at": "2026-11-08T13:15:39.624Z",
+      "content_hash": "fb32d57e2d27ae73d1a1a0e49ada1666e884eb6325f9bf272abdb817519f39e5",
+      "verified_at": "2026-11-13T13:10:51.769Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T13:15:39.624Z"
+      "last_updated": "2026-11-13T13:10:51.769Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -8706,14 +8706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-incubator-pegasus",
-      "content_hash": "2ea802c850c5df17f702d9a433a90b984f8b48a04ddc885ede4083cff13735b8",
-      "verified_at": "2026-10-19T04:19:41.190Z",
+      "content_hash": "ac801a7cb05af2396369c4135aaa12e9572ff54b63c2d293291ee448abdb0b8b",
+      "verified_at": "2026-11-13T13:11:20.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:19:41.190Z"
+      "last_updated": "2026-11-13T13:11:20.101Z"
     },
     "benoitvallon/react-native-nw-react-calculator": {
       "repository": "benoitvallon/react-native-nw-react-calculator",

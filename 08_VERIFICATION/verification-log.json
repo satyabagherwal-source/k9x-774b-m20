@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-M7ML",
-    "timestamp": "2026-11-11T09:15:56.829Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "523f8f2707ec57ebc319ce3958f21963dd6769cb9ca33a547c1dcadc75b7c669",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-2RVT",
-    "timestamp": "2026-11-11T09:28:49.577Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "5829ab15b90b34b402f806e599fba41d637d48dffbb2033f598605f777823025",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-37CH",
     "timestamp": "2026-11-11T09:29:09.617Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7460,36 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "04a7886f758949123d7c43df84da84ec707f1f178eafb1113f89a2d502241ac4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-W0OA",
+    "timestamp": "2026-11-13T13:10:51.754Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "fb32d57e2d27ae73d1a1a0e49ada1666e884eb6325f9bf272abdb817519f39e5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-WMIX",
+    "timestamp": "2026-11-13T13:11:20.073Z",
+    "repository": "apache/incubator-pegasus",
+    "learningId": "learn-github-apache-incubator-pegasus",
+    "contentHash": "ac801a7cb05af2396369c4135aaa12e9572ff54b63c2d293291ee448abdb0b8b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -9486,3 +9486,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `72f2df8f` | Multi-dimensional audit evidence | 2026-11-13T13:02:56.848Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `54d901da` | Multi-dimensional audit evidence | 2026-11-13T13:02:57.622Z |
 | `learn-dom-d-dd9b1abe` | `project://hf-xingchen-agi-teleocr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | 2026-11-13T13:03:17.758Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-13T13:10:51.759Z |
+| `learn-github-apache-incubator-pegasus` | `https://github.com/apache/incubator-pegasus` | `31da6f5e` | Multi-dimensional audit evidence | 2026-11-13T13:11:20.077Z |
+| `learn-dom-d-a29f5946` | `project://hf-qwen-qwen-image-2.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | 2026-11-13T13:11:40.983Z |

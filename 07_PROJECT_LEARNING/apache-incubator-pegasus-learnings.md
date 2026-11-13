@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md`  
 > **Source**: github ([https://github.com/apache/incubator-pegasus](https://github.com/apache/incubator-pegasus))  
-> **Source Version**: `75015467`  
+> **Source Version**: `31da6f5e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:19:40.949Z  
+> **Timestamp**: 2026-11-13T13:11:08.070Z  
 > **Learning ID**: `learn-github-apache-incubator-pegasus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/incubator-pegasus](https://github.com/apache/incubator-pegasus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:19:40.940Z  
+> **Harvest Timestamp**: 2026-11-13T13:11:08.063Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Pegasus - A horizontally scalable, strongly consistent and high-performance key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2066 stars
+- **Stars / Engagement**: 2068 stars
 
 ---
 
@@ -992,11 +992,13 @@ func wrapRPCFailure(resp rpcResponse, err error) error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2402** (2026-05-26): **[backport] ci(github): fix branch glob to actually match release branches**
-  *Symptoms*: ## Summary  Backport of #2401 to `v2.5`.  The branch filter `'v[0-9]+.*'` used in workflow files **never matches the `v2.5` branch**, because GitHub Actions branch filters use glob syntax (not regex):  - `+` is a **literal character**, not a quantifier - `[0-9]` matches **exactly one** digit, not "one or more"  As a result, PRs targeting `v2.5` silently skip every workflow that has this filter, while only those without `branches:` filters (e.g., the Golang/Labeler ones) actually run.  ## Evidence  **PR #2394** targets `v2.5` and modifies `src/replica/duplication/**` (C++ code):  - ✅ Triggered: `Golang Lint and Unit Test - admin-cli/pegic`, `Module Labeler` (no `branches` filter) - ❌ Did NOT trigger: `Cpp CI`, `Lint and Test - admin-cli` (cli proper), `Lint and Test - go-client`, etc.  Confirmed historically: ``` $ gh run list --repo apache/incubator-pegasus \     --workflow lint_and_test_cpp.yaml --branch v2.5 --limit 5 (empty — never run) ```  `Cpp CI` has **never run on the `v2.5` branch** since the workflow was added.  ## Fix  Replace `'v[0-9]+.*'` with `'v[0-9]*'`, which is valid GitHub Actions glob syntax and matches `v2.5`, `v2.5.1`, `v10.20`, etc. Applied uniformly to all 14 affected workflows on `v2.5` (mechanical sed replacement, one-line change per file).  ## Self-validating  This PR modifies `.github/workflows/lint_and_test_cpp.yaml`, which matches `Cpp CI`'s own `paths:` filter. Combined with the branch glob fix on `v2.5`, **this PR itself should be the first time
+- **Issue #2420** (2026-11-13): **ci(github): make v2.5 CI pass on current GitHub runners**
+  *Symptoms*: ### What problem does this PR solve?  CI on `v2.5` is broken in two independent ways:  1. **The workflows never start.** Third-party actions in v2.5 workflows are either unpinned or pinned to SHAs that have since been removed from the ASF organization-wide allow-list (`apache/infrastructure-actions`). Under the ASF GitHub Actions policy, an `apache/*` workflow that references a non-allow-listed action ends in `startup_failure`: no jobs, no logs, no PR check. That is why `Cpp CI` currently does not run at all for PRs targeting `v2.5` (for example #2394), so C++ changes on this branch get no test coverage.  2. **Every test job fails once CI does start.** `Test Release`, `Test ASAN` and `Test jemalloc` all fail because ZooKeeper cannot start inside `apache/pegasus:thirdparties-bin-test-ubuntu2204-v2.5` (image built on 2023-10-18):     ```    Starting zookeeper ... FAILED TO START    java.lang.NullPointerException        at jdk.internal.platform.cgroupv2.CgroupV2Subsystem.getInstance(CgroupV2Subsystem.java:81)        ...        at sun.management.Agent.startLocalManagementAgent(Agent.java:137)    Exception thrown by the agent : java.lang.NullPointerException    ```     The image ships JDK 8u382, whose cgroup v2 metrics code throws on cgroup v2 hosts (which current GitHub runners are). ZooKeeper enables JMX by default, so the JVM starts the local management agent, hits the exception and aborts. The `v2.5` test images are no longer refreshed (`schedule` triggers only run on the defa
 
-- **Issue #2401** (2026-05-26): **ci(github): fix branch glob to actually match release branches**
-  *Symptoms*: ## Summary  The branch filter `'v[0-9]+.*'` used in 15 workflow files **never matches any release branch**, because GitHub Actions branch filters use glob syntax (not regex):  - `+` is a **literal character**, not a quantifier - `[0-9]` matches **exactly one** digit, not "one or more"  As a result, PRs targeting release branches like `v2.5` silently skip every workflow that has this filter, while only those without `branches:` filters (e.g., the Golang/Labeler ones) actually run.  ## Evidence  **PR #2394** targets `v2.5` and modifies `src/replica/duplication/**` (C++ code):  - ✅ Triggered: `Golang Lint and Unit Test - admin-cli/pegic`, `Module Labeler` (no `branches` filter) - ❌ Did NOT trigger: `Cpp CI`, `Lint and Test - admin-cli` (cli proper), `Lint and Test - go-client`, etc.  Confirmed historically: ``` $ gh run list --repo apache/incubator-pegasus \     --workflow lint_and_test_cpp.yaml --branch v2.5 --limit 5 (empty — never run) ```  `Cpp CI` has **never run on the v2.5 branch** since the workflow was added.  ## Fix  Replace `'v[0-9]+.*'` with `'v[0-9]*'`, which is valid GitHub Actions glob syntax and matches `v2.5`, `v2.5.1`, `v10.20`, etc.  Applied uniformly to all 15 affected workflows (mechanical sed replacement, one-line change per file).  ## Verification  - [x] All 18 workflow YAMLs parse successfully (`yaml.safe_load`) - [x] Diff is minimal: 15 files changed, +15/-15 - [ ] After merge: backport to active release branches (`v2.5`, etc.) so existing release-branch
+- **Issue #2419** (2026-11-13): **Is this project stop?**
+  *Symptoms*: ## General Question  Before asking a question, make sure you have:  - Searched open and closed [GitHub issues](https://github.com/apache/incubator-pegasus/issues) - Read the documentation:   - [Pegasus Doc](https://pegasus.apache.org) 
+  **Post-Mortem & Fix Analysis**:
+  > @zhanglistar This project is still actively maintained, even though it has been quiet for a while.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1013,25 +1015,34 @@ func wrapRPCFailure(resp rpcResponse, err error) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68a76223` (2026-01-06)
-**Commit Message**: ci(github): build third-party images independently per OS version to prevent a single OS build failure from breaking the entire build (#2346)
+### Incident Patch 1: `31da6f5e` (2026-11-13)
+**Commit Message**: feat: add offline Pegasus replica recovery and checker tools (#2416)
 
-Currently, the third-party images used for CI are built in roughly two stages: the first stage
-builds the *src* images, and the second stage builds the *bin* images. In each stage,
-images are built for multiple OS versions. If the src image build fails for **any** OS version,
-all bin image builds are canceled.
+### What problem does this PR solve?
 
-In practice, this is not ideal. The likelihood of build failures differs across OS versions —
-for example, older OS versions are more prone to issues. A failure in a single older OS
-version can block the entire third-party image build process.
+A corrupted RocksDB MANIFEST can prevent a Pegasus replica from opening even when many SST files are still readable. Operators need an offline way to salvage the readable records and verify the rebuilt replica before using it.
 
-This PR improves the process by fully decoupling image builds across different OS versions
-so they do not affect each other. If a third-party image build fails for one OS version, it can
-be fixed independently without impacting the builds for other OS versions.
+### What is changed and how does it work?
 
-**File**: `.github/workflows/build-push-thirdparty.yml` (added, +185/-0)
+- Add `local_replica_recover` to Pegasus shell. It first reads the source through the RocksDB DB view; if the DB cannot open, it scans SST files individually and writes a new replica with the data and metadata column families, `.app-info`, and `.init-info`.
+- Write `sst_recovery_report.txt` with per-file counts and reasons for skipped or partially scanned SSTs.
+- Add `local_replica_check` to Pegasus shell and a standalone `pegasus_replica_checker` binary. They validate replica layout and metadata, open the rebuilt RocksDB, and optionally verify SST files and checksums.
+
+SST fallback is best effort: without the DB's merged view, overwritten or deleted values may reappear. The report identifies unreadable files, but a recovered replica should be compared with a healthy replica or backup before it is used.
+
+**File**: `src/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,185 @@
+@@ -65,4 +65,5 @@ add_subdirectory(test/kill_test)
+ add_subdirectory(test/pressure_test)
+ add_subdirectory(tools)
+ add_subdirectory(utils)
++add_subdirectory(recovery_checker)
+ add_subdirectory(zookeeper)
+```
+
+**File**: `src/recovery_checker/CMakeLists.txt` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
 +# Licensed to the Apache Software Foundation (ASF) under one
 +# or more contributor license agreements.  See the NOTICE file
 +# distributed with this work for additional information
@@ -1049,626 +1060,535 @@ be fixed independently without impacting the builds for other OS versions.
 +# specific language governing permissions and limitations
 +# under the License.
 +
-+name: BuildThirdpartyDocker - build and publish thirdparty
++set(MY_PROJ_NAME pegasus_replica_checker)
++set(MY_SRC_SEARCH_MODE "GLOB")
++set(MY_PROJ_SRC "")
++set(MY_PROJ_LIBS
++        dsn_replica_server
++        pegasus_base
++        dsn_utils
++        rocksdb
++        lz4
++        zstd
++        snappy)
++set(MY_BOOST_LIBS Boost::filesystem Boost::system)
++set(MY_BINPLACES "")
++SET(CMAKE_INSTALL_RPATH ".")
++SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
++dsn_add_executable()
++dsn_install_executable()
+```
+
+**File**: `src/recovery_checker/main.cpp` (added, +411/-0)
+```diff
+@@ -0,0 +1,411 @@
++// Licensed to the Apache Software Foundation (ASF) under one
++// or more contributor license agreements.  See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership.  The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License.  You may obtain a copy of the License at
++//
++//   http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing,
++// software distributed under the License is distributed on an
++// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++// KIND, either express or implied.  See the License for the
++// specific language governing permissions and limitations
++// under the License.
 +
-+on:
-+  workflow_call:
-+    inputs:
-+      osversion:
-+        required: true
-+        type: string
++#include <fmt/core.h>
++#include <rocksdb/db.h>
++#include <rocksdb/iterator.h>
++#include <rocksdb/options.h>
++#include <rocksdb/sst_file_reader.h>
++#include <rocksdb/status.h>
++#include <cstdint>
++#include <cstdio>
++#include <memory>
++#include <set>
++#include <string>
++#include <vector>
 +
-+jobs:
-+  build_push_src_docker_images:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v4
-+      - name: Set up QEMU
-+        uses: docker/setup-qemu-action@v1
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v1
-+      - name: Login to DockerHub
-+        uses: docker/login-action@v1
-+        with:
-+          username: ${{ secrets.DOCKERHUB_USER }}
-+          password: ${{ secrets.DOCKERHUB_TOKEN }}
-+      - name: Build and push
-+        uses: docker/build-push-action@v2.10.0
-+        with:
-+          context: .
-+          file: ./docker/thirdparties-src/Dockerfile
-+          push: true
-+          tags: |
-+            apache/pegasus:thirdparties-src-${{ inputs.osversion }}-${{ github.ref_name }}
-+          build-args: |
-+            GITHUB_BRANCH=${{ github.ref_name }}
-+            OS_VERSION=${{ inputs.osversion }}
-+            HADOOP_BIN_PATH=hadoop-bin
-+            ZOOKEEPER_BIN_PATH=zookeeper-bin
++#include "base/meta_store.h"
++#include "common/gpid.h"
++#include "dsn.layer2_types.h"
++#include "replica/replica_stub.h"
++#include "replica/replication_app_base.h"
++#include "utils/error_code.h"
++#include "utils/filesystem.h"
++#include "utils/load_dump_object.h"
 +
-+  build_push_bin_docker_images:
-+    runs-on: ubuntu-latest
-+    env:
-+      # The glibc version on ubuntu1804 is lower than the node20 required, so
-+      # we need to force the node version to 16.
-+      # See more details: https://github.com/actions/checkout/issues/1809
-+      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
-+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-+    needs: build_push_src_docker_images
-+    steps:
-+      # The glibc version on ubuntu1804 is lower than the actions/checkout@v4 required, so
-+      # we need to force to use actions/checkout@v3.
-+      - uses: actions/checkout@v3
-+      - name: Set up QEMU
-+        uses: docker/setup-qemu-action@v1
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v1
-+      - name: Login to DockerHub
-+        uses: docker/login-action@v1
-+        with:
-+          username: ${{ secrets.DOCKERHUB_USER }}
-+          password: ${{ secrets.DOCKERHUB_TOKEN }}
-+      - name: Build and push for production
-+        uses: docker/build-push-action@v2.10.0
-+        with:
-+          context: .
-+          file: ./docker/thirdparties-bin/Dockerfile
-+          push: true
-+          tags: |
-+            apache/pegasus:thirdparties-bin-${{ inputs.osversion }}-${{ github.ref_name }}
-+          build-args: |
-+            GITHUB_BRANCH=${{ github.ref_name }}
-+            OS_VERSION=${{ inputs.osversion }}
-+            HADOOP_BIN_PATH=hadoop-bin
-+            ZOOKEEPER_BIN_PATH=zookeeper-bin
++namespace {
 +
-+  build_push_bin_jemalloc_docker_images:
-+    runs-on: ubuntu-latest
-+    env:
-+      # The glibc version on ubuntu1804 is lower than the node20 required, so
-+      # we need to force the node version to 16.
-+      # See more details: https://github.com/actions/checkout/issues/1809
-+      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
-+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-+    needs: build_push_src_docker_images
-+    steps:
-+      # The glibc version on ubuntu1804 is lower than the actions/checkout@v4 required, so
-+      # we need to force to use actions/checkout@v3.
-+      - uses: actions/checkout@v3
-+      - name: Set up QEMU
-+        uses: docker/setup-qemu-action@v1
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v1
-+      - name: Login to DockerHub
-+        uses: docker/login-action@v1
-+        with:
-+          username: ${{ secrets.DOCKERHUB_USER }}
-+          password: ${{ secrets.DOCKERHUB_TOKEN }}
-+      - name: Build and push for production with jemalloc
-+        uses: docker/build-push-action@v2.10.0
-+        with:
-+          context: .
-+          file: ./docker/thirdparties-bin/Dockerfile
-+          push: true
-+          tags: |
-+            apache/pegasus:thirdparties-bin-jemallc-${{ inputs.osversion }}-${{ github.ref_name }}
-+          build-args: |
-+            GITHUB_BRANCH=${{ github.ref_name }}
-+            OS_VERSION=${{ inputs.osversion }}
-+            USE_JEMALLOC=ON
-+            HADOOP_BIN_PATH=hadoop-bin
-+            ZOOKEEPER_BIN_PATH=zookeeper-bin
++enum class severity
++{
++    kPass,
++    kWarn,
++    kFail
++};
 +
-+  build_p
-```
-
-**File**: `.github/workflows/thirdparty-regular-push.yml` (modified, +6/-185)
-```diff
-@@ -15,7 +15,7 @@
- # specific language governing permissions and limitations
- # under the License.
- ---
--name:  BuildThirdpartyDockerRegularly - build and publish thirdparty every week
-+name: BuildThirdpartyDockerRegularly - build and publish thirdparty every week
- 
- on:
-   push:
-@@ -40,8 +40,7 @@ on:
-     - cron:  '0 18 * * 1'
- 
- jobs:
--  build_push_src_docker_images:
--    runs-on: ubuntu-latest
-+  build_push_thirdparty_docker_images:
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -50,185 +49,7 @@ jobs:
-           - ubuntu2004
-           - ubuntu2204
-           - rockylinux9
--    steps:
--      - uses: actions/checkout@v4
--      - name: Set up QEMU
--        uses: docker/setup-qemu-action@v1
--      - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v1
--      - name: Login to DockerHub
--        uses: docker/login-action@v1
--        with:
--          username: ${{ secrets.DOCKERHUB_USER }}
--          password: ${{ secrets.DOCKERHUB_TOKEN }}
--      - name: Build and push
--        uses: docker/build-push-action@v2.10.0
--        with:
--          context: .
--          file: ./docker/thirdparties-src/Dockerfile
--          push: true
--          tags: |
--            apache/pegasus:thirdparties-src-${{ matrix.osversion }}-${{ github.ref_name }}
--          build-args: |
--            GITHUB_BRANCH=${{ github.ref_name }}
--            OS_VERSION=${{ matrix.osversion }}
--            HADOOP_BIN_PATH=hadoop-bin
--            ZOOKEEPER_BIN_PATH=zookeeper-bin
--
--  build_push_bin_docker_images:
--    runs-on: ubuntu-latest
--    env:
--      # The glibc version on ubuntu1804 is lower than the node20 required, so
--      # we need to force the node version to 16.
--      # See more details: https://github.com/actions/checkout/issues/1809
--      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
--      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
--    needs: build_push_src_docker_images
--    strategy:
--      fail-fast: false
--      matrix:
--        osversion:
--          - ubuntu1804
--          - ubuntu2004
--          - ubuntu2204
--          - rockylinux9
--    steps:
--      # The glibc version on ubuntu1804 is lower than the actions/checkout@v4 required, so
--      # we need to force to use actions/checkout@v3.
--      - uses: actions/checkout@v3
--      - name: Set up QEMU
--        uses: docker/setup-qemu-action@v1
--      - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v1
--      - name: Login to DockerHub
--        uses: docker/login-action@v1
--        with:
--          username: ${{ secrets.DOCKERHUB_USER }}
--          password: ${{ secrets.DOCKERHUB_TOKEN }}
--      - name: Build and push for production
--        uses: docker/build-push-action@v2.10.0
--        with:
--          context: .
--          file: ./docker/thirdparties-bin/Dockerfile
--          push: true
--          tags: |
--            apache/pegasus:thirdparties-bin-${{ matrix.osversion }}-${{ github.ref_name }}
--          build-args: |
--            GITHUB_BRANCH=${{ github.ref_name }}
--            OS_VERSION=${{ matrix.osversion }}
--            HADOOP_BIN_PATH=hadoop-bin
--            ZOOKEEPER_BIN_PATH=zookeeper-bin
--
--  build_push_bin_jemalloc_docker_images:
--    runs-on: ubuntu-latest
--    env:
--      # The glibc version on ubuntu1804 is lower than the node20 required, so
--      # we need to force the node version to 16.
--      # See more details: https://github.com/actions/checkout/issues/1809
--      ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
--      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
--    needs: build_push_src_docker_images
--    strategy:
--      fail-fast: false
--      matrix:
--        osversion:
--          - ubuntu1804
--          - ubuntu2004
--          - ubuntu2204
--          - rockylinux9
--    steps:
--      # The glibc version on ubuntu1804 is lower than the actions/checkout@v4 required, so
--      # we need to force to use actions/checkout@v3.
--      - uses: actions/checkout@v3
--      - name: Set up QEMU
--        uses: docker/setup-qemu-action@v1
--      - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v1
--      - name: Login to DockerHub
--        uses: docker/login-action@v1
--        with:
--          username: ${{ secrets.DOCKERHUB_USER }}
--          password: ${{ secrets.DOCKERHUB_TOKEN }}
--      - name: Build and push for production with jemalloc
--        uses: docker/build-push-action@v2.10.0
--        with:
--          context: .
--          file: ./docker/thirdparties-bin/Dockerfile
--          push: true
--          tags: |
--            apache/pegasus:thirdparties-bin-jemallc-${{ matrix.osversion }}-${{ github.ref_name }}
--          build-args: |
--            GITHUB_BRANCH=${{ github.ref_name }}
--            OS_VERSION=${{ matrix.osversion }}
--            USE_JEMALLOC=ON
--            HADOOP_BIN_PATH=hadoop-bin
--            ZOOKEEPER_BIN_PATH=zookeeper-bin
--
--  build_push_bin_test_docker_images:
--    runs-on: ubuntu-latest
--    needs: build_push_src_docker_images
--    strategy:
--     
-```
-
----
-
-### Incident Patch 2: `b507fd36` (2026-01-09)
-**Commit Message**: fix(test): fix the failed ASan test for gutil due to absl::node_hash_map (#2341)
-
-https://github.com/apache/incubator-pegasus/issues/2344.
-
-The internal types used by `absl::node_hash_map` have different layouts when
-compiled with ASan versus non-ASan builds. As a third-party dependency, Abseil
-is always built in non-ASan mode. However, when Pegasus is built with ASan enabled,
-Abseil headers are also compiled under ASan, which leads to a mismatch between the
-header-compiled structures and the Abseil library itself, causing ASAN tests to fail.
-
-Possible solutions include:
-1. When third-party dependencies change, also build those third-party libraries with
-ASan enabled for ASan builds.
-2. When building third-party images, additionally produce a separate ASan-based
-image, which can be used by ASan CI workflows when third-party dependencies
-themselves have not changed.
-
-**File**: `.github/actions/rebuild_thirdparty_if_needed/action.yaml` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ runs:
-       run: |
-         rm -f /root/thirdparties-src.zip
-         mkdir build
--        cmake -DCMAKE_BUILD_TYPE=Release -DROCKSDB_PORTABLE=1 -DUSE_JEMALLOC=${USE_JEMALLOC} -B build/
-+        cmake -DCMAKE_BUILD_TYPE=Release -DROCKSDB_PORTABLE=1 -DUSE_JEMALLOC=${USE_JEMALLOC} -DENABLE_ASAN=${ENABLE_ASAN} -B build/
-         cmake --build build/ -j $(nproc)
-         rm -rf build/Build build/Download/[a-y]* build/Source/[a-g]* build/Source/[i-q]* build/Source/[s-z]*
-         find ./ -name '*CMakeFiles*' -type d -exec rm -rf "{}" +
-```
-
-**File**: `.github/workflows/lint_and_test_cpp.yaml` (modified, +10/-4)
-```diff
-@@ -60,6 +60,9 @@ jobs:
-   cpp_clang_tidy_linter:
-     name: Tidy
-     runs-on: ubuntu-22.04
-+    env:
-+      USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-     container:
-       image: apache/pegasus:thirdparties-bin-ubuntu2204-${{ github.base_ref }}
-     steps:
-@@ -86,6 +89,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-     container:
-       image: apache/pegasus:thirdparties-bin-ubuntu2204-${{ github.base_ref }}
-     steps:
-@@ -115,6 +119,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       ARTIFACT_NAME: release
-       BUILD_OPTIONS: -t release --test
-     container:
-@@ -204,6 +209,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: ON
-       ARTIFACT_NAME: release_address
-       BUILD_OPTIONS: --sanitizer address --disable_gperf --test
-     container:
-@@ -259,10 +265,7 @@ jobs:
-           - dsn_task_tests
-           - dsn_utils_tests
-           - dsn.zookeeper.tests
--          # TODO(wangdan): absl::node_hash_map will fail when ASan tests run because some objects
--          # have different structures between non-ASan and ASan building. Will be enabled after
--          # this issue is fixed.
--          # - gutil_test
-+          - gutil_test
-           # TODO(yingchun): Disable it because we find it's too flaky, we will re-enable it after
-           # it has been optimized.
-           # - partition_split_test
-@@ -300,6 +303,7 @@ jobs:
- #    runs-on: ubuntu-latest
- #    env:
- #      USE_JEMALLOC: OFF
-+#      ENABLE_ASAN: OFF
- #      ARTIFACT_NAME: release_undefined
- #      BUILD_OPTIONS: --sanitizer undefined --disable_gperf --test
- #    container:
-@@ -386,6 +390,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: ON
-+      ENABLE_ASAN: OFF
-       ARTIFACT_NAME: release_jemalloc
-       BUILD_OPTIONS: -t release --use_jemalloc --test
-     container:
-@@ -463,6 +468,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t debug --test --separate_servers
-       PACK_OPTIONS: --separate_servers
-     container:
-```
-
-**File**: `.github/workflows/lint_and_test_go-client.yml` (modified, +1/-0)
-```diff
-@@ -86,6 +86,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t release
-     container:
-       image: apache/pegasus:thirdparties-bin-test-ubuntu2204-${{ github.base_ref }}
-```
-
-**File**: `.github/workflows/lint_and_test_java-client.yml` (modified, +1/-0)
-```diff
-@@ -55,6 +55,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       ARTIFACT_NAME: release_for_java_client
-       BUILD_OPTIONS: -t release
-     container:
-```
-
-**File**: `.github/workflows/lint_and_test_scala-client.yml` (modified, +1/-0)
-```diff
-@@ -63,6 +63,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t release
-     container:
-       image: apache/pegasus:thirdparties-bin-test-ubuntu2204-${{ github.base_ref }}
-```
-
-**File**: `.github/workflows/test_nodejs-client.yml` (modified, +1/-0)
-```diff
-@@ -43,6 +43,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t release
-     container:
-       image: apache/pegasus:thirdparties-bin-test-ubuntu2204-${{ github.base_ref }}
-```
-
-**File**: `.github/workflows/test_python-client.yml` (modified, +1/-0)
-```diff
-@@ -43,6 +43,7 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       USE_JEMALLOC: OFF
-+      ENABLE_ASAN: OFF
-       BUILD_OPTIONS: -t release
-     container:
-       image: apache/pegasus:thirdparties-bin-test-ubuntu2204-${{ github.base_ref }}
-```
-
-**File**: `run.sh` (modified, +4/-0)
-```diff
-@@ -288,6 +288,10 @@ function run_build()
-         echo "Start building third-parties..."
-         mkdir -p build
-         pushd build
-+        if [[ "${SANITIZER}" == *address* ]]; then
-+            echo "ASan for third-parties is enabled"
-+            CMAKE_OPTIONS="${CMAKE_OPTIONS} -DENABLE_ASAN=ON"
-+        fi
-         CMAKE_OPTIONS="${CMAKE_OPTIONS} -DROCKSDB_PORTABLE=${ROCKSDB_PORTABLE}"
-         cmake .. ${CMAKE_OPTIONS}
-         make -j$JOB_NUM
-```
-
----
-
-### Incident Patch 3: `db756dcd` (2026-03-13)
-**Commit Message**: fix: avoid reopening GC-deleted plog during duplication (#2373)
-
-Fix https://github.com/apache/incubator-pegasus/issues/2372.
-
-Duplication replay may access private log files deleted by
-concurrent GC. Track cleanable decree and stop scanning
-plog files beyond GC boundary to prevent crash.
-
-**File**: `src/replica/duplication/load_from_private_log.cpp` (modified, +22/-4)
-```diff
-@@ -156,17 +156,35 @@ void load_from_private_log::find_log_file_to_start()
-     // Reopen the files. Because the internal file handle of `file_map`
-     // is cleared once WAL replay finished. They are unable to read.
-     mutation_log::log_file_map_by_index new_file_map;
--    for (const auto &pr : file_map) {
++struct check_context
++{
++    bool verify_sst = false;
++    bool verify_checksum = false;
++    bool has_failure = false;
++    bool has_warning = false;
++};
 +
-+    const decree cleanable_decree = _private_log->get_cleanable_decree();
-+    const decree max_decree_gpid = _private_log->max_decree(get_gpid());
++void print_result(check_context *ctx, severity sev, const std::string &message)
++{
++    switch (sev) {
++    case severity::kPass:
++        fmt::print(stdout, "[PASS] {}\n", message);
++        break;
++    case severity::kWarn:
++        ctx->has_warning = true;
++        fmt::print(stdout, "[WARN] {}\n", message);
++        break;
++    case severity::kFail:
++        ctx->has_failure = true;
++        fmt::print(stdout, "[FAIL] {}\n", message);
++        break;
++    }
++}
 +
-+    if (max_decree_gpid <= cleanable_decree) {
-+        LOG_ERROR_PREFIX("max_decree_gpid({}) should be > cleanable_decree({}) for plog",
-+                         max_decree_gpid,
-+                         cleanable_decree);
-+        return;
++void print_usage(const char *prog)
++{
++    fmt::print(stderr,
++               "USAGE: {} <replica_dir> [--verify-sst] [--verify-checksum]\n"
++               "  --verify-sst       open every .sst file with rocksdb::SstFileReader\n"
++               "  --verify-checksum  with --verify-sst, also verify checksum for every .sst\n",
++               prog);
++}
++
++bool parse_args(int argc, char **argv, std::string *replica_dir, check_context *ctx)
++{
++    if (argc < 2) {
++        return false;
++    }
++    *replica_dir = argv[1];
++    for (int i = 2; i < argc; ++i) {
++        const std::string arg = argv[i];
++        if (arg == "--verify-sst") {
++            ctx->verify_sst = true;
++        } else if (arg == "--verify-checksum") {
++            ctx->verify_sst = true;
++            ctx->verify_checksum = true;
++        } else {
++            fmt::print(stderr, "ERROR: unknown argument '{}'\n", arg);
++            return false;
++        }
++    }
++    return true;
++}
++
++bool has_prefix(const std::string &name, const std::string &prefix)
++{
++    return name.size() >= prefix.size() && name.compare(0, prefix.size(), prefix) == 0;
++}
++
++bool has_suffix(const std::string &name, const std::string &suffix)
++{
++    return name.size() >= suffix.size() &&
++           name.compare(name.size() - suffix.size(), suffix.size(), suffix) == 0;
++}
++
++void check_required_files(const std::string &replica_dir,
++                          const std::string &rdb_dir,
++                          check_context *ctx)
++{
++    const auto app_info_path = dsn::utils::filesystem::path_combine(
++        replica_dir, dsn::replication::replica_app_info::kAppInfo);
++    const auto init_info_path = dsn::utils::filesystem::path_combine(
++        replica_dir, dsn::replication::replica_init_info::kInitInfo);
++
++    print_result(ctx,
++                 dsn::utils::filesystem::directory_exists(replica_dir) ? severity::kPass
++                                                                       : severity::kFail,
++                 fmt::format("replica dir {}", replica_dir));
++    print_result(ctx,
++                 dsn::utils::filesystem::file_exists(app_info_path) ? severity::kPass
++                                                                    : severity::kFail,
++                 fmt::format("found {}", app_info_path));
++    print_result(ctx,
++                 dsn::utils::filesystem::file_exists(init_info_path) ? severity::kPass
++                                                                     : severity::kFail,
++                 fmt::format("found {}", init_info_path));
++    print_result(ctx,
++                 dsn::utils::filesystem::directory_exists(rdb_dir) ? severity::kPass
++                                                                   : severity::kFail,
++                 fmt::format("found rocksdb dir {}", rdb_dir));
++}
++
++bool check_replica_metadata(const std::string &replica_dir, c
+```
+
+**File**: `src/shell/commands.h` (modified, +8/-0)
+```diff
+@@ -280,3 +280,11 @@ bool detect_hotkey(command_executor *e, shell_context *sc, arguments args);
+ // == local partition split (see 'commands/local_partition_split.cpp') == //
+ extern const std::string local_partition_split_help;
+ bool local_partition_split(command_executor *e, shell_context *sc, arguments args);
++
++// == local replica recover (see 'commands/local_replica_recover.cpp') == //
++extern const std::string local_replica_recover_help;
++bool local_replica_recover(command_executor *e, shell_context *sc, arguments args);
++
++// == local replica check (see 'commands/local_replica_check.cpp') == //
++extern const std::string local_replica_check_help;
++bool local_replica_check(command_executor *e, shell_context *sc, arguments args);
+```
+
+**File**: `src/shell/commands/local_replica_check.cpp` (added, +395/-0)
+```diff
+@@ -0,0 +1,395 @@
++// Licensed to the Apache Software Foundation (ASF) under one
++// or more contributor license agreements.  See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership.  The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License.  You may obtain a copy of the License at
++//
++//   http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing,
++// software distributed under the License is distributed on an
++// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++// KIND, either express or implied.  See the License for the
++// specific language governing permissions and limitations
++// under the License.
++
++#include <fmt/core.h>
++#include <rocksdb/db.h>
++#include <rocksdb/iterator.h>
++#include <rocksdb/options.h>
++#include <rocksdb/sst_file_reader.h>
++#include <rocksdb/status.h>
++#include <cstdint>
++#include <cstdio>
++#include <memory>
++#include <set>
++#include <string>
++#include <vector>
++
++#include "base/meta_store.h"
++#include "common/gpid.h"
++#include "dsn.layer2_types.h"
++#include "replica/replica_stub.h"
++#include "replica/replication_app_base.h"
++#include "shell/argh.h"
++#include "shell/command_executor.h"
++#include "shell/commands.h"
++#include "utils/error_code.h"
++#include "utils/filesystem.h"
++#include "utils/load_dump_object.h"
++
++const std::string local_replica_check_help = "<replica_dir> [--verify_sst] [--verify_checksum]";
++
++namespace {
++
++enum class check_severity
++{
++    kPass,
++    kWarn,
++    kFail
++};
++
++struct check_context
++{
++    bool verify_sst = false;
++    bool verify_checksum = false;
++    bool has_failure = false;
++    bool has_warning = false;
++};
++
++void print_result(check_context *ctx, check_severity sev, const std::string &message)
++{
++    switch (sev) {
++    case check_severity::kPass:
++        fmt::print(stdout, "[PASS] {}\n", message);
++        break;
++    case check_severity::kWarn:
++        ctx->has_warning = true;
++        fmt::print(stdout, "[WARN] {}\n", message);
++        break;
++    case check_severity::kFail:
++        ctx->has_failure = true;
++        fmt::print(stdout, "[FAIL] {}\n", message);
++        break;
++    }
++}
++
++bool has_prefix(const std::string &name, const std::string &prefix)
++{
++    return name.size() >= prefix.size() && name.compare(0, prefix.size(), prefix) == 0;
++}
++
++bool has_suffix(const std::string &name, const std::string &suffix)
++{
++    return name.size() >= suffix.size() &&
++           name.compare(name.size() - suffix.size(), suffix.size(), suffix) == 0;
++}
++
++void check_required_files(const std::string &replica_dir,
++                          const std::string &rdb_dir,
++                          check_context *ctx)
++{
++    const auto app_info_path = dsn::utils::filesystem::path_combine(
++        replica_dir, dsn::replication::replica_app_info::kAppInfo);
++    const auto init_info_path = dsn::utils::filesystem::path_combine(
++        replica_dir, dsn::replication::replica_init_info::kInitInfo);
++
++    print_result(ctx,
++                 dsn::utils::filesystem::directory_exists(replica_dir) ? check_severity::kPass
++                                                                       : check_severity::kFail,
++                 fmt::format("replica dir {}", replica_dir));
++    print_result(ctx,
++                 dsn::utils::filesystem::file_exists(app_info_path) ? check_severity::kPass
++                                                                    : check_severity::kFail,
++                 fmt::format("found {}", app_info_path));
++    print_result(ctx,
++                 dsn::utils::filesystem::file_exists(init_info_path) ? check_severity::kPass
++                                                                     : check_severity::kFail,
++                 fmt::format("found {}", init_info_path));
++    print_result(ctx,
++                 dsn::utils::filesystem::directory_exists(rdb_dir) ? check_severity::kPass
++                                                                   : check_severity::kFail,
++                 fmt::format("found rocksdb dir {}", rdb_dir));
++}
++
++bool check_replica_metadata(const std::string &replica_dir, check_context *ctx, dsn::gpid *pid)
++{
++    dsn::app_info ai;
++    std::string hint_message;
++    if (!dsn::replication::replica_stub::validate_replica_dir(
++            replica_dir, ai, *pid, hint_message)) {
++        print_result(ctx, check_severity::kFail, hint_message);
++        return false;
 +    }
 +
-+    for (auto it = file_map.rbegin(); it != file_map.rend(); ++it) {
-         log_file_ptr file;
--        error_s es = log_utils::open_read(pr.second->path(), file);
-+        error_s es = log_utils::open_read(it->second->path(), file);
-         if (!es.is_ok()) {
-             LOG_ERROR_PREFIX("{}", es);
-             return;
-         }
--        new_file_map.emplace(pr.first, file);
++    print_result(ctx,
++                 check_severity::kPass,
++                 fmt::format("replica dir parsed: gpid={}, app_name='{}', app_type='{}', "
++                             "partition_count={}, app_id={}",
++                             pid->to_string(),
++                             ai.app_name,
++                             ai.app_type,
++                             ai.partiti
+```
+
+**File**: `src/shell/commands/local_replica_recover.cpp` (added, +912/-0)
+```diff
+@@ -0,0 +1,912 @@
++// Licensed to the Apache Software Foundation (ASF) under one
++// or more contributor license agreements.  See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership.  The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License.  You may obtain a copy of the License at
++//
++//   http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing,
++// software distributed under the License is distributed on an
++// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++// KIND, either express or implied.  See the License for the
++// specific language governing permissions and limitations
++// under the License.
 +
-+        new_file_map.emplace(it->first, file);
++#include <fmt/core.h>
++#include <rocksdb/db.h>
++#include <rocksdb/iterator.h>
++#include <rocksdb/options.h>
++#include <rocksdb/slice.h>
++#include <rocksdb/sst_file_reader.h>
++#include <rocksdb/status.h>
++#include <rocksdb/table_properties.h>
++#include <rocksdb/write_batch.h>
++#include <algorithm>
++#include <cstdint>
++#include <cstdio>
++#include <cstring>
++#include <fstream>
++#include <map>
++#include <memory>
++#include <string>
++#include <utility>
++#include <vector>
 +
-+        // If the max decree of a log file falls within `cleanable_decree`, the file may be deleted
-+        // during the GC of plog files. Therefore, these files should be skipped here.
-+        if (cleanable_decree >= file->previous_log_max_decree(get_gpid())) {
-+            break;
++#include "base/meta_store.h"
++#include "common/gpid.h"
++#include "dsn.layer2_types.h"
++#include "pegasus_value_schema.h"
++#include "replica/replica_stub.h"
++#include "replica/replication_app_base.h"
++#include "shell/argh.h"
++#include "shell/command_executor.h"
++#include "shell/commands.h"
++#include "utils/defer.h"
++#include "utils/endians.h"
++#include "utils/error_code.h"
++#include "utils/filesystem.h"
++#include "utils/fmt_logging.h"
++#include "utils/load_dump_object.h"
++#include "utils/string_conv.h"
++
++const std::string local_replica_recover_help =
++    "<src_replica_dir> <dst_replica_dir> [--force_sst_scan] [--verify_checksum] "
++    "[--write_batch_count num] [--pegasus_data_version num] [--last_flushed_decree num] "
++    "[--last_manual_compact_finish_time num]";
++
++namespace {
++
++const std::string kPegasusDataVersion = "pegasus_data_version";
++const std::string kPegasusLastFlushedDecree = "pegasus_last_flushed_decree";
++const std::string kPegasusLastManualCompactFinishTime = "pegasus_last_manual_compact_finish_time";
++
++struct recover_options
++{
++    std::string src_replica_dir;
++    std::string dst_replica_dir;
++    std::string src_rdb_dir;
++    std::string dst_rdb_dir;
++    std::string sst_report_file;
++    bool force_sst_scan = false;
++    bool verify_checksum = false;
++    uint64_t write_batch_count = 1000;
++    bool has_data_version_override = false;
++    uint32_t data_version_override = 0;
++    bool has_last_flushed_decree_override = false;
++    uint64_t last_flushed_decree_override = 0;
++    bool has_last_manual_compact_finish_time_override = false;
++    uint64_t last_manual_compact_finish_time_override = 0;
++};
++
++struct recovered_metadata
++{
++    std::map<std::string, std::string> meta_kvs;
++    bool has_data_version = false;
++    uint32_t data_version = 0;
++    bool has_last_flushed_decree = false;
++    uint64_t last_flushed_decree = 0;
++    bool has_last_manual_compact_finish_time = false;
++    uint64_t last_manual_compact_finish_time = 0;
++};
++
++struct recovery_stats
++{
++    uint64_t data_kv_count = 0;
++    uint64_t meta_kv_count = 0;
++    uint64_t scanned_sst_count = 0;
++    uint64_t skipped_bad_sst_count = 0;
++};
++
++struct sst_recovery_record
++{
++    std::string path;
++    std::string column_family_name;
++    uint64_t data_kv_count = 0;
++    uint64_t meta_kv_count = 0;
++    uint64_t invalid_key_count = 0;
++    bool skipped = false;
++    bool partial = false;
++    std::string skip_reason;
++    std::string partial_reason;
++};
++
++struct sst_recovery_report
++{
++    bool used_sst_scan = false;
++    bool completed = false;
++    std::string source_rdb_dir;
++    std::vector<sst_recovery_record> records;
++};
++
++bool parse_u64(const std::string &value, uint64_t *result)
++{
++    return dsn::buf2uint64(value, *result);
++}
++
++bool parse_u32(const std::string &value, uint32_t *result)
++{
++    uint64_t tmp = 0;
++    if (!parse_u64(value, &tmp) || tmp > UINT32_MAX) {
++        return false;
++    }
++    *result = static_cast<uint32_t>(tmp);
++    return true;
++}
++
++void refresh_required_metadata(recovered_metadata *meta)
++{
++    auto refresh_u64 = [meta](const std::string &key, bool *has_value, uint64_t *value) {
++        const auto it = meta->meta_kvs.find(key);
++        if (it == meta->meta_kvs.end()) {
++            return;
 +        }
-     }
- 
--    find_log_file_to_start(std::move(new_file_map));
-+    find_log_file_to_start(new_file_map);
- }
- 
- void load_from_private_log::find_log_file_to_start(
++        uint64_t parsed = 0;
++        if (parse_u64(it->second, &parsed)) {
++            *has_value = true;
++            *value = parsed;
++        }
++    };
++
++    refresh_u64(
++        kPegasusLastFlushedDecree, &meta->has_last_flushed_decree, &meta->last_flushed_decree);
++    refresh_u64(kPegasusLastManualCompactFinishTime,
++                &meta->has_last_manual_compact_finish_time,
++
 ```
 
-**File**: `src/replica/duplication/load_from_private_log.h` (modified, +1/-2)
+**File**: `src/shell/main.cpp` (modified, +28/-0)
 ```diff
-@@ -82,9 +82,8 @@ class load_from_private_log final : public replica_base,
-     static constexpr int MAX_ALLOWED_FILE_REPEATS{10};
- 
- private:
--    void find_log_file_to_start(const mutation_log::log_file_map_by_index &log_files);
-+    void find_log_file_to_start(const mutation_log::log_file_map_by_index &log_file_map);
- 
--private:
-     friend class load_from_private_log_test;
-     friend class load_fail_mode_test;
-     FRIEND_TEST(load_fail_mode_test, fail_skip);
-```
-
-**File**: `src/replica/mutation_log.cpp` (modified, +13/-0)
-```diff
-@@ -361,6 +361,7 @@ void mutation_log::init_states()
-     _private_log_info = {0, 0};
-     _plog_max_decree_on_disk = 0;
-     _plog_max_commit_on_disk = 0;
-+    _cleanable_decree = 0;
- }
- 
- error_code mutation_log::open(replay_callback read_callback,
-@@ -898,6 +899,18 @@ void mutation_log::update_max_commit_on_disk_no_lock(decree d)
-     }
- }
- 
-+decree mutation_log::get_cleanable_decree() const
-+{
-+    zauto_lock l(_lock);
-+    return _cleanable_decree;
-+}
-+
-+void mutation_log::set_cleanable_decree(decree d)
-+{
-+    zauto_lock l(_lock);
-+    _cleanable_decree = d;
-+}
-+
- bool mutation_log::get_learn_state(gpid gpid, decree start, /*out*/ learn_state &state) const
- {
-     CHECK(_is_private, "this method is only valid for private logs");
-```
-
-**File**: `src/replica/mutation_log.h` (modified, +14/-3)
-```diff
-@@ -47,6 +47,7 @@
- #include "task/task_code.h"
- #include "task/task_tracker.h"
- #include "utils/autoref_ptr.h"
-+#include "utils/ports.h"
- #include "utils/error_code.h"
- #include "utils/errors.h"
- #include "utils/zlocks.h"
-@@ -301,6 +302,9 @@ class mutation_log : public ref_counter
- 
-     task_tracker *tracker() { return &_tracker; }
- 
-+    decree get_cleanable_decree() const;
-+    void set_cleanable_decree(decree d);
-+
- protected:
-     // 'size' is data size to write; the '_global_end_offset' will be updated by 'size'.
-     // can switch file only when create_new_log_if_needed = true;
-@@ -400,9 +404,14 @@ class mutation_log : public ref_counter
-     // for plog. Since it is set with mutation.data.header.last_committed_decree, it must
-     // be less than _plog_max_decree_on_disk.
-     decree _plog_max_commit_on_disk;
-+
-+    // The decree threshold for private log garbage collection. Mutations with decree <= this
-+    // value are considered cleanable and their log files may be deleted by GC.
-+    // Protected by _lock in get/set.
-+    decree _cleanable_decree;
- };
- 
--typedef dsn::ref_ptr<mutation_log> mutation_log_ptr;
-+using mutation_log_ptr = dsn::ref_ptr<mutation_log>;
- 
- class mutation_log_private : public mutation_log, private replica_base
- {
-@@ -438,6 +447,9 @@ class mutation_log_private : public mutation_log, private replica_base
-     void flush_once() override;
- 
- private:
-+    DISALLOW_COPY_AND_ASSIGN(mutation_log_private);
-+    DISALLOW_MOVE_AND_ASSIGN(mutation_log_private);
-+
-     // async write pending mutations into log file
-     // Preconditions:
-     // - _pending_write != nullptr
-@@ -457,9 +469,8 @@ class mutation_log_private : public mutation_log, private replica_base
-     // if count <= 0, means flush until all data is on disk
-     void flush_internal(int max_count);
- 
--private:
-     // bufferring - only one concurrent write is allowed
--    typedef std::vector<mutation_ptr> mutations;
-+    using mutations = std::vector<mutation_ptr>;
-     std::atomic_bool _is_writing;
-     // Writes that are emitted to `commit_log_block` but are not completely written.
-     // The weak_ptr used here is a trick. Once the pointer freed, ie.
-```
-
-**File**: `src/replica/replica_chkpt.cpp` (modified, +1/-0)
-```diff
-@@ -177,6 +177,7 @@ void replica::on_checkpoint_timer()
-         }
-     }
- 
-+    _private_log->set_cleanable_decree(cleanable_decree);
-     tasking::enqueue(LPC_GARBAGE_COLLECT_LOGS_AND_REPLICAS,
-                      &_tracker,
-                      [this, plog, cleanable_decree, valid_start_offset] {
+@@ -663,6 +663,34 @@ static command_executor commands[] = {
+         local_partition_split_help.c_str(),
+         local_partition_split,
+     },
++    {
++        "local_replica_recover",
++        "Recover a damaged local Pegasus replica offline. Note:\n"
++        "  * Stop the replica servers before executing this command\n"
++        "  * <src_replica_dir> is the damaged replica directory, such as "
++        "    /data/replica/1.2.pegasus\n"
++        "  * <dst_replica_dir> is a new output replica directory, and must not exist\n"
++        "  * It first tries to recover from the RocksDB merged DB view; if opening the DB fails, "
++        "    it falls back to scanning each .sst file directly\n"
++        "  * --force_sst_scan forces direct .sst scanning and skips the DB-view phase\n"
++        "  * --verify_checksum verifies each .sst checksum before reading it\n"
++        "  * --pegasus_data_version can be used when metadata cannot be recovered automatically\n"
++        "  * The tool rebuilds both default/data and pegasus_meta_cf, and rewrites .app-info "
++        "    and .init-info for the new replica directory\n",
++        local_replica_recover_help.c_str(),
++        local_replica_recover,
++    },
++    {
++        "local_replica_check",
++        "Check whether a local Pegasus replica directory is structurally usable. Note:\n"
++        "  * Stop the replica servers before executing this command\n"
++        "  * <replica_dir> is the local replica directory, such as /data/replica/1.2.pegasus\n"
++        "  * It checks .app-info, .init-info, data/rdb, rocksdb column families, and meta cf\n"
++        "  * --verify_sst opens every .sst file one by one\n"
++        "  * --verify_checksum verifies each .sst checksum and implies --verify_sst\n",
++        local_replica_check_help.c_str(),
++        local_replica_check,
++    },
+     {
+         "exit",
+         "exit shell",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2420** (2026-11-13): ci(github): make v2.5 CI pass on current GitHub runners (@ruojieranyishen)
+- **PR #2416** (2026-11-13): feat: add offline Pegasus replica recovery and checker tools (@empiredan)
+- **PR #2403** (closed): ci(github): pin all actions to commit SHAs to comply with ASF allow-list policy (@acelyc111)
 - **PR #2402** (closed): [backport] ci(github): fix branch glob to actually match release branches (@acelyc111)
 - **PR #2401** (closed): ci(github): fix branch glob to actually match release branches (@acelyc111)
 - **PR #2399** (closed): block_service: fix 'occured' -> 'occurred' typos in ERR_FS_INTERNAL doc (@SAY-5)
-- **PR #2398** (2026-04-15): ci(github): pin all actions to exact commit SHAs instead of tags or branch references (@empiredan)
-- **PR #2396** (2026-04-09): feat(docker): support arm64 (#2081) (@empiredan)
-- **PR #2393** (2026-04-14): feat(new_metrics): support `server_stat` command showing some important server-level metrics (part 4) (@empiredan)
 
 ---
 
@@ -1688,56 +1608,21 @@ plog files beyond GC boundary to prevent crash.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(github): build third-party images independently per OS version to prevent a s
+## X. add offline Pegasus replica recovery and checker tools (#2416)
 
 **RULE**:
-When implementing operations in `.github/workflows/build-push-thirdparty.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/incubator-pegasus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/incubator-pegasus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68a76223`: ci(github): build third-party images independently per OS version to prevent a single OS build failure from breaking the entire build (#2346). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `31da6f5e`: add offline Pegasus replica recovery and checker tools (#2416). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-push-thirdparty.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-
-name: BuildThirdpartyDocker - build and publish thirdparty
-
-on:
-  workflow_call:
-    inputs:
-      osversion:
-        required: true
-        type: string
-
-jobs:
-  build_push_src_docker_images:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-  
+add_subdirectory(recovery_checker)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1747,4 +1632,4 @@ jobs:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68a76223` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `31da6f5e` are properly handled with clean fallback behavior.

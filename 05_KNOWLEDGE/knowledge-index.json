@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T13:02:57.477Z",
+  "last_updated": "2026-11-13T13:11:19.933Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2590,11 +2590,16 @@
       "slug": "apache-incubator-pegasus",
       "platform": "github",
       "source_url": "https://github.com/apache/incubator-pegasus",
-      "source_version": "75015467",
-      "content_hash": "2ea802c850c5df17f702d9a433a90b984f8b48a04ddc885ede4083cff13735b8",
+      "source_version": "31da6f5e",
+      "content_hash": "ac801a7cb05af2396369c4135aaa12e9572ff54b63c2d293291ee448abdb0b8b",
       "dossier_path": "07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "add offline Pegasus replica recovery and checker tools (#2416)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2121,
           "title": "ci(github): build third-party images independently per OS version to prevent a s",
@@ -2606,7 +2611,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:19:41.135Z",
+      "verified_at": "2026-11-13T13:11:19.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32185,7 +32190,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "a4b6fa3c78dcaec7ae5999af54c558782be20f47837951e31dda34c34b325769",
+      "content_hash": "fb32d57e2d27ae73d1a1a0e49ada1666e884eb6325f9bf272abdb817519f39e5",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -32245,7 +32250,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
       ],
-      "verified_at": "2026-11-08T13:15:39.472Z",
+      "verified_at": "2026-11-13T13:10:51.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

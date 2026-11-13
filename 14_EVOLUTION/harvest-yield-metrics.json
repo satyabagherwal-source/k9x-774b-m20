@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:02:57.642Z",
-  "total_cycles_completed": 9240,
-  "total_learnings_persisted": 9240,
-  "total_rules_promoted": 9013,
+  "last_updated": "2026-11-13T13:11:20.097Z",
+  "total_cycles_completed": 9242,
+  "total_learnings_persisted": 9242,
+  "total_rules_promoted": 9014,
   "history": [
-    {
-      "timestamp": "2026-11-12T21:49:31.028Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:49:32.695Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T21:56:36.920Z",
       "repository": "restatedev/restate",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T13:02:57.642Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:10:51.765Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:11:20.097Z",
+      "repository": "apache/incubator-pegasus",
+      "learningId": "learn-github-apache-incubator-pegasus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
