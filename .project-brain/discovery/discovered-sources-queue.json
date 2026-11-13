@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T22:45:45.551Z",
+  "updated_at": "2026-11-13T23:02:23.666Z",
   "stats": {
-    "total_discovered": 2986,
-    "approved_pending_harvest": 2788,
+    "total_discovered": 2990,
+    "approved_pending_harvest": 2791,
     "harvested_count": 0,
-    "rejected_count": 198,
+    "rejected_count": 199,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2787,
+      "COMMUNITY_AND_EXPERT": 2790,
       "OFFICIAL_DOCUMENTATION": 106,
-      "STANDARDS_AND_SPECIFICATIONS": 79,
+      "STANDARDS_AND_SPECIFICATIONS": 80,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
       "LEGAL_AND_REGULATORY": 1,
@@ -64326,6 +64326,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
         "fileName": "hf-compvis-stable-diffusion-v1-4-learnings.md"
+      }
+    },
+    "SRC-464E108A8A04": {
+      "id": "SRC-464E108A8A04",
+      "url": "https://huggingface.co/hexgrad/Kokoro-82M",
+      "title": "https://huggingface.co/hexgrad/Kokoro-82M",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:02:23.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
+        "fileName": "hf-hexgrad-kokoro-82m-learnings.md"
+      }
+    },
+    "SRC-42ED694A3525": {
+      "id": "SRC-42ED694A3525",
+      "url": "https://github.com/openreplay/openreplay",
+      "title": "https://github.com/openreplay/openreplay",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:02:23.590Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
+        "fileName": "openreplay-openreplay-learnings.md"
+      }
+    },
+    "SRC-021A1F15B5A3": {
+      "id": "SRC-021A1F15B5A3",
+      "url": "https://github.com/aquasecurity/trivy/releases/download/v0.56.2/trivy_0.56.2_Linux-64bit.tar.gz",
+      "title": "https://github.com/aquasecurity/trivy/releases/download/v0.56.2/trivy_0.56.2_Linux-64bit.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:02:23.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
+        "fileName": "openreplay-openreplay-learnings.md"
+      }
+    },
+    "SRC-A946D26FD836": {
+      "id": "SRC-A946D26FD836",
+      "url": "http://www.w3.org/1999/xlink",
+      "title": "http://www.w3.org/1999/xlink",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-13T23:02:23.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
+        "fileName": "openreplay-openreplay-learnings.md"
       }
     }
   }

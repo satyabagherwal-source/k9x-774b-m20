@@ -835,8 +835,8 @@
     "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceVersion": "hf-hexgrad-kokoro-82m",
     "license": "Open-Source",
-    "contentHash": "4777313f0d1485f9d8ec44cf24be6186cb57b75cf21c7fd712842670af2d5acc",
-    "lastHarvestedAt": "2026-11-08T21:16:35.276Z",
+    "contentHash": "07d15f5a5788e508a751f3abfe56ba0f59da2db454104a279e54ac14abf71e92",
+    "lastHarvestedAt": "2026-11-13T23:01:31.877Z",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m"
   },
   "hf-openai-whisper-large-v3": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "203f88d7",
+    "sourceVersion": "53ace8b4",
     "license": "Apache-2.0",
-    "contentHash": "f65937a30f1db18983b9f090a3944ff9e9383e3ce209562027f185416bcfdccd",
-    "lastHarvestedAt": "2026-11-12T23:17:01.232Z",
+    "contentHash": "f309f50897935dd860fd4ef0fb6603ca348e6d47b257da0409765ffdb56edecb",
+    "lastHarvestedAt": "2026-11-13T23:01:45.840Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "c5ba2a88",
+    "sourceVersion": "25119d9b",
     "license": "NOASSERTION",
-    "contentHash": "f04ef26644a5b6d6232e1ce7060243421bcfad65edde51accfd2895b740ca6cd",
-    "lastHarvestedAt": "2026-11-09T15:12:43.948Z",
+    "contentHash": "07c1e4b8ee4c14da82eb666c74453a1a6c7886cfd0e887254e57be2d92c888ab",
+    "lastHarvestedAt": "2026-11-13T23:01:39.537Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "791e654b",
+    "sourceVersion": "4eba8433",
     "license": "BSD-3-Clause",
-    "contentHash": "7e5f8c54fc06f9049ad6e6aa461e6ad49a1f53053b245f28e045e785d98cbcd2",
-    "lastHarvestedAt": "2026-11-12T12:20:07.935Z",
+    "contentHash": "89695c265dd46271dfb982bc75d5222981688d54aa24b18c1d062c33211674ad",
+    "lastHarvestedAt": "2026-11-13T23:01:33.734Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {

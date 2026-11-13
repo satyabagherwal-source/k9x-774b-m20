@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T22:45:46.772Z",
-  "total_records": 411,
+  "last_updated": "2026-11-13T23:02:23.995Z",
+  "total_records": 419,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 214,
+      "total": 217,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -247,7 +247,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-timm-mobilenetv3_small_100-lamb_in1k-core-invari",
         "DOM-D-62BFCC58",
-        "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning",
+        "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
+        "DOM-D-AB4CCCBB",
+        "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants"
       ]
     },
     "E": {
@@ -267,7 +270,7 @@
       ]
     },
     "G": {
-      "total": 54,
+      "total": 55,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -322,11 +325,12 @@
         "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants",
         "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants",
-        "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-crate-crate-core-invariants"
       ]
     },
     "H": {
-      "total": 89,
+      "total": 93,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -416,7 +420,11 @@
         "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor",
         "domain_intelligence-technical-construction-intelligence-compvis-stable-diffusion-v1-4-core-invariant",
         "domain_intelligence-technical-construction-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-c",
-        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c"
+        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
+        "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria"
       ]
     },
     "I": {
@@ -9804,6 +9812,111 @@
       "repository": "zoontek-react-native-permissions-learnings",
       "content_hash": "0d8dc1790070c1c4a37e3f6c1292a21143103264c4d245571999e3acd9d0ef72",
       "created_at": "2026-11-13T22:45:46.375Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hexgrad/Kokoro-82M Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hexgrad-kokoro-82m-research-knowledge-intelligence-hexgrad-kokoro-82m-core-in.md",
+      "repository": "hexgrad/Kokoro-82M",
+      "content_hash": "4f8e741282452a4b3a623b7fb7b1f44546fb450950512488c2c18bfa8c050ed1",
+      "created_at": "2026-11-13T23:01:32.085Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: u-root/u-root Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-technical-construction-intelligence-u-root-u-root-core-invariants.md",
+      "repository": "u-root/u-root",
+      "content_hash": "bdd67f8ceae609629538f542506f0cf103ee221291b35d6e35775121bb24c879",
+      "created_at": "2026-11-13T23:01:34.071Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: openreplay/openreplay Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-technical-construction-intelligence-openreplay-openreplay-.md",
+      "repository": "openreplay/openreplay",
+      "content_hash": "fde6c532299dce9a55c27737ae1b830a8f701af0f190a2b2ab231e1d12f102cf",
+      "created_at": "2026-11-13T23:01:39.870Z"
+    },
+    "domain_intelligence-architecture-intelligence-crate-crate-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-crate-crate-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: crate/crate Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
+      "repository": "crate/crate",
+      "content_hash": "9d3969c15cd2be5dcb0c5bcbda17638a004eb2da9d5e1ad9e6106710ee0e72c9",
+      "created_at": "2026-11-13T23:01:46.154Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: u-root-u-root-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-learnings-technical-construction-intelligence-u-root-u-root-learni.md",
+      "repository": "u-root-u-root-learnings",
+      "content_hash": "7ed1f6d92974673a9d4619ffdeea97352188ec11b559b374b578a46dd7afa0a7",
+      "created_at": "2026-11-13T23:01:49.381Z"
+    },
+    "DOM-D-AB4CCCBB": {
+      "record_id": "DOM-D-AB4CCCBB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): hexgrad/Kokoro-82M",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/hexgrad/Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M))  \n> **Source Version**: `hf-hexgrad-k`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "954b6cf29889e2b230c66ec6412306b5f6ce3e9073ca66ef7751988741027afb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-hexgrad-kokoro-82m/hf-hexgrad-kokoro-82m-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T23:01:49.607Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-hexgrad-kokoro-82m)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-hexgrad-kokoro-82m"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T23:02:23.199Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-hexgrad-kokoro-82m-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hexgrad-kokoro-82m-learnings-research-knowledge-intelligence-hf-hexgrad-kokor.md",
+      "repository": "hf-hexgrad-kokoro-82m-learnings",
+      "content_hash": "a574653d8e1123c685eb9517ea09094bfef3a710c2cded918d624d31ae580a46",
+      "created_at": "2026-11-13T23:02:23.438Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: openreplay-openreplay-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-learnings-technical-construction-intelligence-openreplay-o.md",
+      "repository": "openreplay-openreplay-learnings",
+      "content_hash": "23a842166bd7979a1593c2221c502894ddcaad539e718f01bd0fae8e7a717d03",
+      "created_at": "2026-11-13T23:02:23.995Z"
     }
   }
 }

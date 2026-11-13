@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-SR1Z",
-    "timestamp": "2026-11-13T03:48:26.999Z",
-    "repository": "0xCUB3/wBlock",
-    "learningId": "learn-github-0xcub3-wblock",
-    "contentHash": "e9d63bd438a29df7c1b2db926ad1e5a26403045d11736a77f0182acca3374957",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-SRLK",
-    "timestamp": "2026-11-13T03:48:27.704Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "cb4b786957dd2966cf56883abee56463569fa541c7f947c9f4bceba784bc3638",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-2G9I",
-    "timestamp": "2026-11-13T03:55:59.574Z",
-    "repository": "lodestones/Kromoss",
-    "learningId": "learn-huggingface-lodestones-kromoss",
-    "contentHash": "dfa722cba28fc0f98492c2c70f51ee302d7e7debda7a652f6c7328901a87bdea",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-2OAS",
-    "timestamp": "2026-11-13T03:56:09.988Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "1401b4d374d6a269bde16e0f5410e6faa0f14cab9db1802dbbd47a04c01db566",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-2SO9",
     "timestamp": "2026-11-13T03:56:15.657Z",
     "repository": "apache/arrow",
@@ -7492,6 +7432,66 @@
     "contentHash": "a8f964b2e2d54500fbc985e6abd2ada6b6999bdbf3bddca35fe72aa022e85bf8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-ZMG0",
+    "timestamp": "2026-11-13T23:01:31.872Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "07d15f5a5788e508a751f3abfe56ba0f59da2db454104a279e54ac14abf71e92",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-ZNVL",
+    "timestamp": "2026-11-13T23:01:33.729Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "89695c265dd46271dfb982bc75d5222981688d54aa24b18c1d062c33211674ad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-ZSCT",
+    "timestamp": "2026-11-13T23:01:39.533Z",
+    "repository": "openreplay/openreplay",
+    "learningId": "learn-github-openreplay-openreplay",
+    "contentHash": "07c1e4b8ee4c14da82eb666c74453a1a6c7886cfd0e887254e57be2d92c888ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-ZX7W",
+    "timestamp": "2026-11-13T23:01:45.836Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "f309f50897935dd860fd4ef0fb6603ca348e6d47b257da0409765ffdb56edecb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

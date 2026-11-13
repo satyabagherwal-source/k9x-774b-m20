@@ -4,45 +4,31 @@
 {
   "source_repository": "crate/crate",
   "source_url": "https://github.com/crate/crate",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "53ace8b4",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T23:01:46.036Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-crate-crate",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `53ace8b4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T23:01:46.036Z`  
+> **Learning ID**: `learn-github-crate-crate`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `crate/crate` (Commit: `historical`)
+- **Target Repository**: `crate/crate` (Commit: `53ace8b4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
-> **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `f7d204bd`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:52:14.429Z  
-> **Learning ID**: `learn-github-crate-crate`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): crate/crate
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:52:14.422Z  
+> **Harvest Timestamp**: 2026-11-13T23:01:44.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4452 stars
+- **Stars / Engagement**: 4453 stars
 
 ---
 
@@ -580,259 +566,99 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ce57725` (2026-11-09)
-**Commit Message**: Add release note entries for released security fixes
+### Incident Patch 1: `53ace8b4` (2026-10-21)
+**Commit Message**: Restore with rename options must not allow rename to the same name
 
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +33/-4)
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
 ```diff
-@@ -194,7 +194,36 @@ Fixes
-   the subscriber cluster were relocated to another node or when a replica shard
-   was promoted to primary.
+@@ -61,3 +61,8 @@ Fixes
  
--- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
--  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
--  to have ``AL`` privilege to avoid a security issue when authenticated user can
--  can switch to CrateDB's unauthenticated internal transport protocol.
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
-+  that allowed authenticated users to switch to CrateDB's unauthenticated
-+  internal transport protocol, by using
-+  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
-+  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
-+  user now requires the ``AL`` privilege.
+ - Fixed an issue that could discard recently replicated data from the
+   subscriber cluster when dropping a subscription shortly after shard recovery.
 +
-+- Fixed security issues (`GHSA-7p46-fxpg-cwm7
-+  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
-+  and `GHSA-jp7h-6782-g32q
-+  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
-+  that allowed existing sessions to use the privileges and role memberships
-+  their user had when the session was created. Changes in privileges and role
-+  memberships now take effect immediately and if the session user is dropped,
-+  all SQL statements are rejected. This includes prepared statements and portals
-+  created before the changes, and ``FETCH`` on cursors declared before such
-+  changes.
-+
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
-+  that allowed users to read tables without having the required privileges,
-+  by using scalar subqueries in a ``VALUES`` list, in the arguments of a table
-+  function, or in a ``JOIN ... ON`` condition, e.g.::
-+
-+    SELECT * FROM (VALUES ((SELECT secret FROM restricted))) AS v(x)
-+
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-qcp3-r37v-7p8j>`__
-+  that allowed unauthenticated clients to exhaust the memory of a node by
-+  sending compressed HTTP requests, as their content was decompressed and
-+  buffered before the request was authenticated. HTTP requests are now
-+  authenticated before their content is decompressed.
++- Fixed an issue causing ``RESTORE SNAPSHOT`` to silently restore only one
++  of several tables if the rename options ``schema_rename_replacement``
++  or ``table_rename_replacement`` mapped them to the same name.
++  Now it fails with an error, similar to clashes with an existing table.
 ```
 
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +33/-4)
+**File**: `server/src/main/java/org/elasticsearch/snapshots/RestoreService.java` (modified, +23/-0)
 ```diff
-@@ -199,7 +199,36 @@ Fixes
-   the subscriber cluster were relocated to another node or when a replica shard
-   was promoted to primary.
- 
--- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
--  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
--  to have ``AL`` privilege to avoid a security issue when authenticated user can
--  can switch to CrateDB's unauthenticated internal transport protocol.
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
-+  that allowed authenticated users to switch to CrateDB's unauthenticated
-+  internal transport protocol, by using
-+  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
-+  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
-+  user now requires the ``AL`` privilege.
-+
-+- Fixed security issues (`GHSA-7p46-fxpg-cwm7
-+  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
-+  and `GHSA-jp7h-6782-g32q
-+  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
-+  that allowed existing sessions to use the privileges and role memberships
-+  their user had when the session was created. Changes in privileges and role
-+  memberships now take effect immediately and if the session user is dropped,
-+  all SQL statements are rejected. This includes prepared statements and portals
-+  created before the changes, and ``FETCH`` on cursors declared before such
-+  changes.
-+
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
-+  that allowed users to read tables without having the required privileges,
-+  by using scalar subqueries in a ``VALUES`` list, in the arguments of a table
-+  function, or in a ``JOIN ... ON`` condition, e.g.::
-+
-+    SELECT * FROM (VALUES ((SELECT secret FROM restricted))) AS v(x)
-+
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-qcp3-r37v-7p8j>`__
-+  that allowed unauthenticated clients to exhaust the memory of a node by
-+  sending compressed HTTP requests, as their content was decompressed and
-+  buffered before the request was authenticated. HTTP requests are now
-+  authenticated before their content is decompressed.
-```
-
----
-
-### Incident Patch 2: `f7d204bd` (2026-11-09)
-**Commit Message**: Fix SketchRamAccounting undercount bug
-
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +3/-0)
-```diff
-@@ -48,3 +48,6 @@ Fixes
- 
- - Fixed an issue where querying ``sys.nodes`` might return ``SQLParseException[Values less than -1 bytes
-   are not supported: -86016b]``.
-+- `Yannic Hamann <https://github.com/yannic-hamann-abb>`_ fixed an issue that
-+  caused :ref:`ANALYZE <analyze>` to exceed the configured I/O rate limit
-+  during statistics collection.
-```
-
-**File**: `server/src/main/java/io/crate/statistics/SketchRamAccounting.java` (modified, +4/-4)
-```diff
-@@ -53,14 +53,14 @@ public SketchRamAccounting(RamAccounting ramAccounting, RateLimiter rateLimiter)
- 
-     public void addBytes(long bytes) {
-         this.blockCache += bytes;
--        boolean checklimit = false;
-+        long flushedBytes = 0;
-         while (this.blockCache > BLOCK_SIZE) {
-             this.blockCache -= BLOCK_SIZE;
-             ramAccounting.addBytes(SHIFTED_BLOCK_SIZE);
--            checklimit = true;
-+            flushedBytes += BLOCK_SIZE;
+@@ -331,9 +331,32 @@ static Map<RelationName, RestoreRelation> resolveRelations(List<TableOrPartition
+                 resolver.accept(relation.name(), List.of());
+             }
          }
--        if (checklimit) {
--            checkRateLimit(bytes);
-+        if (flushedBytes > 0) {
-+            checkRateLimit(flushedBytes);
-         }
++        ensureUniqueTargets(restoreRelations);
+         return restoreRelations;
      }
  
-```
-
-**File**: `server/src/test/java/io/crate/statistics/SketchRamAccountingTest.java` (modified, +5/-3)
-```diff
-@@ -56,10 +56,12 @@ public void test_rate_limited_ram_accounting() {
-         TrackingRateLimiter rateLimiter = new TrackingRateLimiter(1000);
-         var ra = new SketchRamAccounting(RamAccounting.NO_ACCOUNTING, rateLimiter);
- 
--        long bytesToAdd = rateLimiter.getMinPauseCheckBytes() / 2;
-+        long totalBytesAdded = 0;
-+        long bytesToAdd = 5 * rateLimiter.getMinPauseCheckBytes() + 8;
- 
--        for (int i = 0; i < 10; i++) {
--            ra.addBytes(bytesToAdd);
-+        while (totalBytesAdded < bytesToAdd) {
-+            ra.addBytes(8);
-+            totalBytesAdded += 8;
-         }
- 
-         Assertions.assertThat(rateLimiter.pauses).isEqualTo(5);
-```
-
----
-
-### Incident Patch 3: `d33cbcb3` (2026-11-05)
-**Commit Message**: Return 0 for negative "free" and "total" memory reported by the OS
-
-Related to https://github.com/crate/crate/issues/20558
-
-Ported from https://github.com/elastic/elasticsearch/pull/42725
-(The code in this elasticsearch PR contains comments about when the OS might report
-negative values for free and total memory)
-
-As mentioned in the CrateDB bug report, this seems to be a flaky issue.
-I wasn't able to re-create it. However the PR in elasticsearch
-(above) addresses an issue with the same error mentioned in the CrateDB
-issue: "Values less than -1 bytes are not supported: "
-
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +2/-1)
-```diff
-@@ -46,4 +46,5 @@ series.
- Fixes
- =====
- 
--None
-+- Fixed an issue where querying ``sys.nodes`` might return ``SQLParseException[Values less than -1 bytes
-+  are not supported: -86016b]``.
-```
-
-**File**: `server/src/main/java/org/elasticsearch/monitor/os/OsProbe.java` (modified, +18/-5)
-```diff
-@@ -94,9 +94,15 @@ public long getFreePhysicalMemorySize() {
-             return -1;
-         }
-         try {
--            return (long) GET_FREE_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
-+            final long freeMem = (long) GET_FREE_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
-+            if (freeMem < 0) {
-+                logger.warn("OS reported a negative free memory value [{}]", freeMem);
-+                return 0;
++    /**
++     * Renamed pattern can map different tables to the same name.
++     * Check if renamed tables won't be clashing with each other.
++     */
++    private static void ensureUniqueTargets(Map<RelationName, RestoreRelation> restoreRelations) {
++        HashMap<RelationName, RelationName> sourceByTarget = new HashMap<>();
++        for (var entry : restoreRelations.entrySet()) {
++            RelationName source = entry.getKey();
++            RelationName target = entry.getValue().targetName();
++            RelationName otherSource = sourceByTarget.put(target, source);
++            if (otherSource != null) {
++                throw new RelationAlreadyExists(target, String.format(
++                    Locale.ENGLISH,
++                    "Cannot restore relations '%s' and '%s' to the same name '%s'",
++                    otherSource,
++                    source,
++                    target
++                ));
 +            }
-+            return freeMem;
-         } catch (Exception e) {
--            return -1;
-+            logger.warn("exception retrieving free physical memory", e);
-+            return 0;
-         }
-     }
- 
-@@ -105,12 +111,19 @@ public long getFreePhysicalMemorySize() {
-      */
-     public long getTotalPhysicalMemorySize() {
-         if (GET_TOTAL_PHYSICAL_MEMORY_SIZE == null) {
--            return -1;
-+            logger.warn("getTotalPhysicalMemorySize is not available");
-+            return 0;
-         }
-         try {
--            return (long) GET_TOTAL_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
-+            final long totalMem = (long) GET_TOTAL_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
-+            if (totalMem < 0) {
-+                logger.warn("OS reported a negative total memory value [{}]", totalMem);
-+                return 0;
-+            }
-+            return totalMem;
-         } catch (Exception e) {
--            return -1;
-+            logger.warn("exception retrieving total physical memory", e);
-+            return 0;
-         }
-     }
- 
++        }
++    }
++
+     private static boolean includeForeignTables(RestoreSnapshotRequest request) {
+         if (!request.includeCustomMetadata()) {
+             return false;
 ```
 
-**File**: `server/src/main/java/org/elasticsearch/monitor/os/OsStats.java` (modified, +4/-0)
+**File**: `server/src/test/java/io/crate/integrationtests/SnapshotRestoreIntegrationTest.java` (modified, +15/-0)
 ```diff
-@@ -159,13 +159,17 @@ public static class Mem implements Writeable {
-         private final long free;
+@@ -22,6 +22,7 @@
+ package io.crate.integrationtests;
  
-         public Mem(long total, long free) {
-+            assert total >= 0 : "expected total memory to be positive, got: " + total;
-+            assert free >= 0 : "expected free memory to be positive, got: " + total;
-             this.total = total;
-             this.free = free;
-         }
+ import static com.carrotsearch.randomizedtesting.RandomizedTest.$;
++import static io.crate.protocols.postgres.PGErrorStatus.DUPLICATE_TABLE;
+ import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
+ import static io.crate.protocols.postgres.PGErrorStatus.INVALID_OBJECT_DEFINITION;
+ import static io.crate.rest.action.HttpErrorStatus.GENERIC_NOT_FOUND;
+@@ -1082,6 +1083,20 @@ public void test_restore_partitioned_tables_rename_all() throws Exception {
+         );
+     }
  
-         public Mem(StreamInput in) throws IOException {
-             this.total = in.readLong();
-+            assert total >= 0 : "expected total memory to be positive, got: " + total;
-             this.free = in.readLong();
-+            assert free >= 0 : "expected free memory to be positive, got: " + total;
-         }
- 
-         @Override
++    @Test
++    public void test_restore_with_rename_fails_if_renamed_relations_clash() throws Exception {
++        createTable("doc.t1", false);
++        createTable("doc.t2", false);
++        createSnapshot(SNAPSHOT_NAME, "doc.t1", "doc.t2");
++        waitNoPendingTasksOnAll();
++        Asserts.assertSQLError(() -> execute("RESTORE SNAPSHOT " + snapshotName() + " ALL WITH (" +
++                "wait_for_completion=true," +
++                "table_rename_replacement='t')") // Intentionally restoring into same name
++        ).hasPGError(DUPLICATE_TABLE)
++        .hasHTTPError(CONFLICT, 4093)
++        .hasMessageContaining("to the same name 'doc.t'");
++    }
++
+     @Test
+     public void test_restore_old_users() throws IOException {
+         File repoDir = TEMPORARY_FOLDER.newFolder().toPath().toAbsolutePath().toFile();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20579** (2026-11-10): Add docs reference for http.max_content_length (backport #20578) (@mergify[bot])
-- **PR #20578** (2026-11-10): Add docs reference for http.max_content_length (@matriv)
-- **PR #20577** (2026-11-10): Mention that authenticated DoS issues should be reported public (@mfussenegger)
-- **PR #20573** (2026-11-10): Update netty to 4.2.20 (backport #20572) (@mergify[bot])
-- **PR #20572** (2026-11-09): Update netty to 4.2.20 (@mfussenegger)
-- **PR #20571** (2026-11-09): Add release note entries for released security fixes (backport #20569) (@mergify[bot])
+- **PR #20592** (2026-11-13): Restore with rename options must not allow rename to the same name (backport #20591) (@mergify[bot])
+- **PR #20591** (2026-11-13): Restore with rename options must not allow rename to the same name (@BaurzhanSakhariev)
+- **PR #20588** (2026-11-12): Fix replicated data loss when dropping subscription before checkpoints catch up (backport #20576) (@mergify[bot])
+- **PR #20586** (2026-11-12): bp: [Refactor] LuceneChangesSnapshot to use accurate ops history (backport #20574) (@mergify[bot])
+- **PR #20585** (2026-11-12): Remove retention lease only when subscription is removed or table is not published (backport #20566) (@mergify[bot])
+- **PR #20584** (2026-11-11): Return 0 for negative "free" and "total" memory reported by the OS (backport #20563) (@mergify[bot])
 
 ---
 
@@ -852,55 +678,35 @@ issue: "Values less than -1 bytes are not supported: "
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add release note entries for released security fixes
+## X. Restore with rename options must not allow rename to the same name
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ce57725`: Add release note entries for released security fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53ace8b4`: Restore with rename options must not allow rename to the same name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed a `security issue
-  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
-  that allowed authenticated users to switch to CrateDB's unauthenticated
-  internal transport protocol, by using
-  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
-  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
-  user now requires the ``AL`` privilege.
 
-- Fixed security issues (`GHSA-7p46-fxpg-cwm7
-  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
-  and `GHSA-jp7h-6782-g32q
-  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
-  that allowed existing sessions to use the privileges and role memberships
-  their user had when the session was created. Changes in privileges and role
-  memberships now take effect immediately and if the session user is dropped,
-  all SQL statements are rejected. This includes prepared statements and portals
-  created before the changes, and ``FETCH`` on cursors declared before such
-  changes.
-
-- Fixed a `security issue
-  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
-  that allowed users to read tables without having the required pri
+- Fixed an issue causing ``RESTORE SNAPSHOT`` to silently restore only one
+  of several tables if the rename options ``schema_rename_replacement``
+  or ``table_rename_replacement`` mapped them to the same name.
+  Now it fails with an error, similar to clashes with an existing table.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
-  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
-  to have ``AL`` privilege to avoid a security issue when authenticated user can
-  can switch to CrateDB's unauthenticated internal transport protocol.
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ce57725` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53ace8b4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

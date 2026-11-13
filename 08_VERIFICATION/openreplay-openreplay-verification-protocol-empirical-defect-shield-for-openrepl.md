@@ -4,45 +4,31 @@
 {
   "source_repository": "openreplay/openreplay",
   "source_url": "https://github.com/openreplay/openreplay",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "25119d9b",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-13T23:01:39.757Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-openreplay-openreplay",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [openreplay/openreplay](https://github.com/openreplay/openreplay) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [openreplay/openreplay](https://github.com/openreplay/openreplay) (Revision: `25119d9b`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-13T23:01:39.757Z`  
+> **Learning ID**: `learn-github-openreplay-openreplay`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `openreplay/openreplay` (Commit: `historical`)
+- **Target Repository**: `openreplay/openreplay` (Commit: `25119d9b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
-> **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `c5ba2a88`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T15:12:42.134Z  
-> **Learning ID**: `learn-github-openreplay-openreplay`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): openreplay/openreplay
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T15:12:42.127Z  
+> **Harvest Timestamp**: 2026-11-13T23:01:38.502Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13120 stars
+- **Stars / Engagement**: 13144 stars
 
 ---
 
@@ -1101,41 +1087,654 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5ba2a88` (2026-11-09)
-**Commit Message**: Increment utilities chart version to v1.28.5
+### Incident Patch 1: `25119d9b` (2026-11-13)
+**Commit Message**: ci(actions): add otel-collector build and deploy workflow (#5166)
 
-**File**: `scripts/helmcharts/openreplay/charts/utilities/Chart.yaml` (modified, +1/-1)
+**File**: `.github/workflows/otel-collector.yaml` (added, +134/-0)
 ```diff
-@@ -18,4 +18,4 @@ version: 0.1.0
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.4"
-+AppVersion: "v1.28.5"
+@@ -0,0 +1,134 @@
++# Builds the OpenTelemetry Collector image and deploys it to the OSS dev cluster
++on:
++  workflow_dispatch:
++    inputs:
++      skip_security_checks:
++        description: "Skip Security checks if there is a unfixable vuln or error. Value: true/false"
++        required: false
++        default: "false"
++  push:
++    branches:
++      - dev
++    paths:
++      - "otel-collector/**"
++
++name: Build and Deploy otel-collector
++
++jobs:
++  deploy:
++    name: Deploy
++    runs-on: ubuntu-latest
++
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v5
++        with:
++          fetch-depth: 2
++
++      - uses: ./.github/composite-actions/update-keys
++        with:
++          assist_jwt_secret: ${{ secrets.ASSIST_JWT_SECRET }}
++          assist_key: ${{ secrets.ASSIST_KEY }}
++          domain_name: ${{ secrets.OSS_DOMAIN_NAME }}
++          jwt_refresh_secret: ${{ secrets.JWT_REFRESH_SECRET }}
++          jwt_secret: ${{ secrets.OSS_JWT_SECRET }}
++          jwt_spot_refresh_secret: ${{ secrets.JWT_SPOT_REFRESH_SECRET }}
++          jwt_spot_secret: ${{ secrets.JWT_SPOT_SECRET }}
++          license_key: ${{ secrets.OSS_LICENSE_KEY }}
++          minio_access_key: ${{ secrets.OSS_MINIO_ACCESS_KEY }}
++          minio_secret_key: ${{ secrets.OSS_MINIO_SECRET_KEY }}
++          pg_password: ${{ secrets.OSS_PG_PASSWORD }}
++          registry_url: ${{ secrets.OSS_REGISTRY_URL }}
++        name: Update Keys
++
++      - name: Docker login
++        run: |
++          docker login ${{ secrets.OSS_REGISTRY_URL }} -u ${{ secrets.OSS_DOCKER_USERNAME }} -p "${{ secrets.OSS_REGISTRY_TOKEN }}"
++
++      - name: Set image tag
++        run: echo "IMAGE_TAG=${GITHUB_REF_NAME//\//-}_${GITHUB_SHA}" >> $GITHUB_ENV
++
++      - uses: azure/k8s-set-context@v5
++        with:
++          method: kubeconfig
++          kubeconfig: ${{ secrets.OSS_KUBECONFIG }}
++        id: setcontext
++
++      - name: Set up Docker Buildx
++        uses: docker/setup-buildx-action@v3
++
++      - name: Building and Pushing otel-collector image
++        id: build-image
++        env:
++          DOCKER_REPO: ${{ secrets.OSS_REGISTRY_URL }}
++          IMAGE_TAG: ${{ env.IMAGE_TAG }}
++          ENVIRONMENT: staging
++        run: |
++          skip_security_checks=${{ github.event.inputs.skip_security_checks }}
++          cd otel-collector
++          PUSH_IMAGE=0 bash -x ./build.sh
++          [[ "x$skip_security_checks" == "xtrue" ]]  || {
++            curl -L https://github.com/aquasecurity/trivy/releases/download/v0.56.2/trivy_0.56.2_Linux-64bit.tar.gz | tar -xzf - -C ./
++            ./trivy image --db-repository ghcr.io/aquasecurity/trivy-db:2 --db-repository public.ecr.aws/aquasecurity/trivy-db:2 --exit-code 1 --security-checks vuln --vuln-type os,library --severity "HIGH,CRITICAL"  --ignore-unfixed $DOCKER_REPO/otel-collector:$IMAGE_TAG
++            err_code=$?
++            [[ $err_code -ne 0 ]] && {
++              exit $err_code
++            }
++          } && {
++            echo "Skipping Security Checks"
++          }
++          docker push $DOCKER_REPO/otel-collector:$IMAGE_TAG
++
++      - name: Creating old image input
++        run: |
++          #
++          # Create yaml with existing image tags
++          #
++          kubectl get pods -n app -o jsonpath="{.items[*].spec.containers[*].image}" |\
++          tr -s '[[:space:]]' '\n' | sort | uniq -c | grep '/foss/' | cut -d '/' -f3 > /tmp/image_tag.txt
++
++          echo > /tmp/image_override.yaml
++
++          for line in `cat /tmp/image_tag.txt`;
++          do
++              image_array=($(echo "$line" | tr ':' '\n'))
++              cat <<EOF >> /tmp/image_override.yaml
++          ${image_array[0]}:
++            image:
++              tag: ${image_array[1]}
++          EOF
++          done
++
++      - name: Deploy to kubernetes
++        run: |
++          cd scripts/helmcharts/
++
++          # Update changed image tag
++          sed -i "/otel-collector/{n;n;s/.*/    tag: ${IMAGE_TAG}/}" /tmp/image_override.yaml
++          # Ensure otel-collector entry exists even if no pod is running yet
++          if ! grep -q "^otel-collector:" /tmp/image_override.yaml; then
++            printf 'otel-collector:\n  image:\n    tag: %s\n' "${IMAGE_TAG}" >> /tmp/image_override.yaml
++          fi
++
++          cat /tmp/image_override.yaml
++          # Deploy command
++          mkdir -p /tmp/charts
++          mv openreplay/charts/{ingress-nginx,otel-collector,connector} /tmp/charts/
++          rm -rf  openreplay/charts/*
++          mv /tmp/charts/* openreplay/charts/
++          helm template openreplay -n app openreplay -f vars.yaml -f /tmp/image_override.yaml --set ingress-nginx.enabled=false --set skipMigration=true --no-hooks | kubectl apply -n app -f -
++        env:
++          DOCKER_REPO: ${{ secrets.OSS_REGISTRY_URL }}
++          IMAGE_TAG: ${{ env.IMAGE_TAG }}
++          ENVIRONMENT: staging
++
++      - name: Alert slack
++        if: failure()
++        uses: rtCamp/action-slack-notify@v2
++        env:
++          SLACK_CH
 ```
 
 ---
 
-### Incident Patch 2: `2f469178` (2026-11-09)
-**Commit Message**: Increment alerts chart version to v1.28.7
+### Incident Patch 2: `f17fc4e8` (2026-11-12)
+**Commit Message**: ui: parse recorded sprite markup in an inert document (#5164)
 
-**File**: `scripts/helmcharts/openreplay/charts/alerts/Chart.yaml` (modified, +1/-1)
+* ui: parse recorded sprite markup in an inert document
+
+Sprite symbols were rebuilt with innerHTML on nodes owned by the app page.
+Parse them in an inert document, strip non-SVG content, handlers and
+script URLs (sanitizer from dev), and import the result instead.
+
+* ui: keep sprite map node out of the app document
+
+VSpriteMap is created before it has a parent, so VElement put it in the
+app page's document, where detached SVG <image>s still load. Create it in
+an inert document; it is adopted into the replay document on mount.
+Also move symbols through a fragment instead of spreading them into
+replaceChildren, and match prefixed href in SVG animation attributeName.
+
+**File**: `player/src/web/MessageManager.ts` (modified, +15/-19)
 ```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.6"
-+AppVersion: "v1.28.7"
+@@ -26,6 +26,9 @@ import type { SkipInterval } from './managers/ActivityManager';
+ 
+ import HookManager from './managers/HookManager';
+ import ConnectionManager from './managers/ConnectionManager';
++import { parseSanitizedSvg } from './managers/DOM/sanitize';
++
++const SVG_NS = 'http://www.w3.org/2000/svg';
+ 
+ interface RawList {
+   event: Record<string, any>[] & { tabId: string | null };
+@@ -424,14 +427,15 @@ export default class MessageManager {
+ 
+   spriteMapSvg: SVGElement | null = null;
+   potentialSpriteMap: Record<string, any> = {};
+-  domParser: DOMParser | null = null;
+   createSpriteMap = () => {
+     if (!this.spriteMapSvg) {
+-      this.domParser = new DOMParser();
+-      this.spriteMapSvg = document.createElementNS(
+-        'http://www.w3.org/2000/svg',
++      // Inert document: recorded markup must never become nodes of the app page
++      const spriteDoc = document.implementation.createDocument(
++        SVG_NS,
+         'svg',
++        null,
+       );
++      this.spriteMapSvg = spriteDoc.documentElement as unknown as SVGElement;
+       this.spriteMapSvg.setAttribute('style', 'display: none;');
+       this.spriteMapSvg.setAttribute('id', 'reconstructed-sprite');
+     }
+@@ -447,15 +451,7 @@ export default class MessageManager {
+     if (msg.tp === MType.SetNodeAttribute) {
+       if (msg.value.includes('_$OPENREPLAY_SPRITE$_')) {
+         this.createSpriteMap();
+-        if (!this.domParser) {
+-          return console.error('DOM parser is not initialized?');
+-        }
+-        handleSprites(
+-          this.potentialSpriteMap,
+-          this.domParser,
+-          msg,
+-          this.spriteMapSvg!,
+-        );
++        handleSprites(this.potentialSpriteMap, msg, this.spriteMapSvg!);
+       }
+     }
+     if (!this.tabs[msg.tabId]) {
+@@ -581,7 +577,6 @@ function mapTabs(tabs: Record<string, TabSessionManager>) {
+ 
+ function handleSprites(
+   potentialSpriteMap: Record<string, any>,
+-  parser: DOMParser,
+   msg: Record<string, any>,
+   spriteMapSvg: SVGElement,
+ ) {
+@@ -590,11 +585,10 @@ function handleSprites(
+   if (potentialSprite) {
+     msg.value = potentialSprite;
+   } else {
+-    const svgDoc = parser.parseFromString(svgData, 'image/svg+xml');
+-    const originalSvg = svgDoc.querySelector('svg');
++    const originalSvg = parseSanitizedSvg(svgData ?? '');
+     if (originalSvg) {
+-      const symbol = document.createElementNS(
+-        'http://www.w3.org/2000/svg',
++      const symbol = spriteMapSvg.ownerDocument.createElementNS(
++        SVG_NS,
+         'symbol',
+       );
+       const symbolId = `symbol-${msg.id || `ind-${msg.time}`}`; // Generate an ID if missing
+@@ -603,7 +597,9 @@ function handleSprites(
+         'viewBox',
+         originalSvg.getAttribute('viewBox') || '0 0 24 24',
+       );
+-      symbol.innerHTML = originalSvg.innerHTML;
++      while (originalSvg.firstChild) {
++        symbol.appendChild(originalSvg.firstChild);
++      }
+ 
+       spriteMapSvg.appendChild(symbol);
+       msg.value = `#${symbolId}`;
+```
+
+**File**: `player/src/web/managers/DOM/VirtualDOM.ts` (modified, +19/-2)
+```diff
+@@ -1,5 +1,6 @@
+ import { isIFrameElement, isRootNode } from '../../../guards';
+ import { insertRule, deleteRule, replaceRule } from './safeCSSRules';
++import { parseSanitizedSvgContent } from './sanitize';
+ 
+ function isNode(sth: any): sth is Node {
+   return !!sth && sth.nodeType != null;
+@@ -336,7 +337,7 @@ export class VHTMLElement extends VElement {
+  * Host for the `<symbol>`s rebuilt from `_$OPENREPLAY_SPRITE$_` messages, kept as the last child
+  * of every <body> so the `<use href="#symbol-N">` rewrite done in MessageManager resolves inside
+  * the replay document (`<use>` refuses external and data: refs as cross-origin).
+- * Its content comes from innerHTML instead of the message stream, so VParent's child
++ * Its content is set wholesale instead of coming from the message stream, so VParent's child
+  * reconciliation must not run here: it would prune every symbol as an unexpected node.
+  */
+ export class VSpriteMap extends VElement {
+@@ -356,8 +357,24 @@ export class VSpriteMap extends VElement {
+     if (!this.dirty) {
+       return;
+     }
+-    this.node.innerHTML = this.content;
+     this.dirty = false;
++    const node = this.node;
++    const parsed = this.content ? parseSanitizedSvgContent(this.content) : null;
++    const symbols = node.ownerDocument.createDocumentFragment();
++    while (parsed?.firstChild) {
++      symbols.appendChild(parsed.firstChild);
++    }
++    node.replaceChildren(symbols);
++  }
++
++  protected createNode() {
++    // Created before it has a parent (DOMManager.attachSpriteMap), where VElement falls back
++    // to the app page's document; detached SVG <image>s there still load. Adopted on mount.
++    return document.implementation.createDocument(
++      'http://www.w3.org/2000/svg',
++      'svg',
++      null,
++    ).documentElement;
+   }
+ }
+ 
+```
+
+**File**: `player/src/web/managers/DOM/sanitize.ts` (modified, +111/-0)
+```diff
+@@ -188,3 +188,114 @@ export function sanitizeCssText(cssText: string): string {
+   CSS_SCRIPT_CONSTRUCTS.lastIndex = 0;
+   return cssText.replace(CSS_SCRIPT_CONSTRUCTS, '/* blocked */');
+ }
++
++const SVG_NS = 'http://www.w3.org/2000/svg';
++const XLINK_NS = 'http://www.w3.org/1999/xlink';
++
++/** SVG elements that can run script or host HTML/navigable content. */
++const FORBIDDEN_SVG_TAGS = new Set([
++  'script',
++  'foreignobject',
++  'iframe',
++  'object',
++  'embed',
++  'handler',
++  'listener',
++]);
++const SVG_ANIMATION_TAGS = new Set([
++  'set',
++  'animate',
++  'animatemotion',
++  'animatetransform',
++]);
++
++function isDangerousAnimation(el: Element): boolean {
++  const target = (el.getAttribute('attributeName') || '').trim().toLowerCase();
++  // any prefix can be bound to the xlink namespace (`p:href`)
++  const local = target.slice(target.indexOf(':') + 1);
++  return local.startsWith('on') || local === 'href';
++}
++
++function sanitizeSvgAttributes(el: Element): void {
++  for (const attr of Array.from(el.attributes)) {
++    // any prefix can be bound to the xlink namespace (`p:href`)
++    const name =
++      attr.namespaceURI === XLINK_NS ? `xlink:${attr.localName}` : attr.name;
++    if (!sanitizeAttribute(el.localName, name, attr.value)) {
++      el.removeAttributeNode(attr);
++    }
++  }
++}
++
++/**
++ * Strips everything but SVG elements and text from a recorded SVG subtree:
++ * script-capable elements, non-SVG namespaces (e.g. XHTML inside the SVG),
++ * comments/processing instructions (their serialization re-parses differently
++ * in HTML), event handler attributes and script-scheme URLs.
++ */
++export function sanitizeSvgTree(root: Element): void {
++  sanitizeSvgAttributes(root);
++  for (const child of Array.from(root.childNodes)) {
++    if (child.nodeType === Node.TEXT_NODE) {
++      continue;
++    }
++    if (child.nodeType === Node.CDATA_SECTION_NODE) {
++      root.replaceChild(
++        (root.ownerDocument as Document).createTextNode(child.nodeValue || ''),
++        child,
++      );
++      continue;
++    }
++    if (child.nodeType !== Node.ELEMENT_NODE) {
++      root.removeChild(child);
++      continue;
++    }
++    const el = child as Element;
++    const tag = el.localName.toLowerCase();
++    if (
++      el.namespaceURI !== SVG_NS ||
++      FORBIDDEN_SVG_TAGS.has(tag) ||
++      (SVG_ANIMATION_TAGS.has(tag) && isDangerousAnimation(el))
++    ) {
++      root.removeChild(el);
++      continue;
++    }
++    sanitizeSvgTree(el);
++  }
++}
++
++/**
++ * Parses recorded SVG markup in an inert document and sanitizes it.
++ * Never use innerHTML for recorded markup: an element owned by a live document
++ * starts loading (and firing handlers) even while detached.
++ * Strict XML first; the tracker serializes in-page sprites as HTML (`&nbsp;`,
++ * undeclared `xlink:`), which only the HTML parser accepts. DOMParser documents
++ * have no browsing context, so nothing loads or runs before sanitization.
++ * @returns the sanitized <svg> root, or null if the markup holds no SVG
++ */
++export function parseSanitizedSvg(markup: string): SVGSVGElement | null {
++  const parser = new DOMParser();
++  const xmlDoc = parser.parseFromString(markup, 'image/svg+xml');
++  let root: Element | null = xmlDoc.documentElement;
++  if (
++    !root ||
++    root.namespaceURI !== SVG_NS ||
++    root.localName !== 'svg' ||
++    xmlDoc.getElementsByTagName('parsererror').length > 0
++  ) {
++    const htmlDoc = parser.parseFromString(markup, 'text/html');
++    root = htmlDoc.body.firstElementChild;
++    if (!root || root.namespaceURI !== SVG_NS || root.localName !== 'svg') {
++      return null;
++    }
++  }
++  sanitizeSvgTree(root);
++  return root as unknown as SVGSVGElement;
++}
++
++/** Parses sprite symbols markup (children of an <svg>) into a sanitized <svg> root. */
++export function parseSanitizedSvgContent(content: string): SVGSVGElement | null {
++  return parseSanitizedSvg(
++    `<svg xmlns="${SVG_NS}" xmlns:xlink="${XLINK_NS}">${content}</svg>`,
++  );
++}
+```
+
+---
+
+### Incident Patch 3: `812d5544` (2026-11-10)
+**Commit Message**: fix helm quota storageclass (#5162)
+
+**File**: `scripts/helmcharts/databases/charts/clickhouse/templates/cron.yaml` (modified, +4/-0)
+```diff
+@@ -33,6 +33,10 @@ spec:
+           containers:
+           - name: clickhouse-backup
+             image: alpine/curl:8.17.0
++            {{- with .Values.backupCronResources }}
++            resources:
++              {{- toYaml . | nindent 14 }}
++            {{- end }}
+             command:
+               - /bin/sh
+               - -c
+```
+
+**File**: `scripts/helmcharts/databases/charts/clickhouse/templates/statefulset.yaml` (modified, +7/-0)
+```diff
+@@ -62,6 +62,10 @@ spec:
+             {{- toYaml .Values.securityContext | nindent 12 }}
+           image: "{{ .Values.backupImage.repository }}:{{ .Values.backupImage.tag }}"
+           imagePullPolicy: {{ .Values.backupImage.pullPolicy }}
++          {{- with .Values.backupResources }}
++          resources:
++            {{- toYaml . | nindent 12 }}
++          {{- end }}
+           args:
+             - server
+           ports:
+@@ -140,6 +144,9 @@ spec:
+   - metadata:
+       name: default-chi-openreplay-clickhouse-replicated-0-0-0
+     spec:
++      {{- with .Values.storageClassName }}
++      storageClassName: {{ . | quote }}
++      {{- end }}
+       accessModes: [ "ReadWriteOnce" ]
+       resources:
+         requests:
+```
+
+**File**: `scripts/helmcharts/databases/charts/clickhouse/values.yaml` (modified, +5/-0)
+```diff
+@@ -97,6 +97,11 @@ tolerations: []
+ 
+ affinity: {}
+ storageSize: 100Gi
++# StorageClass for the data PVC; empty uses the cluster default.
++storageClassName: ""
++# Resources for the clickhouse-backup sidecar and the backup CronJob.
++backupResources: {}
++backupCronResources: {}
+ 
+ # Kernel / OS tuning (optional, disabled by default)
+ # These require privileged initContainers and may need cluster-level configuration.
+```
+
+**File**: `scripts/helmcharts/databases/charts/redis/templates/redis-master-statefulset.yaml` (modified, +4/-0)
+```diff
+@@ -263,6 +263,10 @@ spec:
+       - name: fix-aof
+         image: {{ template "redis.image" . }}
+         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
++        {{- with .Values.master.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         {{- if .Values.containerSecurityContext.enabled }}
+         securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+         {{- end }}
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/utilities/templates/api-crons.yaml` (modified, +4/-0)
+```diff
+@@ -47,6 +47,10 @@ spec:
+           - name: report-cron
+             image: "{{ tpl $job.image.registry . }}/{{ $job.image.repository }}:{{ $job.image.tag | default .Chart.AppVersion }}-ee"
+             imagePullPolicy: "{{ $job.image.pullPolicy}}"
++            {{- with ($job.resources | default .Values.resources) }}
++            resources:
++              {{- toYaml . | nindent 14 }}
++            {{- end }}
+             env:
+               {{- include "openreplay.env" (dict "ctx" .) | nindent 14 }}
+               {{- include "openreplay.secretEnv" (dict "ctx" .) | nindent 14 }}
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/utilities/templates/efs-cron.yaml` (modified, +4/-0)
+```diff
+@@ -40,6 +40,10 @@ spec:
+           containers:
+           - name: efs-cleaner
+             image: debian:stable-slim
++            {{- with .Values.efsCleaner.resources }}
++            resources:
++              {{- toYaml . | nindent 14 }}
++            {{- end }}
+             command:
+             - /bin/sh
+             - -c
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/utilities/values.yaml` (modified, +3/-0)
+```diff
+@@ -6,7 +6,10 @@ replicaCount: 1
+ 
+ env: {}
+ 
++# Default resources for the apiCrons CronJobs; apiCrons.<job>.resources wins.
++resources: {}
+ efsCleaner:
++  resources: {}
+   retention: 1
+   # This value is the new convention, and has priority.
+   # retentionHours: 12
+```
+
+**File**: `scripts/helmcharts/openreplay/templates/job.yaml` (modified, +40/-0)
+```diff
+@@ -75,6 +75,10 @@ spec:
+       # Offline migration: copy schema files from pre-built migration image
+       - name: migration
+         image: "{{ .Values.offlineMigration.image.registry }}/{{ .Values.offlineMigration.image.repository }}:{{ .Values.offlineMigration.image.tag | default .Chart.AppVersion }}"
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         env:
+           - name: ENTERPRISE_EDITION_LICENSE
+             value: "{{ .Values.global.enterpriseEditionLicense }}"
+@@ -129,6 +133,10 @@ spec:
+       {{- end }}
+       - name: git
+         image: alpine/git:2.52.0
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         env:
+           {{- range $key, $val := .Values.global.env }}
+           - name: {{ $key }}
+@@ -270,6 +278,10 @@ spec:
+           mountPath: /mnt/efs
+       - name: postgres-check
+         image: "{{.Values.postgresql.image.registry}}/{{.Values.postgresql.image.repository}}:{{.Values.postgresql.image.tag}}"
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         env:
+           - name: PGHOST
+             value: "{{ .Values.global.postgresql.postgresqlHost }}"
+@@ -310,6 +322,10 @@ spec:
+             }
+       - name: clickhouse-check
+         image: "{{.Values.clickhouse.image.registry}}/{{.Values.clickhouse.image.repository}}:{{.Values.clickhouse.image.tag}}"
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         env:
+           {{- range $key, $val := .Values.global.env }}
+           - name: {{ $key }}
+@@ -404,6 +420,10 @@ spec:
+             value: '{{ $val }}'
+           {{- end }}
+         image: "{{.Values.postgresql.image.registry}}/{{.Values.postgresql.image.repository}}:{{.Values.postgresql.image.tag}}"
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         command: 
+         - /bin/bash
+         - /opt/migrations/dbops.sh
+@@ -417,6 +437,10 @@ spec:
+       {{- if or .Values.minio.enabled .Values.minio.forceInit }}
+       - name: minio
+         image: "{{.Values.minio.migrationImage.registry}}/{{.Values.minio.migrationImage.repository}}:{{.Values.minio.migrationImage.tag}}"
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         env:
+           - name: OPENREPLAY_VERSION
+             valueFrom:
+@@ -488,6 +512,10 @@ spec:
+           - name: VAULT_ADDR
+             value: "{{ .Values.global.vault.vaultHost }}"
+         image: hashicorp/vault:1.12.0
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         command: 
+         - /bin/sh
+         - /opt/migrations/vault.sh
+@@ -517,6 +545,10 @@ spec:
+           - name: VAULT_BUCKET
+             value: "{{ .Values.global.s3.vaultBucket }}"
+         image: amazon/aws-cli
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         command: 
+         - /bin/bash
+         - -c
+@@ -551,6 +583,10 @@ spec:
+       {{- if or .Values.global.enterpriseEditionLicense .Values.forceKafkaMigration }}
+       - name: kafka
+         image: "{{.Values.kafkaMigration.image.registry}}/{{.Values.kafkaMigration.image.repository}}:{{.Values.kafkaMigration.image.tag}}"
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         env:
+           - name: OPENREPLAY_VERSION
+             valueFrom:
+@@ -595,6 +631,10 @@ spec:
+       {{- end}}
+       - name: clickhouse
+         image: "{{.Values.clickhouse.image.registry}}/{{.Values.clickhouse.image.repository}}:{{.Values.clickhouse.image.tag}}"
++        {{- with $.Values.migrationJob.resources }}
++        resources:
++          {{- toYaml . | nindent 10 }}
++        {{- end }}
+         env:
+           - name: OPENREPLAY_VERSION
+             valueFrom:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5152** (2026-11-09): Updated patch build from main 8804b243aaf6201f6542d40b474264599df00b98 (@estradino)
-- **PR #5151** (2026-11-09): refactor(chalice): bumped base image (@tahayk)
-- **PR #5145** (2026-11-06): Updated patch build from main 7a2990b54ba3b352c4b4144f3873b4e6d58d0238 (@estradino)
-- **PR #5144** (2026-11-06): refactor(chalice): assignments (@tahayk)
-- **PR #5143** (2026-11-06): Updated patch build from main 4062abc4b4e718782691f8931ebf309796690b08 (@estradino)
-- **PR #5142** (2026-11-06): UI patch 11 06 (@nick-delirium)
+- **PR #5166** (2026-11-13): [CI Actions] Add otel-collector build and deploy workflow (@zavorotynskiy)
+- **PR #5165** (2026-11-12): Updated patch build from main f17fc4e840e24e8ac11282f8da18d0c0320dce50 (@estradino)
+- **PR #5164** (2026-11-12): ui: parse recorded sprite markup in an inert document (@nick-delirium)
+- **PR #5162** (2026-11-10): fix helm quota storageclass (@rjshrjndrn)
+- **PR #5161** (2026-11-10): Updated patch build from main a0f8294363553016b79bd38396d671df0ebfd022 (@estradino)
+- **PR #5160** (2026-11-10): Updated patch build from main 3fdbd151ed8c9bd440f0659722a8e1a8c2a69d43 (@estradino)
 
 ---
 
@@ -1155,31 +1754,69 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Increment utilities chart version to v1.28.5
+## X. ci(actions): add otel-collector build and deploy workflow
 
 **RULE**:
-When implementing operations in `scripts/helmcharts/openreplay/charts/utilities/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/otel-collector.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5ba2a88`: Increment utilities chart version to v1.28.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25119d9b`: ci(actions): add otel-collector build and deploy workflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/charts/utilities/Chart.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/otel-collector.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-AppVersion: "v1.28.5"
+# Builds the OpenTelemetry Collector image and deploys it to the OSS dev cluster
+on:
+  workflow_dispatch:
+    inputs:
+      skip_security_checks:
+        description: "Skip Security checks if there is a unfixable vuln or error. Value: true/false"
+        required: false
+        default: "false"
+  push:
+    branches:
+      - dev
+    paths:
+      - "otel-collector/**"
+
+name: Build and Deploy otel-collector
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - uses: ./.github/composite-actions/update-keys
+        with:
+          assist_jwt_secret: ${{ secrets.ASSIST_JWT_SECRET }}
+          assist_key: ${{ secrets.ASSIST_KEY }}
+          domain_name: ${{ secrets.OSS_DOMAIN_NAME }}
+          jwt_refresh_secret: ${{ secrets.JWT_REFRESH_SECRET }}
+          jwt_secret: ${{ secrets.OSS_JWT_SECRET }}
+          jwt_spot_refresh_secret: ${{ secrets.JWT_SPOT_REFRESH_SECRET }}
+          jwt_spot_secret: ${{ secrets.JWT_SPOT_SECRET }}
+          license_key: ${{ secrets.OSS_LICENSE_KEY }}
+          minio_access_key: ${{ secrets.OSS_MINIO_ACCESS_KEY }}
+          minio_secret_k
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-AppVersion: "v1.28.4"
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5ba2a88` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25119d9b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -9694,3 +9694,8 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c62b5245` | Multi-dimensional audit evidence | 2026-11-13T22:31:00.270Z |
 | `learn-dom-d-62bfcc58` | `project://hf-timm-mobilenetv3_small_100.lamb_in1k` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | 2026-11-13T22:31:29.965Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-13T22:45:42.286Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-13T23:01:31.877Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `4eba8433` | Multi-dimensional audit evidence | 2026-11-13T23:01:33.734Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `25119d9b` | Multi-dimensional audit evidence | 2026-11-13T23:01:39.537Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `53ace8b4` | Multi-dimensional audit evidence | 2026-11-13T23:01:45.840Z |
+| `learn-dom-d-ab4cccbb` | `project://hf-hexgrad-kokoro-82m` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | 2026-11-13T23:02:23.210Z |

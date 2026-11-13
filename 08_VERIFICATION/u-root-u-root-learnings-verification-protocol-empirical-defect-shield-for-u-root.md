@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:05.753Z",
+  "timestamp": "2026-11-13T23:01:49.150Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-u-root-u-root-learnings",
+  "learning_id": "LEARN-EVO-u-root-u-root-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [u-root-u-root-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:05.753Z`  
-> **Learning ID**: `LEARN-REEXTRACT-u-root-u-root-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T23:01:49.150Z`  
+> **Learning ID**: `LEARN-EVO-u-root-u-root-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `791e654b`  
+> **Source Version**: `4eba8433`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T12:19:49.575Z  
+> **Timestamp**: 2026-11-13T23:01:32.700Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T12:14:48.818Z  
+> **Harvest Timestamp**: 2026-11-13T23:01:32.694Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1311,153 +1311,58 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27cf9d6e` (2026-11-10)
-**Commit Message**: .circle: Add dockerfile to build RISC-V 64 kernel
+### Incident Patch 1: `4eba8433` (2026-11-12)
+**Commit Message**: CI: Add RISC-V 64 Kernel and OVMF binaries docker push action
 
-Based on kernel v6.18 code base, kernel Image based on
-this configuration file can be loaded by UEFI, and has
-ability to execute kexec for u-root.
-
-Use following command to build and fetch kernel Image:
-	docker build -t kernel-rv64 .
-	docker create --name kernel-rv64 kernel-rv64 /unused
-	docker cp kernel-rv64:/Image .
-	docker rm kernel-rv64
+Add Linux Kernel image and OVMF binaries for github CI action
 
 Signed-off-by: Ajan Zhong <[REDACTED_EMAIL]>
 
-**File**: `.circleci/images/kernel-riscv64/Dockerfile` (added, +38/-0)
+**File**: `.github/workflows/test-images.yml` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,38 @@
-+# Copyright 2026 the u-root Authors. All rights reserved
-+# Use of this source code is governed by a BSD-style
-+# license that can be found in the LICENSE file.
-+FROM ubuntu:24.04 AS base
-+
-+# Install dependencies
-+RUN apt-get update &&                          \
-+    apt-get install -y --no-install-recommends \
-+        ca-certificates                         \
-+        `# Linux dependencies`                  \
-+        bc                                      \
-+        bison                                   \
-+        flex                                    \
-+        gcc                                     \
-+        git                                     \
-+        make                                    \
-+        gcc-riscv64-linux-gnu                   \
-+        libssl-dev                              \
-+        `# Linux kernel build deps`             \
-+        libelf-dev                              \
-+        python3;
-+
-+WORKDIR /root
-+
-+# Build linux
-+RUN git clone --depth=1 --branch=v6.18 https://github.com/torvalds/linux;
-+
-+COPY config_linux.txt linux/.config
-+RUN chmod 0444 linux/.config;
-+
-+RUN cd linux;                                                             \
-+    export ARCH=riscv;                                                    \
-+    export CROSS_COMPILE=/usr/bin/riscv64-linux-gnu-;                     \
-+    make olddefconfig;                                                    \
-+    make -j$(($(nproc) * 2 + 1));
-+
-+FROM scratch
-+COPY --from=base /root/linux/arch/riscv/boot/Image /Image
-```
-
----
-
-### Incident Patch 2: `7d488343` (2026-11-05)
-**Commit Message**: build(deps): bump lodash from 4.17.23 to 4.18.1 in /website
-
-Bumps [lodash](https://github.com/lodash/lodash) from 4.17.23 to 4.18.1.
-- [Release notes](https://github.com/lodash/lodash/releases)
-- [Commits](https://github.com/lodash/lodash/compare/4.17.23...4.18.1)
-
----
-updated-dependencies:
-- dependency-name: lodash
-  dependency-version: 4.18.1
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `website/package-lock.json` (modified, +3/-3)
-```diff
-@@ -5087,9 +5087,9 @@
-       "integrity": "sha512-+dAZZ2mM+/m+vY9ezfoueVvrgnHIGi5FvgSymbIgJOFwiznWyA59mav95L+Mc6xPtL3s9gm5eNTlNtxJLbNM1g=="
-     },
-     "node_modules/lodash": {
--      "version": "4.17.23",
--      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.23.tgz",
--      "integrity": "sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==",
-+      "version": "4.18.1",
-+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
-+      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==",
-       "license": "MIT"
-     },
-     "node_modules/lodash.deburr": {
-```
-
----
-
-### Incident Patch 3: `26ea696b` (2026-11-10)
-**Commit Message**: Use IoctlGetUint64 from golang.org/x/sys/unix
-
-Replace the hand-rolled ioctl wrapper with the equivalent IoctlGetUint64
-from golang.org/x/sys/unix and void unsafe.Pointer use.
-
-Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
-
-**File**: `pkg/mount/block/blockdev_linux.go` (modified, +1/-11)
-```diff
-@@ -18,7 +18,6 @@ import (
- 	"strconv"
- 	"strings"
- 	"unicode"
--	"unsafe"
+@@ -6,10 +6,12 @@ on:
+       - '.circleci/images/kernel-arm/*'
+       - '.circleci/images/kernel-arm64/*'
+       - '.circleci/images/kernel-amd64/*'
++      - '.circleci/images/kernel-riscv64/*'
+       - '.circleci/images/multiboot-test-kernel-amd64/*'
+       - '.circleci/images/uefipayload-amd64/*'
+       - '.circleci/images/ovmf-amd64/*'
+       - '.circleci/images/ovmf-arm64/*'
++      - '.circleci/images/ovmf-riscv64/*'
+       - '.circleci/images/upl-fit-amd64/*'
+       - '.circleci/images/upl-fit-arm64/*'
+       - '.github/workflows/test-images.yml'
+@@ -19,9 +21,11 @@ on:
+       - '.circleci/images/kernel-arm/*'
+       - '.circleci/images/kernel-arm64/*'
+       - '.circleci/images/kernel-amd64/*'
++      - '.circleci/images/kernel-riscv64/*'
+       - '.circleci/images/multiboot-test-kernel-amd64/*'
+       - '.circleci/images/uefipayload-amd64/*'
+       - '.circleci/images/ovmf-amd64/*'
++      - '.circleci/images/ovmf-riscv64/*'
+       - '.circleci/images/ovmf-arm64/*'
+       - '.circleci/images/upl-fit-amd64/*'
+       - '.circleci/images/upl-fit-arm64/*'
+@@ -45,7 +49,7 @@ jobs:
  
- 	"github.com/rekby/gpt"
- 	"github.com/u-root/u-root/pkg/mount"
-@@ -160,15 +159,6 @@ func (b *BlockDev) KernelBlockSize() (int, error) {
- 	return unix.IoctlGetInt(int(f.Fd()), unix.BLKBSZGET)
- }
+     strategy:
+       matrix:
+-        image: ['kernel-amd64', 'kernel-arm', 'kernel-arm64', 'uefipayload-amd64', 'multiboot-test-kernel-amd64', 'ovmf-amd64', 'ovmf-arm64', 'upl-fit-amd64', 'upl-fit-arm64']
++        image: ['kernel-amd64', 'kernel-arm', 'kernel-arm64', 'kernel-riscv64', 'uefipayload-amd64', 'multiboot-test-kernel-amd64', 'ovmf-amd64', 'ovmf-arm64', 'ovmf-riscv64', 'upl-fit-amd64', 'upl-fit-arm64']
  
--func ioctlGetUint64(fd int, req uint) (uint64, error) {
--	var value uint64
--	_, _, err := unix.Syscall(unix.SYS_IOCTL, uintptr(fd), uintptr(req), uintptr(unsafe.Pointer(&value)))
--	if err != 0 {
--		return 0, err
--	}
--	return value, nil
--}
--
- // Size returns the size in bytes.
- func (b *BlockDev) Size() (uint64, error) {
- 	f, err := os.Open(b.DevicePath())
-@@ -177,7 +167,7 @@ func (b *BlockDev) Size() (uint64, error) {
- 	}
- 	defer f.Close()
- 
--	sz, err := ioctlGetUint64(int(f.Fd()), unix.BLKGETSIZE64)
-+	sz, err := unix.IoctlGetUint64(int(f.Fd()), unix.BLKGETSIZE64)
- 	if err != nil {
- 		return 0, &os.PathError{
- 			Op:   "get size",
+     steps:
+       - name: Checkout repository
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3835** (2026-11-12): CI: Add RISC-V 64 Kernel and OVMF binaries docker push action (@AjanZhong)
 - **PR #3834** (2026-11-10): Remove bubbline (@rminnich)
 - **PR #3832** (2026-11-10): Use IoctlGetUint64 from golang.org/x/sys/unix (@tklauser)
 - **PR #3831** (2026-11-10): Add docker files to build RISC-V 64 kernel and OVMF binaries. (@AjanZhong)
 - **PR #3829** (2026-11-09): go.mod: move to Go 1.27 and update gobusybox (@rminnich)
 - **PR #3827** (2026-11-09): gzip: keep the input file's permissions on the output (@alhudz)
-- **PR #3826** (2026-11-07): go.mod: pick up p9 v0.5.1, which bounds a server-reported size (@rminnich)
 
 ---
 
@@ -1477,62 +1382,35 @@ Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. .circle: Add dockerfile to build RISC-V 64 kernel
+## X. CI: Add RISC-V 64 Kernel and OVMF binaries docker push action
 
 **RULE**:
-When implementing operations in `.circleci/images/kernel-riscv64/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/test-images.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27cf9d6e`: .circle: Add dockerfile to build RISC-V 64 kernel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4eba8433`: CI: Add RISC-V 64 Kernel and OVMF binaries docker push action. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/images/kernel-riscv64/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-images.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Copyright 2026 the u-root Authors. All rights reserved
-# Use of this source code is governed by a BSD-style
-# license that can be found in the LICENSE file.
-FROM ubuntu:24.04 AS base
-
-# Install dependencies
-RUN apt-get update &&                          \
-    apt-get install -y --no-install-recommends \
-        ca-certificates                         \
-        `# Linux dependencies`                  \
-        bc                                      \
-        bison                                   \
-        flex                                    \
-        gcc                                     \
-        git                                     \
-        make                                    \
-        gcc-riscv64-linux-gnu                   \
-        libssl-dev                              \
-        `# Linux kernel build deps`             \
-        libelf-dev                              \
-        python3;
-
-WORKDIR /root
-
-# Build linux
-RUN git clone --depth=1 --branch=v6.18 https://github.com/torvalds/linux;
-
-COPY config_linux.txt linux/.config
-RUN chmod 0444 linux/.config;
-
-RUN cd linux;                                                             \
-    export ARCH=riscv;      
+      - '.circleci/images/kernel-riscv64/*'
+      - '.circleci/images/ovmf-riscv64/*'
+      - '.circleci/images/kernel-riscv64/*'
+      - '.circleci/images/ovmf-riscv64/*'
+        image: ['kernel-amd64', 'kernel-arm', 'kernel-arm64', 'kernel-riscv64', 'uefipayload-amd64', 'multiboot-test-kernel-amd64', 'ovmf-amd64', 'ovmf-arm64', 'ovmf-riscv64', 'upl-fit-amd64', 'upl-fit-arm64']
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+        image: ['kernel-amd64', 'kernel-arm', 'kernel-arm64', 'uefipayload-amd64', 'multiboot-test-kernel-amd64', 'ovmf-amd64', 'ovmf-arm64', 'upl-fit-amd64', 'upl-fit-arm64']
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27cf9d6e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4eba8433` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

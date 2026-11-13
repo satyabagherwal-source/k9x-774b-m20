@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T22:45:42.292Z",
+  "last_updated": "2026-11-13T23:01:45.850Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1070,14 +1070,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
-      "content_hash": "4777313f0d1485f9d8ec44cf24be6186cb57b75cf21c7fd712842670af2d5acc",
-      "verified_at": "2026-11-08T21:16:35.285Z",
+      "content_hash": "07d15f5a5788e508a751f3abfe56ba0f59da2db454104a279e54ac14abf71e92",
+      "verified_at": "2026-11-13T23:01:31.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:16:35.285Z"
+      "last_updated": "2026-11-13T23:01:31.887Z"
     },
     "openai/whisper-large-v3": {
       "repository": "openai/whisper-large-v3",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "f65937a30f1db18983b9f090a3944ff9e9383e3ce209562027f185416bcfdccd",
-      "verified_at": "2026-11-12T23:17:01.243Z",
+      "content_hash": "f309f50897935dd860fd4ef0fb6603ca348e6d47b257da0409765ffdb56edecb",
+      "verified_at": "2026-11-13T23:01:45.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T23:17:01.243Z"
+      "last_updated": "2026-11-13T23:01:45.849Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "f04ef26644a5b6d6232e1ce7060243421bcfad65edde51accfd2895b740ca6cd",
-      "verified_at": "2026-11-09T15:12:43.959Z",
+      "content_hash": "07c1e4b8ee4c14da82eb666c74453a1a6c7886cfd0e887254e57be2d92c888ab",
+      "verified_at": "2026-11-13T23:01:39.547Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T15:12:43.959Z"
+      "last_updated": "2026-11-13T23:01:39.547Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -9186,14 +9186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-u-root-u-root",
-      "content_hash": "7e5f8c54fc06f9049ad6e6aa461e6ad49a1f53053b245f28e045e785d98cbcd2",
-      "verified_at": "2026-11-12T12:20:07.946Z",
+      "content_hash": "89695c265dd46271dfb982bc75d5222981688d54aa24b18c1d062c33211674ad",
+      "verified_at": "2026-11-13T23:01:33.743Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T12:20:07.946Z"
+      "last_updated": "2026-11-13T23:01:33.743Z"
     },
     "shoutem/ui": {
       "repository": "shoutem/ui",

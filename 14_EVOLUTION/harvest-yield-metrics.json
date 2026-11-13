@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T22:45:42.289Z",
-  "total_cycles_completed": 9402,
-  "total_learnings_persisted": 9402,
-  "total_rules_promoted": 9120,
+  "last_updated": "2026-11-13T23:01:45.846Z",
+  "total_cycles_completed": 9406,
+  "total_learnings_persisted": 9406,
+  "total_rules_promoted": 9123,
   "history": [
-    {
-      "timestamp": "2026-11-13T09:57:03.570Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T09:57:08.352Z",
-      "repository": "wzh4869/AppPorts",
-      "learningId": "learn-github-wzh4869-appports",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T10:26:24.715Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T10:26:49.197Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T10:55:17.926Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1403,6 +1375,34 @@
       "repository": "CompVis/stable-diffusion-v1-4",
       "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T23:01:31.883Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T23:01:33.739Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T23:01:39.543Z",
+      "repository": "openreplay/openreplay",
+      "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T23:01:45.846Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

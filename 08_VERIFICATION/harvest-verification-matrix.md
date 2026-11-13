@@ -9661,3 +9661,8 @@
 | `CYCLE-20261113-WD62` | `2026-11-13T22:31:00.266Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8397` | Yes (`77a68b55...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T22:31:29.965Z` | `hf-timm-mobilenetv3_small_100.lamb_in1k` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-62BFCC58` [Domain D] | Yes (`366f91ac...`) |
 | `CYCLE-20261113-F9QJ` | `2026-11-13T22:45:42.283Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8398, Rule 8399, Rule 8400` | Yes (`a8f964b2...`) |
+| `CYCLE-20261113-ZMG0` | `2026-11-13T23:01:31.872Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`07d15f5a...`) |
+| `CYCLE-20261113-ZNVL` | `2026-11-13T23:01:33.729Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8401` | Yes (`89695c26...`) |
+| `CYCLE-20261113-ZSCT` | `2026-11-13T23:01:39.533Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8402` | Yes (`07c1e4b8...`) |
+| `CYCLE-20261113-ZX7W` | `2026-11-13T23:01:45.836Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8403` | Yes (`f309f508...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T23:02:23.210Z` | `hf-hexgrad-kokoro-82m` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AB4CCCBB` [Domain D] | Yes (`954b6cf2...`) |

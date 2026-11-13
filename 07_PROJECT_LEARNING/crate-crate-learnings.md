@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `203f88d7`  
+> **Source Version**: `53ace8b4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T23:16:47.545Z  
+> **Timestamp**: 2026-11-13T23:01:44.830Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T23:16:47.535Z  
+> **Harvest Timestamp**: 2026-11-13T23:01:44.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4452 stars
+- **Stars / Engagement**: 4453 stars
 
 ---
 
@@ -555,145 +555,99 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `203f88d7` (2026-11-10)
-**Commit Message**: Fix replicated data loss when dropping subscription before checkpoints catch up
+### Incident Patch 1: `53ace8b4` (2026-10-21)
+**Commit Message**: Restore with rename options must not allow rename to the same name
 
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +3/-0)
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
 ```diff
-@@ -58,3 +58,6 @@ Fixes
-   primary shards on the subscriber cluster were relocated and segments of the
-   published table were merged on the publisher cluster, for example by running
-   ``OPTIMIZE``.
+@@ -61,3 +61,8 @@ Fixes
+ 
+ - Fixed an issue that could discard recently replicated data from the
+   subscriber cluster when dropping a subscription shortly after shard recovery.
 +
-+- Fixed an issue that could discard recently replicated data from the
-+  subscriber cluster when dropping a subscription shortly after shard recovery.
++- Fixed an issue causing ``RESTORE SNAPSHOT`` to silently restore only one
++  of several tables if the rename options ``schema_rename_replacement``
++  or ``table_rename_replacement`` mapped them to the same name.
++  Now it fails with an error, similar to clashes with an existing table.
 ```
 
-**File**: `server/src/main/java/org/elasticsearch/index/shard/IndexShard.java` (modified, +25/-5)
+**File**: `server/src/main/java/org/elasticsearch/snapshots/RestoreService.java` (modified, +23/-0)
 ```diff
-@@ -148,6 +148,7 @@
- import io.crate.execution.dml.TranslogIndexer;
- import io.crate.execution.dml.TranslogMappingUpdateException;
- import io.crate.metadata.NodeContext;
-+import io.crate.replication.logical.engine.SubscriberEngine;
+@@ -331,9 +331,32 @@ static Map<RelationName, RestoreRelation> resolveRelations(List<TableOrPartition
+                 resolver.accept(relation.name(), List.of());
+             }
+         }
++        ensureUniqueTargets(restoreRelations);
+         return restoreRelations;
+     }
  
- public class IndexShard extends AbstractIndexShardComponent {
- 
-@@ -1818,8 +1819,14 @@ public void onSettingsChanged(Settings oldSettings) {
-         var newEngineFactory = getEngineFactory();
-         if (newEngineFactory.getClass() != engineFactory.getClass()) {
-             try {
--                // resetEngineToGlobalCheckpoint will use the new engine factory
--                indexShardOperationPermits.blockOperations(30, TimeUnit.MINUTES, this::resetEngineToGlobalCheckpoint);
-+                if (getEngineOrNull() instanceof SubscriberEngine && newEngineFactory instanceof InternalEngineFactory) {
-+                    // Dropping a subscription requires reopening the SubscriberEngine as an InternalEngine.
-+                    // Preserve local history because the global checkpoint may fall behind after shard recovery or primary promotion.
-+                    indexShardOperationPermits.blockOperations(30, TimeUnit.MINUTES, this::reopenEngineAndRecoverFromLocalTranslog);
-+                } else {
-+                    // resetEngineToGlobalCheckpoint will use the new engine factory
-+                    indexShardOperationPermits.blockOperations(30, TimeUnit.MINUTES, this::resetEngineToGlobalCheckpoint);
-+                }
-             } catch (InterruptedException | TimeoutException e) {
-                 var msg = "Timeout exception while trying to switch to a new engine";
-                 failShard(msg, null);
-@@ -3247,6 +3254,14 @@ public ParsedDocument newNoopTombstoneDoc(String reason) {
-      * Rollback the current engine to the safe commit, then replay local translog up to the global checkpoint.
-      */
-     void resetEngineToGlobalCheckpoint() throws IOException {
-+        reopenEngine(false);
-+    }
-+
-+    void reopenEngineAndRecoverFromLocalTranslog() throws IOException {
-+        reopenEngine(true);
-+    }
-+
-+    private void reopenEngine(boolean recoverLocalHistory) throws IOException {
-         assert Thread.holdsLock(mutex) == false : "resetting engine under mutex";
-         assert getActiveOperationsCount() == OPERATIONS_BLOCKED
-             : "resetting engine without blocking operations; active operations are [" + getActiveOperations() + ']';
-@@ -3257,8 +3272,13 @@ assert getActiveOperationsCount() == OPERATIONS_BLOCKED
-         flush(false, true);
- 
-         SetOnce<Engine> newEngineReference = new SetOnce<>();
--        final long globalCheckpoint = getLastKnownGlobalCheckpoint();
--        assert globalCheckpoint == getLastSyncedGlobalCheckpoint();
-+        final long recoverUpToSeqNo;
-+        if (recoverLocalHistory) {
-+            recoverUpToSeqNo = Long.MAX_VALUE;
-+        } else {
-+            recoverUpToSeqNo = getLastKnownGlobalCheckpoint();
-+            assert recoverUpToSeqNo == getLastSyncedGlobalCheckpoint();
++    /**
++     * Renamed pattern can map different tables to the same name.
++     * Check if renamed tables won't be clashing with each other.
++     */
++    private static void ensureUniqueTargets(Map<RelationName, RestoreRelation> restoreRelations) {
++        HashMap<RelationName, RelationName> sourceByTarget = new HashMap<>();
++        for (var entry : restoreRelations.entrySet()) {
++            RelationName source = entry.getKey();
++            RelationName target = entry.getValue().targetName();
++            RelationName otherSource = sourceByTarget.put(target, source);
++            if (otherSource != null) {
++                throw new RelationAlreadyExists(target, String.format(
++                    Locale.ENGLISH,
++                    "Cannot restore relations '%s' and '%s' to the same name '%s'",
++                    otherSource,
++                    source,
++                    target
++                ));
++            }
 +        }
-         synchronized (engineMutex) {
-             verifyNotClosed();
-             // we must create both new read-only engine and new read-write engine under engineMutex to ensure snapshotStoreMetadata,
-@@ -3307,7 +3327,7 @@ public void close() throws IOException {
-             engine, snapshot, Engine.Operation.Origin.LOCAL_RESET, () -> {
-                 // TODO: add a dedicate recovery stats for the reset translog
-             });
--        newEngineReference.get().recoverFromTranslog(translogRunner, globalCheckpoint);
-+        newEngineReference.get().recoverFromTranslog(translogRunner, recoverUpToSeqNo);
-         newEngineReference.get().refresh("reset_engine");
-         synchronized (engineMutex) {
-             verifyNotClosed();
++    }
++
+     private static boolean includeForeignTables(RestoreSnapshotRequest request) {
+         if (!request.includeCustomMetadata()) {
+             return false;
 ```
 
-**File**: `server/src/test/java/org/elasticsearch/index/shard/IndexShardTests.java` (modified, +38/-0)
+**File**: `server/src/test/java/io/crate/integrationtests/SnapshotRestoreIntegrationTest.java` (modified, +15/-0)
 ```diff
-@@ -3492,6 +3492,44 @@ public void testResetEngine() throws Exception {
-         closeShard(shard, false);
+@@ -22,6 +22,7 @@
+ package io.crate.integrationtests;
+ 
+ import static com.carrotsearch.randomizedtesting.RandomizedTest.$;
++import static io.crate.protocols.postgres.PGErrorStatus.DUPLICATE_TABLE;
+ import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
+ import static io.crate.protocols.postgres.PGErrorStatus.INVALID_OBJECT_DEFINITION;
+ import static io.crate.rest.action.HttpErrorStatus.GENERIC_NOT_FOUND;
+@@ -1082,6 +1083,20 @@ public void test_restore_partitioned_tables_rename_all() throws Exception {
+         );
      }
  
 +    @Test
-+    public void test_reopenEngineAndRecoverFromLocalTranslog() throws Exception {
-+        IndexShard shard = newStartedShard(false);
-+        indexOnReplicaWithGaps(shard, between(1, 1000), Math.toIntExact(shard.getLocalCheckpoint()), false);
-+        Set<String> docIds = getShardDocUIDs(shard);
-+        SeqNoStats seqNoStats = shard.seqNoStats();
-+        assertThat(seqNoStats.getLocalCheckpoint()).isGreaterThan(seqNoStats.getGlobalCheckpoint());
-+
-+        CountDownLatch engineReopenLatch = new CountDownLatch(1);
-+        AtomicReference<Exception> failure = new AtomicReference<>();
-+        shard.acquireAllReplicaOperationsPermits(
-+            shard.getOperationPrimaryTerm(),
-+            shard.getLastKnownGlobalCheckpoint(),
-+            0L,
-+            ActionListener.wrap(releasable -> {
-+                try {
-+                    shard.reopenEngineAndRecoverFromLocalTranslog();
-+                } catch (Exception e) {
-+                    failure.set(e);
-+                } finally {
-+                    releasable.close();
-+                    engineReopenLatch.countDown();
-+                }
-+            }, e -> {
-+                failure.set(e);
-+                engineReopenLatch.countDown();
-+            }),
-+            TimeValue.timeValueMinutes(1L)
-+        );
-+        engineReopenLatch.await();
-+
-+        assertThat(failure.get()).isNull();
-+        assertThat(shard.getEngineOrNull()).isExactlyInstanceOf(InternalEngine.class);
-+        assertThat(shard.seqNoStats()).isEqualTo(seqNoStats);
-+        assertThat(getShardDocUIDs(shard)).isEqualTo(docIds);
-+        closeShard(shard, false);
++    public void test_restore_with_rename_fails_if_renamed_relations_clash() throws Exception {
++        createTable("doc.t1", false);
++        createTable("doc.t2", false);
++        createSnapshot(SNAPSHOT_NAME, "doc.t1", "doc.t2");
++        waitNoPendingTasksOnAll();
++        Asserts.assertSQLError(() -> execute("RESTORE SNAPSHOT " + snapshotName() + " ALL WITH (" +
++                "wait_for_completion=true," +
++                "table_rename_replacement='t')") // Intentionally restoring into same name
++        ).hasPGError(DUPLICATE_TABLE)
++        .hasHTTPError(CONFLICT, 4093)
++        .hasMessageContaining("to the same name 'doc.t'");
 +    }
 +
-     /**
-      * This test simulates a scenario seen rarely in ConcurrentSeqNoVersioningIT. Closing a shard while engine is inside
-      * resetEngineToGlobalCheckpoint can lead to check index failure in integration tests.
+     @Test
+     public void test_restore_old_users() throws IOException {
+         File repoDir = TEMPORARY_FOLDER.newFolder().toPath().toAbsolutePath().toFile();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20592** (2026-11-13): Restore with rename options must not allow rename to the same name (backport #20591) (@mergify[bot])
+- **PR #20591** (2026-11-13): Restore with rename options must not allow rename to the same name (@BaurzhanSakhariev)
 - **PR #20588** (2026-11-12): Fix replicated data loss when dropping subscription before checkpoints catch up (backport #20576) (@mergify[bot])
 - **PR #20586** (2026-11-12): bp: [Refactor] LuceneChangesSnapshot to use accurate ops history (backport #20574) (@mergify[bot])
 - **PR #20585** (2026-11-12): Remove retention lease only when subscription is removed or table is not published (backport #20566) (@mergify[bot])
 - **PR #20584** (2026-11-11): Return 0 for negative "free" and "total" memory reported by the OS (backport #20563) (@mergify[bot])
-- **PR #20582** (2026-11-11): Rate limiting bug (backport #20568) (@mergify[bot])
-- **PR #20579** (2026-11-10): Add docs reference for http.max_content_length (backport #20578) (@mergify[bot])
 
 ---
 
@@ -713,13 +667,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replicated data loss when dropping subscription before checkpoints catch up
+## X. Restore with rename options must not allow rename to the same name
 
 **RULE**:
 When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `203f88d7`: replicated data loss when dropping subscription before checkpoints catch up. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53ace8b4`: Restore with rename options must not allow rename to the same name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
@@ -728,15 +682,17 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```java
 // Verified production-grade fix pattern:
 
-- Fixed an issue that could discard recently replicated data from the
-  subscriber cluster when dropping a subscription shortly after shard recovery.
+- Fixed an issue causing ``RESTORE SNAPSHOT`` to silently restore only one
+  of several tables if the rename options ``schema_rename_replacement``
+  or ``table_rename_replacement`` mapped them to the same name.
+  Now it fails with an error, similar to clashes with an existing table.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `203f88d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53ace8b4` are properly handled with clean fallback behavior.
