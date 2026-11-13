@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T17:24:47.209Z",
+  "last_updated": "2026-11-13T17:37:39.558Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -635,14 +635,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "6ec9627a87dfb8e097b78c8be5421130368a026a941378fe9b3da61017f79da3",
-      "verified_at": "2026-11-08T16:51:11.666Z",
+      "content_hash": "a4ce1a5c66e66c947520f1022d2ce3a5e7bec4a5f8d38a401b444a841e6cd0d5",
+      "verified_at": "2026-11-13T17:37:30.474Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:51:11.666Z"
+      "last_updated": "2026-11-13T17:37:30.474Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -15426,14 +15426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-react-native",
-      "content_hash": "47bcffb5b37bfd61196143d75afe91331218175e3773491d757e7820e78a2da3",
-      "verified_at": "2026-11-09T07:05:58.620Z",
+      "content_hash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
+      "verified_at": "2026-11-13T17:37:39.557Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T07:05:58.620Z"
+      "last_updated": "2026-11-13T17:37:39.557Z"
     },
     "faker-js/faker": {
       "repository": "faker-js/faker",
@@ -18749,6 +18749,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-13T13:50:18.674Z"
+    },
+    "mixelpixx/KiCAD-MCP-Server": {
+      "repository": "mixelpixx/KiCAD-MCP-Server",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mixelpixx-kicad-mcp-server",
+      "content_hash": "a83032b88467d1e522e9bc5c00b1c6251686679c7926f1b175fe2a187cc0af1c",
+      "verified_at": "2026-11-13T17:37:27.418Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-13T17:37:27.418Z"
     }
   },
   "repos": {

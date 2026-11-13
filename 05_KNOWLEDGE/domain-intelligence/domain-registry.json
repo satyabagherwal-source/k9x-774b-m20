@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T17:25:38.219Z",
-  "total_records": 232,
+  "last_updated": "2026-11-13T17:38:17.341Z",
+  "total_records": 238,
   "domains": {
     "A": {
       "total": 1,
@@ -28,7 +28,7 @@
       ]
     },
     "D": {
-      "total": 133,
+      "total": 136,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -162,7 +162,10 @@
         "DOM-D-F5004225",
         "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
         "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant",
-        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c"
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
+        "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-core-invariants",
+        "DOM-D-933E8A17",
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-learnings-cor"
       ]
     },
     "E": {
@@ -180,7 +183,7 @@
       ]
     },
     "G": {
-      "total": 19,
+      "total": 21,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -200,11 +203,13 @@
         "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants",
         "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
         "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
-        "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants",
+        "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 44,
+      "total": 45,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -249,7 +254,8 @@
         "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
         "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
-        "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle"
+        "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
+        "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants"
       ]
     },
     "I": {
@@ -7156,6 +7162,93 @@
       "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
       "content_hash": "9e5ec42b7ca8eba6507dca5e02f68a428454caf8ee38e0be2d7b3bd6b7323146",
       "created_at": "2026-11-13T17:25:37.679Z"
+    },
+    "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mixelpixx/KiCAD-MCP-Server Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mixelpixx-kicad-mcp-server-architecture-intelligence-mixelpixx-kicad-mcp-server-.md",
+      "repository": "mixelpixx/KiCAD-MCP-Server",
+      "content_hash": "ae02221b7e39f7fba3a6427c12898c17b46bda10b66288652bf959e3b8920c18",
+      "created_at": "2026-11-13T17:37:27.628Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-research-knowledge-intelligence-deepseek-ai-d.md",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "content_hash": "a58b2e6d835bb27980462798946132248644158491ec24db79e78b6e0faa845e",
+      "created_at": "2026-11-13T17:37:30.597Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react/react-native Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
+      "repository": "react/react-native",
+      "content_hash": "4f9f3cc43cf05563e811ad758a2e94d33937c63b32eb3596bcf2b4ceb1df96d5",
+      "created_at": "2026-11-13T17:37:39.750Z"
+    },
+    "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mixelpixx-kicad-mcp-server-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mixelpixx-kicad-mcp-server-learnings-architecture-intelligence-mixelpixx-kicad-m.md",
+      "repository": "mixelpixx-kicad-mcp-server-learnings",
+      "content_hash": "67fee382a586ab9d6f918caf4e6bb0560e1e949010992a5233939fb70b9bd5a2",
+      "created_at": "2026-11-13T17:37:42.896Z"
+    },
+    "DOM-D-933E8A17": {
+      "record_id": "DOM-D-933E8A17",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-V4.1-Flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash))  \n> **Source Version**: `hf-deepseek-`  \n> **License",
+      "content_hash": "13b345f1baeae8cf383ab18e6b9cbf9517b816b686c03c46d3b9fcdfc4eea950",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-v4.1-flash/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T17:37:43.021Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-v4.1-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-deepseek-ai-deepseek-v4.1-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T17:38:17.192Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-learnings-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-learnings-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-learnings-research-knowledge-intelligence-hf-.md",
+      "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
+      "content_hash": "cece8b4465c5e34a8631247b78897aa5f28587a5f4a6656090dcc3e6dc993370",
+      "created_at": "2026-11-13T17:38:17.341Z"
     }
   }
 }

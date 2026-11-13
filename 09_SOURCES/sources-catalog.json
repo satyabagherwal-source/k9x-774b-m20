@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "6ec9627a87dfb8e097b78c8be5421130368a026a941378fe9b3da61017f79da3",
-    "lastHarvestedAt": "2026-11-08T16:51:11.645Z",
+    "contentHash": "a4ce1a5c66e66c947520f1022d2ce3a5e7bec4a5f8d38a401b444a841e6cd0d5",
+    "lastHarvestedAt": "2026-11-13T17:37:30.467Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "f480836a",
+    "sourceVersion": "649c1054",
     "license": "MIT",
-    "contentHash": "47bcffb5b37bfd61196143d75afe91331218175e3773491d757e7820e78a2da3",
-    "lastHarvestedAt": "2026-11-09T07:05:58.611Z",
+    "contentHash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
+    "lastHarvestedAt": "2026-11-13T17:37:39.546Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {
@@ -12458,5 +12458,15 @@
     "contentHash": "a6963985aee561a30fd1550efe7e8a9e511dc088f889b90a5fc16f9e20a65947",
     "lastHarvestedAt": "2026-11-13T13:50:18.662Z",
     "learningId": "learn-github-tuist-tuist"
+  },
+  "mixelpixx-kicad-mcp-server": {
+    "repository": "mixelpixx/KiCAD-MCP-Server",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mixelpixx/KiCAD-MCP-Server",
+    "sourceVersion": "2669379b",
+    "license": "MIT",
+    "contentHash": "a83032b88467d1e522e9bc5c00b1c6251686679c7926f1b175fe2a187cc0af1c",
+    "lastHarvestedAt": "2026-11-13T17:37:27.404Z",
+    "learningId": "learn-github-mixelpixx-kicad-mcp-server"
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T17:25:37.930Z",
+  "updated_at": "2026-11-13T17:38:17.206Z",
   "stats": {
-    "total_discovered": 2759,
-    "approved_pending_harvest": 2580,
+    "total_discovered": 2761,
+    "approved_pending_harvest": 2582,
     "harvested_count": 0,
     "rejected_count": 179,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2573,
+      "COMMUNITY_AND_EXPERT": 2575,
       "OFFICIAL_DOCUMENTATION": 96,
       "STANDARDS_AND_SPECIFICATIONS": 78,
       "ENGINEERING_BLOGS": 1,
@@ -59465,6 +59465,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
         "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-C39DC28DD9B9": {
+      "id": "SRC-C39DC28DD9B9",
+      "url": "https://github.com/mixelpixx/KiCAD-MCP-Server",
+      "title": "https://github.com/mixelpixx/KiCAD-MCP-Server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:37:42.695Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mixelpixx-kicad-mcp-server-learnings.md",
+        "fileName": "mixelpixx-kicad-mcp-server-learnings.md"
+      }
+    },
+    "SRC-5C348986A151": {
+      "id": "SRC-5C348986A151",
+      "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "title": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:38:17.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
+        "fileName": "hf-deepseek-ai-deepseek-v4.1-flash-learnings.md"
       }
     }
   }

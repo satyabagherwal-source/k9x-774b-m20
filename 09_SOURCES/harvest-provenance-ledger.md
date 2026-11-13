@@ -9578,3 +9578,7 @@ Every entry in this ledger must capture:
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `7518aee3` | Multi-dimensional audit evidence | 2026-11-13T17:24:41.951Z |
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `a8700949` | Multi-dimensional audit evidence | 2026-11-13T17:24:47.192Z |
 | `learn-dom-f-456eb881` | `project://hf-inclusionai-ming-image-0.1-design` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | 2026-11-13T17:25:37.479Z |
+| `learn-github-mixelpixx-kicad-mcp-server` | `https://github.com/mixelpixx/KiCAD-MCP-Server` | `2669379b` | Multi-dimensional audit evidence | 2026-11-13T17:37:27.404Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-13T17:37:30.467Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `649c1054` | Multi-dimensional audit evidence | 2026-11-13T17:37:39.546Z |
+| `learn-dom-d-933e8a17` | `project://hf-deepseek-ai-deepseek-v4.1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | 2026-11-13T17:38:17.198Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T17:25:38.326Z",
-  "total_verified_learnings": 1264,
+  "last_updated": "2026-11-13T17:38:17.341Z",
+  "total_verified_learnings": 1265,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26252,7 +26252,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "6ec9627a87dfb8e097b78c8be5421130368a026a941378fe9b3da61017f79da3",
+      "content_hash": "a4ce1a5c66e66c947520f1022d2ce3a5e7bec4a5f8d38a401b444a841e6cd0d5",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -26387,7 +26387,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-11-08T16:51:11.511Z",
+      "verified_at": "2026-11-13T17:37:30.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55742,8 +55742,8 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "f480836a",
-      "content_hash": "47bcffb5b37bfd61196143d75afe91331218175e3773491d757e7820e78a2da3",
+      "source_version": "649c1054",
+      "content_hash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
@@ -55755,6 +55755,11 @@
         {
           "number": null,
           "title": "Use metro:runtime for asyncRequireModulePath so Metro's transform cache is share",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "iOS JS timers when the system clock changes",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55788,7 +55793,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T07:05:58.485Z",
+      "verified_at": "2026-11-13T17:37:39.451Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -195062,6 +195067,159 @@
       "content_hash": "9e5ec42b7ca8eba6507dca5e02f68a428454caf8ee38e0be2d7b3bd6b7323146",
       "domain_letter": "D",
       "persisted_at": "2026-11-13T17:25:37.679Z"
+    },
+    "learn-github-mixelpixx-kicad-mcp-server": {
+      "learning_id": "learn-github-mixelpixx-kicad-mcp-server",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mixelpixx/KiCAD-MCP-Server",
+      "repository": "mixelpixx/KiCAD-MCP-Server",
+      "slug": "mixelpixx-kicad-mcp-server",
+      "platform": "github",
+      "source_url": "https://github.com/mixelpixx/KiCAD-MCP-Server",
+      "source_version": "2669379b",
+      "content_hash": "a83032b88467d1e522e9bc5c00b1c6251686679c7926f1b175fe2a187cc0af1c",
+      "dossier_path": "07_PROJECT_LEARNING/mixelpixx-kicad-mcp-server-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mixelpixx-kicad-mcp-server-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "record the board signature after autoroute, import_ses and refill_zones",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T17:37:27.290Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-record-the-board-signature-after-autoroute-import_ses-and-refill_zones": {
+      "item_id": "candidate_directive-record-the-board-signature-after-autoroute-import_ses-and-refill_zones",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F6WE-record-the-board-signature-after-autoroute-import_ses-and-refill_zones.md",
+      "title": "record the board signature after autoroute, import_ses and refill_zones",
+      "repository": "mixelpixx-kicad-mcp-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bc02630c63350a0809b34e9e25348caedf5e120f36c92c5585fe861877f8637e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T17:37:42.835Z"
+    },
+    "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mixelpixx-kicad-mcp-server-architecture-intelligence-mixelpixx-kicad-mcp-server-.md",
+      "title": "Architecture Intelligence: mixelpixx/KiCAD-MCP-Server Core Invariants",
+      "repository": "mixelpixx/KiCAD-MCP-Server",
+      "source_version": "2669379b",
+      "content_hash": "ae02221b7e39f7fba3a6427c12898c17b46bda10b66288652bf959e3b8920c18",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T17:37:27.628Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mixelpixx-kicad-mcp-server": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mixelpixx-kicad-mcp-server",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mixelpixx-kicad-mcp-server-verification-protocol-empirical-defect-shield-for-mix.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mixelpixx/KiCAD-MCP-Server",
+      "repository": "mixelpixx/KiCAD-MCP-Server",
+      "source_version": "2669379b",
+      "content_hash": "ca8afc1592578472f16b3a1fdc936c5a9cef76833f342044bea918442254a3c7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:37:27.691Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-research-knowledge-intelligence-deepseek-ai-d.md",
+      "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash Core Invariants",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "content_hash": "a58b2e6d835bb27980462798946132248644158491ec24db79e78b6e0faa845e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T17:37:30.597Z"
+    },
+    "candidate_directive-ios-js-timers-when-the-system-clock-changes": {
+      "item_id": "candidate_directive-ios-js-timers-when-the-system-clock-changes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F4GS-ios-js-timers-when-the-system-clock-changes.md",
+      "title": "iOS JS timers when the system clock changes",
+      "repository": "react/react-native",
+      "source_version": "649c1054",
+      "content_hash": "e41a1775b9da50d18f55a7b2c24709e812d2e3768c2e4c24f9039bc91975fe55",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:37:39.677Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
+      "title": "Technical Construction Intelligence: react/react-native Core Invariants",
+      "repository": "react/react-native",
+      "source_version": "649c1054",
+      "content_hash": "4f9f3cc43cf05563e811ad758a2e94d33937c63b32eb3596bcf2b4ceb1df96d5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:37:39.750Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/react-react-native-verification-protocol-empirical-defect-shield-for-react-react.md",
+      "title": "Verification Protocol: Empirical Defect Shield for react/react-native",
+      "repository": "react/react-native",
+      "source_version": "649c1054",
+      "content_hash": "6a569584c039ce59a09309743dabb897ca55d3ad7155a925e0d5a95d6c802cbc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:37:39.827Z"
+    },
+    "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mixelpixx-kicad-mcp-server-learnings-architecture-intelligence-mixelpixx-kicad-m.md",
+      "title": "Architecture Intelligence: mixelpixx-kicad-mcp-server-learnings Core Invariants",
+      "repository": "mixelpixx-kicad-mcp-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "67fee382a586ab9d6f918caf4e6bb0560e1e949010992a5233939fb70b9bd5a2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T17:37:42.896Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mixelpixx-kicad-mcp-server-lea": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mixelpixx-kicad-mcp-server-lea",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mixelpixx-kicad-mcp-server-learnings-verification-protocol-empirical-defect-shie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mixelpixx-kicad-mcp-server-learnings",
+      "repository": "mixelpixx-kicad-mcp-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3fc1244eba0cae967d558eda2de97ccd45318adbaf12eaacf7890ab8c9ddc794",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:37:42.959Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-learnings-cor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-learnings-cor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-learnings-research-knowledge-intelligence-hf-.md",
+      "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-learnings Core Invariants",
+      "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cece8b4465c5e34a8631247b78897aa5f28587a5f4a6656090dcc3e6dc993370",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T17:38:17.341Z"
     }
   },
   "aliases": {
@@ -201060,5 +201218,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9205
+  "total_items": 9216
 }

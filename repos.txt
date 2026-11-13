@@ -5042,3 +5042,7 @@ https://huggingface.co/thinkingmachines/Inkling-2-Small
 # --- Automatically Discovered by AI Scout Engine [2026-11-13T13:50:06.925Z] ---
 # [HIGH-PERF-SYSTEMS] tuist/tuist (3617 score) - Tuist builds infrastructure for faster, more reliable build and test workflows a
 https://github.com/tuist/tuist
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-13T17:37:22.139Z] ---
+# [AI-AGENTS] mixelpixx/KiCAD-MCP-Server (2086 score) - KiCAD MCP is a Model Context Protocol (MCP) implementation that enables Large La
+https://github.com/mixelpixx/KiCAD-MCP-Server

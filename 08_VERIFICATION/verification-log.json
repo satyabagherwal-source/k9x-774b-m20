@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-PAE2",
-    "timestamp": "2026-11-12T21:41:50.426Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "bb61a02372ee6b5277dd8318320102f25a3e5159564eeb9fa1bbcb18d3e0406e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-PE1I",
-    "timestamp": "2026-11-12T21:41:55.158Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "09b2b64e6fd68d991097b72e702e376c8137a29e679ad0bdcd12d09fcad7492b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-PFDX",
-    "timestamp": "2026-11-12T21:41:56.901Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "84248f5792c652bbab7844c7177bf2da83d1e789e633e6d9be37cef723086c7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-PIF6",
     "timestamp": "2026-11-12T21:42:00.834Z",
     "repository": "zilliztech/claude-context",
@@ -7490,6 +7445,51 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
     "contentHash": "776cf5dd132dbf4558d65c393030412c344a4b05b3d54684dfa74eab2b1675bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-EUZM",
+    "timestamp": "2026-11-13T17:37:27.394Z",
+    "repository": "mixelpixx/KiCAD-MCP-Server",
+    "learningId": "learn-github-mixelpixx-kicad-mcp-server",
+    "contentHash": "a83032b88467d1e522e9bc5c00b1c6251686679c7926f1b175fe2a187cc0af1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-EXCW",
+    "timestamp": "2026-11-13T17:37:30.464Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+    "contentHash": "a4ce1a5c66e66c947520f1022d2ce3a5e7bec4a5f8d38a401b444a841e6cd0d5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-F4CV",
+    "timestamp": "2026-11-13T17:37:39.535Z",
+    "repository": "react/react-native",
+    "learningId": "learn-github-react-react-native",
+    "contentHash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -9545,3 +9545,7 @@
 | `CYCLE-20261113-YGD7` | `2026-11-13T17:24:41.947Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eb3b2de3...`) |
 | `CYCLE-20261113-YKEK` | `2026-11-13T17:24:47.180Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`776cf5dd...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T17:25:37.479Z` | `hf-inclusionai-ming-image-0.1-design` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-456EB881` [Domain F] | Yes (`41dbb76e...`) |
+| `CYCLE-20261113-EUZM` | `2026-11-13T17:37:27.394Z` | `mixelpixx/KiCAD-MCP-Server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a83032b8...`) |
+| `CYCLE-20261113-EXCW` | `2026-11-13T17:37:30.464Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`a4ce1a5c...`) |
+| `CYCLE-20261113-F4CV` | `2026-11-13T17:37:39.535Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7f53d4a...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T17:38:17.198Z` | `hf-deepseek-ai-deepseek-v4.1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-933E8A17` [Domain D] | Yes (`13b345f1...`) |
