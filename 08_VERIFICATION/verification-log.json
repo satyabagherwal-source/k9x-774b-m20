@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-TQCP",
-    "timestamp": "2026-11-11T06:33:49.993Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-VFBQ",
-    "timestamp": "2026-11-11T07:03:08.630Z",
-    "repository": "Cactus-Compute/mirage",
-    "learningId": "learn-huggingface-cactus-compute-mirage",
-    "contentHash": "cee3ae7d63ad7be61edc5544a30b3799f1cd4db665512daa9ef8343f2b3c90ac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-1TQZ",
     "timestamp": "2026-11-11T07:08:07.259Z",
     "repository": "ConwayResearch/Underdog-Woof",
@@ -7490,6 +7460,36 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "681e4acb259912ecdbfcfee03196f6d3489917ffd30a555c05333bfde8ea2b6d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-XIF7",
+    "timestamp": "2026-11-13T12:16:02.179Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "9a4769f24451c8cd46f5246f3530bb751202332261ea8dd87243adeb010d2506",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-Y3B3",
+    "timestamp": "2026-11-13T12:16:29.247Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "e727c601191752f2c267d552e8c5ec9fb0990271cb8bd707d81e6bf0e9815a77",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

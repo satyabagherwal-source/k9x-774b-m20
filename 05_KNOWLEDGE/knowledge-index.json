@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T12:08:43.026Z",
+  "last_updated": "2026-11-13T12:16:29.122Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18715,8 +18715,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "f8d8fe10",
-      "content_hash": "66775b3009776caebd919003873c234b50d7764be90b55457162069910c8539f",
+      "source_version": "68145fc7",
+      "content_hash": "e727c601191752f2c267d552e8c5ec9fb0990271cb8bd707d81e6bf0e9815a77",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -18733,6 +18733,11 @@
         {
           "number": null,
           "title": "log-store): close raft-engine engines on shutdown (#9518)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "mito2): commit staging edits once when staging ends (#10322)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18816,7 +18821,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T05:27:16.413Z",
+      "verified_at": "2026-11-13T12:16:29.090Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23016,7 +23021,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "b16887ae325419501c4138dc60e64682f2d8adf28f70bc99cd89e17999999d4a",
+      "content_hash": "9a4769f24451c8cd46f5246f3530bb751202332261ea8dd87243adeb010d2506",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -23205,7 +23210,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-11-08T10:22:07.055Z",
+      "verified_at": "2026-11-13T12:16:02.062Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

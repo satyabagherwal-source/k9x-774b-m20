@@ -9463,3 +9463,6 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `8065b000` | Multi-dimensional audit evidence | 2026-11-13T12:08:24.188Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `e79f26cb` | Multi-dimensional audit evidence | 2026-11-13T12:08:43.166Z |
 | `learn-dom-d-fd88fd4e` | `project://hf-audio-cpp-audio.cpp-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md` | 2026-11-13T12:09:03.823Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-13T12:16:02.183Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `68145fc7` | Multi-dimensional audit evidence | 2026-11-13T12:16:29.251Z |
+| `learn-dom-d-ad2e98d1` | `project://hf-black-forest-labs-flux.1-dev` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | 2026-11-13T12:16:48.731Z |

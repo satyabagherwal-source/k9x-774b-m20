@@ -9454,3 +9454,6 @@
 | `CYCLE-20261113-NP15` | `2026-11-13T12:08:24.185Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c7d37ab9...`) |
 | `CYCLE-20261113-O3OB` | `2026-11-13T12:08:43.163Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`681e4acb...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:09:03.823Z` | `hf-audio-cpp-audio.cpp-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FD88FD4E` [Domain D] | Yes (`10e3e98d...`) |
+| `CYCLE-20261113-XIF7` | `2026-11-13T12:16:02.179Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`9a4769f2...`) |
+| `CYCLE-20261113-Y3B3` | `2026-11-13T12:16:29.247Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e727c601...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:16:48.731Z` | `hf-black-forest-labs-flux.1-dev` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AD2E98D1` [Domain D] | Yes (`cffde470...`) |

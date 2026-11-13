@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:09:03.845Z",
+  "last_updated": "2026-11-13T12:16:48.904Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8696,6 +8696,24 @@
       "source_repo": "agent-field-agentfield",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-50F639-release-v0-1-146-rc-29-skip-ci-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-57EC8D",
+      "directive_title": "mito2): commit staging edits once when staging ends (#10322)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "greptimeteam-greptimedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-57EC8D-mito2-commit-staging-edits-once-when-sta.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-7F9814",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7F9814-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-13"
     }
   ]

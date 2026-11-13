@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T12:08:43.185Z",
+  "last_updated": "2026-11-13T12:16:29.261Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,14 +230,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "b16887ae325419501c4138dc60e64682f2d8adf28f70bc99cd89e17999999d4a",
-      "verified_at": "2026-11-08T10:22:07.208Z",
+      "content_hash": "9a4769f24451c8cd46f5246f3530bb751202332261ea8dd87243adeb010d2506",
+      "verified_at": "2026-11-13T12:16:02.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T10:22:07.208Z"
+      "last_updated": "2026-11-13T12:16:02.192Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "66775b3009776caebd919003873c234b50d7764be90b55457162069910c8539f",
-      "verified_at": "2026-11-12T05:27:16.555Z",
+      "content_hash": "e727c601191752f2c267d552e8c5ec9fb0990271cb8bd707d81e6bf0e9815a77",
+      "verified_at": "2026-11-13T12:16:29.260Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T05:27:16.555Z"
+      "last_updated": "2026-11-13T12:16:29.260Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
