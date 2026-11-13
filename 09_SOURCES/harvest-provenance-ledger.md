@@ -9297,3 +9297,8 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `437c6484` | Multi-dimensional audit evidence | 2026-11-13T02:06:03.968Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-13T02:10:35.845Z |
 | `learn-dom-h-8c53c2bf` | `project://oxc-project-oxc` | `8a6e0c14` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md` | 2026-11-13T02:10:54.155Z |
+| `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-13T02:24:30.554Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `27bbbc1c` | Multi-dimensional audit evidence | 2026-11-13T02:24:48.291Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `849a356c` | Multi-dimensional audit evidence | 2026-11-13T02:24:54.641Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `28fc5a3a` | Multi-dimensional audit evidence | 2026-11-13T02:24:59.295Z |
+| `learn-dom-d-dabeafce` | `project://hf-mistralai-timestral-209m` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md` | 2026-11-13T02:25:20.386Z |

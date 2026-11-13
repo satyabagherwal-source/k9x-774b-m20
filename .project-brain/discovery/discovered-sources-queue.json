@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T02:10:54.381Z",
+  "updated_at": "2026-11-13T02:25:20.447Z",
   "stats": {
-    "total_discovered": 1997,
-    "approved_pending_harvest": 1841,
+    "total_discovered": 2008,
+    "approved_pending_harvest": 1852,
     "harvested_count": 0,
     "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1838,
+      "COMMUNITY_AND_EXPERT": 1849,
       "OFFICIAL_DOCUMENTATION": 82,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -42859,6 +42859,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
         "fileName": "matrixorigin-matrixone-learnings.md"
+      }
+    },
+    "SRC-B6BD2783A916": {
+      "id": "SRC-B6BD2783A916",
+      "url": "https://github.com/zed-industries/zed",
+      "title": "https://github.com/zed-industries/zed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:05.173Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-2FA41F97A3AA": {
+      "id": "SRC-2FA41F97A3AA",
+      "url": "https://zed.dev/404",
+      "title": "https://zed.dev/404",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:05.190Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-FFAEAF3880E4": {
+      "id": "SRC-FFAEAF3880E4",
+      "url": "https://zed.dev/",
+      "title": "https://zed.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:05.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-EEB77D5A238F": {
+      "id": "SRC-EEB77D5A238F",
+      "url": "https://github.com/user-attachments/assets/6eaee086-bf42-4d92-abc5-6fc42f6aa773",
+      "title": "https://github.com/user-attachments/assets/6eaee086-bf42-4d92-abc5-6fc42f6aa773",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:05.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-2E000183A861": {
+      "id": "SRC-2E000183A861",
+      "url": "https://github.com/user-attachments/assets/ee33b4e7-4dae-43a1-8bfa-8b85c8302ebe",
+      "title": "https://github.com/user-attachments/assets/ee33b4e7-4dae-43a1-8bfa-8b85c8302ebe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:05.245Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-8FF5A2861D90": {
+      "id": "SRC-8FF5A2861D90",
+      "url": "https://github.com/user-attachments/assets/a937839c-f8ba-4f2e-9fb0-9ca1a91380be",
+      "title": "https://github.com/user-attachments/assets/a937839c-f8ba-4f2e-9fb0-9ca1a91380be",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:05.261Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-50C1DB1923B6": {
+      "id": "SRC-50C1DB1923B6",
+      "url": "https://github.com/zed-industries/zed/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/zed-industries/zed/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:05.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-9D9557EDBB17": {
+      "id": "SRC-9D9557EDBB17",
+      "url": "https://github.com/zed-industries/zed/blob/main/crates/icons/README.md",
+      "title": "https://github.com/zed-industries/zed/blob/main/crates/icons/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:05.293Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-966584A0F435": {
+      "id": "SRC-966584A0F435",
+      "url": "https://huggingface.co/mistralai/Timestral-209M",
+      "title": "https://huggingface.co/mistralai/Timestral-209M",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:20.394Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
+        "fileName": "hf-mistralai-timestral-209m-learnings.md"
+      }
+    },
+    "SRC-809A0F0D0585": {
+      "id": "SRC-809A0F0D0585",
+      "url": "https://github.com/duongductrong/Snapzy",
+      "title": "https://github.com/duongductrong/Snapzy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:20.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
+        "fileName": "duongductrong-snapzy-learnings.md"
+      }
+    },
+    "SRC-F573D5F9D894": {
+      "id": "SRC-F573D5F9D894",
+      "url": "https://github.com/user-attachments/assets/3af50df5-1062-435d-aa8d-566b4080c7a8",
+      "title": "https://github.com/user-attachments/assets/3af50df5-1062-435d-aa8d-566b4080c7a8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:25:20.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
+        "fileName": "duongductrong-snapzy-learnings.md"
       }
     }
   }

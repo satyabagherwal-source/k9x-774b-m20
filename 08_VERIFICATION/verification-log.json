@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-DDLE",
-    "timestamp": "2026-11-09T16:33:38.066Z",
-    "repository": "LiquidAI/LFM3-Omni-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-    "contentHash": "18ea9359dd429b6a53605f5ef3b62610424d3dad6fa9fe796fde878c74087d38",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-DEV3",
-    "timestamp": "2026-11-09T16:33:39.711Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "2fb8b84cfd71001f88ce4867dacd135975a308fc4ed2b1f281a7f42da9ce941b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-LYUI",
-    "timestamp": "2026-11-09T16:40:18.858Z",
-    "repository": "Xudong-Huang/may",
-    "learningId": "learn-github-xudong-huang-may",
-    "contentHash": "b3f699fe649fc4b6b3dff592849d93937994da0f8c3c5b8439f3ff58f8802a5c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-M3K7",
-    "timestamp": "2026-11-09T16:40:24.967Z",
-    "repository": "software-mansion/react-native-reanimated",
-    "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "4aa733de7aeebc43b3205d11941c090ade3700913f2d6e1d1cb447679636b305",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-M79R",
     "timestamp": "2026-11-09T16:40:29.775Z",
     "repository": "datalab-to/indra-ocr",
@@ -7492,6 +7432,66 @@
     "contentHash": "b9b4d6c977ca81cbbf4519c90d29323cda8077af673cc84fc1526f7879371be5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-SSWL",
+    "timestamp": "2026-11-13T02:24:30.549Z",
+    "repository": "mistralai/Timestral-209M",
+    "learningId": "learn-huggingface-mistralai-timestral-209m",
+    "contentHash": "93d1b30d1c225e4be9d68cf5b3d8af07302b5e7dd5609e1c414ba5a2f9c61906",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-T6LA",
+    "timestamp": "2026-11-13T02:24:48.287Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "18f6ccaf0ed7b898152ce2e2c995514a3dc3136d8c25f7f2bcb085f16d8bab54",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-TBHO",
+    "timestamp": "2026-11-13T02:24:54.636Z",
+    "repository": "duongductrong/Snapzy",
+    "learningId": "learn-github-duongductrong-snapzy",
+    "contentHash": "4c557d230ec16c27938506cc1bf155263f3aa3220210f56cfce0d3295766ac54",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-TF2Y",
+    "timestamp": "2026-11-13T02:24:59.290Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "1df137b71a5530c3826bcd8c95c08280057eab6da2c61ab6fb61671e8312a32e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

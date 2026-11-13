@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T02:10:54.152Z",
-  "total_records": 81,
+  "last_updated": "2026-11-13T02:25:20.383Z",
+  "total_records": 82,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 41,
+      "total": 42,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -66,7 +66,8 @@
         "DOM-D-B36C340C",
         "DOM-D-CDB84B7D",
         "DOM-D-3EB7AC49",
-        "DOM-D-E9BE8727"
+        "DOM-D-E9BE8727",
+        "DOM-D-DABEAFCE"
       ]
     },
     "E": {
@@ -3306,6 +3307,48 @@
       "confidence": 0.86,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T02:10:54.150Z"
+    },
+    "DOM-D-DABEAFCE": {
+      "record_id": "DOM-D-DABEAFCE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): mistralai/Timestral-209M",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/mistralai/Timestral-209M](https://huggingface.co/mistralai/Timestral-209M))  \n> **Source Version**: `hf-mistralai`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "f16a15815211c7c67d8da5a99a8c668c8d75fe33462bfac660f8ed5c72b22178",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-mistralai-timestral-209m/hf-mistralai-timestral-209m-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T02:25:05.305Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mistralai-timestral-209m)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-mistralai-timestral-209m"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T02:25:20.381Z"
     }
   }
 }

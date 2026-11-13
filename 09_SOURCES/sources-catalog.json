@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "1a559e40",
+    "sourceVersion": "28fc5a3a",
     "license": "Apache-2.0",
-    "contentHash": "8f0168830209c6f974f10fe7559d98c21e99eaae0c7c0ef3fa600b72298c77e6",
-    "lastHarvestedAt": "2026-11-12T21:10:48.732Z",
+    "contentHash": "1df137b71a5530c3826bcd8c95c08280057eab6da2c61ab6fb61671e8312a32e",
+    "lastHarvestedAt": "2026-11-13T02:24:59.295Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "985bbf42",
+    "sourceVersion": "27bbbc1c",
     "license": "NOASSERTION",
-    "contentHash": "92287886fee3d837c18d74ffcbc845375b7ad2edd31ba3c9077bc6f2358ea7f2",
-    "lastHarvestedAt": "2026-11-11T08:28:08.193Z",
+    "contentHash": "18f6ccaf0ed7b898152ce2e2c995514a3dc3136d8c25f7f2bcb085f16d8bab54",
+    "lastHarvestedAt": "2026-11-13T02:24:48.291Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -8455,8 +8455,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Timestral-209M",
     "sourceVersion": "hf-mistralai-timestral-209m",
     "license": "Open-Source",
-    "contentHash": "b1683ce9a60e25a8aa20d1549f9919c27b0db8b812f625a6cdaec80e84320350",
-    "lastHarvestedAt": "2026-11-08T02:49:36.468Z",
+    "contentHash": "93d1b30d1c225e4be9d68cf5b3d8af07302b5e7dd5609e1c414ba5a2f9c61906",
+    "lastHarvestedAt": "2026-11-13T02:24:30.554Z",
     "learningId": "learn-huggingface-mistralai-timestral-209m"
   },
   "software-mansion-react-native-screens": {
@@ -9153,10 +9153,10 @@
     "repository": "duongductrong/Snapzy",
     "platform": "github",
     "sourceUrl": "https://github.com/duongductrong/Snapzy",
-    "sourceVersion": "13c02b4c",
+    "sourceVersion": "849a356c",
     "license": "BSD-3-Clause",
-    "contentHash": "32ce289fab711615bf23bebf456f65221d22dcb8d38c31c3c0465250c6ffbb9e",
-    "lastHarvestedAt": "2026-11-08T19:50:27.646Z",
+    "contentHash": "4c557d230ec16c27938506cc1bf155263f3aa3220210f56cfce0d3295766ac54",
+    "lastHarvestedAt": "2026-11-13T02:24:54.641Z",
     "learningId": "learn-github-duongductrong-snapzy"
   },
   "scrapy-plugins-scrapy-deltafetch": {

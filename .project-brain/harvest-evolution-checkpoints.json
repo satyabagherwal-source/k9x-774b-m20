@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T02:10:54.391Z",
+  "last_updated": "2026-11-13T02:25:20.455Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T01:31:37.311Z",
@@ -63,7 +63,7 @@
       "staged_for_review": 0
     },
     "zed-industries-zed-learnings.md": {
-      "processed_at": "2026-11-11T08:28:26.584Z",
+      "processed_at": "2026-11-13T02:25:05.160Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1436,9 +1436,19 @@
       "processed_at": "2026-11-13T02:10:54.321Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-mistralai-timestral-209m-learnings.md": {
+      "processed_at": "2026-11-13T02:25:20.386Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "duongductrong-snapzy-learnings.md": {
+      "processed_at": "2026-11-13T02:25:20.423Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 420,
-  "total_canonical_promoted": 48,
-  "total_staged_for_review": 370
+  "total_dossiers_evaluated": 423,
+  "total_canonical_promoted": 49,
+  "total_staged_for_review": 372
 }

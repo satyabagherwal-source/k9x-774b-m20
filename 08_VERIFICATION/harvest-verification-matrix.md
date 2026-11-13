@@ -9288,3 +9288,8 @@
 | `CYCLE-20261113-5324` | `2026-11-13T02:06:03.964Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ca583dc...`) |
 | `CYCLE-20261113-AWU9` | `2026-11-13T02:10:35.841Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`b9b4d6c9...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T02:10:54.155Z` | `oxc-project-oxc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-8C53C2BF` [Domain H] | Yes (`0ae62b34...`) |
+| `CYCLE-20261113-SSWL` | `2026-11-13T02:24:30.549Z` | `mistralai/Timestral-209M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md` | Yes (`93d1b30d...`) |
+| `CYCLE-20261113-T6LA` | `2026-11-13T02:24:48.287Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18f6ccaf...`) |
+| `CYCLE-20261113-TBHO` | `2026-11-13T02:24:54.636Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4c557d23...`) |
+| `CYCLE-20261113-TF2Y` | `2026-11-13T02:24:59.290Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1df137b7...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T02:25:20.386Z` | `hf-mistralai-timestral-209m` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DABEAFCE` [Domain D] | Yes (`f16a1581...`) |

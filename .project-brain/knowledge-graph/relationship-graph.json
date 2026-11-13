@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T02:10:54.154Z",
+  "updated_at": "2026-11-13T02:25:20.385Z",
   "statistics": {
-    "total_nodes": 34,
-    "total_edges": 14,
+    "total_nodes": 35,
+    "total_edges": 15,
     "domain_distribution": {
-      "D": 22,
+      "D": 23,
       "M": 1,
       "H": 7,
       "J": 1,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 14
+      "CONSTRAINED_BY_ARCHITECTURE": 15
     }
   },
   "nodes": {
@@ -763,6 +763,29 @@
       ],
       "created_at": "2026-11-13T02:10:54.154Z",
       "updated_at": "2026-11-13T02:10:54.154Z"
+    },
+    "DOM-D-DABEAFCE": {
+      "id": "DOM-D-DABEAFCE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): mistralai/Timestral-209M",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-mistralai-timestral-209m/hf-mistralai-timestral-209m-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T02:25:05.305Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mistralai-timestral-209m)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T02:25:20.385Z",
+      "updated_at": "2026-11-13T02:25:20.385Z"
     }
   },
   "edges": [
@@ -905,6 +928,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-8C53C2BF [H] with Domain G",
       "created_at": "2026-11-13T02:10:54.154Z"
+    },
+    {
+      "id": "EDGE-ACDFD7898C37",
+      "sourceId": "DOM-D-DABEAFCE",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-DABEAFCE [D] with Domain M",
+      "created_at": "2026-11-13T02:25:20.385Z"
     }
   ]
 }

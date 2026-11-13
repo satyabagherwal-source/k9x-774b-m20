@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T02:10:35.855Z",
+  "last_updated": "2026-11-13T02:24:59.310Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "8f0168830209c6f974f10fe7559d98c21e99eaae0c7c0ef3fa600b72298c77e6",
-      "verified_at": "2026-11-12T21:10:48.742Z",
+      "content_hash": "1df137b71a5530c3826bcd8c95c08280057eab6da2c61ab6fb61671e8312a32e",
+      "verified_at": "2026-11-13T02:24:59.309Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:10:48.742Z"
+      "last_updated": "2026-11-13T02:24:59.309Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "92287886fee3d837c18d74ffcbc845375b7ad2edd31ba3c9077bc6f2358ea7f2",
-      "verified_at": "2026-11-11T08:28:08.225Z",
+      "content_hash": "18f6ccaf0ed7b898152ce2e2c995514a3dc3136d8c25f7f2bcb085f16d8bab54",
+      "verified_at": "2026-11-13T02:24:48.303Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T08:28:08.225Z"
+      "last_updated": "2026-11-13T02:24:48.303Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -12726,14 +12726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-timestral-209m",
-      "content_hash": "b1683ce9a60e25a8aa20d1549f9919c27b0db8b812f625a6cdaec80e84320350",
-      "verified_at": "2026-11-08T02:49:36.488Z",
+      "content_hash": "93d1b30d1c225e4be9d68cf5b3d8af07302b5e7dd5609e1c414ba5a2f9c61906",
+      "verified_at": "2026-11-13T02:24:30.565Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:49:36.488Z"
+      "last_updated": "2026-11-13T02:24:30.565Z"
     },
     "software-mansion/react-native-screens": {
       "repository": "software-mansion/react-native-screens",
@@ -13776,14 +13776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duongductrong-snapzy",
-      "content_hash": "32ce289fab711615bf23bebf456f65221d22dcb8d38c31c3c0465250c6ffbb9e",
-      "verified_at": "2026-11-08T19:50:27.653Z",
+      "content_hash": "4c557d230ec16c27938506cc1bf155263f3aa3220210f56cfce0d3295766ac54",
+      "verified_at": "2026-11-13T02:24:54.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T19:50:27.653Z"
+      "last_updated": "2026-11-13T02:24:54.675Z"
     },
     "scrapy-plugins/scrapy-deltafetch": {
       "repository": "scrapy-plugins/scrapy-deltafetch",

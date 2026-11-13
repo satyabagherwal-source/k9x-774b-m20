@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T02:10:54.350Z",
+  "last_updated": "2026-11-13T02:25:20.422Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7877,6 +7877,24 @@
       "source_repo": "matrixorigin-matrixone",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CCF34A-native-preparation-and-stabilize-ci-test.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-A042BA",
+      "directive_title": "opening `ssh://` links with a drive letter on Windows remotes (#66814)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zed-industries-zed",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A042BA-opening-ssh-links-with-a-drive-letter-on.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-6530D7",
+      "directive_title": "Snapzy no longer crashes at launch on macOS 13 and 14 (#725) (#727)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "duongductrong-snapzy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6530D7-snapzy-no-longer-crashes-at-launch-on-ma.md",
       "staged_date": "2026-11-13"
     }
   ]

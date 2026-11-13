@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source**: github ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
-> **Source Version**: `13c02b4c`  
+> **Source Version**: `849a356c`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T19:50:26.404Z  
+> **Timestamp**: 2026-11-13T02:24:37.133Z  
 > **Learning ID**: `learn-github-duongductrong-snapzy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T19:45:20.727Z  
+> **Harvest Timestamp**: 2026-11-13T02:24:37.124Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source native macOS screenshot and screen recording app. A CleanShot X alternative.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3543 stars
+- **Stars / Engagement**: 3564 stars
 
 ---
 
@@ -930,11 +930,11 @@ struct MeasureOptions: ParsableArguments {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #701** (2026-11-07): **[Bug]: Screenshot & Annotate pointer stuck on macOS 27.2 while dragging still works (2.1 / 2.2 beta)**
-  *Symptoms*: ### Description  Screenshot & Annotate becomes unusable on macOS 27.2: the on-screen cursor/selection point stays at its initial position instead of following mouse movement. However, holding the mouse button and dragging still creates a selection rectangle from that position.  This appears similar to #695. This report adds version history and the distinction between pointer movement and dragging.  ### Version History  - Previously working: Snapzy 2.0 on macOS 27.0. - Affected: Snapzy 2.1 and later on macOS 27.2. - Currently installed and still affected: Snapzy 2.2.0-beta.2 (218) on macOS 27.2.  **Snapzy 2.0 has not been tested on macOS 27.2.** Because both the app and OS versions changed, this comparison does not establish whether the regression was introduced by Snapzy, macOS, or their interaction.  ### Steps to Reproduce  1. Run Snapzy on macOS 27.2. 2. Activate Screenshot & Annotate. 3. Move the mouse without holding a mouse button and try to position the selection point. 4. Hold the mouse button and drag to create a selection rectangle.  ### Expected Behavior  The cursor/selection point follows mouse movement, allowing the user to choose where to start a selection and then proceed with annotation.  ### Actual Behavior  - The screenshot overlay appears frozen: the visible cursor/selection point does not follow mouse movement. - Holding the mouse button and dragging still creates a selection rectangle from the position where the pointer was stuck. - The normal selection an
+- **Issue #730** (2026-11-10): **[Bug]: Tooltips are massive on macOS 15.8**
+  *Symptoms*: ### Description  The tooltips in settings are huuuuge, see screenshot.  ### Steps to Reproduce  1. Open Snapzy Settings. 2. Hover over any `(i)` sign to read the tooltip. 3. The tooltip will fill a massive amount of screen space.  ### Expected Behavior  Tooltips should probably be as large as the text within them.  ### Actual Behavior  The tooltips are massive.  ### Screenshots / Recordings  ![Screenshot](https://github.com/user-attachments/assets/3af50df5-1062-435d-aa8d-566b4080c7a8)  ### Snapzy Version  2.2.0-beta.9  ### macOS Version  macOS 15 (Sequoia)  ### Installation Method  DMG download  ### Additional Context  _No response_
 
-- **Issue #695** (2026-11-07): **[Bug]: Screenshot selection freezes and cannot be moved**
-  *Symptoms*: ### Description  When using the Screenshot & Annotate feature in Snapzy, the screenshot selection point becomes stuck and cannot be moved with the mouse. This prevents me from properly selecting the screenshot area and using the annotation feature.  ### Steps to Reproduce  1. Open Snapzy. 2. Activate the Screenshot & Annotate feature. 3. Try to move the screenshot selection point using the mouse. 4. Observe that the selection point becomes stuck and does not respond to mouse movement.  ### Expected Behavior  The screenshot selection point should respond smoothly to mouse movement, allowing me to select the desired area and proceed with annotation as expected.  ### Actual Behavior  The screenshot selection point freezes and cannot be moved with the mouse. The screenshot selection and annotation workflow becomes unusable.  ### Screenshots / Recordings  _No response_  ### Snapzy Version  2.1.0  ### macOS Version  Other (specify in description)  ### Installation Method  None  ### Additional Context  _No response_
+- **Issue #725** (2026-11-09): **[Bug]: 2.2.0-beta.8 crashes on launch on macOS 14.5 (jump to address 0)**
+  *Symptoms*: ### Description  After updating from 2.1.0 to 2.2.0-beta.8 through the beta update channel, Snapzy crashes about one second after every launch. No window and no menu bar icon appear. 2.1.0 worked on the same Mac.  ### Steps to Reproduce  1. Run Snapzy 2.1.0 (Homebrew) on macOS 14.5. 2. Switch the update channel to beta and install 2.2.0-beta.8. 3. Launch Snapzy.  ### Expected Behavior  Snapzy launches and shows its menu bar icon.  ### Actual Behavior  The process exits about one second after launch with EXC_BAD_ACCESS (SIGSEGV). Every launch produces the same crash report.  ### Screenshots / Recordings  _No response_  ### Snapzy Version  2.2.0-beta.8 (224)  ### macOS Version  macOS 14 (Sonoma)  ### Installation Method  Homebrew  ### Additional Context  From the macOS crash report (three launches, identical):  ``` Version:    2.2.0-beta.8 (224) OS:         macOS 14.5 (23F79) Hardware:   MacBookPro18,2 (Apple Silicon) Exception:  EXC_BAD_ACCESS (SIGSEGV), KERN_INVALID_ADDRESS at 0x0             pc = 0x0, ESR: Instruction Abort, translation fault Binary UUID: 6b429b3c-ab87-3343-b7fc-83ff556688d8  Thread 0 (main), crashed: 0   ???                           0x0 1   Snapzy                        + 1609360 2   Snapzy                        + 1532016 3   Snapzy                        + 1485492 4   Snapzy                        + 10390756 5   Snapzy                        + 10383428 6   Snapzy                        + 10356400 7   Snapzy                        + 14720 8   Snapzy      
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,1017 +951,424 @@ struct MeasureOptions: ParsableArguments {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44278b1c` (2026-11-07)
-**Commit Message**: fix: Keep the app responsive while OCR runs (#708)
+### Incident Patch 1: `432657c3` (2026-11-09)
+**Commit Message**: fix: Snapzy no longer crashes at launch on macOS 13 and 14 (#725) (#727)
 
-OCR ran entirely on the main actor (the project's default isolation), so
-Vision's synchronous perform calls for every recognition pass froze the UI,
-and the shared capture lock stayed held until recognition finished, so other
-capture shortcuts did nothing.
+Approachable Concurrency makes plain async closure types
+nonisolated(nonsending). Using one generically (Dictionary value,
+Optional) needs swift_getExtendedFunctionTypeMetadata, which exists only
+in the macOS 15+ Swift runtime. Optimized builds call it without a
+fallback, so the weak import resolves to NULL and the app jumps to 0x0
+when the CLI router is built at launch.
 
-- Run image normalization, contrast enhancement, vertical CJK analysis,
-  Vision text recognition, QR detection and remote-OCR JPEG encoding on a
-  dedicated GCD queue (OCRWorkQueue), off both the main thread and the Swift
-  cooperative pool. Only candidate ranking and formatting stay on main.
-- Release isAreaSelectionActive once the OCR snapshot is secured and the
-  overlay is dismissed, as live area capture does; a separate
-  isOCRProcessing flag still blocks a second OCR.
-- Re-triggering OCR while one is running shows a cursor-following chat
-  bubble ("Hang tight, still reading text…") with clear Liquid Glass on
-  macOS 26+ and the design-system glass fallback elsewhere.
+- CLIRequestRouter.Route is @concurrent
+- ScreenRulerController.buildRaster and ScrollingCaptureCommitScheduler
+  operation are @MainActor (same isolation they ran with before)
+- Release workflow fails if the archived binary imports the symbol, and
+  keeps the archive dSYMs as a workflow artifact
 
-**File**: `Snapzy/Features/Capture/CaptureViewModel.swift` (modified, +18/-4)
+**File**: `.github/workflows/release-publish.yml` (modified, +15/-0)
 ```diff
-@@ -64,6 +64,8 @@ final class ScreenCaptureViewModel: ObservableObject, KeyboardShortcutDelegate {
-   private let fileAccessManager = SandboxFileAccessManager.shared
-   private let tempCaptureManager = TempCaptureManager.shared
-   private var isAreaSelectionActive = false
-+  /// True from OCR area selection (mouse-up) until text recognition finishes.
-+  private var isOCRProcessing = false
-   private var activeAreaSelectionSessionID: UUID?
-   private var lazyAreaSnapshotTasks: [CGDirectDisplayID: Task<Void, Never>] = [:]
-   private var lazyAreaSnapshotFailedDisplayIDs = Set<CGDirectDisplayID>()
-@@ -2407,6 +2409,14 @@ final class ScreenCaptureViewModel: ObservableObject, KeyboardShortcutDelegate {
-   // MARK: - OCR Capture
+@@ -181,6 +181,21 @@ jobs:
+             exit 1
+           fi
  
-   func captureOCR() {
-+    // A previous OCR is still capturing/recognizing: tell the user at the pointer
-+    // instead of silently ignoring the shortcut (which reads as the app hanging).
-+    if isOCRProcessing {
-+      DiagnosticLogger.shared.log(.debug, .ocr, "captureOCR blocked: previous OCR still processing")
-+      CursorBubbleController.shared.show(L10n.OCR.alreadyRunning)
-+      return
-+    }
++      # Release-only crash class (#725): optimized builds call macOS 15+ Swift
++      # runtime symbols without a fallback, so the app dies at launch on 13/14.
++      - name: Guard Swift runtime imports for deployment target
++        run: |
++          set -euo pipefail
++          bash scripts/check-runtime-weak-imports.sh build/Snapzy.xcarchive/Products/Applications/Snapzy.app
 +
-     // Prevent multiple area captures
-     if isAreaSelectionActive {
-       DiagnosticLogger.shared.log(.debug, .ocr, "captureOCR blocked: area selection active")
-@@ -2489,6 +2499,11 @@ final class ScreenCaptureViewModel: ObservableObject, KeyboardShortcutDelegate {
- 
-           // Secure pixels first: immediately after the snapshot is taken, dismiss the overlay.
-           AreaSelectionController.shared.cancelSelection()
-+          // Pixels are secured and the overlay is gone: release the shared capture lock now
-+          // (as live area capture does) so other capture shortcuts work while OCR runs.
-+          // `isOCRProcessing` alone guards against starting a second OCR.
-+          self.isAreaSelectionActive = false
-+          self.isOCRProcessing = true
- 
-           let progressToast = AppStatusBarController.shared.isMenuBarIconVisible
-             ? nil
-@@ -2503,7 +2518,7 @@ final class ScreenCaptureViewModel: ObservableObject, KeyboardShortcutDelegate {
-           Task { @MainActor in
-             var progressToastResolved = false
-             defer {
--              self.isAreaSelectionActive = false
-+              self.isOCRProcessing = false
-               hiddenWindowSession.restore()
-               if let progressToast, !progressToastResolved {
-                 AppToastManager.shared.dismiss(progressToast)
-@@ -2657,9 +2672,8 @@ final class ScreenCaptureViewModel: ObservableObject, KeyboardShortcutDelegate {
-     let startTime = CFAbsoluteTimeGetCurrent()
- 
-     do {
--      let result = try await Task.detached(priority: .userInitiated) {
--        try await QRCodeService.shared.detect(in: image)
--      }.value
-+      // QRCodeService runs Vision on the OCR work queue itself.
-+      let result = try await QRCodeService.shared.detect(in: image)
- 
-       if result.hasCopyablePayloads || result.unsupportedPayloadCount > 0 {
-         DiagnosticLogger.shared.log(
++      - name: Upload dSYMs
++        uses: actions/upload-artifact@v7
++        with:
++          name: Snapzy-v${{ steps.version.outputs.version }}-dSYMs
++          path: build/Snapzy.xcarchive/dSYMs
++          if-no-files-found: warn
++          retention-days: 90
++
+       - name: Guard release signing strategy
+         run: |
+           set -euo pipefail
 ```
 
-**File**: `Snapzy/Resources/Localization/Features/Capture.xcstrings` (modified, +65/-0)
+**File**: `Snapzy/Services/Capture/ScreenRuler/ScreenRulerController.swift` (modified, +5/-2)
 ```diff
-@@ -1236,6 +1236,71 @@
-         }
-       }
-     },
-+    "ocr.already-running": {
-+      "extractionState": "stale",
-+      "localizations": {
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Einen Moment, Text wird noch gelesen…"
-+          }
-+        },
-+        "en": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Hang tight, still reading text…"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Un momento, todavía leyendo el texto…"
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Un instant, lecture du texte en cours…"
-+          }
-+        },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "少々お待ちください、テキストを読み取り中…"
-+          }
-+        },
-+        "ko": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "잠시만요, 아직 텍스트를 읽는 중이에요…"
-+          }
-+        },
-+        "ru": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Секунду, ещё читаю текст…"
-+          }
-+        },
-+        "vi": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Chờ chút, vẫn đang đọc văn bản…"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "稍等，仍在读取文字…"
-+          }
-+        },
-+        "zh-Hant": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "稍等，仍在讀取文字…"
-+          }
-+        }
-+      }
-+    },
-     "ocr.capturing-content": {
-       "extractionState": "stale",
-       "localizations": {
+@@ -24,7 +24,10 @@ final class ScreenRulerController {
+   private let setProcessing: (Bool) -> Void
+   private let preferences: ScreenRulerPreferences
+   private let setsCursorHidden: Bool
+-  private let buildRaster: (CGImage) async -> ScreenRulerRaster?
++  // Not `nonisolated(nonsending)` on purpose: storing a nonsending async closure type
++  // generically needs `swift_getExtendedFunctionTypeMetadata` (macOS 15+ runtime), which
++  // Release builds call without a fallback -> launch crash on macOS 13/14 (#725).
++  private let buildRaster: @MainActor (CGImage) async -> ScreenRulerRaster?
+ 
+   private var windows: [ScreenRulerOverlayWindow] = []
+   private var saveHandler: SaveHandler?
+@@ -48,7 +51,7 @@ final class ScreenRulerController {
+     setProcessing: ((Bool) -> Void)? = nil,
+     preferences: ScreenRulerPreferences = ScreenRulerPreferences(),
+     setsCursorHidden: Bool = true,
+-    buildRaster: ((CGImage) async -> ScreenRulerRaster?)? = nil
++    buildRaster: (@MainActor (CGImage) async -> ScreenRulerRaster?)? = nil
+   ) {
+     self.copyToPasteboard = copyToPasteboard ?? { value in
+       let pasteboard = NSPasteboard.general
 ```
 
-**File**: `Snapzy/Services/Diagnostics/CursorBubbleController.swift` (added, +304/-0)
+**File**: `Snapzy/Services/Capture/ScrollingCapture/ScrollingCaptureCommitScheduler.swift` (modified, +5/-2)
 ```diff
-@@ -0,0 +1,304 @@
-+//
-+//  CursorBubbleController.swift
-+//  Snapzy
-+//
-+//  Figma-style "cursor chat" bubble that sticks to the pointer for a moment.
-+//
-+
-+import AppKit
-+import Combine
-+import SwiftUI
-+
-+/// Shows a short message in a pill that rides along with the pointer, like
-+/// Figma's cursor chat. Non-interactive, never takes focus, and is excluded
-+/// from captures like other Snapzy toasts.
-+@MainActor
-+final class CursorBubbleController {
-+  static let shared = CursorBubbleController()
-+
-+  /// Panel offset from the pointer tip. The bubble sits 10pt inside the panel
-+  /// (shadow room), so the visible gap is this plus 10.
-+  private static let pointerOffset = CGSize(width: 4, height: 6)
-+  private static let screenMargin: CGFloat = 0
-+
-+  private var panel: NSPanel?
-+  private let model = CursorBubbleModel()
-+  private var followTimer: Timer?
-+  private var dismissTask: Task<Void, Never>?
-+  private var lastMouseLocation: CGPoint?
-+
-+  private init() {}
-+
-+  /// Shows (or refreshes) the bubble. Calling again while visible restarts the
-+  /// timer and gives the bubble a small nudge instead of stacking a new one.
-+  func show(_ message: String, duration: TimeInterval = 1.8) {
-+    let isVisible = panel?.isVisible == true && model.isPresented
-+    model.message = message
-+
-+    let panel = resolvePanel()
-+    resizePanelToFit(panel)
-+    lastMouseLocation = nil
-+    followPointer()
-+
-+    if isVisible {
-+      model.nudge()
-+    } else {
-+      CaptureChromeWindowRegistry.configureAppWindow(panel)
-+      panel.alphaValue = 1
-+      panel.orderFrontRegardless()
-+      model.present(reduceMotion: Self.reduceMotion)
-+    }
-+
-+    startFollowing()
-+    scheduleDismiss(after: duration)
-+  }
-+
-+  // MARK: - Panel
-+
-+  private func resolvePanel() -> NSPanel {
-+    if let panel { return panel }
-+    let panel = AppToastManager.makeToastPanel(contentRect: .zero)
-+    // Glass draws its own shadow; sit above capture overlays (`.screenSaver`).
-+    panel.hasShadow = false
-+    panel.level = NSWindow.Level(rawValue: NSWindow.Level.screenSaver.rawValue + 1)
-+    panel.contentView = NSHostingView(rootView: CursorBubbleView(model: model))
-+    self.panel = panel
-+    return panel
-+  }
-+
-+  private func resizePanelToFit(_ panel: NSPanel) {
-+    guard let hostingView = panel.contentView else { return }
-+    let size = hostingView.fittingSize
-+    panel.setContentSize(size)
-+  }
-+
-+  // MARK: - Following
-+
-+  private func startFollowing() {
-+    guard followTimer == nil else { return }
-+    // 120 Hz keeps the bubble glued to the pointer on ProMotion displays; the
-+    // timer only lives for the ~2s the bubble is on screen.
-+    let timer = Timer(timeInterval: 1.0 / 120.0, repeats: true) { [weak self] _ in
-+      MainActor.assumeIsolated { self?.followPointer() }
-+    }
-+    RunLoop.main.add(timer, forMode: .common)
-+    followTimer = timer
-+  }
-+
-+  private func stopFollowing() {
-+    followTimer?.invalidate()
-+    followTimer = nil
-+  }
-+
-+  private func followPointer() {
-+    guard let panel else { return }
-+    let mouse = NSEvent.mouseLocation
-+    guard mouse != lastMouseLocation else { return }
-+    lastMouseLocation = mouse
-+
-+    let size = panel.frame.size
-+    let screen = NSScreen.screens.first { $0.frame.contains(mouse) } ?? NSScreen.main
-+    let bounds = screen?.visibleFrame ?? CGRect(origin: .zero, size: CGSize(width: 10_000, height: 10_000))
-+    let margin = Self.screenMargin
-+    let offset = Self.pointerOffset
-+
-+    // Default: below-right of the pointer (AppKit y grows upward).
-+    var x = mouse.x + offset.width
-+    var y = mouse.y - offset.height - size.height
-+    var flipsX = false
-+    var flipsY = false
-+    if x + size.width > bounds.maxX - margin {
-+      x = mouse.x - offset.width - size.width
-+      flipsX = true
-+    }
-+    if y < bounds.minY + margin {
-+      y = mouse.y + offset.height
-+      flipsY = true
-+    }
-+    x = min(max(x, bounds.minX + margin), bounds.maxX - size.width - margin)
-+    y = min(max(y, bounds.minY + margin), bounds.maxY - size.height - margin)
-+
-+    model.setPointedCorner(flipsX: flipsX, flipsY: flipsY)
-+    panel.setFrameOrigin(CGPoint(x: x.rounded(), y: y.rounded()))
-+  }
-+
-+  // MARK: - Dismissal
-+
-+  private func scheduleDismiss(after duration: TimeInterval) {
-+    dismissTask?.cancel()
-+    dismissTask = Task { [weak self] in
-+      try? await Task.sleep(nanoseconds: UInt64(max(0.6, duration) * 1_000_000_000))
-+      guard !Task.isCancelled else { return }
-+      self?.dismiss()
-+    }
-+  }
-+
-+  private func dismiss() {
-+    guard let panel else { return }
-+    model.dismiss(reduceMotion: Self.reduceMotion)
-+    dismissTask = Task { [weak self] in
-+      try? await Task.sleep(nanoseconds: 220_000_000)
-+      guard !Task.isCancelled else { return }
-+      panel.orderOut(nil)
-+      self?.stopFollowing()
-+    }
-+  }
-+
-+  private static var reduceMotion: Bool {
-+    NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
-+  }
-+}
-+
-+// MARK: - Model
-```
-
-**File**: `Snapzy/Services/Media/OCR/RemoteOCRService.swift` (modified, +4/-3)
-```diff
-@@ -92,7 +92,8 @@ struct RemoteOCRProvider: OCRProvider {
-     guard let endpoint = Self.endpointURL(forBaseURL: model.baseURL) else {
-       throw RemoteOCRError.invalidBaseURL
-     }
--    guard let jpegData = Self.jpegData(from: image) else {
-+    // JPEG + base64 encoding of a full screenshot is CPU-heavy; keep it off the main actor.
-+    guard let imageBase64 = await OCRWorkQueue.run({ Self.jpegData(from: image)?.base64EncodedString() }) else {
-       throw RemoteOCRError.imageEncodingFailed
-     }
- 
-@@ -107,7 +108,7 @@ struct RemoteOCRProvider: OCRProvider {
-       model: model.modelIdentifier,
-       messages: [ChatCompletionMessage(role: "user", content: [
-         .text(prompt),
--        .imageURL("data:image/jpeg;base64,\(jpegData.base64EncodedString())"),
-+        .imageURL("data:image/jpeg;base64,\(imageBase64)"),
-       ])]
-     ))
- 
-@@ -174,7 +175,7 @@ struct RemoteOCRProvider: OCRProvider {
-     return prompt
+@@ -17,7 +17,10 @@ final class ScrollingCaptureCommitScheduler {
    }
  
--  private static func jpegData(from image: CGImage) -> Data? {
-+  nonisolated private static func jpegData(from image: CGImage) -> Data? {
-     autoreleasepool {
-       NSBitmapImageRep(cgImage: image).representation(using: .jpeg, properties: [.compressionFactor: 0.9])
-     }
-```
-
-**File**: `Snapzy/Services/Media/OCR/VerticalCJKBitmapAnalysis.swift` (modified, +5/-5)
-```diff
-@@ -8,12 +8,12 @@
- import CoreGraphics
- import Foundation
+   private let onRequestCoalesced: () -> Void
+-  private let operation: (Request) async -> Void
++  // Not `nonisolated(nonsending)` on purpose: storing a nonsending async closure type
++  // generically needs `swift_getExtendedFunctionTypeMetadata` (macOS 15+ runtime), which
++  // Release builds call without a fallback -> launch crash on macOS 13/14 (#725).
++  private let operation: @MainActor (Request) async -> Void
  
--enum VerticalCJKBitmapFormat {
-+nonisolated enum VerticalCJKBitmapFormat {
-   static let rgbaBitmapInfo = CGBitmapInfo.byteOrder32Big.rawValue
-     | CGImageAlphaInfo.premultipliedLast.rawValue
- }
- 
--struct VerticalCJKBitmap {
-+nonisolated struct VerticalCJKBitmap {
-   let width: Int
-   let height: Int
-   let bytesPerRow: Int
-@@ -122,14 +122,14 @@ struct VerticalCJKBitmap {
-   }
- }
- 
--struct VerticalCJKForegroundRow {
-+nonisolated struct VerticalCJKForegroundRow {
-   let y: Int
-   let hasInk: Bool
-   let minX: Int
-   let maxX: Int
- }
- 
--struct VerticalCJKGlyphBand {
-+nonisolated struct VerticalCJKGlyphBand {
-   var startY: Int
-   var endY: Int
-   var minX: Int
-@@ -162,7 +162,7 @@ struct VerticalCJKGlyphBand {
-   }
- }
- 
--struct VerticalCJKRGBColor {
-+nonisolated struct VerticalCJKRGBColor {
-   let red: Int
-   let green: Int
-   let blue: Int
-```
-
-**File**: `Snapzy/Services/Media/OCR/VerticalCJKTextNormalizer.swift` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
- import CoreGraphics
- import Foundation
- 
--enum VerticalCJKTextNormalizer {
-+nonisolated enum VerticalCJKTextNormalizer {
-   static func normalizedImage(from image: CGImage) -> CGImage? {
-     guard image.height >= Int(Double(image.width) * 1.35), image.width >= 16, image.height >= 64 else {
-       return nil
-```
-
-**File**: `Snapzy/Services/Media/OCR/VisionOCRProfile.swift` (modified, +11/-0)
-```diff
-@@ -92,6 +92,17 @@ struct VisionOCRProfile {
-     }
-   }
- 
-+  /// Sendable copy of the request settings, for running Vision off the main actor.
-+  var recognitionConfiguration: VisionRecognitionConfiguration {
-+    VisionRecognitionConfiguration(
-+      usesLanguageCorrection: usesLanguageCorrection,
-+      recognitionLanguages: recognitionLanguages,
-+      customWords: customWords,
-+      minimumTextHeight: minimumTextHeight,
-+      automaticallyDetectsLanguage: automaticallyDetectsLanguage
-+    )
-+  }
-+
-   func configure(_ request: VNRecognizeTextRequest) {
-     request.recognitionLevel = .accurate
-     request.usesLanguageCorrection = usesLanguageCorrection
-```
-
-**File**: `Snapzy/Services/Media/OCR/VisionOCRWorker.swift` (added, +158/-0)
-```diff
-@@ -0,0 +1,158 @@
-+//
-+//  VisionOCRWorker.swift
-+//  Snapzy
-+//
-+//  Off-main execution for the CPU-heavy parts of OCR: bitmap normalization,
-+//  Core Image filtering, and synchronous Vision requests.
-+//
-+
-+import CoreGraphics
-+import CoreImage
-+import Foundation
-+import Vision
-+
-+/// Dedicated GCD queue for blocking image/Vision work.
-+///
-+/// `VNImageRequestHandler.perform` is synchronous and can take hundreds of
-+/// milliseconds per pass (accurate recognition, several fallback profiles). Running it on
-+/// the main actor froze the UI; running it inside a Swift Task would pin a
-+/// cooperative-pool thread. A separate queue keeps both free.
-+nonisolated enum OCRWorkQueue {
-+  private static let queue = DispatchQueue(
-+    label: "com.snapzy.ocr.work",
-+    qos: .userInitiated,
-+    attributes: .concurrent
-+  )
-+
-+  static func run<T: Sendable>(_ work: @escaping @Sendable () throws -> T) async throws -> T {
-+    try await withCheckedThrowingContinuation { continuation in
-+      queue.async {
-+        continuation.resume(with: Result { try work() })
-+      }
-+    }
-+  }
-+
-+  static func run<T: Sendable>(_ work: @escaping @Sendable () -> T) async -> T {
-+    await withCheckedContinuation { continuation in
-+      queue.async {
-+        continuation.resume(returning: work())
-+      }
-+    }
-+  }
-+}
-+
-+/// Sendable snapshot of a `VisionOCRProfile`'s request settings.
-+nonisolated struct VisionRecognitionConfiguration: Sendable {
-+  let usesLanguageCorrection: Bool
-+  let recognitionLanguages: [String]
-+  let customWords: [String]
-+  let minimumTextHeight: Float?
-+  let automaticallyDetectsLanguage: Bool
-+
-+  func configure(_ request: VNRecognizeTextRequest) {
-+    request.recognitionLevel = .accurate
-+    request.usesLanguageCorrection = usesLanguageCorrection
-+    if !recognitionLanguages.isEmpty {
-+      request.recognitionLanguages = recognitionLanguages
-+    }
-+    if !customWords.isEmpty {
-+      request.customWords = customWords
-+    }
-+    if let minimumTextHeight {
-+      request.minimumTextHeight = minimumTextHeight
-+    }
-+    if #available(macOS 13.0, *) {
-+      request.automaticallyDetectsLanguage = automaticallyDetectsLanguage
-+    }
-+  }
-+}
-+
-+/// One recognized text candidate, detached from Vision's observation objects.
-+nonisolated struct VisionTextCandidate: Sendable {
-+  let string: String
-+  let confidence: Float
-+}
-+
-+/// One recognized line with its top candidates (best first).
-+nonisolated struct VisionTextObservation: Sendable {
-+  let candidates: [VisionTextCandidate]
-+  let boundingBox: CGRect
-+}
-+
-+nonisolated enum VisionOCRWorker {
-+  private static let ciContext = CIContext(options: [.cacheIntermediates: false])
-+
-+  /// Runs one text-recognition request on the OCR work queue.
-+  static func recognizeText(
-+    in image: CGImage,
-+    configuration: VisionRecognitionConfiguration
-+  ) async throws -> [VisionTextObservation] {
-+    try await OCRWorkQueue.run {
-+      let request = VNRecognizeTextRequest()
-+      configuration.configure(request)
-+      let handler = VNImageRequestHandler(cgImage: image, options: [:])
-+      try handler.perform([request])
-+      return (request.results ?? []).map { observation in
-+        VisionTextObservation(
-+          candidates: observation.topCandidates(5).map {
-+            VisionTextCandidate(string: $0.string, confidence: $0.confidence)
-+          },
-+          boundingBox: observation.boundingBox
-+        )
-+      }
-+    }
-+  }
-+
-+  /// Draw the image into a standard sRGB bitmap so Vision can read it.
-+  /// Fixes `TextRecognition.CRImageReaderError` on IOSurface-backed images from
-+  /// `SCScreenshotManager`. Returns nil when normalization is not possible.
-+  static func normalizedImageForVision(_ image: CGImage) -> CGImage? {
-+    let width = image.width
-+    let height = image.height
-+    let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) ?? image.colorSpace ?? CGColorSpaceCreateDeviceRGB()
-+
-+    guard let context = CGContext(
-+      data: nil,
-+      width: width,
-+      height: height,
-+      bitsPerComponent: 8,
-+      bytesPerRow: 0,
-+      space: colorSpace,
-+      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-+    ) else {
-+      return nil
-+    }
-+
-+    context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-+    return context.makeImage()
-+  }
-+
-+  static func makeContrastEnhancedImage(from image: CGImage) -> CGImage? {
-+    let ciImage = CIImage(cgImage: image)
-+
-+    guard
-+      let colorControls = CIFilter(name: "CIColorControls"),
-+      let sharpen = CIFilter(name: "CISharpenLuminance")
-+    else {
-+      return nil
-+    }
-+
-+    colorControls.setValue(ciImage, forKey: kCIInputImageKey)
-+    colorControls.setValue(0, forKey: kCIInputSaturationKey)
-+    colorControls.setValue(1.32, forKey: kCIInputContrastKey)
-+    colorControls.setValue(0.02, forKey: kCIInputBrightnessKey)
-+
-+    guard let normalizedImage = colorControls.outputImage?.cropped(to: ciImage.extent) else {
-+      return nil
-+
-```
-
----
-
-### Incident Patch 2: `96054e5d` (2026-11-07)
-**Commit Message**: fix: Fixed Capture Markup crosshair tracking the pointer on macOS 27 (#707)
-
-* fix: keep Capture Markup crosshair tracking the pointer on macOS 27
-
-On macOS 27.2 the ⌘⇧7 overlay stops receiving SwiftUI hover events after
-the seeded first position, so the drawn crosshair, coordinate bubble and
-magnifier froze at the trigger point while the real cursor stayed hidden.
-
-- Poll the real pointer at 60 Hz during the selecting phase (same approach
-  as area capture's pointerTrackingTimer) and publish it as
-  selectionPointerLocation; hover/drag paths still run, the poll only fills
-  in what they miss. Stops on annotate/complete and logs hover vs polled
-  move counts for diagnostics.
-- Draw the crosshair proxy as a CALayer in InlineAreaMagnifierHostView,
-  updated together with the coordinate bubble, instead of a SwiftUI Image.
-
-* ci: skip inline session pointer-tracking tests on headless runner
-
-These tests build an InlineAreaAnnotateSession through makeSelectionSession(), which crashes (malloc double free) on the headless CI runner. The sibling tests using the same helper are already skipped here.
-
-**File**: `.github/workflows/ci.yml` (modified, +3/-0)
-```diff
-@@ -78,6 +78,9 @@ jobs:
-             SnapzyTests/InlineAreaAnnotateSessionTests/testAnnotateWindowConsumesCopyAndDuplicateWhenNothingIsSelected
-             SnapzyTests/InlineAreaAnnotateSessionTests/testUpdateSelectionPublishesPointerLocation
-             SnapzyTests/InlineAreaAnnotateSessionTests/testEndSelectionClearsPointerLocation
-+            SnapzyTests/InlineAreaAnnotateSessionTests/testPointerTrackingTickPublishesPointerWithoutHoverEvents
-+            SnapzyTests/InlineAreaAnnotateSessionTests/testPointerTrackingTickFillsInStalledDrag
-+            SnapzyTests/InlineAreaAnnotateSessionTests/testPointerTrackingTickIsInertAfterSelectingPhase
-             SnapzyTests/AreaSelectionMultiMonitorReconciliationTests
-             SnapzyTests/AreaSelectionSessionLifecycleTests
-             SnapzyTests/AreaSelectionHoverPerformanceTests
-```
-
-**File**: `Snapzy/Features/Annotate/InlineAreaAnnotateSession.swift` (modified, +70/-0)
-```diff
-@@ -117,6 +117,16 @@ final class InlineAreaAnnotateSession: ObservableObject {
-   /// `NSApp.activate` at start, so — unlike live-passthrough capture — this doesn't need
-   /// `BackgroundCursorControl`'s background-cursor-control workaround.
-   private var cursorHider = LivePassthroughCursorHider()
-+  /// Polls the real pointer during `.selecting` so the drawn crosshair, magnifier, coordinate
-+  /// bubble and window hover keep tracking even when AppKit stops delivering hover/mouse-moved
-+  /// events to the overlay panels. On macOS 27 `onContinuousHover` was observed to report only
-+  /// the seeded position, freezing all pointer chrome at the trigger point while the (hidden)
-+  /// real cursor kept moving. Same approach as plain area screenshot's `pointerTrackingTimer`.
-+  /// The SwiftUI hover/drag paths still run; this only fills in what they fail to report.
-+  private var pointerTrackingTimer: Timer?
-+  private var lastTrackedScreenPoint: CGPoint?
-+  private var hoverEventCount = 0
-+  private var polledPointerMoveCount = 0
+   private var runnerTask: Task<Void, Never>?
+   private var currentRequest: Request?
+@@ -26,7 +29,7 @@ final class ScrollingCaptureCommitScheduler {
  
    init(
-     primaryDisplayID: CGDirectDisplayID,
-@@ -158,6 +168,7 @@ final class InlineAreaAnnotateSession: ObservableObject {
-     // Session always starts in `.selecting` — hide the real cursor for every display up
-     // front; `beginAnnotating(with:)` shows it again once selection ends.
-     cursorHider.hide(displayIDs: Set(displays.map(\.displayID)))
-+    startPointerTracking()
-     startWindowSelectionQuery(prefetchedContentTask: prefetchedContentTask, excludeOwnApplication: excludeOwnApplication)
-     if autoDetectElementUnderCursor {
-       SmartElementQueryService.shared.ensureAccessibilityPermission()
-@@ -332,9 +343,67 @@ final class InlineAreaAnnotateSession: ObservableObject {
-     state.loadImage(crop.image, url: nil)
-     state.selectedTool = AnnotateToolPreference.initialTool(userDefaults: defaults)
-     phase = .annotating
-+    stopPointerTracking()
-     cursorHider.showAll()
-   }
- 
-+  /// Called by `InlineAreaAnnotateRootView` for every SwiftUI hover update; only feeds the
-+  /// diagnostics logged by `stopPointerTracking()`.
-+  func recordHoverEvent() {
-+    hoverEventCount += 1
-+  }
-+
-+  private func startPointerTracking() {
-+    guard pointerTrackingTimer == nil else { return }
-+    let timer = Timer(timeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
-+      MainActor.assumeIsolated {
-+        self?.handlePointerTrackingTick()
-+      }
-+    }
-+    RunLoop.main.add(timer, forMode: .common)
-+    pointerTrackingTimer = timer
-+  }
-+
-+  private func stopPointerTracking() {
-+    guard let timer = pointerTrackingTimer else { return }
-+    timer.invalidate()
-+    pointerTrackingTimer = nil
-+    DiagnosticLogger.shared.log(.debug, .capture, "Inline area annotate pointer tracking stopped", context: [
-+      "hoverEvents": "\(hoverEventCount)",
-+      "polledMoves": "\(polledPointerMoveCount)",
-+      "appActive": "\(NSApp.isActive)",
-+      "hasKeyPanel": "\(windows.allObjects.contains { $0.isKeyWindow })",
-+    ])
-+  }
-+
-+  func handlePointerTrackingTick(screenPoint: CGPoint = NSEvent.mouseLocation) {
-+    guard phase == .selecting, !didComplete else {
-+      stopPointerTracking()
-+      return
-+    }
-+    let localPoint = localDesktopPoint(for: screenPoint)
-+    let didMove = screenPoint != lastTrackedScreenPoint
-+    lastTrackedScreenPoint = screenPoint
-+
-+    if selectionStartPoint != nil {
-+      // Mid-drag: the drag monitor normally drives this; only fill in if it fell behind.
-+      if didMove, selectionPointerLocation != localPoint {
-+        updateSelection(to: localPoint)
-+      }
-+      return
-+    }
-+
-+    // Re-publish even without movement so a stray hover `.ended` (which clears it) can't
-+    // leave the chrome hidden while the pointer is still over a display.
-+    if selectionPointerLocation != localPoint {
-+      selectionPointerLocation = localPoint
-+    }
-+    if didMove {
-+      polledPointerMoveCount += 1
-+      updateHoveredWindow(atScreenPoint: screenPoint)
-+    }
-+  }
-+
-   func moveSelection(to localRect: CGRect, refreshImage: Bool) {
-     let clampedRect = clampedSelectionRect(localRect.standardized)
-     guard refreshImage else {
-@@ -644,6 +713,7 @@ final class InlineAreaAnnotateSession: ObservableObject {
-     selectionPointerLocation = nil
-     removeKeyMonitors()
-     removeSelectionMonitor()
-+    stopPointerTracking()
-     frozenSession.invalidate()
- 
-     // Restore cursor before closing windows — the inline overlay uses a
+     onRequestCoalesced: @escaping () -> Void = {},
+-    operation: @escaping (Request) async -> Void
++    operation: @escaping @MainActor (Request) async -> Void
+   ) {
+     self.onRequestCoalesced = onRequestCoalesced
+     self.operation = operation
 ```
 
-**File**: `Snapzy/Features/Annotate/InlineAreaAnnotateWindow.swift` (modified, +5/-26)
+**File**: `Snapzy/Services/CommandLine/CLIRequestRouter.swift` (modified, +4/-1)
 ```diff
-@@ -302,16 +302,10 @@ private struct InlineAreaAnnotateRootView: View {
-           // display's true size is already known without needing SwiftUI to measure it.
-           .frame(width: display.localFrame.width, height: display.localFrame.height)
-           .allowsHitTesting(false)
--
-           // The real system cursor is hidden for the whole `.selecting` phase
--          // (`InlineAreaAnnotateSession.cursorHider`) — draw the same crosshair image
--          // ourselves instead, mirroring plain area screenshot's `cursorProxyLayer`. Native
--          // `NSCursor.set()` is not used here: on this `.nonactivatingPanel` configuration the
--          // WindowServer can silently stop rendering it after roughly a second of no new mouse
--          // events, even though the app's own cursor bookkeeping stays correct the whole time.
--          if let selectingPointerPoint {
--            InlineAreaSystemCrosshairProxy(point: selectingPointerPoint)
--          }
-+          // (`InlineAreaAnnotateSession.cursorHider`). The replacement crosshair is drawn by
-+          // `InlineAreaMagnifierHostView` as a CALayer (`crosshairProxyLayer`), in the same
-+          // update as the coordinate bubble — not as a SwiftUI view here.
-         }
-       }
-       .coordinateSpace(name: InlineAreaCoordinateSpace.root)
-@@ -320,6 +314,7 @@ private struct InlineAreaAnnotateRootView: View {
-         case let .active(location):
-           cursorIndicatorPoint = location
-           if session.phase == .selecting {
-+            session.recordHoverEvent()
-             session.selectionPointerLocation = desktopPoint(for: location)
-           }
-           updateNativeCursorForIndicator(showsCursorIndicator)
-@@ -726,7 +721,7 @@ private struct InlineAreaAnnotateRootView: View {
- 
-   /// Only relevant to `.annotating`-phase moving (`InlineAreaCursorIndicator`) — during
-   /// `.selecting` the real cursor is already hidden for the whole phase
--  /// (`InlineAreaAnnotateSession.cursorHider`) and `InlineAreaSystemCrosshairProxy` draws the
-+  /// (`InlineAreaAnnotateSession.cursorHider`) and `InlineAreaMagnifierHostView` draws the
-   /// crosshair instead, so there's nothing for this to do there.
-   private func updateNativeCursorForIndicator(_ isIndicatorVisible: Bool) {
-     guard session.phase != .selecting else { return }
-@@ -809,22 +804,6 @@ private struct InlineAreaCursorIndicator: View {
-   }
+@@ -27,7 +27,10 @@ nonisolated protocol CLIRequestHandling: Sendable {
  }
  
--/// Drawn replacement for the real system cursor during `.selecting`, mirroring plain area
--/// screenshot's `cursorProxyLayer`: draws the exact same crosshair image
--/// (`NSCursor.vectorScreenshotCrosshairLight`) the real cursor would otherwise use, so the two
--/// entry points look pixel-identical, while sidestepping the WindowServer's tendency to stop
--/// rendering a native `NSCursor.set()` cursor on this `.nonactivatingPanel` configuration after
--/// a period of no new mouse events (see `InlineAreaAnnotateSession.cursorHider`).
--private struct InlineAreaSystemCrosshairProxy: View {
--  let point: CGPoint
--
--  var body: some View {
--    Image(nsImage: NSCursor.vectorScreenshotCrosshairLight.image)
--      .position(point)
--      .allowsHitTesting(false)
--  }
--}
--
- private enum InlineAreaNativeCursor {
-   private static let hiddenCursor: NSCursor = {
-     let image = NSImage(size: NSSize(width: 1, height: 1))
+ nonisolated struct CLIRequestRouter: Sendable {
+-  typealias Route = @Sendable (_ payload: Data, _ id: UInt64, _ context: CLIRequestContext) async -> Data
++  // Not `nonisolated(nonsending)` on purpose: storing a nonsending async closure type
++  // generically needs `swift_getExtendedFunctionTypeMetadata` (macOS 15+ runtime), which
++  // Release builds call without a fallback -> launch crash on macOS 13/14 (#725).
++  typealias Route = @Sendable @concurrent (_ payload: Data, _ id: UInt64, _ context: CLIRequestContext) async -> Data
+ 
+   private var routes: [String: Route] = [:]
+ 
 ```
 
-**File**: `Snapzy/Features/Annotate/InlineAreaMagnifierHostView.swift` (modified, +48/-0)
+**File**: `scripts/check-runtime-weak-imports.sh` (added, +61/-0)
 ```diff
-@@ -39,6 +39,15 @@ final class InlineAreaMagnifierHostView: NSView {
-   private(set) var coordinateBubbleBackgroundLayer: CALayer?
-   private(set) var coordinateBubbleTextLayer: CATextLayer?
- 
-+  /// Drawn replacement for the system cursor during `.selecting` (the real cursor is hidden
-+  /// for that whole phase — see `InlineAreaAnnotateSession.cursorHider`). Rendered here as a
-+  /// plain `CALayer`, exactly like plain area screenshot's `cursorProxyLayer`, rather than as
-+  /// a SwiftUI `Image` sibling: it then shares the coordinate bubble's layer, update call and
-+  /// `CATransaction`, so it can never lag, freeze or vanish while the bubble keeps tracking
-+  /// the pointer (observed on macOS 27 with the SwiftUI-drawn proxy).
-+  private(set) var crosshairProxyLayer: CALayer?
-+  private var crosshairProxySourceImage: NSImage?
+@@ -0,0 +1,61 @@
++#!/usr/bin/env bash
++#
++# Fails when a built Snapzy binary imports Swift runtime entry points that do
++# not exist on the deployment target (macOS 13) and that optimized builds call
++# without a NULL check. On older macOS the weak import resolves to NULL and the
++# app jumps to address 0 (see issue #725).
++#
++# Usage: scripts/check-runtime-weak-imports.sh <path/to/Snapzy.app | Mach-O> [...]
++#
++# swift_getExtendedFunctionTypeMetadata is emitted for async closure types that
++# are `nonisolated(nonsending)` (default under Approachable Concurrency) when
++# they are used generically: stored in a Dictionary, an Optional, etc. Fix by
++# marking the closure type `@concurrent` or giving it a global actor
++# (`@MainActor`).
 +
-   override init(frame frameRect: NSRect) {
-     super.init(frame: frameRect)
-     wantsLayer = true
-@@ -64,6 +73,7 @@ final class InlineAreaMagnifierHostView: NSView {
-     magnifier.removeLayers()
-     coordinateBubbleBackgroundLayer?.isHidden = true
-     coordinateBubbleTextLayer?.isHidden = true
-+    crosshairProxyLayer?.isHidden = true
-   }
- 
-   @discardableResult
-@@ -85,6 +95,44 @@ final class InlineAreaMagnifierHostView: NSView {
-       in: layer
-     )
-     updateCoordinateBubble(at: point, in: layer)
-+    updateCrosshairProxy(at: point, in: layer)
-+  }
++set -euo pipefail
 +
-+  /// Mirrors `AreaSelectionOverlayView.updateCursorProxy`: same image, same hot-spot math
-+  /// (`NSCursor.hotSpot` is top-left based, this view is bottom-left based).
-+  private func updateCrosshairProxy(at point: CGPoint, in layer: CALayer) {
-+    let cursor = NSCursor.vectorScreenshotCrosshairLight
-+    let image = cursor.image
-+    let hotSpot = cursor.hotSpot
++FORBIDDEN_SYMBOLS=(
++  "_swift_getExtendedFunctionTypeMetadata"
++)
 +
-+    let proxy = crosshairProxyLayer ?? {
-+      let newLayer = CALayer()
-+      newLayer.actions = [
-+        kCAOnOrderIn: NSNull(), kCAOnOrderOut: NSNull(), "bounds": NSNull(), "position": NSNull(),
-+        "hidden": NSNull(), "contents": NSNull(),
-+      ]
-+      // Stay above the magnifier/bubble sublayers, which may be re-added after this one.
-+      newLayer.zPosition = 1000
-+      layer.addSublayer(newLayer)
-+      crosshairProxyLayer = newLayer
-+      return newLayer
-+    }()
++if [ "$#" -eq 0 ]; then
++  echo "usage: $0 <Snapzy.app | binary> [...]" >&2
++  exit 2
++fi
 +
-+    CATransaction.begin()
-+    CATransaction.setDisableActions(true)
-+    if image !== crosshairProxySourceImage {
-+      proxy.contents = image
-+      crosshairProxySourceImage = image
-+    }
-+    proxy.contentsScale = window?.backingScaleFactor ?? 2.0
-+    proxy.frame = CGRect(
-+      x: point.x - hotSpot.x,
-+      y: point.y - (image.size.height - hotSpot.y),
-+      width: image.size.width,
-+      height: image.size.height
-+    )
-+    proxy.isHidden = false
-+    CATransaction.commit()
-   }
- 
-   private func updateCoordinateBubble(at point: CGPoint, in layer: CALayer) {
-```
-
-**File**: `SnapzyTests/Features/Annotate/InlineAreaAnnotateSessionTests.swift` (modified, +40/-0)
-```diff
-@@ -395,6 +395,46 @@ final class InlineAreaAnnotateSessionTests: XCTestCase {
-     XCTAssertEqual(session.phase, .selecting)
-   }
- 
-+  /// Regression (macOS 27): hover events stopped after the seeded first position, freezing
-+  /// crosshair/bubble/magnifier at the trigger point. The polling tick must publish the real
-+  /// pointer position without any hover event.
-+  @MainActor
-+  func testPointerTrackingTickPublishesPointerWithoutHoverEvents() throws {
-+    let session = try makeSelectionSession()
-+    // desktopFrame is (0, 0, 800, 600): screen (200, 100) → local (200, 500).
-+    session.handlePointerTrackingTick(screenPoint: CGPoint(x: 200, y: 100))
-+    XCTAssertEqual(session.selectionPointerLocation, CGPoint(x: 200, y: 500))
++binaries=()
++for target in "$@"; do
++  if [ -d "$target" ]; then
++    while IFS= read -r -d '' file; do
++      if file -b "$file" | grep -q "Mach-O"; then
++        binaries+=("$file")
++      fi
++    done < <(find "$target/Contents/MacOS" "$target/Contents/Helpers" -type f -print0 2>/dev/null)
++  else
++    binaries+=("$target")
++  fi
++done
 +
-+    session.handlePointerTrackingTick(screenPoint: CGPoint(x: 650, y: 420))
-+    XCTAssertEqual(session.selectionPointerLocation, CGPoint(x: 650, y: 180))
++if [ "${#binaries[@]}" -eq 0 ]; then
++  echo "::error::No Mach-O binaries found in: $*" >&2
++  exit 1
++fi
 +
-+    // A hover `.ended` clears it; the next tick restores it even without movement.
-+    session.selectionPointerLocation = nil
-+    session.handlePointerTrackingTick(screenPoint: CGPoint(x: 650, y: 420))
-+    XCTAssertEqual(session.selectionPointerLocation, CGPoint(x: 650, y: 180))
-+    session.cancel()
-+  }
++failed=0
++for binary in "${binaries[@]}"; do
++  imports=$(xcrun dyld_info -imports "$binary")
++  for symbol in "${FORBIDDEN_SYMBOLS[@]}"; do
++    if grep -qw -- "$symbol" <<<"$imports"; then
++      echo "::error::$binary imports $symbol (macOS 15+ runtime only). It crashes on macOS 13/14. Mark the nonsending async closure type @concurrent or @MainActor."
++      failed=1
++    fi
++  done
++  echo "checked: $binary"
++done
 +
-+  @MainActor
-+  func testPointerTrackingTickFillsInStalledDrag() throws {
-+    let session = try makeSelectionSession()
-+    session.beginSelection(at: CGPoint(x: 100, y: 100))
-+    session.handlePointerTrackingTick(screenPoint: CGPoint(x: 300, y: 300)) // local (300, 300)
-+    XCTAssertEqual(session.selectionPointerLocation, CGPoint(x: 300, y: 300))
-+    XCTAssertEqual(session.selectionRect, CGRect(x: 100, y: 100, width: 200, height: 200))
-+    session.cancel()
-+  }
++if [ "$failed" -ne 0 ]; then
++  exit 1
++fi
 +
-+  @MainActor
-+  func testPointerTrackingTickIsInertAfterSelectingPhase() throws {
-+    let session = try makeSelectionSession()
-+    session.beginAnnotating(with: CGRect(x: 10, y: 10, width: 200, height: 100))
-+    XCTAssertEqual(session.phase, .annotating)
-+    session.handlePointerTrackingTick(screenPoint: CGPoint(x: 200, y: 100))
-+    XCTAssertNil(session.selectionPointerLocation)
-+    session.cancel()
-+  }
-+
-   @MainActor
-   private func makeSelectionSession() throws -> InlineAreaAnnotateSession {
-     // Fake display ID: the session hides the cursor per display at init — a nonexistent
-```
-
-**File**: `SnapzyTests/Features/Annotate/InlineAreaMagnifierHostViewTests.swift` (modified, +43/-0)
-```diff
-@@ -79,6 +79,49 @@ final class InlineAreaMagnifierHostViewTests: XCTestCase {
-     XCTAssertTrue(view.coordinateBubbleTextLayer?.isHidden ?? false)
-   }
- 
-+  /// The drawn crosshair (the real cursor is hidden during `.selecting`) lives in this view's
-+  /// layer, positioned with the cursor hot-spot on the pointer — same math as plain area
-+  /// screenshot's `cursorProxyLayer`.
-+  func testCrosshairProxy_tracksPointerWithHotSpot() throws {
-+    let view = makeView(size: CGSize(width: 800, height: 600))
-+    view.backdropImage = makeSolidColorImage(size: CGSize(width: 800, height: 600))
-+    let cursor = NSCursor.vectorScreenshotCrosshairLight
-+
-+    view.update(at: CGPoint(x: 200, y: 150))
-+    let proxy = try XCTUnwrap(view.crosshairProxyLayer)
-+    XCTAssertFalse(proxy.isHidden)
-+    XCTAssertTrue(proxy.superlayer === view.layer)
-+    XCTAssertTrue((proxy.contents as AnyObject?) === cursor.image)
-+    XCTAssertEqual(proxy.frame.origin.x, 200 - cursor.hotSpot.x)
-+    XCTAssertEqual(proxy.frame.origin.y, 150 - (cursor.image.size.height - cursor.hotSpot.y))
-+
-+    view.update(at: CGPoint(x: 420, y: 310))
-+    XCTAssertEqual(proxy.frame.origin.x, 420 - cursor.hotSpot.x)
-+    XCTAssertEqual(proxy.frame.origin.y, 310 - (cursor.image.size.height - cursor.hotSpot.y))
-+  }
-+
-+  /// The crosshair must stay visible while the magnifier is zoomed in (the bubble hides then).
-+  func testCrosshairProxy_staysVisibleWhileMagnifierActive() {
-+    let view = makeView(size: CGSize(width: 800, height: 600))
-+    view.backdropImage = makeSolidColorImage(size: CGSize(width: 800, height: 600))
-+    view.update(at: CGPoint(x: 200, y: 150))
-+
-+    view.applyScroll(delta: 6, hasPreciseScrollingDeltas: false)
-+
-+    XCTAssertFalse(view.crosshairProxyLayer?.isHidden ?? true)
-+  }
-+
-+  func testCrosshairProxy_hiddenOnHide() {
-+    let view = makeView(size: CGSize(width: 800, height: 600))
-+    view.backdropImage = makeSolidColorImage(size: CGSize(width: 800, height: 600))
-+    view.update(at: CGPoint(x: 200, y: 150))
-+    XCTAssertFalse(view.crosshairProxyLayer?.isHidden ?? true)
-+
-+    view.hide()
-+
-+    XCTAssertTrue(view.crosshairProxyLayer?.isHidden ?? false)
-+  }
-+
-   /// Regression for the magnifier appearing pinned to the bottom-left corner on first render
-   /// in screenshot-and-annotate: `AreaSelectionMagnifier.update(bounds:)` clamps the container
-   /// into `bounds` and divides by its width/height, so a `.zero` bounds collapses every
++echo "OK: no forbidden Swift runtime imports"
 ```
 
 ---
 
-### Incident Patch 3: `f78e43a4` (2026-11-08)
-**Commit Message**: ci: reset SwiftPM artifact cache before xcodebuild (#723)
+### Incident Patch 2: `75a5ce58` (2026-11-10)
+**Commit Message**: fix: Quick Access card buttons no longer ignore the first click (#733)
 
-Fresh macos-15 runners fail package resolution with
-"Sparkle-for-Swift-Package-Manager.zip ... already exists in file system",
-which broke CI and the v2.2.0-beta.7 release publish.
+The Quick Access panel is a fixed 5-card size and lets clicks fall through
+its empty area. It only started accepting clicks after the main thread saw a
+mouse-move over a card, so a quick first click went to the window behind.
+When it did flip, a pointer resting on the card got no hover, so the action
+buttons never appeared.
 
-**File**: `.github/workflows/ci.yml` (modified, +6/-0)
+Pass clicks through only above the top of the card stack, so the panel is
+already clickable when the pointer arrives from the side or from below.
+Replay mouse-moves that went to another window while the pointer is over the
+panel, so hover is always registered, and handle global monitor events
+inline instead of through a Task hop.
+
+Closes #698
+
+**File**: `Snapzy/Features/QuickAccess/QuickAccessPanel.swift` (modified, +67/-5)
 ```diff
-@@ -24,6 +24,12 @@ jobs:
-         with:
-           xcode-version: '26.2'
+@@ -83,6 +83,32 @@ final class QuickAccessPanel: NSPanel {
+     return interactiveRect.contains(screenPoint)
+   }
  
-+      - name: Reset SwiftPM artifact cache
-+        # Fresh macos-15 images can ship a stale entry for the Sparkle binary
-+        # artifact, which makes package resolution fail with
-+        # "... already exists in file system".
-+        run: rm -rf "$HOME/Library/Caches/org.swift.swiftpm/artifacts"
++  /// Whether the panel should let mouse events fall through to the window below
++  /// while the pointer is at `screenPoint`.
++  ///
++  /// The window server picks a click's target window the moment the click happens,
++  /// using whatever `ignoresMouseEvents` is at that instant. Snapzy can only flip it
++  /// after its main thread has handled a mouse-move, so the panel must already
++  /// accept clicks *before* the pointer reaches a card. Otherwise a quick first click
++  /// falls through to the app behind and the card seems to ignore it (#698).
++  ///
++  /// The decision therefore depends only on height: pass clicks through only at or
++  /// above the top of the card stack (the empty area of the fixed-size panel). Beside
++  /// or below the stack the panel accepts clicks. That costs nothing outside the
++  /// panel frame (the window cannot receive those clicks anyway), and pointers
++  /// arriving from the side or from below meet a card that is already clickable.
++  /// Only a pointer moving straight down out of the empty area still needs a flip.
++  func shouldPassMouseThrough(at screenPoint: NSPoint) -> Bool {
++    guard visibleItemCount > 0 else { return true }
 +
-       - name: Verify localization catalogs
-         run: |
-           set -euo pipefail
++    let cardsTop = frame.minY + Self.interactiveContentHeight(
++      itemCount: visibleItemCount,
++      scale: overlayScale,
++      panelHeight: frame.height
++    )
++    return screenPoint.y >= cardsTop
++  }
++
+   static func interactiveContentHeight(itemCount: Int, scale: CGFloat, panelHeight: CGFloat) -> CGFloat {
+     guard itemCount > 0 else { return 0 }
+ 
+@@ -139,8 +165,11 @@ final class QuickAccessPanel: NSPanel {
+     }
+ 
+     if globalMouseMonitor == nil {
++      // Global monitor handlers run on the main thread. Handle the event inline:
++      // hopping through a Task delays the passthrough flip and widens the window
++      // in which a click is routed to the app behind the panel (#698).
+       globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
+-        Task { @MainActor in
++        MainActor.assumeIsolated {
+           self?.handleGlobalMouseEvent(event)
+         }
+       }
+@@ -158,7 +187,8 @@ final class QuickAccessPanel: NSPanel {
+     }
+   }
+ 
+-  private func refreshMousePassthrough() {
++  /// - Parameter missedMove: true when a mouse-move just went to some other window.
++  private func refreshMousePassthrough(missedMove: Bool = false) {
+     if isMouseInteractionActive && NSEvent.pressedMouseButtons & 1 == 0 {
+       isMouseInteractionActive = false
+     }
+@@ -168,7 +198,38 @@ final class QuickAccessPanel: NSPanel {
+       return
+     }
+ 
+-    ignoresMouseEvents = !containsInteractivePoint(NSEvent.mouseLocation)
++    let wasPassingThrough = ignoresMouseEvents
++    ignoresMouseEvents = shouldPassMouseThrough(at: NSEvent.mouseLocation)
++
++    // A move that went elsewhere while the pointer is over this (now clickable)
++    // panel was routed before the window server applied our flip. Replay it here.
++    if !ignoresMouseEvents && (wasPassingThrough || missedMove) {
++      resyncHoverAtPointer()
++    }
++  }
++
++  /// AppKit updates hover tracking (SwiftUI `.onHover`) only when a mouse-move
++  /// reaches the window. Turning `ignoresMouseEvents` off takes effect in the window
++  /// server asynchronously, so moves made just before or just after the flip still go
++  /// to the window behind. If the pointer then stops on a card, the card never sees
++  /// hover, its action buttons never appear, and every click lands on the card body
++  /// (#698). Feed the panel one move at the current pointer location so hover is
++  /// checked right away. No-op while the pointer is outside the panel.
++  private func resyncHoverAtPointer() {
++    let screenPoint = NSEvent.mouseLocation
++    guard frame.contains(screenPoint),
++          let event = NSEvent.mouseEvent(
++            with: .mouseMoved,
++            location: convertPoint(fromScreen: screenPoint),
++            modifierFlags: [],
++            timestamp: ProcessInfo.processInfo.systemUptime,
++            windowNumber: windowNumber,
++            context: nil,
++            eventNumber: 0,
++            clickCount: 0,
++            pressure: 0
++          ) else { return }
++    NSApp.postEvent(event, atStart: false)
+   }
+ 
+   private func handleLocalMouseEvent(_ event: NSEvent) {
+@@ -183,15 +244,16 @@ final class QuickAccessPanel: NSPanel {
+       }
+     }
+ 
+-    refreshMousePassthrough()
++    refreshMousePassthrough(missedMove: event.type == .mouseMoved && event.window !== self)
+   }
+ 
+   private func handleGlobalMouseEvent(_ event: NSEvent) {
+     if event.type == .leftMouseUp {
+       isMouseInteractionActive = false
+     }
+ 
+-    refreshMousePassthrough()
++    // Global events always went to another app.
++    refreshMousePassthrough(missedMove: event.type == .mouseMoved)
+   }
+ 
+   override var canBecomeKey: Bool { false }
 ```
 
-**File**: `.github/workflows/release-publish.yml` (modified, +6/-0)
+**File**: `SnapzyTests/Features/QuickAccess/QuickAccessCoreTests.swift` (modified, +34/-0)
 ```diff
-@@ -148,6 +148,12 @@ jobs:
-         with:
-           xcode-version: "26.2"
+@@ -1569,6 +1569,40 @@ final class QuickAccessCoreTests: XCTestCase {
+     XCTAssertFalse(panel.containsInteractivePoint(NSPoint(x: 150, y: panel.frame.maxY - 10)))
+   }
  
-+      - name: Reset SwiftPM artifact cache
-+        # Fresh macos-15 images can ship a stale entry for the Sparkle binary
-+        # artifact, which makes package resolution fail with
-+        # "... already exists in file system".
-+        run: rm -rf "$HOME/Library/Caches/org.swift.swiftpm/artifacts"
++  /// #698: the panel must already accept clicks before the pointer reaches a card,
++  /// so passthrough depends only on height. Beside or below the card stack (even
++  /// outside the panel frame) clicks are accepted. Only the empty area above passes through.
++  func testQuickAccessPanel_passthroughOnlyAboveCardStack() {
++    let panelHeight =
++      QuickAccessLayout.scaledCardHeight(1) * 5
++      + QuickAccessLayout.cardSpacing * 4
++      + QuickAccessLayout.containerPadding * 2
++    let panel = QuickAccessPanel(
++      contentRect: NSRect(x: 100, y: 100, width: 204, height: panelHeight)
++    )
++    defer { panel.close() }
 +
-       - name: Build archive
-         run: |
-           set -euo pipefail
++    panel.updatePassthroughRegion(itemCount: 1, scale: 1)
++    let cardsTop = panel.frame.minY + QuickAccessLayout.cardHeight + QuickAccessLayout.containerPadding * 2
++
++    // On the card.
++    XCTAssertFalse(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: 150)))
++    // Approaching from the side or from below, outside the panel frame.
++    XCTAssertFalse(panel.shouldPassMouseThrough(at: NSPoint(x: 0, y: 150)))
++    XCTAssertFalse(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: 10)))
++    // Empty area above the stack, inside and beside the panel frame.
++    XCTAssertTrue(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: cardsTop + 1)))
++    XCTAssertTrue(panel.shouldPassMouseThrough(at: NSPoint(x: 0, y: panel.frame.maxY - 10)))
++
++    // The boundary rises as cards are added.
++    panel.updatePassthroughRegion(itemCount: 2, scale: 1)
++    XCTAssertFalse(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: cardsTop + 1)))
++
++    // No cards: everything passes through.
++    panel.updatePassthroughRegion(itemCount: 0, scale: 1)
++    XCTAssertTrue(panel.shouldPassMouseThrough(at: NSPoint(x: 150, y: 150)))
++  }
++
+   func testQuickAccessActionConfigurationStore_usesDefaultOrderAndEnabledActions() {
+     let defaults = makeIsolatedDefaults()
+     let store = makeActionConfigurationStore(defaults: defaults)
+```
+
+---
+
+### Incident Patch 3: `01fe19e0` (2026-11-10)
+**Commit Message**: fix: Settings tooltips no longer grow huge on macOS 15 (#731)
+
+The hint popover only had a max width, so NSPopover on macOS 15 measured
+it at a near-zero width and the text's fixed vertical size produced a
+very tall popover. Measure the text and pin an exact width (capped at
+240pt) so SwiftUI derives the height at that width.
+
+Fixes #730
+
+**File**: `Snapzy/Shared/Components/TooltipView.swift` (modified, +24/-4)
+```diff
+@@ -77,13 +77,33 @@ private struct HintModifier: ViewModifier {
+ private struct HintPopoverContent: View {
+   let text: String
+ 
++  private static let fontSize: CGFloat = 11
++  private static let maxTextWidth: CGFloat = 240
++  private static let horizontalPadding: CGFloat = 10
++  private static let verticalPadding: CGFloat = 6
++
+   var body: some View {
++    // NSPopover sizes itself from the hosting view's fitting size. A flexible width lets
++    // macOS 15 measure the text at a near-zero width, so the popover grows very tall (#730).
++    // Pin an exact width (the text's own width, capped) and let SwiftUI derive the height at it.
+     Text(text)
+-      .font(.system(size: 11))
++      .font(.system(size: Self.fontSize))
+       .foregroundColor(.primary)
+-      .padding(.horizontal, 10)
+-      .padding(.vertical, 6)
++      .lineLimit(nil)
++      .frame(width: Self.textWidth(for: text), alignment: .leading)
+       .fixedSize(horizontal: false, vertical: true)
+-      .frame(maxWidth: 260, alignment: .leading)
++      .padding(.horizontal, Self.horizontalPadding)
++      .padding(.vertical, Self.verticalPadding)
++      .fixedSize()
++  }
++
++  private static func textWidth(for text: String) -> CGFloat {
++    let rect = (text as NSString).boundingRect(
++      with: CGSize(width: maxTextWidth, height: .greatestFiniteMagnitude),
++      options: [.usesLineFragmentOrigin, .usesFontLeading],
++      attributes: [.font: NSFont.systemFont(ofSize: fontSize)]
++    )
++    // Small slack so SwiftUI never wraps a line AppKit measured as fitting.
++    return min(ceil(rect.width) + 2, maxTextWidth)
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #724** (2026-11-08): chore: release v2.2.0-beta.8 (@github-actions[bot])
-- **PR #723** (2026-11-08): ci: reset SwiftPM artifact cache before xcodebuild (@duongductrong)
-- **PR #722** (2026-11-08): chore: release v2.2.0-beta.7 (@github-actions[bot])
-- **PR #719** (2026-11-08): Cloud keys stay within the S3 limit and short keys get 12 characters (@gtmcknight)
-- **PR #718** (2026-11-08): feat: add clear-history and per-card remove actions to floating history panel (@duongductrong)
-- **PR #717** (2026-11-07): chore: release v2.2.0-beta.6 (@github-actions[bot])
+- **PR #735** (2026-11-10): chore: release v2.2.0-beta.10 (@github-actions[bot])
+- **PR #734** (2026-11-10): feat: Option to copy screenshots as image data only (@duongductrong)
+- **PR #733** (2026-11-10): fix: Quick Access card buttons no longer ignore the first click (@duongductrong)
+- **PR #732** (2026-11-10): feat: Confirm before restarting or deleting a recording in progress (@duongductrong)
+- **PR #731** (2026-11-10): fix: Settings tooltips no longer grow huge on macOS 15 (@duongductrong)
+- **PR #728** (2026-11-09): chore: release v2.2.0-beta.9 (@github-actions[bot])
 
 ---
 
@@ -1981,48 +1388,42 @@ which broke CI and the v2.2.0-beta.7 release publish.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep the app responsive while OCR runs (#708)
+## X. Snapzy no longer crashes at launch on macOS 13 and 14 (#725) (#727)
 
 **RULE**:
-When implementing operations in `Snapzy/Features/Capture/CaptureViewModel.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `44278b1c`: Keep the app responsive while OCR runs (#708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `432657c3`: Snapzy no longer crashes at launch on macOS 13 and 14 (#725) (#727). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Capture/CaptureViewModel.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-publish.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  /// True from OCR area selection (mouse-up) until text recognition finishes.
-  private var isOCRProcessing = false
-    // A previous OCR is still capturing/recognizing: tell the user at the pointer
-    // instead of silently ignoring the shortcut (which reads as the app hanging).
-    if isOCRProcessing {
-      DiagnosticLogger.shared.log(.debug, .ocr, "captureOCR blocked: previous OCR still processing")
-      CursorBubbleController.shared.show(L10n.OCR.alreadyRunning)
-      return
-    }
+      # Release-only crash class (#725): optimized builds call macOS 15+ Swift
+      # runtime symbols without a fallback, so the app dies at launch on 13/14.
+      - name: Guard Swift runtime imports for deployment target
+        run: |
+          set -euo pipefail
+          bash scripts/check-runtime-weak-imports.sh build/Snapzy.xcarchive/Products/Applications/Snapzy.app
 
-          // Pixels are secured and the overlay is gone: release the shared capture lock now
-          // (as live area capture does) so other capture shortcuts work while OCR runs.
-          // `isOCRProcessing` alone guards against starting a second OCR.
-          self.isAreaSelectionActive = false
-          self.isOCRProcessing = true
-              self.isOCRProcessing = false
-      // QRCodeService runs Vision on the OCR work queue itself.
-      let result = try await QRCodeService.shared.detect(in: image)
+      - name: Upload dSYMs
+        uses: actions/upload-artifact@v7
+        with:
+          name: Snapzy-v${{ steps.version.outputs.version }}-dSYMs
+          path: build/Snapzy.xcarchive/dSYMs
+          if-no-files-found: warn
+          retention-days: 90
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-              self.isAreaSelectionActive = false
-      let result = try await Task.detached(priority: .userInitiated) {
-        try await QRCodeService.shared.detect(in: image)
-      }.value
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44278b1c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `432657c3` are properly handled with clean fallback behavior.

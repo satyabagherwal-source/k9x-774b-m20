@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `1a559e40`  
+> **Source Version**: `28fc5a3a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:10:34.574Z  
+> **Timestamp**: 2026-11-13T02:24:43.074Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:10:34.568Z  
+> **Harvest Timestamp**: 2026-11-13T02:24:43.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25824 stars
+- **Stars / Engagement**: 25826 stars
 
 ---
 
@@ -1265,7 +1265,7 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
   > /test
   > /ci-kpr-aks
 
-- **Issue #49997** (2026-11-12): **chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.20)**
+- **Issue #49998** (2026-11-12): **chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.19)**
   *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) |  | patch | `v0.20.2` → `v0.20.3` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.2` → `v0.20.3` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.3`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.3)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.2...v0.20.3)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply standard scheduling params to all connectivity pods ([cilium/cilium#49113](https://redirect.github.com/cilium/cilium/issues/49113), [@&#8203;HadrienPatte](https://redirect.github.com/HadrienPatte)) - helm: move SPIRE chart values under ztunnel ([cilium/cilium#48942](https://redirect.github.com/cilium/cilium/issues/48942), [@&#8203;mhofstetter](https://redirect.github.com/mhofstetter))  **CI Changes:**  - cilium-cli: Fix unschedulable client pod on 2-node clusters ([cilium/cilium#49776](https://redirect.github.com/cilium/cilium/issues/49776), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: Ignore restarts of never-started containers ([cilium/cilium#49641](https://redirect.github.com/cilium/cilium/issues/49641), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: restore v2alpha1 BGP deprecation log exception ([cilium/cilium#49919](http
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1283,151 +1283,54 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b6c5441` (2026-11-11)
-**Commit Message**: renovate: Hold docutils in the docs-builder requirements
+### Incident Patch 1: `28fc5a3a` (2026-11-02)
+**Commit Message**: gha: Disable legacy host routing on EKS netkit legs
 
-Since the docs-builder requirements moved under images/, Renovate bumps
-the pins of that pip freeze output one by one, without resolving them.
-The all-dependencies PRs for main, v1.19 and v1.18, cf. [1], bump
-docutils to 0.23, which the pinned Sphinx, myst-parser and
-sphinx_rtd_theme_cilium do not allow. The docs-builder image build, the
-generated documentation check and the Netlify preview all fail with:
+Since e92e788718dc ("defaults: Disable BPF Host Routing by default"),
+the agent defaults to legacy host routing. That commit set
+bpf.hostLegacyRouting=false in the kind netkit configurations, but the
+EKS conformance workflow only sets bpf.datapathMode. On every netkit
+and netkit-l2 leg of ci-kpr-eks, the agent fatals on startup:
 
-  The conflict is caused by:
-      The user requested docutils==0.23
-      sphinx-rtd-theme-cilium 3.1.0 depends on docutils<0.23 and >0.18
+  netkit connector not available: netkit devices cannot be used with --enable-host-legacy-routing=true
 
-This commit disables docutils updates in that file. We bump docutils by
-hand once the packages that pin it allow 0.23.
+The nodes never become Ready and "Create EKS nodegroups" times out
+after 25 minutes. The quarantine on those legs hides it. Seen in the
+scheduled ci-kpr-eks runs[1].
 
-This commit was prepared with AIL:3. I personally checked a Renovate
-lookup dry run before and after the change.
+This commit sets bpf.hostLegacyRouting=false next to bpf.datapathMode,
+as the kind netkit configurations do. Both callers already enable KPR
+and BPF masquerading, so the legs get back the BPF host routing they
+ran with before. They then reach the connectivity tests, where they
+also failed before e92e788718dc, so the quarantine stays.
 
-Fixes: 76cc4f5dec09 ("images: Move docs-builder into images/ directory")
-1: https://github.com/cilium/cilium/pull/49894
+This commit was prepared with AIL:3. I personally checked the diff.
 
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
+1: https://github.com/cilium/cilium/actions/runs/41387168353
+Fixes: e92e788718dc ("defaults: Disable BPF Host Routing by default")
 
-**File**: `.github/renovate.json5` (modified, +10/-0)
+Signed
+
+**File**: `.github/workflows/conformance-eks.yaml` (modified, +1/-1)
 ```diff
-@@ -878,6 +878,16 @@
-         "minor"
-       ]
-     },
-+    {
-+      // The pinned Sphinx, myst-parser and sphinx_rtd_theme_cilium require docutils<0.23.
-+      "enabled": false,
-+      "matchFileNames": [
-+        "images/docs-builder/requirements.txt"
-+      ],
-+      "matchPackageNames": [
-+        "docutils"
-+      ]
-+    },
-     {
-       // k8s major/minor updates are disabled on all branches.
-       // On main, they will be updated manually along with tests.
-```
-
----
-
-### Incident Patch 2: `a25ef4e9` (2026-11-12)
-**Commit Message**: wireguard: fix nil map write when injecting node encryption define
-
-Commit 290bd7a825 ("datapath: turn ENABLE_WIREGUARD into runtime config")
-removed the NodeDefines map initialization together with the
-ENABLE_WIREGUARD entry, but kept the ENABLE_NODE_ENCRYPTION assignment.
-Writing to the nil map panics when WireGuard and node encryption are both
-enabled. Initialize the map when adding the define.
-
-Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
-
-**File**: `pkg/wireguard/agent/cell.go` (modified, +3/-1)
-```diff
-@@ -34,7 +34,9 @@ func newWireguardAgent(p params) (out struct {
- }) {
- 	out.Agent = newAgent(p)
- 	if out.Agent.Enabled() && p.Config.EncryptNode {
--		out.NodeDefines["ENABLE_NODE_ENCRYPTION"] = "1"
-+		out.NodeDefines = defines.Map{
-+			"ENABLE_NODE_ENCRYPTION": "1",
-+		}
- 	}
- 	return
- }
-```
-
----
-
-### Incident Patch 3: `2c8cf854` (2026-10-17)
-**Commit Message**: bpf: fix ICMP sample checksum accumulation
-
-The checksum helper advances by 256 bytes between body128 invocations,
-but each invocation only sums 64 16-bit words (128 bytes). This leaves
-parts of the quoted packet out of the ICMP checksum.
-
-Rename the existing macro to body64 and compose body128 from two body64
-invocations so that each invocation covers all 256 bytes.
-
-Remove the hard-coded ICMPv6 checksums from the no-backend reply fixtures
-and let Scapy calculate them independently. The existing
-tc_nodeport_lb_no_backend and tc_lxc_lb_no_backend BPF tests exercise the
-ICMPv6 error-reply paths and compare the complete response packets. They
-fail with the original helper and pass with this fix, so a new end-to-end
-scenario is not required for this checksum regression.
-
-Fixes: #48297
-Fixes: 2c2c5ae08e7e ("bpf: Send ICMP unreachable when no service backends are available")
-Signed-off-by: YC KAO <[REDACTED_EMAIL]>
-
-**File**: `bpf/lib/icmp_wsum.h` (modified, +4/-1)
-```diff
-@@ -32,11 +32,14 @@ __wsum icmp_wsum_accumulate(void *data_start, void *data_end, int sample_len)
- 		body4(i + 16) \
- 		body4(i + 24)
+@@ -396,7 +396,7 @@ jobs:
+           # Pass any bpf-datapath values verbatim. Note this is validated as our matrix
+           # is being computed, so we assume this contains a valid datapath mode.
+           if [ "${BPF_DATAPATH}" != "" ]; then
+-            CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.datapathMode=${BPF_DATAPATH}"
++            CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.datapathMode=${BPF_DATAPATH} --helm-set bpf.hostLegacyRouting=false"
+           fi
  
--	#define body128(i) body16(i)\
-+	#define body64(i) body16(i)\
- 		body16(i + 32) \
- 		body16(i + 64) \
- 		body16(i + 96)
- 
-+	#define body128(i) body64(i)\
-+		body64(i + 128)
-+
- 	body128(0)
- 	body128(256)
- 	body128(512)
-```
-
-**File**: `bpf/tests/scapy/lb_pkt_defs.py` (modified, +2/-2)
-```diff
-@@ -59,7 +59,7 @@
- lb6_udp_clusterip_icmp_unreach = (
-     Ether(src=mac_two, dst=mac_one) /
-     IPv6(src=v6_svc_one, dst=v6_ext_node_one) /
--    ICMPv6DestUnreach(code=4, cksum=58197) /
-+    ICMPv6DestUnreach(code=4) /
-     IPerror6(bytes(lb6_udp_clusterip[IPv6]))
- )
- 
-@@ -266,6 +266,6 @@
- lb6_ew_udp_nodeport_icmp_unreach = (
-     Ether(src=mac_two, dst=mac_one) /
-     IPv6(src=v6_svc_one, dst=v6_pod_one) /
--    ICMPv6DestUnreach(code=4, cksum=1618) /
-+    ICMPv6DestUnreach(code=4) /
-     IPerror6(bytes(lb6_ew_udp_nodeport[IPv6]))
- )
+           echo cluster_name=${CLUSTER_NAME} >> $GITHUB_OUTPUT
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #49999** (2026-11-12): fix(linux/adnr): reconcile direct routes before node table initialization (@andreaterzolo)
+- **PR #49998** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.19) (@cilium-renovate[bot])
 - **PR #49997** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.20) (@cilium-renovate[bot])
 - **PR #49987** (2026-11-12): datapath: correctly set nodeport/ipv4 configs in tests (@ekoops)
 - **PR #49985** (2026-11-12): wireguard: fix nil map write when injecting node encryption define (@smagnani96)
 - **PR #49978** (2026-11-12): [v1.20] - operator/ces: fix stale CES entry for recreated same-name pod (@smagnani96)
-- **PR #49976** (2026-11-12): [v1.19] logging: Downgrade leader election lease conflict to info (@christarazi)
 
 ---
 
@@ -1447,37 +1350,28 @@ Signed-off-by: YC KAO <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. renovate: Hold docutils in the docs-builder requirements
+## X. gha: Disable legacy host routing on EKS netkit legs
 
 **RULE**:
-When implementing operations in `.github/renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/conformance-eks.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b6c5441`: renovate: Hold docutils in the docs-builder requirements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28fc5a3a`: gha: Disable legacy host routing on EKS netkit legs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/renovate.json5`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/conformance-eks.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    {
-      // The pinned Sphinx, myst-parser and sphinx_rtd_theme_cilium require docutils<0.23.
-      "enabled": false,
-      "matchFileNames": [
-        "images/docs-builder/requirements.txt"
-      ],
-      "matchPackageNames": [
-        "docutils"
-      ]
-    },
+            CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.datapathMode=${BPF_DATAPATH} --helm-set bpf.hostLegacyRouting=false"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            CILIUM_INSTALL_DEFAULTS+=" --helm-set bpf.datapathMode=${BPF_DATAPATH}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b6c5441` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28fc5a3a` are properly handled with clean fallback behavior.
