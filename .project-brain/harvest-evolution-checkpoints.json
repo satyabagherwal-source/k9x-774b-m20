@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:26:52.585Z",
+  "last_updated": "2026-11-13T18:35:49.536Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T15:11:07.403Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-13T12:55:09.359Z",
+      "processed_at": "2026-11-13T18:35:48.934Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2061,9 +2061,19 @@
       "processed_at": "2026-11-13T18:26:52.024Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-prithivmlmods-gender-classifier-mini-learnings.md": {
+      "processed_at": "2026-11-13T18:35:47.916Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "laurent22-joplin-learnings.md": {
+      "processed_at": "2026-11-13T18:35:48.275Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 645,
-  "total_canonical_promoted": 122,
-  "total_staged_for_review": 517
+  "total_dossiers_evaluated": 648,
+  "total_canonical_promoted": 123,
+  "total_staged_for_review": 519
 }

@@ -4,45 +4,31 @@
 {
   "source_repository": "topoteretes/cognee",
   "source_url": "https://github.com/topoteretes/cognee",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "4053f6cc",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T18:34:59.976Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-topoteretes-cognee",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `4053f6cc`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T18:34:59.976Z`  
+> **Learning ID**: `learn-github-topoteretes-cognee`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `topoteretes/cognee` (Commit: `historical`)
+- **Target Repository**: `topoteretes/cognee` (Commit: `4053f6cc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
-> **Source**: github ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
-> **Source Version**: `8853378e`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T21:06:51.115Z  
-> **Learning ID**: `learn-github-topoteretes-cognee`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): topoteretes/cognee
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T21:06:50.273Z  
+> **Harvest Timestamp**: 2026-11-13T18:34:59.086Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33116 stars
+- **Stars / Engagement**: 33293 stars
 
 ---
 
@@ -879,6 +865,11 @@ the package with itself and never refuses an old cognee.
 
 import importlib
 import json
+import time
+from collections.abc import Callable
+from typing import TypeVar
+
+_T = TypeVar("_T")
 
 # A dlt source sets this attribute to opt into the "document" ingestion path:
 # each row becomes a text document that flows through normal cognify (LLM entity
@@ -996,6 +987,39 @@ def guarded_rows(rows, check_active=None):
         yield row
 
 
+def with_retries(
+    attempt: Callable[[], _T],
+    *,
+    retry_on: tuple[type[BaseException], ...],
+    delay: Callable[[BaseException, int], float | None],
+    attempts: int,
+    check_active: Callable[[], None] | None = None,
+    sleep: Callable[[float], None] | None = None,
+) -> _T:
+    """Run one provider request, retried by the connector's own policy.
+
+    ``attempt`` makes one request. An error of a ``retry_on`` class is retried after
+    ``delay(error, number)`` seconds unless it was the last of ``attempts`` or ``delay`` answers
+    ``None``; then it is raised as it is. ``check_active`` runs before every wait and every
+    retry, never before a first attempt, and what it raises propagates as it is.
+    """
+    for number in range(attempts):
+        if number and check_active is not None:
+            check_active()
+        try:
+            return attempt()
+        except retry_on as error:
+            if number == attempts - 1:
+                raise
+            wait = delay(error, number)
+            if wait is None:
+                raise
+        if check_active is not None:
+            check_active()
+        (sleep or time.sleep)(wait)
+    raise ValueError("with_retries needs at least one attempt")
+
+
 def document_source_tag(item) -> str | None:
     """Return the document-source tag a dlt source opted into, else ``None``."""
     tag = getattr(item, DOCUMENT_SOURCE_ATTR, None)
@@ -1062,9 +1086,7 @@ __all__ = [
     "is_dlt_sourced",
     "metadata_source",
     "pipeline_name_for_source",
-    "require_document_sync_version",
-]
-
+    "require_document_sync_v
 ```
 
 ### Core Architecture Module: `cognee-connectors/core/cognee_connectors_core/errors.py`
@@ -1493,11 +1515,11 @@ class DescriptorConnector(Connector):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6424** (2026-11-05): **[Bug]: search(node_name=<document name>) returns nothing for CHUNKS/RAG_COMPLETION, and FEELING_LUCKY can route into it**
-  *Symptoms*: ### Bug Description  `search()` documents `node_name` as "Filter results to specific named entities", but how it is applied depends on the search type, and for several types a document name silently matches nothing.  **Graph completion family** (`GRAPH_COMPLETION`, `_COT`, `_CONTEXT_EXTENSION`, `_DECOMPOSITION`, `GRAPH_SUMMARY_COMPLETION`, `AGENTIC_COMPLETION`): `node_type=TextDocument, node_name=["doc_a"]` goes through `get_nodeset_subgraph`, which keeps the document plus its 1-hop neighbours. Works. (Note: a document's only direct neighbours are its chunks; entities hang off chunks via `contains`, so they are 2 hops away and not included.)  **`CHUNKS` / `RAG_COMPLETION`**: `node_name` is passed to the vector search, which filters on `payload.belongs_to_set` (`LanceDBAdapter.py` ~L1369, `array_has_any(payload.belongs_to_set, ...)`). That field holds NodeSet tags only. `ChunksRetriever` is never given `node_type`, so a document name can never match and the search returns 0 results. `HYBRID_COMPLETION` only appears to work because `request_deferral_reason` hands a custom `node_type` to graph completion.  **`FEELING_LUCKY`**: `select_search_type(query_text)` sees only the query, not `node_name` / `node_type`. With a document filter set, the LLM can still route to `CHUNKS` or `RAG_COMPLETION` (filter matches nothing, empty result), or to `SUMMARIES`, `CYPHER`, `NATURAL_LANGUAGE`, which never receive `node_name` at all (unscoped results). So the scope depends on the LLM's choice.
+- **Issue #6689** (2026-11-13): **[Bug] LanceDB fails to persist transaction files on Windows during cognee.remember() — CognifyFailedError and CollectionNotFoundError**
+  *Symptoms*: ### Bug Description  I'm encountering an issue when using Cognee on Windows with LanceDB as the vector database and OpenRouter for both LLM and embedding inference.  After resetting Cognee's data and ingesting local text files using cognee.remember(), the indexing pipeline fails because LanceDB cannot persist a transaction file.  The initial error is: _RuntimeError: lance error: LanceError(IO): failed to shutdown local writer LanceError(IO): failed to persist temp file The system cannot find the path specified. (os error 3)_  The subsequent rollback also fails: _CollectionNotFoundError: Collection 'DocumentChunk_text' not found! (Status code: 422)_  ### Steps to Reproduce  I run the following code in a Jupyter notebook (the code was given in the first video in cognee Youtube channel : https://www.youtube.com/watch?v=lQpmXvsrBzg&list=PLbJ6aa1LYeSTxMhlfOTKw3RbHGiL3fbm0&index=1): import cognee import os  await cognee.forget(everything=True)  data_path = "../data/silver"  for root, dirs, files in os.walk(data_path):     for file in files:         file_path = os.path.join(root, file)         print(file_path)          content = open(file_path, "r").read()         await cognee.remember(content)  The directory contains local md documents that I want to ingest into Cognee.  ### Expected Behavior  1. Ingest and index documents without filesystem errors. 2. Handle failed collection creation gracefully during rollback, without raising an additional CollectionNotFoundError.  ### Actual Be
 
-- **Issue #6301** (2026-10-29): **[Bug]: S3FileStorage.list_files() hides backend failures as an empty result**
-  *Symptoms*: ### Bug Description  `S3FileStorage.list_files()` catches every exception raised by `s3.glob()` or `s3.isfile()` and returns `[]`. This makes permission errors, transient network failures, and endpoint problems indistinguishable from a genuinely empty directory. Callers that use the listing as a source-of-truth inventory can silently proceed with incomplete or missing data instead of surfacing the storage failure.  ### Steps to Reproduce  1. Configure S3FileStorage with a bucket/prefix. 2. Make the listing call fail (for example, use mocked s3.glob() that raises PermissionError or a connection exception). 3. Call await storage.list_files("some-prefix"). 4. Observe that the call returns [] instead of propagating the backend error.  ### Expected Behavior  Return an empty list only when the requested directory/prefix is confirmed to contain no files. Propagate permission, transport, and other backend errors so callers can fail or retry instead of treating the data source as empty.  ### Actual Behavior  The exception is logged only at debug level and list_files() returns an empty list, hiding the reason the listing failed.  ### Environment  Current main checkout, cognee/infrastructure/files/storage/S3FileStorage.py, S3FileStorage.list_files().  ### Logs/Error Messages  ```shell  ```  ### Additional Context  The blanket except Exception around self.s3.glob() and self.s3.isfile() at the end of list_files_sync() swallows all backend failures. This differs from a confirmed empty pref
+- **Issue #6558** (2026-11-09): **Recreated dataset reuses its deterministic ID but loses all non-owner ACLs, silently locking out shared principals**
+  *Symptoms*: ## Summary  When a dataset is deleted (`forget` / `delete_dataset`) and then created again under the same name by the same owner, it gets **the same dataset ID** but **only the owner's ACLs**. Every grant that other principals (users, roles, tenants) held on the old dataset is gone. Nothing in the API tells a client that this ID now refers to a different dataset. So a client that remembers "I already shared dataset `<id>` with role X" keeps trusting a grant that no longer exists. From then on that principal gets 403 on every read and write, with no clear signal why.  ## Where it comes from  - `cognee/modules/data/methods/get_unique_dataset_id.py`: the dataset ID is deterministic, `uuid5(NAMESPACE_OID, f"{dataset_name}{user.id}")` (and the tenant-aware variant). Recreating the dataset gives back the same UUID. - `cognee/modules/data/methods/delete_dataset.py`: `session.delete(dataset)` cascades and removes the dataset's ACL rows. That part is correct by itself. - On re-creation, only the owner gets `read/write/delete/share`.  Together these mean a dataset ID does not identify one dataset over its whole life. It can come back after a delete, with different permissions.  ## Steps to reproduce  1. User A creates dataset `agent_sessions` and adds data. 2. A grants a role (or another user B) `read` and `write` on it via `POST /api/v1/permissions/datasets/{principal_id}?permission_name=...`. 3. B writes to and searches the dataset successfully. 4. A runs `forget` on the dataset (or 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1514,1176 +1536,699 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `556e958c` (2026-11-06)
-**Commit Message**: fix: Gate database connection-string ingestion (SDK-1443) (#6588)
+### Incident Patch 1: `cc10f9f3` (2026-11-12)
+**Commit Message**: fix(update): Remove stored files no document points at (SDK-1541) (#6674)
 
-## Description
-Fix for GHSA-xjmj-34mq-6g3h.
+Stacked on #6667, which is stacked on #5350. #6667 now has `dev` merged
+in, so these two commits sit on current `dev` plus the ledger changes.
+It was first opened against `dev`, where the full CI ran on the same two
+commits.
 
-### Breaking change for API users
+`forget()` removes the files a `Data` row points at. A stored file that
+no row points at stays under the data root for good, with the content of
+a document the user updated or deleted. This PR removes those files at
+the points where they lose their row.
 
-**Database ingestion over the HTTP API is now off by default.** A
-`postgresql://`, `mysql://`, `sqlite:///` (or any other
-`DB_CONNECTION_PATTERNS`) string posted to `POST /api/v1/add` or `POST
-/api/v1/remember` in `raw_data` is refused with `422
-DatabaseIngestionDisabled` unless the server sets
-`ALLOW_DATABASE_INGESTION=true`. Releases 1.6.3 through 1.6.5 accepted
-it. The SDK, CLI and MCP server are unaffected with the variable unset,
-so only API deployments whose callers are trusted need the switch;
-`false` refuses connection-string ingestion on every surface.
+## What was left behind on `dev`
 
-The 422 and the switch are stated in the add / remember endpoint docs
-(field description, docstring and error list), the `add()` docstring,
-`.env.template` and the CLAUDE.md security entry.
+Files under the data root after `forget()` (mock LLM, one document):
 
-### What
+| Input | Two chunk-level updates | Two full rebuilds | Unchanged update
+| Failed update |
+|---|---|---|---|---|
+| Raw text | 2 | 0 | 0 | 1 |
+| Upload | 4 | 2 | 1 | 2 |
+| File path | 2 | 2 | not run | not run |
 
-dlt connection-string ingestion (add/remember with sqlite:///,
-postgresql://, mysql://, ...) connects from the server, with the
-server's network position. All of it now goes through one gate in
-`create_dlt_source_from_connection_string`:
+With this PR every cell is 0. Re-adding the same upload under another
+filename also leaves 1 file, on `dev` and still here; see below.
 
-1. **ALLOW_DATABASE_INGESTION, three states.
+## Causes and fixes
 
-**File**: `.env.template` (modified, +11/-0)
+- **Chunk-level update.** It pointed the row at the new files and never
+removed the ones it pointed at, so every update kept the previous
+version on disk. `_run_incrementa
+
+**File**: `.env.template` (modified, +18/-2)
 ```diff
-@@ -469,6 +469,17 @@ HASH_API_KEY="False"
- # Enable automatic scan-and-apply for plain folders targeting main_dataset:
- # PRESORT_FOLDERS_ENABLED=false
- ALLOW_HTTP_REQUESTS=True
-+# Ingesting a database from a connection string (add/remember with sqlite:///,
-+# postgresql://, mysql://, ...) connects from this server, with its network
-+# position. Unset (the default), the SDK, CLI and MCP server may do it and the
-+# API server refuses it (422 DatabaseIngestionDisabled): its callers are whoever
-+# can register. Set true to allow it for API callers you trust, false to refuse
-+# it everywhere. Connection strings that point at cognee's own storage are always
-+# refused: SQLite files in its roots, strings carrying cognee's own database
-+# credentials, and hosts resolving to one of its servers (best-effort: not every
-+# address of a host can be known, so keep cognee's databases behind a password
-+# and egress rules). A sqlite:/// path must be an existing file.
-+# ALLOW_DATABASE_INGESTION=true
- # Raw Cypher search (CYPHER, NATURAL_LANGUAGE) is off by default: it lets any user with read
- # access to a dataset run arbitrary graph queries, up to remote code execution on the server.
- # Enable it only when every user of this deployment is trusted.
+@@ -803,9 +803,25 @@ WEB_SCRAPER_MAX_DELAY=10.0
+ # Which pipeline run / task wrote each graph node, stamped as source_* fields
+ # on the node itself. lightweight (default) | deep | disabled.
+ #COGNEE_PROVENANCE_MODE=lightweight
+-# Audit ledger: append-only, hash-chained provenance_entries table written by
+-# an opt-in cognify task. For compliance/lineage history, not retrieval.
++# Audit ledger: append-only, hash-chained provenance_entries table with one
++# row per data item (ids and the content hash, nothing the item produced). It
++# is written at the add_data_points storage seam, gets a new version when an
++# update changes the content, and a tombstone when the item is deleted
++# (written once its row is gone; dropping only its memory writes none). For
++# compliance history, not retrieval. With it on, a ledger write that fails
++# fails the ingestion, the update or the delete. With it off (the default)
++# the ledger is neither written nor read: deletes do not touch it, and the
++# routes and CLI below answer that it is off. Read it with
++# `cognee-cli provenance ...` or /api/v1/provenance.
+ #PROVENANCE_TRACKING=false
++# External anchoring of the ledger's hash chain. With a key set,
++# `cognee-cli provenance anchor` (or POST /api/v1/provenance/anchor) signs the
++# chain head with HMAC-SHA256 and appends it to the anchor file; `provenance
++# verify --anchors` then detects a ledger that was rewritten AND re-chained.
++# Keep the key out of the database host; point the path somewhere it cannot
++# write. Default path: {SYSTEM_ROOT_DIRECTORY}/provenance_anchors.jsonl
++#PROVENANCE_ANCHOR_KEY=
++#PROVENANCE_ANCHOR_PATH=
+ # Edge evidence: which document chunk supports each graph edge, stored in
+ # provenance_edge_evidence and returned as citations when include_references
+ # is on. Captured only for edges extracted from document chunks.
 ```
 
-**File**: `CLAUDE.md` (modified, +1/-0)
+**File**: `CLAUDE.md` (modified, +6/-3)
 ```diff
-@@ -824,6 +824,7 @@ Several security environment variables in `.env`:
- - `ACCEPT_LOCAL_FILE_PATH` - Allow a path in `raw_data` to be read with the server's own access: a local file or directory, cognee's own data root included, or an `s3://` object read with cognee's AWS credentials. One gate, `local_file_paths_accepted()` in `cognee/tasks/ingestion/save_data_item_to_storage.py`, applied before anything is read or listed (`resolve_data_directories` refuses a directory or S3 prefix before walking it): an explicit value is honoured on every surface; unset, the SDK, CLI and MCP server keep the code default (True) while an API request is refused (the gate reads the call origin the API server stamps on each request, `cognee/modules/operations/origin.py`; a task the request starts keeps that origin unless it opens a scope of its own, and the one that does, the session-bridge improve under `background`, only ever stores literal text). There is no exemption for cognee's storage: a caller's path into it is refused like any other. The documents of a repository cognee cloned from a URL are the one path form that passes without the gate: `resolve_data_directories` marks them `DataItem.cognee_path`, since the caller named a URL and cognee produced the paths. Uploads, text and web URLs are unaffected: they are stored under cognee's data root first and loaded from there, and the loader (`data_item_to_text_file`) applies no policy of its own, since everything it receives is cognee's copy or already admitted by the gate. `PATCH /update` takes the new version as an upload, so a document in a dataset shared with the caller is updated by upload under the dataset's write permission alone
- - `COGNEE_ALLOWED_LOCAL_FILE_ROOTS` - Optional `os.pathsep`-separated allowlist of directories local paths may be read from, applied once a path is accepted at all (over HTTP that needs `ACCEPT_LOCAL_FILE_PATH=true`). Unset (default) means any accepted local path is read, so a local repo or document tree can be ingested from anywhere; a path-looking string that does not exist is still ingested as text. When set, paths outside the listed roots are rejected (or ingested as text on the non-strict `add()` path); cognee's own data/system/cache/logs/repos roots are always allowed. Set it when paths are accepted from untrusted callers.
- - `ALLOW_HTTP_REQUESTS` - Allow HTTP requests from Cognee (default: True)
-+- `ALLOW_DATABASE_INGESTION` - **Database ingestion over the API is off by default.** A `postgresql://`, `mysql://`, `sqlite:///` (any `DB_CONNECTION_PATTERNS` scheme) string posted to `POST /api/v1/add` or `POST /api/v1/remember` is refused with 422 `DatabaseIngestionDisabled` unless the server sets `ALLOW_DATABASE_INGESTION=true` (a change from releases before 1.6.6, which accepted it); the SDK, CLI and MCP server ingest databases with the variable unset, so only API deployments need the switch. The reason: the connection is made from the server, with its network position, and the API's callers are whoever can register. `false` refuses connection-string sources on every surface. Connection strings that point at cognee's own storage are refused whatever the setting: SQLite files inside its data/system/cache/logs/repos roots or configured database paths, and network databases on a server its relational, vector, graph or cache settings use, matched by server and not by database name (the per-dataset Postgres handlers keep every dataset's database on one server). A server is recognised two ways. By credentials: a string carrying one of cognee's own username/password pairs (the relational, vector and graph settings' fields and the vector, graph and cache URLs) is refused on any host, which needs no address and so holds under aliases the address check cannot know and under DNS rebinding; it cannot cover a server that admits clients without a password or another role with access to cognee's databases. By address: the host resolved and compared with cognee's servers' addresses on the same port, where every loopback address, `0.0.0.0`/`::`, an IPv4-mapped IPv6 address and whatever this machine's hostname resolves to count as this machine. The address check is best-effort: it cannot list every address of this machine (on Debian-family hosts the hostname resolves to `127.0.1.1` alone) or of the database host (the host's LAN address behind the compose default `DB_HOST=host.docker.internal`), so an operator who turns the switch on relies on the credential refusal, on cognee's databases not accepting passwordless clients, and on network egress rules. A `sqlite:///` path must be an existing regular file (the driver would otherwise create it) and may not carry the `uri` option. A network connection string must name its server as the URL host and may carry only the `sslmode`, `connect_timeout`, `application_name` and `charset` options. Driver errors are reported by exception class only (`DatabaseSourceUnreachable`), with the full error in the server log.
- - `
-```
-
-**File**: `cognee/api/v1/add/add.py` (modified, +9/-0)
-```diff
-@@ -95,6 +95,15 @@ async def add(
-           (cross-file edges), plus the repo's documents; same as adding a local code
-           project directory. Requires ALLOW_HTTP_REQUESTS and git on PATH. Pass
-           ``branch`` to clone a branch other than the remote's default.
-+        - **Database connection strings**: "postgresql://...", "mysql://...",
-+          "sqlite:///path/to/file.db" and the other schemes in
-+          ``create_dlt_source.DB_CONNECTION_PATTERNS`` are read through dlt, with
-+          ``dlt_config["query"]`` as an optional single-table filter. The connection is
-+          made from the machine running cognee: the SDK, CLI and MCP server ingest a
-+          database by default, the API server refuses it (422
-+          ``DatabaseIngestionDisabled``) unless ``ALLOW_DATABASE_INGESTION=true``, and
-+          ``false`` refuses it everywhere. Cognee's own databases are refused whatever
-+          the setting, and a sqlite:/// path must be an existing file.
-         - **Lists**: Multiple files or text strings in a single call
+@@ -276,7 +276,7 @@ The stages below are the Low level operations these call underneath.
+ #### ADD: Data Ingestion
+ `add()` → `resolve_data_directories` → `ingest_data` → `save_data_item_to_storage` → Create Dataset + Data records in relational DB
  
-     Supported File Formats:
+-Re-adding a document that already exists (same `data_id`, through `add()`, `remember()` or `update()`'s full rebuild) follows the PATCH rule described under UPDATE below: `node_set` and a `DataItem`'s `label`, `external_metadata` and `node_set` keep their stored values when not passed, clear on an explicit empty value, and are replaced by a value. Content-derived metadata always refreshes; `_cognee.source_uri` takes the new content's location, and new content without one (an upload, raw text) drops the old one. Connector document rows state their full node sets, so a row with none reports `[]` and clears the stored ones on re-sync.
++Re-adding a document that already exists (same `data_id`, through `add()`, `remember()` or `update()`'s full rebuild) follows the PATCH rule described under UPDATE below: `node_set` and a `DataItem`'s `label`, `external_metadata` and `node_set` keep their stored values when not passed, clear on an explicit empty value, and are replaced by a value. Content-derived metadata always refreshes; `_cognee.source_uri` takes the new content's location, and new content without one (an upload, raw text) drops the old one. Connector document rows state their full node sets, so a row with none reports `[]` and clears the stored ones on re-sync. A re-ingested row that points at new stored files releases the ones it pointed at, the original and the text derived from it: `forget()` removes the files a row points at, so a file no row points at would otherwise stay on disk.
+ 
+ Key files: `cognee/api/v1/add/add.py`, `cognee/tasks/ingestion/ingest_data.py`
+ 
+@@ -299,7 +299,7 @@ A document-mode row (Notion today) may carry a `cognee_structure` json column, `
+ A stored connection syncs on a schedule when a sync policy covers it (`cognee/modules/integrations/sync_policy/`, worker opt-in with `INTEGRATIONS_SYNC_SCHEDULER_ENABLED`). Run the API that enables it as one process per database: a slot starts once across processes, but two runs of one connection are kept apart only in-process (`ingestion.exclusive_sync`), so more processes can run a connection twice over one dlt working directory and cursor. Full guide: `docs/integration-sync-schedule.md`.
+ 
+ #### UPDATE: Chunk-Level Incremental Updates
+-`update(data_id, data, dataset_id)` diffs the new content against the stored processed text (`Data.raw_data_location`) and replaces only the chunks the edits touched: a paragraph-anchored multi-region diff (near-linear for any change shape, including repeated-line-heavy content) finds every disjoint changed span (so edits at the top, middle, and end of a document are three small regions, not one giant one), each span is expanded to chunk boundaries and re-chunked with the standard TextChunker (same boundary semantics as pipeline chunks, cut against the token budget recorded on the chunks it replaces — every chunk stores `max_chunk_tokens`, so documents stay self-consistent across config changes; legacy chunks without the field fall back to the current config; only a region's last chunk may be under-filled), replaced chunks (plus their summaries, chunk-orphaned entities, and legacy triplet embeddings) are deleted, and only the new chunks run through LLM extraction. Chunks between regions are kept without being re-chunked, so their boundaries and ids cannot drift. Unaffected chunks keep their node ids, entities, summaries, and embeddings; surviving chunks are renumbered so `chunk_index` stays contiguous. Chunk identity is content-derived (`uuid5(doc : sha256(text) : occurrence)`, see `cognee/modules/chunking/chunk_id.py`), so unchanged content keeps its identity across edits. Both incremental and full fallback paths preserve `data_id`.
++`update(data_id, data, dataset_id)` diffs the new content against the stored processed text (`Data.raw_data_location`) and replaces only the chunks the edits touched: a paragraph-anchored multi-region diff (near-linear for any change shape, including repeated-line-heavy content) finds every disjoint changed span (so edits at the top, middle, and end of a document are three small regions, not one giant one), each span is expanded to chunk boundaries and re-chunked with the standard TextChunker (same boundary semantics as pipeline chunks, cut against the token budget recorded on the chunks it replaces — every chunk stores `max_chunk_tokens`, so documents stay self-consistent across config changes; legacy chunks without the field fall back to the current config; only a region's last chunk may be under-filled), replaced chunks (plus their summaries, chunk-orphaned entities, and legacy triplet embeddings) are deleted, and only the new chunks run through LLM extraction. Chunks between regions are kept without being re-chunked, so their bou
 ```
 
-**File**: `cognee/api/v1/add/routers/get_add_router.py` (modified, +11/-2)
+**File**: `cognee/api/client.py` (modified, +3/-0)
 ```diff
-@@ -55,8 +55,11 @@ async def add(
-                 "Data given as strings instead of uploads, one entry each: raw text to "
-                 "ingest, a local file or directory path on the server's filesystem "
-                 "(requires ACCEPT_LOCAL_FILE_PATH), a web URL to fetch (requires "
--                "ALLOW_HTTP_REQUESTS), or a GitHub/GitLab repository URL, which is "
--                "shallow-cloned and indexed as a code graph by cognify. Combined with "
-+                "ALLOW_HTTP_REQUESTS), a GitHub/GitLab repository URL, which is "
-+                "shallow-cloned and indexed as a code graph by cognify, or a database "
-+                "connection string (postgresql://, mysql://, sqlite:///, ...), refused "
-+                "over the API with 422 DatabaseIngestionDisabled unless the server sets "
-+                "ALLOW_DATABASE_INGESTION=true. Combined with "
-                 "'data': uploads come first, then these entries; labels and "
-                 "external_metadata pair with that combined order. Empty entries are "
-                 "ignored."
-@@ -124,6 +127,12 @@ async def add(
-             limits where local paths may point)
-           - A web URL, fetched as a page (requires ALLOW_HTTP_REQUESTS)
-           - A GitHub/GitLab repository URL, shallow-cloned and indexed as a code graph
-+          - A database connection string (postgresql://, mysql://, sqlite:///, ...),
-+            read with the server's own network position. Disabled over the API by
-+            default: the request fails with 422 DatabaseIngestionDisabled unless the
-+            server sets ALLOW_DATABASE_INGESTION=true (the SDK, CLI and MCP server
-+            ingest databases without the setting). Cognee's own databases are refused
-+            either way, and a sqlite:/// path must be an existing file.
-           At least one of data or raw_data is required. Uploads come first, then
-           raw_data entries; labels and external_metadata pair with that combined order.
-         - **labels** (Optional[str]): JSON array of per-item labels, e.g.
+@@ -45,6 +45,7 @@
+ from cognee.api.v1.ontologies.routers.get_ontology_router import get_ontology_router
+ from cognee.api.v1.permissions.routers import get_permissions_router
+ from cognee.api.v1.proposals.routers import get_proposals_router
++from cognee.api.v1.provenance.routers import get_provenance_router
+ from cognee.api.v1.recall.routers import get_recall_router
+ from cognee.api.v1.remember.routers import get_remember_router
+ from cognee.api.v1.responses.routers import get_responses_router
+@@ -425,6 +426,8 @@ async def exception_handler(request: Request, exc: CogneeApiError) -> JSONRespon
+ 
+ app.include_router(get_schema_router(), prefix="/api/v1/schema", tags=["schema"])
+ 
++app.include_router(get_provenance_router(), prefix="/api/v1/provenance", tags=["provenance"])
++
+ app.include_router(get_skills_router(), prefix="/api/v1/skills", tags=["skills"])
+ app.include_router(get_proposals_router(), prefix="/api/v1/proposals", tags=["skills"])
+ 
 ```
 
-**File**: `cognee/api/v1/remember/routers/get_remember_router.py` (modified, +16/-4)
+**File**: `cognee/api/v1/cognify/cognify.py` (modified, +2/-7)
 ```diff
-@@ -125,8 +125,11 @@ async def remember(
-                 "Data given as strings instead of uploads, one entry each: raw text to "
-                 "remember, a local file or directory path on the server's filesystem "
-                 "(requires ACCEPT_LOCAL_FILE_PATH), a web URL to fetch (requires "
--                "ALLOW_HTTP_REQUESTS), or a GitHub/GitLab repository URL, which is "
--                "shallow-cloned and indexed as a code graph. Combined with 'data': "
-+                "ALLOW_HTTP_REQUESTS), a GitHub/GitLab repository URL, which is "
-+                "shallow-cloned and indexed as a code graph, or a database connection "
-+                "string (postgresql://, mysql://, sqlite:///, ...), refused over the "
-+                "API with 422 DatabaseIngestionDisabled unless the server sets "
-+                "ALLOW_DATABASE_INGESTION=true. Combined with 'data': "
-                 "uploads come first, then these entries; labels and external_metadata "
-                 "pair with that combined order. Empty entries are ignored. With "
-                 "content_type='code' every entry is a repository spec (git URL or "
-@@ -313,8 +316,14 @@ async def remember(
-         - **data** (List[UploadFile]): Files to upload and process.
-         - **raw_data** (Optional[List[str]]): String inputs, one entry each: raw text, a
-           local file or directory path on the server (requires ACCEPT_LOCAL_FILE_PATH), a
--          web URL fetched as a page (requires ALLOW_HTTP_REQUESTS), or a GitHub/GitLab
--          repository URL, shallow-cloned and indexed as a code graph. Uploads come first,
-+          web URL fetched as a page (requires ALLOW_HTTP_REQUESTS), a GitHub/GitLab
-+          repository URL, shallow-cloned and indexed as a code graph, or a database
-+          connection string (postgresql://, mysql://, sqlite:///, ...). Database
-+          ingestion is disabled over the API by default: the request fails with
-+          422 DatabaseIngestionDisabled unless the server sets
-+          ALLOW_DATABASE_INGESTION=true (the SDK, CLI and MCP server ingest databases
-+          without the setting); cognee's own databases are refused either way, and a
-+          sqlite:/// path must be an existing file. Uploads come first,
-           then raw_data entries; labels and external_metadata pair with that combined
-           order. Normal ingestion only — rejected with content_type. At least one of data
-           or raw_data is required for normal ingestion.
-@@ -368,6 +377,9 @@ async def remember(
-           combination (no raw_data repository specs, file uploads or session_id with
-           content_type="code", index_vectors without it, or local repo paths while
-           ACCEPT_LOCAL_FILE_PATH=false)
-+        - **422 Unprocessable Entity**: A database connection string in raw_data while
-+          ALLOW_DATABASE_INGESTION is unset or false (DatabaseIngestionDisabled), or one
-+          that names cognee's own storage (DatabaseSourceRefused, SqliteSourceRefused)
-         - **409 Conflict**: Error during processing
-         """
-         # Swagger UI submits an untouched file list as one blank part; treat it
+@@ -54,7 +54,6 @@
+ )
+ from cognee.tasks.graph.extract_graph_and_summarize import extract_graph_and_summarize
+ from cognee.tasks.ingestion.document_structure import reconcile_document_structure
+-from cognee.tasks.provenance import record_provenance
+ from cognee.tasks.storage import add_data_points, find_indexed_chunks, index_chunks_for_search
+ 
+ logger = get_logger("cognify")
+@@ -692,7 +691,6 @@ async def get_default_tasks(  # TODO: Find out a better way to do this (Boris's
+ ) -> list[Task]:
+     cognify_config = get_cognify_config()
+     summary_method = summary_method or cognify_config.summary_method
+-    track_provenance = cognify_config.provenance_tracking
+     if early_chunk_indexing is None:
+         early_chunk_indexing = cognify_config.early_chunk_indexing
+     chunks_per_batch = resolve_chunks_per_batch(chunks_per_batch)
+@@ -734,11 +732,8 @@ async def get_default_tasks(  # TODO: Find out a better way to do this (Boris's
+             needs_llm=False,
+         ),
+     ]
+-
+-    if track_provenance:
+-        tasks.append(
+-            Task(record_provenance, task_config={"batch_size": chunks_per_batch}, needs_llm=False)
+-        )
++    # The audit ledger (PROVENANCE_TRACKING) is not a task here: add_data_points
++    # records it at the storage seam, so every writer is covered, not just cognify.
+ 
+     return tasks
+ 
 ```
 
-**File**: `cognee/infrastructure/files/utils/local_path_safety.py` (modified, +71/-11)
+**File**: `cognee/api/v1/datasets/datasets.py` (modified, +22/-4)
 ```diff
-@@ -29,20 +29,80 @@ def get_allowed_local_file_roots() -> tuple[Path, ...] | None:
-     # holds repositories cognee cloned on request; its document files (README,
-     # docs) are ingested by path exactly like a local project's, so the same
-     # allowlist check they pass through has to admit it.
--    base_config = get_base_config()
--    root_values.extend(
--        [
--            base_config.data_root_directory,
--            base_config.system_root_directory,
--            base_config.cache_root_directory,
--            base_config.logs_root_directory,
--            base_config.repos_root_directory,
--        ]
-+    root_values.extend(_storage_root_directories())
-+
-+    return _canonical_paths(root_values)
-+
-+
-+def get_cognee_internal_roots() -> tuple[Path, ...]:
-+    """Every location holding cognee's own state: the storage roots plus the
-+    database files, which their settings can move outside those roots.
-+
-+    Ingestion must never read these as a *source*. They hold every tenant's
-+    users, ACLs, sessions and stored files, so a caller who could point a
-+    source at them would read past the multi-tenant boundary.
-+    """
-+    # Imported here: the database configs sit above this module in the import graph.
-+    from cognee.infrastructure.databases.cache.config import get_cache_config
-+    from cognee.infrastructure.databases.graph.config import get_graph_config
-+    from cognee.infrastructure.databases.relational.config import get_relational_config
-+    from cognee.infrastructure.databases.vector.config import get_vectordb_config
-+
-+    locations: list[str | None] = [*_storage_root_directories()]
-+    locations.append(get_relational_config().db_path)
-+    locations.append(get_graph_config().graph_file_path)
-+    locations.extend(
-+        _local_database_path(url)
-+        for url in (get_vectordb_config().vector_db_url, get_cache_config().cache_db_url)
-+    )
-+
-+    return _canonical_paths([location for location in locations if location])
-+
-+
-+def is_within_roots(path: str | Path, roots: tuple[Path, ...]) -> bool:
-+    """True when the canonical ``path`` is one of ``roots`` or lies under one."""
-+    resolved = os.path.realpath(os.path.expanduser(os.fspath(path)))
-+    return any(
-+        resolved == os.fspath(root) or resolved.startswith(os.fspath(root).rstrip(os.sep) + os.sep)
-+        for root in roots
+@@ -31,6 +31,7 @@
+     get_pipeline_progress,
+     get_pipeline_status,
+ )
++from cognee.modules.provenance.tombstones import tombstone_data_item, tombstone_dataset
+ from cognee.modules.users.exceptions import PermissionDeniedError
+ from cognee.modules.users.methods import get_default_user
+ from cognee.modules.users.models import User
+@@ -125,12 +126,12 @@ async def _retire_forgotten_decisions(
      )
  
-+
-+def _storage_root_directories() -> list[str]:
-+    base_config = get_base_config()
-+    return [
-+        base_config.data_root_directory,
-+        base_config.system_root_directory,
-+        base_config.cache_root_directory,
-+        base_config.logs_root_directory,
-+        base_config.repos_root_directory,
-+    ]
-+
-+
-+def _local_database_path(value: str | None) -> str | None:
-+    """The file behind a database setting: a bare path, or the path of a SQLite-family
-+    URL (sqlite, turso). ``None`` for network URLs, which have no local file."""
-+    if not value:
-+        return None
-+    if "://" not in value:
-+        return value
-+
-+    from sqlalchemy.engine import make_url
-+    from sqlalchemy.exc import ArgumentError
-+
-+    try:
-+        url = make_url(value)
-+    except ArgumentError:
-+        # Not a SQLAlchemy URL (Neptune's `neptune-graph://<id>`, for one): a
-+        # network endpoint with no local file behind it.
-+        return None
-+    return url.database if url.get_backend_name().startswith("sqlite") else None
-+
-+
-+def _canonical_paths(paths: list[str]) -> tuple[Path, ...]:
-     # realpath canonicalizes symlinks (and e.g. macOS /tmp -> /private/tmp) without
--    # requiring the path to exist, so containment checks below are symlink-safe.
--    return tuple(Path(os.path.realpath(os.path.expanduser(root))) for root in root_values)
-+    # requiring the path to exist, so containment checks are symlink-safe.
-+    return tuple(Path(os.path.realpath(os.path.expanduser(path))) for path in paths)
+ 
+-async def _delete_dataset_if_empty(dataset, requested: bool) -> bool:
++async def _delete_dataset_if_empty(dataset, requested: bool, user: User) -> bool:
+     """Drop ``dataset`` when the caller asked for it and no Data row is left.
+ 
+     One count query, never a listing: the receipt only needs to know whether
+     the dataset went away. As in ``empty_dataset``, the dataset's search
+-    history goes first, then the dataset.
++    history goes first, then the dataset, then its audit-ledger tombstones.
+     """
+     if not requested or await has_dataset_data(dataset.id):
+         return False
+@@ -139,6 +140,7 @@ async def _delete_dataset_if_empty(dataset, requested: bool) -> bool:
+ 
+     await delete_dataset_search_history(dataset.id)
+     await delete_dataset(dataset)
++    await tombstone_dataset(dataset.id, user=user)
+     return True
  
  
- def resolve_local_path(path: str | Path, *, must_exist: bool = False) -> Path:
+@@ -451,6 +453,11 @@ async def empty_dataset(dataset_id: UUID, user: User | None = None):
+             # (files refcounted by raw_data_location) with the record.
+             result = await delete_dataset(dataset)
+ 
++            # Last, once the rows are gone: the audit ledger retracts every
++            # data item of the dataset (a no-op unless PROVENANCE_TRACKING
++            # recorded them). It raises when the tombstones cannot be written.
++            await tombstone_dataset(dataset.id, user=user)
++
+         return result
+ 
+     @staticmethod
+@@ -543,8 +550,13 @@ async def delete_data(
+                             await _invalidate_sessions_for_deleted_data_nonfatal(
+                                 dataset.id, invalidated, user.id
+                             )
++                        # No Data row, so the document is gone. A ledger row
++                        # still live for the id (a delete whose tombstone
++                        # could not be written, or an id that only ever owned
++                        # graph elements) is retracted here.
++                        await tombstone_data_item(dataset_id, data_id, user=user)
+                         dataset_deleted = await _delete_dataset_if_empty(
+-                            dataset, delete_dataset_if_empty
++                            dataset, delete_dataset_if_empty, user
+                         )
+ 
+                     return _delete_data_receipt(
+@@ -601,9 +613,15 @@ async def delete_data(
+                     # the delete must never come back as a success receipt.
+                     if await has_data(dataset.id, data_id):
+                         raise DataDeletionIncompleteError(data_id, dataset.id)
++                    # The row is checked to be gone, so the audit ledger can
++                    # say so (a no-op unless PROVENANCE_TRACKING recorded the
++                    # item). Written last: a delete that failed above leaves
++                    # the ledger row live. It raises when it cannot be written,
++                    # and deleting the same id again writes it.
++                    await tombstone_data_item(dataset_id, data_id, user=user)
+                     # Search history first, then the dataset (see the helper).
+                     dataset_deleted = await _delete_dataset_if_empty(
+-                        dataset, delete_dataset_if_empty
++                        dataset, delete_dataset_if_empty, user
+                     )
+ 
+                 # A dataset's code repositories are extracted together, so the
 ```
 
-**File**: `cognee/tasks/ingestion/create_dlt_source.py` (modified, +386/-7)
+**File**: `cognee/api/v1/provenance/routers/__init__.py` (added, +3/-0)
 ```diff
-@@ -2,8 +2,12 @@
- import os
- import re
- 
+@@ -0,0 +1,3 @@
++from .get_provenance_router import get_provenance_router
++
++__all__ = ["get_provenance_router"]
+```
+
+**File**: `cognee/api/v1/provenance/routers/get_provenance_router.py` (added, +201/-0)
+```diff
+@@ -0,0 +1,201 @@
++"""Read surface of the audit-grade provenance ledger.
++
++Every endpoint is read-only — the ledger is written by ingestion and by the
++delete paths (tombstones), never through HTTP. Access control follows the
++dataset namespace baked into every ledger key
++(``{dataset_id}:data_item:{data_id}``): a per-entity lookup is allowed when the caller can
++read the dataset the key belongs to, and the ledger-wide walks (verify,
++statistics, export) require a ``dataset_id`` unless the caller is a
++superuser. Keys without a dataset prefix (custom pipelines that bypass the
++writer's namespacing) are superuser-only for the same reason. The rule itself
++lives in ``cognee.modules.provenance.access`` and is shared with the CLI.
++
++The ledger is off by default (``PROVENANCE_TRACKING``). While it is off every
++route but ``/status`` answers 409 with that reason, instead of reading a
++ledger nobody is writing: "valid, 0 rows" would look like a verified ledger.
++"""
++
++import json
++from collections.abc import Awaitable
++from typing import Any
++from uuid import UUID
++
++from fastapi import APIRouter, Depends, HTTPException, Query
++from fastapi import Path as PathParam
++from fastapi.responses import JSONResponse, StreamingResponse
++
++from cognee.modules.provenance import get_provenance_manager
++from cognee.modules.provenance.access import (
++    authorize_anchoring,
++    authorize_ledger_key,
++    authorize_ledger_scope,
++)
++from cognee.modules.provenance.tracking import (
++    ProvenanceTrackingDisabledError,
++    provenance_tracking_enabled,
++    require_provenance_tracking,
++)
++from cognee.modules.users.exceptions import PermissionDeniedError
++from cognee.modules.users.methods import get_authenticated_user
++from cognee.modules.users.models import User
 +from cognee.shared.logging_utils import get_logger
++from cognee.shared.usage_logger import log_usage
 +
- from .dlt_utils import SOURCE_LABEL_ATTR
- 
-+logger = get_logger("create_dlt_source")
++logger = get_logger()
 +
- DB_CONNECTION_PATTERNS = [
-     "postgresql://",
-     "postgres://",
-@@ -51,18 +55,43 @@ def create_dlt_source_from_connection_string(
- 
-     ``resolve_foreign_keys`` makes dlt record the source's foreign keys in its schema;
-     the staging tables dlt creates carry no key constraints to reflect them from.
 +
-+    The connection is opened here: ``sql_database`` connects and reflects the schema
-+    when it is built. Driver errors are reported by class only — the driver message
-+    names the target and says whether it refused, timed out or rejected the
-+    credentials, which would make this call a scanner for every server it can reach.
-+    The full error is logged.
-     """
-     import sqlalchemy
-     from dlt.sources.sql_database import sql_database
- 
--    # SQLite paths must be absolute for SQLAlchemy to find the file.
--    # sqlite:/// = relative, sqlite://// = absolute
--    if connection_string.startswith("sqlite:///") and not connection_string.startswith(
--        "sqlite:////"
--    ):
--        relative_path = connection_string[len("sqlite:///") :]
--        connection_string = "sqlite:///" + os.path.abspath(relative_path)
-+    from cognee.exceptions import CogneeValidationError
-+
-+    _require_database_ingestion_allowed()
-+    if connection_string.startswith("sqlite:///"):
-+        connection_string = _allowed_sqlite_connection_string(connection_string)
-+    else:
-+        _require_foreign_database_server(connection_string)
-+
++async def _authorize(check: Awaitable[None]) -> None:
++    """Run one ledger access check (``cognee.modules.provenance.access``); a denial is a 403."""
 +    try:
-+        return _build_sql_source(sql_database, sqlalchemy, connection_string, query)
-+    except CogneeValidationError:
-+        raise
-+    except Exception as error:
-+        logger.warning(
-+            "Database source could not be opened (%s.%s): %s",
-+            type(error).__module__,
-+            type(error).__name__,
-+            error,
-+        )
-+        raise CogneeValidationError(
-+            message="The database could not be opened as a source "
-+            f"({type(error).__name__}); details are in the server log.",
-+            name="DatabaseSourceUnreachable",
-+        ) from error
++        await check
++    except PermissionDeniedError as error:
++        raise HTTPException(status_code=403, detail=error.message) from error
 +
- 
-+def _build_sql_source(sql_database, sqlalchemy, connection_string: str, query: str | None):
-     if query:
-         table_name, where_clause = _parse_sql_query(query)
-         schema_name, bare_table_name = _split_schema_and_table(table_name)
-@@ -100,6 +129,356 @@ def _database_label(connection_string: str) -> str:
-     return os.path.basename(database) if url.get_backend_name() == "sqlite" else database
- 
- 
-+def _allowed_sqlite_connection_string(connection_string: str) -> str:
-+    """Return the SQLite connection string with its file path made absolute, or
-+    raise when the file is one cognee must not read as a source.
 +
-+    A SQLite file has no credentials, so whoever names it reads it. Refused:
-+    files inside cognee's own storage (every tenant's users, ACLs and data), files
-+    outside COGNEE_ALLOWED_LOCAL_FILE_ROOTS when that allowlist is set, and paths
-+    that are not an existing regular file: the driver creates a missing file when
-+    it connects, and ingestion must never write one.
-+    """
-+    from cognee.exceptions import CogneeValidationError
-+    from cognee.infrastructure.files.utils.local_path_safety import (
-+        get_cognee_internal_roots,
-+        is_within_roots,
-+        resolve_local_path,
++def _require_ledger_on() -> None:
++    """Answer 409 with the reason while the ledger is off (see the module docstring)."""
++    try:
++        require_provenance_tracking()
++    except ProvenanceTrackingDisabledError as error:
++        raise HTTPException(status_code=409, detail=str(error)) from error
++
++
++def get_provenance_router() -> APIRouter:
++    router = APIRouter(
++        responses={
++            409: {
++                "description": "The audit ledger is off: set `PROVENANCE_TRACKING=true` "
++                "(it is off by default). On the anchor routes, also returned when "
++                "anchoring is not configured."
++            }
++        }
 +    )
 +
-+    # Parsed with the same parser the connection uses, so the path checked here
-+    # is the path that gets opened.
-+    url = _parse_connection_string(connection_string)
-+    # `uri=true` makes SQLite read the path as a `file:` URI, a second path
-+    # syntax; refuse it rather than parse it.
-+    if "uri" in url.query:
-+        raise CogneeValidationError(
-+            message="SQLite connection strings with the 'uri' option are not supported.",
-+            name="SqliteSourceRefused",
-+        )
-+    if not url.database:
-+        # In-memory database: there is no file to read.
-+        return connection_string
++    @router.get("/entry/{entity_id:path}", summary="Current ledger row of one entity")
++    @log_usage(function_name="GET /v1/provenance/entry", log_type="api_endpoint")
++    async def get_entry(
++        entity_id: str = PathParam(
++            ..., description="Ledger key, e.g. `{dataset_id}:data_item:{data_id}`"
++        ),
++        user: User = Depends(get_authenticated_user),
++    ) -> dict[str, Any]:
++        """The live row (or current tombstone) for a ledger key; 404 if never tracked."""
++        _require_ledger_on()
++        await _authorize(authorize_ledger_key(user, entity_id))
++        entry = await get_provenance_manager().get_provenance(entity_id)
++        if entry is None:
++            raise HTTPException(status_code=404, detail="Entity is not in the ledger.")
++        return entry
 +
-+    # realpath, not abspath: a symlink is resolved to the file it points at.
-+    database_path = os.path.realpath(os.path.expanduser(url.database))
-+    if is_within_roots(database_path, get_cognee_internal_roots()):
-+        raise CogneeValidationError(
-+            message="This SQLite file is part of cognee's own storage and cannot be "
-+            "ingested as a source.",
-+            name="SqliteSourceRefused",
-+        )
-+    try:
-+        resolve_local_path(database_path)
-+    except ValueError as error:
-+        raise CogneeValidationError(
-+            message="This SQLite file is outside COGNEE_ALLOWED_LOCAL_FILE_ROOTS.",
-+            name="SqliteSourceRefused",
-+        ) from error
-+    # Checked last, so a path cognee refuses anyway tells nothing about the disk.
-+    if not os.path.isfile(database_path):
-+        raise CogneeValida
++    @router.get("/history/{entity_id:path}", summary="Version history of one entity")
++    @log_usage(function_name="GET /v1/provenance/history", log_type="api_endpoint")
++    async def get_history(
++        entity_id: str = PathParam(..., description="Ledger key"),
++        user: User = Depends(get_authenticated_user),
++    ) -> list[dict[str, Any]]:
++        """Oldest-first versions; tombstone versions carry `invalidated_by` /
++        `invalidation_reason`, so a row reads "asserted by A, retracted by B"."""
++        _require_ledger_on()
++        await _authorize(authorize_ledger_key(user, entity_id))
++        history = await get_provenance_manager().revision_history(entity_id)
++        if not history:
++            raise HTTPException(status_code=404, detail="Entity is not in the ledger.")
++        return history
++
++    @router.get("/verify", summary="Verify checksums and the hash chain")
++    @log_usage(function_name="GET /v1/provenance/verify", log_type="api_endpoint")
++    async def verify(
++        dataset_id: UUID | None = Query(default=None),
++        user: User = Depends(get_authenticated_user),
++    ) -> dict[str, Any]:
++        """Tamper evidence. Without `dataset_id` (superusers) the whole chain is
++        walked; with it, each of the dataset's rows is checked
 ```
 
-**File**: `cognee/tasks/ingestion/resolve_dlt_sources.py` (modified, +11/-3)
+**File**: `cognee/api/v1/update/incremental.py` (modified, +225/-121)
 ```diff
-@@ -168,7 +168,7 @@ async def resolve_dlt_sources(
-     # CSVs are NOT handled here anymore: they route through the loader engine
-     # (dlt_csv_loader, registered above csv_loader) inside the ingest
-     # pipeline, which owns localization (s3/file://) and manifest emission.
--    data_list = _normalize_structured_inputs(data_list, query)
-+    data_list = await _normalize_structured_inputs(data_list, query)
+@@ -58,6 +58,7 @@
+ from cognee.infrastructure.databases.provenance import make_chunk_source_ref_key
+ from cognee.infrastructure.databases.provenance.markers import stores_provenance_in_graph
+ from cognee.infrastructure.databases.vector import get_vector_engine_async
++from cognee.infrastructure.files.stored_file_claims import holding_stored_files
+ from cognee.infrastructure.files.utils.get_data_file_path import get_data_file_path
+ from cognee.infrastructure.files.utils.open_data_file import open_data_file
+ from cognee.infrastructure.llm.utils import get_max_chunk_tokens
+@@ -89,6 +90,7 @@
+     publish_updated_data,
+ )
+ from cognee.modules.data.methods.get_dataset_data import get_dataset_data
++from cognee.modules.data.methods.remove_unreferenced_files import remove_unreferenced_files
+ from cognee.modules.data.models import Data
+ from cognee.modules.data.processing.document_types.Document import Document
+ from cognee.modules.engine.utils.temporal_hints import document_temporal_hints
+@@ -122,6 +124,7 @@
+ from cognee.tasks.ingestion.data_item import DataItem
+ from cognee.tasks.ingestion.data_item_to_text_file import data_item_to_text_file
+ from cognee.tasks.ingestion.save_data_item_to_storage import save_data_item_to_storage
++from cognee.tasks.provenance.record_provenance import record_data_item_content
+ from cognee.tasks.storage.add_data_points import add_data_points
  
-     dlt_items = []
-     non_dlt_items = []
-@@ -337,18 +337,26 @@ async def _cleanup() -> None:
-     return result, orphan_cleanup
+ logger = get_logger("incremental_update")
+@@ -532,6 +535,31 @@ async def _restore_repositioned_chunks(chunks: list[DocumentChunk], _context) ->
+     )
  
  
--def _normalize_structured_inputs(data_list: list, query: str | None) -> list:
-+async def _normalize_structured_inputs(data_list: list, query: str | None) -> list:
-     """Wrap auto-detected structured inputs in dlt sources.
- 
-     Connection strings become dlt sql_database sources; everything else
-     passes through unchanged. CSV inputs are deliberately NOT handled here —
-     the loader engine's dlt_csv_loader owns them inside the ingest pipeline
-     (with localization of s3:// and file:// locations built in).
++UPDATE_APPLIED = "The update was applied: the document holds its new content."
++UPDATE_NOT_APPLIED = "The update was not applied: the document keeps its previous content."
 +
-+    Building a sql_database source connects to the database and reflects its
-+    schema, a blocking call that can wait out a connect timeout, so it runs in a
-+    worker thread (the operation-origin context travels with it).
-     """
-+    import asyncio
 +
-     normalized = []
-     for item in data_list:
-         if isinstance(item, str) and is_connection_string(item):
--            normalized.append(create_dlt_source_from_connection_string(item, query=query))
-+            normalized.append(
-+                await asyncio.to_thread(create_dlt_source_from_connection_string, item, query=query)
++async def _remove_unreferenced_files(*versions: Data | StagedContent, update_applied: bool) -> None:
++    """Remove the stored files of ``versions`` that no ``Data`` row points at.
++
++    A version is a row as it was, or content that was staged: both name a
++    processed text file and an original (see ``remove_unreferenced_files``).
++
++    A file that cannot be removed raises ``StoredFileNotRemovedError``, and no
++    caller catches it: a stored file cognee cannot delete is never an
++    acceptable outcome. ``update_applied`` is what that error tells the caller
++    first, because by then the update may already be in effect.
++    """
++    await remove_unreferenced_files(
++        [
++            location
++            for version in versions
++            for location in (version.raw_data_location, version.original_data_location)
++        ],
++        UPDATE_APPLIED if update_applied else UPDATE_NOT_APPLIED,
++    )
++
++
+ async def _stage_new_content(data, preferred_loaders) -> StagedContent:
+     """Run the input through ingestion's loader machinery without row writes.
+ 
+@@ -766,20 +794,41 @@ async def incremental_update(
+                 "the selected graph does not store ownership provenance in-graph",
+                 RefusalReason.UNSUPPORTED_BACKEND,
+             )
+-        return await _run_incremental_update(
+-            data_id,
+-            data,
+-            dataset,
+-            user,
+-            old_data,
+-            node_set,
+-            preferred_loaders,
+-            graph_model,
+-            custom_prompt,
+-            chunker,
+-            policy,
+-            extractor,
+-        )
++        # The staged files are stored long before the row points at them (the
++        # publish comes after extraction): claimed until the update is over, so
++        # no removal in another dataset takes them. The update's own cleanup
++        # still removes the ones it did not use.
++        async with holding_stored_files():
++            return await _run_incremental_update(
++                data_id,
++                data,
++                dataset,
++                user,
++                old_data,
++                node_set,
++                preferred_loaders,
++                graph_model,
++                custom_prompt,
++                chunker,
++                policy,
++                extractor,
 +            )
-         else:
-             normalized.append(item)
-     return normalized
++
++
++async def _record_content_in_ledger(
++    content_hash: str, bundle: dict, dataset, user: User, pipeline_run_id: UUID | None = None
++) -> None:
++    """Tell the audit ledger which content the document holds (a no-op when it is off)."""
++    await record_data_item_content(
++        PipelineContext(
++            user=user,
++            data_item=bundle["data_item"],
++            dataset=dataset,
++            pipeline_run_id=pipeline_run_id,
++            pipeline_name=PIPELINE_NAME,
++        ),
++        content_hash,
++    )
+ 
+ 
+ async def _run_incremental_update(
+@@ -806,59 +855,101 @@ async def _run_incremental_update(
+     bundle = await _stage_and_plan(
+         data_id, data, dataset, user, node_set, preferred_loaders, chunker, policy
+     )
+-
+-    # A no-op with nothing to repair is the only path that writes nothing, and
+-    # so the only one that records no run.
+-    if bundle.get("status") == "unchanged
 ```
 
 ---
 
-### Incident Patch 2: `f1bac60b` (2026-11-06)
-**Commit Message**: fix(lancedb): Evolve payload schemas in place (#6556)
+### Incident Patch 2: `eab0d282` (2026-11-12)
+**Commit Message**: fix(update): Remove released files 16 at a time
+
+The previous commit started every removal at once. A re-sync that changes
+5,000 documents releases about 10,000 files, and their storage calls all
+queue on the process's shared thread pool: measured on a local S3 server
+with 30 ms added per call, a no-op submitted to that pool by another
+request waited up to 38 s while the release ran. On local storage the
+removals never wait, so the event loop ran all of them in one go and
+stalled for 1.5 s (the one-after-another loop before it did the same).
+
+The removals now run in slices of 16. Nothing queues behind them on the
+thread pool (0.00 s wait in the same measurement), and awaiting each
+slice gives the event loop its turn (0.02 s longest stall on local
+storage). The 10,000 files take 80 s on S3 instead of 60 s all at once.
+The width only spaces the work out: every file is still removed, and
+every failure still reported.
+
+**File**: `cognee/modules/data/methods/remove_unreferenced_files.py` (modified, +21/-6)
+```diff
+@@ -11,16 +11,23 @@
+ 
+ logger = get_logger("remove_unreferenced_files")
+ 
++# How many removals run at once. Their storage calls run on the process's shared
++# thread pool, and local storage does them on the event loop itself, so the
++# files of a large re-sync started all together make every other request in the
++# worker wait behind them. A width, not a cutoff: every file is still removed.
++_REMOVALS_AT_ONCE = 16
++
+ 
+ async def remove_unreferenced_files(locations: Iterable[str | None], outcome: str) -> None:
+     """Remove each stored file in ``locations`` that no ``Data`` row points at.
+ 
+     For the files a document leaves behind when its row moves on, or that were
+     staged for a row that never took them. A file a row still uses stays, and
+     so does a file outside the data root (the user's own). The references of
+-    all the files are read in one query, and the removals run at the same
+-    time: each is a few storage round trips, and a re-sync can release two
+-    files per changed document while it holds the dataset lock.
++    all the files are read in one query, and the removals run
++    ``_REMOVALS_AT_ONCE`` at a time: each is a few storage round trips, and a
++    re-sync can release two files per changed document while it holds the
++    dataset lock.
+ 
+     Every file is tried. The ones that could not be removed are then raised
+     together as one ``StoredFileNotRemovedError``, each with its own error, and
+@@ -46,9 +53,17 @@ async def remove_unreferenced_files(locations: Iterable[str | None], outcome: st
+         raise StoredFileNotRemovedError(dict.fromkeys(candidates, reason), outcome) from error
+ 
+     unreferenced = [location for location in candidates if location not in referenced]
+-    errors = await asyncio.gather(
+-        *(_remove_data_file(db_engine, location) for location in unreferenced)
+-    )
++    errors: list[Exception | None] = []
++    # One slice after another, not a sliding window: awaiting each slice is what
++    # gives the event loop its turn when the removals themselves never wait
++    # (local storage).
++    for start in range(0, len(unreferenced), _REMOVALS_AT_ONCE):
++        errors += await asyncio.gather(
++            *(
++                _remove_data_file(db_engine, location)
++                for location in unreferenced[start : start + _REMOVALS_AT_ONCE]
++            )
++        )
+     not_removed = {
+         location: f"{type(error).__name__}: {error}"
+         for location, error in zip(unreferenced, errors)
+```
+
+**File**: `cognee/tests/unit/modules/data/test_remove_unreferenced_files.py` (modified, +50/-0)
+```diff
+@@ -89,6 +89,56 @@ async def remove_data_file(location):
+     assert most_in_flight == 3
+ 
+ 
++@pytest.mark.asyncio
++async def test_a_large_release_runs_a_few_at_a_time_and_removes_every_file(monkeypatch):
++    engine = _engine(monkeypatch)
++    monkeypatch.setattr(removal, "_REMOVALS_AT_ONCE", 4)
++    in_flight = 0
++    most_in_flight = 0
++
++    async def remove_data_file(location):
++        nonlocal in_flight, most_in_flight
++        in_flight += 1
++        most_in_flight = max(most_in_flight, in_flight)
++        await asyncio.sleep(0)
++        in_flight -= 1
++        engine.removed.append(location)
++
++    engine.remove_data_file = remove_data_file
++    locations = [f"/data/{index}" for index in range(10)]
++
++    await removal.remove_unreferenced_files(locations, OUTCOME)
++
++    # Never more than the width in flight, and the width drops no file.
++    assert most_in_flight == 4
++    assert engine.removed == locations
++
++
++@pytest.mark.asyncio
++async def test_removals_that_never_wait_still_give_other_work_its_turn(monkeypatch):
++    """Local storage removes a file without awaiting anything."""
++    engine = _engine(monkeypatch)
++    monkeypatch.setattr(removal, "_REMOVALS_AT_ONCE", 4)
++    turns = 0
++
++    async def other_request():
++        nonlocal turns
++        while True:
++            turns += 1
++            await asyncio.sleep(0)
++
++    other = asyncio.create_task(other_request())
++    try:
++        await removal.remove_unreferenced_files([f"/data/{index}" for index in range(40)], OUTCOME)
++    finally:
++        other.cancel()
++
++    # Ten slices of four: the other request runs between them, not only once the
++    # last file is gone.
++    assert len(engine.removed) == 40
++    assert turns >= 10
++
++
+ @pytest.mark.asyncio
+ async def test_a_reference_check_that_fails_reports_every_file(monkeypatch):
+     engine = _engine(monkeypatch)
+```
+
+---
+
+### Incident Patch 3: `44e9180f` (2026-11-12)
+**Commit Message**: fix(ci): Run weekly proposals without a shell (SDK-1548) (#6695)
 
 <!-- .github/pull_request_template.md -->
 
 ## Description
-<!--
-Please provide a clear, human-generated description of the changes in
-this PR.
-DO NOT use AI-generated descriptions. We want to understand your thought
-process and reasoning.
--->
-Fixes SDK-413. A LanceDB payload schema migration (a field added to or
-removed from `IndexSchema`, a type or nullability change) used to read
-every row of the table into Python, vectors included, drop the table,
-and write it back through pydantic. On large stores that exhausted
-memory, and a crash between the drop and the rewrite lost the table. The
-migration now evolves the `payload` column in place with Lance's own
-schema evolution, never reads or rewrites the vectors, and never drops
-anything before its replacement exists.
 
-## How it works
+The weekly ticket proposals workflow runs Claude Code over a digest of
+docs-assistant chats. That digest is text typed by anonymous users, so
+the Claude steps should not be able to run commands or change what the
+job runs next.
 
-`cognee_db_workers/lancedb_schema_evolution.py` (new, pure pyarrow,
-shared by the adapter and the subprocess worker):
+- Both Claude steps (Variant A and Variant B) drop
+`--dangerously-skip-permissions` and run with `--restricted`, `--tools
+"Read,Grep,Glob,Write"`, `--allowedTools
+"Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)"` and
+`--permission-prompts none`. Claude has no shell and no web access,
+reads only inside the checkout, and can write only its two output files.
+- The write limit matters because the next step runs
+`scripts/weekly_tickets/issue_body.py` from the same checkout. With a
+general write permission Claude could have changed that script.
+- The Variant B install line names only `cognee`. `cognee-cli` is a
+command of that package, not a package of its own.
 
-1. `add_columns` computes `__payload_migrating` from `payload` with a
-batch UDF that reads only the payload column: kept fields cast where
-their type changed, new fields filled from the model's default or null,
-dropped fields left out
+This targets `main` because the weekly schedule runs the copy of the
+workflow on the default branch. It needs a back-merge to `dev`.
 
-**File**: `CLAUDE.md` (modified, +2/-0)
+Linear: SDK-1548
+
+## Accepta
+
+**File**: `.github/workflows/weekly-ticket-proposals.yml` (modified, +16/-3)
 ```diff
-@@ -395,6 +395,8 @@ DB_NAME=cognee_db
- 
- #### Vector Databases
- Supported in-tree: lancedb (default), pgvector, neptune_analytics, turso.
-+
-+**LanceDB payload schema migrations.** When a payload model changes (a field added or removed on `IndexSchema`, a type or nullability change), the stored `payload` struct is evolved in place by `cognee_db_workers/lancedb_schema_evolution.py` (its module docstring is the reference: Lance schema evolution on the payload column alone, vectors never read, `payload` present at every committed version, rows another process wrote during the run repaired by fragment, which is why compaction leaves a table mid-migration alone, interrupted runs finished by the next one, nothing partial). It runs proactively on every cognee version change (`run_migrations`, schema reads only, every table visited before one error names the failures) and reactively when a write hits LanceDB's schema-drift errors (`create_data_points`); in subprocess mode on the worker's handle (`OP_TABLE_EVOLVE_PAYLOAD`), with the model's required fields carried apart from the relaxed storage schema. Index collections are compared against `IndexSchema`, `TruthCentroid_vector` against its own model (`_resolve_collection_payload_schema`). A table whose vectors are not the configured width is refused with `StoredVectorWidthMismatchError` (a re-embedding, not a schema migration). Commits through pylance, so it needs the pylance line matching lancedb's Lance core, like compaction.
- Others (ChromaDB, Qdrant, Weaviate, Milvus, …) are community adapters — install from
- https://github.com/topoteretes/cognee-community and register via `use_vector_adapter`
- before setting `VECTOR_DB_PROVIDER`, otherwise cognee raises
-```
-
-**File**: `cognee/infrastructure/databases/vector/exceptions/__init__.py` (modified, +2/-0)
-```diff
-@@ -2,10 +2,12 @@
-     CollectionNotFoundError,
-     EmbeddingDimensionMismatchError,
-     SharedDatabasePruneError,
-+    StoredVectorWidthMismatchError,
- )
- 
- __all__ = [
-     "CollectionNotFoundError",
-     "EmbeddingDimensionMismatchError",
-     "SharedDatabasePruneError",
-+    "StoredVectorWidthMismatchError",
- ]
-```
-
-**File**: `cognee/infrastructure/databases/vector/exceptions/exceptions.py` (modified, +44/-0)
-```diff
-@@ -52,6 +52,50 @@ def __init__(
-         )
- 
- 
-+class StoredVectorWidthMismatchError(CogneeValidationError):
-+    """A table's vectors are not the configured embedding width, so its schema cannot be migrated.
-+
-+    A payload schema migration keeps every vector; a width change is a re-embedding.
-+    """
-+
-+    def __init__(
-+        self,
-+        collection_name: str,
-+        stored_dimensions: int | None,
-+        configured_dimensions: int,
-+        name: str = "StoredVectorWidthMismatchError",
-+        status_code: int = status.HTTP_409_CONFLICT,
-+    ):
-+        self.collection_name = collection_name
-+        self.stored_dimensions = stored_dimensions
-+        self.configured_dimensions = configured_dimensions
-+        if stored_dimensions is None:
-+            # A variable-length list column, which no cognee release writes.
-+            stored = "a variable-length vector column with no fixed width"
-+            remediation = (
-+                "Delete the dataset (forget(dataset=...) / cognee-cli forget) and ingest it "
-+                "again with the current model."
-+            )
-+        else:
-+            stored = f"{stored_dimensions}-dimensional vectors"
-+            remediation = (
-+                "Set EMBEDDING_MODEL back to the model that built this store to keep using it, "
-+                "or delete the dataset (forget(dataset=...) / cognee-cli forget) and ingest it "
-+                "again with the current model."
-+            )
-+        super().__init__(
-+            message=(
-+                f"LanceDB collection '{collection_name}' holds {stored}, but the configured "
-+                f"embedding model produces {configured_dimensions} dimensions. A schema "
-+                "migration keeps the stored vectors, so it cannot bring this table to the "
-+                "current model."
-+            ),
-+            name=name,
-+            status_code=status_code,
-+            remediation=remediation,
-+        )
-+
-+
- class CollectionNotFoundError(CogneeValidationError):
-     """
-     Represents an error that occurs when a requested collection cannot be found.
-```
-
-**File**: `cognee/infrastructure/databases/vector/lancedb/LanceDBAdapter.py` (modified, +204/-146)
-```diff
-@@ -17,11 +17,15 @@
- from uuid import UUID
- 
- import lancedb
-+import pyarrow as pa
- from lancedb.pydantic import LanceModel, Vector
--from pydantic import BaseModel
-+from pydantic import BaseModel, TypeAdapter, ValidationError
- 
- from cognee.infrastructure.databases.exceptions import MissingQueryParameterError
--from cognee.infrastructure.databases.vector.exceptions import CollectionNotFoundError
-+from cognee.infrastructure.databases.vector.exceptions import (
-+    CollectionNotFoundError,
-+    StoredVectorWidthMismatchError,
-+)
- from cognee.infrastructure.databases.vector.local_scoring import (
-     score_rows_against_queries,
- )
-@@ -49,6 +53,14 @@
-     open_as_lance,
-     prune_superseded_versions,
- )
-+from cognee_db_workers.lancedb_schema_evolution import (
-+    MIGRATING_COLUMN,
-+    OLD_PAYLOAD_COLUMN,
-+    SchemaEvolutionError,
-+    arrow_default,
-+    evolve_payload_schema,
-+    relax_nullability,
-+)
- 
- from ..embeddings.EmbeddingGateway import EmbeddingGateway
- from ..models.ScoredResult import ScoredResult
-@@ -695,11 +707,7 @@ async def upsert_raw_vectors(
-             payload_schema = IndexSchema
- 
-         vector_size = self.embedding_engine.get_vector_size()
--        payload_model = (
--            self.get_data_point_schema(payload_schema)
--            if issubclass(payload_schema, DataPoint)
--            else payload_schema
--        )
-+        payload_model = self._payload_model_for(payload_schema)
-         LanceDataPoint = self._make_lance_datapoint_cls(payload_model, vector_size)
- 
-         # Every check runs before the table exists, so a rejected call creates nothing.
-@@ -751,8 +759,8 @@ async def upsert_raw_vectors(
-                 )
-         except (ValueError, OSError, RuntimeError) as e:
-             # The same two schema-drift errors create_data_points recovers from: a
--            # table created with an older payload shape is rebuilt to the current
--            # one, its rows kept, and the points are written into the new table.
-+            # table created with an older payload shape is evolved to the current
-+            # one in place, and the points are written afterwards.
-             if not self._is_schema_drift_error(e):
-                 raise
-             logger.warning(
-@@ -864,7 +872,10 @@ async def compact(self, collection_name: str | None = None) -> dict:
-         wrote (that pass raises ``PylanceIncompatibleError``, later ones skip).
-         A failure on one collection does not stop the pass: the rest are
-         compacted, the failed one stays first in line for the next pass, and
--        one error naming every failed collection is raised at the end.
-+        one error naming every failed collection is raised at the end. A table
-+        in the middle of a payload schema migration is left alone (reported
-+        ``skipped``): a rewrite would renumber the fragments the migration
-+        repairs by id (see ``cognee_db_workers.lancedb_schema_evolution``).
-         """
-         options = self._compaction_options()
-         reason = self._compaction_skip_reason()
-@@ -971,12 +982,33 @@ async def _prune_collection(self, collection, retention_seconds: int, max_versio
-             max_versions=max_versions,
-         )
- 
-+    def _payload_model_for(self, payload_schema: type) -> type:
-+        """The model a collection stores for ``payload_schema``: a DataPoint's storable
-+        shape (``get_data_point_schema``), a plain BaseModel as declared."""
-+        if issubclass(payload_schema, DataPoint):
-+            return self.get_data_point_schema(payload_schema)
-+        return payload_schema
-+
-+    def _require_lance_core(self) -> None:
-+        """Raise when pylance is not on the Lance core lancedb bundles.
-+
-+        The in-place migration commits through pylance; a mismatched pair could
-+        write a version lancedb cannot read, so it is an error here, not a skip.
-+        """
-+        mismatch = lance_core_mismatch()
-+        if mismatch:
-+            raise PylanceIncompatibleError(
-+                f"LanceDB schema migration needs pylance on lancedb's Lance core: {mismatch}. "
-+                "Install the pylance release line matching lancedb's bundled Lance core "
-+                "(see pyproject)."
-+            )
-+
-     @staticmethod
-     def _is_schema_drift_error(error: Exception) -> bool:
-         """Whether a write failed because the table's payload shape is an older one.
- 
--        Two LanceDB failures are recoverable by rebuilding the table through
--        Pydantic validation, which fills the defaults of the current schema:
-+        Two LanceDB failures are recoverable by evolving the stored payload
-+        struct to the current schema, which fills the defaults of its new fields:
-         "not found in target schema" (the payload has a field the table does
-         not know) and "contained null values" (old rows lack a field the
-         current schema requires; raised by the Rust file writer).
-@@ -990,18 +1022,16 @@ async def _migrate_collection_schema(
-     
-```
-
-**File**: `cognee/infrastructure/databases/vector/lancedb/subprocess/proxy.py` (modified, +31/-0)
-```diff
-@@ -29,6 +29,7 @@
-     OP_TABLE_COMPACT_FRAGMENTS,
-     OP_TABLE_COUNT_ROWS,
-     OP_TABLE_DELETE,
-+    OP_TABLE_EVOLVE_PAYLOAD,
-     OP_TABLE_MERGE_INSERT_EXECUTE,
-     OP_TABLE_NAMES,
-     OP_TABLE_OPTIMIZE,
-@@ -347,6 +348,36 @@ async def compact_fragments(self, *, target_rows_per_fragment: int, max_tasks: i
-         )
-         return resp.result
- 
-+    async def evolve_payload_schema(
-+        self,
-+        target: pa.StructType,
-+        *,
-+        defaults: dict,
-+        required: frozenset[str],
-+        batch_size: int | None = None,
-+    ) -> dict:
-+        """Mirrors ``lancedb_schema_evolution.evolve_payload_schema`` on the worker's handle.
-+
-+        The target struct travels as a one-field Arrow schema in IPC form, like the
-+        schema of ``create_table``; ``defaults`` holds plain values only and
-+        ``required`` goes as a sorted list of field names.
-+        """
-+        target_bytes = pa.schema([pa.field("payload", target)]).serialize().to_pybytes()
-+        resp = await self._session.call_async(
-+            Request(
-+                op=OP_TABLE_EVOLVE_PAYLOAD,
-+                handle_id=self.handle_id,
-+                args=(target_bytes,),
-+                kwargs={
-+                    "defaults": defaults,
-+                    "required": sorted(required),
-+                    "batch_size": batch_size,
-+                },
-+            ),
-+            timeout=None,
-+        )
-+        return resp.result
-+
-     async def prune_versions(self, *, retention_seconds: int, max_versions: int) -> dict:
-         resp = await self._session.call_async(
-             Request(
-```
-
-**File**: `cognee/tests/unit/exceptions/test_cognee_error_contract.py` (modified, +2/-0)
-```diff
-@@ -89,6 +89,8 @@
-     "stored_dimensions": 384,
-     "configured_model": "sample-provider/new-model",
-     "configured_dimensions": 1536,
-+    # StoredVectorWidthMismatchError: the LanceDB table whose vectors are not that width.
-+    "collection_name": "DocumentChunk_text",
-     # GlinerWorkerModelMismatchError: the model required vs the one the worker serves.
-     "expected": "sample-org/required-model",
-     "served": "sample-org/served-model",
-```
-
-**File**: `cognee/tests/unit/infrastructure/databases/vector/test_lancedb_compaction.py` (modified, +24/-0)
-```diff
-@@ -149,6 +149,30 @@ async def test_compact_is_a_cheap_no_op_on_a_compact_table(tmp_path, compaction_
-     assert _data_files(db_path, collection) == before
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("temporary_column", ["__payload_migrating", "__payload_old"])
-+async def test_compaction_leaves_a_table_mid_migration_alone(
-+    tmp_path, compaction_settings, temporary_column
-+):
-+    """A payload migration finds the rows written during its run by fragment id, and a
-+    rewrite would renumber them; while one of its temporary columns is present the
-+    table is skipped, in the shared function both modes run."""
-+    import lance
-+
-+    compaction_settings(retention_seconds=0)
-+    adapter, db_path = _adapter(tmp_path)
-+    collection = "MidMigration_label"
-+    await _write_n_points(adapter, collection, 3)
-+    dataset = lance.dataset(str(Path(db_path) / f"{collection}.lance"))
-+    dataset.add_columns({temporary_column: "payload"})
-+
-+    stats = await adapter.compact()
-+
-+    assert stats[collection]["skipped"] == "payload_migration"
-+    assert stats[collection]["executed_tasks"] == 0
-+    assert await _fragment_count(adapter, collection) == 3
-+
-+
- @pytest.mark.asyncio
- async def test_compact_leaves_fragments_at_target_size_alone(tmp_path, compaction_settings):
-     """The property that makes it cheap on any disk: cold fragments are not rewritten."""
-```
-
-**File**: `cognee/tests/unit/infrastructure/databases/vector/test_lancedb_schema_migration.py` (modified, +1078/-1)
-```diff
-@@ -2,12 +2,26 @@
- 
- from __future__ import annotations
- 
-+import hashlib
-+import importlib
-+import os
-+import tracemalloc
-+from datetime import datetime, timezone
-+from enum import Enum
- from uuid import uuid4
- 
- import pyarrow as pa
- import pytest
- 
-+from cognee.infrastructure.databases.vector.embeddings.EmbeddingEngine import EmbeddingResult
-+from cognee.infrastructure.databases.vector.exceptions import StoredVectorWidthMismatchError
- from cognee.infrastructure.engine import DataPoint
-+from cognee_db_workers.lancedb_schema_evolution import (
-+    MIGRATING_COLUMN,
-+    OLD_PAYLOAD_COLUMN,
-+    STATE_KEY,
-+    SchemaEvolutionError,
-+)
- 
- try:
-     from cognee.infrastructure.databases.vector.lancedb.LanceDBAdapter import (
-@@ -21,14 +35,16 @@
- 
- 
- class _FakeEmbeddingEngine:
-+    model = "fake"
-+
-     def get_vector_size(self):
-         return 3
- 
-     def get_batch_size(self):
-         return 100
- 
-     async def embed_text(self, texts):
--        return [[0.1, 0.2, 0.3] for _ in texts]
-+        return EmbeddingResult([[0.1, 0.2, 0.3] for _ in texts], tokens=0)
- 
- 
- def _make_point(id: str, text: str, name: str = "") -> IndexSchema:
-@@ -40,6 +56,21 @@ class _InheritedFieldsPoint(DataPoint):
-     metadata: dict = {"index_fields": ["text"]}
- 
- 
-+class _Tier(str, Enum):
-+    FREE = "free"
-+    PAID = "paid"
-+
-+
-+class _TypedDefaultsPoint(DataPoint):
-+    """Defaults pyarrow cannot build from their string form, and one required Enum
-+    (whose inferred default is an Enum member)."""
-+
-+    text: str
-+    seen_at: datetime = datetime(2026, 1, 1, tzinfo=timezone.utc)
-+    tier: _Tier
-+    metadata: dict = {"index_fields": ["text"]}
-+
-+
- class _ImpossibleDefaultPoint(DataPoint):
-     text: str
-     required_pair: tuple[int, int]
-@@ -349,3 +380,1049 @@ async def test_payload_preserves_inherited_datapoint_fields(tmp_path):
-     assert result.payload["feedback_weight"] == 0.75
-     assert result.payload["created_at"] == point.created_at
-     assert result.payload["updated_at"] == point.updated_at
-+
-+
-+# ---------------------------------------------------------------------------
-+# In-place evolution: the vectors are never read, nothing is dropped.
-+# ---------------------------------------------------------------------------
-+
-+
-+class _WideEmbeddingEngine:
-+    """3,072 dimensions, like the production default: the width that made the old
-+    rewrite swap; it also tells a cheap migration from one that touched the vectors."""
-+
-+    dimensions = 3072
-+
-+    def get_vector_size(self):
-+        return self.dimensions
-+
-+    def get_batch_size(self):
-+        return 100
-+
-+    async def embed_text(self, texts):
-+        return EmbeddingResult([[0.0] * self.dimensions for _ in texts], tokens=0)
-+
-+
-+def _data_files(db_path: str, collection: str) -> dict[str, str]:
-+    """sha256 of every data file of the table, by file name."""
-+    data_dir = os.path.join(db_path, f"{collection}.lance", "data")
-+    return {
-+        name: hashlib.sha256(open(os.path.join(data_dir, name), "rb").read()).hexdigest()
-+        for name in os.listdir(data_dir)
-+    }
-+
-+
-+async def _payload_type(adapter, collection):
-+    schema = await (await adapter.get_collection(collection)).schema()
-+    return schema.field("payload").type
-+
-+
-+async def _rewrite_payload(adapter, collection, new_struct: pa.StructType, build):
-+    """Replace the table's payload struct with one built by ``build(old_struct_array)``,
-+    simulating a table written by an older or differently typed model."""
-+    table = await (await adapter.get_collection(collection)).to_arrow()
-+    pi = table.schema.get_field_index("payload")
-+    col = table.column("payload").combine_chunks()
-+    rewritten = table.set_column(pi, pa.field("payload", new_struct), build(col))
-+    conn = await adapter.get_connection()
-+    await conn.drop_table(collection)
-+    await conn.create_table(collection, data=rewritten)
-+
-+
-+def _struct_without(struct: pa.StructType, *names) -> tuple[pa.StructType, list[int]]:
-+    keep = [i for i in range(struct.num_fields) if struct.field(i).name not in names]
-+    return pa.struct([struct.field(i) for i in keep]), keep
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.skipif(not HAS_LANCEDB, reason="lancedb not installed")
-+async def test_proactive_migration_reads_schemas_only(tmp_path, monkeypatch):
-+    """A version bump over a compatible store never loads a table's rows."""
-+    import lancedb
-+
-+    adapter = LanceDBAdapter(
-+        url=str(tmp_path / "db"), api_key=None, embedding_engine=_FakeEmbeddingEngine()
-+    )
-+    await _seed(adapter, "Entity_name", [_make_point(str(uuid4()), "alice")])
-+    await _seed(adapter, "DocumentChunk_text", [_make_point(str(uuid4()), "a chunk")])
-+
-+    async def never(self, *args, **kwargs):
-+        raise AssertionError("the schema check must not read the table")
-+
-+    monkeypatch.setattr(lancedb.AsyncTable, "to_arrow", never)
-+    monkeypatch.setattr(lancedb.AsyncTable, "to_pandas", never, raising=False)
-+
-+    result = awa
-```
-
----
-
-### Incident Patch 3: `690b7e55` (2026-11-06)
-**Commit Message**: fix(search): exclude disabled types from feeling lucky (SDK-1447) (#6600)
-
-## Description
-
-FEELING_LUCKY could select `CYPHER` or `NATURAL_LANGUAGE` while
-`ALLOW_CYPHER_QUERY` was disabled, causing an ordinary search to fail
-with HTTP 403.
-
-Exclude those choices using the same deployment gate as the retriever
-factory and recall router. An unavailable LLM proposal uses the
-selector's existing RAG/graph default. Request scope restrictions and
-explicit Cypher opt-in keep their existing behavior. The shared selector
-covers search and recall.
-
-## Validation
-
-- New regression tests before the fix: **8 failed**, demonstrating
-selection of disabled types.
-- Search, retrieval and recall unit suites: **1,357 passed**.
-  ```sh
-python -m pytest cognee/tests/unit/modules/search
-cognee/tests/unit/modules/retrieval cognee/tests/unit/api/v1/recall -q
-  ```
-- New journey tests against local Ladybug/Kuzu, LanceDB and SQLite: **8
-passed**, covering search/recall, both disabled choices, context and
-generated answers.
-  ```sh
-python -m pytest
-cognee/tests/journeys/test_feeling_lucky_disabled_types.py -q
-  ```
-- Live OpenAI check: `Get all nodes connected to Volvo C70.` proposed
-`NATURAL_LANGUAGE` in bo
-
-**File**: `cognee/api/v1/recall/query_router.py` (modified, +1/-3)
-```diff
-@@ -69,10 +69,8 @@ def from_config(
-         """Constraints for this deployment and request; ``node_name`` names node sets."""
-         from cognee.modules.engine.models.node_set import NodeSet
-         from cognee.modules.preflight import llm_available
--        from cognee.modules.search.methods.get_search_type_retriever_instance import (
--            cypher_queries_allowed,
--        )
-         from cognee.modules.search.methods.node_name_scope import lucky_search_types
-+        from cognee.modules.search.search_type_policy import cypher_queries_allowed
- 
-         return cls(
-             llm_available=llm_available(llm_config),
-```
-
-**File**: `cognee/modules/search/methods/get_search_type_retriever_instance.py` (modified, +1/-8)
-```diff
-@@ -1,4 +1,3 @@
--import os
- from collections.abc import Callable
- 
- from cognee.base_config import get_base_config
-@@ -45,14 +44,13 @@
-     reject_unsupported_node_name,
- )
- from cognee.modules.search.operations import select_search_type
-+from cognee.modules.search.search_type_policy import CYPHER_SEARCH_TYPES, cypher_queries_allowed
- from cognee.modules.search.types import SearchType
- from cognee.modules.search.types.SearchType import DEPRECATED_SEARCH_TYPES
- from cognee.shared.logging_utils import get_logger
- 
- logger = get_logger()
- 
--CYPHER_SEARCH_TYPES = (SearchType.CYPHER, SearchType.NATURAL_LANGUAGE)
--
- # Returned to the caller: says what to change, without detailing the risk.
- CYPHER_DISABLED_MESSAGE = "{search_type} search is disabled by default for security reasons."
- CYPHER_DISABLED_REMEDIATION = (
-@@ -69,11 +67,6 @@
- )
- 
- 
--def cypher_queries_allowed() -> bool:
--    """Raw Cypher (CYPHER, NATURAL_LANGUAGE) is opt-in through ALLOW_CYPHER_QUERY=true."""
--    return os.getenv("ALLOW_CYPHER_QUERY", "false").strip().lower() in ("true", "1", "yes")
--
--
- def _hybrid_lane_top_k(config: dict, key: str, search_top_k: int | None) -> int | None:
-     """Search top_k feeds hybrid's chunk/entity/fact lanes, capped so default context stays small.
- 
-```
-
-**File**: `cognee/modules/search/operations/select_search_type.py` (modified, +4/-1)
-```diff
-@@ -1,5 +1,6 @@
- from cognee.infrastructure.llm.LLMGateway import LLMGateway
- from cognee.infrastructure.llm.prompts import read_query_prompt
-+from cognee.modules.search.search_type_policy import CYPHER_SEARCH_TYPES, cypher_queries_allowed
- from cognee.modules.search.types import SearchType
- from cognee.shared.logging_utils import get_logger
- 
-@@ -22,7 +23,7 @@ async def select_search_type(
-             so the LLM's choice can never drop the filter.
- 
-     Returns:
--        The best search type given by the LLM.
-+        An enabled search type that can serve the request.
-     """
-     default_search_type = SearchType.RAG_COMPLETION
-     if allowed_search_types is not None and default_search_type not in allowed_search_types:
-@@ -32,6 +33,8 @@ async def select_search_type(
-     # their own: CODE runs one exact graph operation driven by a structured
-     # code_query, which FEELING_LUCKY has no way to construct.
-     excluded_search_types = {SearchType.CODE}
-+    if not cypher_queries_allowed():
-+        excluded_search_types.update(CYPHER_SEARCH_TYPES)
-     if allowed_search_types is not None:
-         excluded_search_types |= set(SearchType) - allowed_search_types
-     system_prompt = read_query_prompt(system_prompt_path)
-```
-
-**File**: `cognee/modules/search/search_type_policy.py` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+"""Deployment gates shared by search selection, routing and execution."""
-+
-+import os
-+
-+from cognee.modules.search.types import SearchType
-+
-+CYPHER_SEARCH_TYPES = (SearchType.CYPHER, SearchType.NATURAL_LANGUAGE)
-+
-+
-+def cypher_queries_allowed() -> bool:
-+    """Raw Cypher (CYPHER, NATURAL_LANGUAGE) is opt-in through ALLOW_CYPHER_QUERY=true."""
-+    return os.getenv("ALLOW_CYPHER_QUERY", "false").strip().lower() in ("true", "1", "yes")
-```
-
-**File**: `cognee/tests/journeys/test_feeling_lucky_disabled_types.py` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+"""FEELING_LUCKY answers through an enabled retriever when Cypher is disabled."""
-+
-+import json
-+from unittest.mock import AsyncMock
-+
-+import pytest
-+from fastapi.encoders import jsonable_encoder
-+
-+import cognee
-+from cognee.infrastructure.llm.LLMGateway import LLMGateway
-+from cognee.infrastructure.llm.prompts import read_query_prompt
-+from cognee.modules.search.types import SearchType
-+
-+
-+@pytest.mark.journey
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("api", ["search", "recall"])
-+@pytest.mark.parametrize("only_context", [True, False])
-+@pytest.mark.parametrize("search_type", [SearchType.CYPHER, SearchType.NATURAL_LANGUAGE])
-+async def test_feeling_lucky_rejects_a_disabled_llm_choice(
-+    clean_env, default_user, tmp_path, monkeypatch, api, only_context, search_type
-+):
-+    monkeypatch.setenv("ALLOW_CYPHER_QUERY", "false")
-+    dataset = "journey_lucky_disabled"
-+    document = tmp_path / "maintenance.txt"
-+    document.write_text("Volvo C70 maintenance includes an annual inspection.")
-+    await cognee.add(str(document), dataset_name=dataset, user=default_user)
-+    await cognee.cognify(datasets=[dataset], user=default_user)
-+
-+    original_gateway = LLMGateway.acreate_structured_output
-+    selector_prompt = read_query_prompt("search_type_selector_prompt.txt")
-+    selector = AsyncMock(return_value=search_type.value)
-+
-+    async def gateway(*args, **kwargs):
-+        if kwargs.get("system_prompt") == selector_prompt:
-+            return await selector(*args, **kwargs)
-+        return await original_gateway(*args, **kwargs)
-+
-+    monkeypatch.setattr(LLMGateway, "acreate_structured_output", staticmethod(gateway))
-+
-+    results = await getattr(cognee, api)(
-+        query_text="What maintenance does Volvo C70 need?",
-+        query_type=SearchType.FEELING_LUCKY,
-+        datasets=[dataset],
-+        only_context=only_context,
-+        verbose=True,
-+        user=default_user,
-+    )
-+
-+    selector.assert_awaited_once()
-+    assert results
-+    assert "annual inspection" in json.dumps(jsonable_encoder(results)).lower()
-+    if api == "recall":
-+        assert all(result.search_type == SearchType.RAG_COMPLETION for result in results)
-```
-
-**File**: `cognee/tests/unit/api/v1/recall/test_query_router.py` (modified, +4/-4)
-```diff
-@@ -380,10 +380,10 @@ def test_cypher_disabled_and_no_llm_compose(self):
- 
-     def test_constraints_come_from_the_shared_predicates(self, monkeypatch):
-         from cognee.modules import preflight
--        from cognee.modules.search.methods import get_search_type_retriever_instance as factory
-+        from cognee.modules.search import search_type_policy
- 
-         monkeypatch.setattr(preflight, "llm_available", lambda _config: False)
--        monkeypatch.setattr(factory, "cypher_queries_allowed", lambda: False)
-+        monkeypatch.setattr(search_type_policy, "cypher_queries_allowed", lambda: False)
- 
-         assert RoutingConstraints.from_config(None) == RoutingConstraints(
-             llm_available=False, cypher_allowed=False
-@@ -471,10 +471,10 @@ def test_composes_with_no_llm(self):
- 
-     def test_no_filter_means_no_scope_constraint(self, monkeypatch):
-         from cognee.modules import preflight
--        from cognee.modules.search.methods import get_search_type_retriever_instance as factory
-+        from cognee.modules.search import search_type_policy
- 
-         monkeypatch.setattr(preflight, "llm_available", lambda _config: True)
--        monkeypatch.setattr(factory, "cypher_queries_allowed", lambda: True)
-+        monkeypatch.setattr(search_type_policy, "cypher_queries_allowed", lambda: True)
- 
-         assert RoutingConstraints.from_config(None).scoped_types is None
-         assert RoutingConstraints.from_config(None, node_name=[]).scoped_types is None
-```
-
-**File**: `cognee/tests/unit/modules/search/test_select_search_type.py` (modified, +39/-0)
-```diff
-@@ -50,3 +50,42 @@ async def test_without_a_bound_any_type_but_code_is_kept():
-         assert await mod.select_search_type("q") is SearchType.SUMMARIES
-     with _llm_answering("CODE"):
-         assert await mod.select_search_type("q") is SearchType.RAG_COMPLETION
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("search_type", [SearchType.CYPHER, SearchType.NATURAL_LANGUAGE])
-+@pytest.mark.parametrize("flag", [None, "false"])
-+@pytest.mark.parametrize("graph_only", [False, True])
-+async def test_disabled_cypher_choice_uses_an_allowed_default(
-+    monkeypatch, search_type, flag, graph_only
-+):
-+    if flag is None:
-+        monkeypatch.delenv("ALLOW_CYPHER_QUERY", raising=False)
-+    else:
-+        monkeypatch.setenv("ALLOW_CYPHER_QUERY", flag)
-+    # Even an explicit request allowlist cannot enable a disabled type.
-+    allowed = frozenset({SearchType.GRAPH_COMPLETION, search_type}) if graph_only else None
-+    with _llm_answering(search_type.value):
-+        chosen = await mod.select_search_type("q", allowed_search_types=allowed)
-+    expected = SearchType.GRAPH_COMPLETION if graph_only else SearchType.RAG_COMPLETION
-+    assert chosen is expected
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("search_type", [SearchType.CYPHER, SearchType.NATURAL_LANGUAGE])
-+@pytest.mark.parametrize("flag", ["true", "1", "yes", " TRUE "])
-+async def test_enabled_cypher_choice_is_kept(monkeypatch, search_type, flag):
-+    monkeypatch.setenv("ALLOW_CYPHER_QUERY", flag)
-+    with _llm_answering(search_type.value):
-+        assert await mod.select_search_type("q") is search_type
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("search_type", [SearchType.CYPHER, SearchType.NATURAL_LANGUAGE])
-+async def test_enabled_cypher_choice_still_respects_request_scope(monkeypatch, search_type):
-+    monkeypatch.setenv("ALLOW_CYPHER_QUERY", "true")
-+    with _llm_answering(search_type.value):
-+        chosen = await mod.select_search_type(
-+            "q", allowed_search_types=frozenset({SearchType.GRAPH_COMPLETION})
-+        )
-+    assert chosen is SearchType.GRAPH_COMPLETION
+@@ -60,9 +60,15 @@ jobs:
+       - name: Analyze and propose tickets
+         env:
+           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
++        # digest.md is text typed by anonymous docs users: Claude gets no shell
++        # and no web access, reads only inside the checkout, and can write only
++        # its two output files, so it cannot change the script the next step runs.
+         run: |
+           claude -p "$(cat scripts/weekly_tickets/prompt.md)" \
+-            --dangerously-skip-permissions \
++            --restricted \
++            --tools "Read,Grep,Glob,Write" \
++            --allowedTools "Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)" \
++            --permission-prompts none \
+             --output-format text
+       - name: Shape issue section (tables, length cap)
+         env:
+@@ -96,7 +102,8 @@ jobs:
+       - name: Install Claude Code and cognee
+         run: |
+           npm install -g @anthropic-ai/claude-code
+-          pip install cognee cognee-cli
++          # cognee-cli is a command of the cognee package, not a package of its own.
++          pip install cognee
+       - name: Install the cognee memory plugin
+         # Adjust the marketplace/plugin name if it differs in your setup.
+         run: |
+@@ -111,6 +118,9 @@ jobs:
+         env:
+           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
++        # digest.md is text typed by anonymous docs users: Claude gets no shell
++        # and no web access, reads only inside the checkout, and can write only
++        # its two output files, so it cannot change the script the next step runs.
+         run: |
+           {
+             cat scripts/weekly_tickets/prompt.md
+@@ -124,7 +134,10 @@ jobs:
+             echo "answer."
+           } > /tmp/prompt-cognee.md
+           claude -p "$(cat /tmp/prompt-cognee.md)" \
+-            --dangerously-skip-permissions \
++            --restricted \
++            --tools "Read,Grep,Glob,Write" \
++            --allowedTools "Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)" \
++            --permission-prompts none \
+             --output-format text
+       - name: Shape issue section (tables, length cap)
+         env:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6606** (2026-11-06): chore(mcp): Release cognee-mcp 0.5.8 for dev (SDK-1449) (@NMZivkovic)
-- **PR #6605** (2026-11-06): chore(mcp): Release cognee-mcp 0.5.8 (SDK-1449) (@NMZivkovic)
-- **PR #6603** (2026-11-06): chore: update MCP (@dexters1)
-- **PR #6602** (2026-11-06): chore: update MCP (@dexters1)
-- **PR #6600** (2026-11-06): fix(search): exclude disabled types from feeling lucky (SDK-1447) (@dexters1)
-- **PR #6599** (2026-11-06): fix: fix error when file paths in ingestion (SDK-1446) (@siillee)
+- **PR #6705** (2026-11-13): feat: Add the Vercel connector (SDK-1568) (@goran-radonic)
+- **PR #6704** (2026-11-13): fix: Delete forgotten dlt table's staging copy and state (SDK-1549) (@goran-radonic)
+- **PR #6702** (2026-11-13): chore: sync cognee mcp lock to cognee 1.6.8 (@siillee)
+- **PR #6701** (2026-11-13): chore: bump mcp lock (@siillee)
+- **PR #6700** (2026-11-13): feat: Add the Dropbox connector package (SDK-1512) (@goran-radonic)
+- **PR #6698** (closed): chore: release v1.6.8.rc1 (@goran-radonic)
 
 ---
 
@@ -2703,13 +2248,13 @@ cognee/tests/journeys/test_feeling_lucky_disabled_types.py -q
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Gate database connection-string ingestion (SDK-1443) (#6588)
+## X. update): Remove stored files no document points at (SDK-1541) (#6674)
 
 **RULE**:
 When implementing operations in `.env.template`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `556e958c`: Gate database connection-string ingestion (SDK-1443) (#6588). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc10f9f3`: update): Remove stored files no document points at (SDK-1541) (#6674). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.template`.
@@ -2717,27 +2262,35 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Ingesting a database from a connection string (add/remember with sqlite:///,
-# postgresql://, mysql://, ...) connects from this server, with its network
-# position. Unset (the default), the SDK, CLI and MCP server may do it and the
-# API server refuses it (422 DatabaseIngestionDisabled): its callers are whoever
-# can register. Set true to allow it for API callers you trust, false to refuse
-# it everywhere. Connection strings that point at cognee's own storage are always
-# refused: SQLite files in its roots, strings carrying cognee's own database
-# credentials, and hosts resolving to one of its servers (best-effort: not every
-# address of a host can be known, so keep cognee's databases behind a password
-# and egress rules). A sqlite:/// path must be an existing file.
-# ALLOW_DATABASE_INGESTION=true
+# Audit ledger: append-only, hash-chained provenance_entries table with one
+# row per data item (ids and the content hash, nothing the item produced). It
+# is written at the add_data_points storage seam, gets a new version when an
+# update changes the content, and a tombstone when the item is deleted
+# (written once its row is gone; dropping only its memory writes none). For
+# compliance history, not retrieval. With it on, a ledger write that fails
+# fails the ingestion, the update or the delete. With it off (the default)
+# the ledger is neither written nor read: deletes do not touch it, and the
+# routes and CLI below answer that it is off. Read it with
+# `cognee-cli provenance ...` or /api/v1/provenance.
+# External anchoring of the ledger's hash chain. With a key set,
+# `cognee-cli provenance anchor` (or POST /api/v1/provenance/anchor) signs the
+# chain head with HMAC-SHA256 and appends it to the anchor file; `provenance
+# verify --anchors` then detects a ledger that was rewritten AND re-chained.
+# Keep the key out of the database host; point the path somewhere it cannot
+# write. Default path: {SYSTEM_ROOT_DIRECTORY}/provenance_anchors.jsonl
+#PROVENANCE_ANCHOR_KEY=
+#PROVENANCE_ANC
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+# Audit ledger: append-only, hash-chained provenance_entries table written by
+# an opt-in cognify task. For compliance/lineage history, not retrieval.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `556e958c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc10f9f3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

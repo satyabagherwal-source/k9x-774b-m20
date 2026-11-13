@@ -9563,3 +9563,8 @@
 | `CYCLE-20261113-5B7Q` | `2026-11-13T18:26:01.094Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`93c78f56...`) |
 | `CYCLE-20261113-5CKS` | `2026-11-13T18:26:02.860Z` | `qdrant/qdrant` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`854ab292...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:26:51.023Z` | `hf-xiaomimimo-mimo-v2.6-pro-rl` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C9A75DC2` [Domain D] | Yes (`a205d700...`) |
+| `CYCLE-20261113-GI7T` | `2026-11-13T18:34:43.385Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | Yes (`aa1c9df3...`) |
+| `CYCLE-20261113-GOGU` | `2026-11-13T18:34:51.486Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9f09f4d8...`) |
+| `CYCLE-20261113-GSNL` | `2026-11-13T18:34:56.913Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`64bcc67e...`) |
+| `CYCLE-20261113-GUU0` | `2026-11-13T18:34:59.736Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fcfbb70a...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:35:47.916Z` | `hf-prithivmlmods-gender-classifier-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-20558436` [Domain D] | Yes (`bf23a657...`) |

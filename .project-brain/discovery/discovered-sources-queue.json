@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T18:26:52.036Z",
+  "updated_at": "2026-11-13T18:35:48.957Z",
   "stats": {
-    "total_discovered": 2805,
-    "approved_pending_harvest": 2623,
+    "total_discovered": 2810,
+    "approved_pending_harvest": 2628,
     "harvested_count": 0,
     "rejected_count": 182,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2618,
+      "COMMUNITY_AND_EXPERT": 2623,
       "OFFICIAL_DOCUMENTATION": 96,
       "STANDARDS_AND_SPECIFICATIONS": 78,
       "ENGINEERING_BLOGS": 1,
@@ -60456,6 +60456,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
         "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-2990AB48318B": {
+      "id": "SRC-2990AB48318B",
+      "url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "title": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:35:47.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
+        "fileName": "hf-prithivmlmods-gender-classifier-mini-learnings.md"
+      }
+    },
+    "SRC-BAE0A5C0FE08": {
+      "id": "SRC-BAE0A5C0FE08",
+      "url": "https://github.com/laurent22/joplin",
+      "title": "https://github.com/laurent22/joplin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:35:48.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-A340BDE92668": {
+      "id": "SRC-A340BDE92668",
+      "url": "https://www.tiny.cloud/",
+      "title": "https://www.tiny.cloud/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:35:48.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-23E450E3EF5B": {
+      "id": "SRC-23E450E3EF5B",
+      "url": "https://joshuatz.com/posts/2021/strongly-typed-service-workers",
+      "title": "https://joshuatz.com/posts/2021/strongly-typed-service-workers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:35:48.343Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-22F561C22F7C": {
+      "id": "SRC-22F561C22F7C",
+      "url": "https://github.com/freenet/freenet-core/actions/runs/43461625242",
+      "title": "https://github.com/freenet/freenet-core/actions/runs/43461625242",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:35:48.957Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
       }
     }
   }

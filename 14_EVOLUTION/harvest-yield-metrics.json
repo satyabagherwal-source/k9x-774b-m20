@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:26:02.887Z",
-  "total_cycles_completed": 9325,
-  "total_learnings_persisted": 9325,
-  "total_rules_promoted": 9068,
+  "last_updated": "2026-11-13T18:34:59.765Z",
+  "total_cycles_completed": 9329,
+  "total_learnings_persisted": 9329,
+  "total_rules_promoted": 9071,
   "history": [
-    {
-      "timestamp": "2026-11-13T03:55:59.584Z",
-      "repository": "lodestones/Kromoss",
-      "learningId": "learn-huggingface-lodestones-kromoss",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T03:56:10.018Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T03:56:15.672Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T03:56:21.339Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T04:13:09.703Z",
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-13T18:26:02.887Z",
       "repository": "qdrant/qdrant",
       "learningId": "learn-github-qdrant-qdrant",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:34:43.399Z",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:34:51.514Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:34:56.939Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:34:59.765Z",
+      "repository": "topoteretes/cognee",
+      "learningId": "learn-github-topoteretes-cognee",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

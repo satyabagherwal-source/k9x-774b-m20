@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "23080e91",
+    "sourceVersion": "f26a5e1f",
     "license": "NOASSERTION",
-    "contentHash": "6167bc4a0e87f9db48ed8ce62458fd293e6454b0604c564b7c5de1ef762738f0",
-    "lastHarvestedAt": "2026-11-13T12:54:40.249Z",
+    "contentHash": "64bcc67eae947a93447d7150d76f694d523b19038f2df83a07a49c7cf98b571c",
+    "lastHarvestedAt": "2026-11-13T18:34:56.924Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "8853378e",
+    "sourceVersion": "4053f6cc",
     "license": "Apache-2.0",
-    "contentHash": "e6480d7a359f96498a8063a4c11704b7506bfaaca744be226bb3cf1171917747",
-    "lastHarvestedAt": "2026-11-06T21:06:52.953Z",
+    "contentHash": "fcfbb70ac809a1a01e9829d27b62149cb55cbeb52a6712e399b6c000e05d74f6",
+    "lastHarvestedAt": "2026-11-13T18:34:59.749Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {
@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "d468bb8e",
+    "sourceVersion": "7aeed5a4",
     "license": "NOASSERTION",
-    "contentHash": "b1df17b390757b195bb2ad4c5535d31d99a1e7c6d5d7a581fe2bf36503473570",
-    "lastHarvestedAt": "2026-11-09T07:55:22.848Z",
+    "contentHash": "9f09f4d8c8bb56ead76b1336a8b8505b907c3fae9a75c96e7bb5e7ec27941628",
+    "lastHarvestedAt": "2026-11-13T18:34:51.498Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {
@@ -11405,8 +11405,8 @@
     "sourceUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceVersion": "hf-prithivmlmods-gender-classifier-mini",
     "license": "Open-Source",
-    "contentHash": "956a07deccd4bf91fd9f6e243feb7b7b52cce67d2f390dbb438409be58e0773a",
-    "lastHarvestedAt": "2026-11-08T17:35:46.509Z",
+    "contentHash": "aa1c9df342964035489069261a2122e725c1d4308bc85c7013982b3f259a9cb6",
+    "lastHarvestedAt": "2026-11-13T18:34:43.390Z",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini"
   },
   "hf-openbmb-minicpm-ocr-1.0": {

@@ -9596,3 +9596,8 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1637f0cc` | Multi-dimensional audit evidence | 2026-11-13T18:26:01.106Z |
 | `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `95d89e51` | Multi-dimensional audit evidence | 2026-11-13T18:26:02.872Z |
 | `learn-dom-d-c9a75dc2` | `project://hf-xiaomimimo-mimo-v2.6-pro-rl` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | 2026-11-13T18:26:51.023Z |
+| `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-13T18:34:43.390Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `7aeed5a4` | Multi-dimensional audit evidence | 2026-11-13T18:34:51.498Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f26a5e1f` | Multi-dimensional audit evidence | 2026-11-13T18:34:56.924Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `4053f6cc` | Multi-dimensional audit evidence | 2026-11-13T18:34:59.749Z |
+| `learn-dom-d-20558436` | `project://hf-prithivmlmods-gender-classifier-mini` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | 2026-11-13T18:35:47.916Z |

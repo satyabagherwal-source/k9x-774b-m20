@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `23080e91`  
+> **Source Version**: `f26a5e1f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:54:28.511Z  
+> **Timestamp**: 2026-11-13T18:34:56.286Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:51:47.557Z  
+> **Harvest Timestamp**: 2026-11-13T18:34:56.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3121 stars
+- **Stars / Engagement**: 3122 stars
 
 ---
 
@@ -1738,13 +1738,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6215** (2026-11-13): **CI: Claude rule review is failing to run**
-  *Symptoms*: <!-- claude-rule-review-outage --> @sanity: the `Claude PR Rule Review` workflow could not complete a review, so affected PRs were not reviewed. They show a red `rule-review/warnings` status; the required `Claude Rule Review` check stays green, so merges are not blocked.  If the run ended within about a turn, before any model work, that points at the credential or account behind `CLAUDE_CODE_OAUTH_TOKEN` rather than the diff (usage exhausted, or the token revoked or expired); see #5628 for that pattern. This was opened for a run that did not complete; the error annotation on the run below carries what the action recorded.  First failing run: https://github.com/freenet/freenet-core/actions/runs/43404429667  This issue is opened and closed automatically. It closes itself after the next review that completes, so a flaky reviewer can open and close it repeatedly.
+- **Issue #6225** (2026-11-13): **docs(config): --transport-quic help says prefer is the default**
+  *Symptoms*: ## Problem  `freenet --help` describes `--transport-quic` as "Unset means `shadow` on Linux, macOS and Windows". Since #6207 an unset value means `prefer` there. The same text says `prefer` uses "this release's share, which is 0". That stops being true once a release sets a data ramp (`QUIC_DATA_RAMP_START`). Operators read this text when deciding whether to set the key.  ## Approach  The help text now says `prefer` is the default on Linux, macOS and Windows, and that the release's share is its data ramp, or 0 when it has none. This wording holds both before and after the ramp release. One test doc comment in `driver/tests.rs` made the same claim that shadow is the default, and it is corrected too.  ## Testing  Comment and help text only. `cargo fmt --check` is clean.  Found in review of #6224.  [AI-assisted - Claude] 
   **Post-Mortem & Fix Analysis**:
-  > A review completed again: https://github.com/freenet/freenet-core/actions/runs/43405264586. Closing.
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, transport.md **Files reviewed:** 2  The diff only changes comments, in two places: - The `--transport-quic` help text in `crates/core/src/config.rs`. - A doc comment in `crates/core/src/transport/quic/upgrade/driver/tests.rs`.  No logic, tests or APIs change, so none of the rules on `.unwrap()`, spawns, retries, `biased;`, cleanup, push-before-send or regression tests apply.  - **The new wording is accurate.** The `quic_is_prefer_by_default_on_linux_macos_and_windows` test at `config.rs:7703` asserts that an unset value gives `QuicMode::Prefer` on Linux, macOS and Windows and `Off` elsewhere. `transport/quic.rs:118` already says the same. - **Related docs are not stale.** `.claude/rules/transport.md:1974` ("Step 2: shadow on by default…") is the rollout plan, not a statement of today's default. The next step in the plan describes the data ramp. Nothing else I fou
+  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/43461625242)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/43461625242)
 
-- **Issue #6213** (2026-11-13): **fix(bin): run the node on a worker thread, not the main thread**
-  *Symptoms*: ## Problem  `run_node` passes the whole node to `rt.block_on`, so the node's futures are polled on the process's main thread. The platform fixes that thread's stack when the process starts: 1 MiB on Windows, 8 MiB on Linux. Every thread std spawns gets 2 MiB, and `RUST_MIN_STACK` (which CI sets to 256 MiB) reaches only spawned threads, never the main one.  In a debug build the node's nested poll frames use about 900 KiB of the main thread by the first event-loop turn. Measured with gdb on a Linux debug build of current main at the overflow point; the largest frames are `run_network` (114 KiB), `run` (100 KiB), the `run_node` async block (94 KiB), the event-listener select (88 KiB) and `run_event_listener` (68 KiB). That leaves a few KiB of headroom on Windows. #6207 grew those frames by a few KiB in total, with no single frame standing out, and its "Windows Service Unit" job failed all four `quic_breaker_windows` tests: the node exited with 3221225725 (0xC00000FD, STATUS_STACK_OVERFLOW) right after "Network listener opened". Main passes today only because of that small margin, so the next change that grows any of these frames hits the same overflow.  ## Approach  The node now runs in a spawned task, so a worker thread polls it and the main thread only waits on the join handle (`rt.spawn` plus `rt.block_on(handle)`). Worker threads get std's 2 MiB default, as every other task already does. Identifying the frame was the first step, and it showed the problem is cumulative depth 
+- **Issue #6223** (2026-11-13): **fix(test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers**
+  *Symptoms*: ## Problem  `many_tasks_send_while_the_path_closes_and_nothing_goes_twice` failed intermittently. Running 24 copies of it in parallel reproduced the failure in 7 of 880 runs. Instrumenting `drive_on_threads` (each clock advance logged with which workers were busy and the global queue depth) showed two independent causes:  1. **A lost wakeup in `VirtualTime`** (5 of the 7 instrumented failures, "the multi-thread test did not finish"). `sleep_until` and `sleep_cancelable` checked `deadline > now` and then took the `pending_wakeups` lock to push. If another thread's `advance_to` ran in between, it stored the new time and popped the expired wakeups before the push. The pushed wakeup then had a deadline at or before the current time, so no later `advance_to` popped it. That sleep never ended, and `advance_to_next_wakeup` peeked it on every call and stopped there: the logs show 20,000 to 50,000 advances at one unchanging time, with every worker parked. 2. **`drive_on_threads` advanced the clock over busy workers** ("virtual time passed 30s"). It moved the clock whenever the driven future was unfinished after 64 yields and a 1 ms real-time sleep. In a debug build under load, a worker can still be computing the handshake after that. The log of the remaining failure shows `0 -> 999 ms -> 1998 ms -> 86,400,000 ms`, each advance with worker 3 busy: the handshake's timers fired before it ran, up to the 24 h idle timeout, and the server's handshake timed out.  ## Approach  1. `VirtualTime
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1761,1192 +1762,624 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7fcb4157` (2026-11-13)
-**Commit Message**: fix(bin): run the node on a worker thread, not the main thread (#6213)
+### Incident Patch 1: `f26a5e1f` (2026-11-13)
+**Commit Message**: fix(test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers (#6223)
 
-**File**: `crates/core/src/bin/freenet.rs` (modified, +26/-2)
+**File**: `crates/core/src/simulation/time.rs` (modified, +91/-15)
 ```diff
-@@ -1651,7 +1651,24 @@ fn run_node(config_args: ConfigArgs) -> anyhow::Result<()> {
-         .build()
-         .unwrap();
+@@ -318,15 +318,18 @@ impl VirtualTime {
+     ///
+     /// Returns the list of wakeup IDs that were triggered, in order.
+     pub fn advance_to(&self, target_nanos: u64) -> Vec<WakeupId> {
+-        let current = self.state.current_nanos.load(AtomicOrdering::SeqCst);
+-        if target_nanos <= current {
++        // One atomic step, so two threads advancing at once cannot move the
++        // clock backwards (a load then a store could store the smaller
++        // target last). The time is stored before `pending_wakeups` is taken
++        // below, which `register_future_wakeup` relies on.
++        let previous = self
++            .state
++            .current_nanos
++            .fetch_max(target_nanos, AtomicOrdering::SeqCst);
++        if target_nanos <= previous {
+             return Vec::new();
+         }
  
--    rt.block_on(async move {
-+    // The node runs on a worker thread, never on the main thread. `block_on`
-+    // polls its future on the calling thread, and the main thread's stack is
-+    // fixed by the platform: 1 MiB on Windows, against 2 MiB for every thread
-+    // std spawns. Polled there, the node's nested startup futures used most of
-+    // it (about 900 KiB measured in a Linux debug build at the first event
-+    // loop turn), within a few KiB of the Windows limit: a branch that grew
-+    // those frames slightly overflowed at startup on Windows. A spawned task
-+    // is polled by a worker, so the main thread only waits on the join
-+    // handle. `tests/main_thread_stack.rs` pins it by starting the node with
-+    // a small main-thread stack and workers at their production size.
-+    //
-+    // The root future is now an ordinary task on a worker, so synchronous
-+    // work on its path (config build, logger setup, node construction) holds
-+    // a worker while it runs. With `worker_threads` set to the CPU count, a
-+    // 1-vCPU host has one worker, so a long blocking call here would stall
-+    // the whole runtime. Nothing on that path blocks for long today; anything
-+    // added that does belongs in `spawn_blocking`.
-+    let node = rt.spawn(async move {
-         let config = config_args.build().await?;
-         freenet::config::set_logger(None, None, config.paths().log_dir());
-         // Same reason as the info! below: `ConfigArgs::build()` resolves the
-@@ -1672,7 +1689,14 @@ fn run_node(config_args: ConfigArgs) -> anyhow::Result<()> {
-         // installed — operators with a custom `UMask=` see the change.
-         log_umask_override();
-         run(config).await
--    })?;
-+    });
-+    match rt.block_on(node) {
-+        Ok(result) => result?,
-+        // A panic in the node keeps unwinding from `main`, as it did when the
-+        // node ran on this thread.
-+        Err(join) if join.is_panic() => std::panic::resume_unwind(join.into_panic()),
-+        Err(join) => return Err(anyhow::anyhow!("the node task was cancelled: {join}")),
+-        self.state
+-            .current_nanos
+-            .store(target_nanos, AtomicOrdering::SeqCst);
+-
+         let mut triggered = Vec::new();
+         let mut wakers_to_wake = Vec::new();
+ 
+@@ -387,7 +390,9 @@ impl VirtualTime {
+             .map(|w| w.deadline)
+     }
+ 
+-    /// Registers a wakeup and returns its ID.
++    /// Registers a wakeup and returns its ID, whatever its deadline. Tests
++    /// only; sleeps use [`Self::register_future_wakeup`].
++    #[cfg(test)]
+     fn register_wakeup(&self, deadline: u64) -> WakeupId {
+         let id = WakeupId::new(
+             self.state
+@@ -400,6 +405,32 @@ impl VirtualTime {
+         id
+     }
+ 
++    /// Registers a wakeup for `deadline` if it is still in the future, and
++    /// returns its ID; `None` if the clock has already reached it.
++    ///
++    /// The check and the push are one step under the `pending_wakeups` lock.
++    /// [`Self::advance_to`] stores the new time before it takes that lock to
++    /// pop expired wakeups, so a registration either sees the new time (and
++    /// registers nothing) or is pushed before the pop (and is popped). Checked
++    /// outside the lock, a thread that read the time just before another
++    /// thread's advance could push a wakeup the advance had already passed:
++    /// its deadline is then at or before the current time, which no later
++    /// `advance_to` pops, so the sleep never ends and
++    /// [`Self::advance_to_next_wakeup`] stops at it for good (#6220).
++    fn register_future_wakeup(&self, deadline: u64) -> Option<WakeupId> {
++        let mut pending = self.state.pending_wakeups.lock().unwrap();
++        if deadline <= self.state.current_nanos.load(AtomicOrdering::SeqCst) {
++            return None;
++        }
++        let id = WakeupId::new(
++            self.state
++                .next_wakeup_id
++                .fetch_add(1, AtomicOrdering::SeqCst),
++        );
++        pending.push(Wakeup::new(deadline, id));
++        Some(id)
 +    }
++
+     /// Registers a waker for a wakeup ID.
+     #[allow(dead_code)]
+     fn register_waker(&self, id: WakeupId, waker: Waker) {
+@@ -508,23 +539,19 @@ impl TimeSource for VirtualTime {
+     }
  
-     Ok(())
- }
+     fn sleep_until(&self, deadline_nanos: u64) -> Pin<Box<dyn Future<Output = ()> + Send>> {
+-        let current = self.now_nanos();
+-        if deadline_nanos <= current {
++        let Some(id) = self.register_future_wakeup(deadline_nanos) else {
+             return Box::pin(std::future::ready(()));
+-        }
+-
+-        let id = self.register_wakeup(deadline_nanos);
++        };
+         let state = self.state.clone();
+ 
+         Box::pin(VirtualSleep { id, state })
+     }
+ 
+     fn sleep_cancelable(&self, duration: Duration) -> Pin<Box<dyn Future<Output = ()> + Send>> {
+         let deadline = self.now_nanos().saturating_add(duration.as_nanos() as u64);
+-        if deadline <= self.now_nanos() {
++        let Some(id) = self.register_future_wakeup(deadline) else {
+             return Box::pin(std::future::ready(()));
+-        }
+-        let id = self.register_wakeup(deadline);
++        };
+         let state = self.state.clone();
+         Box::pin(CancelableVirtualSleep {
+             inner: VirtualSleep { id, state },
+@@ -902,6 +929,55 @@ mod tests {
+         assert_eq!(triggered[2], id3);
+     }
+ 
++    /// A sleep registered while another thread advances the clock is never
++    /// left pending with a deadline the clock has already passed: no later
++    /// advance would pop it, so the sleep would never end and
++    /// `advance_to_next_wakeup` would stop at it for good (#6220).
++    #[test]
++    fn a_sleep_registered_during_an_advance_is_never_left_behind() {
++        let vt = VirtualTime::new();
++        std::thread::scope(|scope| {
++            scope.spawn(|| {
++                for _ in 0..200_000 {
++                    vt.advance(Duration::from_nanos(1));
++                }
++            });
++            for _ in 0..3 {
++                scope.spawn(|| {
++                    for _ in 0..200_000 {
++                        drop(vt.sleep_until(vt.now_nanos() + 1));
++                    }
++                });
++            }
++        });
++        let now = vt.now
 ```
 
-**File**: `crates/core/tests/main_thread_stack.rs` (added, +254/-0)
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,254 @@
-+//! The node must not run on the process's main thread.
-+//!
-+//! The main thread's stack is fixed by the platform when the process starts:
-+//! 1 MiB on Windows, against 2 MiB for every thread std spawns (and more under
-+//! `RUST_MIN_STACK`, which CI sets, but which does not reach the main thread).
-+//! `run_node` used to `block_on` the whole node, so its startup futures were
-+//! polled on the main thread. In a debug build their nested poll frames used
-+//! about 900 KiB there by the first event-loop turn, a few KiB short of the
-+//! Windows limit. A branch that made those frames slightly larger (#6207, QUIC
-+//! `prefer` by default) overflowed in the Windows debug binary at startup
-+//! (exit 0xC00000FD, STATUS_STACK_OVERFLOW) before its transport was up. Linux
-+//! CI could not see it: the Linux main thread has 8 MiB.
-+//!
-+//! This test starts the real binary with a 640 KiB main-thread stack, set with
-+//! `ulimit -s` before `exec`, and requires the node to come up and keep running.
-+//! Before the fix the same build aborted with "thread 'main' has overflowed its
-+//! stack" at 640 KiB (and at every size up to about 900 KiB). With the node on
-+//! a worker, the main thread holds only command-line parsing and the wait on
-+//! the node task; clap's derived parser alone takes about 400 KiB in a debug
-+//! build, so the limit leaves room for it and none for the node.
-+//!
-+//! The node's work now runs on tokio workers, whose stack std sizes from
-+//! `RUST_MIN_STACK` (2 MiB when it is unset, as in production). CI sets it to
-+//! 256 MiB, which would let worker stack use grow far past the production size
-+//! unseen, so every case here sets it explicitly: 2 MiB, the production size,
-+//! for each transport, and 1.5 MiB as an early warning. The node's root task
-+//! keeps the same nested frames on its worker that it had on the main thread:
-+//! in a Linux debug build with CI's unit-test features it needs between 896
-+//! KiB and 1 MiB there (measured by lowering `RUST_MIN_STACK`; at 896 KiB it
-+//! overflows in the event listener's select). Production's 2 MiB leaves about
-+//! twice that, and the 1.5 MiB case fails once use grows by about half.
-+//!
-+//! Linux only: `ulimit -s` before `exec` sets the main thread's stack there;
-+//! Windows fixes it in the executable's header at link time. It proves the
-+//! Windows property anyway, because what it checks is where the node runs, not
-+//! a platform's frame sizes: at 640 KiB no node work fits on the main thread on
-+//! any platform. No test runs Windows at its real sizes on both kinds of
-+//! thread. `tests/quic_breaker_windows.rs` runs the binary with its real 1 MiB
-+//! main stack, but with QUIC at the default mode and with CI's 256 MiB
-+//! `RUST_MIN_STACK` on the workers, and Windows frames are usually somewhat
-+//! larger than the Linux ones measured here.
-+//!
-+//! `ulimit -s` also lowers glibc's default stack for threads that C code
-+//! creates without a size (Rust's own threads set theirs). A failure here can
-+//! therefore come from such a thread rather than from node work on the main
-+//! thread: read the overflow message, which names the thread.
+@@ -1727,7 +1727,10 @@ fn many_tasks_send_while_the_path_closes_and_nothing_goes_twice() {
+     match finished.recv_timeout(Duration::from_secs(120)) {
+         Ok(Ok(())) => {}
+         Ok(Err(panic)) => std::panic::resume_unwind(panic),
+-        Err(_) => panic!("the multi-thread test did not finish"),
++        Err(_) => panic!(
++            "the multi-thread test did not finish (a `drive_on_threads:` line above says whether \
++             the runtime never went idle or went idle with nothing to wake)"
++        ),
+     }
+ }
+ 
+```
+
+**File**: `crates/core/src/transport/quic/tests.rs` (modified, +84/-7)
+```diff
+@@ -138,10 +138,32 @@ where
+     }
+ }
+ 
+-/// [`drive`] on a multi-thread runtime. There, a task can still be running on
+-/// another worker when this one runs out of things to poll, so after its turns it
+-/// pauses briefly in real time, and moves the clock only to a wakeup that is
+-/// armed. A stuck test is caught by the caller's real-time limit.
++/// [`drive`] on a multi-thread runtime. The clock moves to the next wakeup
++/// only when the runtime is idle ([`idle_workers`]): every worker parked
++/// and nothing in the global queue, the same on two readings a real-time
++/// millisecond apart (a worker that ran in between changes its park count).
++/// Moving it while a worker is still busy (a handshake's crypto in a debug
++/// build, say) fires that work's timers before it has had a chance to run,
++/// up to quinn's idle timeout (#6220). A stuck test is caught by the
++/// caller's real-time limit.
++///
++/// Must run on the thread that called `block_on`, not on a worker: its own
++/// worker would never read as parked.
++///
++/// Limits: idleness is read from the workers only. Work elsewhere is
++/// invisible to it: `spawn_blocking` and `block_in_place` threads, a
++/// `std::thread` that wakes tasks, real I/O or real-time timers. So is a
++/// worker preempted between parking and taking a task another thread just
++/// queued for it, for as long as the global queue is not read. A caller with
++/// any of those can still have the clock advanced over busy work; the QUIC
++/// tests here use none (in-memory sockets on virtual time).
++///
++/// A run that cannot go on prints why once, so a caller's real-time watchdog
++/// failure shows it: the runtime never read as idle for
++/// [`DRIVE_DIAGNOSTIC_CHECKS`] checks in a row (busy work it cannot see the
++/// end of, or a task that never parks), or it was idle with no wakeup left
++/// to advance to for as many (a lost wakeup, or a task waiting on something
++/// no timer will bring).
+ pub(in crate::transport) async fn drive_on_threads<F>(
+     time: &VirtualTime,
+     limit: Duration,
+@@ -151,27 +173,82 @@ where
+     F: std::future::Future + Send + 'static,
+     F::Output: Send + 'static,
+ {
++    assert_ne!(
++        std::thread::current().name(),
++        Some("tokio-rt-worker"),
++        "drive_on_threads runs on the block_on thread, not on a worker"
++    );
+     let task = tokio::spawn(fut);
+     let limit_ns = time.now_nanos() + limit.as_nanos() as u64;
++    // Checks in a row that found the runtime busy, and that found it idle
++    // with nothing to advance to.
++    let (mut busy, mut stuck) = (0u32, 0u32);
+     loop {
+         for _ in 0..64 {
+             if task.is_finished() {
+                 return task.await.expect("the driven future panicked");
+             }
+             tokio::task::yield_now().await;
+         }
+-        tokio::time::sleep(Duration::from_millis(1)).await;
++        let before = idle_workers();
++        // Blocks only this thread (not a worker), and sets no runtime timer
++        // that would wake the worker holding the time driver and change its
++        // park count.
++        std::thread::sleep(Duration::from_millis(1));
+         if task.is_finished() {
+             return task.await.expect("the driven future panicked");
+         }
+-        time.advance_to_next_wakeup();
++        if before.is_none() || before != idle_workers() {
++            busy += 1;
++            if busy == DRIVE_DIAGNOSTIC_CHECKS {
++                eprintln!(
++                    "drive_on_threads: the runtime has not been idle for {busy} checks in a row \
++                     at {} ns: work it cannot see the end of, or a task that never parks",
++                    time.now_nanos()
++                );
++            }
++            continue;
++        }
++        busy = 0;
++        if time.advance_to_next_wakeup().is_none() {
++            stuck += 1;
++            if stuck == DRIVE_DIAGNOSTIC_CHECKS {
++                eprintln!(
++                    "drive_on_threads: the runtime is idle and no wakeup is left to advance to \
++                     at {} ns: a lost wakeup, or a task waiting on something no timer brings",
++                    time.now_nanos()
++                );
++            }
++            continue;
++        }
++        stuck = 0;
+         assert!(
+             time.now_nanos() <= limit_ns,
+-            "virtual time passed {limit:?} before the future finished"
++            "virtual time passed {limit:?} before the future finished, advancing only while \
++             the runtime was idle"
+         );
+     }
+ }
+ 
++/// Checks in a row of one kind after which [`drive_on_threads`] prints why
++/// it cannot go on: about a second or more of real time.
++const DRIVE_DIAGNOSTIC_CHECKS: u32 = 1000;
 +
-+#![cfg(target_os = "linux")]
-+
-+use std::{
-+    path::{Path, PathBuf},
-+    process::{Child, Command, Stdio},
-+    time::{Duration, Instant},
-+};
-+
-+/// Main-thread stack for the node, in KiB. See the module doc for the sizes
-+/// measured on either side of it.
-+const MAIN_STACK_KIB: u32 = 640;
-+
-+/// std's default stack for the threads it spawns, tokio's workers included,
-+/// when `RUST_MIN_STACK` is unset: the size production runs with.
-+const PRODUCTION_WORKER_STACK: usize = 2 * 1024 * 1024;
-+
-+/// Three quarters of the production worker stack: fails when worker stack use
-+/// grows by about half from the measured 896 KiB - 1 MiB, before it reaches
-+/// production's limit.
-+const EARLY_WARNING_WORKER_STACK: usize = 3 * 512 * 1024;
-+
-+/// Logged once the network listener is open, after the transport is bound:
-+/// the point the Windows run never reached.
-+const LISTENER_OPEN: &str = "Network listener opened";
-+
-+/// How long the node must keep running after `LISTENER_OPEN`. Before the fix
-+/// the overflow came on the first event-loop turns, within milliseconds.
-+const KEEP_RUNNING: Duration = Duration::from_secs(3);
-+
-+/// A port free in both TCP and UDP right now, below the ephemeral range.
-+fn reserve_port() -> std::io::Result<u16> {
-+    use std::sync::atomic::{AtomicU32, Ordering};
-+    const FIRST: u32 = 20_000;
-+    const COUNT: u32 = 10_000;
-+    static NEXT: AtomicU32 = AtomicU32::new(0);
-+    let start = std::process::id().wrapping_mul(2_654_435_761);
-+    for _ in 0..COUNT {
-+        let offset = start.wrapping_add(NEXT.fetch_add(1, Ordering::Relaxed)) % COUNT;
-+        let port = (FIRST + offset) as u16;
-+        if std::net::TcpListener::bind(("127.0.0.1", port)).is_ok()
-+            && std::net::UdpSocket::bind(("127.0.0.1", port)).is_ok()
-+        {
-+            retu
++/// Each worker's park count if the runtime is idle (every worker parked,
++/// none queued globally), else `None`. Two equal readings mean no worker
++/// ran between them.
++fn idle_workers() -> Option<Vec<u64>> {
++    let metrics = tokio::runtime::Handle::current().metric
 ```
 
 ---
 
-### Incident Patch 2: `23080e91` (2026-11-13)
-**Commit Message**: ci(release): refuse a live cut of the QUIC data ramp release far from T0 (#6206)
+### Incident Patch 2: `4ee2c161` (2026-11-13)
+**Commit Message**: fix: validate transaction type at decode; call status providers outside the status lock (#6219)
 
-**File**: `.github/workflows/ci.yml` (modified, +8/-1)
+**File**: `crates/core/src/message.rs` (modified, +68/-4)
 ```diff
-@@ -283,6 +283,13 @@ jobs:
-       - name: Self-test x86-64 baseline check
-         run: bash scripts/check-x86-64-baseline_test.sh
- 
-+      # The release-time check that the QUIC data ramp release is cut within
-+      # 3 h of its ramp start (#5940): its decisions on a fixed clock, that it
-+      # is a no-op while QUIC_DATA_RAMP_RELEASE is None, and that release.yml's
-+      # validate job still runs it.
-+      - name: Self-test QUIC data ramp start check
-+        run: bash scripts/check_quic_data_ramp_t0_test.sh
-+
-       # Release-driver RESUME state. Two regressions, both of the shape where a
-       # resumed release is wrong in a way the operator cannot see: the v0.2.42
-       # FDEV_VERSION double-bump, and the CRATES_PUBLISHED flag being set on
-@@ -381,7 +388,7 @@ jobs:
-       # clean when they landed but were not actually in this list, so nothing
-       # held them to it. `-x` because the two test scripts `source` the canary.
-       - name: Lint install/uninstall scripts (shellcheck)
--        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh scripts/cache_warm_parity_test.sh scripts/simulation_schedule_test.sh
-+        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh scripts/cache_warm_parity_test.sh scripts/simulation_schedule_test.sh scripts/check_quic_data_ramp_t0.sh scripts/check_quic_data_ramp_t0_test.sh
-       # The PR-backlog sweep reports stalled PRs (see
-       # .github/workflows/pr-backlog-sweep.yml). Its self-test drives the ABORT
-       # paths -- failed query, empty listing the REST probe contradicts,
-```
-
-**File**: `.github/workflows/cross-compile.yml` (modified, +20/-0)
-```diff
-@@ -925,6 +925,26 @@ jobs:
-       # does. The default ref for a tag push is the tag, so the tree published
-       # here is exactly the tree the shipped binaries were built from.
-       # ---------------------------------------------------------------------
-+      # The QUIC data ramp start (T0) is checked again here, against the tag's
-+      # version and the clock now, immediately before the irreversible publish
-+      # and the un-draft: release.yml's validate job checks it when the run
-+      # starts, but the bump PR, the builds and the canary come between, and a
-+      # "re-run failed jobs" of this job hours later must check it again rather
-+      # than publish on the earlier verdict. A failure leaves the draft
-+      # unpublished, which is the safe state. Pinned by
-+      # scripts/check_quic_data_ramp_t0_test.sh.
-+      - name: Check the QUIC data ramp start is near now (before publishing)
-+        if: ${{ success() && startsWith(github.ref, 'refs/tags/v') }}
-+        working-directory: _src
-+        env:
-+          # Read-only: the check asks the GitHub API whether a release is
-+          # published, and the anonymous limit is shared by the runner's
-+          # address. The workflow token is enough to read; nothing here writes.
-+          GH_TOKEN: ${{ github.token }}
-+        run: |
-+          TAG_NAME="${GITHUB_REF#refs/tags/}"
-+          bash scripts/check_quic_data_ramp_t0.sh --version "${TAG_NAME#v}" --live true
-+
-       - name: Publish crates to crates.io
-         # Tag-gated as well as job-gated. The job's own
-         # `if: startsWith(github.ref, 'refs/tags/v')` already blocks this on a
-```
-
-**File**: `.github/workflows/release.yml` (modified, +21/-0)
-```diff
-@@ -185,6 +185,27 @@ jobs:
-           echo "  freenet: $VERSION"
-           echo "  fdev: $FDEV_VERSION"
- 
-+      # The QUIC data ramp release must be published within 3 h of its ramp
-+      # start (QUIC_DATA_RAMP_START), which is fixed in the binary: a late
-+      # publish starts every node part-way along the curve. This measures the
-+      # DISPATCH time; cross-compile.yml's attach-to-release job checks again
-+      # just before the crates.io publish and the un-draft, so a re-run checks
-+      # the clock it publishes at. Nodes then take the release over the 0-4 h
-+      # auto-update stagger, on top of either. The ramp release is checked
-+      # against T0; another version passes unless it would ship the ramp
-+      # unchecked (before the ramp release, or skipping it), which fails
-+      # closed. A live run that fails stops here, before anything is created;
-+      # a dry run gets a warning. Pinned by scripts/check_quic_data_ramp_t0_test.sh.
-+      - name: Check the QUIC data ramp start is near now
-+        env:
-+          RELEASE_VERSION: ${{ steps.validate.outputs.version }}
-+          RELEASE_LIVE: ${{ steps.mode.outputs.live }}
-+          # Read-only: the check asks the GitHub API whether a release is
-+          # published, and the anonymous limit is shared by the runner's
-+          # address. The workflow token is enough to read; nothing here writes.
-+          GH_TOKEN: ${{ github.token }}
-+        run: bash scripts/check_quic_data_ramp_t0.sh --version "$RELEASE_VERSION" --live "$RELEASE_LIVE"
-+
-   # Runs in BOTH modes: the bump is computed and committed locally either way.
-   # Only a live run pushes it, opens the PR and enables auto-merge (#5936: a
-   # dry run used to do all three, landing the version bump on main).
-```
-
-**File**: `crates/core/src/transport/quic/upgrade/policy.rs` (modified, +45/-0)
-```diff
-@@ -52,6 +52,26 @@ pub(crate) fn may_carry_data(config: &NetworkApiConfig) -> bool {
-         && config.quic_data_percent().unwrap_or(QUIC_DATA_PERCENT) > 0
+@@ -32,13 +32,37 @@ use ulid::Ulid;
+ ///
+ /// A transaction may span different messages sent across the network.
+ #[derive(Serialize, Deserialize, PartialEq, Eq, Hash, Clone, Copy)]
++#[serde(try_from = "TransactionWire")]
+ pub struct Transaction {
+     id: Ulid,
+     /// Parent transaction ID for child operations spawned by this transaction.
+     /// Enables atomicity tracking for composite operations (e.g., PUT with SUBSCRIBE).
+     parent: Option<Ulid>,
  }
  
-+/// When this release's QUIC data ramp starts (T0), in seconds since the Unix
-+/// epoch, or `None` for no ramp. `None` in tree; the data ramp (#5940) reads
-+/// it, and the reviewed PR for the ramp release sets it to the planned publish
-+/// time. `scripts/check_quic_data_ramp_t0.sh` reads this line, so keep it on
-+/// one line in this form.
-+#[cfg_attr(not(test), allow(dead_code))]
-+pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = None;
++/// Wire shape of [`Transaction`]. Identical field layout, so the encoding is
++/// unchanged; exists so decoding can validate the type byte, which a peer
++/// otherwise controls entirely.
++#[derive(Deserialize)]
++struct TransactionWire {
++    id: Ulid,
++    parent: Option<Ulid>,
++}
 +
-+/// The release whose cut must come within 3 h of [`QUIC_DATA_RAMP_START`], as
-+/// `"X.Y.Z"`, or `None`. Set together with the ramp start, in the same reviewed
-+/// PR, to the version of the release that ships it; release.yml's validate job
-+/// then refuses a live cut of that version unless the clock is within 3 h of the
-+/// start (`scripts/check_quic_data_ramp_t0.sh`, which reads this line, so keep
-+/// it on one line in this form). Left set afterwards, like the start: it names
-+/// one version, so a later release is not held to T0, though one that would
-+/// ship the ramp unchecked (before this release, or skipping it) is refused. An
-+/// emergency stop that sets the start back to `None` leaves this as it is.
-+#[cfg_attr(not(test), allow(dead_code))]
-+pub(in crate::transport) const QUIC_DATA_RAMP_RELEASE: Option<&str> = None;
++impl TryFrom<TransactionWire> for Transaction {
++    type Error = String;
 +
- /// Whether this build reads data from a QUIC path. It does: `PeerConnection::recv`
- /// drains the session's data channels, so a node that says it accepts data delivers
- /// a peer's frames. While this is `false`, [`QuicPolicy::own_caps`] returns 0
-@@ -389,6 +409,31 @@ pub(crate) fn log_startup(config: &NetworkApiConfig) {
- mod tests {
-     use super::*;
- 
-+    /// A ramp start names the release it ships in, so the release-time check
-+    /// (`scripts/check_quic_data_ramp_t0.sh`) has a version to key on; a
-+    /// named release is `X.Y.Z`, the form the script and release.yml use. A
-+    /// release with no start is allowed: an emergency stop resets the start
-+    /// and leaves the release, which names an earlier version.
-+    #[test]
-+    fn a_ramp_start_names_its_release() {
-+        if QUIC_DATA_RAMP_START.is_some() {
-+            assert!(
-+                QUIC_DATA_RAMP_RELEASE.is_some(),
-+                "QUIC_DATA_RAMP_START is set, so QUIC_DATA_RAMP_RELEASE must name its release"
-+            );
-+        }
-+        if let Some(release) = QUIC_DATA_RAMP_RELEASE {
-+            let parts: Vec<&str> = release.split('.').collect();
-+            assert!(
-+                parts.len() == 3
-+                    && parts
-+                        .iter()
-+                        .all(|p| !p.is_empty() && p.bytes().all(|b| b.is_ascii_digit())),
-+                "QUIC_DATA_RAMP_RELEASE must be X.Y.Z, got {release:?}"
-+            );
-+        }
++    fn try_from(w: TransactionWire) -> Result<Self, Self::Error> {
++        let id_byte = (w.id.0 & 0xFFu128) as u8;
++        TransactionType::try_from(id_byte)
++            .map_err(|_| format!("invalid transaction type byte {id_byte}"))?;
++        Ok(Transaction {
++            id: w.id,
++            parent: w.parent,
++        })
 +    }
-+
-     const AVAILABILITIES: [QuicAvailability; 4] = [
-         QuicAvailability::Disabled,
-         QuicAvailability::Up,
-```
-
-**File**: `docs/RELEASING.md` (modified, +52/-0)
-```diff
-@@ -504,6 +504,58 @@ Current wire-gated floors:
-   `quic_native_floor_stays_above_every_release_without_the_decoder` catches the
-   floor being lowered.
- 
-+- `QUIC_DATA_RAMP_START` (T0) and `QUIC_DATA_RAMP_RELEASE` in
-+  `crates/core/src/transport/quic/upgrade/policy.rs` (#5940): both `None` in
-+  tree. The reviewed PR for the QUIC data ramp release sets T0 to the planned
-+  publish time, in Unix seconds, and `QUIC_DATA_RAMP_RELEASE` to that release's
-+  version. `scripts/check_quic_data_ramp_t0.sh` then refuses a live cut of
-+  that version when the clock is more than 3 h from T0 either side (a dry run
-+  only warns). It runs at dispatch (release.yml's validate job), again in
-+  cross-compile.yml's attach-to-release job just before the crates.io publish
-+  and the un-draft (so "re-run failed jobs" checks the clock it publishes at),
-+  and in `scripts/release.sh` at its start and before each publish. What it
-+  measures is the publish time; nodes take the release over the 0-4 h
-+  auto-update stagger on top of it. Both constants stay set afterwards: a later
-+  version passes with a warning. A version that would ship the ramp unchecked
-+  fails closed: one before `QUIC_DATA_RAMP_RELEASE`, one that skips it while
-+  the tree has not reached it (an auto-bump past a taken number), one cut
-+  while `v<QUIC_DATA_RAMP_RELEASE>` is not a published (non-draft) GitHub
-+  release, GitHub's latest release is before it, or `freenet` at that version
-+  is not on crates.io, or any of these gives no clear answer (the ramp
-+  release's bump merged but its publish or un-draft failed or was cancelled,
-+  or "latest" stayed pinned to an older build; nodes update from GitHub's
-+  latest release, so a crates.io publish alone did not reach them), or one
-+  cut more than 3 h
-+  before T0, and T0 set with no ramp release named. The check reads the
-+  GitHub API with `GH_TOKEN` (the workflow token in CI, `gh auth token`
-+  locally) when it has one. Cut the ramp release with `--field version=X.Y.Z` set to
-+  `QUIC_DATA_RAMP_RELEASE`, not the auto-bump. If that version is already
-+  taken, change the constant in the same reviewed PR as T0. A later re-ramp
-+  must set a new T0 and a new `QUIC_DATA_RAMP_RELEASE` together: a new T0 with
-+  a stale release name is not caught when the cut comes more than 3 h after
-+  the new T0. If the publish slips more than about 3 h past T0, re-set T0 in a
-+  new reviewed PR before publishing.
-+
-+  Which check guards which side. The dispatch check (release.yml) reads the
-+  tree before the version bump, so it is the one that sees a cut version
-+  skipping or preceding the ramp release. At the tag the tree is already the
-+  cut version, so the attach-to-release check sees only the clock and the
-+  publication of the ramp release, not a skip. One case neither sees at cut
-+  time: `QUIC_DATA_RAMP_RELEASE` naming a version that ships before the ramp
-+  PR merges. CI covers it: `scripts/check_quic_data_ramp_t0_test.sh` fails a
-+  tree where T0 is more than 3 h away and `QUIC_DATA_RAMP_RELEASE` is not
-+  above the `crates/core` version. The same test requires each state the
-+  constants pass through to pass CI, including the emergency stop (T0 back to
-+  `None` with the release left named: a later version passes, the named one is
-+  refused). A stop taken before the ramp release ships leaves the next
-+  auto-bump equal to the named version, which is then refused: cut another
-+  version, or set `QUIC_DATA_RAMP_RELEASE` to `None` in the stop PR.
-+
-+  The attach-to-release check reads the version from the tag and accepts only
-+  `X.Y.Z`. A pre-release tag (`v0.2.157-rc1`) exits 2 there and stops the
-+  publish. The project tags no pre-releases; one would need the check taught
-+  its form first.
-+
- - `QUIC_DATA_PERCENT` in `crates/core/src/transport/quic/upgrade/policy.rs` (the
-   share of pairs that carry data on QUIC, #5940). It stays at its value unless
-   this release is a rollout step (0, 5, 25, 100), changed in its own PR. That PR also edits the expectations that pin 0:
-```
-
-**File**: `scripts/RELEASE_RECOVERY.md` (modified, +14/-1)
-```diff
-@@ -299,14 +299,27 @@ gh run view "$RUN_ID" --repo "$REPO" --json jobs --jq '
- 
- **That must print `success`.** `failure`, `cancelled`, `skipped` — or no line
- at all, which means the step never ran — all mean Gate A did not pass. Stop and
--go to Step 4b. Only continue past this point on `success`:
-+go to Step 4b. Only continue past this point on `success`.
-+
-+Gate A is not the only step that leaves a release in this state. The QUIC data
-+ramp start check (`Check the QUIC data ramp start is near now (before
-+publishing)`, just before the crates.io publish) refuses a release that would
-+ship the ramp at the wrong time, and its refusal also leaves Gate A passed, the
-+crates absent and the release a draft. So the publish below runs that check
-+first, on the clock you publish at, and stops if it refuses. Do not publish
-+around a refusal; follow the remedy it prints (docs/RELEASING.md).
- 
- ```bash
- cd ~/code/freenet/freenet-core/main
- git fetch origin
- # Publish from the release commit, not from whatever main is now (see Step 2).
- git checkout "$RELEASE_SHA"
- 
-+# The QUIC data ramp start check, as attach-to-release runs it.
-+if ! bash scripts/check_quic_data_ramp_t0.sh --version 0.1.X --live true; then
-+  echo "STOP: the QUIC data ramp start check refused 0.1.X; do not publish"; exit 1
-+fi
-+
- # Per crate, because a partial publish is the usual reason to be here:
- # RELEASING.md routes "fdev failed but freenet succeeded" to this step, and an
- # unconditional `cargo publish -p freenet` would just error on the crate that
-```
-
-**File**: `scripts/check_quic_data_ramp_t0.sh` (added, +316/-0)
-```diff
-@@ -0,0 +1,316 @@
-+#!/usr/bin/env bash
-+# Check, when the QUIC data ramp release is cut, that its ramp start (T0) is
-+# close to now (#5940, #6138).
-+#
-+# T0 (`QUIC_DATA_RAMP_START` in crates/core/src/transport/quic/upgrade/policy.rs)
-+# is fixed in the binary. A publish long after T0 starts every node that updates
-+# part-way along the curve (24 h after T0, at 100%, skipping the ramp), and one
-+# long before T0 holds every node at 5% until T0. So the ramp release must be
-+# cut within WINDOW of T0, or T0 must be re-set in a new reviewed PR first.
-+#
-+# Only the release named by `QUIC_DATA_RAMP_RELEASE` (beside T0) is held to
-+# T0: T0 stays set after it (past 24 h it reads 100%, the steady state), and
-+# later releases must not be held to it, so one passes with a warning. A
-+# version that would ship the ramp unchecked fails closed like a late cut:
-+# T0 set with no release named; a version before the named one; a later one
-+# that skips it while this tree (crates/core/Cargo.toml) has not reached it;
-+# a later one while the ramp release is not a published (non-draft) GitHub
-+# release, GitHub's latest release is before it, or it is not on crates.io,
-+# or any of these has no clear answer (the bump can merge and the publish or
-+# un-draft then fail); a later one
-+# cut more than WINDOW before T0. With no T0, or no ramp release and no T0, it
-+# prints a notice and exits 0.
-+#
-+# Usage:
-+#   check_quic_data_ramp_t0.sh --version X.Y.Z --live true|false
-+#                              [--now UNIX_SECS] [--policy PATH] [--window SECS]
-+#                              [--cargo-toml PATH]
-+#
-+# --now defaults to the clock (`date +%s`); tests pass it. A live run that
-+# fails the check exits 1. A dry run reports the same finding as a warning and
-+# exits 0, so a rehearsal shows it without stopping. A policy file the script
-+# cannot read (a constant missing, repeated or written another way) exits 2 in
-+# both modes: the check cannot say anything, so it does not pass.
-+
-+set -uo pipefail
-+
-+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+POLICY="$SCRIPT_DIR/../crates/core/src/transport/quic/upgrade/policy.rs"
-+CARGO_TOML="$SCRIPT_DIR/../crates/core/Cargo.toml"
-+WINDOW=$((3 * 3600))
-+VERSION=""
-+LIVE=""
-+NOW=""
-+
-+while [[ $# -gt 0 ]]; do
-+    case "$1" in
-+        --version) VERSION="${2:-}"; shift 2 ;;
-+        --live) LIVE="${2:-}"; shift 2 ;;
-+        --now) NOW="${2:-}"; shift 2 ;;
-+        --policy) POLICY="${2:-}"; shift 2 ;;
-+        --window) WINDOW="${2:-}"; shift 2 ;;
-+        --cargo-toml) CARGO_TOML="${2:-}"; shift 2 ;;
-+        *) echo "::error::check_quic_data_ramp_t0: unknown argument '$1'"; exit 2 ;;
-+    esac
-+done
-+
-+if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-+    echo "::error::check_quic_data_ramp_t0: --version must be X.Y.Z (got '$VERSION')"
-+    exit 2
-+fi
-+if [[ "$LIVE" != "true" && "$LIVE" != "false" ]]; then
-+    echo "::error::check_quic_data_ramp_t0: --live must be true or false (got '$LIVE')"
-+    exit 2
-+fi
-+if [[ -z "$NOW" ]]; then
-+    NOW="$(date +%s)"
-+fi
-+if [[ ! "$NOW" =~ ^[0-9]+$ || ! "$WINDOW" =~ ^[0-9]+$ ]]; then
-+    echo "::error::check_quic_data_ramp_t0: --now and --window must be whole seconds"
-+    exit 2
-+fi
-+if [[ ! -f "$POLICY" ]]; then
-+    echo "::error::check_quic_data_ramp_t0: policy file not found: $POLICY"
-+    exit 2
-+fi
-+
-+# Sets DECLARED to the value of the one declaration of constant $1 whose type
-+# is $2, or exits 2. The declaration starts a line and runs to its `;`,
-+# possibly over several lines (rustfmt wraps a long one), and its whitespace
-+# is collapsed, so `Some(\n    1_800_000_000,\n)` reads as `Some(1_800_000_000)`.
-+# Starting a line keeps a comment or test that mentions the name from being
-+# read; two declarations are refused rather than one picked. (Not a command
-+# substitution: its error message would be captured.)
-+DECLARED=""
-+read_declared() {
-+    local name="$1" type="$2" found count
-+    found="$(awk -v head="pub(in crate::transport) const ${name}: ${type} =" '
-+        index($0, head) == 1 { inside = 1; text = "" }
-+        inside { text = text " " $0; if ($0 ~ /;[[:space:]]*$/) { print text; inside = 0 } }
-+    ' "$POLICY")"
-+    count="$(printf '%s' "$found" | grep -c . || true)"
-+    if [[ "$count" != "1" ]]; then
-+        echo "::error::check_quic_data_ramp_t0: expected one declaration of ${name}: ${type} in $POLICY, found ${count}"
-+        exit 2
-+    fi
-+    found="${found#*= }"
-+    found="${found%;*}"
-+    # Collapse whitespace, then drop it inside the parentheses and a trailing
-+    # comma rustfmt adds to a wrapped argument.
-+    found="$(printf '%s' "$found" | tr -s '[:space:]' ' ')"
-+    found="${found// /}"
-+    found="${found/,)/)}"
-+    DECLARED="$found"
 +}
 +
-+read_declared QUIC_DATA_RAMP_RELEASE 'Option<&str>'
-+release_value="$DECLARED"
-+read_declared QUIC_DATA_RAMP_START 'Option<u64>'
-+start_value="$DECLARED"
-+
-+# Every finding below fails a live run and warns in a dry run.
-+finding() {
-+    if 
-```
-
-**File**: `scripts/check_quic_data_ramp_t0_test.sh` (added, +522/-0)
-```diff
-@@ -0,0 +1,522 @@
-+#!/usr/bin/env bash
-+# Tests for scripts/check_quic_data_ramp_t0.sh, the release-time check that the
-+# QUIC data ramp release is cut within 3 h of its ramp start (#5940, #6138).
-+#
-+# Each case runs the script against a policy file written here, with the clock
-+# passed as --now, and checks its exit code and one line of its output. Then it
-+# checks the tree as it is: with QUIC_DATA_RAMP_RELEASE = None the check is a
-+# no-op for any version, live or dry. Last, the wiring, each read from the
-+# step's (or function's) own lines: release.yml's validate job runs it on the
-+# resolved version and run mode; cross-compile.yml's attach-to-release job runs
-+# it again on the tag's version before the crates.io publish and the un-draft;
-+# the local release script runs it at the start and in each publish function.
-+#
-+# Run manually: bash scripts/check_quic_data_ramp_t0_test.sh
-+# Also wired into CI (the Fmt job in .github/workflows/ci.yml).
-+
-+# The needles below are literal workflow and script text, `${{ }}` and `$VAR`
-+# included, so single quotes are meant.
-+# shellcheck disable=SC2016
-+# Two cases run check_tree in a subshell on purpose, so the failures they
-+# expect stay out of this run's count.
-+# shellcheck disable=SC2030,SC2031
-+set -uo pipefail
-+
-+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+CHECK="$SCRIPT_DIR/check_quic_data_ramp_t0.sh"
-+POLICY="$SCRIPT_DIR/../crates/core/src/transport/quic/upgrade/policy.rs"
-+RELEASE_YML="$SCRIPT_DIR/../.github/workflows/release.yml"
-+WORK="$(mktemp -d)"
-+trap 'rm -rf "$WORK"' EXIT
-+FAILURES=0
-+T0=1800000000
-+HOUR=3600
-+
-+# A policy file declaring the two constants as $1 and $2.
-+policy() {
-+    local file="$WORK/policy-$RANDOM.rs"
-+    {
-+        echo "/// When this release's data ramp starts."
-+        echo "pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = $1;"
-+        echo ""
-+        echo "#[cfg_attr(not(test), allow(dead_code))]"
-+        echo "pub(in crate::transport) const QUIC_DATA_RAMP_RELEASE: Option<&str> = $2;"
-+        echo "// QUIC_DATA_RAMP_START: Option<u64> = Some(1); a comment is not read"
-+    } > "$file"
-+    printf '%s' "$file"
-+}
-+
-+# A crates/core/Cargo.toml at version $1.
-+cargo_at() {
-+    local file="$WORK/cargo-$1.toml"
-+    printf '[package]\nname = "freenet"\nversion = "%s"\n' "$1" > "$file"
-+    printf '%s' "$file"
-+}
-+SHIPPED="$(cargo_at 0.2.157)"
-+BEFORE="$(cargo_at 0.2.156)"
-+
-+# crates.io and GitHub, as the check sees them: a `curl` first on PATH that
-+# records its arguments (and the header file it is given, which is where a
-+# token goes) and answers by host: GitHub with HTTP $FAKE_GH_CODE and body
-+# $FAKE_GH_BODY written to the -o file, crates.io with HTTP $FAKE_CRATES_CODE.
-+# $FAKE_CURL_EXIT, when set, makes it fail with no answer at all. A `gh` that
-+# fails keeps the check from reading a real token on this machine.
-+mkdir -p "$WORK/bin"
-+cat > "$WORK/bin/curl" <<'CURL'
-+#!/usr/bin/env bash
-+printf '%s\n' "$*" >> "$FAKE_CURL_LOG"
-+out="" url=""
-+while [[ $# -gt 0 ]]; do
-+    case "$1" in
-+        -o) out="$2"; shift 2 ;;
-+        -H) if [[ "$2" == @* ]]; then cat "${2#@}" >> "$FAKE_CURL_LOG.headers"; fi; shift 2 ;;
-+        http*) url="$1"; shift ;;
-+        *) shift ;;
-+    esac
-+done
-+if [[ -n "${FAKE_CURL_EXIT:-}" ]]; then
-+    exit "$FAKE_CURL_EXIT"
-+fi
-+case "$url" in
-+    https://api.github.com/*/releases/latest)
-+        if [[ -n "$out" ]]; then printf '%s' "$FAKE_GH_LATEST_BODY" > "$out"; fi
-+        printf '%s' "$FAKE_GH_LATEST_CODE" ;;
-+    https://api.github.com/*)
-+        if [[ -n "$out" ]]; then printf '%s' "$FAKE_GH_BODY" > "$out"; fi
-+        printf '%s' "$FAKE_GH_CODE" ;;
-+    *) printf '%s' "$FAKE_CRATES_CODE" ;;
-+esac
-+CURL
-+printf '#!/usr/bin/env bash\nexit 1\n' > "$WORK/bin/gh"
-+chmod +x "$WORK/bin/curl" "$WORK/bin/gh"
-+export PATH="$WORK/bin:$PATH"
-+unset GH_TOKEN GITHUB_TOKEN
-+export FAKE_CURL_LOG="$WORK/curl.log"
-+export FAKE_CRATES_CODE=200 FAKE_GH_CODE=200
-+export FAKE_GH_BODY='{"tag_name": "v0.2.157", "draft": false, "prerelease": false}'
-+export FAKE_GH_LATEST_CODE=200
-+export FAKE_GH_LATEST_BODY='{"tag_name": "v0.2.157", "draft": false}'
-+: > "$FAKE_CURL_LOG"
-+
-+# check_case NAME EXPECTED_RC EXPECTED_TEXT -- ARGS...
-+check_case() {
-+    local name="$1" want_rc="$2" want_text="$3" out rc
-+    shift 4
-+    out="$(bash "$CHECK" "$@" 2>&1)"
-+    rc=$?
-+    if [[ "$rc" != "$want_rc" || "$out" != *"$want_text"* ]]; then
-+        echo "FAIL - $name: rc=$rc (want $want_rc), output: $out"
-+        FAILURES=$((FAILURES + 1))
-+    else
-+        echo "ok - $name"
-+    fi
-+}
-+
-+unset_both="$(policy None None)"
-+check_case "no ramp release, live: no-op" 0 "no ramp release" -- \
-+    --version 0.2.156 --live true --now "$T0" --policy "$unset_both"
-+check_case "no ramp release, dry run: no-op" 0 "no ramp release" -- \
-+    --version 0.2.156 --live false --now "$T0" --policy "$unset_both"
-+
-+set_both="$(policy "Some(1_800_000_000)" 'Some("0.2.157")')"
-+check_case "a
-```
-
----
-
-### Incident Patch 3: `b9479d5b` (2026-11-13)
-**Commit Message**: feat(transport): a QUIC-native connection as a PeerConnectionApi (#6210)
-
-**File**: `.claude/rules/transport.md` (modified, +41/-2)
-```diff
-@@ -2088,6 +2088,44 @@ Not decided here (A5): fairness between the requesters that steer setups,
-   before UDP is removed.
- ```
+ impl Transaction {
+     pub const NULL: &'static Transaction = &Transaction {
+         id: Ulid(0),
+@@ -71,9 +95,15 @@ impl Transaction {
  
-+Native connection (`peer_connection/native_connection.rs`, A5a): the
-+`PeerConnectionApi` over a native connection, built by nothing in production
-+until A5b wires the connect op.
-+
-+```
-+Path: QuicPathLimits::NATIVE (DEFAULT with udp_fallback off) and data
-+  enabled at once. A send whose next step would be UDP is given up (counted
-+  Dropped, a stream's completion told Dropped), and a quiet timeout never
-+  makes the path suspect (suspect only diverts data to UDP); a dark path
-+  ends by the stall close or the acknowledgement watch's dark rule. A peer
-+  refusing data (NOT_ACCEPTING_DATA) closes the native path at once
-+  (QuicPath::stop_sending_data); left open it would drop every later send.
-+  Upgrade paths keep udp_fallback on and are unchanged.
-+Shorts: DataRoute::native, no UDP sender. queue_native_short refuses a full
-+  queue with TransportError::SendQueueFull (Transient: the connection
-+  survives, the message is counted Dropped, no ShortOverflowUdp), and an
-+  ended path with ConnectionClosed. The worker drops and counts a short it
-+  cannot put on the path (ended, or refusing data while it closes).
-+Receive: recv reads the path's inbox through InboundDispatch, the same record
-+  a UDP connection keeps (metadata dispatched once, stream ids not reused).
-+  When the connection ends, both inbox channels are drained before recv
-+  fails.
-+End reasons (close_reason after recv fails): quinn's idle TimedOut is
-+  CloseReason::IdleTimeout; everything else is CloseReason::QuicPath with a
-+  QuicPathEnd. A close this node makes records its cause at the close site
-+  (QuicCloser::close_for: Stalled, NotAcknowledging, SendAborts,
-+  PeerOverBudget, RefusedData, PeerRefusedData, ReceiveTaskPanicked), first
-+  cause wins; a
-+  local close with none is ClosedLocally, the peer's close ClosedByPeer, and
-+  any other end Lost. The disconnect label is QuicPathEnd::label.
-+Pacing: the bandwidth limit paces its data with a LimitPacer on the path's
-+  clock, as an upgrade session's does.
-+Drop: closes with NODE_DROPPED_PEER at once (send tasks hold the path) and
-+  cancels its unclaimed inbound streams, as PeerConnection's drop does.
-+send_bytes_observed is always Unobserved: no message is a stream it reports.
-+The route worker runs under report_panics (task_panicked).
-+```
-+
- #### QUIC framing and path (`quic/framing.rs`, `quic/path.rs`, #5940 step e3)
- 
- The upgrade driver builds a `QuicPath` and sends control frames on it. Data goes on
-@@ -2195,8 +2233,9 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-     repeated timeouts close the path. NotOpened opened nothing, so it does not
-     count.
-   → A NOT_ACCEPTING_DATA stop means the sender's gating is wrong: log it and
--    send the message on UDP, do not retry on this path. A sender cannot rely
--    on seeing it (see the stop code).
-+    send the message on UDP, do not retry on this path (a native path, with no
-+    UDP, closes instead). A sender cannot rely on seeing it (see the stop
-+    code).
-   Sends have no deadline of their own: open_uni, a flow-blocked write
-   and the final wait for acks can wait as long as the connection lives
-   against a peer that does not cooperate. Every node send MUST go through
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +65/-0)
-```diff
-@@ -4116,6 +4116,9 @@ fn disconnect_reason_for_close(
-         Some(CloseReason::InboundStreamRefusals) => {
-             crate::tracing::DisconnectReason::Explicit("inbound_stream_refusals".into())
-         }
-+        Some(CloseReason::QuicPath(end)) => {
-+            crate::tracing::DisconnectReason::Explicit(end.label().into())
-+        }
-         None => crate::tracing::DisconnectReason::NetworkError("transport_closed".into()),
-     }
- }
-@@ -4470,6 +4473,68 @@ pub(crate) mod tests {
-         }
+     pub(crate) fn transaction_type(&self) -> TransactionType {
+         let id_byte = (self.id.0 & 0xFFu128) as u8;
+-        TransactionType::try_from(id_byte).expect(
+-            "Transaction ID contains invalid type byte; this is a bug in Transaction construction",
+-        )
++        // Deserialization rejects unknown type bytes and every constructor
++        // (including `ttl_transaction_with_multiplier`) sets a valid one, so
++        // the fallback is unreachable. It exists so that a value built some
++        // other way can never panic the network event loop; the debug_assert
++        // makes such a value visible in tests instead of silently
++        // misclassifying it.
++        let ty = TransactionType::try_from(id_byte);
++        debug_assert!(ty.is_ok(), "Transaction with invalid type byte {id_byte}");
++        ty.unwrap_or(TransactionType::Connect)
      }
  
-+    /// Every `QuicPathEnd` label reaches telemetry as `Explicit(label)`, both
-+    /// from `disconnect_reason_for_close` and through `DisconnectReason`'s
-+    /// substring parser, which reads "timeout", "limit", "pruned" and
-+    /// "unresponsive" in a label as another reason. The match gives each
-+    /// variant an index, so a new variant does not compile until it has one,
-+    /// and the count check fails until it is in the list.
+     pub fn timed_out(&self) -> bool {
+@@ -148,7 +178,10 @@ impl Transaction {
+ 
+         // Clear the timestamp bits and replace with the cutoff timestamp.
+         const TIMESTAMP_MASK: u128 = 0x00000000000000000000FFFFFFFFFFFFFFFF;
+-        let new_ulid = (id.0 & TIMESTAMP_MASK) | ((ttl_epoch as u128) << 80);
++        // Keep the low byte a valid type byte (Connect = 0): the cutoff id is
++        // only compared against, but it must still satisfy the invariant that
++        // every Transaction carries a valid type.
++        let new_ulid = (id.0 & TIMESTAMP_MASK & !0xFFu128) | ((ttl_epoch as u128) << 80);
+         Self {
+             id: Ulid(new_ulid),
+             parent: None,
+@@ -1500,6 +1533,37 @@ mod tests {
+         assert_eq!(msg.version(), semver::Version::new(1, 3, 0));
+     }
+ 
++    /// A peer chooses every bit of a decoded transaction id; an unknown type
++    /// byte must be a decode error, never a later panic.
 +    #[test]
-+    fn every_quic_path_end_label_survives_the_disconnect_reason_parser() {
-+        use crate::tracing::DisconnectReason;
-+        use crate::transport::{CloseReason, QuicPathEnd as E};
-+        fn index(end: E) -> usize {
-+            match end {
-+                E::Stalled => 0,
-+                E::NotAcknowledging => 1,
-+                E::SendAborts => 2,
-+                E::PeerOverBudget => 3,
-+                E::RefusedData => 4,
-+                E::PeerRefusedData => 5,
-+                E::ReceiveTaskPanicked => 6,
-+                E::ClosedByPeer => 7,
-+                E::ClosedLocally => 8,
-+                E::Lost => 9,
++    fn deserialize_rejects_unknown_transaction_type_byte() {
++        for byte in 0u8..=255 {
++            let id = Ulid((Ulid::generate().0 & !0xFFu128) | byte as u128);
++            let wire = bincode::serialize(&(id, None::<Ulid>)).unwrap();
++            let decoded = bincode::deserialize::<Transaction>(&wire);
++            if byte <= 4 {
++                let tx = decoded.expect("valid type byte must decode");
++                assert_eq!(tx.id, id);
++                assert_eq!(tx.transaction_type() as u8, byte);
++                // Encoding is unchanged by validation.
++                assert_eq!(bincode::serialize(&tx).unwrap(), wire);
++            } else {
++                assert!(decoded.is_err(), "type byte {byte} must be rejected");
 +            }
 +        }
-+        let all = [
-+            E::Stalled,
-+            E::NotAcknowledging,
-+            E::SendAborts,
-+            E::PeerOverBudget,
-+            E::RefusedData,
-+            E::PeerRefusedData,
-+            E::ReceiveTaskPanicked,
-+            E::ClosedByPeer,
-+            E::ClosedLocally,
-+            E::Lost,
-+        ];
-+        let mut indices: Vec<usize> = all.iter().map(|end| index(*end)).collect();
-+        indices.sort_unstable();
-+        indices.dedup();
-+        assert_eq!(
-+            indices,
-+            (0..all.len()).collect::<Vec<_>>(),
-+            "list every variant once"
++    }
++
++    #[test]
++    fn ttl_transactions_carry_a_valid_type_byte() {
++        for _ in 0..512 {
++            for m in [1u64, 2, 5] {
++                let tx = Transaction::ttl_transaction_with_multiplier(m);
++                assert!(TransactionType::try_from((tx.id.0 & 0xFF) as u8).is_ok());
++                let _ = tx.transaction_type();
++            }
++        }
++    }
++
+     #[test]
+     fn pack_transaction_type() {
+         let ts_0 = Ulid::generate();
+```
+
+**File**: `crates/core/src/node/network_status.rs` (modified, +106/-58)
+```diff
+@@ -2497,6 +2497,70 @@ pub fn get_snapshot() -> Option<NetworkStatusSnapshot> {
+ /// `Instant` in the past (which can underflow on a freshly booted machine).
+ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
+     let status = NETWORK_STATUS.get()?;
++    // Call every registered provider BEFORE taking the NETWORK_STATUS read
++    // guard. Providers lock ring/connection state (e.g. the ring-stats provider
++    // takes `ConnectionManager::own_addr`), while `set_own_addr` holds that
++    // lock and then takes the NETWORK_STATUS write lock. Calling them under
++    // the guard is a lock-order inversion that deadlocks the node.
++    // Read subscribed contracts from the registered provider, which in
++    // production points at the canonical lease map in `HostingManager`.
++    // Sort order is set inside the provider (most recently updated first;
++    // never-updated entries fall to the end with a deterministic key
++    // tie-break).
++    let contracts: Vec<ContractSnapshot> = SUBSCRIPTION_PROVIDER
++        .read()
++        .as_ref()
++        .map(|provider| {
++            provider()
++                .into_iter()
++                .map(|c| {
++                    let key_full = c.key.to_string();
++                    let instance_id = c.key.id().to_string();
++                    // Use char boundary for safe truncation (contract keys
++                    // are base58/ASCII, but be defensive against future
++                    // encoding changes).
++                    let key_short = if key_full.chars().count() > 12 {
++                        let trunc: String = key_full.chars().take(12).collect();
++                        format!("{trunc}...")
++                    } else {
++                        key_full.clone()
++                    };
++                    ContractSnapshot {
++                        key_short,
++                        key_full,
++                        instance_id,
++                        subscribed_secs: c.subscribed_secs,
++                        last_updated_secs: c.last_updated_secs,
++                        is_receiving_updates: c.is_receiving_updates,
++                        in_use: c.in_use,
++                    }
++                })
++                .collect()
++        })
++        .unwrap_or_default();
++
++    let ring_stats = RING_STATS_PROVIDER
++        .read()
++        .as_ref()
++        .map(|provider| provider())
++        .unwrap_or_default();
++
++    let governance = GOVERNANCE_PROVIDER
++        .read()
++        .as_ref()
++        .map(|provider| provider())
++        .unwrap_or_default();
++    let ban_list = BAN_LIST_PROVIDER
++        .read()
++        .as_ref()
++        .map(|provider| provider())
++        .unwrap_or_default();
++    let hosting = HOSTING_PROVIDER
++        .read()
++        .as_ref()
++        .map(|provider| provider())
++        .unwrap_or_default();
++
+     let s = status.read().ok()?;
+ 
+     let failures = s
+@@ -2577,43 +2641,6 @@ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
+     let gateway_only_persisting =
+         gateway_only && gateway_only_is_persisting(s.gateway_only_since, now);
+ 
+-    // Read subscribed contracts from the registered provider, which in
+-    // production points at the canonical lease map in `HostingManager`.
+-    // Sort order is set inside the provider (most recently updated first;
+-    // never-updated entries fall to the end with a deterministic key
+-    // tie-break).
+-    let contracts: Vec<ContractSnapshot> = SUBSCRIPTION_PROVIDER
+-        .read()
+-        .as_ref()
+-        .map(|provider| {
+-            provider()
+-                .into_iter()
+-                .map(|c| {
+-                    let key_full = c.key.to_string();
+-                    let instance_id = c.key.id().to_string();
+-                    // Use char boundary for safe truncation (contract keys
+-                    // are base58/ASCII, but be defensive against future
+-                    // encoding changes).
+-                    let key_short = if key_full.chars().count() > 12 {
+-                        let trunc: String = key_full.chars().take(12).collect();
+-                        format!("{trunc}...")
+-                    } else {
+-                        key_full.clone()
+-                    };
+-                    ContractSnapshot {
+-                        key_short,
+-                        key_full,
+-                        instance_id,
+-                        subscribed_secs: c.subscribed_secs,
+-                        last_updated_secs: c.last_updated_secs,
+-                        is_receiving_updates: c.is_receiving_updates,
+-                        in_use: c.in_use,
+-                    }
+-                })
+-                .collect()
+-        })
+-        .unwrap_or_default();
+-
+     let elapsed_secs = now.saturating_duration_since(s.started_at).as_secs();
+     let has_version_mismatch = s
+         .gateway_failures
+@@ -2644,12 +2671,6 @@ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
+     le
+```
+
+**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +40/-1)
+```diff
+@@ -424,6 +424,10 @@ async fn drive_client_connect(
+     // Standard join at zero connections, but its first hop is no gateway.
+     let started = Instant::now();
+     let mut heard_gateway = false;
++    // The first relay sends exactly one `ObservedAddress` per CONNECT, so only
++    // the first one is acted on; repeats would otherwise let any sender keep
++    // rewriting this node's own address until the TTL.
++    let mut applied_observed_address = false;
+     let through_gateway = op_manager
+         .configured_gateways
+         .iter()
+@@ -939,12 +943,21 @@ async fn drive_client_connect(
+                 collection_end = Some((CollectionEnd::Rejected, Instant::now()));
+                 continue;
+             }
++            ConnectMsg::ObservedAddress { address, .. } if applied_observed_address => {
++                tracing::debug!(
++                    tx = %tx,
++                    observed_address = %address,
++                    "connect driver: ignoring repeated ObservedAddress"
++                );
++            }
+             ConnectMsg::ObservedAddress { address, .. } => {
++                applied_observed_address = true;
+                 // The joiner doesn't know its external IP behind NAT;
+                 // the gateway observes it from the UDP packet source
+                 // and ships it back. Update both `own_addr` (for
+                 // diagnostics) and `own_location` (for routing).
+-                // Idempotent: subsequent observations overwrite.
++                // Only the first ObservedAddress per transaction is applied
++                // (see the guard arm above); repeats are ignored.
+                 let location = Location::from_address(&address);
+                 // GLOBAL-ADDR-WRITE-OK: production. A real node learning its
+                 // peer-observed address is exactly what the external_address
+@@ -1962,6 +1975,32 @@ mod tests {
+         );
+     }
+ 
++    /// Source-literal guard: the joiner driver applies only the first
++    /// `ObservedAddress` per CONNECT transaction. Repeats must hit the
++    /// ignoring arm BEFORE the applying arm, and the applying arm must set the
++    /// flag, so a peer cannot keep rewriting this node's own address.
++    #[test]
++    fn joiner_driver_applies_only_first_observed_address() {
++        const SOURCE: &str = include_str!("op_ctx_task.rs");
++        let guard = SOURCE
++            .find("ConnectMsg::ObservedAddress { address, .. } if applied_observed_address =>")
++            .expect("repeat-ignoring ObservedAddress arm removed");
++        let apply = SOURCE
++            .find("ConnectMsg::ObservedAddress { address, .. } => {\n                applied_observed_address = true;")
++            .expect("applying arm must set applied_observed_address first");
++        assert!(
++            guard < apply,
++            "the ignoring arm must precede the applying arm"
 +        );
-+        let mut labels = std::collections::HashSet::new();
-+        for end in all {
-+            let label = end.label();
-+            assert!(labels.insert(label), "{label} is used twice");
-+            let explicit = DisconnectReason::Explicit(label.to_string());
-+            assert_eq!(
-+                super::disconnect_reason_for_close(Some(CloseReason::QuicPath(end))),
-+                explicit,
-+                "{end:?}"
-+            );
-+            assert_eq!(
-+                DisconnectReason::from(Some(label.to_string())),
-+                explicit,
-+                "{label} parses as another reason"
-+            );
-+        }
++        let body_end = SOURCE[apply..]
++            .find("set_own_addr(address)")
++            .expect("set_own_addr call");
++        assert!(
++            body_end < 2000,
++            "set_own_addr must stay in the applying arm"
++        );
 +    }
 +
-     fn hosting_announce() -> crate::message::NetMessage {
-         use crate::message::{NeighborHostingMessage, NetMessage, NetMessageV1};
-         NetMessage::V1(NetMessageV1::NeighborHosting {
+     /// Source-literal guard: the relay driver runs the full re-entry
+     /// state machine (Response/Rejected/ObservedAddress/ConnectFailed)
+     /// on its inbox receiver. Removing any of these branches would
 ```
 
-**File**: `crates/core/src/transport.rs` (modified, +12/-0)
+---
+
+### Incident Patch 3: `af79d38e` (2026-11-13)
+**Commit Message**: docs(config): --transport-quic help says prefer is the default (#6225)
+
+**File**: `crates/core/src/config.rs` (modified, +3/-2)
 ```diff
-@@ -350,6 +350,9 @@ impl From<SocketAddr> for ObservedAddr {
+@@ -2588,13 +2588,14 @@ pub struct NetworkArgs {
+     pub bbr_startup_rate: Option<u64>,
+ 
+     /// QUIC transport (#5940): `off`, `shadow` or `prefer`. Unset means
+-    /// `shadow` on Linux, macOS and Windows, and `off` elsewhere.
++    /// `prefer` on Linux, macOS and Windows, and `off` elsewhere.
+     ///
+     /// `shadow` builds a QUIC endpoint on the network port and upgrades
+     /// connections to peers that also run it to a QUIC path. The path carries
+     /// control frames only, so all traffic stays on the existing transport.
+     /// `prefer` also negotiates data with a share of pairs (`quic-data-percent`,
+-    /// or this release's share, which is 0), and a pair where both sides did
++    /// or this release's share: its data ramp, or 0 when it has none), and a
++    /// pair where both sides did
+     /// sends its traffic on the path. `off` builds no endpoint. An unknown value is treated as `off`,
+     /// with a warning in the log.
+     #[arg(long, env = "FREENET_TRANSPORT_QUIC", value_name = "off|shadow|prefer")]
+```
+
+**File**: `crates/core/src/transport/quic/upgrade/driver/tests.rs` (modified, +4/-2)
+```diff
+@@ -1038,8 +1038,10 @@ fn data_route_takes_no_lock(session: &Arc<Session>) -> bool {
  }
  
- pub(crate) use self::boundary::TransportHandle;
-+// For the node's test that pins each end's disconnect label.
-+#[cfg(test)]
-+pub(crate) use self::boundary::QuicPathEnd;
- pub(crate) use self::boundary::{
-     CloseReason, InboundAcceptor, InboundExpectations, InboundStreamRegistry, ListenerExit,
-     NextConnection, ObservedSend, OutboundConnector, PeerConnectionApi, PendingConnection,
-@@ -399,6 +402,12 @@ pub enum TransportError {
-     /// the same message fails the same way on every attempt.
-     #[error("outbound stream to {0} not sent: length {1} is outside the stream limits")]
-     OutboundStreamInvalidLength(SocketAddr, u64),
-+    /// A message to the peer was not sent because the connection's queue for
-+    /// it is full (a QUIC-native connection's short-message queue, which has
-+    /// no UDP session to spill to). Transient: the connection survives, and
-+    /// the operation layer retries or gives up as for a lost message.
-+    #[error("message to {0} not sent: the connection's send queue is full")]
-+    SendQueueFull(SocketAddr),
-     #[error(transparent)]
-     Other(#[from] anyhow::Error),
-     /// An error only the UDP transport produces (a socket send or I/O
-@@ -638,6 +647,7 @@ impl TransportError {
-     pub fn scope(&self) -> ErrorScope {
-         match self {
-             TransportError::OutboundStreamFailed(..)
-+            | TransportError::SendQueueFull(..)
-             | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) => ErrorScope::Transient,
-             TransportError::Quic(QuicError(QuicErrorKind::Stopped { code }))
-                 if quic::error::stop_is_retryable(*code) =>
-@@ -1204,6 +1214,7 @@ mod tests {
-                     (ErrorScope::Transient, true, false)
-                 }
-                 TransportError::OutboundStreamFailed(_) => (ErrorScope::Transient, true, false),
-+                TransportError::SendQueueFull(_) => (ErrorScope::Transient, true, false),
-                 TransportError::OutboundStreamInvalidLength(..) => {
-                     (ErrorScope::Stream, false, false)
-                 }
-@@ -1254,6 +1265,7 @@ mod tests {
-             },
-             TransportError::send_failed(addr, io::ErrorKind::NetworkUnreachable),
-             TransportError::OutboundStreamFailed(addr),
-+            TransportError::SendQueueFull(addr),
-             TransportError::OutboundStreamInvalidLength(addr, 0),
-             TransportError::from(io::Error::other("x")),
-             TransportError::Other(anyhow::anyhow!("x")),
-```
-
-**File**: `crates/core/src/transport/boundary.rs` (modified, +53/-0)
-```diff
-@@ -332,6 +332,59 @@ pub(crate) enum CloseReason {
-     /// The peer had more refused inbound streams outstanding than are
-     /// remembered.
-     InboundStreamRefusals,
-+    /// A QUIC-native connection's path ended, for the reason given.
-+    QuicPath(QuicPathEnd),
-+}
-+
-+/// Why a QUIC-native connection's path ended, other than the idle timeout
-+/// ([`CloseReason::IdleTimeout`]). A cause this node closed for is recorded
-+/// where it closed (`QuicCloser::close_for`).
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) enum QuicPathEnd {
-+    /// This node's sends kept timing out with nothing acknowledged (the
-+    /// path's stall count).
-+    Stalled,
-+    /// The peer acknowledged none of this node's packets while it kept
-+    /// sending, or stopped acknowledging data (the acknowledgement watch).
-+    NotAcknowledging,
-+    /// This node reset more sends on the connection than it remembers
-+    /// (`recycle::SEND_ABORT_LIMIT`).
-+    SendAborts,
-+    /// The peer held more of this node's buffer budget than it allows.
-+    PeerOverBudget,
-+    /// The peer sent data on a path that refuses it.
-+    RefusedData,
-+    /// The peer refused this node's data (`NOT_ACCEPTING_DATA`) on a path that
-+    /// has no UDP session to send it on instead.
-+    PeerRefusedData,
-+    /// The path's receive task panicked.
-+    ReceiveTaskPanicked,
-+    /// The peer closed the connection.
-+    ClosedByPeer,
-+    /// This node closed it for another reason (its connection was dropped).
-+    ClosedLocally,
-+    /// The connection was lost: a reset, a transport error, or an end quinn
-+    /// reports in any other way.
-+    Lost,
-+}
-+
-+impl QuicPathEnd {
-+    /// The disconnect label. None contains "timeout", "limit", "pruned" or
-+    /// "unresponsive", which `DisconnectReason` parses as other reasons.
-+    pub(crate) fn label(self) -> &'static str {
-+        match self {
-+            Self::Stalled => "quic_path_stalled",
-+            Self::NotAcknowledging => "quic_peer_not_acknowledging",
-+            Self::SendAborts => "quic_send_aborts",
-+            Self::PeerOverBudget => "quic_peer_over_budget",
-+            Self::RefusedData => "quic_refused_data",
-+            Self::PeerRefusedData => "quic_peer_refused_data",
-+            Self::ReceiveTaskPanicked => "quic_receive_task_panicked",
-+            Self::ClosedByPeer => "quic_closed_by_peer",
-+            Self::ClosedLocally => "quic_closed_locally",
-+            Self::Lost => "quic_connection_lost",
-+        }
-+    }
- }
- 
- /// An inbound stream, as the layers above the transport see it: claimed from
-```
-
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +4/-1)
-```diff
-@@ -2451,7 +2451,7 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
-                                     crate::transport::TRANSPORT_METRICS
-                                         .record_nat_traversal_failed_version();
-                                 }
--                                TransportError::ChannelClosed | TransportError::ConnectionClosed(_) | TransportError::ConnectionEstablishmentFailure { .. } | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) | TransportError::OutboundStreamFailed(_) | TransportError::OutboundStreamInvalidLength(..) | TransportError::Udp(UdpError(UdpErrorKind::IO(_))) | TransportError::Other(_) | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_))) | TransportError::Udp(UdpError(UdpErrorKind::Serialization(_))) | TransportError::Quic(_) => {
-+                                TransportError::ChannelClosed | TransportError::ConnectionClosed(_) | TransportError::ConnectionEstablishmentFailure { .. } | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) | TransportError::OutboundStreamFailed(_) | TransportError::OutboundStreamInvalidLength(..) | TransportError::SendQueueFull(_) | TransportError::Udp(UdpError(UdpErrorKind::IO(_))) | TransportError::Other(_) | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_))) | TransportError::Udp(UdpError(UdpErrorKind::Serialization(_))) | TransportError::Quic(_) => {
-                                     tracing::error!(error = %error, peer_addr = %remote_addr, "Failed NAT traversal");
-                                     crate::transport::TRANSPORT_METRICS
-                                         .record_nat_traversal_failed_error();
-@@ -3566,6 +3566,7 @@ fn classify_nat_failure(
-         | TransportError::ConnectionEstablishmentFailure { .. }
-         | TransportError::OutboundStreamFailed(_)
-         | TransportError::OutboundStreamInvalidLength(..)
-+        | TransportError::SendQueueFull(_)
-         | TransportError::Udp(UdpError(UdpErrorKind::IO(_)))
-         | TransportError::Other(_)
-         | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_)))
-@@ -4021,6 +4022,7 @@ pub mod mock_transport {
-             | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..)))
-             | TransportError::OutboundStreamFailed(_)
-             | TransportError::OutboundStreamInvalidLength(..)
-+            | TransportError::SendQueueFull(_)
-             | TransportError::Udp(UdpError(UdpErrorKind::IO(_)))
-             | TransportError::Other(_)
-             | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_)))
-@@ -4041,6 +4043,7 @@ pub mod mock_transport {
-             | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..)))
-             | TransportError::OutboundStreamFailed(_)
-             | TransportError::OutboundStreamInvalidLength(..)
-+            | TransportError::SendQueueFull(_)
-             | TransportError::Udp(UdpError(UdpErrorKind::IO(_)))
-             | TransportError::Other(_)
-             | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_)))
-```
-
-**File**: `crates/core/src/transport/peer_connection.rs` (modified, +42/-116)
-```diff
-@@ -23,8 +23,12 @@ use tracing::{Instrument, span};
- 
- pub(super) mod inbound_budget;
- mod inbound_concurrency;
-+mod inbound_dispatch;
- mod inbound_stream;
- mod outbound_stream;
-+// Built only by its tests until the connect op uses it (#5940, A5b).
-+#[cfg_attr(not(test), allow(dead_code))]
-+mod native_connection;
- pub(super) use outbound_stream::embeds_metadata;
- mod peer_identity;
- pub(crate) mod piped_stream;
-@@ -483,19 +487,10 @@ pub struct PeerConnection<S = super::UdpSocket, T: TimeSource = RealTime> {
-     streaming_handles: crate::util::DecisionHashMap<StreamId, (streaming::StreamHandle, u64)>,
-     /// Time source for deterministic simulation support
-     time_source: T,
--    /// Registry that receives inbound operations streams, handling the race
--    /// between stream fragments and metadata messages
--    /// (RequestStreaming/ResponseStreaming).
--    /// Set by the node layer after connection establishment.
--    inbound_stream_registry: Option<std::sync::Arc<dyn super::InboundStreamRegistry>>,
--    /// LRU cache of recently dispatched metadata hashes (capacity 1000), used to dedup
--    /// embedded-metadata-in-fragment-#1 against the separate ShortMessage.
--    ///
--    /// Uses `DefaultHasher` (not cryptographic). A hash collision would cause
--    /// a silent metadata drop, leading to a 60-second operation timeout for
--    /// the affected stream -- acceptable given the small working set and
--    /// negligible collision probability. See issue #3317.
--    dispatched_msg_hashes: lru::LruCache<u64, ()>,
-+    /// What this connection has handed to the node: the inbound stream
-+    /// registry, the hashes of dispatched messages and the completed stream
-+    /// ids (`inbound_dispatch`).
-+    dispatch: inbound_dispatch::InboundDispatch,
-     /// Refused stream ids, so a refused stream's later fragments are dropped
-     /// rather than admitted part-way through (see
-     /// `inbound_budget::RefusedStreams`).
-@@ -505,9 +500,6 @@ pub struct PeerConnection<S = super::UdpSocket, T: TimeSource = RealTime> {
-     closed_by_stream_refusals: bool,
-     /// Rate limiter for the refused-stream warning.
-     refusal_log: RefusalLog,
--    /// Recently completed (and released) inbound streams, so a late
--    /// retransmission does not start one again.
--    completed_inbound_streams: lru::LruCache<StreamId, ()>,
-     /// Tokens of the legacy streams in `inbound_streams`, to cancel them.
-     legacy_tokens: crate::util::DecisionHashMap<StreamId, Arc<inbound_budget::LegacyStreamToken>>,
-     /// This connection's inbound stream outcomes, indexed by
-@@ -581,7 +573,7 @@ impl<S, T: TimeSource> Drop for PeerConnection<S, T> {
-         // retired, too) would otherwise wait out the orphan timeout with
-         // nothing accounting for them. Both paths' streams: a QUIC path's reader
-         // cancels its own streams but not a complete one.
--        if let Some(registry) = &self.inbound_stream_registry {
-+        if let Some(registry) = &self.dispatch.inbound_stream_registry {
-             // Collected first, so the shared budget is not locked while the
-             // registry runs.
-             let live: Vec<_> = self.inbound_budget.lock().live_buffer_streams().collect();
-@@ -1139,14 +1131,7 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-     /// A Short from a QUIC path, as the UDP arm takes a `ShortMessage`, with its
-     /// charge released at once. It moves neither of the UDP session's clocks.
-     fn take_quic_short(&mut self, short: super::quic::path::InboundShort) -> Vec<u8> {
--        let (payload, key) = short.into_parts();
--        if let Some(key) = key {
--            self.inbound_budget.lock().release_if_gone(key);
--        }
--        let bytes = Vec::from(payload);
--        // Only so that the same metadata embedded in a stream is suppressed; a
--        // Short itself is always delivered, as on UDP.
--        self.dispatched_msg_hashes.put(Self::msg_hash(&bytes), ());
-+        let bytes = self.dispatch.take_short(short, &self.inbound_budget);
-         self.note_quic_delivery(|| {
-             let decoded = bincode::deserialize::<crate::message::NetMessage>(&bytes).is_ok();
-             format!(
-@@ -1171,70 +1156,24 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-         &mut self,
-         arrival: super::quic::path::InboundStreamArrival,
-     ) -> Option<Vec<u8>> {
--        let super::quic::path::InboundStreamArrival {
--            stream_id,
--            metadata,
--            handle,
--        } = arrival;
--        // The stream's payload length, counted here because the reader task
--        // completes the stream later, with no way to count it from there.
--        // UDP counts at completion; this counts at arrival, and a stream that
--        // later fails is counted too.
--        let total = handle.total_bytes();
--        let seen_on_udp = self
--            .inbound_budget
--            .lock()
--            .contains(InboundKey::Udp(stream_id));
--        // An id i
-```
-
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_data.rs` (modified, +2/-2)
-```diff
-@@ -152,7 +152,7 @@ fn a_short_and_a_stream_on_a_path_arrive_as_the_udp_ones_do() {
-                 .send_stream(id, Some(b"announce"), payload.clone())
-                 .await;
-             assert_eq!(rig.e.conn.recv().await.unwrap(), b"announce");
--            assert!(rig.e.conn.completed_inbound_streams.contains(&id));
-+            assert!(rig.e.conn.dispatch.completed_inbound_streams.contains(&id));
-             assert_eq!(rig.budget().0, 1, "the consumer's to hold");
-             let stream = claim((&rig.registry, rig.peer_addr()), id).await;
-             assert_eq!(stream.assemble().await.unwrap(), payload.to_vec());
-@@ -521,7 +521,7 @@ fn a_stream_with_no_registry_is_cancelled_and_its_charge_released() {
-         "quic-data-noregistry",
-         QuicPathLimits::DEFAULT,
-         |mut rig| async move {
--            rig.e.conn.inbound_stream_registry = None;
-+            rig.e.conn.dispatch.inbound_stream_registry = None;
-             rig.path
-                 .send_stream(StreamId::next(), Some(b"meta"), bytes_of(50))
-                 .await;
-```
-
-**File**: `crates/core/src/transport/peer_connection/inbound_dispatch.rs` (added, +149/-0)
-```diff
-@@ -0,0 +1,149 @@
-+//! What a connection has handed to the node, kept to refuse repeats: the
-+//! registry that receives its inbound streams, the hashes of the messages it
-+//! dispatched, and the ids of the streams it completed. Moved out of
-+//! `PeerConnection` unchanged, so a connection with no UDP session can keep
-+//! the same record.
-+
-+use std::net::SocketAddr;
-+
-+use super::StreamId;
-+use super::inbound_budget::{InboundKey, SharedInboundBudget};
-+use crate::transport::quic::path::{InboundShort, InboundStreamArrival};
-+
-+/// What became of a stream that arrived on a QUIC path.
-+pub(super) enum TakenStream {
-+    /// Its id was in use on UDP or used before: cancelled and released.
-+    IdInUse,
-+    /// It ended while it waited, or there is no registry: cancelled and
-+    /// released.
-+    Dropped,
-+    /// Registered with the node; `message` is its announcing message, unless
-+    /// there was none or it was already dispatched.
-+    Registered {
-+        stream_id: StreamId,
-+        message: Option<Vec<u8>>,
-+    },
-+}
-+
-+pub(super) struct InboundDispatch {
-+    /// Registry that receives inbound operations streams, handling the race
-+    /// between stream fragments and metadata messages
-+    /// (RequestStreaming/ResponseStreaming).
-+    /// Set by the node layer after connection establishment.
-+    pub(super) inbound_stream_registry:
-+        Option<std::sync::Arc<dyn crate::transport::InboundStreamRegistry>>,
-+    /// LRU cache of recently dispatched metadata hashes (capacity 1000), used to dedup
-+    /// embedded-metadata-in-fragment-#1 against the separate ShortMessage.
-+    ///
-+    /// Uses `DefaultHasher` (not cryptographic). A hash collision would cause
-+    /// a silent metadata drop, leading to a 60-second operation timeout for
-+    /// the affected stream -- acceptable given the small working set and
-+    /// negligible collision probability. See issue #3317.
-+    pub(super) dispatched_msg_hashes: lru::LruCache<u64, ()>,
-+    /// Recently completed (and released) inbound streams, so a late
-+    /// retransmission does not start one again.
-+    pub(super) completed_inbound_streams: lru::LruCache<StreamId, ()>,
-+}
-+
-+impl InboundDispatch {
-+    /// Compute a fast hash of the given bytes for dedup tracking.
-+    pub(super) fn msg_hash(bytes: &[u8]) -> u64 {
-+        use std::hash::{Hash, Hasher};
-+        let mut h = std::collections::hash_map::DefaultHasher::new();
-+        bytes.hash(&mut h);
-+        h.finish()
-+    }
-+
-+    /// Returns true if this message was already dispatched (is a duplicate).
-+    /// Only used on the embedded-metadata-in-fragment-#1 path to suppress
-+    /// duplicates when the same metadata was already dispatched as a ShortMessage.
-+    pub(super) fn is_duplicate_dispatch(&mut self, bytes: &[u8]) -> bool {
-+        self.dispatched_msg_hashes
-+            .put(Self::msg_hash(bytes), ())
-+            .is_some()
-+    }
-+
-+    /// A Short taken from a QUIC path: its charge released and its hash
-+    /// remembered. Moved from `PeerConnection::take_quic_short`.
-+    pub(super) fn take_short(
-+        &mut self,
-+        short: InboundShort,
-+        budget: &SharedInboundBudget,
-+    ) -> Vec<u8> {
-+        let (payload, key) = short.into_parts();
-+        if let Some(key) = key {
-+            budget.lock().release_if_gone(key);
-+        }
-+        let bytes = Vec::from(payload);
-+        // Only so that the same metadata embedded in a stream is suppressed; a
-+        // Short itself is always delivered, as on UDP.
-+        self.dispatched_msg_hashes.put(Self::msg_hash(&bytes), ());
-+        bytes
-+    }
-+
-+    /// A stream arrival taken from a QUIC path. Moved from
-+    /// `PeerConnection::take_quic_stream`; the caller records the outcome and
-+    /// traces the delivery.
-+    pub(super) fn take_stream(
-+        &mut self,
-+        arrival: InboundStreamArrival,
-+        budget: &SharedInboundBudget,
-+        remote_addr: SocketAddr,
-+    ) -> TakenStream {
-+        let InboundStreamArrival {
-+            stream_id,
-+            metadata,
-+            handle,
-+        } = arrival;
-+        // The stream's payload length, counted here because the reader task
-+        // completes the stream later, with no way to count it from there.
-+        // UDP counts at completion; this counts at arrival, and a stream that
-+        // later fails is counted too.
-+        let total = handle.total_bytes();
-+        let seen_on_udp = budget.lock().contains(InboundKey::Udp(stream_id));
-+        // An id in use on UDP, or used before on either path: only a faulty peer
-+        // or a bug sends one, and the shared budget bounds what it costs.
-+        if seen_on_udp || self.completed_inbound_streams.contains(&stream_id) {
-+            handle.cancel();
-+            drop(handle);
-+            budget.lock().release_if_gone(InboundKey::Quic(stream_id));
-+            tracing::debug!(
-+                peer_addr = %remote_addr,
-+                stream_id = %stream_id,
-+                see
+ /// With no route, as on a path without both data bits, a send reads one atomic
+-/// and never waits for the session's lock, which the driver also takes. Shadow is
+-/// the default on Linux, macOS and Windows, so this is every connection there.
++/// and never waits for the session's lock, which the driver also takes. With no
++/// data ramp, a `prefer` path carries no data, so this is every connection on
++/// Linux, macOS and Windows, where `prefer` is the default; with a ramp, every
++/// pair outside its share.
+ #[test]
+ fn a_connection_without_a_route_takes_no_lock_to_send() {
+     bounded(|| async move {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6213** (2026-11-13): fix(bin): run the node on a worker thread, not the main thread (@sanity)
-- **PR #6212** (2026-11-13): test(transport): keep the QUIC test pair alive in partially captured test bodies (@sanity)
-- **PR #6210** (2026-11-13): feat(transport): a QUIC-native connection as a PeerConnectionApi (@sanity)
-- **PR #6206** (2026-11-13): ci(release): refuse a live cut of the QUIC data ramp release far from T0 (@sanity)
-- **PR #6204** (2026-11-13): feat(quic): native setup with Hello exchange, punching and native ALPN (@sanity)
-- **PR #6203** (2026-11-12): feat(quic): native Hello frame, two close codes, reserved punch byte (@sanity)
+- **PR #6225** (2026-11-13): docs(config): --transport-quic help says prefer is the default (@sanity)
+- **PR #6223** (2026-11-13): fix(test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers (@sanity)
+- **PR #6222** (2026-11-13): fix: validate guest buffer and result offsets against linear memory (@sanity)
+- **PR #6221** (2026-11-13): fix(transport): sweep Established entries whose connection has ended (@sanity)
+- **PR #6219** (2026-11-13): fix: validate transaction type at decode; call status providers outside the status lock (@sanity)
+- **PR #6217** (2026-11-13): fix: bound guest-supplied error text and delegate result size (@sanity)
 
 ---
 
@@ -2966,45 +2399,62 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bin): run the node on a worker thread, not the main thread (#6213)
+## X. test): a lost VirtualTime wakeup and drive_on_threads advancing over busy worker
 
 **RULE**:
-When implementing operations in `crates/core/src/bin/freenet.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/simulation/time.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7fcb4157`: bin): run the node on a worker thread, not the main thread (#6213). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f26a5e1f`: test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers (#6223). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/bin/freenet.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/simulation/time.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // The node runs on a worker thread, never on the main thread. `block_on`
-    // polls its future on the calling thread, and the main thread's stack is
-    // fixed by the platform: 1 MiB on Windows, against 2 MiB for every thread
-    // std spawns. Polled there, the node's nested startup futures used most of
-    // it (about 900 KiB measured in a Linux debug build at the first event
-    // loop turn), within a few KiB of the Windows limit: a branch that grew
-    // those frames slightly overflowed at startup on Windows. A spawned task
-    // is polled by a worker, so the main thread only waits on the join
-    // handle. `tests/main_thread_stack.rs` pins it by starting the node with
-    // a small main-thread stack and workers at their production size.
-    //
-    // The root future is now an ordinary task on a worker, so synchronous
-    // work on its path (config build, logger setup, node construction) holds
-    // a worker while it runs. With `worker_threads` set to the CPU count, a
-    // 1-vCPU host has one worker, so a long blocking call here would stall
-    // the whole runtime. Nothing on that path blocks for long today; anything
-    // added that does belongs in `spawn_
+        // One atomic step, so two threads advancing at once cannot move the
+        // clock backwards (a load then a store could store the smaller
+        // target last). The time is stored before `pending_wakeups` is taken
+        // below, which `register_future_wakeup` relies on.
+        let previous = self
+            .state
+            .current_nanos
+            .fetch_max(target_nanos, AtomicOrdering::SeqCst);
+        if target_nanos <= previous {
+    /// Registers a wakeup and returns its ID, whatever its deadline. Tests
+    /// only; sleeps use [`Self::register_future_wakeup`].
+    #[cfg(test)]
+    /// Registers a wakeup for `deadline` if it is still in the future, and
+    /// returns its ID; `None` if the clock has already reached it.
+    ///
+    /// The check and the push are one step under the `pending_wakeups` lock.
+    /// [`Self::advance_to`] stores the new time before it takes that lock to
+    /// pop expired wakeups, so a registration either sees the new time (and
+    /// registers nothing) or is pushed before the pop (and is popped). Checked
+    /// outside the lock, a thread that read the time just before another
+    /// thread's advance could push a wakeup the
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    rt.block_on(async move {
-    })?;
+        let current = self.state.current_nanos.load(AtomicOrdering::SeqCst);
+        if target_nanos <= current {
+        self.state
+            .current_nanos
+            .store(target_nanos, AtomicOrdering::SeqCst);
+
+    /// Registers a wakeup and returns its ID.
+        let current = self.now_nanos();
+        if deadline_nanos <= current {
+        }
+
+        let id = self.register_wakeup(deadline_nanos);
+        if deadline <= self.now_nanos() {
+        }
+        let id = self.register_wakeup(deadline);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7fcb4157` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f26a5e1f` are properly handled with clean fallback behavior.

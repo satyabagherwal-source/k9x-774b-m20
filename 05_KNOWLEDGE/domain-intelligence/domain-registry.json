@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T18:26:52.372Z",
-  "total_records": 260,
+  "last_updated": "2026-11-13T18:35:49.274Z",
+  "total_records": 268,
   "domains": {
     "A": {
       "total": 3,
@@ -30,7 +30,7 @@
       ]
     },
     "D": {
-      "total": 148,
+      "total": 152,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -179,7 +179,11 @@
         "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen-image-2-1-gguf-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
         "DOM-D-C9A75DC2",
-        "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
+        "DOM-D-20558436",
+        "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning"
       ]
     },
     "E": {
@@ -227,7 +231,7 @@
       ]
     },
     "H": {
-      "total": 49,
+      "total": 53,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -277,7 +281,11 @@
         "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants",
         "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-laurent22-joplin-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian"
       ]
     },
     "I": {
@@ -7601,6 +7609,111 @@
       "repository": "provablehq-snarkos-learnings",
       "content_hash": "14f38af618d0daaba70bf88fe40fd622d73de95b25ecca1172678b94768cebd4",
       "created_at": "2026-11-13T18:26:52.372Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: prithivMLmods/Gender-Classifier-Mini Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prithivmlmods-gender-classifier-mini-research-knowledge-intelligence-prithivm.md",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "content_hash": "1524e1d7f1e2a2afe0f9d5ba13f74fbf9d8658b0eb0d441c1107579d38394172",
+      "created_at": "2026-11-13T18:34:43.608Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-laurent22-joplin-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
+      "repository": "laurent22/joplin",
+      "content_hash": "ae9f2080c94994c26d09f545e55988e37b17c98e1ffe6ce4376876df17438273",
+      "created_at": "2026-11-13T18:34:51.829Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
+      "repository": "freenet/freenet-core",
+      "content_hash": "d12d7fcd3f98b6789c14ad8d0176bd605a482f84ec2732cb475c84bcd71791c3",
+      "created_at": "2026-11-13T18:34:57.278Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: topoteretes/cognee Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-topoteretes-cognee-research-knowledge-intelligence-topoteretes-cognee-core-invar.md",
+      "repository": "topoteretes/cognee",
+      "content_hash": "1a090e2c4d4bd138ebeab08874ac46a9db97a92a2d055fe8a892145d5e2434ee",
+      "created_at": "2026-11-13T18:35:00.109Z"
+    },
+    "DOM-D-20558436": {
+      "record_id": "DOM-D-20558436",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): prithivMLmods/Gender-Classifier-Mini",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/prithivMLmods/Gender-Classifier-Mini](https://huggingface.co/prithivMLmods/Gender-Classifier-Mini))  \n> **Source Version**: `hf-prithivml",
+      "content_hash": "bf23a657e162ffc9e28613c173b6471abc910d85cf7b9a4e70256a6b42aee214",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-prithivmlmods-gender-classifier-mini/hf-prithivmlmods-gender-classifier-mini-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T18:35:03.002Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prithivmlmods-gender-classifier-mini)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-prithivmlmods-gender-classifier-mini"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T18:35:47.906Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-prithivmlmods-gender-classifier-mini-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prithivmlmods-gender-classifier-mini-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-prithivmlmods-gender-classifier-mini-learnings",
+      "content_hash": "5bcf798bce066dda76f8b466f950012759c8357fade896c3158f8048f32baaf3",
+      "created_at": "2026-11-13T18:35:48.131Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-learnings-technical-construction-intelligence-laurent22-joplin-.md",
+      "repository": "laurent22-joplin-learnings",
+      "content_hash": "1038b0721ebbcd4e88e2ef02f3fa29906ece957c40fd764cabda879ae7eac4ff",
+      "created_at": "2026-11-13T18:35:48.664Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
+      "repository": "freenet-freenet-core-learnings",
+      "content_hash": "09a671fc2002f4dabca432e3622c145cf728344127b062b06569c61dcef40f08",
+      "created_at": "2026-11-13T18:35:49.274Z"
     }
   }
 }

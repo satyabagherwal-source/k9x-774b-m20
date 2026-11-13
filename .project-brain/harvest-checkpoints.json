@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T18:26:02.893Z",
+  "last_updated": "2026-11-13T18:34:59.771Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "6167bc4a0e87f9db48ed8ce62458fd293e6454b0604c564b7c5de1ef762738f0",
-      "verified_at": "2026-11-13T12:54:40.259Z",
+      "content_hash": "64bcc67eae947a93447d7150d76f694d523b19038f2df83a07a49c7cf98b571c",
+      "verified_at": "2026-11-13T18:34:56.943Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:54:40.259Z"
+      "last_updated": "2026-11-13T18:34:56.943Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -10266,14 +10266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topoteretes-cognee",
-      "content_hash": "e6480d7a359f96498a8063a4c11704b7506bfaaca744be226bb3cf1171917747",
-      "verified_at": "2026-11-06T21:06:52.972Z",
+      "content_hash": "fcfbb70ac809a1a01e9829d27b62149cb55cbeb52a6712e399b6c000e05d74f6",
+      "verified_at": "2026-11-13T18:34:59.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:06:52.972Z"
+      "last_updated": "2026-11-13T18:34:59.770Z"
     },
     "radix-ui/primitives": {
       "repository": "radix-ui/primitives",
@@ -15486,14 +15486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-laurent22-joplin",
-      "content_hash": "b1df17b390757b195bb2ad4c5535d31d99a1e7c6d5d7a581fe2bf36503473570",
-      "verified_at": "2026-11-09T07:55:22.864Z",
+      "content_hash": "9f09f4d8c8bb56ead76b1336a8b8505b907c3fae9a75c96e7bb5e7ec27941628",
+      "verified_at": "2026-11-13T18:34:51.519Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T07:55:22.864Z"
+      "last_updated": "2026-11-13T18:34:51.519Z"
     },
     "appwrite/appwrite": {
       "repository": "appwrite/appwrite",
@@ -17136,14 +17136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "content_hash": "956a07deccd4bf91fd9f6e243feb7b7b52cce67d2f390dbb438409be58e0773a",
-      "verified_at": "2026-11-08T17:35:46.515Z",
+      "content_hash": "aa1c9df342964035489069261a2122e725c1d4308bc85c7013982b3f259a9cb6",
+      "verified_at": "2026-11-13T18:34:43.403Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:35:46.515Z"
+      "last_updated": "2026-11-13T18:34:43.403Z"
     },
     "openbmb/MiniCPM-OCR-1.0": {
       "repository": "openbmb/MiniCPM-OCR-1.0",

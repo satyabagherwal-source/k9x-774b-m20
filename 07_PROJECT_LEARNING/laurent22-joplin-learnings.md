@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `d468bb8e`  
+> **Source Version**: `7aeed5a4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T07:55:21.904Z  
+> **Timestamp**: 2026-11-13T18:34:50.863Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T07:55:21.899Z  
+> **Harvest Timestamp**: 2026-11-13T18:34:50.857Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 57109 stars
+- **Stars / Engagement**: 57165 stars
 
 ---
 
@@ -930,11 +930,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17054** (2026-11-07): **Desktop: Fixes #17008: Keep a list that follows another list separate when converting to Markdown**
-  *Symptoms*: AI tools assisted with this contribution.  A checklist followed by a bullet list is converted to:  ```md - [ ] task  - bullet ```  Both lists use `-`, so the Markdown is one list, and the renderer turns it into a single checklist (`data-is-checklist`). After the next save, the bullet comes back as `- [ ] bullet`. The same happens to any two lists of the same kind in a row: they merge into one list.  CommonMark starts a new list when the marker changes, so this counts how many lists of the same kind come right before the current one, and every second one uses the other marker: `*` instead of `-` (also for checkboxes), and `1)` instead of `1.`. Lists with anything between them are not touched.  ```md - [ ] task  * bullet ```  Testing: - New fixture `html_to_md/adjacent_lists` (checklist, bullet list, bullet list, ordered list, ordered list). It fails without the change. - All 83 `html_to_md` fixtures pass with the change. I ran them with a small script that calls the built turndown with the same options as `HtmlToMd`, not through the app-cli Jest setup. - Checklist + bullet HTML through turndown and then `@joplin/renderer`: on dev one `<ul data-is-checklist="1">` holds both items; with the change there are two lists and the bullet has no checkbox. - I did not run the desktop app. 
+- **Issue #17090** (2026-11-12): **Desktop: Fix creating accessible PDFs when OCR text contains non-Latin characters**
+  *Symptoms*: Creating an accessible document failed with "WinAnsi cannot encode…" whenever the OCR text had a character outside Windows-1252. That could be a single misrecognised character like "ı", or any Cyrillic, Greek or CJK document. The cause was the invisible text layer, which used pdf-lib's standard Helvetica font.  The text layer now uses a small embedded "glyphless" font, the same approach as Tesseract's own PDF output. Characters are encoded as UTF-16, and a ToUnicode map lets them be extracted again. The text is drawn in invisible render mode instead of with zero opacity. The font program is a ~870-byte TrueType file, stored as base64. Its glyph has a real outline and the font has a non-zero descent, because without them macOS Preview can't compute the text bounds and makes the text unselectable. Each word is also sized and stretched to fit its OCR bounding box, so selection lines up with the words in the image.  **Steps to reproduce the original bug**  The trick is that OCR uses the UI language and stores its result with the attachment. That's why the same PDF worked on your Mac: it was OCR'd in your language and produced only Windows-1252 characters. A Cyrillic document is the most reliable way to trigger it:  1.  Run a build without this fix, for example 3.7.21 or `dev` before this change. 2.  Make a test PDF: in TextEdit, type something like "Привет, мир. Это тестовый документ." in a large font, then choose File > Export as PDF. 3.  In Settings > General:     - 
 
-- **Issue #17029** (2026-11-05): **All: Translation: Update eo.po**
-  *Symptoms*:  Small follow-up review of the Esperanto translation (29 strings changed, nothing else touched).  - Fixed wrong meanings: "Dropbox Login" / "OneDrive Login" were translated as "username" (-salutnomo); now "Ensaluto al …" - Consistency: on/off settings now all use ŝalti/malŝalti (some used ebligi); "Restore" now uses restaŭri (restarigi is already used for "Reset"); Malvalida → Nevalida to match the rest of the file; "Label" was "Etikedo" (same as "tag"), now "Surskribo" - Grammar: "molajn linisaltojn", "Eliras el la aplikaĵo", "Ŝanĝi al nota/taska tipo", and added the missing "Ĉu" to two yes/no questions  All placeholders unchanged and verified. <!--  Before contributing, please read the contribution guidelines: https://github.com/laurent22/joplin/blob/dev/readme/dev/index.md  If this is a Google Summer of Code pull request, please read the [GSoC pull request guidelines](https://github.com/joplin/gsoc/blob/master/pull_request_guidelines.md).  ---  **Pull request title**: Please prefix the title with the area you are targeting, then add the issue you are addressing.  The format is:      <Prefix>: <Fixes|Resolves> #<issue>: <description>  Use "Resolves #123" for new features or improvements, and "Fixes #123" for bug fixes.  Examples of good titles:  - Desktop: Resolves #123: Added new setting to change font - Mobile, Desktop: Fixes #456: Fixed config screen error - Mobile, Desktop, Cli: Resolves #777: Improved note search performance  Valid prefixes:  - `Desktop` — the Windows/
+- **Issue #17088** (2026-11-11): **Tools: Resolves #16659: Publish sub-packages from CI using npm trusted publishing**
+  *Symptoms*: Ref #16659  Sub-package publishing has been broken for two reasons: npm revoked classic tokens, and lerna 3 can no longer build its package graph because of the yarn `patch:` protocol. As a result, 3.7.2 and 3.7.3 were never published.  - Replaces lerna with `packages/tools/releaseSubPackages.ts`:   - `version` bumps all public packages by patch and updates the ranges between them.   - `publish` runs `npm publish` per package, in dependency order, skipping versions already on the registry. - Keeps two lerna behaviours that plain `npm publish` would lose:   - It passes `--workspaces=false`. Without it, npm applies the root `.gitignore` to each package and drops `packages/lib/vendor/`.   - It temporarily copies the root `LICENSE` into packages that don't have one. - Sets `repository` in all public packages to the Joplin repo, which npm provenance requires. - Adds the `publish-sub-packages.yml` workflow, triggered by `sub-packages-v*` tags and using OIDC trusted publishing. Trusted publishers are already configured on npmjs.com for all 13 packages. - `yarn publishAll` now bumps the versions, commits with the lockfile, and pushes the tag. CI then does the publishing.  The tarball contents were checked against the last published versions with `npm publish --dry-run`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,77 +951,111 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d468bb8e` (2026-11-08)
-**Commit Message**: Chore: Fix flaky compactCss performance test on loaded machines
+### Incident Patch 1: `dfe4a242` (2026-11-07)
+**Commit Message**: Server: Security: Check the token on the account confirmation page when confirm_email=0
 
-**File**: `packages/lib/utils/compactCss.test.ts` (modified, +2/-1)
+With confirm_email=0 (used by the redirect after a Stripe checkout), GET users/:id/confirm did not check the token at all. Anyone could use it to find out whether a user ID exists (302 to the login page instead of 404), to see the email address of an account that has not set its password yet, and to add an "Email confirmed" notification to any account. It was used on 2026-11-07 to check which of the attacker's user IDs were real.
+
+Setting the password was not affected, since the POST handler checks the token. The post-checkout redirect always carries a valid account confirmation token, so it keeps working.
+
+**File**: `packages/server/src/routes/index/users.test.ts` (modified, +3/-0)
 ```diff
-@@ -36,6 +36,7 @@ describe('compactCss', () => {
- 	])('should compact many %s quickly', (_case, css) => {
- 		const startTime = Date.now();
- 		compactCss(css);
--		expect(Date.now() - startTime).toBeLessThan(1000);
-+		// Takes ~50ms normally. A quadratic implementation would take minutes, so a generous limit avoids failing on a loaded CI machine.
-+		expect(Date.now() - startTime).toBeLessThan(10_000);
+@@ -222,6 +222,9 @@ describe('index/users', () => {
+ 		// "confirm_email" is set to 0.
+ 		user1 = await models().user().load(user1.id);
+ 		expect(user1.email_confirmed).toBe(0);
++
++		// The token is still required
++		await expectHttpError(() => execRequest('', 'GET', path, null, { query: { token: 'invalid', confirm_email: '0' } }), ErrorForbidden.httpCode);
  	});
- });
+ 
+ 	test('should allow user to verify their email', async () => {
+```
+
+**File**: `packages/server/src/routes/index/users.ts` (modified, +6/-1)
+```diff
+@@ -166,7 +166,12 @@ router.get('users/:id/confirm', async (path: SubPath, ctx: AppContext, error: Er
+ 		}
+ 	};
+ 
+-	if (ctx.query.confirm_email !== '0') await models.user().processEmailConfirmation(userId, token, beforeChangingEmailHandler);
++	if (ctx.query.confirm_email !== '0') {
++		await models.user().processEmailConfirmation(userId, token, beforeChangingEmailHandler);
++	} else {
++		// Otherwise this page would reveal whether an account exists, and the email of an account without a password
++		await models.token().checkToken(userId, token, TokenPurpose.AccountConfirmation);
++	}
+ 
+ 	const user = await models.user().load(userId);
+ 	if (!user) throw new ErrorNotFound(`No such user: ${userId}`);
 ```
 
 ---
 
-### Incident Patch 2: `73394294` (2026-11-07)
-**Commit Message**: fix(deps): update dependency adm-zip to v0.6.0 (#17057)
+### Incident Patch 2: `fbf73e5f` (2026-11-07)
+**Commit Message**: Server: Security: Do not reveal the owner's user ID on public share API
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+GET api/shares/:id is public so that published notes work without logging in, but it returned the owner's full user ID. Published links are indexed by search engines, so anyone could collect user IDs this way and then target the account endpoints with them. This was used in the probing attacks of 2026-10-24 and 2026-11-07: 25 of the 28 user IDs the attacker had owned published shares.
 
-**File**: `packages/lib/package.json` (modified, +1/-1)
+The owner ID is now only returned to the share's owner. No client uses this end point.
+
+**File**: `packages/server/src/routes/api/shares.test.ts` (modified, +4/-0)
 ```diff
-@@ -59,7 +59,7 @@
-     "@joplin/turndown": "^4.0.88",
-     "@joplin/turndown-plugin-gfm": "^1.0.70",
-     "@joplin/utils": "^3.7.3",
--    "adm-zip": "0.5.18",
-+    "adm-zip": "0.6.0",
-     "async-mutex": "0.5.0",
-     "base-64": "1.0.0",
-     "base64-stream": "1.0.0",
+@@ -87,6 +87,10 @@ describe('shares', () => {
+ 		const result = await getApi<Share>('', `shares/${share.id}`);
+ 		expect(result.id).toBe(share.id);
+ 		expect(result.type).toBe(ShareType.PublishedFolder);
++		expect(result.owner_id).toBeUndefined();
++
++		const ownerResult = await getApi<Share>(session.id, `shares/${share.id}`);
++		expect(ownerResult.owner_id).toBe(share.owner_id);
+ 	});
+ 
+ 	test('should not reveal whether an email has an account', async () => {
 ```
 
-**File**: `yarn.lock` (modified, +5/-5)
+**File**: `packages/server/src/routes/api/shares.ts` (modified, +4/-1)
 ```diff
-@@ -12979,7 +12979,7 @@ __metadata:
-     "@types/react": "npm:19.1.10"
-     "@types/react-dom": "npm:19.1.7"
-     "@types/uuid": "npm:11.0.0"
--    adm-zip: "npm:0.5.18"
-+    adm-zip: "npm:0.6.0"
-     async-mutex: "npm:0.5.0"
-     base-64: "npm:1.0.0"
-     base64-stream: "npm:1.0.0"
-@@ -21414,10 +21414,10 @@ __metadata:
-   languageName: node
-   linkType: hard
+@@ -132,7 +132,10 @@ router.get('api/shares/:id', async (path: SubPath, ctx: AppContext) => {
+ 	if (share && (share.type === ShareType.Note || share.type === ShareType.PublishedFolder)) {
+ 		// No authentication is necessary - anyone who knows the share ID is allowed
+ 		// to access the file. It is essentially public.
+-		return shareModel.toApiOutput(share);
++		const output = await shareModel.toApiOutput(share) as Share;
++		// Published links are indexed by search engines, and the owner's ID would let anyone target their account
++		if (ctx.joplin.owner?.id !== share.owner_id) delete output.owner_id;
++		return output;
+ 	}
  
--"adm-zip@npm:0.5.18":
--  version: 0.5.18
--  resolution: "adm-zip@npm:0.5.18"
--  checksum: 10/6eaa298828b92e543241fa24d01af774ad8709b80539b3fa60d4ba6f69fd5a15a19d8177e6d739f18f4e0933610ed555215dc6553b51c532534414702c255167
-+"adm-zip@npm:0.6.0":
-+  version: 0.6.0
-+  resolution: "adm-zip@npm:0.6.0"
-+  checksum: 10/6a49ab39055d8f716958d3a2055491ab86fe3359c4afeed9b14bbce78fb847bcd3cbaa0ff4921aaa19824aaa29d06691def1f53263db5224d06c068f922c5ba2
-   languageName: node
-   linkType: hard
+ 	throw new ErrorNotFound();
+```
+
+---
+
+### Incident Patch 3: `7130435d` (2026-11-12)
+**Commit Message**: Chore: Fix web build (#17076)
+
+**File**: `packages/app-mobile/web/webpack.config.ts` (modified, +3/-0)
+```diff
+@@ -85,6 +85,9 @@ const buildSharedConfig = (hotReload: boolean): webpack.Configuration => {
+ 				// Force react-native-paper to use the correct icon library
+ 				'react-native-vector-icons/MaterialCommunityIcons': throwOnLoadLibraryMock,
+ 				'@expo/vector-icons/MaterialCommunityIcons': throwOnLoadLibraryMock,
++				// expo-font is optionally used by react-native-vector-icons, but doesn't load correctly on web
++				// (tries to import `node:async_hooks`):
++				'expo-font': throwOnLoadLibraryMock,
  
+ 				// Workaround for applying serviceworker types to a single file.
+ 				// See https://joshuatz.com/posts/2021/strongly-typed-service-workers/.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17057** (2026-11-07): fix(deps): update dependency adm-zip to v0.6.0 (@renovate[bot])
-- **PR #17055** (closed): Desktop: Fixes #17051: Show when Markdown editor search has no results (@MaybeSomeone-arc18)
-- **PR #17054** (closed): Desktop: Fixes #17008: Keep a list that follows another list separate when converting to Markdown (@jayhemnani9910)
-- **PR #17049** (closed): fix(deps): update dependency yosay to v3 (@renovate[bot])
-- **PR #17048** (closed): fix(deps): update dependency uuid to v14 (@renovate[bot])
-- **PR #17047** (closed): fix(deps): update dependency reselect to v5 (@renovate[bot])
+- **PR #17098** (2026-11-12): chore(deps): update dependency react-tooltip to v6.0.8 (@renovate[bot])
+- **PR #17097** (2026-11-12): Tools: Publish the CLI app from CI using npm trusted publishing (@laurent22)
+- **PR #17094** (2026-11-12): Tools: Cache default plugin builds (@laurent22)
+- **PR #17093** (2026-11-12): Tools: Hoist shared dependencies to speed up installs (@laurent22)
+- **PR #17092** (2026-11-12): chore(deps): update dependency ubuntu to v24 (@renovate[bot])
+- **PR #17090** (2026-11-12): Desktop: Fix creating accessible PDFs when OCR text contains non-Latin characters (@laurent22)
 
 ---
 
@@ -1041,29 +1075,30 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fix flaky compactCss performance test on loaded machines
+## X. Server: Security: Check the token on the account confirmation page when confirm_
 
 **RULE**:
-When implementing operations in `packages/lib/utils/compactCss.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/server/src/routes/index/users.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d468bb8e`: Fix flaky compactCss performance test on loaded machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dfe4a242`: Server: Security: Check the token on the account confirmation page when confirm_email=0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/lib/utils/compactCss.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/server/src/routes/index/users.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-		// Takes ~50ms normally. A quadratic implementation would take minutes, so a generous limit avoids failing on a loaded CI machine.
-		expect(Date.now() - startTime).toBeLessThan(10_000);
+
+		// The token is still required
+		await expectHttpError(() => execRequest('', 'GET', path, null, { query: { token: 'invalid', confirm_email: '0' } }), ErrorForbidden.httpCode);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-		expect(Date.now() - startTime).toBeLessThan(1000);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d468bb8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dfe4a242` are properly handled with clean fallback behavior.

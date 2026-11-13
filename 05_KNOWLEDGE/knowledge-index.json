@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T18:26:52.481Z",
+  "last_updated": "2026-11-13T18:35:49.414Z",
   "total_verified_learnings": 1266,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16237,8 +16237,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "23080e91",
-      "content_hash": "6167bc4a0e87f9db48ed8ce62458fd293e6454b0604c564b7c5de1ef762738f0",
+      "source_version": "f26a5e1f",
+      "content_hash": "64bcc67eae947a93447d7150d76f694d523b19038f2df83a07a49c7cf98b571c",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -16330,6 +16330,11 @@
         {
           "number": null,
           "title": "bin): run the node on a worker thread, not the main thread (#6213)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test): a lost VirtualTime wakeup and drive_on_threads advancing over busy worker",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16548,7 +16553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T12:54:40.102Z",
+      "verified_at": "2026-11-13T18:34:56.767Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41574,8 +41579,8 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "d468bb8e",
-      "content_hash": "b1df17b390757b195bb2ad4c5535d31d99a1e7c6d5d7a581fe2bf36503473570",
+      "source_version": "7aeed5a4",
+      "content_hash": "9f09f4d8c8bb56ead76b1336a8b8505b907c3fae9a75c96e7bb5e7ec27941628",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
@@ -41587,6 +41592,11 @@
         {
           "number": null,
           "title": "Fix flaky compactCss performance test on loaded machines",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Server: Security: Check the token on the account confirmation page when confirm_",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -41620,7 +41630,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T07:55:22.774Z",
+      "verified_at": "2026-11-13T18:34:51.337Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64561,14 +64571,19 @@
       "slug": "topoteretes-cognee",
       "platform": "github",
       "source_url": "https://github.com/topoteretes/cognee",
-      "source_version": "8853378e",
-      "content_hash": "e6480d7a359f96498a8063a4c11704b7506bfaaca744be226bb3cf1171917747",
+      "source_version": "4053f6cc",
+      "content_hash": "fcfbb70ac809a1a01e9829d27b62149cb55cbeb52a6712e399b6c000e05d74f6",
       "dossier_path": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Gate database connection-string ingestion (SDK-1443) (#6588)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "update): Remove stored files no document points at (SDK-1541) (#6674)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64587,7 +64602,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:06:52.834Z",
+      "verified_at": "2026-11-13T18:34:59.578Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -160153,7 +160168,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
       "source_version": "hf-prithivmlmods-gender-classifier-mini",
-      "content_hash": "956a07deccd4bf91fd9f6e243feb7b7b52cce67d2f390dbb438409be58e0773a",
+      "content_hash": "aa1c9df342964035489069261a2122e725c1d4308bc85c7013982b3f259a9cb6",
       "dossier_path": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "promoted_rules": [
@@ -160198,7 +160213,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:35:46.419Z",
+      "verified_at": "2026-11-13T18:34:43.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -195741,6 +195756,186 @@
       "content_hash": "9e7d240250d7031fff1b03f0a300472dc9b06a1acbff6d4b0ef5e7304bfb832c",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T18:26:52.481Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prithivmlmods-gender-classifier-mini-research-knowledge-intelligence-prithivm.md",
+      "title": "Research & Knowledge Intelligence: prithivMLmods/Gender-Classifier-Mini Core Invariants",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "content_hash": "1524e1d7f1e2a2afe0f9d5ba13f74fbf9d8658b0eb0d441c1107579d38394172",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:34:43.608Z"
+    },
+    "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
+      "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HWHP-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_.md",
+      "title": "Server: Security: Check the token on the account confirmation page when confirm_",
+      "repository": "laurent22-joplin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bd954769bf06d9bd3a92721324bd085b35a20170e27bad33dbd07263e7ef2a6a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:35:48.542Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-laurent22-joplin-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
+      "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
+      "repository": "laurent22/joplin",
+      "source_version": "7aeed5a4",
+      "content_hash": "ae9f2080c94994c26d09f545e55988e37b17c98e1ffe6ce4376876df17438273",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:34:51.829Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/laurent22-joplin-verification-protocol-empirical-defect-shield-for-laurent22-jop.md",
+      "title": "Verification Protocol: Empirical Defect Shield for laurent22/joplin",
+      "repository": "laurent22/joplin",
+      "source_version": "7aeed5a4",
+      "content_hash": "1323967b3f30a7a45a01391633062a16a6d24fa2a44f28888723cddc31ba4e74",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:34:51.947Z"
+    },
+    "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker": {
+      "item_id": "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HWYN-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker.md",
+      "title": "test): a lost VirtualTime wakeup and drive_on_threads advancing over busy worker",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "43f36f21b576c73c18b85bfb533c8368b81eb7e2f84826a91af57f2bd5cdba13",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:35:49.160Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
+      "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
+      "repository": "freenet/freenet-core",
+      "source_version": "f26a5e1f",
+      "content_hash": "d12d7fcd3f98b6789c14ad8d0176bd605a482f84ec2732cb475c84bcd71791c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:34:57.278Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
+      "repository": "freenet/freenet-core",
+      "source_version": "f26a5e1f",
+      "content_hash": "c00ccc97fb20a04d887eaf06414804f9e7b223ea1b8633025f9d662b4d5088f0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:34:57.392Z"
+    },
+    "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
+      "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GV0L-update-remove-stored-files-no-document-points-at-sdk-1541-6674.md",
+      "title": "update): Remove stored files no document points at (SDK-1541) (#6674)",
+      "repository": "topoteretes/cognee",
+      "source_version": "4053f6cc",
+      "content_hash": "3d8e6d08857c498bfe897198cf63165bcb4ff73ca208a942ea440d3edc9764e1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:34:59.977Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-topoteretes-cognee-research-knowledge-intelligence-topoteretes-cognee-core-invar.md",
+      "title": "Research & Knowledge Intelligence: topoteretes/cognee Core Invariants",
+      "repository": "topoteretes/cognee",
+      "source_version": "4053f6cc",
+      "content_hash": "1a090e2c4d4bd138ebeab08874ac46a9db97a92a2d055fe8a892145d5e2434ee",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:35:00.109Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-topoteretes-cognee": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-topoteretes-cognee",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/topoteretes-cognee-verification-protocol-empirical-defect-shield-for-topoteretes.md",
+      "title": "Verification Protocol: Empirical Defect Shield for topoteretes/cognee",
+      "repository": "topoteretes/cognee",
+      "source_version": "4053f6cc",
+      "content_hash": "46987602af8b5eddbf2f91e8a3b9ba5e23fa2d76b9cfbc3e0e94fac89a02a338",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:35:00.239Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prithivmlmods-gender-classifier-mini-learnings-research-knowledge-intelligenc.md",
+      "title": "Research & Knowledge Intelligence: hf-prithivmlmods-gender-classifier-mini-learnings Core Invariants",
+      "repository": "hf-prithivmlmods-gender-classifier-mini-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5bcf798bce066dda76f8b466f950012759c8357fade896c3158f8048f32baaf3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:35:48.131Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-learnings-technical-construction-intelligence-laurent22-joplin-.md",
+      "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
+      "repository": "laurent22-joplin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1038b0721ebbcd4e88e2ef02f3fa29906ece957c40fd764cabda879ae7eac4ff",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:35:48.664Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/laurent22-joplin-learnings-verification-protocol-empirical-defect-shield-for-lau.md",
+      "title": "Verification Protocol: Empirical Defect Shield for laurent22-joplin-learnings",
+      "repository": "laurent22-joplin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c6919ed0728ed0c1d8f3bc1e1d4348999f65a6a2819b3777d788657605b995a3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:35:48.804Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
+      "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "09a671fc2002f4dabca432e3622c145cf728344127b062b06569c61dcef40f08",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:35:49.274Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/freenet-freenet-core-learnings-verification-protocol-empirical-defect-shield-for.md",
+      "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "240c51c903b67e827e0a523fd58537230de1adb5e38a7b3aa72d4a9bb84b7438",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:35:49.414Z"
     }
   },
   "aliases": {
@@ -201739,5 +201934,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9256
+  "total_items": 9271
 }
