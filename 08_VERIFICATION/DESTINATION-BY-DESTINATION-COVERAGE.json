@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-11-13T09:40:00.000Z",
+  "audit_version": "2.0.0-post-distribution-repair",
+  "status": "VERIFIED_EMPIRICALLY",
+  "git_head": "2821b14e7b",
+  "canonical_folder_coverage": {
+    "01_CORE": { "file_count": 9, "status": "COVERED", "role": "Architectural principles, constitution, core laws" },
+    "02_AGENT_INTELLIGENCE": { "file_count": 512, "status": "COVERED", "historical_backfill": 255, "role": "Autonomous agent contracts and fleet specifications" },
+    "03_SKILLS": { "file_count": 185, "status": "COVERED", "historical_backfill": 85, "role": "Executable skills and operational playbooks" },
+    "04_WORKFLOWS": { "file_count": 226, "status": "COVERED", "role": "Factory engines, pipelines, automated scripts" },
+    "05_KNOWLEDGE": { 
+      "file_count": 3606, 
+      "status": "COVERED", 
+      "engineering_patterns_total_rules": 8082,
+      "reconciled_patterns_added": 809,
+      "domain_intelligence_files": 1829,
+      "knowledge_index_records": 15576,
+      "file_size_bytes": 25938010,
+      "role": "Canonical engineering patterns, domain intelligence, and knowledge indices" 
+    },
+    "06_TEMPLATES": { "file_count": 0, "status": "RESERVED_NOT_APPLICABLE", "role": "Reserved directory for scaffolding templates" },
+    "07_PROJECT_LEARNING": { "file_count": 3114, "status": "COVERED", "dossiers_processed": 1829, "role": "Deep inspection learning records and raw harvest dossiers" },
+    "08_VERIFICATION": { "file_count": 1324, "status": "COVERED", "historical_backfill": 1245, "role": "Verification protocols, defect shields, regression suites, and test logs" },
+    "09_SOURCES": { "file_count": 5, "status": "COVERED", "role": "Provenance ledgers and sources catalogs" },
+    "10_DOCUMENTATION": { "file_count": 0, "status": "RESERVED_NOT_APPLICABLE", "role": "Reserved documentation directory" },
+    "11_INBOX": { "file_count": 307, "status": "COVERED", "quarantined_directives": 0, "role": "Candidate directives and quarantine zone for zero silent data loss" },
+    "12_DECISIONS": { "file_count": 256, "status": "COVERED", "historical_backfill": 132, "role": "Architecture Decision Records (ADRs)" },
+    "13_GOVERNANCE": { "file_count": 13, "status": "COVERED", "role": "Security policies, invariants, and compliance rules" },
+    "14_EVOLUTION": { "file_count": 4, "status": "COVERED", "role": "Harvest yield metrics and continuous evolution tracking" },
+    "15_METADATA": { "file_count": 6, "status": "COVERED", "role": "Universal destination registry and schema taxonomies" }
+  },
+  "historical_backfill_summary": {
+    "total_dossiers_discovered": 1829,
+    "total_dossiers_eligible": 1829,
+    "total_dossiers_processed": 1829,
+    "total_artifacts_persisted": 3546,
+    "total_artifacts_verified": 3546,
+    "duplicates_suppressed_on_rerun": 19,
+    "failed_writes": 0,
+    "quarantined": 0,
+    "reconciled_engineering_rules": 809,
+    "rule_range_appended": "Rule 7274 through Rule 8082"
+  },
+  "domain_evaluation_counts": {
+    "A": 57,
+    "B": 27,
+    "C": 4,
+    "D": 209,
+    "E": 2,
+    "F": 173,
+    "G": 841,
+    "H": 1507,
+    "I": 307,
+    "J": 142,
+    "K": 1718,
+    "L": 54,
+    "M": 23,
+    "total_evaluations": 5066
+  },
+  "retrieval_verification": {
+    "bm25_search_status": "OPERATIONAL",
+    "domains_tested": 13,
+    "domains_passed": 13,
+    "pass_rate_percent": 100.0,
+    "dangling_index_pointers": 0
+  },
+  "regression_results": {
+    "master_distribution_suite": { "tests": 25, "passed": 25, "failed": 0, "assertions": 69 },
+    "gateway_suite": { "tests": 41, "passed": 41, "failed": 0 },
+    "phase_1_shadow_suite": { "tests": 12, "passed": 12, "failed": 0, "assertions": 54 },
+    "idempotency_suite": { "tests": 1, "passed": 1, "failed": 0, "duplicates_suppressed": 19 },
+    "reconciliation_suite": { "missing_rules_remaining": 0 }
+  },
+  "cloud_harvester_status": {
+    "schedule": "ALWAYS_ON_24_7",
+    "recent_workflow_run": "43400302109",
+    "operational_state": "ACTIVE_RUNNING",
+    "disruption": "NONE"
+  }
+}
+

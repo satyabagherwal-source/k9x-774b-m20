@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-11-13T12:55:44.683Z",
+  "allPass": true,
+  "results": [
+    {
+      "domain": "A",
+      "query": "pipeline stream processing schema validation batch",
+      "status": "PASS",
+      "score": 39.3476,
+      "title": "Batch Processing Memory Safety Guard (Harvested from BAAI/bge-small-en-v1.5)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    },
+    {
+      "domain": "B",
+      "query": "model inference weights token context tensor",
+      "status": "PASS",
+      "score": 51.5566,
+      "title": "**Rule #3 – Mandatory `dtype` Alignment Between Model Weights and Runtime Tensor Type** (Harvested from HemmingwayAI/Hemmingway-1)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    },
+    {
+      "domain": "C",
+      "query": "swift xcframework objective c bridge ui kit",
+      "status": "PASS",
+      "score": 67.819,
+      "title": "Verification Protocol: Verification Protocol: Empirical Defect Shield for jordansinger/swiftui/kit",
+      "path": "08_VERIFICATION/jordansinger-swiftui-kit-verification-protocol-empirical-defect-shield-for-jorda.md",
+      "exists": true
+    },
+    {
+      "domain": "D",
+      "query": "memory allocation buffer pointer concurrency invariant",
+      "status": "PASS",
+      "score": 45.0388,
+      "title": "Pointer-to-Slice Allocation Invariant for `sync.Pool` (Harvested from nats-io/nats-server)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    },
+    {
+      "domain": "E",
+      "query": "firmware protocol hardware peripheral sensor",
+      "status": "PASS",
+      "score": 46.881,
+      "title": "Verification of Hardware Bus Master Address Spaces for DMA Buffers (Harvested from embassy-rs/embassy)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    },
+    {
+      "domain": "F",
+      "query": "css components react dom virtual tree render",
+      "status": "PASS",
+      "score": 62.3415,
+      "title": "Verification Protocol: Verification Protocol: Empirical Defect Shield for bvaughn/react/virtualized",
+      "path": "08_VERIFICATION/bvaughn-react-virtualized-verification-protocol-empirical-defect-shield-for-bvau.md",
+      "exists": true
+    },
+    {
+      "domain": "G",
+      "query": "distributed state consensus raft boundary decoupling",
+      "status": "PASS",
+      "score": 52.1434,
+      "title": "Deterministic Entity ID Derivation in Distributed State Machine Replicas (Harvested from restatedev/restate)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    },
+    {
+      "domain": "H",
+      "query": "subsystem boundary modular decoupling invariant architecture",
+      "status": "PASS",
+      "score": 71.8884,
+      "title": "Architecture Decision Record: ADR: Subsystem Boundary & Modular Decoupling in canary-enterprise-vault-sentinel-learnings",
+      "path": "12_DECISIONS/ADR-canary-enterprise-vault-sentinel-learnings-adr-subsystem-boundary-modular-decoup.md",
+      "exists": true
+    },
+    {
+      "domain": "I",
+      "query": "encryption gcm aes vault token secret security",
+      "status": "PASS",
+      "score": 58.5286,
+      "title": "Cryptographic Scope-Binding via Authenticated Encryption Labels (Harvested from bitnami/sealed-secrets)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    },
+    {
+      "domain": "J",
+      "query": "container docker kubernetes ci cd action runner",
+      "status": "PASS",
+      "score": 53.3743,
+      "title": "Containerized CI Pre-Phase Execution Isolation (Harvested from RediSearch/RediSearch)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    },
+    {
+      "domain": "K",
+      "query": "empirical defect shield verification protocol test suite assertion",
+      "status": "PASS",
+      "score": 64.8966,
+      "title": "Verification Protocol: Verification Protocol: Empirical Defect Shield for anonymousaak-seo-skills-learnings",
+      "path": "08_VERIFICATION/anonymousaak-seo-skills-learnings-verification-protocol-empirical-defect-shield-.md",
+      "exists": true
+    },
+    {
+      "domain": "L",
+      "query": "throughput latency benchmark cache memory footprint",
+      "status": "PASS",
+      "score": 36.2739,
+      "title": "Batched Inference Memory & Throughput Guard (Harvested from cross-encoder/ms-marco-MiniLM-L6-v2)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    },
+    {
+      "domain": "M",
+      "query": "cli parser compiler ast generator developer tooling",
+      "status": "PASS",
+      "score": 44.7968,
+      "title": "Pre-Expansion AST Inspection for Semantic Pattern Classification (Harvested from sharkdp/fd)",
+      "path": "05_KNOWLEDGE/engineering-patterns.md",
+      "exists": true
+    }
+  ]
+}

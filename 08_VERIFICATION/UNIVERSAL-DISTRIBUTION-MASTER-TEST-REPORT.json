@@ -1,0 +1,186 @@
+{
+  "suite": "Master Universal Knowledge Distribution 25-Test Suite",
+  "executed_at": "2026-11-13T09:37:03.953Z",
+  "totalTests": 25,
+  "passedTests": 25,
+  "failedTests": 0,
+  "assertionsPassed": 69,
+  "totalAssertions": 69,
+  "testResults": [
+    {
+      "testNumber": 1,
+      "name": "All 16 major destinations discovered",
+      "status": "PASS",
+      "durationMs": 9,
+      "error": null
+    },
+    {
+      "testNumber": 2,
+      "name": "Nested destination discovery",
+      "status": "PASS",
+      "durationMs": 32,
+      "error": null
+    },
+    {
+      "testNumber": 3,
+      "name": "Newly created destination discovery",
+      "status": "PASS",
+      "durationMs": 15,
+      "error": null
+    },
+    {
+      "testNumber": 4,
+      "name": "All 13 domains classified",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "testNumber": 5,
+      "name": "Engineering learning distributed correctly",
+      "status": "PASS",
+      "durationMs": 183,
+      "error": null
+    },
+    {
+      "testNumber": 6,
+      "name": "Skill artifact persisted",
+      "status": "PASS",
+      "durationMs": 3,
+      "error": null
+    },
+    {
+      "testNumber": 7,
+      "name": "Agent intelligence persisted",
+      "status": "PASS",
+      "durationMs": 15,
+      "error": null
+    },
+    {
+      "testNumber": 8,
+      "name": "Domain intelligence persisted",
+      "status": "PASS",
+      "durationMs": 9,
+      "error": null
+    },
+    {
+      "testNumber": 9,
+      "name": "Workflow artifact persisted",
+      "status": "PASS",
+      "durationMs": 4,
+      "error": null
+    },
+    {
+      "testNumber": 10,
+      "name": "Architecture decision persisted",
+      "status": "PASS",
+      "durationMs": 2,
+      "error": null
+    },
+    {
+      "testNumber": 11,
+      "name": "Cross-domain fan-out",
+      "status": "PASS",
+      "durationMs": 105,
+      "error": null
+    },
+    {
+      "testNumber": 12,
+      "name": "Rejected learning preserved in 11_INBOX",
+      "status": "PASS",
+      "durationMs": 76,
+      "error": null
+    },
+    {
+      "testNumber": 13,
+      "name": "Unknown category safely handled",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "testNumber": 14,
+      "name": "Duplicate suppression",
+      "status": "PASS",
+      "durationMs": 59,
+      "error": null
+    },
+    {
+      "testNumber": 15,
+      "name": "Idempotent rerun",
+      "status": "PASS",
+      "durationMs": 40,
+      "error": null
+    },
+    {
+      "testNumber": 16,
+      "name": "Atomic write failure handling",
+      "status": "PASS",
+      "durationMs": 4,
+      "error": null
+    },
+    {
+      "testNumber": 17,
+      "name": "Partial destination failure isolation",
+      "status": "PASS",
+      "durationMs": 49,
+      "error": null
+    },
+    {
+      "testNumber": 18,
+      "name": "Retry and recovery capability",
+      "status": "PASS",
+      "durationMs": 2,
+      "error": null
+    },
+    {
+      "testNumber": 19,
+      "name": "Index synchronization",
+      "status": "PASS",
+      "durationMs": 5,
+      "error": null
+    },
+    {
+      "testNumber": 20,
+      "name": "Missing-file detection",
+      "status": "PASS",
+      "durationMs": 11,
+      "error": null
+    },
+    {
+      "testNumber": 21,
+      "name": "Provenance verification",
+      "status": "PASS",
+      "durationMs": 2,
+      "error": null
+    },
+    {
+      "testNumber": 22,
+      "name": "Historical backlog dry-run",
+      "status": "PASS",
+      "durationMs": 294,
+      "error": null
+    },
+    {
+      "testNumber": 23,
+      "name": "Concurrent submission safety",
+      "status": "PASS",
+      "durationMs": 128,
+      "error": null
+    },
+    {
+      "testNumber": 24,
+      "name": "Existing gateway regression tests",
+      "status": "PASS",
+      "durationMs": 415,
+      "error": null
+    },
+    {
+      "testNumber": 25,
+      "name": "Cloud Harvester compatibility tests",
+      "status": "PASS",
+      "durationMs": 16,
+      "error": null
+    }
+  ]
+}

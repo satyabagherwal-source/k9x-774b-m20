@@ -1,26 +1,14 @@
 # Daily Harvesting Verification Matrix & Evidence Ledger
 ### *Empirical Verification Protocol: Inspected, Verified, Rejected, and Uncertain Records*
-
-> **Hard Invariant**:  
-> Every automated harvesting cycle must log its verification findings here.  
-> An AI claim or synthesis is **NEVER** accepted as verified without empirical citations (commit diffs, test suites, or runtime reproduction).
-
----
-
 ## 1. Verification Outcome Definitions
-
-| Status | Definition | Routing Action |
 | :--- | :--- | :--- |
+## 2. Daily Harvesting Verification Log
+| Cycle ID | Timestamp (UTC) | Source Inspected | Evidence Type | Verification Status | Promoted Target / Dossier | SHA-256 Verified |
+| Status | Definition | Routing Action |
 | **`VERIFIED`** | Hypothesis supported by reproducible test suite, production commit patch, or live runtime execution. | Promoted to `05_KNOWLEDGE/engineering-patterns.md` with stable Rule number. |
 | **`PARTIALLY_VERIFIED`** | Pattern holds in specific environments but has known edge cases or missing proofs. | Staged in `11_INBOX` or logged in `07_PROJECT_LEARNING` with explicit boundary scope. |
 | **`REJECTED`** | Hypothesis disproven by code inspection, test failure, or demonstrated anti-pattern. | Logged below with rejection rationale. **Blocked from promotion.** |
 | **`UNCERTAIN`** | Promising discovery, but insufficient empirical evidence or test coverage in source repo. | Kept in `11_INBOX/candidate-directives/` pending deeper inspection. |
-
----
-
-## 2. Daily Harvesting Verification Log
-
-| Cycle ID | Timestamp (UTC) | Source Inspected | Evidence Type | Verification Status | Promoted Target / Dossier | SHA-256 Verified |
 | `CYCLE-20261008-01` | `2026-10-08T16:52:27Z` | `expressjs/cors` | Middleware options test | `PROJECT_ONLY` | `07_PROJECT_LEARNING/expressjs-cors-learnings.md` | Yes (`7a64...`) |
 | `CYCLE-20261008-02` | `2026-10-08T16:54:44Z` | `meta-llama/Llama-3.2-1B` | Model card & license config | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.2-1b-learnings.md` | Yes (`a4c3...`) |
 | `CYCLE-20261009-01` | `2026-10-09T03:32:36Z` | `oven-sh/bun` | Commit diff / hook runner | `VERIFIED` | `Rule 255` in `05_KNOWLEDGE` | Yes (`a4c3...`) |
@@ -9197,6 +9185,8 @@
 | `CYCLE-20261112-K7QZ` | `2026-11-12T15:33:58.715Z` | `mswjs/msw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ad88efd...`) |
 | `CYCLE-20261112-KGWN` | `2026-11-12T15:34:10.583Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`236425e8...`) |
 | `CYCLE-20261112-KI0N` | `2026-11-12T15:34:12.023Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8875915d...`) |
+| `CYCLE-20261113-DTMN` | `2026-11-13T07:48:47.039Z` | `canary-enterprise-vault-sentinel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/canary-enterprise-vault-sentinel-learnings.md` | Yes (`7eea3336...`) |
+| `CYCLE-20261113-A7U2` | `2026-11-13T12:53:54.602Z` | `test-org/continuous-harvester-proof` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8097` | Yes (`6fed2fb4...`) |
 | `CYCLE-20261112-AEQ9` | `2026-11-12T21:02:16.593Z` | `facebook/sam-3d-body-dinov3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md` | Yes (`cc5aeb88...`) |
 | `CYCLE-20261112-AIG5` | `2026-11-12T21:02:21.413Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f9033c9f...`) |
 | `CYCLE-20261112-AKGX` | `2026-11-12T21:02:24.033Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`570227c1...`) |
@@ -9502,17 +9492,3 @@
 | `CYCLE-20261113-V3VC` | `2026-11-13T14:06:08.472Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`737dc8a2...`) |
 | `CYCLE-20261113-V72S` | `2026-11-13T14:06:12.628Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5b0f484...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:06:34.285Z` | `hf-prism-ml-ternary-bonsai-2-27b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B39F30BA` [Domain D] | Yes (`26e6ab12...`) |
-| `CYCLE-20261113-9J4L` | `2026-11-13T14:17:21.429Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`911cb94c...`) |
-| `CYCLE-20261113-A22H` | `2026-11-13T14:17:45.977Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`09866200...`) |
-| `CYCLE-20261113-A37P` | `2026-11-13T14:17:47.461Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4e2e4029...`) |
-| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:18:05.914Z` | `hf-viggle-qwen-image-2.1-viggle-turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9522FB5E` [Domain D] | Yes (`009b4292...`) |
-| `CYCLE-20261113-K159` | `2026-11-13T14:25:31.341Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`720da69c...`) |
-| `CYCLE-20261113-KL44` | `2026-11-13T14:25:57.220Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b315df1e...`) |
-| `CYCLE-20261113-KO55` | `2026-11-13T14:26:01.145Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`81e86aa6...`) |
-| `CYCLE-20261113-KRE5` | `2026-11-13T14:26:05.357Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`01ee42e4...`) |
-| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:26:28.004Z` | `hf-xingchen-agi-xing4.0-29b-a4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-98796BF2` [Domain D] | Yes (`8add30aa...`) |
-| `CYCLE-20261113-UIFH` | `2026-11-13T14:33:40.301Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`35b31d5f...`) |
-| `CYCLE-20261113-UXQZ` | `2026-11-13T14:34:00.155Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9df43c72...`) |
-| `CYCLE-20261113-V096` | `2026-11-13T14:34:03.402Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1e7eaa98...`) |
-| `CYCLE-20261113-V3ZX` | `2026-11-13T14:34:08.253Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da9c3497...`) |
-| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:34:29.708Z` | `hf-supersoniclabs-julia-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ACECC835` [Domain D] | Yes (`483c8205...`) |

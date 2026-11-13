@@ -1,0 +1,2846 @@
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for apache/pinot
+
+<!-- PROVENANCE_START
+{
+  "source_repository": "apache/pinot",
+  "source_url": "https://github.com/apache/pinot",
+  "source_version": "historical-head",
+  "license": "OPEN_HARVEST",
+  "timestamp": "2026-11-13T00:00:00.000Z",
+  "ai_provider": "universal-multi-artifact-distributor",
+  "generator_version": "2.0.0-universal",
+  "learning_id": "unknown",
+  "canonical_classification": "verification_contract"
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `historical`).  
+> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
+> **Learning ID**: `unknown`
+
+
+## 1. Scope & Verification Target
+- **Target Repository**: `apache/pinot` (Commit: `historical`)
+- **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
+
+## 2. Observed Failure Modes & Defect Traps
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
+> **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
+> **Source Version**: `18e46648`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-11-12T04:50:26.941Z  
+> **Learning ID**: `learn-github-apache-pinot`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+# Forensic Learning Record (Deep Inspection): apache/pinot
+
+> **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
+> **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
+> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
+> **Harvest Timestamp**: 2026-11-12T04:50:26.930Z  
+> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+
+---
+
+## 1. Context & Architectural Overview
+- **Repository / Resource**: `apache/pinot`
+- **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
+- **Primary Language / Ecosystem**: Java
+- **Discovered Manifests / Configurations**: README.md
+- **Stars / Engagement**: 6171 stars
+
+---
+
+## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+
+### D1: Architecture & Structural Boundaries
+- Entry configurations inspected via direct stream: README.md.
+- Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/app_state.ts`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+ import { AuthWorkflow } from "Models";
+import { DEFAULT_TIMEZONE_FALLBACK } from './utils/TimezoneUtils';
+
+class app_state {
+  queryConsoleOnlyView: boolean;
+  authWorkflow: AuthWorkflow;
+  authToken: string | null;
+  columnNameSeparator: string = '#$%';
+  hideQueryConsoleTab: boolean;
+  username: string;
+  role: string;
+  timezone: string = DEFAULT_TIMEZONE_FALLBACK;
+}
+
+export default new app_state();
+
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/components/SegmentStatusRenderer.tsx`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import {
+  Box,
+  Chip,
+  CircularProgress,
+  IconButton,
+  makeStyles,
+  Tooltip,
+} from "@material-ui/core";
+import { HelpOutlineOutlined } from "@material-ui/icons";
+import { getSegmentLevelDebugDetails } from "../requests";
+import CustomCodemirror from "./CustomCodemirror";
+import CustomDialog from "./CustomDialog";
+import { NotificationContext } from "./Notification/NotificationContext";
+import clsx from "clsx";
+import { DISPLAY_SEGMENT_STATUS, SegmentDebugDetails } from "Models";
+import React, { useContext, useEffect, useState } from "react";
+
+const useStyles = makeStyles((theme) => ({
+  error: {
+    color: theme.palette.error.main,
+    border: `1px solid ${theme.palette.error.main}`,
+  },
+  success: {
+    color: theme.palette.success.main,
+    border: `1px solid ${theme.palette.success.main}`,
+  },
+  warning: {
+    color: theme.palette.warning.main,
+    border: `1px solid ${theme.palette.warning.main}`,
+  },
+  segmentDebugDetails: {
+    "& .CodeMirror": { fontSize: 14, height: "100%" },
+    maxHeight: 500,
+  },
+}));
+
+interface SegmentStatusRendererProps {
+  status: DISPLAY_SEGMENT_STATUS;
+  segmentName: string;
+  tableName: string;
+}
+
+export enum StatusColor {
+  Error = "error",
+  Warning = "warning",
+  Success = "success",
+}
+
+export const SegmentStatusRenderer = ({
+  status,
+  segmentName,
+  tableName,
+}: SegmentStatusRendererProps) => {
+  const { dispatch: notify } = useContext(NotificationContext);
+  const [statusTooltipTitle, setStatusTooltipTitle] = useState<string>("");
+  const [statusColor, setStatusColor] = useState<StatusColor | null>(
+    null
+  );
+  const [errorDetailsVisible, setErrorDetailsVisible] =
+    useState<boolean>(false);
+  const [segmentDebugDetails, setSegmentDebugDetails] =
+    useState<SegmentDebugDetails | null>(null);
+  const segmentStatusRendererClasses = useStyles();
+
+  useEffect(() => {
+    initializeValues();
+  }, [status]);
+
+  const initializeValues = () => {
+    switch (status) {
+      case DISPLAY_SEGMENT_STATUS.GOOD: {
+        setStatusColor(StatusColor.Success);
+        setStatusTooltipTitle("All the servers of this segment are ONLINE/CONSUMING");
+
+        break;
+      }
+      case DISPLAY_SEGMENT_STATUS.BAD: {
+        setStatusColor(StatusColor.Error);
+        setStatusTooltipTitle("One or more servers of this segment are in ERROR state");
+
+        break;
+      }
+      case DISPLAY_SEGMENT_STATUS.UPDATING: {
+        setStatusColor(StatusColor.Warning);
+        setStatusTooltipTitle("External view is OFFLINE or missing for one or more servers of this segment");
+
+        break;
+      }
+    }
+  };
+
+  const fetchSegmentErrorDetails = async () => {
+    setSegmentDebugDetails(null);
+    try {
+      const segmentDebugDetails = await getSegmentLevelDebugDetails(
+        tableName,
+        segmentName
+      );
+      setSegmentDebugDetails(segmentDebugDetails);
+    } catch (error) {
+      notify({
+        type: "error",
+        message: "Error occurred while fetching segment debug details.",
+        show: true,
+      });
+      setSegmentDebugDetails({} as SegmentDebugDetails);
+    }
+  };
+
+  const handleShowErrorDetailsClick = () => {
+    setErrorDetailsVisible(true);
+    fetchSegmentErrorDetails();
+  };
+
+  const handleHideErrorDetails = () => {
+    setErrorDetailsVisible(false);
+  };
+
+  return (
+    <>
+      <Tooltip arrow title={statusTooltipTitle} placement="top">
+        <Chip
+          className={clsx([segmentStatusRendererClasses[statusColor]])}
+          label={status}
+          variant="outlined"
+        />
+      </Tooltip>
+
+      {/* Only show when segment status is bad */}
+      {status === DISPLAY_SEGMENT_STATUS.BAD && (
+        <>
+          <Tooltip
+            title="Click to show segment error details"
+            arrow
+            placement="top"
+          >
+            <IconButton onClick={handleShowErrorDetailsClick}>
+              <HelpOutlineOutlined fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <CustomDialog
+            title="Segment Debug Details"
+            open={errorDetailsVisible}
+            handleClose={handleHideErrorDetails}
+            showOkBtn={false}
+          >
+            {/* Loading */}
+            {!segmentDebugDetails && (
+              <Box display="flex" justifyContent="center"><CircularProgress /></Box>
+            )}
+            {segmentDebugDetails && (
+              <CustomCodemirror
+                showLineWrapToggle
+                customClass={segmentStatusRendererClasses.segmentDebugDetails}
+                data={segmentDebugDetails}
+              />
+            )}
+          </CustomDialog>
+        </>
+      )}
+    </>
+  );
+};
+
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/pages/TaskQueue.tsx`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import React, { useEffect, useState } from 'react';
+import { get, map } from 'lodash';
+import { TableData } from 'Models';
+import { Grid, makeStyles } from '@material-ui/core';
+import SimpleAccordion from '../components/SimpleAccordion';
+import CustomButton from '../components/CustomButton';
+import PinotMethodUtils from '../utils/PinotMethodUtils';
+import { useConfirm } from '../components/Confirm';
+import CustomizedTables from '../components/Table';
+import { cleanupTasks } from '../requests';
+
+const useStyles = makeStyles(() => ({
+  gridContainer: {
+    padding: 20,
+    backgroundColor: 'white',
+    maxHeight: 'calc(100vh - 70px)',
+    overflowY: 'auto'
+  },
+  operationDiv: {
+    border: '1px #BDCCD9 solid',
+    borderRadius: 4,
+    marginBottom: 20
+  },
+  body: {
+    borderTop: '1px solid #BDCCD9',
+    fontSize: '16px',
+    lineHeight: '3rem',
+    paddingLeft: '15px',
+  },
+  highlightBackground: {
+    border: '1px #4285f4 solid',
+    backgroundColor: 'rgba(66, 133, 244, 0.05)',
+    borderRadius: 4,
+    marginBottom: '20px',
+  },
+}));
+
+const TaskQueue = (props) => {
+  const classes = useStyles();
+  const { taskType } = props.match.params;
+
+  const [fetching, setFetching] = useState(true);
+  const [taskInfo, setTaskInfo] = useState([]);
+  const [tables, setTables] = useState<TableData>({ records: [], columns: ['Name'] });
+
+  const fetchData = async () => {
+    setFetching(true);
+    const taskInfoRes = await PinotMethodUtils.getTaskInfo(taskType);
+    const tablesResponse:any = await PinotMethodUtils.getTableData({ taskType });
+    setTaskInfo(taskInfoRes);
+    setTables((prevState): TableData => {
+      const _records = map(get(tablesResponse, 'tables', []), table => [table]);
+      return { ...prevState, records: _records };
+    });
+    setFetching(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleStopAll = async () => {
+    await PinotMethodUtils.stopAllTasks(taskType);
+    await fetchData();
+    stopAllConfirm.setConfirmDialog(false);
+  };
+
+  const stopAllConfirm = useConfirm({
+    dialogTitle: 'Stop all tasks',
+    dialogContent: 'Are you sure want to stop all the tasks?',
+    successCallback: handleStopAll
+  });
+
+  const handleResumeAll = async () => {
+    await PinotMethodUtils.resumeAllTasks(taskType);
+    await fetchData();
+    resumeAllConfirm.setConfirmDialog(false);
+  };
+
+  const resumeAllConfirm = useConfirm({
+    dialogTitle: 'Resume all tasks',
+    dialogContent: 'Are you sure want to resume all the tasks?',
+    successCallback: handleResumeAll
+  });
+
+  const handleCleanupAll = async () => {
+    await PinotMethodUtils.cleanupAllTasks(taskType);
+    cleanupAllConfirm.setConfirmDialog(false);
+  };
+
+  const cleanupAllConfirm = useConfirm({
+    dialogTitle: 'Cleanup all tasks',
+    dialogContent: 'Are you sure want to cleanup all the tasks?',
+    successCallback: handleCleanupAll
+  });
+
+  const handleDeleteAll = async () => {
+    await PinotMethodUtils.deleteAllTasks(taskType);
+    deleteAllConfirm.setConfirmDialog(false);
+  };
+
+  const deleteAllConfirm = useConfirm({
+    dialogTitle: 'Delete all tasks',
+    dialogContent: 'Are you sure want to delete all the tasks?',
+    successCallback: handleDeleteAll
+  });
+
+  return (
+    <Grid item xs className={classes.gridContainer}>
+      <div className={classes.operationDiv}>
+        <SimpleAccordion
+          headerTitle="Operations"
+          showSearchBox={false}
+        >
+          <div>
+            <CustomButton
+              onClick={() => stopAllConfirm.setConfirmDialog(true)}
+              tooltipTitle="Stop all running/pending tasks (as well as the task queue) for the given task type. Any new task added will not be picked up until Task Queue is resumed. This is not an instant operation, and the task may take some more time to actually stop."
+              enableTooltip={true}
+            >
+              Stop All
+            </CustomButton>
+            <CustomButton
+              onClick={() => resumeAllConfirm.setConfirmDialog(true)}
+              tooltipTitle="Resume all stopped tasks (as well as the task queue) for the given task type. Resumed tasks start from the beginning of the task."
+              enableTooltip={true}
+            >
+              Resume All
+            </CustomButton>
+            <CustomButton
+              onClick={() => cleanupAllConfirm.setConfirmDialog(true)}
+              tooltipTitle="Clean up finished tasks (COMPLETED, FAILED) for the given task type. This has no impact on the executing tasks. This happens periodically "
+              enableTooltip={true}
+            >
+              Cleanup All
+            </CustomButton>
+            <CustomButton
+              onClick={() => deleteAllConfirm.setConfirmDialog(true)}
+              tooltipTitle="Delete all tasks (as well as the task queue) for the given task type."
+              enableTooltip={true}
+            >
+              Delete All
+            </CustomButton>
+          </div>
+        </SimpleAccordion>
+      </div>
+      <div className={classes.highlightBackground}>
+        {/* <TableToolbar name="Summary" showSearchBox={false} /> */}
+        <Grid container className={classes.body}>
+          <Grid item xs={4}>
+            <strong>Task Type:</strong> {taskType}
+          </Grid>
+          <Grid item xs={4}>
+            <strong>Task Queue Status:</strong> {get(taskInfo, '1', null)}
+          </Grid>
+          <Grid item xs={4}>
+            <strong>Num Tasks: </strong>
+            {get(taskInfo, '0', null)}
+          </Grid>
+        </Grid>
+      </div>
+      {!fetching && (
+        <CustomizedTables
+          title="Tables"
+          data={tables}
+          showSearchBox={true}
+          inAccordionFormat={true}
+          addLinks
+          baseURL={`/task-queue/${taskType}/tables/`}
+        />
+      )}
+      {stopAllConfirm.confirmComponent}
+      {resumeAllConfirm.confirmComponent}
+      {cleanupAllConfirm.confirmComponent}
+      {deleteAllConfirm.confirmComponent}
+    </Grid>
+  );
+};
+
+export default TaskQueue;
+
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/pages/TaskQueueTable.tsx`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import React, { useEffect, useState, useContext } from 'react';
+import { get, keys, last } from 'lodash';
+import moment from 'moment';
+import { formatTimeInTimezone } from '../utils/TimezoneUtils';
+import { useTimezone } from '../contexts/TimezoneContext';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { Grid, makeStyles, Box } from '@material-ui/core';
+import { NotificationContext } from '../components/Notification/NotificationContext';
+import SimpleAccordion from '../components/SimpleAccordion';
+import CustomButton from '../components/CustomButton';
+import { useConfirm } from '../components/Confirm';
+import PinotMethodUtils from '../utils/PinotMethodUtils';
+import useScheduleAdhocModal from '../components/useScheduleAdhocModal';
+import useMinionMetadata from '../components/useMinionMetaData';
+import useTaskListing from '../components/useTaskListing';
+import { Typography } from '@material-ui/core';
+
+const jsonoptions = {
+  lineNumbers: true,
+  mode: 'application/json',
+  styleActiveLine: true,
+  gutters: ['CodeMirror-lint-markers'],
+  theme: 'default',
+  readOnly: true
+};
+
+const useStyles = makeStyles(() => ({
+  gridContainer: {
+    padding: 20,
+    backgroundColor: 'white',
+    maxHeight: 'calc(100vh - 70px)',
+    overflowY: 'auto'
+  },
+  operationDiv: {
+    border: '1px #BDCCD9 solid',
+    borderRadius: 4,
+    marginBottom: 20
+  },
+  body: {
+    borderTop: '1px solid #BDCCD9',
+    fontSize: '16px',
+    lineHeight: '3rem',
+    paddingLeft: '15px',
+  },
+  highlightBackground: {
+    border: '1px #4285f4 solid',
+    backgroundColor: 'rgba(66, 133, 244, 0.05)',
+    borderRadius: 4,
+    marginBottom: '20px',
+  },
+  sqlDiv: {
+    border: '1px #BDCCD9 solid',
+    borderRadius: 4,
+    marginBottom: '20px',
+  },
+  queryOutput: {
+    border: '1px solid #BDCCD9',
+    '& .CodeMirror': { height: 532 },
+  },
+}));
+
+const TaskQueueTable = (props) => {
+  const classes = useStyles();
+  const { currentTimezone } = useTimezone();
+  const { taskType, queueTableName: tableName } = props.match.params;
+
+  const {dispatch} = useContext(NotificationContext);
+  const [fetching, setFetching] = useState(true);
+  const [jobDetail, setJobDetail] = useState({});
+  const [tableDetail, setTableDetail] = useState({});
+  const [mostRecentErrorRunMessage, setMostRecentErrorRunMessage] = useState('');
+  const scheduleAdhocModal = useScheduleAdhocModal();
+  const minionMetadata = useMinionMetadata({ taskType, tableName });
+  const taskListing = useTaskListing({ taskType, tableName });
+
+  const fetchData = async () => {
+    setFetching(true);
+    const detail = await PinotMethodUtils.getScheduleJobDetail(tableName, taskType);
+    const tableDetailRes = await PinotMethodUtils.getTableDetails(tableName);
+    const taskGeneratorDebugData = await PinotMethodUtils.getTaskGeneratorDebugData(tableName, taskType);
+    const mostRecentErrorRunMessagesTS = get(taskGeneratorDebugData, 'data.0.mostRecentErrorRunMessages', {});
+    const mostRecentErrorRunMessagesTSLastTime = last(keys(mostRecentErrorRunMessagesTS).sort());
+    setMostRecentErrorRunMessage(get(mostRecentErrorRunMessagesTS, mostRecentErrorRunMessagesTSLastTime, ''));
+    setTableDetail(tableDetailRes);
+    setJobDetail(detail);
+    setFetching(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [currentTimezone]);
+
+  const handleScheduleNow = async () => {
+    const res = await PinotMethodUtils.scheduleTaskAction(tableName, taskType);
+    if (get(res, `${taskType}`, null) === null) {
+      dispatch({
+        type: 'error',
+        message: (
+          <Box>
+            <Typography>
+              Could not schedule task
+            </Typography>
+            <Typography>
+              Task generation errors : {get(res, 'generationErrors', 'none')}
+            </Typography>
+            <Typography>
+              Task scheduling errors : {get(res, 'schedulingErrors', 'none')}
+            </Typography>
+          </Box>
+        ),
+        show: true
+      });
+    } else if (get(res, `${taskType}`, null) === '') {
+      dispatch({
+        type: 'success',
+        message: `No task to schedule`,
+        show: true
+      });
+    } else {
+      dispatch({
+        type: 'success',
+        message: `${get(res, `${taskType}`, null)} scheduled successfully`,
+        show: true
+      });
+    }
+
+    await fetchData();
+    scheduleNowConfirm.setConfirmDialog(false);
+  };
+
+  const scheduleNowConfirm = useConfirm({
+    dialogTitle: 'Schedule now',
+    dialogContent: 'Are you sure want to schedule now?',
+    successCallback: handleScheduleNow
+  });
+
+  const cronExpression = get(jobDetail, 'Triggers.0.CronExpression', '');
+  const previousFireTime = get(jobDetail, 'Triggers.0.PreviousFireTime', 0);
+  const nextFireTime = get(jobDetail, 'Triggers.0.NextFireTime', 0);
+
+  return (
+    <Grid item xs className={classes.gridContainer}>
+      <div className={classes.operationDiv}>
+        <SimpleAccordion
+          headerTitle="Operations"
+          showSearchBox={false}
+        >
+          <div>
+            <CustomButton
+              onClick={() => scheduleNowConfirm.setConfirmDialog(true)}
+              tooltipTitle="Schedule now"
+              enableTooltip={true}
+            >
+              Schedule Now
+            </CustomButton>
+            <CustomButton
+              onClick={() => scheduleAdhocModal.handleOpen()}
+              tooltipTitle="Execute ADHOC"
+              enableTooltip={true}
+            >
+              Schedule ADHOC
+            </CustomButton>
+          </div>
+        </SimpleAccordion>
+      </div>
+      <div className={classes.highlightBackground}>
+        {/* <TableToolbar name="Summary" showSearchBox={false} /> */}
+        <Grid container className={classes.body}>
+          <Grid item xs={12}>
+            <strong>Table Name:</strong> {tableName}
+          </Grid>
+          <Grid item xs={12}>
+            <strong>Cron Schedule :</strong> {cronExpression}
+          </Grid>
+          <Grid item xs={12}>
+            <strong>Previous Fire Time: </strong> {previousFireTime ? formatTimeInTimezone(previousFireTime) : '-'}
+          </Grid>
+          <Grid item xs={12}>
+            <strong>Next Fire Time: </strong> {nextFireTime ? formatTimeInTimezone(nextFireTime) : '-'}
+          </Grid>
+        </Grid>
+      </div>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <div className={classes.sqlDiv}>
+            <SimpleAccordion
+              headerTitle="Task Config"
+              showSearchBox={false}
+            >
+              <CodeMirror
+                options={jsonoptions}
+                value={JSON.stringify(get(tableDetail, `OFFLINE.task.taskTypeConfigsMap.${taskType}`, {}), null, '  ')}
+                className={classes.queryOutput}
+                autoCursor={false}
+              />
+            </SimpleAccordion>
+          </div>
+        </Grid>
+        <Grid item xs={6}>
+          <div className={classes.sqlDiv}>
+            {minionMetadata.content}
+          </div>
+          <div className={classes.sqlDiv}>
+            <SimpleAccordion
+              headerTitle="Scheduling Errors"
+              showSearchBox={false}
+            >
+              <Box p={3} style={{ overflow: 'auto' }}>
+                {mostRecentErrorRunMessage}
+              </Box>
+            </SimpleAccordion>
+          </div>
+        </Grid>
+        <Grid item xs={12}>
+          {taskListing.content}
+        </Grid>
+      </Grid>
+      {scheduleAdhocModal.dialog}
+      {scheduleNowConfirm.confirmComponent}
+    </Grid>
+  );
+};
+
+export default TaskQueueTable;
+
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/ChartConstants.ts`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+// Standard chart colors matching the ECharts palette
+export const CHART_COLORS = [
+    "#5470C6", "#91CC75", "#EE6666", "#FAC858", "#73C0DE",
+    "#3BA272", "#FC8452", "#9A60B4", "#EA7CCC", "#6E7074",
+    "#546570", "#C4CCD3", "#F05B72", "#FF715E", "#FFAF51",
+    "#FFE153", "#47B39C", "#5BACE1", "#32C5E9", "#96BFFF"
+];
+
+/**
+ * Default number of series that can be rendered in the chart
+ */
+export const DEFAULT_SERIES_LIMIT = 40;
+
+/**
+ * Chart padding percentage for time axis and series
+ */
+export const CHART_PADDING_PERCENTAGE = 0.05; // 5%
+
+/**
+ * Get color for a series by index
+ * @param index - The series index
+ * @returns The color for the series
+ */
+export const getSeriesColor = (index: number): string => {
+  return CHART_COLORS[index % CHART_COLORS.length];
+};
+
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/PinotMethodUtils.ts`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import jwtDecode from 'jwt-decode';
+import { get, each, isEqual, isArray, keys, union } from 'lodash';
+import {
+  DataTable,
+  InstanceStatus,
+  InstanceStatusCell,
+  InstanceType,
+  RebalanceTableSegmentJob,
+  RebalanceTableSegmentJobs,
+  SchemaInfo,
+  SegmentMetadata,
+  SqlException,
+  SQLResult,
+  TaskType,
+} from 'Models';
+import moment from 'moment';
+import {
+  getTenants,
+  getInstances,
+  getInstance,
+  putInstance,
+  setInstanceState,
+  setTableState,
+  dropInstance,
+  getPeriodicTaskNames,
+  runPeriodicTask,
+  runPeriodicTaskWithErrors,
+  getTaskTypes,
+  getTaskTypeDebug,
+  getTables,
+  getTaskTypeTasksCount,
+  getTaskTypeState,
+  stopTasks,
+  resumeTasks,
+  cleanupTasks,
+  deleteTasks,
+  scheduleTask,
+  executeTask,
+  getJobDetail,
+  getMinionMeta,
+  getTasks,
+  getTaskDebug,
+  getTaskGeneratorDebug,
+  getTasksSummary,
+  getTaskCounts,
+  getTaskStates,
+  getCronSchedulerInformation,
+  deleteSingleTask,
+  getInstanceLogFiles,
+  downloadInstanceLogFile,
+  updateInstanceTags,
+  getClusterConfig,
+  getQueryTables,
+  getTableSchema,
+  getQueryResult,
+  getTimeSeriesQueryResult,
+  getTenantTable,
+  getTableSize,
+  getIdealState,
+  getExternalView,
+  getTenantTableDetails,
+  getSegmentMetadata,
+  reloadSegment,
+  getTableJobs,
+  getClusterInfo,
+  zookeeperGetList,
+  zookeeperGetData,
+  zookeeperGetListWithStat,
+  zookeeperGetStat,
+  zookeeperPutData,
+  zookeeperDeleteNode,
+  getBrokerListOfTenant,
+  getServerListOfTenant,
+  deleteSegment,
+  resetSegment,
+  putTable,
+  putSchema,
+  deleteTable,
+  deleteSchema,
+  reloadAllSegments,
+  reloadStatus,
+  rebalanceServersForTable,
+  rebalanceBrokersForTable,
+  validateSchema,
+  validateTable,
+  saveSchema,
+  saveTable,
+  getSchema,
+  getSchemaList,
+  getState,
+  getInfo,
+  authenticateUser,
+  getSegmentDebugInfo,
+  requestTable,
+  requestUserList,
+  requestAddUser,
+  requestDeleteUser,
+  requestUpdateUser,
+  getTaskProgress,
+  getSegmentReloadStatus,
+  getTaskRuntimeConfig,
+  getSchemaInfo,
+  getSegmentsStatus,
+  getConsumingSegmentsInfo,
+  getServerToSegmentsCount,
+  pauseConsumption,
+  resumeConsumption,
+  getPauseStatus,
+  getVersions,
+  getLogicalTables,
+  getLogicalTable,
+  putLogicalTable,
+  deleteLogicalTable
+} from '../requests';
+import { baseApi } from './axios-config';
+import Utils from './Utils';
+import { matchPath } from 'react-router-dom';
+import RouterData from '../router';
+import JSONbigBase from 'json-bigint';
+const JSONbig = JSONbigBase({ storeAsString: true });
+
+// This method is used to display tenants listing on cluster manager home page
+// API: /tenants
+// Expected Output: {columns: [], records: []}
+const getTenantsData = () => {
+  return getTenants().then(({ data }) => {
+    const records = union(data.SERVER_TENANTS, data.BROKER_TENANTS);
+    const serverPromiseArr = [], brokerPromiseArr = [], tablePromiseArr = [];
+    const finalResponse = {
+      columns: ['Tenant Name', 'Server', 'Broker', 'Tables'],
+      records: []
+    };
+    records.map((record)=>{
+      finalResponse.records.push([
+        record
+      ]);
+      serverPromiseArr.push(getServerOfTenant(record));
+      brokerPromiseArr.push(getBrokerOfTenant(record));
+      tablePromiseArr.push(getTenantTable(record));
+    });
+    return Promise.all([
+      Promise.all(serverPromiseArr),
+      Promise.all(brokerPromiseArr),
+      Promise.all(tablePromiseArr)
+    ]).then((results)=>{
+      const serversResponseData = results[0];
+      const brokersResponseData = results[1];
+      const tablesResponseData = results[2];
+
+      tablesResponseData.map((tableResult, index)=>{
+        const serverCount = serversResponseData[index]?.length || 0;
+        const brokerCount = brokersResponseData[index]?.length || 0;
+        const tablesCount = tableResult.data.tables.length
+        finalResponse.records[index].push(serverCount, brokerCount, tablesCount);
+      });
+      return finalResponse;
+    });
+  });
+};
+
+// This method is used to fetch all instances on cluster manager home page
+// API: /instances
+// Expected Output: {CONTROLLER: ['Controller1', 'Controller2'], BROKER: ['Broker1', 'Broker2']}
+const getAllInstances = () => {
+  return getInstances().then(({ data }) => {
+    const instanceTypeToInstancesMap: DataTable = {
+      [InstanceType.CONTROLLER]: [],
+      [InstanceType.BROKER]: [],
+      [InstanceType.SERVER]: [],
+      [InstanceType.MINION]: []
+    };
+
+    data.instances.forEach((instance) => {
+      const instanceType =  instance.split('_')[0].toUpperCase();
+      if (instanceTypeToInstancesMap[instanceType]) {
+        instanceTypeToInstancesMap[instanceType].push(instance);
+      }
+    });
+
+    return instanceTypeToInstancesMap;
+  });
+};
+
+// This method is used to display instance data on cluster manager home page
+// API: /instances/:instanceName
+// Expected Output: {columns: [], records: []}
+const getInstanceData = (instances, liveInstanceArr) => {
+  const promiseArr = [...instances.map((inst) => getInstance(inst))];
+
+  return Promise.all(promiseArr).then(async (result) => {
+    // First, get all instance configs
+    const instanceRecords = result.map(({ data }) => {
+      const isAlive = liveInstanceArr.indexOf(data.instanceName) > -1;
+      const isEnabled = data.enabled;
+      const queriesDisabled = data.queriesDisabled === 'true' || data.queriesDisabled === true;
+      const shutdownInProgress = data.shutdownInProgress === true;
+      
+      return {
+        instanceName: data.instanceName,
+        enabled: data.enabled,
+        hostName: data.hostName,
+        port: data.port,
+        adminPort: data.adminPort,
+        isAlive,
+        isEnabled,
+        queriesDisabled,
+        shutdownInProgress
+      };
+    });
+
+    // Then check health endpoints for alive instances
+    const healthCheckPromises = instanceRecords.map(async (record) => {
+
+      let status: InstanceStatusCell = {value: InstanceStatus.DEAD, tooltip: 'Instance is not running'};
+
+      if (!record.isAlive) {
+        return { ...record, healthStatus: status };
+      }
+
+      if (record.shutdownInProgress) {
+        status = {value: InstanceStatus.UNHEALTHY, tooltip: 'Instance is running but is starting up or shutting down'};
+      } else if (!record.isEnabled) {
+        status = {value: InstanceStatus.INSTANCE_DISABLED, tooltip: 'Instance has been disabled in helix'};
+      } else if (record.queriesDisabled) {
+        status = {value: InstanceStatus.QUERIES_DISABLED, tooltip: 'Instance running but has queries disabled'};
+      } else {
+        status = {value: InstanceStatus.HEALTHY, tooltip: 'Instance is healthy and ready to serve requests'};
+      }
+
+      return { ...record, healthStatus: status };
+    });
+
+    const recordsWithHealth = await Promise.all(healthCheckPromises);
+
+    return {
+      columns: ['Instance Name', 'Enabled', 'Hostname', 'Port', 'Status'],
+      records: recordsWithHealth.map(record => [
+        record.instanceName,
+        record.enabled,
+        record.hostName,
+        record.port,
+        record.healthStatus
+      ])
+    };
+  });
+};
+
+// This method is used to fetch cluster name
+// API: /cluster/info
+// Expected Output: {clusterName: ''}
+const getClusterName = () => {
+  return getClusterInfo().then(({ data }) => {
+    return data.clusterName;
+  });
+};
+
+// This method is used to fetch array of live instances name
+// API: /zk/ls?path=:ClusterName/LIVEINSTANCES
+// Expected Output: []
+const getLiveInstance = (clusterName: string) => {
+  const params = encodeURIComponent(`/${clusterName}/LIVEINSTANCES`);
+  return zookeeperGetList(params).then((data) => {
+    return data;
+  });
+};
+
+const getLiveInstances = () => {
+  let localclusterName: string | null = localStorage.getItem('pinot_ui:clusterName');
+  let clusterNameRes: Promise<string>;
+  if(!localclusterName || localclusterName === ''){
+    clusterNameRes = getClusterName();
+  } else {
+    clusterNameRes = Promise.resolve(localclusterName);
+  }
+  return clusterNameRes.then((clusterName) => {
+    return getLiveInstance(clusterName);
+  });
+};
+
+// This method is used to diaplay cluster congifuration on cluster manager home page
+// API: /cluster/configs
+// Expected Output: {columns: [], records: []}
+const getClusterConfigData = () => {
+  return getClusterConfig().then(({ data }) => {
+    return {
+      columns: ['Property', 'Value'],
+      records: [...Object.keys(data).map((key) => [key, data[key]])],
+    };
+  });
+};
+
+// This method is used to fetch cluster congifuration
+// API: /cluster/configs
+// Expected Output: {key: value}
+const getClusterConfigJSON = () => {
+  return getClusterConfig().then(({ data }) => {
+    return data;
+  });
+};
+
+// This method is used to display table listing on query page
+// API: /tables
+// Expected Output: {columns: [], records: []}
+const getQueryTablesList = ({bothType = false}) => {
+  const promiseArr = bothType ? [getQueryTables('realtime'), getQueryTables('offline')] : [getQueryTables()];
+
+  return Promise.all(promiseArr).then((results) => {
+    const responseObj = {
+      columns: ['Tables'],
+      records:  []
+    };
+    results.map((result)=>{
+      result.data.tables.map((table)=>{
+        responseObj.records.push([table]);
+      });
+    });
+    return responseObj;
+  });
+};
+
+// This method is used to display log
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/SortFunctions.tsx`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import {TableSortFunction} from "Models";
+import app_state from "../app_state";
+
+
+// table sorting requires a 1/-1 result. This helper function helps calculate this
+// from any two results.
+const valuesToResultNumber = (aRes: any, bRes: any, order: boolean): number => {
+    if (aRes === bRes) {
+        return 0;
+    }
+    const result = order ? aRes > bRes : aRes < bRes;
+    return result ? 1 : -1;
+}
+
+const getCellValue = (row: any, column: string, index: number): any => {
+    const cellValue = row[column+app_state.columnNameSeparator+index];
+    if (cellValue && typeof cellValue === "object" && "value" in cellValue) {
+        return cellValue.value;
+    }
+    return cellValue;
+}
+
+const normalizeCellValue = (value: any): string | number => {
+    if (typeof value === "number") {
+        return value;
+    }
+    if (value === null || value === undefined) {
+        return "";
+    }
+    return value.toString().toLowerCase();
+}
+
+export const sortNumberOfSegments: TableSortFunction = (a: any, b: any, column: string, index: number, order: boolean) => {
+    const aSegmentInt = parseInt(a[column+app_state.columnNameSeparator+index]);
+    const bSegmentInt = parseInt(b[column+app_state.columnNameSeparator+index]);
+    return valuesToResultNumber(aSegmentInt, bSegmentInt, order);
+}
+
+export const sortBytes: TableSortFunction = (a: any, b: any, column: string, index: number, order: boolean) => {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const [aValue, aUnit] = a[column+app_state.columnNameSeparator+index].split(" ");
+    const [bValue, bUnit] = b[column+app_state.columnNameSeparator+index].split(" ");
+    const aUnitIndex = sizes.indexOf(aUnit);
+    const bUnitIndex = sizes.indexOf(bUnit);
+
+    if (sizes.indexOf(aUnit) === sizes.indexOf(bUnit)) {
+        return valuesToResultNumber(parseFloat(aValue), parseFloat(bValue), order);
+    } else {
+        return valuesToResultNumber(aUnitIndex, bUnitIndex, order);
+    }
+}
+
+export const sortCellValue: TableSortFunction = (a: any, b: any, column: string, index: number, order: boolean) => {
+    const aValue = normalizeCellValue(getCellValue(a, column, index));
+    const bValue = normalizeCellValue(getCellValue(b, column, index));
+    return valuesToResultNumber(aValue, bValue, order);
+}
+
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/TimeseriesUtils.ts`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import { ChartSeries, ChartDataPoint, MetricStats } from 'Models';
+
+// Define proper types for API responses
+interface BrokerResponse {
+  resultTable?: {
+    dataSchema: {
+      columnNames: string[];
+      columnDataTypes: string[];
+    };
+    rows: any[][];
+  };
+  exceptions?: any[];
+  error?: string;
+}
+
+/**
+ * Parse broker timeseries response directly to ChartSeries
+ */
+export const parseTimeseriesResponse = (brokerResponse: BrokerResponse): ChartSeries[] => {
+  if (!brokerResponse?.resultTable?.dataSchema) {
+    return [];
+  }
+
+  const { columnNames } = brokerResponse.resultTable.dataSchema;
+  const rows = brokerResponse.resultTable.rows || [];
+
+  const tsIdx = columnNames.indexOf('ts');
+  const valuesIdx = columnNames.indexOf('values');
+  const nameIdx = columnNames.indexOf('__name__');
+
+  if (tsIdx === -1 || valuesIdx === -1 || nameIdx === -1) {
+    return [];
+  }
+
+  return rows
+    .filter(row => row != null)
+    .map(row => {
+      const timestamps = parseArray(row[tsIdx]);
+      const values = parseArray(row[valuesIdx]);
+      const metric: Record<string, string> = { __name__: String(row[nameIdx] || '') };
+
+      // Add tag columns
+      columnNames.forEach((col, idx) => {
+        if (col !== 'ts' && col !== 'values' && col !== '__name__' && row[idx] != null) {
+          metric[col] = String(row[idx]);
+        }
+      });
+
+      // Create data points directly
+      const dataPoints: ChartDataPoint[] = [];
+      const len = Math.min(timestamps.length, values.length);
+      for (let i = 0; i < len; i++) {
+        const ts = timestamps[i];
+        const val = values[i];
+        const tsSeconds = ts > 1e12 ? Math.floor(ts / 1000) : ts;
+        dataPoints.push({
+          timestamp: tsSeconds * 1000, // Convert to milliseconds for chart
+          value: val == null ? 0 : val,
+          formattedTime: new Date(tsSeconds * 1000).toLocaleString()
+        });
+      }
+
+      const stats = calculateMetricStats(dataPoints);
+      const seriesName = formatSeriesName(metric);
+
+      return {
+        name: seriesName,
+        data: dataPoints,
+        stats
+      };
+    });
+};
+
+/**
+ * Helper function to parse array data from broker response
+ */
+const parseArray = (data: any): number[] => {
+  if (Array.isArray(data)) {
+    return data.map(v => v == null ? null as any : (typeof v === 'number' ? v : parseFloat(String(v))));
+  }
+  if (typeof data === 'string') {
+    try {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) return parseArray(parsed);
+    } catch (e) { /* ignore */ }
+  }
+  return [];
+};
+
+/**
+ * Calculate statistics for a metric series
+ */
+export const calculateMetricStats = (dataPoints: ChartDataPoint[]): MetricStats => {
+  if (dataPoints.length === 0) {
+    return {
+      min: NaN,
+      max: NaN,
+      avg: NaN,
+      sum: NaN,
+      count: 0,
+      firstValue: NaN,
+      lastValue: NaN
+    };
+  }
+
+  // Filter out null/undefined values and check if we have any valid values
+  const validValues = dataPoints
+    .map(dp => dp.value)
+    .filter(val => val !== null && val !== undefined && !isNaN(val));
+
+  if (validValues.length === 0) {
+    return {
+      min: NaN,
+      max: NaN,
+      avg: NaN,
+      sum: NaN,
+      count: 0,
+      firstValue: NaN,
+      lastValue: NaN
+    };
+  }
+
+  const sum = validValues.reduce((acc, val) => acc + val, 0);
+  const avg = sum / validValues.length;
+  const min = Math.min(...validValues);
+  const max = Math.max(...validValues);
+
+  // Find first and last valid values
+  const firstValidIndex = dataPoints.findIndex(dp => dp.value !== null && dp.value !== undefined && !isNaN(dp.value));
+  const lastValidIndex = dataPoints.length - 1 - dataPoints.slice().reverse().findIndex(dp => dp.value !== null && dp.value !== undefined && !isNaN(dp.value));
+
+  const firstValue = firstValidIndex >= 0 ? dataPoints[firstValidIndex].value : NaN;
+  const lastValue = lastValidIndex >= 0 ? dataPoints[lastValidIndex].value : NaN;
+
+  return {
+    min,
+    max,
+    avg,
+    sum,
+    count: validValues.length,
+    firstValue,
+    lastValue
+  };
+};
+
+/**
+ * Format series name from metric labels
+ */
+export const formatSeriesName = (metric: Record<string, string>): string => {
+  if (!metric || Object.keys(metric).length === 0) {
+    return 'Unknown Metric';
+  }
+
+  // Try to find a meaningful name from common label patterns
+  const name = metric.__name__ || metric.name || metric.metric || metric.job || metric.instance;
+
+  if (name) {
+    // Add additional context if available, but exclude the main metric name
+    const additionalLabels = Object.entries(metric)
+      .filter(([key]) => !['__name__', 'name', 'metric', 'job', 'instance'].includes(key))
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(', ');
+
+    // Return just the name without the {} wrapper
+    return name;
+  }
+
+  // Fallback to just the first label without {}
+  const firstLabel = Object.entries(metric)[0];
+  return firstLabel ? firstLabel[0] : 'Unknown Metric';
+};
+
+/**
+ * Check if response is in Broker compatible format
+ */
+export const isBrokerFormat = (response: any): boolean => {
+  return response?.resultTable?.dataSchema && Array.isArray(response.resultTable.rows);
+};
+
+/**
+ * Get time range from data points
+ */
+export const getTimeRange = (dataPoints: ChartDataPoint[]): { start: number; end: number } => {
+  if (dataPoints.length === 0) {
+    return { start: 0, end: 0 };
+  }
+
+  const timestamps = dataPoints.map(dp => dp.timestamp);
+  return {
+    start: Math.min(...timestamps),
+    end: Math.max(...timestamps)
+  };
+};
+
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/TimezoneUtils.ts`
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import moment from 'moment';
+import 'moment-timezone';
+
+// Default timezone fallback (single source of truth)
+export const DEFAULT_TIMEZONE_FALLBACK = 'UTC';
+// Default timezone
+export const DEFAULT_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || DEFAULT_TIMEZONE_FALLBACK;
+
+// Standardized timezones using 3-letter zone IDs with location information
+// Each timezone has only one representation, sorted by UTC offset
+export const STANDARD_TIMEZONES = [
+  // UTC-12 to UTC-1
+  { value: 'BIT(Pacific/Baker)', label: 'BIT (UTC-12)' },
+  { value: 'SST(Pacific/Samoa)', label: 'SST (UTC-11)' },
+  { value: 'HST(Pacific/Honolulu)', label: 'HST (UTC-10)' },
+  { value: 'HAST(America/Adak)', label: 'HAST (UTC-10)' },
+  { value: 'AKST(America/Anchorage)', label: 'AKST (UTC-9)' },
+  { value: 'HADT(America/Adak)', label: 'HADT (UTC-9)' },
+  { value: 'PST(America/Los_Angeles)', label: 'PST (UTC-8)' },
+  { value: 'AKDT(America/Anchorage)', label: 'AKDT (UTC-8)' },
+  { value: 'MST(America/Denver)', label: 'MST (UTC-7)' },
+  { value: 'PDT(America/Los_Angeles)', label: 'PDT (UTC-7)' },
+  { value: 'CST(America/Chicago)', label: 'CST (UTC-6)' },
+  { value: 'MDT(America/Denver)', label: 'MDT (UTC-6)' },
+  { value: 'EST(America/New_York)', label: 'EST (UTC-5)' },
+  { value: 'CDT(America/Chicago)', label: 'CDT (UTC-5)' },
+  { value: 'COT(America/Bogota)', label: 'COT (UTC-5)' },
+  { value: 'PET(America/Lima)', label: 'PET (UTC-5)' },
+  { value: 'AST(America/Puerto_Rico)', label: 'AST (UTC-4)' },
+  { value: 'EDT(America/New_York)', label: 'EDT (UTC-4)' },
+  { value: 'VET(America/Caracas)', label: 'VET (UTC-4)' },
+  { value: 'BOT(America/La_Paz)', label: 'BOT (UTC-4)' },
+  { value: 'ART(America/Argentina/Buenos_Aires)', label: 'ART (UTC-3)' },
+  { value: 'BRT(America/Sao_Paulo)', label: 'BRT (UTC-3)' },
+  { value: 'UYT(America/Montevideo)', label: 'UYT (UTC-3)' },
+  { value: 'GFT(America/Cayenne)', label: 'GFT (UTC-3)' },
+  { value: 'FNT(America/Noronha)', label: 'FNT (UTC-2)' },
+  { value: 'AZOT(Atlantic/Azores)', label: 'AZOT (UTC-1)' },
+  { value: 'CVT(Atlantic/Cape_Verde)', label: 'CVT (UTC-1)' },
+
+  // UTC+0
+  { value: 'UTC', label: 'UTC (UTC+0)' },
+  { value: 'GMT', label: 'GMT (UTC+0)' },
+  { value: 'WET(Europe/London)', label: 'WET (UTC+0)' },
+
+  // UTC+1 to UTC+3
+  { value: 'CET(Europe/Paris)', label: 'CET (UTC+1)' },
+  { value: 'WEST(Europe/London)', label: 'WEST (UTC+1)' },
+  { value: 'BST(Europe/London)', label: 'BST (UTC+1)' },
+  { value: 'WAT(Africa/Lagos)', label: 'WAT (UTC+1)' },
+  { value: 'CAT(Africa/Harare)', label: 'CAT (UTC+2)' },
+  { value: 'CEST(Europe/Paris)', label: 'CEST (UTC+2)' },
+  { value: 'EET(Europe/Athens)', label: 'EET (UTC+2)' },
+  { value: 'SAST(Africa/Johannesburg)', label: 'SAST (UTC+2)' },
+  { value: 'IST(Asia/Jerusalem)', label: 'IST (UTC+2)' },
+  { value: 'EAT(Africa/Nairobi)', label: 'EAT (UTC+3)' },
+  { value: 'EEST(Europe/Athens)', label: 'EEST (UTC+3)' },
+  { value: 'MSK(Europe/Moscow)', label: 'MSK (UTC+3)' },
+  { value: 'AST(Asia/Riyadh)', label: 'AST (UTC+3)' },
+
+  // UTC+4 to UTC+6
+  { value: 'GST(Asia/Dubai)', label: 'GST (UTC+4)' },
+  { value: 'AMT(Asia/Yerevan)', label: 'AMT (UTC+4)' },
+  { value: 'AZT(Asia/Baku)', label: 'AZT (UTC+4)' },
+  { value: 'PKT(Asia/Karachi)', label: 'PKT (UTC+5)' },
+  { value: 'UZT(Asia/Tashkent)', label: 'UZT (UTC+5)' },
+  { value: 'YEKT(Asia/Yekaterinburg)', label: 'YEKT (UTC+5)' },
+  { value: 'IST(Asia/Kolkata)', label: 'IST (UTC+5:30)' },
+  { value: 'NPT(Asia/Kathmandu)', label: 'NPT (UTC+5:45)' },
+  { value: 'BST(Asia/Dhaka)', label: 'BST (UTC+6)' },
+  { value: 'BDT(Asia/Dhaka)', label: 'BDT (UTC+6)' },
+  { value: 'BTT(Asia/Thimphu)', label: 'BTT (UTC+6)' },
+
+  // UTC+7 to UTC+9
+  { value: 'ICT(Asia/Bangkok)', label: 'ICT (UTC+7)' },
+  { value: 'WIB(Asia/Jakarta)', label: 'WIB (UTC+7)' },
+  { value: 'KRAT(Asia/Krasnoyarsk)', label: 'KRAT (UTC+7)' },
+  { value: 'CST(Asia/Shanghai)', label: 'CST (UTC+8)' },
+  { value: 'SGT(Asia/Singapore)', label: 'SGT (UTC+8)' },
+  { value: 'HKT(Asia/Hong_Kong)', label: 'HKT (UTC+8)' },
+  { value: 'MYT(Asia/Kuala_Lumpur)', label: 'MYT (UTC+8)' },
+  { value: 'WITA(Asia/Makassar)', label: 'WITA (UTC+8)' },
+  { value: 'IRKT(Asia/Irkutsk)', label: 'IRKT (UTC+8)' },
+  { value: 'JST(Asia/Tokyo)', label: 'JST (UTC+9)' },
+  { value: 'KST(Asia/Seoul)', label: 'KST (UTC+9)' },
+  { value: 'WIT(Asia/Jayapura)', label: 'WIT (UTC+9)' },
+  { value: 'YAKT(Asia/Yakutsk)', label: 'YAKT (UTC+9)' },
+
+  // UTC+9:30 to UTC+12
+  { value: 'ACST(Australia/Adelaide)', label: 'ACST (UTC+9:30)' },
+  { value: 'AEST(Australia/Sydney)', label: 'AEST (UTC+10)' },
+  { value: 'AEDT(Australia/Sydney)', label: 'AEDT (UTC+11)' },
+  { value: 'SBT(Pacific/Guadalcanal)', label: 'SBT (UTC+11)' },
+  { value: 'NCT(Pacific/Noumea)', label: 'NCT (UTC+11)' },
+  { value: 'VUT(Pacific/Efate)', label: 'VUT (UTC+11)' },
+  { value: 'NZST(Pacific/Auckland)', label: 'NZST (UTC+12)' },
+  { value: 'FJT(Pacific/Fiji)', label: 'FJT (UTC+12)' },
+  { value: 'TVT(Pacific/Funafuti)', label: 'TVT (UTC+12)' },
+  { value: 'NZDT(Pacific/Auckland)', label: 'NZDT (UTC+13)' },
+  { value: 'TOT(Pacific/Tongatapu)', label: 'TOT (UTC+13)' },
+  { value: 'LINT(Pacific/Kiritimati)', label: 'LINT (UTC+14)' },
+];
+
+// Legacy support - map common location-based timezones to standardized format
+const TIMEZONE_MAPPING: Record<string, string> = {
+  // US Timezones
+  'America/New_York': 'EST(America/New_York)',
+  'America/Chicago': 'CST(America/Chicago)',
+  'America/Denver': 'MST(America/Denver)',
+  'America/Los_Angeles': 'PST(America/Los_Angeles)',
+  'America/Anchorage': 'AKST(America/Anchorage)',
+  'America/Adak': 'HAST(America/Adak)',
+  'Pacific/Honolulu': 'HST(Pacific/Honolulu)',
+  'America/Puerto_Rico': 'AST(America/Puerto_Rico)',
+
+  // South American Timezones
+  'America/Sao_Paulo': 'BRT(America/Sao_Paulo)',
+  'America/Noronha': 'FNT(America/Noronha)',
+  'America/Argentina/Buenos_Aires': 'ART(America/Argentina/Buenos_Aires)',
+  'America/Montevideo': 'UYT(America/Montevideo)',
+  'America/Cayenne': 'GFT(America/Cayenne)',
+  'America/Bogota': 'COT(America/Bogota)',
+  'America/Lima': 'PET(America/Lima)',
+  'America/Caracas': 'VET(America/Caracas)',
+  'America/La_Paz': 'BOT(America/La_Paz)',
+
+  // Atlantic Timezones
+  'Atlantic/Azores': 'AZOT(Atlantic/Azores)',
+  'Atlantic/Cape_Verde': 'CVT(Atlantic/Cape_Verde)',
+
+  // African Timezones
+  'Africa/Lagos': 'WAT(Africa/Lagos)',
+  'Africa/Harare': 'CAT(Africa/Harare)',
+  'Africa/Johannesburg': 'SAST(Africa/Johannesburg)',
+  'Africa/Nairobi': 'EAT(Africa/Nairobi)',
+
+  // European Timezones
+  'Europe/London': 'WET(Europe/London)',
+  'Europe/Paris': 'CET(Europe/Paris)',
+  'Europe/Berlin': 'CET(Europe/Paris)',
+  'Europe/Athens': 'EET(Europe/Athens)',
+  'Europe/Moscow': 'MSK(Europe/Moscow)',
+
+  // Middle Eastern Timezones
+  'Asia/Jerusalem': 'IST(Asia/Jerusalem)',
+  'Asia/Riyadh': 'AST(Asia/Riyadh)',
+  'Asia/Dubai': 'GST(Asia/Dubai)',
+
+  // Central Asian Timezones
+  'Asia/Yerevan': 'AMT(Asia/Yerevan)',
+  'Asia/Baku': 'AZT(Asia/Baku)',
+  'Asia/Karachi': 'PKT(Asia/Karachi)',
+  'Asia/Tashkent': 'UZT(Asia/Tashkent)',
+  'Asia/Yekaterinburg': 'YEKT(Asia/Yekaterinburg)',
+  'Asia/Kolkata': 'IST(Asia/Kolkata)',
+  'Asia/Kathmandu': 'NPT(Asia/Kathmandu)',
+  'Asia/Dhaka': 'BDT(Asia/Dhaka)',
+  'Asia/Thimphu': 'BTT(Asia/Thimphu)',
+
+  // Southeast Asian Timezones
+  'Asia/Bangkok': 'ICT(Asia/Bangkok)',
+  'Asia/Jakarta': 'WIB(Asia/Jakarta)',
+  'Asia/Makassar': 'WITA(Asia/Makassar)',
+  'Asia/Jayapura': 'WIT(Asia/Jayapura)',
+  'Asia/Krasnoyarsk': 'KRAT(Asia/Krasnoyarsk)',
+  'Asia/Irkutsk': 'IRKT(Asia/Irkutsk)',
+  'Asia/Yakutsk': 'YAKT(Asia/Yakutsk)',
+
+  // East Asian Timezones
+  'Asia/Shanghai': 'CST(Asia/Shanghai)',
+  'Asia/Singapore': 'SGT(Asia/Singapore)',
+  'Asia/Hong_Kong': 'HKT(Asia/Hong_Kong)',
+  'Asia/Kuala_Lumpur': 'MYT(Asia/Kuala_Lumpur)',
+  'Asia/Tokyo': 'JST(Asia/Tokyo)',
+  'Asia/Seoul': 'KST(Asia/Seoul)',
+
+  // Pacific Timezones
+  'Pacific/Baker': 'BIT(Pacific/Baker)',
+  'Pacific/Samoa': 'SST(Pacific/Samoa)',
+  'Pacific/Guadalcanal': 'SBT(Pacific/Guadalcanal)',
+  'Pacific/Noumea': 'NCT(Pacific/Noumea)',
+  'Pacific/Efate': 'VUT(Pacific/Efate)',
+  'Pacific/Auckland': 'NZST(Pacific/Auckland)',
+  'Pacific/Fiji': 'FJT(Pacific/Fiji)',
+  'Pacific/Funafuti': 'TVT(Pacific/Funafuti)',
+  'Pacific/Tongatapu': 'TOT(Pacific/Tongatapu)',
+  'Pacific/Kiritimati': 'LINT(Pacific/Kiritimati)',
+
+  // Australian Timezones
+  'Australia/Sydney': 'AEST(Australia/Sydney)',
+  'Australia/Adelaide': 'ACST(Australia/Adelaide)',
+  'Australia/Perth': 'CST(Asia/Shanghai)',
+
+  // Common Timezone Abbreviations
+  'EST': 'EST(America/New_York)',
+  'CST': 'CST(America/Chicago)',
+  'MST': 'MST(America/Denver)',
+  'PST': 'PST(America/Los_Angeles)',
+  'EDT': 'EDT(America/New_York)',
+  'CDT': 'CDT(America/Chicago)',
+  'MDT': 'MDT(America/Denver)',
+  'PDT': 'PDT(America/Los_Angeles)',
+  'AKST': 'AKST(America/Anchorage)',
+  'AKDT': 'AKDT(America/Anchorage)',
+  'HAST': 'HAST(America/Adak)',
+  'HADT': 'HADT(America/Adak)',
+  'HST': 'HST(Pacific/Honolulu)',
+  'SST': 'SST(Pacific/Samoa)',
+  'AST': 'AST(America/Puerto_Rico)',
+  'WET': 'WET(Europe/London)',
+  'WEST': 'WEST(Europe/London)',
+  'BST': 'BST(Europ
+```
+
+### Core Architecture Module: `pinot-controller/src/main/resources/app/utils/Utils.tsx`
+```
+/* eslint-disable no-nested-ternary */
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import React from 'react';
+import ReactDiffViewer, {DiffMethod} from 'react-diff-viewer';
+import { map, isEqual, findIndex, findLast } from 'lodash';
+import app_state from '../app_state';
+import {
+  DISPLAY_SEGMENT_STATUS, InstanceType,
+  MapRecord,
+  PinotTableDetails,
+  SEGMENT_STATUS,
+  SegmentStatus,
+  TableData,
+} from 'Models';
+import Loading from '../components/Loading';
+import moment from "moment";
+import {RebalanceServerOption} from "../components/Homepage/Operations/RebalanceServer/RebalanceServerOptions";
+import { formatTimeInTimezone } from './TimezoneUtils';
+
+const getRebalanceConfigValue = (
+    rebalanceConfig: { [optionName: string]: string | boolean | number },
+    option: RebalanceServerOption
+) => {
+  return (
+      Object.keys(rebalanceConfig).includes(option.name) ? rebalanceConfig[option.name] : option.defaultValue
+  );
+}
+
+const sortArray = function (sortingArr, keyName, ascendingFlag) {
+  if (ascendingFlag) {
+    return sortingArr.sort(function (a, b) {
+      if (a[keyName] < b[keyName]) {
+        return -1;
+      }
+      if (a[keyName] > b[keyName]) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+  return sortingArr.sort(function (a, b) {
+    if (b[keyName] < a[keyName]) {
+      return -1;
+    }
+    if (b[keyName] > a[keyName]) {
+      return 1;
+    }
+    return 0;
+  });
+};
+
+const pinotTableDetailsFormat = (tableDetails: PinotTableDetails): Array<string | number | boolean | SegmentStatus | { customRenderer: JSX.Element }> => {
+  return [
+    tableDetails.name,
+    tableDetails.estimated_size || Loading,
+    tableDetails.reported_size || Loading,
+    tableDetails.number_of_segments || Loading,
+    tableDetails.segment_status || Loading
+  ];
+}
+
+const pinotTableDetailsFromArray = (tableDetails: Array<string | number | boolean | MapRecord | SegmentStatus | { customRenderer: JSX.Element }>): PinotTableDetails => {
+  return {
+    name: tableDetails[0] as string,
+    estimated_size: tableDetails[1] as string,
+    reported_size: tableDetails[2] as string,
+    number_of_segments: tableDetails[3] as string,
+    segment_status: tableDetails[4] as any
+  };
+}
+
+const tableFormat = (data: TableData, withColumnNameSeparator: boolean = true): Array<{ [key: string]: any }> => {
+  const rows = data.records;
+  const header = data.columns;
+
+  const results: Array<{ [key: string]: any }> = [];
+  rows.forEach((singleRow) => {
+    const obj: { [key: string]: any } = {};
+    singleRow.forEach((val: any, index: number) => {
+      // The column name separator is added to avoid conflicts where 2 columns
+      // have the same name. But for cases where we download the raw data, we
+      // do not want the separate there.
+      if (withColumnNameSeparator) {
+        obj[header[index] + app_state.columnNameSeparator + index] = val;
+      } else {
+        obj[header[index]] = val;
+      }
+    });
+    results.push(obj);
+  });
+  return results;
+};
+
+const getSegmentStatus = (idealStateObj, externalViewObj) => {
+  const tableStatus = getDisplayTableStatus(idealStateObj, externalViewObj);
+  const statusMismatchDiffComponent = (
+    <ReactDiffViewer
+      oldValue={JSON.stringify(idealStateObj, null, 2)}
+      newValue={JSON.stringify(externalViewObj, null, 2)}
+      splitView={true}
+      showDiffOnly={true}
+      leftTitle={"Ideal State"}
+      rightTitle={"External View"}
+      compareMethod={DiffMethod.WORDS}
+    />
+  );
+
+  if(tableStatus === DISPLAY_SEGMENT_STATUS.BAD) {
+    return ({
+      value: tableStatus,
+      tooltip: "One or more segments in this table are in bad state. Click the status to view more details.",
+      component: statusMismatchDiffComponent,
+    })
+  }
+
+  if(tableStatus === DISPLAY_SEGMENT_STATUS.UPDATING) {
+    return ({
+      value: tableStatus,
+      tooltip: "One or more segments in this table are in updating state. Click the status to view more details.",
+      component: statusMismatchDiffComponent,
+    })
+  }
+
+  return ({
+    value: tableStatus,
+    tooltip: "All segments in this table are in good state.",
+  });
+};
+
+const findNestedObj = (entireObj, keyToFind, valToFind) => {
+  let foundObj;
+  JSON.stringify(entireObj, (a, nestedValue) => {
+    if (nestedValue && nestedValue[keyToFind] === valToFind) {
+      foundObj = nestedValue;
+    }
+    return nestedValue;
+  });
+  return foundObj;
+};
+
+const generateCodeMirrorOptions = (array, type, modeType?) => {
+  const arr = [];
+  // eslint-disable-next-line no-shadow
+  const nestedFields = (arrayList, type, level, oldObj?) => {
+    map(arrayList, (a) => {
+      const obj = {
+        text: a.displayName || a.name || a,
+        displayText: a.displayName || a.name || a,
+        filterText: oldObj
+          ? `${oldObj.filterText}.${a.displayName || a.name || a}`
+          : a.displayName || a.name || a,
+        render: (el, cm, data) => {},
+        className:
+          type === 'FUNCTION'
+            ? 'codemirror-func'
+            : type === 'SQL'
+              ? 'codemirror-sql'
+              : type === 'BINARY-OPERATORS'
+                ? 'codemirror-Operators'
+                : type === 'TABLE'
+                  ? 'codemirror-table'
+                  : 'codemirror-column'
+      };
+      obj[type === 'FUNCTION' ? 'returnType' : 'type'] =
+        type === 'FUNCTION'
+          ? a.returnType
+          : type === 'SQL'
+            ? 'SQL'
+            : type === 'BINARY-OPERATORS'
+              ? 'Binary Operators'
+              : a.type;
+      obj.render = (el, cm, data) => {
+        codeMirrorOptionsTemplate(el, data);
+      };
+
+      if (oldObj === undefined) {
+        arr.push(obj);
+      } else {
+        const index = findIndex(
+          arr,
+          (n) => n.filterText === oldObj.filterText
+        );
+        if (index !== -1) {
+          const name = obj.displayText;
+          if (modeType === 'sql') {
+            obj.displayText = `${oldObj.displayText}.${name}`;
+            obj.text = `${oldObj.text}.${name}`;
+          } else {
+            obj.displayText = name;
+            obj.text = name;
+          }
+          obj.filterText = `${oldObj.text}.${name}`;
+          if (arr[index].fields) {
+            arr[index].fields.push(obj);
+          } else {
+            arr[index].fields = [];
+            arr[index].fields.push(obj);
+          }
+        } else {
+          const indexPath = getNestedObjPathFromList(arr, oldObj);
+          if (indexPath && indexPath.length) {
+            pushNestedObjectInArray(indexPath, obj, arr, modeType);
+          }
+        }
+      }
+      if (a.fields) {
+        nestedFields(a.fields, type, level + 1, obj);
+      }
+    });
+    return arr;
+  };
+  return nestedFields(array, type, 0);
+};
+
+const pushNestedObjectInArray = (pathArr, obj, targetList, modeType) => {
+  const rollOverFields = (target) => {
+    map(target, (list) => {
+      if (pathArr === list.filterText) {
+        if (modeType === 'sql') {
+          obj.displayText = `${pathArr}.${obj.displayText}`;
+          obj.text = `${pathArr}.${obj.text}`;
+        } else {
+          obj.displayText = obj.displayText;
+          obj.text = obj.text;
+        }
+        obj.filterText = `${pathArr}.${obj.text}`;
+        if (list.fields) {
+          list.fields.push(obj);
+        } else {
+          list.fields = [];
+          list.fields.push(obj);
+        }
+      } else if (list.fields) {
+        rollOverFields(list.fields);
+      }
+    });
+  };
+  rollOverFields(targetList);
+};
+
+const getNestedObjPathFromList = (list, obj) => {
+  const str = [];
+  const recursiveFunc = (arr, level) => {
+    map(arr, (a) => {
+      if (a.fields) {
+        str.push(a.filterText);
+        recursiveFunc(a.fields, level + 1);
+      } else if (obj.filterText === a.filterText) {
+        str.push(a.filterText);
+      }
+    });
+    return findLast(str);
+  };
+  return recursiveFunc(list, 0);
+};
+
+const codeMirrorOptionsTemplate = (el, data) => {
+  const text = document.createElement('div');
+  const fNameSpan = document.createElement('span');
+  fNameSpan.setAttribute('class', 'funcText');
+  fNameSpan.innerHTML = data.displayText;
+
+  text.appendChild(fNameSpan);
+  el.appendChild(text);
+
+  // data.returnType is for UDF Function ||  data.type is for Fields
+  if (data.returnType || data.type) {
+    const returnTypetxt = document.createElement('div');
+    returnTypetxt.setAttribute('class', 'fieldText');
+    const content = data.returnType
+      ? `Return Type: ${data.returnType}`
+      : `Type: ${data.type}`;
+    returnTypetxt.innerHTML = content;
+    el.appendChild(returnTypetxt);
+  }
+};
+
+const serialize = (obj: any, prefix?: any) => {
+  let str = [], p;
+  for (p in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, p)) {
+      var k = prefix ? prefix + "[" + p + "]" : p,
+        v = obj[p];
+      str.push((v !== null && typeof v === "object") ?
+        serialize(v, k) :
+        encodeURIComponent(k) + "=" + encodeURIComponent(v));
+    }
+  }
+  return str.join("&");
+};
+
+const navigateToPreviousPage = (location, popTwice) => {
+  const hasharr = location.pathname.split('/');
+  hasharr.pop();
+  if(popTwice){
+    hasharr.pop();
+  }
+  return hasharr.join('/');
+};
+
+const syncTableSchemaData = (data, showFieldType) => {
+  const dimensionFields = data.dimensionF
+```
+
+
+### D2: Asynchronous State & Concurrency
+- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
+
+### D3: Error Boundaries, Recovery & Rollbacks
+- Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20218** (2026-11-11): **Fix port reuse in ServerTableSizeReaderTest**
+  *Symptoms*: ServerTableSizeReaderTest chose the unavailable server's port before starting all mock HTTP servers. Since findUnusedPort() releases its socket, a later mock server could receive the same port, causing testServerSizesErrors to fail in HashBiMap.put() with a duplicate endpoint before invoking the reader.  Choose the unused port after all mock servers are bound so their endpoints remain distinct. This preserves the existing connection-refused coverage.  Observed in [Pinot Unit Test Set 2](https://github.com/apache/pinot/actions/runs/42871682370/job/130024242709) on #19448; the affected test is unchanged by that PR.  Validation (JDK 25): - ServerTableSizeReaderTest: both tests passed using `./mvnw -pl pinot-controller -am -Ppinot-fastdev -Dtest=ServerTableSizeReaderTest -Dsurefire.failIfNoSpecifiedTests=false -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test`. - Controller `spotless:apply`, `checkstyle:check`, `license:format`, and `license:check` passed. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20218?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 70.51%. Comparing base ([`45feee7`](https://app.codecov.io/gh/apache/pinot/commit/45feee7d2d0932e94e19d2488d7a50aafcfdafd6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`70283d5`](https://app.codecov.io/gh/apache/pinot/commit/70283d5b3d2ecae23df1b0b2d9ad69dd9048be15?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##             master   #20218      +/-   ## ================================
+
+- **Issue #20216** (2026-11-10): **Fix the Kafka 4.0 plugin test build after the Kafka 4.4 upgrade**
+  *Symptoms*: ## Summary  Since #20185 upgraded Kafka to 4.4.0, `master` fails to compile the Kafka 4.0 plugin tests:  ``` KafkaPartitionLevelConsumerDataLossCheckTest.java:[42,45] cannot find symbol   import static org.apache.kafka.common.record.RecordBatch.NO_TIMESTAMP; ```  Kafka 4.4 moved `RecordBatch` into `org.apache.kafka.common.record.internal`. Every CI job that builds the plugin fails at this step, including unit, integration, quickstart and compatibility, on `master` and on every open PR.  The test now uses the public `ConsumerRecord.NO_TIMESTAMP` constant, which has the same value (-1) and is not internal API. No other code references the moved class.  ## Testing  - `KafkaPartitionLevelConsumerDataLossCheckTest`: 7/7 pass, and the module's tests compile. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20216?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 70.51%. Comparing base ([`72bc378`](https://app.codecov.io/gh/apache/pinot/commit/72bc378edc5bf109a6a2c852a86efbd95137278d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`74a6484`](https://app.codecov.io/gh/apache/pinot/commit/74a6484ac205b6e45aaff775ab626ba1cfef965f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@              Coverage Diff              @@ ##             master  
+
+### D4: Resource Lifecycle & Leak Defenses
+- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
+
+### D5: Boundary Deserialization & Encoding
+- Schema deserialization, payload validation, and untrusted input guards.
+
+### D6: Cross-Platform & Runtime Gotchas
+- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
+
+### D7: Build, CI/CD, Deployment & Tooling
+- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
+
+### D8: Forensic Bug Fixes & Real Production Code Patches
+Observed empirical fixes and code patches:
+
+### Incident Patch 1: `fd91422b` (2026-11-11)
+**Commit Message**: Evaluate user filters only on the rows that row-level security allows (#20183)
+
+* Evaluate user filters only on the rows that row-level security allows
+
+The broker ANDs the row-level security (RLS) filter into the WHERE clause, but
+AndDocIdSet does not always evaluate it first. A user expression could run on
+rows the RLS filter hides, so its errors, its scan stats and its side channels
+showed hidden values. It happened in three ways: ExpressionScanDocIdIterator
+evaluates blocks of 10k documents, a composite child under OR or NOT evaluates
+the whole segment, and the AND of deriveNulls has no restriction push-down.
+
+Server:
+- QueryContextConverterUtils reads the RLS filter from the
+  `rlsFilters-<rawTableName>` query option into QueryContext. A filter that
+  cannot be parsed fails the query.
+- InstancePlanMakerImplV2 optimizes the RLS filter with the table schema
+  (QueryOptimizer#optimizeFilter), as the WHERE copy is optimized, so a policy
+  such as `intCol = 2.0` works.
+- FilterPlanNode wraps the user filter in the new
+  RowLevelSecurityFilterOperator. It materializes the RLS bitmap once per
+  segment, bounds it by the plan's numDocs, ANDs it with the valid-doc
+  snapshot, and ANDs
+
+**File**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandler.java` (modified, +23/-37)
+```diff
+@@ -593,12 +593,20 @@ protected BrokerResponse doHandleRequest(long requestId, String query, SqlNodeAn
+           serverPinotQuery.setQueryOptions(queryOptions);
+           try {
+             CalciteSqlParser.queryRewrite(serverPinotQuery, RlsFiltersRewriter.class);
++            // compileRequest() optimized the query before the RLS filter was in its WHERE clause. Optimize it again,
++            // as the server optimizes its copy of the RLS filter, so that both copies match the same rows.
++            _queryOptimizer.optimize(serverPinotQuery, schema);
+             rlsFiltersApplied.set(true);
+             _brokerMetrics.addMeteredTableValue(rawTableName, BrokerMeter.RLS_FILTERS_APPLIED, 1);
+           } catch (Exception e) {
+-            LOGGER.error(
+-                "Unable to apply RLS filter: {}. Row-level security filtering will be disabled for this query.",
+-                RlsFiltersRewriter.class.getName(), e);
++            // Fail closed: the query must not run without its row-level security filter. Do not put the filter or
++            // the parse error in the response, because they can show the RLS policy to the user.
++            LOGGER.error("Unable to apply the RLS filter for request {} on table {}. Failing the query.", requestId,
++                rawTableName, e);
++            _brokerMetrics.addMeteredTableValue(rawTableName, BrokerMeter.QUERY_VALIDATION_EXCEPTIONS, 1);
++            requestContext.setErrorCode(QueryErrorCode.QUERY_VALIDATION);
++            return new BrokerResponseNative(QueryErrorCode.QUERY_VALIDATION,
++                "Cannot apply the row-level security filter for table: " + rawTableName);
+           }
+         }
+       }
+@@ -640,7 +648,11 @@ protected BrokerResponse doHandleRequest(long requestId, String query, SqlNodeAn
+     /// Per-query opt-out (default true). A user — or the MV minion executor for its own
+     /// materialization query — sets `enableMaterializedViewRewrite=false` to force the base-table
+     /// path and avoid rewriting a materialization query back onto an MV.
+-    if (_materializedViewHandler != null
++    /// A query with a row-level security (RLS) filter is never rewritten. The server applies the RLS filter from the
++    /// `rlsFilters-<rawTableName>` query option, so after a swap to the MV it would find no RLS filter for the MV
++    /// table, and the user expressions would run on the rows that the RLS filter hides.
++    // TODO: Support the MV rewrite under RLS (the MV can lack the columns of the RLS filter)
++    if (_materializedViewHandler != null && !rlsFiltersApplied.get()
+         && QueryOptionsUtils.isMaterializedViewRewriteEnabled(serverPinotQuery.getQueryOptions())) {
+       MaterializedViewCompileOutcome outcome = applyMaterializedViewRewriteAtCompile(
+           requestId, serverPinotQuery, tableName, rawTableName, schema, _tableCache.isIgnoreCase());
+@@ -1118,6 +1130,9 @@ protected BrokerResponse doHandleRequest(long requestId, String query, SqlNodeAn
+         new QueryLogger.QueryLogParams(requestContext, tableName, brokerResponse,
+             QueryLogger.QueryLogParams.QueryEngine.SINGLE_STAGE, requesterIdentity, serverStats, workloadName),
+         queryWasLogged);
++    if (rlsFiltersApplied.get()) {
++      RlsResponseUtils.hideTableLayoutStats(brokerResponse);
++    }
+ 
+     return brokerResponse;
+   }
+@@ -1437,30 +1452,6 @@ private MaterializedViewCompileOutcome applyMaterializedViewRewriteAtCompile(lon
+         rewrittenServerQuery, rewrittenTableName, rewrittenRawTableName, rewrittenSchema, materializedViewContext);
+   }
+ 
+-  /// Apply row-level security filters to `serverPinotQuery`.  When the accessor returns RLS rules
+-  /// for `rawTableName`, the rewriter appends them to the query's WHERE clause and stamps a
+-  /// `rlsFilters-<rawTableName>` entry in `queryOptions` — the marker the caller later reads to
+-  /// stamp `rlsFiltersApplied` on the broker response.
+-  private void applyRlsFilters(long requestId, String query, PinotQuery serverPinotQuery, String rawTableName,
+-      @Nullable RequesterIdentity requesterIdentity, AccessControl accessControl) {
+-    TableRowColAccessResult rlsFilters = accessControl.getRowColFilters(requesterIdentity, rawTableName);
+-    List<String> rowFilters = rlsFilters.getRLSFilters().orElse(null);
+-    if (CollectionUtils.isEmpty(rowFilters)) {
+-      return;
+-    }
+-
+-    Map<String, String> queryOptions =
+-        serverPinotQuery.getQueryOptions() == null ? new HashMap<>() : serverPinotQuery.getQueryOptions();
+-    String combinedFilters =
+-        rowFilters.stream().map(filter -> "( " + filter + " )").collect(Collectors.joining(" AND "));
+-    queryOptions.put(RlsUtils.buildRlsFilterKey(rawTableName), combinedFilters);
+-    serverPinotQuery.setQueryOptions(queryOptions);
+-    CalciteSqlParser.queryRewrite(serverPinotQuery, RlsFiltersRewriter.class);
+-    _brokerMetrics.addMeteredTableValue(rawTableName, BrokerMeter.RLS_FILTERS_APPLIED, 1);
+-    LOGGER.debug("Applied RLS filters for r
+```
+
+**File**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java` (modified, +3/-0)
+```diff
+@@ -1124,6 +1124,9 @@ private BrokerResponse query(QueryEnvironment.CompiledQuery query, long requestI
+           new QueryLogger.QueryLogParams(requestContext, tableNames.toString(), brokerResponse,
+               QueryLogger.QueryLogParams.QueryEngine.MULTI_STAGE, requesterIdentity, null, workloadName),
+           queryWasLogged);
++      if (rlsFiltersApplied) {
++        RlsResponseUtils.hideTableLayoutStats(brokerResponse);
++      }
+ 
+       return brokerResponse;
+     } finally {
+```
+
+**File**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/RlsResponseUtils.java` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.broker.requesthandler;
++
++import java.util.List;
++import org.apache.pinot.common.response.BrokerResponse;
++import org.apache.pinot.common.response.broker.BrokerResponseNative;
++import org.apache.pinot.common.response.broker.BrokerResponseNativeV2;
++import org.apache.pinot.common.response.broker.BrokerResponseNativeV2.StatKey;
++
++
++/// Response handling for queries with a row-level security (RLS) filter.
++///
++/// Stateless and thread-safe.
++public class RlsResponseUtils {
++  /// The multi-stage stats that show the layout of the whole table.
++  private static final List<StatKey> TABLE_LAYOUT_STAT_KEYS = List.of(StatKey.TOTAL_DOCS,
++      StatKey.NUM_SEGMENTS_QUERIED, StatKey.NUM_SEGMENTS_PROCESSED, StatKey.NUM_SEGMENTS_MATCHED,
++      StatKey.NUM_CONSUMING_SEGMENTS_QUERIED, StatKey.NUM_CONSUMING_SEGMENTS_PROCESSED,
++      StatKey.NUM_CONSUMING_SEGMENTS_MATCHED, StatKey.NUM_SEGMENTS_PRUNED_BY_BROKER,
++      StatKey.NUM_SEGMENTS_PRUNED_BY_SERVER, StatKey.NUM_SEGMENTS_PRUNED_INVALID, StatKey.NUM_SEGMENTS_PRUNED_BY_LIMIT,
++      StatKey.NUM_SEGMENTS_PRUNED_BY_VALUE);
++
++  private RlsResponseUtils() {
++  }
++
++  /// Sets to 0 the stats that show the layout of the whole table: the total number of documents, and the number of
++  /// segments queried, processed, matched and pruned. A table that holds only the rows of the tenant has a different
++  /// layout, so these values cannot be emulated.
++  ///
++  /// A new server already leaves these stats out under RLS. The broker also hides them, for an old server.
++  ///
++  /// Call this after the broker logs the query, so that the broker query log keeps the real values.
++  public static void hideTableLayoutStats(BrokerResponse brokerResponse) {
++    if (brokerResponse instanceof BrokerResponseNative) {
++      BrokerResponseNative response = (BrokerResponseNative) brokerResponse;
++      response.setTotalDocs(0);
++      response.setNumSegmentsQueried(0);
++      response.setNumSegmentsProcessed(0);
++      response.setNumSegmentsMatched(0);
++      response.setNumConsumingSegmentsQueried(0);
++      response.setNumConsumingSegmentsProcessed(0);
++      response.setNumConsumingSegmentsMatched(0);
++      response.setNumSegmentsPrunedByBroker(0);
++      response.setNumSegmentsPrunedByServer(0);
++      response.setNumSegmentsPrunedInvalid(0);
++      response.setNumSegmentsPrunedByLimit(0);
++      response.setNumSegmentsPrunedByValue(0);
++    } else if (brokerResponse instanceof BrokerResponseNativeV2) {
++      BrokerResponseNativeV2 response = (BrokerResponseNativeV2) brokerResponse;
++      for (StatKey key : TABLE_LAYOUT_STAT_KEYS) {
++        response.removeBrokerStat(key);
++      }
++    }
++  }
++}
+```
+
+**File**: `pinot-broker/src/test/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandlerTest.java` (modified, +170/-15)
+```diff
+@@ -44,6 +44,7 @@
+ import org.apache.pinot.broker.queryquota.QueryQuotaManager;
+ import org.apache.pinot.broker.routing.manager.BrokerRoutingManager;
+ import org.apache.pinot.common.config.provider.TableCache;
++import org.apache.pinot.common.metrics.BrokerMeter;
+ import org.apache.pinot.common.metrics.BrokerMetrics;
+ import org.apache.pinot.common.request.BrokerRequest;
+ import org.apache.pinot.common.request.Expression;
+@@ -92,6 +93,7 @@
+ import org.apache.pinot.spi.utils.builder.TableNameBuilder;
+ import org.apache.pinot.sql.FilterKind;
+ import org.apache.pinot.sql.parsers.CalciteSqlParser;
++import org.apache.pinot.sql.parsers.rewriter.RlsUtils;
+ import org.apache.pinot.util.TestUtils;
+ import org.mockito.Mockito;
+ import org.slf4j.MDC;
+@@ -1036,17 +1038,10 @@ protected BrokerResponseNative processMaterializedViewSplitBrokerRequest(long re
+     };
+   }
+ 
+-  /// Bug: FULL_REWRITE overwrites tableName to the materialized view table name, so
+-  /// accessControl.getRowColFilters(requesterIdentity, tableName) fetches RLS
+-  /// policy for the materialized view table instead of the base table.
+-  ///
+-  /// Before fix: getRowColFilters is called with the materialized view table name
+-  /// "mv_baseTable_OFFLINE".
+-  ///
+-  /// After fix: getRowColFilters is called with the original base table
+-  /// name "baseTable_OFFLINE".
++  /// A query with an RLS filter skips the MV rewrite: the broker looks up the RLS filter of the base table
++  /// "baseTable_OFFLINE", and the query runs on the base table with that filter in its options.
+   @Test
+-  public void testMaterializedViewFullRewriteRlsLookupUsesBaseTable()
++  public void testMaterializedViewRewriteSkippedUnderRls()
+       throws Exception {
+     String baseOfflineTable = "baseTable_OFFLINE";
+     String materializedViewOfflineTable = "mv_baseTable_OFFLINE";
+@@ -1101,6 +1096,7 @@ public void testMaterializedViewFullRewriteRlsLookupUsesBaseTable()
+             new SegmentsToQuery(List.of("seg01"), List.of())));
+     when(routingManager.getRoutingTable(any(), Mockito.anyLong())).thenReturn(rt);
+ 
++    AtomicReference<BrokerRequest> capturedServerRequest = new AtomicReference<>();
+     QueryQuotaManager quotaManager = mock(QueryQuotaManager.class);
+     when(quotaManager.acquire(anyString())).thenReturn(true);
+     when(quotaManager.acquireDatabase(anyString())).thenReturn(true);
+@@ -1157,6 +1153,7 @@ protected BrokerResponseNative processBrokerRequest(long requestId,
+               BrokerRequest originalBrokerRequest, BrokerRequest serverBrokerRequest,
+               TableRouteInfo route, long timeoutMs, ServerStats serverStats,
+               RequestContext requestContext) {
++            capturedServerRequest.set(serverBrokerRequest);
+             return BrokerResponseNative.empty();
+           }
+ 
+@@ -1184,11 +1181,13 @@ protected BrokerResponseNative processMaterializedViewSplitBrokerRequest(long re
+         "RLS filter lookup must use base table '" + baseRawTable
+             + "' not materialized view table, but got: " + rlsTable);
+     Assert.assertTrue(response.getRLSFiltersApplied(), "response should report that RLS filters were applied");
+-    PinotQuery rewriteInput = querySeenByMaterializedViewRewrite.get();
+-    Assert.assertNotNull(rewriteInput, "MV rewrite should see the server query after RLS rewrite");
+-    Assert.assertNotNull(rewriteInput.getFilterExpression(), "MV rewrite input must carry the base-table RLS filter");
+-    Assert.assertTrue(rewriteInput.getFilterExpression().toString().contains("allowed"),
+-        "MV rewrite input must include the RLS predicate, got: " + rewriteInput.getFilterExpression());
++    /// The server applies the RLS filter from the `rlsFilters-<rawTableName>` query option, so a query with an RLS
++    /// filter must not be rewritten onto the MV: it runs on the base table, with the option of the base table.
++    Assert.assertNull(querySeenByMaterializedViewRewrite.get(), "A query with an RLS filter must skip the MV rewrite");
++    PinotQuery serverQuery = capturedServerRequest.get().getPinotQuery();
++    Assert.assertEquals(serverQuery.getDataSource().getTableName(), baseOfflineTable);
++    Assert.assertEquals(serverQuery.getQueryOptions().get(RlsUtils.buildRlsFilterKey(baseRawTable)),
++        "( ts = 'allowed' )");
+   }
+ 
+   /// The split-mode time-boundary filter attach helpers moved to
+@@ -1335,6 +1334,162 @@ protected BrokerResponseNative processBrokerRequest(long requestId,
+         "combined filter must retain the original WHERE clause, got literals: " + literalValues);
+   }
+ 
++  /// The broker fails the query when it cannot apply the RLS filter, instead of running it without the filter.
++  @Test
++  public void testRlsRewriteFailureFailsTheQuery()
++      throws Exception {
++    AtomicReference<BrokerRequest> capturedServerRequest = new AtomicReference<>();
++    BaseSingleStageBrokerRequestHandler handler =
++        newRlsHandler("ts = = 'allowed'", capturedServerRequest, BrokerResponseNative.empty());
++
++    Br
+```
+
+**File**: `pinot-broker/src/test/java/org/apache/pinot/broker/requesthandler/RlsResponseUtilsTest.java` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.broker.requesthandler;
++
++import org.apache.pinot.common.datatable.StatMap;
++import org.apache.pinot.common.response.broker.BrokerResponseNativeV2;
++import org.apache.pinot.common.response.broker.BrokerResponseNativeV2.StatKey;
++import org.testng.annotations.Test;
++
++import static org.testng.Assert.assertEquals;
++
++
++public class RlsResponseUtilsTest {
++
++  /// The multi-stage broker hides the stats that show the layout of the whole table.
++  @Test
++  public void testHideTableLayoutStatsMultiStage() {
++    BrokerResponseNativeV2 response = new BrokerResponseNativeV2();
++    StatMap<StatKey> stats = new StatMap<>(StatKey.class)
++        .merge(StatKey.TOTAL_DOCS, 1000L)
++        .merge(StatKey.NUM_SEGMENTS_QUERIED, 10)
++        .merge(StatKey.NUM_SEGMENTS_PROCESSED, 8)
++        .merge(StatKey.NUM_SEGMENTS_MATCHED, 5)
++        .merge(StatKey.NUM_CONSUMING_SEGMENTS_QUERIED, 2)
++        .merge(StatKey.NUM_SEGMENTS_PRUNED_BY_BROKER, 3)
++        .merge(StatKey.NUM_SEGMENTS_PRUNED_BY_SERVER, 2)
++        .merge(StatKey.NUM_DOCS_SCANNED, 42L);
++    response.addBrokerStats(stats);
++
++    RlsResponseUtils.hideTableLayoutStats(response);
++
++    assertEquals(response.getTotalDocs(), 0L);
++    assertEquals(response.getNumSegmentsQueried(), 0L);
++    assertEquals(response.getNumSegmentsProcessed(), 0L);
++    assertEquals(response.getNumSegmentsMatched(), 0L);
++    assertEquals(response.getNumConsumingSegmentsQueried(), 0L);
++    assertEquals(response.getNumSegmentsPrunedByBroker(), 0L);
++    assertEquals(response.getNumSegmentsPrunedByServer(), 0L);
++    // numDocsScanned only counts the rows of the tenant, so it stays
++    assertEquals(response.getNumDocsScanned(), 42L);
++  }
++}
+```
+
+**File**: `pinot-broker/src/test/java/org/apache/pinot/broker/requesthandler/RowLevelSecurityExpressionOverrideTest.java` (added, +298/-0)
+```diff
+@@ -0,0 +1,298 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.broker.requesthandler;
++
++import java.io.File;
++import java.nio.file.Files;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Map;
++import java.util.Set;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.atomic.AtomicReference;
++import org.apache.commons.io.FileUtils;
++import org.apache.commons.lang3.tuple.Pair;
++import org.apache.helix.model.InstanceConfig;
++import org.apache.pinot.broker.api.AccessControl;
++import org.apache.pinot.broker.broker.AccessControlFactory;
++import org.apache.pinot.broker.queryquota.QueryQuotaManager;
++import org.apache.pinot.broker.routing.manager.BrokerRoutingManager;
++import org.apache.pinot.common.config.provider.TableCache;
++import org.apache.pinot.common.metrics.BrokerMetrics;
++import org.apache.pinot.common.metrics.ServerMetrics;
++import org.apache.pinot.common.request.BrokerRequest;
++import org.apache.pinot.common.request.Expression;
++import org.apache.pinot.common.request.InstanceRequest;
++import org.apache.pinot.common.response.broker.BrokerResponseNative;
++import org.apache.pinot.core.data.manager.InstanceDataManager;
++import org.apache.pinot.core.operator.blocks.InstanceResponseBlock;
++import org.apache.pinot.core.operator.blocks.results.AggregationResultsBlock;
++import org.apache.pinot.core.query.executor.ServerQueryExecutorV1Impl;
++import org.apache.pinot.core.query.request.ServerQueryRequest;
++import org.apache.pinot.core.routing.RoutingTable;
++import org.apache.pinot.core.routing.SegmentsToQuery;
++import org.apache.pinot.core.routing.TableRouteInfo;
++import org.apache.pinot.core.transport.ServerInstance;
++import org.apache.pinot.segment.local.data.manager.SegmentDataManager;
++import org.apache.pinot.segment.local.data.manager.TableDataManager;
++import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
++import org.apache.pinot.segment.local.segment.creator.impl.SegmentIndexCreationDriverImpl;
++import org.apache.pinot.segment.local.segment.index.loader.IndexLoadingConfig;
++import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
++import org.apache.pinot.segment.spi.ImmutableSegment;
++import org.apache.pinot.segment.spi.IndexSegment;
++import org.apache.pinot.segment.spi.SegmentContext;
++import org.apache.pinot.segment.spi.creator.SegmentGeneratorConfig;
++import org.apache.pinot.spi.accounting.ThreadAccountantUtils;
++import org.apache.pinot.spi.auth.AuthorizationResult;
++import org.apache.pinot.spi.auth.TableAuthorizationResult;
++import org.apache.pinot.spi.auth.TableRowColAccessResult;
++import org.apache.pinot.spi.auth.TableRowColAccessResultImpl;
++import org.apache.pinot.spi.auth.broker.RequesterIdentity;
++import org.apache.pinot.spi.config.table.FieldConfig;
++import org.apache.pinot.spi.config.table.QueryConfig;
++import org.apache.pinot.spi.config.table.TableConfig;
++import org.apache.pinot.spi.config.table.TableType;
++import org.apache.pinot.spi.data.FieldSpec.DataType;
++import org.apache.pinot.spi.data.Schema;
++import org.apache.pinot.spi.data.readers.GenericRow;
++import org.apache.pinot.spi.env.PinotConfiguration;
++import org.apache.pinot.spi.eventlistener.query.BrokerQueryEventListenerFactory;
++import org.apache.pinot.spi.query.QueryThreadContext;
++import org.apache.pinot.spi.trace.RequestContext;
++import org.apache.pinot.spi.utils.CommonConstants.Broker;
++import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
++import org.apache.pinot.sql.parsers.CalciteSqlCompiler;
++import org.apache.pinot.sql.parsers.CalciteSqlParser;
++import org.apache.pinot.sql.parsers.rewriter.RlsUtils;
++import org.testng.annotations.AfterClass;
++import org.testng.annotations.BeforeClass;
++import org.testng.annotations.Test;
++
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyList;
++import static org.mockito.ArgumentMatchers.anyLong;
++import static org.mockito.ArgumentMatchers.anyMap;
++import static org.mockito.ArgumentMatchers.anyString;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++import static org.testng.Assert.
+```
+
+**File**: `pinot-common/src/main/java/org/apache/pinot/common/datatable/StatMap.java` (modified, +6/-0)
+```diff
+@@ -93,6 +93,12 @@ public StatMap<K> merge(K key, int value) {
+     return this;
+   }
+ 
++  /// Removes the value of the given key, so that it reads as the default value and is not serialized.
++  public StatMap<K> remove(K key) {
++    _map.remove(key);
++    return this;
++  }
++
+   public long getLong(K key) {
+     if (key.getType() == Type.INT) {
+       return getInt(key);
+```
+
+**File**: `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerTimer.java` (modified, +3/-1)
+```diff
+@@ -98,7 +98,9 @@ public enum ServerTimer implements AbstractMetrics.Timer {
+   // Ingestion metrics
+   INGESTION_DELAY_TRACKING_MS("milliseconds", false, "Time taken to run a trackIngestionDelay cycle"),
+   // The total time spent in processing the workload queries
+-  WORKLOAD_TOTAL_QUERY_TIME_MS("millis", false);
++  WORKLOAD_TOTAL_QUERY_TIME_MS("millis", false),
++  RLS_FILTER_TIME_MS("milliseconds", false,
++      "Time taken by a query to materialize the row-level security bitmap, summed over the queried segments");
+ 
+   private final String _timerName;
+   private final boolean _global;
+```
+
+---
+
+### Incident Patch 2: `8d90c47a` (2026-11-11)
+**Commit Message**: Fix subtask worker progress API failing on null worker key (#20210)
+
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/helix/core/minion/PinotHelixTaskResourceManager.java` (modified, +3/-1)
+```diff
+@@ -911,7 +911,9 @@ Map<String, Object> getSubtaskOnWorkerProgress(String subtaskState, CompletionSe
+       String worker = entry.getKey();
+       String resp = entry.getValue();
+       LOGGER.debug("Got resp: {} from worker: {}", resp, worker);
+-      minionWorkerIdSubtaskProgressMap.put(minionWorkerUrlToWorkerIdMap.get(worker),
++      // Response keys are "<url>__<count>" when multiRequestPerServer is true
++      minionWorkerIdSubtaskProgressMap.put(
++          minionWorkerUrlToWorkerIdMap.get(StringUtils.substringBeforeLast(worker, "__")),
+           JsonUtils.stringToObject(resp, Map.class));
+     }
+     if (serviceResponse._failedResponseCount > 0) {
+```
+
+**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/helix/core/minion/PinotHelixTaskResourceManagerTest.java` (modified, +1/-1)
+```diff
+@@ -285,7 +285,7 @@ public void testGetSubtaskWithGivenStateProgress()
+       // Notice that for testing purpose, we map subtask names to empty strings. In reality, subtask names will be
+       // mapped to jsonized org.apache.pinot.minion.event.MinionEventObserver
+       httpResp._httpResponses.put(
+-          String.format("%s/tasks/subtask/state/progress?subTaskState=IN_PROGRESS", workerEndpoint),
++          String.format("%s/tasks/subtask/state/progress?subTaskState=IN_PROGRESS__1", workerEndpoint),
+           JsonUtils.objectToString(Map.of(subtaskIds[2 * i], "", subtaskIds[2 * i + 1], "")));
+     }
+     httpResp._failedResponseCount = 1;
+```
+
+---
+
+### Incident Patch 3: `2ea51e9d` (2026-11-10)
+**Commit Message**: Fix table-level segment metadata silently omitting segments when replication < servers (#20182)
+
+* Fix table-level segment metadata silently omitting segments when replication < servers
+
+The table-level path of TableMetadataReader#getSegmentsMetadata passed the
+server -> endpoint map from getDataInstanceAdminEndpoints straight to
+CompletionServiceHelper, which expects endpoint -> server. Each response's
+server lookup returned null, and with multiRequestPerServer=false every body
+was stored under the same null key, overwriting the previous one. The call
+reported no failures, so there was no fallback, and the API returned 200 with
+only the last server's segments (roughly replication/N of the table).
+
+Pass endpoints.inverse() as the legacy per-segment path already does, and
+rename the misleading endpointToInstance variable in
+getDataInstanceAdminEndpoints to instanceToEndpoint.
+
+Add TableMetadataReaderTest covering full, partial and no replication across
+multiple fake servers.
+
+* Fix 'Server: null' in error logs of PinotTableReloadStatusReporter and PinotTableRestletResource by passing the inverted endpoint map
+
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotTableRestletResource.java` (modified, +2/-2)
+```diff
+@@ -1428,7 +1428,7 @@ private JsonNode getAggregateIndexMetadataFromServer(String tableNameWithType)
+     BiMap<String, String> serverEndPoints =
+         _pinotHelixResourceManager.getDataInstanceAdminEndpoints(serverToSegments.keySet());
+     CompletionServiceHelper completionServiceHelper =
+-        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints,
++        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints.inverse(),
+             _pinotHelixResourceManager.getServerAdminAuthProvider());
+ 
+     List<String> serverUrls = new ArrayList<>();
+@@ -1597,7 +1597,7 @@ private long validateSegmentStateForTable(String offlineTableName)
+     BiMap<String, String> serverEndPoints =
+         _pinotHelixResourceManager.getDataInstanceAdminEndpoints(serverToSegments.keySet());
+     CompletionServiceHelper completionServiceHelper =
+-        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints,
++        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints.inverse(),
+             _pinotHelixResourceManager.getServerAdminAuthProvider());
+     List<String> serverUrls = new ArrayList<>();
+     BiMap<String, String> endpointsToServers = serverEndPoints.inverse();
+```
+
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/helix/core/PinotHelixResourceManager.java` (modified, +3/-3)
+```diff
+@@ -4519,7 +4519,7 @@ public List<String> getOnlineInstanceList() {
+   /// server instances. With BiMap, both mappings are easily available
+   public BiMap<String, String> getDataInstanceAdminEndpoints(Set<String> instances)
+       throws InvalidConfigException {
+-    BiMap<String, String> endpointToInstance = HashBiMap.create(instances.size());
++    BiMap<String, String> instanceToEndpoint = HashBiMap.create(instances.size());
+     for (String instance : instances) {
+       String instanceAdminEndpoint;
+       try {
+@@ -4531,9 +4531,9 @@ public BiMap<String, String> getDataInstanceAdminEndpoints(Set<String> instances
+         LOGGER.error(errorMessage, e);
+         throw new InvalidConfigException(errorMessage);
+       }
+-      endpointToInstance.put(instance, instanceAdminEndpoint);
++      instanceToEndpoint.put(instance, instanceAdminEndpoint);
+     }
+-    return endpointToInstance;
++    return instanceToEndpoint;
+   }
+ 
+   /// Returns the service identity provider used for outbound Server admin API requests.
+```
+
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/services/PinotTableReloadStatusReporter.java` (modified, +1/-1)
+```diff
+@@ -166,7 +166,7 @@ public PinotTableReloadStatusResponse getReloadJobStatus(String reloadJobId)
+     final List<String> serverUrls = getServerUrls(serverEndPoints, reloadJobMetadata, serverToSegments);
+ 
+     final CompletionServiceHelper completionServiceHelper =
+-        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints,
++        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints.inverse(),
+             _pinotHelixResourceManager.getServerAdminAuthProvider());
+     final CompletionServiceHelper.CompletionServiceResponse serviceResponse =
+         completionServiceHelper.doMultiGetRequest(serverUrls, null, true, 10000);
+```
+
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/util/TableMetadataReader.java` (modified, +1/-1)
+```diff
+@@ -203,7 +203,7 @@ private JsonNode getSegmentsMetadataInternal(String tableNameWithType, @Nullable
+     try {
+       List<String> tableUrls = buildTableLevelUrls(serverToSegs, endpoints,
+           tableNameWithType, columns, segments, reader);
+-      return fetchAndAggregateMetadata(tableUrls, endpoints, /*perSegmentJson=*/false,
++      return fetchAndAggregateMetadata(tableUrls, endpoints.inverse(), /*perSegmentJson=*/false,
+           tableNameWithType, timeoutMs);
+     } catch (RuntimeException e) {
+       log.warn("Failed to fetch table metadata for table {} using new server endpoint, falling back to legacy "
+```
+
+**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/util/TableMetadataReaderTest.java` (added, +176/-0)
+```diff
+@@ -0,0 +1,176 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.controller.util;
++
++import com.fasterxml.jackson.databind.JsonNode;
++import com.fasterxml.jackson.databind.node.ObjectNode;
++import com.google.common.collect.BiMap;
++import com.google.common.collect.HashBiMap;
++import com.sun.net.httpserver.HttpServer;
++import java.io.IOException;
++import java.io.OutputStream;
++import java.net.InetSocketAddress;
++import java.nio.charset.StandardCharsets;
++import java.util.ArrayList;
++import java.util.HashSet;
++import java.util.LinkedHashMap;
++import java.util.List;
++import java.util.Map;
++import java.util.Set;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.atomic.AtomicInteger;
++import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
++import org.apache.pinot.controller.helix.core.PinotHelixResourceManager;
++import org.apache.pinot.spi.utils.JsonUtils;
++import org.testng.annotations.AfterClass;
++import org.testng.annotations.AfterMethod;
++import org.testng.annotations.BeforeClass;
++import org.testng.annotations.Test;
++
++import static org.mockito.ArgumentMatchers.anySet;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++import static org.testng.Assert.assertEquals;
++
++
++public class TableMetadataReaderTest {
++  private static final String TABLE_NAME = "testTable_OFFLINE";
++  private static final int TIMEOUT_MS = 10_000;
++
++  private final ExecutorService _executor = Executors.newFixedThreadPool(4);
++  private final PoolingHttpClientConnectionManager _connectionManager = new PoolingHttpClientConnectionManager();
++  private final List<HttpServer> _httpServers = new ArrayList<>();
++  private final AtomicInteger _legacyRequestCount = new AtomicInteger();
++
++  @BeforeClass
++  public void setUp() {
++    _connectionManager.setDefaultMaxPerRoute(4);
++  }
++
++  @AfterMethod
++  public void stopServers() {
++    _httpServers.forEach(server -> server.stop(0));
++    _httpServers.clear();
++    _legacyRequestCount.set(0);
++  }
++
++  @AfterClass
++  public void tearDown() {
++    _executor.shutdownNow();
++    _connectionManager.close();
++  }
++
++  /// Every server holds every segment, so any single server's response is already complete.
++  @Test
++  public void testTableLevelMetadataWithFullReplication()
++      throws Exception {
++    Map<String, List<String>> serverToSegments = new LinkedHashMap<>();
++    serverToSegments.put("server0", List.of("seg0", "seg1", "seg2"));
++    serverToSegments.put("server1", List.of("seg0", "seg1", "seg2"));
++    serverToSegments.put("server2", List.of("seg0", "seg1", "seg2"));
++
++    JsonNode metadata = getSegmentsMetadata(serverToSegments);
++
++    assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2"));
++    assertEquals(_legacyRequestCount.get(), 0);
++  }
++
++  /// 4 servers with replication 2: each server holds only half of the segments, so every server's response is needed.
++  @Test
++  public void testTableLevelMetadataWithPartialReplication()
++      throws Exception {
++    Map<String, List<String>> serverToSegments = new LinkedHashMap<>();
++    serverToSegments.put("server0", List.of("seg0", "seg1"));
++    serverToSegments.put("server1", List.of("seg1", "seg2"));
++    serverToSegments.put("server2", List.of("seg2", "seg3"));
++    serverToSegments.put("server3", List.of("seg3", "seg0"));
++
++    JsonNode metadata = getSegmentsMetadata(serverToSegments);
++
++    assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2", "seg3"));
++    assertEquals(_legacyRequestCount.get(), 0);
++  }
++
++  /// Each server holds a distinct segment, so dropping any server's response loses its segment.
++  @Test
++  public void testTableLevelMetadataWithoutReplication()
++      throws Exception {
++    Map<String, List<String>> serverToSegments = new LinkedHashMap<>();
++    serverToSegments.put("server0", List.of("seg0"));
++    serverToSegments.put("server1", List.of("seg1"));
++    serverToSegments.put("server2", List.of("seg2"));
++
++    JsonNode metadata = getSegmentsMetadata(serverToSegments);
++
++    assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2"));
++    assertEquals(_lega
+```
+
+#### Recent Merged Pull Requests:
+- **PR #20226** (2026-11-11): Bump com.fasterxml.jackson:jackson-bom from 2.22.4 to 2.23.0 (@dependabot[bot])
+- **PR #20225** (2026-11-11): Bump at.yawk.lz4:lz4-java from 1.13.0 to 1.14.0 (@dependabot[bot])
+- **PR #20224** (2026-11-11): Bump parquet.version from 1.18.1 to 1.18.2 (@dependabot[bot])
+- **PR #20222** (2026-11-11): Remove legacy per-segment fallback from segments metadata API (@manakbisht)
+- **PR #20221** (2026-11-11): Revert "Reject time-based flush threshold for pauseless tables (#20168)" (@9aman)
+- **PR #20218** (2026-11-11): Fix port reuse in ServerTableSizeReaderTest (@Jackie-Jiang)
+
+---
+
+## 3. Empirical Evidence & Compliance Certification
+- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
+- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
+- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+
+---
+
+## 4. Promotion & Integration Status
+- **Status**: HARVESTED_DEEP_FORENSIC
+- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Evaluate user filters only on the rows that row-level security allows (#20183)
+
+**RULE**:
+When implementing operations in `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fd91422b`: Evaluate user filters only on the rows that row-level security allows (#20183). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandler.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+            // compileRequest() optimized the query before the RLS filter was in its WHERE clause. Optimize it again,
+            // as the server optimizes its copy of the RLS filter, so that both copies match the same rows.
+            _queryOptimizer.optimize(serverPinotQuery, schema);
+            // Fail closed: the query must not run without its row-level security filter. Do not put the filter or
+            // the parse error in the response, because they can show the RLS policy to the user.
+            LOGGER.error("Unable to apply the RLS filter for request {} on table {}. Failing the query.", requestId,
+                rawTableName, e);
+            _brokerMetrics.addMeteredTableValue(rawTableName, BrokerMeter.QUERY_VALIDATION_EXCEPTIONS, 1);
+            requestContext.setErrorCode(QueryErrorCode.QUERY_VALIDATION);
+            return new BrokerResponseNative(QueryErrorCode.QUERY_VALIDATION,
+                "Cannot apply the row-level security filter for table: " + rawTableName);
+    /// A query with a row-level security (RLS) filter is never rewritten. The server applies the RLS filter from the
+    /// `rlsFilters-<rawTableName>` query option, so after a swap to the MV it w
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Anti-pattern to NEVER write (induced failure mode):
+            LOGGER.error(
+                "Unable to apply RLS filter: {}. Row-level security filtering will be disabled for this query.",
+                RlsFiltersRewriter.class.getName(), e);
+    if (_materializedViewHandler != null
+  /// Apply row-level security filters to `serverPinotQuery`.  When the accessor returns RLS rules
+  /// for `rawTableName`, the rewriter appends them to the query's WHERE clause and stamps a
+  /// `rlsFilters-<rawTableName>` entry in `queryOptions` — the marker the caller later reads to
+  /// stamp `rlsFiltersApplied` on the broker response.
+  private void applyRlsFilters(long requestId, String query, PinotQuery serverPinotQuery, String rawTableName,
+      @Nullable RequesterIdentity requesterIdentity, AccessControl accessControl) {
+    TableRowColAccessResult rlsFilters = accessControl.getRowColFilters(requesterIdentity, rawTableName);
+    List<String> rowFilters = rlsFilters.getRLSFilters().orElse(null);
+    if (CollectionUtils.isEmpty(rowFilters)) {
+      return;
+    }
+
+    Map<String, String> queryOptions =
+        serverPinotQuery.getQueryOptions() == null ? new HashMap<>() : serverPinotQuery.getQueryOptions();
+    String combinedFilters =
+    
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fd91422b` are properly handled with clean fallback behavior.
+
+
+## 3. Independent Verification Protocol
+1. Assert state existence before and after execution.
+2. Verify deterministic SHA-256 byte digest parity.
+3. Validate zero unhandled promise rejections or uncaught exceptions.

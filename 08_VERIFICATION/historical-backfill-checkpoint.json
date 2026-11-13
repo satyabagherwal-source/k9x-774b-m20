@@ -1,0 +1,35 @@
+{
+  "last_processed_index": 9,
+  "last_processed_file": "4mmar1mtiaz-seo-tools-by-ammar-imtiaz-learnings.md",
+  "batches_completed": 1,
+  "timestamp": "2026-11-13T09:37:38.181Z",
+  "metrics": {
+    "discovered": 1829,
+    "eligible": 10,
+    "processed": 10,
+    "persisted": 0,
+    "indexed": 0,
+    "independently_verified": 0,
+    "duplicates_suppressed": 19,
+    "failed": 0,
+    "quarantined": 0,
+    "per_domain_counts": {
+      "H": 6,
+      "G": 3,
+      "B": 1,
+      "K": 9,
+      "D": 1,
+      "I": 3,
+      "J": 1
+    },
+    "per_destination_counts": {
+      "03_SKILLS": 0,
+      "05_KNOWLEDGE/domain-intelligence": 0,
+      "12_DECISIONS": 0,
+      "02_AGENT_INTELLIGENCE": 0,
+      "08_VERIFICATION": 0,
+      "11_INBOX": 0
+    },
+    "batches_completed": 1
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "timestamp": "2026-11-13T08:05:33.154Z",
+  "brainRoot": "C:\\AI-Builder-Brain",
+  "total_destinations_discovered": 103,
+  "canonical_top_level_count": 22,
+  "active_automated_destinations": 95,
+  "stale_automated_destinations": 1,
+  "stale_destinations": [
+    {
+      "path": "04_WORKFLOWS/blueprints/astro-tailwind-v4/.project-brain",
+      "domain": "BLUEPRINT_TEMPLATES",
+      "filesCount": 0,
+      "reason": "AUTOMATED_DESTINATION_HAS_ZERO_FILES"
+    }
+  ],
+  "domain_coverage": {
+    "A": {
+      "letter": "A",
+      "id": "human_need",
+      "name": "Human & Need Intelligence",
+      "registeredRecords": 26,
+      "status": "ACTIVE"
+    },
+    "B": {
+      "letter": "B",
+      "id": "market_competition",
+      "name": "Market & Competitive Intelligence",
+      "registeredRecords": 11,
+      "status": "ACTIVE"
+    },
+    "C": {
+      "letter": "C",
+      "id": "product_positioning",
+      "name": "Product & Positioning Intelligence",
+      "registeredRecords": 2,
+      "status": "ACTIVE"
+    },
+    "D": {
+      "letter": "D",
+      "id": "systems_architecture",
+      "name": "Systems & Architecture Intelligence",
+      "registeredRecords": 172,
+      "status": "ACTIVE"
+    },
+    "E": {
+      "letter": "E",
+      "id": "interaction_design",
+      "name": "Interaction & UX Intelligence",
+      "registeredRecords": 2,
+      "status": "ACTIVE"
+    },
+    "F": {
+      "letter": "F",
+      "id": "security_threat",
+      "name": "Security & Threat Modeling Intelligence",
+      "registeredRecords": 92,
+      "status": "ACTIVE"
+    },
+    "G": {
+      "letter": "G",
+      "id": "operations_sre",
+      "name": "Operations, Reliability & SRE Intelligence",
+      "registeredRecords": 381,
+      "status": "ACTIVE"
+    },
+    "H": {
+      "letter": "H",
+      "id": "technical_construction",
+      "name": "Technical Construction Intelligence",
+      "registeredRecords": 746,
+      "status": "ACTIVE"
+    },
+    "I": {
+      "letter": "I",
+      "id": "growth_distribution",
+      "name": "Growth, SEO & Distribution Intelligence",
+      "registeredRecords": 152,
+      "status": "ACTIVE"
+    },
+    "J": {
+      "letter": "J",
+      "id": "economics_pricing",
+      "name": "Economics, Monetization & Pricing Intelligence",
+      "registeredRecords": 98,
+      "status": "ACTIVE"
+    },
+    "K": {
+      "letter": "K",
+      "id": "quality_verification",
+      "name": "Quality & Verification Intelligence",
+      "registeredRecords": 113,
+      "status": "ACTIVE"
+    },
+    "L": {
+      "letter": "L",
+      "id": "adaptation_evolution",
+      "name": "Adaptation & Ecosystem Evolution Intelligence",
+      "registeredRecords": 29,
+      "status": "ACTIVE"
+    },
+    "M": {
+      "letter": "M",
+      "id": "governance_alignment",
+      "name": "Governance, Human Intent & Safety Intelligence",
+      "registeredRecords": 15,
+      "status": "ACTIVE"
+    }
+  },
+  "inbox_backlog": {
+    "totalDirectives": 697,
+    "stagedForVerification": 398,
+    "stagedForHumanReview": 296,
+    "promotedCount": 3
+  },
+  "registry_consistency": {
+    "status": "HEALTHY",
+    "dangling_pointers_count": 0
+  },
+  "alerts_count": 1,
+  "alerts": [
+    {
+      "severity": "INFO",
+      "code": "LARGE_INBOX_BACKLOG",
+      "message": "398 candidates staged in 11_INBOX. Automated triage/graduation recommended."
+    }
+  ]
+}
