@@ -9591,3 +9591,8 @@ Every entry in this ledger must capture:
 | `learn-github-foreactlabs-openexecutive` | `https://github.com/ForeactLabs/OpenExecutive` | `e023f2f3` | Multi-dimensional audit evidence | 2026-11-13T18:17:14.943Z |
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-13T18:17:17.287Z |
 | `learn-dom-d-dc65f2a5` | `project://hf-unsloth-qwen-image-2.1-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | 2026-11-13T18:18:05.134Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-13T18:25:45.801Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `4507a263` | Multi-dimensional audit evidence | 2026-11-13T18:25:56.000Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1637f0cc` | Multi-dimensional audit evidence | 2026-11-13T18:26:01.106Z |
+| `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `95d89e51` | Multi-dimensional audit evidence | 2026-11-13T18:26:02.872Z |
+| `learn-dom-d-c9a75dc2` | `project://hf-xiaomimimo-mimo-v2.6-pro-rl` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | 2026-11-13T18:26:51.023Z |

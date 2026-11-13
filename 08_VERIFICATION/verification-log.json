@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-8AE5",
-    "timestamp": "2026-11-12T21:56:36.893Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "9e6dba947a6a661a7312164893db8827f9464e812b413e7dce99b809b972377b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-8CDM",
-    "timestamp": "2026-11-12T21:56:39.466Z",
-    "repository": "dubzzz/fast-check",
-    "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "580fe0ffc3f28cb86cbc49b52d24c3c2df0004571e2b43c62c02535ab6a66080",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-8HI4",
-    "timestamp": "2026-11-12T21:56:46.108Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "a828e68bdd75eb287c250672b9d3dcac96a00ff2c82fd528ad7d211a2cdb9bb1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-JLSW",
-    "timestamp": "2026-11-12T22:05:24.896Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "f7d8f2fb4cbad4da8100fd63a85baab6f21c34294ee6745e14f7d7a843f65830",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-JPC3",
     "timestamp": "2026-11-12T22:05:29.475Z",
     "repository": "rustls/rustls",
@@ -7492,6 +7432,66 @@
     "contentHash": "ddfa54153e32b8814cb316daf58626e074e75de6a4525e8da6ebba6b1677cb07",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-4ZES",
+    "timestamp": "2026-11-13T18:25:45.796Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "1d1d4dd679ea45780d448aede1963e64d86a616ea676bb4cab39ef8aff42bd37",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-579W",
+    "timestamp": "2026-11-13T18:25:55.988Z",
+    "repository": "appwrite/appwrite",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "8dbfb21bb8b7e85c0acbad05c0f789e6514c430b6edb9c1885db2b35b999f2ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-5B7Q",
+    "timestamp": "2026-11-13T18:26:01.094Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "93c78f56607fc2f2722a5454fb96056347a38abb46044f722870beb4002965e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-5CKS",
+    "timestamp": "2026-11-13T18:26:02.860Z",
+    "repository": "qdrant/qdrant",
+    "learningId": "learn-github-qdrant-qdrant",
+    "contentHash": "854ab292cf2dbd1dbf1a9e8519f0a2fc3f0ffa420bb1e65bbaeaecf2c44c4609",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

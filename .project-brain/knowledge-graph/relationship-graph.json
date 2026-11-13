@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T18:18:05.133Z",
+  "updated_at": "2026-11-13T18:26:51.022Z",
   "statistics": {
-    "total_nodes": 111,
+    "total_nodes": 112,
     "total_edges": 61,
     "domain_distribution": {
-      "D": 91,
+      "D": 92,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -2478,6 +2478,28 @@
       ],
       "created_at": "2026-11-13T18:18:05.133Z",
       "updated_at": "2026-11-13T18:18:05.133Z"
+    },
+    "DOM-D-C9A75DC2": {
+      "id": "DOM-D-C9A75DC2",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-xiaomimimo-mimo-v2.6-pro-rl/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T18:26:06.045Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xiaomimimo-mimo-v2.6-pro-rl)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T18:26:51.022Z",
+      "updated_at": "2026-11-13T18:26:51.022Z"
     }
   },
   "edges": [

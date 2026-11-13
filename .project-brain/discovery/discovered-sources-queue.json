@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T18:18:05.142Z",
+  "updated_at": "2026-11-13T18:26:52.036Z",
   "stats": {
-    "total_discovered": 2799,
-    "approved_pending_harvest": 2617,
+    "total_discovered": 2805,
+    "approved_pending_harvest": 2623,
     "harvested_count": 0,
     "rejected_count": 182,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2612,
+      "COMMUNITY_AND_EXPERT": 2618,
       "OFFICIAL_DOCUMENTATION": 96,
       "STANDARDS_AND_SPECIFICATIONS": 78,
       "ENGINEERING_BLOGS": 1,
@@ -60324,6 +60324,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
         "fileName": "hf-unsloth-qwen-image-2.1-gguf-learnings.md"
+      }
+    },
+    "SRC-6F92C274A23E": {
+      "id": "SRC-6F92C274A23E",
+      "url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "title": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:26:51.036Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
+        "fileName": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md"
+      }
+    },
+    "SRC-6968183A54D9": {
+      "id": "SRC-6968183A54D9",
+      "url": "https://github.com/appwrite/appwrite",
+      "title": "https://github.com/appwrite/appwrite",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:26:51.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
+        "fileName": "appwrite-appwrite-learnings.md"
+      }
+    },
+    "SRC-1179F6B4FEF9": {
+      "id": "SRC-1179F6B4FEF9",
+      "url": "https://local.invalid/$%7Bpath",
+      "title": "https://local.invalid/$%7Bpath",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:26:51.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
+        "fileName": "appwrite-appwrite-learnings.md"
+      }
+    },
+    "SRC-AEA9EF4ED45F": {
+      "id": "SRC-AEA9EF4ED45F",
+      "url": "https://api.etsy.com/v3/application/users/%7Buser_id",
+      "title": "https://api.etsy.com/v3/application/users/%7Buser_id",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:26:51.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
+        "fileName": "appwrite-appwrite-learnings.md"
+      }
+    },
+    "SRC-88FFBDFC7B1F": {
+      "id": "SRC-88FFBDFC7B1F",
+      "url": "https://developers.etsy.com/documentation/essentials/requests",
+      "title": "https://developers.etsy.com/documentation/essentials/requests",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:26:51.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
+        "fileName": "appwrite-appwrite-learnings.md"
+      }
+    },
+    "SRC-1D4D5C1F7F03": {
+      "id": "SRC-1D4D5C1F7F03",
+      "url": "https://github.com/ProvableHQ/snarkOS",
+      "title": "https://github.com/ProvableHQ/snarkOS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:26:52.036Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
       }
     }
   }

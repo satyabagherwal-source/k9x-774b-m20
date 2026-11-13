@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T18:17:17.294Z",
+  "last_updated": "2026-11-13T18:26:02.893Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -680,14 +680,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "content_hash": "7744a3efca7d64cc26a959229bdb6ddba69e5772adf2aa52a1fe892143d180d3",
-      "verified_at": "2026-11-08T17:29:00.877Z",
+      "content_hash": "1d1d4dd679ea45780d448aede1963e64d86a616ea676bb4cab39ef8aff42bd37",
+      "verified_at": "2026-11-13T18:25:45.810Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:29:00.877Z"
+      "last_updated": "2026-11-13T18:25:45.810Z"
     },
     "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF": {
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "253ac5030fd64005a10b7eda7bb4dedba11c31f669357c312670e7450c0a52fa",
-      "verified_at": "2026-11-13T15:38:18.096Z",
+      "content_hash": "93c78f56607fc2f2722a5454fb96056347a38abb46044f722870beb4002965e7",
+      "verified_at": "2026-11-13T18:26:01.126Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:38:18.096Z"
+      "last_updated": "2026-11-13T18:26:01.126Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10131,14 +10131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qdrant-qdrant",
-      "content_hash": "ad2cb8edf3601643fee298578ae24886612cff45ff5f9e98450e041ce08e8779",
-      "verified_at": "2026-10-22T19:22:50.354Z",
+      "content_hash": "854ab292cf2dbd1dbf1a9e8519f0a2fc3f0ffa420bb1e65bbaeaecf2c44c4609",
+      "verified_at": "2026-11-13T18:26:02.892Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:22:50.354Z"
+      "last_updated": "2026-11-13T18:26:02.892Z"
     },
     "vuetifyjs/vuetify": {
       "repository": "vuetifyjs/vuetify",
@@ -15501,14 +15501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-appwrite-appwrite",
-      "content_hash": "c675403625cae250e705d372cd1b2d168adbbfdab567cf385d7d000fd64653f7",
-      "verified_at": "2026-11-09T07:43:42.855Z",
+      "content_hash": "8dbfb21bb8b7e85c0acbad05c0f789e6514c430b6edb9c1885db2b35b999f2ce",
+      "verified_at": "2026-11-13T18:25:56.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T07:43:42.855Z"
+      "last_updated": "2026-11-13T18:25:56.018Z"
     },
     "expo/expo": {
       "repository": "expo/expo",

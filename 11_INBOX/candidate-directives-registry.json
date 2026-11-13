@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:18:05.587Z",
+  "last_updated": "2026-11-13T18:26:52.271Z",
   "directives": [
     {
       "id": "CD-001",
@@ -9224,13 +9224,13 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-5MP7",
+      "id": "CD-6EP3",
       "directive_title": "Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip",
-      "source_repo": "aleo-labs-protocol/snarkOS",
-      "source_commit": "e3b97728",
-      "staged_file": "11_INBOX/candidate-directives/CD-5MP7-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip.md",
+      "source_repo": "provablehq-snarkos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6EP3-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip.md",
       "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
       "date_staged": "2026-11-13",
       "domain_letter": "G"
     },
@@ -9677,6 +9677,64 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-63002D-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-6E9A",
+      "directive_title": "dsn): look up getParam keys by their bytes",
+      "source_repo": "appwrite-appwrite-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6E9A-dsn-look-up-getparam-keys-by-their-bytes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-5B8A",
+      "directive_title": "Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "1637f0cc",
+      "date_staged": "2026-11-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "HIQV quality gate withheld: REJECT (Rejected fail-closed: NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant))",
+      "learning_id": "learn-github-aleo-labs-protocol-snarkos",
+      "candidateDomain": "UNASSIGNED",
+      "candidateDomainName": null,
+      "secondaryDomains": [],
+      "classificationConfidence": 0,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/domain-intelligence/DOM-H-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-5CR4",
+      "directive_title": "Add `PATCH /cluster/consensus_state` API to fix consensus state (#11411)",
+      "source_repo": "qdrant/qdrant",
+      "source_commit": "95d89e51",
+      "staged_file": "11_INBOX/candidate-directives/CD-5CR4-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-D0950A",
+      "directive_title": "dsn): look up getParam keys by their bytes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "appwrite-appwrite",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D0950A-dsn-look-up-getparam-keys-by-their-bytes.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-3D3849",
+      "directive_title": "Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "provablehq-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3D3849-merge-pull-request-4603-from-aleo-labs-p.md",
       "staged_date": "2026-11-13"
     }
   ]

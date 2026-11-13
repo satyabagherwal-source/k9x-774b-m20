@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T18:18:05.682Z",
-  "total_records": 253,
+  "last_updated": "2026-11-13T18:26:52.372Z",
+  "total_records": 260,
   "domains": {
     "A": {
       "total": 3,
@@ -30,7 +30,7 @@
       ]
     },
     "D": {
-      "total": 145,
+      "total": 148,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -176,7 +176,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn",
         "domain_intelligence-research-knowledge-intelligence-unsloth-qwen-image-2-1-gguf-core-invariants",
         "DOM-D-DC65F2A5",
-        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen-image-2-1-gguf-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen-image-2-1-gguf-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
+        "DOM-D-C9A75DC2",
+        "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in"
       ]
     },
     "E": {
@@ -194,7 +197,7 @@
       ]
     },
     "G": {
-      "total": 21,
+      "total": 25,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -216,7 +219,11 @@
         "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
         "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants",
-        "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants",
+        "domain_intelligence-architecture-intelligence-qdrant-qdrant-core-invariants",
+        "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6357,10 +6364,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "66921aed3552cb8ccccece3be3cdf89751aa9735724cb352d38c05e81c3a6531",
-      "created_at": "2026-11-13T15:38:18.384Z"
+      "content_hash": "32e1e64bef265ee043092013bd81619e9034abd27acd9341e089f58c51c83f8f",
+      "created_at": "2026-11-13T18:26:01.424Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -7498,6 +7505,102 @@
       "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
       "content_hash": "c7a667decdab45567b377ba7a5530c2a6c0a01ba095869f8c2c779fe6650768b",
       "created_at": "2026-11-13T18:18:05.287Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Pro-RL Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-research-knowledge-intelligence-xiaomimimo-mimo-v.md",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "content_hash": "5db92a726d5b8fb292ead3bf4da572800e21831411432aded9a3528cc9fb66fd",
+      "created_at": "2026-11-13T18:25:45.995Z"
+    },
+    "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: appwrite/appwrite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-appwrite-appwrite-architecture-intelligence-appwrite-appwrite-core-invariants.md",
+      "repository": "appwrite/appwrite",
+      "content_hash": "55745b2c523fcf608f3a8ed40e5c39785936f0013d58eb96535de28d698edcdb",
+      "created_at": "2026-11-13T18:25:56.321Z"
+    },
+    "domain_intelligence-architecture-intelligence-qdrant-qdrant-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: qdrant/qdrant Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-qdrant-qdrant-architecture-intelligence-qdrant-qdrant-core-invariants.md",
+      "repository": "qdrant/qdrant",
+      "content_hash": "a7dacad382e6718bb5a82472ab1c91a54c53105690739fb84ada91dcc7e9decc",
+      "created_at": "2026-11-13T18:26:03.207Z"
+    },
+    "DOM-D-C9A75DC2": {
+      "record_id": "DOM-D-C9A75DC2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL))  \n> **Source Version**: `hf-xiaomimim`  \n> **License**: Open-Sou",
+      "content_hash": "a205d70062b72da28f3ae2b8ee0bfbf33e5d1683fe68f090ff116b7897dc1ce3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-xiaomimimo-mimo-v2.6-pro-rl/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T18:26:06.045Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xiaomimimo-mimo-v2.6-pro-rl)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-xiaomimimo-mimo-v2.6-pro-rl"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T18:26:51.015Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-pro-rl-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-research-knowledge-intelligence-hf-xiao.md",
+      "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
+      "content_hash": "f9fad0b0a85494f32fc6924a18e31b7f529d490744d7f32ce6b62dd12bf57a54",
+      "created_at": "2026-11-13T18:26:51.238Z"
+    },
+    "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-appwrite-appwrite-learnings-architecture-intelligence-appwrite-appwrite-learning.md",
+      "repository": "appwrite-appwrite-learnings",
+      "content_hash": "5d7a2635e39fd37e4b8cddc895d34a80935298bc88c16a7c02a8c060e989ebf8",
+      "created_at": "2026-11-13T18:26:51.804Z"
+    },
+    "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
+      "repository": "provablehq-snarkos-learnings",
+      "content_hash": "14f38af618d0daaba70bf88fe40fd622d73de95b25ecca1172678b94768cebd4",
+      "created_at": "2026-11-13T18:26:52.372Z"
     }
   }
 }

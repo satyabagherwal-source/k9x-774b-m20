@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T18:17:29.384Z",
-    "lastVerified": "2026-11-13T18:17:29.384Z",
+    "lastChecked": "2026-11-13T18:26:05.927Z",
+    "lastVerified": "2026-11-13T18:26:05.927Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,8 +368,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-13T17:37:42.598Z",
-    "lastVerified": "2026-11-13T17:37:42.598Z",
+    "lastChecked": "2026-11-13T18:25:57.760Z",
+    "lastVerified": "2026-11-13T18:25:57.760Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -512,14 +512,14 @@
     "officialUrl": "https://github.com/appwrite/appwrite",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T07:43:41.670Z",
-    "lastVerified": "2026-11-09T07:43:41.670Z",
+    "lastChecked": "2026-11-13T18:25:55.389Z",
+    "lastVerified": "2026-11-13T18:25:55.389Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "c675403625cae250e705d372cd1b2d168adbbfdab567cf385d7d000fd64653f7",
+    "contentHash": "8dbfb21bb8b7e85c0acbad05c0f789e6514c430b6edb9c1885db2b35b999f2ce",
     "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -757,11 +757,21 @@
     "lastVerified": "2026-11-13T17:24:46.242Z"
   },
   "qdrant-qdrant": {
-    "name": "qdrant",
+    "name": "qdrant/qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-12T13:10:18.621Z",
-    "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-11-12T13:10:18.621Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-13T18:26:02.248Z",
+    "lastVerified": "2026-11-13T18:26:02.248Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-qdrant-qdrant",
+    "contentHash": "854ab292cf2dbd1dbf1a9e8519f0a2fc3f0ffa420bb1e65bbaeaecf2c44c4609",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -1197,22 +1207,21 @@
     "revisionIdentifier": "a875a4ba"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T12:42:34.498Z",
-    "lastVerified": "2026-11-13T12:42:34.498Z",
+    "lastChecked": "2026-11-13T18:26:00.520Z",
+    "lastVerified": "2026-11-13T18:26:00.520Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
+    "contentHash": "93c78f56607fc2f2722a5454fb96056347a38abb46044f722870beb4002965e7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "56afe28f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -3149,12 +3158,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T17:28:59.656Z",
-    "lastVerified": "2026-11-08T17:28:59.656Z",
+    "lastChecked": "2026-11-13T18:25:45.312Z",
+    "lastVerified": "2026-11-13T18:25:45.312Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "7744a3efca7d64cc26a959229bdb6ddba69e5772adf2aa52a1fe892143d180d3",
+    "contentHash": "1d1d4dd679ea45780d448aede1963e64d86a616ea676bb4cab39ef8aff42bd37",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4678,9 +4687,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-12T05:47:31.507Z",
+    "lastChecked": "2026-11-13T18:25:42.705Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-12T05:47:31.507Z"
+    "lastVerified": "2026-11-13T18:25:42.705Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -6731,9 +6740,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-12T14:44:31.220Z",
+    "lastChecked": "2026-11-13T18:25:50.203Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-12T14:44:31.220Z"
+    "lastVerified": "2026-11-13T18:25:50.203Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T18:18:05.835Z",
+  "last_updated": "2026-11-13T18:26:52.481Z",
   "total_verified_learnings": 1266,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3123,8 +3123,8 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "f651d47d",
-      "content_hash": "c675403625cae250e705d372cd1b2d168adbbfdab567cf385d7d000fd64653f7",
+      "source_version": "4507a263",
+      "content_hash": "8dbfb21bb8b7e85c0acbad05c0f789e6514c430b6edb9c1885db2b35b999f2ce",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
@@ -3136,6 +3136,11 @@
         {
           "number": null,
           "title": "storage): keep the key configuration hint in encryption errors",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "dsn): look up getParam keys by their bytes",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3174,7 +3179,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T07:43:42.740Z",
+      "verified_at": "2026-11-13T18:25:55.849Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35485,7 +35490,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "7744a3efca7d64cc26a959229bdb6ddba69e5772adf2aa52a1fe892143d180d3",
+      "content_hash": "1d1d4dd679ea45780d448aede1963e64d86a616ea676bb4cab39ef8aff42bd37",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -35597,7 +35602,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-11-08T17:29:00.728Z",
+      "verified_at": "2026-11-13T18:25:45.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54813,11 +54818,16 @@
       "slug": "qdrant-qdrant",
       "platform": "github",
       "source_url": "https://github.com/qdrant/qdrant",
-      "source_version": "222b2e44",
-      "content_hash": "ad2cb8edf3601643fee298578ae24886612cff45ff5f9e98450e041ce08e8779",
+      "source_version": "95d89e51",
+      "content_hash": "854ab292cf2dbd1dbf1a9e8519f0a2fc3f0ffa420bb1e65bbaeaecf2c44c4609",
       "dossier_path": "07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Add `PATCH /cluster/consensus_state` API to fix consensus state (#11411)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2246,
           "title": "build(deps): bump urllib3 and pyjwt in /tests (#10912)",
@@ -54834,7 +54844,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:22:50.289Z",
+      "verified_at": "2026-11-13T18:26:02.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79464,13 +79474,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "e3b97728",
-      "content_hash": "253ac5030fd64005a10b7eda7bb4dedba11c31f669357c312670e7450c0a52fa",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "1637f0cc",
+      "content_hash": "93c78f56607fc2f2722a5454fb96056347a38abb46044f722870beb4002965e7",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -79683,7 +79693,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T15:38:17.933Z",
+      "verified_at": "2026-11-13T18:26:00.962Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -193858,37 +193868,37 @@
       "item_id": "candidate_directive-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5MP7-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6EP3-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip.md",
       "title": "Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "e3b97728",
-      "content_hash": "56cebb564878bdcd60b1c760520843e318bd803e767b7a8cc1d10c0f8e956e50",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1a7fefa2cdcde32e1dc1951bb7ce595b5574e7fab83a71684d5432acfc0d73bd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:38:18.289Z"
+      "persisted_at": "2026-11-13T18:26:52.271Z"
     },
     "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "e3b97728",
-      "content_hash": "66921aed3552cb8ccccece3be3cdf89751aa9735724cb352d38c05e81c3a6531",
+      "source_version": "1637f0cc",
+      "content_hash": "32e1e64bef265ee043092013bd81619e9034abd27acd9341e089f58c51c83f8f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:38:18.384Z"
+      "persisted_at": "2026-11-13T18:26:01.424Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "e3b97728",
-      "content_hash": "c5b4ad5346787bfa089e1349d9155a49217fc9f4d7bee628c9d658dd9cc838b2",
+      "source_version": "1637f0cc",
+      "content_hash": "8bec84a8c2759cb50105fbe193e3e31e041df0b255a1195852ded4eac63cf7ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:38:18.483Z"
+      "persisted_at": "2026-11-13T18:26:01.522Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -195587,6 +195597,150 @@
       "content_hash": "c7a667decdab45567b377ba7a5530c2a6c0a01ba095869f8c2c779fe6650768b",
       "domain_letter": "D",
       "persisted_at": "2026-11-13T18:18:05.287Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-research-knowledge-intelligence-xiaomimimo-mimo-v.md",
+      "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Pro-RL Core Invariants",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "content_hash": "5db92a726d5b8fb292ead3bf4da572800e21831411432aded9a3528cc9fb66fd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:25:45.995Z"
+    },
+    "candidate_directive-dsn-look-up-getparam-keys-by-their-bytes": {
+      "item_id": "candidate_directive-dsn-look-up-getparam-keys-by-their-bytes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6E9A-dsn-look-up-getparam-keys-by-their-bytes.md",
+      "title": "dsn): look up getParam keys by their bytes",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c302c0590aa8169e75a5d4b2fbe5e57ec74f25383de484eb02dd7a84001518e3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:26:51.702Z"
+    },
+    "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-appwrite-appwrite-architecture-intelligence-appwrite-appwrite-core-invariants.md",
+      "title": "Architecture Intelligence: appwrite/appwrite Core Invariants",
+      "repository": "appwrite/appwrite",
+      "source_version": "4507a263",
+      "content_hash": "55745b2c523fcf608f3a8ed40e5c39785936f0013d58eb96535de28d698edcdb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:25:56.321Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-appwrite-appwrite": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-appwrite-appwrite",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/appwrite-appwrite-verification-protocol-empirical-defect-shield-for-appwrite-app.md",
+      "title": "Verification Protocol: Empirical Defect Shield for appwrite/appwrite",
+      "repository": "appwrite/appwrite",
+      "source_version": "4507a263",
+      "content_hash": "1e601b28e67472f6243781b1b477fde29aa145e472458b56b8ccf81a859bf6b3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:25:56.419Z"
+    },
+    "candidate_directive-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411": {
+      "item_id": "candidate_directive-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5CR4-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411.md",
+      "title": "Add `PATCH /cluster/consensus_state` API to fix consensus state (#11411)",
+      "repository": "qdrant/qdrant",
+      "source_version": "95d89e51",
+      "content_hash": "7e07f421da2ffae672187c6960f1bdfad3e34c677bcb29043ad19923997e515a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:26:03.092Z"
+    },
+    "domain_intelligence-architecture-intelligence-qdrant-qdrant-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-qdrant-qdrant-architecture-intelligence-qdrant-qdrant-core-invariants.md",
+      "title": "Architecture Intelligence: qdrant/qdrant Core Invariants",
+      "repository": "qdrant/qdrant",
+      "source_version": "95d89e51",
+      "content_hash": "a7dacad382e6718bb5a82472ab1c91a54c53105690739fb84ada91dcc7e9decc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:26:03.207Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-qdrant-qdrant": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qdrant-qdrant",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/qdrant-qdrant-verification-protocol-empirical-defect-shield-for-qdrant-qdrant.md",
+      "title": "Verification Protocol: Empirical Defect Shield for qdrant/qdrant",
+      "repository": "qdrant/qdrant",
+      "source_version": "95d89e51",
+      "content_hash": "fc468c93c357b3f598d2557a2ce25a8f2039145de53ccafac4055c898a66f198",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:26:03.305Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-research-knowledge-intelligence-hf-xiao.md",
+      "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-pro-rl-learnings Core Invariants",
+      "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f9fad0b0a85494f32fc6924a18e31b7f529d490744d7f32ce6b62dd12bf57a54",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:26:51.238Z"
+    },
+    "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-appwrite-appwrite-learnings-architecture-intelligence-appwrite-appwrite-learning.md",
+      "title": "Architecture Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d7a2635e39fd37e4b8cddc895d34a80935298bc88c16a7c02a8c060e989ebf8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:26:51.804Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-appwrite-appwrite-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-appwrite-appwrite-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/appwrite-appwrite-learnings-verification-protocol-empirical-defect-shield-for-ap.md",
+      "title": "Verification Protocol: Empirical Defect Shield for appwrite-appwrite-learnings",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d23fa52d91912d22ad7d5e4c27346a2aeb3f6976e781caa25fcd4d5420c8544b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:26:51.914Z"
+    },
+    "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
+      "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "14f38af618d0daaba70bf88fe40fd622d73de95b25ecca1172678b94768cebd4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:26:52.372Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-provablehq-snarkos-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-provablehq-snarkos-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-learnings-verification-protocol-empirical-defect-shield-for-p.md",
+      "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9e7d240250d7031fff1b03f0a300472dc9b06a1acbff6d4b0ef5e7304bfb832c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:26:52.481Z"
     }
   },
   "aliases": {
@@ -201585,5 +201739,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9244
+  "total_items": 9256
 }

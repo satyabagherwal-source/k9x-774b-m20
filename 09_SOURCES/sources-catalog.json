@@ -545,8 +545,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
     "license": "Open-Source",
-    "contentHash": "7744a3efca7d64cc26a959229bdb6ddba69e5772adf2aa52a1fe892143d180d3",
-    "lastHarvestedAt": "2026-11-08T17:29:00.869Z",
+    "contentHash": "1d1d4dd679ea45780d448aede1963e64d86a616ea676bb4cab39ef8aff42bd37",
+    "lastHarvestedAt": "2026-11-13T18:25:45.801Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "56afe28f",
+    "sourceVersion": "1637f0cc",
     "license": "Apache-2.0",
-    "contentHash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
-    "lastHarvestedAt": "2026-11-13T00:24:14.365Z",
+    "contentHash": "93c78f56607fc2f2722a5454fb96056347a38abb46044f722870beb4002965e7",
+    "lastHarvestedAt": "2026-11-13T18:26:01.106Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6713,10 +6713,10 @@
     "repository": "qdrant/qdrant",
     "platform": "github",
     "sourceUrl": "https://github.com/qdrant/qdrant",
-    "sourceVersion": "222b2e44",
+    "sourceVersion": "95d89e51",
     "license": "Apache-2.0",
-    "contentHash": "ad2cb8edf3601643fee298578ae24886612cff45ff5f9e98450e041ce08e8779",
-    "lastHarvestedAt": "2026-10-22T19:22:50.342Z",
+    "contentHash": "854ab292cf2dbd1dbf1a9e8519f0a2fc3f0ffa420bb1e65bbaeaecf2c44c4609",
+    "lastHarvestedAt": "2026-11-13T18:26:02.872Z",
     "learningId": "learn-github-qdrant-qdrant"
   },
   "vuetifyjs-vuetify": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "f651d47d",
+    "sourceVersion": "4507a263",
     "license": "BSD-3-Clause",
-    "contentHash": "c675403625cae250e705d372cd1b2d168adbbfdab567cf385d7d000fd64653f7",
-    "lastHarvestedAt": "2026-11-09T07:43:42.837Z",
+    "contentHash": "8dbfb21bb8b7e85c0acbad05c0f789e6514c430b6edb9c1885db2b35b999f2ce",
+    "lastHarvestedAt": "2026-11-13T18:25:56.000Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

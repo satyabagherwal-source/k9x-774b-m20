@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `f651d47d`  
+> **Source Version**: `4507a263`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T07:43:41.676Z  
+> **Timestamp**: 2026-11-13T18:25:55.397Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T07:43:41.670Z  
+> **Harvest Timestamp**: 2026-11-13T18:25:55.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -26,15 +26,15 @@
 - **Repository / Resource**: `appwrite/appwrite`
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57898 stars
+- **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
+- **Stars / Engagement**: 58082 stars
 
 ---
 
 ## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
 ### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md, Dockerfile.
+- Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
 
 ### Core Architecture Module: `app/views/install/installer/js/modules/state.js`
@@ -927,7 +927,9 @@ export function ProductEmptyStateHero({
   title,
   description,
   actions,
+  children,
   as: Heading = 'h2',
+  layout = 'stacked',
 }: {
   /** Desktop illustration; `icon` replaces it below `sm`. */
   visual: ReactNode
@@ -935,25 +937,79 @@ export function ProductEmptyStateHero({
   title: ReactNode
   description: ReactNode
   actions?: ReactNode
+  /** Rendered under the actions. */
+  children?: ReactNode
   as?: 'h1' | 'h2'
+  /**
+   * `split` puts the illustration beside the text from `lg`, for wide cards.
+   * `columns` sets the text and illustration in two columns once the
+   * container has room for both, and stacks them centered when it has not.
+   */
+  layout?: 'stacked' | 'split' | 'columns'
 }) {
-  return (
-    <div className="flex flex-col items-center text-center">
-      {visual}
+  const split = layout === 'split'
+  const columns = layout === 'columns'
+  const text = (
+    <div
+      className={cn(
+        'flex flex-col items-center',
+        split && 'lg:max-w-md lg:items-start',
+        columns && 'w-full @4xl:items-start',
+      )}
+    >
       <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-muted text-muted-foreground sm:hidden">
         <Icon className="h-5 w-5" />
       </div>
-      <Heading className="mt-6 text-[24px] font-semibold tracking-tight text-foreground sm:mt-10">
+      <Heading
+        className={cn(
+          'mt-6 text-[24px] font-semibold tracking-tight text-foreground sm:mt-10',
+          split && 'lg:mt-0',
+          columns && '@4xl:mt-0 @4xl:text-[28px] @4xl:leading-tight',
+        )}
+      >
         {title}
       </Heading>
       <p className="mt-3 max-w-lg text-[14px] leading-relaxed text-muted-foreground">
         {description}
       </p>
       {actions ? (
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+        <div
+          className={cn(
+            'mt-7 flex flex-wrap items-center justify-center gap-2',
+            split && 'lg:justify-start',
+            columns && '@4xl:justify-start',
+          )}
+        >
           {actions}
         </div>
       ) : null}
+      {children}
+    </div>
+  )
+
+  if (columns) {
+    return (
+      <div className="@container">
+        <div className="flex flex-col items-center text-center @4xl:grid @4xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] @4xl:gap-12 @4xl:text-start">
+          {/* The end padding holds the illustration's dot grid, which bleeds past it. */}
+          <div className="w-full max-w-md @4xl:order-last @4xl:max-w-none @4xl:pe-16">
+            {visual}
+          </div>
+          {text}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className={cn(
+        'flex flex-col items-center text-center',
+        split && 'lg:flex-row lg:justify-center lg:gap-36 lg:text-start',
+      )}
+    >
+      {visual}
+      {text}
     </div>
   )
 }
@@ -1175,20 +1231,7 @@ export function ProductEmptyStateSteps({
             {step.link ? (
               <Link
                 {...step.link}
-                className="group flex h-full flex-col p-5 transition-colors hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-none"
-              >
-                {content}
-              </Link>
-            ) : (
-              <div className="flex h-full flex-col p-5">{content}</div>
-            )}
-          </li>
-        )
-      })}
-    </ol>
-  )
-}
-
+                className="group flex h-full flex-col p-5 transition-colors hover:bg
 ```
 
 ### Core Architecture Module: `apps/console/src/components/pages/domains/_components/DomainsDefaultState.tsx`
@@ -1905,11 +1948,11 @@ export function DomainsEmptyState({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #15433** (2026-11-10): **🐛 Bug Report: Etsy OAuth2 adapter reads the user without the required x-api-key header**
+  *Symptoms*: ## Summary  Sign in with Etsy still fails after #15415. After the token exchange, the adapter reads the user from Etsy's v3 API without the `x-api-key` header, which Etsy requires on every v3 request.  ## Details  - `src/Appwrite/Auth/OAuth2/Etsy.php`, `getUser()`, calls `GET https://api.etsy.com/v3/application/users/{user_id}` with only an `Authorization: Bearer` header. - Etsy requires `x-api-key: <keystring>:<shared secret>` on every v3 request: https://developers.etsy.com/documentation/essentials/requests - Without it, the endpoint returns `{"error":"Invalid API key: should be in the format 'keystring:shared_secret'."}`, so `getUserEmail()` and `getUserName()` read keys that aren't there and sign-in fails. - The Console already collects both values for Etsy (**Keystring** and **Shared Secret** in `src/Appwrite/Platform/Modules/Project/Http/Project/OAuth2/Etsy/Update.php`), so the adapter has them as `appID` and `appSecret`. - The code is the same on `main` and in 2.7.1.  ## Suggested fix  Send `x-api-key: {appID}:{appSecret}` with the `getUser()` request.  ## Notes  - #15415 fixed the authorize URL from #15370. The adapter also still passes `scope` as an array, so the authorize URL carries `scope[0]=email_r&scope[1]=profile_r` instead of the space-separated `scope` Etsy expects. #15394, still open, fixes that part. - This turned up while adding the held-back OAuth providers to the appwrite.io integrations catalog. The Etsy page stays held back until both are fixed.  cc @a
+
 - **Issue #15382** (2026-11-09): **🐛 Bug Report: Turning off Public when creating a function from a template still lets anyone execute it**
   *Symptoms*: ## Summary  When you create a function from a template in the Console, turning off the **Public** switch ("Allow anyone to execute this function (execute role: any)") has no effect. The function is still created with `execute: ['any']`, so anyone who finds its domain can run it.  ## Details  - `apps/console/src/components/pages/projects/$projectId/functions/create/TemplateConfigView.tsx`, around line 300, builds the execute permissions as `isPublic ? ['any'] : template.permissions?.length ? template.permissions : []`. - Every function template in `app/config/templates/function.php` sets `'permissions' => ['any']`, so the "off" branch also resolves to `['any']`. - The manual, repository and URL flows (`ManualCreateView.tsx`, `RepositoryConfigView.tsx` and `DeployFromUrlView.tsx`) send `[]` when the switch is off, so only the template flow is affected. - The code is the same at HEAD and in 2.7.1.  ## Suggested fix  Send exactly what the switch shows: `['any']` when it's on and `[]` when it's off. If a template should start private, set the switch's initial state from the template's permissions instead.  ## Notes  This comes from reading the Console code. I didn't reproduce it in a running Console. It turned up while writing the appwrite.io integrations catalog pages in #15374, which tell readers to change execute access after creating these template functions.  cc @adityaoberai 
-
-- **Issue #15372** (2026-11-09): **🐛 Bug Report: Pinecone, LangChain RAG and Replicate function templates ask for variables their code doesn't read**
-  *Symptoms*: ## Summary  Three Console function templates ask for environment variables that the template code doesn't read. Functions created from them fail on every execution until the user adds the expected variable by hand.  ## Details  | Template | `app/config/templates/function.php` asks for | Template code at `1.2.0` requires | | --- | --- | --- | | `sync-with-pinecone` | `PINECONE_INDEX_NAME` | `PINECONE_INDEX_ID` (`throwIfMissing` in `node/sync-with-pinecone/src/main.js`) | | `rag-with-langchain` | `PINECONE_INDEX_NAME` | `PINECONE_INDEX_ID` (`node/rag-with-langchain/src/main.js`) | | `generate-with-replicate` | `REPLICATE_API_KEY` | `REPLICATE_API_TOKEN` (`node/generate-with-replicate/src/main.js`; it's also the Replicate SDK's variable) |  - The Pinecone variable was renamed in the config in 8a4954d4e8 (2025-03-08), but the templates weren't updated. - `generate-with-replicate` is also listed twice in `app/config/templates/function.php`.  ## Suggested fix  Rename the config variables to match the code, or update the templates and bump `providerVersion`. Then drop the duplicate Replicate entry.  ## Notes  This turned up while adding function templates to the appwrite.io integrations catalog. The Pinecone, LangChain and Replicate pages are held back until this is fixed.  cc @adityaoberai 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1926,137 +1969,268 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7944683b` (2026-11-07)
-**Commit Message**: fix(storage): keep the key configuration hint in encryption errors
+### Incident Patch 1: `6f930f77` (2026-11-13)
+**Commit Message**: fix(dsn): look up getParam keys by their bytes
 
-A missing or rotated _APP_OPENSSL_KEY_V* raised a StorageException, which the HTTP error handler turns into a bare 500. Raise GENERAL_SERVER_ERROR with the configuration hint, as main does.
+PHP's getParam is binary-safe: a query like ?%ff=1 has the key "\xff". The binding mapped a non-UTF-8 key to '' instead. The corpus now covers that key and a Stringable whose __toString() throws (its exception already passes through unchanged).
 
-**File**: `src/Appwrite/Storage/Encryption.php` (modified, +10/-6)
+**File**: `crates/extension/src/dsn.rs` (modified, +1/-2)
 ```diff
-@@ -3,6 +3,7 @@
- namespace Appwrite\Storage;
+@@ -303,8 +303,7 @@ impl Dsn {
+     /// `getParam(string $key, string $default = ''): string`.
+     #[php(defaults(default = "\"\""))]
+     pub fn get_param(&self, key: PhpString<'_>, default: PhpString<'_>) -> PhpResult<Param<'_>> {
+-        let key = text(key.bytes(), MALFORMED).unwrap_or_default();
+-        Ok(match self.dsn.param(key).map_err(thrown)? {
++        Ok(match self.dsn.param(key.bytes()).map_err(thrown)? {
+             Some(value) => Param::Found(value),
+             None => Param::Default(default.0.into_owned()),
+         })
+```
+
+**File**: `crates/extension/tests/dsn.php` (modified, +7/-0)
+```diff
+@@ -158,6 +158,7 @@ function emit(string $case, array $result): void
+ // Positional and named arguments, and getParam's default.
+ emit('from positional', outcome(fn () => (string) DSN::from('redis', 'cache', 'u', 'p', 6379, 'db', ['a' => 'b'])));
+ emit('getParam default', outcome(fn () => (new DSN('redis://h?a=1'))->getParam('b')));
++emit('getParam binary key', outcome(fn () => bin2hex((new DSN('redis://h?%ff=1&=2'))->getParam("\xff"))));
  
- use Appwrite\Auth\EncryptionKey;
-+use Appwrite\Extend\Exception;
- use Appwrite\OpenSSL\OpenSSL;
- use Utopia\Compression\Compression;
- use Utopia\Database\Document;
-@@ -31,7 +32,7 @@ public static function create(): array
-     {
-         $master = EncryptionKey::current();
-         if ($master === '') {
--            throw new StorageException('Encryption key is not configured. Please configure _APP_OPENSSL_KEY_V' . EncryptionKey::version() . ' in .env file.');
-+            throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Encryption key is not configured. Please configure _APP_OPENSSL_KEY_V' . EncryptionKey::version() . ' in .env file.');
-         }
- 
-         return [
-@@ -47,11 +48,14 @@ public static function cipher(array $envelope): Cipher
-     {
-         $wrapped = \base64_decode($envelope['key'], true);
-         $master = EncryptionKey::get($envelope['version']);
--        if ($wrapped === false || $master === '') {
--            throw new StorageException('Unable to unwrap the file key with _APP_OPENSSL_KEY_V' . $envelope['version']);
-+        if ($wrapped !== false && $master !== '') {
-+            try {
-+                return Cipher::unwrap($wrapped, $master);
-+            } catch (StorageException) {
-+            }
-         }
- 
--        return Cipher::unwrap($wrapped, $master);
-+        throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Unable to unwrap the file key. Please check _APP_OPENSSL_KEY_V' . $envelope['version'] . ' in .env file.');
+ // DSN.php has no strict_types: PHP converts scalar arguments, and Cloud relies on it
+ // (getParam('connectTimeout', 1.0) took down staging when the binding refused it).
+@@ -177,6 +178,12 @@ public function __toString(): string
+     'getParam array default' => fn () => (new DSN('redis://h'))->getParam('x', []),
+     'getParam int key' => fn () => (new DSN('redis://h?5=a'))->getParam(5),
+     'new Stringable' => fn () => (string) new DSN($stringable),
++    'new throwing Stringable' => fn () => new DSN(new class () {
++        public function __toString(): string
++        {
++            throw new LogicException('unprintable');
++        }
++    }),
+     'new int' => fn () => (string) new DSN(5),
+     'new null' => fn () => (string) new DSN(null),
+     'new object' => fn () => (string) new DSN(new stdClass()),
+```
+
+**File**: `crates/utopia/dsn/src/lib.rs` (modified, +4/-3)
+```diff
+@@ -518,13 +518,13 @@ impl Dsn {
+     /// echo $dsn->getParam('from'), "\n";          // +15550100
+     /// var_dump($dsn->getParam('region'));         // string(0) ""
+     /// ```
+-    pub fn param(&self, key: &str) -> Result<Option<&[u8]>, Error> {
++    pub fn param(&self, key: impl AsRef<[u8]>) -> Result<Option<&[u8]>, Error> {
+         let query = match self.query() {
+             None | Some("" | "0") => return Ok(None),
+             Some(q) => q,
+         };
+         let params = self.params.get_or_init(|| parse_str(query.as_bytes()));
+-        match params.get_str(key) {
++        match params.get_ref(php_std::types::KeyRef::normalize(key.as_ref())) {
+             None => Ok(None),
+             Some(Value::Str(value)) => Ok(Some(value)),
+             Some(_) => {
+@@ -551,7 +551,7 @@ impl Dsn {
+     /// $dsn = new DSN('s3://key:secret@s3.amazonaws.com/backups');
+     /// echo $dsn->getParam('region', 'us-east-1'), "\n"; // us-east-1
+     /// ```
+-    pub fn param_or<'a>(&'a self, key: &str, default: &'a [u8]) -> Result<&'a [u8], Error> {
++    pub fn param_or<'a>(&'a self, key: impl AsRef<[u8]>, default: &'a [u8]) -> Result<&'a [u8], Error> {
+         Ok(self.param(key)?.unwrap_or(default))
      }
- 
-     /**
-@@ -84,7 +88,7 @@ public function decrypt(string $data): string
-         );
- 
-         if ($decrypted === false) {
--            throw new StorageException('Failed to decrypt file ' . $this->file->getId());
-+            throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Failed to decrypt file ' . $this->file->getId());
-         }
- 
-         return $decrypted;
-@@ -110,7 +114,7 @@ public function copy(Device $from, Device $to, string $target, string $contentTy
- 
-     private function open(): Cipher
-     {
--        return self::cipher($this->file->getAttribute('metadata', [])['encryption'] ?? throw new StorageException('File ' . $this->file->getId() . ' has no key'));
-+        return self::cipher($this->file->getAttribute('metadata', [])['encryption'] ?? throw new Exception(Exception::GENERAL_SERVER_ERROR, 'File ' . $this->file->getId() . ' has no encryption key'));
-     }
- 
-     private function path(): string
+ }
+@@ -664,6 +664,7 @@ mod tests {
+         assert_eq!(d.path(), b"database");
+         assert_eq!(d.param("timezone").unwrap(), Some(&b"UTC"[..]));
+         assert_eq!(d.param_or("region", b"us-east-1").unwrap(), b"us-east-1");
++        assert_eq!(Dsn::parse("s://h?%ff=1&=2").unwrap().param(b"\xff").unwrap(), Some(&b"1"[..]));
+         let d = Dsn::parse("sms://user:sl%2Fsh%2B%24%40no%3Aher@localhost").unwrap();
+         assert_eq!(d.password(), Some(&b"sl/sh+$@no:her"[..]));
+         assert_eq!(d.path(), b"");
 ```
 
 ---
 
-### Incident Patch 2: `1f62f76e` (2026-11-07)
-**Commit Message**: fix(storage): fail the antivirus scan when the decrypted copy is incomplete
+### Incident Patch 2: `a5c3657e` (2026-11-13)
+**Commit Message**: Merge pull request #15596 from appwrite/fix-device-switch-blocked-user
 
-A failed or short write of the temporary plaintext would have been scanned as an empty or truncated file and reported clean. It now fails the scan, which removes the upload as any other failed scan does.
+fix(account): refuse device session switch to a blocked user
 
-**File**: `src/Appwrite/Platform/Modules/Storage/Http/Buckets/Files/Create.php` (modified, +10/-5)
+**File**: `src/Appwrite/Platform/Modules/Account/Http/Account/Devices/Sessions/Update.php` (modified, +10/-2)
 ```diff
-@@ -456,16 +456,21 @@ public function action(
+@@ -127,6 +127,16 @@ public function action(
+             throw new Exception(Exception::USER_DEVICE_SESSION_NOT_FOUND);
+         }
  
-                     // ClamAV reads a path, so an encrypted file is scanned from a decrypted temporary copy.
-                     $temporary = $cipher === null ? null : \tempnam(\sys_get_temp_dir(), 'scan');
--                    if ($temporary !== null) {
--                        \file_put_contents($temporary, $cipher->decrypt((string) $deviceForFiles->read($path), 0, true));
--                    }
- 
-                     try {
--                        $scan = $antivirus->scanInStream($temporary ?? $path);
-+                        // A missing or short copy would scan clean, so it fails the scan instead.
-+                        if ($cipher !== null) {
-+                            $plaintext = $cipher->decrypt((string) $deviceForFiles->read($path), 0, true);
-+                            if (!\is_string($temporary) || \file_put_contents($temporary, $plaintext) !== \strlen($plaintext)) {
-+                                throw new \RuntimeException('Unable to write the decrypted copy for scanning');
-+                            }
-+                        }
++        $user = $authorization->skip(fn () => $dbForProject->getDocument('users', $session->getAttribute('userId')));
 +
-+                        $scan = $antivirus->scanInStream(\is_string($temporary) ? $temporary : $path);
-                     } catch (\RuntimeException $e) {
-                         $scan = ScanResult::failed($e->getMessage());
-                     } finally {
--                        if ($temporary !== null) {
-+                        if (\is_string($temporary)) {
-                             \unlink($temporary);
-                         }
-                     }
++        if ($user->isEmpty()) {
++            throw new Exception(Exception::USER_DEVICE_SESSION_NOT_FOUND);
++        }
++
++        if ($user->getAttribute('status') === false) {
++            throw new Exception(Exception::USER_BLOCKED);
++        }
++
+         $protocol = $request->getProtocol();
+ 
+         // Session secrets are hashed, so the original can never be put back into a cookie. Switching
+@@ -147,8 +157,6 @@ public function action(
+             'activeSessionInternalId' => $session->getSequence(),
+         ])));
+ 
+-        $user = $authorization->skip(fn () => $dbForProject->getDocument('users', $session->getAttribute('userId')));
+-
+         $dbForProject->purgeCachedDocument('users', $session->getAttribute('userId'));
+ 
+         $store = new Store();
+```
+
+**File**: `tests/e2e/Services/Account/AccountDevicesCustomClientTest.php` (modified, +39/-0)
+```diff
+@@ -724,6 +724,45 @@ public function testDeviceRefusesInvalidatedSessions(): void
+         $this->assertEquals('user_device_session_not_found', $response['body']['type']);
+     }
+ 
++    public function testDeviceRefusesBlockedUsers(): void
++    {
++        $projectId = $this->getProject()['$id'];
++        $deviceKey = 'a_device_' . $projectId;
++        $headers = [
++            'origin' => 'http://localhost',
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $projectId,
++        ];
++
++        $email = \uniqid() . 'blocked@localhost.test';
++        $userId = $this->createUserWithPassword($email, 'password');
++        $deviceCookie = $this->createDevice()['cookie'];
++
++        $session = $this->signIn($deviceCookie, $email, 'password');
++        $this->assertEquals(201, $session['headers']['status-code']);
++        $deviceCookie = $session['cookies'][$deviceKey];
++
++        $blocked = $this->client->call(Client::METHOD_PATCH, '/users/' . $userId . '/status', [
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $projectId,
++            'x-appwrite-key' => $this->getProject()['apiKey'],
++        ], [
++            'status' => false,
++        ]);
++        $this->assertEquals(200, $blocked['headers']['status-code']);
++
++        /**
++         * Test for FAILURE - the device still holds the session, but its user is blocked
++         */
++        $response = $this->client->call(Client::METHOD_PATCH, '/account/devices/current/session', \array_merge($headers, [
++            'cookie' => $deviceKey . '=' . $deviceCookie,
++        ]), [
++            'sessionId' => $session['body']['$id'],
++        ]);
++        $this->assertEquals(403, $response['headers']['status-code']);
++        $this->assertEquals('user_blocked', $response['body']['type']);
++    }
++
+     public function testFallbackCookiesCarryTheDeviceAndTheSession(): void
+     {
+         $projectId = $this->getProject()['$id'];
 ```
 
 ---
 
-### Incident Patch 3: `f651d47d` (2026-11-09)
-**Commit Message**: Merge pull request #15413 from appwrite/fix-template-public-switch
+### Incident Patch 3: `5668053c` (2026-11-13)
+**Commit Message**: fix(account): refuse device session switch to a blocked user
 
-fix(console): respect the Public switch when creating a function from a template
+The switch route loaded the session's owner only after rotating its secret and never checked the owner's status, so a device could still switch to a blocked account's session. Load the user first and refuse with user_blocked, as the request pipeline does for callers.
 
-**File**: `apps/console/src/components/pages/projects/$projectId/functions/create/TemplateConfigView.tsx` (modified, +1/-5)
+**File**: `src/Appwrite/Platform/Modules/Account/Http/Account/Devices/Sessions/Update.php` (modified, +10/-2)
 ```diff
-@@ -297,11 +297,7 @@ export function TemplateConfigView({
-         functionId: finalFunctionId,
-         name: functionName.trim(),
-         runtime: runtime as Runtime,
--        execute: isPublic
--          ? ['any']
--          : template.permissions?.length
--            ? template.permissions
--            : [],
-+        execute: isPublic ? ['any'] : [],
-         events: template.events?.length ? template.events : undefined,
-         schedule: template.cron || undefined,
-         timeout: template.timeout ?? undefined,
+@@ -127,6 +127,16 @@ public function action(
+             throw new Exception(Exception::USER_DEVICE_SESSION_NOT_FOUND);
+         }
+ 
++        $user = $authorization->skip(fn () => $dbForProject->getDocument('users', $session->getAttribute('userId')));
++
++        if ($user->isEmpty()) {
++            throw new Exception(Exception::USER_DEVICE_SESSION_NOT_FOUND);
++        }
++
++        if ($user->getAttribute('status') === false) {
++            throw new Exception(Exception::USER_BLOCKED);
++        }
++
+         $protocol = $request->getProtocol();
+ 
+         // Session secrets are hashed, so the original can never be put back into a cookie. Switching
+@@ -147,8 +157,6 @@ public function action(
+             'activeSessionInternalId' => $session->getSequence(),
+         ])));
+ 
+-        $user = $authorization->skip(fn () => $dbForProject->getDocument('users', $session->getAttribute('userId')));
+-
+         $dbForProject->purgeCachedDocument('users', $session->getAttribute('userId'));
+ 
+         $store = new Store();
+```
+
+**File**: `tests/e2e/Services/Account/AccountDevicesCustomClientTest.php` (modified, +39/-0)
+```diff
+@@ -724,6 +724,45 @@ public function testDeviceRefusesInvalidatedSessions(): void
+         $this->assertEquals('user_device_session_not_found', $response['body']['type']);
+     }
+ 
++    public function testDeviceRefusesBlockedUsers(): void
++    {
++        $projectId = $this->getProject()['$id'];
++        $deviceKey = 'a_device_' . $projectId;
++        $headers = [
++            'origin' => 'http://localhost',
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $projectId,
++        ];
++
++        $email = \uniqid() . 'blocked@localhost.test';
++        $userId = $this->createUserWithPassword($email, 'password');
++        $deviceCookie = $this->createDevice()['cookie'];
++
++        $session = $this->signIn($deviceCookie, $email, 'password');
++        $this->assertEquals(201, $session['headers']['status-code']);
++        $deviceCookie = $session['cookies'][$deviceKey];
++
++        $blocked = $this->client->call(Client::METHOD_PATCH, '/users/' . $userId . '/status', [
++            'content-type' => 'application/json',
++            'x-appwrite-project' => $projectId,
++            'x-appwrite-key' => $this->getProject()['apiKey'],
++        ], [
++            'status' => false,
++        ]);
++        $this->assertEquals(200, $blocked['headers']['status-code']);
++
++        /**
++         * Test for FAILURE - the device still holds the session, but its user is blocked
++         */
++        $response = $this->client->call(Client::METHOD_PATCH, '/account/devices/current/session', \array_merge($headers, [
++            'cookie' => $deviceKey . '=' . $deviceCookie,
++        ]), [
++            'sessionId' => $session['body']['$id'],
++        ]);
++        $this->assertEquals(403, $response['headers']['status-code']);
++        $this->assertEquals('user_blocked', $response['body']['type']);
++    }
++
+     public function testFallbackCookiesCarryTheDeviceAndTheSession(): void
+     {
+         $projectId = $this->getProject()['$id'];
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15415** (2026-11-09): fix(oauth): use Etsy's v3 authorize URL (@HarshMN2345)
-- **PR #15414** (2026-11-09): fix(templates): match function template variables to their code (@HarshMN2345)
-- **PR #15413** (2026-11-09): fix(console): respect the Public switch when creating a function from a template (@HarshMN2345)
-- **PR #15410** (2026-11-09): fix(console): keep full-screen curtains clickable over an open dialog (@HarshMN2345)
-- **PR #15408** (2026-11-08): fix(deletes): delete a deployment's own runtime instead of looking it up as a function (@ChiragAgg5k)
-- **PR #15400** (2026-11-07): refactor(storage): drop the segmented encryption rollout flag (@ChiragAgg5k)
+- **PR #15606** (closed): feat(console): link MCP1 in the expanded marketing footer (@eldadfux)
+- **PR #15602** (2026-11-13): feat(console): point agents at the public docs MCP server in llms.txt (@ChiragAgg5k)
+- **PR #15601** (2026-11-13): feat(console): declare Appwrite Cloud OAuth 2.0 scopes in /openapi.json (@ChiragAgg5k)
+- **PR #15600** (2026-11-13): feat(notifications): let the Beep app restyle alert pushes (@ChiragAgg5k)
+- **PR #15599** (2026-11-13): fix(extension): convert scalar arguments to DSN as PHP's weak mode does (@ChiragAgg5k)
+- **PR #15598** (2026-11-13): fix(console): start new projects with a web platform for localhost (@ChiragAgg5k)
 
 ---
 
@@ -2076,42 +2250,29 @@ fix(console): respect the Public switch when creating a function from a template
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): keep the key configuration hint in encryption errors
+## X. dsn): look up getParam keys by their bytes
 
 **RULE**:
-When implementing operations in `src/Appwrite/Storage/Encryption.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/extension/src/dsn.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7944683b`: storage): keep the key configuration hint in encryption errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f930f77`: dsn): look up getParam keys by their bytes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Appwrite/Storage/Encryption.php`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/extension/src/dsn.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-use Appwrite\Extend\Exception;
-            throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Encryption key is not configured. Please configure _APP_OPENSSL_KEY_V' . EncryptionKey::version() . ' in .env file.');
-        if ($wrapped !== false && $master !== '') {
-            try {
-                return Cipher::unwrap($wrapped, $master);
-            } catch (StorageException) {
-            }
-        throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Unable to unwrap the file key. Please check _APP_OPENSSL_KEY_V' . $envelope['version'] . ' in .env file.');
-            throw new Exception(Exception::GENERAL_SERVER_ERROR, 'Failed to decrypt file ' . $this->file->getId());
-        return self::cipher($this->file->getAttribute('metadata', [])['encryption'] ?? throw new Exception(Exception::GENERAL_SERVER_ERROR, 'File ' . $this->file->getId() . ' has no encryption key'));
+        Ok(match self.dsn.param(key.bytes()).map_err(thrown)? {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-            throw new StorageException('Encryption key is not configured. Please configure _APP_OPENSSL_KEY_V' . EncryptionKey::version() . ' in .env file.');
-        if ($wrapped === false || $master === '') {
-            throw new StorageException('Unable to unwrap the file key with _APP_OPENSSL_KEY_V' . $envelope['version']);
-        return Cipher::unwrap($wrapped, $master);
-            throw new StorageException('Failed to decrypt file ' . $this->file->getId());
-        return self::cipher($this->file->getAttribute('metadata', [])['encryption'] ?? throw new StorageException('File ' . $this->file->getId() . ' has no key'));
+        let key = text(key.bytes(), MALFORMED).unwrap_or_default();
+        Ok(match self.dsn.param(key).map_err(thrown)? {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7944683b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f930f77` are properly handled with clean fallback behavior.

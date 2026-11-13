@@ -9558,3 +9558,8 @@
 | `CYCLE-20261113-U185` | `2026-11-13T18:17:14.933Z` | `ForeactLabs/OpenExecutive` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`19aed310...`) |
 | `CYCLE-20261113-U31G` | `2026-11-13T18:17:17.284Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`ddfa5415...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:18:05.134Z` | `hf-unsloth-qwen-image-2.1-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DC65F2A5` [Domain D] | Yes (`90d65327...`) |
+| `CYCLE-20261113-4ZES` | `2026-11-13T18:25:45.796Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`1d1d4dd6...`) |
+| `CYCLE-20261113-579W` | `2026-11-13T18:25:55.988Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8dbfb21b...`) |
+| `CYCLE-20261113-5B7Q` | `2026-11-13T18:26:01.094Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`93c78f56...`) |
+| `CYCLE-20261113-5CKS` | `2026-11-13T18:26:02.860Z` | `qdrant/qdrant` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`854ab292...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:26:51.023Z` | `hf-xiaomimimo-mimo-v2.6-pro-rl` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C9A75DC2` [Domain D] | Yes (`a205d700...`) |
