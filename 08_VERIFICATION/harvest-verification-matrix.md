@@ -9457,3 +9457,7 @@
 | `CYCLE-20261113-XIF7` | `2026-11-13T12:16:02.179Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`9a4769f2...`) |
 | `CYCLE-20261113-Y3B3` | `2026-11-13T12:16:29.247Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e727c601...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:16:48.731Z` | `hf-black-forest-labs-flux.1-dev` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AD2E98D1` [Domain D] | Yes (`cffde470...`) |
+| `CYCLE-20261113-808K` | `2026-11-13T12:24:11.828Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`0367de8e...`) |
+| `CYCLE-20261113-88WM` | `2026-11-13T12:24:23.062Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`21c27e87...`) |
+| `CYCLE-20261113-8LS4` | `2026-11-13T12:24:39.748Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8260bfd8...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:24:54.932Z` | `hf-deepseek-ai-deepseek-r1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7533F859` [Domain D] | Yes (`0d7dd964...`) |

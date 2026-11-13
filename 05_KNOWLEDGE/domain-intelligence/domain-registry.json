@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T12:16:48.728Z",
-  "total_records": 126,
+  "last_updated": "2026-11-13T12:24:54.930Z",
+  "total_records": 127,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 82,
+      "total": 83,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -107,7 +107,8 @@
         "DOM-D-BC1FB9A1",
         "DOM-D-9BACEDC2",
         "DOM-D-FD88FD4E",
-        "DOM-D-AD2E98D1"
+        "DOM-D-AD2E98D1",
+        "DOM-D-7533F859"
       ]
     },
     "E": {
@@ -5259,6 +5260,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T12:16:48.726Z"
+    },
+    "DOM-D-7533F859": {
+      "record_id": "DOM-D-7533F859",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-R1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/deepseek-ai/DeepSeek-R1](https://huggingface.co/deepseek-ai/DeepSeek-R1))  \n> **Source Version**: `hf-deepseek-`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "0d7dd96489886c31ba09b8ddaca4c0e50cf8b60a4cd379e4fac4c0fb2c2f931f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-r1/hf-deepseek-ai-deepseek-r1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T12:24:43.729Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-r1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-deepseek-ai-deepseek-r1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T12:24:54.928Z"
     }
   }
 }

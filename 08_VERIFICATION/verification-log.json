@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-1TQZ",
-    "timestamp": "2026-11-11T07:08:07.259Z",
-    "repository": "ConwayResearch/Underdog-Woof",
-    "learningId": "learn-huggingface-conwayresearch-underdog-woof",
-    "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-R61R",
-    "timestamp": "2026-11-11T07:27:49.599Z",
-    "repository": "Checkmarx/kics",
-    "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-RA9N",
-    "timestamp": "2026-11-11T07:27:55.067Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-40VR",
     "timestamp": "2026-11-11T07:37:49.431Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7490,6 +7445,51 @@
     "repository": "GreptimeTeam/greptimedb",
     "learningId": "learn-github-greptimeteam-greptimedb",
     "contentHash": "e727c601191752f2c267d552e8c5ec9fb0990271cb8bd707d81e6bf0e9815a77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-808K",
+    "timestamp": "2026-11-13T12:24:11.828Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+    "contentHash": "0367de8ee5a632def34ac95b926db50359632d42b8cd4327841affcb96dc7ae1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-88WM",
+    "timestamp": "2026-11-13T12:24:23.062Z",
+    "repository": "ratatui/ratatui",
+    "learningId": "learn-github-ratatui-ratatui",
+    "contentHash": "21c27e878fbaacf8e5baf73ed4cfd47379f937da72af17e2c73b4c55a4e812b1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8LS4",
+    "timestamp": "2026-11-13T12:24:39.748Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "8260bfd80a6bb4010a0c06d4c67916b61d128d722394ca713345500abf265092",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

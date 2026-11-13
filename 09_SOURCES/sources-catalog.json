@@ -265,8 +265,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceVersion": "hf-deepseek-ai-deepseek-r1",
     "license": "Open-Source",
-    "contentHash": "b98ec77bc6c802f98f6caa15958cc8cce75cc7adabe10e64c39f080417ca7875",
-    "lastHarvestedAt": "2026-11-08T10:48:30.200Z",
+    "contentHash": "0367de8ee5a632def34ac95b926db50359632d42b8cd4327841affcb96dc7ae1",
+    "lastHarvestedAt": "2026-11-13T12:24:11.831Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1"
   },
   "hf-moonshotai-kimi-k3": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "2b7b78e7",
+    "sourceVersion": "41c26a74",
     "license": "MIT",
-    "contentHash": "20aea369b5c0a77fb332ce77af8164b6f3b3d92f1dfa589aa587e29feb68510b",
-    "lastHarvestedAt": "2026-11-08T03:21:25.474Z",
+    "contentHash": "21c27e878fbaacf8e5baf73ed4cfd47379f937da72af17e2c73b4c55a4e812b1",
+    "lastHarvestedAt": "2026-11-13T12:24:23.065Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "9495f482",
+    "sourceVersion": "acbe836e",
     "license": "Apache-2.0",
-    "contentHash": "9afea8a9017f1173ace93ee5a2dfd9d855c0f7627c2a6d880b8d30140550b0d1",
-    "lastHarvestedAt": "2026-11-12T05:35:15.908Z",
+    "contentHash": "8260bfd80a6bb4010a0c06d4c67916b61d128d722394ca713345500abf265092",
+    "lastHarvestedAt": "2026-11-13T12:24:39.752Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {

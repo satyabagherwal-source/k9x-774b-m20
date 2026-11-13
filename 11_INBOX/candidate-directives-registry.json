@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:16:48.904Z",
+  "last_updated": "2026-11-13T12:24:54.951Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8714,6 +8714,24 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7F9814-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-CE5B7C",
+      "directive_title": "build(deps): bump crate-ci/typos from 1.51.1 to 1.52.0 (#2905)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ratatui-ratatui",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CE5B7C-build-deps-bump-crate-ci-typos-from-1-51.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-B33F5F",
+      "directive_title": "datashard : allow read-only prepares on CDC overflow (#58063)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ydb-platform-ydb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B33F5F-datashard-allow-read-only-prepares-on-cd.md",
       "staged_date": "2026-11-13"
     }
   ]

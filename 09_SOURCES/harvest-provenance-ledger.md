@@ -9466,3 +9466,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-13T12:16:02.183Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `68145fc7` | Multi-dimensional audit evidence | 2026-11-13T12:16:29.251Z |
 | `learn-dom-d-ad2e98d1` | `project://hf-black-forest-labs-flux.1-dev` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | 2026-11-13T12:16:48.731Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-13T12:24:11.831Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `41c26a74` | Multi-dimensional audit evidence | 2026-11-13T12:24:23.065Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `acbe836e` | Multi-dimensional audit evidence | 2026-11-13T12:24:39.752Z |
+| `learn-dom-d-7533f859` | `project://hf-deepseek-ai-deepseek-r1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | 2026-11-13T12:24:54.932Z |
