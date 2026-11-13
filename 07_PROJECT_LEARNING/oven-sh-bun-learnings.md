@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `89452d2a`  
+> **Source Version**: `9ea3c693`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:39:36.962Z  
+> **Timestamp**: 2026-11-13T03:10:33.112Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:39:36.958Z  
+> **Harvest Timestamp**: 2026-11-13T03:10:33.106Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96758 stars
+- **Stars / Engagement**: 96681 stars
 
 ---
 
@@ -978,11 +978,13 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #48765** (2026-11-12): **error: Unexpected token: /**
+  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  macos  ### What steps can reproduce the bug?  ``` echo "@supports (content:counter(line) / '') {}" > /tmp/bun-css-test.css bun build /tmp/bun-css-test.css --outdir /tmp/bun-css-test ```  ### What is the expected behavior?  _No response_  ### What do you see instead?  _No response_  ### Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > This is fixed on `main` by #47025 (commit 7942008688a, merged 2026-10-27). The fix is not in a release yet. Bun 1.4.4 (tag `bun-v1.4.4` = 38afee6c8, the version in the report) is from before that commit.  **Root cause:** `Parser::expect_no_error_token` in `src/css/css_parser.rs` returned right after it scanned a nested block (a function or a parenthesis group). Any token after the nested block in an `@supports` declaration condition then failed the "input is exhausted" check. `counter(line)` is the nested block here, and `/` is the token after it. The same failure hit `@supports (transform: translate(1px) rotate(1deg))` and `@import ... supports(...)`. #47025 removed that early return and added tests for it (`test/js/bun/css/css.test.ts`, "Tokens after a nested block"). See also #38552.  **Bun version:** `1.4.3` (release) and `1.4.4-debug` (main, 8aa496e1df5) on `linux x64`  **Attempt 1:** The report's steps on the released Bun 1.4.3 (same code path as 1.4.4). ```console $ echo "@suppo
+
 - **Issue #48450** (2026-11-10): **AOT regression since 1.4.4-canary.20261108.1: build plugin modules are added as entry points**
   *Symptoms*: ### What version of Bun is running?  1.4.4-canary.1+98cda0d8b  ### What platform is your computer?  Darwin 25.6.0 x86_64 i386  ### What steps can reproduce the bug?  This is a canary regression. The same project and the same source build on one canary and fail on the next. A standalone, framework-free reproduction repository is public: [TiBianMod/bun-aot-build-plugin-entry-point](https://github.com/TiBianMod/bun-aot-build-plugin-entry-point).  ```sh git clone https://github.com/TiBianMod/bun-aot-build-plugin-entry-point.git cd bun-aot-build-plugin-entry-point ./repro.sh ```  **1. Canary bisect**  | canary                    | revision                   | result         | | ------------------------- | -------------------------- | -------------- | | `1.4.4-canary.20261107.1` | `1.4.4-canary.1+7ca0042d3` | build succeeds | | `1.4.4-canary.20261108.1` | `1.4.4-canary.1+2596ac5`   | build fails    |  ```sh npx -y bun@1.4.4-canary.20261107.1 build.ts   # succeeds npx -y bun@1.4.4-canary.20261108.1 build.ts   # fails ```  Only one commit is between them: **#47942 — “AOT: the Bun side of the rewritten ahead-of-time compiler”**.  **2. Reproduction files**  A single entry point is passed to `Bun.build`. It loads a build plugin module through a helper that takes the module path as a parameter and calls `import(entry)`:  ```ts // entry.tsx import { load } from "./loader.js";  export const pluginFactory = load("./plugins/tsx.ts"); ```  ```ts // loader.ts export async function load(entry: 
-
-- **Issue #48349** (2026-11-09): **CSS: @counter-style output drops the separating space (@counter-stylethumbs)**
-  *Symptoms*: ### What happens  Bun's CSS output prints `@counter-style` with no space between the at-rule name and the style name, producing an at-rule named `@counter-stylethumbs` instead of `@counter-style thumbs`. Browsers do not recognize it, so the counter style is dropped and `list-style-type: thumbs` has nothing to resolve to. It happens with and without `minify`.  ### Version  - Bun 1.4.3 (`c6da4a4d3010e5553438c60f6bd76d981976867c`), Windows 11 10.0.26200 x64 - Bun 1.4.4 (`38afee6c84fcf48c0edb2466aa4b27d287a59c30`), same host — still present  ### Minimal repro  `input.css`:  ```css @counter-style thumbs{system:cyclic}.c{list-style-type:thumbs} ```  `repro.ts`:  ```ts const result = await Bun.build({   entrypoints: ["./input.css"],   outdir: "./out",   minify: true,   target: "browser", }); for (const output of result.outputs) console.log(await Bun.file(output.path).text()); ```  Actual output on both 1.4.3 and 1.4.4:  ```css @counter-stylethumbs{system:cyclic}.c{list-style-type:thumbs} ```  The same glued name is produced with `minify: false` (formatted):  ```css @counter-stylethumbs {   system: cyclic; } ```  Expected in both cases:  ```css @counter-style thumbs{system:cyclic}.c{list-style-type:thumbs} ```  The style name is part of the prelude, so the printer needs to emit the separating space after `@counter-style` (the same is true for any at-rule whose name can be adjacent to an identifier, but this is the observed one).  ### Related records  - #46692 — `css: print the space 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -999,1087 +1001,1193 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89452d2a` (2026-11-10)
-**Commit Message**: AOT: bun compile, build output, module mocks, fixes and new names (#48436)
+### Incident Patch 1: `43850629` (2026-11-12)
+**Commit Message**: AOT: module instances in test runs, files that packages read, build cost (#48617)
 
 Bun's side of a round of work on the ahead-of-time compiler (`bun build --compile --aot` and `bun
-test --aot`, both experimental). The JavaScriptCore side is merged: oven-sh/WebKit#1025. This
-follows oven-sh/bun#48120.
+test --aot`, both experimental). The JavaScriptCore side is merged: oven-sh/WebKit#1036. This
+follows oven-sh/bun#48478.
 
-About 9,400 files, +53,000 -22,000. About 3,200 of the files only move. Most of the rest is tests.
+10,044 files, +195,171 -7,216; of it test 9,609 files, +166,986 -3,748.
+
+[skip size check], as in 607519ac.
+
+Tests
+
+- CI compiles a stored program with `--aot`, runs it and compares it with `bun run`; a stored test
+  run likewise, with `bun test --aot` and `bun test`. Where the answer of `bun test` depends on its
+  threads, the reference is read on one thread.
+
+If you don't use `--aot`
+
+- `require()` of a module whose load an `import()` has begun no longer throws. That includes a chunk
+  of a `--splitting` executable that is imported and, some microtasks later, required.
+
+- `bun test`: which files a later mock evicts no longer changes from run to run. A module that a
+  test imports while a mock's factory runs shares no turn with that factory, so a factory that the
+  test ends later does not keep both waiting (`BunPlugin.cpp`, `JSCommonJSModule.cpp`).
+
+- `bun:sqlite` asks one boolean w
+
+**File**: `docs/compiler/compatibility.mdx` (modified, +25/-2)
+```diff
+@@ -11,6 +11,7 @@ Most programs behave the same under [`bun compile`](/compiler/aot) as under `bun
+ | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
+ | [Built-in objects are read-only](#built-in-objects-are-read-only)     | Add methods, don't replace them                                  |
+ | [Code from a string is interpreted](#code-from-strings)               | Keep it out of hot paths                                         |
++| [Unused built-ins are left out](#unused-built-ins)                    | Write the name of one that you need                              |
+ | [A dynamic import finds only what the build found](#dynamic-imports)  | Start the path with a folder, or pass the file as an entry point |
+ | [Nothing hooks the module loader](#loader-hooks-and-the-module-cache) | Use `paths` in `tsconfig.json`                                   |
+ | [Your files are inside the executable](#paths-of-the-running-file)    | Embed what you read with `--asset`                               |
+@@ -90,6 +91,8 @@ bun compile ./strings.ts && ./strings
+ 
+ `eval`, `new Function` and `node:vm` work, under a computed name like `globalThis[name](code)` too. The build can't see that code and the executable has no JIT, so Bun interprets it.
+ 
++There's one exception. Some libraries make many similar functions from a template, as in `eval(template.replace("NAME", "add"))` or `new Function("a", "b", "return a " + operator + " b")`. Where the build can work out such strings from the constants of the file, it compiles the function. For `eval` the string has to be one function in parentheses. The executable uses the function where the strings turn out to be the same.
++
+ - Where the build can't tell that a call evaluates code, the call throws an `EvalError`. `fn[name](code)` does if `"constructor"` isn't written anywhere in your code.
+ - Code from a string can `import()` your entry points. Any other file may throw `Cannot load`. Pass the module to that code instead. `new Function("path", "return import(path)")` and `eval("import('./a.js')")`, with strings that are written out like that, are compiled as that `import()`.
+ - A script from a string can't declare a built-in global at its top level. `vm.runInThisContext("let Array = 5")` throws a `SyntaxError`. It works in a block, in a function or in a `node:vm` context of its own.
+@@ -103,6 +106,22 @@ If your program needs no code from strings, build with [`--disallow-code-generat
+ 
+ `ShadowRealm` isn't supported. The build warns (`TS100076`), and `new ShadowRealm()` throws a `ReferenceError`. Use a `node:vm` context.
+ 
++## Unused built-ins
++
++An executable holds the parts of Bun's own JavaScript that your code uses. When [code from a string](#code-from-strings) uses another part, such as `Bun.$` or `console.Console`, it gets an error that it can catch. Write `void Bun.$` anywhere in your code to keep that part.
++
++```txt
++Error: Bun.$ was not compiled into this executable because your code never uses it. To keep it, use it somewhere in your code.
++```
++
++An event can lead to such a part too. Called without a receiver, `dispatchEvent()` and `addEventListener()` work on the global object, and `event.target` is the global object. The build follows that where your code writes the method's name. It doesn't if the name is only known at run time, as in `const send = signal[process.env.METHOD]; send(event)`, or if it comes out of a `for...in`. Reading `event.target.process.finalization` then throws:
++
++```txt
++Error: process.finalization was not compiled into this executable because the compiler saw no use of it. Your code reached it through the `target` of an event on the global object. To keep it, write `void dispatchEvent` anywhere in your code.
++```
++
++Call the method with its receiver instead: `signal[name](event)`. Or write `void dispatchEvent`, which keeps everything that the global object leads to and makes the executable about 3 MB larger.
++
+ ## WebAssembly
+ 
+ A `.wasm` file that you import is compiled at build time. So is a module that's in your source as a base64 string, if you decode it with `atob()` or `Uint8Array.fromBase64()`. Bytes that your program downloads or assembles at run time are interpreted, and a tight loop in them runs much slower than under `bun run`.
+@@ -174,6 +193,8 @@ The build compiles every file it can reach from your entry point. Where a path i
+ bun compile ./app.ts './extra/*.ts' ./node_modules/pg/lib/index.js
+ ```
+ 
++Where the build can't tell which file a Worker starts from, it also compiles the files that your own code names: by a URL or a path that it makes from `import.meta`, or by a text such as `"./jobs/resize.ts"`. A text only leads to files in the root directory, which is the folder of your entry point, the folder that several entry points share, or `--root`. The folder that you build in makes no difference. The build lists these files (`TS100168`), and `--ex
+```
+
+**File**: `docs/compiler/debugging.mdx` (modified, +34/-0)
+```diff
+@@ -56,6 +56,40 @@ bun compile --obfuscate ./repo.ts
+ 
+ `--obfuscate` does what `--sourcemap=external` does, and the `name` of every function and class in your program is `""`. Code that reads a name behaves differently. A table keyed by `constructor.name` puts every class under one key. Property names and strings stay in the executable, because your program uses them when it runs.
+ 
++### List the strings in the executable
++
++To check that a word isn't in your executable, search the list of its strings instead of its bytes. In the file, strings share characters, two strings that aren't related can be next to each other, and the names that a program only shows are compressed.
++
++```bash terminal icon="terminal"
++bun compile --metafile=meta.json ./repo.ts
++bun build --aot-stored-strings ./repo > strings.bin
++bun build --aot-stored-strings-json ./repo > strings.jsonl
++jq '.outputs[].inlinedStrings' meta.json
++```
++
++`--aot-stored-strings` prints each stored string as UTF-8, followed by a zero byte.
++
++`--aot-stored-strings-json` prints an object per line, and says where each string is in the file.
++
++```json
++{"type":"section","image":0,"section":"Text","offset":141190064,"length":88033}
++{"type":"string","image":0,"section":"Text","offset":141190065,"length":6,"encoding":"latin1","text":"bad id"}
++{"type":"uncovered","image":0,"section":"Text","offset":141190064,"length":1,"isZero":true}
++```
++
++| `type`      | What it is                                                                                                                                                                                                                                                                    |
++| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| `image`     | The compiled program in the file.                                                                                                                                                                                                                                             |
++| `section`   | A part of the image that has strings.                                                                                                                                                                                                                                         |
++| `string`    | A string. With the `encoding` `latin1`, `utf16le` or `utf8`, its characters are the `length` bytes at `offset`, and other strings can have some of the same bytes. With `coded` or `compressed`, those bytes are compressed, and hold up to eight strings or a block of text. |
++| `uncovered` | Bytes of the section that aren't in any string.                                                                                                                                                                                                                               |
++
++Both print a line per section to stderr. They exit with code `1` if a byte between the strings isn't zero, and `2` if they can't read the file.
++
++`inlinedStrings` in the metafile lists the strings whose characters are only in the machine code, up to eight at a time, like the label of a `case` or the other side of a `===`. The executable doesn't have them as a string, so the two commands can't print them.
++
++None of the lists has the strings of Bun itself, embedded files, or a single character that your program compares as a number.
++
+ ### Use with Sentry
+ 
+ ```bash terminal icon="terminal"
+```
+
+**File**: `docs/compiler/explain.mdx` (modified, +48/-25)
+```diff
+@@ -6,7 +6,7 @@ description: "How to read bun compile --explain, and what to change for each cau
+ 
+ <Warning>Ahead-of-time compilation is experimental.</Warning>
+ 
+-`bun compile --explain` lists the lines that slow your compiled code down, worst first, with a fix for each. Fix the first entry and run it again. Stop when the entries that are left aren't in hot code.
++`bun compile --explain` lists the lines that slow your compiled code down, with a fix for each. The line whose change alone speeds up the most operations in loops comes first. Fix the first entry and run it again. Stop when the entries that are left aren't in hot code.
+ 
+ `bun check --aot --explain` prints the same report without building.
+ 
+@@ -32,33 +32,54 @@ bun compile ./main.ts --explain
+ ```
+ 
+ ```txt
+-11 | for (const item of items) total += item.price;
+-                                        ^
+-note: 1. unknown-object: The compiler doesn't know the shape of this object, so the access is a lookup or needs a shape check.
+-   at main.ts:11:36
++7 | const saved: any = JSON.parse('{ "sku": "B-2", "price": 10 }');
++                            ^
++note: 1. unknown-object: The compiler doesn't know the shape of what JSON.parse() returns.
++   at main.ts:7:25
+ 
+ note: 1 of 1 untyped access
+ note: 1 of these runs in a loop
+-note: fix: that depends on where the object comes from. See the table at the link below.
++note: used at main.ts:11:36
++note: fix: check its fields and build a new object from them.
+ note: https://bun.com/docs/compiler/explain#unknown-object
+ ```
+ 
+-| Line                        | What it tells you                          |
+-| --------------------------- | ------------------------------------------ |
+-| `1. unknown-object`         | The rank and the [cause](#causes)          |
+-| `at`                        | The line that runs slower                  |
+-| `1 of 1 untyped access`     | The entry's share of your untyped accesses |
+-| `1 untyped operator`        | Operators on a value of unknown type       |
+-| `1 indirect call`           | Calls where the callee isn't known         |
+-| `1 of these runs in a loop` | How many are in loops                      |
+-| `fix:`                      | What to change                             |
++| Line                               | What it tells you                                             |
++| ---------------------------------- | ------------------------------------------------------------- |
++| `1. unknown-object`                | The rank, the [cause](#causes) and why                        |
++| `at`                               | The line to change, where the compiler lost track of the type |
++| `1 of 1 untyped access`            | How many of your untyped accesses this line causes            |
++| `1 untyped operator`               | Operators on a value of unknown type                          |
++| `1 indirect call`                  | Calls where the callee isn't known                            |
++| `1 of these runs in a loop`        | How many are in loops                                         |
++| `1 of these has another cause too` | These get faster when the other cause is fixed as well        |
++| `it comes in at`                   | Where the value gets between objects, if that's another line  |
++| `used at`                          | The lines that run slower                                     |
++| `fix:`                             | What to change                                                |
+ 
+-The location is the line that uses the untyped value, not the line where the value starts. Here that's the read of `item.price`, and the value comes from the `JSON.parse` four lines above it.
++The compiler follows each value back to where its type was lost, through variables, fields, arrays, parameters and results. Here that's the result of `JSON.parse`, and the line that runs slower is the read of `item.price` four lines below it. Where there's no such line, the entry has the location of the operation itself.
+ 
+-Entries in loops come first, then the ones where types would save the most instructions. That's an estimate. Nothing is measured.
++The first entry is the line whose change alone speeds up the most operations in loops, then come the ones with the most operations elsewhere. Entries with nothing to change in your types come last. Nothing is measured.
+ 
+ The report shows the first 20 entries. `--explain=json` prints all of them.
+ 
++In `--explain=json`, `why` says what happened at the line, and `uses` lists the lines that run slower:
++
++| `why`                                            | At the line                                                                       |
++| ------------------------------------------------ | --------------------------------------------------------------------------------- |
++| `builtin-result`, `call-result`, `property-read` | A value of unknown shape comes from this call or read                             |
++| `outside-caller`        
+```
+
+**File**: `docs/compiler/troubleshooting.mdx` (modified, +1/-1)
+```diff
+@@ -73,7 +73,7 @@ const found = Bun.resolveSync("./plugin.js", import.meta.dir); // bun-ignore TS1
+ | `... because built-in objects are read-only`    | [Don't replace built-ins](/compiler/compatibility#built-in-objects-are-read-only)                                              |
+ | `Cannot find module`                            | The build didn't embed the file. [Pass it as another entry point](/compiler/compatibility#a-file-that-isnt-in-the-executable). |
+ | `Cannot load ...: it isn't in this executable`  | Pass the file as another entry point. Import a `node:` or `bun:` module by name                                                |
+-| `... was not compiled into this executable`     | Code from a string used an API that your own code never uses. Use it once in your own code                                     |
++| `... was not compiled into this executable`     | [Use that API once](/compiler/compatibility#unused-built-ins) in your own code                                                 |
+ | `EvalError: ... the compiler couldn't tell ...` | Call `eval` or `new Function` directly                                                                                         |
+ | `... can't be used with this executable`        | The option needs code that wasn't compiled in. The message names the flag to rebuild with                                      |
+ | `Cannot compile C code ... (PR_SET_MDWE)`       | Compile the C file first, then `dlopen()`                                                                                      |
+```
+
+**File**: `packages/bun-types/bun.d.ts` (modified, +5/-0)
+```diff
+@@ -4783,6 +4783,11 @@ declare module "bun" {
+         }>;
+         /** List of exported names from this output */
+         exports: string[];
++        /**
++         * The strings whose characters are only in the machine code of this executable, such as the labels of
++         * a `switch`. A search of the file's bytes doesn't find them. Only for builds with `compile.aot`.
++         */
++        inlinedStrings?: string[];
+         /** Entrypoint path, if this output is an entrypoint */
+         entryPoint?: string;
+         /** Path to the associated CSS bundle (for JS entrypoints with CSS) */
+```
+
+**File**: `scripts/build/deps/webkit.ts` (modified, +4/-1)
+```diff
+@@ -3,7 +3,7 @@
+  * for local mode. Override via `--webkit-version=<hash>` to test a branch.
+  * From https://github.com/oven-sh/WebKit releases.
+  */
+-export const WEBKIT_VERSION = "7f020d2818998a359eafb1c40c274550c1b5140a";
++export const WEBKIT_VERSION = "7101dff5ab7e5527ce93e772b92f3da510089d8e";
+ 
+ /**
+  * WebKit (JavaScriptCore) — the JS engine, with WTF and bmalloc.
+@@ -1921,6 +1921,9 @@ function jscGroup(
+           // Unrolling loops whose trip count is not known adds 2% to this code and no speed. Under ThinLTO loops are
+           // unrolled in the link, so this counts where the objects are machine code.
+           if (cfg.release && attribute === undefined) extra.push("-mllvm=-unroll-runtime=false");
++          // CMake builds what ships, and does not define it: `--aot-testing=MisstateFact` is known to local builds alone.
++          if ((bundled ?? [path]).some(source => basename(source) === "AOTFactFaults.cpp"))
++            extra.push("-DENABLE_AOT_FAULT_INJECTION=1");
+           // A switch of aot/ that has no default names every enumerator, and nothing points into a temporary beyond its statement
+           // (aot/AOT.cmake has the same flags).
+           return {
+```
+
+**File**: `scripts/verify-baseline-static/allowlist-x64-windows.txt` (modified, +8/-0)
+```diff
+@@ -1277,6 +1277,14 @@ jsimd_ycc_extxbgr_convert_avx2           [AVX, AVX2]
+ jsimd_ycc_extxrgb_convert_avx2           [AVX, AVX2]
+ jsimd_ycc_rgb_convert_avx2               [AVX, AVX2]
+ 
++# ----------------------------------------------------------------------------
++# The ahead-of-time compiler's search of an array for a value. Gate: findBox() asks
++# CPUFeatureSet::host() for AVX2 (CPUID and XGETBV).
++# (1 symbols)
++# ----------------------------------------------------------------------------
++JSC::AOT::findWithAVX2  [AVX, AVX2]
++
++
+ # ----------------------------------------------------------------------------
+ # Bun's Highway kernels for the scanner of `bun check`, `bun lint` and `bun fmt`. Gate: hwy::SupportedTargets via CPUID.
+ # (18 symbols)
+```
+
+**File**: `scripts/verify-baseline-static/allowlist-x64.txt` (modified, +19/-0)
+```diff
+@@ -1438,6 +1438,25 @@ _ZN3bun11N_AVX3_ZEN414LineStartsImplEPKhmPj        [AVX, AVX2, AVX512BW, AVX512D
+ _ZN3bun11N_AVX3_ZEN413OddBlocksImplEPKhmPm         [AVX, AVX2, AVX512BW, AVX512DQ, AVX512F, AVX512VL, AVX512_VBMI, BMI1, BMI2, GFNI]
+ 
+ 
++# ----------------------------------------------------------------------------
++# The ahead-of-time compiler's search of an array for a value. Gate: findBox() asks
++# CPUFeatureSet::host() for AVX2 (CPUID and XGETBV).
++# (1 symbols)
++# ----------------------------------------------------------------------------
++_ZN3JSC3AOTL12findWithAVX2EPKmmm  [AVX, AVX2]
++
++
++# ----------------------------------------------------------------------------
++# The ahead-of-time compiler's products of BigInts. Gate: BigIntArithmetic::hasMULX()
++# (CPUID).
++# (4 symbols)
++# ----------------------------------------------------------------------------
++_ZN3JSC3AOTL24tryMulUsualBigIntsByMULXEllPv                  [BMI2]
++_ZN3JSC3AOTL31tryMulUsualBigIntsInFrameByMULXEllPv           [BMI2]
++_ZN3JSC3AOTL32tryRemainderOfUsualFactorsByMULXElllPv         [BMI2]
++_ZN3JSC3AOTL39tryRemainderOfUsualFactorsInFrameByMULXElllPv  [BMI2]
++
++
+ # ----------------------------------------------------------------------------
+ # The ahead-of-time compiler's count of instructions per pass. Gate: cap_user_rdpmc
+ # of the perf_event_open() page, which the kernel sets where user code may read the
+```
+
+---
+
+### Incident Patch 2: `447ff870` (2026-11-11)
+**Commit Message**: AOT: stack traces as in bun run, code from disk, workers, embedded files, module mocks, build cost (#48478)
+
+Bun's side of a round of work on the ahead-of-time compiler (`bun build --compile --aot` and `bun
+test --aot`, both experimental). The JavaScriptCore side is merged: oven-sh/WebKit#1028 and #1030.
+This follows oven-sh/bun#48436.
+
+2,879 files, +62,642 -4,043; of it test 2,562 files, +48,499 -741.
 
 [skip size check], as in 607519ac.
 
 If you don't use `--aot`
 
-- The transpiler's visit pass skips an empty list that it used to drain for every scope.
-  src/jsc/RuntimeTranspilerStore.rs counts the transpiler jobs that were scheduled and completed:
-  two additions per job.
+- Linux: the four libc signal functions that ask who called them are no longer inlined, so a chained
+  handler gets the mask that the kernel would have set.
 
-- x64: byte-sized atomic subtract, and, or, xor in WebAssembly whose result is unused stored a wrong
-  byte in the optimizing JIT; four encodings lacked a prefix. Hot JavaScript used the same encodings
-  on x64: `Atomics.sub`, `and`, `or` and `xor` on an `Int8Array` or `Uint8Array` with an unused
-  result stored a wrong byte. Fixed in the engine.
+- From the engine: on x64 a WebAssembly load whose low bytes alone are used returned a value at the
+  end of the memory where it should trap; `f32.demote_f64` of a converted 64-bit integer rounded
+  once where it rounds twice; a signaling NaN stayed signaling through `f32.demote_f64` of
+  `f64.promote_f32`; all three in the optimizing JIT. Fixed. The data segments of a WebAssembly
+  module lie in one buffer.
 
-- arm64 without LSE atomics: a compare-exchange that has to fail could store when its
-  store-exclusive was lost. Fixed in the engine.
+- Plain `fstatSync()` takes 255.5 M instructions in our loop, 256.7 M before.
 
-- From the engine: `new WebAssembly.Module(
+- scripts/verify-baseline-static: the three allowlists name PackWordsImpl and Unp
 
-**File**: `.gitattributes` (modified, +1/-1)
+**File**: `docs/compiler/aot.mdx` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@
- *.patch text eol=lf
- # Every byte of an input of the formatter, and of what is expected for it, is part of the test.
- test/cli/format/own/cases/** -text
--test/aot/parallel/the-head-of-the-text-of-a-function-is-laid-as-bun-prints-it/** -text
-+test/aot/parallel/function-source-signature-formatting/** -text
- # Compared line by line with what a runner prints, which ends a line with \n on every system.
- test/cli/format/*/expected.txt text eol=lf
- test/cli/lint/conformance/expected*.txt text eol=lf
+@@ -119,7 +119,7 @@ bun compile ./server.ts --aot-harden=proof-checks,ignore-told-ranges
+ | `proof-checks`       | Checks the type again at each read, and checks again what the compiler remembers from earlier code. Objects stay on the heap, not on the stack | Runs about 5 times slower       |
+ | `ignore-told-ranges` | Checks every index against the length, where the index is used                                                                                 | Runs about 1.7 times slower     |
+ 
+-A check that fails prints `internal AOT error` with the place in your code, then Bun's crash report, and aborts the process. The program can't catch it. Neither name is on by default, and neither changes what a correct program does. `proof-checks` tests what the compiler believes about values, not every compiler mistake. In `Bun.build`, pass `compile: { aot: true, aotHarden: ["proof-checks"] }`.
++A check that fails prints `internal AOT error` with the place in your code, then Bun's crash report, and aborts the process. The program can't catch it. Neither name is on by default, and neither changes what a correct program does. `proof-checks` tests what the compiler believes about values and runs the compiler's own verifier over the build. It doesn't find every compiler mistake. In `Bun.build`, pass `compile: { aot: true, aotHarden: ["proof-checks"] }`.
+ 
+ ## Read next
+ 
 ```
 
-**File**: `bench/compiler/run.ts` (modified, +11/-11)
+**File**: `docs/compiler/compatibility.mdx` (modified, +11/-3)
 ```diff
-@@ -13,7 +13,7 @@
- // Every number comes from this script: the mean of all runs, none left out. CPU seconds and peak memory are the operating system's for the compiler's process and its children.
- // Instructions are counted where `perf` is there. Lines are physical lines of the files that the compiler is given; what it reads besides (declaration files, its own library, Go's standard library) stands in its own column.
- // Bun's compiler counts those lines in every build and prints the counts under `--explain=statistics`. Cargo and `bun build --compile` without `--aot` don't tell, so their cells are empty.
--// Below the table, the closing line of the last run of each `bun build --compile --aot` is printed as is: how many lines the compiler says it compiled, and how long it says that took.
-+// Below the table: the `compile` row of each `bun build --compile --aot`.
- // Not a test, and CI does not run it.
- import { spawnSync } from "bun";
- import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
-@@ -203,13 +203,13 @@ interface Measured {
-   cpu: number;
-   peakMB: number;
-   instructions?: number;
--  /** Only Bun's compiler prints one: `[1.31s] compile  app  compiled 10,123 lines in 1.23 s (8,230 lines/s)`. */
--  closingLine?: string;
-+  /** Bun's compiler only: `[1.31s] compile  app  126.4 MB  8.2k lines/s`. */
-+  compileRow?: string;
-   /** Only Bun's compiler counts them: the lines of declaration files and of its own library. */
-   linesReadBesides?: number;
- }
+@@ -91,7 +91,7 @@ bun compile ./strings.ts && ./strings
+ `eval`, `new Function` and `node:vm` work, under a computed name like `globalThis[name](code)` too. The build can't see that code and the executable has no JIT, so Bun interprets it.
  
--const closingLineOfBuild = /^.*\bcompiled [\d,]+ lines? in [\d,.]+ s \([\d,]+ lines\/s\)/m;
-+const compileRowOfBuild = /^ *\[[\d.]+m?s\] compile  .* lines\/s$/m;
+ - Where the build can't tell that a call evaluates code, the call throws an `EvalError`. `fn[name](code)` does if `"constructor"` isn't written anywhere in your code.
+-- Code from a string can `import()` your entry points. Any other file may throw `Cannot load`. Pass the module to that code instead.
++- Code from a string can `import()` your entry points. Any other file may throw `Cannot load`. Pass the module to that code instead. `new Function("path", "return import(path)")` and `eval("import('./a.js')")`, with strings that are written out like that, are compiled as that `import()`.
+ - A script from a string can't declare a built-in global at its top level. `vm.runInThisContext("let Array = 5")` throws a `SyntaxError`. It works in a block, in a function or in a `node:vm` context of its own.
  
- function linesReadBesidesIn(stderr: string) {
-   const declarations = /^SourceLinesOfDeclarations (\d+)$/m.exec(stderr);
-@@ -243,7 +243,7 @@ function time(command: string[], cwd: string, env: Record<string, string>): Meas
-     cpu: Number(usage.cpuTime.total) / 1e6,
-     peakMB: usage.maxRSS / (1 << 20),
-     instructions: counted || undefined,
--    closingLine: closingLineOfBuild.exec(result.stdout.toString())?.[0].trim(),
-+    compileRow: compileRowOfBuild.exec(result.stdout.toString())?.[0].trim(),
-     linesReadBesides: linesReadBesidesIn(result.stderr.toString()),
-   };
- }
-@@ -334,7 +334,7 @@ try {
-         peakMB: mean(measured.map(run => run.peakMB)),
-         instructions: measured[0].instructions === undefined ? undefined : mean(measured.map(run => run.instructions!)),
-         executableBytes: statSync(builtIn(folder, scenario)).size,
--        closingLine: measured.at(-1)!.closingLine,
-+        compileRow: measured.at(-1)!.compileRow,
-         everyRun: measured,
-       };
-       results.push(row);
-@@ -419,10 +419,10 @@ for (const size of new Set(results.map(row => row.size))) {
-           : columns.map(([, width, text]) => text(row).padStart(width)).join("")),
-     );
- }
--const rowsWithClosingLine = results.filter(row => row.closingLine);
--if (rowsWithClosingLine.length) {
--  console.log("\nThe closing line of bun's build, in the last run");
--  for (const row of rowsWithClosingLine)
--    console.log(`${whole(row.size).padStart(9)}  ${row.scenario.padEnd(widest)}  ${row.closingLine}`);
-+const rowsWithCompileRow = results.filter(row => row.compileRow);
-+if (rowsWithCompileRow.length) {
-+  console.log("\nThe compile row of bun's build, in the last run");
-+  for (const row of rowsWithCompileRow)
-+    console.log(`${whole(row.size).padStart(9)}  ${row.scenario.padEnd(widest)}  ${row.compileRow}`);
- }
- if (option("json", "")) writeFileSync(option("json", ""), JSON.stringify(results, null, 2) + "\n");
+ Interpreted code is fine for a template or a config file. It costs you when a library generates its hot code this way, as zod 4, ajv, fast-json-stringify and Elysia do.
+@@ -147,6 +147,7 @@ The build compiles every file it can reach from your entry point. Where a path i
+ - `import.meta.glob()` is expanded at build time, and every file that matches is compiled.
+ - `require.resolve()` and `import.meta.resolve()` return a path. They don't embed the file. Neither do `Bun.resolveSync()`, `Bun.resolve()` and `import.meta.resolveSync()`. With those three the build warns if the path names a file that isn't in the executable (`TS100099`). `require.resolve()` returns where the file was when you built, so reading it fails on another machine.
+ - `require("./notes.txt")` returns the text itself, as in `bun build --compile`. `bun run` returns an object with the text as its `default`.
++- An `import()` at the top level of an ES module that a `require()` loads runs its module after that `require()` returns, as in Node.js and `bun build --compile`. Under `bun run`, it runs during the `require()`.
+ - A query, as in `import("./a.ts?v=2")`, loads one more copy of the file, as in `bun run`. `?worker` works too. `?raw`, `?url`, a query on a data file and a query in a `require()` stop the build (`TS100159`).
+ 
+ ### A file that isn't in the executable
+@@ -208,6 +209,8 @@ Every compiled file has a path under `/$bunfs/root`, laid out like your sources.
+ 
+ `/$bunfs/root` is the folder of your entry point. A file above it, like a package in a `node_modules` beside `src`, is under `/$bunfs/_.._` instead. For a folder more than one level above your entry point, use `__dirname`: `path.join(import.meta.dir, "../../commands")` is `/commands` in an executable.
+ 
++A comparison of `__filename` with another path of the same file, like `process.argv[1] === __filename`, gives what it gives under `bun run`. It may go through variables, `path.resolve()`, `path.dirname()`, `fs.realpathSync()`, `fileURLToPath()`, `pathToFileURL()` and `replace()`. The two strings stay different: `[__filename].includes(process.argv[1])` is `false`.
++
+ `require.main === module`, `import.meta.main`, `module.paths`, `module.parent` and `createRequire(import.meta.url)` work as under `bun run`.
+ 
+ An executable runs your entry point by itself, so a program that starts a copy of itself must not pass the file. Write `spawn(process.execPath, ["child"])`. After `spawn(process.execPath, [process.argv[1], "child"])` or `fork(__filename, ["child"])`, the child finds the path in `process.argv[2]` and `"child"` in `process.argv[3]`.
+@@ -235,6 +238,10 @@ That path is inside the executable, so the read only finds a file that's in ther
+ 
+ A read through `__dirname` finds the file on the machine that built the executable, and the embedded one anywhere else.
+ 
++A path made from `import.meta.dirname` climbs at most one folder above the root of the executable. An asset that lies two or more folders above it is embedded, but such a path doesn't find it. Where the build can see the read, it warns (`TS100087`). `__dirname` finds it.
++
++`--asset` follows no symbolic links inside a folder, so what they lead to isn't embedded. Where the build can see such a read, it warns and names the link to pass as an asset of its own (`TS100165`).
++
+ Your own code is in there as machine code, not as text. `fs.existsSync()` finds a compiled file, but its size is `0` and reading it fails with `ENOENT`.
+ 
+ Some packages load their own files by a name that they put together when the program runs:
+@@ -274,9 +281,10 @@ With that field, a package says that loading its files does nothing except defin
+ | `import "pure"`                                  | Removed. The package's file never runs |
+ | `import { x } from "pure"`, and nothing uses `x` | Removed                                |
+ | `import { x } from "pure"`, and `x` is used      | The file runs                          |
++| Any 
 ```
 
-**File**: `docs/compiler/aot.mdx` (modified, +31/-37)
+**File**: `docs/compiler/debugging.mdx` (modified, +8/-6)
 ```diff
-@@ -18,41 +18,37 @@ There's no new syntax and nothing to annotate. TypeScript, JavaScript and npm pa
+@@ -26,11 +26,11 @@ bun compile ./repo.ts && ./repo
  
- ## What to expect
- 
--Under `bun run`, and in an executable from [`bun build --compile`](/compiler/executables), your code starts in an interpreter and a JIT compiles the hot functions while the program runs. `bun compile` does that work at build time, and the executable has no JIT.
-+Under `bun run`, and in an executable from [`bun build --compile`](/compiler/executables), your code starts in an interpreter and a JIT compiles the hot functions while the program runs. `bun compile` does that work at build time. It follows the imports from your entry point, type checks your TypeScript, and works out which objects reach each variable and which function each call reaches. Then it generates machine code for every function the program can reach, npm packages included, and puts it into a copy of the Bun runtime. The executable has no JIT.
- 
- What you get:
- 
- - Your program starts faster. There's no source to parse and nothing to warm up.
--- It uses less memory. The process has no bytecode, no JIT-compiled code and no profiling data.
-+- A large application uses less memory, and a tiny program uses about as much as without AoT. The process has no bytecode, no JIT-compiled code and no profiling data.
- - Typed code runs faster. A property access is one load from a fixed offset, like a struct field in Go or Rust.
- - A small program's file is smaller, because it leaves out the `bun` command line and the JIT. In a large program, the machine code can outweigh that. [`--trim`](/compiler/size) removes the Bun APIs you don't use.
- 
- What it costs:
- 
--- The build takes longer. Bun type checks and compiles every function that the program can reach, and nothing is cached between builds.
--- Untyped code can run slower than under the JIT. A JIT watches the program run and learns which objects show up at each property access. The compiler has to prove that at build time. Where it can't, the code looks the property up at run time.
--- [A few things differ from `bun run`](/compiler/compatibility). Built-in objects such as `Array.prototype` are read-only, and code from a string (`eval`, `new Function`) runs in an interpreter.
--
--[`bun compile --explain`](/compiler/explain) lists the code that compiled to a slow path, worst first, with a fix for each.
-+- The build takes longer, and nothing is cached between builds.
-+- Untyped code can run slower than under the JIT. A JIT learns which objects show up at each property access by watching the program run. The compiler has to prove it at build time. Where it can't, the code looks the property up at run time. [`bun compile --explain`](/compiler/explain) lists that code, worst first, with a fix for each.
-+- [A few things differ from `bun run`](/compiler/compatibility).
- 
- ## When to stay with the JIT
- 
--- Peak throughput matters most, and your hot code is untyped JavaScript from npm.
-+- Your hot code is untyped JavaScript from npm.
- - You build on one platform and deploy to another. `bun compile` only builds for the platform it runs on, so run it in CI or in a container.
- - A library generates its hot code with `new Function`, as some validators and serializers do. [That code is interpreted](/compiler/compatibility#code-from-strings).
--- A dependency changes [built-in objects](/compiler/compatibility#built-in-objects-are-read-only). Assigning to `Array.prototype.push` throws a `TypeError`.
--- Your program spends its time in [WebAssembly](/compiler/compatibility#webassembly) that it downloads or decodes at run time. Only a `.wasm` file that you import is compiled.
--- You need breakpoints in the executable. [The inspector](/compiler/debugging#the-inspector) connects, but it can't pause compiled code.
-+- A dependency replaces methods of [built-in objects](/compiler/compatibility#built-in-objects-are-read-only). Assigning to `Array.prototype.push` throws a `TypeError`.
-+- Your program spends its time in [WebAssembly](/compiler/compatibility#webassembly) that it downloads or assembles at run time.
-+- You need [breakpoints](/compiler/debugging) in the executable.
- 
--If you aren't sure, build the same entry point both ways and measure. With `--no-aot`, the executable holds your JavaScript and runs it with the JIT.
-+If you aren't sure, build both ways and put both under the same load. With `--no-aot`, the executable holds your JavaScript and runs it with the JIT.
- 
- ```bash terminal icon="terminal"
- bun compile --no-aot ./server.ts --outfile server-jit
- bun compile ./server.ts --outfile server-aot
+ ```txt
+ RangeError: bad id -1
+-      at find (/$bunfs/root/repo.ts:3:27)
+-      at /$bunfs/root/repo.ts:7:12
++      at find (./repo.ts:3:27)
++      at ./repo.ts:7:12
  ```
  
--Put both under the same load, on routes that do what your application does in production. Run the load twice and keep the second result, so the JIT has warmed up. [Benchmarking](/project/benchmarking) covers the tools.
--
- ## Build an executable
- 
- <Tabs>
-@@ -73,6 +69,10 @@ Put both under the same load, on routes that do what your application does in pr
- 
- `bun compile` is short for `bun build --com
-```
-
-**File**: `docs/compiler/debugging.mdx` (modified, +108/-80)
-```diff
-@@ -1,7 +1,7 @@
- ---
- title: "Test and debug a compiled program"
- sidebarTitle: "Testing and debugging"
--description: "Stack traces, source maps, crash reports and profiles of an executable, and how to check your program before you build it"
-+description: "Stack traces, source maps, crash reports and profiles of an executable, and how to run your tests compiled"
- ---
- 
- <Warning>Ahead-of-time compilation is experimental.</Warning>
-@@ -30,45 +30,31 @@ RangeError: bad id -1
-       at /$bunfs/root/repo.ts:7:12
- ```
- 
--Stack traces have the file, line and column of your source code. You don't need a source map. The part after `/$bunfs/root/` is the path of the source file, relative to the directory where you ran the build. The executable doesn't hold the text of your files, so it prints no source excerpt above the message.
-+Stack traces have the file, line and column of your source code. You don't need a source map. The part after `/$bunfs/root/` is the path of the source file, relative to the folder of the entry point. An executable prints no source excerpt above the message.
+-Stack traces have the file, line and column of your source code. You don't need a source map. The part after `/$bunfs/root/` is the path of the source file, relative to the folder of the entry point. An executable prints no source excerpt above the message.
++Stack traces have the file, line and column of your source code. You don't need a source map. A path in a stack trace is relative to the folder you ran the build in, as with [`--sourcemap`](/compiler/executables) without `--aot`. A package is at `./node_modules/pkg/index.js`, and a file above that folder at `../shared/log.ts`. An executable prints no source excerpt above the message.
  
  ### Minified executables and external source maps
  
- ```bash terminal icon="terminal"
--bun compile --minify --sourcemap=external ./repo.ts
-+bun compile --minify --sourcemap=external ./repo.ts && ./repo
- ```
+@@ -40,8 +40,8 @@ bun compile --minify --sourcemap=external ./repo.ts && ./repo
  
--`--minify` shortens the names of functions, classes and variables. `--sourcemap=external` moves what stack traces show (function names, paths, lines and columns) out of the executable and into `repo.map`, next to it. Every frame then points into `compiled.js`, as in `compiled.js:4:2`. That file doesn't exist. The line and column are a position in the map, and any source map library turns them back into your names, files and lines.
-+```txt
-+RangeError: bad id -1
-+      at <anonymous> (/$bunfs/root/compiled.js:4:2)
-+      at /$bunfs/root/compiled.js:1:4
-+```
- 
--Your program reads the names it read before: `--sourcemap=external` doesn't change `handler.name` or `error.constructor.name`. With `--minify` they are short, as in any minified build, and the map has them as you wrote them. The source text of functions moves out too, as with [`--no-compile-function-source`](/compiler/size): `handler.toString()` returns `function handler() { [native code] }`.
-+`--sourcemap=external` moves function names, paths, lines and columns out of the executable and into `repo.map`, next to it. Every frame then points into `compiled.js`. That file doesn't exist. The line and column are a position in the map, and any source map library turns them back into your names, files and lines. Keep the map of every build you deploy, and don't ship it.
- 
--Keep the map of every build you deploy, and don't ship it.
-+The source text of functions moves out too, as with [`--no-compile-function-source`](/compiler/size). `handler.toString()` returns `function handler() { [native code] }`. `handler.name` stays. `--minify` shortens it, as in any minified build.
- 
- ### Keep every name out of the executable
- 
- ```bash terminal icon="terminal"
- bun compile --obfuscate ./repo.ts
- ```
- 
--`--obfuscate` does what `--sourcemap=external` does, and the `name` of every function and class is `""`. That includes built-in functions that are written in JavaScript, such as `Array.prototype.map`. An error message names a variable by a single letter. Code that reads a name behaves differently: `this.name = new.target.name` sets an empty name, and a table keyed by `constructor.name` puts every class under one key. Property names, strings and the descriptions of symbols stay in the executable, because your program finds and prints them when it runs.
--
--### List the strings in an executable
--
--```bash terminal icon="terminal"
--bun build --aot-stored-strings ./dist/app > strings.bin
--```
--
--Before you ship, you may want to check that a name didn't end up in the executable. `strings` and `grep` are a poor fit for that. Compiled code stores its strings back to back and shares bytes between them, so two neighbors can spell a word that isn't in your program. This command prints every string that the compiled code stores, whole, as UTF-8, each followed by a zero byte. It reads an executable built for any platform, builds nothing, and takes no other flag.
--
--Standard error gets one line for each place in the file that holds such bytes: the strings, the source text that error messages quote, and the source text of functions.
--
--```txt
--image 0 | Text | offset 94617600 | length 18883161 | 1 bytes that no string covers
--image 0 | quoted text | offset 201326848 | length 412007 | 0 bytes that no string covers
--image 0 | function text | offset 201738855 | length 96110 | 0 bytes that no string covers
--```
--
--The exit code is 0 when the bytes that no string covers are all zero, 1 when one of them isn't, and 2 when the file holds no compiled code or comes from a Bun with another image format.
-+`--obfuscate` does what `--sourcemap=external` does, and the `name` of every function and class in your program is `"
-```
-
-**File**: `docs/compiler/executables.mdx` (modified, +10/-18)
-```diff
-@@ -459,7 +459,7 @@ BUN_OPTIONS="--heap-prof-md" ./myapp
- BUN_OPTIONS="--smol --cpu-prof-md" ./myapp
- ```
- 
--An executable built with `bun compile` only takes `--inspect` if you built it with [`--compile-inspector`](/compiler/debugging#the-inspector).
-+An executable built with `bun compile` only takes `--inspect` if you built it with [`--compile-inspector`](/compiler/debugging).
- 
- ---
- 
-@@ -572,7 +572,7 @@ Checked 63 installs across 64 packages (no changes) [5.00ms]
- 
- CLI tools built on top of Bun can use this to install packages, bundle dependencies, or run other files without downloading a separate binary or installing Bun.
- 
--An executable built with `bun compile` doesn't include the `bun` CLI, so `BUN_BE_BUN=1` doesn't work there.
-+An executable built with [`--trim`](#smaller-executables) doesn't include the `bun` CLI, so `BUN_BE_BUN=1` doesn't work there.
- 
- ---
- 
-@@ -712,7 +712,7 @@ When you add multiple entrypoints to a standalone executable, Bun bundles each o
- 
- We may eventually detect statically-known paths in `new Worker(path)` and bundle them automatically. For now, you need to list the worker file as an entrypoint, as in the earlier example.
- 
--If you use a relative path to a file not included in the standalone executable, Bun loads that path from disk relative to the process's current working directory, and errors if it doesn't exist. An executable built with `--aot` does that only with [`--aot-allow-code-from-disk`](/compiler/compatibility#dynamic-imports). With [`--disallow-code-generation-from-strings=strict`](/runtime/code-generation-from-strings#files-on-disk-are-not-part-of-the-program), Bun doesn't load it.
-+If you use a relative path to a file not included in the standalone executable, Bun loads that path from disk relative to the process's current working directory, and errors if it doesn't exist. An executable built with `--aot` does that only with [`--aot-allow-code-from-disk`](/compiler/compatibility). With [`--disallow-code-generation-from-strings=strict`](/runtime/code-generation-from-strings#files-on-disk-are-not-part-of-the-program), Bun doesn't load it.
- 
- ---
- 
-@@ -735,8 +735,6 @@ cd /home/me/Desktop
- ./hello
- ```
- 
--With `--aot`, a path is resolved the first time it is imported. After `process.chdir()`, `await import("./my.db", { with: { type: "sqlite" } })` returns the database that was opened first, not the one in the new directory.
--
- ---
- 
- ## Embed assets & files
-@@ -931,7 +929,7 @@ console.log(addon.hello());
- 
- If you're using `@mapbox/node-pre-gyp` or similar tools, require the `.node` file directly, or it won't bundle correctly.
- 
--Some addons load a shared library that ships beside them. The `.node` file of `sharp` needs `libvips` from a neighboring package. With `--aot`, embed the folder that holds both:
-+Some addons load a shared library that ships beside them, like `sharp` and `libvips`. With `--aot`, embed the folder that holds both:
- 
- ```bash terminal icon="terminal"
- bun build --compile --aot ./index.ts --asset node_modules/@img --outfile mycli
-@@ -975,21 +973,13 @@ const html = await Bun.file(path.join(publicDir, "index.html")).text();
- 
- Pass `--asset` multiple times to embed several directories (for example `--asset ./client --asset ./prerendered` for a SvelteKit build). Bun embeds only regular files; it skips symlinks and empty subdirectories inside the tree.
- 
--With `--aot`, the build also embeds the data files that a `require()` or `import()` with a path that isn't a constant may name, [where it can hold the whole folder](/compiler/compatibility). `fs.stat()` of such a file gives its size, one link, a number of its own and the times the file had when you built; they don't move later, and the owner is whoever runs the executable. A folder that comes into sight that way is also listed in the folder above it, whose own listing may still leave out what the executable doesn't hold. A file you embed with `--asset` has its size and no times.
--
--With `--aot`, your modules and the files you embed keep their places relative to one another. Next to `./dist/server/entry.mjs`, `--asset dist/client` is at `path.join(import.meta.dir, "../client")`, the same as under `bun run`.
--
--Without `--aot`, a single file is embedded under its base name: `--asset ./a/config.json` is at `/$bunfs/root/config.json`. With `--aot` it's at `/$bunfs/root/a/config.json`, and `/$bunfs/root/config.json` finds it too, so code written for either keeps working. Three things differ:
--
--- The base name only resolves. `fs.readdirSync()` and `Bun.embeddedFiles` list the file once, as `a/config.json`.
--- If a module, another embedded file or a directory is already at that path, the path keeps meaning that.
--- `--asset ./a/config.json --asset ./b/config.json` is an error without `--aot`, because both files would be `config.json`. With `--aot` it builds. Each file is at its own path and `/$bunfs/root/config.json` doesn't exist.
-+With `--aot`, your modules and the files you embed keep their place
-```
-
-**File**: `docs/compiler/explain.mdx` (modified, +44/-186)
-```diff
-@@ -34,35 +34,30 @@ bun compile ./main.ts --explain
  ```txt
- 11 | for (const item of items) total += item.price;
-                                         ^
--note: 1. unknown-object: An object from untyped code is used as this type here, so it can have any shape.
-+note: 1. unknown-object: The compiler doesn't know the shape of this object, so the access is a lookup or needs a shape check.
-    at main.ts:11:36
- 
- note: 1 of 1 untyped access
- note: 1 of these runs in a loop
--note: why (loose-type): The value comes from 'any', 'unknown', 'object', '{}', 'Function' or a bare type parameter.
--note: fix: build a new object of this type from it where it enters typed code.
-+note: fix: that depends on where the object comes from. See the table at the link below.
- note: https://bun.com/docs/compiler/explain#unknown-object
+ RangeError: bad id -1
+-      at <anonymous> (/$bunfs/root/compiled.js:4:2)
+-      at /$bunfs/root/compiled.js:1:4
++      at <anonymous> (./compiled.js:4:2)
++      at ./compiled.js:1:4
  ```
  
--| Line                        | What it tells you                       |
--| --------------------------- | --------------------------------------- |
--| `1. unknown-object`         | The rank and the [cause](#causes)       |
--| `at`                        | The line that runs slower               |
--| `1 of 1 untyped access`     | How many accesses the fix speeds up     |
--| `1 untyped operator`        | Operators on a value of unknown type    |
--| `3 indirect calls`          | Calls where the callee isn't known      |
--| `1 of these runs in a loop` | How many are in loops, which rank first |
--| `types:`                    | The types that the cause slows down     |
--| `why`                       | How the value got past TypeScript       |
--| `fix:`                      | What to change                          |
-+| Line                        | What it tells you                          |
-+| --------------------------- | ------------------------------------------ |
-+| `1. unknown-object`         | The rank and the [cause](#causes)          |
-+| `at`                        | The line that runs slower                  |
-+| `1 of 1 untyped access`     | The entry's share of your untyped accesses |
-+| `1 untyped operator`        | Operators on a value of unknown type       |
-+| `1 indirect call`           | Calls where the callee isn't known         |
-+| `1 of these runs in a loop` | How many are in loops                      |
-+| `fix:`                      | What to change                             |
+ `--sourcemap=external` moves function names, paths, lines and columns out of the executable and into `repo.map`, next to it. Every frame then points into `compiled.js`. That file doesn't exist. The line and column are a position in the map, and any source map library turns them back into your names, files and lines. Keep the map of every build you deploy, and don't ship it.
+@@ -118,6 +118,8 @@ A package may catch an error and carry on. So the run ends with a list of every
  
- The location is the line that uses the untyped value, not the line where the value starts. Here that's the read of `item.price`, and the value comes from the `JSON.parse` four lines above it.
+ The build reads your tests to find out which built-in methods and which exports they replace, and compiled code checks for a replacement of those. Your tests are the test files, the preloads and the files that only they import. A file that your program imports too can't replace a built-in. It throws the `TypeError` of the executable.
  
--Entries whose operations are in loops come first, so five accesses in a loop rank above a hundred at startup. After that, entries are sorted by how many instructions types would save. Nothing is measured. A loop counts if the operation is inside it after inlining, and the count is `inLoops` in JSON.
-+Entries in loops come first, then the ones where types would save the most instructions. That's an estimate. Nothing is measured.
++A file is your program's if `package.json` names it as an entry point, if another file of your program in the run loads it, or if a file that the run doesn't load imports it by a relative path that's written as one string. A file that only re-exports it counts if something imports that file. Where the build can't tell, the file counts as your tests', and code in it runs as under `bun test`.
++
+ If the build can't see what a test replaces, as in `Object.prototype[name] = 1` with a name that's put together while the test runs, the write, the spy or the mock throws a `TypeError` that shows what to write instead.
  
--An access can have more than one cause, so a fix can uncover the next one.
--
--The report shows the first 20 entries, and `--explain=json` prints all of them.
-+The report shows the first 20 entries. `--explain=json` prints all of them.
+ What the language looks up by itself can't be replaced at all.
+@@ -192,7 +194,7 @@ bun check --aot --explain=guards ./total.ts
+ ```txt
+ note: 3 type guards can fail at run time. When one fails, the result is the same and at most the rest of that call runs slower.
+ note: 1. the type of this value isn't proven, so it is checked here
+-   at total.ts:3:3
++   at total.ts:3:14
+ note: fix: nothing to fix unless it fails in hot code. Then trace the value back from here to where its type is lost
+ ```
  
- ## What is counted
- 
-@@ -81,196 +76,59 @@ Dependencies: 3.1% of property accesses are one load: 210 free, 1,320 tested, 5,
- 
- Only `free` counts as typed. An access is `free` when the compiler knows every shape the object can have at that point, from your types or by tracking the object from where it's created. An `any` or a `.js` file doesn't break that by itself.
- 
--A property access is a read, a write, an `in` test or a `delete`. Method calls, array and `Map` operations, and calls like `console.log()` aren't counted. Properties of objects that Bun gives you, such as `req.params.id` or `process.env.PORT`, are counted and are always lookups. So a small server has a low percentage, which doesn't matter outside of hot code.
-+A property access is a read, a write, an `in` test or a `delete`. Array elements and `Map` operations aren't counted. Properties of objects that Bun gives you, such as `req.params.id` or `process.env.PORT`, are always lookups. So a small server has a low percentage, which doesn't matter outside of hot code.
- 
--Bun counts after optimization, so the total moves when you change code nearby. Watch the percentage.
-+Bun counts after optimization, so the total moves when you change code nearby.
- 
- ## Other reports
- 
--| Flag                    | Lists                                                                      |
--| ----------------------- | -------------------------------------------------------------------------- |
--| `--explain=json`        | Every entry, one JSON object per line                                      |
--| `--explain=guards`      | [Type guards that can fail](/compiler/debugging#find-the-guards-that-fail) |
--| `--explain=trim`        | [What `--trim` kept, and why](/compiler/size#see-what-the-compiler-fou
 ```
 
-**File**: `docs/compiler/index.mdx` (modified, +4/-4)
+**File**: `packages/bun-types/bun.d.ts` (modified, +1/-1)
 ```diff
-@@ -28,14 +28,14 @@ Hello world!
- | Builds for           | Any platform, with `--target` | The platform you build on |
- | Status               | Stable                        | Experimental              |
- 
--`bun build --compile` runs nearly everything that `bun run` runs. With `bun compile`, which is short for `bun build --compile --aot`, your program starts faster and uses less memory, and [a few things differ from `bun run`](/compiler/compatibility).
-+`bun build --compile` runs nearly everything that `bun run` runs. With `bun compile`, which is short for `bun build --compile --aot`, your program starts faster, and [a few things differ from `bun run`](/compiler/compatibility). A large application uses less memory, and a tiny program uses about as much as without AoT.
- 
- ## Read next
- 
- - [Single-file executable](/compiler/executables): cross-compile, embed files, sign the executable.
- - [Bytecode caching](/compiler/bytecode): make an executable from `bun build --compile` start faster.
- - [Standalone HTML](/bundler/standalone-html): `--compile --target=browser` writes one `.html` file.
- - [Ahead-of-time compilation](/compiler/aot): what `bun compile` gets you, and when to stay with the JIT.
--- [Types](/compiler/types) and [typed percentage](/compiler/explain): how your types make compiled code faster.
--- [Compatibility](/compiler/compatibility) and [libraries](/compiler/libraries): what differs from `bun run`, and which packages it affects.
--- [Debugging](/compiler/debugging), [size](/compiler/size), [troubleshooting](/compiler/troubleshooting) and [how it works](/compiler/internals).
-+- [Types](/compiler/types) and [typed percentage](/compiler/explain): make compiled code faster.
-+- [Compatibility](/compiler/compatibility) and [libraries](/compiler/libraries): what differs from `bun run`.
-+- [Debugging](/compiler/debugging), [size](/compiler/size) and [troubleshooting](/compiler/troubleshooting).
+@@ -4069,7 +4069,7 @@ declare module "bun" {
+      *
+      * - `"proof-checks"`: check the type that the compiler has proven of a value again at each read,
+      *   and check again what the compiler remembers from earlier code. Objects stay on the heap, not
+-     *   on the stack.
++     *   on the stack. The build also runs the compiler's own verifier.
+      * - `"ignore-told-ranges"`: check every index against the length, where the index is used.
+      *
+      * A check that fails aborts the process.
 ```
 
-**File**: `docs/compiler/internals.mdx` (removed, +0/-99)
+**File**: `scripts/build/deps/webkit.ts` (modified, +1/-1)
 ```diff
-@@ -1,99 +0,0 @@
-----
--title: "How bun compile works"
--sidebarTitle: "How it works"
--description: "What bun compile does with your code and your types, and what ends up in the executable"
-----
--
--<Warning>Ahead-of-time compilation is experimental.</Warning>
--
--`bun compile` type checks your whole program, compiles it to machine code at build time, and puts that code into a copy of the Bun runtime. The executable has no JIT, so nothing is compiled while your program runs.
--
--You don't need this page to [use `bun compile`](/compiler/aot). Read it if you want to know what to expect from the code it generates.
--
--## From source to executable
--
--1. Bun follows the imports from your entry point with the same resolver, loaders and plugins as `bun build`. npm packages are compiled along with your code. So are the `node:` and `bun:` modules you import, because much of `node:fs`, `node:http` and `node:stream` is written in TypeScript.
--2. It type checks your TypeScript with the checker behind [`bun check`](/runtime/check). A type error stops the build.
--3. It tracks values through the whole program. For each variable, parameter and property it works out which objects can end up there, and for each call, which functions it can reach.
--4. It optimizes each function and generates machine code with its own backend.
--5. It copies the `bun` that runs the build, leaves out the parts a compiled program can't use, and adds the machine code. You don't need a linker or a C toolchain.
--
--Your code is never bundled or printed back out as JavaScript, so stack traces point at your original source without a source map.
--
--## What types are used for
--
--```ts dot.ts icon="/icons/typescript.svg"
--interface Vec {
--  x: number;
--  y: number;
--}
--
--function dot(a: Vec, b: Vec) {
--  return a.x * b.x + a.y * b.y;
--}
--
--const unit: Vec = { x: 1, y: 0.5 };
--const input = JSON.parse(process.argv[2]);
--
--console.log(dot(unit, input));
--```
--
--```bash terminal icon="terminal"
--bun compile ./dot.ts && ./dot '{"x":2,"y":4}'
--```
--
--```txt
--4
--```
--
--`Vec` gets a fixed layout, like a struct in Go or Rust. `x` and `y` sit at fixed offsets. Your program creates `unit` itself, so the compiler knows it has that layout, and `a.x` is one load with no check in front of it.
--
--`input` comes from outside. TypeScript lets it through because `JSON.parse` returns `any`, but nothing proves it's a `Vec`. So `dot` checks `b` once, on entry. If the check passes, `b.x` is one load too. If it fails, the call goes to a second copy of `dot` that treats `b` as plain JavaScript and looks `x` up at run time. `a` stays typed in that copy.
--
--The same rule applies everywhere. A type is a fact about values your program creates. It's a guess about values your program receives, such as parsed data, the result of a function that only has a `.d.ts` file, or anything that went through `any` or `as`. A fact costs nothing at run time. A guess costs one check where the value arrives.
--
--The check compares layouts and doesn't look inside the object. `JSON.parse` makes ordinary objects, so `input` fails the check even when it has the right properties. To avoid that, [build a `Vec` from what you parse](/compiler/types#build-your-own-objects-from-what-you-parse).
--
--## When a type is wrong
--
--Types change how fast your program runs, never what it does. A value that doesn't match its type doesn't throw, and it isn't converted or copied. The code that touches it takes the slow path. [Types](/compiler/types#when-a-value-doesnt-match-its-type) has an example.
--
--Anything the compiler rejects that `bun run` accepts, it rejects at build time. The main exceptions are [read-only built-ins](#read-only-built-ins) and [an import of code that isn't in the executable](/compiler/compatibility#dynamic-imports). [Compatibility](/compiler/compatibility) has others.
--
--## Code without types
--
--JavaScript files, `any` and untyped packages are compiled to machine code like everything else. Code that the build saw never falls back to the interpreter. The compiler still tracks objects from where they're created, so a class in a `.js` file gets a fixed layout too.
--
--Where it can't tell which objects reach a property access, the compiled code looks the property up at run time. That works the same and runs slower. [`bun compile --explain`](/compiler/explain) lists those places and what causes them.
--
--## Code the build can't see
--
--Strings passed to `eval`, `new Function` and `node:vm` run in JavaScriptCore's interpreter, in the same process and on the same objects. There's no JIT above it, so a library that generates its hot code this way runs slower compiled.
--
--The compiler finds these calls at build time and assumes less about whatever they can reach. A read that it can't follow, like `globalThis[name]`, counts as one. If it finds none, it assumes it has seen all the code there is and turns `eval` off. See [Code from strings](/compiler/compatibility#code-from-strings).
--
--## Read-only built-ins
--
--Compile
+@@ -3,7 +3,7 @@
+  * for local mode. Override via `--webkit-version=<hash>` to test a branch.
+  * From https://github.com/oven-sh/WebKit releases.
+  */
+-export const WEBKIT_VERSION = "873ab3a426f858450b4bdba51e230f79a8feec85";
++export const WEBKIT_VERSION = "264cf6db419244fde189186713b7e42929bc4205";
+ 
+ /**
+  * WebKit (JavaScriptCore) — the JS engine, with WTF and bmalloc.
+```
+
+**File**: `scripts/verify-baseline-static/allowlist-aarch64.txt` (modified, +8/-0)
+```diff
+@@ -185,6 +185,14 @@ _ZN3bun10N_SVE2_128L12MemMemSearchILb0EtEEmPKT0_mS4_mmmPm                      [
+ _ZN3bun10N_SVE2_128L12MemMemSearchILb1EtEEmPKT0_mS4_mmmPm                      [SVE]
+ 
+ 
++# ----------------------------------------------------------------------------
++# Bun's packing of words (src/jsc/bindings/highway_strings.cpp).
++# Gate: BUN_HWY_DISPATCH (highway_dispatch.h) via hwy::SupportedTargets. (2 symbols)
++# ----------------------------------------------------------------------------
++_ZN3bun10N_SVE2_12813PackWordsImplEPKjmPhS3_                                   [SVE]
++_ZN3bun10N_SVE2_12815UnpackWordsImplEPKhmS2_mPjPm                              [SVE]
++
++
+ # ----------------------------------------------------------------------------
+ # Bun source-map VLQ decoder (src/jsc/bindings/highway_sourcemap.cpp).
+ # Gate: BUN_HWY_DISPATCH (highway_dispatch.h) via hwy::SupportedTargets. (8 symbols)
+```
+
+**File**: `scripts/verify-baseline-static/allowlist-x64-windows.txt` (modified, +18/-0)
+```diff
+@@ -733,6 +733,24 @@ bun::N_AVX3_ZEN4::BSwap32Impl                                                  [
+ bun::N_AVX3_ZEN4::BSwap64Impl                                                  [AVX, AVX2, AVX512BW, AVX512F, AVX512VL]
+ 
+ 
++# ----------------------------------------------------------------------------
++# Bun's packing of words (src/jsc/bindings/highway_strings.cpp).
++# Gate: BUN_HWY_DISPATCH (highway_dispatch.h) via hwy::SupportedTargets. (12 symbols)
++# ----------------------------------------------------------------------------
++bun::N_AVX2::PackWordsImpl                                                     [AVX, AVX2]
++bun::N_AVX2::UnpackWordsImpl                                                   [AVX, AVX2]
++bun::N_AVX3::PackWordsImpl                                                     [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++bun::N_AVX3::UnpackWordsImpl                                                   [AVX, AVX2]
++bun::N_AVX3_DL::PackWordsImpl                                                  [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++bun::N_AVX3_DL::UnpackWordsImpl                                                [AVX, AVX2]
++bun::N_AVX3_SPR::PackWordsImpl                                                 [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++bun::N_AVX3_SPR::UnpackWordsImpl                                               [AVX, AVX2]
++bun::N_AVX3_ZEN4::PackWordsImpl                                                [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++bun::N_AVX3_ZEN4::UnpackWordsImpl                                              [AVX, AVX2]
++bun::N_AVX10_2::PackWordsImpl                                                  [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++bun::N_AVX10_2::UnpackWordsImpl                                                [AVX, AVX2]
++
++
+ # ----------------------------------------------------------------------------
+ # Bun source-map VLQ decoder (src/jsc/bindings/highway_sourcemap.cpp).
+ # Gate: BUN_HWY_DISPATCH (highway_dispatch.h) via hwy::SupportedTargets. (12 symbols)
+```
+
+**File**: `scripts/verify-baseline-static/allowlist-x64.txt` (modified, +18/-0)
+```diff
+@@ -759,6 +759,24 @@ _ZN3bun9N_AVX3_DL11BSwap32ImplEPhm                                             [
+ _ZN3bun9N_AVX3_DL11BSwap64ImplEPhm                                             [AVX, AVX2, AVX512BW, AVX512F, AVX512VL]
+ 
+ 
++# ----------------------------------------------------------------------------
++# Bun's packing of words (src/jsc/bindings/highway_strings.cpp).
++# Gate: BUN_HWY_DISPATCH (highway_dispatch.h) via hwy::SupportedTargets. (12 symbols)
++# ----------------------------------------------------------------------------
++_ZN3bun6N_AVX213PackWordsImplEPKjmPhS3_                                        [AVX, AVX2]
++_ZN3bun6N_AVX215UnpackWordsImplEPKhmS2_mPjPm                                   [AVX, AVX2]
++_ZN3bun6N_AVX313PackWordsImplEPKjmPhS3_                                        [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++_ZN3bun6N_AVX315UnpackWordsImplEPKhmS2_mPjPm                                   [AVX, AVX2]
++_ZN3bun9N_AVX3_DL13PackWordsImplEPKjmPhS3_                                     [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++_ZN3bun9N_AVX3_DL15UnpackWordsImplEPKhmS2_mPjPm                                [AVX, AVX2]
++_ZN3bun10N_AVX3_SPR13PackWordsImplEPKjmPhS3_                                   [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++_ZN3bun10N_AVX3_SPR15UnpackWordsImplEPKhmS2_mPjPm                              [AVX, AVX2]
++_ZN3bun11N_AVX3_ZEN413PackWordsImplEPKjmPhS3_                                  [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++_ZN3bun11N_AVX3_ZEN415UnpackWordsImplEPKhmS2_mPjPm                             [AVX, AVX2]
++_ZN3bun9N_AVX10_213PackWordsImplEPKjmPhS3_                                     [AVX, AVX2, AVX512DQ, AVX512F, AVX512VL]
++_ZN3bun9N_AVX10_215UnpackWordsImplEPKhmS2_mPjPm                                [AVX, AVX2]
++
++
+ # ----------------------------------------------------------------------------
+ # Bun source-map VLQ decoder (src/jsc/bindings/highway_sourcemap.cpp).
+ # Gate: BUN_HWY_DISPATCH (highway_dispatch.h) via hwy::SupportedTargets. (12 symbols)
 ```
 
 ---
 
-### Incident Patch 2: `98cda0d8` (2026-11-10)
-**Commit Message**: AOT: Bun's side of the compiler's new optimizations, with fixes and tests (#48120)
+### Incident Patch 3: `801eb373` (2026-11-13)
+**Commit Message**: ci: build releases from release branches (#48769)
 
-Bun's side of the ahead-of-time compiler rewrite (`bun build --compile --aot` and `bun test --aot`,
-both experimental). The JavaScriptCore side is merged: oven-sh/WebKit#1001, oven-sh/WebKit#1008 and
-oven-sh/WebKit#1021.
+### What does this PR do?
 
-About 31,000 files, +430,000 -34,000. Almost all of that is stored programs and stored test runs
-under test/aot. A stored program is a small program that CI compiles with `--aot`, runs, and
-compares with `bun run`. A stored test run does the same with `bun test --aot` and `bun test`.
+Releases are built from a `release/bun-vX.Y.Z` branch instead of main,
+and CI prepares the draft releases.
 
-[skip size check], as in 607519ac: the binary is 3.5 to 5 MB over the size check's limit on all 12
-targets.
+1. Create the branch from a main commit, or from the previous tag with
+cherry-picks. `package.json` must have that version.
+2. Click New Build on the branch. It builds with canary off, signs the
+Windows and macOS binaries, and uploads the zips to drafts on
+`oven-sh/bun` and `oven-sh/bun-releases-for-updater`.
+3. Publish the drafts, in that order. Publishing still creates the tag.
 
-If you don't use `--aot`
+Another New Build replaces the drafts. A draft is titled "incomplete"
+until its files match the build. The build stops right away if the
+version differs from `package.json`, is not newer than the latest tag,
+or the commit is not the head of the branch.
 
-- Built-in modules. Earlier AOT work edited files under src/js in place. Those files are back to
-  what main had before that work, or within a few lines of it. The versions that compiled programs
-  run now live beside them in src/js/ahead-of-time.
+Also:
 
-- `util.inspect()` of an error that shares four or more stack frames with its `cause` prints them
-  once, like Node.
+- Pushes to and rebuilds of a release branch are canary builds that sign
+and upload nothing.
+- main no longer signs.
+- `[release]` in a commit subject does nothing, and a build at or behind
+the latest tag stays a canary. The canary revision lookup is deleted.
+- `upload-release.sh` is now `upload-release.ts`, typechecked with the
+other CI scripts.
+- Canary gets the An
 
-- A run-time `onResolve` plugin is passed `kind`, `namespace` and `resolveDir`, as bun.d.ts
-  declares. It
-
-**File**: `.gitattributes` (modified, +1/-0)
+**File**: `.buildkite/ci.ts` (modified, +77/-132)
 ```diff
-@@ -24,6 +24,7 @@
- *.patch text eol=lf
- # Every byte of an input of the formatter, and of what is expected for it, is part of the test.
- test/cli/format/own/cases/** -text
-+test/aot/parallel/the-head-of-the-text-of-a-function-is-laid-as-bun-prints-it/** -text
- # Compared line by line with what a runner prints, which ends a line with \n on every system.
- test/cli/format/*/expected.txt text eol=lf
- test/cli/lint/conformance/expected*.txt text eol=lf
-```
-
-**File**: `.gitignore` (modified, +1/-0)
-```diff
-@@ -101,6 +101,7 @@ node_modules_*
- !test/aot/parallel/**/dist/
- !test/aot/ir/**/node_modules/
- !test/aot/parallel-test-runs/**/node_modules/
-+!test/aot/fuzz/**/node_modules/
- out
- out.*
- outcss
-```
-
-**File**: `bench/compiler/run.ts` (modified, +35/-30)
-```diff
-@@ -35,9 +35,11 @@ const perf = process.platform === "linux" ? which("perf") : null;
- interface Scenario {
-   name: string;
-   dress: string;
--  /** What has to be on the machine. */
--  needs?: string;
--  /** Run once before the timed command of every run, untimed. */
-+  /** What has to be on the machine, the formatter of the language too: a scenario that lacks one is left out, and a line says so. */
-+  needs?: string[];
-+  /** Below the folder of the scenario: removed before the timed command of every run, untimed. */
-+  removes?: string;
-+  /** Run behind the removal, before the timed command of every run, untimed. */
-   prepare?: (folder: string) => string[][];
-   command: (folder: string) => string[];
-   environment?: (folder: string) => Record<string, string>;
-@@ -118,37 +120,35 @@ const scenarios: Scenario[] = [
-   {
-     name: "go-cold",
-     dress: "go",
--    needs: "go",
--    prepare: folder => [["rm", "-rf", join(folder, ".cache")]],
-+    needs: ["go", "gofmt"],
-+    removes: ".cache",
-     command: () => ["go", "build", "-o", onThisSystem("app"), "."],
-     environment: folder => ({ GOCACHE: join(folder, ".cache"), GOFLAGS: "-mod=mod", GOTOOLCHAIN: "local" }),
-     executable: "app",
-   },
-   {
-     name: "go-std-warm",
-     dress: "go",
--    needs: "go",
--    prepare: folder => [
--      ["rm", "-rf", join(folder, ".cache")],
--      ["go", "build", "std"],
--    ],
-+    needs: ["go", "gofmt"],
-+    removes: ".cache",
-+    prepare: () => [["go", "build", "std"]],
-     command: () => ["go", "build", "-o", onThisSystem("app"), "."],
-     environment: folder => ({ GOCACHE: join(folder, ".cache"), GOFLAGS: "-mod=mod", GOTOOLCHAIN: "local" }),
-     executable: "app",
-   },
-   {
-     name: "cargo build",
-     dress: "rust",
--    needs: "cargo",
--    prepare: folder => [["rm", "-rf", join(folder, "target")]],
-+    needs: ["cargo", "rustfmt"],
-+    removes: "target",
-     command: () => ["cargo", "build", "--offline", "--quiet"],
-     executable: "target/debug/application",
-   },
-   {
-     name: "cargo build --release",
-     dress: "rust",
--    needs: "cargo",
--    prepare: folder => [["rm", "-rf", join(folder, "target")]],
-+    needs: ["cargo", "rustfmt"],
-+    removes: "target",
-     command: () => ["cargo", "build", "--offline", "--quiet", "--release"],
-     executable: "target/release/application",
-   },
-@@ -167,7 +167,8 @@ const shown = (command: string[]) => command.map(word => (word === bun ? "bun" :
- function printCommandsOf(chosen: Scenario[]) {
-   const widest = Math.max(...chosen.map(scenario => scenario.name.length), "scenario".length);
-   for (const scenario of chosen) {
--    const before = (scenario.prepare?.(".") ?? []).map(shown).join(" && ");
-+    const removal = scenario.removes ? [["rm", "-rf", scenario.removes]] : [];
-+    const before = [...removal, ...(scenario.prepare?.(".") ?? [])].map(shown).join(" && ");
-     console.log(
-       `${scenario.name.padEnd(widest)}  ${shown(scenario.command("."))}${before ? `   (before it, not timed: ${before})` : ""}`,
-     );
-@@ -265,8 +266,9 @@ try {
-     const features = Math.max(2, Math.round(size / linesOfFeature));
-     for (const scenario of scenarios) {
-       if (wanted && !wanted.split(",").includes(scenario.name)) continue;
--      if (scenario.needs && !which(scenario.needs)) {
--        console.error(`${scenario.name}: no ${scenario.needs} on this machine: left out`);
-+      const missing = scenario.needs?.find(tool => !which(tool));
-+      if (missing) {
-+        console.error(`${scenario.name}: no ${missing} on this machine: left out`);
-         continue;
-       }
-       const folder = join(root, `${size}-${scenario.name.replace(/[^a-z0-9]+/gi, "-")}`);
-@@ -281,21 +283,24 @@ try {
-       // A compiler that fails or takes over an hour at some size has a row that says so. Nothing is left out in silence.
-       let failure: string | undefined;
-       for (let run = 0; !failure && run < (has("check") ? 1 : runs); run++) {
--        for (const command of scenario.prepare?.(folder) ?? []) {
--          const prepared = spawnSync({
--            cmd: command,
--            cwd: folder,
--            env: { ...process.env, ...env },
--            stdout: "pipe",
--            stderr: "pipe",
--          });
--          if (prepared.exitCode !== 0)
--            throw new Error(`${command.join(" ")}: exit ${prepared.exitCode}\n${prepared.stderr}`);
--        }
-         try {
-+          if (scenario.removes) rmSync(join(folder, scenario.removes), { recursive: true, force: true });
-+          for (const command of scenario.prepare?.(folder) ?? []) {
-+            const prepared = spawnSync({
-+              cmd: command,
-+              cwd: folder,
-+              env: { ...process.env, ...env },
-+              stdout: "pipe",
-+              stderr: "pipe",
-+            });
-+            if (prepared.exitCode !== 0)
-+              throw new Error(`${command.join(" ")}: exit ${prepared.exitCode}\n${prepared.stderr}`);
-+          }
-           measured.push(time(sce
-```
-
-**File**: `docs/compiler/aot.mdx` (modified, +4/-2)
-```diff
-@@ -99,12 +99,14 @@ One error is different. TypeScript gives up on a type after 100 nested steps and
+@@ -22,42 +22,22 @@ import {
+ } from "../scripts/build/ci-images/spec.ts";
+ import {
+   getBuildMetadata,
+-  getCommit,
+   getCommitMessage,
+   getEnv,
+-  getJson,
+   getLastSuccessfulBuild,
+   getPullRequestFiles,
+-  getRepositoryUrl,
++  getReleaseVersion,
+   getSecret,
+   isBuildkite,
+   isFork,
+   isMainBranch,
+   isMergeQueue,
+-  isPullRequest,
+-  parseGitUrl,
+   startGroup,
+   uploadArtifact,
+ } from "../scripts/buildkite.ts";
++import { checkRelease } from "../scripts/check-release.ts";
+ import { type ImageState, getImageState } from "../scripts/ci-image.ts";
  
- [`bun check --aot`](/runtime/check) reports every error that stops the build, and also the type errors in code that the build leaves out. It builds nothing. Bun checks each file with the nearest `tsconfig.json`, and reads that config's `files` and `include` for the globals they declare, even if nothing imports them. If you can't fix an error yet, you can [suppress it](/compiler/troubleshooting#the-build-stops-at-a-type-error).
- 
--The build only stops where `tsc` reports an error under your own `tsconfig.json`:
-+The build only stops where `tsc` reports an error under your own `tsconfig.json`. The compiler reads Bun's type declarations even if you haven't installed them, and it overrides a few options. So when it finds a type error, it runs [`bun check`](/runtime/check) on that file with your own settings, and only reports the error if `bun check` finds it at the same place. A build without type errors skips that step.
-+
-+For example:
- 
- - `"noCheck": true` turns type errors off for the build too. Syntax errors still stop it.
- - An entry point that `exclude` rules out isn't type checked, and neither are the files that only it imports. An example is a worker that has a `tsconfig.json` of its own.
- - If `@types/bun` is installed but `types` doesn't name it, the build still reads it, and an error that only comes from its declarations doesn't stop the build.
--- Without a `tsconfig.json`, the build uses [the options of `bun check`](/runtime/check#without-a-tsconfigjson) with TypeScript's default `lib`, which declares the DOM. `typeof window` and `HTMLElement` are not errors.
-+- Without a `tsconfig.json`, the build uses [the options of `bun check`](/runtime/check#without-a-tsconfigjson). `lib` is `ESNext`, as in the `tsconfig.json` that `bun init` writes, and Bun's own declarations cover `fetch`, `Response`, streams and the like. A name that only the DOM declares isn't an error, because `tsc`'s default `lib` declares it: `typeof window` and `HTMLElement` build. The compiler doesn't know the type of such a name, though, so it misses a wrong use of one: `const title: number = document.title` builds too.
- 
- A few options can't change from one file to the next, because a build has one type checker and the entry point's `tsconfig.json` sets it up: `strictNullChecks`, `strictFunctionTypes`, `strictBindCallApply`, `strictBuiltinIteratorReturn`, `exactOptionalPropertyTypes`, `lib` (or the `target` it defaults from), `allowJs`, `maxNodeModuleJsDepth`, `resolveJsonModule` and `allowArbitraryExtensions`. If a folder's `tsconfig.json` sets one of them differently, the build doesn't type check the files in that folder, and its last line counts them as compiled without types. It still reads their types, but takes each one as a [guess](/compiler/internals#what-types-are-used-for) that the compiled code checks. They behave the same. Run `bun check` in that folder to see their type errors. A package that [publishes its types](/compiler/libraries#publish-a-package-with-its-types) is the exception: it keeps them whatever your `tsconfig.json` says.
- 
-```
-
-**File**: `docs/compiler/debugging.mdx` (modified, +16/-6)
-```diff
-@@ -89,10 +89,14 @@ If the process crashes, Bun prints a report to stderr. It ends with the function
- bun test --aot
- ```
- 
--`bun test --aot` compiles your test files, your preloads and everything they import the way `bun compile` does, and runs the compiled code. The type checker, the optimizer's settings, the object model and the run time are those of an executable, so every [difference from `bun run`](/compiler/compatibility) shows up in your tests as it would there.
-+`bun test --aot` compiles your test files, your preloads and everything they import the way `bun compile` does, and runs the compiled code. The type checker, the optimizer's settings, the object model and the run time are those of an executable, so every [difference from `bun run`](/compiler/compatibility) shows up in your tests as it would there. That goes for the test files themselves: `fn[name](code)` in a test throws the [`EvalError`](/compiler/compatibility#code-from-strings) of an executable when nothing in the run writes `"constructor"`.
- 
- `--isolate`, `--parallel`, `--rerun-each` and `--coverage` work as in `bun test`. `--watch`, `--hot` and `--inspect` exit with an error.
- 
-+`--isolate=modules` runs like `--isolate`: every test file gets a global object of its own. In `bun test` the files share one, so a property that one file leaves on a built-in module, like `fs.mine = 1`, is still there in the next file. In a compiled run it's gone, and no error tells you.
-+
-+With `--isolate`, a test file can't `require()` another test file that imports from `vitest` and has two or more other imports. It throws `require() async module ... is unsupported`. `bun test` turns the imports of such a file into `await import()` while it's the file being run, and transpiles it a second time, without that, when another file loads it. A compiled run has the first form only. An `import` statement and `await import()` work.
-+
- `--shard=i/n` still runs every test file in exactly one shard, but splits the files differently from `bun test`. A compiled run builds everything its test files import before the first test starts. So test files that import the same code go into the same shard, and each part of your project is compiled on one machine instead of on all of them. What your preloads import is compiled in every shard. With `--timings` written by a compiled `--parallel` run, a shard that has more to compile gets fewer test files. Each machine works out the split for itself, from the files on disk and the timings and from nothing else, so every machine needs the same checkout and the same timings, and `--parallel` may differ between them. Each shard prints a hash of the whole split. It's the same on every shard. Where no other split is faster, you get the split of `bun test`.
- 
- ### What differs from an executable
-@@ -112,7 +116,7 @@ A test run differs from `bun compile` only where tests couldn't work otherwise.
- | `import()` and `require()` of a file that wasn't compiled load it from disk, and Bun interprets it, in a test file, a preload or a helper that only your tests import. In a file of your program they throw, as in the executable, and the run lists where when it ends.                                                                                            | They throw, unless it's built with `--aot-allow-code-from-disk`.                                                   | A module that a test writes, a fixture, a path from the environment                                                                                                  |
- | All of Bun's own JavaScript that such a file could reach is compiled in. Beside it, the first read of a built-in that's made on demand, like `Map.prototype`, is made where it's written if other code may have run before: one more operation, 19 to 29 bytes.                                                                                                     | Only what the program can reach of it is compiled in.                                                              | A file that's loaded from disk can use any built-in                                                                                                                  |
- | `process.mainModule` and `require.main` count as read, so the module objects of entry points written in CommonJS, with their `children` and `parent`, are kept.                                                                                                                                                                                                     | They're kept where the build finds a read.                                                                         | Code that a test loads from disk may read them, and the build doesn't see that code                                                                                  |
--| `import(path)` and `require(path)` find every compiled file, also where the path is put together when the test runs. They answer with the compiled f
-```
-
-**File**: `docs/compiler/executables.mdx` (modified, +2/-0)
-```diff
-@@ -975,6 +975,8 @@ const html = await Bun.file(path.join(publicDir, "index.html")).text();
- 
- Pass `--asset` multiple times to embed several directories (for example `--asset ./client --asset ./prerendered` for a SvelteKit build). Bun embeds only regular files; it skips symlinks and empty subdirectories inside the tree.
- 
-+With `--aot`, the build also embeds the data files that a `require()` or `import()` with a path that isn't a constant may name, [where it can hold the whole folder](/compiler/compatibility). `fs.stat()` of such a file gives its size, one link, a number of its own and the times the file had when you built; they don't move later, and the owner is whoever runs the executable. A folder that comes into sight that way is also listed in the folder above it, whose own listing may still leave out what the executable doesn't hold. A file you embed with `--asset` has its size and no times.
-+
- With `--aot`, your modules and the files you embed keep their places relative to one another. Next to `./dist/server/entry.mjs`, `--asset dist/client` is at `path.join(import.meta.dir, "../client")`, the same as under `bun run`.
- 
- Without `--aot`, a single file is embedded under its base name: `--asset ./a/config.json` is at `/$bunfs/root/config.json`. With `--aot` it's at `/$bunfs/root/a/config.json`, and `/$bunfs/root/config.json` finds it too, so code written for either keeps working. Three things differ:
-```
-
-**File**: `docs/compiler/index.mdx` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ Hello world!
- | Builds for           | Any platform, with `--target` | The platform you build on |
- | Status               | Stable                        | Experimental              |
- 
--`bun build --compile` runs everything that `bun run` runs. With `bun compile`, which is short for `bun build --compile --aot`, your program starts faster and uses less memory, and [a few things differ from `bun run`](/compiler/compatibility).
-+`bun build --compile` runs nearly everything that `bun run` runs. With `bun compile`, which is short for `bun build --compile --aot`, your program starts faster and uses less memory, and [a few things differ from `bun run`](/compiler/compatibility).
- 
- ## Read next
- 
-```
-
-**File**: `docs/compiler/internals.mdx` (modified, +3/-3)
-```diff
-@@ -58,7 +58,7 @@ The check compares layouts and doesn't look inside the object. `JSON.parse` make
- 
- Types change how fast your program runs, never what it does. A value that doesn't match its type doesn't throw, and it isn't converted or copied. The code that touches it takes the slow path. [Types](/compiler/types#when-a-value-doesnt-match-its-type) has an example.
- 
--Anything the compiler rejects that `bun run` accepts, it rejects at build time. The exceptions are [read-only built-ins](#read-only-built-ins) and [an import of code that isn't in the executable](/compiler/compatibility#dynamic-imports).
-+Anything the compiler rejects that `bun run` accepts, it rejects at build time. The main exceptions are [read-only built-ins](#read-only-built-ins) and [an import of code that isn't in the executable](/compiler/compatibility#dynamic-imports). [Compatibility](/compiler/compatibility) has others.
- 
- ## Code without types
- 
-@@ -74,15 +74,15 @@ The compiler finds these calls at build time and assumes less about whatever the
- 
- ## Read-only built-ins
- 
--Compiled code calls `Array.prototype.push` directly. A JIT can do that too, because it can throw the code away if something replaces `push`. Code in a file can't be thrown away. So Bun makes the assumption true, and replacing or deleting an existing member of a built-in object throws a `TypeError`.
-+Compiled code calls `Array.prototype.push` directly. A JIT can do that too, because it can throw the code away if something replaces `push`. Code in a file can't be thrown away. So Bun makes the assumption true, and replacing or deleting most existing members of a built-in object throws a `TypeError`.
- 
- Adding your own method to `Array.prototype` still works, and so does patching `console`, `process` or `fetch`. See [Built-in objects are read-only](/compiler/compatibility#built-in-objects-are-read-only).
- 
- ## What's in the executable
- 
- The file holds the machine code for your program and its packages, Bun's native APIs, the event loop, the garbage collector, and the interpreter for code from strings. It also holds function names and source positions for stack traces, and the source text of each function so that `fn.toString()` works.
- 
--It doesn't hold the JIT compilers, the `bun` command line, the bundler, the type checker or the compiler itself. Built-in modules that your program never imports aren't there either.
-+Unless your code passes `compile`, `check`, `dts`, `plugins` or a `target` that starts with `bun-` to `Bun.build`, or options that the compiler can't read, it doesn't hold the JIT compilers, the `bun` command line, the type checker or the compiler itself. Built-in modules that your program never imports aren't there either.
- 
- The machine code and its tables are read-only and mapped straight from the file, so processes and Workers share them. [Smaller executables](/compiler/size) covers what else you can remove.
- 
-```
-
----
-
-### Incident Patch 3: `cd40cef9` (2026-11-09)
-**Commit Message**: css: fix layer ordering bugs left after #47797 (#47882)
-
-Fixes four rare CSS bundling bugs left after #47797.
-
-**A layer could be declared too late.** Bun hoists an external `@import`
-out of a bare `layer` import. It then prints in an anonymous layer of
-its own.
-
-```css
-/* entry.css */
-@import "./a.css" layer;
-
-/* a.css */
-@import "https://example.com/ext.css" layer(w);
-@import "./g.css"; /* @layer v { ... } */
-@import "./f.css" layer(w);
-```
-
-Nothing kept the place of `w`, so `v` came first and the wrong rule
-could win. Bun now prints `@layer w;` at that place.
-
-**An `@import` behind an unknown at-rule could apply twice.** Bun
-hoisted it and also left it in the file body. Bun now removes it from
-the body.
-
-**An `@import` behind an unknown at-rule with a `url()` could use the
-wrong import record.** Bun now looks up each import by its own record.
-
-**An import that is not CSS could lose its layer.** `@import "./a.svg"
-layer(x)` did not declare `x`. A second import of the same file was
-taken for a cycle. An import that fails to load still declares its
-layer, so each one now does.
-
-**Visible changes.**
-- A bare `layer` import can print an extra statement, such as `@layer
-w;`.
-- An `@im
-
-**File**: `src/bundler/linker_context/findImportedFilesInCSSOrder.rs` (modified, +81/-41)
-```diff
-@@ -124,6 +124,31 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-             });
-         }
- 
-+        /// An import that loads no style sheet still adds its layer to the layer order.
-+        fn push_layers_of_unloaded_import(&mut self, wrapping_conditions: &Vec<ImportConditions>) {
-+            if wrapping_conditions.iter().any(|c| c.layer.is_some()) {
-+                self.push_entry(
-+                    CssImportOrderKind::Layers(Layers::Owned(Vec::new())),
-+                    wrapping_conditions,
-+                );
-+            }
-+        }
-+
-+        /// The external import is hoisted out of the anonymous layer that its
-+        /// neighbours share, so something else must hold the place of its sublayer.
-+        fn push_sublayer_of_external_import(&mut self, conditions: &Vec<ImportConditions>) {
-+            let names_a_sublayer = conditions
-+                .iter()
-+                .skip_while(|c| !c.has_anonymous_layer())
-+                .any(|c| c.layer.as_ref().is_some_and(|layer| layer.v.is_some()));
-+            if names_a_sublayer {
-+                self.push_entry(
-+                    CssImportOrderKind::Layers(Layers::Owned(Vec::new())),
-+                    conditions,
-+                );
-+            }
-+        }
-+
-         /// Every visit of a bare "layer" makes a new anonymous layer, also when it
-         /// is the same rule or its conditions look the same.
-         fn append_conditions(
-@@ -186,30 +211,26 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-             //
-             // So that's what we do here. See "StyleRuleImport::requestStyleSheet()" in
-             // WebKit for more information.
--            //
--            // An import that is not loaded still adds its layer to the layer order.
-             for visited_source_index in self.visited.slice() {
-                 if visited_source_index.get() == source_index.get() {
-                     debug!(
-                         "Skip file: {}={}",
-                         source_index.get(),
-                         self.input_file_pretty(source_index),
-                     );
--                    self.push_entry(
--                        CssImportOrderKind::Layers(Layers::Owned(Vec::new())),
--                        wrapping_conditions,
--                    );
-+                    self.push_layers_of_unloaded_import(wrapping_conditions);
-                     return;
-                 }
-             }
- 
--            self.visited.push(source_index);
+-function parseGitRepository(url: string | URL): string | undefined {
+-  const parsed = parseGitUrl(url);
+-  if (parsed) {
+-    const { hostname, pathname } = parsed;
+-    if (hostname == "github.com") {
+-      return pathname.slice(1);
+-    }
+-  }
 -
-+            // An asset, such as "./icon.svg", is not a style sheet.
-             let Some(repr): Option<&BundlerStyleSheet> =
-                 self.css_asts[source_index.get() as usize].as_deref()
-             else {
--                return; // Sanity check
-+                self.push_layers_of_unloaded_import(wrapping_conditions);
-+                return;
-             };
-+            self.visited.push(source_index);
-             let top_level_rules = &repr.rules;
- 
-             // Any pre-import layers come first.
-@@ -220,16 +241,11 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-                 );
-             }
- 
--            // `visited.pop()` happens at the end of this function; the early
--            // return above intentionally skips it.
+-  return undefined;
+-}
 -
-             // Iterate over the top-level "@import" rules
--            let mut import_record_idx: usize = 0;
-             for rule in top_level_rules.v.iter() {
-                 if let BundlerCssRule::Import(import_rule) = rule {
--                    // `defer import_record_idx += 1;` — increment at end of this arm
--                    let record =
--                        &self.all_import_records[source_index.get() as usize][import_record_idx];
-+                    let record = &self.all_import_records[source_index.get() as usize]
-+                        [import_rule.import_record_idx as usize];
+-function getRepository(): string | undefined {
+-  const url = getRepositoryUrl();
+-  return url ? parseGitRepository(url) : undefined;
+-}
+-
+ function isBuildManual(): boolean | undefined {
+   if (isBuildkite) {
+     const buildSource = process.env.BUILDKITE_SOURCE;
+@@ -70,6 +50,15 @@ function isBuildManual(): boolean | undefined {
+   return undefined;
+ }
  
-                     // Follow internal dependencies
-                     if record.source_index.is_valid() {
-@@ -255,7 +271,6 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-                             if !followed {
-                                 return;
-                             }
--                            import_record_idx += 1;
-                             continue;
-                         }
-                         if !self.visit_import(
-@@ -266,7 +281,6 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-                         ) {
-                             return;
-                         }
--                        import_record_idx += 1;
-                         continue;
-                     }
++function isReleaseBranch(): boolean {
++  return getReleaseVersion() !== undefined;
++}
++
++/** "New Build" on a release branch: signs what it builds and uploads it to draft releases. */
++function isReleaseBuild(): boolean {
++  return isReleaseBranch() && !!isBuildManual();
++}
++
+ function parseBoolean(value = ""): boolean | undefined {
+   if (/^(true|yes|1|on)$/i.test(value)) {
+     return true;
+@@ -87,50 +76,6 @@ function setBuildMetadata(name: string, value: string): void {
+   }
+ }
  
-@@ -282,12 +296,14 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-                                 fork_conditions(wrapping_conditions, self.arena);
-                             let all_import_records = shallow_clone_records(wrapping_import_records);
-                             self.append_conditions(&mut all_conditions, import_rule);
-+                            self.push_sublayer
+-/** The fields of GitHub's "get the latest release" response that are read here. */
+-interface GithubRelease {
+-  tag_name: string;
+-}
+-
+-/** The fields of GitHub's "compare two commits" response that are read here. */
+-interface GithubComparison {
+-  ahead_by?: unknown;
+-}
+-
+-async function getCanaryRevision(): Promise<number> {
+-  if (isPullRequest() || isFork()) {
+-    return 1;
+-  }
+-
+-  const repository = getRepository() || "oven-sh/bun";
+-  const { error: releaseError, body: release } = await getJson(
+-    new URL(`repos/${repository}/releases/latest`, getGithubApiUrl()),
+-  );
+-  if (releaseError) {
+-    return 1;
+-  }
+-
+-  const commit = getCommit();
+-  const { tag_name: latest } = release as GithubRelease;
+-  const { error: compareError, body: compare } = await getJson(
+-    new URL(`repos/${repository}/compare/${latest}...${commit}`, getGithubApiUrl()),
+-  );
+-  if (compareError) {
+-    return 1;
+-  }
+-
+-  const { ahead_by: revision } = compare as GithubComparison;
+-  if (typeof revision === "number") {
+-    return revision;
+-  }
+-
+-  return 1;
+-}
+-
+-function getGithubApiUrl(): URL {
+-  return new URL(process.env.GITHUB_API_URL || "https://api.github.com");
+-}
+-
+ type Emoji = keyof typeof emojiMap;
+ 
+ const emojiMap = {
+@@ -303,7 +248,7 @@ const testPlatforms: Platform[] = [
+   // The darwin test suite runs on real macOS agents against the Linux-built
+   // artifacts from the `darwin-<arch>-build-bun` steps (the only darwin build
+   // lanes — see buildPlatforms).
+-  // These three version-specific lanes run on main and on opt-in (see
++  // These three version-specific lanes run on main, release branches and opt-in (see
+   // darwinTestsEnabled). PR builds instead get one aarch64 lane that any mac
+   // agent of that arch can take (prDarwinTestPlatforms), so the whole arm64
+   // pool serves one PR lane and the whole x64 pool the other.
+@@ -340,7 +285,7 @@ const testPlatforms: Platform[] = [
+   { os: "windows", arch: "aarch64", release: "11", tier: "latest" },
+ ];
+ 
+-/** Pull requests build and test the other profiles. main does not: nothing ships them. */
++/** Pull requests build and test the other profiles. main and release branches do not: nothing ships them. */
+ const isInRelease = ({ profile }: Target) => profile !== "asan" && profile !== "hardened";
+ 
+ function getPlatformKey(platform: Platform): string {
+@@ -482,6 +427,9 @@ function getPriority(): number {
+   if (isFork()) {
+     return -1;
+   }
++  if (isReleaseBranch()) {
++    return 3;
++  }
+   if (isMainBranch()) {
+     return 2;
+   }
+@@ -615,11 +563,7 @@ function getBuildArgs(target: Target, options: PipelineOptions): string {
+   if (profile === "asan") args.push("--asan=on");
+   if (profile === "hardened") args.push("--hardened=on");
+ 
+-  // canary: options.canary can be number (revision count) or undefined
+-  // (default on). Old system used CANARY_REVISION as a counter; build.ts
+-  // has only on/off — disabled only when explicitly 0.
+-  const canaryRev = typeof canary === "number" ? canary : 1;
+-  if (canaryRev === 0) args.push("--canary=off");
++  if (canary === false) args.push("--canary=off");
+ 
+   return args.join(" ");
+ }
+@@ -1098,23 +1042,25 @@ function getImageSteps(
+ 
+ const windowsSignPlatform: Platform = { os: "windows", arch: "x64", release: "2019" };
+ 
++/*
 ```
 
-**File**: `src/bundler/linker_context/prepareCssAstsForChunk.rs` (modified, +12/-5)
+**File**: `.buildkite/scripts/entitlements.profile.plist` (added, +18/-0)
 ```diff
-@@ -363,7 +363,14 @@ fn prepare_css_asts_for_chunk_impl(c: &LinkerContext, chunk: &mut Chunk, bump: &
-                                 }
-                             }
-                         }
--                        let dropped = prefix_end - layer_count;
-+                        // An "@import" behind an unknown at-rule is in the order too.
-+                        let is_import =
-+                            |rule: &&BundlerCssRule| matches!(rule, BundlerCssRule::Import(_));
-+                        let dropped = prefix_end - layer_count
-+                            + original_rules[prefix_end..]
-+                                .iter()
-+                                .filter(is_import)
-+                                .count();
- 
-                         if dropped == 0 {
-                             // Prefix is all "@layer" (or empty). Nothing to
-@@ -374,10 +381,7 @@ fn prepare_css_asts_for_chunk_impl(c: &LinkerContext, chunk: &mut Chunk, bump: &
-                             // Preserve the "@layer" statements from the
-                             // prefix and append the remaining tail.
-                             let mut new_rules: ArenaVec<BundlerCssRule> =
--                                ArenaVec::with_capacity_in(
--                                    layer_count + (original_rules.len() - prefix_end),
--                                    bump,
--                                );
-+                                ArenaVec::with_capacity_in(original_rules.len() - dropped, bump);
-                             keep_layers = keep_leading_layers;
-                             for rule in &original_rules[0..prefix_end] {
-                                 keep_layers |= matches!(rule, BundlerCssRule::Import(_));
-@@ -392,6 +396,9 @@ fn prepare_css_asts_for_chunk_impl(c: &LinkerContext, chunk: &mut Chunk, bump: &
-                                 }
-                             }
-                             for rule in &original_rules[prefix_end..] {
-+                                if is_import(&rule) {
-+                                    continue;
-+                                }
-                                 // SAFETY: bitwise duplicate of a rule. The copy goes into
-                                 // an `arena_rule_list` slab installed in `css_chunk.asts[i]`,
-                                 // whose elements never run `Drop` (see `arena_rule_list` /
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
++<plist version="1.0">
++<dict>
++    <key>com.apple.security.cs.allow-jit</key>
++    <true/>
++    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
++    <true/>
++    <key>com.apple.security.cs.disable-executable-page-protection</key>
++    <true/>
++    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
++    <true/>
++    <key>com.apple.security.cs.disable-library-validation</key>
++    <true/>
++    <key>com.apple.security.get-task-allow</key>
++    <true/>
++</dict>
++</plist>
+\ No newline at end of file
 ```
 
-**File**: `test/bundler/esbuild/css.test.ts` (modified, +173/-0)
+**File**: `.buildkite/scripts/sign-darwin-artifacts.ts` (added, +117/-0)
 ```diff
-@@ -2691,6 +2691,179 @@ describe("bundler", () => {
-       },
-       out: "@layer{@layer w;@layer v{.t{color:#00f}}}",
-     },
-+    // "v" comes first because the import that closes the cycle declares it.
-+    SublayerOfACycleInImportedFileOfAnonymousLayer: {
-+      files: {
-+        "/entry.css": `@import "./a.css" layer;`,
-+        "/a.css": /* css */ `
-+          @import "./b.css";
-+          @layer v { .t { color: red } }
-+          @layer c { .t { color: green } }
-+        `,
-+        "/b.css": /* css */ `
-+          @import "./entry.css" layer(v);
-+          @layer c { .u { color: blue } }
-+        `,
-+      },
-+      out: "@layer{@layer v;@layer c{.u{color:#00f}}@layer v{.t{color:red}}@layer c{.t{color:green}}}",
+@@ -0,0 +1,117 @@
++#!/usr/bin/env node
++
++// Signs the macOS binaries of a release with Bun's Developer ID certificate, and
++// uploads the zips again under the same names.
++//
++//   sign-darwin-artifacts.ts <zip>=<key of the step that built it>...
++
++import { spawnSync } from "node:child_process";
++import { randomUUID } from "node:crypto";
++import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { basename, join } from "node:path";
++import { output, run } from "../../scripts/agent.ts";
++import { getEnv, getReleaseVersion, readSecret, startGroup } from "../../scripts/buildkite.ts";
++
++const teamId = "7FRXF46ZSN";
++const work = mkdtempSync(join(tmpdir(), "sign-"));
++const keychain = join(work, "signing.keychain-db");
++
++/** Its arguments hold passwords, so they stay out of the error. */
++function security(command: string, ...args: string[]): void {
++  const { status } = spawnSync("security", [command, ...args], { stdio: ["ignore", "ignore", "inherit"] });
++  if (status !== 0) {
++    throw new Error(`security ${command} failed`);
++  }
++}
++
++async function importIdentity(): Promise<void> {
++  const keychainPassword = randomUUID();
++  security("create-keychain", "-p", keychainPassword, keychain);
++  security("set-keychain-settings", keychain); // never lock
++  security("unlock-keychain", "-p", keychainPassword, keychain);
++
++  // codesign needs the certificate's issuer, which the .p12 does not carry.
++  for (const authority of ["DeveloperIDCA.cer", "DeveloperIDG2CA.cer"]) {
++    const url = `https://www.apple.com/certificateauthority/${authority}`;
++    await run(["curl", "-fsSL", "--retry", "3", "-o", authority, url], { cwd: work });
++    security("import", join(work, authority), "-k", keychain);
++  }
++
++  const identity = join(work, "identity.p12");
++  writeFileSync(identity, readSecret("APPLE_DEVELOPER_ID_P12_BASE64"), { encoding: "base64", mode: 0o600 });
++  const password = readSecret("APPLE_DEVELOPER_ID_P12_PASSWORD");
++  security("import", identity, "-k", keychain, "-f", "pkcs12", "-P", password, "-T", "/usr/bin/codesign");
++  rmSync(identity);
++
++  // Without this, codesign waits on a keychain prompt.
++  security("set-key-partition-list", "-S", "apple-tool:,apple:", "-s", "-k", keychainPassword, keychain);
++  security("list-keychains", "-d", "user", "-s", keychain);
++}
++
++async function verify(binary: string): Promise<void> {
++  // What earlier releases are signed as, so macOS takes this binary for the same program.
++  const requirement = [
++    `identifier "${basename(binary)}"`,
++    "anchor apple generic",
++    "certificate 1[field.1.2.840.113635.100.6.2.6] exists",
++    "certificate leaf[field.1.2.840.113635.100.6.1.13] exists",
++    `certificate leaf[subject.OU] = "${teamId}"`,
++  ].join(" and ");
++  await run(["codesign", "--verify", "--strict", "--verbose=2", `--test-requirement==${requirement}`, binary]);
++
++  const { stderr: details } = spawnSync("codesign", ["--display", "--verbose=3", binary], { encoding: "utf8" });
++  console.log(details);
++  for (const expected of ["flags=0x10000(runtime)", "Hash type=sha256", "Timestamp="]) {
++    if (!details.includes(expected)) {
++      throw new Error(`The signature of ${binary} does not have ${expected}`);
++    }
++  }
++}
++
++async function smokeTest(binary: string): Promise<void> {
++  const expected = `${getReleaseVersion()}+${getEnv("BUILDKITE_COMMIT").slice(0, 9)}`;
++  const actual = output([binary, "--revision"])?.trim();
++  if (actual !== expected) {
++    throw new Error(`${binary} --revision printed ${actual}, expected ${expected}`);
++  }
++  // `--compile` edits a copy of the binary, signature included.
++  writeFileSync(join(work, "smoke.js"), 'console.log("ok")');
++  await run([binary, "build", "--compile", "smoke.js", "--outfile", "smoke"], { cwd: work });
++  await run([join(work, "smoke")]);
++}
++
++async function sign(zip: string, step: string): Promise<void> {
++  const directory = basename(zip, ".zip");
++  const isProfile = directory.endsWith("-profile");
++  const binary = join(work, directory, isProfile ? "bun-profile" : "bun");
++  const entitlements = isProfile
++    ? join(import.meta.dirname, "entitlements.profile.plist")
++    : join(import.meta.dirname, "..", "..", "entitlements.plist");
++
++  await run(["buildkite-agent", "artifact", "download", zip, ".", "--step", step], { cwd: work });
++  await run(["unzip", "-q", zip], { cwd: work });
++  rmSync(join(work, zip));
++  const flags = ["--options", "runtime", "--force", "--timestamp", "-vvvv", "--deep", "--strict"];
++  const identity = ["--keychain", keychain, "--sign", "Developer ID Application"];
++  await run(["codesign", "--entitlements", entitlements, ...flags, ...identity, binary]);
++  await verify(binary);
++  if (directory.includes("-aarch64")) {
++    await smokeTest(binary);
++  }
++  await run(["ditto", "-ck", "--rsrc", "--sequesterRsrc", "--keepParent", directory, zip], { cwd: work });
++  await run(["buildkite-agent", "artifact", "upload",
+```
+
+**File**: `.buildkite/scripts/upload-release.sh` (removed, +0/-460)
+```diff
+@@ -1,460 +0,0 @@
+-#!/bin/bash
+-
+-set -eo pipefail
+-
+-function assert_main() {
+-  if [ -z "$BUILDKITE_REPO" ]; then
+-    echo "error: Cannot find repository for this build"
+-    exit 1
+-  fi
+-  if [ -z "$BUILDKITE_COMMIT" ]; then
+-    echo "error: Cannot find commit for this build"
+-    exit 1
+-  fi
+-  if [ -n "$BUILDKITE_PULL_REQUEST_REPO" ] && [ "$BUILDKITE_REPO" != "$BUILDKITE_PULL_REQUEST_REPO" ]; then
+-    echo "error: Cannot upload release from a fork"
+-    exit 1
+-  fi
+-  if [ "$BUILDKITE_PULL_REQUEST" != "false" ]; then
+-    echo "error: Cannot upload release from a pull request"
+-    exit 1
+-  fi
+-  if [ "$BUILDKITE_BRANCH" != "main" ]; then
+-    echo "error: Cannot upload release from a branch other than main"
+-    exit 1
+-  fi
+-}
+-
+-function assert_buildkite_agent() {
+-  if ! command -v "buildkite-agent" &> /dev/null; then
+-    echo "error: Cannot find buildkite-agent, please install it:"
+-    echo "https://buildkite.com/docs/agent/self-hosted/install"
+-    exit 1
+-  fi
+-}
+-
+-function assert_github() {
+-  assert_command "gh" "gh" "https://github.com/cli/cli#installation"
+-  assert_buildkite_secret "GITHUB_APP_BUN_RELEASE_UPLOAD_PRIVATE_KEY_BASE64"
+-  local pem
+-  pem="$(openssl base64 -d -A <<< "$GITHUB_APP_BUN_RELEASE_UPLOAD_PRIVATE_KEY_BASE64")"
+-  unset GITHUB_APP_BUN_RELEASE_UPLOAD_PRIVATE_KEY_BASE64
+-  # The bun-release-upload app's client ID, and the ID of its installation on oven-sh.
+-  create_github_app_token "Iv23li0GlmKSYj59x7e3" "177437987" "$pem"
+-  buildkite-agent redactor add <<< "$GH_TOKEN"
+-}
+-
+-# Exports an installation access token as $GH_TOKEN, where gh expects it. The JWT is GitHub's example:
+-# https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app#example-using-bash-to-generate-a-jwt
+-function create_github_app_token() {
+-  local client_id="$1"
+-  local installation_id="$2"
+-  local pem="$3"
+-
+-  local now=$(date +%s)
+-  local iat=$((${now} - 60)) # Issues 60 seconds in the past
+-  local exp=$((${now} + 300)) # Expires 5 minutes in the future
+-
+-  function b64enc() { openssl base64 | tr -d '=' | tr '/+' '_-' | tr -d '\n'; }
+-
+-  local header_json='{
+-    "typ":"JWT",
+-    "alg":"RS256"
+-}'
+-  local payload_json="{
+-    \"iat\":${iat},
+-    \"exp\":${exp},
+-    \"iss\":\"${client_id}\"
+-}"
+-  local header payload signature
+-  header=$( echo -n "${header_json}" | b64enc )
+-  payload=$( echo -n "${payload_json}" | b64enc )
+-  local header_payload="${header}"."${payload}"
+-  signature=$(
+-    openssl dgst -sha256 -sign <(echo -n "${pem}") \
+-    <(echo -n "${header_payload}") | b64enc
+-  )
+-  local jwt="${header_payload}"."${signature}"
+-
+-  local response
+-  if ! response="$(curl --silent --show-error --fail-with-body --request POST \
+-    --url "https://api.github.com/app/installations/${installation_id}/access_tokens" \
+-    --header "Accept: application/vnd.github+json" \
+-    --header "Authorization: Bearer ${jwt}" \
+-    --header "X-GitHub-Api-Version: 2026-03-10")"; then
+-    echo "error: Cannot create a GitHub App installation access token"
+-    echo ""
+-    echo "$response"
+-    exit 1
+-  fi
+-  GH_TOKEN="$(jq --raw-output ".token" <<< "$response")"
+-  export GH_TOKEN
+-}
+-
+-function assert_aws() {
+-  assert_command "aws" "awscli" "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"
+-  for secret in "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY" "AWS_ENDPOINT"; do
+-    assert_buildkite_secret "$secret"
+-  done
+-  assert_buildkite_secret "AWS_BUCKET" --skip-redaction
+-}
+-
+-function assert_sentry() {
+-  assert_command "sentry-cli" "getsentry/tools/sentry-cli" "https://docs.sentry.io/cli/installation/"
+-  for secret in "SENTRY_AUTH_TOKEN" "SENTRY_ORG" "SENTRY_PROJECT"; do
+-    assert_buildkite_secret "$secret"
+-  done
+-}
+-
+-function run_command() {
+-  set -x
+-  "$@"
+-  { local status=$?; set +x; } 2>/dev/null
+-  return "$status"
+-}
+-
+-# Zips are read with unzip and written with cmake. Not one tool for both:
+-# `cmake -E tar xf` streams, so it exits 0 on a truncated archive and leaves a
+-# corrupt file behind where unzip exits 9, and `zip` is not on the agent image
+-# (which has no root to install it). cmake is what wrote these zips in the
+-# first place — scripts/build/ci.ts makeZip.
+-function assert_archive_tools() {
+-  for tool in "unzip" "cmake"; do
+-    if ! command -v "$tool" &> /dev/null; then
+-      echo "error: Cannot find $tool"
+-      echo ""
+-      echo "hint: the agent image is supposed to have it; see scripts/build/ci-images/spec.ts"
+-      exit 1
+-    fi
+-  done
+-}
+-
+-# Tools this script installs go to a writable directory on PATH instead of
+-# /usr/local/bin, which needs root on most agents.
+-function ensure_tools_bin() {
+-  if [ -n "$TOOLS_BIN" ]; then
+-    return
+-  fi
+-  TOOLS_DIR="${HOME:-}/.cache/bun-release-tools"
+-  if [ -z "$HOME" ] || ! mkdir -p "$TOOLS_DIR/bin" 2> /dev/null; then
+-    TOOLS_DIR="$(mktemp -d)"
+-    mkdir -p "$TOOLS_DIR/bin"
+-  fi
+- 
+```
+
+**File**: `.buildkite/scripts/upload-release.ts` (added, +383/-0)
+```diff
+@@ -0,0 +1,383 @@
++#!/usr/bin/env node
++
++// upload-release.ts canary: replaces the files of the canary release, on main.
++// upload-release.ts draft: replaces the draft releases of a release branch.
++
++import { spawnSync } from "node:child_process";
++import { createHash, createSign } from "node:crypto";
++import { createReadStream, existsSync, mkdirSync, mkdtempSync, renameSync, rmSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { join, resolve } from "node:path";
++import { type Command, getArch, request, requireCommand, run, which } from "../../scripts/agent.ts";
++import { getEnv, isMainBranch, readSecret, reportAnnotationToBuildkite } from "../../scripts/buildkite.ts";
++import { checkRelease, repository, updaterRepository } from "../../scripts/check-release.ts";
++
++export const artifacts = [
++  "darwin-aarch64",
++  "darwin-x64",
++  "linux-aarch64",
++  "linux-x64",
++  "linux-aarch64-musl",
++  "linux-x64-musl",
++  "linux-aarch64-android",
++  "linux-x64-android",
++  "freebsd-aarch64",
++  "freebsd-x64",
++  "windows-x64",
++  "windows-aarch64",
++].flatMap(target => [`bun-${target}.zip`, `bun-${target}-profile.zip`]);
++
++/** x64 ships one binary. Older `bun upgrade` clients still ask for it by its `-baseline` name. */
++export function getBaselineAlias(artifact: string): string | undefined {
++  return artifact.includes("-x64") ? artifact.replace(/(-profile)?\.zip$/, "-baseline$1.zip") : undefined;
++}
++
++async function trace(command: Command, options?: { cwd?: string }): Promise<void> {
++  console.log("+", command.join(" "));
++  await run(command, options);
++}
++
++/** Each puts its program in `<directory>/bin`. */
++const installers = {
++  async "gh"(directory: string) {
++    // From the redirect, because the API is rate limited by IP address until there is a token.
++    const { url } = await fetch("https://github.com/cli/cli/releases/latest", { method: "HEAD" });
++    const version = /\/tag\/v(.+)$/.exec(url)?.[1];
++    if (!version) {
++      throw new Error(`Cannot determine the latest version of gh from ${url}`);
++    }
++    const file = `gh_${version}_linux_${getArch() === "x64" ? "amd64" : "arm64"}.tar.gz`;
++    const download = `https://github.com/cli/cli/releases/download/v${version}/${file}`;
++    await trace(["curl", "-fsSL", download, "-o", file], { cwd: directory });
++    await trace(["tar", "-xzf", file, "--strip-components=1"], { cwd: directory });
++  },
++  async "aws"(directory: string) {
++    const file = `awscli-exe-linux-${getArch() === "x64" ? "x86_64" : "aarch64"}.zip`;
++    await trace(["curl", "-fsSL", `https://awscli.amazonaws.com/${file}`, "-o", file], { cwd: directory });
++    await trace(["unzip", "-q", file], { cwd: directory });
++    await trace([join(directory, "aws", "install"), "-i", join(directory, "aws-cli"), "-b", join(directory, "bin")]);
++  },
++  async "sentry-cli"(directory: string) {
++    await trace(["curl", "-fsSL", "https://sentry.io/get-cli/", "-o", "install.sh"], { cwd: directory });
++    await trace(["env", `INSTALL_DIR=${join(directory, "bin")}`, "sh", "install.sh"], { cwd: directory });
++  },
++};
++
++/** Into a temporary directory, because the agent has no root. */
++async function installCommand(name: keyof typeof installers): Promise<void> {
++  if (which([name])) {
++    return;
++  }
++  const directory = mkdtempSync(join(tmpdir(), `${name}-`));
++  mkdirSync(join(directory, "bin"));
++  await installers[name](directory);
++  process.env.PATH = `${join(directory, "bin")}:${process.env.PATH}`;
++  requireCommand(name);
++}
++
++function exportSecrets(...names: string[]): void {
++  for (const name of names) {
++    process.env[name] = readSecret(name);
++  }
++}
++
++async function github<T>(method: string, path: string, body?: object, token = getEnv("GH_TOKEN")): Promise<T> {
++  const { error, body: response } = await request(`https://api.github.com/${path}`, {
++    method,
++    headers: {
++      "Accept": "application/vnd.github+json",
++      "Authorization": `Bearer ${token}`,
++      "X-GitHub-Api-Version": "2026-03-10",
 +    },
-+    // The external import prints an anonymous layer of its own, so it does not declare "w" for its neighbours.
-+    SublayerOfAnExternalImportInAnonymousLayer: {
-+      files: {
-+        "/entry.css": `@import "./a.css" layer;`,
-+        "/a.css": /* css */ `
-+          @import "https://example.com/ext.css" layer(w);
-+          @import "./f.css" layer(w);
-+          @import "./g.css";
-+          @import "./f.css" layer(w);
-+        `,
-+        "/g.css": `@layer v { .t { color: blue } }`,
-+        "/f.css": `.t { color: red }`,
-+      },
-+      out: `@import "data:text/css,@import \\"https://example.com/ext.css\\" layer(w);" layer;@layer{@layer w;@layer v{.t{color:#00f}}@layer w{.t{color:red}}}`,
-+    },
-+    // The external import declares "w" ahead of "v", also with no other copy of "f.css".
-+    SublayerOfALoneExternalImportInAnonymousLayer: {
-+      files: {
-+        "/entry.css": `@import "./a.css" layer;`,
-+        "/a.css": /* css */ `
-+          @import "https://example.com/ext.css" layer(w);
-+          @import "./g.css";
-+          @import "./f.css" layer(w);
-+        `,
-+        "/g.css": `@layer v { .t { color: blue } }`,
-+        "/f.css": `.t { color: red }`,
-+      },
-+      out: `@import "data:text/css,@import \\"https://example.com/ext.css\\" layer(w);" layer;@layer{@layer w;@layer v{.t{color:#00f}}@layer w{.t{color:red}}}`,
-+    },
-+    // An import that does not load a style sheet still declares its layer, each time.
-+    LayersOfImportsOfAnAsset: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./a.svg" layer(x);
-+          @import "./a.svg" layer(y);
-+          @import "./c.css" layer(y);
-+          @import "./b.css" layer(x);
-+        `,
-+        "/a.svg": `<svg/>`,
-+        "/b.css": `.t { color: red }`,
-+        "/c.css": `.t { color: blue }`,
-+      },
-+      out: "@layer x;@layer y{.t{color:#00f}}@layer x{.t{color:red}}",
-+    },
-+    // An asset under no layer adds nothing, so the statement stays ahead of the external import.
-+    ImportOfAnAssetAheadOfAStatement: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./a.svg" screen;
-+          @import "./a.svg" screen;
-+          @import "./a.css";
-+        `,
-+        "/a.svg": `<svg/>`,
-+        "/a.css": /* css */ `
-+          @layer x;
-+          @import "https://example.com/e.css" layer(y);
-+        `,
-+      },
-+      out: `@layer x;@import "https://example.com/e.css" layer(y);`,
-+    },
-+    // Only "z" is out of its place, and nothing else declares it.
-+    ConditionalImportOfAnAssetAheadOfAStatement: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./a.svg" layer(z) screen;
-+          @import "./a.css";
-+        `,
-+        "/a.svg": `<svg/>`,
-+        "/a.css": /* css */ `
-+          @layer x;
-+          @import "https://example.com/e.css" layer(y);
-+          .a { c: d }
-+        `,
-+      },
-+      out: `@layer x;@import "https://example.com/e.css" layer(y);@media screen{@layer z;}.a{c:d}`,
-+    },
-+    ConditionalImportOfACycleAheadOfAStatement: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./entry.css" layer(z) screen;
-+          @import "./a.css";
-+        `,
-+        "/a.css": /* css */ `
-+          @layer x;
-+          @import "https://example.com/e.css" layer(y);
-+          .a { c: d }
-+        `,
-+      },
-+      out: `@layer x;@import "https://example.com/e.css" layer(y);@media screen{@layer z;}.a{c:d}`,
-+    },
-+    // Browsers accept an "@import" behind an unknown at-rule, and it applies once.
-+    ImportBehindAnUnknownAtRule: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./a.css";
-+          @import "https://example.com/f.css";
-+        `,
-+        "/a.css": /* css */ `
-+          @layer first;
-+          @unknown x;
-+          @import "https://example.com/e.css";
-+          .a { c: d }
-+        `,
-+      },
-+      out: `@layer first;@import "https://example.com/e.css";@import "https://example.com/f.css";@unknown x;.a{c:d}`,
-+    },
-+    ImportOfAFileBehindAnUnknownAtRule: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @unknown x;
-+          @import "./b.css";
-+          .a { c: d }
-+        `,
-+        "/b.css": `.b { c: d }`,
-+      },
-+      out
++    ...(body && { body: JSON.stringify(body) }),
++    json: method !== "DELETE",
++    attempts: 3,
++  });
++  if (error) {
++    throw error;
++  }
++  return response as T;
++}
++
++async function githubPages<Page, Item>(path: string, getItems: (page: Page) => Item[]): Promise<Item[]> {
++  const perPage = 100;
++  const items: Item[] = [];
++  for (let page = 1; ; page++) {
++    const more = getItems(await github<Page>("GET", `${path}?per_page=${perPage}&page=${page}`));
++    items.push(...more);
++    if (more.length < perPage) {
++      return items;
++    }
++  }
++}
++
++/**
++ * Exports an installation access token of the bun-release-upload app as GH_TOKEN, where gh expects it.
++ * @link https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app
++ */
++async function signInToGithub(): Promise<void> {
++  await installCommand("gh");
++  const clientId = "Iv23li0GlmKSYj59x7e3";
++  co
+```
+
+**File**: `.github/workflows/cancel-buildkite-on-pr-close.yml` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ jobs:
+           # Defence in depth: never touch protected/queue branches even if the
+           # event somehow resolves to one.
+           case "${BK_BRANCH}" in
+-            "" | main | master | gh-readonly-queue/*)
++            "" | main | master | release/* | gh-readonly-queue/*)
+               echo "Refusing to cancel builds on protected branch '${BK_BRANCH}'"
+               exit 0
+               ;;
+```
+
+**File**: `.github/workflows/release.yml` (modified, +0/-2)
+```diff
+@@ -102,8 +102,6 @@ jobs:
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
+-          # To workaround issue
+-          ref: main
+       - name: Setup Node.js
+         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+         with:
+```
+
+**File**: `.github/workflows/source-lints.yml` (modified, +2/-2)
+```diff
+@@ -25,7 +25,7 @@ on:
+       - "scripts/agent.ts"
+       - "scripts/buildkite.ts"
+       - ".buildkite/ci.ts"
+-      - ".buildkite/scripts/upload-release.sh"
++      - ".buildkite/scripts/upload-release.ts"
+       - "packages/bun-release/src/platform.ts"
+       - "rust-toolchain.toml"
+       - "bun.lock"
+@@ -54,7 +54,7 @@ on:
+       - "scripts/agent.ts"
+       - "scripts/buildkite.ts"
+       - ".buildkite/ci.ts"
+-      - ".buildkite/scripts/upload-release.sh"
++      - ".buildkite/scripts/upload-release.ts"
+       - "packages/bun-release/src/platform.ts"
+       - "rust-toolchain.toml"
+       - "bun.lock"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48436** (2026-11-10): AOT: bun compile, build output, module mocks, fixes and new names (@Jarred-Sumner)
-- **PR #48428** (2026-11-10): Check vendored test suites out by commit (@dylan-conway)
-- **PR #48413** (2026-11-09): Extend existing checks to `bun run` bins and `data:` URL macros (@dylan-conway)
-- **PR #48371** (closed): Windows: a spawned child inherits only the handles its spawn names (@robobun)
-- **PR #48354** (closed): fix(aot): preserve runtime module formats for in-place imports (@vincentkoc)
-- **PR #48327** (closed): install: honor certfile and keyfile from .npmrc for registry client TLS (@robobun)
+- **PR #48774** (2026-11-13): Bump to 1.4.5 (@dylan-conway)
+- **PR #48769** (2026-11-13): ci: build releases from release branches (@dylan-conway)
+- **PR #48766** (closed): node:net: complete a sent socket's queued write through owner_symbol (@robobun)
+- **PR #48750** (2026-11-12): Pin WebKit to b553971ea817 (@dylan-conway)
+- **PR #48730** (closed): Upgrade WebKit to 3811f48e52eb (oven-sh/WebKit#1041) (@sosukesuzuki)
+- **PR #48714** (2026-11-12): AOT: update the engine; stores in defaults of parameters, paths that stores rule out (@Jarred-Sumner)
 
 ---
 
@@ -2099,28 +2207,39 @@ w;`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. AOT: bun compile, build output, module mocks, fixes and new names (#48436)
+## X. AOT: module instances in test runs, files that packages read, build cost (#48617
 
 **RULE**:
-When implementing operations in `.gitattributes`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/compiler/compatibility.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89452d2a`: AOT: bun compile, build output, module mocks, fixes and new names (#48436). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `43850629`: AOT: module instances in test runs, files that packages read, build cost (#48617). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitattributes`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/compiler/compatibility.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-test/aot/parallel/function-source-signature-formatting/** -text
+| [Unused built-ins are left out](#unused-built-ins)                    | Write the name of one that you need                              |
+There's one exception. Some libraries make many similar functions from a template, as in `eval(template.replace("NAME", "add"))` or `new Function("a", "b", "return a " + operator + " b")`. Where the build can work out such strings from the constants of the file, it compiles the function. For `eval` the string has to be one function in parentheses. The executable uses the function where the strings turn out to be the same.
+
+## Unused built-ins
+
+An executable holds the parts of Bun's own JavaScript that your code uses. When [code from a string](#code-from-strings) uses another part, such as `Bun.$` or `console.Console`, it gets an error that it can catch. Write `void Bun.$` anywhere in your code to keep that part.
+
+```txt
+Error: Bun.$ was not compiled into this executable because your code never uses it. To keep it, use it somewhere in your code.
+```
+
+An event can lead to such a part too. Called without a receiver, `dispatchEvent()` and `addEventListener()` work on the global object, and `event.target` is the global object. The build follows tha
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-test/aot/parallel/the-head-of-the-text-of-a-function-is-laid-as-bun-prints-it/** -text
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89452d2a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `43850629` are properly handled with clean fallback behavior.

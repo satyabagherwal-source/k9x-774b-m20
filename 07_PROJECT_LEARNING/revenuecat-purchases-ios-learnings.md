@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source**: github ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
-> **Source Version**: `c9c4ede1`  
+> **Source Version**: `efd30907`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T20:21:36.447Z  
+> **Timestamp**: 2026-11-13T03:10:36.646Z  
 > **Learning ID**: `learn-github-revenuecat-purchases-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T20:21:36.440Z  
+> **Harvest Timestamp**: 2026-11-13T03:10:36.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: In-app purchases and subscriptions made easy. Support for iOS, watchOS, tvOS, macOS, and visionOS.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3093 stars
+- **Stars / Engagement**: 3094 stars
 
 ---
 
@@ -527,580 +527,465 @@ struct YarnShape: Shape {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd2ea7ef` (2026-11-05)
-**Commit Message**: fix(paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230)
+### Incident Patch 1: `9c76a522` (2026-11-09)
+**Commit Message**: Revert "build: don't block releases on CocoaPods publishing (#8125)" (#8236)
 
-* fix(paywalls): stop nested Fill stacks from hanging on iOS 17
-
-On iOS 17, SwiftUI places a frame's content three times per placement
-whenever an ancestor proposes an unbounded size, as the paywall's root
-ScrollView or ViewThatFits does. Each nested Fill stack multiplies that,
-so a paywall about a dozen stacks deep keeps the main thread busy for
-minutes and never appears.
-
-Fill sizing now goes through a single-child Layout on iOS 17 that sizes
-like the frame did and aligns by size, placing its content once.
-
-
-
-* refactor(paywalls): trim FillLayout to its essentials
-
-Drops the negative-proposal clamp, which SwiftUI never needs, and folds
-the alignment fractions inline. Behavior and test coverage are unchanged.
-
-
-
-* refactor(paywalls): move Layout conformances into extensions
-
-Follows the style guide: stored properties in the declaration, protocol
-conformance in an extension.
-
-
-
----------
-
-Co-authored-by: Nevyn Bengtsson <[REDACTED_EMAIL]>
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift` (modified, +62/-2)
+**File**: `.circleci/default_config.yml` (modified, +1/-2)
 ```diff
-@@ -40,7 +40,7 @@ extension View {
-             self
-         case let .fill(minMax):
-             self
--                .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-+                .fill(.horizontal, alignment: alignment)
-                 .applyWidthLimits(minMax, alignment: alignment)
-         case .fixed(let value):
-             self
-@@ -58,7 +58,7 @@ extension View {
-             self
-         case let .fill(minMax):
-             self
--                .frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
-+                .fill(.vertical, alignment: alignment)
-                 .applyHeightLimits(minMax, alignment: alignment)
-         case .fixed(let value):
-             self
-@@ -69,6 +69,31 @@ extension View {
+@@ -2884,8 +2884,7 @@ workflows:
+       - make-release:
+           context: github-bot-public
+           requires:
+-            # TODO: restore after Nov 7, 2026, once CocoaPods trunk is writable again.
+-            # - push-revenuecatui-pod
++            - push-revenuecatui-pod
+             - deploy-to-spm
+             - docs-deploy
+           <<: *release-tags
+```
+
+---
+
+### Incident Patch 2: `dcc4051c` (2026-11-11)
+**Commit Message**: Fix custom paywall purchase loading state cleanup (#8277)
+
+**File**: `RevenueCatUI/Purchasing/PurchaseHandler.swift` (modified, +1/-1)
+```diff
+@@ -977,7 +977,7 @@ extension PurchaseHandler {
+         self.purchaseError = nil
+ 
+         defer {
+-            self.restoreInProgress = false
++            self.packageBeingPurchased = nil
+             self.actionTypeInProgress = nil
+         }
+ 
+```
+
+**File**: `Tests/RevenueCatUITests/Purchasing/PurchaseHandlerTests.swift` (modified, +89/-0)
+```diff
+@@ -42,6 +42,95 @@ class PurchaseHandlerTests: TestCase {
+         expect(handler.restoreError).to(beNil())
+     }
+ 
++    func testCustomPurchaseSuccessClearsLoadingState() async throws {
++        try await self.checkCustomPurchaseLoadingState(userCancelled: false, error: nil)
++    }
++
++    func testCustomPurchaseCancellationClearsLoadingState() async throws {
++        try await self.checkCustomPurchaseLoadingState(userCancelled: true, error: nil)
++    }
++
++    func testCustomPurchaseFailureClearsLoadingState() async throws {
++        try await self.checkCustomPurchaseLoadingState(userCancelled: false, error: ErrorCode.storeProblemError)
++    }
++
++    func testCustomPurchaseCustomerInfoFailureClearsLoadingState() async throws {
++        let purchases = MockPurchases(purchasesAreCompletedBy: .myApp) { _, _, _ in
++            XCTFail("The app must complete its own purchase")
++            return (nil, TestData.customerInfo, false)
++        } restorePurchases: {
++            TestData.customerInfo
++        } trackEvent: { _ in
++        } customerInfo: {
++            throw ErrorCode.networkError
++        }
++        let handler = PurchaseHandler(
++            purchases: purchases,
++            performPurchase: { _ in (false, nil) },
++            eventTracker: .init(purchases: purchases)
++        )
++
++        do {
++            try await handler.purchase(package: TestData.packageWithIntroOffer)
++            XCTFail("Expected the customer info error")
++        } catch {
++            XCTAssertEqual(error as? ErrorCode, .networkError)
++        }
++
++        XCTAssertNil(handler.packageBeingPurchased)
++        XCTAssertFalse(handler.actionInProgress)
++    }
++
++    func testCustomPurchaseCanRetryAfterCancellation() async throws {
++        var packages: [Package] = []
++        let handler = PurchaseHandler.mock(purchasesAreCompletedBy: .myApp, performPurchase: { package in
++            packages.append(package)
++            return (userCancelled: packages.count == 1, error: nil)
++        })
++
++        try await handler.purchase(package: TestData.packageWithIntroOffer)
++        XCTAssertNil(handler.packageBeingPurchased)
++        expect(handler.purchaseResult) == .cancelled
++
++        try await handler.purchase(package: TestData.annualPackage)
++        XCTAssertNil(handler.packageBeingPurchased)
++        XCTAssertFalse(handler.actionInProgress)
++        XCTAssertEqual(packages.count, 2)
++        XCTAssertTrue(packages[0] === TestData.packageWithIntroOffer)
++        XCTAssertTrue(packages[1] === TestData.annualPackage)
++        expect(handler.purchaseResult) == .purchased(transaction: nil, customerInfo: TestData.customerInfo)
++    }
++
++    private func checkCustomPurchaseLoadingState(userCancelled: Bool, error expectedError: Error?) async throws {
++        weak var handlerReference: PurchaseHandler?
++        let handler = PurchaseHandler.mock(purchasesAreCompletedBy: .myApp, performPurchase: { package in
++            XCTAssertTrue(handlerReference?.packageBeingPurchased === package)
++            XCTAssertTrue(handlerReference?.actionInProgress == true)
++            return (userCancelled, expectedError)
++        })
++        handlerReference = handler
++
++        do {
++            try await handler.purchase(package: TestData.packageWithIntroOffer)
++            XCTAssertNil(expectedError)
++        } catch {
++            XCTAssertNotNil(expectedError)
++            XCTAssertEqual(error as? ErrorCode, expectedError as? ErrorCode)
++        }
++
++        XCTAssertNil(handler.packageBeingPurchased)
++        XCTAssertFalse(handler.actionInProgress)
++        XCTAssertFalse(handler.restoreInProgress)
++        if expectedError != nil {
++            XCTAssertNotNil(handler.purchaseError)
++            XCTAssertNil(handler.purchaseResult)
++        } else if userCancelled {
++            expect(handler.purchaseResult) == .cancelled
++        } else {
++            expect(handler.purchaseResult) == .purchased(transaction: nil, customerInfo: TestData.customerInfo)
++        }
++    }
++
+     func testPurchaseSetsCustomerInfo() async throws {
+         let handler: PurchaseHandler = .mock()
+ 
+```
+
+---
+
+### Incident Patch 3: `11db1698` (2026-11-12)
+**Commit Message**: fix: prevent flaky StoreKit 1 transaction finish assertion (#8270)
+
+* fix: prevent flaky StoreKit 1 transaction finish assertion
+
+* test: centralize StoreKit transaction finish verification
+
+* refactor: clarify StoreKit finish verification
+
+* test: await consumable transaction finish log
+
+* docs: explain StoreKit 1 finish verification
+
+* test: preserve StoreKit 2 finish count semantics
+
+* test: scope StoreKit queue removal assertions
+
+* test: avoid flaky StoreKit queue removal wait
+
+**File**: `Tests/BackendIntegrationTests/Helpers/BaseStoreKitIntegrationTests+Verification.swift` (modified, +35/-6)
+```diff
+@@ -162,6 +162,31 @@ extension BaseStoreKitIntegrationTests {
+                                            line: line)
+     }
+ 
++    func verifyTransactionWasFinished(
++        _ transaction: StoreTransaction,
++        count: Int? = 1,
++        file: FileString = #file,
++        line: UInt = #line
++    ) async throws {
++        switch Self.storeKitVersion {
++        case .storeKit1:
++            // StoreKit 1 can deliver duplicate updates, so exact finish-request counts are unreliable.
++            try await self.verifySpecificTransactionIsEventuallyFinished(
++                transaction,
++                count: nil,
++                file: file,
++                line: line
++            )
++        case .storeKit2:
++            try await self.verifySpecificTransactionIsEventuallyFinished(
++                transaction,
++                count: count,
++                file: file,
++                line: line
++            )
++        }
++    }
++
+     func verifySpecificTransactionIsEventuallyFinished(
+         _ transaction: StoreTransaction,
+         count: Int? = 1,
+@@ -207,13 +232,17 @@ extension BaseStoreKitIntegrationTests {
+         count: Int? = 1,
+         file: FileString = #file,
+         line: UInt = #line
+-    ) {
++    ) async throws {
+         let expectedLogRegexPattern = Self.finishingTransactionLogRegexPattern(productIdentifier: productIdentifier)
+-        self.logger.verifyMessageWasLogged(regexPattern: expectedLogRegexPattern,
+-                                           level: .info,
+-                                           expectedCount: count,
+-                                           file: file,
+-                                           line: line)
++        try await self.logger.verifyMessageIsEventuallyLogged(
++            regexPattern: expectedLogRegexPattern,
++            level: .info,
++            expectedCount: count,
++            timeout: .seconds(5),
++            pollInterval: .milliseconds(100),
++            file: file,
++            line: line
++        )
+     }
+ 
+     func verifyNoTransactionsWereFinished(
+```
+
+**File**: `Tests/BackendIntegrationTests/OfflineStoreKitIntegrationTests.swift` (modified, +10/-16)
+```diff
+@@ -197,11 +197,7 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
+         }
+ 
+         // 4. Ensure transaction is eventually finished
+-        try await self.verifySpecificTransactionIsEventuallyFinished(
+-            transactionId: transaction.transactionIdentifier,
+-            productId: transaction.productIdentifier,
+-            count: nil
+-        )
++        try await self.verifyTransactionWasFinished(transaction, count: nil)
+ 
+         // 5. Restart app again
+         try self.purchases.invalidateCustomerInfoCache()
+@@ -414,7 +410,7 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
+ 
+         // 2. Ensure the purchase transaction is finished before server goes down
+         let transaction = try XCTUnwrap(result.transaction)
+-        self.verifySpecificTransactionWasFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+ 
+         // 3. Server goes down
+         self.serverDown()
+@@ -531,7 +527,7 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
+         try await self.verifyEntitlementWentThrough(info1)
+ 
+         // 4. Ensure transaction is finished
+-        self.verifySpecificTransactionWasFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+ 
+         // 5. Restart app
+         try self.purchases.invalidateCustomerInfoCache()
+@@ -580,13 +576,12 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
+         expect(info.nonSubscriptions.onlyElement?.productIdentifier) == Self.consumable10Coins
+ 
+         // 6. Ensure transactions are finished
+-        try await self.verifyAnyTransactionIsEventuallyFinished(count: 2)
+-
+-        try await self.verifySpecificTransactionIsEventuallyFinished(
+-            transactionId: transaction.transactionIdentifier,
+-            productId: transaction.productIdentifier
+-        )
+-        self.verifyTransactionWasFinishedForProductIdentifier(Self.consumable10Coins)
++        if Self.storeKitVersion == .storeKit2 {
++            try await self.verifyAnyTransactionIsEventuallyFinished(count: 2)
++        }
++        try await self.verifyTransactionWasFinished(transaction)
++        let expectedCount = Self.storeKitVersion == .storeKit1 ? nil : 1
++        try await self.verifyTransactionWasFinishedForProductIdentifier(Self.consumable10Coins, count: expectedCount)
+     }
+ 
+     @available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *)
+@@ -630,8 +625,7 @@ class OfflineStoreKit1IntegrationTests: BaseOfflineStoreKitIntegrationTests {
+                                            level: .verbose,
+                                            expectedCount: 1)
+ 
+-        self.verifySpecificTransactionWasFinished(transactionId: transactionId,
+-                                                  productId: transaction.productIdentifier)
++        try await self.verifyTransactionWasFinished(transaction)
+         self.logger.verifyMessageWasLogged(
+             "API request completed: POST '/v1/receipts'",
+             level: .debug
+```
+
+**File**: `Tests/BackendIntegrationTests/PurchasesFallbackURLBackendIntegrationTests.swift` (modified, +2/-8)
+```diff
+@@ -91,10 +91,7 @@ class PurchasesFallbackURLBackendStoreKit2IntegrationTests: BaseStoreKitIntegrat
+         let onlineCustomerInfo = try await self.purchases.customerInfo()
+ 
+         verifyCustomerInfoWasNotComputedOffline(customerInfo: onlineCustomerInfo)
+-        try await self.verifySpecificTransactionIsEventuallyFinished(
+-            transactionId: transactionIdentifier,
+-            productId: transaction.productIdentifier
+-        )
++        try await self.verifyTransactionWasFinished(transaction)
+         try await asyncWait(description: "Recovered transaction is still unfinished", timeout: .seconds(5)) {
+             for await result in StoreKit.Transaction.unfinished {
+                 switch result {
+@@ -132,10 +129,7 @@ class PurchasesFallbackURLBackendStoreKit2IntegrationTests: BaseStoreKitIntegrat
+ 
+         let onlineCustomerInfo = try await self.purchases.customerInfo()
+ 
+-        try await self.verifySpecificTransactionIsEventuallyFinished(
+-            transaction,
+-            count: nil
+-        )
++        try await self.verifyTransactionWasFinished(transaction, count: nil)
+ 
+         verifyCustomerInfoWasNotComputedOffline(customerInfo: onlineCustomerInfo)
+ 
+```
+
+**File**: `Tests/BackendIntegrationTests/StoreKitIntegrationTests.swift` (modified, +6/-6)
+```diff
+@@ -348,7 +348,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+         expect(nonSubscription.storeTransactionIdentifier) == transaction.transactionIdentifier
+         expect(info.allPurchasedProductIdentifiers).to(contain(Self.consumable10Coins))
+ 
+-        self.verifySpecificTransactionWasFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+     }
+ 
+     func testCanPurchaseConsumableMultipleTimes() async throws {
+@@ -366,7 +366,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+                                                                         count: count)
+ 
+         for transaction in transactions {
+-            self.verifySpecificTransactionWasFinished(transaction, count: nil)
++            try await self.verifyTransactionWasFinished(transaction, count: nil)
+             if Self.storeKitVersion == .storeKit1 {
+                 await self.verifyTransactionIsEventuallyRemovedFromSK1Queue(transaction)
+             }
+@@ -397,7 +397,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+ 
+         expect(transaction1.transactionIdentifier).toNot(equal(transaction2.transactionIdentifier))
+         for transaction in [transaction1, transaction2] {
+-            self.verifySpecificTransactionWasFinished(transaction)
++            try await self.verifyTransactionWasFinished(transaction)
+             if Self.storeKitVersion == .storeKit1 {
+                 await self.verifyTransactionIsEventuallyRemovedFromSK1Queue(transaction)
+             }
+@@ -416,7 +416,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+ 
+         try await self.verifyEntitlementWentThrough(info)
+ 
+-        self.verifySpecificTransactionWasFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+     }
+ 
+     func testCanPurchaseNonRenewingSubscription() async throws {
+@@ -431,7 +431,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+ 
+         try await self.verifyEntitlementWentThrough(info)
+ 
+-        self.verifySpecificTransactionWasFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+     }
+ 
+     func testCanPurchaseMultipleSubscriptions() async throws {
+@@ -1236,7 +1236,7 @@ class StoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+ 
+         let transaction = try XCTUnwrap(result.transaction)
+         try await self.verifyEntitlementWentThrough(result.customerInfo)
+-        self.verifySpecificTransactionWasFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+     }
+     #endif
+ 
+```
+
+**File**: `Tests/BackendIntegrationTests/VirtualCurrencyIntegrationTests.swift` (modified, +4/-4)
+```diff
+@@ -39,7 +39,7 @@ class VirtualCurrencyStoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+ 
+         let resultData = try await self.purchaseConsumablePackage()
+         let transaction = try XCTUnwrap(resultData.transaction)
+-        try await self.verifySpecificTransactionIsEventuallyFinished(transaction, count: nil)
++        try await self.verifyTransactionWasFinished(transaction)
+         await self.verifyTransactionIsEventuallyRemovedFromSK1Queue(transaction)
+ 
+         try self.purchases.invalidateVirtualCurrenciesCache()
+@@ -73,7 +73,7 @@ class VirtualCurrencyStoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+ 
+         let resultData = try await self.purchaseNonConsumablePackage()
+         let transaction = try XCTUnwrap(resultData.transaction)
+-        try await self.verifySpecificTransactionIsEventuallyFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+         await self.verifyTransactionIsEventuallyRemovedFromSK1Queue(transaction)
+ 
+         try self.purchases.invalidateVirtualCurrenciesCache()
+@@ -106,7 +106,7 @@ class VirtualCurrencyStoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+ 
+         let resultData = try await self.purchaseMonthlyOffering()
+         let transaction = try XCTUnwrap(resultData.transaction)
+-        self.verifySpecificTransactionWasFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+ 
+         try self.purchases.invalidateVirtualCurrenciesCache()
+ 
+@@ -138,7 +138,7 @@ class VirtualCurrencyStoreKit1IntegrationTests: BaseStoreKitIntegrationTests {
+ 
+         let purchaseResult = try await self.purchaseNonRenewingSubscriptionPackage()
+         let transaction = try XCTUnwrap(purchaseResult.transaction)
+-        self.verifySpecificTransactionWasFinished(transaction)
++        try await self.verifyTransactionWasFinished(transaction)
+ 
+         try self.purchases.invalidateVirtualCurrenciesCache()
+ 
+```
+
+**File**: `Tests/UnitTests/TestHelpers/TestLogHandler.swift` (modified, +34/-0)
+```diff
+@@ -204,6 +204,40 @@ extension TestLogHandler {
          }
      }
  
-+    /// Takes all the space proposed along `axis`, like `.frame(minWidth: 0, maxWidth: .infinity)`.
-+    ///
-+    /// iOS 17 places a frame's content three times under an unbounded proposal, such as a `ScrollView`'s, and
-+    /// every nested Fill stack multiplies that until the paywall hangs. ``FillLayout`` places it once.
-+    @ViewBuilder
-+    func fill(_ axis: Axis, alignment: Alignment) -> some View {
-+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
-+            self.fillFrame(axis, alignment: alignment)
-+        } else if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
-+            FillLayout(axis: axis, alignment: alignment) { self }
-+        } else {
-+            self.fillFrame(axis, alignment: alignment)
++    func verifyMessageIsEventuallyLogged(
++        regexPattern: String,
++        level: LogLevel? = nil,
++        expectedCount: Int? = nil,
++        timeout: NimbleTimeInterval = PollingDefaults.timeout,
++        pollInterval: NimbleTimeInterval = PollingDefaults.pollInterval,
++        file: FileString = #file,
++        line: UInt = #line
++    ) async throws {
++        let condition = Self.regexEntryCondition(pattern: regexPattern, level: level)
++
++        try await asyncWait(
++            description: "Message with pattern '\(regexPattern)' not found. Logged messages: \(self.messages)",
++            timeout: timeout,
++            pollInterval: pollInterval,
++            file: file,
++            line: line
++        ) {
++            self.messages.contains(where: condition)
++        }
++
++        if let expectedCount = expectedCount {
++            try await asyncWait(
++                description: "Message with pattern '\(regexPattern)' expected \(expectedCount) times",
++                timeout: timeout,
++                pollInterval: pollInterval,
++                file: file,
++                line: line
++            ) {
++                self.messagesMatching(condition) == expectedCount
++            }
 +        }
 +    }
 +
-+    @ViewBuilder
-+    private func fillFrame(_ axis: Axis, alignment: Alignment) -> some View {
-+        switch axis {
-+        case .horizontal:
-+            self.frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-+        case .vertical:
-+            self.frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
-+        }
-+    }
-+
-     @ViewBuilder
-     func applyWidthLimits(_ minMax: MinMax, alignment: Alignment) -> some View {
-         if minMax.hasLimit {
-@@ -97,6 +122,41 @@ extension View {
- 
- }
- 
-+/// Lays out its single subview like `.frame(minWidth: 0, maxWidth: .infinity, alignment:)` along `axis`.
-+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
-+private struct FillLayout {
-+
-+    let axis: Axis
-+    let alignment: Alignment
-+
-+}
-+
-+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
-+extension FillLayout: Layout {
-+
-+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-+        let size = subviews.first?.sizeThatFits(proposal) ?? .zero
-+        return self.axis == .horizontal
-+            ? CGSize(width: proposal.width ?? size.width, height: size.height)
-+            : CGSize(width: size.width, height: proposal.height ?? size.height)
-+    }
-+
-+    // By size, not `dimensions(in:)`: a stack's alignment guides lay out its whole subtree again.
-+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-+        guard let subview = subviews.first else { return }
-+        let size = subview.sizeThatFits(proposal)
-+        let horizontal = self.alignment.horizontal
-+        let vertical = self.alignment.vertical
-+        let xFraction: CGFloat = horizontal == .leading ? 0 : horizontal == .trailing ? 1 : 0.5
-+        let yFraction: CGFloat = vertical == .top ? 0 : vertical == .bottom ? 1 : 0.5
-+        subview.place(at: CGPoint(x: bounds.minX + xFraction * (bounds.width - size.width),
-+                                  y: bounds.minY + yFraction * (bounds.height - size.height)),
-+                      anchor: .topLeading,
-+                      proposal: proposal)
-+    }
-+
-+}
-+
- extension MinMax {
- 
-     fileprivate var hasLimit: Bool {
-```
-
-**File**: `Tests/RevenueCatUITests/PaywallsV2/SizeModifierTests.swift` (modified, +64/-0)
-```diff
-@@ -180,6 +180,35 @@ final class SizeModifierTests: TestCase {
-                        .init(width: 100, height: 600))
-     }
- 
-+    func testNestedFillStacksInsideScrollViewPlaceContentOnce() throws {
-+        guard #available(iOS 16.0, *) else { throw XCTSkip("PlacementRecorder needs iOS 16") }
-+        let log = PlacementRecorder.Log()
-+        var content = AnyView(PlacementRecorder(log: log) { Color.clear.frame(width: 10, height: 10) })
-+        for _ in 0..<10 {
-+            content = AnyView(VStack { content }.size(.init(width: .fill, height: .fit(nil))))
-+        }
-+
-+        Self.layOut(ScrollView { content }, in: .init(width: 100, height: 600))
-+
-+        // iOS 17 used to place each level's content three times: 2 * 3^10 placements of this leaf.
-+        XCTAssertGreaterThan(log.placements.count, 0)
-+        XCTAssertLessThan(log.placements.count, 20)
-+    }
-+
-+    func testFillAlignsContentLikeAFrame() throws {
-+        guard #available(iOS 16.0, *) else { throw XCTSkip("PlacementRecorder needs iOS 16") }
-+        for (alignment, minX) in [(HorizontalAlignment.leading, 0.0), (.center, 45), (.trailing, 90)] {
-+            let log = PlacementRecorder.Log()
-+            let view = PlacementRecorder(log: log) { Color.clear.frame(width: 10, height: 10) }
-+                .size(.init(width: .fill, height: .fixed(10)),
-+                      horizontalAlignment: Alignment(horizontal: alignment, vertical: .center))
-+
-+            Self.layOut(view.frame(width: 100, height: 10), in: .init(width: 100, height: 10))
-+
-+            XCTAssertEqual(log.placements.last?.minX, CGFloat(minX))
-+        }
-+    }
-+
-     private static func requireFitScrollAvailability() throws {
-         guard #available(iOS 16.0, *) else {
-             throw XCTSkip("FIT scrolling uses ViewThatFits on iOS 16 and later")
-@@ -190,6 +219,41 @@ final class SizeModifierTests: TestCase {
-         UIHostingController(rootView: view).sizeThatFits(in: proposal)
-     }
- 
-+    private static func layOut<Content: View>(_ view: Content, in size: CGSize) {
-+        let controller = UIHostingController(rootView: view)
-+        let window = UIWindow(frame: CGRect(origin: .zero, size: size))
-+        window.rootViewController = controller
-+        window.isHidden = false
-+        controller.view.frame = window.bounds
-+        controller.view.layoutIfNeeded()
-+    }
-+
-+}
-+
-+/// Passes its single subview through unchanged, logging the bounds of every placement.
-+@available(iOS 16.0, *)
-+private struct PlacementRecorder {
-+
-+    final class Log {
-+        var placements: [CGRect] = []
-+    }
-+
-+    let log: Log
-+
-+}
-+
-+@available(iOS 16.0, *)
-+extension PlacementRecorder: Layout {
-+
-+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-+        subviews.first?.sizeThatFits(proposal) ?? .zero
-+    }
-+
-+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-+        self.log.placements.append(bounds)
-+        subviews.first?.place(at: bounds.origin, proposal: proposal)
-+    }
-+
- }
- 
- #endif
-```
-
----
-
-### Incident Patch 2: `87417b48` (2026-11-06)
-**Commit Message**: ci: merge gate that tightens once the full suite is approved (#8235)
-
-* ci: post a merge gate status that tightens once the full suite is approved
-
-Adds a ci/all-tests-gate commit status driven from CircleCI. A no-requires
-job posts success at pipeline start, approving the full-suite hold flips
-it to pending, and all-tasks-passed posts success again once every full
-job is green. Release pipelines post it from all-tests-succeeded so
-release PRs are not blocked once the context is required.
-
-The reduced suite needs no gate of its own: its jobs are already required
-individually.
-
-* test: find the merge gate by its instance name
-
-all-tasks-passed is now an instance of the parameterized post-gate-status
-job, so the workflow entry is keyed by the job name and carries name:.
-
-* ci: never post the default gate success once the full suite is requested
-
-full-suite-not-requested waits for the reduced suite and checks the
-hold first: approved means halt without posting, so the gate goes from
-unreported straight to pending; anything but on_hold fails the job
-rather than posting success. all-tasks-passed reaches the reduced suite
-through full-suite-started, so it keeps a single list, and the tes
-
-**File**: `.circleci/default_config.yml` (modified, +75/-32)
-```diff
-@@ -2453,23 +2453,49 @@ jobs:
-           name: Trigger RC App Pipeline
-           command: bundle exec fastlane trigger_bump_sdk_in_rc_mobile_app
- 
--  all-tests-succeeded:
--    docker:
--      - image: cimg/base:stable
--    resource_class: small
--    steps:
--      - run:
--          name: All tests succeeded
--          command: echo "All tests succeeded"
--
--  all-tasks-passed:
-+  post-gate-status:
-+    parameters:
-+      state:
-+        type: enum
-+        enum: [success, pending]
-+      unless_full_suite_approved:
-+        type: boolean
-+        default: false
-     docker:
-       - image: cimg/base:stable
-     resource_class: small
-     steps:
--      - run:
--          name: All tasks passed
--          command: echo "All tasks passed"
-+      - when:
-+          condition: << parameters.unless_full_suite_approved >>
-+          steps:
-+            - run:
-+                name: Halt if approve-full-tests was already approved
-+                command: |
-+                  approval=$(curl --fail --silent --show-error --max-time 30 --retry 5 \
-+                    -H "Circle-Token: ${CIRCLECI_API_TOKEN}" \
-+                    "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/job" \
-+                    | jq -r '.items[] | select(.name == "approve-full-tests") | .status')
-+                  case "$approval" in
-+                    success)
-+                      echo "Full suite already requested, leaving the gate to it"
-+                      circleci-agent step halt
-+                      ;;
-+                    on_hold) ;;
-+                    *)
-+                      echo "Unexpected approve-full-tests status '${approval}', not posting"
-+                      exit 1
-+                      ;;
-+                  esac
-+      - run:
-+          name: Post ci/all-tests-gate status (<< parameters.state >>)
-+          environment:
-+            GATE_STATE: << parameters.state >>
-+          command: |
-+            curl --fail --silent --show-error --output /dev/null --retry 5 \
-+              -X POST "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/statuses/${CIRCLE_SHA1}" \
-+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-+              -H "Accept: application/vnd.github+json" \
-+              -d "{\"state\":\"${GATE_STATE}\",\"context\":\"ci/all-tests-gate\",\"target_url\":\"${CIRCLE_BUILD_URL}\"}"
- 
- workflows:
-   record-performance-baselines:
-@@ -2585,12 +2611,38 @@ workflows:
-       - revenuecat-ads-tests:
-           context:
-             - slack-secrets
-+      - post-gate-status:
-+          name: full-suite-not-requested
-+          state: success
-+          unless_full_suite_approved: true
-+          requires:
-+            - performance-tests
-+            - performance-automation-tests
-+            - lint
-+            - check-api-changes
-+            - run-test-ios-27
-+            - build-samplecat
-+            - build-purchase-tester
-+            - pod-lib-lint
-+            - run-revenuecat-ui-ios-27
-+            - run-revenuecat-ui-ios-26
-+            - emerge_purchases_ui_snapshot_tests
-+            - binary_size_analysis
-+            - build-tv-watch-mac-and-visionos
-+            - revenuecat-admob-tests
-+            - revenuecat-ads-tests
- 
-       # =============================================================
-       # Hold gate for the Full Test Suite
-       # =============================================================
-       - approve-full-tests:
-           type: approval
-+      - post-gate-status:
-+          name: full-suite-started
-+          state: pending
-+          requires:
-+            - approve-full-tests
-+            - full-suite-not-requested
- 
-       # =============================================================
-       # Full Test Suite: Gated behind approve-full-tests
-@@ -2745,22 +2797,11 @@ workflows:
-       # =============================================================
-       # Summary gate: blocks merge until all jobs pass
-       # =============================================================
--      - all-tasks-passed:
-+      - post-gate-status:
-+          name: all-tasks-passed
-+          state: success
-           requires:
--            # Reduced Test Suite
--            - performance-tests
--            - performance-automation-tests
--            - lint
--            - check-api-changes
--            - run-test-ios-27
--            - build-samplecat
--            - build-purchase-tester
--            - pod-lib-lint
--            - run-revenuecat-ui-ios-27
--            - run-revenuecat-ui-ios-26
--            - emerge_purchases_ui_snapshot_tests
--            - binary_size_analysis
--            - build-tv-watch-mac-and-visionos
-+            - full-suite-started
-             # Full Test Suite
-             - backend-integration-tests-SK1
-             - backend-integration-tests-SK2
-@@ -2784,8 +2825,6 @@ workflows:
-             - api-tests
-             - spm-receipt-parser
-             - check-app-extension-safe-api-usage
--            - revenueca
-```
-
-**File**: `.github/workflows/rcgitbot_please_test.yml` (modified, +16/-1)
-```diff
-@@ -17,14 +17,17 @@ jobs:
-       github.event.comment.author_association == 'MEMBER'
-     permissions:
-       pull-requests: write
-+      statuses: write
- 
-     steps:
-       # GitHub Actions `issue_comment` workflows always run from the default branch,
-       # so we resolve the PR's head branch to find its CircleCI pipeline and approve
-       # the hold job in the existing workflow.
-       - name: Get PR branch
-         id: get-branch
--        run: echo "branch=$(gh pr view "$PR_NO" --repo "$REPO" --json headRefName --jq '.headRefName')" >> "$GITHUB_OUTPUT"
-+        run: |
-+          gh pr view "$PR_NO" --repo "$REPO" --json headRefName,headRefOid \
-+            --jq '"branch=\(.headRefName)\nsha=\(.headRefOid)"' >> "$GITHUB_OUTPUT"
-         env:
-           REPO: ${{ github.repository }}
-           PR_NO: ${{ github.event.issue.number }}
-@@ -126,6 +129,18 @@ jobs:
-           fi
- 
-           echo "Successfully approved '$APPROVAL_JOB_NAME' in workflow '$WORKFLOW_NAME'"
-+          echo "approved=true" >> "$GITHUB_OUTPUT"
-+
-+      - name: Mark the merge gate pending
-+        if: steps.approve.outputs.approved == 'true'
-+        env:
-+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          REPO: ${{ github.repository }}
-+          SHA: ${{ steps.get-branch.outputs.sha }}
-+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-+        run: |
-+          gh api "repos/$REPO/statuses/$SHA" \
-+            -f state=pending -f context=ci/all-tests-gate -f target_url="$RUN_URL"
- 
-       - name: React to comment
-         if: always()
-```
-
-**File**: `fastlane/performance_baseline_helper_test.rb` (modified, +14/-2)
-```diff
-@@ -72,8 +72,20 @@ def test_rejects_results_after_branch_changes
-   def test_pr_merge_gate_requires_the_memory_benchmark
-     config = YAML.safe_load(File.read(File.join(ROOT, '.circleci/default_config.yml')), aliases: true)
-     jobs = config.fetch('workflows').fetch('run-all-tests').fetch('jobs')
--    gate = jobs.find { |job| job.is_a?(Hash) && job.key?('all-tasks-passed') }
--    assert_includes gate.fetch('all-tasks-passed').fetch('requires'), 'performance-tests'
-+    gate = jobs.find { |job| job.is_a?(Hash) && job.values.first['name'] == 'full-suite-not-requested' }
-+    assert_includes gate.values.first.fetch('requires'), 'performance-tests'
-+  end
-+
-+  def test_merge_gate_posts_pending_after_the_default_success_and_success_last
-+    config = YAML.safe_load(File.read(File.join(ROOT, '.circleci/default_config.yml')), aliases: true)
-+    jobs = config.fetch('workflows').fetch('run-all-tests').fetch('jobs')
-+    gates = jobs.select { |job| job.is_a?(Hash) && job.key?('post-gate-status') }.to_h { |job| [job['post-gate-status']['name'], job['post-gate-status']] }
-+    assert_equal 'success', gates.fetch('full-suite-not-requested').fetch('state')
-+    assert_equal true, gates.fetch('full-suite-not-requested').fetch('unless_full_suite_approved')
-+    assert_equal 'pending', gates.fetch('full-suite-started').fetch('state')
-+    assert_equal %w[approve-full-tests full-suite-not-requested], gates.fetch('full-suite-started').fetch('requires').sort
-+    assert_equal 'success', gates.fetch('all-tasks-passed').fetch('state')
-+    assert_includes gates.fetch('all-tasks-passed').fetch('requires'), 'full-suite-started'
-   end
- 
-   def test_requested_job_enables_record_and_push_with_boolean_parameters
-```
-
----
-
-### Incident Patch 3: `05faffdd` (2026-11-05)
-**Commit Message**: fix(Paywalls) Package selection resolution on older OSes (#8226)
-
-**File**: `RevenueCatUI/Templates/V2/Components/Button/BottomSheetView.swift` (modified, +2/-2)
-```diff
-@@ -95,9 +95,9 @@ private struct SheetPackageSelectionModifier: ViewModifier {
-         )
-     }
- 
--    private var selectedPackageIsVisible: Bool {
-+    private func selectedPackageIsVisible() -> Bool {
-         guard let validator = self.viewModel.packageValidator,
--              !validator.packages.isEmpty else { return self.inheritedSelectionIsVisible }
-+              !validator.packages.isEmpty else { return self.inheritedSelectionIsVisible() }
-         guard let package = self.packageContext.package else { return false }
-         return validator.couldBeRendering(
-             package,
-```
-
-**File**: `RevenueCatUI/Templates/V2/Components/Tabs/TabsComponentView.swift` (modified, +5/-3)
-```diff
-@@ -252,7 +252,7 @@ struct LoadedTabsComponentView: View {
-     private func reconcileSelection(_ context: PackageContext, tabViewModel: TabViewModel) {
-         // A root row can intentionally clear the tab's highlight. Resuming after a sheet
-         // must preserve that manual root choice while it can still render.
--        if self.selectedPackageIsVisible,
-+        if self.selectedPackageIsVisible(),
-            self.selectionState.didUserSelectPackage,
-            self.packageContext.package?.identifier == self.selectionState.parentOwnedPackage?.identifier,
-            TabPackageParentPropagation.shouldSuppressNotifyingParent(
-@@ -368,13 +368,15 @@ struct LoadedTabsComponentView: View {
-             .environmentObject(tierPackageContext)
-             .environment(
-                 \.selectedPackageIsVisible,
--                tierPackageContext === self.packageContext ? self.selectedPackageIsVisible
--                    : activeTabViewModel.validatedSelection(
-+                {
-+                    tierPackageContext === self.packageContext ? self.selectedPackageIsVisible()
-+                        : activeTabViewModel.validatedSelection(
-                         tierPackageContext.package,
-                         in: self.packageSelectionContext,
-                         offerEligibilityLoading: self.offerEligibilityLoading,
-                         offerEligibilityAvailability: self.offerEligibilityAvailability
-                     ) != nil
-+                }
-             )
-             .environment(
-                 \.planSelectionDefaultPackage,
-```
-
-**File**: `RevenueCatUI/Templates/V2/EnvironmentObjects/PlanSelectionDefaultPackage.swift` (modified, +4/-3)
-```diff
-@@ -21,9 +21,10 @@ private struct PlanSelectionDefaultPackageKey: EnvironmentKey {
-     static let defaultValue: Package? = nil
- }
- 
--/// Whether the selected package has a card that can render in its owning scope.
-+/// Checks whether the current selection has a card that can render in its owning scope.
-+/// Evaluate lazily because pre-iOS 17 `onChange` closures capture the previous render's environment.
- private struct SelectedPackageIsVisibleKey: EnvironmentKey {
--    static let defaultValue = true
-+    static let defaultValue: () -> Bool = { true }
- }
- 
- extension EnvironmentValues {
-@@ -33,7 +34,7 @@ extension EnvironmentValues {
-         set { self[PlanSelectionDefaultPackageKey.self] = newValue }
-     }
- 
--    var selectedPackageIsVisible: Bool {
-+    var selectedPackageIsVisible: () -> Bool {
-         get { self[SelectedPackageIsVisibleKey.self] }
-         set { self[SelectedPackageIsVisibleKey.self] = newValue }
-     }
-```
-
-**File**: `RevenueCatUI/Templates/V2/PaywallsV2View.swift` (modified, +1/-1)
-```diff
-@@ -748,7 +748,7 @@ struct LoadedPaywallsV2View: View {
-         )
-     }
- 
--    private var selectedPackageIsVisible: Bool {
-+    private func selectedPackageIsVisible() -> Bool {
-         guard let package = self.selectedPackageContext.package else { return false }
-         return self.paywallState.viewModelFactory.packageValidator.couldBeRendering(
-             package,
-```
-
-**File**: `Tests/RevenueCatUITests/PaywallsV2/RootViewSheetDismissalTests.swift` (modified, +8/-1)
-```diff
-@@ -69,7 +69,12 @@ extension RootViewSheetDismissalTests {
-         try await PackageResolutionTestFixture.settlePresentation()
-         let snapshot = fixture.context.package
-         let variables = fixture.context.variableContext
--        let tabContext = try XCTUnwrap(fixture.context.tabsState(for: fixture.tabs).contextsByTabId["tab-2"])
-+        let tabsState = fixture.context.tabsState(for: fixture.tabs)
-+        let tabContext = try XCTUnwrap(tabsState.contextsByTabId["tab-2"])
-+        XCTAssertEqual(snapshot?.identifier, rootPackage.identifier)
-+        XCTAssertEqual(fixture.context.manuallySelectedPackage?.identifier, rootPackage.identifier)
-+        XCTAssertTrue(tabsState.didUserSelectPackage)
-+        XCTAssertEqual(tabsState.parentOwnedPackage?.identifier, rootPackage.identifier)
-         XCTAssertNil(tabContext.package)
- 
-         let sheetValidator = try XCTUnwrap(fixture.state.rootViewModel.stackViewModel.viewModels.compactMap {
-@@ -80,6 +85,8 @@ extension RootViewSheetDismissalTests {
-         try await PackageResolutionTestFixture.settlePresentation()
-         XCTAssertEqual(sheetContext.package?.identifier, "annual_xl")
-         XCTAssertEqual(fixture.context.package?.identifier, "annual_xl")
-+        XCTAssertEqual(fixture.context.manuallySelectedPackage?.identifier, rootPackage.identifier)
-+        XCTAssertEqual(tabsState.parentOwnedPackage?.identifier, rootPackage.identifier)
- 
-         fixture.context.update(
-             package: RootView.restoredPackageAfterSheetDismissal(
+     /// - Parameter allowNoMessages: by default, this method requires logs to not be empty
+     /// to eliminate the possibility of false positives due to log handler not being installed properly.
+     func verifyMessageWasNotLogged(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8237** (2026-11-06): Prepare next version: 5.103.0-SNAPSHOT (@RCGitBot)
-- **PR #8235** (2026-11-06): ci: merge gate that tightens once the full suite is approved (@AlvaroBrey)
-- **PR #8233** (2026-11-06): [AUTOMATIC] Release/5.102.3 (@RCGitBot)
-- **PR #8232** (2026-11-06): feat(checkpoints): gate rewarded ad steps on an earned reward (@peterporfy)
-- **PR #8231** (2026-11-06): Prepare next version: 5.103.0-SNAPSHOT (@RCGitBot)
-- **PR #8230** (2026-11-05): fix(paywalls): stop nested Fill stacks from hanging on iOS 17  (@JZDesign)
+- **PR #8292** (2026-11-12): Chore(deps): Bump fastlane-plugin-revenuecat_internal from `1e7875c` to `52a8b95` (@dependabot[bot])
+- **PR #8290** (2026-11-12): Route direct GitHub API calls through the plugin's retry helper (@ajpallares)
+- **PR #8284** (2026-11-12): chore(paywalls): Expose overload for hybrids (@JZDesign)
+- **PR #8283** (2026-11-11): Prepare next version: 5.104.0-SNAPSHOT (@RCGitBot)
+- **PR #8282** (2026-11-11): [AUTOMATIC] Release/5.103.0 (@RCGitBot)
+- **PR #8281** (2026-11-11): Update baseline swiftinterface files for `pallares/paywall-purchase-context` (@RCGitBot)
 
 ---
 
@@ -1120,52 +1005,29 @@ through full-suite-started, so it keeps a single list, and the tes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230)
+## X. Revert "build: don't block releases on CocoaPods publishing (#8125)" (#8236)
 
 **RULE**:
-When implementing operations in `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.circleci/default_config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd2ea7ef`: paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c76a522`: Revert "build: don't block releases on CocoaPods publishing (#8125)" (#8236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/default_config.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                .fill(.horizontal, alignment: alignment)
-                .fill(.vertical, alignment: alignment)
-    /// Takes all the space proposed along `axis`, like `.frame(minWidth: 0, maxWidth: .infinity)`.
-    ///
-    /// iOS 17 places a frame's content three times under an unbounded proposal, such as a `ScrollView`'s, and
-    /// every nested Fill stack multiplies that until the paywall hangs. ``FillLayout`` places it once.
-    @ViewBuilder
-    func fill(_ axis: Axis, alignment: Alignment) -> some View {
-        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
-            self.fillFrame(axis, alignment: alignment)
-        } else if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
-            FillLayout(axis: axis, alignment: alignment) { self }
-        } else {
-            self.fillFrame(axis, alignment: alignment)
-        }
-    }
-
-    @ViewBuilder
-    private func fillFrame(_ axis: Axis, alignment: Alignment) -> some View {
-        switch axis {
-        case .horizontal:
-            self.frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-        case .vertical:
-            self.frame(minHeight: 0, maxHeight: .infinity, alignment: al
+            - push-revenuecatui-pod
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-                .frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
+            # TODO: restore after Nov 7, 2026, once CocoaPods trunk is writable again.
+            # - push-revenuecatui-pod
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd2ea7ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c76a522` are properly handled with clean fallback behavior.

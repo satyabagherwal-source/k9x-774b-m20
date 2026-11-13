@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `11c82084`  
+> **Source Version**: `59064619`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:41:37.948Z  
+> **Timestamp**: 2026-11-13T03:10:41.835Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:41:37.942Z  
+> **Harvest Timestamp**: 2026-11-13T03:10:41.831Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39011 stars
+- **Stars / Engagement**: 39022 stars
 
 ---
 
@@ -821,49 +821,125 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e982a66c` (2026-11-12)
-**Commit Message**: ipn/ipnstate,tailcfg: fix comment
+### Incident Patch 1: `59064619` (2026-11-13)
+**Commit Message**: ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (#22375)
 
-The comment should refer to dbx.Node.IsRouter, not
-dbx.Node.IsSubnetRouter.
+This is needed for authenticated log uploads (see #20482).
+Add a noop declaration now, so that we can call it from
+client implementations on other platforms (e.g., Android or iOS).
 
-Updates #cleanup
+Updates tailscale/corp#39092
 
-Signed-off-by: Fran Bull <[REDACTED_EMAIL]>
+Signed-off-by: Joe Tsai <[REDACTED_EMAIL]>
 
-**File**: `ipn/ipnstate/ipnstate.go` (modified, +1/-1)
+**File**: `ipn/ipnlocal/local.go` (modified, +9/-0)
 ```diff
-@@ -370,7 +370,7 @@ func (ps *PeerStatus) HasCap(cap nodecap.Cap) bool {
- // Examples: an exit node, a subnet router, an app connector, etc.
- // It is the analogue of [tailcfg.Node.IsRouter].
- func (ps *PeerStatus) IsRouter() bool {
--	// TODO(sfllaw): Keep this aligned with dbx.Node.IsSubnetRouter.
-+	// TODO(sfllaw): Keep this aligned with dbx.Node.IsRouter.
- 	if ps.AllowedIPs == nil {
- 		return false
- 	}
+@@ -53,6 +53,7 @@ import (
+ 	"tailscale.com/ipn/ipnstate"
+ 	"tailscale.com/log/sockstatlog"
+ 	"tailscale.com/logpolicy"
++	"tailscale.com/logtail"
+ 	"tailscale.com/net/dns"
+ 	"tailscale.com/net/dnscache"
+ 	"tailscale.com/net/dnsfallback"
+@@ -6612,6 +6613,14 @@ func (b *LocalBackend) SetLogFlusher(flushFunc func()) {
+ 	b.logFlushFunc = flushFunc
+ }
+ 
++// SetLogUploader sets the process-wide logtail logger used for tailscaled's
++// main log stream.
++//
++// It should only be called before the LocalBackend is used.
++func (b *LocalBackend) SetLogUploader(lg *logtail.Logger) {
++	// TODO: Implemented later for authenticated log uploads.
++}
++
+ // TryFlushLogs calls the log flush function. It returns false if a log flush
+ // function was never initialized with SetLogFlusher.
+ //
 ```
 
-**File**: `tailcfg/tailcfg.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `1d32249f` (2026-11-12)
+**Commit Message**: cmd/k8s-proxy: add test for parsePort
+
+Updates #21714
+
+Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
+
+**File**: `cmd/k8s-proxy/k8s-proxy_test.go` (added, +60/-0)
 ```diff
-@@ -624,7 +624,7 @@ func (n *Node) DisplayNames(forOwner bool) (name, hostIfDifferent string) {
- // IsRouter reports whether n is a router: it routes addresses besides its own.
- // Examples: an exit node, a subnet router, an app connector, etc.
- func (n *Node) IsRouter() bool {
--	// TODO(sfllaw): Keep this aligned with dbx.Node.IsSubnetRouter.
-+	// TODO(sfllaw): Keep this aligned with dbx.Node.IsRouter.
- 	for _, r := range n.AllowedIPs {
- 		if !slices.Contains(n.Addresses, r) {
- 			return true
+@@ -0,0 +1,60 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build !plan9
++
++package main
++
++import "testing"
++
++func TestParsePort(t *testing.T) {
++	tests := []struct {
++		name    string
++		port    string
++		want    uint16
++		wantErr bool
++	}{
++		{
++			name: "unset",
++			port: "",
++			want: 0,
++		},
++		{
++			name: "valid",
++			port: "12199",
++			want: 12199,
++		},
++		{
++			name: "max",
++			port: "65535",
++			want: 65535,
++		},
++		{
++			name:    "out_of_range",
++			port:    "65536",
++			wantErr: true,
++		},
++		{
++			name:    "negative",
++			port:    "-1",
++			wantErr: true,
++		},
++		{
++			name:    "not_a_number",
++			port:    "https",
++			wantErr: true,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got, err := parsePort(tt.port)
++			if (err != nil) != tt.wantErr {
++				t.Fatalf("parsePort(%q) error = %v, wantErr %v", tt.port, err, tt.wantErr)
++			}
++			if got != tt.want {
++				t.Errorf("parsePort(%q) = %d, want %d", tt.port, got, tt.want)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22375** (2026-11-13): ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (@dsnet)
 - **PR #22372** (2026-11-12): ipn/ipnstate,tailcfg: fix comment (@franbull)
+- **PR #22371** (2026-11-12): cmd/k8s-proxy: listen on the PORT that the operator sets (@ChaosInTheCRD)
 - **PR #22370** (2026-11-12): tstest/natlab/vnet: check PCP nonces in renewals and deletes (@fmarier)
 - **PR #22364** (2026-11-12): k8s-operator/api-proxy: only use the remote address for WhoIs (@ChaosInTheCRD)
 - **PR #22361** (2026-11-12): go.toolchain.rev: bump to Go 1.27.4 [release-branch] (@bradfitz)
-- **PR #22345** (closed): wgengine/magicsock: untrust silent best addr after peer network change (@Marouane-elfadli)
-- **PR #22344** (2026-11-12): k8s-operator/api-proxy: only use the remote address for WhoIs (@ChaosInTheCRD)
 
 ---
 
@@ -883,28 +959,36 @@ Signed-off-by: Fran Bull <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnstate,tailcfg: fix comment
+## X. ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (#22375)
 
 **RULE**:
-When implementing operations in `ipn/ipnstate/ipnstate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ipn/ipnlocal/local.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e982a66c`: ipn/ipnstate,tailcfg: fix comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59064619`: ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (#22375). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnstate/ipnstate.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/local.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// TODO(sfllaw): Keep this aligned with dbx.Node.IsRouter.
+	"tailscale.com/logtail"
+// SetLogUploader sets the process-wide logtail logger used for tailscaled's
+// main log stream.
+//
+// It should only be called before the LocalBackend is used.
+func (b *LocalBackend) SetLogUploader(lg *logtail.Logger) {
+	// TODO: Implemented later for authenticated log uploads.
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// TODO(sfllaw): Keep this aligned with dbx.Node.IsSubnetRouter.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e982a66c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59064619` are properly handled with clean fallback behavior.

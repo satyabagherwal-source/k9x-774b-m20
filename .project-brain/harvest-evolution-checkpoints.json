@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:03:22.817Z",
+  "last_updated": "2026-11-13T03:11:08.649Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T01:31:37.311Z",
@@ -78,7 +78,7 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-11T09:40:59.773Z",
+      "processed_at": "2026-11-13T03:10:56.511Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1471,9 +1471,19 @@
       "processed_at": "2026-11-13T03:03:22.540Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md": {
+      "processed_at": "2026-11-13T03:11:08.604Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "revenuecat-purchases-ios-learnings.md": {
+      "processed_at": "2026-11-13T03:11:08.623Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 429,
-  "total_canonical_promoted": 51,
-  "total_staged_for_review": 376
+  "total_dossiers_evaluated": 432,
+  "total_canonical_promoted": 52,
+  "total_staged_for_review": 378
 }

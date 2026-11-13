@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T03:03:22.807Z",
+  "updated_at": "2026-11-13T03:11:08.642Z",
   "stats": {
-    "total_discovered": 2090,
-    "approved_pending_harvest": 1934,
+    "total_discovered": 2114,
+    "approved_pending_harvest": 1958,
     "harvested_count": 0,
     "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1928,
-      "OFFICIAL_DOCUMENTATION": 84,
+      "COMMUNITY_AND_EXPERT": 1948,
+      "OFFICIAL_DOCUMENTATION": 88,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 7,
@@ -44906,6 +44906,534 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
         "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-1F8D61FE04F2": {
+      "id": "SRC-1F8D61FE04F2",
+      "url": "https://github.com/oven-sh/bun",
+      "title": "https://github.com/oven-sh/bun",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.521Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-566078CB6D1C": {
+      "id": "SRC-566078CB6D1C",
+      "url": "https://react.dev/errors",
+      "title": "https://react.dev/errors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.536Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-CF32FB7ABD3F": {
+      "id": "SRC-CF32FB7ABD3F",
+      "url": "https://github.com/torvalds/linux/blob/9d1ddab261f3e2af7c384dc02238784ce0cf9f98/include/uapi/asm-generic/unistd.h",
+      "title": "https://github.com/torvalds/linux/blob/9d1ddab261f3e2af7c384dc02238784ce0cf9f98/include/uapi/asm-generic/unistd.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.555Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-9D5C6E8AEEC5": {
+      "id": "SRC-9D5C6E8AEEC5",
+      "url": "https://github.com/google/gvisor/blob/master/test/syscalls/linux/epoll.cc",
+      "title": "https://github.com/google/gvisor/blob/master/test/syscalls/linux/epoll.cc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.566Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-589DCF02D006": {
+      "id": "SRC-589DCF02D006",
+      "url": "https://github.com/TiBianMod/bun-aot-build-plugin-entry-point",
+      "title": "https://github.com/TiBianMod/bun-aot-build-plugin-entry-point",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-0FE799D1129C": {
+      "id": "SRC-0FE799D1129C",
+      "url": "https://github.com/TiBianMod/bun-aot-build-plugin-entry-point.git",
+      "title": "https://github.com/TiBianMod/bun-aot-build-plugin-entry-point.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.590Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-FB9CAC6D6EF2": {
+      "id": "SRC-FB9CAC6D6EF2",
+      "url": "https://bun.com/docs/compiler/explain",
+      "title": "https://bun.com/docs/compiler/explain",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-F8B00ADCDDA3": {
+      "id": "SRC-F8B00ADCDDA3",
+      "url": "https://github.com/oven-sh/WebKit",
+      "title": "https://github.com/oven-sh/WebKit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.614Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-BA00FF30B3E4": {
+      "id": "SRC-BA00FF30B3E4",
+      "url": "https://api.github.com/",
+      "title": "https://api.github.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-34D5E5C69540": {
+      "id": "SRC-34D5E5C69540",
+      "url": "https://www.apple.com/certificateauthority/$%7Bauthority",
+      "title": "https://www.apple.com/certificateauthority/$%7Bauthority",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-CAE7D25C1A46": {
+      "id": "SRC-CAE7D25C1A46",
+      "url": "https://buildkite.com/docs/agent/self-hosted/install",
+      "title": "https://buildkite.com/docs/agent/self-hosted/install",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-440AC9DF5EF1": {
+      "id": "SRC-440AC9DF5EF1",
+      "url": "https://github.com/cli/cli",
+      "title": "https://github.com/cli/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-6C623C153B71": {
+      "id": "SRC-6C623C153B71",
+      "url": "https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app",
+      "title": "https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.678Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-4F4B2E10BF80": {
+      "id": "SRC-4F4B2E10BF80",
+      "url": "https://api.github.com/app/installations/$%7Binstallation_id",
+      "title": "https://api.github.com/app/installations/$%7Binstallation_id",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.689Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-F2A98602172B": {
+      "id": "SRC-F2A98602172B",
+      "url": "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html",
+      "title": "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-4444CEC75B16": {
+      "id": "SRC-4444CEC75B16",
+      "url": "https://docs.sentry.io/cli/installation",
+      "title": "https://docs.sentry.io/cli/installation",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.711Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-8B38499DF45B": {
+      "id": "SRC-8B38499DF45B",
+      "url": "https://github.com/cli/cli/releases/latest",
+      "title": "https://github.com/cli/cli/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.723Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-FE2923BBB309": {
+      "id": "SRC-FE2923BBB309",
+      "url": "https://github.com/cli/cli/releases/download/v$%7Bversion",
+      "title": "https://github.com/cli/cli/releases/download/v$%7Bversion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.734Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-E8F4382705AC": {
+      "id": "SRC-E8F4382705AC",
+      "url": "https://awscli.amazonaws.com/$%7Bfile",
+      "title": "https://awscli.amazonaws.com/$%7Bfile",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.745Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-7D7CCB8B6FC1": {
+      "id": "SRC-7D7CCB8B6FC1",
+      "url": "https://sentry.io/get-cli",
+      "title": "https://sentry.io/get-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.756Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-71F5BCB1E0D0": {
+      "id": "SRC-71F5BCB1E0D0",
+      "url": "https://api.github.com/$%7Bpath",
+      "title": "https://api.github.com/$%7Bpath",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:10:56.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-B9CFA9976826": {
+      "id": "SRC-B9CFA9976826",
+      "url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "title": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:11:08.609Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
+        "fileName": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md"
+      }
+    },
+    "SRC-FBDEC518F667": {
+      "id": "SRC-FBDEC518F667",
+      "url": "https://github.com/RevenueCat/purchases-ios",
+      "title": "https://github.com/RevenueCat/purchases-ios",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:11:08.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-74466A26EACB": {
+      "id": "SRC-74466A26EACB",
+      "url": "https://docs.revenuecat.com/docs/user-ids",
+      "title": "https://docs.revenuecat.com/docs/user-ids",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:11:08.642Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
       }
     }
   }

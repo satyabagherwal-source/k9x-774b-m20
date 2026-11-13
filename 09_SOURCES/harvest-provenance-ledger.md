@@ -9311,3 +9311,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-13T03:02:37.716Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `79d1d2c1` | Multi-dimensional audit evidence | 2026-11-13T03:03:02.243Z |
 | `learn-dom-d-8804a7f5` | `project://hf-nvidia-deepseek-v4.1-flash-1017-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | 2026-11-13T03:03:22.389Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-13T03:10:29.824Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `9ea3c693` | Multi-dimensional audit evidence | 2026-11-13T03:10:33.384Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `efd30907` | Multi-dimensional audit evidence | 2026-11-13T03:10:46.570Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `59064619` | Multi-dimensional audit evidence | 2026-11-13T03:10:52.447Z |
+| `learn-dom-j-f84c9e58` | `project://hf-meta-models-muse-spark-open-816b-a42b-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | 2026-11-13T03:11:08.603Z |

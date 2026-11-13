@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T03:03:02.254Z",
+  "last_updated": "2026-11-13T03:10:52.468Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "84248f5792c652bbab7844c7177bf2da83d1e789e633e6d9be37cef723086c7f",
-      "verified_at": "2026-11-12T21:41:56.943Z",
+      "content_hash": "7e10bc329b758fa0f0c00fa8900ae35a5e3f7caf758bd785099602e0f89a18fa",
+      "verified_at": "2026-11-13T03:10:52.467Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:41:56.943Z"
+      "last_updated": "2026-11-13T03:10:52.467Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "050ce85a18a207c5513be2057308746474c4511e8302a09c8a7b2e43cac2affc",
-      "verified_at": "2026-11-11T09:39:48.865Z",
+      "content_hash": "c98a961c993009a16ea770aa915d47da3c173468a12cbe3140b446e5dd2a6d58",
+      "verified_at": "2026-11-13T03:10:33.397Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:39:48.865Z"
+      "last_updated": "2026-11-13T03:10:33.397Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -12891,14 +12891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "062ace715cd44c764a876b8cb30e114cdf2490931d9599ca9791a1fc75d7b44f",
-      "verified_at": "2026-11-08T03:15:00.544Z",
+      "content_hash": "82dfa5b1b00f466879d47754500f817e5c992f198e9d39e7d25b8ab70b5688ae",
+      "verified_at": "2026-11-13T03:10:29.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:15:00.544Z"
+      "last_updated": "2026-11-13T03:10:29.831Z"
     },
     "rickclephas/KMP-NativeCoroutines": {
       "repository": "rickclephas/KMP-NativeCoroutines",
@@ -13866,14 +13866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-revenuecat-purchases-ios",
-      "content_hash": "7851a9d5283c14288c568cd6e8dbb3b7b46ef8d89a857d917cc7a95b40c43206",
-      "verified_at": "2026-11-08T20:21:37.876Z",
+      "content_hash": "b5c65542003761eb5a2d2caeb8536ee8d630e09839655037da7e454f6abd7f4f",
+      "verified_at": "2026-11-13T03:10:46.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:21:37.876Z"
+      "last_updated": "2026-11-13T03:10:46.578Z"
     },
     "reflection/Beam-1.0-501B-A23B": {
       "repository": "reflection/Beam-1.0-501B-A23B",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T03:03:02.125Z",
+  "last_updated": "2026-11-13T03:10:52.334Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -51715,8 +51715,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "89452d2a",
-      "content_hash": "050ce85a18a207c5513be2057308746474c4511e8302a09c8a7b2e43cac2affc",
+      "source_version": "9ea3c693",
+      "content_hash": "c98a961c993009a16ea770aa915d47da3c173468a12cbe3140b446e5dd2a6d58",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -51806,7 +51806,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T09:39:48.581Z",
+      "verified_at": "2026-11-13T03:10:33.275Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56006,14 +56006,19 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "c9c4ede1",
-      "content_hash": "7851a9d5283c14288c568cd6e8dbb3b7b46ef8d89a857d917cc7a95b40c43206",
+      "source_version": "efd30907",
+      "content_hash": "b5c65542003761eb5a2d2caeb8536ee8d630e09839655037da7e454f6abd7f4f",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Revert \"build: don't block releases on CocoaPods publishing (#8125)\" (#8236)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56052,7 +56057,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:21:37.741Z",
+      "verified_at": "2026-11-13T03:10:46.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62231,8 +62236,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "11c82084",
-      "content_hash": "84248f5792c652bbab7844c7177bf2da83d1e789e633e6d9be37cef723086c7f",
+      "source_version": "59064619",
+      "content_hash": "7e10bc329b758fa0f0c00fa8900ae35a5e3f7caf758bd785099602e0f89a18fa",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -62289,6 +62294,11 @@
         {
           "number": null,
           "title": "ipn/ipnstate,tailcfg: fix comment",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (#22375)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -62487,7 +62497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T21:41:56.722Z",
+      "verified_at": "2026-11-13T03:10:52.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119495,7 +119505,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "062ace715cd44c764a876b8cb30e114cdf2490931d9599ca9791a1fc75d7b44f",
+      "content_hash": "82dfa5b1b00f466879d47754500f817e5c992f198e9d39e7d25b8ab70b5688ae",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -119565,7 +119575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:15:00.416Z",
+      "verified_at": "2026-11-13T03:10:29.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

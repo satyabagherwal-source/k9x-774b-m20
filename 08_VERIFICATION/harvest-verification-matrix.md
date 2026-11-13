@@ -9302,3 +9302,8 @@
 | `CYCLE-20261113-5TOW` | `2026-11-13T03:02:37.712Z` | `nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | Yes (`6f3652a7...`) |
 | `CYCLE-20261113-6CM7` | `2026-11-13T03:03:02.239Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e750dd4a...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:03:22.389Z` | `hf-nvidia-deepseek-v4.1-flash-1017-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8804A7F5` [Domain D] | Yes (`af07d047...`) |
+| `CYCLE-20261113-FXZ0` | `2026-11-13T03:10:29.820Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | Yes (`82dfa5b1...`) |
+| `CYCLE-20261113-G0PW` | `2026-11-13T03:10:33.380Z` | `oven-sh/bun` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | Yes (`c98a961c...`) |
+| `CYCLE-20261113-GAW6` | `2026-11-13T03:10:46.566Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b5c65542...`) |
+| `CYCLE-20261113-GFFF` | `2026-11-13T03:10:52.443Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e10bc32...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:11:08.603Z` | `hf-meta-models-muse-spark-open-816b-a42b-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-F84C9E58` [Domain J] | Yes (`d6b8531f...`) |
