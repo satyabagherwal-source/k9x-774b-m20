@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-JV0Q",
-    "timestamp": "2026-11-10T01:58:32.906Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "3ecdfe00e8740b5f6f37c04fccb2362203e8437324cb2e17a7491cb0f85b9d70",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-JV6Z",
-    "timestamp": "2026-11-10T01:58:33.131Z",
-    "repository": "openyurtio/openyurt",
-    "learningId": "learn-github-openyurtio-openyurt",
-    "contentHash": "4491deafb264fb0fe67524d1beb33e830430d17350c55137dbe6655a078bfecf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-JXXO",
-    "timestamp": "2026-11-10T01:58:36.684Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-JZ0D",
     "timestamp": "2026-11-10T01:58:38.077Z",
     "repository": "Open-Source-Legal/OpenContracts",
@@ -7490,6 +7445,51 @@
     "repository": "kumahq/kuma",
     "learningId": "learn-github-kumahq-kuma",
     "contentHash": "6c7548a6c39a929d2e5541bace632dc19f3f619440d1288b82e3a3f7992e123b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-LV1L",
+    "timestamp": "2026-11-13T07:55:02.121Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+    "contentHash": "7e9ddacb466b3888794dc91f354512a37b80ef35183462c9ea01a8e0a54c2de1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-MBTW",
+    "timestamp": "2026-11-13T07:55:23.876Z",
+    "repository": "iPlug2/iPlug2",
+    "learningId": "learn-github-iplug2-iplug2",
+    "contentHash": "58de453d95c9ff52e6734b990b60fcdfcce2fddca726377b6a6205cfb62e2419",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-MDS9",
+    "timestamp": "2026-11-13T07:55:26.409Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "72b34d1ff00f85ef0e34efab68f9724758327cf0358e611bd0e62144ceeae87f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

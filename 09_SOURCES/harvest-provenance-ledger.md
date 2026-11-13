@@ -9399,3 +9399,7 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `622a4930` | Multi-dimensional audit evidence | 2026-11-13T07:47:17.078Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `db67396d` | Multi-dimensional audit evidence | 2026-11-13T07:47:22.616Z |
 | `learn-dom-d-388f29c6` | `project://hf-xhtoken-spark-x2.6-4b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | 2026-11-13T07:47:42.744Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-13T07:55:02.126Z |
+| `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `0cf04038` | Multi-dimensional audit evidence | 2026-11-13T07:55:23.882Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `e7a377fa` | Multi-dimensional audit evidence | 2026-11-13T07:55:26.414Z |
+| `learn-dom-d-4e597f40` | `project://hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md` | 2026-11-13T07:55:49.995Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source**: github ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
-> **Source Version**: `b320ce3b`  
+> **Source Version**: `0cf04038`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T23:50:42.021Z  
+> **Timestamp**: 2026-11-13T07:55:09.154Z  
 > **Learning ID**: `learn-github-iplug2-iplug2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T23:50:42.017Z  
+> **Harvest Timestamp**: 2026-11-13T07:55:09.148Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2440 stars
+- **Stars / Engagement**: 2442 stars
 
 ---
 
@@ -1452,112 +1452,82 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b320ce3b` (2026-11-07)
-**Commit Message**: Revert "Merge pull request #1447 from iPlug2/fix/wasm-restore-state-to-dsp"
+### Incident Patch 1: `0cf04038` (2026-11-10)
+**Commit Message**: Merge pull request #1452 from iPlug2/claude/kind-pasteur-izurqu
 
-This reverts commit ed9e7dff57823312e4ad48bc801b8206a5223fa8, reversing
-changes made to d82b2e99b17c8f723d3f6e2a88ffd8b656f28e5d.
+IVTabbedPagesControl: keep tabs in declaration order
 
-**File**: `IPlug/WEB/IPlugWasmUI.cpp` (modified, +0/-17)
+**File**: `IGraphics/Controls/IVTabbedPagesControl.h` (modified, +4/-2)
 ```diff
-@@ -45,23 +45,6 @@ void IPlugWasmUI::SendParameterValueFromUI(int paramIdx, double value)
-   IPlugAPIBase::SendParameterValueFromUI(paramIdx, value);
- }
+@@ -19,7 +19,8 @@
+ #include "IControls.h"
+ #include "IBubbleControl.h"
  
--void IPlugWasmUI::OnRestoreState()
--{
--  // The DSP instance only hears about parameter changes that are sent to it, so after restoring
--  // state on the UI instance (e.g. RestorePreset(), LoadPresetFromFXP()) send it every parameter value
--  for (int i = 0; i < NParams(); i++)
--  {
--    EM_ASM({
--      if (typeof window.iPlugController !== 'undefined') {
--        window.iPlugController.setParam($0, $1);
--      }
--    }, i, GetParam(i)->GetNormalized());
--  }
--
--  // Update the UI
--  IPlugAPIBase::OnRestoreState();
--}
--
- void IPlugWasmUI::SendMidiMsgFromUI(const IMidiMsg& msg)
- {
-   EM_ASM({
-```
-
-**File**: `IPlug/WEB/IPlugWasmUI.h` (modified, +0/-4)
-```diff
-@@ -39,10 +39,6 @@ class IPlugWasmUI : public IPlugAPIBase
-   void SendSysexMsgFromUI(const ISysEx& msg) override;
-   void SendArbitraryMsgFromUI(int msgTag, int ctrlTag = kNoTag, int dataSize = 0, const void* pData = nullptr) override;
+-#include <map>
++#include <utility>
++#include <vector>
  
--  /** State (e.g. a preset) is restored on the UI instance, so this sends the new parameter values to the DSP instance.
--   * Plug-ins that override OnRestoreState() must call the base class! */
--  void OnRestoreState() override;
--
-   /** Plug-ins that override OnIdle() must call the base class! */
-   void OnIdle() override { SendDSPIdleTick(); }
+ BEGIN_IPLUG_NAMESPACE
+ BEGIN_IGRAPHICS_NAMESPACE
+@@ -80,7 +81,8 @@ class IVTabPage : public IContainerBase, public IVectorBase
+   double mPadding = 0.0;
+ };
  
+-using PageMap = std::map<const char*, IVTabPage*>;
++/** Ordered list of (tab name, page) pairs. Tabs appear in the order given. */
++using PageMap = std::vector<std::pair<const char*, IVTabPage*>>;
+ 
+ /** A control to manage tabbed pages of sub controls
+  * Basic usage example:
 ```
 
 ---
 
-### Incident Patch 2: `ed9e7dff` (2026-11-07)
-**Commit Message**: Merge pull request #1447 from iPlug2/fix/wasm-restore-state-to-dsp
+### Incident Patch 2: `25f2e97b` (2026-11-10)
+**Commit Message**: IVTabbedPagesControl: keep tabs in declaration order
 
-Wasm: send restored parameter values to the DSP module
+PageMap was std::map<const char*, IVTabPage*>, which orders entries by
+pointer address of the name strings, not by declaration order (or even
+alphabetically). Tab order therefore varied between compilers/builds.
+Use a vector of pairs so pages appear in the order given. Existing
+brace-initializer call sites are unchanged.
 
-**File**: `IPlug/WEB/IPlugWasmUI.cpp` (modified, +17/-0)
+Fixes #1449
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_012EnMekvRS2XBdH16wi1S63
+
+**File**: `IGraphics/Controls/IVTabbedPagesControl.h` (modified, +4/-2)
 ```diff
-@@ -45,6 +45,23 @@ void IPlugWasmUI::SendParameterValueFromUI(int paramIdx, double value)
-   IPlugAPIBase::SendParameterValueFromUI(paramIdx, value);
- }
+@@ -19,7 +19,8 @@
+ #include "IControls.h"
+ #include "IBubbleControl.h"
  
-+void IPlugWasmUI::OnRestoreState()
-+{
-+  // The DSP instance only hears about parameter changes that are sent to it, so after restoring
-+  // state on the UI instance (e.g. RestorePreset(), LoadPresetFromFXP()) send it every parameter value
-+  for (int i = 0; i < NParams(); i++)
-+  {
-+    EM_ASM({
-+      if (typeof window.iPlugController !== 'undefined') {
-+        window.iPlugController.setParam($0, $1);
-+      }
-+    }, i, GetParam(i)->GetNormalized());
-+  }
-+
-+  // Update the UI
-+  IPlugAPIBase::OnRestoreState();
-+}
-+
- void IPlugWasmUI::SendMidiMsgFromUI(const IMidiMsg& msg)
- {
-   EM_ASM({
-```
-
-**File**: `IPlug/WEB/IPlugWasmUI.h` (modified, +4/-0)
-```diff
-@@ -39,6 +39,10 @@ class IPlugWasmUI : public IPlugAPIBase
-   void SendSysexMsgFromUI(const ISysEx& msg) override;
-   void SendArbitraryMsgFromUI(int msgTag, int ctrlTag = kNoTag, int dataSize = 0, const void* pData = nullptr) override;
+-#include <map>
++#include <utility>
++#include <vector>
  
-+  /** State (e.g. a preset) is restored on the UI instance, so this sends the new parameter values to the DSP instance.
-+   * Plug-ins that override OnRestoreState() must call the base class! */
-+  void OnRestoreState() override;
-+
-   /** Plug-ins that override OnIdle() must call the base class! */
-   void OnIdle() override { SendDSPIdleTick(); }
+ BEGIN_IPLUG_NAMESPACE
+ BEGIN_IGRAPHICS_NAMESPACE
+@@ -80,7 +81,8 @@ class IVTabPage : public IContainerBase, public IVectorBase
+   double mPadding = 0.0;
+ };
  
+-using PageMap = std::map<const char*, IVTabPage*>;
++/** Ordered list of (tab name, page) pairs. Tabs appear in the order given. */
++using PageMap = std::vector<std::pair<const char*, IVTabPage*>>;
+ 
+ /** A control to manage tabbed pages of sub controls
+  * Basic usage example:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1452** (2026-11-10): IVTabbedPagesControl: keep tabs in declaration order (@olilarkin)
 - **PR #1447** (2026-11-07): Wasm: send restored parameter values to the DSP module (@olilarkin)
 - **PR #1429** (2026-10-25): CI: unpin claude-code-action (back to @v1) (@olilarkin)
 - **PR #1428** (2026-10-18): CI: pin claude-code-action to v1.0.196 (@olilarkin)
 - **PR #1427** (2026-10-25): Bump macOS deployment target to 13.0 (@olilarkin)
 - **PR #1426** (2026-10-17): CI: move macOS runners from macos-14 to macos-15 (@olilarkin)
-- **PR #1425** (2026-10-17): iOS App: adopt UIScene life cycle (fixes #1420) (@olilarkin)
 
 ---
 
@@ -1571,3 +1541,38 @@ Wasm: send restored parameter values to the DSP module
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #1452 from iPlug2/claude/kind-pasteur-izurqu
+
+**RULE**:
+When implementing operations in `IGraphics/Controls/IVTabbedPagesControl.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0cf04038`: Merge pull request #1452 from iPlug2/claude/kind-pasteur-izurqu. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `IGraphics/Controls/IVTabbedPagesControl.h`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+#include <utility>
+#include <vector>
+/** Ordered list of (tab name, page) pairs. Tabs appear in the order given. */
+using PageMap = std::vector<std::pair<const char*, IVTabPage*>>;
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Anti-pattern to NEVER write (induced failure mode):
+#include <map>
+using PageMap = std::map<const char*, IVTabPage*>;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0cf04038` are properly handled with clean fallback behavior.

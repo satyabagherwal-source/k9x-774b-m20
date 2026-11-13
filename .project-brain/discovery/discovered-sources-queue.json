@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T07:47:42.820Z",
+  "updated_at": "2026-11-13T07:55:50.206Z",
   "stats": {
-    "total_discovered": 2250,
-    "approved_pending_harvest": 2092,
+    "total_discovered": 2260,
+    "approved_pending_harvest": 2101,
     "harvested_count": 0,
-    "rejected_count": 158,
+    "rejected_count": 159,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2079,
+      "COMMUNITY_AND_EXPERT": 2089,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 72,
       "ENGINEERING_BLOGS": 1,
@@ -48412,6 +48412,219 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
         "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-BE21BA74D256": {
+      "id": "SRC-BE21BA74D256",
+      "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "title": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
+        "fileName": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md"
+      }
+    },
+    "SRC-6D2AADF25AF5": {
+      "id": "SRC-6D2AADF25AF5",
+      "url": "https://github.com/iPlug2/iPlug2",
+      "title": "https://github.com/iPlug2/iPlug2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-9D2A7B1A0C20": {
+      "id": "SRC-9D2A7B1A0C20",
+      "url": "http://bit.ly/2S64BDd",
+      "title": "http://bit.ly/2S64BDd",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T07:55:50.052Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-BA0298B208AC": {
+      "id": "SRC-BA0298B208AC",
+      "url": "https://iplug2.github.io/",
+      "title": "https://iplug2.github.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.072Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-DFD7158ED448": {
+      "id": "SRC-DFD7158ED448",
+      "url": "https://github.com/user-attachments/assets/1fb92b36-92cf-4f37-873f-3e4e433fa14d",
+      "title": "https://github.com/user-attachments/assets/1fb92b36-92cf-4f37-873f-3e4e433fa14d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-C463C2721A5F": {
+      "id": "SRC-C463C2721A5F",
+      "url": "https://github.com/user-attachments/assets/c9032b78-83d8-45ca-88bd-7af8075ce487",
+      "title": "https://github.com/user-attachments/assets/c9032b78-83d8-45ca-88bd-7af8075ce487",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.118Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-80A1C190500F": {
+      "id": "SRC-80A1C190500F",
+      "url": "https://github.com/iPlug2/iPlug2/blob/1a1239123e254dd442064cd1a4b3c9852607deff/IGraphics/IControl.h",
+      "title": "https://github.com/iPlug2/iPlug2/blob/1a1239123e254dd442064cd1a4b3c9852607deff/IGraphics/IControl.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-930ADEA5700C": {
+      "id": "SRC-930ADEA5700C",
+      "url": "https://claude.ai/code/session_012EnMekvRS2XBdH16wi1S63",
+      "title": "https://claude.ai/code/session_012EnMekvRS2XBdH16wi1S63",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
+        "fileName": "iplug2-iplug2-learnings.md"
+      }
+    },
+    "SRC-373483004F74": {
+      "id": "SRC-373483004F74",
+      "url": "https://github.com/skyhook-io/radar",
+      "title": "https://github.com/skyhook-io/radar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-E4B064144F58": {
+      "id": "SRC-E4B064144F58",
+      "url": "https://bugs.webkit.org/show_bug.cgi?id=327542",
+      "title": "https://bugs.webkit.org/show_bug.cgi?id=327542",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:55:50.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
       }
     }
   }

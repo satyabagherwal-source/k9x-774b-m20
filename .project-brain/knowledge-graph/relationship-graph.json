@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T07:47:42.743Z",
+  "updated_at": "2026-11-13T07:55:49.994Z",
   "statistics": {
-    "total_nodes": 61,
+    "total_nodes": 62,
     "total_edges": 31,
     "domain_distribution": {
-      "D": 47,
+      "D": 48,
       "M": 1,
       "H": 8,
       "J": 2,
@@ -1365,6 +1365,28 @@
       ],
       "created_at": "2026-11-13T07:47:42.743Z",
       "updated_at": "2026-11-13T07:47:42.743Z"
+    },
+    "DOM-D-4E597F40": {
+      "id": "DOM-D-4E597F40",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md`  \n> **Source**: huggingface",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T07:55:33.064Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T07:55:49.994Z",
+      "updated_at": "2026-11-13T07:55:49.994Z"
     }
   },
   "edges": [

@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "bb49df41",
+    "sourceVersion": "e7a377fa",
     "license": "Apache-2.0",
-    "contentHash": "f2c98b2c6e4af52cb5af7039b38cbc0c927f7052481efd715d109621ebbd7a00",
-    "lastHarvestedAt": "2026-11-12T03:10:39.224Z",
+    "contentHash": "72b34d1ff00f85ef0e34efab68f9724758327cf0358e611bd0e62144ceeae87f",
+    "lastHarvestedAt": "2026-11-13T07:55:26.414Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -9683,10 +9683,10 @@
     "repository": "iPlug2/iPlug2",
     "platform": "github",
     "sourceUrl": "https://github.com/iPlug2/iPlug2",
-    "sourceVersion": "b320ce3b",
+    "sourceVersion": "0cf04038",
     "license": "NOASSERTION",
-    "contentHash": "a58f52dc9761845795655a51de51231e65cd98075b77c2092f1ba0d3f359ff42",
-    "lastHarvestedAt": "2026-11-08T23:50:42.287Z",
+    "contentHash": "58de453d95c9ff52e6734b990b60fcdfcce2fddca726377b6a6205cfb62e2419",
+    "lastHarvestedAt": "2026-11-13T07:55:23.882Z",
     "learningId": "learn-github-iplug2-iplug2"
   },
   "digitalbazaar-jsonld.js": {
@@ -10825,8 +10825,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
     "license": "Open-Source",
-    "contentHash": "18de81b65bdf8f1b16835161c4c4fa2a9293322b38046f871020ffb7667a0a95",
-    "lastHarvestedAt": "2026-11-08T06:25:44.887Z",
+    "contentHash": "7e9ddacb466b3888794dc91f354512a37b80ef35183462c9ea01a8e0a54c2de1",
+    "lastHarvestedAt": "2026-11-13T07:55:02.126Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb"
   },
   "gaurav-gosain-tuios": {

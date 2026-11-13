@@ -9390,3 +9390,7 @@
 | `CYCLE-20261113-BW7L` | `2026-11-13T07:47:17.073Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0427a1dc...`) |
 | `CYCLE-20261113-C0HG` | `2026-11-13T07:47:22.612Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6c7548a6...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:47:42.744Z` | `hf-xhtoken-spark-x2.6-4b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-388F29C6` [Domain D] | Yes (`3f691ebb...`) |
+| `CYCLE-20261113-LV1L` | `2026-11-13T07:55:02.121Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md` | Yes (`7e9ddacb...`) |
+| `CYCLE-20261113-MBTW` | `2026-11-13T07:55:23.876Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`58de453d...`) |
+| `CYCLE-20261113-MDS9` | `2026-11-13T07:55:26.409Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`72b34d1f...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:55:49.995Z` | `hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4E597F40` [Domain D] | Yes (`cc7334b9...`) |
