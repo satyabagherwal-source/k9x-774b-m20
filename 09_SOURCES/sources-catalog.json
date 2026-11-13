@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "720da69c8286abcf6558737f1a916e5d40789a4643326ec29710850575bc37f8",
-    "lastHarvestedAt": "2026-11-13T14:25:31.346Z",
+    "contentHash": "a7225e606f9fac9353e26eddca581150a35d4009ef8ee85be8d6bc2cc520338f",
+    "lastHarvestedAt": "2026-11-13T15:03:44.294Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "72f2df8f",
+    "sourceVersion": "ce4f6857",
     "license": "NOASSERTION",
-    "contentHash": "50afdb8e00df729e561c193dd1b9a6d2f72e1bde19b0784359252a29a49ba377",
-    "lastHarvestedAt": "2026-11-13T13:02:56.848Z",
+    "contentHash": "909b9c492801b2b201dd0e378a0122cc6b19e7cea387d6157ebf5559f8bb5ee3",
+    "lastHarvestedAt": "2026-11-13T15:04:01.205Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:55:43.763Z",
-  "total_cycles_completed": 9272,
-  "total_learnings_persisted": 9272,
-  "total_rules_promoted": 9033,
+  "last_updated": "2026-11-13T15:04:01.229Z",
+  "total_cycles_completed": 9274,
+  "total_learnings_persisted": 9274,
+  "total_rules_promoted": 9034,
   "history": [
-    {
-      "timestamp": "2026-11-12T23:55:04.631Z",
-      "repository": "touchlab/Kermit",
-      "learningId": "learn-github-touchlab-kermit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:55:04.792Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T00:01:50.727Z",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T14:55:43.763Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:03:44.300Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:04:01.229Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

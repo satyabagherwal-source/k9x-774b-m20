@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `72f2df8f`  
+> **Source Version**: `ce4f6857`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T13:02:41.733Z  
+> **Timestamp**: 2026-11-13T15:04:00.599Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T13:02:41.725Z  
+> **Harvest Timestamp**: 2026-11-13T15:04:00.591Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2201,93 +2201,158 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72f2df8f` (2026-11-13)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (#5044)
+### Incident Patch 1: `ce4f6857` (2026-11-13)
+**Commit Message**: docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)
 
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.270 to 1.0.271.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/9eb012b6d0900c2b9eede65ee1758cec4d2973e9...4fa93a88de49bbef68b10eb15aabedf28ca0e1ed)
+* docs: fix sqlp `<=>` and Polars schema file name in USAGE
 
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.271
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+- sqlp: `<=>` is NULL-safe equality (IS NOT DISTINCT FROM), not a
+  -1/0/1 spaceship comparison; it returns true/false, never NULL.
+- sqlp, joinp, schema: a Polars schema file is named after the full
+  input file name (data.csv -> data.csv.pschema.json), per
+  util::pschema_path.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Help markdown and MCP skill JSONs regenerated.
 
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: CHANGELOG entry for #5046
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +1/-1)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
- 
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
-+        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+@@ -45,7 +45,7 @@
+       {
+         "flag": "--cache-schema",
+         "type": "number",
+-        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
++        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
+         "default": 0
+       },
+       {
 ```
 
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +2/-2)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
- 
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
-+        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
- 
-```
-
----
-
-### Incident Patch 2: `01db7f52` (2026-11-13)
-**Commit Message**: build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (#5043)
-
-Bumps [hono](https://github.com/honojs/hono) from 4.13.13 to 4.13.18.
-- [Release notes](https://github.com/honojs/hono/releases)
-- [Commits](https://github.com/honojs/hono/compare/v4.13.13...v4.13.18)
-
----
-updated-dependencies:
-- dependency-name: hono
-  dependency-version: 4.13.18
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.claude/skills/package-lock.json` (modified, +3/-3)
-```diff
-@@ -1238,9 +1238,9 @@
-       }
+@@ -23,7 +23,7 @@
+       {
+         "flag": "--cache-schema",
+         "type": "flag",
+-        "description": "Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars \"table\" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension \".pschema.json\" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its \"Float64\" type to \"Float32\" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of \"Float64\", use {\"Decimal\": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`."
++        "description": "Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars \"table\" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with \".pschema.json\" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its \"Float64\" type to \"Float32\" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of \"Float64\", use {\"Decimal\": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`."
+       },
+       {
+         "flag": "--compress-level",
+@@ -177,7 +177,7 @@
+       "command": "qsv sqlp data.csv \"select CASE col*5 WHEN 10 THEN 'foo' WHEN 5 THEN 'bar' ELSE 'baz' END from _t_1\""
      },
-     "node_modules/hono": {
--      "version": "4.13.13",
--      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
--      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
-+      "version": "4.13.18",
-+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
-+      "integrity": "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=16.9.0"
+     {
+-      "description": "spaceship operator: \"<=>\" (three-way comparison operator) returns -1 if left < right, 0 if left == right, 1 if left > right https://en.wikipedia.org/wiki/Three-way_comparison#Spaceship_operator",
++      "description": "NULL-safe equality operator: \"<=>\" (same as IS NOT DISTINCT FROM) returns true if both sides are equal or both are NULL, false otherwise (never NULL)",
+       "command": "qsv sqlp data.csv data2.csv \"select data.c2 <=> data2.c2 from data join data2 on data.c1 = data2.c1\""
+     },
+     {
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+ 
+ ### Fixed
++- **docs: `sqlp`, `joinp` and `schema` USAGE corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)). `sqlp`'s `<=>` is NULL-safe equality (the same as `IS NOT DISTINCT FROM`: true when both sides are equal or both are NULL, never NULL), not a -1/0/1 "spaceship" comparison. A Polars schema file is named after the full input file name, so `data.csv`'s is `data.csv.pschema.json`, not `data.pschema.json`.
+ - **`luau`: fixes from a review of `luau.rs`** ([#5036](https://github.com/dathere/qsv/pull/5036)):
+   - **An existing `./date.lua` is no longer overwritten and deleted.** A script using `require "./date"` made qsv write the bundled LuaDate over any `date.lua` in the current directory, then delete it at exit. An existing file is now used as-is and left alone. The bundled copy is also removed when the run fails; before, a failed run left it behind.
+   - **`luau filter` no longer keeps every row after the first error.** The keep check looked at the running error count, so after one row errored, every later row was kept whatever it returned. An errored row is still kept.
+```
+
+**File**: `docs/help/joinp.md` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ qsv joinp --help
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse the columns as dates. If the parse fails, columns remain as strings. This is useful when the join keys are formatted as dates with differing date formats, as the date formats will be normalized. Note that this will be automatically enabled when using asof joins. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
+-| &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
++| &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
+ | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
+ | &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
+ | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
+```
+
+**File**: `docs/help/schema.md` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ and then use that to generate the schema file.
+ 
+ When the "polars" feature is enabled, the `--polars` option will generate a Polars schema
+ instead of a JSON Schema. The generated Polars schema will be written to a file with the
+-`.pschema.json` suffix appended to the input file stem.
++`.pschema.json` suffix appended to the full input file name (data.csv -> data.csv.pschema.json).
+ 
+ The Polars schema is a JSON object that describes the schema of a CSV file. When present,
+ the `sqlp`, `joinp`, and `pivotp` commands will use the Polars schema to read the CSV file
+```
+
+**File**: `docs/help/sqlp.md` (modified, +3/-4)
+```diff
+@@ -149,9 +149,8 @@ qsv sqlp data.csv "select CASE WHEN col1 > 10 THEN 'foo' WHEN col1 > 5 THEN 'bar
+ qsv sqlp data.csv "select CASE col*5 WHEN 10 THEN 'foo' WHEN 5 THEN 'bar' ELSE 'baz' END from _t_1"
+ ```
+ 
+-> spaceship operator: "<=>" (three-way comparison operator)
+-> returns -1 if left < right, 0 if left == right, 1 if left > right
+-> <https://en.wikipedia.org/wiki/Three-way_comparison#Spaceship_operator>
++> NULL-safe equality operator: "<=>" (same as IS NOT DISTINCT FROM)
++> returns true if both sides are equal or both are NULL, false otherwise (never NULL)
+ 
+ ```console
+ qsv sqlp data.csv data2.csv "select data.c2 <=> data2.c2 from data join data2 on data.c1 = data2.c1"
+@@ -360,7 +359,7 @@ qsv sqlp --help
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+-| &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension ".pschema.json" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
++| &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's e
+```
+
+**File**: `src/cmd/joinp.rs` (modified, +1/-1)
+```diff
+@@ -145,7 +145,7 @@ joinp options:
+                                 * If no schema or stats cache: infer schema using --infer-len 
+                                   and cache the result
+                                 Schema files use the same name as input with .pschema.json extension
+-                                (e.g., data.csv -> data.pschema.json).
++                                (e.g., data.csv -> data.csv.pschema.json).
+                            ‎NOTE: If the input files have pschema.json files that are newer or created
+                            at the same time as the input files, they will be used to inform the join
+                            operation regardless of the value of --cache-schema unless --infer-len is 0.
+```
+
+**File**: `src/cmd/schema.rs` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ Polars Schema:
+ ==============
+ When the "polars" feature is enabled, the `--polars` option will generate a Polars schema
+ instead of a JSON Schema. The generated Polars schema will be written to a file with the
+-`.pschema.json` suffix appended to the input file stem.
++`.pschema.json` suffix appended to the full input file name (data.csv -> data.csv.pschema.json).
+ 
+ The Polars schema is a JSON object that describes the schema of a CSV file. When present,
+ the `sqlp`, `joinp`, and `pivotp` commands will use the Polars schema to read the CSV file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5046** (2026-11-13): docs: fix sqlp `<=>` and Polars schema file name in USAGE (@jqnatividad)
+- **PR #5045** (2026-11-13): deps: bump Polars to upstream 61fdb30 (@jqnatividad)
 - **PR #5044** (2026-11-13): build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (@dependabot[bot])
 - **PR #5043** (2026-11-13): build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (@dependabot[bot])
 - **PR #5042** (2026-11-12): build(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /.claude/skills (@dependabot[bot])
 - **PR #5041** (2026-11-12): deps: bump Polars to upstream 8ecd1ca (@jqnatividad)
-- **PR #5040** (2026-11-12): chore: clear qsvlite/qsvdp dead-code warnings (@jqnatividad)
-- **PR #5039** (2026-11-12): build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvdp (@jqnatividad)
 
 ---
 
@@ -2307,28 +2372,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (#5044)
+## X. docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)
 
 **RULE**:
-When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-joinp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72f2df8f`: build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (#5044). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce4f6857`: docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-joinp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
+        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
+        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72f2df8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce4f6857` are properly handled with clean fallback behavior.

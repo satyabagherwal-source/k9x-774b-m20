@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T14:55:46.782Z",
-    "lastVerified": "2026-11-13T14:55:46.782Z",
+    "lastChecked": "2026-11-13T15:04:04.290Z",
+    "lastVerified": "2026-11-13T15:04:04.290Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,22 +252,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T13:42:31.059Z",
-    "lastVerified": "2026-11-13T13:42:31.059Z",
+    "lastChecked": "2026-11-13T15:04:00.591Z",
+    "lastVerified": "2026-11-13T15:04:00.591Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "50afdb8e00df729e561c193dd1b9a6d2f72e1bde19b0784359252a29a49ba377",
+    "contentHash": "909b9c492801b2b201dd0e378a0122cc6b19e7cea387d6157ebf5559f8bb5ee3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "72f2df8f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1879,13 +1878,13 @@
     "officialUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T14:48:51.816Z",
-    "lastVerified": "2026-11-08T14:48:51.816Z",
+    "lastChecked": "2026-11-13T15:03:43.716Z",
+    "lastVerified": "2026-11-13T15:03:43.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "3c5fa8de6b4dc568909a9ea0b07016c392b91b94d12ed7d83e5fee1c61ffcc64",
-    "promotedRulesCount": 3,
+    "contentHash": "a7225e606f9fac9353e26eddca581150a35d4009ef8ee85be8d6bc2cc520338f",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -2127,8 +2126,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T08:05:03.753Z",
-    "lastVerified": "2026-11-13T08:05:03.753Z",
+    "lastChecked": "2026-11-13T15:03:51.059Z",
+    "lastVerified": "2026-11-13T15:03:51.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -3649,9 +3648,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-12T01:51:40.918Z",
+    "lastChecked": "2026-11-13T15:03:42.917Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-12T01:51:40.918Z"
+    "lastVerified": "2026-11-13T15:03:42.917Z"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
     "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -5527,12 +5526,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-aws-cdk": {
-    "name": "aws/aws-cdk",
+    "name": "aws-cdk",
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T10:07:20.306Z",
-    "lastVerified": "2026-11-12T10:07:20.306Z",
+    "lastChecked": "2026-11-13T15:03:48.557Z",
+    "lastVerified": "2026-11-13T15:03:48.557Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
@@ -5541,7 +5540,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "79914032"
   },
   "gluesql-gluesql": {
     "name": "gluesql/gluesql",
@@ -7640,12 +7640,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "redisearch-redisearch": {
-    "name": "RediSearch/RediSearch",
+    "name": "RediSearch",
     "officialUrl": "https://github.com/RediSearch/RediSearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T08:14:44.317Z",
-    "lastVerified": "2026-11-12T08:14:44.317Z",
+    "lastChecked": "2026-11-13T15:03:53.553Z",
+    "lastVerified": "2026-11-13T15:03:53.553Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-redisearch-redisearch",
@@ -7654,7 +7654,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "33d90342"
   },
   "restatedev-restate": {
     "name": "restatedev/restate",
@@ -12727,12 +12728,12 @@
     "revisionIdentifier": "5b5afa7b"
   },
   "software-mansion-react-native-screens": {
-    "name": "software-mansion/react-native-screens",
+    "name": "react-native-screens",
     "officialUrl": "https://github.com/software-mansion/react-native-screens",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T04:27:33.918Z",
-    "lastVerified": "2026-11-09T04:27:33.918Z",
+    "lastChecked": "2026-11-13T15:03:46.112Z",
+    "lastVerified": "2026-11-13T15:03:46.112Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-software-mansion-react-native-screens",
@@ -12741,7 +12742,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a1f25d01"
   },
   "dubzzz-fast-check": {
     "name": "dubzzz/fast-check",

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-xingchen-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T14:25:30.993Z  
+> **Timestamp**: 2026-11-13T15:03:43.933Z  
 > **Learning ID**: `learn-huggingface-xingchen-agi-xing4-0-29b-a4b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B](https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:25:30.774Z  
+> **Harvest Timestamp**: 2026-11-13T15:03:43.716Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
