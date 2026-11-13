@@ -9268,3 +9268,4 @@ Every entry in this ledger must capture:
 | `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `141dc8dd` | Multi-dimensional audit evidence | 2026-11-12T23:55:04.610Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `f00b7006` | Multi-dimensional audit evidence | 2026-11-12T23:55:04.785Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `e8491dea` | Multi-dimensional audit evidence | 2026-11-13T00:01:50.723Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `9889b7da` | Multi-dimensional audit evidence | 2026-11-13T00:16:17.831Z |

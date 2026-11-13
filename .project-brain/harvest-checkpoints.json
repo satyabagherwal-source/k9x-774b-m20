@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T00:01:50.730Z",
+  "last_updated": "2026-11-13T00:16:17.856Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11166,14 +11166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bahdotsh-wrkflw",
-      "content_hash": "4bcc131da93ccae4640244361e05ce2bb7c390e2a3f72a41ca15fb5e49733974",
-      "verified_at": "2026-11-10T05:14:16.562Z",
+      "content_hash": "f5732766e48793bff353c0b2509e1be0851e2758bba6619a84c55cbfce5baa62",
+      "verified_at": "2026-11-13T00:16:17.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T05:14:16.562Z"
+      "last_updated": "2026-11-13T00:16:17.855Z"
     },
     "jordanbaird/Ice": {
       "repository": "jordanbaird/Ice",

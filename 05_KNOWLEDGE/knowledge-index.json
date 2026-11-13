@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T00:01:50.608Z",
+  "last_updated": "2026-11-13T00:16:17.658Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5001,8 +5001,8 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "bcd6c848",
-      "content_hash": "4bcc131da93ccae4640244361e05ce2bb7c390e2a3f72a41ca15fb5e49733974",
+      "source_version": "9889b7da",
+      "content_hash": "f5732766e48793bff353c0b2509e1be0851e2758bba6619a84c55cbfce5baa62",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
@@ -5014,6 +5014,11 @@
         {
           "number": null,
           "title": "make local verdicts match what GitHub would say (#166)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "report what a local pass didn't check, and make local runs match GitHub's (#167)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5047,7 +5052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T05:14:16.395Z",
+      "verified_at": "2026-11-13T00:16:17.635Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T00:01:54.158Z",
+  "updated_at": "2026-11-13T00:16:22.712Z",
   "stats": {
-    "total_discovered": 1864,
-    "approved_pending_harvest": 1717,
+    "total_discovered": 1866,
+    "approved_pending_harvest": 1719,
     "harvested_count": 0,
     "rejected_count": 147,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1725,
+      "COMMUNITY_AND_EXPERT": 1727,
       "OFFICIAL_DOCUMENTATION": 68,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -39996,6 +39996,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
         "fileName": "kubernetes-sigs-aws-load-balancer-controller-learnings.md"
+      }
+    },
+    "SRC-3EE004F08332": {
+      "id": "SRC-3EE004F08332",
+      "url": "https://github.com/bahdotsh/wrkflw",
+      "title": "https://github.com/bahdotsh/wrkflw",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:16:22.697Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-EF927962EF4E": {
+      "id": "SRC-EF927962EF4E",
+      "url": "https://gitea.com/actions/checkout@v4%60",
+      "title": "https://gitea.com/actions/checkout@v4%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:16:22.712Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
       }
     }
   }

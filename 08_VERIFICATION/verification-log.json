@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-5MWJ",
-    "timestamp": "2026-11-09T14:35:38.419Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "e29f2ba6c161266b5e8228270a17407a74d87cafbf9e1a3180c09491854dec16",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-5P3H",
     "timestamp": "2026-11-09T14:35:41.261Z",
     "repository": "black-forest-labs/flux-3-image-klein",
@@ -7490,6 +7475,21 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
     "contentHash": "9a4bfbadee74aed17076420373153c40633c624d3adae0e326badaabaf16b5fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-7X5V",
+    "timestamp": "2026-11-13T00:16:17.827Z",
+    "repository": "bahdotsh/wrkflw",
+    "learningId": "learn-github-bahdotsh-wrkflw",
+    "contentHash": "f5732766e48793bff353c0b2509e1be0851e2758bba6619a84c55cbfce5baa62",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

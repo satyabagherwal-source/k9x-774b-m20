@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T00:01:54.204Z",
+  "last_updated": "2026-11-13T00:16:22.741Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7643,6 +7643,33 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-84699A-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-286E41",
+      "directive_title": "report what a local pass didn't check, and make local runs match GitHub's (#167)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "bahdotsh-wrkflw",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-286E41-report-what-a-local-pass-didn-t-check-an.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-2E63F6",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2E63F6-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-BE041D",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BE041D-engine-restore-text-fallback-for-unknown.md",
       "staged_date": "2026-11-13"
     }
   ]
