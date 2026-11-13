@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T04:43:22.670Z",
-    "lastVerified": "2026-11-13T04:43:22.670Z",
+    "lastChecked": "2026-11-13T04:50:21.305Z",
+    "lastVerified": "2026-11-13T04:50:21.305Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -256,8 +256,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T03:56:11.190Z",
-    "lastVerified": "2026-11-13T03:56:11.190Z",
+    "lastChecked": "2026-11-13T04:50:19.338Z",
+    "lastVerified": "2026-11-13T04:50:19.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -544,8 +544,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T23:07:48.460Z",
-    "lastVerified": "2026-11-12T23:07:48.460Z",
+    "lastChecked": "2026-11-13T04:50:14.288Z",
+    "lastVerified": "2026-11-13T04:50:14.288Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2581,9 +2581,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-11T19:53:32.462Z",
+    "lastChecked": "2026-11-13T04:50:11.722Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-11T19:53:32.462Z"
+    "lastVerified": "2026-11-13T04:50:11.722Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -4665,9 +4665,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-11T18:23:40.053Z",
+    "lastChecked": "2026-11-13T04:50:16.721Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-11T18:23:40.053Z"
+    "lastVerified": "2026-11-13T04:50:16.721Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -9223,14 +9223,14 @@
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T10:43:10.463Z",
-    "lastVerified": "2026-11-11T10:43:10.463Z",
+    "lastChecked": "2026-11-13T04:50:08.203Z",
+    "lastVerified": "2026-11-13T04:50:08.203Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
+    "contentHash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11578,9 +11578,9 @@
   "kitlangton-hex": {
     "name": "Hex",
     "officialUrl": "https://github.com/kitlangton/Hex",
-    "lastChecked": "2026-11-08T21:24:34.507Z",
+    "lastChecked": "2026-11-13T04:50:09.277Z",
     "revisionIdentifier": "3e300721",
-    "lastVerified": "2026-11-08T21:24:34.507Z"
+    "lastVerified": "2026-11-13T04:50:09.277Z"
   },
   "syntax-tree-hast-util-to-html": {
     "name": "hast-util-to-html",
@@ -13361,12 +13361,12 @@
     "officialUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T04:19:18.177Z",
-    "lastVerified": "2026-11-08T04:19:18.177Z",
+    "lastChecked": "2026-11-13T04:50:06.891Z",
+    "lastVerified": "2026-11-13T04:50:06.891Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "466081a950bb911afa7d322bf9618f59be5a17350a8c14f43618816663458ae3",
+    "contentHash": "0eab085bcc89e35488d81961e15771764d7f11c0f6884b804c51865ddfedfc13",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

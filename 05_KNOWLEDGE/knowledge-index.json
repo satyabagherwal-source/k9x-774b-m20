@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T04:43:17.853Z",
+  "last_updated": "2026-11-13T04:50:17.295Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -79862,8 +79862,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "763ed8b0",
-      "content_hash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
+      "source_version": "be35fa33",
+      "content_hash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -79890,6 +79890,11 @@
         {
           "number": null,
           "title": "linux): ask before a page uses the camera or microphone, and recover from a fail",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "open the title bar in its last color and fit tall windows on screen",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -79958,7 +79963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:43:21.999Z",
+      "verified_at": "2026-11-13T04:50:17.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132737,7 +132742,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
       "source_version": "hf-xhtoken-spark-x2.6-4b",
-      "content_hash": "466081a950bb911afa7d322bf9618f59be5a17350a8c14f43618816663458ae3",
+      "content_hash": "0eab085bcc89e35488d81961e15771764d7f11c0f6884b804c51865ddfedfc13",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
       "promoted_rules": [
@@ -132767,7 +132772,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:19:19.398Z",
+      "verified_at": "2026-11-13T04:50:07.229Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

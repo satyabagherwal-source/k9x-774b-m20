@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-KCBL",
-    "timestamp": "2026-11-09T22:14:58.401Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "63e0c12cbbaba6f2e823cbbcf0ca8d1a5d32c4059dcf6d730ac16cd9473fdb9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-KGPE",
-    "timestamp": "2026-11-09T22:15:04.082Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5b3cfbcd17c17b4b17d913cff9c0c83b01a8896edc781cde8030fcbed8dffd8a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-0610",
     "timestamp": "2026-11-09T22:27:16.741Z",
     "repository": "keybase/client",
@@ -7490,6 +7460,36 @@
     "repository": "kubeedge/kubeedge",
     "learningId": "learn-github-kubeedge-kubeedge",
     "contentHash": "0285b275d2a7374af91b5b50e98669ba911929bb62d750c922dc85612ada7cd7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-028O",
+    "timestamp": "2026-11-13T04:50:07.320Z",
+    "repository": "XHToken/Spark-X2.6-4B",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+    "contentHash": "0eab085bcc89e35488d81961e15771764d7f11c0f6884b804c51865ddfedfc13",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-09ZS",
+    "timestamp": "2026-11-13T04:50:17.368Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

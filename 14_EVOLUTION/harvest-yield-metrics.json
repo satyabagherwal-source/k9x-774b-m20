@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T04:43:18.016Z",
-  "total_cycles_completed": 9139,
-  "total_learnings_persisted": 9139,
-  "total_rules_promoted": 8955,
+  "last_updated": "2026-11-13T04:50:17.376Z",
+  "total_cycles_completed": 9141,
+  "total_learnings_persisted": 9141,
+  "total_rules_promoted": 8956,
   "history": [
-    {
-      "timestamp": "2026-11-12T07:54:27.757Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T08:07:07.594Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T08:07:15.996Z",
       "repository": "modelcontextprotocol/kotlin-sdk",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T04:43:18.016Z",
       "repository": "kubeedge/kubeedge",
       "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:50:07.328Z",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:50:17.376Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

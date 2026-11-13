@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T04:43:18.020Z",
+  "last_updated": "2026-11-13T04:50:17.379Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
-      "verified_at": "2026-11-11T10:43:22.238Z",
+      "content_hash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
+      "verified_at": "2026-11-13T04:50:17.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:43:22.238Z"
+      "last_updated": "2026-11-13T04:50:17.378Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -15771,14 +15771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "content_hash": "466081a950bb911afa7d322bf9618f59be5a17350a8c14f43618816663458ae3",
-      "verified_at": "2026-11-08T04:19:19.548Z",
+      "content_hash": "0eab085bcc89e35488d81961e15771764d7f11c0f6884b804c51865ddfedfc13",
+      "verified_at": "2026-11-13T04:50:07.330Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:19:19.548Z"
+      "last_updated": "2026-11-13T04:50:07.330Z"
     },
     "InternScience/Sage-A1.5": {
       "repository": "InternScience/Sage-A1.5",

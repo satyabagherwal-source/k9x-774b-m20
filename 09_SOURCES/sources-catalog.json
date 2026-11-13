@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "763ed8b0",
+    "sourceVersion": "be35fa33",
     "license": "GPL-3.0",
-    "contentHash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
-    "lastHarvestedAt": "2026-11-11T10:43:22.212Z",
+    "contentHash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
+    "lastHarvestedAt": "2026-11-13T04:50:17.371Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -10495,8 +10495,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b",
     "license": "Open-Source",
-    "contentHash": "466081a950bb911afa7d322bf9618f59be5a17350a8c14f43618816663458ae3",
-    "lastHarvestedAt": "2026-11-08T04:19:19.540Z",
+    "contentHash": "0eab085bcc89e35488d81961e15771764d7f11c0f6884b804c51865ddfedfc13",
+    "lastHarvestedAt": "2026-11-13T04:50:07.323Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b"
   },
   "hf-internscience-sage-a1.5": {

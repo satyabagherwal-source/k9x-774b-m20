@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T04:43:37.171Z",
+  "updated_at": "2026-11-13T04:50:32.276Z",
   "stats": {
-    "total_discovered": 2176,
-    "approved_pending_harvest": 2018,
+    "total_discovered": 2180,
+    "approved_pending_harvest": 2022,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2009,
-      "OFFICIAL_DOCUMENTATION": 89,
+      "COMMUNITY_AND_EXPERT": 2012,
+      "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 7,
@@ -46784,6 +46784,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
         "fileName": "kubeedge-kubeedge-learnings.md"
+      }
+    },
+    "SRC-18FF38E9FFED": {
+      "id": "SRC-18FF38E9FFED",
+      "url": "https://github.com/tw93/Pake",
+      "title": "https://github.com/tw93/Pake",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:50:21.396Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md",
+        "fileName": "tw93-pake-learnings.md"
+      }
+    },
+    "SRC-E3F65B3A3DE9": {
+      "id": "SRC-E3F65B3A3DE9",
+      "url": "https://github.com/tw93/Pake/issues?q=",
+      "title": "https://github.com/tw93/Pake/issues?q=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:50:21.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md",
+        "fileName": "tw93-pake-learnings.md"
+      }
+    },
+    "SRC-110BE99CF19D": {
+      "id": "SRC-110BE99CF19D",
+      "url": "https://docs.deno.com/runtime",
+      "title": "https://docs.deno.com/runtime",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:50:21.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-pake-learnings.md",
+        "fileName": "tw93-pake-learnings.md"
+      }
+    },
+    "SRC-37EA901DA6EC": {
+      "id": "SRC-37EA901DA6EC",
+      "url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "title": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:50:32.276Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
+        "fileName": "hf-xhtoken-spark-x2.6-4b-learnings.md"
       }
     }
   }

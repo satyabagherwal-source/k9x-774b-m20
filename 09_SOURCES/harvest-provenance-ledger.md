@@ -9346,3 +9346,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-13T04:42:59.009Z |
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `65659fb7` | Multi-dimensional audit evidence | 2026-11-13T04:43:17.994Z |
 | `learn-dom-d-fe25e160` | `project://hf-recursivesi-flint` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | 2026-11-13T04:43:37.119Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-13T04:50:07.323Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `be35fa33` | Multi-dimensional audit evidence | 2026-11-13T04:50:17.371Z |
+| `learn-dom-d-90e0590c` | `project://hf-xhtoken-spark-x2.6-4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | 2026-11-13T04:50:32.271Z |

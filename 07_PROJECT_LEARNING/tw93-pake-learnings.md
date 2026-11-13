@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `763ed8b0`  
+> **Source Version**: `be35fa33`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:43:10.678Z  
+> **Timestamp**: 2026-11-13T04:50:08.207Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:43:10.463Z  
+> **Harvest Timestamp**: 2026-11-13T04:50:08.203Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 63205 stars
+- **Stars / Engagement**: 63467 stars
 
 ---
 
@@ -938,1150 +938,514 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `404369a5` (2026-11-10)
-**Commit Message**: feat(linux): ask before a page uses the camera or microphone, and recover from a failed load
+### Incident Patch 1: `b6bb966e` (2026-11-12)
+**Commit Message**: fix: open the title bar in its last color and fit tall windows on screen
 
-WebKitGTK refuses getUserMedia unless the embedder answers its
-permission-request signal, and neither wry 0.54 nor Pake did, so a call
-or voice page never got a device on Linux. Linux has no system prompt
-for this as macOS and WebView2 do, so Pake asks once per site and run
-("meet.google.com wants to use your camera and microphone", Don't Allow /
-Allow), in English or Chinese by the system language. enumerateDevices
-labels follow what the site was already allowed.
+A macOS app with a transparent title bar opened with a white bar until
+title_bar.js sampled the page, which flashed on every dark site. The main
+window now remembers the last color it painted (title-bar-color.txt in the
+app data dir) and opens in it. title_bar.js also falls back to the page's
+theme-color, honouring its media query, when the top edge is not painted
+yet.
 
-A load that fails now shows a small page with the site and Try Again
-instead of the engine's bare message, and a web process that exits is
-reloaded; a cancelled load, a download taking over and a policy refusal
-are left alone. On Windows a renderer crash reloads the page; WebView2
-already has its own error page. macOS is not covered: Tauri 2.10 exposes
-neither hook for WKWebView.
+Size presets can exceed the screen (the tablet one is 820x1180), so the
+first window is fitted to the primary monitor's work area less a title bar
+allowance; sizes restored by the window-state plugin are untouched.
 
-gtk 0.18 becomes a direct Linux dependency at the version wry and tao
-already lock.
+Verified: cargo test --lib and clippy -D warnings with and without
+runtime-template on macOS, vitest tests/unit (773), and the theme-color
+test fails with the fallback removed. The Windows and Linux arms are
+compiled only by CI.
 
-Verified on the Debian 12 devbox (WebKitGTK 2.50): clippy -D warnings and
-cargo test --lib with and without runtime-template, a deb and rpm build,
-and the built app un
-
-**File**: `src-tauri/Cargo.lock` (modified, +1/-0)
+**File**: `src-tauri/src/app/invoke.rs` (modified, +21/-1)
 ```diff
-@@ -2589,6 +2589,7 @@ version = "3.18.0"
- dependencies = [
-  "block2",
-  "dispatch",
-+ "gtk",
-  "objc2",
-  "objc2-app-kit",
-  "objc2-foundation",
-```
-
-**File**: `src-tauri/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -57,6 +57,9 @@ objc2-web-kit = { version = "0.3", default-features = false, features = [
- # Version and features must match what wry resolves, or PlatformWebview::inner
- # hands back a WebView from a different crate instance.
- webkit2gtk = { version = "=2.0.2", features = ["v2_40"] }
-+# The camera and microphone question (media_permission.rs). The version wry and
-+# tao already lock, so its Window is the one WebView::toplevel hands back.
-+gtk = "0.18"
- # Reads the freedesktop color-scheme from the settings portal. Same version
- # and features that tauri-plugin-opener and single-instance already lock.
- zbus = "5.14"
-```
-
-**File**: `src-tauri/src/app/media_permission.rs` (added, +175/-0)
-```diff
-@@ -0,0 +1,175 @@
-+//! Camera and microphone for pages on Linux.
-+//!
-+//! WebKitGTK refuses `getUserMedia` unless the embedder answers its
-+//! `permission-request` signal, and neither wry nor Pake did, so a call or
-+//! voice page never got a device. Linux has no system prompt for this as
-+//! macOS and WebView2 do, so Pake asks once per site and run.
-+
-+use gtk::prelude::*;
-+use std::cell::RefCell;
-+use std::collections::HashMap;
-+use webkit2gtk::{
-+    DeviceInfoPermissionRequest, PermissionRequestExt, SettingsExt, UserMediaPermissionRequest,
-+    UserMediaPermissionRequestExt, WebViewExt,
-+};
-+
-+thread_local! {
-+    /// The answers given in this run, by host and device kinds.
-+    static ANSWERS: RefCell<HashMap<String, bool>> = RefCell::new(HashMap::new());
-+}
-+
-+pub fn install(webview: &tauri::webview::PlatformWebview) {
-+    let gtk_webview = webview.inner();
-+    if let Some(settings) = WebViewExt::settings(&gtk_webview) {
-+        settings.set_enable_media_stream(true);
-+        settings.set_enable_webrtc(true);
-+    }
-+
-+    gtk_webview.connect_permission_request(|webview, request| {
-+        let host = webview
-+            .uri()
-+            .and_then(|uri| tauri::Url::parse(uri.as_str()).ok())
-+            .and_then(|url| url.host_str().map(str::to_owned))
-+            .unwrap_or_default();
-+
-+        // Device labels in enumerateDevices follow what the site was already allowed.
-+        if request.is::<DeviceInfoPermissionRequest>() {
-+            if host_was_allowed(&host) {
-+                request.allow();
-+            } else {
-+                request.deny();
+@@ -485,7 +485,27 @@ pub fn set_title_bar_color(
+             .as_ref()
+             .window()
+             .set_background_color(Some(tauri::window::Color(red, green, blue, 255)))
+-            .map_err(|e| format!("Failed to set the title bar color: {}", e))
++            .map_err(|e| format!("Failed to set the title bar color: {}", e))?;
++        // Remember the main window's color for the next launch; failing to
++        // save it costs only that first frame, so it never fails the call.
++        if window.label() == "pake" {
++            let saved = window
++                .app_handle()
++                .path()
++                .app_data_dir()
++                .map_err(|e| e.to_string())
++                .and_then(|directory| {
++                    crate::util::write_title_bar_color(
++                        &directory.join(crate::app::window::TITLE_BAR_COLOR_FILE),
++                        (red, green, blue),
++                    )
++                    .map_err(|e| e.to_string())
++                });
++            if let Err(error) = saved {
++                eprintln!("[Pake] Could not remember the title bar color: {error}");
 +            }
-+            return true;
 +        }
-+
-+        let Some(media) = request.downcast_ref::<UserMediaPermissionRequest>() else {
-+            return false;
-+        };
-+        let audio = media.is_for_audio_device();
-+        let video = media.is_for_video_device();
-+        let key = answer_key(&host, audio, video);
-+        if let Some(allowed) = ANSWERS.with(|answers| answers.borrow().get(&key).copied()) {
-+            answer(request, allowed);
-+            return true;
-+        }
-+
-+        let parent = webview
-+            .toplevel()
-+            .and_then(|widget| widget.downcast::<gtk::Window>().ok());
-+        let (question, deny, allow) = prompt_text(
-+            &host,
-+            audio,
-+            video,
-+            crate::util::UiLanguage::system() != crate::util::UiLanguage::English,
-+        );
-+        let dialog = gtk::MessageDialog::new(
-+            parent.as_ref(),
-+            gtk::DialogFlags::MODAL,
-+            gtk::MessageType::Question,
-+            gtk::ButtonsType::None,
-+            &question,
-+        );
-+        dialog.add_button(deny, gtk::ResponseType::Reject);
-+        dialog.add_button(allow, gtk::ResponseType::Accept);
-+        let request = request.clone();
-+        dialog.connect_response(move |dialog, response| {
-+            // Closing the dialog without choosing is a refusal that is asked again next time.
-+            if matches!(
-+                response,
-+                gtk::ResponseType::Accept | gtk::ResponseType::Reject
-+            ) {
-+                let allowed = response == gtk::ResponseType::Accept;
-+                ANSWERS.with(|answers| answers.borrow_mut().insert(key.clone(), allowed));
-+                answer(&request, allowed);
-+            } else {
-+                request.deny();
-+            }
-+            dialog.close();
-+        });
-+        dialog.show();
-+        true
-+    });
-+}
-+
-+fn answer(request: &webkit2gtk::PermissionRequest, allowed: bool) {
-+    if allowed {
-+        request.allow();
-+    } else {
-+        request.deny();
-+    }
-+}
-+
-+fn host_was_allowed(host: &str) -> bool {
-+    let prefix = format!("{host}|");
-+    ANSWERS.with(|answers| {
-+        answers
-+            .borrow()
-+            .iter()
-+            .any(|(key, allowed)| *allowed && key.starts_with(&prefix))
-+    })
-+}
-+
-+pub(crate) fn answer_key(host: &str, audio: bool, video: bool) -> String {
-+    format!("{host}|{}{}", u8::from(audio), u8::from(video))
-+}
-+
-+/// The question and its two buttons, refusal first.
-+pub(crate) fn prompt_text(
-+    host: &str,
-+    audio: bool,
-+    video: bool,
-+    chinese: bool,
-+) -> (String, &'static str, &'static str) {
-+    if chinese {
-+        let devices = match (audio, video) {
-+            (true, true) => "摄像头和麦克风",
-+            (false, true) => "摄像头",
-+            _ => "麦克风",
-+        };
-+        (format!("{host} 想使用{devices}"), "不允许", "允许")
-+    } else {
-+        let devices = match (audio, video) {
-+            (true, true) => "camera and microphone",
-+            (false, true) => "camera",
-+            _ => "microphone",
-+        };
-+        (
-+            format!("{host} wants to use your {devices}"),
-+            "Don't Allow",
-+            "Allow",
-+        )
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn the_prompt_names_the_site_and_only_the_devices_asked_for() {
-+        assert_eq!(
-+      
++        Ok(())
+     }
+     #[cfg(not(target_os = "macos"))]
+     {
 ```
 
-**File**: `src-tauri/src/app/mod.rs` (modified, +4/-0)
+**File**: `src-tauri/src/app/window.rs` (modified, +44/-10)
 ```diff
-@@ -6,10 +6,14 @@ pub mod config;
- #[cfg(target_os = "windows")]
- pub mod download;
- pub mod invoke;
-+#[cfg(target_os = "linux")]
-+pub mod media_permission;
+@@ -38,6 +38,13 @@ use tauri::Theme;
  #[cfg(target_os = "macos")]
- pub mod menu;
- pub mod navigation;
- pub mod notification;
-+#[cfg(any(target_os = "linux", target_os = "windows", test))]
-+pub mod recovery;
- pub mod setup;
+ use tauri::TitleBarStyle;
+ 
++/// Logical points kept free above a fitted window for its title bar.
++const TITLE_BAR_ALLOWANCE: f64 = 40.0;
++
++/// Where the main window's last title bar color is remembered on macOS.
++#[cfg(target_os = "macos")]
++pub const TITLE_BAR_COLOR_FILE: &str = "title-bar-color.txt";
++
  #[cfg(target_os = "macos")]
- pub mod tab_bar;
-```
-
-**File**: `src-tauri/src/app/recovery.rs` (added, +122/-0)
-```diff
-@@ -0,0 +1,122 @@
-+//! Getting back from a page that failed to load or a web process that died.
-+//!
-+//! WebKitGTK shows a bare engine message for a failed load and a dead grey view
-+//! after its web process exits; WebView2 has its own error page but leaves a
-+//! blank view after a renderer crash. Neither had a way back short of knowing
-+//! Ctrl+R. macOS is not covered: Tauri 2.10 exposes neither hook for WKWebView.
-+
-+#[cfg(target_os = "linux")]
-+pub fn install(webview: &tauri::webview::PlatformWebview) {
-+    use webkit2gtk::{NetworkError, PluginError, PolicyError, WebViewExt};
-+
-+    let gtk_webview = webview.inner();
-+    gtk_webview.connect_load_failed(|webview, _event, uri, error| {
-+        // A cancelled load, a load a download took over and a policy refusal are not failures.
-+        if error.kind::<NetworkError>() == Some(NetworkError::Cancelled)
-+            || error.is::<PolicyError>()
-+            || error.is::<PluginError>()
-+            || uri.starts_with("about:")
-+        {
-+            return false;
-+        }
-+        let host = tauri::Url::parse(uri)
-+            .ok()
-+            .and_then(|url| url.host_str().map(str::to_owned))
-+            .unwrap_or_default();
-+        let chinese = crate::util::UiLanguage::system() != crate::util::UiLanguage::English;
-+        // The failed address stays the page's own, so Try Again and Ctrl+R load it again.
-+        webview.load_alternate_html(&error_page(&host, chinese), uri, None);
-+        true
+ fn prepare_macos_new_window_configuration(features: &NewWindowFeatures) -> tauri::Result<()> {
+     let mtm = MainThreadMarker::new().ok_or_else(|| {
+@@ -536,22 +543,37 @@ fn build_window(
+         .resizable(window_config.resizable)
+         .maximized(window_config.maximize);
+ 
++    // A size preset can be taller than the screen (the tablet one is 820x1180),
++    // so the first window fits the primary monitor's work area; a size the
++    // window-state plugin restores later is left as the user made it.
++    let monitor = app.primary_monitor().ok().flatten();
++    let scale_factor = monitor.as_ref().map(|m| m.scale_factor()).unwrap_or(1.0);
++    let work_area = monitor.as_ref().map(|m| {
++        let size = m.work_area().size;
++        (f64::from(size.width), f64::from(size.height))
 +    });
-+    gtk_webview.connect_web_process_terminated(|webview, _reason| {
-+        webview.reload();
-+    });
-+}
 +
-+#[cfg(target_os = "windows")]
-+pub fn install(webview: &tauri::webview::PlatformWebview) {
-+    use webview2_com::{
-+        Microsoft::Web::WebView2::Win32::{
-+            COREWEBVIEW2_PROCESS_FAILED_KIND,
-+            COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED,
-+        },
-+        ProcessFailedEventHandler,
-+    };
-+
-+    let result = unsafe {
-+        (|| -> windows_core::Result<()> {
-+            let core = webview.controller().CoreWebView2()?;
-+            let mut token = 0;
-+            core.add_ProcessFailed(
-+                &ProcessFailedEventHandler::create(Box::new(|core, args| {
-+                    let (Some(core), Some(args)) = (core, args) else {
-+                        return Ok(());
-+                    };
-+                    let mut kind = COREWEBVIEW2_PROCESS_FAILED_KIND(0);
-+                    args.ProcessFailedKind(&mut kind)?;
-+                    // Only a dead renderer leaves a view that a reload brings back.
-+                    if kind == COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED {
-+                        core.Reload()?;
-+                    }
-+                    Ok(())
-+                })),
-+                &mut token,
-+            )
-+        })()
-+    };
-+    if let Err(error) = result {
-+        eprintln!("[Pake] Failed to watch for a WebView2 renderer crash: {error}");
-+    }
-+}
-+
-+/// A self-contained page for a load that failed: what happened, the site, one way back.
-+#[cfg(any(target_os = "linux", test))]
-+pub(crate) fn error_page(host: &str, chinese: bool) -> String {
-+    let (title, hint, retry) = if chinese {
-+        ("无法打开此页面", "检查网络后再试一次", "重试")
-+    } else {
-+        (
-+            "Can't open this page",
-+            "Check your network, then try again.",
-+            "Try Again",
-+        )
-+    };
-+    let host = host
-+        .replace('&', "&amp;")
-+        .replace('<', "&lt;")
-+        .replace('>', "&gt;");
-+    format!(
-+        r#"<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title><style>
-+html,body{{height:100%;margin:0}}
-+body{{display:flex;align-items:center;justify-content:center;font:14px/1.5 system-ui,-apple-system,"Segoe UI","Noto Sans CJK SC",sans-serif;background:#fff;color:#1d1d1f}}
-+main{{text-align:center;padding:24px;max-width:420px}}
-+h1{{font-size:20px;font-weight:600;margin:0 0 6px}}
-+p{{margin:0;color:#6e6e73}}
-+.host{{margin-top:2px;word-break:break-all}}
-+button{{margin-top:20px;font:inherit;padding:7px 18px;border-radius:8px;border:0;background:#1d1d1f;color:#fff;cursor:pointer}}
-+@media (prefers-color-scheme:dark){{body{{background:#1c1c1e;color:#f5f5f7}}p{{color:#98989d}}button{{background:#f5f5f7;color:#1c1c1e}}}}
-+</style></head><body><main><h1>{title}</h1><p>{hint}</p><p class="host">{host}</p><button onclick="location.reload()">{retry}</button></main></body></html>"#
-+    )
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn the_error_page_names_the_site_and_offers_one_way_back() {
-+        let page = error_page("example.com", false);
-+        assert!(page.contains("Can't open this page"));
-+        assert!(page.contains(r#"<p class="host">example.com</p>"#));
-+        assert_eq!(page.matches("<button").count(), 1);
-+        assert!(page.contains("location.reload()"));
-+        assert!(error_page("example.com", true).co
-```
-
-**File**: `src-tauri/src/app/window.rs` (modified, +16/-0)
-```diff
-@@ -883,6 +883,22 @@ fn build_window(
      #[cfg(target_os = "windows")]
-     crate::app::download::install(&window, download_target)?;
- 
-+    // Every webview is built here, so every one can be asked for the camera and microphone.
-+    #[cfg(target_os = "linux")]
-+    if let Err(error) = window.with_webview(|webview| {
-+        crate::app::media_permission::install(&webview);
-+        crate::app::recovery::install(&webview);
-+    }) {
-+        eprintln!("[Pake] Failed to access WebKitGTK for media permissions and recovery: {error}");
-+    }
-+
-+    #[cfg(target_os = "windows")]
-+    if let Err(error) = window.with_webview(|webview| {
-+        crate::app::recovery::install(&webview);
-+    }) {
-+        eprintln!("[Pake] Failed to access WebView2 for crash recovery: {error}");
-+    }
-+
-     // Every webview is built here (main window, Cmd+N clones, --new-window and
-     // blank two-stage popups), so trackpad history swipes match in all of them.
-     #[cfg(target_os = "macos")]
-```
-
----
-
-### Incident Patch 2: `65513ded` (2026-11-10)
-**Commit Message**: fix: let the page keep its keys, stop endless crash reloads, and escape the autostart entry
-
-Findings of an independent review of 2f38e5ec..03c17008.
-
-The Ctrl+W, Ctrl+Q, Ctrl+L and Alt arrow shortcuts ran on keyup, after
-the page had already acted on the key, so a web terminal deleted a word
-and then lost its window. They now run on keydown from a window listener
-in the bubble phase and leave alone a key the page prevented, as find.js
-does for Ctrl+F; a repeat and AltGr (Ctrl and Alt together) do nothing.
-
-A page that takes its renderer down on every load was reloaded for ever
-on Linux and Windows. At most two automatic reloads in a minute now;
-past that Linux shows the failed-load page and Windows leaves the view.
-
-The camera and microphone dialog answers its request once and is
-destroyed rather than closed (close raised a second response), and goes
-with its window. The Linux autostart Exec is quoted and then escaped as a
-string value, as the format reads it, with env carrying a path that holds
-a percent sign, and a path the key cannot carry gets no entry.
-
-Verified: vitest 793 passed, cargo clippy -D warnings and cargo test
---lib (99) on macOS, and clippy, tests and a deb and rp
-
-**File**: `src-tauri/src/app/autostart.rs` (modified, +46/-10)
-```diff
-@@ -77,11 +77,25 @@ pub(crate) fn launch_agent(identifier: &str, executable: &Path) -> String {
-     )
- }
- 
--/// An XDG autostart entry. Exec quotes the path and doubles `%`, which the
--/// desktop entry format reads as a field code.
-+/// A desktop-entry string value: the format unescapes backslash sequences before anything else.
- #[cfg(any(target_os = "linux", test))]
--pub(crate) fn autostart_entry(name: &str, executable: &Path) -> String {
-+fn entry_value(text: &str) -> String {
-+    text.replace('\\', "\\\\")
-+        .replace('\n', "\\n")
-+        .replace('\r', "\\r")
-+        .replace('\t', "\\t")
-+}
-+
-+/// An XDG autostart entry, or None for a path the Exec key cannot carry (`=`, a control
-+/// character). The argument is quoted first (a backslash before `"`, a backtick, `$` and `\`,
-+/// `%` doubled) and then escaped as a string value, since unescaping happens before unquoting.
-+/// GLib checks argv[0] before it expands `%%`, so a path with `%` is passed to env instead.
-+#[cfg(any(target_os = "linux", test))]
-+pub(crate) fn autostart_entry(name: &str, executable: &Path) -> Option<String> {
-     let path = executable.to_string_lossy();
-+    if path.contains('=') || path.chars().any(char::is_control) {
-+        return None;
-+    }
-     let mut quoted = String::with_capacity(path.len() + 2);
-     quoted.push('"');
-     for character in path.chars() {
-@@ -95,10 +109,16 @@ pub(crate) fn autostart_entry(name: &str, executable: &Path) -> String {
-         }
-     }
-     quoted.push('"');
-+    let command = if path.contains('%') {
-+        format!("/usr/bin/env -- {}", entry_value(&quoted))
-+    } else {
-+        entry_value(&quoted)
-+    };
-     let name: String = name.chars().filter(|c| !c.is_control()).collect();
--    format!(
--        "[Desktop Entry]\nType=Application\nName={name}\nExec={quoted}\nTerminal=false\nX-GNOME-Autostart-enabled=true\n"
--    )
-+    Some(format!(
-+        "[Desktop Entry]\nType=Application\nName={}\nExec={command}\nTerminal=false\nX-GNOME-Autostart-enabled=true\n",
-+        entry_value(&name)
-+    ))
- }
- 
- #[cfg(target_os = "macos")]
-@@ -142,7 +162,12 @@ mod platform {
-         let path = config
-             .join("autostart")
-             .join(format!("{identifier}.desktop"));
--        let content = enabled.then(|| autostart_entry(name, executable));
-+        // A path the entry cannot carry gets no login item rather than a broken one.
-+        let content = if enabled {
-+            autostart_entry(name, executable)
-+        } else {
-+            None
-+        };
-         sync_file(&path, content.as_deref())
-     }
- }
-@@ -233,11 +258,22 @@ mod tests {
-     }
- 
-     #[test]
--    fn the_autostart_entry_quotes_the_path_and_doubles_percent() {
--        let entry = autostart_entry("Hacker\nNews", Path::new("/home/a b/50%/com.pake.a1"));
-+    fn the_autostart_entry_quotes_then_escapes_the_path() {
-+        let entry = autostart_entry("Hacker\nNews", Path::new("/home/a b/com.pake.a1")).unwrap();
-         assert!(entry.contains("Name=HackerNews\n"));
--        assert!(entry.contains("Exec=\"/home/a b/50%%/com.pake.a1\"\n"));
-+        assert!(entry.contains("Exec=\"/home/a b/com.pake.a1\"\n"));
-         assert!(entry.starts_with("[Desktop Entry]\nType=Application\n"));
-+
-+        // Quoted first, then escaped as a string value: a `$` gets one backslash, doubled.
-+        let odd = autostart_entry("A", Path::new("/home/a$b/x")).unwrap();
-+        assert!(odd.contains("Exec=\"/home/a\\\\$b/x\"\n"), "{odd}");
-+        // GLib checks argv[0] before expanding %%, so env carries such a path.
-+        let percent = autostart_entry("A", Path::new("/home/50%/x")).unwrap();
-+        assert!(
-+            percent.contains("Exec=/usr/bin/env -- \"/home/50%%/x\"\n"),
-+            "{percent}"
+     {
+-        let scale_factor = app
+-            .primary_monitor()
+-            .ok()
+-            .flatten()
+-            .map(|m| m.scale_factor())
+-            .unwrap_or(1.0);
+-        let logical_width = window_config.width / scale_factor;
+-        let logical_height = window_config.height / scale_factor;
+-        window_builder = window_builder.inner_size(logical_width, logical_height);
++        // The config size is read as physical pixels here, as before.
++        let (width, height) = crate::util::fit_to_work_area(
++            window_config.width,
++            window_config.height,
++            work_area,
++            TITLE_BAR_ALLOWANCE * scale_factor,
 +        );
-+        assert!(autostart_entry("A", Path::new("/home/a=b/x")).is_none());
++        window_builder = window_builder.inner_size(width / scale_factor, height / scale_factor);
      }
  
-     #[test]
-```
-
-**File**: `src-tauri/src/app/media_permission.rs` (modified, +8/-2)
-```diff
-@@ -64,15 +64,21 @@ pub fn install(webview: &tauri::webview::PlatformWebview) {
-         );
-         let dialog = gtk::MessageDialog::new(
-             parent.as_ref(),
--            gtk::DialogFlags::MODAL,
-+            gtk::DialogFlags::MODAL | gtk::DialogFlags::DESTROY_WITH_PARENT,
-             gtk::MessageType::Question,
-             gtk::ButtonsType::None,
-             &question,
-         );
-         dialog.add_button(deny, gtk::ResponseType::Reject);
-         dialog.add_button(allow, gtk::ResponseType::Accept);
-         let request = request.clone();
-+        // The request is answered once: destroying the dialog raises no second response, where
-+        // close() would send a delete-event and with it another one.
-+        let answered = std::cell::Cell::new(false);
-         dialog.connect_response(move |dialog, response| {
-+            if answered.replace(true) {
-+                return;
-+            }
-             // Closing the dialog without choosing is a refusal that is asked again next time.
-             if matches!(
-                 response,
-@@ -84,7 +90,7 @@ pub fn install(webview: &tauri::webview::PlatformWebview) {
-             } else {
-                 request.deny();
-             }
--            dialog.close();
-+            unsafe { dialog.destroy() };
-         });
-         dialog.show();
-         true
-```
-
-**File**: `src-tauri/src/app/recovery.rs` (modified, +63/-2)
-```diff
-@@ -5,6 +5,30 @@
- //! blank view after a renderer crash. Neither had a way back short of knowing
- //! Ctrl+R. macOS is not covered: Tauri 2.10 exposes neither hook for WKWebView.
+     #[cfg(not(target_os = "windows"))]
+     {
+-        window_builder = window_builder.inner_size(window_config.width, window_config.height);
++        let (width, height) = crate::util::fit_to_work_area(
++            window_config.width,
++            window_config.height,
++            work_area.map(|(width, height)| (width / scale_factor, height / scale_factor)),
++            TITLE_BAR_ALLOWANCE,
++        );
++        window_builder = window_builder.inner_size(width, height);
+     }
  
-+/// A page that takes its renderer down on every load must not be reloaded for ever: after
-+/// `MAX_RELOADS` in `RELOAD_WINDOW` the view is left as it is.
-+const MAX_RELOADS: usize = 2;
-+const RELOAD_WINDOW: std::time::Duration = std::time::Duration::from_secs(60);
-+
-+/// True when one more automatic reload is within the limit, and counts it.
-+pub(crate) fn may_reload(recent: &mut Vec<std::time::Instant>, now: std::time::Instant) -> bool {
-+    recent.retain(|at| now.duration_since(*at) < RELOAD_WINDOW);
-+    if recent.len() >= MAX_RELOADS {
-+        return false;
+     window_builder = window_builder
+@@ -719,6 +741,18 @@ fn build_window(
+         window_builder = window_builder.title_bar_style(title_bar_style);
+         if window_config.title_bar_follows_page() {
+             window_builder = window_builder.hidden_title(true);
++            // Open in the color title_bar.js last painted, so the bar does not
++            // flash the default white before the page reports its own.
++            if label == "pake" {
++                if let Some((red, green, blue)) =
++                    app.path().app_data_dir().ok().and_then(|directory| {
++                        crate::util::read_title_bar_color(&directory.join(TITLE_BAR_COLOR_FILE))
++                    })
++                {
++                    window_builder = window_builder
++                        .background_color(tauri::window::Color(red, green, blue, 255));
++                }
++            }
+         }
+         window_builder = window_builder.theme(theme);
+ 
+```
+
+**File**: `src-tauri/src/inject/title_bar.js` (modified, +15/-1)
+```diff
+@@ -55,9 +55,23 @@
+     return samples[majority === -1 ? 1 : majority];
+   }
+ 
++  // Before the page paints its top edge (or when it is see-through there),
++  // the page's own theme-color still says what the bar should be. A tag with
++  // a media query counts only while that query matches.
++  function themeColor() {
++    const tags = document.querySelectorAll?.('meta[name="theme-color"]') || [];
++    for (const tag of tags) {
++      const media = tag.getAttribute("media");
++      if (media && !window.matchMedia?.(media)?.matches) continue;
++      const color = toRgb(tag.getAttribute("content"));
++      if (color) return color;
 +    }
-+    recent.push(now);
-+    true
-+}
++    return null;
++  }
 +
-+#[cfg(any(target_os = "linux", target_os = "windows"))]
-+fn reload_allowed() -> bool {
-+    use std::cell::RefCell;
-+    thread_local! {
-+        static RECENT: RefCell<Vec<std::time::Instant>> = const { RefCell::new(Vec::new()) };
-+    }
-+    RECENT.with(|recent| may_reload(&mut recent.borrow_mut(), std::time::Instant::now()))
-+}
-+
- #[cfg(target_os = "linux")]
- pub fn install(webview: &tauri::webview::PlatformWebview) {
-     use webkit2gtk::{NetworkError, PluginError, PolicyError, WebViewExt};
-@@ -29,7 +53,18 @@ pub fn install(webview: &tauri::webview::PlatformWebview) {
-         true
-     });
-     gtk_webview.connect_web_process_terminated(|webview, _reason| {
--        webview.reload();
-+        if reload_allowed() {
-+            webview.reload();
-+            return;
-+        }
-+        // Past the limit the page gets the same way back as a failed load, and no more reloads.
-+        let uri = webview.uri().map(|uri| uri.to_string()).unwrap_or_default();
-+        let host = tauri::Url::parse(&uri)
-+            .ok()
-+            .and_then(|url| url.host_str().map(str::to_owned))
-+            .unwrap_or_default();
-+        let chinese = crate::util::UiLanguage::system() != crate::util::UiLanguage::English;
-+        webview.load_alternate_html(&error_page(&host, chinese), &uri, None);
-     });
+   function update() {
+     pending = 0;
+-    const color = pageTopColor();
++    const color = pageTopColor() || themeColor();
+     if (!color) return;
+     const key = `${color.red},${color.green},${color.blue}`;
+     if (key === lastSent) return;
+```
+
+**File**: `src-tauri/src/util.rs` (modified, +84/-0)
+```diff
+@@ -206,6 +206,55 @@ pub fn write_last_url(path: &Path, url: &tauri::Url) -> std::io::Result<()> {
+     Ok(())
  }
  
-@@ -55,7 +90,9 @@ pub fn install(webview: &tauri::webview::PlatformWebview) {
-                     let mut kind = COREWEBVIEW2_PROCESS_FAILED_KIND(0);
-                     args.ProcessFailedKind(&mut kind)?;
-                     // Only a dead renderer leaves a view that a reload brings back.
--                    if kind == COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED {
-+                    if kind == COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED
-+                        && reload_allowed()
-+                    {
-                         core.Reload()?;
-                     }
-                     Ok(())
-@@ -113,6 +150,30 @@ mod tests {
-         assert!(error_page("example.com", true).contains("无法打开此页面"));
++/// The title bar color last painted on macOS, stored as `r,g,b`, so the next
++/// launch opens in it instead of flashing the default bar first.
++#[cfg(any(target_os = "macos", test))]
++pub fn parse_title_bar_color(value: &str) -> Option<(u8, u8, u8)> {
++    let mut parts = value
++        .trim()
++        .split(',')
++        .map(|part| part.trim().parse::<u8>());
++    let color = (
++        parts.next()?.ok()?,
++        parts.next()?.ok()?,
++        parts.next()?.ok()?,
++    );
++    parts.next().is_none().then_some(color)
++}
++
++#[cfg(any(target_os = "macos", test))]
++pub fn read_title_bar_color(path: &Path) -> Option<(u8, u8, u8)> {
++    std::fs::read_to_string(path)
++        .ok()
++        .and_then(|value| parse_title_bar_color(&value))
++}
++
++#[cfg(any(target_os = "macos", test))]
++pub fn write_title_bar_color(path: &Path, (red, green, blue): (u8, u8, u8)) -> std::io::Result<()> {
++    if let Some(parent) = path.parent() {
++        std::fs::create_dir_all(parent)?;
++    }
++    std::fs::write(path, format!("{red},{green},{blue}"))
++}
++
++/// Fits a configured window into the monitor's work area, leaving room for
++/// the title bar, so a tall preset never opens past the bottom of the screen.
++/// All values share one unit: logical points on macOS and Linux, physical
++/// pixels on Windows, where the config size is read as physical.
++pub fn fit_to_work_area(
++    width: f64,
++    height: f64,
++    area: Option<(f64, f64)>,
++    chrome: f64,
++) -> (f64, f64) {
++    match area {
++        Some((area_width, area_height)) if area_width > 0.0 && area_height > chrome => {
++            (width.min(area_width), height.min(area_height - chrome))
++        }
++        _ => (width, height),
++    }
++}
++
+ /// Both native and IPC downloads use the trusted, packaged configuration.
+ pub fn get_download_dir(app: &AppHandle) -> Result<PathBuf, String> {
+     let state = app
+@@ -520,6 +569,41 @@ mod tests {
+         dir
      }
  
 +    #[test]
-+    fn a_page_that_keeps_crashing_is_reloaded_twice_a_minute_at_most() {
-+        let start = std::time::Instant::now();
-+        let mut recent = Vec::new();
-+        assert!(may_reload(&mut recent, start));
-+        assert!(may_reload(
-+            &mut recent,
-+            start + std::time::Duration::from_secs(1)
-+        ));
-+        assert!(!may_reload(
-+            &mut recent,
-+            start + std::time::Duration::from_secs(2)
-+        ));
-+        assert!(!may_reload(
-+            &mut recent,
-+            start + std::time::Duration::from_secs(59)
-+        ));
-+        // Once the first reload is a minute old there is room for one more.
-+        assert!(may_reload(
-+            &mut recent,
-+            start + std::time::Duration::from_secs(61)
-+        ));
++    fn title_bar_color_round_trips_and_rejects_anything_else() {
++        let path = temp_path("state/title-bar-color.txt");
++        assert_eq!(read_title_bar_color(&path), None);
++        write_title_bar_color(&path, (17, 24, 39)).unwrap();
++        assert_eq!(read_title_bar_color(&path), Some((17, 24, 39)));
++        assert_eq!(parse_title_bar_color(" 255, 0 ,8\n"), Some((255, 0, 8)));
++        for value in ["", "1,2", "1,2,3,4", "256,0,0", "-1,0,0", "a,b,c", "1,,3"] {
++            assert_eq!(parse_title_bar_color(value), None, "{value:?}");
++        }
++        fs::remove_dir_all(path.parent().unwrap().parent().unwrap()).unwrap();
++    }
++
++    #[test]
++    fn a_window_taller_than_the_work_area_fits_inside_it() {
++        // The tablet preset on a 1440x900 MacBook Air with the Dock shown.
++        assert_eq!(
++            fit_to_work_area(820.0, 1180.0, Some((1440.0, 875.0)), 32.0),
++            (820.0, 843.0)
++        );
++        assert_eq!(
++            fit_to_work_area(1200.0, 780.0, Some((1440.0, 875.0)), 32.0),
++            (1200.0, 780.0)
++        );
++        assert_eq!(
++            fit_to_work_area(3000.0, 780.0, Some((1440.0, 875.0)), 32.0),
++            (1440.0, 780.0)
++        );
++        assert_eq!(fit_to_work_area(820.0, 1180.0, None, 32.0), (820.0, 1180.0));
++        assert_eq!(
++            fit_to_work_area(820.0, 1180.0, Some((0.0, 0.0)), 32.0),
++            (820.0, 1180.0)
++        );
 +    }
 +
      #[test]
-     fn a_host_cannot_inject_markup_into_the_error_page() {
-         let page = error_page("<script>alert(1)</script>", false);
+     fn last_url_round_trip_preserves_full_address() {
+         let path = temp_path("state/last-url.txt");
 ```
 
-**File**: `src-tauri/src/inject/event.js` (modified, +26/-16)
+**File**: `tests/unit/title-bar-color.test.js` (modified, +30/-1)
 ```diff
-@@ -128,28 +128,37 @@ const altShortcuts = {
-   ArrowRight: () => nativeNavigate("forward"),
- };
- 
--function handleWebShortcut(event) {
--  if (isNonMacDesktop() && event.ctrlKey) {
--    const plain = !event.shiftKey && !event.altKey && !event.metaKey;
--    const windowShortcut = plain && windowShortcuts[event.key?.toLowerCase?.()];
--    if (windowShortcut) {
--      event.preventDefault();
--      windowShortcut();
--      return;
--    }
--    handleShortcut(event);
-+// The page gets these keys first: this listens on window for keydown in the
-+// bubble phase, after the page's own handlers, and leaves alone a key the page
-+// prevented. A web terminal or editor that takes Ctrl+W (delete a word), Ctrl+L
-+// (clear) or Alt+Left (word left) on keydown keeps it, as find.js does for Ctrl+F.
-+function handleWindowShortcut(event) {
-+  if (!isNonMacDesktop() || event.defaultPrevented || event.repeat) {
-     return;
-   }
- 
--  if (
--    isNonMacDesktop() &&
-+  let action;
-+  if (event.ctrlKey && !event.shiftKey && !event.altKey && !event.metaKey) {
-+    action = windowShortcuts[event.key?.toLowerCase?.()];
-+  } else if (
-     event.altKey &&
-+    !event.ctrlKey &&
-     !event.shiftKey &&
--    !event.metaKey &&
--    altShortcuts[event.key]
-+    !event.metaKey
-   ) {
--    event.preventDefault();
--    altShortcuts[event.key]();
-+    action = altShortcuts[event.key];
-+  }
-+  if (!action) {
-+    return;
-+  }
-+
-+  event.preventDefault();
-+  action();
-+}
-+
-+function handleWebShortcut(event) {
-+  if (isNonMacDesktop() && event.ctrlKey) {
-+    handleShortcut(event);
-     return;
-   }
- 
-@@ -742,6 +751,7 @@ document.addEventListener("DOMContentLoaded", () => {
-   if (window["pakeConfig"]?.disabled_web_shortcuts !== true) {
-     document.addEventListener("keydown", handleWindowFullscreenShortcut, true);
-     document.addEventListener("keyup", handleWebShortcut);
-+    window.addEventListener("keydown", handleWindowShortcut);
-   }
- 
-   document.addEventListener("keydown", handleClipboardShortcut, true);
-```
-
-**File**: `tests/unit/event-fullscreen-shortcuts.test.js` (modified, +27/-3)
-```diff
-@@ -179,6 +179,12 @@ function getFullscreenShortcutHandler(context) {
-   ).handler;
+@@ -21,7 +21,7 @@ function element(background, parentElement = null) {
+   return { background, parentElement };
  }
  
-+function getWindowShortcutHandler(context) {
-+  return context.eventListeners.keydown.find(
-+    ({ handler }) => handler.name === "handleWindowShortcut",
-+  ).handler;
-+}
-+
- function getWebShortcutHandler(context) {
-   return context.eventListeners.keyup.find(
-     ({ handler }) => handler.name === "handleWebShortcut",
-@@ -245,7 +251,7 @@ describe("event fullscreen shortcuts", () => {
+-function loadTitleBar({ columns, width = 1000 }) {
++function loadTitleBar({ columns, width = 1000, metas = [], matching = [] }) {
+   const calls = [];
+   let current = columns;
+   let timer = null;
+@@ -58,6 +58,12 @@ function loadTitleBar({ columns, width = 1000 }) {
+           }),
+         };
        },
-     };
-     context.window.location = { href: "https://example.com/page" };
--    const handler = getWebShortcutHandler(context);
-+    const handler = getWindowShortcutHandler(context);
- 
-     handler(createKeyEvent("w", { ctrlKey: true }));
-     expect(context.closeCalls).toEqual(["close"]);
-@@ -263,7 +269,7 @@ describe("event fullscreen shortcuts", () => {
- 
-   it("goes back and forward on Alt+Left and Alt+Right on Windows and Linux", () => {
-     const context = loadEventHelpers();
--    const handler = getWebShortcutHandler(context);
-+    const handler = getWindowShortcutHandler(context);
- 
-     handler(createKeyEvent("ArrowLeft", { altKey: true }));
-     handler(createKeyEvent("ArrowRight", { altKey: true }));
-@@ -278,7 +284,7 @@ describe("event fullscreen shortcuts", () => {
-         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15",
-       platform: "MacIntel",
-     });
--    const handler = getWebShortcutHandler(context);
-+    const handler = getWindowShortcutHandler(context);
- 
-     handler(createKeyEvent("w", { ctrlKey: true }));
-     handler(createKeyEvent("ArrowLeft", { altKey: true }));
-@@ -287,6 +293,24 @@ describe("event fullscreen shortcuts", () => {
-     expect(context.navigateCalls).toEqual([]);
++      querySelectorAll: (selector) =>
++        selector === 'meta[name="theme-color"]'
++          ? metas.map((attributes) => ({
++              getAttribute: (name) => attributes[name] ?? null,
++            }))
++          : [],
+       elementFromPoint(x) {
+         const column = Math.min(2, Math.floor((x / width) * 3));
+         return current[column];
+@@ -66,6 +72,7 @@ function loadTitleBar({ columns, width = 1000 }) {
+     window: {
+       innerWidth: width,
+       addEventListener() {},
++      matchMedia: (query) => ({ matches: matching.includes(query) }),
+       getComputedStyle: (node) => ({ backgroundColor: node.background }),
+       __TAURI__: {
+         core: {
+@@ -133,6 +140,28 @@ describe("macOS transparent title bar color", () => {
+     expect(calls.map((call) => call.args.red)).toEqual([255, 30]);
    });
  
-+  it("leaves a window shortcut to a page that handled the key itself", () => {
-+    const context = loadEventHelpers();
-+    const handler = getWindowShortcutHandler(context);
-+
-+    // A web terminal takes Ctrl+W on keydown and prevents the default.
-+    handler(createKeyEvent("w", { ctrlKey: true, defaultPrevented: true }));
-+    handler(
-+      createKeyEvent("ArrowLeft", { altKey: true, defaultPrevented: true }),
-+    );
-+    handler(createKeyEvent("w", { ctrlKey: true, repeat: true }));
-+    // AltGr on European layouts reports Ctrl and Alt together.
-+    handler(createKeyEvent("q", { ctrlKey: true, altKey: true }));
-+
-+    expect(context.closeCalls).toEqual([]);
-+    expect(context.navigateCalls).toEqual([]);
-+    expect(context.invokeCalls).not.toContain("quit_app");
++  it("falls back to the theme-color whose media query matches", () => {
++    const clear = element("0,0,0,0");
++    const { calls } = loadTitleBar({
++      columns: [clear, clear, clear],
++      metas: [
++        { content: "250,250,250,255", media: "(prefers-color-scheme: light)" },
++        { content: "18,18,20,255", media: "(prefers-color-scheme: dark)" },
++      ],
++      matching: ["(prefers-color-scheme: dark)"],
++    });
++    expect(calls[0].args).toEqual({ red: 18, green: 18, blue: 20 });
 +  });
 +
-   it("keeps macOS scroll-to-edge shortcuts in the webview", () => {
-     const context = loadEventHelpers({
-       userAgent:
++  it("prefers the painted top edge over the theme-color", () => {
++    const page = element("40,40,40,255");
++    const { calls } = loadTitleBar({
++      columns: [page, page, page],
++      metas: [{ content: "250,250,250,255" }],
++    });
++    expect(calls[0].args).toEqual({ red: 40, green: 40, blue: 40 });
++  });
++
+   it("leaves the native color alone when nothing on top is painted", () => {
+     const clear = element("0,0,0,0");
+     const { calls } = loadTitleBar({ columns: [clear, clear, null] });
 ```
 
 ---
 
-### Incident Patch 3: `4c0db527` (2026-11-10)
-**Commit Message**: feat: close, quit and copy the address on Windows and Linux, and show a finished download
+### Incident Patch 2: `be35fa33` (2026-11-13)
+**Commit Message**: fix: leave full screen at the configured size on macOS
 
-Windows and Linux apps have no menu, so what the macOS menu carries was
-out of reach there. Ctrl+W closes the window through its close request
-(hide-on-close still applies), Ctrl+Q quits with the tray's window-state
-flags, Ctrl+L copies the page address, and Alt+Left / Alt+Right go back
-and forward. A browser keeps all of these for itself, so no page relies
-on them; Shift or Alt with Ctrl is left to the page, and macOS is
-unchanged.
+A macOS app set to start in full screen returned to the screen's size,
+not its configured one, when it left full screen: tao gives a window
+built with fullscreen(true) the screen's frame as its own size
+(platform_impl/macos/window.rs, the frame match on attrs.fullscreen),
+and that frame is what AppKit restores. So a Pake app made with the
+tablet preset and full screen could never get back to 820 wide.
 
-A finished download's toast was the only trace of the file on macOS and
-Linux. It now reads "Download successful, click to show in folder~" and a
-click shows the file in the file manager through the opener plugin. The
-page asks for "the last download" and never names a path; WKWebView
-reports no path on finish, so the destination set at the request is
-remembered per address.
+macOS now builds the window at its configured size and enters full
+screen the first time each window is shown, as Linux already does. A
+window enters once, so one the user took out of full screen stays out
+when it is hidden and shown again; a popup built visible enters at
+once. Windows keeps the builder flag, since tao there creates the
+window at its size before going full screen.
 
-New commands quit_app and reveal_download, both in the default
-capability. Verified: vitest 792 passed (new cases for the five
-shortcuts and the macOS no-op), clippy and cargo test on macOS and on the
-devbox. Not verified by hand: the toast click on a real download.
+Verified on the test Mac (macOS 26.7.2) with a tablet-sized,
+full-screen app: before, leaving full screen gave 1708x983; after, it
+gives 820x963 and the app still opens in full screen. cargo test
+(102) and clippy --all-targets -D warnings pass on macOS; the Windows
+and Linux arms are compiled only by CI.
 
-**File**: `src-tauri/build.rs` (modified, +2/-0)
+**File**: `src-tauri/src/app/window.rs` (modified, +42/-1)
 ```diff
-@@ -14,6 +14,8 @@ fn main() {
-             "set_zoom",
-             "webview_navigate",
-             "set_title_bar_color",
-+            "quit_app",
-+            "reveal_download",
-         ]),
-     ))
-     .expect("Failed to build Pake permissions")
-```
-
-**File**: `src-tauri/capabilities/default.json` (modified, +2/-0)
-```diff
-@@ -15,6 +15,8 @@
-     "allow-set-zoom",
-     "allow-webview-navigate",
-     "allow-set-title-bar-color",
-+    "allow-quit-app",
-+    "allow-reveal-download",
-     "shell:allow-open",
-     "core:window:allow-theme",
-     "core:window:allow-start-dragging",
-```
-
-**File**: `src-tauri/src/app/invoke.rs` (modified, +31/-2)
-```diff
-@@ -396,9 +396,10 @@ pub async fn download_file(
-                 return Err(error);
-             }
- 
--            show_toast(
-+            crate::util::show_download_finished(
-                 &window,
--                &get_download_message_with_lang(MessageType::Success, params.language.clone()),
-+                Some(std::path::PathBuf::from(&file_path)),
-+                params.language.clone(),
-             );
-             Ok(())
-         }
-@@ -529,6 +530,34 @@ pub fn webview_navigate(window: WebviewWindow, action: String) -> Result<(), Str
+@@ -319,9 +319,38 @@ pub fn reveal_built_window(window: &WebviewWindow) {
      }
+     let _ = window.show();
+     reapply_window_icon(window);
++    #[cfg(target_os = "macos")]
++    enter_configured_fullscreen(window);
+     let _ = window.set_focus();
  }
  
-+/// Shows the last finished download in the file manager, for a click on its toast.
-+#[command]
-+pub fn reveal_download(app: AppHandle) -> Result<(), String> {
-+    let path = app
-+        .try_state::<crate::util::LastDownload>()
-+        .and_then(|last| last.0.lock().ok().and_then(|slot| slot.clone()))
-+        .ok_or_else(|| "No finished download to show".to_string())?;
-+    tauri_plugin_opener::reveal_item_in_dir(path).map_err(|error| error.to_string())
++/// Puts a window into full screen the first time it is shown when the app is set to
++/// start in full screen. Once per window, so a window the user took out of full
++/// screen stays out when it is hidden and shown again.
++#[cfg(target_os = "macos")]
++pub fn enter_configured_fullscreen(window: &WebviewWindow) {
++    static ENTERED: std::sync::Mutex<Vec<String>> = std::sync::Mutex::new(Vec::new());
++    let configured = window
++        .app_handle()
++        .try_state::<MultiWindowState>()
++        .is_some_and(|state| state.pake_config.windows[0].fullscreen);
++    let Ok(mut entered) = ENTERED.lock() else {
++        return;
++    };
++    let label = window.label().to_string();
++    let first_show = !entered.contains(&label);
++    if crate::util::enters_fullscreen_on_show(
++        configured,
++        first_show,
++        window.is_fullscreen().unwrap_or(false),
++    ) {
++        let _ = window.set_fullscreen(true);
++    }
++    if configured && first_show {
++        entered.push(label);
++    }
 +}
 +
-+/// Quit for the injected Ctrl+Q on Windows and Linux, which have no app menu to carry it.
-+/// Saves the window state with the same flags as the tray's Quit.
-+#[command]
-+pub fn quit_app(app: AppHandle) {
-+    use tauri_plugin_window_state::{AppHandleExt, StateFlags};
+ /// True when any Pake webview window is currently on screen.
+ ///
+ /// A minimized window does not count. Windows keeps `IsWindowVisible` true while
+@@ -353,6 +382,8 @@ pub fn show_all_app_windows(app: &AppHandle, init_fullscreen: bool) {
+         if init_fullscreen && !window.is_fullscreen().unwrap_or(false) {
+             let _ = window.set_fullscreen(true);
+         }
++        #[cfg(target_os = "macos")]
++        enter_configured_fullscreen(window);
+     }
+     #[cfg(not(target_os = "linux"))]
+     let _ = init_fullscreen;
+@@ -580,7 +611,10 @@ fn build_window(
+         .always_on_top(window_config.always_on_top)
+         .incognito(window_config.incognito);
+ 
+-    #[cfg(any(target_os = "windows", target_os = "macos"))]
++    // macOS enters full screen once the window is shown (`enter_configured_fullscreen`):
++    // tao gives a window built full screen the screen's frame as its own size, so
++    // leaving full screen kept the screen's size instead of the configured one.
++    #[cfg(target_os = "windows")]
+     {
+         window_builder = window_builder.fullscreen(window_config.fullscreen);
+     }
+@@ -913,6 +947,13 @@ fn build_window(
+ 
+     let window = window_builder.build()?;
+ 
++    // A popup is built visible, so it can enter full screen now; a hidden window
++    // enters when it is first shown.
++    #[cfg(target_os = "macos")]
++    if visible {
++        enter_configured_fullscreen(&window);
++    }
 +
-+    let fullscreen = app
-+        .try_state::<crate::app::window::MultiWindowState>()
-+        .is_some_and(|state| state.pake_config.windows[0].fullscreen);
-+    let flags = if fullscreen {
-+        StateFlags::all()
-+    } else {
-+        StateFlags::all() & !StateFlags::FULLSCREEN
-+    };
-+    let _ = app.save_window_state(flags);
-+    app.exit(0);
+     #[cfg(target_os = "windows")]
+     {
+         let password_autosave = window_config.password_autosave_enabled();
+```
+
+**File**: `src-tauri/src/lib.rs` (modified, +9/-0)
+```diff
+@@ -27,6 +27,8 @@ const WEBKIT_DMABUF_RENDERER_FORCE_SHM: &str = "WEBKIT_DMABUF_RENDERER_FORCE_SHM
+ #[cfg(target_os = "linux")]
+ const GDK_BACKEND: &str = "GDK_BACKEND";
+ 
++#[cfg(target_os = "macos")]
++use app::window::enter_configured_fullscreen;
+ use app::{
+     invoke::{
+         clear_dock_badge, close_notification, download_file, increment_dock_badge, quit_app,
+@@ -85,6 +87,9 @@ fn reveal_startup_window(window: WebviewWindow, init_fullscreen: bool, revealed:
+             }
+         }
+ 
++        #[cfg(target_os = "macos")]
++        enter_configured_fullscreen(&window);
++
+         #[cfg(not(target_os = "linux"))]
+         let _ = init_fullscreen;
+     });
+@@ -359,6 +364,8 @@ pub fn run_app() {
+                     let _ = window.unminimize();
+                     let _ = window.show();
+                     reapply_window_icon(&window);
++                    #[cfg(target_os = "macos")]
++                    enter_configured_fullscreen(&window);
+                     let _ = window.set_focus();
+                 }
+             },
+@@ -552,6 +559,8 @@ pub fn run_app() {
+                         cancel_startup_reveal(&reopen_revealed);
+                         let _ = window.show();
+                         reapply_window_icon(&window);
++                        #[cfg(target_os = "macos")]
++                        enter_configured_fullscreen(&window);
+                         let _ = window.set_focus();
+                     }
+                 }
+```
+
+**File**: `src-tauri/src/util.rs` (modified, +17/-0)
+```diff
+@@ -542,6 +542,13 @@ pub fn check_file_or_append(file_path: &str) -> String {
+     new_path.to_string_lossy().into_owned()
+ }
+ 
++/// Whether a window enters full screen as it is shown: only when the app is set to
++/// start in full screen, only on the window's first show, and not when it already is.
++#[cfg(any(target_os = "macos", test))]
++pub fn enters_fullscreen_on_show(configured: bool, first_show: bool, fullscreen_now: bool) -> bool {
++    configured && first_show && !fullscreen_now
 +}
 +
  #[cfg(test)]
  mod tests {
      use super::*;
-```
-
-**File**: `src-tauri/src/app/window.rs` (modified, +19/-10)
-```diff
-@@ -802,6 +802,9 @@ fn build_window(
-     #[cfg(not(target_os = "windows"))]
-     {
-         let download_handle = app.clone();
-+        // WKWebView reports no path when a download finishes, so remember where each was sent.
-+        let destinations: std::sync::Mutex<std::collections::HashMap<String, PathBuf>> =
-+            std::sync::Mutex::new(std::collections::HashMap::new());
-         window_builder = window_builder.on_download(move |webview, event| match event {
-             DownloadEvent::Requested { url, destination } => {
-                 match get_download_dir(&download_handle) {
-@@ -821,6 +824,9 @@ fn build_window(
-                         let target = download_dir.join(sanitize_download_filename(&filename));
-                         if let Some(path_str) = target.to_str() {
-                             *destination = PathBuf::from(check_file_or_append(path_str));
-+                            if let Ok(mut sent) = destinations.lock() {
-+                                sent.insert(url.to_string(), destination.clone());
-+                            }
-                         } else {
-                             eprintln!("[Pake] Download destination is not valid UTF-8");
-                             return false;
-@@ -842,23 +848,26 @@ fn build_window(
-                 }
-                 true
-             }
--            DownloadEvent::Finished {
--                url: _,
--                path: _,
--                success,
--            } => {
-+            DownloadEvent::Finished { url, path, success } => {
-+                let saved = destinations
-+                    .lock()
-+                    .ok()
-+                    .and_then(|mut sent| sent.remove(url.as_str()))
-+                    .or(path);
-                 // Toast on the window that started the download (including
-                 // secondary multi-window labels), not a hard-coded "pake".
-                 let toast_window = download_handle
-                     .get_webview_window(webview.label())
-                     .or_else(|| download_handle.get_webview_window("pake"));
-                 if let Some(window) = toast_window {
--                    let message_type = if success {
--                        MessageType::Success
-+                    if success {
-+                        crate::util::show_download_finished(&window, saved, None);
-                     } else {
--                        MessageType::Failure
--                    };
--                    show_toast(&window, &get_download_message_with_lang(message_type, None));
-+                        show_toast(
-+                            &window,
-+                            &get_download_message_with_lang(MessageType::Failure, None),
-+                        );
-+                    }
-                 }
-                 true
-             }
-```
-
-**File**: `src-tauri/src/inject/event.js` (modified, +63/-0)
-```diff
-@@ -84,12 +84,75 @@ function handleShortcut(event) {
-   }
- }
- 
-+// What the macOS app menu carries and Windows and Linux, with no menu, lacked:
-+// close the window, quit, copy the page address, as a browser's Ctrl+W, Ctrl+Q
-+// and Ctrl+L. A browser keeps all three for itself, so no page relies on them.
-+function closeCurrentWindow() {
-+  // close() raises the window's close request, so hide-on-close still applies.
-+  window.__TAURI__?.window?.getCurrentWindow?.()?.close?.();
-+}
-+
-+function quitApp() {
-+  window.__TAURI__?.core?.invoke?.("quit_app")?.catch?.(() => {});
-+}
-+
-+function copyPageAddress() {
-+  const address = window.location.href;
-+  const write = navigator.clipboard?.writeText?.(address);
-+  if (write?.catch) {
-+    write.catch(() => copyTextWithSelection(address));
-+  } else if (!write) {
-+    copyTextWithSelection(address);
-+  }
-+}
-+
-+function copyTextWithSelection(text) {
-+  const field = document.createElement("textarea");
-+  field.value = text;
-+  field.setAttribute("readonly", "");
-+  field.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
-+  document.body.appendChild(field);
-+  field.select();
-+  document.execCommand("copy");
-+  field.remove();
-+}
-+
-+const windowShortcuts = {
-+  w: closeCurrentWindow,
-+  q: quitApp,
-+  l: copyPageAddress,
-+};
-+
-+const altShortcuts = {
-+  ArrowLeft: () => nativeNavigate("back"),
-+  ArrowRight: () => nativeNavigate("forward"),
-+};
-+
- function handleWebShortcut(event) {
-   if (isNonMacDesktop() && event.ctrlKey) {
-+    const plain = !event.shiftKey && !event.altKey && !event.metaKey;
-+    const windowShortcut = plain && windowShortcuts[event.key?.toLowerCase?.()];
-+    if (windowShortcut) {
-+      event.preventDefault();
-+      windowShortcut();
-+      return;
-+    }
-     handleShortcut(event);
-     return;
-   }
- 
-+  if (
-+    isNonMacDesktop() &&
-+    event.altKey &&
-+    !event.shiftKey &&
-+    !event.metaKey &&
-+    altShortcuts[event.key]
-+  ) {
-+    event.preventDefault();
-+    altShortcuts[event.key]();
-+    return;
-+  }
-+
-   const isMac = /mac/i.test(getDesktopPlatform());
-   const isMacScrollShortcut =
-     event.key === "ArrowUp" || event.key === "ArrowDown";
-```
-
-**File**: `src-tauri/src/inject/toast.js` (modified, +22/-10)
-```diff
-@@ -1,21 +1,33 @@
- // Lightweight in-page toast used by Rust `show_toast` (download status, etc).
- // Kept tiny and always loaded so the Rust side can rely on `window.pakeToast`.
- document.addEventListener("DOMContentLoaded", () => {
--  function pakeToast(msg) {
-+  // `action` names a Pake command a click on the toast runs (showing a finished
-+  // download in the file manager); such a toast stays twice as long.
-+  function pakeToast(msg, action) {
-     const m = document.createElement("div");
-     m.innerHTML = msg;
-     m.style.cssText =
-       "max-width:60%;min-width: 80px;padding:0 12px;height: 32px;color: rgb(255, 255, 255);line-height: 32px;text-align: center;border-radius: 8px;position: fixed; bottom:24px;right: 28px;z-index: 999999;background: rgba(0, 0, 0,.8);font-size: 13px;";
-+    if (action) {
-+      m.style.cursor = "pointer";
-+      m.addEventListener("click", function () {
-+        const invoke = window.__TAURI__?.core?.invoke;
-+        if (invoke) invoke(action).catch(function () {});
-+      });
-+    }
-     document.body.appendChild(m);
--    setTimeout(function () {
--      const d = 0.5;
--      m.style.transition =
--        "transform " + d + "s ease-in, opacity " + d + "s ease-in";
--      m.style.opacity = "0";
--      setTimeout(function () {
--        document.body.removeChild(m);
--      }, d * 1000);
--    }, 3000);
-+    setTimeout(
-+      function () {
-+        const d = 0.5;
-+        m.style.transition =
-+          "transform " + d + "s ease-in, opacity " + d + "s ease-in";
-+        m.style.opacity = "0";
-+        setTimeout(function () {
-+          document.body.removeChild(m);
-+        }, d * 1000);
-+      },
-+      action ? 6000 : 3000,
-+    );
-   }
- 
-   window.pakeToast = pakeToast;
-```
-
-**File**: `src-tauri/src/lib.rs` (modified, +6/-3)
-```diff
-@@ -29,9 +29,9 @@ const GDK_BACKEND: &str = "GDK_BACKEND";
- 
- use app::{
-     invoke::{
--        clear_dock_badge, close_notification, download_file, increment_dock_badge,
--        send_notification, set_dock_badge, set_dock_badge_label, set_title_bar_color, set_zoom,
--        update_theme_mode, webview_navigate,
-+        clear_dock_badge, close_notification, download_file, increment_dock_badge, quit_app,
-+        reveal_download, send_notification, set_dock_badge, set_dock_badge_label,
-+        set_title_bar_color, set_zoom, update_theme_mode, webview_navigate,
-     },
-     setup::{set_global_shortcut, set_system_tray},
-     window::{
-@@ -413,13 +413,16 @@ pub fn run_app() {
-             set_zoom,
-             webview_navigate,
-             set_title_bar_color,
-+            quit_app,
-+            reveal_download,
-         ])
-         .setup(move |app| {
-             // Grant remote IPC only to the immutable, packaged entry origins,
-             // before any webview can start loading untrusted content.
-             if let Some(capability) = pake_config.remote_capability()? {
-                 app.add_capability(capability)?;
-             }
-+            app.manage(crate::util::LastDownload::default());
-             app.manage(MultiWindowState::new(
-                 pake_config.clone(),
-                 tauri_config.clone(),
-```
-
-**File**: `src-tauri/src/util.rs` (modified, +34/-0)
-```diff
-@@ -262,9 +262,41 @@ pub fn show_toast(window: &WebviewWindow, message: &str) {
+@@ -582,6 +589,16 @@ mod tests {
+         fs::remove_dir_all(path.parent().unwrap().parent().unwrap()).unwrap();
      }
- }
  
-+/// The file the last finished download wrote, so its toast can show it in the file manager.
-+/// The page only asks for "the last download"; it never names a path itself.
-+#[derive(Default)]
-+pub struct LastDownload(pub std::sync::Mutex<Option<PathBuf>>);
-+
-+/// The success toast for a download that knows where its file went: a click on it shows the
-+/// file in the file manager. Without a known path it is the plain success toast.
-+pub fn show_download_finished(
-+    window: &WebviewWindow,
-+    path: Option<PathBuf>,
-+    language: Option<String>,
-+) {
-+    let Some(path) = path else {
-+        show_toast(
-+            window,
-+            &get_download_message_with_lang(MessageType::Success, language),
-+        );
-+        return;
-+    };
-+    if let Some(last) = window.app_handle().try_state::<LastDownload>() {
-+        if let Ok(mut slot) = last.0.lock() {
-+            *slot = Some(path);
-+        }
++    #[test]
++    fn a_window_enters_configured_full_screen_only_on_its_first_show() {
++        assert!(enters_fullscreen_on_show(true, true, false));
++        // Hidden and shown again after the user left full screen: stays out.
++        assert!(!enters_fullscreen_on_show(true, false, false));
++        // Restored full screen by the window state plugin: nothing to do.
++        assert!(!enters_fullscreen_on_show(true, true, true));
++        assert!(!enters_fullscreen_on_show(false, true, false));
 +    }
-+    let message = get_download_message_with_lang(MessageType::SuccessReveal, language);
-+    let script = format!(r#"pakeToast("{message}", "reveal_download");"#);
-+    if let Err(error) = window.eval(&script) {
-+        eprintln!("[Pake] Failed to show toast: {error}");
-+    }
-+}
 +
- pub enum MessageType {
-     Start,
-     Success,
-+    SuccessReveal,
-     Failure,
-     DirectoryFailure,
- }
-@@ -308,13 +340,15 @@ pub fn get_download_message_with_lang(
-         match message_type {
-             MessageType::Start => chinese_start_message,
-             MessageType::Success => chinese_success_message,
-+            MessageType::SuccessReveal => "下载成功，点击在文件夹中显示~",
-             MessageType::Failure => chinese_failure_message,
-             MessageType::DirectoryFailure => "无法保存到下载目录~",
-         }
-     } else {
-         match message_type {
-             MessageType::Start => default_start_message,
-             MessageType::Success => default_success_message,
-+            MessageType::SuccessReveal => "Download successful, click to show in folder~",
-             MessageType::Failure => default_failure_message,
-             MessageType::DirectoryFailure => "Cannot save to the download directory~",
-         }
+     #[test]
+     fn a_window_taller_than_the_work_area_fits_inside_it() {
+         // The tablet preset on a 1440x900 MacBook Air with the Dock shown.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2110,28 +1474,48 @@ devbox. Not verified by hand: the toast click on a real download.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linux): ask before a page uses the camera or microphone, and recover from a fail
+## X. open the title bar in its last color and fit tall windows on screen
 
 **RULE**:
-When implementing operations in `src-tauri/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-tauri/src/app/invoke.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `404369a5`: linux): ask before a page uses the camera or microphone, and recover from a failed load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b6bb966e`: open the title bar in its last color and fit tall windows on screen. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/src/app/invoke.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "gtk",
+            .map_err(|e| format!("Failed to set the title bar color: {}", e))?;
+        // Remember the main window's color for the next launch; failing to
+        // save it costs only that first frame, so it never fails the call.
+        if window.label() == "pake" {
+            let saved = window
+                .app_handle()
+                .path()
+                .app_data_dir()
+                .map_err(|e| e.to_string())
+                .and_then(|directory| {
+                    crate::util::write_title_bar_color(
+                        &directory.join(crate::app::window::TITLE_BAR_COLOR_FILE),
+                        (red, green, blue),
+                    )
+                    .map_err(|e| e.to_string())
+                });
+            if let Err(error) = saved {
+                eprintln!("[Pake] Could not remember the title bar color: {error}");
+            }
+        }
+        Ok(())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            .map_err(|e| format!("Failed to set the title bar color: {}", e))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `404369a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b6bb966e` are properly handled with clean fallback behavior.

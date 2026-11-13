@@ -9337,3 +9337,6 @@
 | `CYCLE-20261113-QVR1` | `2026-11-13T04:42:59.005Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | Yes (`f3e7d189...`) |
 | `CYCLE-20261113-RAEF` | `2026-11-13T04:43:17.991Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0285b275...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T04:43:37.119Z` | `hf-recursivesi-flint` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FE25E160` [Domain D] | Yes (`c9ef3f38...`) |
+| `CYCLE-20261113-028O` | `2026-11-13T04:50:07.320Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`0eab085b...`) |
+| `CYCLE-20261113-09ZS` | `2026-11-13T04:50:17.368Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`37009f43...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T04:50:32.271Z` | `hf-xhtoken-spark-x2.6-4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-90E0590C` [Domain D] | Yes (`75002cb1...`) |
