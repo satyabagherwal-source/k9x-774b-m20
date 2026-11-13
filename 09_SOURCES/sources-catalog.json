@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "1485b169a3290c0f5ee866f731ac6e6a6d4102ba6ef9d4f11418bd6b15e100fb",
-    "lastHarvestedAt": "2026-11-08T20:05:57.443Z",
+    "contentHash": "6f432600c6f07b144012992a26858c61540f930ced5374d92de6aeb01311ebec",
+    "lastHarvestedAt": "2026-11-13T21:07:07.096Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "7d46258d",
+    "sourceVersion": "f0c90aa3",
     "license": "Apache-2.0",
-    "contentHash": "74b9be778f20e07180013cbec7b888f0de52a29bf104536fb13e58bffda877be",
-    "lastHarvestedAt": "2026-11-09T12:49:34.451Z",
+    "contentHash": "f7efce8d1552b7b4a98986af42d37207aa560e3f0d1d8c00c660800abae9b897",
+    "lastHarvestedAt": "2026-11-13T21:07:15.356Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "51d3b704",
+    "sourceVersion": "7cc32d88",
     "license": "Apache-2.0",
-    "contentHash": "8789ab88b13a4ae2a68ef38c1fed6c43b3180c7cc12dc2117f5ac72cf2cfbfdf",
-    "lastHarvestedAt": "2026-11-11T11:19:09.823Z",
+    "contentHash": "a312f8b12054c88ec6429bd94f4143ecbb7bca1acd1ea3c8e669f1230922c5c8",
+    "lastHarvestedAt": "2026-11-13T21:07:17.701Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {

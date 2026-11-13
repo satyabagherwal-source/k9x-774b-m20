@@ -9625,3 +9625,8 @@
 | `CYCLE-20261113-GBU7` | `2026-11-13T20:54:33.199Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8381` | Yes (`b7061593...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:55:04.957Z` | `hf-google-electra-base-discriminator` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9936936B` [Domain D] | Yes (`b7d162a2...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:55:40.724Z` | `react-navigation-react-navigation` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-169AAD95` [Domain H] | Yes (`b544c7c1...`) |
+| `CYCLE-20261113-WHJO` | `2026-11-13T21:07:07.092Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`6f432600...`) |
+| `CYCLE-20261113-WNX4` | `2026-11-13T21:07:15.352Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8382` | Yes (`f7efce8d...`) |
+| `CYCLE-20261113-WPQ9` | `2026-11-13T21:07:17.697Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8383` | Yes (`a312f8b1...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:07:53.947Z` | `hf-google-bert-bert-base-uncased` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-81EB8074` [Domain D] | Yes (`252ecb14...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:08:32.631Z` | `pubkey-rxdb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-30566771` [Domain K] | Yes (`f66f2b32...`) |

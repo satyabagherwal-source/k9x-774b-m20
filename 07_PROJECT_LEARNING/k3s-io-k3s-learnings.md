@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `51d3b704`  
+> **Source Version**: `7cc32d88`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:18:54.044Z  
+> **Timestamp**: 2026-11-13T21:07:16.744Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:18:54.037Z  
+> **Harvest Timestamp**: 2026-11-13T21:07:16.738Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34388 stars
+- **Stars / Engagement**: 34398 stars
 
 ---
 
@@ -884,13 +884,13 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14971** (2026-11-10): **Disable LB+tunnel on agentless servers with local apiserver**
-  *Symptoms*: #### Proposed Changes #### If running with agent (containerd/cni/kubelet) disabled and apiserver enabled, do not start tunnels to other apiservers. The load-balancer and tunnels are only necessary for etcd-only servers (node->apiserver), or nodes that might run a pod (apiserver->node).  #### Types of Changes ####  Enhancement  #### Verification ####  See linked issue  #### Testing ####   #### Linked Issues #### * https://github.com/k3s-io/k3s/issues/14950  #### User-Facing Change #### ```release-note ```  #### Further Comments #### 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14971?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :x: Patch coverage is `33.33333%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 51.92%. Comparing base ([`dca306c`](https://app.codecov.io/gh/k3s-io/k3s/commit/dca306c81c44fed1dd0621d5579785c980080ae8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`df0b650`](https://app.codecov.io/gh/k3s-io/k3s/commit/df0b6508b22267b2dfed32fa31bf82b9fe4c0ea7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  | [Files with missing lines](https://app.codecov.io/gh/k3s-io/k3s/pull/14971?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=
+- **Issue #14982** (2026-11-12): **cred/passwd permanently "newer than datastore": bootstrap record is never re-saved**
+  *Symptoms*: # cred/passwd permanently "newer than datastore": bootstrap record is never re-saved  ## Environmental Info  **RKE2 Version:** `v1.37.0+rke2r1` (`37af8f9f73a0e95c36295142a63fdcb218cd34e2`), Go `1.26.7-X:boringcrypto`  **Node(s) CPU architecture, OS, and Version:** - 3 servers (etcd + control-plane), 5 agents, x86_64 - servers: Ubuntu 22.04.5 (5.15.0-202) ×2, Ubuntu 26.04 (7.0.0-42) ×1  **Cluster Configuration:** 3 servers, 5 agents. Embedded etcd. Cluster created 2025-01-21.  ## Describe the bug  Two of three servers fail to start with:  ``` level=fatal msg="/var/lib/rancher/rke2/server/cred/passwd newer than datastore and could cause a cluster outage. Remove the file(s) from disk and restart to reload from datastore." ```  The documented remedy — remove the file and restart — works exactly **once**. The regenerated file gets `mtime = now`, which is again newer than the datastore record, so the *next* start fails the same way. The node is therefore permanently one restart away from refusing to boot.  This is not cosmetic: a site-wide power cut restarts all three servers at once, only the unaffected one returns, etcd loses quorum, and the cluster stays down until someone removes the file by hand on each node. That is exactly what happened to us on 2026-11-10 and cost a 24-hour outage.  ## Root cause as far as we could trace it  The bootstrap record in the datastore appears to be written once and never updated:  ``` $ etcdctl get /bootstrap --prefix -w fields "Key"            :
 
-- **Issue #14968** (2026-11-06): **[main] Bump Klipper LB version**
-  *Symptoms*:    <Actions>     <action id="e0a9fe32db8e9db3e5cb4c4ccdd32d3e665fa59c307ebb2fa091d7a938f65869">         <h3>Bump Klipper LB version</h3>         <details id="11a0b411d5881733470a0714e2147a7156f2f76194c76db3775c9df96024686e">             <summary>Update rancher/klipper-lb image versions</summary>             <p>2 file(s) updated with &#34;rancher/klipper-lb:v0.4.18&#34;:&#xA;&#xA;* pkg/cloudprovider/servicelb.go&#xA;* scripts/airgap/image-list.txt&#xA;</p>             <details>                 <summary>v0.4.18</summary>             </details>             <details>                 <summary>v0.4.17</summary>                 <pre>## What&#39;s Changed&#xD;&#xA;* Remove unnecessary apks by @brandond in https://github.com/k3s-io/klipper-lb/pull/93&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**Full Changelog**: https://github.com/k3s-io/klipper-lb/compare/v0.4.16...v0.4.17</pre>             </details>             <details>                 <summary>v0.4.16</summary>             </details>             <details>                 <summary>v0.4.15</summary>                 <pre>* v0.4.15</pre>             </details>             <details>                 <summary>v0.4.14</summary>                 <pre>## What&#39;s Changed&#xD;&#xA;* Bump alpine from 3.21 to 3.22 by @dependabot[bot] in https://github.com/k3s-io/klipper-lb/pull/82&#xD;&#xA;* Bump alpine from 3.22 to 3.23 by @dependabot[bot] in https://github.com/k3s-io/klipper-lb/pull/86&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**Full Changelog**: https://github.com/
+- **Issue #14974** (2026-11-13): **Bump gateway-api to 1.7.0**
+  *Symptoms*: #### Proposed Changes Bump gateway-api to 1.7.0  #### Types of Changes Version bump  #### Verification There are 10 Gateway API CRDs, all on v1.7.0 with helm.sh/resource-policy: keep annotation.  #### Linked Issues Resolves #14973  #### User-Facing Change ```release-note Bump gateway-api to 1.7.0 ```
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14974?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 51.97%. Comparing base ([`51d3b70`](https://app.codecov.io/gh/k3s-io/k3s/commit/51d3b7043183cbd61381773e6345082bd4cf2280?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`b86e219`](https://app.codecov.io/gh/k3s-io/k3s/commit/b86e219872cff5ce663ac686ea472258179bbd19?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main   #14974      +/-   ## ==========================================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -907,35 +907,28 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51d3b704` (2026-11-07)
-**Commit Message**: Disable LB+tunnel on agentless servers with local apiserver
+### Incident Patch 1: `7cc32d88` (2026-11-11)
+**Commit Message**: Bump gateway-api to 1.7.0
 
-Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
+Signed-off-by: Manuel Buil <[REDACTED_EMAIL]>
 
-**File**: `pkg/agent/run.go` (modified, +4/-2)
+**File**: `manifests/gateway-api-crd.yaml` (modified, +1/-1)
 ```diff
-@@ -272,8 +272,10 @@ func RunStandalone(ctx context.Context, wg *sync.WaitGroup, cfg cmds.Agent) erro
- 		return err
- 	}
- 
--	if err := tunnelSetup(ctx, nodeConfig, cfg, proxy); err != nil {
--		return err
-+	if !cfg.DisableLoadBalancer {
-+		if err := tunnelSetup(ctx, nodeConfig, cfg, proxy); err != nil {
-+			return err
-+		}
- 	}
- 	if err := certMonitorSetup(ctx, nodeConfig, cfg); err != nil {
- 		return err
+@@ -8,4 +8,4 @@ spec:
+   forceConflicts: true
+   failurePolicy: retry
+   takeOwnership: true
+-  chart: https://%{KUBERNETES_API}%/static/charts/gateway-api-crd-1.6.301.tgz
++  chart: https://%{KUBERNETES_API}%/static/charts/gateway-api-crd-1.7.1.tgz
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14974** (2026-11-13): Bump gateway-api to 1.7.0 (@manuelbuil)
 - **PR #14971** (2026-11-10): Disable LB+tunnel on agentless servers with local apiserver (@brandond)
 - **PR #14968** (2026-11-06): [main] Bump Klipper LB version (@github-actions[bot])
 - **PR #14967** (2026-11-06): [main] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
 - **PR #14966** (2026-11-06): [release-1.36] Bump Klipper LB version (@github-actions[bot])
 - **PR #14965** (2026-11-06): [release-1.35] Bump Klipper LB version (@github-actions[bot])
-- **PR #14964** (2026-11-06): [release-1.36] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
 
 ---
 
@@ -955,32 +948,28 @@ Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Disable LB+tunnel on agentless servers with local apiserver
+## X. Bump gateway-api to 1.7.0
 
 **RULE**:
-When implementing operations in `pkg/agent/run.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `manifests/gateway-api-crd.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51d3b704`: Disable LB+tunnel on agentless servers with local apiserver. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cc32d88`: Bump gateway-api to 1.7.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/agent/run.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `manifests/gateway-api-crd.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if !cfg.DisableLoadBalancer {
-		if err := tunnelSetup(ctx, nodeConfig, cfg, proxy); err != nil {
-			return err
-		}
+  chart: https://%{KUBERNETES_API}%/static/charts/gateway-api-crd-1.7.1.tgz
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	if err := tunnelSetup(ctx, nodeConfig, cfg, proxy); err != nil {
-		return err
+// Induced defect failure mode:
+  chart: https://%{KUBERNETES_API}%/static/charts/gateway-api-crd-1.6.301.tgz
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51d3b704` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cc32d88` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T20:55:41.787Z",
-  "total_records": 353,
+  "last_updated": "2026-11-13T21:08:34.145Z",
+  "total_records": 361,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 188,
+      "total": 191,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -221,7 +221,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
         "domain_intelligence-research-knowledge-intelligence-google-electra-base-discriminator-core-invariant",
         "DOM-D-9936936B",
-        "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c"
+        "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
+        "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
+        "DOM-D-81EB8074",
+        "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-"
       ]
     },
     "E": {
@@ -239,7 +242,7 @@
       ]
     },
     "G": {
-      "total": 42,
+      "total": 44,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -282,11 +285,13 @@
         "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants",
         "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants",
         "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants",
-        "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar"
+        "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar",
+        "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants",
+        "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 76,
+      "total": 78,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -363,7 +368,9 @@
         "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-core-invariants",
         "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
         "DOM-H-169AAD95",
-        "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-learnings-core-invariants"
       ]
     },
     "I": {
@@ -396,7 +403,7 @@
       ]
     },
     "K": {
-      "total": 8,
+      "total": 9,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -405,7 +412,8 @@
         "DOM-K-66271FDB",
         "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
         "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
-        "DOM-K-199063A7"
+        "DOM-K-199063A7",
+        "DOM-K-30566771"
       ]
     },
     "L": {
@@ -8927,6 +8935,144 @@
       "repository": "envoyproxy-envoy-learnings",
       "content_hash": "fea654482ac5cffe1f4f68196edaf55b7db3fcae8a7e4b77cdb6f893d86748c6",
       "created_at": "2026-11-13T20:55:41.787Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: google-bert/bert-base-uncased Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-bert-bert-base-uncased-research-knowledge-intelligence-google-bert-ber.md",
+      "repository": "google-bert/bert-base-uncased",
+      "content_hash": "4a659b3b62d85c66f32c78a2eb86b75abd454f7eda5122d8bce5927a10591689",
+      "created_at": "2026-11-13T21:07:07.291Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: pubkey/rxdb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-technical-construction-intelligence-pubkey-rxdb-core-invariants.md",
+      "repository": "pubkey/rxdb",
+      "content_hash": "63b679e82bc369b264ec967625d4daa0ca383b2c27fb967888c50eadc241aa25",
+      "created_at": "2026-11-13T21:07:15.677Z"
+    },
+    "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
+      "repository": "k3s-io/k3s",
+      "content_hash": "eb375050a02130f21b5ff9b9ec977c1e532edea080ea70868907f7e06803c12e",
+      "created_at": "2026-11-13T21:07:18.014Z"
+    },
+    "DOM-D-81EB8074": {
+      "record_id": "DOM-D-81EB8074",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): google-bert/bert-base-uncased",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased))  \n> **Source Version**: `hf-google-be`  \n> **License**: Op",
+      "content_hash": "252ecb146aa98423a7ec72a4c70bd798ce39595c0169cbe86abf4c02d1376ffd",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-google-bert-bert-base-uncased/hf-google-bert-bert-base-uncased-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:07:20.889Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-bert-bert-base-uncased)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-google-bert-bert-base-uncased"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T21:07:53.937Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-google-bert-bert-base-uncased-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-bert-bert-base-uncased-learnings-research-knowledge-intelligence-hf-go.md",
+      "repository": "hf-google-bert-bert-base-uncased-learnings",
+      "content_hash": "e158265b28b2b6bfce38769b0440e5f13cc7105ffcef187d436f45f525e33ff8",
+      "created_at": "2026-11-13T21:07:54.154Z"
+    },
+    "DOM-K-30566771": {
+      "record_id": "DOM-K-30566771",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "ci): make the tauri example e2e test robust against a lost webdriver session",
+      "content": "When implementing operations in `examples/tauri/wdio.conf.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "f66f2b3281330d25542bb83131a9677cbbcc0aec7bb84af0b477319fa5b4d594",
+      "summary": "Prevents defects observed in production commit `75b3da7a`: ci): make the tauri example e2e test robust against a lost webdriver session. Unv -> When implementing operations in `examples/tauri/wdio.conf.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions,",
+      "provenance": {
+        "source_uri": "project://pubkey-rxdb/pubkey-rxdb-learnings.md",
+        "source_version": "f0c90aa3",
+        "observed_at": "2026-11-13T21:07:14.398Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pubkey-rxdb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of pubkey-rxdb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T21:08:32.623Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: pubkey-rxdb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-learnings-technical-construction-intelligence-pubkey-rxdb-learnings-.md",
+      "repository": "pubkey-rxdb-learnings",
+      "content_hash": "ce2287dff443907a4316df2a4a9388ab12113082fd9afa1657eaa8e9f24f0074",
+      "created_at": "2026-11-13T21:08:33.222Z"
+    },
+    "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: k3s-io-k3s-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-learnings-architecture-intelligence-k3s-io-k3s-learnings-core-invaria.md",
+      "repository": "k3s-io-k3s-learnings",
+      "content_hash": "17838e29cb625eef6f04f861b866817152f2bc225eb98c8346625d04259f88a4",
+      "created_at": "2026-11-13T21:08:34.145Z"
     }
   }
 }

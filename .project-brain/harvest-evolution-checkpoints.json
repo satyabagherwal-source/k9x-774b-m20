@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:55:42.019Z",
+  "last_updated": "2026-11-13T21:08:34.394Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T20:37:26.959Z",
@@ -243,7 +243,7 @@
       "staged_for_review": 1
     },
     "k3s-io-k3s-learnings.md": {
-      "processed_at": "2026-11-11T11:19:20.195Z",
+      "processed_at": "2026-11-13T21:08:33.604Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2166,9 +2166,19 @@
       "processed_at": "2026-11-13T20:55:40.724Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-google-bert-bert-base-uncased-learnings.md": {
+      "processed_at": "2026-11-13T21:07:53.947Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "pubkey-rxdb-learnings.md": {
+      "processed_at": "2026-11-13T21:08:32.631Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 681,
-  "total_canonical_promoted": 132,
-  "total_staged_for_review": 543
+  "total_dossiers_evaluated": 684,
+  "total_canonical_promoted": 134,
+  "total_staged_for_review": 544
 }

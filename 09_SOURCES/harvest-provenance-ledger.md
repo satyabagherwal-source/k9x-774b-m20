@@ -9658,3 +9658,8 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `f77caec1` | Multi-dimensional audit evidence | 2026-11-13T20:54:33.202Z |
 | `learn-dom-d-9936936b` | `project://hf-google-electra-base-discriminator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | 2026-11-13T20:55:04.957Z |
 | `learn-dom-h-169aad95` | `project://react-navigation-react-navigation` | `5e31b0a0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md` | 2026-11-13T20:55:40.724Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-13T21:07:07.096Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `f0c90aa3` | Multi-dimensional audit evidence | 2026-11-13T21:07:15.356Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `7cc32d88` | Multi-dimensional audit evidence | 2026-11-13T21:07:17.701Z |
+| `learn-dom-d-81eb8074` | `project://hf-google-bert-bert-base-uncased` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | 2026-11-13T21:07:53.947Z |
+| `learn-dom-k-30566771` | `project://pubkey-rxdb` | `f0c90aa3` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md` | 2026-11-13T21:08:32.631Z |

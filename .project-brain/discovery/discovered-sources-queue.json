@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T20:55:41.504Z",
+  "updated_at": "2026-11-13T21:08:33.820Z",
   "stats": {
-    "total_discovered": 2896,
-    "approved_pending_harvest": 2698,
+    "total_discovered": 2915,
+    "approved_pending_harvest": 2717,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2704,
+      "COMMUNITY_AND_EXPERT": 2723,
       "OFFICIAL_DOCUMENTATION": 100,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -62346,6 +62346,424 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
         "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-B40E89A13A38": {
+      "id": "SRC-B40E89A13A38",
+      "url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "title": "https://huggingface.co/google-bert/bert-base-uncased",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:07:53.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
+        "fileName": "hf-google-bert-bert-base-uncased-learnings.md"
+      }
+    },
+    "SRC-8D3BC4F626D5": {
+      "id": "SRC-8D3BC4F626D5",
+      "url": "https://github.com/pubkey/rxdb",
+      "title": "https://github.com/pubkey/rxdb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-DDC8E1517229": {
+      "id": "SRC-DDC8E1517229",
+      "url": "https://rxdb.info/",
+      "title": "https://rxdb.info/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.669Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-54559BD8EC03": {
+      "id": "SRC-54559BD8EC03",
+      "url": "https://github.com/pubkey/rxdb/issues/8635",
+      "title": "https://github.com/pubkey/rxdb/issues/8635",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-AEE25233AFEA": {
+      "id": "SRC-AEE25233AFEA",
+      "url": "https://goo.gl/AFskqB",
+      "title": "https://goo.gl/AFskqB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.730Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-ABD70F8AB44D": {
+      "id": "SRC-ABD70F8AB44D",
+      "url": "https://pubkey.github.io/rxdb/rx-attachment.html",
+      "title": "https://pubkey.github.io/rxdb/rx-attachment.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-90AEB4541E5C": {
+      "id": "SRC-90AEB4541E5C",
+      "url": "https://claude.ai/code/session_015P6w6ivw9hqEC6jJDaEn3g",
+      "title": "https://claude.ai/code/session_015P6w6ivw9hqEC6jJDaEn3g",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-FA1026A40764": {
+      "id": "SRC-FA1026A40764",
+      "url": "https://github.com/pubkey/rxdb/pull/9710",
+      "title": "https://github.com/pubkey/rxdb/pull/9710",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.802Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-3D5537AD5933": {
+      "id": "SRC-3D5537AD5933",
+      "url": "https://claude/",
+      "title": "https://claude/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.826Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-0DE3253C2042": {
+      "id": "SRC-0DE3253C2042",
+      "url": "https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F",
+      "title": "https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-E2ED417DB1D9": {
+      "id": "SRC-E2ED417DB1D9",
+      "url": "https://github.com/pubkey/rxdb/pull/9628",
+      "title": "https://github.com/pubkey/rxdb/pull/9628",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:32.890Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-2A443D6BA23D": {
+      "id": "SRC-2A443D6BA23D",
+      "url": "https://github.com/k3s-io/k3s",
+      "title": "https://github.com/k3s-io/k3s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:33.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-57D09109DECE": {
+      "id": "SRC-57D09109DECE",
+      "url": "https://nixos.org/download",
+      "title": "https://nixos.org/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:33.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-966480CE10FF": {
+      "id": "SRC-966480CE10FF",
+      "url": "https://github.com/kubernetes/kubernetes/blob/v1.25.4/cmd/kubeadm/app/apis/bootstraptoken/v1/utils.go",
+      "title": "https://github.com/kubernetes/kubernetes/blob/v1.25.4/cmd/kubeadm/app/apis/bootstraptoken/v1/utils.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:33.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-6C0893F32EF6": {
+      "id": "SRC-6C0893F32EF6",
+      "url": "https://github.com/kubernetes/kubernetes/blob/v1.24.0/cmd/kubeadm/app/util/staticpod/utils.go",
+      "title": "https://github.com/kubernetes/kubernetes/blob/v1.24.0/cmd/kubeadm/app/util/staticpod/utils.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:33.704Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-EB84496F5036": {
+      "id": "SRC-EB84496F5036",
+      "url": "https://app.codecov.io/gh/k3s-io/k3s/pull/14974?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/k3s-io/k3s/pull/14974?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:33.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-0C4309E27DA9": {
+      "id": "SRC-0C4309E27DA9",
+      "url": "https://app.codecov.io/gh/k3s-io/k3s/commit/51d3b7043183cbd61381773e6345082bd4cf2280?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/k3s-io/k3s/commit/51d3b7043183cbd61381773e6345082bd4cf2280?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:33.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-D31280BD940B": {
+      "id": "SRC-D31280BD940B",
+      "url": "https://app.codecov.io/gh/k3s-io/k3s/commit/b86e219872cff5ce663ac686ea472258179bbd19?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/k3s-io/k3s/commit/b86e219872cff5ce663ac686ea472258179bbd19?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:33.792Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-B5A341E985A5": {
+      "id": "SRC-B5A341E985A5",
+      "url": "https://%{KUBERNETES_API",
+      "title": "https://%{KUBERNETES_API",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:08:33.820Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
+        "fileName": "k3s-io-k3s-learnings.md"
       }
     }
   }

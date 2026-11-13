@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T20:54:33.211Z",
+  "last_updated": "2026-11-13T21:07:17.712Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -905,14 +905,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
-      "content_hash": "1485b169a3290c0f5ee866f731ac6e6a6d4102ba6ef9d4f11418bd6b15e100fb",
-      "verified_at": "2026-11-08T20:05:57.452Z",
+      "content_hash": "6f432600c6f07b144012992a26858c61540f930ced5374d92de6aeb01311ebec",
+      "verified_at": "2026-11-13T21:07:07.105Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:05:57.452Z"
+      "last_updated": "2026-11-13T21:07:07.105Z"
     },
     "google/electra-base-discriminator": {
       "repository": "google/electra-base-discriminator",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "74b9be778f20e07180013cbec7b888f0de52a29bf104536fb13e58bffda877be",
-      "verified_at": "2026-11-09T12:49:34.460Z",
+      "content_hash": "f7efce8d1552b7b4a98986af42d37207aa560e3f0d1d8c00c660800abae9b897",
+      "verified_at": "2026-11-13T21:07:15.365Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:49:34.460Z"
+      "last_updated": "2026-11-13T21:07:15.365Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "8789ab88b13a4ae2a68ef38c1fed6c43b3180c7cc12dc2117f5ac72cf2cfbfdf",
-      "verified_at": "2026-11-11T11:19:09.832Z",
+      "content_hash": "a312f8b12054c88ec6429bd94f4143ecbb7bca1acd1ea3c8e669f1230922c5c8",
+      "verified_at": "2026-11-13T21:07:17.711Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T11:19:09.832Z"
+      "last_updated": "2026-11-13T21:07:17.711Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",

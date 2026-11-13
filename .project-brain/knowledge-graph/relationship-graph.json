@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T20:55:40.723Z",
+  "updated_at": "2026-11-13T21:08:32.630Z",
   "statistics": {
-    "total_nodes": 124,
+    "total_nodes": 126,
     "total_edges": 67,
     "domain_distribution": {
-      "D": 102,
+      "D": 103,
       "M": 1,
       "H": 10,
       "J": 3,
-      "K": 4,
+      "K": 5,
       "L": 2,
       "G": 1,
       "F": 1
@@ -2770,6 +2770,50 @@
       ],
       "created_at": "2026-11-13T20:55:40.723Z",
       "updated_at": "2026-11-13T20:55:40.723Z"
+    },
+    "DOM-D-81EB8074": {
+      "id": "DOM-D-81EB8074",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): google-bert/bert-base-uncased",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-google-bert-bert-base-uncased/hf-google-bert-bert-base-uncased-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:07:20.889Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-bert-bert-base-uncased)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T21:07:53.946Z",
+      "updated_at": "2026-11-13T21:07:53.946Z"
+    },
+    "DOM-K-30566771": {
+      "id": "DOM-K-30566771",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "ci): make the tauri example e2e test robust against a lost webdriver session",
+      "summary": "Prevents defects observed in production commit `75b3da7a`: ci): make the tauri example e2e test robust against a lost webdriver session. Unv -> When implementing operations in `examples/tauri/wdio.conf.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions,",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://pubkey-rxdb/pubkey-rxdb-learnings.md",
+        "source_version": "f0c90aa3",
+        "observed_at": "2026-11-13T21:07:14.398Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pubkey-rxdb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-13T21:08:32.630Z",
+      "updated_at": "2026-11-13T21:08:32.630Z"
     }
   },
   "edges": [
