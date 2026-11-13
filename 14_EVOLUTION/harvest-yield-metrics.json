@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:16:23.259Z",
-  "total_cycles_completed": 9360,
-  "total_learnings_persisted": 9360,
-  "total_rules_promoted": 9092,
+  "last_updated": "2026-11-13T20:27:08.325Z",
+  "total_cycles_completed": 9363,
+  "total_learnings_persisted": 9363,
+  "total_rules_promoted": 9093,
   "history": [
-    {
-      "timestamp": "2026-11-13T06:33:13.211Z",
-      "repository": "KRAFTON/Raon-1-mini-preview",
-      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T06:33:25.315Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T06:33:35.836Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T06:51:00.370Z",
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T20:16:23.259Z",
       "repository": "karakeep-app/karakeep",
       "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:26:57.534Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-cloudflare-clef",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:27:08.223Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:27:08.325Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

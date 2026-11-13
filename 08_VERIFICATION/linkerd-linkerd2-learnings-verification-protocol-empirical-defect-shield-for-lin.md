@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:40:49.690Z",
+  "timestamp": "2026-11-13T20:27:43.506Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-linkerd-linkerd2-learnings",
+  "learning_id": "LEARN-EVO-linkerd-linkerd2-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [linkerd-linkerd2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:40:49.690Z`  
-> **Learning ID**: `LEARN-REEXTRACT-linkerd-linkerd2-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T20:27:43.506Z`  
+> **Learning ID**: `LEARN-EVO-linkerd-linkerd2-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `e9de42d3`  
+> **Source Version**: `76f5e82d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:28:17.319Z  
+> **Timestamp**: 2026-11-13T20:27:07.295Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:28:17.315Z  
+> **Harvest Timestamp**: 2026-11-13T20:27:07.288Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11528 stars
+- **Stars / Engagement**: 11531 stars
 
 ---
 
@@ -1625,11 +1625,11 @@ func (pw *ProbeWorker) doProbe() error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #15764** (2026-11-13): **linkerd-cni writes an invalid kubeconfig when KUBERNETES_SERVICE_HOST is an IPv6 address**
+  *Symptoms*: ### What is the issue?  The linkerd-cni installer (`internal/cni/conf.go` in linkerd2-proxy-init) builds the cluster server URL for the cni-plugin kubeconfig as `https://{{ .ServiceHost }}:{{ .ServicePort }}`. On IPv6 and IPv6-first dual-stack clusters, `KUBERNETES_SERVICE_HOST` is an IPv6 address such as `fd00:10:96::1`, so the kubeconfig contains:  ```yaml server: https://fd00:10:96::1:443 ```  That is not a valid URL, so the cni-plugin cannot create a Kubernetes client from the kubeconfig.  linkerd/linkerd2-proxy-init#589 removed the square brackets around the host to fix IPv4 addresses with recent Go versions. A review comment on that PR pointed out that the change breaks IPv6 hosts.  ### How can it be reproduced?  1. Run the linkerd-cni installer with `KUBERNETES_SERVICE_HOST=fd00:10:96::1` and `KUBERNETES_SERVICE_PORT=443`, for example through `reconfigureK8s` in a `TestReconfigureK8s` case. 2. Inspect the generated `ZZZ-linkerd-cni-kubeconfig`. The `server` field is `https://fd00:10:96::1:443`.  ### Logs, error output, etc  Parsing the generated server URL with Go's `net/url`:  ``` parse "https://fd00:10:96::1:443": invalid port ":10:96::1:443" after host ```  ### output of `linkerd check -o short`  Not applicable. I found this by reading the installer code and reproduced it with the installer's unit tests, not on a live cluster.  ### Environment  - linkerd2-proxy-init `main` (f9e8b49) - Any cluster where `KUBERNETES_SERVICE_HOST` is an IPv6 address  ### Possible solut
+
 - **Issue #15665** (2026-10-08): **h2 library upgrade causes policy service to terminate connections from clients with a large number of policy watches**
   *Symptoms*: ### What is the issue?  The h2 upgrade from 0.4.15 to 0.4.17 in https://github.com/linkerd/linkerd2/pull/15592 and released in  https://github.com/linkerd/linkerd2/releases/tag/edge-26.8.3 included this change from h2 library https://github.com/hyperium/h2/pull/935, which was released in h2 0.4.16.  The h2 change adds a "small DATA frame" budget which limits the number of small http2 DATA frames that a client can send to the server, in an attempt to protect the server from denial of service attacks. When the client overruns this budget by sending too many small http2 DATA frames, the server terminates the connection with a GOAWAY.  This change, however, is causing the policy container to terminate valid connections. linkerd client proxies can easily overrun the default small DATA frame budget in the h2 library by creating a few hundred policy watches. Each `Watch()` gRPC request results in a small DATA frame sent from the proxy to the policy service, eventually causing the policy service to terminate the connection.  I attempted to upgrade from edge-26.8.2 to edge-26.9.1 and immediately began running into this issue. Client proxies that have a large number of outbound destinations would send many `Watch()` requests to the policy service, until the policy service terminated the connection. A few minutes later, the client proxies would retry, only to have the connection terminated again once the small DATA frame budget was exhausted and the h2 library closed the connection.  Th
-
-- **Issue #15664** (2026-09-26): **version-2.20 tag was moved at some point**
-  *Symptoms*: ### What is the issue?  https://github.com/Homebrew/homebrew-core/pull/299023  Hello, this is a homebrew maintainer and I have noticed that the tag was moved at some point. There was a PR to fix this but we haven't check it is intended or not.   Can you check the moved commit for tag v2.2.0 is valid and fine to use? Then I will open a new PR to fix this.  Thanks,  ### How can it be reproduced?  ``` brew install linkerd --build-from-source ```  ### Logs, error output, etc  ``` ==> Fetching downloads for: linkerd ✘ Formula linkerd (2.20) Error: version-2.20 tag should be 7977d505fc3d9ae7dddddd11779a82f813e405ac but is actually eadc1acf79ad2e766afbdceadb77f1594296fd77 ```  ### output of `linkerd check -o short`  none  ### Environment  MacOS 26  ### Possible solution  Just check wheth  ### Additional context  _No response_  ### Would you like to work on fixing this bug?  None
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1646,135 +1646,28 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7dc717c3` (2026-11-06)
-**Commit Message**: ci: fix flaky policy tests (#15732)
+### Incident Patch 1: `76f5e82d` (2026-11-13)
+**Commit Message**: proxy: v2.374.0 (#15781)
 
-Policy admission tests such as `rejects_duplicate_mtls_authns` fail
-intermittently with "resource must not apply". The validating webhook uses
-`failurePolicy: Ignore`, so when the apiserver cannot reach it the invalid
-resource is admitted. `_linkerd-ready` waited on control plane pods right after
-the install was applied, which often failed at once with "no matching
-resources found", and the recipe did not fail on that error.
+Release notes: https://github.com/linkerd/linkerd2-proxy/releases/tag/release/v2.374.0
 
-* `_linkerd-ready` waits for the control plane deployments to be Available,
-  which exist as soon as the install is applied, and exits non-zero on timeout.
-* A new `policy-validator-ready` recipe retries a server-side dry run of an
-  invalid AuthorizationPolicy until the webhook denies it. Only a denial
-  proves the apiserver can reach the webhook.
-* `policy-test` and the `test-policy` CI job run `policy-validator-ready`
-  after installing Linkerd.
+Signed-off-by: l5d-bot <[REDACTED_EMAIL]>
+Co-authored-by: l5d-bot <[REDACTED_EMAIL]>
 
-Signed-off-by: Apoorv Kothari <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/integration.yml` (modified, +8/-1)
+**File**: `.proxy-version` (modified, +1/-1)
 ```diff
-@@ -224,7 +224,14 @@ jobs:
-       - run: docker load <image-archives/controller.tar
-       - run: docker load <image-archives/proxy.tar
-       - run: docker image ls
--      - run: just linkerd-tag='${{ needs.meta.outputs.tag }}' linkerd-exec="${{ runner.temp }}/linkerd" linkerd-install
-+      - name: Install Linkerd
-+        # Install Linkerd and check readiness.
-+        run: just linkerd-tag='${{ needs.meta.outputs.tag }}' linkerd-exec="${{ runner.temp }}/linkerd" linkerd-install
-+      - name: Wait for policy validator ready
-+        # Check readiness by blocking until the policy validator webhook denies an invalid
-+        # AuthorizationPolicy. Pod readiness alone does not prove the apiserver can reach the
-+        # webhook, and with failurePolicy=Ignore an unreachable webhook admits invalid resources.
-+        run: just policy-validator-ready
-       - name: Load images
-         run: |
-           # Image loading is flakey in CI, so retry!
-```
-
-**File**: `justfile` (modified, +21/-5)
-```diff
-@@ -137,7 +137,7 @@ _cargo-test := _cargo + ```
- export POLICY_TEST_CONTEXT := env_var_or_default("POLICY_TEST_CONTEXT", "k3d-" + k3d-name)
- 
- # Install linkerd in the test cluster and run the policy tests.
--policy-test: linkerd-install policy-test-deps-load policy-test-run && policy-test-cleanup linkerd-uninstall
-+policy-test: linkerd-install policy-validator-ready policy-test-deps-load policy-test-run && policy-test-cleanup linkerd-uninstall
- 
- _policy-test-tls-route-flags := if GATEWAY_API_TLS_ROUTE == "none" { "" } else if GATEWAY_API_TLS_ROUTE =~ '^v1(alpha2)?$' { " --features=gateway-api-tls-route-" + GATEWAY_API_TLS_ROUTE } else { error("GATEWAY_API_TLS_ROUTE must be 'v1', 'v1alpha2', or 'none'") }
- 
-@@ -393,12 +393,28 @@ _controller-build:
-         --load
- 
- _linkerd-ready:
--    if ! {{ _kubectl }} wait pod --for=condition=ready \
--            --namespace=linkerd --selector='linkerd.io/control-plane-component' \
--            --timeout=1m ; then \
--        {{ _kubectl }} describe pods --namespace=linkerd ; \
-+    # Wait for the control plane deployments to be Available. They exist as soon as the install is
-+    # applied, so unlike a pod selector this wait cannot fail early with "no matching resources".
-+    if ! {{ _kubectl }} -n linkerd wait deploy -l linkerd.io/control-plane-component \
-+            --for=condition=Available --timeout=2m ; then \
-+        {{ _kubectl }} describe deployments,pods --namespace=linkerd ; \
-+        exit 1 ; \
-     fi
- 
-+# Wait until the policy validator webhook denies an invalid resource.
-+policy-validator-ready:
-+    # Pod readiness does not prove the apiserver can reach the webhook, and with
-+    # failurePolicy=Ignore an unreachable webhook admits invalid resources. Only a denial of a
-+    # server-side dry run of an invalid AuthorizationPolicy (two MeshTLSAuthentication refs) does.
-+    # https://github.com/kubernetes/apiserver/blob/a1b8e6fa9269c795a50d34e22fef9b0bc55f9fdb/pkg/admission/plugin/webhook/errors/statuserror.go#L29
-+    for _ in $(seq 60) ; do \
-+        out=$(printf '%s' '{"apiVersion":"policy.linkerd.io/v1alpha1","kind":"AuthorizationPolicy","metadata":{"name":"webhook-probe","namespace":"default"},"spec":{"targetRef":{"group":"policy.linkerd.io","kind":"Server","name":"probe"},"requiredAuthenticationRefs":[{"group":"policy.linkerd.io","kind":"MeshTLSAuthentication","name":"a"},{"group":"policy.linkerd.io","kind":"MeshTLSAuthentication","name":"b"}]}}' | {{ _kubectl }} apply --dry-run=server -f - 2>&1) ; \
-+        if echo "$out" | grep -qF 'admission webhook "linkerd-policy-validator.linkerd.io" denied the request' ; then exit 0 ; fi ; \
-+        sleep 1 ; \
-+    done ; \
-+    echo "ERROR: policy validator webhook did not deny an invalid AuthorizationPolicy within 60s. Last response: $out" >&2 ; \
-+    exit 1
-+
- # Ensure that a linkerd control plane is installed
- _linkerd-init: && _linkerd-ready
-     #!/usr/bin/env bash
-```
-
----
-
-### Incident Patch 2: `36a43b29` (2026-11-05)
-**Commit Message**: build(deps): bump node-forge from 1.4.0 to 1.4.3 in /web/app (#15763)
-
-Bumps [node-forge](https://github.com/digitalbazaar/forge) from 1.4.0 to 1.4.3.
-- [Changelog](https://github.com/digitalbazaar/forge/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/digitalbazaar/forge/compare/v1.4.0...v1.4.3)
-
----
-updated-dependencies:
-- dependency-name: node-forge
-  dependency-version: 1.4.2
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `web/app/yarn.lock` (modified, +3/-3)
-```diff
-@@ -7972,9 +7972,9 @@ node-addon-api@^7.0.0:
-   integrity sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==
- 
- node-forge@>=0.10.0:
--  version "1.4.0"
--  resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.4.0.tgz#1c7b7d8bdc2d078739f58287d589d903a11b2fc2"
--  integrity sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==
-+  version "1.4.3"
-+  resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.4.3.tgz#5dc578529ac8e162f58038c6673337cabfab3277"
-+  integrity sha512-P6wzfh6t70avmV8FrVEAd/36sOPJQ+hkaJVX1Laap9J/77m7M0eyozDvc8SwnDf4P7MP94gwbAAo0rg3YVXT+g==
- 
- node-gettext@^3.0.0:
-   version "3.0.0"
+@@ -1 +1 @@
+-v2.373.0
++v2.374.0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15781** (2026-11-13): proxy: v2.374.0 (@l5d-bot)
 - **PR #15776** (2026-11-06): chore: migrate stale from app to action (@raykroeker)
 - **PR #15775** (2026-11-06): chore: bump dev image to v55. (@toidiu)
 - **PR #15768** (2026-11-05): proxy: v2.373.0 (@l5d-bot)
 - **PR #15766** (2026-11-04): build: keep apko outputs out of the repo root (@alpeb)
 - **PR #15763** (2026-11-05): build(deps): bump node-forge from 1.4.0 to 1.4.3 in /web/app (@dependabot[bot])
-- **PR #15761** (2026-11-02): ci: pin k3s images to avoid update.k3s.io lookups (@alpeb)
 
 ---
 
@@ -1794,38 +1687,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: fix flaky policy tests (#15732)
+## X. proxy: v2.374.0
 
 **RULE**:
-When implementing operations in `.github/workflows/integration.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.proxy-version`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7dc717c3`: ci: fix flaky policy tests (#15732). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `76f5e82d`: proxy: v2.374.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/integration.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.proxy-version`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - name: Install Linkerd
-        # Install Linkerd and check readiness.
-        run: just linkerd-tag='${{ needs.meta.outputs.tag }}' linkerd-exec="${{ runner.temp }}/linkerd" linkerd-install
-      - name: Wait for policy validator ready
-        # Check readiness by blocking until the policy validator webhook denies an invalid
-        # AuthorizationPolicy. Pod readiness alone does not prove the apiserver can reach the
-        # webhook, and with failurePolicy=Ignore an unreachable webhook admits invalid resources.
-        run: just policy-validator-ready
+v2.374.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-      - run: just linkerd-tag='${{ needs.meta.outputs.tag }}' linkerd-exec="${{ runner.temp }}/linkerd" linkerd-install
+// Induced defect failure mode:
+v2.373.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7dc717c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `76f5e82d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

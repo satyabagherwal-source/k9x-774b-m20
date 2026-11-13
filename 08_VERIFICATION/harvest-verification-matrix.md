@@ -9605,3 +9605,8 @@
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:08:02.979Z` | `hf-unsloth-qwen3.8-27b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-218A5260` [Domain D] | Yes (`8e54b810...`) |
 | `CYCLE-20261113-32T2` | `2026-11-13T20:16:15.350Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`80c44fb7...`) |
 | `CYCLE-20261113-38WH` | `2026-11-13T20:16:23.249Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8373` | Yes (`f20023e8...`) |
+| `CYCLE-20261113-GUB6` | `2026-11-13T20:26:57.522Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | Yes (`74ba2b27...`) |
+| `CYCLE-20261113-H2JU` | `2026-11-13T20:27:08.202Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`a337642a...`) |
+| `CYCLE-20261113-H2MW` | `2026-11-13T20:27:08.312Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8374` | Yes (`a21edee8...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:27:42.809Z` | `hf-cloudflare-clef` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-43004423` [Domain D] | Yes (`5ceb17cf...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:28:20.767Z` | `trufflesecurity-trufflehog` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4CA3BD2A` [Domain D] | Yes (`d57aa4b9...`) |

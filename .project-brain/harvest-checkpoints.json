@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T20:16:23.263Z",
+  "last_updated": "2026-11-13T20:27:08.329Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -860,14 +860,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef",
-      "content_hash": "4d36e8c0930817074e77f323f3b4592a68bcc952563043712e887da28f8bf958",
-      "verified_at": "2026-11-08T19:11:23.132Z",
+      "content_hash": "74ba2b27ead4f630f58d85f39c8e0abd03474e94d61ca53d5ecf0eda4176873c",
+      "verified_at": "2026-11-13T20:26:57.538Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T19:11:23.132Z"
+      "last_updated": "2026-11-13T20:26:57.538Z"
     },
     "Cloudflare/clef-flash": {
       "repository": "Cloudflare/clef-flash",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "9c7d56d15cd9264fcdf63ed47a10ef0c70a473db35792cbeacbd9f675db83777",
-      "verified_at": "2026-11-12T21:31:11.106Z",
+      "content_hash": "a337642afd83803f42cf912750ac56b85dbb36129808d1871f63dba8aeeb3018",
+      "verified_at": "2026-11-13T20:27:08.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:31:11.106Z"
+      "last_updated": "2026-11-13T20:27:08.229Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "1e750f966a18a6427a7cf7b21357f6b9a44e78924e588f4e2b582505d5fd47ba",
-      "verified_at": "2026-11-07T05:28:18.422Z",
+      "content_hash": "a21edee86d890d7d55e2c6f02320468d81a3bdab177b3d9ea6ddd0e6671e0e6e",
+      "verified_at": "2026-11-13T20:27:08.329Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:28:18.422Z"
+      "last_updated": "2026-11-13T20:27:08.329Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",

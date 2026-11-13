@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:16:28.806Z",
+  "last_updated": "2026-11-13T20:28:21.567Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T20:16:28.256Z",
@@ -103,9 +103,9 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-12T21:31:23.023Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-13T20:28:20.767Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "pola-rs-polars-learnings.md": {
       "processed_at": "2026-11-13T03:48:36.334Z",
@@ -2131,9 +2131,19 @@
       "processed_at": "2026-11-13T20:16:27.523Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-cloudflare-clef-learnings.md": {
+      "processed_at": "2026-11-13T20:27:42.810Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "linkerd-linkerd2-learnings.md": {
+      "processed_at": "2026-11-13T20:27:43.164Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 669,
-  "total_canonical_promoted": 127,
-  "total_staged_for_review": 536
+  "total_dossiers_evaluated": 672,
+  "total_canonical_promoted": 129,
+  "total_staged_for_review": 537
 }

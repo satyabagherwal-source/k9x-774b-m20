@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T20:08:02.977Z",
+  "updated_at": "2026-11-13T20:28:20.766Z",
   "statistics": {
-    "total_nodes": 119,
-    "total_edges": 64,
+    "total_nodes": 121,
+    "total_edges": 66,
     "domain_distribution": {
-      "D": 98,
+      "D": 100,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -17,7 +17,7 @@
       "F": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 64
+      "CONSTRAINED_BY_ARCHITECTURE": 66
     }
   },
   "nodes": {
@@ -2657,6 +2657,52 @@
       ],
       "created_at": "2026-11-13T20:08:02.977Z",
       "updated_at": "2026-11-13T20:08:02.977Z"
+    },
+    "DOM-D-43004423": {
+      "id": "DOM-D-43004423",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Cloudflare/clef",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-cloudflare-clef/hf-cloudflare-clef-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T20:27:11.529Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cloudflare-clef)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T20:27:42.808Z",
+      "updated_at": "2026-11-13T20:27:42.808Z"
+    },
+    "DOM-D-4CA3BD2A": {
+      "id": "DOM-D-4CA3BD2A",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Clean up Stdin source logging for per-source debug",
+      "summary": "Prevents defects observed in production commit `94dd9889`: Clean up Stdin source logging for per-source debug. Unvalidated execution paths c -> When implementing operations in `pkg/sources/stdin/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, ",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://trufflesecurity-trufflehog/trufflesecurity-trufflehog-learnings.md",
+        "source_version": "94dd9889",
+        "observed_at": "2026-11-13T20:27:07.815Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trufflesecurity-trufflehog)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-13T20:28:20.766Z",
+      "updated_at": "2026-11-13T20:28:20.766Z"
     }
   },
   "edges": [
@@ -3299,6 +3345,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-218A5260 [D] with Domain M",
       "created_at": "2026-11-13T20:08:02.977Z"
+    },
+    {
+      "id": "EDGE-FB62E38608C2",
+      "sourceId": "DOM-D-43004423",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-43004423 [D] with Domain M",
+      "created_at": "2026-11-13T20:27:42.808Z"
+    },
+    {
+      "id": "EDGE-78E4A1A947E1",
+      "sourceId": "DOM-D-4CA3BD2A",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-4CA3BD2A [D] with Domain G",
+      "created_at": "2026-11-13T20:28:20.766Z"
     }
   ]
 }

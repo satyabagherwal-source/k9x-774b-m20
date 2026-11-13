@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T20:16:28.579Z",
-  "total_records": 323,
+  "last_updated": "2026-11-13T20:28:21.312Z",
+  "total_records": 331,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 174,
+      "total": 180,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -207,7 +207,13 @@
         "DOM-D-218A5260",
         "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
-        "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7"
+        "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7",
+        "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants",
+        "DOM-D-43004423",
+        "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants",
+        "DOM-D-4CA3BD2A",
+        "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-learnings-core-invari"
       ]
     },
     "E": {
@@ -225,7 +231,7 @@
       ]
     },
     "G": {
-      "total": 36,
+      "total": 38,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -262,7 +268,9 @@
         "domain_intelligence-architecture-intelligence-rook-rook-core-invariants",
         "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants",
-        "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-linkerd-linkerd2-core-invariants",
+        "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8462,6 +8470,144 @@
       "repository": "karakeep-app-karakeep-learnings",
       "content_hash": "f41ea576b333e7c4d9ced66d30b441ed71330206d45866053ac877043ed2c494",
       "created_at": "2026-11-13T20:16:28.017Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Cloudflare/clef Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-research-knowledge-intelligence-cloudflare-clef-core-invarian.md",
+      "repository": "Cloudflare/clef",
+      "content_hash": "1be884e5e5405c4cd80404c8d6d36fe8c5100559906def035eb5e38d0b871d85",
+      "created_at": "2026-11-13T20:26:57.726Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: trufflesecurity/trufflehog Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-trufflesecurity-trufflehog-research-knowledge-intelligence-trufflesecurity-truff.md",
+      "repository": "trufflesecurity/trufflehog",
+      "content_hash": "1c4ab1a7c6bf8103846f5eb6a1f125d69f2aad7cef792461ee8070fdf0fc06ac",
+      "created_at": "2026-11-13T20:27:08.594Z"
+    },
+    "domain_intelligence-architecture-intelligence-linkerd-linkerd2-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-linkerd-linkerd2-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
+      "repository": "linkerd/linkerd2",
+      "content_hash": "e68bf73630409a3e9d0ea7de3c358019d935d4b989e7b9706085c7a6ea3428a7",
+      "created_at": "2026-11-13T20:27:08.657Z"
+    },
+    "DOM-D-43004423": {
+      "record_id": "DOM-D-43004423",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Cloudflare/clef",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Cloudflare/clef](https://huggingface.co/Cloudflare/clef))  \n> **Source Version**: `hf-cloudflar`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clo",
+      "content_hash": "5ceb17cf024ab7edc53f7d287a5cd71b17f89e24ce2124986e4ffdc7a3e2cc26",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "provenance": {
+        "source_uri": "project://hf-cloudflare-clef/hf-cloudflare-clef-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T20:27:11.529Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cloudflare-clef)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-cloudflare-clef"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T20:27:42.800Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-learnings-research-knowledge-intelligence-hf-cloudflare-clef-.md",
+      "repository": "hf-cloudflare-clef-learnings",
+      "content_hash": "fca61d07805f641bd461006d1ce3c0d85b6e064a30631e9a310fd90ccdb0e97e",
+      "created_at": "2026-11-13T20:27:43.034Z"
+    },
+    "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-learnings-architecture-intelligence-linkerd-linkerd2-learnings-.md",
+      "repository": "linkerd-linkerd2-learnings",
+      "content_hash": "6a372f24108ae07375bfbbb17f1a32ef54d206aed35d501e4b088480ad7161a0",
+      "created_at": "2026-11-13T20:27:43.733Z"
+    },
+    "DOM-D-4CA3BD2A": {
+      "record_id": "DOM-D-4CA3BD2A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Clean up Stdin source logging for per-source debug",
+      "content": "When implementing operations in `pkg/sources/stdin/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "d57aa4b9f08b3b8bcbc52997e76af729edbcd43afae0fd4c3706e411ae43f1c6",
+      "summary": "Prevents defects observed in production commit `94dd9889`: Clean up Stdin source logging for per-source debug. Unvalidated execution paths c -> When implementing operations in `pkg/sources/stdin/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, ",
+      "provenance": {
+        "source_uri": "project://trufflesecurity-trufflehog/trufflesecurity-trufflehog-learnings.md",
+        "source_version": "94dd9889",
+        "observed_at": "2026-11-13T20:27:07.815Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trufflesecurity-trufflehog)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of trufflesecurity-trufflehog"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T20:28:20.759Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-trufflesecurity-trufflehog-learnings-research-knowledge-intelligence-trufflesecu.md",
+      "repository": "trufflesecurity-trufflehog-learnings",
+      "content_hash": "1f9d651231227d2a4533bf680ba2f788d9d7dd10b8f93668e5539ad0a3a64801",
+      "created_at": "2026-11-13T20:28:21.312Z"
     }
   }
 }

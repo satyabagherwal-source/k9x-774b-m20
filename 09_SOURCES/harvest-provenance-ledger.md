@@ -9638,3 +9638,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-218a5260` | `project://hf-unsloth-qwen3.8-27b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | 2026-11-13T20:08:02.979Z |
 | `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-13T20:16:15.355Z |
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `f7119ca0` | Multi-dimensional audit evidence | 2026-11-13T20:16:23.253Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-13T20:26:57.527Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `94dd9889` | Multi-dimensional audit evidence | 2026-11-13T20:27:08.206Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `76f5e82d` | Multi-dimensional audit evidence | 2026-11-13T20:27:08.318Z |
+| `learn-dom-d-43004423` | `project://hf-cloudflare-clef` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | 2026-11-13T20:27:42.809Z |
+| `learn-dom-d-4ca3bd2a` | `project://trufflesecurity-trufflehog` | `94dd9889` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | 2026-11-13T20:28:20.767Z |

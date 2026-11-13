@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-R1A2",
-    "timestamp": "2026-11-13T00:31:09.626Z",
-    "repository": "h3js/h3",
-    "learningId": "learn-github-h3js-h3",
-    "contentHash": "f4a9760cb0d81fe432bc89d3dc9cb2e2643acab99b29e3b9ba3e74a12867ba7e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-R1VU",
-    "timestamp": "2026-11-13T00:31:10.410Z",
-    "repository": "kube-rs/kube",
-    "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "83fa1a011f117c49c324ed38fa7a621aefe4a808378696af71fd1968d8b2922c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-R57G",
-    "timestamp": "2026-11-13T00:31:14.716Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "3e78a7b994723f3497435a9fb24cc85d8e3e420fa6275f33bcad737a33fe0c24",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-6V8S",
     "timestamp": "2026-11-13T00:43:28.300Z",
     "repository": "gardener/gardener",
@@ -7490,6 +7445,51 @@
     "repository": "karakeep-app/karakeep",
     "learningId": "learn-github-karakeep-app-karakeep",
     "contentHash": "f20023e860cf93bf0c820b3709409764f10c30425fe79c333c055ab38bed7a81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-GUB6",
+    "timestamp": "2026-11-13T20:26:57.522Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-cloudflare-clef",
+    "contentHash": "74ba2b27ead4f630f58d85f39c8e0abd03474e94d61ca53d5ecf0eda4176873c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-H2JU",
+    "timestamp": "2026-11-13T20:27:08.202Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "a337642afd83803f42cf912750ac56b85dbb36129808d1871f63dba8aeeb3018",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-H2MW",
+    "timestamp": "2026-11-13T20:27:08.312Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "a21edee86d890d7d55e2c6f02320468d81a3bdab177b3d9ea6ddd0e6671e0e6e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

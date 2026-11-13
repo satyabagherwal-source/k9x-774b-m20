@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "4d36e8c0930817074e77f323f3b4592a68bcc952563043712e887da28f8bf958",
-    "lastHarvestedAt": "2026-11-08T19:11:23.122Z",
+    "contentHash": "74ba2b27ead4f630f58d85f39c8e0abd03474e94d61ca53d5ecf0eda4176873c",
+    "lastHarvestedAt": "2026-11-13T20:26:57.527Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "3bd2b588",
+    "sourceVersion": "94dd9889",
     "license": "AGPL-3.0",
-    "contentHash": "9c7d56d15cd9264fcdf63ed47a10ef0c70a473db35792cbeacbd9f675db83777",
-    "lastHarvestedAt": "2026-11-12T21:31:11.094Z",
+    "contentHash": "a337642afd83803f42cf912750ac56b85dbb36129808d1871f63dba8aeeb3018",
+    "lastHarvestedAt": "2026-11-13T20:27:08.206Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "e9de42d3",
+    "sourceVersion": "76f5e82d",
     "license": "Apache-2.0",
-    "contentHash": "1e750f966a18a6427a7cf7b21357f6b9a44e78924e588f4e2b582505d5fd47ba",
-    "lastHarvestedAt": "2026-11-07T05:28:18.417Z",
+    "contentHash": "a21edee86d890d7d55e2c6f02320468d81a3bdab177b3d9ea6ddd0e6671e0e6e",
+    "lastHarvestedAt": "2026-11-13T20:27:08.318Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {
