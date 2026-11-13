@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T11:14:09.036Z",
-  "total_records": 120,
+  "last_updated": "2026-11-13T11:25:04.722Z",
+  "total_records": 121,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 76,
+      "total": 77,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -101,7 +101,8 @@
         "DOM-D-F81EC195",
         "DOM-D-F667641F",
         "DOM-D-57460E8B",
-        "DOM-D-9703D9B4"
+        "DOM-D-9703D9B4",
+        "DOM-D-785F48FA"
       ]
     },
     "E": {
@@ -5001,6 +5002,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T11:14:09.035Z"
+    },
+    "DOM-D-785F48FA": {
+      "record_id": "DOM-D-785F48FA",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): BAAI/bge-small-en-v1.5",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/BAAI/bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5))  \n> **Source Version**: `hf-baai-bge-`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "767c6bb0d319c29781f849ad34446f7bef39c3e1f6dc0e1a20d46b56132d7a42",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-baai-bge-small-en-v1.5/hf-baai-bge-small-en-v1.5-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T11:24:51.725Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-small-en-v1.5)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-baai-bge-small-en-v1.5"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T11:25:04.720Z"
     }
   }
 }

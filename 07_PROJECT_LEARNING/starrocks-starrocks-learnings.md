@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `bf73116b`  
+> **Source Version**: `9a755b9e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T04:24:00.441Z  
+> **Timestamp**: 2026-11-13T11:24:31.668Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T04:24:00.258Z  
+> **Harvest Timestamp**: 2026-11-13T11:24:31.662Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12248 stars
+- **Stars / Engagement**: 12253 stars
 
 ---
 
@@ -1818,758 +1818,836 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf73116b` (2026-11-12)
-**Commit Message**: [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)
+### Incident Patch 1: `28f9a91c` (2026-11-13)
+**Commit Message**: [BugFix] Fix BatchRunCounter unsigned filter comparison and delta decode signed overflow UB (#82015)
 
-Signed-off-by: Karol Sobczak <[REDACTED_EMAIL]>
+Signed-off-by: James Lamb <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java` (modified, +10/-0)
+**File**: `be/src/base/simd/batch_run_counter.h` (modified, +10/-9)
 ```diff
-@@ -123,6 +123,7 @@
- import com.starrocks.type.TypeFactory;
- import com.starrocks.type.VarcharType;
+@@ -62,15 +62,15 @@ class BatchRunCounter {
  
-+import java.math.BigDecimal;
- import java.math.BigInteger;
- import java.util.ArrayList;
- import java.util.Arrays;
-@@ -825,6 +826,15 @@ public Void visitTimestampArithmeticExpr(TimestampArithmeticExpr node, Scope sco
-                         .join(Arrays.stream(argumentTypes).map(Type::toSql).collect(Collectors.toList())));
-                 throw new SemanticException(msg, node.getPos());
-             }
-+            String fnName = fn.getFunctionName().getFunction();
-+            if (FunctionSet.SECONDS_ADD.equals(fnName) || FunctionSet.SECONDS_SUB.equals(fnName)) {
-+                // A literal amount with more than 6 decimals is refused here already, so that a definition that uses it,
-+                // such as a generated column or a view, is refused when it is created rather than each time it is used
-+                BigDecimal seconds = IntervalSeconds.literalValue(node.getChild(1));
-+                if (seconds != null) {
-+                    IntervalSeconds.split(seconds, node.getPos());
-+                }
-+            }
-             node.setType(fn.getReturnType());
-             return null;
-         }
+         if (batch_size >= 32 && _left >= 32) {
+             __m256i f = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(_filter + _offset));
+-            uint32_t mask = _mm256_movemask_epi8(_mm256_cmpgt_epi8(f, all0));
++            uint32_t zero_mask = _mm256_movemask_epi8(_mm256_cmpeq_epi8(f, all0));
+             _offset += 32;
+             _left -= 32;
+ 
+-            if (mask == 0) {
++            if (zero_mask == 0xffffffff) {
+                 // all zero
+                 return BatchCount(32, 0, true);
+-            } else if (mask == 0xffffffff) {
+-                // all one
++            } else if (zero_mask == 0) {
++                // all non-zero
+                 return BatchCount(32, 32, true);
+             } else {
+                 return BatchCount(32, 0, false);
+@@ -83,15 +83,15 @@ class BatchRunCounter {
+ 
+         if (batch_size >= 16 && _left >= 16) {
+             const auto f = _mm_loadu_si128(reinterpret_cast<const __m128i*>(_filter + _offset));
+-            const auto mask = _mm_movemask_epi8(_mm_cmpgt_epi8(f, zero16));
++            const auto zero_mask = _mm_movemask_epi8(_mm_cmpeq_epi8(f, zero16));
+             _offset += 16;
+             _left -= 16;
+ 
+-            if (mask == 0) {
++            if (zero_mask == 0xffff) {
+                 // all zero
+                 return BatchCount(16, 0, true);
+-            } else if (mask == 0xffff) {
+-                // all one
++            } else if (zero_mask == 0) {
++                // all non-zero
+                 return BatchCount(16, 16, true);
+             } else {
+                 return BatchCount(16, 0, false);
+@@ -137,7 +137,8 @@ class BatchRunCounter {
+             _left -= 8;
+             if (partital_value == 0) {
+                 return BatchCount(8, 0, true);
+-            } else if (partital_value == 0x0101010101010101) {
++            } else if (partital_value == 0x0101010101010101ULL ||
++                       (((partital_value - 0x0101010101010101ULL) & ~partital_value & 0x8080808080808080ULL) == 0)) {
+                 return BatchCount(8, 8, true);
+             } else {
+                 return BatchCount(8, 0, false);
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/IntervalSeconds.java` (added, +79/-0)
+**File**: `be/src/base/simd/delta_decode.cpp` (modified, +26/-10)
 ```diff
-@@ -0,0 +1,79 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package com.starrocks.sql.analyzer;
-+
-+import com.starrocks.sql.ast.expression.DecimalLiteral;
-+import com.starrocks.sql.ast.expression.Expr;
-+import com.starrocks.sql.ast.expression.FloatLiteral;
-+import com.starrocks.sql.ast.expression.StringLiteral;
-+import com.starrocks.sql.parser.NodePosition;
-+
-+import java.math.BigDecimal;
-+
-+/**
-+ * The amount of an INTERVAL in SECOND. seconds_add and seconds_sub take it as an INT, so a fraction of a second would be
-+ * lost; such an amount is added as whole seconds and microseconds instead.
-+ */
-+public final class IntervalSeconds {
-+    private IntervalSeconds() {
-+    }
-+
-+    /**
-+     * Splits an amount of seconds into whole seconds and microseconds.
-+     *
-+     * @return {whole seconds, microseconds}, or null if the amount doesn't fit in an INT, which leaves it to the INT cast
-+     * @throws SemanticException if the amount has more than 6 decimals: a datetime has no digits below microseconds
-+     */
-+    public static int[] split(BigDecimal seconds, NodePosition pos) {
-+        // An INT holds at most 10 digits before the point, so a larger amount is left to the INT cast. This also keeps
-+        // the arithmetic below away from the huge numbers a short exponent can describe, as in '1e100000000'.
-+        if ((long) seconds.precision() - seconds.scale() > 10) {
-+            return null;
-+        }
-+        BigDecimal exact = seconds.stripTrailingZeros();
-+        if (exact.scale() > 6) {
-+            // BigDecimal.toString() writes a long fraction such as '1e-100000000' with an exponent, so the message stays
-+            // short
-+            throw new SemanticException("The amount of an INTERVAL in SECOND can have at most 6 decimals "
-+                    + "because a datetime has no digits below microseconds: " + seconds, pos);
-+        }
-+        BigDecimal[] wholeAndFraction = exact.divideAndRemainder(BigDecimal.ONE);
-+        try {
-+            return new int[] {wholeAndFraction[0].intValueExact(), wholeAndFraction[1].movePointRight(6).intValueExact()};
-+        } catch (ArithmeticException e) {
-+            // doesn't fit in an INT, which is what the function takes
-+            return null;
-+        }
-+    }
-+
-+    /**
-+     * The value of a decimal, floating point or string literal, or null for any other expression (also for a string that
-+     * is not a number, which is left to the INT cast)
-+     */
-+    public static BigDecimal literalValue(Expr amount) {
-+        try {
-+            if (amount instanceof DecimalLiteral) {
-+                return ((DecimalLiteral) amount).getValue();
-+            } else if (amount instanceof FloatLiteral) {
-+                return BigDecimal.valueOf(((FloatLiteral) amount).getValue());
-+            } else if (amount instanceof StringLiteral) {
-+                return new BigDecimal(((StringLiteral) amount).getValue().trim());
-+            }
-+        } catch (NumberFormatException e) {
-+            return null;
-+        }
-+        return null;
-+    }
-+}
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/SimplifiedPredicateRule.java` (modified, +29/-35)
-```diff
-@@ -48,39 +48,33 @@
- 
- import java.util.Arrays;
- import java.util.List;
--import java.util.Objects;
-+import java.util.Map;
- import java.util.Set;
- import java.util.function.Predicate;
- import java.util.stream.Collectors;
- 
- public class SimplifiedPredicateRule extends BottomUpScalarOperatorRewriteRule {
--    private static final ImmutableMap<String, List<String>> TIME_FNS = ImmutableMap.<String, List<String>>builder()
--            .put("years_", ImmutableList.of(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB))
--            .put("quarters_", ImmutableList.of(FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB))
--            .put("months_", ImmutableList.of(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB))
--            .put("weeks_", ImmutableList.of(FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB))
--            .put("days_", ImmutableList.of(FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB))
--            .put("hours_", ImmutableList.of(FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB))
--            .put("minutes_", ImmutableList.of(FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB))
--            .put("seconds_", ImmutableList.of(FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB))
--            .put("milliseconds_", ImmutableList.of(FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB))
--            .put("microseconds_", ImmutableList.of(FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB))
--            .put("date", ImmutableList.of(FunctionSet.DATE_ADD, FunctionSet.DATE_SUB))
--            .build();
--    private static final Set<String> MONTH_BASED_TIME_FNS = ImmutableSet.of("years_", "quarters_", "months_");
--    private static final List<String> TIME_FN_NAMES = ImmutableList.<String>builder()
--            .add(FunctionSet.YEARS_ADD).add(FunctionSet.YEARS_SUB)
--            .add(FunctionSet.QUARTERS_ADD).add(FunctionSet.QUARTERS_SUB)
--            .add(FunctionSet.MONTHS_ADD).add(FunctionSet.MONTHS_SUB)
--            .add(FunctionSet.WEEKS_ADD).add(FunctionSet.WEEKS_SUB)
--            .add(FunctionSet.DAYS_ADD).add(FunctionSet.DAYS_SUB)
--            .add(FunctionSet.HOURS_ADD).add(FunctionSet.HOURS_SUB)
--            .add(FunctionSet.MINUTES_ADD).add(FunctionSet.MINUTES_SUB)
--            .add(FunctionSet.SECONDS_ADD).add(FunctionSet.SECONDS_SUB)
--            .add(FunctionSet.MILLISECONDS_ADD).add(FunctionSet.MILLISECONDS_SUB)
--            .add(FunctionSet.MICROSECONDS_ADD).add(FunctionSet.MICROSECONDS_SUB)
--            .add(FunctionSet.DATE_ADD).add(FunctionSet.DATE_SUB)
--            .build();
-+    // The {add, sub} functions of each time unit. Only calls of the same unit are merged.
-+    private static final List<List<String>> TIME_FN_UNITS = ImmutableList.of(
-+            ImmutableList.of(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB),
-+            ImmutableList.of(FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB),
-+            ImmutableList.of(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB),
-+            ImmutableList.of(FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB),
-+            ImmutableList.of(FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB),
-+            ImmutableList.of(FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB),
-+            ImmutableList.of(FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB),
-+            ImmutableList.of(FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB),
-+            ImmutableList.of(FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB),
-+            ImmutableList.of(FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB),
-+            ImmutableList.of(FunctionSet.DATE_ADD, FunctionSet.DATE_SUB));
-+    // Each time function and the {add, sub} functions of its unit
-+    private static final Map<String, List<String>> TIME_FNS = TIME_FN_UNITS.stream()
-+            .flatMap(unit -> unit.stream().map(fn -> Map.entry(fn, unit)))
-+            .collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
-+    // years, quarters and months clamp to the month end, so they do not compose
-+    private static final Set<String> MONTH_BASED_TIME_FNS = ImmutableSet.of(FunctionSet.YEARS_ADD,
-+            FunctionSet.YEARS_SUB, FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB, FunctionSet.MONTHS_ADD,
-+            FunctionSet.MONTHS_SUB);
- 
-     private static final EliminateNegationsRewriter ELIMINATE_NEGATIONS_REWRITER = new EliminateNegationsRewriter();
- 
-@@ -398,7 +392,7 @@ public ScalarOperator visitCall(CallOperator call, ScalarOperatorRewriteContext
-             return ifNull(call);
-         } else if (FunctionSet.ARRAY_MAP.equals(call.getFnName())) {
-             return arrayMap(call);
--        } else if (TIME_FN_NAMES.contains(call.getFnName())) {
-+        } else if (TIME_FNS.containsKey(call.getFnName())) {
-             return simplifiedTimeFns(call);
-         } else if (FunctionSet.DATE_TRUNC.equalsIgnoreCase(call.getFnName())) {
-             return simplifiedDateTrunc(call);
-@@ -443,8 +437,7 @@ public ScalarOperator visitLikePredicateOperator(LikePredicateOperator predicate
-
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/transformer/SqlToScalarOperatorTranslator.java` (modified, +80/-1)
-```diff
-@@ -24,6 +24,7 @@
- import com.starrocks.qe.ConnectContext;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.sql.analyzer.ExpressionAnalyzer;
-+import com.starrocks.sql.analyzer.IntervalSeconds;
- import com.starrocks.sql.analyzer.RelationFields;
- import com.starrocks.sql.analyzer.RelationId;
- import com.starrocks.sql.analyzer.ResolvedField;
-@@ -109,12 +110,17 @@
- import com.starrocks.sql.optimizer.operator.scalar.SubfieldOperator;
- import com.starrocks.sql.optimizer.operator.scalar.SubqueryOperator;
- import com.starrocks.sql.optimizer.rewrite.ScalarOperatorRewriter;
-+import com.starrocks.sql.parser.NodePosition;
-+import com.starrocks.type.DateType;
- import com.starrocks.type.FunctionType;
-+import com.starrocks.type.IntegerType;
- import com.starrocks.type.InvalidType;
- import com.starrocks.type.JsonType;
-+import com.starrocks.type.Type;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-+import java.math.BigDecimal;
- import java.util.ArrayList;
- import java.util.Collections;
- import java.util.List;
-@@ -563,7 +569,80 @@ public ScalarOperator visitTimestampArithmeticExpr(TimestampArithmeticExpr node,
- 
-             Function fn = ExprUtils.getTimestampArithmeticFunction(node);
-             Preconditions.checkNotNull(fn, "TimestampArithmeticExpr must resolve to a function");
--            return new CallOperator(fn.getFunctionName().getFunction(), node.getType(), arguments, fn);
-+            String fnName = fn.getFunctionName().getFunction();
-+            ScalarOperator fractionalSeconds = splitFractionalSeconds(fnName, node.getType(), arguments, node.getPos());
-+            if (fractionalSeconds != null) {
-+                return fractionalSeconds;
-+            }
-+            return new CallOperator(fnName, node.getType(), arguments, fn);
-+        }
-+
-+        // seconds_add and seconds_sub take the amount as an INT, so `ts + INTERVAL '0.5' SECOND` would add NULL and
-+        // `ts + INTERVAL 1.5 SECOND` one second. A constant amount that is a decimal, a floating point number or a
-+        // string is added as whole seconds and microseconds instead:
-+        // `ts + INTERVAL 1.5 SECOND` is `microseconds_add(seconds_add(ts, 1), 500000)`.
-+        // Returns null if the call is not such an interval, and then it is built as it is.
-+        private static ScalarOperator splitFractionalSeconds(String fnName, Type returnType,
-+                                                             List<ScalarOperator> arguments, NodePosition pos) {
-+            boolean add = FunctionSet.SECONDS_ADD.equals(fnName);
-+            if (!add && !FunctionSet.SECONDS_SUB.equals(fnName)) {
-+                return null;
-+            }
-+            ScalarOperator amount = arguments.get(1);
-+            if (!amount.isConstantRef() && amount.isConstant()) {
-+                // A constant expression, as in `TIMESTAMPADD(SECOND, 0.25 + 0.25, ts)`, is folded here. Later on the
-+                // amount is cast to INT before constants are folded, which would drop the fraction.
-+                ScalarOperatorRewriter rewriter = new ScalarOperatorRewriter();
-+                amount = rewriter.rewrite(rewriter.rewrite(amount, ScalarOperatorRewriter.DEFAULT_TYPE_CAST_RULE),
-+                        ScalarOperatorRewriter.FOLD_CONSTANT_RULES);
-+            }
-+            BigDecimal seconds = constantSeconds(amount);
-+            if (seconds == null) {
-+                return null;
-+            }
-+            int[] wholeSecondsAndMicroseconds = IntervalSeconds.split(seconds, pos);
-+            if (wholeSecondsAndMicroseconds == null) {
-+                return null;
-+            }
-+            int wholeSeconds = wholeSecondsAndMicroseconds[0];
-+            int wholeMicroseconds = wholeSecondsAndMicroseconds[1];
-+
-+            String microsecondsFn = add ? FunctionSet.MICROSECONDS_ADD : FunctionSet.MICROSECONDS_SUB;
-+            Type[] argTypes = {DateType.DATETIME, IntegerType.INT};
-+            ScalarOperator result = arguments.get(0);
-+            if (wholeSeconds != 0 || wholeMicroseconds == 0) {
-+                result = new CallOperator(fnName, returnType,
-+                        Lists.newArrayList(result, ConstantOperator.createInt(wholeSeconds)),
-+                        ExprUtils.getBuiltinFunction(fnName, argTypes, Function.CompareMode.IS_IDENTICAL));
-+            }
-+            if (wholeMicroseconds != 0) {
-+                result = new CallOperator(microsecondsFn, returnType,
-+                        Lists.newArrayList(result, ConstantOperator.createInt(wholeMicroseconds)),
-+                        ExprUtils.getBuiltinFunction(microsecondsFn, argTypes, Function.CompareMode.IS_IDENTICAL));
-+            }
-+            return result;
-+        }
-+
-+        // The value of a constant decimal, floating point or string amount, or null for any other amount (also for a
-+        // string that is not a number, which is left to the cast to INT of the function argument)
-+        private static Bi
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/rewrite/scalar/SimplifiedPredicateRuleTest.java` (modified, +104/-1)
-```diff
-@@ -16,21 +16,30 @@
- package com.starrocks.sql.optimizer.rewrite.scalar;
- 
- import com.google.common.collect.Lists;
-+import com.starrocks.catalog.Function;
-+import com.starrocks.catalog.FunctionSet;
- import com.starrocks.sql.ast.expression.BinaryType;
-+import com.starrocks.sql.ast.expression.ExprUtils;
- import com.starrocks.sql.optimizer.operator.OperatorType;
- import com.starrocks.sql.optimizer.operator.scalar.BinaryPredicateOperator;
-+import com.starrocks.sql.optimizer.operator.scalar.CallOperator;
- import com.starrocks.sql.optimizer.operator.scalar.CaseWhenOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ConstantOperator;
- import com.starrocks.sql.optimizer.operator.scalar.LikePredicateOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ScalarOperator;
- import com.starrocks.sql.plan.PlanTestBase;
- import com.starrocks.type.BooleanType;
-+import com.starrocks.type.DateType;
- import com.starrocks.type.IntegerType;
-+import com.starrocks.type.Type;
- import com.starrocks.type.VarcharType;
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.Test;
- 
-+import java.util.Arrays;
-+import java.util.List;
-+
- import static org.junit.jupiter.api.Assertions.assertEquals;
- 
- public class SimplifiedPredicateRuleTest extends PlanTestBase {
-@@ -42,6 +51,24 @@ public class SimplifiedPredicateRuleTest extends PlanTestBase {
-     private static final ConstantOperator OB_FALSE = ConstantOperator.createBoolean(false);
-     private static final ConstantOperator OB_TRUE = ConstantOperator.createBoolean(true);
- 
-+    // The {add, sub} functions of each unit whose nested calls with constant amounts are merged
-+    private static final String[][] TIME_FN_UNITS = {
-+            {FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB},
-+            {FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB},
-+            {FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB},
-+            {FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB},
-+            {FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB},
-+            {FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB},
-+            {FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB},
-+            {FunctionSet.DATE_ADD, FunctionSet.DATE_SUB},
-+    };
-+    // Years, quarters and months clamp to the month end, so their nested calls are not merged
-+    private static final String[][] MONTH_BASED_TIME_FN_UNITS = {
-+            {FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB},
-+            {FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB},
-+            {FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB},
-+    };
-+
-     private SimplifiedPredicateRule rule = new SimplifiedPredicateRule();
- 
-     @BeforeAll
-@@ -163,4 +190,80 @@ public void applyHourToDatetimeRewrite() throws Exception {
-         starRocksAssert.query("SELECT hour(to_datetime(ts, 4)) FROM test_timestamp")
-                 .explainWithout("hour_from_unixtime");
-     }
--}
-\ No newline at end of file
-+
-+    private static CallOperator timeFn(String name, ScalarOperator datetime, int amount) {
-+        Function fn = ExprUtils.getBuiltinFunction(name, new Type[] {DateType.DATETIME, IntegerType.INT},
-+                Function.CompareMode.IS_IDENTICAL);
-+        return new CallOperator(name, DateType.DATETIME,
-+                Lists.newArrayList(datetime, ConstantOperator.createInt(amount)), fn);
-+    }
-+
-+    @Test
-+    public void mergeTimeFnsOfTheSameUnit() {
-+        ColumnRefOperator ts = new ColumnRefOperator(1, DateType.DATETIME, "ts", true);
-+        for (String[] unit : TIME_FN_UNITS) {
-+            String add = unit[0];
-+            String sub = unit[1];
-+            assertEquals(add + "(1: ts, 7)", rule.apply(timeFn(add, timeFn(add, ts, 3), 4), null).toString());
-+            assertEquals(sub + "(1: ts, 2)", rule.apply(timeFn(sub, timeFn(add, ts, 3), 5), null).toString());
-+            assertEquals(add + "(1: ts, 2)", rule.apply(timeFn(add, timeFn(sub, ts, 3), 5), null).toString());
-+            assertEquals(sub + "(1: ts, 7)", rule.apply(timeFn(sub, timeFn(sub, ts, 3), 4), null).toString());
-+            // the amounts cancel out
-+            assertEquals("1: ts", rule.apply(timeFn(sub, timeFn(add, ts, 3), 3), null).toString());
-+        }
-+        for (String[] unit : MONTH_BASED_TIME_FN_UNITS) {
-+            for (String outerFn : unit) {
-+                for (String innerFn : unit) {
-+                    CallOperator call = timeFn(outerFn, timeFn(innerFn, ts, 3), 4);
-+                    assertEquals(call.toString(), rule.apply(call, null).toString(), outerFn + " over " + innerFn);
-+                }
-+            }
-+        }
-+    }
-+
-+    @Test
-+    public void doNotMergeTimeFnsOfDifferentUnits() {
-+        ColumnRefOperator ts = new ColumnRefOperator(1, DateType.DATETIME, "ts", true);
-+        List<String[]> units = Lists.newArrayList(TIME_FN_UNITS);
-+        units.addAll(Arrays.asList(MONTH_BASED_TIME_FN_UNITS));
-+        for 
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/ExpressionTest.java` (modified, +81/-0)
-```diff
-@@ -257,6 +257,87 @@ public void testTimestampArithmeticExpr() throws Exception {
-                 + "  |  <slot 14> : days_sub(15: cast, 3)\n"));
+@@ -80,8 +80,10 @@ DD_TARGET_AVX2 void delta_decode_chain_int32_avx2(int32_t* buf, int n, int32_t m
      }
  
-+    // seconds_add takes its amount as an INT, so a fraction of a second is added with microseconds_add
-+    @Test
-+    public void testIntervalWithFractionalSeconds() throws Exception {
-+        String[][] cases = {
-+                {"id_datetime + interval '0.5' second", "microseconds_add(8: id_datetime, 500000)"},
-+                {"id_datetime + interval 1.5 second", "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
-+                {"id_datetime - interval 1.5 second", "microseconds_sub(seconds_sub(8: id_datetime, 1), 500000)"},
-+                {"interval 1.5 second + id_datetime", "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
-+                {"id_datetime + interval -0.25 second", "microseconds_add(8: id_datetime, -250000)"},
-+                {"id_datetime + interval -1.5 second", "microseconds_add(seconds_add(8: id_datetime, -1), -500000)"},
-+                {"id_datetime + interval 0.000001 second", "microseconds_add(8: id_datetime, 1)"},
-+                {"id_datetime + interval 1e0 second", "seconds_add(8: id_datetime, 1)"},
-+                {"id_datetime + interval 0.5e0 second", "microseconds_add(8: id_datetime, 500000)"},
-+                {"date_add(id_datetime, interval '3000.000001' second)",
-+                        "microseconds_add(seconds_add(8: id_datetime, 3000), 1)"},
-+                {"timestampadd(second, 2.5, id_datetime)", "microseconds_add(seconds_add(8: id_datetime, 2), 500000)"},
-+                // the amount is still a number of seconds when it has a fraction of zero
-+                {"id_datetime + interval '5.0' second", "seconds_add(8: id_datetime, 5)"},
-+                {"id_datetime + interval 5.00 second", "seconds_add(8: id_datetime, 5)"},
-+                // amounts without a fraction are as before
-+                {"id_datetime + interval 2 second", "seconds_add(8: id_datetime, 2)"},
-+                {"id_datetime + interval '2' second", "seconds_add(8: id_datetime, 2)"},
-+                {"id_datetime - interval 2 second", "seconds_sub(8: id_datetime, 2)"},
-+                // and the other calls on the same value are not merged with it
-+                {"id_datetime + interval 1.5 second + interval 1 second",
-+                        "seconds_add(microseconds_add(seconds_add(8: id_datetime, 1), 500000), 1)"},
-+                {"id_datetime + interval 1.5 second + interval 250 millisecond",
-+                        "milliseconds_add(microseconds_add(seconds_add(8: id_datetime, 1), 500000), 250)"},
-+                // a constant expression is folded first
-+                {"timestampadd(second, 0.25 + 0.25, id_datetime)", "microseconds_add(8: id_datetime, 500000)"},
-+                {"id_datetime + interval cast('1.5' as decimal(10, 1)) second",
-+                        "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
-+                {"date_sub(id_datetime, interval cast(3 as double) / 4 second)", "microseconds_sub(8: id_datetime, 750000)"},
-+        };
-+        for (String[] c : cases) {
-+            String plan = getFragmentPlan("select " + c[0] + " from test_all_type");
-+            assertContains(plan, c[1]);
-+        }
-+    }
-+
-+    @Test
-+    public void testIntervalWithSecondsFinerThanMicroseconds() {
-+        // DATETIME has no digits below microseconds
-+        SemanticException e = assertThrows(SemanticException.class,
-+                () -> getFragmentPlan("select id_datetime + interval 0.1234567 second from test_all_type"));
-+        assertContains(e.getMessage(), "0.1234567");
-+        assertThrows(SemanticException.class,
-+                () -> getFragmentPlan("select id_datetime + interval '1.0000001' second from test_all_type"));
-+        // also when the amount is a constant expression
-+        assertThrows(SemanticException.class,
-+                () -> getFragmentPlan("select timestampadd(second, 0.0000001 + 0, id_datetime) from test_all_type"));
-+    }
-+
-+    // A literal amount is checked when the expression is analyzed, so a definition that uses it is refused when it is
-+    // created, rather than each time it is used
-+    @Test
-+    public void testDefinitionWithSecondsFinerThanMicroseconds() {
-+        Exception e = assertThrows(Exception.class, () -> starRocksAssert.withTable("CREATE TABLE t_interval_generated (\n" +
-+                "  k1 INT NOT NULL,\n" +
-+                "  ts DATETIME NOT NULL,\n" +
-+                "  ts2 DATETIME NULL AS ts + INTERVAL 0.1234567 SECOND\n" +
-+                ") DUPLICATE KEY(k1) DISTRIBUTED BY HASH(k1) BUCKETS 1 PROPERTIES ('replication_num' = '1')"));
-+        assertContains(e.getMessage(), "at most 6 decimals");
-+
-+        e = assertThrows(Exception.class, () -> starRocksAssert.withView(
-+                "create view v_interval_finer as select id_datetime + interval '0.1234567' second from test_all_type"));
-
-```
-
----
-
-### Incident Patch 2: `dcd391a9` (2026-11-12)
-**Commit Message**: [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (#82995)
-
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/StatisticsCalculator.java` (modified, +15/-6)
-```diff
-@@ -312,9 +312,11 @@ public Void visitOperator(Operator node, ExpressionContext context) {
-             Map<ColumnRefOperator, SubfieldOperator> subfieldColumns = Maps.newHashMap();
-             Preconditions.checkState(projection.getCommonSubOperatorMap().isEmpty());
-             for (Map.Entry<ColumnRefOperator, ScalarOperator> entry : projection.getColumnRefMap().entrySet()) {
--                if (entry.getValue() instanceof SubfieldOperator && (node instanceof LogicalScanOperator ||
--                        node instanceof PhysicalScanOperator)) {
--                    subfieldColumns.put(entry.getKey(), (SubfieldOperator) entry.getValue());
-+                if (entry.getValue() instanceof SubfieldOperator subfieldOperator &&
-+                        (node instanceof LogicalScanOperator ||
-+                        node instanceof PhysicalScanOperator) &&
-+                        canUseSubfieldStatistics(subfieldOperator)) {
-+                    subfieldColumns.put(entry.getKey(), subfieldOperator);
-                 } else {
-                     statisticsBuilder.addColumnStatistic(entry.getKey(),
-                             ExpressionStatisticCalculator.calculate(entry.getValue(), statisticsBuilder.build()));
-@@ -329,6 +331,12 @@ public Void visitOperator(Operator node, ExpressionContext context) {
-         return null;
+     for (int i = sz; i < n; i++) {
+-        buf[i] += last_value + min_delta;
+-        last_value = buf[i];
++        uint32_t val =
++                static_cast<uint32_t>(buf[i]) + static_cast<uint32_t>(last_value) + static_cast<uint32_t>(min_delta);
++        buf[i] = static_cast<int32_t>(val);
++        last_value = static_cast<int32_t>(val);
      }
- 
-+    private static boolean canUseSubfieldStatistics(SubfieldOperator subfieldOperator) {
-+        // Persistent subfield statistics paths must be rooted directly at a table column. Expression roots such as
-+        // array_col[1] cannot be represented by a persistent STRUCT path.
-+        return subfieldOperator.getChild(0) instanceof ColumnRefOperator;
-+    }
-+
-     private void addSubFiledStatistics(Operator node, Map<ColumnRefOperator, SubfieldOperator> subfieldColumns,
-                                        Statistics.Builder statisticsBuilder) {
-         if (!(node instanceof LogicalScanOperator) && !(node instanceof PhysicalScanOperator)) {
-@@ -1230,11 +1238,12 @@ private Void computeProjectNode(ExpressionContext context,
- 
-         for (ColumnRefOperator requiredColumnRefOperator : columnRefMap.keySet()) {
-             ScalarOperator mapOperator = columnRefMap.get(requiredColumnRefOperator);
--            if (mapOperator instanceof SubfieldOperator && context.getOptExpression() != null) {
-+            if (mapOperator instanceof SubfieldOperator subfieldOperator &&
-+                    canUseSubfieldStatistics(subfieldOperator) &&
-+                    context.getOptExpression() != null) {
-                 Operator child = context.getOptExpression().inputAt(0).getOp();
-                 if (child instanceof LogicalScanOperator || child instanceof PhysicalScanOperator) {
--                    addSubFiledStatistics(child, ImmutableMap.of(requiredColumnRefOperator,
--                            (SubfieldOperator) mapOperator), builder);
-+                    addSubFiledStatistics(child, ImmutableMap.of(requiredColumnRefOperator, subfieldOperator), builder);
-                     continue;
-                 }
-             }
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/statistics/StatisticsCalculatorTest.java` (modified, +217/-0)
-```diff
-@@ -33,6 +33,7 @@
- import com.starrocks.qe.ConnectContext;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.server.MetadataMgr;
-+import com.starrocks.sql.analyzer.SemanticException;
- import com.starrocks.sql.ast.JoinOperator;
- import com.starrocks.sql.ast.expression.BinaryType;
- import com.starrocks.sql.common.StarRocksPlannerException;
-@@ -51,27 +52,37 @@
- import com.starrocks.sql.optimizer.dump.MockDumpInfo;
- import com.starrocks.sql.optimizer.dump.QueryDumpInfo;
- import com.starrocks.sql.optimizer.operator.AggType;
-+import com.starrocks.sql.optimizer.operator.Projection;
- import com.starrocks.sql.optimizer.operator.UKFKConstraints;
- import com.starrocks.sql.optimizer.operator.logical.LogicalAggregationOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalEsScanOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalIcebergScanOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalJoinOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalKuduScanOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalOlapScanOperator;
-+import com.starrocks.sql.optimizer.operator.logical.LogicalProjectOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalUnionOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalValuesOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalWindowOperator;
- import com.starrocks.sql.optimizer.operator.scalar.BinaryPredicateOperator;
- import com.starrocks.sql.optimizer.operator.scalar.CallOperator;
- import com.starrocks.sql.optimizer.operator.scalar.CastOperator;
-+import com.starrocks.sql.optimizer.operator.scalar.CollectionElementOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
- import com.starrocks.sql.optimizer.operator.scalar.CompoundPredicateOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ConstantOperator;
- import com.starrocks.sql.optimizer.operator.scalar.InPredicateOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ScalarOperator;
-+import com.starrocks.sql.optimizer.operator.scalar.SubfieldOperator;
- import com.starrocks.sql.plan.ConnectorPlanTestBase;
-+import com.starrocks.statistic.StatisticUtils;
-+import com.starrocks.thrift.TExplainLevel;
-+import com.starrocks.type.ArrayType;
- import com.starrocks.type.DateType;
- import com.starrocks.type.IntegerType;
-+import com.starrocks.type.StructField;
-+import com.starrocks.type.StructType;
-+import com.starrocks.type.Type;
- import com.starrocks.type.VarcharType;
- import com.starrocks.utframe.StarRocksAssert;
- import com.starrocks.utframe.UtFrameUtils;
-@@ -315,6 +326,212 @@ public void testLogicalOlapTableScan() throws Exception {
-         }
-     }
- 
-+    /**
-+     * Operator level test for both call sites that ask the statistics storage for a subfield path: the projection of a
-+     * scan operator, and a LogicalProject on top of a scan. A query reaches the first one, see
-+     * {@link #testQueryWithSubfieldOfArrayElement()}, but not the second one, because the project is merged into the
-+     * scan projection before statistics are estimated. That branch is therefore covered by a hand built operator tree.
-+     */
-+    @Test
-+    public void testSkipStatisticsForSubfieldOfArrayElement() {
-+        GlobalStateMgr globalStateMgr = connectContext.getGlobalStateMgr();
-+        OlapTable table = (OlapTable) globalStateMgr.getLocalMetastore().getDb("statistics_test")
-+                .getTable("test_all_type");
-+        List<Long> partitionIds = table.getPartitions().stream()
-+                .mapToLong(Partition::getId).boxed().collect(Collectors.toList());
-+
-+        Type structType = new StructType(
-+                new ArrayList<>(List.of(new StructField("bucket_id", IntegerType.INT))));
-+        Type arrayType = new ArrayType(structType);
-+        Column arrayColumn = new Column("bucket_array", arrayType, true);
-+        ColumnRefOperator arrayRef = columnRefFactory.create("bucket_array", arrayType, true);
-+        ColumnRefOperator outputRef = columnRefFactory.create("bucket_id", IntegerType.INT, true);
-+        CollectionElementOperator arrayElement = new CollectionElementOperator(
-+                structType, arrayRef, ConstantOperator.createInt(1), false);
-+        SubfieldOperator subfield = new SubfieldOperator(
-+                arrayElement, IntegerType.INT, List.of("bucket_id"));
-+
-+        LogicalOlapScanOperator scanOperator = new LogicalOlapScanOperator(table,
-+                ImmutableMap.of(arrayRef, arrayColumn),
-+                ImmutableMap.of(arrayColumn, arrayRef),
-+                null, -1, null,
-+                table.getBaseIndexMetaId(),
-+                partitionIds,
-+                null,
-+                false,
-+                Lists.newArrayList(),
-+                Lists.newArrayList(),
-+                Lists.newArrayList(),
-+                false);
-+        scanOperator.setProjection(new Projection(ImmutableMap.of(outputRe
-```
-
----
-
-### Incident Patch 3: `234fea95` (2026-11-12)
-**Commit Message**: [BugFix] Keep constant columns in MAP casts (#82964)
-
-Signed-off-by: Viktor Gnidenko <[REDACTED_EMAIL]>
-
-**File**: `be/src/exprs/cast_nested.cpp` (modified, +3/-0)
-```diff
-@@ -57,6 +57,9 @@ StatusOr<ColumnPtr> CastMapExpr::evaluate_checked(ExprContext* context, Chunk* p
-     auto casted_map = MapColumn::create(casted_key_column, casted_value_column,
-                                         ColumnHelper::as_column<UInt32Column>(std::move(*src_offsets_column).mutate()));
-     RETURN_IF_ERROR(down_cast<MapColumn*>(casted_map->as_mutable_raw_ptr())->unfold_const_children(_type));
-+    if (orig_column->is_constant()) {
-+        return ConstColumn::create(std::move(casted_map), orig_column->size());
-+    }
-     if (!orig_column->is_nullable()) {
-         return casted_map;
-     }
-```
-
-**File**: `be/test/exprs/cast_expr_core_test.cpp` (modified, +59/-0)
-```diff
-@@ -14,8 +14,13 @@
- 
- #include <gtest/gtest.h>
- 
-+#include "column/chunk.h"
-+#include "column/column_helper.h"
-+#include "column/const_column.h"
-+#include "column/map_column.h"
- #include "common/object_pool.h"
- #include "exprs/cast_expr.h"
-+#include "exprs/column_ref.h"
- 
- namespace starrocks {
- 
-@@ -39,6 +44,21 @@ TypeDescriptor make_array_type(LogicalType elem_type) {
-     return array_type;
  }
  
-+const auto int_map_type = TypeDescriptor::create_map_type(TYPE_INT_DESC, TYPE_INT_DESC);
-+const auto bigint_key_map_type = TypeDescriptor::create_map_type(TYPE_BIGINT_DESC, TYPE_INT_DESC);
-+
-+StatusOr<ColumnPtr> cast_map(ColumnPtr input) {
-+    ObjectPool pool;
-+    auto* input_expr = pool.add(new ColumnRef(int_map_type, 0));
-+    auto* expr = VectorizedCastExprFactory::from_type(int_map_type, bigint_key_map_type, input_expr, &pool);
-+    if (expr == nullptr) {
-+        return Status::InternalError("Failed to create MAP cast expression");
-+    }
-+    Chunk chunk;
-+    chunk.append_column(std::move(input), 0);
-+    return expr->evaluate_checked(nullptr, &chunk);
-+}
-+
- } // namespace
+@@ -118,8 +120,10 @@ DD_TARGET_AVX512VL void delta_decode_chain_int32_avx2x(int32_t* buf, int n, int3
+     }
  
- TEST(CastExprCoreTest, from_thrift_succeeds_for_primitive_cast) {
-@@ -59,4 +79,43 @@ TEST(CastExprCoreTest, from_thrift_returns_null_for_unsupported_cast) {
-     EXPECT_EQ(nullptr, expr);
+     for (int i = sz; i < n; i++) {
+-        buf[i] += last_value + min_delta;
+-        last_value = buf[i];
++        uint32_t val =
++                static_cast<uint32_t>(buf[i]) + static_cast<uint32_t>(last_value) + static_cast<uint32_t>(min_delta);
++        buf[i] = static_cast<int32_t>(val);
++        last_value = static_cast<int32_t>(val);
+     }
  }
  
-+TEST(CastExprCoreTest, map_cast_preserves_constant) {
-+    auto input = ColumnHelper::create_column(int_map_type, false);
-+    input->append_datum(DatumMap{{int32_t{1}, int32_t{7}}});
-+    auto result = cast_map(ConstColumn::create(std::move(input), 4));
-+    ASSERT_TRUE(result.ok()) << result.status();
-+    ASSERT_EQ(4, result.value()->size());
-+    ASSERT_TRUE(result.value()->is_constant());
-+
-+    const auto* map = down_cast<const MapColumn*>(ColumnHelper::get_data_column(result.value().get()));
-+    EXPECT_EQ(1, map->size());
-+    EXPECT_EQ("{1:7}", map->debug_item(0));
-+    EXPECT_NE(nullptr, dynamic_cast<const Int64Column*>(ColumnHelper::get_data_column(map->keys_column().get())));
+@@ -160,8 +164,10 @@ DD_TARGET_AVX512F void delta_decode_chain_int32_avx512(int32_t* buf, int n, int3
+     }
+ 
+     for (int i = sz; i < n; i++) {
+-        buf[i] += last_value + min_delta;
+-        last_value = buf[i];
++        uint32_t val =
++                static_cast<uint32_t>(buf[i]) + static_cast<uint32_t>(last_value) + static_cast<uint32_t>(min_delta);
++        buf[i] = static_cast<int32_t>(val);
++        last_value = static_cast<int32_t>(val);
+     }
+ }
+ 
+@@ -202,8 +208,10 @@ DD_TARGET_AVX512F void delta_decode_chain_int64_avx512(int64_t* buf, int n, int6
+     }
+ 
+     for (int i = sz; i < n; i++) {
+-        buf[i] += last_value + min_delta;
+-        last_value = buf[i];
++        uint64_t val =
++                static_cast<uint64_t>(buf[i]) + static_cast<uint64_t>(last_value) + static_cast<uint64_t>(min_delta);
++        buf[i] = static_cast<int64_t>(val);
++        last_value = static_cast<int64_t>(val);
+     }
+ }
+ 
+@@ -308,6 +316,14 @@ void delta_decode_chain_int64_neon(int64_t* buf, int n, int64_t min_delta, int64
+ // The AVX-512 path is skipped under ASan: it spills zmm registers to a stack slot ASan aligns to 32
+ // (not 64) bytes, so the store touches the redzone and traps. See https://github.com/llvm/llvm-project/issues/91565.
+ 
++void delta_decode_chain_int32_scalar(int32_t* buf, int n, int32_t min_delta, int32_t& last_value) {
++    delta_decode_chain_scalar_prefetch<int32_t>(buf, n, min_delta, last_value);
 +}
 +
-+TEST(CastExprCoreTest, map_cast_preserves_nullable_rows) {
-+    auto input = ColumnHelper::create_column(int_map_type, true);
-+    input->append_datum(DatumMap{{int32_t{1}, int32_t{7}}});
-+    input->append_nulls(1);
-+    input->append_datum(DatumMap{});
-+    input->append_datum(DatumMap{{int32_t{2}, int32_t{9}}});
-+    auto result = cast_map(std::move(input));
-+    ASSERT_TRUE(result.ok()) << result.status();
-+    const auto& output = result.value();
-+    ASSERT_EQ(4, output->size());
-+    EXPECT_FALSE(output->is_constant());
-+    ASSERT_TRUE(output->is_nullable());
-+    EXPECT_EQ("{1:7}", output->debug_item(0));
-+    EXPECT_TRUE(output->is_null(1));
-+    EXPECT_EQ("{}", output->debug_item(2));
-+    EXPECT_EQ("{2:9}", output->debug_item(3));
++void delta_decode_chain_int64_scalar(int64_t* buf, int n, int64_t min_delta, int64_t& last_value) {
++    delta_decode_chain_scalar_prefetch<int64_t>(buf, n, min_delta, last_value);
 +}
 +
-+TEST(CastExprCoreTest, map_cast_preserves_constant_null) {
-+    auto result = cast_map(ColumnHelper::create_const_null_column(4));
-+    ASSERT_TRUE(result.ok()) << result.status();
-+    EXPECT_EQ(4, result.value()->size());
-+    EXPECT_TRUE(result.value()->only_null());
-+}
-+
+ void delta_decode_chain_int32(int32_t* buf, int n, int32_t min_delta, int32_t& last_value) {
+ #if defined(__x86_64__)
+ #if !defined(ADDRESS_SANITIZER)
+@@ -324,7 +340,7 @@ void delta_decode_chain_int32(int32_t* buf, int n, int32_t min_delta, int32_t& l
+     delta_decode_chain_int32_neon(buf, n, min_delta, last_value);
+     return;
+ #endif
+-    delta_decode_chain_scalar_prefetch<int32_t>(buf, n, min_delta, last_value);
++    delta_decode_chain_int32_scalar(buf, n, min_delta, last_value);
+ }
+ 
+ void delta_decode_chain_int64(int64_t* buf, int n, int64_t min_delta, int64_t& last_value) {
+@@ -337,7 +353,7 @@ void delta_decode_chain_int64(int64_t* buf, int n, int64_t min_delta, int64_t& l
+     delta_decode_chain_int64_neon(buf, n, min_delta, last_value);
+     return;
+ #endif
+-    delta_decode_chain_scalar_prefetch<int64_t>(buf, n, min_delta, last_value);
++    delta_decode_chain_int64_scalar(buf, n, min_delta, last_value);
+ }
+ 
  } // namespace starrocks
 ```
 
-**File**: `test/sql/test_map/R/test_cast_constant_map` (added, +12/-0)
+**File**: `be/src/base/simd/delta_decode.h` (modified, +16/-11)
 ```diff
-@@ -0,0 +1,12 @@
-+-- name: test_cast_constant_map
-+WITH t AS (
-+    SELECT generate_series AS id, CAST(parse_json('{"1":7}') AS MAP<INT,INT>) AS m
-+    FROM TABLE(generate_series(1,4))
-+)
-+SELECT CAST(m AS MAP<BIGINT,INT>) AS m FROM t;
-+-- result:
-+{1:7}
-+{1:7}
-+{1:7}
-+{1:7}
-+-- !result
+@@ -16,6 +16,7 @@
+ 
+ #include <cstddef>
+ #include <cstdint>
++#include <type_traits>
+ 
+ #if defined(__x86_64__) && defined(__AVX2__)
+ #include <immintrin.h>
+@@ -36,11 +37,9 @@ inline bool contains_negative_value_scalar(const int32_t* buf, int n) {
+ static inline bool contains_negative_value(const int32_t* data, size_t size) {
+     size_t i = 0;
+ #ifdef __AVX2__
+-    __m256i v_zero = _mm256_setzero_si256();
+     for (; i + 8 <= size; i += 8) {
+-        __m256i v = _mm256_loadu_si256((__m256i*)(data + i));
+-        __m256i cmp = _mm256_cmpgt_epi32(v_zero, v);
+-        if (_mm256_movemask_epi8(cmp)) return true;
++        __m256i v = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(data + i));
++        if (_mm256_movemask_ps(_mm256_castsi256_ps(v))) return true;
+     }
+ #elif defined(__ARM_NEON) && defined(__aarch64__)
+     int32x4_t v_or0 = vdupq_n_s32(0);
+@@ -58,21 +57,27 @@ static inline bool contains_negative_value(const int32_t* data, size_t size) {
+ }
+ 
+ template <typename T>
+-static inline void delta_decode_chain_scalar_prefetch(T* buf, int n, T min_delta, T& last_value) noexcept {
+-    T acc = last_value;
++inline void delta_decode_chain_scalar_prefetch(T* buf, int n, T min_delta, T& last_value) noexcept {
++    using U = std::make_unsigned_t<T>;
++    U acc = static_cast<U>(last_value);
++    const U u_min_delta = static_cast<U>(min_delta);
+     int i = 0;
+     for (i = 0; (i + 8) < n; ++i) {
+         __builtin_prefetch(buf + i + 8);
+-        acc += buf[i] + min_delta;
+-        buf[i] = acc;
++        acc += static_cast<U>(buf[i]) + u_min_delta;
++        buf[i] = static_cast<T>(acc);
+     }
+     for (; i < n; ++i) {
+-        acc += buf[i] + min_delta;
+-        buf[i] = acc;
++        acc += static_cast<U>(buf[i]) + u_min_delta;
++        buf[i] = static_cast<T>(acc);
+     }
+-    last_value = acc;
++    last_value = static_cast<T>(acc);
+ }
+ 
++// Portable scalar reference implementations, defined in delta_decode.cpp.
++void delta_decode_chain_int32_scalar(int32_t* buf, int n, int32_t min_delta, int32_t& last_value);
++void delta_decode_chain_int64_scalar(int64_t* buf, int n, int64_t min_delta, int64_t& last_value);
++
+ // ISA-specific implementations, defined in delta_decode.cpp. Each kernel carries a per-function
+ // `target` attribute so its AVX2 / AVX-512 intrinsics are available even when the global build
+ // targets a lower baseline (e.g. USE_AVX512=OFF). Declared here for the runtime dispatchers below
 ```
 
-**File**: `test/sql/test_map/T/test_cast_constant_map` (added, +6/-0)
+**File**: `be/test/base/simd/batch_run_counter_test.cpp` (modified, +157/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+-- name: test_cast_constant_map
-+WITH t AS (
-+    SELECT generate_series AS id, CAST(parse_json('{"1":7}') AS MAP<INT,INT>) AS m
-+    FROM TABLE(generate_series(1,4))
-+)
-+SELECT CAST(m AS MAP<BIGINT,INT>) AS m FROM t;
+@@ -215,4 +215,161 @@ TEST_F(BatchRunCounterTest, deterministic_all_zero_all_one_and_single_flip) {
+     }
+ }
+ 
++TEST_F(BatchRunCounterTest, unsigned_filter_values) {
++    // 1. All 0xFF (values with high bit set, previously broken by signed cmpgt_epi8)
++    {
++        std::vector<uint8_t> filter_ff(test_size, 0xFF);
++        BatchRunCounter<32> counter32(filter_ff.data(), 0, test_size);
++        BatchCount b32 = counter32.next_batch();
++        EXPECT_TRUE(b32.AllSet());
++        EXPECT_FALSE(b32.NoneSet());
++
++        BatchRunCounter<16> counter16(filter_ff.data(), 0, test_size);
++        BatchCount b16 = counter16.next_batch();
++        EXPECT_TRUE(b16.AllSet());
++        EXPECT_FALSE(b16.NoneSet());
++
++        BatchRunCounter<8> counter8(filter_ff.data(), 0, test_size);
++        BatchCount b8 = counter8.next_batch();
++        EXPECT_TRUE(b8.AllSet());
++        EXPECT_FALSE(b8.NoneSet());
++    }
++
++    // 2. All 0x80 (int8_t -128)
++    {
++        std::vector<uint8_t> filter_80(test_size, 0x80);
++        BatchRunCounter<32> counter32(filter_80.data(), 0, test_size);
++        BatchCount b32 = counter32.next_batch();
++        EXPECT_TRUE(b32.AllSet());
++        EXPECT_FALSE(b32.NoneSet());
++
++        BatchRunCounter<16> counter16(filter_80.data(), 0, test_size);
++        BatchCount b16 = counter16.next_batch();
++        EXPECT_TRUE(b16.AllSet());
++        EXPECT_FALSE(b16.NoneSet());
++
++        BatchRunCounter<8> counter8(filter_80.data(), 0, test_size);
++        BatchCount b8 = counter8.next_batch();
++        EXPECT_TRUE(b8.AllSet());
++        EXPECT_FALSE(b8.NoneSet());
++    }
++
++    // 3. Mixed unsigned values {0, 0xFF, 0x80, 1, 42}
++    {
++        std::vector<uint8_t> filter(test_size);
++        const uint8_t choices[] = {0, 0xFF, 0x80, 1, 42};
++        for (size_t i = 0; i < test_size; i++) {
++            filter[i] = choices[rand() % 5];
++        }
++
++        size_t zero_count = SIMD::count_zero(filter.data(), test_size);
++
++        auto count_zeros = [&](auto counter) {
++            size_t count = 0;
++            size_t index = 0;
++            auto batch = counter.next_batch();
++            while (batch.length > 0) {
++                if (batch.AllSet()) {
++                    // all non-zero
++                } else if (batch.NoneSet()) {
++                    count += batch.length;
++                } else {
++                    for (int i = 0; i < batch.length; i++) {
++                        if (filter[index + i] == 0) {
++                            count++;
++                        }
++                    }
++                }
++                index += batch.length;
++                batch = counter.next_batch();
++            }
++            return count;
++        };
++
++        EXPECT_EQ(count_zeros(BatchRunCounter<32>(filter.data(), 0, test_size)), zero_count);
++        EXPECT_EQ(count_zeros(BatchRunCounter<16>(filter.data(), 0, test_size)), zero_count);
++        EXPECT_EQ(count_zeros(BatchRunCounter<8>(filter.data(), 0, test_size)), zero_count);
++    }
++}
++
++TEST_F(BatchRunCounterTest, tail_sizes_and_patterns) {
++    const std::vector<size_t> sizes = {0, 1, 3, 7, 8, 11, 15, 16, 23, 24, 31, 32, 40, 48, 55, 63, 64, 75, 127};
++
++    auto run_test = [](const std::vector<uint8_t>& filter) {
++        size_t expected_zeros = 0;
++        for (uint8_t b : filter) {
++            if (b == 0) expected_zeros++;
++        }
++
++        auto count_zeros = [&](auto counter) {
++            size_t count = 0;
++            size_t index = 0;
++            auto batch = counter.next_batch();
++            while (batch.length > 0) {
++                if (batch.AllSet()) {
++                    // all non-zero
++                } else if (batch.NoneSet()) {
++                    count += batch.length;
++                } else {
++                    for (size_t i = 0; i < batch.length; i++) {
++                        if (filter[index + i] == 0) {
++                            count++;
++                        }
++                    }
++                }
++                index += batch.length;
++                batch = counter.next_batch();
++            }
++            return count;
++        };
++
++        EXPECT_EQ(count_zeros(BatchRunCounter<32>(filter.data(), 0, filter.size())), expected_zeros);
++        EXPECT_EQ(count_zeros(BatchRunCounter<16>(filter.data(), 0, filter.size())), expected_zeros);
++        EXPECT_EQ(count_zeros(BatchRunCounter<8>(filter.data(), 0, filter.size())), expected_zeros);
++    };
++
++    for (size_t sz : sizes) {
++        // 1. All zeros
++        std::vector<uint8_t> all_zeros(sz, 0);
++        run_test(all_zeros);
++
++        // 2. All 1s
++        std::vector<uint8_t> all_ones(sz, 1);
++        run_test(all_ones);
++
++        // 3. All 0xFF (unsigned high bit set)
++        std::vector<uint8_t> all_ff(sz, 0xFF);
++        run_test(all_ff);
++
++        // 4. All 0x80 (int8_t -128)
++        std::vector<uint8_t> all_80(sz, 0x80);
++        run_test(all_80);
++
++        // 5. Alternating 0 and 1
++        std::vector<uint8_t> al
+```
+
+**File**: `be/test/base/simd/delta_decode_test.cpp` (modified, +185/-1)
+```diff
+@@ -17,6 +17,7 @@
+ #include <gtest/gtest.h>
+ 
+ #include <climits>
++#include <limits>
+ #include <vector>
+ 
+ namespace starrocks {
+@@ -53,6 +54,15 @@ TEST_F(DeltaDecodeTest, test_int32) {
+         ASSERT_EQ(v.back(), last_value);
+     }
+ 
++    // scalar entry point
++    {
++        std::vector<int32_t> v(values);
++        int32_t last_value = 10;
++        delta_decode_chain_int32_scalar(v.data(), v.size(), 10, last_value);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_value);
++    }
++
+ #if defined(__ARM_NEON) && defined(__aarch64__)
+     {
+         std::vector<int32_t> v(values);
+@@ -111,6 +121,15 @@ TEST_F(DeltaDecodeTest, test_int64) {
+         ASSERT_EQ(v.back(), last_value);
+     }
+ 
++    // scalar entry point
++    {
++        std::vector<int64_t> v(values);
++        int64_t last_value = 10;
++        delta_decode_chain_int64_scalar(v.data(), v.size(), 10, last_value);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_value);
++    }
++
+ #if defined(__ARM_NEON) && defined(__aarch64__)
+     {
+         std::vector<int64_t> v(values);
+@@ -184,8 +203,173 @@ TEST_F(DeltaDecodeTest, test_boundary_sizes_and_negative_deltas) {
+     }
+ }
+ 
++TEST_F(DeltaDecodeTest, test_int32_wrapping_overflow) {
++    // Deliberately test values that wrap across INT32_MAX and INT32_MIN.
++    // In standard C++, signed overflow is UB unless unsigned cast is used.
++    // Under UBSan (-fsanitize=undefined), this verifies zero traps occur.
++    const size_t sz = 137;
++    std::vector<int32_t> values(sz);
++    int32_t start_val = std::numeric_limits<int32_t>::max() - 50;
++    int32_t min_delta = 100;
++    for (size_t i = 0; i < sz; i++) {
++        values[i] = static_cast<int32_t>(i * 1000);
++    }
++    // Force a signed underflow in the scalar tail (index 136) as well as the SIMD loop (index 0).
++    values[sz - 1] = std::numeric_limits<int32_t>::min();
++
++    std::vector<int32_t> expected(values);
++    int32_t expected_last = start_val;
++    delta_decode_chain_scalar_prefetch<int32_t>(expected.data(), expected.size(), min_delta, expected_last);
++    ASSERT_EQ(expected.back(), expected_last);
++
++    {
++        std::vector<int32_t> v(values);
++        int32_t last_val = start_val;
++        delta_decode_chain_int32(v.data(), v.size(), min_delta, last_val);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_val);
++    }
++
++    {
++        std::vector<int32_t> v(values);
++        int32_t last_val = start_val;
++        delta_decode_chain_int32_scalar(v.data(), v.size(), min_delta, last_val);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_val);
++    }
++
++#if defined(__ARM_NEON) && defined(__aarch64__)
++    {
++        std::vector<int32_t> v(values);
++        int32_t last_val = start_val;
++        delta_decode_chain_int32_neon(v.data(), v.size(), min_delta, last_val);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_val);
++    }
++#endif
++
++#if defined(__x86_64__)
++    if (__builtin_cpu_supports("avx2")) {
++        std::vector<int32_t> v(values);
++        int32_t last_val = start_val;
++        delta_decode_chain_int32_avx2(v.data(), v.size(), min_delta, last_val);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_val);
++    }
++#if !defined(ADDRESS_SANITIZER)
++    if (__builtin_cpu_supports("avx512f") && __builtin_cpu_supports("avx512vl")) {
++        std::vector<int32_t> v(values);
++        int32_t last_val = start_val;
++        delta_decode_chain_int32_avx2x(v.data(), v.size(), min_delta, last_val);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_val);
++    }
++    if (__builtin_cpu_supports("avx512f")) {
++        std::vector<int32_t> v(values);
++        int32_t last_val = start_val;
++        delta_decode_chain_int32_avx512(v.data(), v.size(), min_delta, last_val);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_val);
++    }
++#endif
++#endif
++}
++
++TEST_F(DeltaDecodeTest, test_int64_wrapping_overflow) {
++    const size_t sz = 137;
++    std::vector<int64_t> values(sz);
++    int64_t start_val = std::numeric_limits<int64_t>::max() - 50;
++    int64_t min_delta = 100;
++    for (size_t i = 0; i < sz; i++) {
++        values[i] = static_cast<int64_t>(i * 1000);
++    }
++    // Force a signed underflow in the scalar tail (index 136) as well as the SIMD loop (index 0).
++    values[sz - 1] = std::numeric_limits<int64_t>::min();
++
++    std::vector<int64_t> expected(values);
++    int64_t expected_last = start_val;
++    delta_decode_chain_scalar_prefetch<int64_t>(expected.data(), expected.size(), min_delta, expected_last);
++    ASSERT_EQ(expected.back(), expected_last);
++
++    {
++        std::vector<int64_t> v(values);
++        int64_t last_val = start_val;
++        delta_decode_chain_int64(v.data(), v.size(), min_delta, last_val);
++        ASSERT_EQ(v, expected);
++        ASSERT_EQ(v.back(), last_val);
++    }
++
++    {
++        std::vector<int64_t> v(values);
++        int64_t last_val = start_val;
++        delta_decode_chai
+```
+
+---
+
+### Incident Patch 2: `6536a1d7` (2026-11-12)
+**Commit Message**: [BugFix] Fix parquet bloom filter pruning for string struct subfield equality (#82844)
+
+Signed-off-by: kyle-goodale-klaviyo <[REDACTED_EMAIL]>
+
+**File**: `be/src/formats/parquet/complex_column_reader.cpp` (modified, +1/-1)
+```diff
+@@ -647,7 +647,7 @@ StatusOr<bool> StructColumnReader::row_group_bloom_filter(const std::vector<cons
+         if (!val || !val->is_constant()) {
+             return false;
+         }
+-        auto val_str = down_cast<const ConstColumn*>(val.get())->data_column()->debug_item(0);
++        auto val_str = down_cast<const ConstColumn*>(val.get())->data_column()->raw_item_value(0);
+         auto t = get_type_info(root->get_child(1)->type().type);
+         ColumnPredicate* pred = nullptr;
+         pred = new_column_eq_predicate(t, rewritten_subfield_predicate->column_id(), val_str);
+```
+
+**File**: `be/test/formats/parquet/file_reader_test.cpp` (modified, +55/-0)
+```diff
+@@ -3280,6 +3280,61 @@ TEST_F(FileReaderTest, bloom_filter_reader_test_hit) {
+     EXPECT_EQ(file_reader->row_group_size(), 1);
+ }
+ 
++/*
++    c1 = [f"a{i:04d}" for i in range(1000) if i != 500] + ["a0999"] + [f"b{i:04d}" for i in range(1000)]
++    table = pa.table({
++        "c0": pa.array(range(len(c1)), pa.int32()),
++        "c_struct": pa.StructArray.from_arrays(
++                [pa.array(range(len(c1)), pa.int32()), pa.array(c1, pa.string())], ["c0", "c1"]),
++    })
++    pq.write_table(table, path, row_group_size=1000, use_dictionary=False, write_page_index=False,
++                   bloom_filter_options={"c_struct.c1": {"ndv": 1000, "fpp": 0.01}})
++ */
++TEST_F(FileReaderTest, StructSubfieldStringBloomFilter) {
++    const std::string file_path = "./be/test/formats/parquet/test_data/struct_subfield_bloom_filter.parquet";
++    TypeDescriptor type_struct = TypeDescriptor::create_struct_type({"c0", "c1"}, {TYPE_INT_DESC, TYPE_VARCHAR_DESC});
++    Utils::SlotDesc slot_descs[] = {{"c0", TYPE_INT_DESC}, {"c_struct", type_struct}, {""}};
++
++    auto scan = [&](const std::string& value, size_t* total_rows, int* bloom_filtered_row_groups) {
++        auto* ctx = _create_scan_context(slot_descs, file_path);
++        auto& conjunct_ctxs = ctx->format_scan_context.conjunct_ctxs_by_slot[1];
++        _create_struct_subfield_predicate_conjunct_ctxs(TExprOpcode::EQ, 1, type_struct, {"c1"}, value, &conjunct_ctxs);
++        TupleDescriptor* tuple_desc = Utils::create_tuple_descriptor(_runtime_state, &_pool, slot_descs);
++        ParquetUTBase::setup_conjuncts_manager(conjunct_ctxs, nullptr, tuple_desc, _runtime_state, ctx);
++        FormatScannerStats stats;
++        ctx->format_scan_context.stats = &stats;
++
++        auto file_reader = _create_file_reader(file_path);
++        Status status = file_reader->init(&ctx->format_scan_context);
++        ASSERT_OK(status);
++
++        auto chunk = std::make_shared<Chunk>();
++        chunk->append_column(ColumnHelper::create_column(TYPE_INT_DESC, true), chunk->num_columns());
++        chunk->append_column(ColumnHelper::create_column(type_struct, true), chunk->num_columns());
++        *total_rows = 0;
++        while (!status.is_end_of_file()) {
++            chunk->reset();
++            status = file_reader->get_next(&chunk);
++            chunk->check_or_die();
++            *total_rows += chunk->num_rows();
++        }
++        *bloom_filtered_row_groups = stats.bloom_filter_success_counter;
++    };
++
++    size_t total_rows = 0;
++    int bloom_filtered_row_groups = 0;
++
++    // Row group 0 holds 'a0400' and its bloom filter contains it, so it must not be pruned.
++    scan("a0400", &total_rows, &bloom_filtered_row_groups);
++    EXPECT_EQ(1, total_rows);
++    EXPECT_EQ(0, bloom_filtered_row_groups);
++
++    // 'a0500' is inside row group 0's min/max but absent, so only the bloom filter can prune it.
++    scan("a0500", &total_rows, &bloom_filtered_row_groups);
++    EXPECT_EQ(0, total_rows);
++    EXPECT_EQ(1, bloom_filtered_row_groups);
++}
++
+ TEST_F(FileReaderTest, read_parquet_bloom_filter_by_parquet_hadoop) {
+     Utils::SlotDesc slot_descs[] = {{"c0", TYPE_VARCHAR_DESC}, {"c1", TYPE_INT_DESC}, {"c2", TYPE_DATETIME_DESC}, {""}};
+     const std::string bloom_filter_file =
+```
+
+---
+
+### Incident Patch 3: `1cd80a91` (2026-11-12)
+**Commit Message**: [Doc] Fix docs that contradict the source on memory limits, resource groups, MVs, shared-data, FE and Iceberg (#82971)
+
+Signed-off-by: Binglin Chang <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: docs-automation[bot] <docs-automation[bot]@starrocks.io>
+
+**File**: `docs/en/administration/Meta_recovery.md` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ You can follow these steps to fix this issue:
+ :::tip
+ 
+ - This bug has been fixed in StarRocks v3.1. You can avoid this issue by upgrading your cluster to v3.1 or later. 
+-- This solution does not apply if more than half of the FE nodes have encountered this issue. You must follow the instructions provided in [Measure of the last resort](#7-measure-of-the-last-resort) to fix the issue.
++- This solution does not apply if more than half of the FE nodes have encountered this issue. You must follow the instructions provided in [Measure of the last resort](#10-measure-of-the-last-resort) to fix the issue.
+ 
+ :::
+ 
+```
+
+**File**: `docs/en/administration/configuration/BE_parameters/shared_lake_other.md` (modified, +5/-5)
+```diff
+@@ -587,7 +587,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
+ - Type: String
+ - Unit: -
+ - Is mutable: Yes
+-- Description: The maximum amount of data that can be cached on a single disk. You can set it as a percentage (for example, `80%`) or a physical limit (for example, `2T`, `500G`). For example, if you use two disks and set the value of the `datacache_disk_size` parameter as `21474836480` (20 GB), a maximum of 40 GB data can be cached on these two disks. The default value is `0`, which indicates that only memory is used to cache data.
++- Description: The maximum amount of data that can be cached on a single disk. You can set it as a percentage (for example, `80%`) or a physical limit (for example, `2T`, `500G`). For example, if you use two disks and set the value of the `datacache_disk_size` parameter as `21474836480` (20 GB), a maximum of 40 GB data can be cached on these two disks. A percentage is relative to the capacity of the disk that holds each `storage_root_path`. The default value is `100%`. When `enable_datacache_disk_auto_adjust` is `true` (default), the system adjusts the actual disk cache quota based on disk usage, and this item only sets the upper limit of that quota. `0` disables the disk cache.
+ - Introduced in: -
+ 
+ ### datacache_enable
+@@ -886,7 +886,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
+ - Type: Int
+ - Unit: -
+ - Is mutable: No
+-- Description: The maximum concurrency (per BE node) of the materialized view refresh tasks in the resource group `default_mv_wg`. The default value `0` indicates no limits.
++- Description: The maximum concurrency (per BE node) of the materialized view refresh tasks in the resource group `default_mv_wg`. The default value `0` indicates no limits. Deprecated: from v3.4 onwards, this item no longer takes effect because the FE stores `default_mv_wg` and sends it to the BEs. Use `ALTER RESOURCE GROUP default_mv_wg WITH (...)` instead.
+ - Introduced in: v3.1
+ 
+ ### default_mv_resource_group_cpu_limit
+@@ -895,7 +895,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
+ - Type: Int
+ - Unit: -
+ - Is mutable: No
+-- Description: The maximum number of CPU cores (per BE node) that can be used by the materialized view refresh tasks in the resource group `default_mv_wg`.
++- Description: The maximum number of CPU cores (per BE node) that can be used by the materialized view refresh tasks in the resource group `default_mv_wg`. Deprecated: from v3.4 onwards, this item no longer takes effect because the FE stores `default_mv_wg` and sends it to the BEs. Use `ALTER RESOURCE GROUP default_mv_wg WITH (...)` instead.
+ - Introduced in: v3.1
+ 
+ ### default_mv_resource_group_memory_limit
+@@ -904,7 +904,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
+ - Type: Double
+ - Unit:
+ - Is mutable: No
+-- Description: The maximum memory proportion (per BE node) that can be used by the materialized view refresh tasks in the resource group `default_mv_wg`. The default value indicates 80% of the memory.
++- Description: The maximum memory proportion (per BE node) that can be used by the materialized view refresh tasks in the resource group `default_mv_wg`. The default value indicates 80% of the memory. Deprecated: from v3.4 onwards, this item no longer takes effect because the FE stores `default_mv_wg` and sends it to the BEs. Use `ALTER RESOURCE GROUP default_mv_wg WITH (...)` instead.
+ - Introduced in: v3.1
+ 
+ ### default_mv_resource_group_spill_mem_limit_threshold
+@@ -913,7 +913,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
+ - Type: Double
+ - Unit: -
+ - Is mutable: No
+-- Description: The memory usage threshold before a materialized view refresh task in the resource group `default_mv_wg` triggers intermediate result spilling. The default value indicates 80% of the memory.
++- Description: The memory usage threshold before a materialized view refresh task in the resource group `default_mv_wg` triggers intermediate result spilling. The default value indicates 80% of the memory. Deprecated: from v3.4 onwards, this item no longer takes effect because the FE stores `default_mv_wg` and sends it to the BEs. Use `ALTER RESOURCE GROUP default_mv_wg WITH (...)` instead.
+ - Introduced in: v3.1
+ 
+ ### enable_resolve_hostname_to_ip_in_load_error_url
+```
+
+**File**: `docs/en/administration/configuration/FE_parameters/log_server_meta.md` (modified, +3/-3)
+```diff
+@@ -1594,7 +1594,7 @@ This topic introduces the following types of FE configurations:
+ - Type: Int
+ - Unit: -
+ - Is mutable: Yes
+-- Description: The maximum number of metadata log entries that can be written before a log file is created for these log entries. This parameter is used to control the size of log files. The new log file is written to the BDBJE database.
++- Description: The maximum number of metadata log entries that can be written before a log file is created for these log entries. This parameter is used to control the size of log files. The new log file is written to the BDBJE database. This parameter also controls how often a metadata image (checkpoint) can be created, because a checkpoint only covers log entries in log files that have already been rolled.
+ - Introduced in: -
+ 
+ ### `edit_log_type`
+@@ -1856,7 +1856,7 @@ This topic introduces the following types of FE configurations:
+ - Unit: Milliseconds
+ - Is mutable: Yes
+ - Description: The interval at which a Follower or Observer FE re-evaluates whether its metadata is still fresh enough to serve reads, as defined by `meta_delay_toleration_second`. Values outside the range [10, 5000] are clamped. This check runs on a dedicated thread rather than on the metadata replay thread, so that the node still stops serving stale metadata while a single journal entry is taking a long time to apply, for example when a replay operation is waiting for a database lock.
+-- Introduced in: v4.2
++- Introduced in: v4.1.6, v4.2
+ 
+ ### `metadata_replay_stuck_warn_threshold_second`
+ 
+@@ -1865,7 +1865,7 @@ This topic introduces the following types of FE configurations:
+ - Unit: Seconds
+ - Is mutable: Yes
+ - Description: A metadata journal entry that has been applying for longer than this duration is reported in **fe.log** as a stuck replay, together with the stack of the replay thread, so that you can identify what is blocking metadata replay. Set this item to `0` to disable the report.
+-- Introduced in: v4.2
++- Introduced in: v4.1.6, v4.2
+ 
+ ### `meta_dir`
+ 
+```
+
+**File**: `docs/en/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +11/-2)
+```diff
+@@ -1658,7 +1658,7 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
+ - Type: Long
+ - Unit:
+ - Is mutable: Yes
+-- Description: The maximum size of materialized view plan cache (which is used for materialized view rewrite). If there are many materialized views used for transparent query rewrite, you may increase this value.
++- Description: The maximum size of materialized view plan cache (which is used for materialized view rewrite). If there are many materialized views used for transparent query rewrite, you may increase this value. The value is read only once, when the cache is created at FE startup, so a value changed at runtime takes effect only after the FE restarts.
+ - Introduced in: v3.2
+ 
+ ### `mv_plan_cache_thread_pool_size`
+@@ -1667,7 +1667,7 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
+ - Type: Int
+ - Unit: -
+ - Is mutable: Yes
+-- Description: The default thread pool size of materialized view plan cache (which is used for materialized view rewrite).
++- Description: Deprecated. From v3.5.14, v4.0.7, and v4.1 onwards, this parameter no longer takes effect. The size of the thread pool that loads the materialized view plan cache (which is used for materialized view rewrite) is fixed at the larger of 2 and three quarters of the number of CPU cores.
+ - Introduced in: v3.2
+ 
+ ### `mv_refresh_default_planner_optimize_timeout`
+@@ -1688,6 +1688,15 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
+ - Description: Mv refresh fails if there is filtered data in refreshing, true by default, otherwise return success by ignoring the filtered data.
+ - Introduced in: -
+ 
++### `mv_refresh_force_partition_type`
++
++- Default: 0
++- Type: Int
++- Unit: -
++- Is mutable: Yes
++- Description: Forces materialized view refreshes of the specified partition types to refresh regardless of whether the base tables have changed. This is useful for materialized views on external tables, where data changes cannot be accurately detected. The value is a bitmap: `0` disables this behavior, `1` applies it to non-partitioned materialized views, `2` to range-partitioned materialized views, and `4` to list-partitioned materialized views. Add the values to combine types, for example, `7` applies to all three. It does not apply to a materialized view whose `refresh_mode` is `INCREMENTAL`.
++- Introduced in: v3.5.16, v4.0.9, v4.1
++
+ ### `mv_refresh_try_lock_timeout_ms`
+ 
+ - Default: 30000
+```
+
+**File**: `docs/en/administration/configuration/FE_parameters/user_query_loading.md` (modified, +1/-1)
+```diff
+@@ -1259,7 +1259,7 @@ Starting from version 3.3.0, the system defaults to refreshing one partition at
+ - Type: Int
+ - Unit: Seconds
+ - Is mutable: Yes
+-- Description: The timeout duration for the INSERT INTO statement that is used to load data.
++- Description: Deprecated. This item does not control the timeout of INSERT statements. Use the session variable `insert_timeout` instead.
+ - Introduced in: -
+ 
+ ### `label_clean_interval_second`
+```
+
+**File**: `docs/en/administration/management/cluster_snapshot.md` (modified, +20/-5)
+```diff
+@@ -51,18 +51,33 @@ Syntax:
+ 
+ ```SQL
+ ADMIN SET AUTOMATED CLUSTER SNAPSHOT ON
++[INTERVAL <value> <unit>]
+ [STORAGE VOLUME <storage_volume_name>]
+ ```
+ 
+-Parameter:
++Parameters:
+ 
+-`storage_volume_name`: Specifies the storage volume used to store the snapshot. If this parameter is not specified, the default storage volume will be used. For details on creating a storage volume, see [CREATE STORAGE VOLUME](../../sql-reference/sql-statements/cluster-management/storage_volume/CREATE_STORAGE_VOLUME.md).
++`INTERVAL <value> <unit>`: The interval at which automated snapshots are created. `value` must be a positive integer, and `unit` must be one of `SECOND`, `MINUTE`, `HOUR`, `DAY`, and `WEEK`. If this parameter is not specified, the interval is controlled by the FE configuration item `automated_cluster_snapshot_interval_seconds`.
+ 
+-Each time FE creates a new metadata image after completing a metadata checkpoint, it automatically creates a snapshot. The name of the snapshot is generated by the system, following the format `automated_cluster_snapshot_{timestamp}`.
++`storage_volume_name`: Specifies the storage volume used to store the snapshot. If this parameter is not specified, the built-in storage volume `builtin_storage_volume` is used, even if another storage volume is set as the default. If `builtin_storage_volume` does not exist (for example, because `enable_load_volume_from_conf` is `false`), the statement fails, and you must specify a storage volume. For details on creating a storage volume, see [CREATE STORAGE VOLUME](../../sql-reference/sql-statements/cluster-management/storage_volume/CREATE_STORAGE_VOLUME.md).
++
++Each time the snapshot interval has elapsed since the previous automated snapshot started, the Leader FE performs a metadata checkpoint to create a new metadata image, and creates a snapshot from it. The name of the snapshot is generated by the system, following the format `automated_cluster_snapshot_{timestamp}`.
+ 
+ Metadata snapshots are stored under `/{storage_volume_locations}/{service_id}/meta/image/automated_cluster_snapshot_timestamp`. Data snapshots are stored in the same location as the original data.
+ 
+-FE configuration item `automated_cluster_snapshot_interval_seconds` controls the snapshot automation cycle. The default value is 600 seconds (10 minutes).
++FE configuration item `automated_cluster_snapshot_interval_seconds` controls the snapshot automation cycle when no `INTERVAL` is specified for the feature. The default value is 600 seconds (10 minutes).
++
++Use the following statement to change the interval while the feature is enabled (supported from v4.0.5 onwards, as is the `INTERVAL` clause):
++
++```SQL
++ADMIN ALTER AUTOMATED CLUSTER SNAPSHOT SET INTERVAL <value> <unit>
++```
++
++Use the following statement to view whether the feature is enabled, the effective interval, the storage volume, and the time of the last and the next snapshot (supported from v4.0.6 onwards):
++
++```SQL
++ADMIN SHOW AUTOMATED CLUSTER SNAPSHOT
++```
+ 
+ ### Disable automated cluster snapshot
+ 
+@@ -87,7 +102,7 @@ Return:
+ | Field              | Description                                                  |
+ | ------------------ | ------------------------------------------------------------ |
+ | snapshot_name      | The name of the snapshot.                                    |
+-| snapshot_type      | The type of the snapshot. Valid values: `automated` and `manual`. |
++| snapshot_type      | The type of the snapshot. Currently, the value is always `AUTOMATED`. |
+ | created_time       | The time at which the snapshot was created.                  |
+ | fe_journal_id      | The ID of the FE journal.                                    |
+ | starmgr_journal_id | The ID of the StarManager journal.                           |
+```
+
+**File**: `docs/en/administration/management/graceful_exit.md` (modified, +2/-6)
+```diff
+@@ -49,12 +49,8 @@ Upon receiving the signal:
+ 
+ **Leader FE**
+ 
+-- Read request handling is identical to the of Followers.
+-- Write request handling requires:
+-
+-  - Closing BDBJE.
+-  - Allowing a new Leader election to complete.
+-  - Redirecting subsequent writes to the newly elected Leader.
++- Request handling is identical to that of Followers: the Leader FE waits for its connections to drain and then exits.
++- The Leader FE does not hand over leadership before it exits. A new Leader is elected from the remaining FEs after the process exits.
+ 
+ #### Timeout Control
+ 
+```
+
+**File**: `docs/en/administration/management/monitoring/metric_details/s.md` (modified, +6/-0)
+```diff
+@@ -6,6 +6,12 @@ description: "Alphabetical s"
+ 
+ # Metrics s
+ 
++## `scheduled_tablet_num`
++
++- Unit: Count
++- Type: Instantaneous
++- Description: The number of tablets that are being scheduled by the tablet scheduler of the Leader FE, that is, the total of the tablets in Pending and Running states, including both BALANCE and REPAIR types. Non-Leader FEs report `0`.
++
+ ## `schema_change_mem_bytes`
+ 
+ - Unit: Bytes
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #83011** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
-- **PR #83010** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
-- **PR #83009** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
-- **PR #83007** (2026-11-12): [BugFix] Keep constant columns in MAP casts (backport #82964) (@mergify[bot])
-- **PR #83004** (2026-11-12): [Doc] Merge the warehouse and privilege partials into their pages (backport #82999) (@mergify[bot])
-- **PR #83003** (2026-11-12): [Doc] Merge the warehouse and privilege partials into their pages (backport #82999) (@mergify[bot])
+- **PR #83209** (2026-11-13): [BugFix] Reject unsupported GEO arguments in sum_map and to_json (backport #83106) (@mergify[bot])
+- **PR #83208** (2026-11-13): [Enhancement][RB-533] Scope connector scan EOS to independent drivers (backport #83197) (@mergify[bot])
+- **PR #83206** (2026-11-13): [Tool] Support single quotes in assert_query_contains of SQL-tester (@trueeyu)
+- **PR #83205** (2026-11-13): [BugFix] Support RLE-encoded BOOLEAN values in the parquet reader (backport #78691) (@mergify[bot])
+- **PR #83204** (2026-11-13): [BugFix] Support RLE-encoded BOOLEAN values in the parquet reader (backport #78691) (@mergify[bot])
+- **PR #83201** (2026-11-13): [BugFix][RB-225] Skip the storage stat on Iceberg metadata reads that do not need it (backport #83182) (@mergify[bot])
 
 ---
 
@@ -2589,37 +2667,45 @@ Signed-off-by: Viktor Gnidenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)
+## X. [BugFix] Fix BatchRunCounter unsigned filter comparison and delta decode signed 
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/base/simd/batch_run_counter.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf73116b`: [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28f9a91c`: [BugFix] Fix BatchRunCounter unsigned filter comparison and delta decode signed overflow UB (#82015). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/base/simd/batch_run_counter.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import java.math.BigDecimal;
-            String fnName = fn.getFunctionName().getFunction();
-            if (FunctionSet.SECONDS_ADD.equals(fnName) || FunctionSet.SECONDS_SUB.equals(fnName)) {
-                // A literal amount with more than 6 decimals is refused here already, so that a definition that uses it,
-                // such as a generated column or a view, is refused when it is created rather than each time it is used
-                BigDecimal seconds = IntervalSeconds.literalValue(node.getChild(1));
-                if (seconds != null) {
-                    IntervalSeconds.split(seconds, node.getPos());
-                }
-            }
+            uint32_t zero_mask = _mm256_movemask_epi8(_mm256_cmpeq_epi8(f, all0));
+            if (zero_mask == 0xffffffff) {
+            } else if (zero_mask == 0) {
+                // all non-zero
+            const auto zero_mask = _mm_movemask_epi8(_mm_cmpeq_epi8(f, zero16));
+            if (zero_mask == 0xffff) {
+            } else if (zero_mask == 0) {
+                // all non-zero
+            } else if (partital_value == 0x0101010101010101ULL ||
+                       (((partital_value - 0x0101010101010101ULL) & ~partital_value & 0x8080808080808080ULL) == 0)) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            uint32_t mask = _mm256_movemask_epi8(_mm256_cmpgt_epi8(f, all0));
+            if (mask == 0) {
+            } else if (mask == 0xffffffff) {
+                // all one
+            const auto mask = _mm_movemask_epi8(_mm_cmpgt_epi8(f, zero16));
+            if (mask == 0) {
+            } else if (mask == 0xffff) {
+                // all one
+            } else if (partital_value == 0x0101010101010101) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf73116b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28f9a91c` are properly handled with clean fallback behavior.

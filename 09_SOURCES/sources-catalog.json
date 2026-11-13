@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "539519e9076f244e8d3885d80fb22613f5c4b070a7eebfbc8e7452db006a3fbb",
-    "lastHarvestedAt": "2026-11-08T08:58:20.410Z",
+    "contentHash": "0b32eff5b765c42e3520bca816c2cbe68d91375e4e064fc5d13fbad0c7ebbdbb",
+    "lastHarvestedAt": "2026-11-13T11:24:16.120Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "9a1a9e7c",
+    "sourceVersion": "3ee0d1d6",
     "license": "GPL-2.0",
-    "contentHash": "c1a49d371356d750113b45122f957825639972d9ee8829ab43a3938301232971",
-    "lastHarvestedAt": "2026-11-11T18:16:58.932Z",
+    "contentHash": "8feb434e98741e501d644f894526fce3055ad4124c54f00033cc13e1347ea80c",
+    "lastHarvestedAt": "2026-11-13T11:24:30.135Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -3963,10 +3963,10 @@
     "repository": "argoproj/argo-events",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-events",
-    "sourceVersion": "c6a8c5ae",
+    "sourceVersion": "48cb7266",
     "license": "Apache-2.0",
-    "contentHash": "da7b7aab1fdb82d7574ef13bc3fc2dd17f3d5dbe00457811da8fa1b232227508",
-    "lastHarvestedAt": "2026-11-08T01:25:32.566Z",
+    "contentHash": "62eac0657e05e79b4bf1dd30252793cf8a791da13d2ac96f80386c17a7be1e02",
+    "lastHarvestedAt": "2026-11-13T11:24:38.040Z",
     "learningId": "learn-github-argoproj-argo-events"
   },
   "helixdb-helix-db": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "bf73116b",
+    "sourceVersion": "9a755b9e",
     "license": "Apache-2.0",
-    "contentHash": "e2ca9c5f2f2cd4d90128a33b256a6fb837a225eba5305106a90e41fd36c30aee",
-    "lastHarvestedAt": "2026-11-12T04:24:11.136Z",
+    "contentHash": "e187fa50a38c537d4406a6d19eb6bbb2a368c0709d1e604b6d3289745a3607f4",
+    "lastHarvestedAt": "2026-11-13T11:24:44.041Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {

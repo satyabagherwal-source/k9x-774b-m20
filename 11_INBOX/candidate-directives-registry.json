@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T11:14:09.153Z",
+  "last_updated": "2026-11-13T11:25:04.760Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8597,6 +8597,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9BD4B1-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-C7D17F",
+      "directive_title": "activate): let the shell hook follow Flox upgrades (#4848)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "flox-flox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C7D17F-activate-let-the-shell-hook-follow-flox-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-A8C32C",
+      "directive_title": "ci): fix the ci issues after using ubutnu 26 runner (#4274)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "argoproj-argo-events",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A8C32C-ci-fix-the-ci-issues-after-using-ubutnu-.md",
       "staged_date": "2026-11-13"
     }
   ]

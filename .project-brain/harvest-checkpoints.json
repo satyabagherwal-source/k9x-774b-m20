@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T11:13:49.116Z",
+  "last_updated": "2026-11-13T11:24:44.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -126,14 +126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
-      "content_hash": "539519e9076f244e8d3885d80fb22613f5c4b070a7eebfbc8e7452db006a3fbb",
-      "verified_at": "2026-11-08T08:58:20.428Z",
+      "content_hash": "0b32eff5b765c42e3520bca816c2cbe68d91375e4e064fc5d13fbad0c7ebbdbb",
+      "verified_at": "2026-11-13T11:24:16.129Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T08:58:20.428Z"
+      "last_updated": "2026-11-13T11:24:16.129Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "c1a49d371356d750113b45122f957825639972d9ee8829ab43a3938301232971",
-      "verified_at": "2026-11-11T18:16:58.951Z",
+      "content_hash": "8feb434e98741e501d644f894526fce3055ad4124c54f00033cc13e1347ea80c",
+      "verified_at": "2026-11-13T11:24:30.160Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:16:58.951Z"
+      "last_updated": "2026-11-13T11:24:30.160Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -6066,14 +6066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-events",
-      "content_hash": "da7b7aab1fdb82d7574ef13bc3fc2dd17f3d5dbe00457811da8fa1b232227508",
-      "verified_at": "2026-11-08T01:25:32.575Z",
+      "content_hash": "62eac0657e05e79b4bf1dd30252793cf8a791da13d2ac96f80386c17a7be1e02",
+      "verified_at": "2026-11-13T11:24:38.050Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T01:25:32.575Z"
+      "last_updated": "2026-11-13T11:24:38.050Z"
     },
     "HelixDB/helix-db": {
       "repository": "HelixDB/helix-db",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "e2ca9c5f2f2cd4d90128a33b256a6fb837a225eba5305106a90e41fd36c30aee",
-      "verified_at": "2026-11-12T04:24:11.146Z",
+      "content_hash": "e187fa50a38c537d4406a6d19eb6bbb2a368c0709d1e604b6d3289745a3607f4",
+      "verified_at": "2026-11-13T11:24:44.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T04:24:11.146Z"
+      "last_updated": "2026-11-13T11:24:44.336Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",

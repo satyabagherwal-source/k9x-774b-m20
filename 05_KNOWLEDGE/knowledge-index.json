@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T11:13:49.037Z",
+  "last_updated": "2026-11-13T11:24:43.789Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3626,14 +3626,19 @@
       "slug": "argoproj-argo-events",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-events",
-      "source_version": "c6a8c5ae",
-      "content_hash": "da7b7aab1fdb82d7574ef13bc3fc2dd17f3d5dbe00457811da8fa1b232227508",
+      "source_version": "48cb7266",
+      "content_hash": "62eac0657e05e79b4bf1dd30252793cf8a791da13d2ac96f80386c17a7be1e02",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (#4270)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci): fix the ci issues after using ubutnu 26 runner (#4274)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3657,7 +3662,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:25:32.433Z",
+      "verified_at": "2026-11-13T11:24:37.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15870,14 +15875,19 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "9a1a9e7c",
-      "content_hash": "c1a49d371356d750113b45122f957825639972d9ee8829ab43a3938301232971",
+      "source_version": "3ee0d1d6",
+      "content_hash": "8feb434e98741e501d644f894526fce3055ad4124c54f00033cc13e1347ea80c",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "telemetry): keep metrics files out of the current directory on config errors (#4",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "activate): let the shell hook follow Flox upgrades (#4848)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15916,7 +15926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:16:58.792Z",
+      "verified_at": "2026-11-13T11:24:29.991Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22251,7 +22261,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "539519e9076f244e8d3885d80fb22613f5c4b070a7eebfbc8e7452db006a3fbb",
+      "content_hash": "0b32eff5b765c42e3520bca816c2cbe68d91375e4e064fc5d13fbad0c7ebbdbb",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -22715,7 +22725,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-11-08T08:58:20.288Z",
+      "verified_at": "2026-11-13T11:24:15.965Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60861,8 +60871,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "bf73116b",
-      "content_hash": "e2ca9c5f2f2cd4d90128a33b256a6fb837a225eba5305106a90e41fd36c30aee",
+      "source_version": "9a755b9e",
+      "content_hash": "e187fa50a38c537d4406a6d19eb6bbb2a368c0709d1e604b6d3289745a3607f4",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -60889,6 +60899,11 @@
         {
           "number": null,
           "title": "[BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[BugFix] Fix BatchRunCounter unsigned filter comparison and delta decode signed",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -60972,7 +60987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T04:24:10.995Z",
+      "verified_at": "2026-11-13T11:24:43.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

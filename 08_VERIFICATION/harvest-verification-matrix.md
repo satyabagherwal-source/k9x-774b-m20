@@ -9435,3 +9435,8 @@
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T10:55:52.540Z` | `hf-sentence-transformers-all-minilm-l6-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-57460E8B` [Domain D] | Yes (`4044e2e3...`) |
 | `CYCLE-20261113-PHYP` | `2026-11-13T11:13:49.105Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`6dc88efa...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:14:09.039Z` | `hf-cross-encoder-ms-marco-minilm-l6-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9703D9B4` [Domain D] | Yes (`6cd30e61...`) |
+| `CYCLE-20261113-2XRO` | `2026-11-13T11:24:16.117Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`0b32eff5...`) |
+| `CYCLE-20261113-38L0` | `2026-11-13T11:24:30.132Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8feb434e...`) |
+| `CYCLE-20261113-3EOL` | `2026-11-13T11:24:38.037Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62eac065...`) |
+| `CYCLE-20261113-3J8Z` | `2026-11-13T11:24:43.955Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e187fa50...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:25:04.725Z` | `hf-baai-bge-small-en-v1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-785F48FA` [Domain D] | Yes (`767c6bb0...`) |

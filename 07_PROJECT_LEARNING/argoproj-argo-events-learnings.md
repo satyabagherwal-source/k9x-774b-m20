@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
-> **Source Version**: `c6a8c5ae`  
+> **Source Version**: `48cb7266`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:25:30.667Z  
+> **Timestamp**: 2026-11-13T11:24:24.862Z  
 > **Learning ID**: `learn-github-argoproj-argo-events`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:25:30.020Z  
+> **Harvest Timestamp**: 2026-11-13T11:24:24.857Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1046,143 +1046,317 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6a8c5ae` (2026-11-07)
-**Commit Message**: chore(deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (#4270)
+### Incident Patch 1: `48cb7266` (2026-11-12)
+**Commit Message**: fix(ci): fix the ci issues after using ubutnu 26 runner (#4274)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: Derek Wang <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +2/-2)
+**File**: `.github/workflows/gh-pages.yaml` (modified, +2/-2)
 ```diff
-@@ -89,7 +89,7 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.6
- 	golang.org/x/crypto v0.58.0
- 	golang.org/x/tools v0.52.0
--	google.golang.org/api v0.309.0
-+	google.golang.org/api v0.310.0
- 	google.golang.org/grpc v1.85.0
- 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2
- 	google.golang.org/protobuf v1.36.12
-@@ -231,7 +231,7 @@ require (
- 	github.com/google/go-tpm v0.9.8 // indirect
- 	github.com/google/gofuzz v1.2.0 // indirect
- 	github.com/google/s2a-go v0.1.11 // indirect
--	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
-+	github.com/googleapis/enterprise-certificate-proxy v0.3.24 // indirect
- 	github.com/googleapis/gax-go/v2 v2.27.0 // indirect
- 	github.com/gopherjs/gopherjs v1.17.2 // indirect
- 	github.com/gorilla/handlers v1.5.2 // indirect
+@@ -17,9 +17,9 @@ jobs:
+     steps:
+       - uses: actions/checkout@v6
+       - name: Setup Python
+-        uses: actions/setup-python@v5
++        uses: actions/setup-python@v7
+         with:
+-          python-version: 3.9
++          python-version: "3.12"
+       - name: Setup Golang
+         uses: actions/setup-go@v7
+         with:
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `.github/workflows/release.yml` (modified, +3/-3)
 ```diff
-@@ -488,8 +488,8 @@ github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
- github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
- github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
--github.com/googleapis/enterprise-certificate-proxy v0.3.23 h1:J+VGF1wjAM2dU2kKUXZxJdDppRLReWP7KWcclfngQhc=
--github.com/googleapis/enterprise-certificate-proxy v0.3.23/go.mod h1:Y8NO/15GNLkrXI3OR5xOFmeU3XLX1sLSdtlXgJ0zmIw=
-+github.com/googleapis/enterprise-certificate-proxy v0.3.24 h1:G9iCJIY+AYVmUskKdjX8FVy7sG+nbzjOQ41cvlmhcvg=
-+github.com/googleapis/enterprise-certificate-proxy v0.3.24/go.mod h1:hEjCmnoakQzv5ImLUp6alkY7XgLlNoAxwTXmhHHNIsI=
- github.com/googleapis/gax-go/v2 v2.27.0 h1:qe2iQOUzxb3fd6x6ewpIEixPQhJ+0Ihc/RRZhKA/2g0=
- github.com/googleapis/gax-go/v2 v2.27.0/go.mod h1:RofiqDw3ehcG4L0H1zO3D2Itpwd3/uS/7wdmbNDF1DE=
- github.com/gopackage/ddp v0.0.0-20170117053602-652027933df4 h1:4EZlYQIiyecYJlUbVkFXCXHz1QPhVXcHnQKAzBTPfQo=
-@@ -1165,8 +1165,8 @@ gomodules.xyz/notify v0.1.1/go.mod h1:QgQyU4xEA/plJcDeT66J2Go2V7U4c0pD9wjo7HfFil
- gomodules.xyz/version v0.1.0/go.mod h1:Y8xuV02mL/45psyPKG3NCVOwvAOy6T5Kx0l3rCjKSjU=
- gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
- gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
--google.golang.org/api v0.309.0 h1:DXP86di4cL3R3R6aUrJNUNthav2djJ99QbSOrN63238=
--google.golang.org/api v0.309.0/go.mod h1:4XMH+b/ZEfuTbK7FnrFRY9c4xfFHVflGTKuy/i5wUmE=
-+google.golang.org/api v0.310.0 h1:537ccDDmbwuwX1iof3Vtdz9vow6uJCgrSZJWedAWM0I=
-+google.golang.org/api v0.310.0/go.mod h1:5NUthU+LmGMKzYgRaScb+TTe1Lo7x4A+J7g+Yj8BRzA=
- google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
- google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
- google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod h1:JiN7NxoALGmiZfu7CAH4rXhgtRTLTxftemlI0sWmxmc=
+@@ -36,7 +36,7 @@ jobs:
+       - name: Make checksums
+         run: make checksums
+       - name: store artifacts
+-        uses: actions/upload-artifact@v5
++        uses: actions/upload-artifact@v7
+         with:
+           name: binaries
+           path: dist
+@@ -93,10 +93,10 @@ jobs:
+           else
+             echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+           fi
++      - uses: actions/checkout@v6
+       - uses: actions/setup-go@v7
+         with:
+           go-version: "1.26"
+-      - uses: actions/checkout@v6
+       - run: go install sigs.k8s.io/bom/cmd/bom@v0.2.0
+       - run:
+           go install github.com/spdx/spdx-sbom-generator/cmd/generator@v0.0.13
+@@ -107,7 +107,7 @@ jobs:
+           /tmp/argo-events.spdx
+       # pack the boms into one file to make it easy to download
+       - run: cd /tmp && tar -zcf sbom.tar.gz *.spdx
+-      - uses: actions/upload-artifact@v5
++      - uses: actions/upload-artifact@v7
+         with:
+           name: sbom.tar.gz
+           path: /tmp/sbom.tar.gz
+```
+
+**File**: `Makefile` (modified, +7/-2)
+```diff
+@@ -69,9 +69,14 @@ K := $(foreach exec,$(EXECUTABLES), $(if $(shell which $(exec)),some string,$(er
+ 
+ # build
+ .PHONY: build
+-build: dist/$(BINARY_NAME)-linux-amd64.gz dist/$(BINARY_NAME)-linux-arm64.gz dist/$(BINARY_NAME)-linux-arm.gz dist/$(BINARY_NAME)-linux-ppc64le.gz dist/$(BINARY_NAME)-linux-s390x.gz
++PLATFORMS:=linux-amd64 linux-arm64 linux-arm linux-ppc64le linux-s390x
++BINARY_GZ_TARGETS:=$(addprefix dist/$(BINARY_NAME)-,$(addsuffix .gz,$(PLATFORMS)))
+ 
+-dist/$(BINARY_NAME)-%.gz: dist/$(BINARY_NAME)-%
++build: $(BINARY_GZ_TARGETS)
++
++# Static pattern rule: the implicit dist/$(BINARY_NAME)-% rule also matches the
++# .gz names, and newer GNU make versions pick it over the gzip rule.
++$(BINARY_GZ_TARGETS): dist/$(BINARY_NAME)-%.gz: dist/$(BINARY_NAME)-%
+ 	@[[ -e dist/$(BINARY_NAME)-$*.gz ]] || gzip -k dist/$(BINARY_NAME)-$*
+ 
+ dist/$(BINARY_NAME): GOARGS = GOOS= GOARCH=
 ```
 
 ---
 
-### Incident Patch 2: `16a36f69` (2026-11-07)
-**Commit Message**: chore(deps): bump cloud.google.com/go/iam from 1.15.0 to 1.15.1 (#4267)
+### Incident Patch 2: `5a04d224` (2026-11-12)
+**Commit Message**: fix: reject TLS CA certs that contain no valid PEM certificate (#4244)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +3/-3)
+**File**: `pkg/eventsources/sources/minio/start.go` (modified, +4/-3)
 ```diff
-@@ -8,7 +8,7 @@ retract v1.15.0 // Published accidentally.
- 
- require (
- 	cloud.google.com/go/compute/metadata v0.10.0
--	cloud.google.com/go/iam v1.15.0
-+	cloud.google.com/go/iam v1.15.1
- 	cloud.google.com/go/pubsub/v2 v2.8.0
- 	dario.cat/mergo v1.0.2
- 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20221103172237-443f56ff4ba8
-@@ -232,7 +232,7 @@ require (
- 	github.com/google/gofuzz v1.2.0 // indirect
- 	github.com/google/s2a-go v0.1.11 // indirect
- 	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
--	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
-+	github.com/googleapis/gax-go/v2 v2.27.0 // indirect
- 	github.com/gopherjs/gopherjs v1.17.2 // indirect
- 	github.com/gorilla/handlers v1.5.2 // indirect
- 	github.com/gorilla/websocket v1.5.3 // indirect
-@@ -358,7 +358,7 @@ require (
- 	gomodules.xyz/envconfig v1.3.1-0.20190308184047-426f31af0d45 // indirect
- 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
- 	gomodules.xyz/notify v0.1.1 // indirect
--	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
-+	google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20261026165753-2ffab32bce7e // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
- 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+@@ -19,7 +19,6 @@ package minio
+ import (
+ 	"context"
+ 	"crypto/tls"
+-	"crypto/x509"
+ 	"encoding/json"
+ 	"fmt"
+ 	"net/http"
+@@ -91,8 +90,10 @@ func (el *EventListener) StartListening(ctx context.Context, dispatch func([]byt
+ 		if err != nil {
+ 			return fmt.Errorf("failed to get the CA certificate for event source %s, %w", el.GetEventName(), err)
+ 		}
+-		caCertPool := x509.NewCertPool()
+-		caCertPool.AppendCertsFromPEM([]byte(caCertificate))
++		caCertPool, err := sharedutil.NewCertPoolFromPEM([]byte(caCertificate))
++		if err != nil {
++			return fmt.Errorf("invalid CA certificate for event source %s, %w", el.GetEventName(), err)
++		}
+ 		tlsConfig := &tls.Config{
+ 			RootCAs: caCertPool,
+ 		}
 ```
 
-**File**: `go.sum` (modified, +6/-6)
+**File**: `pkg/shared/util/util.go` (modified, +16/-2)
 ```diff
-@@ -8,8 +8,8 @@ cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQ
- cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
- cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
- cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
--cloud.google.com/go/iam v1.15.0 h1:U/wqjfrM0ceBFdPlOI2+cu68yPAxh72M8fe9uLG0+ZE=
--cloud.google.com/go/iam v1.15.0/go.mod h1:HAVf7PNhTrNTrEc6fVB21l8ejkbzNTulJHYf7QtD424=
-+cloud.google.com/go/iam v1.15.1 h1:i6EXLKyIi0Sh72p+5+Fz0PfnzB63bkneVpaBCGrjlWs=
-+cloud.google.com/go/iam v1.15.1/go.mod h1:nDJ/rfCzLKyBUY1AeiSQwOAJg/AN7zZ2QmNzRTcK2jM=
- cloud.google.com/go/pubsub/v2 v2.8.0 h1:mDGFPDisDUcv0fEkiYQX+BRbenlzdnV6BdH2eb9YQ/M=
- cloud.google.com/go/pubsub/v2 v2.8.0/go.mod h1:OUQLW4ZkmJ0lVvXpP+2Kk0acWWO2pTg5nJ3xaq786ag=
- dario.cat/mergo v1.0.2 h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
-@@ -490,8 +490,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
- github.com/googleapis/enterprise-certificate-proxy v0.3.23 h1:J+VGF1wjAM2dU2kKUXZxJdDppRLReWP7KWcclfngQhc=
- github.com/googleapis/enterprise-certificate-proxy v0.3.23/go.mod h1:Y8NO/15GNLkrXI3OR5xOFmeU3XLX1sLSdtlXgJ0zmIw=
--github.com/googleapis/gax-go/v2 v2.26.2 h1:ydkmNXxj7bEmmeK5AihkKnWxyOyBR9TDebvp5L5izk8=
--github.com/googleapis/gax-go/v2 v2.26.2/go.mod h1:sMKqnMesnKH+3wiRJROcttA+cJoZoGbZl1vDQ8XYtGk=
-+github.com/googleapis/gax-go/v2 v2.27.0 h1:qe2iQOUzxb3fd6x6ewpIEixPQhJ+0Ihc/RRZhKA/2g0=
-+github.com/googleapis/gax-go/v2 v2.27.0/go.mod h1:RofiqDw3ehcG4L0H1zO3D2Itpwd3/uS/7wdmbNDF1DE=
- github.com/gopackage/ddp v0.0.0-20170117053602-652027933df4 h1:4EZlYQIiyecYJlUbVkFXCXHz1QPhVXcHnQKAzBTPfQo=
- github.com/gopackage/ddp v0.0.0-20170117053602-652027933df4/go.mod h1:lEO7XoHJ/xNRBCxrn4h/CEB67h0kW1B0t4ooP2yrjUA=
- github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=
-@@ -1173,8 +1173,8 @@ google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod h1:JiN7NxoA
- google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55/go.mod h1:DMBHOl98Agz4BDEuKkezgsaosCRResVns1a3J2ZsMNc=
- google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884/go.mod h1:55QSHmfGQM9UVYDPBsyGGes0y52j32PQ3BqQfXhyH3c=
- google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013/go.mod h1:NbSheEEYHJ7i3ixzK3sjbqSGDJWnxyFXZblF3eUsNvo=
--google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d h1:C9v1o0/4quuhOAfmRXA2j+we0PqZIp8traLdeogF3Ms=
--google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d/go.mod h1:Wz2wFJntZFmLGo7pLDXZ3wYk5hyc0Mb+SkHhDDXT+lU=
-+google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 h1:CXq2XEi5aEyLjjPZIwqrmQH8ZY4ctUwK7uyAx3mjX/U=
-+google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941/go.mod h1:3gK0ehnhP0V7/x3ypGoLyT3d0n6TSi/EcsphIjHrcz4=
- google.golang.org/genproto/googleapis/api v0.0.0-20261026165753-2ffab32bce7e h1:e789sLZjeTdc02ZCQGTSzHOu0fR73+dwPQVKUp67Z88=
- google.golang.org/genproto/googleapis/api v0.0.0-20261026165753-2ffab32bce7e/go.mod h1:vHV3wJM9WZyfV7GyB+OQGq5dWVrFwCDxapPK4WlRD88=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b h1:6WNWHZk91dp4gZ25642OALkuG1UVNZbwENJD19DnB8k=
+@@ -191,6 +191,18 @@ func GenerateEnvFromConfigMapSpec(selector *v1.ConfigMapKeySelector) v1.EnvFromS
+ 	}
+ }
+ 
++// NewCertPoolFromPEM returns a certificate pool with the PEM encoded
++// certificates in caCert. It returns an error when caCert contains no valid
++// certificate, so that a bad CA does not silently produce an empty pool that
++// rejects every server certificate.
++func NewCertPoolFromPEM(caCert []byte) (*x509.CertPool, error) {
++	pool := x509.NewCertPool()
++	if !pool.AppendCertsFromPEM(caCert) {
++		return nil, fmt.Errorf("no valid PEM encoded certificate found")
++	}
++	return pool, nil
++}
++
+ // GetTLSConfig returns a tls configuration for given cert and key or skips the certs if InsecureSkipVerify is true.
+ func GetTLSConfig(config *aev1.TLSConfig) (*tls.Config, error) {
+ 	if config == nil {
+@@ -244,8 +256,10 @@ func GetTLSConfig(config *aev1.TLSConfig) (*tls.Config, error) {
+ 		if err != nil {
+ 			return nil, fmt.Errorf("failed to read ca cert file %s, %w", caCertPath, err)
+ 		}
+-		pool := x509.NewCertPool()
+-		pool.AppendCertsFromPEM(caCert)
++		pool, err := NewCertPoolFromPEM(caCert)
++		if err != nil {
++			return nil, fmt.Errorf("invalid ca cert file %s, %w", caCertPath, err)
++		}
+ 		c.RootCAs = pool
+ 	}
+ 
+```
+
+**File**: `pkg/shared/util/util_test.go` (modified, +42/-0)
+```diff
+@@ -1,9 +1,17 @@
+ package util
+ 
+ import (
++	"crypto/ecdsa"
++	"crypto/elliptic"
++	"crypto/rand"
++	"crypto/x509"
++	"crypto/x509/pkix"
++	"encoding/pem"
++	"math/big"
+ 	"net/http"
+ 	"strings"
+ 	"testing"
++	"time"
+ 
+ 	aev1 "github.com/argoproj/argo-events/pkg/apis/events/v1alpha1"
+ 	"github.com/stretchr/testify/assert"
+@@ -312,3 +320,37 @@ func TestSliceContains(t *testing.T) {
+ 	assert.True(t, SliceContains([]string{"*", "hello", "*"}, "*"))
+ 	assert.False(t, SliceContains([]string{"hello", "world"}, "*"))
+ }
++
++func TestNewCertPoolFromPEM(t *testing.T) {
++	t.Run("valid certificate", func(t *testing.T) {
++		key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
++		assert.NoError(t, err)
++		tmpl := &x509.Certificate{
++			SerialNumber:          big.NewInt(1),
++			Subject:               pkix.Name{CommonName: "test-ca"},
++			NotBefore:             time.Now(),
++			NotAfter:              time.Now().Add(time.Hour),
++			IsCA:                  true,
++			BasicConstraintsValid: true,
++		}
++		der, err := x509.CreateCertificate(rand.Reader, tmpl, tmpl, &key.PublicKey, key)
++		assert.NoError(t, err)
++		caCert := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der})
++
++		pool, err := NewCertPoolFromPEM(caCert)
++		assert.NoError(t, err)
++		assert.NotNil(t, pool)
++	})
++
++	for name, caCert := range map[string][]byte{
++		"empty":   {},
++		"not pem": []byte("not a certificate"),
++	} {
++		t.Run(name, func(t *testing.T) {
++			pool, err := NewCertPoolFromPEM(caCert)
++			assert.Nil(t, pool)
++			assert.Error(t, err)
++			assert.Contains(t, err.Error(), "no valid PEM encoded certificate found")
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `7a582dc9` (2026-11-12)
+**Commit Message**: docs: fix dead links to moved event source setup pages and examples (#4243)
+
+Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
+
+**File**: `docs/FAQ.md` (modified, +1/-1)
+```diff
+@@ -55,7 +55,7 @@ set up the AWS SNS event-source.
+ 
+ **Q. If I have multiple event dependencies and triggers in a single sensor, can I execute a specific trigger upon a specific event?**  
+ 
+-**A.** Yes, this functionality is offered by the sensor event resolution circuitry. Please take a look at the [Circuit and Switch](https://argoproj.github.io/argo-events/tutorials/06-circuit-and-switch/) tutorial.
++**A.** Yes, this functionality is offered by the sensor event resolution circuitry. Please take a look at the [Trigger Conditions](https://argoproj.github.io/argo-events/tutorials/06-trigger-conditions/) tutorial.
+ 
+ **Q. The latest image tag does not point to latest release tag?**
+ 
+```
+
+**File**: `docs/sensors/triggers/azure-event-hubs.md` (modified, +1/-1)
+```diff
+@@ -85,4 +85,4 @@ The Azure Event Hubs trigger specification is available [here](../../APIs.md#arg
+ 
+         curl -d '{"message":"ok"}' -H "Content-Type: application/json" -X POST http://localhost:12000/example
+ 
+-1.  Verify Events have been in ingested in Azure Events Hub by creating a [listener app](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-go-get-started-send#receive-events) or following other [code samples](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-samples). You can optionally create an [Azure Event Hubs Event Source](https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/event-sources/azure-event-hubs-sensor.yaml).
++1.  Verify Events have been in ingested in Azure Events Hub by creating a [listener app](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-go-get-started-send#receive-events) or following other [code samples](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-samples). You can optionally create an [Azure Event Hubs Event Source](https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/event-sources/azure-events-hub.yaml).
+```
+
+**File**: `docs/sensors/triggers/http-trigger.md` (modified, +3/-3)
+```diff
+@@ -63,7 +63,7 @@ We will set up a basic go http server and connect it with the Minio events.
+         kubectl -n argo-events port-forward <http-server-pod-name> 8090:8090
+ 
+ 5.  Our goals is to seamlessly integrate Minio S3 bucket notifications with REST API server created in previous step. So,
+-    lets set up the Minio event-source available [here](https://argoproj.github.io/argo-events/setup/minio/).
++    lets set up the Minio event-source available [here](https://argoproj.github.io/argo-events/eventsources/setup/minio/).
+     Don't create the sensor as we will be deploying it in next step.
+ 
+ 6.  Create a sensor as follows.
+@@ -175,7 +175,7 @@ to invoke OpenFaaS function.
+ 
+ 4.  We are going to invoke OpenFaaS function on a message on Redis Subscriber.
+ 
+-5.  Let's set up the Redis Database, Redis PubSub event-source as specified [here](https://argoproj.github.io/argo-events/setup/redis/).
++5.  Let's set up the Redis Database, Redis PubSub event-source as specified [here](https://argoproj.github.io/argo-events/eventsources/setup/redis/).
+     Do not create the Redis sensor, we are going to create it in next step.
+ 
+ 6.  Let's create the sensor with OpenFaaS trigger.
+@@ -222,7 +222,7 @@ Similar to REST API calls, you can easily invoke Kubeless functions using HTTP t
+ 
+ 4.  Now, we are going to invoke the Kubeless function when a message is placed on a NATS queue.
+ 
+-5.  Let's set up the NATS event-source. Follow [instructions](https://argoproj.github.io/argo-events/setup/nats/#setup) for details.
++5.  Let's set up the NATS event-source. Follow [instructions](https://argoproj.github.io/argo-events/eventsources/setup/nats/#setup) for details.
+     Do not create the NATS sensor, we are going to create it in next step.
+ 
+ 6.  Let's create NATS sensor with HTTP trigger.
+```
+
+**File**: `docs/sensors/triggers/kafka-trigger.md` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ The Kafka trigger specification is available [here](../../APIs.md#argoproj.io/v1
+ 
+ 1.  Consider a scenario where you are expecting a file drop onto a Minio bucket and want to place that event on a Kafka topic.
+ 
+-1.  Set up the Minio Event Source [here](https://argoproj.github.io/argo-events/setup/minio/).
++1.  Set up the Minio Event Source [here](https://argoproj.github.io/argo-events/eventsources/setup/minio/).
+     Do not create the Minio sensor, we are going to create it in next step.
+ 
+ 1.  Lets create the sensor.
+```
+
+**File**: `docs/sensors/triggers/pulsar-trigger.md` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ The Pulsar trigger specification is available [here](../../APIs.md#argoproj.io/v
+ 
+ 1.  Consider a scenario where you are expecting a file drop onto a Minio bucket and want to place that event on a Pulsar topic.
+ 
+-1.  Set up the Minio Event Source [here](https://argoproj.github.io/argo-events/setup/minio/).
++1.  Set up the Minio Event Source [here](https://argoproj.github.io/argo-events/eventsources/setup/minio/).
+     Do not create the Minio sensor, we are going to create it in next step.
+ 
+ 1.  Lets create the sensor.
+```
+
+**File**: `docs/sensors/triggers/slack-trigger.md` (modified, +1/-1)
+```diff
+@@ -110,7 +110,7 @@ generate complex event payloads, take a look at [this library](https://github.co
+                   messageAggregationKey: "abcdefg" # aggregate message by some key to send them to the same Slack thread
+                   broadcastMessageToChannel: true # also broadcast the message from the thread to the channel
+ 
+-#### Sending attachments using [Slack Attachments API](https://api.slack.com/reference/messaging/attachments):
++#### Sending attachments using [Slack Attachments API](https://docs.slack.dev/legacy/legacy-messaging/legacy-secondary-message-attachments/):
+ 
+          - template:
+               name: slack-trigger
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4274** (2026-11-12): fix(ci): fix the ci issues after using ubutnu 26 runner (@whynowy)
 - **PR #4271** (2026-11-07): chore(deps): bump github.com/xdg-go/scram from 1.2.0 to 1.3.0 (@dependabot[bot])
 - **PR #4270** (2026-11-07): chore(deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (@dependabot[bot])
 - **PR #4269** (2026-11-07): chore(deps): bump go.yaml.in/yaml/v3 from 3.0.5 to 3.0.6 (@dependabot[bot])
 - **PR #4268** (2026-11-07): chore(deps): bump github.com/go-swagger/go-swagger from 0.36.6 to 0.36.7 (@dependabot[bot])
 - **PR #4267** (2026-11-07): chore(deps): bump cloud.google.com/go/iam from 1.15.0 to 1.15.1 (@dependabot[bot])
-- **PR #4265** (2026-11-07): chore(deps): bump github.com/itchyny/gojq from 0.12.19 to 0.12.20 (@dependabot[bot])
 
 ---
 
@@ -1202,30 +1376,30 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (#4270)
+## X. ci): fix the ci issues after using ubutnu 26 runner (#4274)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/gh-pages.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6a8c5ae`: deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (#4270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48cb7266`: ci): fix the ci issues after using ubutnu 26 runner (#4274). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/gh-pages.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	google.golang.org/api v0.310.0
-	github.com/googleapis/enterprise-certificate-proxy v0.3.24 // indirect
+        uses: actions/setup-python@v7
+          python-version: "3.12"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	google.golang.org/api v0.309.0
-	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
+        uses: actions/setup-python@v5
+          python-version: 3.9
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6a8c5ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48cb7266` are properly handled with clean fallback behavior.

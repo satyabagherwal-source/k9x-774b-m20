@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T11:13:49.113Z",
-  "total_cycles_completed": 9209,
-  "total_learnings_persisted": 9209,
-  "total_rules_promoted": 8995,
+  "last_updated": "2026-11-13T11:24:44.221Z",
+  "total_cycles_completed": 9213,
+  "total_learnings_persisted": 9213,
+  "total_rules_promoted": 8998,
   "history": [
-    {
-      "timestamp": "2026-11-12T14:59:57.056Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T15:04:38.669Z",
-      "repository": "tonhowtf/omniget",
-      "learningId": "learn-github-tonhowtf-omniget",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T15:17:31.140Z",
-      "repository": "webdriverio/webdriverio",
-      "learningId": "learn-github-webdriverio-webdriverio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T15:25:09.795Z",
-      "repository": "DevExpress/testcafe",
-      "learningId": "learn-github-devexpress-testcafe",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T15:25:30.858Z",
       "repository": "t8y2/dbx",
@@ -1403,6 +1375,34 @@
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T11:24:16.126Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T11:24:30.155Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T11:24:38.046Z",
+      "repository": "argoproj/argo-events",
+      "learningId": "learn-github-argoproj-argo-events",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T11:24:44.221Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

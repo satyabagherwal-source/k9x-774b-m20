@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T11:14:09.046Z",
+  "updated_at": "2026-11-13T11:25:05.503Z",
   "stats": {
-    "total_discovered": 2325,
-    "approved_pending_harvest": 2162,
+    "total_discovered": 2348,
+    "approved_pending_harvest": 2184,
     "harvested_count": 0,
-    "rejected_count": 163,
+    "rejected_count": 164,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2152,
-      "OFFICIAL_DOCUMENTATION": 90,
-      "STANDARDS_AND_SPECIFICATIONS": 73,
+      "COMMUNITY_AND_EXPERT": 2171,
+      "OFFICIAL_DOCUMENTATION": 93,
+      "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 8,
       "LEGAL_AND_REGULATORY": 1
@@ -50028,6 +50028,505 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
         "fileName": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md"
+      }
+    },
+    "SRC-669C182D7462": {
+      "id": "SRC-669C182D7462",
+      "url": "https://linear.app/floxdotdev/issue/DEV-340/upgrade-shell-hook-when-flox-is-upgraded",
+      "title": "https://linear.app/floxdotdev/issue/DEV-340/upgrade-shell-hook-when-flox-is-upgraded",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:24:51.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flox-flox-learnings.md",
+        "fileName": "flox-flox-learnings.md"
+      }
+    },
+    "SRC-58BEDB4DD76D": {
+      "id": "SRC-58BEDB4DD76D",
+      "url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "title": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:04.733Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
+        "fileName": "hf-baai-bge-small-en-v1.5-learnings.md"
+      }
+    },
+    "SRC-C09831C48991": {
+      "id": "SRC-C09831C48991",
+      "url": "https://github.com/argoproj/argo-events",
+      "title": "https://github.com/argoproj/argo-events",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:04.769Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-500CD20FC242": {
+      "id": "SRC-500CD20FC242",
+      "url": "https://%s.queue.core.windows.net/",
+      "title": "https://%s.queue.core.windows.net/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:04.826Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-A824ABE28AE6": {
+      "id": "SRC-A824ABE28AE6",
+      "url": "https://github.com/GerritCodeReview/plugins_webhooks/blob/master/src/main/resources/Documentation/rest-api-config.md",
+      "title": "https://github.com/GerritCodeReview/plugins_webhooks/blob/master/src/main/resources/Documentation/rest-api-config.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:04.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-F73182662E18": {
+      "id": "SRC-F73182662E18",
+      "url": "https://github.com/argoproj/argo-events/blob/main/pkg/eventsources/sources/amqp/start.go",
+      "title": "https://github.com/argoproj/argo-events/blob/main/pkg/eventsources/sources/amqp/start.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:04.856Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-6783D63F5B23": {
+      "id": "SRC-6783D63F5B23",
+      "url": "https://argoproj.github.io/argo-events/tutorials/06-circuit-and-switch",
+      "title": "https://argoproj.github.io/argo-events/tutorials/06-circuit-and-switch",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:04.879Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-D51281B0F733": {
+      "id": "SRC-D51281B0F733",
+      "url": "https://argoproj.github.io/argo-events/tutorials/06-trigger-conditions",
+      "title": "https://argoproj.github.io/argo-events/tutorials/06-trigger-conditions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-CC514BA64D50": {
+      "id": "SRC-CC514BA64D50",
+      "url": "http://localhost:12000/example",
+      "title": "http://localhost:12000/example",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T11:25:05.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-AB08E12B5CD8": {
+      "id": "SRC-AB08E12B5CD8",
+      "url": "https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-go-get-started-send",
+      "title": "https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-go-get-started-send",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.286Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-DADBA56F2E7C": {
+      "id": "SRC-DADBA56F2E7C",
+      "url": "https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-samples",
+      "title": "https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-samples",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-2E08C88B532D": {
+      "id": "SRC-2E08C88B532D",
+      "url": "https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/event-sources/azure-event-hubs-sensor.yaml",
+      "title": "https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/event-sources/azure-event-hubs-sensor.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.317Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-EC981431C479": {
+      "id": "SRC-EC981431C479",
+      "url": "https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/event-sources/azure-events-hub.yaml",
+      "title": "https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/event-sources/azure-events-hub.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.340Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-CA100F577EE8": {
+      "id": "SRC-CA100F577EE8",
+      "url": "https://argoproj.github.io/argo-events/setup/minio",
+      "title": "https://argoproj.github.io/argo-events/setup/minio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-460262CE8527": {
+      "id": "SRC-460262CE8527",
+      "url": "https://argoproj.github.io/argo-events/eventsources/setup/minio",
+      "title": "https://argoproj.github.io/argo-events/eventsources/setup/minio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-28B6EBBC0FCE": {
+      "id": "SRC-28B6EBBC0FCE",
+      "url": "https://argoproj.github.io/argo-events/setup/redis",
+      "title": "https://argoproj.github.io/argo-events/setup/redis",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-168CD95180C3": {
+      "id": "SRC-168CD95180C3",
+      "url": "https://argoproj.github.io/argo-events/eventsources/setup/redis",
+      "title": "https://argoproj.github.io/argo-events/eventsources/setup/redis",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-7772927CAFA2": {
+      "id": "SRC-7772927CAFA2",
+      "url": "https://argoproj.github.io/argo-events/setup/nats",
+      "title": "https://argoproj.github.io/argo-events/setup/nats",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-A059183E5CDB": {
+      "id": "SRC-A059183E5CDB",
+      "url": "https://argoproj.github.io/argo-events/eventsources/setup/nats",
+      "title": "https://argoproj.github.io/argo-events/eventsources/setup/nats",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.437Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-9107C494911D": {
+      "id": "SRC-9107C494911D",
+      "url": "https://github.co/",
+      "title": "https://github.co/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-86F45DE7D0F8": {
+      "id": "SRC-86F45DE7D0F8",
+      "url": "https://api.slack.com/reference/messaging/attachments",
+      "title": "https://api.slack.com/reference/messaging/attachments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-3876102A16FA": {
+      "id": "SRC-3876102A16FA",
+      "url": "https://docs.slack.dev/legacy/legacy-messaging/legacy-secondary-message-attachments",
+      "title": "https://docs.slack.dev/legacy/legacy-messaging/legacy-secondary-message-attachments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-4613194C9A5C": {
+      "id": "SRC-4613194C9A5C",
+      "url": "https://www.rfc-editor.org/rfc/rfc7231",
+      "title": "IETF RFC 7231",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:25:05.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
       }
     }
   }

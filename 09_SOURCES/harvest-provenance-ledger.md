@@ -9444,3 +9444,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-57460e8b` | `project://hf-sentence-transformers-all-minilm-l6-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | 2026-11-13T10:55:52.540Z |
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-13T11:13:49.109Z |
 | `learn-dom-d-9703d9b4` | `project://hf-cross-encoder-ms-marco-minilm-l6-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | 2026-11-13T11:14:09.039Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-13T11:24:16.120Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `3ee0d1d6` | Multi-dimensional audit evidence | 2026-11-13T11:24:30.135Z |
+| `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `48cb7266` | Multi-dimensional audit evidence | 2026-11-13T11:24:38.040Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `9a755b9e` | Multi-dimensional audit evidence | 2026-11-13T11:24:44.041Z |
+| `learn-dom-d-785f48fa` | `project://hf-baai-bge-small-en-v1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | 2026-11-13T11:25:04.725Z |

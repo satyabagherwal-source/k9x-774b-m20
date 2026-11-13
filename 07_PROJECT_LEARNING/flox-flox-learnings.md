@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `9a1a9e7c`  
+> **Source Version**: `3ee0d1d6`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:16:45.724Z  
+> **Timestamp**: 2026-11-13T11:24:18.575Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:11:44.806Z  
+> **Harvest Timestamp**: 2026-11-13T11:24:18.570Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4201 stars
+- **Stars / Engagement**: 4204 stars
 
 ---
 
@@ -302,6 +302,13 @@ impl ClientHooks<RequestHooks> for crate::Client {
 //! only runs the hook from `PROMPT_COMMAND`, which a fork never evaluates,
 //! and fish has no forked subshells.
 //!
+//! `flox_bin` is the path an upgrade replaces, not the store path of the
+//! running binary (see `FLOX_BIN_FOR_SHELL` in the `flox` crate). It is
+//! user-controlled text, so each hook escapes it for its shell, and `command`
+//! (`exec` in tcsh, which only alias-expands the first word) keeps a user
+//! function or alias named `flox` from injecting output into the text the
+//! hook evals.
+//!
 //! Each hook also exports [`PROMPT_HOOK_VERSION_ENV`] =
 //! `<version>:true` at registration time (top level, so it is set before the
 //! first prompt); subshell activations export `<version>:false` instead (see
@@ -309,11 +316,14 @@ impl ClientHooks<RequestHooks> for crate::Client {
 //! subprocess such as `flox deactivate` can confirm a compatible hook is set
 //! up before writing an action file the hook would otherwise never consume.
 
+use std::borrow::Cow;
+
 use flox_core::activate::vars::{FLOX_INVOCATION_TYPES_VAR, FLOX_INVOCATION_TYPES_WIRE_VAR};
 use flox_core::hook_actions::{PROMPT_HOOK_VERSION_ENV, prompt_hook_marker_value};
 use indoc::formatdoc;
 
 pub fn bash_hook(flox_bin: &str) -> String {
+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
     let marker = prompt_hook_marker_value(true);
     formatdoc!(
         r#"
@@ -321,7 +331,7 @@ pub fn bash_hook(flox_bin: &str) -> String {
         _flox_hook() {{
           local _prev_exit=$?;
           local _flox_vars;
-          _flox_vars="$("{flox_bin}" hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
+          _flox_vars="$(command {flox_bin} hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
           trap -- '' SIGINT;
           eval "$_flox_vars";
           trap - SIGINT;
@@ -344,6 +354,7 @@ pub fn bash_hook(flox_bin: &str) -> String {
 // The `ZSH_SUBSHELL` check keeps the hook out of forked subshells (see the
 // module docs).
 pub fn zsh_hook(flox_bin: &str) -> String {
+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
     let marker = prompt_hook_marker_value(true);
     formatdoc!(
         r#"
@@ -351,7 +362,7 @@ pub fn zsh_hook(flox_bin: &str) -> String {
         _flox_hook() {{
           if (( ZSH_SUBSHELL )); then return; fi;
           local _flox_vars;
-          _flox_vars="$("{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
+          _flox_vars="$(command {flox_bin} hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
           trap -- '' SIGINT;
           eval "$_flox_vars";
           trap - SIGINT;
@@ -396,12 +407,13 @@ pub fn fish_hook(flox_bin: &str) -> String {
     //   - eval_after_arrow: PWD hook sets a flag; evaluation is deferred
     //     until before the next command executes (fish_preexec).
     //   - disable_arrow: no PWD reaction; only prompt-based evaluation.
+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
     let marker = prompt_hook_marker_value(true);
     formatdoc!(
         r#"
         set -gx {PROMPT_HOOK_VERSION_ENV} {marker};
         function _flox_hook --on-event fish_prompt;
-            eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+            eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
             if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
                 set -g _flox_pwd_hook_active 1;
             end;
@@ -411,14 +423,14 @@ pub fn fish_hook(flox_bin: &str) -> String {
                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
                     set -g _flox_env_again 0;
                 else;
-                    eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+                    eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
                 end;
             end;
         end;
         function _flox_hook_preexec --on-event fish_preexec;
             if set -q _flox_env_again;
                 set -e _flox_env_again;
-                eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+                eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
             end;
             set -e _flox_pwd_hook_active;
         end;
@@ -449,17 +461,7 @@ pub fn fish_hook(flox_bin: &str) -> String {
 //   `unsetenv` immediately after, so it never outlives the hook run.
 //
 // Exiting from the hook is also awkward: if `exit` unwinds out of the eval'd
-// `hook-env` output, tcsh treats the special alias as broken, prints
-// "Faulty alias 'precmd' removed.", deletes the alias, and does NOT exit. An
-// `exit` at the alias-body top level is fine, so for an interactive
-// deactivation `hook-env` emits `set _flox_exit=1` (see
-// `emit_deactivate_script` in the `flox` crate) and the alias body checks the
-// flag after the eval completes — after the `unsetenv`, so the wire variable
-// dies with the hook run even when the shell exits.
 //
-// tcsh has nothing like `ZSH_SUBSHELL` to keep the hook out of forked
-// subshells (see the module docs), so `hook-env` detects the fork instead:
-// `exec` makes
 ```
 
 ### Core Architecture Module: `cli/flox-core/src/activate/context.rs`
@@ -584,7 +586,8 @@ pub struct ActivateCtx {
     #[serde(default)]
     pub disable_hook: bool,
 
-    /// Path to the flox binary, used for generating hook code.
+    /// The command the generated hook code runs to reach flox (see
+    /// `FLOX_BIN_FOR_SHELL` in the `flox` crate).
     #[serde(default)]
     pub flox_bin: String,
 
@@ -763,9 +766,7 @@ mod tests {
             (InvocationType::Interactive, InvocationKind::Interactive),
             (
                 InvocationType::ShellCommand("echo hi".to_string()),
-                InvocationKind::ShellCommand,
-            ),
-           
+                I
 ```
 
 ### Core Architecture Module: `cli/flox-core/src/activate/mod.rs`
@@ -1445,1047 +1446,946 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12b42fe6` (2026-11-09)
-**Commit Message**: fix(telemetry): keep metrics files out of the current directory on config errors (#4762)
+### Incident Patch 1: `cc3dcd2c` (2026-11-12)
+**Commit Message**: fix(activate): let the shell hook follow Flox upgrades (#4848)
 
-When Flox can't parse its config, every invocation now prints the parse
-error and exits 1, including `--help` and shell completion. Flox no
-longer falls back to the default config, which has metrics on and empty
-dirs. So it no longer creates `metrics-uuid` and `metrics-lock` in the
-current directory, prints the first-run notice, or starts Sentry.
+Fixes
+[DEV-340](https://linear.app/floxdotdev/issue/DEV-340/upgrade-shell-hook-when-flox-is-upgraded).
 
-**Worth checking:** `--help` and completion now fail on an invalid
-config, where they used to exit 0. Every subcommand, `flox config`
-included, already failed on one. `run()` now takes the config `main()`
-parsed rather than parsing it again.
+## Problem
 
-**Not covered:** an empty or relative `FLOX_CACHE_DIR`, `FLOX_DATA_DIR`
-or `FLOX_STATE_DIR` still resolves against the current directory.
-`FLOX_DISABLE_METRICS` still accepts only `true`/`false`. Files that
-earlier versions left behind are not cleaned up.
+The prompt hook that `flox activate` installs in a shell calls flox by
+the store path of the binary that created it. The `activate` command
+that `hook-env` emits for auto-activation does the same. After an
+upgrade, a shell that is already open keeps running the old binary on
+every prompt. When the new `flox init` creates an environment, the old
+hook offers to auto-activate it and then fails:
 
-## Release Notes
+```
+ERROR: failed to parse lockfile JSON: manifest had invalid schema version '1.19.0' at line 8 column 3
+```
 
-- Fixed: Flox no longer writes `metrics-uuid` and `metrics-lock` into
-the current directory when it can't parse its configuration. It now
-reports the error for every command, including `flox --help`.
+The `_FLOX_PROMPT_HOOK_VERSION` check does not catch this. It is a
+protocol number, not the Flox version, and it is the same in both
+releases.
 
-Stack: 2 of 6, merge bottom-up. Refs DEV-
+## Fix
 
-**File**: `cli/flox/src/main.rs` (modified, +12/-4)
+The hook and the emitted `activate` command now call flox by the path an
+upgrade replaces, taken from how the user invoked it (argv[0]):
+
+- a path such as `/usr/local/bin/flox` or `~/.nix-profile/bin/flox` is
+used as is;
+- a bare `flox` is resolved on PATH once, at activation, without
+following symlinks. Resolving once matters because activation puts the
+envi
+
+**File**: `cli/flox-activations/src/gen_rc/bash.rs` (modified, +2/-2)
 ```diff
-@@ -45,8 +45,7 @@ mod beta;
- mod commands;
- mod utils;
+@@ -420,7 +420,7 @@ mod tests {
+             _flox_hook() {
+               local _prev_exit=$?;
+               local _flox_vars;
+-              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
++              _flox_vars="$(command /flox hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+               trap -- '' SIGINT;
+               eval "$_flox_vars";
+               trap - SIGINT;
+@@ -469,7 +469,7 @@ mod tests {
+             _flox_hook() {
+               local _prev_exit=$?;
+               local _flox_vars;
+-              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
++              _flox_vars="$(command /flox hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+               trap -- '' SIGINT;
+               eval "$_flox_vars";
+               trap - SIGINT;
+```
+
+**File**: `cli/flox-activations/src/gen_rc/fish.rs` (modified, +6/-6)
+```diff
+@@ -373,7 +373,7 @@ mod tests {
+             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
+             set -gx _FLOX_PROMPT_HOOK_VERSION 1:true;
+             function _flox_hook --on-event fish_prompt;
+-                eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
+                     set -g _flox_pwd_hook_active 1;
+                 end;
+@@ -383,14 +383,14 @@ mod tests {
+                     if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
+                         set -g _flox_env_again 0;
+                     else;
+-                        eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                        eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                     end;
+                 end;
+             end;
+             function _flox_hook_preexec --on-event fish_preexec;
+                 if set -q _flox_env_again;
+                     set -e _flox_env_again;
+-                    eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                    eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                 end;
+                 set -e _flox_pwd_hook_active;
+             end;
+@@ -431,7 +431,7 @@ mod tests {
+             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
+             set -gx _FLOX_PROMPT_HOOK_VERSION 1:true;
+             function _flox_hook --on-event fish_prompt;
+-                eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
+                     set -g _flox_pwd_hook_active 1;
+                 end;
+@@ -441,14 +441,14 @@ mod tests {
+                     if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
+                         set -g _flox_env_again 0;
+                     else;
+-                        eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                        eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                     end;
+                 end;
+             end;
+             function _flox_hook_preexec --on-event fish_preexec;
+                 if set -q _flox_env_again;
+                     set -e _flox_env_again;
+-                    eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                    eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                 end;
+                 set -e _flox_pwd_hook_active;
+             end;
+```
+
+**File**: `cli/flox-activations/src/gen_rc/zsh.rs` (modified, +2/-2)
+```diff
+@@ -412,7 +412,7 @@ mod tests {
+             _flox_hook() {
+               if (( ZSH_SUBSHELL )); then return; fi;
+               local _flox_vars;
+-              _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
++              _flox_vars="$(command /flox hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+               trap -- '' SIGINT;
+               eval "$_flox_vars";
+               trap - SIGINT;
+@@ -458,7 +458,7 @@ mod tests {
+             _flox_hook() {
+               if (( ZSH_SUBSHELL )); then return; fi;
+               local _flox_vars;
+-              _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
++              _flox_vars="$(command /flox hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+               trap -- '' SIGINT;
+               eval "$_flox_vars";
+               trap - SIGINT;
+```
+
+**File**: `cli/flox-activations/src/hook.rs` (modified, +45/-5)
+```diff
+@@ -32,26 +32,36 @@
+ //! only runs the hook from `PROMPT_COMMAND`, which a fork never evaluates,
+ //! and fish has no forked subshells.
+ //!
++//! `flox_bin` is the path an upgrade replaces, not the store path of the
++//! running binary (see `FLOX_BIN_FOR_SHELL` in the `flox` crate). It is
++//! user-controlled text, so each hook escapes it for its shell, and `command`
++//! (`exec` in tcsh, which only alias-expands the first word) keeps a user
++//! function or alias named `flox` from injecting output into the text the
++//! hook evals.
++//!
+ //! Each hook also exports [`PROMPT_HOOK_VERSION_ENV`] =
+ //! `<version>:true` at registration time (top level, so it is set before the
+ //! first prompt); subshell activations export `<version>:false` instead (see
+ //! `gen_rc`). It is exported, unlike `_FLOX_INVOCATION_TYPES`, so a
+ //! subprocess such as `flox deactivate` can confirm a compatible hook is set
+ //! up before writing an action file the hook would otherwise never consume.
  
--async fn run(args: FloxArgs) -> Result<()> {
--    let config = Config::parse()?;
-+async fn run(args: FloxArgs, config: Config) -> Result<()> {
-     args.handle(config).await?;
-     Ok(())
- }
-@@ -119,7 +118,16 @@ fn main() -> ExitCode {
-         return ExitCode::from(1);
++use std::borrow::Cow;
++
+ use flox_core::activate::vars::{FLOX_INVOCATION_TYPES_VAR, FLOX_INVOCATION_TYPES_WIRE_VAR};
+ use flox_core::hook_actions::{PROMPT_HOOK_VERSION_ENV, prompt_hook_marker_value};
+ use indoc::formatdoc;
+ 
+ pub fn bash_hook(flox_bin: &str) -> String {
++    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
+     let marker = prompt_hook_marker_value(true);
+     formatdoc!(
+         r#"
+         export {PROMPT_HOOK_VERSION_ENV}={marker};
+         _flox_hook() {{
+           local _prev_exit=$?;
+           local _flox_vars;
+-          _flox_vars="$("{flox_bin}" hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
++          _flox_vars="$(command {flox_bin} hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
+           trap -- '' SIGINT;
+           eval "$_flox_vars";
+           trap - SIGINT;
+@@ -74,14 +84,15 @@ pub fn bash_hook(flox_bin: &str) -> String {
+ // The `ZSH_SUBSHELL` check keeps the hook out of forked subshells (see the
+ // module docs).
+ pub fn zsh_hook(flox_bin: &str) -> String {
++    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
+     let marker = prompt_hook_marker_value(true);
+     formatdoc!(
+         r#"
+         export {PROMPT_HOOK_VERSION_ENV}={marker};
+         _flox_hook() {{
+           if (( ZSH_SUBSHELL )); then return; fi;
+           local _flox_vars;
+-          _flox_vars="$("{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
++          _flox_vars="$(command {flox_bin} hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
+           trap -- '' SIGINT;
+           eval "$_flox_vars";
+           trap - SIGINT;
+@@ -126,12 +137,13 @@ pub fn fish_hook(flox_bin: &str) -> String {
+     //   - eval_after_arrow: PWD hook sets a flag; evaluation is deferred
+     //     until before the next command executes (fish_preexec).
+     //   - disable_arrow: no PWD reaction; only prompt-based evaluation.
++    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
+     let marker = prompt_hook_marker_value(true);
+     formatdoc!(
+         r#"
+         set -gx {PROMPT_HOOK_VERSION_ENV} {marker};
+         function _flox_hook --on-event fish_prompt;
+-            eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
++            eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+             if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
+                 set -g _flox_pwd_hook_active 1;
+             end;
+@@ -141,14 +153,14 @@ pub fn fish_hook(flox_bin: &str) -> String {
+                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
+                     set -g _flox_env_again 0;
+                 else;
+-                    eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
++                    eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+                 end;
+             end;
+         end;
+         function _flox_hook_preexec --on-event fish_preexec;
+             if set -q _flox_env_again;
+                 set -e _flox_env_again;
+-                eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
++                eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+             end;
+             set -e _flox_pwd_hook_active;
+         end;
+@@ -192,7 +204,17 @@ pub fn fish_hook(flox_bin: &str) -> String {
+ // `exec` makes the shell evaluating the alias its parent process, and
+ // `--skip
+```
+
+**File**: `cli/flox-core/src/activate/context.rs` (modified, +2/-1)
+```diff
+@@ -118,7 +118,8 @@ pub struct ActivateCtx {
+     #[serde(default)]
+     pub disable_hook: bool,
+ 
+-    /// Path to the flox binary, used for generating hook code.
++    /// The command the generated hook code runs to reach flox (see
++    /// `FLOX_BIN_FOR_SHELL` in the `flox` crate).
+     #[serde(default)]
+     pub flox_bin: String,
+ 
+```
+
+**File**: `cli/flox/src/beta/extensions/dispatch.rs` (modified, +5/-2)
+```diff
+@@ -20,6 +20,7 @@ use thiserror::Error;
+ use tracing::{debug, warn};
+ 
+ use super::manifest::{InstalledState, parse_installed_state};
++use crate::utils::FLOX_BIN_FOR_SHELL;
+ 
+ #[derive(Debug, Error)]
+ pub enum FindError {
+@@ -186,14 +187,16 @@ pub fn try_dispatch_external(data_dir: &Path, disable_metrics: bool) -> Option<E
+         .as_ref()
+         .map(|p| p.as_os_str().to_owned())
+         .unwrap_or_else(|| path.as_os_str().to_owned());
+-    let flox_bin = std::env::current_exe().unwrap_or_else(|_| PathBuf::from("flox"));
++    // The same command the shell hook embeds, so an activation an extension
++    // starts follows a Flox upgrade too; a store path would pin the old binary.
++    let flox_bin = FLOX_BIN_FOR_SHELL.as_str();
+ 
+     let mut command = Command::new(&path);
+     command
+         .args(&rest)
+         .env("FLOX_EXTENSION_NAME", &extension_name)
+         .env("FLOX_EXTENSION_PATH", &extension_path)
+-        .env("FLOX_BIN", &flox_bin);
++        .env("FLOX_BIN", flox_bin);
+     flox_core::util::restore_startup_tls_env(&mut command);
+     export_telemetry_opt_out(&mut command, disable_metrics);
+ 
+```
+
+**File**: `cli/flox/src/beta/extensions/docs/author-guide.md` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ extension's environment:
+ |----------|-------|
+ | `FLOX_EXTENSION_NAME` | The extension's declared name. |
+ | `FLOX_EXTENSION_PATH` | Absolute path to the managed install directory, or to the executable itself when the extension was found on `$PATH` rather than installed. |
+-| `FLOX_BIN` | Path to the flox binary that dispatched the extension. |
++| `FLOX_BIN` | The flox command that dispatched the extension, as the user invoked it (a path an upgrade replaces, not the store path). |
+ 
+ Extensions can read these to find their own install directory
+ or to shell out to other `flox` subcommands.
+```
+
+**File**: `cli/flox/src/commands/activate.rs` (modified, +3/-5)
+```diff
+@@ -69,7 +69,7 @@ use crate::utils::errors::format_diverged_metadata;
+ use crate::utils::events::{env_detail_from_concrete, env_detail_from_concrete_without_lineage};
+ use crate::utils::markdown::render_markdown_to_stderr;
+ use crate::utils::upgrade_output::{count_upgrade_categories, format_upgrade_summary};
+-use crate::utils::{FLOX_ACTIVATIONS_BIN, message};
++use crate::utils::{FLOX_ACTIVATIONS_BIN, flox_bin_for_hook, message};
+ use crate::{Exit, environment_subcommand_metric, subcommand_metric, utils};
+ 
+ #[derive(Debug, Clone, Bpaf)]
+@@ -733,6 +733,7 @@ impl ActivateOptions {
+             && flox.verbosity >= 0
+             && now_active.name().as_ref() != DEFAULT_NAME;
+ 
++        let flox_bin = flox_bin_for_hook(&shell);
+         let activate_data = ActivateCtx {
+             flox_activate_store_path: store_path.to_string_lossy().to_string(),
+             attach_ctx: core,
+@@ -746,10 +747,7 @@ impl ActivateOptions {
+             remove_after_reading: true,
+             metrics_uuid: flox.metrics_device_uuid,
+             disable_hook: config.flox.disable_hook.unwrap_or(false),
+-            flox_bin: std::env::current_exe()
+-                .ok()
+-                .and_then(|p| p.to_str().map(String::from))
+-                .unwrap_or_else(|| "flox".to_string()),
++            flox_bin,
+             auto_activate_fish_mode: config.flox.auto_activate_fish_mode,
+             announce_activation,
+         };
+```
+
+---
+
+### Incident Patch 2: `f0a868ba` (2026-10-28)
+**Commit Message**: fix(activate): let the shell hook follow Flox upgrades
+
+The prompt hook that `flox activate` registers, and the `activate`
+command `hook-env` emits for it, embedded `current_exe()`: the store
+path of the binary that created them. A shell that was already open
+kept running the old binary on every prompt after an upgrade, so the
+old `hook-env` would prompt to auto-activate an environment the new
+`flox init` had just written and then fail with
+"failed to parse lockfile JSON: manifest had invalid schema version".
+The protocol marker did not catch this because it did not change
+between the two releases, and the pinned path also broke once the old
+store path was garbage-collected.
+
+Embed the command the user invoked (argv[0]) instead. A bare `flox`
+resolves through PATH on every run, and an installer or profile path is
+replaced by the upgrade, so open shells follow it either way. The hooks
+call `command "<flox>"` so a user function or alias named `flox` cannot
+inject output into the text the hook evals.
+
+Shells carrying a hook from 1.19.x or earlier still pin the old store
+path and need one restart after upgrading.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `cli/flox-activations/src/gen_rc/bash.rs` (modified, +2/-2)
+```diff
+@@ -420,7 +420,7 @@ mod tests {
+             _flox_hook() {
+               local _prev_exit=$?;
+               local _flox_vars;
+-              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
++              _flox_vars="$(command "/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+               trap -- '' SIGINT;
+               eval "$_flox_vars";
+               trap - SIGINT;
+@@ -469,7 +469,7 @@ mod tests {
+             _flox_hook() {
+               local _prev_exit=$?;
+               local _flox_vars;
+-              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
++              _flox_vars="$(command "/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+               trap -- '' SIGINT;
+               eval "$_flox_vars";
+               trap - SIGINT;
+```
+
+**File**: `cli/flox-activations/src/gen_rc/fish.rs` (modified, +6/-6)
+```diff
+@@ -373,7 +373,7 @@ mod tests {
+             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
+             set -gx _FLOX_PROMPT_HOOK_VERSION 1:true;
+             function _flox_hook --on-event fish_prompt;
+-                eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
+                     set -g _flox_pwd_hook_active 1;
+                 end;
+@@ -383,14 +383,14 @@ mod tests {
+                     if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
+                         set -g _flox_env_again 0;
+                     else;
+-                        eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                        eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                     end;
+                 end;
+             end;
+             function _flox_hook_preexec --on-event fish_preexec;
+                 if set -q _flox_env_again;
+                     set -e _flox_env_again;
+-                    eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                    eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                 end;
+                 set -e _flox_pwd_hook_active;
+             end;
+@@ -431,7 +431,7 @@ mod tests {
+             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
+             set -gx _FLOX_PROMPT_HOOK_VERSION 1:true;
+             function _flox_hook --on-event fish_prompt;
+-                eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
+                     set -g _flox_pwd_hook_active 1;
+                 end;
+@@ -441,14 +441,14 @@ mod tests {
+                     if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
+                         set -g _flox_env_again 0;
+                     else;
+-                        eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                        eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                     end;
+                 end;
+             end;
+             function _flox_hook_preexec --on-event fish_preexec;
+                 if set -q _flox_env_again;
+                     set -e _flox_env_again;
+-                    eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
++                    eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
+                 end;
+                 set -e _flox_pwd_hook_active;
+             end;
+```
+
+**File**: `cli/flox-activations/src/gen_rc/zsh.rs` (modified, +2/-2)
+```diff
+@@ -412,7 +412,7 @@ mod tests {
+             _flox_hook() {
+               if (( ZSH_SUBSHELL )); then return; fi;
+               local _flox_vars;
+-              _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
++              _flox_vars="$(command "/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+               trap -- '' SIGINT;
+               eval "$_flox_vars";
+               trap - SIGINT;
+@@ -458,7 +458,7 @@ mod tests {
+             _flox_hook() {
+               if (( ZSH_SUBSHELL )); then return; fi;
+               local _flox_vars;
+-              _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
++              _flox_vars="$(command "/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+               trap -- '' SIGINT;
+               eval "$_flox_vars";
+               trap - SIGINT;
+```
+
+**File**: `cli/flox-activations/src/hook.rs` (modified, +13/-5)
+```diff
+@@ -32,6 +32,14 @@
+ //! only runs the hook from `PROMPT_COMMAND`, which a fork never evaluates,
+ //! and fish has no forked subshells.
+ //!
++//! `flox_bin` is the command the user invoked (`flox`, or the path they
++//! typed), not the store path of the running binary: the hook outlives Flox
++//! upgrades, and a bare name resolves through PATH on every run, so an open
++//! shell follows the upgrade instead of calling a binary that cannot read the
++//! environments the new one writes. `command` (and `exec` in tcsh, which only
++//! alias-expands the first word) keeps a user function or alias named `flox`
++//! from injecting output into the text the hook evals.
++//!
+ //! Each hook also exports [`PROMPT_HOOK_VERSION_ENV`] =
+ //! `<version>:true` at registration time (top level, so it is set before the
+ //! first prompt); subshell activations export `<version>:false` instead (see
+@@ -51,7 +59,7 @@ pub fn bash_hook(flox_bin: &str) -> String {
+         _flox_hook() {{
+           local _prev_exit=$?;
+           local _flox_vars;
+-          _flox_vars="$("{flox_bin}" hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
++          _flox_vars="$(command "{flox_bin}" hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
+           trap -- '' SIGINT;
+           eval "$_flox_vars";
+           trap - SIGINT;
+@@ -81,7 +89,7 @@ pub fn zsh_hook(flox_bin: &str) -> String {
+         _flox_hook() {{
+           if (( ZSH_SUBSHELL )); then return; fi;
+           local _flox_vars;
+-          _flox_vars="$("{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
++          _flox_vars="$(command "{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
+           trap -- '' SIGINT;
+           eval "$_flox_vars";
+           trap - SIGINT;
+@@ -131,7 +139,7 @@ pub fn fish_hook(flox_bin: &str) -> String {
+         r#"
+         set -gx {PROMPT_HOOK_VERSION_ENV} {marker};
+         function _flox_hook --on-event fish_prompt;
+-            eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
++            eval (command "{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+             if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
+                 set -g _flox_pwd_hook_active 1;
+             end;
+@@ -141,14 +149,14 @@ pub fn fish_hook(flox_bin: &str) -> String {
+                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
+                     set -g _flox_env_again 0;
+                 else;
+-                    eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
++                    eval (command "{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+                 end;
+             end;
+         end;
+         function _flox_hook_preexec --on-event fish_preexec;
+             if set -q _flox_env_again;
+                 set -e _flox_env_again;
+-                eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
++                eval (command "{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+             end;
+             set -e _flox_pwd_hook_active;
+         end;
+```
+
+**File**: `cli/flox-core/src/activate/context.rs` (modified, +3/-1)
+```diff
+@@ -118,7 +118,9 @@ pub struct ActivateCtx {
+     #[serde(default)]
+     pub disable_hook: bool,
+ 
+-    /// Path to the flox binary, used for generating hook code.
++    /// The command the generated hook code runs to reach flox: the name or
++    /// path the user invoked, not this process's store path, so that an
++    /// upgrade takes effect in shells that are already open.
+     #[serde(default)]
+     pub flox_bin: String,
+ 
+```
+
+**File**: `cli/flox/src/commands/activate.rs` (modified, +2/-5)
+```diff
+@@ -69,7 +69,7 @@ use crate::utils::errors::format_diverged_metadata;
+ use crate::utils::events::{env_detail_from_concrete, env_detail_from_concrete_without_lineage};
+ use crate::utils::markdown::render_markdown_to_stderr;
+ use crate::utils::upgrade_output::{count_upgrade_categories, format_upgrade_summary};
+-use crate::utils::{FLOX_ACTIVATIONS_BIN, message};
++use crate::utils::{FLOX_ACTIVATIONS_BIN, FLOX_BIN_FOR_SHELL, message};
+ use crate::{Exit, environment_subcommand_metric, subcommand_metric, utils};
+ 
+ #[derive(Debug, Clone, Bpaf)]
+@@ -746,10 +746,7 @@ impl ActivateOptions {
+             remove_after_reading: true,
+             metrics_uuid: flox.metrics_device_uuid,
+             disable_hook: config.flox.disable_hook.unwrap_or(false),
+-            flox_bin: std::env::current_exe()
+-                .ok()
+-                .and_then(|p| p.to_str().map(String::from))
+-                .unwrap_or_else(|| "flox".to_string()),
++            flox_bin: FLOX_BIN_FOR_SHELL.clone(),
+             auto_activate_fish_mode: config.flox.auto_activate_fish_mode,
+             announce_activation,
+         };
+```
+
+**File**: `cli/flox/src/commands/hook_env.rs` (modified, +10/-7)
+```diff
+@@ -37,7 +37,7 @@ use super::deactivate::{deactivation_target, emit_deactivate_script, flox_activa
+ use crate::subcommand_metric;
+ use crate::utils::active_environments::ActiveEnvironment;
+ use crate::utils::dialog::{Confirm, Dialog};
+-use crate::utils::message;
++use crate::utils::{FLOX_BIN_FOR_SHELL, message};
+ 
+ #[derive(Debug, Clone, Bpaf)]
+ pub struct HookEnv {
+@@ -1000,23 +1000,26 @@ async fn prompt_for_auto_activation(project_dirs: &[PathBuf]) -> Result<AutoActi
+ /// runs `flox activate` with stdout captured — which selects in-place mode —
+ /// so this reuses the full activation path (hooks, services, attach
+ /// semantics) of `eval "$(flox activate)"`.
++///
++/// It runs flox through [`FLOX_BIN_FOR_SHELL`], the same command the hook used
++/// to start this process, so an upgraded Flox is picked up rather than this
++/// binary's store path. `command` keeps a user function or alias named `flox`
++/// out of the way, as in the hook itself.
+ fn write_activate_command(shell: Shell, project_dir: &Path, writer: &mut impl Write) -> Result<()> {
+-    let flox_bin = std::env::current_exe().context("failed to determine flox executable path")?;
+-    let flox_bin = flox_bin.to_string_lossy().to_string();
+-    let escaped_bin = shell_escape::escape(Cow::Borrowed(&*flox_bin));
++    let escaped_bin = shell_escape::escape(Cow::Borrowed(FLOX_BIN_FOR_SHELL.as_str()));
+     let dir = project_dir.to_string_lossy().to_string();
+     let escaped_dir = shell_escape::escape(Cow::Borrowed(&*dir));
+     match shell {
+         Shell::Bash | Shell::Zsh => {
+             writeln!(
+                 writer,
+-                r#"eval "$({escaped_bin} activate --dir {escaped_dir})";"#
++                r#"eval "$(command {escaped_bin} activate --dir {escaped_dir})";"#
+             )?;
+         },
+         Shell::Fish => {
+             writeln!(
+                 writer,
+-                "{escaped_bin} activate --dir {escaped_dir} | source;"
++                "command {escaped_bin} activate --dir {escaped_dir} | source;"
+             )?;
+         },
+         Shell::Tcsh => {
+@@ -1853,7 +1856,7 @@ mod tests {
+             script.contains("activate --dir '/home/user/my proj'"),
+             "{script}"
+         );
+-        assert!(script.starts_with(r#"eval "$("#), "{script}");
++        assert!(script.starts_with(r#"eval "$(command "#), "{script}");
      }
  
--    let config = Config::parse().unwrap_or_default();
-+    // Exit rather than fall back to the defaults, which enable metrics and
-+    // leave the data and cache dirs empty, so they would create the metrics
-+    // UUID in the current directory whatever the unparsed sources set.
-+    let config = match Config::parse() {
-+        Ok(config) => config,
-+        Err(err) => {
-+            message::error(format!("{err:#}"));
-+            return ExitCode::from(1);
-+        },
+     #[test]
+```
+
+**File**: `cli/flox/src/utils/mod.rs` (modified, +96/-1)
+```diff
+@@ -1,6 +1,7 @@
+ use std::env;
++use std::ffi::OsString;
+ use std::io::Stderr;
+-use std::path::PathBuf;
++use std::path::{Path, PathBuf};
+ use std::sync::{LazyLock, Mutex};
+ use std::time::Duration;
+ 
+@@ -40,6 +41,51 @@ pub static FLOX_ACTIVATIONS_BIN: LazyLock<PathBuf> = LazyLock::new(|| {
+         env::var("FLOX_ACTIVATIONS_BIN").unwrap_or(env!("FLOX_ACTIVATIONS_BIN").to_string()),
+     )
+ });
++
++/// The command a shell can use to reach this flox again.
++///
++/// Embedded in code the shell keeps running after Flox may have been upgraded:
++/// the prompt hook `flox activate` registers and the activation commands
++/// `flox hook-env` emits for it. `current_exe()` would pin this process's store
++/// path, which keeps an open shell on the old binary after an upgrade (and
++/// breaks it once that store path is garbage-collected). argv[0] is how the
++/// user reached flox instead: a bare name resolves through PATH every time the
++/// hook runs, and a path names the installer- or profile-managed location, both
++/// of which an upgrade replaces.
++pub static FLOX_BIN_FOR_SHELL: LazyLock<String> = LazyLock::new(|| {
++    flox_bin_for_shell(
++        env::args_os().next(),
++        env::current_dir().ok(),
++        env::current_exe().ok(),
++    )
++});
++
++/// See [`FLOX_BIN_FOR_SHELL`]. A relative `argv0` is anchored to `cwd` but never
++/// canonicalized, since resolving symlinks would pin the store path again.
++fn flox_bin_for_shell(
++    argv0: Option<OsString>,
++    cwd: Option<PathBuf>,
++    exe: Option<PathBuf>,
++) -> String {
++    let fallback = || {
++        exe.as_deref()
++            .map(Path::to_string_lossy)
++            .map_or_else(|| "flox".to_string(), |exe| exe.into_owned())
 +    };
-     let metrics_uuid = if !config.flox.disable_metrics {
-         init_telemetry_uuid(&config.flox.data_dir, &config.flox.cache_dir)
-             .and_then(|_| read_metrics_uuid(&config))
-@@ -206,7 +214,7 @@ fn main() -> ExitCode {
-     let runtime = tokio::runtime::Runtime::new().unwrap();
- 
-     let dispatch_start = Instant::now();
--    let result = runtime.block_on(run(args));
-+    let result = runtime.block_on(run(args, config.clone()));
- 
-     // Print errors; derive the exit code and the telemetry `error_kind`.
-     let (code, error_kind): (u8, Option<&'static str>) = match &result {
++    let Some(argv0) = argv0.filter(|argv0| !argv0.is_empty()) else {
++        return fallback();
++    };
++    let argv0 = PathBuf::from(argv0);
++    // A bare name (one component) is left to the shell's PATH lookup.
++    if argv0.is_absolute() || argv0.components().count() == 1 {
++        return argv0.to_string_lossy().into_owned();
++    }
++    match cwd {
++        Some(cwd) => cwd.join(argv0).to_string_lossy().into_owned(),
++        None => fallback(),
++    }
++}
++
+ /// Timeout used for network operations that run after the main flox command has
+ /// completed.
+ ///
+@@ -57,3 +103,52 @@ pub fn populate_default_nix_env_vars() {
+         unsafe { env::set_var(key, value) }
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn exe() -> Option<PathBuf> {
++        Some(PathBuf::from("/nix/store/abc-flox/bin/.flox-wrapped"))
++    }
++
++    #[test]
++    fn bare_name_is_left_for_path_lookup() {
++        assert_eq!(
++            flox_bin_for_shell(Some("flox".into()), Some("/work".into()), exe()),
++            "flox"
++        );
++    }
++
++    #[test]
++    fn relative_path_is_anchored_to_cwd() {
++        assert_eq!(
++            flox_bin_for_shell(
++                Some("./target/debug/flox".into()),
++                Some("/work".into()),
++                exe()
++            ),
++            "/work/./target/debug/flox"
++        );
++    }
++
++    #[test]
++    fn absolute_path_is_kept_unresolved() {
++        assert_eq!(
++            flox_bin_for_shell(
++                Some("/usr/local/bin/flox".into()),
++                Some("/work".into()),
++                exe()
++            ),
++            "/usr/local/bin/flox"
++        );
++    }
++
++    #[test]
++    fn missing_argv0_falls_back_to_the_running_binary() {
++        assert_eq!(
++            flox_bin_for_shell(None, Some("/work".into()), exe()),
++            "/nix/store/abc-flox/bin/.flox-wrapped"
++        );
++    }
++}
 ```
 
-**File**: `cli/tests/config-errors.bats` (added, +80/-0)
+---
+
+### Incident Patch 3: `3ee0d1d6` (2026-11-12)
+**Commit Message**: fix(nef): percent-encode path flakerefs so paths with spaces work (#4870)
+
+Fixes #4675
+
+**Cause.** `NixFlakeref::from_path` built the flakeref with
+`format!("path:{}", path)`. Flakerefs are URL-like, so a space in the
+project path (or `%`, `?`, `#`) is not understood by
+`builtins.parseFlakeRef`, and NEF builds under such a directory fail.
+The issue shows that `path:/tmp/space%20demo` round-trips correctly
+while the raw form does not.
+
+**Fix.** A small helper, `path_flakeref_string`, percent-encodes `%`,
+`?`, `#`, `"`, `\`, whitespace and control characters, and leaves
+everything else (including non-ASCII) untouched. `from_path` uses it;
+all callers (`build.rs`, `develop.rs`, `publish.rs`) go through
+`from_path`, so they are covered.
+
+**Test.** Unit tests on the helper (plain path unchanged, space and URL
+delimiters encoded, non-ASCII kept). The space/delimiter case reproduces
+the issue's rejected string (`path:/tmp/space demo/...`) with the
+previous `format!` and passes with the fix. They don't need nix; a bats
+test (`develop.bats`) builds an expression from a project directory
+containing a space; it was not run locally (no nix available) and is
+left to CI.
+
+Disclosure: this change
+
+**File**: `.github/CONTRIBUTORS.csv` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,80 @@
-+#! /usr/bin/env bats
-+# -*- mode: bats; -*-
-+# ============================================================================ #
-+#
-+# Test that a config that does not parse is an error for every invocation,
-+# and creates no telemetry state (no device ID, no Sentry client) and no files
-+# in the current directory.
-+#
-+# ---------------------------------------------------------------------------- #
+@@ -33,3 +33,4 @@ yes,jsoref,Josh Soref,<jsoref@gmail.com>
+ yes,esteve,Esteve Fernández,<github@nara.ac>
+ yes,fzakaria,Farid Zakaria,<farid.m.zakaria@gmail.com>
+ yes,nixfred,Fred Nix,<frednix@gmail.com>
++yes,pcbeingused333,Alex Castillo,<alex.castillog33@gmail.com>
+```
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -3167,6 +3167,7 @@ dependencies = [
+  "httpmock",
+  "indent",
+  "indoc",
++ "percent-encoding",
+  "rnix",
+  "rowan",
+  "serde",
+```
+
+**File**: `Cargo.toml` (modified, +1/-0)
+```diff
+@@ -86,6 +86,7 @@ nix = { version = "0.31", features = ["signal", "process", "user", "fs"] }
+ # uses, because native-tls takes precedence.
+ oauth2 = { version = "5.0", default-features = false, features = ["reqwest"] }
+ path-dedot = "3.1.1"
++percent-encoding = "2.3"
+ pollster = "0.4.0"
+ progenitor-client = "0.11.2"
+ proptest = "1.9.0"
+```
+
+**File**: `cli/nef-lock-catalog/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ anyhow.workspace = true
+ clap.workspace = true
+ indent.workspace = true
+ indoc.workspace = true
++percent-encoding.workspace = true
+ url.workspace = true
+ serde_json.workspace = true
+ serde.workspace = true
+```
+
+**File**: `cli/nef-lock-catalog/src/lock/flakeref.rs` (modified, +54/-3)
+```diff
+@@ -2,6 +2,7 @@ use std::path::Path;
+ use std::str::FromStr;
+ 
+ use anyhow::{Context, Result};
++use percent_encoding::{AsciiSet, NON_ALPHANUMERIC, utf8_percent_encode};
+ use serde::{Deserialize, Serialize};
+ use serde_json::{Value, json};
+ use url::Url;
+@@ -72,11 +73,24 @@ impl TryFrom<Value> for NixFlakeref {
+     }
+ }
+ 
++/// Format a filesystem path as a `path:` flakeref string.
++/// Keep path separators and URI-unreserved characters; Nix decodes the rest.
++fn path_flakeref_string(path: &Path) -> String {
++    const PATH_FLAKEREF_SET: &AsciiSet = &NON_ALPHANUMERIC
++        .remove(b'/')
++        .remove(b'-')
++        .remove(b'.')
++        .remove(b'_')
++        .remove(b'~');
++    format!(
++        "path:{}",
++        utf8_percent_encode(&path.to_string_lossy(), PATH_FLAKEREF_SET)
++    )
++}
 +
-+load test_support.bash
+ impl NixFlakeref {
+     pub fn from_path(path: impl AsRef<Path>) -> Result<Self> {
+-        format!("path:{}", path.as_ref().to_string_lossy())
+-            .as_str()
+-            .try_into()
++        path_flakeref_string(path.as_ref()).as_str().try_into()
+     }
+ 
+     pub fn from_git_with_dir(url: &Url, dir: Option<&Path>) -> Result<Self> {
+@@ -154,3 +168,40 @@ impl From<&crate::lock::build_lock::GitSource> for RawNixFlakerefAttrs {
+         }))
+     }
+ }
 +
-+# bats file_tags=config,telemetry
++#[cfg(test)]
++mod tests {
++    use super::*;
 +
-+# ---------------------------------------------------------------------------- #
++    #[test]
++    fn path_flakeref_plain_path_is_unchanged() {
++        assert_eq!(
++            path_flakeref_string(Path::new("/tmp/demo/.flox")),
++            "path:/tmp/demo/.flox"
++        );
++    }
 +
-+setup() {
-+  common_test_setup
-+  setup_isolated_flox
-+  # Turn metrics on, as on a user's machine, so that falling back to the
-+  # default config would create telemetry state.
-+  export FLOX_DISABLE_METRICS=false
-+  export _FLOX_METRICS_URL_OVERRIDE="http://127.0.0.1:1/legacy"
-+  export _FLOX_METRICS_URL_V2_OVERRIDE="http://127.0.0.1:1/v2"
-+  export PROJECT_DIR="${BATS_TEST_TMPDIR?}/cwd"
++    #[test]
++    fn path_flakeref_encodes_spaces_and_url_delimiters() {
++        assert_eq!(
++            path_flakeref_string(Path::new("/tmp/space demo/a%b?c#d")),
++            "path:/tmp/space%20demo/a%25b%3Fc%23d"
++        );
++    }
++
++    #[test]
++    fn path_flakeref_encodes_punctuation() {
++        assert_eq!(
++            path_flakeref_string(Path::new("/tmp/a^b'c’d")),
++            "path:/tmp/a%5Eb%27c%E2%80%99d"
++        );
++    }
++
++    #[test]
++    fn path_flakeref_encodes_non_ascii_characters() {
++        assert_eq!(
++            path_flakeref_string(Path::new("/tmp/café dir")),
++            "path:/tmp/caf%C3%A9%20dir"
++        );
++    }
++}
+```
+
+**File**: `cli/tests/develop.bats` (modified, +17/-0)
+```diff
+@@ -512,3 +512,20 @@ logged_catalog_lock_path() {
+   link_count="$(find "$PROJECT_DIR/.flox/run" -maxdepth 1 -name "$NIX_SYSTEM.greet.develop*" | wc -l)"
+   assert_equal "$link_count" 1
+ }
++
++@test "develop: builds a Nix expression from a project directory containing a space" {
++  project_setup_common
++  PROJECT_DIR="${BATS_TEST_TMPDIR?}/project with space"
++  rm -rf "${PROJECT_DIR?}"
 +  mkdir -p "$PROJECT_DIR"
-+  cd "$PROJECT_DIR" || return
-+}
++  popd >/dev/null || true
++  pushd "$PROJECT_DIR" >/dev/null || return
++  "$FLOX_BIN" init -d "$PROJECT_DIR"
++  git_init_project
++  nef_package_setup greet
++  export _FLOX_USE_CATALOG_MOCK="$UNIT_TEST_GENERATED/get_base_catalog_nixpkgs_url.yaml"
 +
-+assert_cwd_empty() {
-+  run ls -A "$PROJECT_DIR"
++  run "$FLOX_BIN" build -d "$PROJECT_DIR" greet
 +  assert_success
-+  assert_output ""
-+}
-+
-+# ---------------------------------------------------------------------------- #
-+
-+@test "invalid FLOX_DISABLE_METRICS creates no device ID" {
-+  FLOX_DISABLE_METRICS=1 run "$FLOX_BIN" --help
-+  assert_failure
-+  assert_output --partial "Could not parse config"
-+
-+  # Allow the detached telemetry sender, which would log into the current
-+  # directory if it ran with the default config.
-+  _FLOX_TESTING_DISABLE_BG_SIDE_EFFECTS=false _FLOX_FORCE_FLUSH_METRICS=true \
-+    FLOX_DISABLE_METRICS=garbage run "$FLOX_BIN" envs --active
-+  assert_failure
-+  assert_output --partial "Could not parse config"
-+
-+  assert_cwd_empty
-+  assert [ ! -e "$FLOX_DATA_DIR/metrics-uuid" ]
-+}
-+
-+@test "malformed flox.toml creates no device ID" {
-+  # A quoted boolean is a string, which does not parse as `disable_metrics`.
-+  unset FLOX_DISABLE_METRICS
-+  mkdir -p "$FLOX_CONFIG_DIR"
-+  echo 'disable_metrics = "true"' > "$FLOX_CONFIG_DIR/flox.toml"
-+
-+  run "$FLOX_BIN" envs --active
-+  assert_failure
-+  assert_output --partial "Could not parse config"
-+
-+  assert_cwd_empty
-+  assert [ ! -e "$FLOX_DATA_DIR/metrics-uuid" ]
-+}
-+
-+@test "invalid config does not initialize Sentry" {
-+  export FLOX_SENTRY_DSN="http://public@127.0.0.1:1/1"
-+  export RUST_LOG="flox_core::sentry=debug"
-+
-+  # A valid config with metrics on initializes Sentry.
-+  run "$FLOX_BIN" --help
-+  assert_success
-+  assert_output --partial "Initializing Sentry"
-+
-+  FLOX_DISABLE_METRICS=1 run "$FLOX_BIN" --help
-+  assert_failure
-+  refute_output --partial "Initializing Sentry"
++  assert [ -e "$PROJECT_DIR/result-greet/hi" ]
 +}
 ```
 
----
-
-### Incident Patch 2: `ef109fde` (2026-11-09)
-**Commit Message**: fix(telemetry): make reset-metrics delete buffered events (#4760)
-
-`flox reset-metrics` now deletes the unsent v2 events
-(`events-v2.json`), the legacy buffer, `send-telemetry.log`, and the
-buffers' lock files, along with the device ID. It records no event,
-sends no Sentry trace under the ID it deletes, and doesn't start the
-background sender.
-
-Before, the v2 buffer survived the reset, so the next flush sent events
-carrying the old ID. That defeated the reset.
-
-**Worth checking:** the Sentry client is unbound
-(`flox_core::sentry::stop_sentry_reporting`) before the handler's span
-starts. The device ID is deleted last, so a failed deletion leaves the
-old ID with its events, and rerunning the command finishes the job.
-`is_telemetry_reset_command` is checked in the dispatcher and in
-`send_telemetry::spawn_if_due_with`.
-
-**Not covered:** events already sent; a `send-telemetry` child or
-another `flox` process that is already running; upgrade-check logs
-inside environments. While the lock files are being deleted, a waiting
-process and a new one don't exclude each other for a short window
-(documented on `EventsBuffer::delete`).
-
-<details><summary>Tests and open questions</summary>
-
-- Unit 
-
-**File**: `cli/flox-core/src/sentry.rs` (modified, +34/-0)
+**File**: `package-builder/flox-build.mk` (modified, +3/-1)
 ```diff
-@@ -59,6 +59,16 @@ pub fn init_sentry(release_name: &str, metrics_uuid: Uuid) -> Option<ClientInitG
-     Some(sentry)
- }
+@@ -322,8 +322,10 @@ define COMMON_BUILD_VARS_template =
+ 	@# Having confirmed the links, create the $(_pvarname)_resultLinks_json
+ 	@# variable used to construct build-meta.json in the form of a json string
+ 	@# like '{ "result-link1":"store-path1","result-link2":"store-path2",... }'.
++	@# Entries are space-separated, but $(PWD) may itself contain spaces, so
++	@# only replace the space between the closing and opening quotes.
+ 	$$(eval $(_pvarname)_resultLinks_json = \
+-	  { $$(subst $$(space),$$(comma),$$($(_pvarname)_resultLinks)) })
++	  { $$(subst "$$(space)","$$(comma)",$$($(_pvarname)_resultLinks)) })
  
-+/// Stop reporting events and transactions to Sentry for the rest of the process.
-+///
-+/// Call it before the span or event that must not be reported starts,
-+/// because a transaction keeps the client it started with.
-+/// It affects the calling thread's hub, which on the main thread is the
-+/// process hub that [init_sentry] bound the client to.
-+pub fn stop_sentry_reporting() {
-+    sentry::Hub::current().bind_client(None);
-+}
-+
- /// Client options for every flox binary that reports to Sentry, minus the DSN.
- fn client_options(release_name: &str, sentry_env: String) -> ClientOptions {
-     ClientOptions {
-@@ -145,6 +155,30 @@ mod tests {
-         (events, transactions)
-     }
+ endef
  
-+    #[test]
-+    fn stopped_reporting_sends_neither_events_nor_transactions() {
-+        let options = sentry::apply_defaults(client_options("flox-test", "test".to_string()));
-+        let sent_item_counts = [false, true].map(|stopped| {
-+            sentry::test::with_captured_envelopes_options(
-+                || {
-+                    if stopped {
-+                        stop_sentry_reporting();
-+                    }
-+                    sentry::capture_message("error", sentry::Level::Error);
-+                    sentry::start_transaction(sentry::TransactionContext::new("transaction", "op"))
-+                        .finish();
-+                },
-+                options.clone(),
-+            )
-+            .iter()
-+            .flat_map(|envelope| envelope.items())
-+            .count()
-+        });
-+
-+        // The first count is the control: without stopping, both are sent.
-+        assert_eq!(sent_item_counts, [2, 0]);
-+    }
-+
-     #[test]
-     fn events_and_transactions_omit_hostname() {
-         let options = client_options("flox-test", "test".to_string());
 ```
 
-**File**: `cli/flox-events/src/buffer.rs` (modified, +61/-0)
+**File**: `pkgs/crate2nix/Cargo.nix` (modified, +4/-0)
 ```diff
-@@ -179,6 +179,35 @@ impl EventsBuffer {
-         }))
-     }
- 
-+    /// Delete the buffer file and its lock file from `data_dir`, discarding
-+    /// every buffered event, including entries this binary cannot parse.
-+    /// Succeeds without doing anything when `data_dir` does not exist.
-+    ///
-+    /// Blocks until the file lock is acquired, so no other process is
-+    /// mid-write. The lock file is deleted while still held. A process that
-+    /// was already waiting on it then locks the deleted file, while a process
-+    /// that starts later creates and locks a new one, so those two processes
-+    /// do not exclude each other until the first one releases its lock.
-+    pub fn delete(data_dir: &Path) -> Result<()> {
-+        if !data_dir
-+            .try_exists()
-+            .context("Could not check the v2 events buffer directory")?
-+        {
-+            return Ok(());
-+        }
-+
-+        let lock_file_path = data_dir.join(EVENTS_LOCK_FILE_NAME);
-+        let events_lock =
-+            open_lock_file(&lock_file_path).context("Could not open v2 events lock file")?;
-+        events_lock
-+            .lock()
-+            .context("Could not lock v2 events buffer")?;
-+
-+        remove_file_if_present(&data_dir.join(EVENTS_BUFFER_FILE_NAME))
-+            .context("Could not delete v2 events buffer file")?;
-+        remove_file_if_present(&lock_file_path).context("Could not delete v2 events lock file")
-+    }
-+
-     pub(crate) fn is_expired(&self, expiry: Duration) -> bool {
-         let now = OffsetDateTime::now_utc();
-         self.oldest_timestamp()
-@@ -313,6 +342,13 @@ impl EventsBuffer {
-     }
- }
- 
-+fn remove_file_if_present(path: &Path) -> std::io::Result<()> {
-+    match std::fs::remove_file(path) {
-+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
-+        result => result,
-+    }
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -369,4 +405,29 @@ mod tests {
-             "the sent entry is drained and the unreadable one is written back"
-         );
-     }
-+
-+    #[test]
-+    fn delete_removes_the_buffer_with_unreadable_entries_and_the_lock_file() {
-+        let dir = tempfile::tempdir().unwrap();
-+        std::fs::write(
-+            dir.path().join(EVENTS_BUFFER_FILE_NAME),
-+            format!(
-+                "{}\n{}\n",
-+                envelope("cli.environment.delete"),
-+                envelope("cli.environment.from.the.future"),
-+            ),
-+        )
-+        .unwrap();
-+        drop(EventsBuffer::read(dir.path()).unwrap());
-+
-+        EventsBuffer::delete(dir.path()).unwrap();
-+
-+        let remaining: Vec<_> = std::fs::read_dir(dir.path()).unwrap().collect();
-+        assert!(remaining.is_empty(), "left behind: {remaining:?}");
-+
-+        EventsBuffer::delete(dir.path()).expect("deleting a missing buffer succeeds");
-+        EventsBuffer::delete(&dir.path().join("missing"))
-+            .expect("deleting from a missing directory succeeds");
-+        assert!(!dir.path().join("missing").exists());
-+    }
- }
-```
-
-**File**: `cli/flox/src/commands/general.rs` (modified, +92/-22)
-```diff
-@@ -6,6 +6,7 @@ use anyhow::{Context, Result};
- use bpaf::Bpaf;
- use flox_config::{Config, FLOX_CONFIG_FILE, ReadWriteError};
- use flox_core::open_lock_file;
-+use flox_events::{EventsBuffer, EventsHub};
- use flox_rust_sdk::flox::Flox;
- use indoc::indoc;
- use serde::Serialize;
-@@ -15,6 +16,7 @@ use toml_edit::{Key, TomlError};
- use tracing::{debug, instrument};
- 
- use crate::subcommand_metric;
-+use crate::utils::detached::{SEND_TELEMETRY_LOG_NAME, send_telemetry_log_dir};
- use crate::utils::message;
- use crate::utils::metrics::{
-     METRICS_EVENTS_FILE_NAME,
-@@ -28,32 +30,18 @@ pub struct ResetMetrics {}
- impl ResetMetrics {
-     #[instrument(name = "reset-metrics", skip_all)]
-     pub async fn handle(self, flox: Flox) -> Result<()> {
--        subcommand_metric!("reset-metrics");
--        let metrics_lock = open_lock_file(flox.cache_dir.join(METRICS_LOCK_FILE_NAME))?;
--        // Hand the file back out of the closure, so the lock is held while
--        // the metrics files are removed rather than dropped with the closure.
--        let _metrics_lock =
--            tokio::task::spawn_blocking(move || metrics_lock.lock().map(|()| metrics_lock))
--                .await??;
--
--        if let Err(err) =
--            tokio::fs::remove_file(flox.cache_dir.join(METRICS_EVENTS_FILE_NAME)).await
--        {
--            match err.kind() {
--                std::io::ErrorKind::NotFound => {},
--                _ => Err(err)?,
--            }
--        }
-+        // An event recorded from here on would carry the ID this command
-+        // deletes, and would recreate the v2 buffer.
-+        EventsHub::global().clear_client();
- 
--        if let Err(err) = tokio::fs::remove_file(flox.data_dir.join(METRICS_UUID_FILE_NAME)).await {
--            match err.kind() {
--                std::io::ErrorKind::NotFound => {},
--                _ => Err(err)?,
--            }
--        }
-+        let data_dir = flox.data_dir.clone();
-+        let cache_dir = flox.cache_dir.clone();
-+        tokio::task::spawn_blocking(move || delete_device_id_and_buffers(&data_dir, &cache_dir))
-+            .await??;
- 
-         let notice = indoc! {"
-             Successfully reset telemetry ID for this machine!
-+            Deleted unsent telemetry events.
- 
-             A new ID will be assigned next time you use Flox.
- 
-@@ -69,6 +57,43 @@ impl ResetMetrics {
-     }
- }
- 
-+/// Delete the device ID, the two event buffers and the send-telemetry log,
-+/// which all hold the ID, and the buffers' lock files.
-+///
-+/// Holds the metrics lock throughout, so no process creates a new ID or
-+/// appends to the legacy buffer until the old ID is gone. Deletes the device
-+/// ID last, so when an earlier deletion fails, the old ID and the events
-+/// recorded under it stay together and rerunning the command finishes the
-+/// reset.
-+fn delete_device_id_and_buffers(data_dir: &Path, cache_dir: &Path) -> Result<()> {
-+    let metrics_lock_path = cache_dir.join(METRICS_LOCK_FILE_NAME);
-+    let metrics_lock =
-+        open_lock_file(&metrics_lock_path).context("Could not open metrics lock file")?;
-+    metrics_lock
-+        .lock()
-+        .context("Could not lock metrics lock file")?;
-+
-+    remove_file_if_present(&cache_dir.join(METRICS_EVENTS_FILE_NAME))?;
-+    EventsBuffer::delete(data_dir)?;
-+    remove_file_if_present(&send_telemetry_log_dir(cache_dir).join(SEND_TELEMETRY_LOG_NAME))?;
-+    remove_file_if_present(&data_dir.join(METRICS_UUID_FILE_NAME))?;
-+
-+    // Best effort: the lock file holds no data. Deleting it while it is held
-+    // has the effect described on `EventsBuffer::delete`: a process already
-+    // waiting on it and a process that starts later do not exclude each other.
-+    if let Err(err) = remove_file_if_present(&metrics_lock_path) {
-+        debug!(error = %err, "Failed to delete metrics lock file");
-+    }
-+    Ok(())
-+}
-+
-+fn remove_file_if_present(path: &Path) -> Result<()> {
-+    match std::fs::remove_file(path) {
-+        Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(()),
-+        result => result.with_context(|| format!("Could not delete {}", path.display())),
-+    }
-+}
-+
- #[derive(Bpaf, Clone)]
- #[bpaf(fallback(ConfigArgs::List))]
- pub enum ConfigArgs {
-@@ -288,4 +313,49 @@ mod tests {
-             invalid unquoted key, expected letters, numbers, `-`, `_`
-         "#});
-     }
-+
-+    fn sorted_entries(dir: &Path) -> Vec<String> {
-+        let mut names: Vec<String> = std::fs::read_dir(dir)
-+            .unwrap()
-+            .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
-+            .collect();
-+        names.sort();
-+        names
-+    }
-+
-+    #[test]
-+    fn delete_device_id_and_buffers_leaves_no_telemetry_files() {
-+        let data_dir = tempfile::tempdir().unwrap();
-+        let cache_dir = tempfile::tempdir().unwrap();
-+        let log_dir = send_telemetry_log_dir(cache_dir.path());
-+        std::fs::create_dir_all(&log_dir).unwrap();
-+        drop(EventsBuffer::read(data_dir.path()).unwrap());
-+   
-```
-
-**File**: `cli/flox/src/commands/mod.rs` (modified, +44/-1)
-```diff
-@@ -46,6 +46,7 @@ use bpaf::{Args, Bpaf, ParseFailure, Parser, ShellComp};
- use flox_config::{Config, EnvironmentTrust, FLOX_DIR_NAME, TokenStorageMode};
- use flox_core::data::environment_ref::{self, DEFAULT_NAME, RemoteEnvironmentRef};
- use flox_core::floxhub::{DEFAULT_FLOXHUB_URL, Floxhub};
-+use flox_core::sentry::stop_sentry_reporting;
- use flox_core::vars::FLOX_DISABLE_METRICS_VAR;
- use flox_events::{EventKind, EventsHub};
- use flox_manifest::interfaces::AsLatestSchema;
-@@ -274,6 +275,17 @@ pub struct Interrupted;
- impl FloxArgs {
-     /// Initialize the command line by creating an initial FloxBuilder
-     pub async fn handle(self, config: Config) -> Result<()> {
-+        // Sentry was initialized with the device ID that this command deletes,
-+        // and a span of the command would be reported under that ID.
-+        // Unbind before the handler's span starts; see `is_telemetry_reset_command`.
-+        if self
-+            .command
-+            .as_ref()
-+            .is_some_and(|command| is_telemetry_reset_command(command.subcommand_name()))
-+        {
-+            stop_sentry_reporting();
-+        }
-+
-         // ensure xdg dirs exist
-         tokio::fs::create_dir_all(&config.flox.config_dir).await?;
-         tokio::fs::create_dir_all(&config.flox.data_dir).await?;
-@@ -445,8 +457,10 @@ impl FloxArgs {
-             .as_ref()
-             .map(Commands::subcommand_name)
-             .unwrap_or("help");
--        // Recording is gated by `is_telemetry_flush_command` — see its doc.
-+        // Recording is gated by `is_telemetry_flush_command` and
-+        // `is_telemetry_reset_command` — see their docs.
-         if !is_telemetry_flush_command(v2_subcommand)
-+            && !is_telemetry_reset_command(v2_subcommand)
-             && let Err(err) = EventsHub::global().record_command_run(v2_subcommand.to_string())
-         {
-             debug!(error = %err, "Failed to record v2 cli.command_run event");
-@@ -1210,6 +1224,20 @@ pub fn is_telemetry_flush_command(name: &str) -> bool {
-     name == "send-telemetry"
- }
- 
-+/// Whether `name` deletes the device ID. Such a command must not report
-+/// anything under the ID it deletes, nor recreate the files it deleted.
-+///
-+/// - `FloxArgs::handle` neither records its `cli.command_run` event nor leaves
-+///   Sentry bound, because a span or event would carry the old ID.
-+/// - `send_telemetry::spawn_if_due_with` does not spawn the `send-telemetry`
-+///   child: the flush check recreates `metrics-lock` and the legacy buffer,
-+///   and the spawn recreates the send-telemetry log.
-+///
-+/// The `reset-metrics` handler removes the events client for everything else.
-+pub fn is_telemetry_reset_command(name: &str) -> bool {
-+    name == "reset-metrics"
-+}
-+
- /// Special command to check for the presence of the `--prefix` flag.
- ///
- /// With `--prefix` the application will print the prefix of the program
-@@ -2039,6 +2067,21 @@ mod detached_predicate_tests {
-         assert!(!is_telemetry_flush_command("check-for-upgrades"));
-         assert!(!is_telemetry_flush_command("install"));
-     }
-+
-+    /// The reset exclusion matches the name that the parsed `reset-metrics`
-+    /// command derives, so renaming either one cannot silently drop it.
-+    #[test]
-+    fn reset_exclusion_covers_only_the_reset_command() {
-+        let reset = flox_args()
-+            .to_options()
-+            .run_inner(&["reset-metrics"])
-+            .unwrap_or_else(|err| panic!("failed to parse reset-metrics: {err:?}"))
-+            .command
-+            .expect("expected the reset-metrics subcommand");
-+        assert!(is_telemetry_reset_command(reset.subcommand_name()));
-+        assert!(!is_telemetry_reset_command("send-telemetry"));
-+        assert!(!is_telemetry_reset_command("install"));
-+    }
- }
- 
- #[cfg(test)]
-```
-
-**File**: `cli/flox/src/commands/send_telemetry.rs` (modified, +4/-2)
-```diff
-@@ -19,7 +19,7 @@ use flox_events::{EventsHub, LifecycleFields};
- use flox_rust_sdk::flox::Flox;
- use tracing::debug;
- 
--use super::is_detached_side_effect_command;
-+use super::{is_detached_side_effect_command, is_telemetry_reset_command};
- use crate::utils::detached::{self, DetachedCommand, LogFile};
- use crate::utils::metrics::Hub;
- 
-@@ -115,6 +115,7 @@ fn telemetry_flush_due() -> bool {
- /// - neither buffer is due and flushing was not explicitly forced;
- /// - `subcommand` is itself a detached side-effect command (prevents a
- ///   fork-bomb and stops `send-telemetry` from re-spawning itself);
-+/// - `subcommand` reset the device ID (see [`is_telemetry_reset_command`]);
- /// - `_FLOX_TESTING_DISABLE_BG_SIDE_EFFECTS=1` (CI escape hatch).
- ///
- /// The child logs to a single rolling file; see [`LogFile::Rolling`].
-@@ -128,13 +129,14 @@ pub fn spawn_if_due(config: &Config, subcommand: &str) {
- fn spawn_if_due_with(config: &Config, subcommand: &str, self_executable: Option<PathBuf>) -> bool {
-     if config.flox.disable_metrics
-         || is_detached_side_effect_command(subcommand)
-+        || is_telemetry_reset_command(subcommand)
-         || detached::bg_side_effects_disabled()
-         || !telemetry_flush_due()
-     {
-         return false;
-     }
- 
--    let log_dir = config.flox.cache_dir.join("log");
-+    let log_dir = detached::send_telemetry_log_dir(&config.flox.cache_dir);
-     let args = [String::from("send-telemetry"), String::from("-vv")];
-     let spawn_result = DetachedCommand {
-         args: &args,
-```
-
-**File**: `cli/flox/src/utils/detached.rs` (modified, +6/-1)
-```diff
-@@ -8,7 +8,7 @@
- 
- use std::fs::{File, OpenOptions};
- use std::os::fd::AsRawFd;
--use std::path::Path;
-+use std::path::{Path, PathBuf};
- use std::process::{Command, Stdio};
- 
- use anyhow::{Context, Result, bail};
-@@ -213,6 +213,11 @@ impl DetachedCommand<'_> {
- /// The rolling log filename for the send-telemetry child.
- pub const SEND_TELEMETRY_LOG_NAME: &str = "send-telemetry.log";
- 
-+/// The directory under `cache_dir` that holds the send-telemetry log.
-+pub fn send_telemetry_log_dir(cache_dir: &Path) -> PathBuf {
-+    cache_dir.join("log")
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-```
-
----
-
-### Incident Patch 3: `4b4da59e` (2026-10-03)
-**Commit Message**: fix(telemetry): make reset-metrics delete buffered events
-
-`flox reset-metrics` deleted the device ID and the legacy event buffer,
-but it left the v2 event buffer (`events-v2.json`) in place. The next
-flush sent the events recorded under the old ID together with the events
-recorded under the new ID.
-
-`flox reset-metrics` now also deletes:
-- the v2 event buffer and its lock file (`events-v2.json`,
-  `events-v2.lock`), through a new `EventsBuffer::delete` that takes the
-  buffer lock first
-- the send-telemetry log (`<cache>/log/send-telemetry.log`), which
-  records the device ID
-- the metrics lock file (`metrics-lock`), best effort
-
-It deletes the device ID last, so when an earlier deletion fails, the old
-ID stays with its events and rerunning the command finishes the reset.
-
-The command no longer records its `cli.command_run` event or a legacy
-event, and it removes the v2 client before it deletes the buffers, so
-none of its own telemetry events survive it. It also skips the flush
-check and the detached send-telemetry child that run after a command.
-The check would recreate `metrics-lock` and the legacy buffer, and the
-spawn would recreate the send-telemetry log.
-
-Sentry starts befor
-
-**File**: `cli/flox-core/src/sentry.rs` (modified, +34/-0)
-```diff
-@@ -59,6 +59,16 @@ pub fn init_sentry(release_name: &str, metrics_uuid: Uuid) -> Option<ClientInitG
-     Some(sentry)
- }
- 
-+/// Stop reporting events and transactions to Sentry for the rest of the process.
-+///
-+/// Call it before the span or event that must not be reported starts,
-+/// because a transaction keeps the client it started with.
-+/// It affects the calling thread's hub, which on the main thread is the
-+/// process hub that [init_sentry] bound the client to.
-+pub fn stop_sentry_reporting() {
-+    sentry::Hub::current().bind_client(None);
-+}
-+
- /// Client options for every flox binary that reports to Sentry, minus the DSN.
- fn client_options(release_name: &str, sentry_env: String) -> ClientOptions {
-     ClientOptions {
-@@ -145,6 +155,30 @@ mod tests {
-         (events, transactions)
-     }
- 
-+    #[test]
-+    fn stopped_reporting_sends_neither_events_nor_transactions() {
-+        let options = sentry::apply_defaults(client_options("flox-test", "test".to_string()));
-+        let sent_item_counts = [false, true].map(|stopped| {
-+            sentry::test::with_captured_envelopes_options(
-+                || {
-+                    if stopped {
-+                        stop_sentry_reporting();
-+                    }
-+                    sentry::capture_message("error", sentry::Level::Error);
-+                    sentry::start_transaction(sentry::TransactionContext::new("transaction", "op"))
-+                        .finish();
-+                },
-+                options.clone(),
-+            )
-+            .iter()
-+            .flat_map(|envelope| envelope.items())
-+            .count()
-+        });
-+
-+        // The first count is the control: without stopping, both are sent.
-+        assert_eq!(sent_item_counts, [2, 0]);
-+    }
-+
-     #[test]
-     fn events_and_transactions_omit_hostname() {
-         let options = client_options("flox-test", "test".to_string());
-```
-
-**File**: `cli/flox-events/src/buffer.rs` (modified, +61/-0)
-```diff
-@@ -179,6 +179,35 @@ impl EventsBuffer {
-         }))
-     }
- 
-+    /// Delete the buffer file and its lock file from `data_dir`, discarding
-+    /// every buffered event, including entries this binary cannot parse.
-+    /// Succeeds without doing anything when `data_dir` does not exist.
-+    ///
-+    /// Blocks until the file lock is acquired, so no other process is
-+    /// mid-write. The lock file is deleted while still held. A process that
-+    /// was already waiting on it then locks the deleted file, while a process
-+    /// that starts later creates and locks a new one, so those two processes
-+    /// do not exclude each other until the first one releases its lock.
-+    pub fn delete(data_dir: &Path) -> Result<()> {
-+        if !data_dir
-+            .try_exists()
-+            .context("Could not check the v2 events buffer directory")?
-+        {
-+            return Ok(());
-+        }
-+
-+        let lock_file_path = data_dir.join(EVENTS_LOCK_FILE_NAME);
-+        let events_lock =
-+            open_lock_file(&lock_file_path).context("Could not open v2 events lock file")?;
-+        events_lock
-+            .lock()
-+            .context("Could not lock v2 events buffer")?;
-+
-+        remove_file_if_present(&data_dir.join(EVENTS_BUFFER_FILE_NAME))
-+            .context("Could not delete v2 events buffer file")?;
-+        remove_file_if_present(&lock_file_path).context("Could not delete v2 events lock file")
-+    }
-+
-     pub(crate) fn is_expired(&self, expiry: Duration) -> bool {
-         let now = OffsetDateTime::now_utc();
-         self.oldest_timestamp()
-@@ -313,6 +342,13 @@ impl EventsBuffer {
-     }
- }
- 
-+fn remove_file_if_present(path: &Path) -> std::io::Result<()> {
-+    match std::fs::remove_file(path) {
-+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
-+        result => result,
-+    }
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -369,4 +405,29 @@ mod tests {
-             "the sent entry is drained and the unreadable one is written back"
-         );
-     }
-+
-+    #[test]
-+    fn delete_removes_the_buffer_with_unreadable_entries_and_the_lock_file() {
-+        let dir = tempfile::tempdir().unwrap();
-+        std::fs::write(
-+            dir.path().join(EVENTS_BUFFER_FILE_NAME),
-+            format!(
-+                "{}\n{}\n",
-+                envelope("cli.environment.delete"),
-+                envelope("cli.environment.from.the.future"),
-+            ),
-+        )
-+        .unwrap();
-+        drop(EventsBuffer::read(dir.path()).unwrap());
-+
-+        EventsBuffer::delete(dir.path()).unwrap();
-+
-+        let remaining: Vec<_> = std::fs::read_dir(dir.path()).unwrap().collect();
-+        assert!(remaining.is_empty(), "left behind: {remaining:?}");
-+
-+        EventsBuffer::delete(dir.path()).expect("deleting a missing buffer succeeds");
-+        EventsBuffer::delete(&dir.path().join("missing"))
-+            .expect("deleting from a missing directory succeeds");
-+        assert!(!dir.path().join("missing").exists());
-+    }
- }
-```
-
-**File**: `cli/flox/src/commands/general.rs` (modified, +92/-22)
-```diff
-@@ -6,6 +6,7 @@ use anyhow::{Context, Result};
- use bpaf::Bpaf;
- use flox_config::{Config, FLOX_CONFIG_FILE, ReadWriteError};
- use flox_core::open_lock_file;
-+use flox_events::{EventsBuffer, EventsHub};
- use flox_rust_sdk::flox::Flox;
- use indoc::indoc;
- use serde::Serialize;
-@@ -15,6 +16,7 @@ use toml_edit::{Key, TomlError};
- use tracing::{debug, instrument};
- 
- use crate::subcommand_metric;
-+use crate::utils::detached::{SEND_TELEMETRY_LOG_NAME, send_telemetry_log_dir};
- use crate::utils::message;
- use crate::utils::metrics::{
-     METRICS_EVENTS_FILE_NAME,
-@@ -28,32 +30,18 @@ pub struct ResetMetrics {}
- impl ResetMetrics {
-     #[instrument(name = "reset-metrics", skip_all)]
-     pub async fn handle(self, flox: Flox) -> Result<()> {
--        subcommand_metric!("reset-metrics");
--        let metrics_lock = open_lock_file(flox.cache_dir.join(METRICS_LOCK_FILE_NAME))?;
--        // Hand the file back out of the closure, so the lock is held while
--        // the metrics files are removed rather than dropped with the closure.
--        let _metrics_lock =
--            tokio::task::spawn_blocking(move || metrics_lock.lock().map(|()| metrics_lock))
--                .await??;
--
--        if let Err(err) =
--            tokio::fs::remove_file(flox.cache_dir.join(METRICS_EVENTS_FILE_NAME)).await
--        {
--            match err.kind() {
--                std::io::ErrorKind::NotFound => {},
--                _ => Err(err)?,
--            }
--        }
-+        // An event recorded from here on would carry the ID this command
-+        // deletes, and would recreate the v2 buffer.
-+        EventsHub::global().clear_client();
- 
--        if let Err(err) = tokio::fs::remove_file(flox.data_dir.join(METRICS_UUID_FILE_NAME)).await {
--            match err.kind() {
--                std::io::ErrorKind::NotFound => {},
--                _ => Err(err)?,
--            }
--        }
-+        let data_dir = flox.data_dir.clone();
-+        let cache_dir = flox.cache_dir.clone();
-+        tokio::task::spawn_blocking(move || delete_device_id_and_buffers(&data_dir, &cache_dir))
-+            .await??;
- 
-         let notice = indoc! {"
-             Successfully reset telemetry ID for this machine!
-+            Deleted unsent telemetry events.
- 
-             A new ID will be assigned next time you use Flox.
- 
-@@ -69,6 +57,43 @@ impl ResetMetrics {
-     }
- }
- 
-+/// Delete the device ID, the two event buffers and the send-telemetry log,
-+/// which all hold the ID, and the buffers' lock files.
-+///
-+/// Holds the metrics lock throughout, so no process creates a new ID or
-+/// appends to the legacy buffer until the old ID is gone. Deletes the device
-+/// ID last, so when an earlier deletion fails, the old ID and the events
-+/// recorded under it stay together and rerunning the command finishes the
-+/// reset.
-+fn delete_device_id_and_buffers(data_dir: &Path, cache_dir: &Path) -> Result<()> {
-+    let metrics_lock_path = cache_dir.join(METRICS_LOCK_FILE_NAME);
-+    let metrics_lock =
-+        open_lock_file(&metrics_lock_path).context("Could not open metrics lock file")?;
-+    metrics_lock
-+        .lock()
-+        .context("Could not lock metrics lock file")?;
-+
-+    remove_file_if_present(&cache_dir.join(METRICS_EVENTS_FILE_NAME))?;
-+    EventsBuffer::delete(data_dir)?;
-+    remove_file_if_present(&send_telemetry_log_dir(cache_dir).join(SEND_TELEMETRY_LOG_NAME))?;
-+    remove_file_if_present(&data_dir.join(METRICS_UUID_FILE_NAME))?;
-+
-+    // Best effort: the lock file holds no data. Deleting it while it is held
-+    // has the effect described on `EventsBuffer::delete`: a process already
-+    // waiting on it and a process that starts later do not exclude each other.
-+    if let Err(err) = remove_file_if_present(&metrics_lock_path) {
-+        debug!(error = %err, "Failed to delete metrics lock file");
-+    }
-+    Ok(())
-+}
-+
-+fn remove_file_if_present(path: &Path) -> Result<()> {
-+    match std::fs::remove_file(path) {
-+        Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(()),
-+        result => result.with_context(|| format!("Could not delete {}", path.display())),
-+    }
-+}
-+
- #[derive(Bpaf, Clone)]
- #[bpaf(fallback(ConfigArgs::List))]
- pub enum ConfigArgs {
-@@ -288,4 +313,49 @@ mod tests {
-             invalid unquoted key, expected letters, numbers, `-`, `_`
-         "#});
-     }
-+
-+    fn sorted_entries(dir: &Path) -> Vec<String> {
-+        let mut names: Vec<String> = std::fs::read_dir(dir)
-+            .unwrap()
-+            .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
-+            .collect();
-+        names.sort();
-+        names
-+    }
-+
-+    #[test]
-+    fn delete_device_id_and_buffers_leaves_no_telemetry_files() {
-+        let data_dir = tempfile::tempdir().unwrap();
-+        let cache_dir = tempfile::tempdir().unwrap();
-+        let log_dir = send_telemetry_log_dir(cache_dir.path());
-+        std::fs::create_dir_all(&log_dir).unwrap();
-+        drop(EventsBuffer::read(data_dir.path()).unwrap());
-+   
-```
-
-**File**: `cli/flox/src/commands/mod.rs` (modified, +44/-1)
-```diff
-@@ -46,6 +46,7 @@ use bpaf::{Args, Bpaf, ParseFailure, Parser, ShellComp};
- use flox_config::{Config, EnvironmentTrust, FLOX_DIR_NAME, TokenStorageMode};
- use flox_core::data::environment_ref::{self, DEFAULT_NAME, RemoteEnvironmentRef};
- use flox_core::floxhub::{DEFAULT_FLOXHUB_URL, Floxhub};
-+use flox_core::sentry::stop_sentry_reporting;
- use flox_core::vars::FLOX_DISABLE_METRICS_VAR;
- use flox_events::{EventKind, EventsHub};
- use flox_manifest::interfaces::AsLatestSchema;
-@@ -274,6 +275,17 @@ pub struct Interrupted;
- impl FloxArgs {
-     /// Initialize the command line by creating an initial FloxBuilder
-     pub async fn handle(self, config: Config) -> Result<()> {
-+        // Sentry was initialized with the device ID that this command deletes,
-+        // and a span of the command would be reported under that ID.
-+        // Unbind before the handler's span starts; see `is_telemetry_reset_command`.
-+        if self
-+            .command
-+            .as_ref()
-+            .is_some_and(|command| is_telemetry_reset_command(command.subcommand_name()))
-+        {
-+            stop_sentry_reporting();
-+        }
-+
-         // ensure xdg dirs exist
-         tokio::fs::create_dir_all(&config.flox.config_dir).await?;
-         tokio::fs::create_dir_all(&config.flox.data_dir).await?;
-@@ -445,8 +457,10 @@ impl FloxArgs {
-             .as_ref()
-             .map(Commands::subcommand_name)
-             .unwrap_or("help");
--        // Recording is gated by `is_telemetry_flush_command` — see its doc.
-+        // Recording is gated by `is_telemetry_flush_command` and
-+        // `is_telemetry_reset_command` — see their docs.
-         if !is_telemetry_flush_command(v2_subcommand)
-+            && !is_telemetry_reset_command(v2_subcommand)
-             && let Err(err) = EventsHub::global().record_command_run(v2_subcommand.to_string())
-         {
-             debug!(error = %err, "Failed to record v2 cli.command_run event");
-@@ -1210,6 +1224,20 @@ pub fn is_telemetry_flush_command(name: &str) -> bool {
-     name == "send-telemetry"
- }
- 
-+/// Whether `name` deletes the device ID. Such a command must not report
-+/// anything under the ID it deletes, nor recreate the files it deleted.
-+///
-+/// - `FloxArgs::handle` neither records its `cli.command_run` event nor leaves
-+///   Sentry bound, because a span or event would carry the old ID.
-+/// - `send_telemetry::spawn_if_due_with` does not spawn the `send-telemetry`
-+///   child: the flush check recreates `metrics-lock` and the legacy buffer,
-+///   and the spawn recreates the send-telemetry log.
-+///
-+/// The `reset-metrics` handler removes the events client for everything else.
-+pub fn is_telemetry_reset_command(name: &str) -> bool {
-+    name == "reset-metrics"
-+}
-+
- /// Special command to check for the presence of the `--prefix` flag.
- ///
- /// With `--prefix` the application will print the prefix of the program
-@@ -2039,6 +2067,21 @@ mod detached_predicate_tests {
-         assert!(!is_telemetry_flush_command("check-for-upgrades"));
-         assert!(!is_telemetry_flush_command("install"));
-     }
-+
-+    /// The reset exclusion matches the name that the parsed `reset-metrics`
-+    /// command derives, so renaming either one cannot silently drop it.
-+    #[test]
-+    fn reset_exclusion_covers_only_the_reset_command() {
-+        let reset = flox_args()
-+            .to_options()
-+            .run_inner(&["reset-metrics"])
-+            .unwrap_or_else(|err| panic!("failed to parse reset-metrics: {err:?}"))
-+            .command
-+            .expect("expected the reset-metrics subcommand");
-+        assert!(is_telemetry_reset_command(reset.subcommand_name()));
-+        assert!(!is_telemetry_reset_command("send-telemetry"));
-+        assert!(!is_telemetry_reset_command("install"));
-+    }
- }
- 
- #[cfg(test)]
-```
-
-**File**: `cli/flox/src/commands/send_telemetry.rs` (modified, +4/-2)
-```diff
-@@ -19,7 +19,7 @@ use flox_events::{EventsHub, LifecycleFields};
- use flox_rust_sdk::flox::Flox;
- use tracing::debug;
- 
--use super::is_detached_side_effect_command;
-+use super::{is_detached_side_effect_command, is_telemetry_reset_command};
- use crate::utils::detached::{self, DetachedCommand, LogFile};
- use crate::utils::metrics::Hub;
- 
-@@ -115,6 +115,7 @@ fn telemetry_flush_due() -> bool {
- /// - neither buffer is due and flushing was not explicitly forced;
- /// - `subcommand` is itself a detached side-effect command (prevents a
- ///   fork-bomb and stops `send-telemetry` from re-spawning itself);
-+/// - `subcommand` reset the device ID (see [`is_telemetry_reset_command`]);
- /// - `_FLOX_TESTING_DISABLE_BG_SIDE_EFFECTS=1` (CI escape hatch).
- ///
- /// The child logs to a single rolling file; see [`LogFile::Rolling`].
-@@ -128,13 +129,14 @@ pub fn spawn_if_due(config: &Config, subcommand: &str) {
- fn spawn_if_due_with(config: &Config, subcommand: &str, self_executable: Option<PathBuf>) -> bool {
-     if config.flox.disable_metrics
-         || is_detached_side_effect_command(subcommand)
-+        || is_telemetry_reset_command(subcommand)
-         || detached::bg_side_effects_disabled()
-         || !telemetry_flush_due()
-     {
-         return false;
-     }
- 
--    let log_dir = config.flox.cache_dir.join("log");
-+    let log_dir = detached::send_telemetry_log_dir(&config.flox.cache_dir);
-     let args = [String::from("send-telemetry"), String::from("-vv")];
-     let spawn_result = DetachedCommand {
-         args: &args,
-```
-
-**File**: `cli/flox/src/utils/detached.rs` (modified, +6/-1)
-```diff
-@@ -8,7 +8,7 @@
- 
- use std::fs::{File, OpenOptions};
- use std::os::fd::AsRawFd;
--use std::path::Path;
-+use std::path::{Path, PathBuf};
- use std::process::{Command, Stdio};
- 
- use anyhow::{Context, Result, bail};
-@@ -213,6 +213,11 @@ impl DetachedCommand<'_> {
- /// The rolling log filename for the send-telemetry child.
- pub const SEND_TELEMETRY_LOG_NAME: &str = "send-telemetry.log";
- 
-+/// The directory under `cache_dir` that holds the send-telemetry log.
-+pub fn send_telemetry_log_dir(cache_dir: &Path) -> PathBuf {
-+    cache_dir.join("log")
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
+@@ -10693,6 +10693,10 @@ rec {
+             name = "indoc";
+             packageId = "indoc";
+           }
++          {
++            name = "percent-encoding";
++            packageId = "percent-encoding";
++          }
+           {
+             name = "rnix";
+             packageId = "rnix";
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4876** (2026-11-10): fix(show): clarify when no builds are available (@mkenigs)
+- **PR #4873** (2026-11-12): Community ci (@ysndr)
 - **PR #4871** (2026-11-10): ci(github-actions): bump macos runner for nix-plugin and CLI-unit jobs (@ysndr)
+- **PR #4870** (2026-11-12): fix(nef): percent-encode path flakerefs so paths with spaces work (@pcbeingused333)
 - **PR #4863** (2026-11-09): chore: community CI (@mkenigs)
 - **PR #4861** (2026-11-09): fix(modules): trust the floxhub-1 key so published packages install (@nixfred)
-- **PR #4860** (2026-11-10): docs(agents): PR hot fixes against the release branch (@mkenigs)
-- **PR #4858** (2026-11-04): fix(auth): drop the CI hint from expired and rejected login errors (@tanjadev)
 
 ---
 
@@ -2505,42 +2405,30 @@ Sentry starts befor
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. telemetry): keep metrics files out of the current directory on config errors (#4
+## X. activate): let the shell hook follow Flox upgrades (#4848)
 
 **RULE**:
-When implementing operations in `cli/flox/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/flox-activations/src/gen_rc/bash.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12b42fe6`: telemetry): keep metrics files out of the current directory on config errors (#4762). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc3dcd2c`: activate): let the shell hook follow Flox upgrades (#4848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox/src/main.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-activations/src/gen_rc/bash.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-async fn run(args: FloxArgs, config: Config) -> Result<()> {
-    // Exit rather than fall back to the defaults, which enable metrics and
-    // leave the data and cache dirs empty, so they would create the metrics
-    // UUID in the current directory whatever the unparsed sources set.
-    let config = match Config::parse() {
-        Ok(config) => config,
-        Err(err) => {
-            message::error(format!("{err:#}"));
-            return ExitCode::from(1);
-        },
-    };
-    let result = runtime.block_on(run(args, config.clone()));
+              _flox_vars="$(command /flox hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+              _flox_vars="$(command /flox hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-async fn run(args: FloxArgs) -> Result<()> {
-    let config = Config::parse()?;
-    let config = Config::parse().unwrap_or_default();
-    let result = runtime.block_on(run(args));
+              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12b42fe6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc3dcd2c` are properly handled with clean fallback behavior.
