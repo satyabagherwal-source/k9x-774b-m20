@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T18:35:49.414Z",
+  "last_updated": "2026-11-13T18:43:51.737Z",
   "total_verified_learnings": 1266,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14897,8 +14897,8 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "52915f0d",
-      "content_hash": "8e333507852436d72901cc9e07fb02d3587a8bbce2d81b10f267a606aeecc4df",
+      "source_version": "117d1254",
+      "content_hash": "20065d23a52e770336ec54a8d1ca088261403fe2127f56ae752cb91d42296c64",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
@@ -14921,6 +14921,11 @@
           "number": null,
           "title": "Thread-Safe Snapshotting Before Serialized Collection Mutation",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "[docs] Fix API links for library types named like global types (#53359)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 3060,
@@ -14958,7 +14963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T08:16:27.746Z",
+      "verified_at": "2026-11-13T18:43:47.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31396,7 +31401,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "8a8e7e1ca8f1469639f8064266340c5de219ba6567be262a0723298880a255d6",
+      "content_hash": "e6b4b1878bb571d5f160b5ba9250ce3bf2c7c4a866da66baac3a76f8c1463472",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -31567,7 +31572,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-11-08T17:42:43.828Z",
+      "verified_at": "2026-11-13T18:43:37.699Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40858,8 +40863,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "527eec41",
-      "content_hash": "637610b57cf531ad29597ce3255d97fe999594d4e41de20ccf59cc8d17573adf",
+      "source_version": "b79927a3",
+      "content_hash": "657cdf25d1db7f4e39d2cab25a08d91809bc09a63396cd6693a170d9b210bfd8",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -40876,6 +40881,11 @@
         {
           "number": null,
           "title": "Merge pull request #1288 from abrahamguo/get-jscpd-report",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): bump rustix to 1.1.6 for RUSTSEC-2026-0486",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40954,7 +40964,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T06:19:50.114Z",
+      "verified_at": "2026-11-13T18:43:40.927Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -195936,6 +195946,150 @@
       "content_hash": "240c51c903b67e827e0a523fd58537230de1adb5e38a7b3aa72d4a9bb84b7438",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T18:35:49.414Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-research-knowledge-intelligenc.md",
+      "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF Core Invariants",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "content_hash": "574778bda238c80ac316d293aa6ed61e84aa20e99c4a22f090cb5957c92475ed",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:43:38.036Z"
+    },
+    "candidate_directive-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486": {
+      "item_id": "candidate_directive-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S8HF-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486.md",
+      "title": "deps): bump rustix to 1.1.6 for RUSTSEC-2026-0486",
+      "repository": "kucherenko-jscpd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eda3e9c295816053f907190cc8f48c2659ee3c3895fa718c138c04bdc27ec262",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:43:50.648Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
+      "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
+      "repository": "kucherenko/jscpd",
+      "source_version": "b79927a3",
+      "content_hash": "fbaba7ccec379d5e610ac6b4c0be3aac13acbbcd7ecf98975888a432f2b4bd8e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:43:41.385Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kucherenko-jscpd-verification-protocol-empirical-defect-shield-for-kucherenko-js.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kucherenko/jscpd",
+      "repository": "kucherenko/jscpd",
+      "source_version": "b79927a3",
+      "content_hash": "823f57ca2aaca0f93f60e826a8b0f4a5dab218859940076e7106da022a953e0f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:43:41.484Z"
+    },
+    "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359": {
+      "item_id": "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S968-docs-fix-api-links-for-library-types-named-like-global-types-53359.md",
+      "title": "[docs] Fix API links for library types named like global types (#53359)",
+      "repository": "expo-expo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "30ebdee884ff38bbf487c76181ed513753f3cefbdba69d679767c9f8bf248707",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:43:51.537Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
+      "title": "Technical Construction Intelligence: expo/expo Core Invariants",
+      "repository": "expo/expo",
+      "source_version": "117d1254",
+      "content_hash": "52df2b3b2fa640c50051406d1d69898065502c50cb3832dc10958a116ba68396",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:43:47.573Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/expo-expo-verification-protocol-empirical-defect-shield-for-expo-expo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for expo/expo",
+      "repository": "expo/expo",
+      "source_version": "117d1254",
+      "content_hash": "94def4ed6d7ffb304023cfc7e2c38cd0a077a42bfba825b46b26e23099176f7f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:43:47.671Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-learnings-technical-construction-intelligence-kucherenko-jscpd-.md",
+      "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
+      "repository": "kucherenko-jscpd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf0bb35c25209bd77f807ac833b6bdff6c549732db1f37a1acd3aced4badb6c5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:43:50.744Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kucherenko-jscpd-learnings-verification-protocol-empirical-defect-shield-for-kuc.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kucherenko-jscpd-learnings",
+      "repository": "kucherenko-jscpd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dc15042df3eeae8687c250f428d4312963c188df9cf9bc51fcb88f524ab62200",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:43:50.843Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings-research-knowledge-i.md",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings Core Invariants",
+      "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "51ca12b0ec185f053b4fc38da454a0c3d57053ca04301797d1a2e448981af744",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:43:51.129Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-learnings-technical-construction-intelligence-expo-expo-learnings-core.md",
+      "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
+      "repository": "expo-expo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "660b61f83138b540ab3bb4013b105db9a88e2a467708512d287fc9da89764512",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:43:51.638Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/expo-expo-learnings-verification-protocol-empirical-defect-shield-for-expo-expo-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for expo-expo-learnings",
+      "repository": "expo-expo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1bd5a61cdbcd33a0a15ef115c17db0ffaf2dcca875632478773c4b0f2d437f07",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:43:51.737Z"
     }
   },
   "aliases": {
@@ -201934,5 +202088,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9271
+  "total_items": 9283
 }

@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "8a8e7e1ca8f1469639f8064266340c5de219ba6567be262a0723298880a255d6",
-    "lastHarvestedAt": "2026-11-08T17:42:43.931Z",
+    "contentHash": "e6b4b1878bb571d5f160b5ba9250ce3bf2c7c4a866da66baac3a76f8c1463472",
+    "lastHarvestedAt": "2026-11-13T18:43:37.840Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "527eec41",
+    "sourceVersion": "b79927a3",
     "license": "MIT",
-    "contentHash": "637610b57cf531ad29597ce3255d97fe999594d4e41de20ccf59cc8d17573adf",
-    "lastHarvestedAt": "2026-11-12T06:19:50.346Z",
+    "contentHash": "657cdf25d1db7f4e39d2cab25a08d91809bc09a63396cd6693a170d9b210bfd8",
+    "lastHarvestedAt": "2026-11-13T18:43:41.070Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "52915f0d",
+    "sourceVersion": "117d1254",
     "license": "MIT",
-    "contentHash": "8e333507852436d72901cc9e07fb02d3587a8bbce2d81b10f267a606aeecc4df",
-    "lastHarvestedAt": "2026-11-09T08:16:28.055Z",
+    "contentHash": "20065d23a52e770336ec54a8d1ca088261403fe2127f56ae752cb91d42296c64",
+    "lastHarvestedAt": "2026-11-13T18:43:47.262Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

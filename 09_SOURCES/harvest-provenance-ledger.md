@@ -9601,3 +9601,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f26a5e1f` | Multi-dimensional audit evidence | 2026-11-13T18:34:56.924Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `4053f6cc` | Multi-dimensional audit evidence | 2026-11-13T18:34:59.749Z |
 | `learn-dom-d-20558436` | `project://hf-prithivmlmods-gender-classifier-mini` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | 2026-11-13T18:35:47.916Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-13T18:43:37.840Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `b79927a3` | Multi-dimensional audit evidence | 2026-11-13T18:43:41.070Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `117d1254` | Multi-dimensional audit evidence | 2026-11-13T18:43:47.262Z |

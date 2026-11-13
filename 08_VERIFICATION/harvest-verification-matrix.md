@@ -9568,3 +9568,6 @@
 | `CYCLE-20261113-GSNL` | `2026-11-13T18:34:56.913Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`64bcc67e...`) |
 | `CYCLE-20261113-GUU0` | `2026-11-13T18:34:59.736Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fcfbb70a...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:35:47.916Z` | `hf-prithivmlmods-gender-classifier-mini` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-20558436` [Domain D] | Yes (`bf23a657...`) |
+| `CYCLE-20261113-RYLO` | `2026-11-13T18:43:37.836Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`e6b4b187...`) |
+| `CYCLE-20261113-S137` | `2026-11-13T18:43:41.059Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`657cdf25...`) |
+| `CYCLE-20261113-S5V5` | `2026-11-13T18:43:47.249Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`20065d23...`) |

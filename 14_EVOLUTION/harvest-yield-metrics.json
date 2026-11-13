@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:34:59.765Z",
-  "total_cycles_completed": 9329,
-  "total_learnings_persisted": 9329,
-  "total_rules_promoted": 9071,
+  "last_updated": "2026-11-13T18:43:47.277Z",
+  "total_cycles_completed": 9332,
+  "total_learnings_persisted": 9332,
+  "total_rules_promoted": 9073,
   "history": [
-    {
-      "timestamp": "2026-11-13T04:13:09.703Z",
-      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T04:13:24.122Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T04:13:25.719Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T04:31:02.607Z",
       "repository": "orcarouter/OrcaCyber-Nano-1.0",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T18:34:59.765Z",
       "repository": "topoteretes/cognee",
       "learningId": "learn-github-topoteretes-cognee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:43:37.846Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:43:41.083Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:43:47.277Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

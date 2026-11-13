@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T18:35:48.957Z",
+  "updated_at": "2026-11-13T18:43:51.357Z",
   "stats": {
-    "total_discovered": 2810,
-    "approved_pending_harvest": 2628,
+    "total_discovered": 2816,
+    "approved_pending_harvest": 2634,
     "harvested_count": 0,
     "rejected_count": 182,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2623,
-      "OFFICIAL_DOCUMENTATION": 96,
+      "COMMUNITY_AND_EXPERT": 2628,
+      "OFFICIAL_DOCUMENTATION": 97,
       "STANDARDS_AND_SPECIFICATIONS": 78,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
@@ -60566,6 +60566,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
         "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-E5187964C1A4": {
+      "id": "SRC-E5187964C1A4",
+      "url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "title": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:43:50.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+        "fileName": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md"
+      }
+    },
+    "SRC-9E7C9CE267D0": {
+      "id": "SRC-9E7C9CE267D0",
+      "url": "https://github.com/expo/expo",
+      "title": "https://github.com/expo/expo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:43:51.254Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-BB009462ECC8": {
+      "id": "SRC-BB009462ECC8",
+      "url": "https://user-images.githubusercontent.com/109685663/223214187-611456c2-5775-49e6-ab6f-7114b453c472.png",
+      "title": "https://user-images.githubusercontent.com/109685663/223214187-611456c2-5775-49e6-ab6f-7114b453c472.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:43:51.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-C8EF98153C9F": {
+      "id": "SRC-C8EF98153C9F",
+      "url": "https://user-images.githubusercontent.com/109685663/223214030-fd88c8d2-1640-4878-8feb-dfbbc6415bc4.png",
+      "title": "https://user-images.githubusercontent.com/109685663/223214030-fd88c8d2-1640-4878-8feb-dfbbc6415bc4.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:43:51.299Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-6B814E99B122": {
+      "id": "SRC-6B814E99B122",
+      "url": "https://github.com/francolivelli/expo-error",
+      "title": "https://github.com/francolivelli/expo-error",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:43:51.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-5EFD9FEE129F": {
+      "id": "SRC-5EFD9FEE129F",
+      "url": "https://developer.mozilla.org/",
+      "title": "https://developer.mozilla.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:43:51.357Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
       }
     }
   }

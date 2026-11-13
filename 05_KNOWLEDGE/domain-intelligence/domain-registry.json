@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T18:35:49.274Z",
-  "total_records": 268,
+  "last_updated": "2026-11-13T18:43:51.638Z",
+  "total_records": 274,
   "domains": {
     "A": {
       "total": 3,
@@ -30,7 +30,7 @@
       ]
     },
     "D": {
-      "total": 152,
+      "total": 154,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -183,7 +183,9 @@
         "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
         "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
         "DOM-D-20558436",
-        "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning",
+        "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu"
       ]
     },
     "E": {
@@ -231,7 +233,7 @@
       ]
     },
     "H": {
-      "total": 53,
+      "total": 57,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -285,7 +287,11 @@
         "domain_intelligence-technical-construction-intelligence-laurent22-joplin-core-invariants",
         "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants",
         "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian"
+        "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7714,6 +7720,60 @@
       "repository": "freenet-freenet-core-learnings",
       "content_hash": "09a671fc2002f4dabca432e3622c145cf728344127b062b06569c61dcef40f08",
       "created_at": "2026-11-13T18:35:49.274Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-research-knowledge-intelligenc.md",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "content_hash": "574778bda238c80ac316d293aa6ed61e84aa20e99c4a22f090cb5957c92475ed",
+      "created_at": "2026-11-13T18:43:38.036Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
+      "repository": "kucherenko/jscpd",
+      "content_hash": "fbaba7ccec379d5e610ac6b4c0be3aac13acbbcd7ecf98975888a432f2b4bd8e",
+      "created_at": "2026-11-13T18:43:41.385Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: expo/expo Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
+      "repository": "expo/expo",
+      "content_hash": "52df2b3b2fa640c50051406d1d69898065502c50cb3832dc10958a116ba68396",
+      "created_at": "2026-11-13T18:43:47.573Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-learnings-technical-construction-intelligence-kucherenko-jscpd-.md",
+      "repository": "kucherenko-jscpd-learnings",
+      "content_hash": "bf0bb35c25209bd77f807ac833b6bdff6c549732db1f37a1acd3aced4badb6c5",
+      "created_at": "2026-11-13T18:43:50.744Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings-research-knowledge-i.md",
+      "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings",
+      "content_hash": "51ca12b0ec185f053b4fc38da454a0c3d57053ca04301797d1a2e448981af744",
+      "created_at": "2026-11-13T18:43:51.129Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-learnings-technical-construction-intelligence-expo-expo-learnings-core.md",
+      "repository": "expo-expo-learnings",
+      "content_hash": "660b61f83138b540ab3bb4013b105db9a88e2a467708512d287fc9da89764512",
+      "created_at": "2026-11-13T18:43:51.638Z"
     }
   }
 }

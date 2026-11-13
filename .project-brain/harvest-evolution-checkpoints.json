@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:35:49.536Z",
+  "last_updated": "2026-11-13T18:43:51.833Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T15:11:07.403Z",
@@ -858,7 +858,7 @@
       "staged_for_review": 1
     },
     "kucherenko-jscpd-learnings.md": {
-      "processed_at": "2026-11-12T06:20:28.221Z",
+      "processed_at": "2026-11-13T18:43:50.422Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2071,9 +2071,19 @@
       "processed_at": "2026-11-13T18:35:48.275Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md": {
+      "processed_at": "2026-11-13T18:43:50.954Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "expo-expo-learnings.md": {
+      "processed_at": "2026-11-13T18:43:51.243Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 648,
+  "total_dossiers_evaluated": 651,
   "total_canonical_promoted": 123,
-  "total_staged_for_review": 519
+  "total_staged_for_review": 522
 }
