@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T15:18:40.706Z",
-  "total_cycles_completed": 9281,
-  "total_learnings_persisted": 9281,
-  "total_rules_promoted": 9039,
+  "last_updated": "2026-11-13T15:29:40.238Z",
+  "total_cycles_completed": 9285,
+  "total_learnings_persisted": 9285,
+  "total_rules_promoted": 9042,
   "history": [
-    {
-      "timestamp": "2026-11-13T00:31:09.637Z",
-      "repository": "h3js/h3",
-      "learningId": "learn-github-h3js-h3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T00:31:10.420Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T00:31:14.747Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T00:43:28.322Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T01:01:18.954Z",
       "repository": "yyjeqhc/webcodex",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-13T15:18:40.706Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:29:23.613Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:29:32.642Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:29:36.941Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:29:40.238Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

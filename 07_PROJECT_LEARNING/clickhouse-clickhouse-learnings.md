@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `1598acaa`  
+> **Source Version**: `c08eec9b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:19:23.255Z  
+> **Timestamp**: 2026-11-13T15:29:39.672Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:19:23.007Z  
+> **Harvest Timestamp**: 2026-11-13T15:29:39.665Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50896 stars
+- **Stars / Engagement**: 50927 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #130799** (2026-11-12): **max_execution_time includes workload query-slot admission wait**
-  *Symptoms*: ### Describe what's wrong  I reproduced this locally on **26.6.1.2439** (Linux/aarch64) and **26.7.1.1315** (macOS/arm64). A short query waits for a workload QUERY slot, then fails with `TIMEOUT_EXCEEDED` because that wait has already used up its `max_execution_time` budget. The same query passes without queueing.  The [admission timeout documentation](https://clickhouse.com/docs/reference/settings/session-settings/other#workload_admission_timeout_ms) gives pre-execution admission its own budget, separate from `max_execution_time`. The short query should still have its execution budget after admission.  ### How to reproduce  Use a fresh local server with two concurrent clients:  ```sql CREATE RESOURCE mre_query (QUERY); CREATE WORKLOAD mre_root; CREATE WORKLOAD mre_leaf IN mre_root SETTINGS max_concurrent_queries = 1; ```  Session A holds the only slot:  ```sql SELECT sleep(2) SETTINGS workload = 'mre_leaf'; ```  Start session B as soon as A holds the slot:  ```sql SELECT sleep(0.1) SETTINGS workload = 'mre_leaf', max_execution_time = 0.5; ```  In my runs I synchronized the clients by observing A in `system.processes` and `inflight_requests = 1` at `/mre_root/mre_leaf/semaphore` in `system.scheduler`. I then observed `queue_length = 1` at `/mre_root/mre_leaf/semaphore/fifo` while B waited. This avoids relying on a fixed delay to start B.  ### Observed results  On 26.6.1.2439:  | Query | Result | `query_duration_ms` | | --- | --- | ---: | | Short query, no holder | Success | 1
+- **Issue #131056** (2026-11-13): **ODBC table engine rejects Date32 with Unsupported value type**
+  *Symptoms*: ### Company or project name  _No response_  ### Describe the unexpected behaviour  Reading an ODBC column declared as Nullable(Date32) fails. The same column declared as Nullable(DateTime64) is read successfully.  The bridge accepts Date32 in the table schema, then throws Unsupported value type on the first non-NULL value. Nullable is not the cause: the nested type is Date32.  ### Which ClickHouse versions are affected?  26.8.15.10  ### How to reproduce  Source is Oracle via ODBC. dt is an Oracle DATE.  ``` CREATE TABLE tt (     `dt` Nullable(Date32) ) ENGINE = ODBC('DSN=...;CLIENT_CHARSET=UTF-8', 'dbo', 'tt');  SELECT dt FROM tt; ```  The same SELECT succeeds if the column is Nullable(DateTime64).    ### Expected behavior  Date32 is read the same way Date, DateTime and DateTime64 are. Oracle DATE arrives as SQL_TIMESTAMP, so the bridge should take year / month / day from the ODBC timestamp and insert an ExtendedDayNum. Dates before 1970-01-01 must be preserved: Date32 covers 1900–2299.  ### Error message and/or stacktrace  Code: 86. DB::Exception: Received error from remote server http://127.0.0.1:9018/... HTTP status code: 404 'Not Found', body: Code: 50. DB::Exception: Unsupported value type: While executing ODBC. (UNKNOWN_TYPE) (RECEIVED_ERROR_FROM_REMOTE_IO_SERVER) (version 26.8.15.10 (official build))  ### Related issues and pull requests  _No response_  ### Additional context  ExternalResultDescription maps Date32 to vtDate32:  [github.com/ClickHouse/ClickHouse/blo…ter
 
-- **Issue #130381** (2026-11-12): **26.10: `addDate(formatDateTime(...))` over a Nullable DateTime64 with NULL rows fails with CANNOT_PARSE_DATETIME (regression from #117359)**
-  *Symptoms*: Caused by: https://github.com/ClickHouse/ClickHouse/pull/117359 (automated bisect over master builds narrowed to its merge; the two adjacent candidate commits have no CI build and the same build inputs as the last good commit)  ### Description  addDate(formatDateTime(x, '%Y-%m-%d 00:00:00'), INTERVAL) over a Nullable(DateTime64) column that contains NULL rows now fails with CANNOT_PARSE_DATETIME (Code 41). formatDateTime now leaves an empty string under NULL rows, where it used to leave '1970-01-01 00:00:00', and addDate still parses that value.  Regression between `26.8.1.667` (OLD) and `26.10.2.142` (NEW).  ### How to reproduce  Measure only the SELECT on each version.  ```sql SELECT min(addDate(formatDateTime(c1, '%Y-%m-%d 00:00:00'), toIntervalSecond(0))) AS lo, max(addDate(formatDateTime(c1, '%Y-%m-%d 00:00:00'), toIntervalSecond(0))) AS hi FROM (SELECT parseDateTime64BestEffortOrNull(arrayJoin(['2026-01-01 10:00:00', '']), 3, 'UTC') AS c1) SETTINGS compatibility = '24.12'; ```  ### Expected behavior  NULL rows give NULL and are ignored by min/max. The query should return lo = hi = 2026-01-01 00:00:00.000, as 26.8 does.  Error: `CANNOT_PARSE_DATETIME (Code 41)`.   <!-- ch-version-info:start --> ### Version info - Resolved by: #130646 - Merged into: `26.11.1.2046-master` (included in `26.11` and later) <!-- ch-version-info:end -->
+- **Issue #130899** (2026-11-13): **Adding an element to a named `Tuple` (`ALTER … MODIFY COLUMN`, `INSERT … SELECT`, `CAST`) fills the new element of existing rows with 0 instead of the element type's default: for an `Enum` element the mutation stores a value that is not a member**
+  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   Adding an element to a named `Tuple` is the schema-evolution path for `Tuple` columns. `CAST` between named tuples matches elements by name, and according to its comment, "target elements without a counterpart are filled by default values". For an `Enum` element, the new element of existing rows gets the integer 0 instead of the element type's default. For `Enum8('x' = 1, 'y' = 2)` the default is `'x'`, and `defaultValueOfTypeName` of the widened tuple is `(0,'x')`. The paths:  - `ALTER TABLE … MODIFY COLUMN attrs Tuple(a UInt8, status Enum8(…))` on a `Tuple(a UInt8)` column runs a mutation that rewrites every part with `status = 0`. Merges keep the value. - `INSERT … SELECT` from a table with the narrower tuple into one with the wider tuple stores 0. - `CAST(… AS <wider tuple>)` returns 0. - `Array(Tuple(…))` widened the same way gets 0 in every element. - With the non-default `allow_metadata_only_named_tuple_alter = 1`, the `ALTER` is metadata-only, and reads (and later merges) of the old parts also return 0 (checked on master).  After that, `SELECT *`, `GROUP BY attrs.status` and every text export of the table fail with `UNKNOWN_ELEMENT_OF_ENUM`, while `CHECK TABLE` reports no problem. If the Enum has a member numbered 0 that is not its lowest member, that member is stored without any error. `ALTER TABLE … ADD COLUMN` with the same tuple type fills the type default (`1`).   ### Does it reproduce on the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,181 +1338,676 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1b855d0` (2026-11-12)
-**Commit Message**: Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-warning
+### Incident Patch 1: `3a137ccd` (2026-11-13)
+**Commit Message**: Merge pull request #131190 from groeneai/null-as-default-type-default
 
-Log a timed-out cleanup status poll of a distributed plan task at Warning
+Fix an explicit NULL storing 0 in an `Enum` column with `input_format_null_as_default`
 
-**File**: `src/QueryPipeline/DistributedPlanExecutor.cpp` (modified, +6/-0)
+**File**: `src/DataTypes/Serializations/SerializationNullable.cpp` (modified, +31/-28)
 ```diff
-@@ -1855,6 +1855,12 @@ class DistributedQueryPlanExecutorRemote final : public DistributedQueryPlanExec
-                     if (task_status.status == "Failing")
-                         recordTaskFailureOnce(task, task_status);
+@@ -248,15 +248,18 @@ ReturnType safeAppendToNullMap(ColumnNullable & column, bool is_null)
+     return ReturnType(true);
+ }
+ 
+-/// Deserialize value into non-nullable column. In case of NULL, insert default and set is_null to true.
++/// Deserialize value into non-nullable column. In case of NULL, insert the default of nested_type (if given) and set is_null to true.
+ /// If ReturnType is bool, return true if parsing was successful and false in case of any error.
+ template <typename ReturnType = void, typename CheckForNull, typename DeserializeNested>
+-static ReturnType deserializeImpl(IColumn & column, ReadBuffer & buf, CheckForNull && check_for_null, DeserializeNested && deserialize_nested, bool & is_null)
++static ReturnType deserializeImpl(IColumn & column, ReadBuffer & buf, CheckForNull && check_for_null, DeserializeNested && deserialize_nested, bool & is_null, const IDataType * nested_type = nullptr)
+ {
+     is_null = check_for_null(buf);
+     if (is_null)
+     {
+-        column.insertDefault();
++        if (nested_type && !nested_type->isDefaultInsertTrivial())
++            nested_type->insertDefaultInto(column);
++        else
++            column.insertDefault();
+     }
+     else
+     {
+@@ -327,7 +330,7 @@ bool SerializationNullable::tryDeserializeNullRaw(DB::ReadBuffer & istr, const D
+ }
+ 
+ template<typename ReturnType, bool escaped>
+-ReturnType  deserializeTextEscapedAndRawImpl(IColumn & column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, bool & is_null)
++ReturnType  deserializeTextEscapedAndRawImpl(IColumn & column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, bool & is_null, const IDataType * nested_type = nullptr)
+ {
+     static constexpr bool throw_exception = std::is_same_v<ReturnType, void>;
+ 
+@@ -368,7 +371,7 @@ ReturnType  deserializeTextEscapedAndRawImpl(IColumn & column, ReadBuffer & istr
+             buf.position() = pos;
+             return false;
+         };
+-        return deserializeImpl<ReturnType>(column, istr, check_for_null, deserialize_nested, is_null);
++        return deserializeImpl<ReturnType>(column, istr, check_for_null, deserialize_nested, is_null, nested_type);
+     }
+ 
+     /// We don't have enough data in buffer to check if it's a null.
+@@ -430,7 +433,7 @@ ReturnType  deserializeTextEscapedAndRawImpl(IColumn & column, ReadBuffer & istr
+                                    istr.count(), std::string(pos, buf.position() - pos), parsed_value.str());
+     };
+ 
+-    return deserializeImpl<ReturnType>(column, peekable_buf, check_for_null, deserialize_nested_with_check, is_null);
++    return deserializeImpl<ReturnType>(column, peekable_buf, check_for_null, deserialize_nested_with_check, is_null, nested_type);
+ }
+ 
+ void SerializationNullable::deserializeTextEscaped(IColumn & column, ReadBuffer & istr, const FormatSettings & settings) const
+@@ -448,10 +451,10 @@ bool SerializationNullable::tryDeserializeTextEscaped(IColumn & column, ReadBuff
+     return deserializeTextEscapedAndRawImpl<bool, true>(col.getNestedColumn(), istr, settings, nested, is_null) && safeAppendToNullMap<bool>(col, is_null);
+ }
+ 
+-bool SerializationNullable::deserializeNullAsDefaultOrNestedTextEscaped(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization)
++bool SerializationNullable::deserializeNullAsDefaultOrNestedTextEscaped(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, const IDataType * nested_type)
+ {
+     bool is_null = false;
+-    deserializeTextEscapedAndRawImpl<void, true>(nested_column, istr, settings, nested_serialization, is_null);
++    deserializeTextEscapedAndRawImpl<void, true>(nested_column, istr, settings, nested_serialization, is_null, nested_type);
+     return !is_null;
+ }
+ 
+@@ -476,10 +479,10 @@ bool SerializationNullable::tryDeserializeTextRaw(IColumn & column, ReadBuffer &
+     return deserializeTextEscapedAndRawImpl<bool, false>(col.getNestedColumn(), istr, settings, nested, is_null) && safeAppendToNullMap<bool>(col, is_null);
+ }
+ 
+-bool SerializationNullable::deserializeNullAsDefaultOrNestedTextRaw(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization)
++bool SerializationNullable::deserializeNullAsDefaultOrNestedTextRaw(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, const IDataType * nested_type)
+ {
+     bool is_null = false;
+-    deserializeTextEscapedAndRawImpl<void, false>(nested_column, istr, settings, nested_serialization, is_null);
++    deserializeTextEscapedAndRawImpl<void, false>(nested_column, istr, settings, nested_serialization, is_null, nested_type);
+     return !is_null;
+ }
+ 
+@@ -510,7 +513,7 @@ bool SerializationNullable::tryDeserializeNullQuoted(DB::ReadBuffer & istr)
+ }
+ 
+ templ
+```
+
+**File**: `src/DataTypes/Serializations/SerializationNullable.h` (modified, +6/-6)
+```diff
+@@ -108,12 +108,12 @@ class SerializationNullable final : public ISerialization
+     void serializeTextRaw(const IColumn & column, size_t row_num, WriteBuffer & ostr, const FormatSettings & settings) const override;
+ 
+     /// If Check for NULL and deserialize value into non-nullable column (and return true) or insert default value of nested type (and return false)
+-    static bool deserializeNullAsDefaultOrNestedWholeText(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization);
+-    static bool deserializeNullAsDefaultOrNestedTextEscaped(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization);
+-    static bool deserializeNullAsDefaultOrNestedTextQuoted(IColumn & nested_column, ReadBuffer & istr, const FormatSettings &, const SerializationPtr & nested_serialization);
+-    static bool deserializeNullAsDefaultOrNestedTextCSV(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization);
+-    static bool deserializeNullAsDefaultOrNestedTextJSON(IColumn & nested_column, ReadBuffer & istr, const FormatSettings &, const SerializationPtr & nested_serialization);
+-    static bool deserializeNullAsDefaultOrNestedTextRaw(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization);
++    static bool deserializeNullAsDefaultOrNestedWholeText(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, const IDataType * nested_type = nullptr);
++    static bool deserializeNullAsDefaultOrNestedTextEscaped(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, const IDataType * nested_type = nullptr);
++    static bool deserializeNullAsDefaultOrNestedTextQuoted(IColumn & nested_column, ReadBuffer & istr, const FormatSettings &, const SerializationPtr & nested_serialization, const IDataType * nested_type = nullptr);
++    static bool deserializeNullAsDefaultOrNestedTextCSV(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, const IDataType * nested_type = nullptr);
++    static bool deserializeNullAsDefaultOrNestedTextJSON(IColumn & nested_column, ReadBuffer & istr, const FormatSettings &, const SerializationPtr & nested_serialization, const IDataType * nested_type = nullptr);
++    static bool deserializeNullAsDefaultOrNestedTextRaw(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, const IDataType * nested_type = nullptr);
+ 
+     /// If Check for NULL and deserialize value into non-nullable column or insert default value of nested type.
+     /// Return true if parsing was successful and false in case of any error.
+```
+
+**File**: `src/Formats/EscapingRuleUtils.cpp` (modified, +5/-5)
+```diff
+@@ -130,31 +130,31 @@ bool deserializeFieldByEscapingRule(
+     {
+         case FormatSettings::EscapingRule::Escaped:
+             if (parse_as_nullable)
+-                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextEscaped(column, buf, format_settings, serialization);
++                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextEscaped(column, buf, format_settings, serialization, type.get());
+             else
+                 serialization->deserializeTextEscaped(column, buf, format_settings);
+             break;
+         case FormatSettings::EscapingRule::Quoted:
+             if (parse_as_nullable)
+-                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextQuoted(column, buf, format_settings, serialization);
++                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextQuoted(column, buf, format_settings, serialization, type.get());
+             else
+                 serialization->deserializeTextQuoted(column, buf, format_settings);
+             break;
+         case FormatSettings::EscapingRule::CSV:
+             if (parse_as_nullable && !isCSVSeparateColumnsTuple(type, format_settings))
+-                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextCSV(column, buf, format_settings, serialization);
++                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextCSV(column, buf, format_settings, serialization, type.get());
+             else
+                 serialization->deserializeTextCSV(column, buf, format_settings);
+             break;
+         case FormatSettings::EscapingRule::JSON:
+             if (parse_as_nullable)
+-                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextJSON(column, buf, format_settings, serialization);
++                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextJSON(column, buf, format_settings, serialization, type.get());
+             else
+                 serialization->deserializeTextJSON(column, buf, format_settings);
+             break;
+         case FormatSettings::EscapingRule::Raw:
+             if (parse_as_nullable)
+-                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextRaw(column, buf, format_settings, serialization);
++                read = SerializationNullable::deserializeNullAsDefaultOrNestedTextRaw(column, buf, format_settings, serialization, type.get());
+             else
+                 serialization->deserializeTextRaw(column, buf, format_settings);
+             break;
+```
+
+**File**: `src/Formats/JSONUtils.cpp` (modified, +3/-3)
+```diff
+@@ -326,16 +326,16 @@ namespace JSONUtils
+                 ReadBufferFromString buf(str);
+ 
+                 if (as_nullable)
+-                    return SerializationNullable::deserializeNullAsDefaultOrNestedWholeText(column, buf, format_settings, serialization);
++                    return SerializationNullable::deserializeNullAsDefaultOrNestedWholeText(column, buf, format_settings, serialization, type.get());
+ 
+                 serialization->deserializeWholeText(column, buf, format_settings);
+                 return true;
+             }
+ 
+-            auto deserialize = [as_nullable, &format_settings, &serialization](IColumn & column_, ReadBuffer & buf) -> bool
++            auto deserialize = [as_nullable, &format_settings, &serialization, &type](IColumn & column_, ReadBuffer & buf) -> bool
+             {
+                 if (as_nullable)
+-                    return SerializationNullable::deserializeNullAsDefaultOrNestedTextJSON(column_, buf, format_settings, serialization);
++                    return SerializationNullable::deserializeNullAsDefaultOrNestedTextJSON(column_, buf, format_settings, serialization, type.get());
+ 
+                 serialization->deserializeTextJSON(column_, buf, format_settings);
+                 return true;
+```
+
+**File**: `src/Processors/Formats/Impl/BSONEachRowRowInputFormat.cpp` (modified, +4/-1)
+```diff
+@@ -523,7 +523,10 @@ bool BSONEachRowRowInputFormat::readField(IColumn & column, const DataTypePtr &
+                             "Cannot insert BSON Null value into non-nullable column with type {}",
+                             data_type->getName());
+ 
+-        column.insertDefault();
++        if (!data_type->isDefaultInsertTrivial())
++            data_type->insertDefaultInto(column);
++        else
++            column.insertDefault();
+         return false;
+     }
+ 
+```
+
+**File**: `src/Processors/Formats/Impl/CSVRowInputFormat.cpp` (modified, +1/-1)
+```diff
+@@ -425,7 +425,7 @@ bool CSVFormatReader::readFieldImpl(ReadBuffer & istr, DB::IColumn & column, con
+         && !isCSVSeparateColumnsTuple(type, format_settings))
+     {
+         /// If value is null but type is not nullable then use default value instead.
+-        return SerializationNullable::deserializeNullAsDefaultOrNestedTextCSV(column, istr, format_settings, serialization);
++        return SerializationNullable::deserializeNullAsDefaultOrNestedTextCSV(column, istr, format_settings, serialization, type.get());
+     }
+ 
+     /// Read the column normally.
+```
+
+**File**: `src/Processors/Formats/Impl/FreeformRowInputFormat.cpp` (modified, +1/-1)
+```diff
+@@ -786,7 +786,7 @@ bool FreeformRowInputFormat::readField(unsigned index, MutableColumns & columns)
+             /// reader would stop at a tab, and an `Escaped` one would decode escape sequences that
+             /// were never meant as such.
+             if (format_settings.null_as_default && !isNullableOrLowCardinalityNullable(type))
+-                read = SerializationNullable::deserializeNullAsDefaultOrNestedWholeText(*columns[target], field_buf, format_settings, serializations[target]);
++                read = SerializationNullable::deserializeNullAsDefaultOrNestedWholeText(*columns[target], field_buf, format_settings, serializations[target], type.get());
+             else
+                 serializations[target]->deserializeWholeText(*columns[target], field_buf, format_settings);
+         }
+```
+
+**File**: `src/Processors/Formats/Impl/GeoJSONRowInputFormat.cpp` (modified, +2/-1)
+```diff
+@@ -804,7 +804,8 @@ bool GeoJSONRowInputFormat::readRow(MutableColumns & columns, RowReadExtension &
+             assertPropertiesIsObjectOrNull(buf);
+             if (properties_col_idx.has_value())
+                 SerializationNullable::deserializeNullAsDefaultOrNestedTextJSON(
+-                    *columns[*properties_col_idx], buf, format_settings, serializations[*properties_col_idx]);
++                    *columns[*properties_col_idx], buf, format_settings, serializations[*properties_col_idx],
++                    getPort().getHeader().getByPosition(*properties_col_idx).type.get());
+             else
+                 skipJSONValueStrict(buf, format_settings.json);
+             has_properties = true;
+```
+
+---
+
+### Incident Patch 2: `1a446404` (2026-11-13)
+**Commit Message**: Merge pull request #130895 from ClickHouse/vdimir/fix-async-insert-sparse-type-confusion
+
+Reject non-default serialization kinds in data received over the native protocol
+
+**File**: `docs/resources/develop-contribute/native-protocol/format.mdx` (modified, +6/-2)
+```diff
+@@ -205,7 +205,8 @@ The `count` is the full stack length **including the leading `DEFAULT` entry** t
+ 
+ Note that this order is not the order of the kind byte values above. Any other stack describes a column layout no writer builds and that no materialization step unwraps back to a full column of the declared type — a `ColumnSparse` whose values column is itself sparse or replicated, for instance, stays wrapped.
+ 
+-**Recursive `kind_stack` for `Tuple` columns.** The `kind_stack` payload above is the byte (or `COMBINATION` sequence) for one column's own serialization info. A `Tuple` carries a `SerializationInfoTuple`, which first writes the tuple's *own* kind-stack payload and then writes one full kind-stack payload for *each* element, in order; a decoder reads back the same recursive structure. So for `Tuple(A, B, C)` the field-4 bytes are `[tuple_kind][A_kind][B_kind][C_kind]`, and each element payload is itself recursive if that element is again a composite. The `has_custom_serialization` byte (field 3) is set whenever the tuple's own info *or any element's* info is non-default, so a `Tuple` whose only special element is sparse or replicated still triggers the kind-stack payload. A decoder that reads only the single leading enum byte for a `Tuple` will stop too early and misread the remaining element-kind bytes as column data.
++**Recursive `kind_stack` for `Tuple` columns.** The `kind_stack` payload above is the byte (or `COMBINATION` sequence) for one column's own serialization info. A `Tuple` carries a `SerializationInfoTuple`, which first writes the tuple's *own* kind-stack payload and then writes one full kind-stack payload for *each* element, in order; a decoder reads back the same recursive structure. So for `Tuple(A, B, C)` the field-4 bytes are `[tuple_kind][A_kind][B_kind][C_kind]`, and each element payload is itself recursive if that element is again a composite. The `has_custom_serialization` byte (field 3) is set whenever the tuple's own info *or any element's* info is non-default, so a `Tuple` whose only special element is sparse still triggers the kind-stack payload. A decoder that reads only the single leading enum byte for a `Tuple` will stop too early and misread the remaining element-kind bytes as column data.
++An element's stack never contains `REPLICATED` or `DETACHED`: both wrap a whole top-level column only, and a decoder rejects either of them in an element stack with `INCORRECT_DATA`.
+ 
+ **Sparse wire format.** When `kind_stack = 0x01`, the column `data` is two streams written back-to-back in the single shared TCP stream:
+ 
+@@ -239,7 +240,10 @@ A decoder reconstructs a dense column by selecting `elements[indexes[i]]` for ea
+ 
+ If the wrapped column was sparse, its stack is `{DEFAULT, SPARSE, DETACHED}`, which serializes as `DETACHED_OVER_SPARSE`. A client decoding such a column reads the blob length and bytes, then decompresses the blob to recover the inner column payload (see the [`ColumnBLOB` note](#compression-negotiation) under compression).
+ 
+-`DETACHED` is directional: it may appear only in result blocks sent by a server, and only for a whole top-level column — never as one of the element kinds of a `Tuple`. Unlike the other kinds, it makes the runtime column a `ColumnBLOB` instead of the column of the declared type, so a receiver accepts it only when its own pipeline converts the blob back. A server therefore rejects `DETACHED` in any block a client sends — external table data, scalars and insert data alike — with `INCORRECT_DATA`.
++`DETACHED` is directional: it may appear only in result blocks sent by a server, and only for a whole top-level column — never as one of the element kinds of a `Tuple`. Unlike the other kinds, it makes the runtime column a `ColumnBLOB` instead of the column of the declared type, so a receiver accepts it only when its own pipeline converts the blob back.
++
++**Kinds in blocks sent to a server.** Every non-default kind is directional: it appears only in result blocks sent by a server.
++A block sent to a server — insert data, the data of the `input` table function, external table data and scalars, whether it comes from a client or from another server — carries only `DEFAULT` stacks: senders convert the columns to full ones before sending, and a server rejects any other kind in such a block with `INCORRECT_DATA`.
+ 
+ ### Block variants {#block-variants}
+ 
+```
+
+**File**: `src/DataTypes/Serializations/SerializationInfo.cpp` (modified, +8/-6)
+```diff
+@@ -286,12 +286,6 @@ void SerializationInfo::checkKindStack(ISerialization::KindSet allowed_kinds) co
+ 
+     for (auto kind : kind_stack)
+     {
+-        if (!allowed_kinds.contains(kind))
+-            throw Exception(
+-                ErrorCodes::INCORRECT_DATA,
+-                "Unexpected serialization kind {} in the received data",
+-                ISerialization::kindToString(kind));
+-
+         expected = std::find(expected, canonical_kind_order.end(), kind);
+         if (expected == canonical_kind_order.end())
+             throw Exception(
+@@ -301,6 +295,14 @@ void SerializationInfo::checkKindStack(ISerialization::KindSet allowed_kinds) co
+ 
+         ++expected;
+     }
++
++    /// A well-formed stack is checked from the outermost kind, the first one a consumer would have to unwrap.
++    for (auto it = kind_stack.rbegin(); it != kind_stack.rend(); ++it)
++        if (!allowed_kinds.contains(*it))
++            throw Exception(
++                ErrorCodes::INCORRECT_DATA,
++                "Unexpected serialization kind {} in the received data",
++                ISerialization::kindToString(*it));
+ }
+ 
+ void SerializationInfo::deserializeFromKindsBinary(ReadBuffer & in, ISerialization::KindSet allowed_kinds)
+```
+
+**File**: `src/DataTypes/Serializations/SerializationInfoTuple.cpp` (modified, +3/-2)
+```diff
+@@ -165,8 +165,9 @@ void SerializationInfoTuple::deserializeFromKindsBinary(ReadBuffer & in, ISerial
+ {
+     SerializationInfo::deserializeFromKindsBinary(in, allowed_kinds);
+ 
+-    /// A detached blob always covers a whole column, never a single tuple element.
+-    auto elements_allowed_kinds = allowed_kinds.without(ISerialization::Kind::DETACHED);
++    /// `Detached` and `Replicated` always wrap a whole column, never a single tuple element:
++    /// no writer builds such an element, and both are unwrapped only at the top level of a column.
++    auto elements_allowed_kinds = allowed_kinds.without(ISerialization::Kind::DETACHED).without(ISerialization::Kind::REPLICATED);
+     for (const auto & elem : elems)
+         elem->deserializeFromKindsBinary(in, elements_allowed_kinds);
+ }
+```
+
+**File**: `src/Formats/NativeReader.cpp` (modified, +3/-1)
+```diff
+@@ -65,13 +65,15 @@ NativeReader::NativeReader(
+     UInt64 server_revision_,
+     std::optional<FormatSettings> format_settings_,
+     BlockMissingValues * block_missing_values_,
+-    NativeReaderTypeCache * type_cache_)
++    NativeReaderTypeCache * type_cache_,
++    ISerialization::KindSet allowed_kinds_)
+     : istr(istr_)
+     , header(header_)
+     , server_revision(server_revision_)
+     , format_settings(format_settings_ ? std::make_shared<const FormatSettings>(std::move(*format_settings_)) : nullptr)
+     , block_missing_values(block_missing_values_)
+     , type_cache(type_cache_)
++    , allowed_kinds(allowed_kinds_)
+ {
+ }
+ 
+```
+
+**File**: `src/Formats/NativeReader.h` (modified, +2/-1)
+```diff
+@@ -51,7 +51,8 @@ class NativeReader
+         UInt64 server_revision_,
+         std::optional<FormatSettings> format_settings_,
+         BlockMissingValues * block_missing_values_ = nullptr,
+-        NativeReaderTypeCache * type_cache_ = nullptr);
++        NativeReaderTypeCache * type_cache_ = nullptr,
++        ISerialization::KindSet allowed_kinds_ = default_allowed_kinds);
+ 
+     /// For cases when we have an index. It allows to skip columns. Only columns specified in the index will be read.
+     NativeReader(ReadBuffer & istr_, UInt64 server_revision_,
+```
+
+**File**: `src/Interpreters/AsynchronousInsertQueue.cpp` (modified, +11/-0)
+```diff
+@@ -682,6 +682,17 @@ AsynchronousInsertQueue::pushQueryWithInlinedData(ASTPtr query, ContextPtr query
+ AsynchronousInsertQueue::PushResult AsynchronousInsertQueue::pushQueryWithBlock(
+     ASTPtr query, Block && block, ContextPtr query_context, std::unique_ptr<MemoryTracker> queued_data_tracker)
+ {
++    /// The flush copies queued blocks into full columns with `insertRangeFrom`, whose `assert_cast` would misread a
++    /// wrapped column (`Sparse`, `Replicated`, ...) at any nesting depth. Every producer materializes before queuing.
++    /// An insert without data queues a block without columns.
++    for (const auto & elem : block)
++        if (elem.column && elem.column->convertToFullIfWrapped().get() != elem.column.get())
++            throw Exception(
++                ErrorCodes::LOGICAL_ERROR,
++                "Async insert block column '{}' must be materialized before queuing, but has a "
++                "non-default serialization representation: {}",
++                elem.name, elem.column->dumpStructure());
++
+     query = query->clone();
+     preprocessInsertQuery(query, query_context);
+     return pushDataChunk(std::move(query), std::move(block), std::move(query_context), std::move(queued_data_tracker));
+```
+
+**File**: `src/Processors/Formats/Impl/NativeFormat.cpp` (modified, +17/-8)
+```diff
+@@ -17,12 +17,7 @@ class NativeInputFormat final : public IInputFormat
+ public:
+     NativeInputFormat(ReadBuffer & buf, SharedHeader header_, const FormatSettings & settings_)
+         : IInputFormat(header_, &buf)
+-        , reader(std::make_unique<NativeReader>(
+-              buf,
+-              *header_,
+-              0,
+-              settings_,
+-              settings_.defaults_for_omitted_fields ? &block_missing_values : nullptr))
++        , reader(makeReader(buf, *header_, settings_, block_missing_values))
+         , header(header_)
+         , block_missing_values(header->columns())
+         , settings(settings_)
+@@ -56,7 +51,7 @@ class NativeInputFormat final : public IInputFormat
+ 
+     void setReadBuffer(ReadBuffer & in_) override
+     {
+-        reader = std::make_unique<NativeReader>(in_, *header, 0, settings, settings.defaults_for_omitted_fields ? &block_missing_values : nullptr);
++        reader = makeReader(in_, *header, settings, block_missing_values);
+         IInputFormat::setReadBuffer(in_);
+     }
+ 
+@@ -65,6 +60,20 @@ class NativeInputFormat final : public IInputFormat
+     size_t getApproxBytesReadForChunk() const override { return approx_bytes_read_for_chunk; }
+ 
+ private:
++    /// Revision 0 has no serialization kinds in its layout, so the kind set takes effect only with a non-zero revision.
++    static std::unique_ptr<NativeReader> makeReader(
++        ReadBuffer & buf, const Block & header_, const FormatSettings & settings_, BlockMissingValues & block_missing_values_)
++    {
++        return std::make_unique<NativeReader>(
++            buf,
++            header_,
++            0,
++            settings_,
++            settings_.defaults_for_omitted_fields ? &block_missing_values_ : nullptr,
++            /*type_cache_=*/ nullptr,
++            ISerialization::KindSet{ISerialization::Kind::DEFAULT});
++    }
++
+     std::unique_ptr<NativeReader> reader;
+     SharedHeader header;
+     BlockMissingValues block_missing_values;
+@@ -105,7 +114,7 @@ class NativeSchemaReader final : public ISchemaReader
+ 
+     NamesAndTypesList readSchema() override
+     {
+-        auto reader = NativeReader(in, 0, settings);
++        auto reader = NativeReader(in, 0, settings, ISerialization::KindSet{ISerialization::Kind::DEFAULT});
+         auto block = reader.read();
+         return block.getNamesAndTypesList();
+     }
+```
+
+**File**: `src/QueryPipeline/RemoteQueryExecutor.cpp` (modified, +5/-0)
+```diff
+@@ -17,6 +17,7 @@
+ #include <Processors/QueryPlan/Optimizations/QueryPlanOptimizationSettings.h>
+ #include <Processors/Sources/SourceFromSingleChunk.h>
+ #include <Processors/Transforms/LimitsCheckingTransform.h>
++#include <Processors/Transforms/MaterializingTransform.h>
+ #include <Processors/QueryPlan/QueryPlan.h>
+ #include <QueryPipeline/QueryPipelineBuilder.h>
+ #include <Storages/SelectQueryInfo.h>
+@@ -1375,6 +1376,10 @@ void RemoteQueryExecutor::sendExternalTables()
+ 
+                     auto builder = plan.buildQueryPipeline(QueryPlanOptimizationSettings(my_context), BuildQueryPipelineSettings(my_context));
+ 
++                    /// The receiver accepts only the default serialization, while a table that is not filled
++                    /// through the insert chain (a materialized CTE) keeps `Sparse` columns.
++                    builder->addSimpleTransform([](const SharedHeader & table_header) { return std::make_shared<MaterializingTransform>(table_header); });
++
+                     builder->resize(1);
+                     builder->addTransform(std::make_shared<LimitsCheckingTransform>(builder->getSharedHeader(), limits));
+ 
+```
+
+---
+
+### Incident Patch 3: `544355ca` (2026-11-13)
+**Commit Message**: Merge pull request #131189 from groeneai/groeneai/fix-missing-values-type-default
+
+Use the type default for values missing from Native and JSON input
+
+**File**: `src/DataTypes/DataTypeMap.cpp` (modified, +1/-1)
+```diff
+@@ -137,7 +137,7 @@ SerializationPtr DataTypeMap::doGetSerialization(const SerializationInfoSettings
+     /// Instead, reuse already created serializations for keys and values.
+     auto key_serialization_named = std::static_pointer_cast<const SerializationNamed>(SerializationNamed::create(key_serialization, "keys", SubstreamType::TupleElement));
+     auto value_serialization_named = std::static_pointer_cast<const SerializationNamed>(SerializationNamed::create(value_serialization, "values", SubstreamType::TupleElement));
+-    auto nested_serialization = SerializationArray::create(SerializationTuple::create(SerializationTuple::ElementSerializations{key_serialization_named, value_serialization_named}, true));
++    auto nested_serialization = SerializationArray::create(SerializationTuple::create(SerializationTuple::ElementSerializations{key_serialization_named, value_serialization_named}, DataTypes{key_type, value_type}, true));
+     return SerializationMap::create(key_serialization, value_serialization, nested_serialization, settings.map_serialization_version);
+ }
+ 
+```
+
+**File**: `src/DataTypes/DataTypeTuple.cpp` (modified, +2/-2)
+```diff
+@@ -347,7 +347,7 @@ SerializationPtr DataTypeTuple::doGetSerialization(const SerializationInfoSettin
+         serializations[i] = std::static_pointer_cast<const SerializationNamed>(SerializationNamed::create(serialization, elem_name, SubstreamType::TupleElement));
+     }
+ 
+-    return SerializationTuple::create(std::move(serializations), has_explicit_names);
++    return SerializationTuple::create(std::move(serializations), elems, has_explicit_names);
+ }
+ 
+ SerializationPtr DataTypeTuple::getSerialization(const SerializationInfo & info) const
+@@ -365,7 +365,7 @@ SerializationPtr DataTypeTuple::getSerialization(const SerializationInfo & info)
+     auto kinds = info.getKindStack();
+     /// Compatibility with older version that may propagate Sparse serialization for Tuple itself (in serialization.json)
+     std::erase(kinds, ISerialization::Kind::SPARSE);
+-    return wrapSerializationBasedOnKindStack(SerializationTuple::create(std::move(serializations), has_explicit_names), kinds, info.getSettings());
++    return wrapSerializationBasedOnKindStack(SerializationTuple::create(std::move(serializations), elems, has_explicit_names), kinds, info.getSettings());
+ }
+ 
+ MutableSerializationInfoPtr DataTypeTuple::createSerializationInfo(const SerializationInfoSettings & settings) const
+```
+
+**File**: `src/DataTypes/Serializations/SerializationTuple.cpp` (modified, +11/-5)
+```diff
+@@ -164,22 +164,24 @@ void SerializationTuple::readElementsSafe(DB::IColumn & column, std::function<vo
+     addElementSafe<void>(assert_cast<ColumnTuple &>(column).getColumns().size(), column, [&](){ read_func(); return true; });
+ }
+ 
+-SerializationTuple::SerializationTuple(ElementSerializations elems_, bool has_explicit_names_)
++SerializationTuple::SerializationTuple(ElementSerializations elems_, DataTypes elem_types_, bool has_explicit_names_)
+     : elems(std::move(elems_))
++    , elem_types(std::move(elem_types_))
+     , has_explicit_names(has_explicit_names_)
+     , elems_support_pooling(std::ranges::all_of(elems, [](const auto & elem) { return elem->supportsPooling(); }))
+ {
++    chassert(elem_types.size() == elems.size());
+ }
+ 
+-SerializationPtr SerializationTuple::create(ElementSerializations elems_, bool has_explicit_names_)
++SerializationPtr SerializationTuple::create(ElementSerializations elems_, DataTypes elem_types_, bool has_explicit_names_)
+ {
+     for (const auto & elem : elems_)
+     {
+         if (!elem->supportsPooling())
+-            return std::shared_ptr<ISerialization>(new SerializationTuple(std::move(elems_), has_explicit_names_));
++            return std::shared_ptr<ISerialization>(new SerializationTuple(std::move(elems_), std::move(elem_types_), has_explicit_names_));
+     }
+     auto hash = getHash(elems_, has_explicit_names_);
+-    return ISerialization::pooled(hash, [e = std::move(elems_), has_explicit_names_]() mutable { return new SerializationTuple(std::move(e), has_explicit_names_); });
++    return ISerialization::pooled(hash, [e = std::move(elems_), t = std::move(elem_types_), has_explicit_names_]() mutable { return new SerializationTuple(std::move(e), std::move(t), has_explicit_names_); });
+ }
+ 
+ bool SerializationTuple::isElementSubcolumn(const SubstreamPath & path, const String & element_name)
+@@ -546,7 +548,10 @@ ReturnType SerializationTuple::deserializeTupleJSONImpl(IColumn & column, ReadBu
+                     }
+ 
+                     auto & element_column = extractElementColumn(column, element_pos);
+-                    element_column.insertDefault();
++                    if (elem_types[element_pos]->isDefaultInsertTrivial())
++                        element_column.insertDefault();
++                    else
++                        elem_types[element_pos]->insertDefaultInto(element_column);
                  }
-+                catch (const Poco::TimeoutException &)
+             }
+ 
+@@ -928,6 +933,7 @@ size_t SerializationTuple::allocatedBytes() const
+ {
+     size_t bytes = sizeof(*this);
+     bytes += elems.capacity() * sizeof(ElementSerializationPtr);
++    bytes += elem_types.capacity() * sizeof(DataTypePtr);
+     return bytes;
+ }
+ 
+```
+
+**File**: `src/DataTypes/Serializations/SerializationTuple.h` (modified, +6/-2)
+```diff
+@@ -1,5 +1,6 @@
+ #pragma once
+ 
++#include <DataTypes/IDataType_fwd.h>
+ #include <DataTypes/Serializations/SimpleTextSerialization.h>
+ #include <DataTypes/Serializations/SerializationNamed.h>
+ 
+@@ -13,11 +14,11 @@ class SerializationTuple final : public SimpleTextSerialization
+     using ElementSerializations = std::vector<ElementSerializationPtr>;
+ 
+ private:
+-    SerializationTuple(ElementSerializations elems_, bool has_explicit_names_);
++    SerializationTuple(ElementSerializations elems_, DataTypes elem_types_, bool has_explicit_names_);
+ 
+ public:
+     static UInt128 getHash(const ElementSerializations & elems_, bool has_explicit_names_);
+-    static SerializationPtr create(ElementSerializations elems_, bool has_explicit_names_);
++    static SerializationPtr create(ElementSerializations elems_, DataTypes elem_types_, bool has_explicit_names_);
+ 
+     /// Whether a resolved subcolumn is really this element, which its name alone cannot tell: a
+     /// sibling element can flatten to the same name. `QBit` elements are the same substream.
+@@ -89,6 +90,9 @@ class SerializationTuple final : public SimpleTextSerialization
+ 
+ private:
+     ElementSerializations elems;
++    /// Used only for the defaults of missing elements. Not part of the pool key: the key of each element
++    /// serialization already determines the default of its type.
++    DataTypes elem_types;
+     bool has_explicit_names;
+     /// Cached result of `supportsPooling` of all elements, see `SerializationArray`.
+     bool elems_support_pooling;
+```
+
+**File**: `src/Formats/NativeReader.cpp` (modified, +9/-1)
+```diff
+@@ -383,7 +383,15 @@ Block NativeReader::read()
+             }
+             else
+             {
+-                tmp_res.insert({col.type->createColumn()->cloneResized(rows), col.type, col.name});
++                MutableColumnPtr column;
++                if (col.type->isDefaultInsertTrivial())
++                    column = col.type->createColumn()->cloneResized(rows);
++                else
 +                {
-+                    /// A cleanup poll has a short receive timeout, so a slow worker is expected to exceed it.
-+                    tryLogCurrentException(__PRETTY_FUNCTION__, fmt::format("waitForTaskTerminal {} on {}", task.task_id, task.endpoint_uri), LogsLevel::warning);
-+                    return std::nullopt;
++                    column = col.type->createColumn();
++                    col.type->insertManyDefaultsInto(*column, rows);
 +                }
-                 catch (...)
-                 {
-                     tryLogCurrentException(__PRETTY_FUNCTION__, fmt::format("waitForTaskTerminal {} on {}", task.task_id, task.endpoint_uri));
++                tmp_res.insert({std::move(column), col.type, col.name});
+                 if (block_missing_values)
+                     block_missing_values->setBits(column_i, rows);
+             }
 ```
 
----
-
-### Incident Patch 2: `75cbc54e` (2026-11-12)
-**Commit Message**: Merge pull request #130714 from groeneai/fix-resource-soak-tsan-rss-and-fds-median
-
-Fix flaky resource soak tests on ThreadSanitizer builds
-
-**File**: `tests/integration/helpers/resource_soak.py` (modified, +14/-9)
+**File**: `src/Processors/Formats/Impl/JSONColumnsBlockInputFormatBase.cpp` (modified, +4/-1)
 ```diff
-@@ -104,6 +104,7 @@ def __init__(self, node, metrics: Iterable[str] = ()):
-         self.pid = node.get_process_pid("clickhouse")
-         assert self.pid is not None, "cannot find the server process"
-         self.asan = node.is_built_with_sanitizer("address")
-+        self.tsan = node.is_built_with_sanitizer("thread")
-         self.samples: List[Sample] = []
- 
-     def sample(self, iteration: int) -> Sample:
-@@ -184,7 +185,7 @@ def assert_bounded(
-     ):
-         """Assert that the server-wide resources do not grow from the early to the late window.
- 
--        Memory gets a tolerance in bytes plus a fraction of the early value: allocator caching, log buffers and the query that just ran move it by some megabytes between samples. File descriptors and threads come from bounded pools (connection pools, thread pools), so after the warmup their maximum moves by a few at most.
-+        Memory gets a tolerance in bytes plus a fraction of the early value: allocator caching, log buffers and the query that just ran move it by some megabytes between samples. File descriptors and threads come from bounded pools (connection pools, thread pools), so after the warmup their number moves by a few at most.
- 
-         `cache_metrics` name `system.metrics` sizes in bytes of caches that legitimately fill up during the soak, for example `IcebergMetadataFilesCacheBytes` while every `INSERT` adds a manifest. Their size is subtracted from the memory before the comparison, as the caches have limits of their own."""
-         caches = [sum(s.metrics[m] for m in cache_metrics) for s in self.samples]
-@@ -196,14 +197,18 @@ def assert_bounded(
-             unit=" B",
-         )
-         # Resident memory also covers allocations that `MemoryTracking` does not see, such as those of the Rust Delta kernel. Only anonymous memory is compared: file-backed pages are those of the binary and of the files it reads, which the server faults in on first use (for example the debug info when it symbolizes a stack trace) and the kernel can evict, so they are not held by the server.
--        assert_not_growing(
--            "anonymous resident memory without caches",
--            [m - c for m, c in zip(self.series("rss"), caches)],
--            abs_tolerance=memory_abs_tolerance + (ASAN_QUARANTINE_BYTES if self.asan else 0),
--            rel_tolerance=memory_rel_tolerance,
--            unit=" B",
--        )
--        assert_not_growing("open file descriptors", self.series("fds"), abs_tolerance=fds_tolerance, statistic=max)
-+        # The resident memory of a ThreadSanitizer build includes its shadow memory, which it discards all at once when its thread slots run out of epochs and then refills, at points unrelated to the iterations.
-+        if self.tsan:
-+            logging.info("anonymous resident memory: not compared on a ThreadSanitizer build")
-+        else:
-+            assert_not_growing(
-+                "anonymous resident memory without caches",
-+                [m - c for m, c in zip(self.series("rss"), caches)],
-+                abs_tolerance=memory_abs_tolerance + (ASAN_QUARANTINE_BYTES if self.asan else 0),
-+                rel_tolerance=memory_rel_tolerance,
-+                unit=" B",
-+            )
-+        assert_not_growing("open file descriptors", self.series("fds"), abs_tolerance=fds_tolerance)
-         assert_not_growing("descriptors of exited threads", self.series("exited_thread_fds"), abs_tolerance=fds_tolerance, statistic=max)
-         assert_not_growing("threads", self.series("threads"), abs_tolerance=threads_tolerance, statistic=max)
- 
+@@ -206,7 +206,10 @@ Chunk JSONColumnsBlockInputFormatBase::read()
+         {
+             if (format_settings.force_null_for_omitted_fields && !isNullableOrLowCardinalityNullable(fields[i].type))
+                 throw Exception(ErrorCodes::TYPE_MISMATCH, "Cannot insert NULL value into a column `{}` of type '{}'", fields[i].name, fields[i].type->getName());
+-            columns[i]->insertManyDefaults(rows);
++            if (fields[i].type->isDefaultInsertTrivial())
++                columns[i]->insertManyDefaults(rows);
++            else
++                fields[i].type->insertManyDefaultsInto(*columns[i], rows);
+             if (format_settings.defaults_for_omitted_fields)
+                 block_missing_values.setBits(i, rows);
+         }
 ```
 
----
-
-### Incident Patch 3: `1c8ebee4` (2026-11-12)
-**Commit Message**: Merge pull request #130639 from groeneai/darwin-executable-tests-read-timeout
-
-Raise the script read timeout in three executable tests flaky on the macOS Fast test
-
-**File**: `tests/queries/0_stateless/05047_selected_rows_executable_loop_double_count.sh` (modified, +4/-4)
+**File**: `tests/queries/0_stateless/05628_missing_values_get_type_default.reference` (added, +14/-0)
 ```diff
-@@ -169,11 +169,11 @@ EOF
- # would make it depend on randomized granule settings. The non-pool cell must not set
- # \`send_chunk_header\`: with a header the child would echo the count back as a data row.
- $CLICKHOUSE_LOCAL --config-file="${WORK_DIR}/config.xml" --query "
--SELECT * FROM executable('gen1000.sh', 'TSV', 'x UInt64')
-+SELECT * FROM executable('gen1000.sh', 'TSV', 'x UInt64', SETTINGS command_read_timeout = 30000)
- SETTINGS log_queries = 1, log_comment = '05047_exec_tf', ast_fuzzer_runs = 0
- FORMAT Null;
- 
--CREATE TABLE t_pool (x UInt64) ENGINE = ExecutablePool('gen1000_pool.sh', 'TSV') SETTINGS pool_size = 1;
-+CREATE TABLE t_pool (x UInt64) ENGINE = ExecutablePool('gen1000_pool.sh', 'TSV') SETTINGS pool_size = 1, command_read_timeout = 30000;
- SELECT * FROM t_pool
- SETTINGS log_queries = 1, log_comment = '05047_exec_pool', ast_fuzzer_runs = 0
- FORMAT Null;
-@@ -182,15 +182,15 @@ CREATE TABLE t_pool_src (x UInt64) ENGINE = Memory;
- INSERT INTO t_pool_src SELECT number FROM numbers(100);
- 
- CREATE TABLE t_exec_in (x UInt64)
--ENGINE = Executable('echo_rows.sh', 'TSV', (SELECT x FROM t_pool_src WHERE x < 10));
-+ENGINE = Executable('echo_rows.sh', 'TSV', (SELECT x FROM t_pool_src WHERE x < 10)) SETTINGS command_read_timeout = 30000;
- 
- SELECT * FROM t_exec_in
- SETTINGS log_queries = 1, log_comment = '05047_exec_input', ast_fuzzer_runs = 0
- FORMAT Null;
- 
- CREATE TABLE t_pool_in (x UInt64)
- ENGINE = ExecutablePool('echo_pool.sh', 'TSV', (SELECT x FROM t_pool_src WHERE x < 10))
--SETTINGS send_chunk_header = 1, pool_size = 1;
-+SETTINGS send_chunk_header = 1, pool_size = 1, command_read_timeout = 30000;
- 
- SELECT * FROM t_pool_in
- SETTINGS log_queries = 1, log_comment = '05047_exec_pool_input', ast_fuzzer_runs = 0
+@@ -0,0 +1,14 @@
++1	a
++2	a
++1	m
++2	m
++1	a
++2	a
++1	a
++2	a
++(5,'a')
++(0,'a')
++[(5,'a')]
++(5,('a'))
++(5,'',[],NULL)
++1
 ```
 
-**File**: `tests/queries/0_stateless/05227_allow_executable_tables_ddl_does_not_run_script.sh` (modified, +4/-4)
+**File**: `tests/queries/0_stateless/05628_missing_values_get_type_default.sql` (added, +22/-0)
 ```diff
-@@ -42,28 +42,28 @@ CONFIG
- # Gate closed: the definition is accepted and the refused read spawns nothing.
- $CLICKHOUSE_LOCAL --config-file="${CONFIG_FILE}" --query "
- SET allow_executable_tables = 0;
--CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV');
-+CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV') SETTINGS command_read_timeout = 30000;
- SELECT * FROM t_gate;
- " 2>&1 | grep -o -m1 'SUPPORT_IS_DISABLED'
- 
- # Gate open: defining and wrapping still run nothing.
- $CLICKHOUSE_LOCAL --config-file="${CONFIG_FILE}" --query "
--CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV');
-+CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV') SETTINGS command_read_timeout = 30000;
- CREATE VIEW v_gate AS SELECT * FROM t_gate;
- "
- if [ -e "${MARKER}" ]; then echo "script ran"; else echo "script did not run"; fi
- 
- # Positive control: proves the marker is observable, so the check above is not vacuous.
- $CLICKHOUSE_LOCAL --config-file="${CONFIG_FILE}" --query "
--CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV');
-+CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV') SETTINGS command_read_timeout = 30000;
- SELECT * FROM t_gate;
- "
- if [ -e "${MARKER}" ]; then echo "script ran"; else echo "script did not run"; fi
- 
- # A pooled worker started by a permitted read survives the gate closing: the refused read neither
- # reuses nor respawns it, and reopening the gate serves from the same worker.
- $CLICKHOUSE_LOCAL --config-file="${CONFIG_FILE}" --ignore-error --query "
--CREATE TABLE t_pool (x UInt32) ENGINE = ExecutablePool('marker_pool.sh', 'TSV', (SELECT 7)) SETTINGS send_chunk_header = 1, pool_size = 1;
-+CREATE TABLE t_pool (x UInt32) ENGINE = ExecutablePool('marker_pool.sh', 'TSV', (SELECT 7)) SETTINGS send_chunk_header = 1, pool_size = 1, command_read_timeout = 30000;
- SELECT * FROM t_pool;
- SET allow_executable_tables = 0;
- SELECT * FROM t_pool;
-```
-
-**File**: `tests/queries/0_stateless/scripts_udf/function.xml` (modified, +1/-0)
-```diff
-@@ -5,5 +5,6 @@
-         <return_type>String</return_type>
-         <format>TabSeparated</format>
-         <command>udf.sh</command>
-+        <command_read_timeout>30000</command_read_timeout>
-     </function>
- </functions>
+@@ -0,0 +1,22 @@
++-- Values absent from Native and JSON-format input get the default of their type, not the zero of the column.
++
++SET engine_file_truncate_on_insert = 1;
++
++INSERT INTO FUNCTION file(currentDatabase() || '_missing_default.native', Native) SELECT number + 1 AS id FROM numbers(2);
++
++SELECT id, status FROM file(currentDatabase() || '_missing_default.native', Native, 'id UInt32, status Enum8(\'a\' = 1, \'b\' = 2)') ORDER BY id;
++SELECT id, status FROM file(currentDatabase() || '_missing_default.native', Native, 'id UInt32, status Enum8(\'m\' = -3, \'n\' = 0, \'o\' = 4)') ORDER BY id;
++
++DROP TABLE IF EXISTS events;
++CREATE TABLE events (id UInt32, status Enum8('a' = 1, 'b' = 2)) ENGINE = MergeTree ORDER BY id;
++INSERT INTO events SELECT * FROM file(currentDatabase() || '_missing_default.native', Native);
++SELECT * FROM events ORDER BY id;
++DROP TABLE events;
++
++SELECT * FROM format(JSONColumns, 'id UInt32, status Enum8(\'a\' = 1, \'b\' = 2)', '{"id": [1, 2]}');
++
++SELECT t FROM format(JSONEachRow, 't Tuple(n UInt8, status Enum8(\'a\' = 1, \'b\' = 2))', '{"t": {"n": 5}}\n{"t": {}}');
++SELECT a FROM format(JSONEachRow, 'a Array(Tuple(n UInt8, status Enum8(\'a\' = 1, \'b\' = 2)))', '{"a": [{"n": 5}]}');
++SELECT t FROM format(JSONEachRow, 't Tuple(n UInt8, u Tuple(status Enum8(\'a\' = 1, \'b\' = 2)))', '{"t": {"n": 5}}');
++SELECT t FROM format(JSONEachRow, 't Tuple(n UInt8, s String, a Array(UInt8), x Nullable(Enum8(\'a\' = 1, \'b\' = 2)))', '{"t": {"n": 5}}');
++SELECT t.b FROM format(JSONEachRow, 't Tuple(a Nothing, b UInt8)', '{"t": {"b": 1}}');
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #130991** (2026-11-12): Backport #130493 to 26.9: Fix flaky test_async_metadata_refresh (@robot-ch-test-poll3)
-- **PR #130990** (2026-11-12): Backport #130493 to 26.8: Fix flaky test_async_metadata_refresh (@robot-ch-test-poll3)
-- **PR #130945** (2026-11-12): Backport #125801 to 26.9: Parallel replicas followers follow the initiator whatever their own `automatic_parallel_replicas_mode` (@robot-clickhouse-ci-2)
-- **PR #130944** (2026-11-12): Backport #127416 to 26.9: Fix `Cannot fold actions for projection` when the join order optimizer reorders an outer join converted to INNER (@robot-clickhouse-ci-2)
-- **PR #130943** (2026-11-12): Backport #125897 to 26.8: Do not prefetch in a two-level GROUP BY that holds few keys (@robot-ch-test-poll)
-- **PR #130940** (2026-11-12): Backport #124526 to 26.10: Do not report progress of server-side AST fuzzer queries to the client (@robot-clickhouse)
+- **PR #131280** (2026-11-13): Backport #126209 to 26.10: Compute a window function reached through several alias references only once (@robot-ch-test-poll3)
+- **PR #131275** (closed): Add spacing between replica-aware routing badges (@Blargian)
+- **PR #131252** (2026-11-13): Run the ascii performance test queries with format Null (@groeneai)
+- **PR #131246** (2026-11-13): Backport #126521 to 26.10: Store the value of an expression-valued named collection override in the table definition (@robot-ch-test-poll3)
+- **PR #131245** (2026-11-13): Backport #128165 to 26.10: Do not split a Graphite rollup group (@robot-ch-test-poll3)
+- **PR #131224** (2026-11-13): Backport #131055 to 26.10: Fix SIGSEGV (in <26.10) when format_schema query reads a MongoDB table (@robot-clickhouse-ci-2)
 
 ---
 
@@ -1532,33 +2027,47 @@ Raise the script read timeout in three executable tests flaky on the macOS Fast 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-w
+## X. Merge pull request #131190 from groeneai/null-as-default-type-default
 
 **RULE**:
-When implementing operations in `src/QueryPipeline/DistributedPlanExecutor.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/DataTypes/Serializations/SerializationNullable.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1b855d0`: Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-warning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a137ccd`: Merge pull request #131190 from groeneai/null-as-default-type-default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/QueryPipeline/DistributedPlanExecutor.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/DataTypes/Serializations/SerializationNullable.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-                catch (const Poco::TimeoutException &)
-                {
-                    /// A cleanup poll has a short receive timeout, so a slow worker is expected to exceed it.
-                    tryLogCurrentException(__PRETTY_FUNCTION__, fmt::format("waitForTaskTerminal {} on {}", task.task_id, task.endpoint_uri), LogsLevel::warning);
-                    return std::nullopt;
-                }
+/// Deserialize value into non-nullable column. In case of NULL, insert the default of nested_type (if given) and set is_null to true.
+static ReturnType deserializeImpl(IColumn & column, ReadBuffer & buf, CheckForNull && check_for_null, DeserializeNested && deserialize_nested, bool & is_null, const IDataType * nested_type = nullptr)
+        if (nested_type && !nested_type->isDefaultInsertTrivial())
+            nested_type->insertDefaultInto(column);
+        else
+            column.insertDefault();
+ReturnType  deserializeTextEscapedAndRawImpl(IColumn & column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, bool & is_null, const IDataType * nested_type = nullptr)
+        return deserializeImpl<ReturnType>(column, istr, check_for_null, deserialize_nested, is_null, nested_type);
+    return deserializeImpl<ReturnType>(column, peekable_buf, check_for_null, deserialize_nested_with_check, is_null, nested_type);
+bool SerializationNullable::deserializeNullAsDefaultOrNestedTextEscaped(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, const IDataType * nested_type)
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+/// Deserialize value into non-nullable column. In case of NULL, insert default and set is_null to true.
+static ReturnType deserializeImpl(IColumn & column, ReadBuffer & buf, CheckForNull && check_for_null, DeserializeNested && deserialize_nested, bool & is_null)
+        column.insertDefault();
+ReturnType  deserializeTextEscapedAndRawImpl(IColumn & column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization, bool & is_null)
+        return deserializeImpl<ReturnType>(column, istr, check_for_null, deserialize_nested, is_null);
+    return deserializeImpl<ReturnType>(column, peekable_buf, check_for_null, deserialize_nested_with_check, is_null);
+bool SerializationNullable::deserializeNullAsDefaultOrNestedTextEscaped(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization)
+    deserializeTextEscapedAndRawImpl<void, true>(nested_column, istr, settings, nested_serialization, is_null);
+bool SerializationNullable::deserializeNullAsDefaultOrNestedTextRaw(IColumn & nested_column, ReadBuffer & istr, const FormatSettings & settings, const SerializationPtr & nested_serialization)
+    d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1b855d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a137ccd` are properly handled with clean fallback behavior.

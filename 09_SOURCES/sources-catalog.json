@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "e0efb330929580e8d311497727f3ff2937b646884133f00327d8a9998079825e",
-    "lastHarvestedAt": "2026-11-08T15:21:44.295Z",
+    "contentHash": "6f1d39f942c7d43c507bb7b95c4ed506b8a6125479852d1b7209e013ef78f9ee",
+    "lastHarvestedAt": "2026-11-13T15:29:23.607Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "af5d1570",
+    "sourceVersion": "d05d6645",
     "license": "MIT",
-    "contentHash": "5b7e0587531287278abe69aa8fb9edf8daaa85869081b8d7040673823c594cae",
-    "lastHarvestedAt": "2026-11-11T10:08:31.964Z",
+    "contentHash": "526b4b4234627c43077ceee9adaa4956eb6d6e02df367c183944175611ab832a",
+    "lastHarvestedAt": "2026-11-13T15:29:36.919Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "6899c191",
+    "sourceVersion": "786343a3",
     "license": "Apache-2.0",
-    "contentHash": "1d151e429a00bbfc4d39a1ee2905380a19a65d417498f99d1356de4a61aa4401",
-    "lastHarvestedAt": "2026-11-10T04:51:50.305Z",
+    "contentHash": "a437bfefb77772bef10d9c36ef9d2fd78e24f007ce1d16d17f47e04875ef5be4",
+    "lastHarvestedAt": "2026-11-13T15:29:32.627Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "1598acaa",
+    "sourceVersion": "c08eec9b",
     "license": "Apache-2.0",
-    "contentHash": "5f3970b022f015561639893582677110f3bec653160184dd13bf280049b8bd0f",
-    "lastHarvestedAt": "2026-11-12T09:19:34.571Z",
+    "contentHash": "2932f1d4c4a1bf48f0de502a67c1795c273bc86eea656f95dc79f0d4a4facb62",
+    "lastHarvestedAt": "2026-11-13T15:29:40.215Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {

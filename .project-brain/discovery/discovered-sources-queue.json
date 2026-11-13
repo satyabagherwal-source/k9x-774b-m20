@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T15:19:17.141Z",
+  "updated_at": "2026-11-13T15:30:25.269Z",
   "stats": {
-    "total_discovered": 2570,
-    "approved_pending_harvest": 2399,
+    "total_discovered": 2583,
+    "approved_pending_harvest": 2412,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2389,
+      "COMMUNITY_AND_EXPERT": 2402,
       "OFFICIAL_DOCUMENTATION": 95,
       "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
@@ -55362,6 +55362,292 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
         "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-225152E9C8D1": {
+      "id": "SRC-225152E9C8D1",
+      "url": "https://huggingface.co/apple/LensVLM-9B",
+      "title": "https://huggingface.co/apple/LensVLM-9B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:24.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+        "fileName": "hf-apple-lensvlm-9b-learnings.md"
+      }
+    },
+    "SRC-DD9FFEBDBDE0": {
+      "id": "SRC-DD9FFEBDBDE0",
+      "url": "https://github.com/crossplane/crossplane",
+      "title": "https://github.com/crossplane/crossplane",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:24.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
+        "fileName": "crossplane-crossplane-learnings.md"
+      }
+    },
+    "SRC-DD5B01A09C03": {
+      "id": "SRC-DD5B01A09C03",
+      "url": "https://github.com/crossplane/crossplane/issues/5643",
+      "title": "https://github.com/crossplane/crossplane/issues/5643",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:24.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
+        "fileName": "crossplane-crossplane-learnings.md"
+      }
+    },
+    "SRC-08EBF6FAA270": {
+      "id": "SRC-08EBF6FAA270",
+      "url": "https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md",
+      "title": "https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:24.562Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
+        "fileName": "crossplane-crossplane-learnings.md"
+      }
+    },
+    "SRC-D55879FA4C8A": {
+      "id": "SRC-D55879FA4C8A",
+      "url": "https://github.com/kubernetes/community/blob/9bf8cd/contributors/devel/sig-architecture/api-conventions.md",
+      "title": "https://github.com/kubernetes/community/blob/9bf8cd/contributors/devel/sig-architecture/api-conventions.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:24.583Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
+        "fileName": "crossplane-crossplane-learnings.md"
+      }
+    },
+    "SRC-37E3EF7A311C": {
+      "id": "SRC-37E3EF7A311C",
+      "url": "https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md",
+      "title": "https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:24.612Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
+        "fileName": "crossplane-crossplane-learnings.md"
+      }
+    },
+    "SRC-A5FBF010E2DB": {
+      "id": "SRC-A5FBF010E2DB",
+      "url": "https://github.com/mitmproxy/mitmproxy",
+      "title": "https://github.com/mitmproxy/mitmproxy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:25.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-F0A91549E48C": {
+      "id": "SRC-F0A91549E48C",
+      "url": "https://easinspectorforfiddler.codeplex.com/",
+      "title": "https://easinspectorforfiddler.codeplex.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:25.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-1A0B6030F00C": {
+      "id": "SRC-1A0B6030F00C",
+      "url": "https://github.com/python/cpython/issues/83623",
+      "title": "https://github.com/python/cpython/issues/83623",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:25.180Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-0E668B07C930": {
+      "id": "SRC-0E668B07C930",
+      "url": "https://github.com/mitmproxy/mitmproxy/pull/8594",
+      "title": "https://github.com/mitmproxy/mitmproxy/pull/8594",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:25.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-CB5A8DBA39F6": {
+      "id": "SRC-CB5A8DBA39F6",
+      "url": "https://github.com/mitmproxy/mitmproxy/pull/8593",
+      "title": "https://github.com/mitmproxy/mitmproxy/pull/8593",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:25.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-49C566F1F4CA": {
+      "id": "SRC-49C566F1F4CA",
+      "url": "https://github.com/mitmproxy/mitmproxy/pull/8585",
+      "title": "https://github.com/mitmproxy/mitmproxy/pull/8585",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:25.249Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-6E827B53F61B": {
+      "id": "SRC-6E827B53F61B",
+      "url": "https://packaging.python.org/en/latest/discussions/install-requires-vs-requirements",
+      "title": "https://packaging.python.org/en/latest/discussions/install-requires-vs-requirements",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:30:25.269Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
       }
     }
   }

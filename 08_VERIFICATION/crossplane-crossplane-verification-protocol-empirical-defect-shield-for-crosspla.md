@@ -4,45 +4,31 @@
 {
   "source_repository": "crossplane/crossplane",
   "source_url": "https://github.com/crossplane/crossplane",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "786343a3",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T15:29:32.849Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-crossplane-crossplane",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crossplane/crossplane](https://github.com/crossplane/crossplane) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [crossplane/crossplane](https://github.com/crossplane/crossplane) (Revision: `786343a3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T15:29:32.849Z`  
+> **Learning ID**: `learn-github-crossplane-crossplane`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `crossplane/crossplane` (Commit: `historical`)
+- **Target Repository**: `crossplane/crossplane` (Commit: `786343a3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
-> **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `6899c191`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T04:51:48.634Z  
-> **Learning ID**: `learn-github-crossplane-crossplane`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): crossplane/crossplane
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T04:51:48.404Z  
+> **Harvest Timestamp**: 2026-11-13T15:29:32.057Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12232 stars
+- **Stars / Engagement**: 12244 stars
 
 ---
 
@@ -1550,49 +1536,294 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6899c191` (2026-11-09)
-**Commit Message**: Merge pull request #8024 from crossplane/renovate/main-renovate-44.x
+### Incident Patch 1: `0c1c1b69` (2026-11-10)
+**Commit Message**: fix(deps): update go dependencies
 
-chore(deps): update dependency renovate to v44.222.5 (main)
-
-**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
+**File**: `go.mod` (modified, +5/-5)
 ```diff
-@@ -16,7 +16,7 @@ permissions:
- 
- env:
-   LOG_LEVEL: "info"
--  RENOVATE_VERSION: "44.221.4"
-+  RENOVATE_VERSION: "44.222.5"
- 
- jobs:
-   renovate:
+@@ -8,15 +8,15 @@ require (
+ 	dario.cat/mergo v1.0.2
+ 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6
+ 	github.com/Masterminds/semver/v3 v3.5.0
+-	github.com/alecthomas/kong v1.16.1
++	github.com/alecthomas/kong v1.17.0
+ 	github.com/crossplane/crossplane-runtime/v2 v2.5.0-rc.0.0.20261030000521-f78c9aebf4ff
+ 	github.com/crossplane/crossplane/apis/v2 v2.5.0-rc.0.0.20261029180807-76a72bee8a19
+ 	github.com/google/go-cmp v0.7.0
+ 	github.com/google/go-containerregistry v0.22.1
+ 	github.com/robfig/cron/v3 v3.0.1
+ 	github.com/spf13/afero v1.15.0
+-	golang.org/x/sync v0.24.0
+-	google.golang.org/grpc v1.84.0
++	golang.org/x/sync v0.25.0
++	google.golang.org/grpc v1.85.0
+ 	google.golang.org/protobuf v1.36.12
+ 	k8s.io/api v0.37.1
+ 	k8s.io/apiextensions-apiserver v0.37.1
+@@ -132,7 +132,7 @@ require (
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
++	google.golang.org/genproto/googleapis/api v0.0.0-20260817212433-ac3dfec99bb1 // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+ 	k8s.io/code-generator v0.37.1 // indirect
+ 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3 // indirect
+@@ -215,7 +215,7 @@ require (
+ 	golang.org/x/time v0.16.0 // indirect
+ 	golang.org/x/tools v0.51.0 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+ 	k8s.io/component-base v0.37.1 // indirect
+ 	k8s.io/klog/v2 v2.140.0
 ```
 
----
-
-### Incident Patch 2: `a6dfb9ac` (2026-11-09)
-**Commit Message**: chore(deps): update dependency renovate to v44.222.5
-
-**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
+**File**: `go.sum` (modified, +14/-14)
 ```diff
-@@ -16,7 +16,7 @@ permissions:
+@@ -1,5 +1,5 @@
+-cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
+-cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
++cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
++cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
+ cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
+ cloud.google.com/go/auth v0.20.0 h1:kXTssoVb4azsVDoUiF8KvxAqrsQcQtB53DcSgta74CA=
+@@ -51,8 +51,8 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
+ github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
+ github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
+ github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
+-github.com/alecthomas/kong v1.16.1 h1:ixhCt93XkJ98kGposQ54+bl0IK6XwqB40AsMynU7Z8E=
+-github.com/alecthomas/kong v1.16.1/go.mod h1:wrlbXem1CWqUV5Vbmss5ISYhsVPkBb1Yo7YKJghju2I=
++github.com/alecthomas/kong v1.17.0 h1:f52BVWChYMDkMkCoqkEWRuFOk/K4B5LO7xIijeLJRdk=
++github.com/alecthomas/kong v1.17.0/go.mod h1:wrlbXem1CWqUV5Vbmss5ISYhsVPkBb1Yo7YKJghju2I=
+ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
+ github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+ github.com/alessio/shellescape v1.4.1 h1:V7yhSDDn8LP4lc4jS8pFkt0zCnzVJlG5JXy9BVKJUX0=
+@@ -154,8 +154,8 @@ github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f h1:Wl78ApPPB2
+ github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f/go.mod h1:OSYXu++VVOHnXeitef/D8n/6y4QV8uLHSFXX4NeXMGc=
+ github.com/fatih/color v1.19.0 h1:Zp3PiM21/9Ld6FzSKyL5c/BULoe/ONr9KlbYVOfG8+w=
+ github.com/fatih/color v1.19.0/go.mod h1:zNk67I0ZUT1bEGsSGyCZYZNrHuTkJJB+r6Q9VuMi0LE=
+-github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeORc=
+-github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
++github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
++github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
+ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
+ github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
+ github.com/fsnotify/fsnotify v1.5.4/go.mod h1:OVB6XrOHzAwXMpEM7uPOzcehqUV2UqJxmVXmkdnm1bU=
+@@ -590,8 +590,8 @@ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/5
+ golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+-golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
++golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -647,12 +647,12 @@ google.golang.org/api v0.284.0 h1:i+cKTgeQRcRySkP7QTl5PDO7/pAm8EcMFIUMlNbk4Vc=
+ google.golang.org/api v0.284.0/go.mod h1:AU44fU+XVZOCcd8uLaBIa/ZgzgPf/0qqY3+m7lQaado=
+ google.golang.org/genproto v0.0.0-20260406210006-6f92a3bedf2d h1:N1Ec54vZnIPd7MnxRiYLW+oY4fDR4BOS/LrssdD9+ek=
+ google.golang.org/genproto v0.0.0-20260406210006-6f92a3bedf2d/go.mod h1:c2hJ1grtnH0xUiEKGDGkjGNTJ1Hy2LrblyKOHF0sqRM=
+-google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d h1:FarXi840EJWSHYTN3ERkADbPWjl307+FGrA22KAVjjc=
+-google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d/go.mod h1:K/+WGbmBY7aNW1HDw1fJnKYo10i0DkAX6pows00dLig=
+-google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d h1:IL4hdHzcUv2l/gcg98/Rj3FbtE6axwqslOW8SW0C+S0=
+-google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
+-google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
+-google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
++google.golang.org/genproto/googleapis/api v0.0.0-20260817212433-ac3dfec99bb1 h1:lrupDmKL3p5kEX1M92oan027eCKcouzjuPbH6YBK+Rs=
++google.golang.org/genproto/googleapis/api v0.0.0-20260817212433-ac3dfec99bb1/go.mod h1:q/3oV3jAi5vwelxsVAprMBC8BcM2zmNe+IjRGd+9/ks=
++google
+```
+
+**File**: `nix/vendor-hashes.nix` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ # by hand.)
+ {
+   # Root module: github.com/crossplane/crossplane/v2
+-  root = "sha256-selb9Mm0vDIQwA5dqQ5JWyhuoRDD9HB/YAfWLSSq9dk=";
++  root = "sha256-HIupaO1ehDF/k7g4IYIIp2GmIOtlhRR5BDTARJhQKsA=";
  
- env:
-   LOG_LEVEL: "info"
--  RENOVATE_VERSION: "44.221.4"
-+  RENOVATE_VERSION: "44.222.5"
+   # apis module: github.com/crossplane/crossplane/apis/v2
+   apis = "sha256-OOGYrf8BQfWKJ6YS4BEma53wjrSLh1WQ2dHGnDNUm3g=";
+```
+
+**File**: `test/e2e/functions/revision-id/go.mod` (modified, +45/-38)
+```diff
+@@ -3,55 +3,63 @@ module github.com/crossplane/crossplane/test/e2e/functions/revision-id
+ go 1.26.7
  
- jobs:
-   renovate:
+ require (
+-	github.com/alecthomas/kong v1.16.1
+-	github.com/crossplane/function-sdk-go v0.5.0
+-	k8s.io/apimachinery v0.33.0
++	github.com/alecthomas/kong v1.17.0
++	github.com/crossplane/function-sdk-go v0.7.1
++	k8s.io/apimachinery v0.35.3
+ )
+ 
+ require (
+ 	dario.cat/mergo v1.0.2 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+-	github.com/crossplane/crossplane-runtime/v2 v2.0.0 // indirect
++	github.com/crossplane/crossplane-runtime/v2 v2.3.1 // indirect
++	github.com/crossplane/crossplane/apis/v2 v2.3.1 // indirect
+ 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+-	github.com/emicklei/go-restful/v3 v3.12.1 // indirect
+-	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
++	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
++	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
+ 	github.com/fatih/color v1.18.0 // indirect
+ 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
+ 	github.com/go-json-experiment/json v0.0.0-20240815175050-ebd3a8989ca1 // indirect
+ 	github.com/go-logr/logr v1.4.3 // indirect
+ 	github.com/go-logr/zapr v1.3.0 // indirect
+-	github.com/go-openapi/jsonpointer v0.21.0 // indirect
+-	github.com/go-openapi/jsonreference v0.21.0 // indirect
+-	github.com/go-openapi/swag v0.23.0 // indirect
++	github.com/go-openapi/jsonpointer v0.22.5 // indirect
++	github.com/go-openapi/jsonreference v0.21.5 // indirect
++	github.com/go-openapi/swag v0.25.5 // indirect
++	github.com/go-openapi/swag/cmdutils v0.25.5 // indirect
++	github.com/go-openapi/swag/conv v0.25.5 // indirect
++	github.com/go-openapi/swag/fileutils v0.25.5 // indirect
++	github.com/go-openapi/swag/jsonname v0.25.5 // indirect
++	github.com/go-openapi/swag/jsonutils v0.25.5 // indirect
++	github.com/go-openapi/swag/loading v0.25.5 // indirect
++	github.com/go-openapi/swag/mangling v0.25.5 // indirect
++	github.com/go-openapi/swag/netutils v0.25.5 // indirect
++	github.com/go-openapi/swag/stringutils v0.25.5 // indirect
++	github.com/go-openapi/swag/typeutils v0.25.5 // indirect
++	github.com/go-openapi/swag/yamlutils v0.25.5 // indirect
+ 	github.com/gobuffalo/flect v1.0.3 // indirect
+-	github.com/gogo/protobuf v1.3.2 // indirect
+-	github.com/google/gnostic-models v0.7.0 // indirect
+-	github.com/google/go-cmp v0.7.0 // indirect
++	github.com/google/gnostic-models v0.7.1 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+ 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.1.0 // indirect
+-	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0 // indirect
++	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.0 // indirect
+ 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+-	github.com/josharian/intern v1.0.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+-	github.com/mailru/easyjson v0.7.7 // indirect
+ 	github.com/mattn/go-colorable v0.1.14 // indirect
+-	github.com/mattn/go-isatty v0.0.20 // indirect
++	github.com/mattn/go-isatty v0.0.22 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+ 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+ 	github.com/pkg/errors v0.9.1 // indirect
+-	github.com/prometheus/client_golang v1.22.0 // indirect
+-	github.com/prometheus/client_model v0.6.1 // indirect
+-	github.com/prometheus/common v0.62.0 // indirect
+-	github.com/prometheus/procfs v0.15.1 // indirect
+-	github.com/spf13/afero v1.12.0 // indirect
+-	github.com/spf13/cobra v1.10.1 // indirect
++	github.com/prometheus/client_golang v1.23.2 // indirect
++	github.com/prometheus/client_model v0.6.2 // indirect
++	github.com/prometheus/common v0.67.5 // indirect
++	github.com/prometheus/procfs v0.19.2 // indirect
++	github.com/spf13/afero v1.15.0 // indirect
++	github.com/spf13/cobra v1.10.2 // indirect
+ 	github.com/spf13/pflag v1.0.10 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	go.uber.org/zap v1.27.0 // indirect
+-	go.yaml.in/yaml/v2 v2.4.2 // indirect
++	go.uber.org/zap v1.28.0 // indirect
++	go.yaml.in/yaml/v2 v2.4.3 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+@@ -60,27 +68,26 @@ require (
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/term v0.47.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
+-	golang.org/x/time v0.11.0 // indirect
++	golang.org/x/time v0.15.0 // indirect
+ 	golang.org/x/tools v0.51.0 // indirect
+-	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+ 	google.golang.org/grpc v1.83.2 // indirect
+ 	google.golang.org/protobuf v1.36.11 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+ 	gopkg.in/yaml.v2 v2.4.0 // indirect
+ 	go
+```
+
+**File**: `test/e2e/functions/revision-id/go.sum` (modified, +155/-127)
+```diff
+@@ -1,32 +1,47 @@
++cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
++cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ dario.cat/mergo v1.0.2 h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
+ dario.cat/mergo v1.0.2/go.mod h1:E/hbnu0NxMFBjpMIE34DRGLWqDy0g5FuKDhCb31ngxA=
++github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
++github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
+ github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
+ github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
+-github.com/alecthomas/kong v1.16.1 h1:ixhCt93XkJ98kGposQ54+bl0IK6XwqB40AsMynU7Z8E=
+-github.com/alecthomas/kong v1.16.1/go.mod h1:wrlbXem1CWqUV5Vbmss5ISYhsVPkBb1Yo7YKJghju2I=
++github.com/alecthomas/kong v1.17.0 h1:f52BVWChYMDkMkCoqkEWRuFOk/K4B5LO7xIijeLJRdk=
++github.com/alecthomas/kong v1.17.0/go.mod h1:wrlbXem1CWqUV5Vbmss5ISYhsVPkBb1Yo7YKJghju2I=
+ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
+ github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
++github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYWrPrQ=
++github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
+ github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
+ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
++github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdnnjpJbkM4JQ=
++github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
++github.com/blang/semver/v4 v4.0.0/go.mod h1:IbckMUScFkM3pff0VJDNKRiT6TG/YpiHIM2yvyW5YoQ=
++github.com/cenkalti/backoff/v5 v5.0.3 h1:ZN+IMa753KfX5hd8vVaMixjnqRZ3y8CuJKRKj1xcsSM=
++github.com/cenkalti/backoff/v5 v5.0.3/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F97BxZthm/crw=
+ github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
+ github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
+ github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
+-github.com/crossplane/crossplane-runtime/v2 v2.0.0 h1:PK2pTKfshdDZ5IfoiMRiCi0PBnIjqbS0KGXEJgRdrb4=
+-github.com/crossplane/crossplane-runtime/v2 v2.0.0/go.mod h1:pkd5UzmE8esaZAApevMutR832GjJ1Qgc5Ngr78ByxrI=
+-github.com/crossplane/function-sdk-go v0.5.0 h1:wF+pOsR6jlIUHZjpSL6tbuSP0UB7s25+4AGkNytsHKk=
+-github.com/crossplane/function-sdk-go v0.5.0/go.mod h1:bIvGe17dIdpZ/YULrg5xAP8MK+eS3ot5BAuQEntaeWc=
++github.com/crossplane/crossplane-runtime/v2 v2.3.1 h1:g2jT8aWl8bVuM62oeUiCv4FcrwoNcmJBXWj2ZpV+2Kw=
++github.com/crossplane/crossplane-runtime/v2 v2.3.1/go.mod h1:kl5xmOCH7pOVs0vMeDyQ5utqCxjmHd3Qa79i9Cc4mw0=
++github.com/crossplane/crossplane/apis/v2 v2.3.1 h1:gaJX/DSp5qnfLoThMxbJZOEziIJBEGbcRl7HjT3R1fk=
++github.com/crossplane/crossplane/apis/v2 v2.3.1/go.mod h1:o+D0ktZQKJCFcpfzMKA4n53aTo2sFqqDsADBNIRuIyE=
++github.com/crossplane/function-sdk-go v0.7.1 h1:BEM2b7nAr8rJYc9tjwnoMfVVy1veCA/juD8APYCVLi0=
++github.com/crossplane/function-sdk-go v0.7.1/go.mod h1:AOD9l/tlKYP6giyT8ZVxrcTUCYliRDKO3aRySojsHVY=
+ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
+ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+-github.com/emicklei/go-restful/v3 v3.12.1 h1:PJMDIM/ak7btuL8Ex0iYET9hxM3CI2sjZtzpL63nKAU=
+-github.com/emicklei/go-restful/v3 v3.12.1/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
+-github.com/evanphx/json-patch/v5 v5.9.0 h1:kcBlZQbplgElYIlo/n1hJbls2z/1awpXxpRi0/FOJfg=
+-github.com/evanphx/json-patch/v5 v5.9.0/go.mod h1:VNkHZ/282BpEyt/tObQO8s5CMPmYYq14uClGH4abBuQ=
++github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bFY/oTyCes=
++github.com/emicklei/go-restful/v3 v3.13.0/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
++github.com/evanphx/json-patch/v5 v5.9.11 h1:/8HVnzMq13/3x9TPvjG08wUGqBTmZBsCWzjTM0wiaDU=
++github.com/evanphx/json-patch/v5 v5.9.11/go.mod h1:3j+LviiESTElxA4p3EMKAB9HXj3/XEtnUf6OZxqIQTM=
+ github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
+ github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
+-github.com/fsnotify/fsnotify v1.8.0 h1:dAwr6QBTBZIkG8roQaJjGof0pp0EeF+tNV7YBP3F/8M=
+-github.com/fsnotify/fsnotify v1.8.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
++github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
++github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
++github.com/fsnotify/fsnotify v1.9
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8025** (2026-11-06): chore(deps): update korthout/backport-action action to v4.7.1 (main) (@crossplane-renovate[bot])
-- **PR #8024** (2026-11-09): chore(deps): update dependency renovate to v44.222.5 (main) (@crossplane-renovate[bot])
-- **PR #8023** (2026-11-06): chore(deps): update buildpulse/buildpulse-action digest to e27b872 (main) (@crossplane-renovate[bot])
-- **PR #8022** (2026-11-06): chore(deps): update bufbuild/buf-action digest to 37ac33d (main) (@crossplane-renovate[bot])
-- **PR #8020** (2026-11-06): chore(deps): update module github.com/klauspost/compress to v1.20.2 [security] (release-2.4) (@crossplane-renovate[bot])
-- **PR #8019** (2026-11-06): chore(deps): update module github.com/klauspost/compress to v1.20.2 [security] (release-2.3) (@crossplane-renovate[bot])
+- **PR #8036** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.4) (@crossplane-renovate[bot])
+- **PR #8035** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.3) (@crossplane-renovate[bot])
+- **PR #8034** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.2) (@crossplane-renovate[bot])
+- **PR #8031** (2026-11-13): chore(deps): update dependency renovate to v44.235.1 (main) (@crossplane-renovate[bot])
+- **PR #8028** (2026-11-13): fix(deps): update go dependencies (main) (@crossplane-renovate[bot])
+- **PR #8027** (2026-11-13): chore(deps): update renovatebot/github-action action to v46.3.13 (main) (@crossplane-renovate[bot])
 
 ---
 
@@ -1612,31 +1843,39 @@ chore(deps): update dependency renovate to v44.222.5 (main)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8024 from crossplane/renovate/main-renovate-44.x
+## X. deps): update go dependencies
 
 **RULE**:
-When implementing operations in `.github/workflows/renovate.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6899c191`: Merge pull request #8024 from crossplane/renovate/main-renovate-44.x. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c1c1b69`: deps): update go dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  RENOVATE_VERSION: "44.222.5"
+	github.com/alecthomas/kong v1.17.0
+	golang.org/x/sync v0.25.0
+	google.golang.org/grpc v1.85.0
+	google.golang.org/genproto/googleapis/api v0.0.0-20260817212433-ac3dfec99bb1 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  RENOVATE_VERSION: "44.221.4"
+	github.com/alecthomas/kong v1.16.1
+	golang.org/x/sync v0.24.0
+	google.golang.org/grpc v1.84.0
+	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6899c191` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c1c1b69` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

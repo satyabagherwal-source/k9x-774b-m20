@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T15:19:17.383Z",
-  "total_records": 163,
+  "last_updated": "2026-11-13T15:30:25.565Z",
+  "total_records": 171,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 104,
+      "total": 107,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -131,7 +131,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
         "DOM-D-A827EB1D",
-        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-apple-lensvlm-9b-core-invariants",
+        "DOM-D-303E5CE5",
+        "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -148,18 +151,20 @@
       ]
     },
     "G": {
-      "total": 6,
+      "total": 8,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-electron-electron-core-invariants",
         "domain_intelligence-architecture-intelligence-tailscale-tailscale-core-invariants",
         "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
-        "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
+        "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 26,
+      "total": 27,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -186,16 +191,19 @@
         "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
         "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-encoredev-encore-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants"
       ]
     },
     "I": {
-      "total": 4,
+      "total": 6,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
         "domain_intelligence-content-information-intelligence-dathere-qsv-core-invariants",
-        "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants",
+        "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants"
       ]
     },
     "J": {
@@ -6130,6 +6138,111 @@
       "repository": "encoredev-encore-learnings",
       "content_hash": "c7556a02b0f16a6acf971032d2c61a00fe6946a95c0a4fdd634ef0989e760424",
       "created_at": "2026-11-13T15:19:17.383Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-apple-lensvlm-9b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-apple-lensvlm-9b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: apple/LensVLM-9B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-lensvlm-9b-research-knowledge-intelligence-apple-lensvlm-9b-core-invari.md",
+      "repository": "apple/LensVLM-9B",
+      "content_hash": "a544068c4ba8e9216a702284b80127a010d87cfed2c643489db4d5598bd6e45e",
+      "created_at": "2026-11-13T15:29:23.798Z"
+    },
+    "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
+      "repository": "crossplane/crossplane",
+      "content_hash": "1b4b1c782b4a03bae1775e6fc2e98c453f8f74751b01cca08b3f955dbc7d642b",
+      "created_at": "2026-11-13T15:29:32.951Z"
+    },
+    "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mitmproxy/mitmproxy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-architecture-intelligence-mitmproxy-mitmproxy-core-invariant.md",
+      "repository": "mitmproxy/mitmproxy",
+      "content_hash": "40756decfa88f749ac784f3c0f7cac27c0290e77b0e599bd3208d3d4851668ce",
+      "created_at": "2026-11-13T15:29:37.240Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
+      "repository": "ClickHouse/ClickHouse",
+      "content_hash": "e0f02991ef7ab740160ea8e2e2bf64833ee3c31c2d4e446fc0ad2ea6c9affa48",
+      "created_at": "2026-11-13T15:29:40.533Z"
+    },
+    "DOM-D-303E5CE5": {
+      "record_id": "DOM-D-303E5CE5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): apple/LensVLM-9B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B))  \n> **Source Version**: `hf-apple-len`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-",
+      "content_hash": "ef2496d97cd0847e9df624378f4ded63c490a082ac467e456f0cc55718483f85",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md`  \n> **Source**: huggingface ([https://huggingface. -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.",
+      "provenance": {
+        "source_uri": "project://hf-apple-lensvlm-9b/hf-apple-lensvlm-9b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T15:29:43.391Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-apple-lensvlm-9b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-apple-lensvlm-9b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T15:30:24.164Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-apple-lensvlm-9b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-lensvlm-9b-learnings-research-knowledge-intelligence-hf-apple-lensvlm-9.md",
+      "repository": "hf-apple-lensvlm-9b-learnings",
+      "content_hash": "eb40089e83cd8e69036fcf84e4b2a84c3f272a83824e7d18fc9ea3f347e69cb6",
+      "created_at": "2026-11-13T15:30:24.377Z"
+    },
+    "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-learnings-content-information-intelligence-crossplane-cros.md",
+      "repository": "crossplane-crossplane-learnings",
+      "content_hash": "8f493ce82181e98e14ecdc041778822dbe2fc132176942755495407765c8d8bb",
+      "created_at": "2026-11-13T15:30:24.909Z"
+    },
+    "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mitmproxy-mitmproxy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-learnings-architecture-intelligence-mitmproxy-mitmproxy-lear.md",
+      "repository": "mitmproxy-mitmproxy-learnings",
+      "content_hash": "57abd6514bc5750107d2500071c93940ae6b288da6800253651c2671c63c6a2c",
+      "created_at": "2026-11-13T15:30:25.565Z"
     }
   }
 }

@@ -9504,3 +9504,8 @@
 | `CYCLE-20261113-GB44` | `2026-11-13T15:18:36.868Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`45ea91e4...`) |
 | `CYCLE-20261113-GE28` | `2026-11-13T15:18:40.688Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fe578b29...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T15:19:16.382Z` | `hf-comfy-org-wan-2.2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A827EB1D` [Domain D] | Yes (`c905e928...`) |
+| `CYCLE-20261113-U64Y` | `2026-11-13T15:29:23.602Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md` | Yes (`6f1d39f9...`) |
+| `CYCLE-20261113-UD3J` | `2026-11-13T15:29:32.623Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1931` | Yes (`a437bfef...`) |
+| `CYCLE-20261113-UGER` | `2026-11-13T15:29:36.915Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`526b4b42...`) |
+| `CYCLE-20261113-UIYB` | `2026-11-13T15:29:40.211Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2932f1d4...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T15:30:24.171Z` | `hf-apple-lensvlm-9b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-303E5CE5` [Domain D] | Yes (`ef2496d9...`) |

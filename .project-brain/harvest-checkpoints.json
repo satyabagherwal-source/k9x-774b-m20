@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T15:18:40.709Z",
+  "last_updated": "2026-11-13T15:29:40.244Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -485,14 +485,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-lensvlm-9b",
-      "content_hash": "e0efb330929580e8d311497727f3ff2937b646884133f00327d8a9998079825e",
-      "verified_at": "2026-11-08T15:21:44.312Z",
+      "content_hash": "6f1d39f942c7d43c507bb7b95c4ed506b8a6125479852d1b7209e013ef78f9ee",
+      "verified_at": "2026-11-13T15:29:23.616Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:21:44.312Z"
+      "last_updated": "2026-11-13T15:29:23.616Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "5b7e0587531287278abe69aa8fb9edf8daaa85869081b8d7040673823c594cae",
-      "verified_at": "2026-11-11T10:08:31.974Z",
+      "content_hash": "526b4b4234627c43077ceee9adaa4956eb6d6e02df367c183944175611ab832a",
+      "verified_at": "2026-11-13T15:29:36.947Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:08:31.974Z"
+      "last_updated": "2026-11-13T15:29:36.947Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "1d151e429a00bbfc4d39a1ee2905380a19a65d417498f99d1356de4a61aa4401",
-      "verified_at": "2026-11-10T04:51:50.325Z",
+      "content_hash": "a437bfefb77772bef10d9c36ef9d2fd78e24f007ce1d16d17f47e04875ef5be4",
+      "verified_at": "2026-11-13T15:29:32.645Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T04:51:50.325Z"
+      "last_updated": "2026-11-13T15:29:32.645Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "5f3970b022f015561639893582677110f3bec653160184dd13bf280049b8bd0f",
-      "verified_at": "2026-11-12T09:19:34.593Z",
+      "content_hash": "2932f1d4c4a1bf48f0de502a67c1795c273bc86eea656f95dc79f0d4a4facb62",
+      "verified_at": "2026-11-13T15:29:40.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T09:19:34.593Z"
+      "last_updated": "2026-11-13T15:29:40.243Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",

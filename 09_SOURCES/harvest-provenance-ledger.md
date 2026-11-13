@@ -9537,3 +9537,8 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e0d532cc` | Multi-dimensional audit evidence | 2026-11-13T15:18:36.871Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `399d7a83` | Multi-dimensional audit evidence | 2026-11-13T15:18:40.692Z |
 | `learn-dom-d-a827eb1d` | `project://hf-comfy-org-wan-2.2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md` | 2026-11-13T15:19:16.382Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-13T15:29:23.607Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `786343a3` | Multi-dimensional audit evidence | 2026-11-13T15:29:32.627Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `d05d6645` | Multi-dimensional audit evidence | 2026-11-13T15:29:36.919Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `c08eec9b` | Multi-dimensional audit evidence | 2026-11-13T15:29:40.215Z |
+| `learn-dom-d-303e5ce5` | `project://hf-apple-lensvlm-9b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md` | 2026-11-13T15:30:24.171Z |

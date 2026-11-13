@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T15:19:17.532Z",
+  "last_updated": "2026-11-13T15:30:25.773Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8534,8 +8534,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "1598acaa",
-      "content_hash": "5f3970b022f015561639893582677110f3bec653160184dd13bf280049b8bd0f",
+      "source_version": "c08eec9b",
+      "content_hash": "2932f1d4c4a1bf48f0de502a67c1795c273bc86eea656f95dc79f0d4a4facb62",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -8562,6 +8562,11 @@
         {
           "number": null,
           "title": "Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-w",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #131190 from groeneai/null-as-default-type-default",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8670,7 +8675,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T09:19:34.425Z",
+      "verified_at": "2026-11-13T15:29:40.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9840,8 +9845,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "6899c191",
-      "content_hash": "1d151e429a00bbfc4d39a1ee2905380a19a65d417498f99d1356de4a61aa4401",
+      "source_version": "786343a3",
+      "content_hash": "a437bfefb77772bef10d9c36ef9d2fd78e24f007ce1d16d17f47e04875ef5be4",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -9859,6 +9864,11 @@
           "number": null,
           "title": "Merge pull request #8024 from crossplane/renovate/main-renovate-44.x",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": 1931,
+          "title": "deps): update go dependencies",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 2030,
@@ -9896,7 +9906,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T04:51:50.174Z",
+      "verified_at": "2026-11-13T15:29:32.496Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21128,7 +21138,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "e0efb330929580e8d311497727f3ff2937b646884133f00327d8a9998079825e",
+      "content_hash": "6f1d39f942c7d43c507bb7b95c4ed506b8a6125479852d1b7209e013ef78f9ee",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -21402,7 +21412,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-11-08T15:21:44.199Z",
+      "verified_at": "2026-11-13T15:29:23.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46253,8 +46263,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "af5d1570",
-      "content_hash": "5b7e0587531287278abe69aa8fb9edf8daaa85869081b8d7040673823c594cae",
+      "source_version": "d05d6645",
+      "content_hash": "526b4b4234627c43077ceee9adaa4956eb6d6e02df367c183944175611ab832a",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -46266,6 +46276,11 @@
         {
           "number": null,
           "title": "mitmweb: add quiet zone around WireGuard QR code (#8585)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Handle STOP_SENDING in raw QUIC mode (#8594)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46389,7 +46404,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:08:31.808Z",
+      "verified_at": "2026-11-13T15:29:36.788Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108401,15 +108416,15 @@
       "learning_id": "rule-1931",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1931,
-      "title": "deps): update go dependencies with security fixes (#932)",
-      "source_url": "https://github.com/nitrictech/nitric",
-      "source_version": "8b1be250",
+      "title": "deps): update go dependencies",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "786343a3",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T00:41:15.682Z"
+      "verified_at": "2026-11-13T15:29:32.496Z"
     },
     "rule-1932": {
       "learning_id": "rule-1932",
@@ -193469,6 +193484,210 @@
       "content_hash": "aa5b1d51c2ef8f41f293367466491e05014f4848ef4a3a0063cab453b1305912",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T15:19:17.532Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-apple-lensvlm-9b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-apple-lensvlm-9b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-lensvlm-9b-research-knowledge-intelligence-apple-lensvlm-9b-core-invari.md",
+      "title": "Research & Knowledge Intelligence: apple/LensVLM-9B Core Invariants",
+      "repository": "apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "content_hash": "a544068c4ba8e9216a702284b80127a010d87cfed2c643489db4d5598bd6e45e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T15:29:23.798Z"
+    },
+    "candidate_directive-deps-update-go-dependencies": {
+      "item_id": "candidate_directive-deps-update-go-dependencies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VHCX-deps-update-go-dependencies.md",
+      "title": "deps): update go dependencies",
+      "repository": "crossplane-crossplane-learnings",
+      "source_version": "HEAD",
+      "content_hash": "072658efe79d8188e46de794f2f514a6e7379469a4644c0f98beda7e0152243b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-13T15:30:24.810Z"
+    },
+    "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
+      "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
+      "repository": "crossplane/crossplane",
+      "source_version": "786343a3",
+      "content_hash": "1b4b1c782b4a03bae1775e6fc2e98c453f8f74751b01cca08b3f955dbc7d642b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-13T15:29:32.951Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crossplane-crossplane-verification-protocol-empirical-defect-shield-for-crosspla.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crossplane/crossplane",
+      "repository": "crossplane/crossplane",
+      "source_version": "786343a3",
+      "content_hash": "73b9a128ef82cb3693f1b5d8b67a3526bf0f4d9cef6731321b2d2a4ff1e191a3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:29:33.048Z"
+    },
+    "candidate_directive-handle-stop_sending-in-raw-quic-mode-8594": {
+      "item_id": "candidate_directive-handle-stop_sending-in-raw-quic-mode-8594",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VHV7-handle-stop_sending-in-raw-quic-mode-8594.md",
+      "title": "Handle STOP_SENDING in raw QUIC mode (#8594)",
+      "repository": "mitmproxy-mitmproxy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eeb4062b07fd25a4fef63e561d8956b555d22c97ae000293e7eee3bc19ee9aaa",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T15:30:25.468Z"
+    },
+    "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-architecture-intelligence-mitmproxy-mitmproxy-core-invariant.md",
+      "title": "Architecture Intelligence: mitmproxy/mitmproxy Core Invariants",
+      "repository": "mitmproxy/mitmproxy",
+      "source_version": "d05d6645",
+      "content_hash": "40756decfa88f749ac784f3c0f7cac27c0290e77b0e599bd3208d3d4851668ce",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T15:29:37.240Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/mitmproxy-mitmproxy-skill-operational-integration-playbook-for-mitmproxy-mitmpro.md",
+      "title": "Skill: Operational & Integration Playbook for mitmproxy/mitmproxy",
+      "repository": "mitmproxy/mitmproxy",
+      "source_version": "d05d6645",
+      "content_hash": "fa4435c62165fae5221806cd27f69574545e98301854fa8a028928e3aca43c66",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T15:29:37.336Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mitmproxy-mitmproxy": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mitmproxy-mitmproxy",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mitmproxy-mitmproxy-verification-protocol-empirical-defect-shield-for-mitmproxy-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mitmproxy/mitmproxy",
+      "repository": "mitmproxy/mitmproxy",
+      "source_version": "d05d6645",
+      "content_hash": "ed10f00b15bbc57d0253bbf8300172347714ff594351512c10d5cc108bfb3386",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:29:37.429Z"
+    },
+    "candidate_directive-merge-pull-request-131190-from-groeneai-null-as-default-type-default": {
+      "item_id": "candidate_directive-merge-pull-request-131190-from-groeneai-null-as-default-type-default",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UJ4F-merge-pull-request-131190-from-groeneai-null-as-default-type-default.md",
+      "title": "Merge pull request #131190 from groeneai/null-as-default-type-default",
+      "repository": "ClickHouse/ClickHouse",
+      "source_version": "c08eec9b",
+      "content_hash": "b93b5373cf39053eb634b2bfec572df44fa31d1198a0d42dfe9e36c5ec3833f2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:29:40.437Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
+      "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
+      "repository": "ClickHouse/ClickHouse",
+      "source_version": "c08eec9b",
+      "content_hash": "e0f02991ef7ab740160ea8e2e2bf64833ee3c31c2d4e446fc0ad2ea6c9affa48",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:29:40.533Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
+      "repository": "ClickHouse/ClickHouse",
+      "source_version": "c08eec9b",
+      "content_hash": "f3d61e27ce266e32c75ff188c5613bf917dd2932a7222311aa226f88f4ece149",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:29:40.629Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-lensvlm-9b-learnings-research-knowledge-intelligence-hf-apple-lensvlm-9.md",
+      "title": "Research & Knowledge Intelligence: hf-apple-lensvlm-9b-learnings Core Invariants",
+      "repository": "hf-apple-lensvlm-9b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eb40089e83cd8e69036fcf84e4b2a84c3f272a83824e7d18fc9ea3f347e69cb6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T15:30:24.377Z"
+    },
+    "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-learnings-content-information-intelligence-crossplane-cros.md",
+      "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
+      "repository": "crossplane-crossplane-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8f493ce82181e98e14ecdc041778822dbe2fc132176942755495407765c8d8bb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-13T15:30:24.909Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crossplane-crossplane-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crossplane-crossplane-learnings",
+      "repository": "crossplane-crossplane-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97081b04ec29a4fd7a04eed9c395afadedc70821aa87b0b093caf0883b467a10",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:30:25.013Z"
+    },
+    "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-learnings-architecture-intelligence-mitmproxy-mitmproxy-lear.md",
+      "title": "Architecture Intelligence: mitmproxy-mitmproxy-learnings Core Invariants",
+      "repository": "mitmproxy-mitmproxy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "57abd6514bc5750107d2500071c93940ae6b288da6800253651c2671c63c6a2c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T15:30:25.565Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/mitmproxy-mitmproxy-learnings-skill-operational-integration-playbook-for-mitmpro.md",
+      "title": "Skill: Operational & Integration Playbook for mitmproxy-mitmproxy-learnings",
+      "repository": "mitmproxy-mitmproxy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "549ce20ffdbbc9170b070df5ceb331a477ad0f14864740c6bed5bc082f1f02b2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T15:30:25.671Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mitmproxy-mitmproxy-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mitmproxy-mitmproxy-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mitmproxy-mitmproxy-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mitmproxy-mitmproxy-learnings",
+      "repository": "mitmproxy-mitmproxy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7b09972ca9f6117d17b953b97cdc9c0b7fd22c2be38c707fdfe6c8af119794d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:30:25.773Z"
     }
   },
   "aliases": {
@@ -199467,5 +199686,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9081
+  "total_items": 9098
 }
