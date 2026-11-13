@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:18:06.008Z",
+  "last_updated": "2026-11-13T14:26:28.320Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8948,6 +8948,24 @@
       "source_repo": "genkit-ai-genkit",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-39FD07-deps-override-undici-and-bump-angular-te.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-CEA418",
+      "directive_title": "example): build Detox from source with a patch for RN 0.89 (#5180)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "software-mansion-react-native-screens",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CEA418-example-build-detox-from-source-with-a-p.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-523486",
+      "directive_title": "core): bump bundled minimatch to 11.0.8 to address CVE-2026-118764 (#39595)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aws-aws-cdk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-523486-core-bump-bundled-minimatch-to-11-0-8-to.md",
       "staged_date": "2026-11-13"
     }
   ]

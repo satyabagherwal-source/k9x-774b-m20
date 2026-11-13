@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T14:17:47.341Z",
+  "last_updated": "2026-11-13T14:26:05.230Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4875,8 +4875,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "ac7afd8b",
-      "content_hash": "bdd6fd2c9487e5a2b97f76226df1f52fd9f304bd90caa71a6b8604c1190a4846",
+      "source_version": "79914032",
+      "content_hash": "81e86aa6c6f9b4a8cd98a346992aaaf481419fec3d68cf8a940d446cacbecfb5",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -4893,6 +4893,11 @@
         {
           "number": null,
           "title": "docs: fix README images that do not render on the API reference site (#38862)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "core): bump bundled minimatch to 11.0.8 to address CVE-2026-118764 (#39595)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4971,7 +4976,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T10:17:33.222Z",
+      "verified_at": "2026-11-13T14:26:00.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35660,7 +35665,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "3c5fa8de6b4dc568909a9ea0b07016c392b91b94d12ed7d83e5fee1c61ffcc64",
+      "content_hash": "720da69c8286abcf6558737f1a916e5d40789a4643326ec29710850575bc37f8",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [
@@ -35738,7 +35743,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-11-08T14:49:06.018Z",
+      "verified_at": "2026-11-13T14:25:31.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55891,8 +55896,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "a3613276",
-      "content_hash": "4f26d34544aa2dfd14a7c8c179a12a3773dbbb0020caff252b0603e09278f726",
+      "source_version": "33d90342",
+      "content_hash": "01ee42e42216e448373c669626ab41e1d52eabb514b53e2008cfc32e8d4187d5",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -55935,6 +55940,11 @@
           "number": null,
           "title": "Containerized CI Pre-Phase Execution Isolation",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "[MOD-20889] [Disk observability] Keep TEXT metadata aggregation in C (#12325)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2157,
@@ -56012,7 +56022,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T08:19:18.904Z",
+      "verified_at": "2026-11-13T14:26:05.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60404,8 +60414,8 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "0cd7f96f",
-      "content_hash": "ae1f0b3852a2f55619f5dadf433ebec3a0da8872ea0f065f591b4476abe9e657",
+      "source_version": "a1f25d01",
+      "content_hash": "b315df1e10f20edca31ade6ef54c9e50df28a66bc4712a725d08890fc7859f69",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
@@ -60417,6 +60427,11 @@
         {
           "number": null,
           "title": "iOS, FormSheet): clean up and ignore stale content wrappers (#5153)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "example): build Detox from source with a patch for RN 0.89 (#5180)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -60450,7 +60465,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:27:35.207Z",
+      "verified_at": "2026-11-13T14:25:57.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

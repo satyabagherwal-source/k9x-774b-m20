@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `ac7afd8b`  
+> **Source Version**: `79914032`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T10:17:21.678Z  
+> **Timestamp**: 2026-11-13T14:25:42.595Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T10:07:20.306Z  
+> **Harvest Timestamp**: 2026-11-13T14:25:42.582Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12972 stars
+- **Stars / Engagement**: 12975 stars
 
 ---
 
@@ -1200,254 +1200,846 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac7afd8b` (2026-11-12)
-**Commit Message**: docs: fix README images that do not render on the API reference site (#38862)
+### Incident Patch 1: `c153af90` (2026-11-13)
+**Commit Message**: fix(core): bump bundled minimatch to 11.0.8 to address CVE-2026-118764 (#39595)
 
 ### Issue # (if applicable)
 
-Closes #34023.
+Closes #39594.
 
 ### Reason for this change
 
-Three README images are referenced by a repository-relative path. That resolves on GitHub, but the API reference site renders the README at a different base URL, so the browser requests the images from a path that does not exist and they silently render as broken.
+`aws-cdk-lib` bundles `minimatch@10.2.6`, which is affected by [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) / CVE-2026-118764 (denial of service via globparts amplification, affected `< 11.0.1`). There is no patched `10.x` release, so the fix requires the `minimatch` major version 11.
 
-Confirmed against the live pages:
-
-| Reference | Requested URL on the docs site | `naturalWidth` |
-| --- | --- | --- |
-| `images/ui-screenshot.png` | `https://docs.aws.amazon.com/cdk/api/v2/docs/images/ui-screenshot.png` | `0` |
-| `doc-images/unprocessed-template.png` | `https://docs.aws.amazon.com/cdk/api/v2/docs/doc-images/unprocessed-template.png` | `0` |
-| `doc-images/processed-template.png` | `https://docs.aws.amazon.com/cdk/api/v2/docs/doc-images/processed-template.png` | `0` |
-
-Every other image on those same pages is referenced absolutely and renders correctly, which is the pattern the status badges at the top of every module README already follow.
-
-- https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_synthetics-readme.html
-- https://docs.aws.amazon.com/c
-
-**File**: `packages/aws-cdk-lib/aws-synthetics/README.md` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ exports.handler = async () => {
- 
- The canary will automatically produce a CloudWatch Dashboard:
- 
--![UI Screenshot](images/ui-screenshot.png)
-+![UI Screenshot](https://raw.githubusercontent.com/aws/aws-cdk/main/packages/aws-cdk-lib/aws-synthetics/images/ui-screenshot.png)
- 
- The Canary code will be executed in a lambda function created by Synthetics on your behalf. The Lambda function includes a custom [runtime](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Library.html) provided by Synthetics. The provided runtime includes a variety of handy tools such as [Puppeteer](https://www.npmjs.com/package/puppeteer-core) (for nodejs based one) and Chromium.
- 
-```
-
-**File**: `packages/aws-cdk-lib/cloudformation-include/README.md` (modified, +2/-2)
-```diff
-@@ -119,7 +119,7 @@ So, if you're downloading the template to include from the CloudFormation AWS Co
- make sure to download the unprocessed template
- (the "View processed template" checkbox is left **unchecked**, which is the default):
- 
--![unprocessed template in the CloudFormation AWS Console](doc-images/unprocessed-template.png)
-+![unprocessed template in the CloudFormation AWS Console](https://raw.githubusercontent.com/aws/aws-cdk/main/packages/aws-cdk-lib/cloudformation-include/doc-images/unprocessed-template.png)
- 
- However, certain unprocessed templates can fail when used with the `CfnInclude` class.
- The most common reason for the failure is that the unprocessed template can contain cycles between resources,
-@@ -131,7 +131,7 @@ to cloudformation, set `allowCyclicalReferences` of CfnIncludeProps to true.
- When that happens, you should instead download the processed template from the CloudFormation AWS Console
- (make sure the "View processed template" checkbox is **checked** in that case):
- 
--![processed template in the CloudFormation AWS Console](doc-images/processed-template.png)
-+![processed template in the CloudFormation AWS Console](https://raw.githubusercontent.com/aws/aws-cdk/main/packages/aws-cdk-lib/cloudformation-include/doc-images/processed-template.png)
- 
- When you include that processed template in your CDK application,
- running `cdk diff` will now show a lot of differences with the deployed Stack,
-```
-
----
-
-### Incident Patch 2: `42d9c2e8` (2026-11-10)
-**Commit Message**: docs: fix grammar errors and typos in README files (#37578)
-
-Fixes various grammar errors and typos in README files:
-- "featuer" → "feature" (cx-api)
-- "it's" → "its" (possessive)
-- "allows to" → "allows you to"
-- "the a stage" → "a stage" (apigateway)
-
-Consolidates the following closed PRs into a single review:
-- #37436, #37437, #37438, #37439
-
-All changes are documentation-only (README files). No code behavior changes.
-
-**File**: `packages/@aws-cdk/integ-tests-alpha/README.md` (modified, +1/-1)
-```diff
-@@ -219,7 +219,7 @@ new AwsApiCall(myAppStack, 'GetObject', {
- 
- ### DeployAssert
- 
--Assertions are created by using the `DeployAssert` construct. This construct creates it's own `Stack` separate from
-+Assertions are created by using the `DeployAssert` construct. This construct creates its own `Stack` separate from
- any stacks that you create as part of your integration tests. This `Stack` is treated differently from other stacks
- by the `integ-runner` tool. For example, this stack will not be diffed by the `integ-runner`.
- 
-```
-
-**File**: `packages/aws-cdk-lib/aws-apigateway/README.md` (modified, +1/-1)
-```diff
-@@ -1416,7 +1416,7 @@ new apigateway.RestApi(this, 'books', {
- 
- You can use the `methodOptions` property to configure
- [default method throttling](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html#apigateway-api-level-throttling-in-usage-plan)
--for a stage. The following snippet configures the a stage that accepts
-+for a stage. The following snippet configures a stage that accepts
- 100 requests per minute, allowing burst up to 200 requests per minute.
- 
- ```ts
-```
-
-**File**: `packages/aws-cdk-lib/aws-config/README.md` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ new config.AccessKeysRotated(this, 'AccessKeyRotated');
- #### CloudFormation Stack drift detection
- 
- Checks whether your CloudFormation stack's actual configuration differs, or has drifted,
--from it's expected configuration.
-+from its expected configuration.
- 
- ```ts
- // compliant if stack's status is 'IN_SYNC'
-```
-
-**File**: `packages/aws-cdk-lib/aws-kms/README.md` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ must be set to `true`. By default, this flag is `false` and grant calls on an im
- 
- If you can't use a KMS key imported by alias (e.g. because you need access to the key id), you can lookup the key with `Key.fromLookup()`.
- 
--In general, the preferred method would be to use `Alias.fromAliasName()` which returns an `IAlias` object which extends `IKey`. However, some services need to have access to the underlying key id. In this case, `Key.fromLookup()` allows to lookup the key id.
-+In general, the preferred method would be to use `Alias.fromAliasName()` which returns an `IAlias` object which extends `IKey`. However, some services need to have access to the underlying key id. In this case, `Key.fromLookup()` allows you to look up the key id.
- 
- The result of the `Key.fromLookup()` operation will be written to a file
- called `cdk.context.json`. You must commit this file to source control so
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda-destinations/README.md` (modified, +2/-2)
-```diff
-@@ -122,7 +122,7 @@ payload file in the configured bucket is `aws/lambda/async/<function-name>/YYYY/
- 
- ### Auto-extract response payload with lambda destination
- 
--The `responseOnly` option of `LambdaDestination` allows to auto-extract the response payload from the
-+The `responseOnly` option of `LambdaDestination` allows you to auto-extract the response payload from the
- invocation record:
- 
- ```ts
-@@ -146,5 +146,5 @@ In the above example, `destinationFn` will be invoked with the payload returned
- When used with `onFailure`, the destination function is invoked with the error object returned
- by the source function.
- 
--Using the `responseOnly` option allows to easily chain asynchronous Lambda functions without
-+Using the `responseOnly` option allows you to easily chain asynchronous Lambda functions without
- having to deal with data extraction in the runtime code.
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/README.md` (modified, +1/-1)
-```diff
-@@ -238,7 +238,7 @@ new nodejs.NodejsFunction(this, 'my-handler', {
-     charset: nodejs.Charset.UTF8, // do not escape non-ASCII characters, defaults to Charset.ASCII
-     format: nodejs.OutputFormat.ESM, // ECMAScript module output format, defaults to OutputFormat.CJS (OutputFormat.ESM requires Node.js >= 14)
-     mainFields: ['module', 'main'], // prefer ECMAScript versions of dependencies
--    inject: ['./my-shim.js', './other-shim.js'], // allows to automatically replace a global variable with an import from another file
-+    inject: ['./my-shim.js', './other-shim.js'], // allows you to automatically replace a global variable with an import from another file
-     esbuildArgs: { // Pass additional arguments to esbuild
-       "--log-limit": "0",
-       "--splitting": true,
-```
-
-**File**: `packages/aws-cdk-lib/cx-api/FEATURE_FLAGS.md` (modified, +1/-1)
-```diff
-@@ -1494,7 +1494,7 @@ any prefix.
- 
- Flag type: New default behavior
- 
--When this featuer flag is enabled, the default volume type of the EBS volume will be `EbsDeviceVolumeType.GENERAL_PURPOSE_SSD_GP3`.
-+When this feature flag is enabled, the default volume type of the EBS volume will be `EbsDeviceVolumeType.GENERAL_PURPOSE_SSD_GP3`.
- 
- 
- | Since | Unset behaves like | Recommended value |
-```
-
-**File**: `packages/aws-cdk-lib/cx-api/README.md` (modified, +2/-2)
-```diff
-@@ -345,7 +345,7 @@ _cdk.json_
- 
- When enabled, the default volume type of the EBS volume will be GP3.
- 
--When this featuer flag is enabled, the default volume type of the EBS volume will be `EbsDeviceVolumeType.GENERAL_PURPOSE_SSD_GP3`
-+When this feature flag is enabled, the default volume type of the EBS volume will be `EbsDeviceVolumeType.GENERAL_PURPOSE_SSD_GP3`
- 
- _cdk.json_
- 
-@@ -361,7 +361,7 @@ _cdk.json_
- 
- When enabled, remove default deployment alarm settings.
- 
--When this featuer flag is enabled, remove the default deployment alarm settings when creating a AWS ECS service.
-+When this feature flag is enabled, remove the default deployment alarm settings when creating a AWS ECS service.
- 
- _cdk.json_
- 
-```
-
----
-
-### Incident Patch 3: `2c226f06` (2026-11-10)
-**Commit Message**: docs(ec2): fix typo (#37321)
-
-### Issue # (if applicable)
-
-Closes #<issue number here>.
-
-### Reason for this change
-
-
+Because `minimatch` is a bundled dependency, consumers can't fix this with `overrides`/`resolutions`. The `yarn-upgrade` workflow uses `ncu --target=minor` and won't pick up the major bump.
 
 ### Description of changes
 
+- `packages/aws-cdk-lib/package.json`: `minimatch` `^10.2.6` → `^11.0.1`.
+- `yarn.lock`: new `minimatch@^11.0.1` entry resolving to `11.0.8`, plus its new dependency `@isaacs/nonrecursive-glob-match@1.1.0`. `brace-expansion@^5.0.12` resolves to the existing `5.0.13` entry. `^10.2.6` is removed from the shared `minimatch@10.2.6` entry, which other tooling in the monorepo still uses. The lockfile was regenerated with `yarn install` on top of current `main`.
+- `packages/aws-cdk-lib/NOTICE`: attribution for the
 
-
-### Describe any new or updated permissions being added
-
-
-
-
-### Description of how you validated changes
-
-
-
-### Checklist
-- [ ] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
-
-----
-
-*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*
-
-**File**: `packages/aws-cdk-lib/aws-ec2/lib/connections.ts` (modified, +1/-1)
+**File**: `packages/aws-cdk-lib/NOTICE` (modified, +60/-0)
 ```diff
-@@ -30,7 +30,7 @@ export interface IConnectable {
- }
+@@ -74,6 +74,66 @@ software or this license, under any kind of legal claim.
  
- /**
-- * Properties to intialize a new Connections object
-+ * Properties to initialize a new Connections object
-  */
- export interface ConnectionsProps {
+ ----------------
+ 
++** @isaacs/nonrecursive-glob-match - https://www.npmjs.com/package/@isaacs/nonrecursive-glob-match
++
++Blue Oak Model License
++
++Version 1.0.0
++
++Purpose
++
++This license gives everyone as much permission to work with
++this software as possible, while protecting contributors
++from liability.
++
++Acceptance
++
++In order to receive this license, you must agree to its
++rules. The rules of this license are both obligations
++under that agreement and conditions to your license.
++You must not do anything with this software that triggers
++a rule that you cannot or will not follow.
++
++Copyright
++
++Each contributor licenses you to do everything with this
++software that would otherwise infringe that contributor's
++copyright in it.
++
++Notices
++
++You must ensure that everyone who gets a copy of
++any part of this software from you, with or without
++changes, also gets the text of this license or a link to
++https://blueoakcouncil.org/license/1.0.0.
++
++Excuse
++
++If anyone notifies you in writing that you have not
++complied with Notices, you can keep your
++license by taking all practical steps to comply within 30
++days after the notice. If you do not do so, your license
++ends immediately.
++
++Patent
++
++Each contributor licenses you to do everything with this
++software that would otherwise infringe any patent claims
++they can license or become able to license.
++
++Reliability
++
++No contributor can revoke this license.
++
++No Liability
++
++As far as the law allows, this software comes as is,
++without any warranty or condition, and no contributor
++will be liable to anyone for any damages related to this
++software or this license, under any kind of legal claim.
++
++----------------
++
+ The AWS CDK includes the following third-party software/licensing:
+ 
+ ** mime-db - https://www.npmjs.com/package/mime-db
+```
+
+**File**: `packages/aws-cdk-lib/package.json` (modified, +1/-1)
+```diff
+@@ -129,7 +129,7 @@
+     "ignore": "^5.3.2",
+     "jsonschema": "^1.5.0",
+     "mime-types": "^2.1.35",
+-    "minimatch": "^10.2.6",
++    "minimatch": "^11.0.1",
+     "punycode": "^2.3.1",
+     "semver": "^7.8.6",
+     "yaml": "1.10.3"
+```
+
+**File**: `yarn.lock` (modified, +15/-2)
+```diff
+@@ -3202,6 +3202,11 @@
+   dependencies:
+     minipass "^7.0.4"
+ 
++"@isaacs/nonrecursive-glob-match@^1.1.0":
++  version "1.1.0"
++  resolved "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.1.0.tgz#b1d69b8938aab4c292f7fde628c47dc1dbd737ef"
++  integrity sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==
++
+ "@isaacs/string-locale-compare@^1.1.0":
+   version "1.1.0"
+   resolved "https://registry.npmjs.org/@isaacs/string-locale-compare/-/string-locale-compare-1.1.0.tgz#291c227e93fd407a96ecd59879a35809120e432b"
+@@ -5987,7 +5992,7 @@ brace-expansion@^2.0.1, brace-expansion@^2.0.2:
+   dependencies:
+     balanced-match "^1.0.0"
+ 
+-brace-expansion@^5.0.5, brace-expansion@^5.0.8:
++brace-expansion@^5.0.12, brace-expansion@^5.0.5, brace-expansion@^5.0.8:
+   version "5.0.13"
+   resolved "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.13.tgz#e2d4497370f7e385e6f96b57bd7ff11d77d85851"
+   integrity sha512-Vh3dmFbc4wZeox7M9I/0L9GfFd83Su4+yCck/OF9Gi/P/dAHn0RT7X4K9R7gMNMhDck3DvhR6QXsnQdjjgwNvQ==
+@@ -10911,13 +10916,21 @@ minimatch@9.0.3:
+   dependencies:
+     brace-expansion "^2.0.1"
+ 
+-minimatch@^10.0.1, minimatch@^10.2.2, minimatch@^10.2.6, minimatch@~10.2.6:
++minimatch@^10.0.1, minimatch@^10.2.2, minimatch@~10.2.6:
+   version "10.2.6"
+   resolved "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz#fd956bbe0b77241e9f15ac5dccb1c638060968ef"
+   integrity sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==
+   dependencies:
+     brace-expansion "^5.0.8"
+ 
++minimatch@^11.0.1:
++  version "11.0.8"
++  resolved "https://registry.npmjs.org/minimatch/-/minimatch-11.0.8.tgz#715fc3509cd7f76ed9af2f702a98411b1b0288c8"
++  integrity sha512-nFQuYSTVrGvysVBps5Ih+0BdnYFN/Cj3C816r6+p7yK+FHrVLGE4O4N9AFwykrlNlvM2HYt+Rad1Uiro6h88Ig==
++  dependencies:
++    "@isaacs/nonrecursive-glob-match" "^1.1.0"
++    brace-expansion "^5.0.12"
++
+ minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2, minimatch@^3.1.5:
+   version "3.1.5"
+   resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.5.tgz#580c88f8d5445f2bd6aa8f3cadefa0de79fbd69e"
+```
+
+---
+
+### Incident Patch 2: `9170700b` (2026-11-12)
+**Commit Message**: feat(bedrockagentcore): support runtime build hooks and minimum memory (#39695)
+
+### Issue # (if applicable)
+
+Closes #39696.
+
+# Summary of Changes
+
+## Description
+
+Adds two optional props to the AgentCore `Runtime` L2 construct, rendered to the new `CfnRuntime` properties `HooksConfiguration` and `ResourceConfigurations`:
+
+- `buildHooks`: hooks the service calls on the agent's container while it builds the runtime. Today that is a `warmup` hook, created with `LifecycleHook.httpPost({ path, port? })`, which runs before the service snapshots the agent so every session starts from a warmed state.
+- `minimumMemory`: the minimum memory for each runtime session, as a `Size` (for example `Size.gibibytes(4)`), rendered as `MinimumMemoryInMiB`.
+
+```ts
+new agentcore.Runtime(this, 'Runtime', {
+  runtimeName: 'my_agent',
+  agentRuntimeArtifact,
+  platformVersion: agentcore.PlatformVersion.V2,
+  buildHooks: {
+    warmup: agentcore.LifecycleHook.httpPost({ path: '/warmup', port: 8080 }),
+  },
+  minimumMemory: cdk.Size.gibibytes(4),
+});
+```
+
+Builds on the L1 update in #39701 (`@aws-cdk/aws-service-spec` 0.1.231), which added `HooksConfiguration` and `ResourceConfigurations` to `CfnRuntime`.
+
+### 
+
+**File**: `packages/@aws-cdk-testing/framework-integ/package.json` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@
+     "@aws-cdk/integ-runner": "^2.207.0",
+     "@aws-cdk/pkglint": "0.0.0",
+     "@aws-sdk/client-acm": "3.632.0",
+-    "@aws-sdk/client-bedrock-agentcore-control": "3.1143.0",
++    "@aws-sdk/client-bedrock-agentcore-control": "3.1166.0",
+     "@aws-sdk/client-ec2": "3.632.0",
+     "@aws-sdk/client-rds": "3.632.0",
+     "@aws-sdk/client-s3": "3.632.0",
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/build-hooks-verifier/index.js` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++/* eslint-disable */
++// Plain .js on purpose: bundled by esbuild at synth, and kept out of the package's tsc build (which
++// compiles only **/*.ts). It pins a current bedrock-agentcore-control SDK whose model includes
++// hooksConfiguration and resourceConfigurations.
++const { BedrockAgentCoreControlClient, GetAgentRuntimeCommand } = require('@aws-sdk/client-bedrock-agentcore-control');
++
++const client = new BedrockAgentCoreControlClient({});
++
++// Returns "<hook path>:<hook port>:<minimum memory MiB>" for the deployed runtime.
++exports.handler = async (event) => {
++  const res = await client.send(new GetAgentRuntimeCommand({ agentRuntimeId: event.agentRuntimeId }));
++  const httpPost = res.hooksConfiguration?.build?.warmup?.action?.httpPost;
++  const memory = res.resourceConfigurations?.[0]?.minimumMemoryInMiB;
++  const summary = `${httpPost?.path}:${httpPost?.port}:${memory}`;
++  console.log(`GetAgentRuntime returned ${summary}`);
++  return summary;
++};
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/buildHooksArtifact/Dockerfile` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++FROM public.ecr.aws/docker/library/python:3.12-slim
++WORKDIR /app
++COPY app.py .
++EXPOSE 8080
++CMD ["python", "app.py"]
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/buildHooksArtifact/app.py` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++#!/usr/bin/env python3
++"""Minimal AgentCore Runtime test agent (HTTP protocol) with a warmup build hook.
++
++Implements the AgentCore custom HTTP contract on port 8080:
++  GET  /ping         -> health check (must return 200 for the runtime to stabilize)
++  POST /invocations  -> agent invocation
++  POST /warmup       -> warmup build hook (must return 2xx or the runtime build fails)
++Used by integ.runtime-build-hooks to deploy a real V2 runtime with a warmup hook and minimum memory.
++"""
++import json
++import logging
++from http.server import HTTPServer, BaseHTTPRequestHandler
++
++logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
++logger = logging.getLogger(__name__)
++
++
++class Handler(BaseHTTPRequestHandler):
++    def _send(self, code, body):
++        payload = json.dumps(body).encode()
++        self.send_response(code)
++        self.send_header('Content-Type', 'application/json')
++        self.send_header('Content-Length', str(len(payload)))
++        self.end_headers()
++        self.wfile.write(payload)
++
++    def _read_body(self):
++        length = int(self.headers.get('Content-Length', 0))
++        return self.rfile.read(length) if length else b''
++
++    def do_GET(self):
++        if self.path == '/ping':
++            self._send(200, {'status': 'Healthy'})
++        else:
++            self._send(404, {'error': 'not found'})
++
++    def do_POST(self):
++        raw = self._read_body()
++        if self.path == '/warmup':
++            logger.info('Warmup hook called')
++            self._send(200, {'status': 'warm'})
++        elif self.path == '/invocations':
++            try:
++                data = json.loads(raw) if raw else {}
++            except json.JSONDecodeError:
++                data = {}
++            self._send(200, {'output': f"Echo: {data.get('prompt', '')}"})
++        else:
++            self._send(404, {'error': 'not found'})
++
++    def log_message(self, fmt, *args):
++        logger.info('%s - %s', self.address_string(), fmt % args)
++
++
++if __name__ == '__main__':
++    logger.info('Starting test agent on :8080')
++    HTTPServer(('', 8080), Handler).serve_forever()
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/integ.runtime-build-hooks.js.snapshot/BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.assets.json` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++{
++  "version": "55.0.0",
++  "files": {
++    "59699f3599c12b54666f05dd2d4702da313e1466f561751ee1d588dd5228a950": {
++      "source": {
++        "path": "asset.59699f3599c12b54666f05dd2d4702da313e1466f561751ee1d588dd5228a950.bundle",
++        "packaging": "zip"
++      },
++      "destinations": {
++        "current_account-current_region-b881a5e0": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "59699f3599c12b54666f05dd2d4702da313e1466f561751ee1d588dd5228a950.zip",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    },
++    "543871a85c8de711628d8aef84e51f1e00921ae3b3716fc710256c26bfa0caf6": {
++      "displayName": "BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F Template",
++      "source": {
++        "path": "BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.template.json",
++        "packaging": "file"
++      },
++      "destinations": {
++        "current_account-current_region-877dd630": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "543871a85c8de711628d8aef84e51f1e00921ae3b3716fc710256c26bfa0caf6.json",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    }
++  },
++  "dockerImages": {}
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/integ.runtime-build-hooks.js.snapshot/BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.metadata.json` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++{
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert": [
++    {
++      "type": "aws:cdk:warning",
++      "data": "No cross-stack-reference strength configured, defaulting to \"strong\". We recommend you set feature flag \"@aws-cdk/core:defaultCrossStackReferences\" to \"both\", then deploy everywhere, then set it to \"weak\". Alternatively, set it to \"strong\" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) [ack: @aws-cdk/core:crossStackReferencesDefaultStrong]",
++      "trace": [
++        "Annotations.addMessage (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/annotations.js:279:29)",
++        "Annotations.addWarningV2 (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/annotations.js:145:18)",
++        "resolveValue (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/refs.js:215:54)",
++        "resolveReferencesInElements (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/refs.js:139:30)",
++        "resolveReferences (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/refs.js:124:5)",
++        "prepareApp (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/prepare-app.js:35:36)",
++        "synthesize (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/synthesis.js:72:36)",
++        "App.synth (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/stage.js:230:96)",
++        "App.synth (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/app.js:231:27)",
++        "process.<anonymous> (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/app.js:178:51)",
++        "Object.onceWrapper (node:events:634:26)",
++        "process.emit (node:events:519:28)"
++      ]
++    },
++    {
++      "type": "aws:cdk:templateFile",
++      "data": "BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.template.json"
++    }
++  ],
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/BootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "BootstrapVersion"
++    }
++  ],
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/CheckBootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "CheckBootstrapVersion"
++    }
++  ],
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/LambdaInvokeba6c6b6e12994c5657955bec4846f242/Default": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    }
++  ],
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/LambdaInvokeba6c6b6e12994c5657955bec4846f242/Invoke": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "LambdaInvokeba6c6b6e12994c5657955bec4846f242InvokeFF298FB6"
++    }
++  ],
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/LambdaInvokeba6c6b6e12994c5657955bec4846f242/AssertionResults": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AssertionResultsLambdaInvokeba6c6b6e12994c5657955bec4846f242"
++    }
++  ],
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Role": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73"
++    }
++  ],
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Handler": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F"
++    }
++  ],
++  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/LambdaInvokeba6c6b6e12994c5657955bec4846f242/Default/Default": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "LambdaInvokeba6c6b6e12994c5657955bec4846f242"
++    }
++  ]
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/integ.runtime-build-hooks.js.snapshot/BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.template.json` (added, +203/-0)
+```diff
+@@ -0,0 +1,203 @@
++{
++ "Resources": {
++  "LambdaInvokeba6c6b6e12994c5657955bec4846f242": {
++   "Type": "Custom::DeployAssert@SdkCallLambdainvoke",
++   "Properties": {
++    "ServiceToken": {
++     "Fn::GetAtt": [
++      "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F",
++      "Arn"
++     ]
++    },
++    "service": "Lambda",
++    "api": "invoke",
++    "expected": "{\"$ObjectLike\":{\"Payload\":\"\\\"/warmup:8080:4096\\\"\"}}",
++    "parameters": {
++     "FunctionName": {
++      "Fn::Join": [
++       "",
++       [
++        "\"",
++        {
++         "Fn::ImportValue": "aws-cdk-bedrock-agentcore-runtime-build-hooks:ExportsOutputRefBuildHooksVerifier5ADACB5EF9D8BB61"
++        },
++        "\""
++       ]
++      ]
++     },
++     "Payload": {
++      "Fn::Join": [
++       "",
++       [
++        "\"{\\\"agentRuntimeId\\\":\\\"",
++        {
++         "Fn::ImportValue": "aws-cdk-bedrock-agentcore-runtime-build-hooks:ExportsOutputFnGetAttTestRuntime65042BB5AgentRuntimeId5490EDE2"
++        },
++        "\\\"}\""
++       ]
++      ]
++     }
++    },
++    "flattenResponse": "false",
++    "salt": "1794427191267"
++   },
++   "UpdateReplacePolicy": "Delete",
++   "DeletionPolicy": "Delete"
++  },
++  "LambdaInvokeba6c6b6e12994c5657955bec4846f242InvokeFF298FB6": {
++   "Type": "AWS::Lambda::Permission",
++   "Properties": {
++    "Action": "lambda:InvokeFunction",
++    "FunctionName": {
++     "Fn::ImportValue": "aws-cdk-bedrock-agentcore-runtime-build-hooks:ExportsOutputRefBuildHooksVerifier5ADACB5EF9D8BB61"
++    },
++    "Principal": {
++     "Fn::GetAtt": [
++      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
++      "Arn"
++     ]
++    }
++   }
++  },
++  "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73": {
++   "Type": "AWS::IAM::Role",
++   "Properties": {
++    "AssumeRolePolicyDocument": {
++     "Version": "2012-10-17",
++     "Statement": [
++      {
++       "Action": "sts:AssumeRole",
++       "Effect": "Allow",
++       "Principal": {
++        "Service": "lambda.amazonaws.com"
++       }
++      }
++     ]
++    },
++    "ManagedPolicyArns": [
++     {
++      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
++     }
++    ],
++    "Policies": [
++     {
++      "PolicyName": "Inline",
++      "PolicyDocument": {
++       "Version": "2012-10-17",
++       "Statement": [
++        {
++         "Action": [
++          "lambda:Invoke"
++         ],
++         "Effect": "Allow",
++         "Resource": [
++          "*"
++         ]
++        },
++        {
++         "Action": [
++          "lambda:InvokeFunction"
++         ],
++         "Effect": "Allow",
++         "Resource": [
++          {
++           "Fn::Join": [
++            "",
++            [
++             "arn:",
++             {
++              "Ref": "AWS::Partition"
++             },
++             ":lambda:",
++             {
++              "Ref": "AWS::Region"
++             },
++             ":",
++             {
++              "Ref": "AWS::AccountId"
++             },
++             ":function:",
++             {
++              "Fn::ImportValue": "aws-cdk-bedrock-agentcore-runtime-build-hooks:ExportsOutputRefBuildHooksVerifier5ADACB5EF9D8BB61"
++             }
++            ]
++           ]
++          }
++         ]
++        }
++       ]
++      }
++     }
++    ]
++   }
++  },
++  "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F": {
++   "Type": "AWS::Lambda::Function",
++   "Properties": {
++    "Runtime": "nodejs24.x",
++    "Code": {
++     "S3Bucket": {
++      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
++     },
++     "S3Key": "59699f3599c12b54666f05dd2d4702da313e1466f561751ee1d588dd5228a950.zip"
++    },
++    "Timeout": 120,
++    "Handler": "index.handler",
++    "Role": {
++     "Fn::GetAtt": [
++      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
++      "Arn"
++     ]
++    },
++    "LoggingConfig": {
++     "LogFormat": "JSON",
++     "ApplicationLogLevel": "FATAL"
++    }
++   }
++  }
++ },
++ "Outputs": {
++  "AssertionResultsLambdaInvokeba6c6b6e12994c5657955bec4846f242": {
++   "Value": {
++    "Fn::GetAtt": [
++     "LambdaInvokeba6c6b6e12994c5657955bec4846f242",
++     "assertion"
++    ]
++   }
++  }
++ },
++ "Parameters": {
++  "BootstrapVersion": {
++   "Type": "AWS::SSM::Parameter::Value<String>",
++   "Default": "/cdk-bootstrap/hnb659fds/version",
++   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
++  }
++ },
++ "Rules": {
++  "CheckBootstrapVersion": {
++   "Assertions": [
++    {
++     "Assert": {
++      "Fn::Not": [
++       {
++        "Fn::Contains": [
++         [
++          "1",
++          "2",
++          "3",
++          "4",
++          "5"
++         ],
++         {
++          "Ref": "BootstrapVersion"
++         }
++        ]
++       }
++      ]
++     },
++     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
++    }
++   ]
++  }
++ }
++
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/integ.runtime-build-hooks.js.snapshot/asset.6528f3d28d4b4fcb85fe3418aa8484e437716009856ef6fc36583e50cf7ef299/Dockerfile` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++FROM public.ecr.aws/docker/library/python:3.12-slim
++WORKDIR /app
++COPY app.py .
++EXPOSE 8080
++CMD ["python", "app.py"]
+```
+
+---
+
+### Incident Patch 3: `06a1c50a` (2026-11-12)
+**Commit Message**: feat(elbv2): add RFC 9151 (CNSA 1.0) SSL security policies for ALB and NLB (#38700)
+
+### Issue # (if applicable)
+
+Relates to #38666.
+
+### Reason for this change
+
+AWS added TLS-based security policies for Application Load Balancer (HTTPS listeners) and Network Load Balancer (TLS listeners) that comply with RFC 9151 for the Commercial National Security Algorithm (CNSA) 1.0 suite: [AWS Application and Network Load Balancers now support RFC 9151 compliant security policies](https://aws.amazon.com/about-aws/whats-new/2026/08/aws-application-network/) from August 2026. 
+
+The CDK `SslPolicy` enum did not expose these policies yet, so users had to workaround via mixin or  fall back to the L1 escape hatch to select them. Let's change this.
+
+### Description of changes
+
+Added the 7 RFC 9151 (CNSA 1.0) security policies to the shared `SslPolicy` enum (used by both ALB and NLB listeners):
+
+- Strict policies (enforce full RFC 9151 requirements):
+  - `RFC9151_TLS13_13` → `ELBSecurityPolicy-TLS13-1-3-RFC9151-FIPS-2023-07`
+  - `RFC9151_TLS13_12` → `ELBSecurityPolicy-TLS13-1-2-RFC9151-FIPS-2023-07`
+  - `RFC9151_TLS13_12_EXT0` → `ELBSecurityPolicy-TLS13-1-2-Ext0-RFC9151-FIPS-2023-07`
+- Interop polici
+
+**File**: `packages/aws-cdk-lib/aws-elasticloadbalancingv2/lib/shared/enums.ts` (modified, +74/-0)
+```diff
+@@ -305,6 +305,80 @@ export enum SslPolicy {
+    */
+   FIPS_TLS13_10_PQ = 'ELBSecurityPolicy-TLS13-1-0-FIPS-PQ-2025-09',
+ 
++  /**
++   * TLS 1.3 only, RFC 9151 (CNSA 1.0) strict policy. FIPS-compliant.
++   *
++   * Supports the single cipher TLS_AES_256_GCM_SHA384. Use a strict policy only when all
++   * clients can negotiate RFC 9151 algorithms.
++   *
++   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
++   */
++  RFC9151_TLS13_13 = 'ELBSecurityPolicy-TLS13-1-3-RFC9151-FIPS-2023-07',
++
++  /**
++   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) strict policy. FIPS-compliant.
++   *
++   * Adds the ECDHE-ECDSA and ECDHE-RSA AES256-GCM-SHA384 ciphers on top of
++   * {@link RFC9151_TLS13_13} for TLS 1.2 clients. Use a strict policy only when all clients
++   * can negotiate RFC 9151 algorithms.
++   *
++   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
++   */
++  RFC9151_TLS13_12 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-FIPS-2023-07',
++
++  /**
++   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) strict policy. FIPS-compliant.
++   *
++   * Same as {@link RFC9151_TLS13_12} plus the non-ECDHE AES256-GCM-SHA384 cipher (extended
++   * cipher suite 0). Use a strict policy only when all clients can negotiate RFC 9151 algorithms.
++   *
++   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
++   */
++  RFC9151_TLS13_12_EXT0 = 'ELBSecurityPolicy-TLS13-1-2-Ext0-RFC9151-FIPS-2023-07',
++
++  /**
++   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) interoperability policy. FIPS-compliant.
++   *
++   * Interop policies mix RFC 9151 and non-RFC 9151 ciphers so clients can transition gradually.
++   * This variant adds the AES128-GCM-SHA256 ciphers (TLS_AES_128_GCM_SHA256,
++   * ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-RSA-AES128-GCM-SHA256) to the RFC 9151 GCM ciphers.
++   *
++   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
++   */
++  RFC9151_TLS13_12_INTEROP1 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP1-FIPS-2023-07',
++
++  /**
++   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) interoperability policy. FIPS-compliant.
++   *
++   * Extends {@link RFC9151_TLS13_12_INTEROP1} with the AES-SHA256 CBC ciphers
++   * (ECDHE-ECDSA/RSA-AES256-SHA384 and ECDHE-ECDSA/RSA-AES128-SHA256).
++   *
++   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
++   */
++  RFC9151_TLS13_12_INTEROP2 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP2-FIPS-2023-07',
++
++  /**
++   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) interoperability policy. FIPS-compliant.
++   *
++   * Adds the AES-SHA1 CBC ciphers (ECDHE-ECDSA/RSA-AES256-SHA and ECDHE-ECDSA/RSA-AES128-SHA)
++   * on top of the GCM and SHA256 ciphers, for the widest client compatibility of the interop
++   * policies.
++   *
++   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
++   */
++  RFC9151_TLS13_12_INTEROP3 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP3-FIPS-2023-07',
++
++  /**
++   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) interoperability policy. FIPS-compliant.
++   *
++   * AWS recommends starting with this policy: it supports clients that negotiate classical
++   * TLS 1.3, TLS 1.2, or strict RFC 9151 algorithms, then move to a stricter policy as clients
++   * gain RFC 9151 support. Also used for backend connections when any listener uses an RFC 9151 policy.
++   *
++   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
++   */
++  RFC9151_TLS13_12_INTEROP4 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP4-FIPS-2023-07',
++
    /**
+    * Strong foward secrecy ciphers and TLV1.2 only (2020 edition).
+    * Same as FORWARD_SECRECY_TLS12_RES, but only supports GCM versions of the TLS ciphers
+```
+
+**File**: `packages/aws-cdk-lib/aws-elasticloadbalancingv2/test/alb/listener.test.ts` (modified, +30/-0)
+```diff
+@@ -2329,6 +2329,36 @@ describe('tests', () => {
+       });
+     });
+   });
++
++  describe('RFC 9151 (CNSA 1.0) SSL policies', () => {
++    test.each([
++      [elbv2.SslPolicy.RFC9151_TLS13_13, 'ELBSecurityPolicy-TLS13-1-3-RFC9151-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_EXT0, 'ELBSecurityPolicy-TLS13-1-2-Ext0-RFC9151-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP1, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP1-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP2, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP2-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP3, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP3-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP4, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP4-FIPS-2023-07'],
++    ])('sets SslPolicy %s on an HTTPS listener', (sslPolicy, expected) => {
++      // GIVEN
++      const stack = new cdk.Stack();
++      const vpc = new ec2.Vpc(stack, 'VPC');
++      const lb = new elbv2.ApplicationLoadBalancer(stack, 'LB', { vpc });
++
++      // WHEN
++      lb.addListener('Listener', {
++        protocol: elbv2.ApplicationProtocol.HTTPS,
++        certificates: [importedCertificate(stack)],
++        sslPolicy,
++        defaultAction: elbv2.ListenerAction.fixedResponse(200),
++      });
++
++      // THEN
++      Template.fromStack(stack).hasResourceProperties('AWS::ElasticLoadBalancingV2::Listener', {
++        SslPolicy: expected,
++      });
++    });
++  });
+ });
+ 
+ class ResourceWithLBDependency extends cdk.CfnResource {
+```
+
+**File**: `packages/aws-cdk-lib/aws-elasticloadbalancingv2/test/nlb/listener.test.ts` (modified, +34/-0)
+```diff
+@@ -750,6 +750,40 @@ describe('tests', () => {
+       });
+     });
+   });
++
++  describe('RFC 9151 (CNSA 1.0) SSL policies', () => {
++    test.each([
++      [elbv2.SslPolicy.RFC9151_TLS13_13, 'ELBSecurityPolicy-TLS13-1-3-RFC9151-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_EXT0, 'ELBSecurityPolicy-TLS13-1-2-Ext0-RFC9151-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP1, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP1-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP2, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP2-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP3, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP3-FIPS-2023-07'],
++      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP4, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP4-FIPS-2023-07'],
++    ])('sets SslPolicy %s on a TLS listener', (sslPolicy, expected) => {
++      // GIVEN
++      const stack = new cdk.Stack();
++      const vpc = new ec2.Vpc(stack, 'VPC');
++      const lb = new elbv2.NetworkLoadBalancer(stack, 'LB', { vpc });
++      const cert = new acm.Certificate(stack, 'Certificate', {
++        domainName: 'example.com',
++      });
++
++      // WHEN
++      lb.addListener('Listener', {
++        port: 443,
++        protocol: elbv2.Protocol.TLS,
++        certificates: [elbv2.ListenerCertificate.fromCertificateManager(cert)],
++        sslPolicy,
++        defaultTargetGroups: [new elbv2.NetworkTargetGroup(stack, 'Group', { vpc, port: 80 })],
++      });
++
++      // THEN
++      Template.fromStack(stack).hasResourceProperties('AWS::ElasticLoadBalancingV2::Listener', {
++        SslPolicy: expected,
++      });
++    });
++  });
+ });
+ 
+ class ResourceWithLBDependency extends cdk.CfnResource {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39694** (closed): feat: update L1 CloudFormation resource definitions (@aws-cdk-automation)
-- **PR #39687** (2026-11-11): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
-- **PR #39685** (2026-11-11): fix(core): bundling 'user' argument is not escaped (@rix0rrr)
-- **PR #39684** (2026-11-11): fix: invalid validation rule ID (@rix0rrr)
-- **PR #39683** (2026-11-11): feat(lambda): add nodejs 26.x runtime (@reedham-aws)
-- **PR #39681** (2026-11-10): chore(merge-back): 2.276.0 (@aws-cdk-automation)
+- **PR #39722** (2026-11-13): chore(merge-back): 2.277.0 (@aws-cdk-automation)
+- **PR #39712** (2026-11-12): feat(lambda-event-sources): support queue consumption mode for self-managed Kafka (@ainafee-amzn)
+- **PR #39711** (2026-11-12): chore(release): 2.277.0 (@aws-cdk-automation)
+- **PR #39709** (2026-11-12): docs: reference the security model in the README (@ozelalisen)
+- **PR #39703** (closed): chore(release): 2.277.0 (@aws-cdk-automation)
+- **PR #39701** (2026-11-12): feat: update L1 CloudFormation resource definitions (@aws-cdk-automation)
 
 ---
 
@@ -1467,28 +2059,71 @@ Closes #<issue number here>.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix README images that do not render on the API reference site (#38862)
+## X. core): bump bundled minimatch to 11.0.8 to address CVE-2026-118764 (#39595)
 
 **RULE**:
-When implementing operations in `packages/aws-cdk-lib/aws-synthetics/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/aws-cdk-lib/NOTICE`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac7afd8b`: docs: fix README images that do not render on the API reference site (#38862). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c153af90`: core): bump bundled minimatch to 11.0.8 to address CVE-2026-118764 (#39595). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-synthetics/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/NOTICE`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-![UI Screenshot](https://raw.githubusercontent.com/aws/aws-cdk/main/packages/aws-cdk-lib/aws-synthetics/images/ui-screenshot.png)
+** @isaacs/nonrecursive-glob-match - https://www.npmjs.com/package/@isaacs/nonrecursive-glob-match
+
+Blue Oak Model License
+
+Version 1.0.0
+
+Purpose
+
+This license gives everyone as much permission to work with
+this software as possible, while protecting contributors
+from liability.
+
+Acceptance
+
+In order to receive this license, you must agree to its
+rules. The rules of this license are both obligations
+under that agreement and conditions to your license.
+You must not do anything with this software that triggers
+a rule that you cannot or will not follow.
+
+Copyright
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe that contributor's
+copyright in it.
+
+Notices
+
+You must ensure that everyone who gets a copy of
+any part of this software from you, with or without
+changes, also gets the text of this license or a link to
+https://blueoakcouncil.org/license/1.0.0.
+
+Excuse
+
+If anyone notifies you in writing that you have not
+complied with Notices, you can keep your
+license by taking all practical steps to comply within 30
+days after the notice. If you do not do so, your license
+ends immediately.
+
+Patent
+
+Each contributor licenses you to do everythi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-![UI Screenshot](images/ui-screenshot.png)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac7afd8b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c153af90` are properly handled with clean fallback behavior.

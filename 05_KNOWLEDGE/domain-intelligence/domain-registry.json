@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T14:18:05.912Z",
-  "total_records": 138,
+  "last_updated": "2026-11-13T14:26:28.000Z",
+  "total_records": 139,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 93,
+      "total": 94,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -118,7 +118,8 @@
         "DOM-D-B9912729",
         "DOM-D-E7FD79E5",
         "DOM-D-B39F30BA",
-        "DOM-D-9522FB5E"
+        "DOM-D-9522FB5E",
+        "DOM-D-98796BF2"
       ]
     },
     "E": {
@@ -5781,6 +5782,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T14:18:05.909Z"
+    },
+    "DOM-D-98796BF2": {
+      "record_id": "DOM-D-98796BF2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): XingChen-AGI/Xing4.0-29B-A4B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B](https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B))  \n> **Source Version**: `hf-xingchen-`  \n> **License**: Open-",
+      "content_hash": "8add30aa9a2cc6ae4ffb13b1877aece0bd434412fdd8df6b7c74599178ccaa83",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md`  \n> **Source**: huggingface ([https://",
+      "provenance": {
+        "source_uri": "project://hf-xingchen-agi-xing4.0-29b-a4b/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T14:26:11.719Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xingchen-agi-xing4.0-29b-a4b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-xingchen-agi-xing4.0-29b-a4b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T14:26:27.997Z"
     }
   }
 }

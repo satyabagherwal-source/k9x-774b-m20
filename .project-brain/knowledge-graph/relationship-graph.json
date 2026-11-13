@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T14:18:05.914Z",
+  "updated_at": "2026-11-13T14:26:28.003Z",
   "statistics": {
-    "total_nodes": 94,
+    "total_nodes": 95,
     "total_edges": 50,
     "domain_distribution": {
-      "D": 75,
+      "D": 76,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -2092,6 +2092,28 @@
       ],
       "created_at": "2026-11-13T14:18:05.914Z",
       "updated_at": "2026-11-13T14:18:05.914Z"
+    },
+    "DOM-D-98796BF2": {
+      "id": "DOM-D-98796BF2",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): XingChen-AGI/Xing4.0-29B-A4B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md`  \n> **Source**: huggingface ([https://",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-xingchen-agi-xing4.0-29b-a4b/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T14:26:11.719Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xingchen-agi-xing4.0-29b-a4b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T14:26:28.002Z",
+      "updated_at": "2026-11-13T14:26:28.002Z"
     }
   },
   "edges": [

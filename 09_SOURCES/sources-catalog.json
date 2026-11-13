@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "3c5fa8de6b4dc568909a9ea0b07016c392b91b94d12ed7d83e5fee1c61ffcc64",
-    "lastHarvestedAt": "2026-11-08T14:49:06.149Z",
+    "contentHash": "720da69c8286abcf6558737f1a916e5d40789a4643326ec29710850575bc37f8",
+    "lastHarvestedAt": "2026-11-13T14:25:31.346Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "ac7afd8b",
+    "sourceVersion": "79914032",
     "license": "Apache-2.0",
-    "contentHash": "bdd6fd2c9487e5a2b97f76226df1f52fd9f304bd90caa71a6b8604c1190a4846",
-    "lastHarvestedAt": "2026-11-12T10:17:33.365Z",
+    "contentHash": "81e86aa6c6f9b4a8cd98a346992aaaf481419fec3d68cf8a940d446cacbecfb5",
+    "lastHarvestedAt": "2026-11-13T14:26:01.150Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "a3613276",
+    "sourceVersion": "33d90342",
     "license": "NOASSERTION",
-    "contentHash": "4f26d34544aa2dfd14a7c8c179a12a3773dbbb0020caff252b0603e09278f726",
-    "lastHarvestedAt": "2026-11-12T08:19:19.252Z",
+    "contentHash": "01ee42e42216e448373c669626ab41e1d52eabb514b53e2008cfc32e8d4187d5",
+    "lastHarvestedAt": "2026-11-13T14:26:05.362Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "0cd7f96f",
+    "sourceVersion": "a1f25d01",
     "license": "MIT",
-    "contentHash": "ae1f0b3852a2f55619f5dadf433ebec3a0da8872ea0f065f591b4476abe9e657",
-    "lastHarvestedAt": "2026-11-09T04:27:35.327Z",
+    "contentHash": "b315df1e10f20edca31ade6ef54c9e50df28a66bc4712a725d08890fc7859f69",
+    "lastHarvestedAt": "2026-11-13T14:25:57.226Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {

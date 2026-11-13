@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:17:47.486Z",
-  "total_cycles_completed": 9262,
-  "total_learnings_persisted": 9262,
-  "total_rules_promoted": 9026,
+  "last_updated": "2026-11-13T14:26:05.369Z",
+  "total_cycles_completed": 9266,
+  "total_learnings_persisted": 9266,
+  "total_rules_promoted": 9029,
   "history": [
-    {
-      "timestamp": "2026-11-12T23:16:53.681Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:17:01.239Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:28:54.717Z",
-      "repository": "kamgurgul/cpu-info",
-      "learningId": "learn-github-kamgurgul-cpu-info",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:29:00.828Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T23:41:45.899Z",
       "repository": "joreilly/Confetti",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-13T14:17:47.486Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:25:31.353Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:25:57.256Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:26:01.158Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:26:05.369Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

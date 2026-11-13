@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T14:18:05.922Z",
+  "updated_at": "2026-11-13T14:26:28.690Z",
   "stats": {
-    "total_discovered": 2508,
-    "approved_pending_harvest": 2337,
+    "total_discovered": 2535,
+    "approved_pending_harvest": 2364,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2330,
-      "OFFICIAL_DOCUMENTATION": 94,
-      "STANDARDS_AND_SPECIFICATIONS": 74,
+      "COMMUNITY_AND_EXPERT": 2354,
+      "OFFICIAL_DOCUMENTATION": 95,
+      "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
-      "SECURITY_ADVISORIES": 8,
+      "SECURITY_ADVISORIES": 9,
       "LEGAL_AND_REGULATORY": 1
     }
   },
@@ -53998,6 +53998,600 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
         "fileName": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md"
+      }
+    },
+    "SRC-AFDFA90A322D": {
+      "id": "SRC-AFDFA90A322D",
+      "url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "title": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
+        "fileName": "hf-xingchen-agi-xing4.0-29b-a4b-learnings.md"
+      }
+    },
+    "SRC-86557885F3C8": {
+      "id": "SRC-86557885F3C8",
+      "url": "https://github.com/software-mansion/react-native-screens",
+      "title": "https://github.com/software-mansion/react-native-screens",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.046Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-4DDE8D264204": {
+      "id": "SRC-4DDE8D264204",
+      "url": "https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1",
+      "title": "https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.068Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-7EF7433A0FC0": {
+      "id": "SRC-7EF7433A0FC0",
+      "url": "https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5199?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5199?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.106Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-9D34F3263DBF": {
+      "id": "SRC-9D34F3263DBF",
+      "url": "https://github.com/software-mansion/react-native-screens-labs/pull/1805",
+      "title": "https://github.com/software-mansion/react-native-screens-labs/pull/1805",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-3242E77328A9": {
+      "id": "SRC-3242E77328A9",
+      "url": "https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg",
+      "title": "https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-498C49E4EF82": {
+      "id": "SRC-498C49E4EF82",
+      "url": "https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog.svg",
+      "title": "https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-2D3F43E1C79E": {
+      "id": "SRC-2D3F43E1C79E",
+      "url": "https://github.com/wix/Detox/issues/2848",
+      "title": "https://github.com/wix/Detox/issues/2848",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.215Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-476242C02C74": {
+      "id": "SRC-476242C02C74",
+      "url": "https://github.com/wix/Detox/issues/3973",
+      "title": "https://github.com/wix/Detox/issues/3973",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-2EDF060BDCAC": {
+      "id": "SRC-2EDF060BDCAC",
+      "url": "https://github.com/facebook/react-native/pull/58469",
+      "title": "https://github.com/facebook/react-native/pull/58469",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.258Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-774D8CD58ADB": {
+      "id": "SRC-774D8CD58ADB",
+      "url": "https://github.com/software-mansion/react-native-screens/issues/5112",
+      "title": "https://github.com/software-mansion/react-native-screens/issues/5112",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-64265A39ECFC": {
+      "id": "SRC-64265A39ECFC",
+      "url": "https://github.com/rafalnawojczyk/rns-nested-stack-header-crash-repro",
+      "title": "https://github.com/rafalnawojczyk/rns-nested-stack-header-crash-repro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-FBCFD2305C08": {
+      "id": "SRC-FBCFD2305C08",
+      "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+      "title": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-B601FDF31C7B": {
+      "id": "SRC-B601FDF31C7B",
+      "url": "https://www.npmjs.com/package/@isaacs/nonrecursive-glob-match",
+      "title": "https://www.npmjs.com/package/@isaacs/nonrecursive-glob-match",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.397Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-C465EDA081C9": {
+      "id": "SRC-C465EDA081C9",
+      "url": "https://blueoakcouncil.org/license/1.0.0",
+      "title": "https://blueoakcouncil.org/license/1.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.418Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-EC3D0A38FA12": {
+      "id": "SRC-EC3D0A38FA12",
+      "url": "https://www.npmjs.com/package/mime-db",
+      "title": "https://www.npmjs.com/package/mime-db",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.438Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-31F474C8F1D7": {
+      "id": "SRC-31F474C8F1D7",
+      "url": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.1.0.tgz",
+      "title": "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.467Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-4C29CCFA0C0C": {
+      "id": "SRC-4C29CCFA0C0C",
+      "url": "https://registry.npmjs.org/@isaacs/string-locale-compare/-/string-locale-compare-1.1.0.tgz",
+      "title": "https://registry.npmjs.org/@isaacs/string-locale-compare/-/string-locale-compare-1.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.487Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-7A0066AEE4BF": {
+      "id": "SRC-7A0066AEE4BF",
+      "url": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.13.tgz",
+      "title": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.13.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.508Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-8ECDEB5586E7": {
+      "id": "SRC-8ECDEB5586E7",
+      "url": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
+      "title": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-15EF182C2437": {
+      "id": "SRC-15EF182C2437",
+      "url": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.8.tgz",
+      "title": "https://registry.npmjs.org/minimatch/-/minimatch-11.0.8.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.555Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-3D86972E665A": {
+      "id": "SRC-3D86972E665A",
+      "url": "https://registry.npmjs.org/minimatch/-/minimatch-3.1.5.tgz",
+      "title": "https://registry.npmjs.org/minimatch/-/minimatch-3.1.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.584Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-634132EB9A2C": {
+      "id": "SRC-634132EB9A2C",
+      "url": "https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md",
+      "title": "https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.605Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-3CBDD3FEA837": {
+      "id": "SRC-3CBDD3FEA837",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2026/08/aws-application-network",
+      "title": "https://aws.amazon.com/about-aws/whats-new/2026/08/aws-application-network",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-3C6428080C51": {
+      "id": "SRC-3C6428080C51",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html",
+      "title": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.647Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-3FDD171EE8AF": {
+      "id": "SRC-3FDD171EE8AF",
+      "url": "https://www.rfc-editor.org/rfc/rfc9151",
+      "title": "IETF RFC 9151",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.668Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-78F63B28FD05": {
+      "id": "SRC-78F63B28FD05",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-118764",
+      "title": "Vulnerability Advisory CVE-2026-118764",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:26:28.690Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
       }
     }
   }

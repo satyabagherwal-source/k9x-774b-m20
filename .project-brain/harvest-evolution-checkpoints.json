@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:18:06.090Z",
+  "last_updated": "2026-11-13T14:26:28.701Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T13:34:34.562Z",
@@ -1018,7 +1018,7 @@
       "staged_for_review": 1
     },
     "aws-aws-cdk-learnings.md": {
-      "processed_at": "2026-11-12T10:17:38.596Z",
+      "processed_at": "2026-11-13T14:26:28.321Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1881,9 +1881,19 @@
       "processed_at": "2026-11-13T14:18:05.915Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-xingchen-agi-xing4.0-29b-a4b-learnings.md": {
+      "processed_at": "2026-11-13T14:26:28.004Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "software-mansion-react-native-screens-learnings.md": {
+      "processed_at": "2026-11-13T14:26:28.036Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 585,
-  "total_canonical_promoted": 105,
-  "total_staged_for_review": 477
+  "total_dossiers_evaluated": 588,
+  "total_canonical_promoted": 106,
+  "total_staged_for_review": 479
 }

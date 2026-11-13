@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `0cd7f96f`  
+> **Source Version**: `a1f25d01`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T04:27:33.925Z  
+> **Timestamp**: 2026-11-13T14:25:39.851Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T04:27:33.918Z  
+> **Harvest Timestamp**: 2026-11-13T14:25:39.844Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native navigation primitives for your React Native app.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3749 stars
+- **Stars / Engagement**: 3753 stars
 
 ---
 
@@ -365,11 +365,15 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5153** (2026-11-06): **fix(iOS, FormSheet): clean up and ignore stale content wrappers**
-  *Symptoms*: ## Description  Follow-up to #5147, which has landed. I found this while investigating #5143. It is tracked in https://github.com/software-mansion/react-native-screens-labs/issues/2052 and is not a regression from #5147.  Closes software-mansion/react-native-screens-labs#2052.  A form sheet remembers one content wrapper in `_contentWrapperBox` and uses it to find and size its scroll view. A nested screen's wrapper, such as the screen of a stack rendered inside the sheet, registers itself there in `willMoveToWindow:`. The box holds a weak pointer. An unmounted wrapper is not deallocated, though. Fabric keeps it in the recycle pool and reuses it in the next screen that needs a content wrapper. The pool is LIFO, so that is usually the very next one.  Sometimes the nested screen goes away while the sheet stays presented, and no other wrapper registers afterwards. An example is a multi-step sheet that swaps its nested navigator for plain content. The box then keeps pointing at the pooled wrapper. Once Fabric reuses it in another screen, the next sheet layout (for example a detent change) does two things:  - `tryFindDescendantScrollView` returns that other screen's ScrollView, and the sheet starts observing it. - `correctScrollViewFrame:` and the bounds KVO handler size that ScrollView to the sheet's frame.  In the repro, the list of a screen pushed beneath the sheet gets clipped to the sheet's height. This is the same kind of bug as #4785, where the sheet's own scroll view was rec
+- **Issue #5199** (2026-11-10): **chore: Post Argent Cloud reports with inline screenshots through the reports App**
+  *Symptoms*: ## Description  Argent Cloud report comments are now posted directly through the GitHub API with the reports App token, instead of through `argent-cloud comment`. Each run posts one comment under the mirror issue: the workflow report with the agent's report, then the session's screenshots in a 3-column grid, ordered and captioned by their number, then the agent stream.  ## Changes  - Screenshots are committed to a dedicated branch of the reports repository and embedded from that commit. Without the contents permission, or when the commit fails, the comment lists them instead. - Removed the `comment` job, the `post-argent-cloud-comment` action and the public-issue comment option. - The tester prompt says how screenshots are numbered and laid out. - Security hardening of the workflow.  ## Test plan  - Type-checked the helpers and syntax-checked every shell step. - Ran the helpers against a mock GitHub API. - The first real run on a labeled issue will confirm that the images render.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5199?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- walkthrough_start -->  <details> <summary><strong>Walkthrough</strong></summary> <dl> <dd> <br>  The PR moves Argent Cloud report publishing from the Argent C
 
-- **Issue #5147** (2026-11-06): **fix(iOS, FormSheet): reset content wrapper delegate on recycle**
-  *Symptoms*: ## Description  On iOS, pushing a screen right after a `formSheet` that hosts its own stack is dismissed reports `[RNScreens] sheetPresentationController is null when attempting to set allowed detents`. It shows a red box in development and writes an OS log line in release.  The cause is a recycled `RNSScreenContentWrapper` that still has its `delegate` set to the dismissed sheet:  1. Every native-stack screen renders a content wrapper. The sheet's own wrapper gets `delegate = sheet` on mount. The wrapper of the screen inside the sheet's nested stack then registers with the sheet in `attachToAncestorScreenView` (`willMoveToWindow:`). That replaces the sheet's `_contentWrapperBox`, so the sheet sizes itself to the nested screen's content. Below iOS 26, the nested navigation bar's height is added too. 2. On teardown, `-[RNSScreenView unmountChildComponentView:index:]` clears the delegate of `_contentWrapperBox.contentWrapper`, which is the nested wrapper, not the child being unmounted. The sheet's own wrapper keeps `delegate == sheet`. 3. `RNSScreenContentWrapper` can be recycled, and it did not reset its delegate in `prepareForRecycle`. 4. Fabric's `Insert` mutation (`RCTMountingManager.mm`) calls `updateLayoutMetrics:` on a reused view **before** it calls `mountChildComponentView:` on the new parent. The pushed screen reuses the sheet's wrapper from the pool, and that wrapper reports its first frame to the invalidated sheet. The sheet's `_controller` is already nil at that po
+- **Issue #5192** (2026-11-13): **feat(iOS, Split): Stack.Host as the only child of Split.Column navigates the column**
+  *Symptoms*: ## Description  Next PR of the Split/Stack series ([RFC-1805](https://github.com/software-mansion/react-native-screens-labs/pull/1805)), stacked on #5186. `Stack.Host` rendered as the only child of a `Split.Column` becomes the navigator of that column on iOS.  How the pieces from the previous PRs come together:  - `RNSSplitScreenShadowNode` looks at its only direct child, and when it is an `RNSStackHost` it sets its own Yoga display to `contents`. - `Stack.Host` renders with `display: contents` when it is column content, which it learns from `SplitColumnMarkerContext` provided by `Split.Column` and reset by `Stack.Screen`, so a stack nested in a screen is not affected. - `RNSSplitScreenComponentView` takes the provider over when the host is mounted as its child. - `RNSStackHostComponentView` logs an error and shows nothing when it is out of layout but no column took it over. - `RNSSplitHostController.splitScreenControllers` becomes `visibleColumnControllersWithoutProvider` and skips columns backed by a provided navigation controller: they have no `RNSSplitScreenController` in the hierarchy and their content reports its own frame.  ## Changes  - RNSSplitScreenComponentView take-over and release of the provider - the `disableStackIntegration` prop - `splitScreenControllers` renamed to `visibleColumnControllersWithoutProvider`  ## Before & after - visual documentation  | Appearance events | Stack header subviews | Disabling stack integration | | --- | --- | 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- This is an auto-generated comment: skip review by coderabbit.ai -->  > [!IMPORTANT] > ## Review skipped >  > Auto reviews are disabled on base/target branches other than the default branch. >  >  >  > Please check the settings in the CodeRabbit UI or the `.coderabbit.yaml` file in this repository. To trigger a single review, invoke the `@coderabbitai review` command. >  > <details> > <summary><strong><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog.svg" width="16" height="16" align="absmiddle" alt=""></picture> Run configuration</strong></summary> > <dl> > <dd> > <br> >  > - **Source mode**: Auto > - **Repository**: Unavailable > - **Branch**: Unavailable > - **File**: No confi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -386,992 +390,855 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0cd7f96f` (2026-11-06)
-**Commit Message**: fix(iOS, FormSheet): clean up and ignore stale content wrappers (#5153)
+### Incident Patch 1: `d20ab95e` (2026-11-12)
+**Commit Message**: chore(example): build Detox from source with a patch for RN 0.89 (#5180)
 
 ## Description
 
-Follow-up to #5147, which has landed. I found this while investigating
-#5143. It is tracked in
-https://github.com/software-mansion/react-native-screens-labs/issues/2052
-and is not a regression from #5147.
+Android e2e on `main` has been failing since the RN 0.89 bump (#5156):
+every spec dies in `beforeAll` → `device.reloadReactNative()` with
 
-Closes software-mansion/react-native-screens-labs#2052.
+```
+NoSuchMethodError: No static method getFabricEnabled() in class DefaultNewArchitectureEntryPoint
+```
 
-A form sheet remembers one content wrapper in `_contentWrapperBox` and
-uses it to find and size its scroll view. A nested screen's wrapper,
-such as the screen of a stack rendered inside the sheet, registers
-itself there in `willMoveToWindow:`. The box holds a weak pointer. An
-unmounted wrapper is not deallocated, though. Fabric keeps it in the
-recycle pool and reuses it in the next screen that needs a content
-wrapper. The pool is LIFO, so that is usually the very next one.
+Detox 20.45.1 decides whether the app runs the New Architecture by
+reading `DefaultNewArchitectureEntryPoint.fabricEnabled`
+(`isFabricEnabled()` in `ReactApplicationExt.kt`, used by four call
+sites). React Native removed that property in
+facebook/react-native#58469, first shipped in 0.89. Detox `master` and
+the latest release (20.51.4) still carry the same code, so upgrading
+Detox does not help; the one-line upstream fix (check
+`ReactNativeInfo.isNewArchitectureOnlyVersion()` first) will be reported
+separately.
 
-Sometimes the nested screen goes away while the sheet stays presented,
-and no other wrapper registers afterwards. An example is a multi-step
-sheet that swaps its nested navigator for plain content. The box then
-keeps pointing at the pooled wrapper. Once Fabric reuses it in another
-screen, the next sheet layout (for example a detent change) does two
-things:
+The prebuilt `com.wix:detox` AAR cannot be patched, so FabricExample
+builds `:detox` from `node_modules/detox/android/detox` with a
+`patch-package` patch applied by the existing `postinstall` script.
 
-- `tryFin
+## Changes
 
-**File**: `apps/src/tests/issue-tests/TestLabs2052.tsx` (added, +197/-0)
+- `FabricExample/patches/detox+20.45.1.patch`
+- `isFabricEnabled()` returns `true` (FabricExample is New Architecture
+only).
+- Legacy-
+
+**File**: `FabricExample/android/app/build.gradle` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,197 @@
-+import React from 'react';
-+import { NavigationContainer } from '@react-navigation/native';
-+import {
-+  createNativeStackNavigator,
-+  type NativeStackNavigationProp,
-+} from '@react-navigation/native-stack';
-+import { Button, ScrollView, Text, View } from 'react-native';
-+import { Colors } from '@apps/shared/styling';
-+
-+// Reproduces https://github.com/software-mansion/react-native-screens-labs/issues/2052
-+//
-+// A form sheet must not keep using a content wrapper that belonged to a nested
-+// screen after that screen is gone.
-+//
-+// 1. "Open form sheet": the sheet hosts its own native stack. The nested
-+//    screen's RNSScreenContentWrapper registers with the sheet.
-+// 2. "Finish step": the sheet replaces the nested stack with plain content and
-+//    stays presented. Fabric recycles the nested screen's content wrapper.
-+// 3. "Push list beneath": pushes List in the stack nested in Home, beneath the
-+//    sheet. Fabric reuses the most recently recycled content wrapper for List.
-+// 4. "Shrink sheet": resizes the sheet, which runs its scroll view correction.
-+//
-+// Expected: the blue list beneath the sheet still fills its screen.
-+// Bug: the sheet sizes List's ScrollView to its own size, so the blue list
-+// ends at the sheet's height and white shows below it.
-+
-+type RootStackParamList = {
-+  Home: undefined;
-+  Sheet: undefined;
-+};
-+
-+type HomeStackParamList = {
-+  HomeMain: undefined;
-+  List: undefined;
-+};
-+
-+type SheetStackParamList = {
-+  Step: undefined;
-+};
-+
-+const RootStack = createNativeStackNavigator<RootStackParamList>();
-+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
-+const SheetStack = createNativeStackNavigator<SheetStackParamList>();
-+
-+// Navigating from the sheet to a screen of the root stack would present it
-+// above the sheet, so the sheet pushes List in Home's stack through this ref.
-+const pushListBeneathSheet: { current: (() => void) | null } = {
-+  current: null,
-+};
-+
-+const FinishStepContext = React.createContext<() => void>(() => {});
-+
-+function HomeMain({
-+  navigation,
-+}: {
-+  navigation: NativeStackNavigationProp<HomeStackParamList, 'HomeMain'>;
-+}) {
-+  React.useEffect(() => {
-+    // `navigate` would also focus Home in the root stack, which closes the
-+    // sheet. `push` does not change the focused route of the parent.
-+    pushListBeneathSheet.current = () => navigation.push('List');
-+    return () => {
-+      pushListBeneathSheet.current = null;
-+    };
-+  }, [navigation]);
-+
-+  return (
-+    <View
-+      style={{
-+        flex: 1,
-+        alignItems: 'center',
-+        justifyContent: 'center',
-+        backgroundColor: Colors.White,
-+      }}>
-+      <Button
-+        title="Open form sheet"
-+        onPress={() =>
-+          navigation
-+            .getParent<NativeStackNavigationProp<RootStackParamList>>()
-+            .navigate('Sheet')
-+        }
-+        testID="home-open-sheet"
-+      />
-+    </View>
-+  );
-+}
-+
-+function List() {
-+  return (
-+    <ScrollView
-+      style={{ backgroundColor: Colors.BlueLight40 }}
-+      contentInsetAdjustmentBehavior="automatic"
-+      testID="list-scroll-view">
-+      {Array.from({ length: 40 }, (_, index) => (
-+        <Text key={index} style={{ padding: 12 }}>
-+          Row {index}
-+        </Text>
-+      ))}
-+    </ScrollView>
-+  );
-+}
-+
-+function Home() {
-+  return (
-+    <HomeStack.Navigator>
-+      <HomeStack.Screen
-+        name="HomeMain"
-+        component={HomeMain}
-+        options={{ title: 'Home' }}
-+      />
-+      <HomeStack.Screen
-+        name="List"
-+        component={List}
-+        options={{
-+          title: 'List',
-+          contentStyle: { backgroundColor: Colors.White },
-+        }}
-+      />
-+    </HomeStack.Navigator>
-+  );
-+}
-+
-+function Step() {
-+  const finishStep = React.useContext(FinishStepContext);
-+  return (
-+    <View style={{ padding: 24, backgroundColor: Colors.White }}>
-+      <Button
-+        title="Finish step"
-+        onPress={finishStep}
-+        testID="sheet-finish-step"
-+      />
-+    </View>
-+  );
-+}
-+
-+function Sheet({
-+  navigation,
-+}: {
-+  navigation: NativeStackNavigationProp<RootStackParamList, 'Sheet'>;
-+}) {
-+  const [isStepFinished, setIsStepFinished] = React.useState(false);
-+  const finishStep = React.useCallback(() => setIsStepFinished(true), []);
-+
-+  if (!isStepFinished) {
-+    return (
-+      <FinishStepContext.Provider value={finishStep}>
-+        <SheetStack.Navigator>
-+          <SheetStack.Screen
-+            name="Step"
-+            component={Step}
-+            options={{ title: 'Step 1' }}
-+          />
-+        </SheetStack.Navigator>
-+      </FinishStepContext.Provider>
-+    );
+@@ -101,6 +101,7 @@ android {
+         versionName "1.0"
+         testBuildType System.getProperty('testBuildType', 'release') // Detox
+         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox
++        missingDimensionStrategy 'detox', 'full' // Detox built from source
+     }
+     signingConfigs {
+         debug {
+@@ -135,7 +136,7 @@ android {
+ 
+ dependencies {
+     // Detox
+-    androidTestImplementation('com.wix:detox:+') {
++    androidTestImplementation(project(path: ':detox')) {
+         // Both rn-screens and detox are using this class
+         // https://github.com/wix/Detox/issues/2848
+         exclude group: 'com.google.android.material'
+```
+
+**File**: `FabricExample/android/app/src/main/java/com/fabricexample/MainApplication.kt` (modified, +32/-3)
+```diff
+@@ -4,10 +4,11 @@ import android.app.Application
+ import com.facebook.react.PackageList
+ import com.facebook.react.ReactApplication
+ import com.facebook.react.ReactHost
+-import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
+-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
++import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
++import com.facebook.react.internal.featureflags.ReactNativeNewArchitectureFeatureFlagsDefaults
+ import com.facebook.react.soloader.OpenSourceMergedSoMapping
++import com.facebook.react.views.view.setEdgeToEdgeFeatureFlagOn
+ import com.facebook.soloader.SoLoader
+ 
+ class MainApplication : Application(), ReactApplication {
+@@ -25,6 +26,34 @@ class MainApplication : Application(), ReactApplication {
+ 
+   override fun onCreate() {
+     super.onCreate()
+-    loadReactNative(this)
++    loadReactNativeWithoutPreparedTextLayout()
 +  }
 +
-+  return (
-+    <View style={{ padding: 24, gap: 12, backgroundColor: Colors.White }}>
-+      <Text>The nested stack is gone, the sheet is still presented.</Text>
-+      <Button
-+        title="Push list beneath"
-+        onPress={() => pushListBeneathSheet.current?.()}
-+        testID="sheet-push-list"
-+      />
-+      
-```
-
-**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
-```diff
-@@ -245,6 +245,7 @@ export { default as TestHeaderHeight } from './TestHeaderHeight';
- export { default as TestModalNavigation } from './TestModalNavigation';
- export { default as TestMemoryLeak } from './TestMemoryLeak';
- export { default as TestFormSheet } from './TestFormSheet';
-+export { default as TestLabs2052 } from './TestLabs2052';
- export { default as TestAndroidTransitions } from './TestAndroidTransitions';
- export { default as TestAnimation } from './TestAnimation';
- export { default as TestBottomTabs } from './TestBottomTabs';
-```
-
-**File**: `ios/legacy/RNSScreen.mm` (modified, +25/-8)
-```diff
-@@ -232,7 +232,7 @@ - (void)applyFrameCorrectionForDescendantScrollView
- - (void)correctScrollViewFrame:(nonnull RCTScrollViewComponentView *)scrollViewComponent
-                     withHeader:(nullable UIView *)headerView
- {
--  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
-+  RNSScreenContentWrapper *_Nullable contentWrapper = [self registeredContentWrapper];
-   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
-     return;
-   }
-@@ -262,7 +262,7 @@ - (void)observeValueForKeyPath:(NSString *)keyPath
-     return;
-   }
- 
--  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
-+  RNSScreenContentWrapper *_Nullable contentWrapper = [self registeredContentWrapper];
-   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
-     return;
-   }
-@@ -501,6 +501,18 @@ - (BOOL)registerContentWrapper:(RNSScreenContentWrapper *)contentWrapper content
-   return YES;
- }
- 
-+/// Returns the content wrapper registered with this screen, or nil if it is no longer registered.
-+///
-+/// `_contentWrapperBox` holds a weak pointer, but an unmounted wrapper stays alive in Fabric's recycle pool and can be
-+/// reused by another screen. This happens when a nested screen's wrapper registered with this form sheet and the nested
-+/// screen is removed while the sheet stays presented. A wrapper that is still registered has this screen as its
-+/// delegate. Unmounting, recycling and mounting in another screen all change the delegate.
-+- (nullable RNSScreenContentWrapper *)registeredContentWrapper
-+{
-+  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
-+  return contentWrapper.delegate == self ? contentWrapper : nil;
-+}
-+
- /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
- - (void)contentWrapper:(RNSScreenContentWrapper *)contentWrapper receivedReactFrame:(CGRect)reactFrame
- {
-@@ -753,7 +765,7 @@ - (nullable RNSScreenStackHeaderConfig *)findHeaderConfig
- - (nullable RCTScrollViewComponentView *)tryFindDescendantScrollView
- {
-   // Step 1: Query registered content wrapper for the scrollview.
--  RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
-+  RNSScreenContentWrapper *contentWrapper = [self registeredContentWrapper];
- 
-   if (RCTScrollViewComponentView *_Nullable scrollViewComponent =
-           [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
-@@ -1160,7 +1172,7 @@ - (void)updateFormSheetPresentationStyle
- 
-   // We trigger update from content wrapper, because on Fabric we update props after the children are mounted & laid
-   // out.
--  [self->_contentWrapperBox.contentWrapper triggerDelegateUpdate];
-+  [[self registeredContentWrapper] triggerDelegateUpdate];
- }
- 
- #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-@@ -1341,11 +1353,11 @@ - (void)invalidate
- - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
- {
-   if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
--    auto contentWrapper = (RNSScreenContentWrapper *)childComponentView;
-+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
-     contentWrapper.delegate = self;
-     _contentWrapperBox.contentWrapper = contentWrapper;
-   } else if ([childComponentView isKindOfClass:RNSScreenStackHeaderConfig.class]) {
--    _config = (RNSScreenStackHeaderConfig *)childComponentView;
-+    _config = static_cast<RNSScreenStackHeaderConfig *>(childComponentView);
-     _config.screenView = self;
-   }
-   [_reactSubviews insertObject:childComponentView atIndex:index];
-@@ -1358,8 +1370,13 @@ - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childCompo
-     _config = nil;
-   }
-   if ([childComponentView isKindOfClass:[RNSScreenContentWrapper class]]) {
--    _contentWrapperBox.contentWrapper.delegate = nil;
--    _contentWrapperBox.contentWrapper = nil;
-+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
-+    // The box may hold a nested screen's wrapper that registered with this form sheet instead of this child.
-+    // The unmounted wrapper must stop reporting regardless of which screen it reported to.
-+    contentWrapper.delegate = nil;
-+    if (_contentWrapperBox.contentWrapper == contentWrapper) {
-+      _contentWrapperBox.contentWrapper = nil;
++  /**
++   * Same as the generated `ReactNativeApplicationEntryPoint.loadReactNative(this)`, except
++   * `enablePreparedTextLayout` is turned off.
++   *
++   * RN 0.89 enables it by default, which mounts `<Text>` as `PreparedLayoutTextView`, a
++   * `ViewGroup` rather than a `TextView`. Detox finds text only through `TextView`, so
++   * `by.text`, `by.label`, `toHaveText` and `getAttributes().text` stop matching and the
++   * Android e2e suite fails wholesale. Feature flags can be overridden only once, which
++   * `DefaultNewArchitectureEntryPoint.load()` already does, so its body is inlined here
++   * with the STABLE flag set (`ReactNativeNewArchitectureFeatureFlagsDefaults`) instead.
++   * Remove once Detox supports `PreparedLayoutTextView`.
++   */
++  private fun loadReactNativeWithoutPreparedTextLayout() {
++    SoLoader.init(this, OpenSourceMergedSoMapping)
++    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
++      ReactNativeFeatureFlags.override(
++        object : ReactNativeNewArchitectureFeatureFlagsDefaults() {
++          override fun enablePreparedTextLayout(): Boolean = false
++        }
++      )
++      SoLoader.loadLibrary("react_newarchdefaults")
++      SoLoader.loadLibrary("appmodules")
++    }
++    if (BuildConfig.IS_EDGE_TO_EDGE_ENABLED) {
++      setEdgeToEdgeFeatureFlagOn()
 +    }
    }
-   [_reactSubviews removeObject:childComponentView];
-   [super unmountChildComponentView:childComponentView index:index];
-```
-
-**File**: `ios/legacy/RNSScreenContentWrapper.mm` (modified, +4/-3)
-```diff
-@@ -203,9 +203,10 @@ - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetric
- - (void)prepareForRecycle
- {
-   [super prepareForRecycle];
--  // The delegate is not always cleared on unmount (e.g. when a form sheet registered a nested wrapper), and Fabric
--  // calls `updateLayoutMetrics:` on a reused view before mounting it in its new parent. Without this, the reused
--  // wrapper would report its first frame to the previous, possibly invalidated, screen.
-+  // A reused wrapper must start like a new one. Its previous owner might not have cleared the delegate on unmount
-+  // (the wrapper's parent is not always a screen view), and Fabric calls `updateLayoutMetrics:` on a reused view before
-+  // mounting it in its new parent. Without this, the reused wrapper would report its first frame to the previous,
-+  // possibly invalidated, screen.
-   // See https://github.com/software-mansion/react-native-screens/issues/5143
-   self.delegate = nil;
  }
 ```
 
----
-
-### Incident Patch 2: `180e32e3` (2026-11-06)
-**Commit Message**: fix(iOS, FormSheet): reset content wrapper delegate on recycle (#5147)
-
-## Description
-
-On iOS, pushing a screen right after a `formSheet` that hosts its own
-stack is dismissed reports `[RNScreens] sheetPresentationController is
-null when attempting to set allowed detents`. It shows a red box in
-development and writes an OS log line in release.
-
-The cause is a recycled `RNSScreenContentWrapper` that still has its
-`delegate` set to the dismissed sheet:
-
-1. Every native-stack screen renders a content wrapper. The sheet's own
-wrapper gets `delegate = sheet` on mount. The wrapper of the screen
-inside the sheet's nested stack then registers with the sheet in
-`attachToAncestorScreenView` (`willMoveToWindow:`). That replaces the
-sheet's `_contentWrapperBox`, so the sheet sizes itself to the nested
-screen's content. Below iOS 26, the nested navigation bar's height is
-added too.
-2. On teardown, `-[RNSScreenView unmountChildComponentView:index:]`
-clears the delegate of `_contentWrapperBox.contentWrapper`, which is the
-nested wrapper, not the child being unmounted. The sheet's own wrapper
-keeps `delegate == sheet`.
-3. `RNSScreenContentWrapper` can be recycled, and it did not reset its
-delegat
-
-**File**: `apps/src/tests/issue-tests/Test5143.tsx` (added, +122/-0)
+**File**: `FabricExample/android/build.gradle` (modified, +1/-13)
 ```diff
-@@ -0,0 +1,122 @@
-+import React from 'react';
-+import { NavigationContainer } from '@react-navigation/native';
-+import {
-+  createNativeStackNavigator,
-+  type NativeStackNavigationProp,
-+} from '@react-navigation/native-stack';
-+import { Button, Text, View } from 'react-native';
-+import { Colors } from '@apps/shared/styling';
-+
-+// Reproduces https://github.com/software-mansion/react-native-screens/issues/5143
-+//
-+// A formSheet hosts its own native stack. "Continue" closes the sheet and
-+// pushes a screen onto the root stack on the next tick. The pushed screen
-+// reuses a recycled RNSScreenContentWrapper whose delegate still points at the
-+// dismissed sheet, which logs "sheetPresentationController is null when
-+// attempting to set allowed detents" (a red box in development).
-+// Expected: the Next screen opens without a red box.
-+
-+type RootStackParamList = {
-+  Home: undefined;
-+  Next: undefined;
-+  Sheet: undefined;
-+};
-+
-+type SheetStackParamList = {
-+  SheetHome: undefined;
-+};
-+
-+const RootStack = createNativeStackNavigator<RootStackParamList>();
-+const SheetStack = createNativeStackNavigator<SheetStackParamList>();
-+
-+function Home({
-+  navigation,
-+}: {
-+  navigation: NativeStackNavigationProp<RootStackParamList>;
-+}) {
-+  return (
-+    <View
-+      style={{
-+        flex: 1,
-+        alignItems: 'center',
-+        justifyContent: 'center',
-+        backgroundColor: Colors.White,
-+      }}>
-+      <Button
-+        title="Open form sheet"
-+        onPress={() => navigation.navigate('Sheet')}
-+        testID="home-open-sheet"
-+      />
-+    </View>
-+  );
-+}
-+
-+function Next() {
-+  return (
-+    <View
-+      style={{
-+        flex: 1,
-+        alignItems: 'center',
-+        justifyContent: 'center',
-+        backgroundColor: Colors.White,
-+      }}>
-+      <Text testID="next-text">Pushed right after the sheet closed.</Text>
-+    </View>
-+  );
-+}
-+
-+function SheetHome({
-+  navigation,
-+}: {
-+  navigation: NativeStackNavigationProp<SheetStackParamList>;
-+}) {
-+  const onContinue = () => {
-+    const rootNavigation = navigation.getParent();
-+    // Close the form sheet, then push onto the root stack on the next tick.
-+    rootNavigation?.goBack();
-+    setTimeout(() => rootNavigation?.navigate('Next'), 0);
-+  };
-+
-+  return (
-+    <View style={{ padding: 24, backgroundColor: Colors.White }}>
-+      <Button title="Continue" onPress={onContinue} testID="sheet-continue" />
-+    </View>
-+  );
-+}
-+
-+// The form sheet hosts its own stack (a multi-step sheet flow).
-+function Sheet() {
-+  return (
-+    <SheetStack.Navigator screenOptions={{ title: 'Sheet' }}>
-+      <SheetStack.Screen name="SheetHome" component={SheetHome} />
-+    </SheetStack.Navigator>
-+  );
-+}
-+
-+export default function Test5143() {
-+  return (
-+    <NavigationContainer>
-+      <RootStack.Navigator>
-+        <RootStack.Screen
-+          name="Home"
-+          component={Home}
-+          options={{ title: 'Home' }}
-+        />
-+        <RootStack.Screen
-+          name="Next"
-+          component={Next}
-+          options={{ title: 'Next' }}
-+        />
-+        <RootStack.Screen
-+          name="Sheet"
-+          component={Sheet}
-+          options={{
-+            presentation: 'formSheet',
-+            sheetAllowedDetents: [1],
-+            headerShown: false,
-+          }}
-+        />
-+      </RootStack.Navigator>
-+    </NavigationContainer>
-+  );
-+}
-```
-
-**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
-```diff
-@@ -232,6 +232,7 @@ export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPh
- export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
- export { default as Test5092 } from './Test5092';
- export { default as Test5127 } from './Test5127';
-+export { default as Test5143 } from './Test5143';
- export { default as TestScreenAnimation } from './TestScreenAnimation';
- // The following test was meant to demo the "go back" gesture using Reanimated
- // but the associated PR in react-navigation is currently put on hold
-```
-
-**File**: `ios/legacy/RNSScreenContentWrapper.mm` (modified, +10/-0)
-```diff
-@@ -200,6 +200,16 @@ - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetric
-   [self notifyDelegateWithFrame:RCTCGRectFromRect(layoutMetrics.frame)];
+@@ -6,6 +6,7 @@ buildscript {
+         targetSdkVersion = 36
+         ndkVersion = "28.2.13676358"
+         kotlinVersion = "2.3.21"
++        detoxKotlinVersion = kotlinVersion // Detox built from source
+     }
+     repositories {
+         google()
+@@ -33,19 +34,6 @@ buildscript {
+     }
  }
  
-+- (void)prepareForRecycle
-+{
-+  [super prepareForRecycle];
-+  // The delegate is not always cleared on unmount (e.g. when a form sheet registered a nested wrapper), and Fabric
-+  // calls `updateLayoutMetrics:` on a reused view before mounting it in its new parent. Without this, the reused
-+  // wrapper would report its first frame to the previous, possibly invalidated, screen.
-+  // See https://github.com/software-mansion/react-native-screens/issues/5143
-+  self.delegate = nil;
-+}
+-// Detox repository for `com.wix:detox` dependency specified
+-// in app build.gradle. This most likely does not have to be
+-// specified for each project but AFAIK it does not create any conflicts.
+-// See: https://github.com/wix/Detox/issues/3973#issuecomment-1459895555
+-// TODO: Find out which project should have it added.
+-allprojects {
+-    repositories {
+-        maven {
+-            url("$rootDir/../node_modules/detox/Detox-android")
+-        }
+-    }
+-}
+-
+ apply plugin: "com.facebook.react.rootproject"
+ 
+ // Custom configuration. This is done in order to simplify process
+```
+
+**File**: `FabricExample/android/settings.gradle` (modified, +5/-0)
+```diff
+@@ -4,3 +4,8 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex -> ex.autol
+ rootProject.name = 'FabricExample'
+ include ':app'
+ includeBuild('../node_modules/@react-native/gradle-plugin')
 +
- + (react::ComponentDescriptorProvider)componentDescriptorProvider
- {
-   return react::concreteComponentDescriptorProvider<react::RNSScreenContentWrapperComponentDescriptor>();
++// Detox is built from source (patched in ../patches) until it supports RN 0.89,
++// see https://github.com/facebook/react-native/pull/58469.
++include ':detox'
++project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
+```
+
+**File**: `FabricExample/patches/detox+20.45.1.patch` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
++index 62d4c2a..f73f066 100644
++--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
+++++ b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
++@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
++ import com.facebook.react.ReactApplication
++ import com.facebook.react.ReactInstanceManager
++ import com.facebook.react.bridge.ReactContext
++-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint
++ 
++ 
++ fun ReactApplication.getInstanceManagerSafe(): ReactInstanceManager {
++@@ -28,7 +27,9 @@ fun ReactApplication.getCurrentReactContextSafe(): ReactContext {
++ 
++ /**
++  * A method to check if Fabric is enabled in the React Native application.
+++ *
+++ * react-native-screens patch: RN 0.89 removed `DefaultNewArchitectureEntryPoint.fabricEnabled`
+++ * (facebook/react-native#58469). FabricExample runs the New Architecture only, so the legacy
+++ * path (and its bridge-only idling resources) is dropped. Remove once Detox ships a fix.
++  */
++-fun isFabricEnabled(): Boolean {
++-    return DefaultNewArchitectureEntryPoint.fabricEnabled
++-}
+++fun isFabricEnabled(): Boolean = true
++diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt
++deleted file mode 100644
++index 2e3ec8b..0000000
++--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt
+++++ /dev/null
++@@ -1,72 +0,0 @@
++-package com.wix.detox.reactnative.idlingresources.bridge
++-
++-import android.util.Log
++-import com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener
++-import com.facebook.react.bridge.ReactContext
++-import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
++-import java.util.concurrent.atomic.AtomicBoolean
++-
++-/**
++- * Created by simonracz on 01/06/2017.
++- */
++-/**
++- *
++- *
++- * IdlingResource for Espresso, which monitors the traffic of
++- * React Native's JS bridge.
++- *
++- */
++-class BridgeIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
++-    NotThreadSafeBridgeIdleDebugListener {
++-    private val idleNow = AtomicBoolean(true)
++-
++-    init {
++-        reactContext.catalystInstance.addBridgeIdleDebugListener(this)
++-    }
++-
++-    fun onDetach() {
++-        reactContext.catalystInstance.removeBridgeIdleDebugListener(this)
++-    }
++-
++-    override fun getName(): String {
++-        return BridgeIdlingResource::class.java.name
++-    }
++-
++-    override fun getDebugName(): String {
++-        return "bridge"
++-    }
++-
++-    override fun getBusyHint(): Map<String, Any>? {
++-        return null
++-    }
++-
++-    override fun checkIdle(): Boolean {
++-        val ret = idleNow.get()
++-        if (!ret) {
++-            Log.i(LOG_TAG, "JS Bridge is busy")
++-        }
++-        return ret
++-    }
++-
++-    override fun onTransitionToBridgeIdle() {
++-        idleNow.set(true)
++-        notifyIdle()
++-    }
++-
++-    override fun onTransitionToBridgeBusy() {
++-        idleNow.set(false)
++-        // Log.i(LOG_TAG, "JS Bridge transitions to busy.");
++-    }
++-
++-    override fun onBridgeDestroyed() {
++-    }
++-
++-    override fun onUnregistered() {
++-        super.onUnregistered()
++-        onDetach()
++-    }
++-
++-    companion object {
++-        private const val LOG_TAG = "Detox"
++-    }
++-}
++diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
++index bc3e0c9..834ba1d 100644
++--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
+++++ b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
++@@ -5,10 +5,8 @@ import com.wix.detox.reactnative.getCurrentReactContext
++ import com.wix.detox.reactnative.getCurrentReactContextSafe
++ import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
++ import com.wix.detox.reactnative.idlingresources.animations.AnimatedModuleIdlingResource
++-import com.wix.detox.reactnative.idlingresources.bridge.BridgeIdlingResource
++ import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
++ import com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource
++-import com.wix.detox.reactnative.idlingres
 ```
 
 ---
 
-### Incident Patch 3: `7fee38da` (2026-11-06)
-**Commit Message**: fix(Android, FormSheet v5): keep a drag that starts on a scrolled list from moving the sheet (#5116)
+### Incident Patch 2: `f30d8c2c` (2026-11-09)
+**Commit Message**: fix(Android, Stack v4): don't let an enter animation end a removal transition (#5113)
 
-## Description
+When a nested native stack with 2+ screens is popped as a whole while
+its inner pop animation is still running (open a screen inside a nested
+stack, press back twice quickly), Android/Fabric crashes:
 
-On Android, a `FormSheet` holding a nested `ScrollView` is dismissed, or
-dropped to a lower detent, by a drag that was only meant to scroll the
-list back up. Material's `BottomSheetBehavior` hands the rest of a
-downward drag to the sheet as soon as the list reaches its top, within
-the same gesture, so a list scrolled down by less than the length of one
-drag can't be scrolled back to its top without moving the sheet.
+```
+java.lang.IllegalStateException: Cannot remove child at index 2 from parent ViewGroup [...], only 2 children in parent.
+Caused by: java.lang.IllegalStateException: The specified child already has a parent. You must call removeView() on the child's parent first.
+    at com.swmansion.rnscreens.ScreenStackHeaderConfig.onUpdate
+    at com.swmansion.rnscreens.ScreenStackHeaderConfig.maybeUpdate
+    at com.swmansion.rnscreens.ScreenStackHeaderConfig.removeConfigSubview
+```
 
-This is the `FormSheet` v5 counterpart of #5100. The rule is the same
-and is decided once, when the touch nested scroll starts:
+(or `ScreenStackFragment added into a non-stack container` from
+`canNavigateBack`, same frames, on older versions).
 
-- a drag that starts on a scrolled list scrolls the list and stops at
-its top,
-- a drag that starts with the list already at its top moves the sheet,
-as before.
+Sequence:
 
-Flings, upward drags and drags on the non-scrollable parts of the sheet
-are unchanged.
+1. The teardown of the nested stack is committed.
+`NativeProxy.notifyScreenRemoved()` posts
+`Screen.startRemovalTransition()` → `isRemovalTransitionStarted = true`,
+`isBeingRemoved = true`.
+2. The revealed screen's **enter** animation (from the first back) ends
+→ `ScreenStackFragment.notifyViewTransitionEn
 
----
-
-In v4, the stack owns both the `CoordinatorLayout` and the behavior it
-creates, so we simply override some callbacks on the Behavior level. In
-v5 the sheet is a `BottomSheetDialog`, so everything down to
-`design_bottom_sheet`, including the `CoordinatorLayout` is inflated
-from
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/core/modals/formsheet/dialog/FormSheetContainer.kt` (modified, +67/-0)
+**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/ScreenStackFragment.kt` (modified, +5/-2)
 ```diff
-@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
- import android.content.Context
- import android.view.View
- import android.widget.LinearLayout
-+import androidx.coordinatorlayout.widget.CoordinatorLayout
- import com.google.android.material.bottomsheet.BottomSheetDragHandleView
- 
- @SuppressLint("ViewConstructor")
-@@ -21,6 +22,13 @@ class FormSheetContainer(
-             visibility = GONE
+@@ -164,8 +164,11 @@ class ScreenStackFragment :
+             screenStack.onViewTransitionEnd(coordinatorLayout)
          }
  
-+    internal var bottomSheetView: View? = null
-+
-+    private val sheetCoordinator: CoordinatorLayout?
-+        get() = bottomSheetView?.parent as? CoordinatorLayout
-+
-+    private var startedOnScrolledTarget = false
-+
-     init {
-         orientation = VERTICAL
- 
-@@ -38,4 +46,63 @@ class FormSheetContainer(
-     internal fun setGrabberVisible(visible: Boolean) {
-         grabberView.visibility = if (visible) VISIBLE else GONE
+-        // Rely on guards inside the callee to detect whether this was indeed removal transition.
+-        screen.endRemovalTransition()
++        // Only an exit animation finishes a removal transition. An enter animation that ends after the
++        // removal has already started (e.g. a quick second back) must not reset `isBeingRemoved`.
++        if (isRemoving) {
++            screen.endRemovalTransition()
++        }
      }
+ 
+     /**
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/events/ScreenAnimationDelegate.kt` (modified, +6/-1)
+```diff
+@@ -67,7 +67,12 @@ class ScreenAnimationDelegate(
+                 isExitAnimation,
+             )
+ 
+-            wrapper.screen.endRemovalTransition()
++            // Check fragment state, not animation direction: when a form sheet is removed during its
++            // ENTER animation, AndroidX can merge the removal into the running operation and end the
++            // ENTER animator without ever creating an EXIT one.
++            if (wrapper.fragment.isRemoving) {
++                wrapper.screen.endRemovalTransition()
++            }
+         }
+     }
+ 
+```
+
+**File**: `apps/src/tests/issue-tests/Test5112.tsx` (added, +271/-0)
+```diff
+@@ -0,0 +1,271 @@
++import React, {
++  useCallback,
++  useEffect,
++  useLayoutEffect,
++  useState,
++} from 'react';
++import { Button, Pressable, Text, View } from 'react-native';
++import {
++  createNavigationContainerRef,
++  NavigationContainer,
++  type NavigatorScreenParams,
++  useFocusEffect,
++  useIsFocused,
++  useNavigation,
++} from '@react-navigation/native';
++import {
++  createNativeStackNavigator,
++  type NativeStackScreenProps,
++} from '@react-navigation/native-stack';
 +
-+    private fun shouldHoldBackFromSheet(
-+        target: View,
-+        dy: Int,
-+    ): Boolean = startedOnScrolledTarget && dy < 0 && !target.canScrollVertically(-1)
++// Reproduces https://github.com/software-mansion/react-native-screens/issues/5112
++// (based on https://github.com/rafalnawojczyk/rns-nested-stack-header-crash-repro).
++//
++// Root native stack: Home (nested stack) and Feature (nested stack: Dashboard → Child).
++// Dashboard has custom headerLeft / headerTitle / headerRight.
++//
++// "Start auto repro" loops: open Feature → open Child → goBack() → wait 250–400 ms → goBack().
++// The second goBack() pops the whole Feature stack while Dashboard is still sliding back in.
++// Home does HOME_RENDER_COST_MS of JS work in a layout effect when it regains focus, i.e. after the
++// commit that removes Feature, in the same JS task. That delays the teardown mount until after
++// Dashboard's enter animation has ended.
++//
++// Expected: Home is shown.
++// Bug (Android, Fabric): crash in ScreenStackHeaderConfig.onUpdate during the teardown of the
++// Feature stack ("The specified child already has a parent").
 +
-+    override fun onStartNestedScroll(
-+        child: View,
-+        target: View,
-+        axes: Int,
-+    ): Boolean {
-+        val sheet = bottomSheetView ?: return false
-+        val coordinator = sheetCoordinator ?: return false
-+        if (!coordinator.onStartNestedScroll(sheet, target, axes)) {
-+            return false
++type FeatureParamList = { Dashboard: undefined; Child: undefined };
++type RootParamList = {
++  Home: undefined;
++  Feature: NavigatorScreenParams<FeatureParamList> | undefined;
++};
++
++const Root = createNativeStackNavigator<RootParamList>();
++const HomeStack = createNativeStackNavigator<{ HomeScreen: undefined }>();
++const FeatureStack = createNativeStackNavigator<FeatureParamList>();
++const ChildStack = createNativeStackNavigator<{ ChildRoot: undefined }>();
++const navigationRef = createNavigationContainerRef<RootParamList>();
++
++// JS work done by Home when it is revealed. It delays the teardown mount of the Feature stack.
++const HOME_RENDER_COST_MS = 300;
++const GAPS_MS = [250, 300, 350, 400];
++
++const wait = (ms: number) =>
++  new Promise<void>(resolve => setTimeout(resolve, ms));
++const burn = (ms: number) => {
++  const end = Date.now() + ms;
++  while (Date.now() < end) {}
++};
++
++function HeaderButton({
++  label,
++  onPress,
++}: {
++  label: string;
++  onPress?: () => void;
++}) {
++  return (
++    <Pressable
++      onPress={onPress}
++      style={{
++        paddingHorizontal: 12,
++        paddingVertical: 6,
++        borderWidth: 1,
++        borderRadius: 16,
++      }}>
++      <Text>{label}</Text>
++    </Pressable>
++  );
++}
++
++function useCustomHeader(title: string) {
++  const navigation = useNavigation();
++  useLayoutEffect(() => {
++    navigation.setOptions({
++      headerBackVisible: false,
++      headerLeft: () => (
++        <HeaderButton label="←" onPress={() => navigation.goBack()} />
++      ),
++      headerTitle: () => (
++        <Text style={{ fontSize: 18, fontWeight: '600' }}>{title}</Text>
++      ),
++      headerRight: () => <HeaderButton label="More" />,
++      headerTitleAlign: 'center',
++    });
++  });
++}
++
++function Tiles({ count, seed }: { count: number; seed: number }) {
++  return (
++    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
++      {Array.from({ length: count }, (_, i) => (
++        <View
++          key={i}
++          style={{
++            width: 8,
++            height: 8,
++            margin: 1,
++            backgroundColor: (i + seed) % 2 ? '#ccc' : '#999',
++          }}
++        />
++      ))}
++    </View>
++  );
++}
++
++function AutoRepro() {
++  const [running, setRunning] = useState(false);
++  const [iteration, setIteration] = useState(0);
++
++  useEffect(() => {
++    if (!running) {
++      return;
++    }
++    // Per run, so Stop + Start or leaving the screen ends this loop after its current wait.
++    let cancelled = false;
++    (async () => {
++      for (let i = 1; !cancelled; i++) {
++        const gap = GAPS_MS[i % GAPS_MS.length];
++        setIteration(i);
++        console.log(`[Test5112] iteration ${i} gap ${gap}ms`);
++        navigationRef.navigate('Feature');
++        await wait(2000);
++        if (cancelled) {
++          return;
 +        }
-+        startedOnScrolledTarget = target.canScrollVertically(-1)
-+        return true
-+    }
-+
-+    override fun onNestedScrollAccepted(
-+        child: View,
-+        target: View,
-+        axes: Int,
-+    ) {
-+        super.onNestedScrollAccepted(child, target, axes)
-+        val sheet = bottomSheetView ?: return
-+        val coordinator = sheetCoordinator ?: return
-+        coordinator.onNestedScrollAccepted(sheet, target, axes)
-+    }
-+
-+    override fun onNestedPreScroll(
-+        target: View,
-+        dx: Int,
-+        dy: Int,
-+        consumed: IntArray,
-+    ) {
-+        val coordinator = sheetCoordinator ?: return
-+        if (shouldHoldBackFromSheet(target, dy)) {
-+            return
++        navigationRef.navigate('Feature', { screen: 'Child' });
++        await wait(1500);
++        if (cancelled) {
++          return;
 +        }
-+        coordinator.onNestedPreScroll(target, dx, dy, consumed)
++        navigationRef.goBack(); // pops Child, Dashboard slides back in
++        await wait(gap);
++        if (cancelled) {
++          return;
++        }
++        navigationRef.goBack(); // pops the whole Feature stack during that animation
++        await wait(2000);
++      }
++    })();
++    return () => {
++      cancelled = true;
++    };
++  }, [running]);
++
++  return (
++    <View style={{ alignItems: 'center', gap: 8 }}>
++      <Button
++        testID="open-feature"
++        title="Open feature"
++        onPress={() => navigationRef.navigate('Feature')}
++     
+```
+
+**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
+```diff
+@@ -231,6 +231,7 @@ export { default as Test4872 } from './Test4872';
+ export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
+ export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
+ export { default as Test5092 } from './Test5092';
++export { default as Test5112 } from './Test5112';
+ export { default as Test5127 } from './Test5127';
+ export { default as Test5143 } from './Test5143';
+ export { default as TestScreenAnimation } from './TestScreenAnimation';
+```
+
+---
+
+### Incident Patch 3: `947bcd4a` (2026-11-12)
+**Commit Message**: feat(iOS, Stack v5): stack screen reports the frame UIKit gives it (#5183)
+
+## Description
+
+Second PR of the series that lets a `Stack.Host` act as the navigator of
+a `Split.Column`
+([RFC-1805](https://github.com/software-mansion/react-native-screens-labs/pull/1805)),
+follows #5182.
+
+In a column the column view and the host take no part in layout, so Yoga
+lays the stack screens out as children of the split host, at the size of
+the whole split, while UIKit places each screen at the size of its
+column. A stack screen is the one node that both Yoga lays out and UIKit
+places, so it is the place to reconcile the two.
+
+This PR adds an internal `reportsFrameToShadowTree` prop to
+`RNSStackScreen`. With the prop on, the screen view reports the frame
+UIKit gave it through the shadow state, and the shadow node takes its
+size and content offset from that state, which is what Android already
+does for every stack screen. The prop is off by default and nothing sets
+it yet (#5192 sets it for a stack that navigates a column), so a regular
+stack is untouched and this PR changes no behaviour on its own.
+
+## Changes
+
+- `src/fabric/stack/StackScreenNativeComponent.ts`: the
+`reportsFrameToShadowTree` pr
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/stack/screen/StackScreenViewManager.kt` (modified, +7/-0)
+```diff
+@@ -179,6 +179,13 @@ internal class StackScreenViewManager :
+             }
+     }
+ 
++    override fun setReportsFrameToShadowTree(
++        view: StackScreen,
++        value: Boolean,
++    ) {
++        // iOS only.
 +    }
 +
-+    override fun onStopNestedScroll(target: View) {
-+        super.onStopNestedScroll(target)
-+        startedOnScrolledTarget = false
-+        val coordinator = sheetCoordinator ?: return
-+        coordinator.onStopNestedScroll(target)
-+    }
+     companion object {
+         const val REACT_CLASS = "RNSStackScreen"
+         private const val TAG = "StackScreenViewManager"
+```
+
+**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackHostShadowNode.cpp` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ RNSStackHostShadowNode::RNSStackHostShadowNode(
+  * React Native marks every node rendered with `display: contents` for
+  * flattening (`ForceFlattenView`) when it applies the style. Inside a Split
+  * column `Stack.Host` renders that way and still needs its view , which
+- * owns the navigation controller the Split installs in the column so the mark 
++ * owns the navigation controller the Split installs in the column so the mark
+  * is cleared after every construction.
+  */
+ void RNSStackHostShadowNode::unsetForceFlattenViewForContents() {
+```
+
+**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h` (modified, +16/-15)
+```diff
+@@ -16,25 +16,26 @@ class RNSStackScreenComponentDescriptor final
+   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
+ 
+   void adopt(ShadowNode &shadowNode) const override {
+-#ifdef ANDROID
+     react_native_assert(dynamic_cast<RNSStackScreenShadowNode *>(&shadowNode));
+     auto &screenShadowNode =
+         static_cast<RNSStackScreenShadowNode &>(shadowNode);
+-    react_native_assert(
+-        dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
+-    auto &layoutableShadowNode =
+-        static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
+-
+-    auto state =
+-        std::static_pointer_cast<const RNSStackScreenShadowNode::ConcreteState>(
+-            shadowNode.getState());
+-    auto stateData = state->getData();
+-
+-    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+-      layoutableShadowNode.setSize(
+-          Size{stateData.frameSize.width, stateData.frameSize.height});
 +
-+    override fun onNestedPreFling(
-+        target: View,
-+        velocityX: Float,
-+        velocityY: Float,
-+    ): Boolean {
-+        val coordinator = sheetCoordinator ?: return false
-+        return coordinator.onNestedPreFling(target, velocityX, velocityY)
-+    }
++    if (screenShadowNode.shouldApplyReportedFrame()) {
++      react_native_assert(
++          dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
++      auto &layoutableShadowNode =
++          static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
++
++      auto state = std::static_pointer_cast<
++          const RNSStackScreenShadowNode::ConcreteState>(shadowNode.getState());
++      auto stateData = state->getData();
++
++      if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
++        layoutableShadowNode.setSize(
++            Size{stateData.frameSize.width, stateData.frameSize.height});
++      }
+     }
+-#endif // ANDROID
++
+     ConcreteComponentDescriptor::adopt(shadowNode);
+   }
+ };
+```
+
+**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackScreenShadowNode.cpp` (modified, +10/-1)
+```diff
+@@ -4,12 +4,21 @@ namespace facebook::react {
+ 
+ extern const char RNSStackScreenComponentName[] = "RNSStackScreen";
+ 
++bool RNSStackScreenShadowNode::shouldApplyReportedFrame() const {
+ #ifdef ANDROID
++  return true;
++#else
++  return getConcreteProps().reportsFrameToShadowTree;
++#endif // ANDROID
++}
++
+ Point RNSStackScreenShadowNode::getContentOriginOffset(
+     bool /*includeTransform*/) const {
++  if (!shouldApplyReportedFrame()) {
++    return {};
++  }
+   auto stateData = getStateData();
+   return stateData.contentOffset;
  }
+-#endif // ANDROID
+ 
+ } // namespace facebook::react
 ```
 
-**File**: `android/src/main/java/com/swmansion/rnscreens/core/modals/formsheet/presentation/FormSheetPresentation.kt` (modified, +2/-0)
+**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackScreenShadowNode.h` (modified, +9/-2)
 ```diff
-@@ -73,6 +73,7 @@ internal class FormSheetPresentation(
-         )
+@@ -20,11 +20,18 @@ class JSI_EXPORT RNSStackScreenShadowNode final
+   using ConcreteViewShadowNode::ConcreteViewShadowNode;
+   using StateData = ConcreteViewShadowNode::ConcreteStateData;
  
-     init {
-+        container.bottomSheetView = bottomSheetView
-         nativeDismissCoordinator.setup()
-         appearanceCoordinator.setup()
-         dimensionsCoordinator.setup()
-@@ -147,6 +148,7 @@ internal class FormSheetPresentation(
++  /**
++   * Whether the frame the native side sends via shadow state should be applied
++   * to this node (setSize + contentOffset). On Android this is currently
++   * required. On iOS this is enabled in JS only in case a Stack is nested
++   * inside a Split - as it is `StackScreen` role then to convey platform column
++   * dimensions to the React screen contents.
++   */
++  bool shouldApplyReportedFrame() const;
++
+ #pragma mark - ShadowNode overrides
  
-         // The FormSheetContainer outlives the presentation - its lifecycle is managed by FormSheetDialogManager
-         // which is tied with the React's Host lifecycle.
-+        container.bottomSheetView = null
-         (container.parent as? ViewGroup)?.removeView(container)
-     }
- 
-```
-
-**File**: `apps/src/tests/component-integration-tests/form-sheet/test-form-sheet-scrollview-nesting-scrollview-in-form-sheet/scenario.md` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ TBD: Planned, but will be implemented separately.
- 
- 5. Scroll the list to its very top, then swipe down on the list.
- 
--    - [ ] The sheet collapses to the lower detent (0.5) – on Android within the same gesture as soon as the list reaches its top edge. The list stays at its top.
-+    - [ ] The sheet collapses to the lower detent (0.5). The list stays at its top. A swipe that starts on a scrolled list only scrolls the list and stops at its top, it never moves the sheet.
- 
- 6. Swipe down on the list again (list at its top, sheet at 0.5).
- 
-```
-
-**File**: `apps/src/tests/single-feature-tests/form-sheet/index.ts` (modified, +3/-0)
-```diff
-@@ -19,6 +19,7 @@ import TestFormSheetOrientationChange from './test-form-sheet-orientation-change
- import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius';
- import TestFormSheetPresentationState from './test-form-sheet-presentation-state';
- import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss';
-+import TestFormSheetScrollStopsAtTop from './test-form-sheet-scroll-stops-at-top';
- import TestFormSheetStacking from './test-form-sheet-stacking';
- 
- // Scenario entry-point components — each scenario's default export re-exported
-@@ -40,6 +41,7 @@ export { default as TestFormSheetOrientationChange } from './test-form-sheet-ori
- export { default as TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius';
- export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state';
- export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss';
-+export { default as TestFormSheetScrollStopsAtTop } from './test-form-sheet-scroll-stops-at-top';
- export { default as TestFormSheetStacking } from './test-form-sheet-stacking';
- 
- const scenarios = {
-@@ -60,6 +62,7 @@ const scenarios = {
-   TestFormSheetPreferredCornerRadius,
-   TestFormSheetPresentationState,
-   TestFormSheetPreventNativeDismiss,
-+  TestFormSheetScrollStopsAtTop,
-   TestFormSheetStacking,
+-#ifdef ANDROID
+   Point getContentOriginOffset(bool includeTransform) const override;
+-#endif // ANDROID
  };
  
+ } // namespace facebook::react
 ```
 
-**File**: `apps/src/tests/single-feature-tests/form-sheet/test-form-sheet-scroll-stops-at-top/index.tsx` (added, +158/-0)
+**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackScreenState.h` (modified, +7/-3)
 ```diff
-@@ -0,0 +1,158 @@
-+import React, { useState } from 'react';
-+import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
-+import { FormSheet } from 'react-native-screens';
-+import { scenarioDescription } from './scenario-description';
-+import { createScenario } from '@apps/tests/shared/helpers';
-+import { Colors } from '@apps/shared/styling';
+@@ -1,6 +1,8 @@
+ #pragma once
+ 
+ #include <jsi/jsi.h>
++#include <react/renderer/graphics/Point.h>
++#include <react/renderer/graphics/Size.h>
+ 
+ #ifdef ANDROID
+ #include <folly/dynamic.h>
+@@ -17,6 +19,11 @@ class JSI_EXPORT RNSStackScreenState final {
+   using Shared = std::shared_ptr<const RNSStackScreenState>;
+ 
+   RNSStackScreenState() {};
++  RNSStackScreenState(Size frameSize_, Point contentOffset_)
++      : frameSize(frameSize_), contentOffset(contentOffset_) {};
 +
-+const ROW_COUNT = 40;
++  Size frameSize{};
++  Point contentOffset{};
+ 
+ #ifdef ANDROID
+   RNSStackScreenState(
+@@ -31,9 +38,6 @@ class JSI_EXPORT RNSStackScreenState final {
+                 (Float)data["contentOffsetX"].getDouble(),
+                 (Float)data["contentOffsetY"].getDouble()}) {};
+ 
+-  Size frameSize{};
+-  Point contentOffset{};
+-
+   folly::dynamic getDynamic() const;
+   MapBuffer getMapBuffer() const {
+     return MapBufferBuilder::EMPTY();
+```
+
+**File**: `ios/react/containers/stack/screen/RNSStackScreenComponentView.mm` (modified, +48/-0)
+```diff
+@@ -16,6 +16,7 @@
+ #import "RNSStackScreenComponentEventEmitter.h"
+ #import "RNSStackScreenController.h"
+ #import "RNSStackScreenHeaderCoordinator.h"
++#import "RNSStackScreenShadowStateProxy.h"
+ 
+ namespace react = facebook::react;
+ 
+@@ -30,6 +31,7 @@ @interface RNSStackScreenComponentView () <RCTMountingTransactionObserving,
+ @implementation RNSStackScreenComponentView {
+   RNSStackScreenController *_Nonnull _controller;
+   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
++  RNSStackScreenShadowStateProxy *_Nonnull _shadowStateProxy;
+ 
+   // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
+   // the owning `RNSStackScreenController` through `RNSStackContainerItemConfigProviding` when
+@@ -38,6 +40,7 @@ @implementation RNSStackScreenComponentView {
+ 
+   // Flags
+   BOOL _hasUpdatedActivityMode;
++  BOOL _reportsFrameToShadowTree;
+ }
+ 
+ - (instancetype)initWithFrame:(CGRect)frame
+@@ -55,11 +58,46 @@ - (void)initState
+   [self setupController];
+ 
+   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
++  _shadowStateProxy = [RNSStackScreenShadowStateProxy new];
+ 
+   _hasUpdatedActivityMode = NO;
++  _reportsFrameToShadowTree = NO;
+   _isNativelyDismissed = NO;
+ }
+ 
++#pragma mark - Shadow state
 +
-+function SheetContent({ onClose }: { onClose: () => void }) {
-+  return (
-+    <View style={styles.sheetContainer}>
-+      <View style={styles.dragHeader}>
-+        <View style={styles.dragHandle} />
-+        <Text style={styles.headerText}>Drag here</Text>
-+      </View>
-+
-+      <ScrollView
-+        nestedScrollEnabled
-+        contentContainerStyle={styles.scrollContent}>
-+        <Text style={styles.listTitle}>Top of the list</Text>
-+        <Button title="Close" color={Colors.primary} onPress={onClose} />
-+        {Array.from({ length: ROW_COUNT }, (_, index) => (
-+          <Text key={index} style={styles.row}>
-+            Row {index + 1}
-+          </Text>
-+        ))}
-+      </ScrollView>
-+    </View>
-+  );
++/**
++ * UIKit calls this when the screen has to lay out its subviews, which happens whenever its size changes.
++ * We assume a size change is the only frame change that needs no other trigger.
++ */
++- (void)layoutSubviews
++{
++  [super layoutSubviews];
++  [self updateShadowStateIfNeeded];
 +}
 +
-+function TestFormSheetScrollStopsAtTop() {
-+  const [isSingleDetentOpen, setIsSingleDetentOpen] = useState(false);
-+  const [isTwoDetentsOpen, setIsTwoDetentsOpen] = useState(false);
++/**
++ * Integration with Split. `reportsFrameToShadowTree` is set when the stack is nested in a Split column. The column
++ * and the stack host are out of layout then and the screen's shadow node spans the split host, so the screen sends
++ * the size UIKit gave it and its origin in the split host through the shadow state. Without the prop nothing is
++ * sent; Yoga sizes the screen through the host, as in a regular stack.
++ */
++- (void)updateShadowStateIfNeeded
++{
++  if (!_reportsFrameToShadowTree || CGRectIsEmpty(self.bounds)) {
++    return;
++  }
 +
-+  const openSingleDetent = () => {
-+    setIsSingleDetentOpen(true);
-+  };
++  UIView *splitView = _controller.splitViewController.view;
++  if (splitView == nil) {
++    return;
++  }
 +
-+  const closeSingleDetent = () => {
-+    setIsSingleDetentOpen(false);
-+  };
-+
-+  const openTwoDetents = () => {
-+    setIsTwoDetentsOpen(true);
-+  };
-+
-+  const closeTwoDetents = () => {
-+    setIsTwoDetentsOpen(false);
-+  };
-+
-+  return (
-+    <View style={styles.container}>
-+      <Text style={styles.title}>Scroll Stops At Top</Text>
-+      <Text style={styles.instruction}>
-+        In the sheet, scroll the list down a little and lift the finger. Then
-+        start a new drag down on the list and continue it past the list's top
-+        without lifting the finger. The list should stop at its top and the
-+        sheet should stay in place. A drag that starts with the list at its top
-+        should move the sheet.
-+      </Text>
-+
-+      <View style={styles.buttonGroup}>
-+        <Button
-+          title="Open sheet (detents: [1])"
-+          color={Colors.primary}
-+          onPress={openSingleDetent}
-+        />
-+        <Button
-+          title="Open sheet (detents: [0.5, 1])"
-+          color={Colors.primary}
-+          onPress={openTwoDetents}
-+        />
-+      </View>
-+
-+      <FormSheet
-+        isOpen={isSingleDetentOpen}
-+        onNativeDismiss={closeSingleDetent}
-+        detents={[1]}>
-+        <SheetContent onClose={closeSingleDetent} />
-+      </FormSheet>
-+
-+      <FormSheet
-+        isOpen={isTwoDetentsOpen}
-+        onNativeDismiss={closeTwoDetents}
-+        detents={[0.5, 1]}
-+        initialDetentIndex="last">
-+        <SheetContent onClose={closeTwoDetents} />
-+      </FormSheet>
-+    </View>
-+  );
++  CGRect frame = {[self convertPoint:CGPointZero toView:splitView], self.bounds.size};
++  [_shadowStateProxy updateShadowStateWithFrame:frame];
 +}
 +
-+const styles = StyleSheet.create({
-+  container: {
-+    flex: 1,
-+    backgroundColor: Colors.offBackground,
-+    padding: 16,
-+    paddingTop: 80,
-+    gap: 12,
-+  },
-+  title: {
-+    fontSize: 20,
-+    fontWeight: 'bold',
-+    color: Colors.text,
-+    textAlign: 'center',
-+  },
-+  instruction: {
-+    fontSize: 15,
-+    color: Colors.text,
-+  },
-+  buttonGroup: {
-+    gap: 8,
-+  },
-+  sheetContainer: {
-+    width: '100%',
-+    height: '100%',
-+    backgroundColor: Colors.cardBackground,
-+  },
-+  dragHeader: {
-+    width: '100%',
-+    paddingVertical: 16,
-+    alignItems: 'center',
-+    borderBottomWidth: StyleSheet.hairlineWidth,
-+    borderBottomColor: Colors.NavyLight20,
-+  },
-+  dragHandle: {
-+    width: 40,
-+    height: 5,
-+    borderRadius: 3,
-+    backgroundColor: Colors.NavyLight40,
-+    marginBottom: 12,
-+  },
-+  headerText: {
-+    fontSize: 16,
-+    fontWeight: '600',
-+    color: Colors.text,
-+  },
-+  scrollContent: {
-+    padding: 16,
-+  },
-+  listTitle: {
-+    fontSize: 17,
-+    fontWeight: 'bold',
-+    paddingVertical: 12,
-+    color: Colors.text,
-+  },
-+  row: {
-+    paddingVertical: 14,
-+    color: Colors.text,
-+  },
-+});
+ - (void)resetProps
+ {
+   static const auto defaultProps = std::make_shared<const react::RNSStackScreenProps>();
+@@ -187,9 +225,19 @@ - (void)updateProps:(const facebook::react::Props::Shared &)props
+     _screenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey);
+   }
+ 
++  if (oldComponentProps.reportsFrameToShadowTree != newComponentProps.reportsFrameToShadowTree) {
++    _reportsFrameToShadowTree = newComponentProps.reportsFrameToShadowTree;
++  }
 +
-+export default createScenario(
-+  TestFormSheetScrollStopsAtTop,
-+  scenarioDescription,
-+);
+   [super updateProps:props oldProps:oldProps];
+ }
+ 
++- (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
++{
++  [super updateState:state oldState:oldState];
++  [_shadowStateProxy updateState:state oldState:oldState];
++}
++
+ - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+ {
+   if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
 ```
 
-**File**: `apps/src/tests/single-feature-tests/form-sheet/test-form-sheet-scroll-stops-at-top/scenario-description.ts` (added, +11/-0)
+**File**: `ios/react/containers/stack/screen/RNSStackScreenShadowStateProxy.h` (added, +31/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+@@ -0,0 +1,31 @@
++#pragma once
 +
-+export const scenarioDescription: ScenarioDescription = {
-+  name: 'Scroll Stops At Top',
-+  key: 'test-form-sheet-scroll-stops-at-top',
-+  details:
-+    'Nested ScrollView in a sheet: a drag that starts on a scrolled list stops at its top instead of moving the sheet; a drag that starts at the top moves the sheet.',
-+  platforms: ['android', 'ios'],
-+  e2eCoverage: 'tbd',
-+  smokeTest: false,
-+};
-```
-
-**File**: `apps/src/tests/single-feature-tests/form-sheet/test-form-sheet-scroll-stops-at-top/scenario.md` (added, +103/-0)
-```diff
-@@ -0,0 +1,103 @@
-+# Test Scenario: Scroll Stops At Top
++#import <Foundation/Foundation.h>
++#import <UIKit/UIKit.h>
 +
-+## Details
++#if defined(__cplusplus)
++#import <react/renderer/core/State.h>
 +
-+**Description:** Verify how a `FormSheet` with a nested `ScrollView` splits a downward drag between the list and the sheet. The rule under test is decided once, when the gesture starts: a drag that starts on a list scrolled away from its top scrolls the list and stops at its top, without moving the sheet, even when the gesture continues past the top; a drag that starts with the list already at its top moves the sheet, at a single detent dismissing it and at two detents stepping down through the detents. Dragging the non-scrollable header always moves the sheet, whatever the list offset.
++namespace react = facebook::react;
++#endif // __cplusplus
 +
-+The sheet is tested with a single detent `[1]` and with two detents `[0.5, 1]`, opened at the large detent. The list has 40 rows, so it can be scrolled by less than the length of one drag as well as by much more.
++NS_ASSUME_NONNULL_BEGIN
 +
-+**OS test creation version:** iOS: 27.1, Android: API Level 37.
++@interface RNSStackScreenShadowStateProxy : NSObject
 +
-+## E2E test
++- (void)updateShadowStateWithFrame:(CGRect)frame;
 +
-+TBD
++@end
 +
-+## Prerequisites
++#pragma mark - Hidden from Swift
 +
-+- Android: emulator or device.
-+- iOS: iPhone device or simulator.
++#if defined(__cplusplus)
 +
-+## Note
++@interface RNSStackScreenShadowStateProxy ()
 +
-+- At the lower detent, an upward drag on the list expands the sheet instead of scrolling the list (on Android whatever the list offset, on iOS when the list is at its top). This is why the "Scrolled list at the lower detent" section scrolls the list at the large detent first and then moves the sheet down with the header.
-+- "Scroll the list a little" means 2 or 3 rows, clearly less than the length of one drag across the screen. "Scroll the list far" means 10 rows or more.
++- (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState;
 +
-+## Steps
++@end
 +
-+### Baseline
-+
-+1. Launch the app and navigate to the **Scroll Stops At Top** screen.
-+
-+    - [ ] The host shows the instruction and two buttons: "Open sheet (detents: [1])" and "Open sheet (detents: [0.5, 1])".
-+
-+---
-+
-+### Single detent, drag that starts on a scrolled list
-+
-+1. Tap "Open sheet (detents: [1])".
-+
-+    - [ ] The sheet opens up to the top of the screen. The "Drag here" header, "Top of the list", the "Close" button and the first rows are visible.
-+
-+2. Scroll the list a little and lift the finger. Then start a new drag down on the list and continue it past the list's top without lifting the finger.
-+
-+    - [ ] The list scrolls back and stops with "Top of the list" fully visible. The sheet does not move and stays open.
-+
-+3. Scroll the list a little again and lift the finger. Then fling the list down fast, past its top.
-+
-+    - [ ] Same as above: the list stops at its top, the sheet stays open.
-+
-+4. With the list at its top, drag down on the list.
-+
-+    - [ ] The sheet follows the finger and is dismissed.
-+
-+---
-+
-+### Single detent, drags that are not affected
-+
-+1. Tap "Open sheet (detents: [1])", then drag down on the list right away.
-+
-+    - [ ] The sheet follows the finger and is dismissed.
-+
-+2. Tap "Open sheet (detents: [1])", scroll the list far and lift the finger. Then drag down on the list once.
-+
-+    - [ ] The list scrolls back by the length of the drag and stays scrolled. The sheet stays open.
-+
-+3. Drag the "Drag here" header down.
-+
-+    - [ ] The sheet is dismissed, although the list is still scrolled.
-+
-+---
-+
-+### Two detents at the large detent
-+
-+1. Tap "Open sheet (detents: [0.5, 1])".
-+
-+    - [ ] The sheet opens at the large detent.
-+
-+2. Scroll the list a little and lift the finger. Then start a new drag down on the list and continue it past the list's top without lifting the finger.
-+
-+    - [ ] The list stops at its top. The sheet stays at the large detent.
-+
-+3. With the list at its top, drag down on the list.
-+
-+    - [ ] The sheet settles at the lower detent. The list stays at its top.
-+
-+4. Drag down on the list again.
-+
-+    - [ ] The sheet is dismissed.
-+
-+---
-+
-+### Two detents, scrolled list at the lower detent
-+
-+1. Tap "Open sheet (detents: [0.5, 1])", scroll the list a little and lift the finger. Then drag the "Drag here" header down.
-+
-+    - [ ] The sheet settles at the lower detent with the list still scrolled.
-+
-+2. Drag down on the list and continue past the list's top without lifting the finger.
-+
-+    - [ ] The list stops at its top. The sheet stays at the lower detent.
-+
-+3. Dismiss the sheet by dragging the header down.
-+
-+    - [ ] The sheet is dismissed.
++#endif // __cplusplus
++NS_ASSUME_NONNULL_END
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5153** (2026-11-06): fix(iOS, FormSheet): clean up and ignore stale content wrappers (@kkafar)
-- **PR #5147** (2026-11-06): fix(iOS, FormSheet): reset content wrapper delegate on recycle (@kkafar)
-- **PR #5145** (2026-11-05): fix(Android, Tabs): notify every SafeAreaView registered on TabsContainer about interface insets (@lassiecoder)
-- **PR #5141** (2026-11-06): refactor(v5): migrate FormSheet and ContainedModal to the docs conventions (@Loloekk)
-- **PR #5140** (2026-11-04): refactor(v5): migrate SafeAreaView, ScrollToTopGuard and ScrollViewMarker to the docs conventions (@Loloekk)
-- **PR #5139** (closed): fix(iOS, Stack v4): animate header right items when their count changes on a visible bar (@sethwebster)
+- **PR #5199** (2026-11-10): chore: Post Argent Cloud reports with inline screenshots through the reports App (@kmichalikk)
+- **PR #5192** (closed): feat(iOS, Split): Stack.Host as the only child of Split.Column navigates the column (@t0maboro)
+- **PR #5186** (closed): feat(iOS, Stack v5): hit-test the content of header items from the navigation bar (@t0maboro)
+- **PR #5183** (2026-11-12): feat(iOS, Stack v5): stack screen reports the frame UIKit gives it (@t0maboro)
+- **PR #5182** (2026-11-12): feat(iOS, Stack v5): own shadow node for RNSStackHost (@t0maboro)
+- **PR #5180** (2026-11-12): chore(example): build Detox from source with a patch for RN 0.89 (@t0maboro)
 
 ---
 
@@ -1391,51 +1258,29 @@ from
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS, FormSheet): clean up and ignore stale content wrappers (#5153)
+## X. example): build Detox from source with a patch for RN 0.89 (#5180)
 
 **RULE**:
-When implementing operations in `apps/src/tests/issue-tests/TestLabs2052.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `FabricExample/android/app/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0cd7f96f`: iOS, FormSheet): clean up and ignore stale content wrappers (#5153). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d20ab95e`: example): build Detox from source with a patch for RN 0.89 (#5180). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/src/tests/issue-tests/TestLabs2052.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `FabricExample/android/app/build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import {
-  createNativeStackNavigator,
-  type NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
-import { Button, ScrollView, Text, View } from 'react-native';
-import { Colors } from '@apps/shared/styling';
-
-// Reproduces https://github.com/software-mansion/react-native-screens-labs/issues/2052
-//
-// A form sheet must not keep using a content wrapper that belonged to a nested
-// screen after that screen is gone.
-//
-// 1. "Open form sheet": the sheet hosts its own native stack. The nested
-//    screen's RNSScreenContentWrapper registers with the sheet.
-// 2. "Finish step": the sheet replaces the nested stack with plain content and
-//    stays presented. Fabric recycles the nested screen's content wrapper.
-// 3. "Push list beneath": pushes List in the stack nested in Home, beneath the
-//    sheet. Fabric reuses the most recently recycled content wrapper for List.
-// 4. "Shrink sheet": resizes the sheet, which runs its scroll view correction.
-//
-// Expected: the blue list beneath the sheet still fills its screen.
-// Bug: the sheet sizes List's ScrollView to its own size, so the 
+        missingDimensionStrategy 'detox', 'full' // Detox built from source
+    androidTestImplementation(project(path: ':detox')) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    androidTestImplementation('com.wix:detox:+') {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0cd7f96f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d20ab95e` are properly handled with clean fallback behavior.

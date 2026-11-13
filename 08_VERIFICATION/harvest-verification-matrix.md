@@ -9506,3 +9506,8 @@
 | `CYCLE-20261113-A22H` | `2026-11-13T14:17:45.977Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`09866200...`) |
 | `CYCLE-20261113-A37P` | `2026-11-13T14:17:47.461Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4e2e4029...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:18:05.914Z` | `hf-viggle-qwen-image-2.1-viggle-turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9522FB5E` [Domain D] | Yes (`009b4292...`) |
+| `CYCLE-20261113-K159` | `2026-11-13T14:25:31.341Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`720da69c...`) |
+| `CYCLE-20261113-KL44` | `2026-11-13T14:25:57.220Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b315df1e...`) |
+| `CYCLE-20261113-KO55` | `2026-11-13T14:26:01.145Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`81e86aa6...`) |
+| `CYCLE-20261113-KRE5` | `2026-11-13T14:26:05.357Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`01ee42e4...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:26:28.004Z` | `hf-xingchen-agi-xing4.0-29b-a4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-98796BF2` [Domain D] | Yes (`8add30aa...`) |

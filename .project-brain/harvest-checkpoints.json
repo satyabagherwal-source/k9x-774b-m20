@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T14:17:47.490Z",
+  "last_updated": "2026-11-13T14:26:05.374Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -455,14 +455,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "3c5fa8de6b4dc568909a9ea0b07016c392b91b94d12ed7d83e5fee1c61ffcc64",
-      "verified_at": "2026-11-08T14:49:06.157Z",
+      "content_hash": "720da69c8286abcf6558737f1a916e5d40789a4643326ec29710850575bc37f8",
+      "verified_at": "2026-11-13T14:25:31.357Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T14:49:06.157Z"
+      "last_updated": "2026-11-13T14:25:31.357Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "bdd6fd2c9487e5a2b97f76226df1f52fd9f304bd90caa71a6b8604c1190a4846",
-      "verified_at": "2026-11-12T10:17:33.376Z",
+      "content_hash": "81e86aa6c6f9b4a8cd98a346992aaaf481419fec3d68cf8a940d446cacbecfb5",
+      "verified_at": "2026-11-13T14:26:01.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T10:17:33.376Z"
+      "last_updated": "2026-11-13T14:26:01.163Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "4f26d34544aa2dfd14a7c8c179a12a3773dbbb0020caff252b0603e09278f726",
-      "verified_at": "2026-11-12T08:19:19.272Z",
+      "content_hash": "01ee42e42216e448373c669626ab41e1d52eabb514b53e2008cfc32e8d4187d5",
+      "verified_at": "2026-11-13T14:26:05.373Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:19:19.272Z"
+      "last_updated": "2026-11-13T14:26:05.373Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -12741,14 +12741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-screens",
-      "content_hash": "ae1f0b3852a2f55619f5dadf433ebec3a0da8872ea0f065f591b4476abe9e657",
-      "verified_at": "2026-11-09T04:27:35.346Z",
+      "content_hash": "b315df1e10f20edca31ade6ef54c9e50df28a66bc4712a725d08890fc7859f69",
+      "verified_at": "2026-11-13T14:25:57.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:27:35.346Z"
+      "last_updated": "2026-11-13T14:25:57.262Z"
     },
     "speedyapply/JobSpy": {
       "repository": "speedyapply/JobSpy",
