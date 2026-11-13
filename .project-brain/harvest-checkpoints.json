@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T21:28:08.216Z",
+  "last_updated": "2026-11-13T21:36:41.247Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "82d82e2a89c4da7ed16fcb29a83fb77af647a05c934b8ba71e0f8f177eb5a25c",
-      "verified_at": "2026-11-13T16:39:42.853Z",
+      "content_hash": "b926ded77a84b3341b3bc66fcb56019d724b45fb81c5932c8220221c385c0794",
+      "verified_at": "2026-11-13T21:36:41.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:39:42.853Z"
+      "last_updated": "2026-11-13T21:36:41.247Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -4386,14 +4386,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-streetwriters-notesnook",
-      "content_hash": "4aa21afa16b360c6f1278ae73ef54367472c6e1d635dc680b0c72fb03dca7e3a",
-      "verified_at": "2026-11-09T13:34:22.925Z",
+      "content_hash": "ed56db56a85d8d657ea52446947fca770484b1d4cee3e042edbb7b97c779746d",
+      "verified_at": "2026-11-13T21:36:37.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T13:34:22.925Z"
+      "last_updated": "2026-11-13T21:36:37.687Z"
     },
     "kgateway-dev/kgateway": {
       "repository": "kgateway-dev/kgateway",
@@ -17976,14 +17976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "4e750a0e12a60a91925ca8e841e1f13d99b8bb87a691c18046ab4c73ec4870f5",
-      "verified_at": "2026-11-08T20:31:14.851Z",
+      "content_hash": "977cd09488b5998a0372796818cb403af8e58f59fbc8d78f34b6d82bf23d5e23",
+      "verified_at": "2026-11-13T21:36:29.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:31:14.851Z"
+      "last_updated": "2026-11-13T21:36:29.284Z"
     },
     "ricursiveAI/Ripple-65B-Preview": {
       "repository": "ricursiveAI/Ripple-65B-Preview",

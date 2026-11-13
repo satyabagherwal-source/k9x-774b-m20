@@ -9638,3 +9638,7 @@
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:16:45.591Z` | `hf-baai-bge-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-86956AB2` [Domain D] | Yes (`289bd4a1...`) |
 | `CYCLE-20261113-NIMG` | `2026-11-13T21:28:08.200Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`482ba5ac...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:28:52.902Z` | `hf-qwen-qwen3-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7BD861BF` [Domain D] | Yes (`dca45c82...`) |
+| `CYCLE-20261113-Y992` | `2026-11-13T21:36:29.270Z` | `nvidia/NVIDIA-NemotronLabs-RE-USE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | Yes (`977cd094...`) |
+| `CYCLE-20261113-YFQF` | `2026-11-13T21:36:37.671Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8388` | Yes (`ed56db56...`) |
+| `CYCLE-20261113-YIHC` | `2026-11-13T21:36:41.232Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8389` | Yes (`b926ded7...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:37:17.530Z` | `hf-nvidia-nvidia-nemotronlabs-re-use` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B0D103E9` [Domain D] | Yes (`52910bc4...`) |

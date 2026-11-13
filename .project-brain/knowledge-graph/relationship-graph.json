@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T21:28:52.901Z",
+  "updated_at": "2026-11-13T21:37:17.529Z",
   "statistics": {
-    "total_nodes": 128,
+    "total_nodes": 129,
     "total_edges": 69,
     "domain_distribution": {
-      "D": 105,
+      "D": 106,
       "M": 1,
       "H": 10,
       "J": 3,
@@ -2860,6 +2860,28 @@
       ],
       "created_at": "2026-11-13T21:28:52.901Z",
       "updated_at": "2026-11-13T21:28:52.901Z"
+    },
+    "DOM-D-B0D103E9": {
+      "id": "DOM-D-B0D103E9",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md`  \n> **Source**: huggingface ([htt",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-nvidia-nvidia-nemotronlabs-re-use/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:36:44.528Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-nvidia-nemotronlabs-re-use)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T21:37:17.529Z",
+      "updated_at": "2026-11-13T21:37:17.529Z"
     }
   },
   "edges": [

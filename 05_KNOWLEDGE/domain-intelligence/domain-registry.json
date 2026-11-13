@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T21:28:54.454Z",
-  "total_records": 373,
+  "last_updated": "2026-11-13T21:37:18.965Z",
+  "total_records": 378,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 197,
+      "total": 200,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -230,7 +230,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-0-6b-core-invariants",
         "DOM-D-7BD861BF",
-        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant",
+        "DOM-D-B0D103E9",
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-c"
       ]
     },
     "E": {
@@ -248,7 +251,7 @@
       ]
     },
     "G": {
-      "total": 46,
+      "total": 48,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -295,7 +298,9 @@
         "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants",
         "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
-        "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants",
+        "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6863,8 +6868,8 @@
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "repository": "microsoft/agent-governance-toolkit",
-      "content_hash": "f9478cfd0bc20a6c019c062e98c01c697ed6cb01d1ba04d21852574a5561eefe",
-      "created_at": "2026-11-13T16:39:43.087Z"
+      "content_hash": "75b4c7efa86df50ee25c6a02ab01df7766c4d9aad71c19a1e59b877eea04e1ff",
+      "created_at": "2026-11-13T21:36:41.544Z"
     },
     "DOM-D-21095CB7": {
       "record_id": "DOM-D-21095CB7",
@@ -6923,8 +6928,8 @@
       "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-learnings-architecture-intelligence-microsoft.md",
       "repository": "microsoft-agent-governance-toolkit-learnings",
-      "content_hash": "fe71720ea5c71e4c523376e391d9460e056461296817238e3af2411dc7943e80",
-      "created_at": "2026-11-13T16:40:23.782Z"
+      "content_hash": "c7cfefbda9325888672a836c195f894a5b7b7c15e0a663f17721360cc82307b6",
+      "created_at": "2026-11-13T21:37:18.965Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
@@ -9259,6 +9264,84 @@
       "repository": "hf-qwen-qwen3-0.6b-learnings",
       "content_hash": "89155d168482dd6a3854c27a41aa55a107429278c72d85e19b8b339cb0e67b94",
       "created_at": "2026-11-13T21:28:53.129Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-NemotronLabs-RE-USE Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotronlabs-re-use-research-knowledge-intelligence-nvidia-nvid.md",
+      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "content_hash": "fbb6db15371b7ad64b00ead44ae1d42162f60b4f0394b27feb1d56ba59a68c56",
+      "created_at": "2026-11-13T21:36:29.471Z"
+    },
+    "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: streetwriters/notesnook Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-streetwriters-notesnook-architecture-intelligence-streetwriters-notesnook-core-i.md",
+      "repository": "streetwriters/notesnook",
+      "content_hash": "47781562f7599a41de15fded2ca7ddbff0df8622bf63fb19bc16ce72cd6c4c96",
+      "created_at": "2026-11-13T21:36:38.015Z"
+    },
+    "DOM-D-B0D103E9": {
+      "record_id": "DOM-D-B0D103E9",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE))  \n> **Source Version**: `hf-nvidia-nv`  \n> **L",
+      "content_hash": "52910bc45bbc56f3f26bdc74f9eafa9c2406a502010dfa6789282cec09281e6a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md`  \n> **Source**: huggingface ([htt",
+      "provenance": {
+        "source_uri": "project://hf-nvidia-nvidia-nemotronlabs-re-use/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:36:44.528Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-nvidia-nemotronlabs-re-use)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nvidia-nvidia-nemotronlabs-re-use"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T21:37:17.513Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotronlabs-re-use-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-research-knowledge-intelligence-h.md",
+      "repository": "hf-nvidia-nvidia-nemotronlabs-re-use-learnings",
+      "content_hash": "e9300714cf96d8111a29481d763eb086d83c2982a46f0f5c23614a044788fd6e",
+      "created_at": "2026-11-13T21:37:17.757Z"
+    },
+    "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: streetwriters-notesnook-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-streetwriters-notesnook-learnings-architecture-intelligence-streetwriters-notesn.md",
+      "repository": "streetwriters-notesnook-learnings",
+      "content_hash": "144ada95f57b1e2f8d18aeda28dae4f7b171a992a80e0bef640d8739fdfc28a0",
+      "created_at": "2026-11-13T21:37:18.387Z"
     }
   }
 }

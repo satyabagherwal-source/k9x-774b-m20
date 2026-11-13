@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source**: github ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
-> **Source Version**: `af701e99`  
+> **Source Version**: `a2ac794b`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T13:34:21.383Z  
+> **Timestamp**: 2026-11-13T21:36:36.680Z  
 > **Learning ID**: `learn-github-streetwriters-notesnook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T13:34:21.219Z  
+> **Harvest Timestamp**: 2026-11-13T21:36:36.673Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully open source & end-to-end encrypted note taking alternative to Evernote.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14903 stars
+- **Stars / Engagement**: 14932 stars
 
 ---
 
@@ -754,11 +754,13 @@ function setDockMenuOnMacOs() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10653** (2026-11-09): **Report issues as the signed-in user, or with an email when logged out**
-  *Symptoms*: ## Description The issues service now identifies who filed a report from their access token, instead of the user id sent in the request body. Logged-out users can still report issues, but need to give a contact email so our support team can reply; their reports go to support rather than GitHub.  - **core:** `Debug.report()` sends `Authorization: Bearer <access token>` when signed in, and takes `email` for logged-out reports. It no longer sends `userId`. - **web:** the report dialog sends the token when signed in, and shows a required **Email** field when signed out. - **mobile:** same as web. When the server answers with an error (session expired, email not confirmed, too many reports today), the error is now shown and the form is kept. Before, the sheet switched to an empty success screen.  Older app versions can't file reports once the updated issues service is deployed; they're shown "Please update Notesnook to the latest version…".  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why The change is a request header and a form field; the behavior that matters is the issues service's response, which our tests don't cover. Checked with typecheck on c
+- **Issue #10679** (2026-11-13): **Email confirmation failed. Invalid token**
+  *Symptoms*: new account/user  Received email to verify email but get this error. Solution/fix please  Uh oh! Email confirmation failed. Please try again! Invalid token  <img width="636" height="363" alt="Email Confirmation Failed - Notesnook" src="https://github.com/user-attachments/assets/ea8e6b8a-2c66-464c-b8c2-eeebb1d54470" />
+  **Post-Mortem & Fix Analysis**:
+  > Resolved. 
 
-- **Issue #10650** (2026-11-09): **web: reset arrowDown flag when tag suggestion menu closes**
-  *Symptoms*: Fixes #10646  ## Description In the note editor's tag input (Autosuggest), navigating suggestions using ArrowUp or ArrowDown sets arrowDown.current = true so that pressing Enter routes to the dropdown menu. However, arrowDown.current was never cleared when a suggestion was picked (via reset()) or when the suggestion menu closed. As a result, subsequent attempts to create new tags by typing in the input and pressing Enter were silently ignored because !arrowDown.current evaluated to false.  This PR:  Clears arrowDown.current = false inside reset(). Adds a useEffect on isOpen to clear arrowDown.current whenever the suggestion menu closes.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [x] Web - [ ] Mobile - [x] Desktop  ## Sign-off - [x] QA passed - [x] UI/UX passed 
+- **Issue #10661** (2026-11-11): **web: ask vault password when trashing locked archived notes**
+  *Symptoms*: ## Description Fixes #10645  Moving a locked note to trash asks for the vault password, but not when the note is archived.  `moveNotesToTrash` found locked notes with `db.relations.from(vault, "note")`. That query filters out archived notes (they're excluded whenever notes are the returned side of a relation), so locked archived notes were never detected. It now queries from the note side with `db.relations.to({ type: "note", ids }, "vault")`, which isn't filtered.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [x] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why Added a vault test in `packages/core/__tests__/vault.test.js` asserting locked archived notes are returned by `db.relations.to(..., "vault")` and `db.vaults.itemExists`. All vault tests pass.  ## Platform - [x] Web - [ ] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -775,49 +777,122 @@ function setDockMenuOnMacOs() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4bd16217` (2026-11-09)
-**Commit Message**: Merge pull request #10639 from streetwriters/fix/10585-quick-note-plain-text
+### Incident Patch 1: `ebf5ab16` (2026-11-11)
+**Commit Message**: Merge pull request #10637 from streetwriters/fix/android-quick-note-toolbar-position
 
-mobile: fix quick note text erased when selecting plain text
+mobile: reset stale keyboard state after quick note
 
-**File**: `apps/mobile/app/share/share.tsx` (modified, +1/-0)
+**File**: `apps/mobile/app/hooks/use-app-events.tsx` (modified, +2/-0)
 ```diff
-@@ -407,6 +407,7 @@ const ShareView = () => {
-   };
+@@ -110,6 +110,7 @@ import {
+ import { getGithubVersion } from "../utils/github-version";
+ import { fluidTabsRef } from "../utils/global-refs";
+ import { sleep } from "../utils/time";
++import { dismissAndResetKeyboard } from "../utils/keyboard";
+ import useFeatureManager from "./use-feature-manager";
  
-   const changeMode = async (value: number) => {
-+    if (value === mode) return;
-     setMode(value);
+ const onCheckSyncStatus = async (type: SyncStatusEvent) => {
+@@ -869,6 +870,7 @@ export const useAppEvents = () => {
  
-     setLoading(true);
+     const onAppStateChanged = async (state: AppStateStatus) => {
+       if (state === "active") {
++        dismissAndResetKeyboard();
+         notifee.setBadgeCount(0);
+         updateStatusBarColor();
+         expiringNotesTimer();
 ```
 
----
-
-### Incident Patch 2: `fe00b7e6` (2026-11-04)
-**Commit Message**: mobile: fix quick note text erased when selecting plain text
-
-Signed-off-by: Kashaf Ansari <[REDACTED_EMAIL]>
-
-**File**: `apps/mobile/app/share/share.tsx` (modified, +1/-0)
+**File**: `apps/mobile/app/share/share.tsx` (modified, +5/-0)
 ```diff
-@@ -407,6 +407,7 @@ const ShareView = () => {
-   };
+@@ -73,6 +73,7 @@ import { isTablet } from "react-native-device-info";
+ import { NotesnookModule } from "../utils/notesnook-module";
+ import { DefaultAppStyles } from "../utils/styles";
+ import { encodeHTML5 } from "entities";
++import { dismissAndResetKeyboard } from "../utils/keyboard";
  
-   const changeMode = async (value: number) => {
-+    if (value === mode) return;
-     setMode(value);
+ const getLinkPreview = (url: string) => {
+   return getPreviewData(url, 5000);
+@@ -340,9 +341,13 @@ const ShareView = () => {
+         DatabaseLogger.error(e);
+       }
+     })();
++    return () => {
++      dismissAndResetKeyboard();
++    };
+   }, [loadData]);
  
-     setLoading(true);
+   const close = async () => {
++    dismissAndResetKeyboard();
+     setNote({ ...defaultNote });
+     setLoadingExtension(true);
+     ShareExtension.close();
+```
+
+**File**: `apps/mobile/app/utils/keyboard.ts` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++/*
++This file is part of the Notesnook project (https://notesnook.com/)
++
++Copyright (C) 2023 Streetwriters (Private) Limited
++
++This program is free software: you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation, either version 3 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++import {
++  DeviceEventEmitter,
++  Dimensions,
++  Keyboard,
++  Platform
++} from "react-native";
++
++/**
++ * Dismisses the keyboard and emits keyboard hide events across the React Native
++ * bridge to purge any stale keyboard state/displacement (e.g. after ShareActivity
++ * or quick note finishes abruptly without a native layout hide event).
++ */
++export function dismissAndResetKeyboard() {
++  try {
++    Keyboard.dismiss();
++    const window = Dimensions.get("window");
++    const payload = {
++      duration: 0,
++      easing: "keyboard",
++      endCoordinates: {
++        screenX: 0,
++        screenY: window.height,
++        width: window.width,
++        height: 0
++      }
++    };
++    DeviceEventEmitter.emit("keyboardDidHide", payload);
++    if (Platform.OS === "ios") {
++      DeviceEventEmitter.emit("keyboardWillHide", payload);
++    }
++  } catch (e) {
++    console.error("Failed to reset keyboard state:", e);
++  }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10661** (2026-11-11): web: ask vault password when trashing locked archived notes (@01zulfi)
+- **PR #10657** (closed): web: warn when published notes are not trashed (@federicoiosue)
+- **PR #10656** (2026-11-10): web: bump version to 3.4.13 (@01zulfi)
 - **PR #10653** (2026-11-09): Report issues as the signed-in user, or with an email when logged out (@thecodrr)
 - **PR #10650** (2026-11-09): web: reset arrowDown flag when tag suggestion menu closes (@mohdsultan18)
-- **PR #10639** (2026-11-09): mobile: fix quick note text erased when selecting plain text (@kashaf-ansari-dev)
-- **PR #10629** (2026-11-03): web: don't render custom context menu behind native macOS context menu (@01zulfi)
-- **PR #10628** (2026-11-03): web: redesign reminder list & dialog fixes (@01zulfi)
-- **PR #10627** (2026-11-03): core: skip attachments with undecryptable keys when restoring backups (@thecodrr)
+- **PR #10644** (2026-11-10): Handle canceled uploads and show clearer upload error messages (@kashaf-ansari-dev)
 
 ---
 
@@ -837,28 +912,29 @@ Signed-off-by: Kashaf Ansari <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #10639 from streetwriters/fix/10585-quick-note-plain-text
+## X. Empirical Invariant Guard in use-app-events.tsx
 
 **RULE**:
-When implementing operations in `apps/mobile/app/share/share.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/mobile/app/hooks/use-app-events.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4bd16217`: Merge pull request #10639 from streetwriters/fix/10585-quick-note-plain-text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ebf5ab16`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/share/share.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/hooks/use-app-events.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    if (value === mode) return;
+import { dismissAndResetKeyboard } from "../utils/keyboard";
+        dismissAndResetKeyboard();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4bd16217` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ebf5ab16` are properly handled with clean fallback behavior.

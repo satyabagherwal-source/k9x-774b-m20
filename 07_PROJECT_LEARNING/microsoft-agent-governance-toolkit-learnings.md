@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `c3342ce2`  
+> **Source Version**: `c8939518`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T16:39:42.369Z  
+> **Timestamp**: 2026-11-13T21:36:40.234Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T16:39:42.364Z  
+> **Harvest Timestamp**: 2026-11-13T21:36:40.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -405,74 +405,32 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c3342ce2` (2026-11-13)
-**Commit Message**: chore(deps-dev): Bump hono (#4574)
+### Incident Patch 1: `c8939518` (2026-11-13)
+**Commit Message**: docs(changelog): record the conversation guardian invisible-character fix (#4406)
 
-Bumps [hono](https://github.com/honojs/hono) from 4.13.13 to 4.13.18.
-- [Release notes](https://github.com/honojs/hono/releases)
-- [Commits](https://github.com/honojs/hono/compare/v4.13.13...v4.13.18)
+* docs(changelog): record the conversation guardian invisible-character fix
 
----
-updated-dependencies:
-- dependency-name: hono
-  dependency-version: 4.13.18
-  dependency-type: indirect
-...
+Signed-off-by: MohammadHaroonAbuomar <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+* chore: retrigger CI after stalled Actions runs
 
-**File**: `agent-governance-python/agentmesh-integrations/mastra-agentmesh/package-lock.json` (modified, +3/-3)
+Signed-off-by: MohammadHaroonAbuomar <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: MohammadHaroonAbuomar <[REDACTED_EMAIL]>
+Co-authored-by: Ricky Gummadi <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -2989,9 +2989,9 @@
-       }
-     },
-     "node_modules/hono": {
--      "version": "4.13.13",
--      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
--      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
-+      "version": "4.13.18",
-+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
-+      "integrity": "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-```
-
----
-
-### Incident Patch 2: `66b78a1e` (2026-11-13)
-**Commit Message**: chore(deps): Bump hono (#4573)
-
-Bumps [hono](https://github.com/honojs/hono) from 4.13.13 to 4.13.18.
-- [Release notes](https://github.com/honojs/hono/releases)
-- [Commits](https://github.com/honojs/hono/compare/v4.13.13...v4.13.18)
-
----
-updated-dependencies:
-- dependency-name: hono
-  dependency-version: 4.13.18
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `agent-governance-python/agent-os/extensions/mcp-server/package-lock.json` (modified, +3/-3)
-```diff
-@@ -2775,9 +2775,9 @@
-       }
-     },
-     "node_modules/hono": {
--      "version": "4.13.13",
--      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
--      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
-+      "version": "4.13.18",
-+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
-+      "integrity": "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=16.9.0"
+@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **policy-engine: agent-control-spec 0.4.0-alpha.4 (#4224).** The engine now accepts both manifest contracts (`0.4.0-alpha.1`, `0.5.0-alpha.1`); `bundle_url` and `system_prompt_url` are accepted on a pinned chain and fetched by the bundled dispatchers at dispatch time; `acs_builder_set_url_fetch_limits` stores the limits and returns `0` instead of the former `-1` "unsupported"; `REMOVED_MANIFEST_FIELDS` is deprecated in favour of `UNSUPPORTED_MANIFEST_FIELDS`. See BREAKING_CHANGES.md for the consumer-side notes.
+ 
+ ### Fixed
++- **Conversation guardian no longer misses patterns hidden behind invisible characters (#4124).** Zero-width characters, soft hyphens, variation selectors and similar code points inserted inside a word let an escalation or offensive phrase pass the `agent-os` conversation guardian unchanged. The detectors now run over normalized views of each message with those characters removed, so the same phrases are caught at the same scores, while emoji, right-to-left and CJK text score as before.
+ - **Python `AgentControl.run_tool` no longer runs the tool when the manifest does not bind `post_tool_call`.** With `pre_tool_call` bound and `post_tool_call` not, `run_tool` (and so `protect_tool` and the MCP, LangChain, Semantic Kernel and Foundry adapters) executed the tool and only then raised `AgentControlBlocked` for `post_tool_call` with `runtime_error:intervention_point_unknown`, so the side effect happened while the caller was told the call was blocked, and a retry could repeat it. In enforce mode `run_tool` now checks, once the pre-check permits the call, that `post_tool_call` is bound in the merged manifest (a parent of an `extends` chain counts) and raises the same block with the same verdict and reason before calling the tool; a reserved tool-call budget slot is released. The fail-closed rule for an unbound point is unchanged. A custom runtime client that does not expose `policy_labels` keeps the previous order. The `run_tool` and `protect_tool` docstrings, the Python SDK README, the quickstart and the tutorial now say both points must be bound (#4424).
+ - **Hypervisor command denylist no longer misses a denied command written without a space, by path or quoted.** `RingEnforcer.check_command` compared the first whitespace-separated token against `DENIED_COMMANDS` after stripping only trailing `;&|`, so `curl;rm -rf /`, `curl&&id`, `|curl`, `/usr/bin/curl`, `./bash`, `"curl"` and `\curl` were all reported as allowed, as were `curl>out`, `(curl x)`, `` `curl x` ``, `$(curl x)`, `{ curl; }`, `$'curl'`, `>out curl` and `>"my file" curl`. The command now has redirections dropped together with their targets (`>out`, `2>&1`, `< /dev/null`, and quoted or escaped targets such as `>"my file"` or `>a\ b`), then has shell quotes (including `$'...'` and `$"..."`) and backslashes removed, is split at whitespace, `;`, `&`, `|`, `<`, `>`, `(`, `)` and backticks, skips a leading `{`, `!` or `$(`, and the first command is reduced to its executable name before matching. A token made only of control operators, or a redirection to an empty file name (`>"" curl`), is denied as having no executable name instead of being allowed.
+ - **Hypervisor command denylist no longer misses a denied command after a variable assignment or a wrapper.** `RingEnforcer.check_command` took the first word as the executable, so `FOO=x curl`, `env -i curl`, `exec curl`, `nohup curl`, `nice -n 5 curl`, `timeout 5 curl`, `command curl` and `time curl` were checked as `FOO=x`, `env`, `exec` and so on and allowed, and a line continuation (`cu\<newline>rl`) split the name. Backslash-newline pairs are now removed first, leading `NAME=value` assignments (with quoted or escaped values) are skipped, and `env`, `exec`, `nohup`, `nice`, `timeout`, `stdbuf`, `time`, `command` and `builtin` are unwrapped by reading their options, so the command they run is checked. A wrapper that runs no command (`env`, `command -v curl`) is still the executable, and a wrapper whose options cannot be read (an unknown option, a missing option argument, or `env -S`) is denied (#4331).
 ```
 
 #### Recent Merged Pull Requests:
@@ -501,32 +459,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): Bump hono (#4574)
+## X. docs(changelog): record the conversation guardian invisible-character fix
 
 **RULE**:
-When implementing operations in `agent-governance-python/agentmesh-integrations/mastra-agentmesh/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c3342ce2`: deps-dev): Bump hono (#4574). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8939518`: docs(changelog): record the conversation guardian invisible-character fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agentmesh-integrations/mastra-agentmesh/package-lock.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-      "version": "4.13.18",
-      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
-      "integrity": "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==",
+- **Conversation guardian no longer misses patterns hidden behind invisible characters (#4124).** Zero-width characters, soft hyphens, variation selectors and similar code points inserted inside a word let an escalation or offensive phrase pass the `agent-os` conversation guardian unchanged. The detectors now run over normalized views of each message with those characters removed, so the same phrases are caught at the same scores, while emoji, right-to-left and CJK text score as before.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-      "version": "4.13.13",
-      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
-      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c3342ce2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8939518` are properly handled with clean fallback behavior.

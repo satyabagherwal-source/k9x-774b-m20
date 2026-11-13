@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-13T21:28:54.593Z",
-  "total_verified_learnings": 8408,
+  "last_updated": "2026-11-13T21:37:19.213Z",
+  "total_verified_learnings": 8411,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16643,
+  "total_items": 16656,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113366,10 +113366,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "c3342ce2",
-      "content_hash": "f9478cfd0bc20a6c019c062e98c01c697ed6cb01d1ba04d21852574a5561eefe",
+      "source_version": "c8939518",
+      "content_hash": "75b4c7efa86df50ee25c6a02ab01df7766c4d9aad71c19a1e59b877eea04e1ff",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T16:39:43.087Z"
+      "persisted_at": "2026-11-13T21:36:41.544Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit",
@@ -113378,10 +113378,10 @@
       "relative_path": "12_DECISIONS/ADR-microsoft-agent-governance-toolkit-adr-subsystem-boundary-modular-decoupling-in-.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft/agent-governance-toolkit",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "c3342ce2",
-      "content_hash": "4a29f61e9bef91660204909266b1f1cb4b73989f2049d331d87642693a04444b",
+      "source_version": "c8939518",
+      "content_hash": "a068df3d4eb3b444e27d71350d3e67dd41d04c1aecf053bb41477a1abacc9013",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T16:39:43.168Z"
+      "persisted_at": "2026-11-13T21:36:41.658Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too",
@@ -113391,9 +113391,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for microsoft-agent-governance-toolkit-learnings",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5112ab1a3a19b0b61c02887292ff9a0e63a2834a1ee7f698aa87fb479fac2bc",
+      "content_hash": "affa453150c12f3a30c02824ac33dea3b6eeecd2757d33fecd59d248bfe0c744",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:40:23.968Z"
+      "persisted_at": "2026-11-13T21:37:19.213Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
@@ -113415,9 +113415,9 @@
       "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "fe71720ea5c71e4c523376e391d9460e056461296817238e3af2411dc7943e80",
+      "content_hash": "c7cfefbda9325888672a836c195f894a5b7b7c15e0a663f17721360cc82307b6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T16:40:23.782Z"
+      "persisted_at": "2026-11-13T21:37:18.965Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-",
@@ -113427,9 +113427,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft-agent-governance-toolkit-learnings",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7b38d51290f4a310021a332de1b85c9d8a7ca5640acd694047baeeb803e1ea2",
+      "content_hash": "7cd6d4811d41b1fa2277769002451a35abe95335f6f564368e2e683cc48d4cf7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T16:40:23.877Z"
+      "persisted_at": "2026-11-13T21:37:19.092Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
@@ -216213,6 +216213,223 @@
       "content_hash": "89155d168482dd6a3854c27a41aa55a107429278c72d85e19b8b339cb0e67b94",
       "domain_letter": "D",
       "persisted_at": "2026-11-13T21:28:53.129Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "slug": "hf-nvidia-nvidia-nemotronlabs-re-use",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
+      "content_hash": "977cd09488b5998a0372796818cb403af8e58f59fbc8d78f34b6d82bf23d5e23",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T21:36:29.109Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotronlabs-re-use-research-knowledge-intelligence-nvidia-nvid.md",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-NemotronLabs-RE-USE Core Invariants",
+      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
+      "content_hash": "fbb6db15371b7ad64b00ead44ae1d42162f60b4f0394b27feb1d56ba59a68c56",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T21:36:29.471Z"
+    },
+    "learn-github-streetwriters-notesnook": {
+      "learning_id": "learn-github-streetwriters-notesnook",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "streetwriters/notesnook",
+      "repository": "streetwriters/notesnook",
+      "slug": "streetwriters-notesnook",
+      "platform": "github",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "a2ac794b",
+      "content_hash": "ed56db56a85d8d657ea52446947fca770484b1d4cee3e042edbb7b97c779746d",
+      "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8388,
+          "title": "Empirical Invariant Guard in use-app-events.tsx",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T21:36:37.512Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8388": {
+      "learning_id": "rule-8388",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8388,
+      "title": "Empirical Invariant Guard in use-app-events.tsx",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "a2ac794b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T21:36:37.512Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-use-app-events-tsx": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-use-app-events-tsx",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZB1Q-empirical-invariant-guard-in-use-app-events-tsx.md",
+      "title": "Empirical Invariant Guard in use-app-events.tsx",
+      "repository": "streetwriters-notesnook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b0564c54bd65b04ffb24b3e577db1f54e6a4d01e8b3e23664afc630c012aaf3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T21:37:18.254Z"
+    },
+    "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-streetwriters-notesnook-architecture-intelligence-streetwriters-notesnook-core-i.md",
+      "title": "Architecture Intelligence: streetwriters/notesnook Core Invariants",
+      "repository": "streetwriters/notesnook",
+      "source_version": "a2ac794b",
+      "content_hash": "47781562f7599a41de15fded2ca7ddbff0df8622bf63fb19bc16ce72cd6c4c96",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T21:36:38.015Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-streetwriters-notesnook": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-streetwriters-notesnook",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/streetwriters-notesnook-verification-protocol-empirical-defect-shield-for-street.md",
+      "title": "Verification Protocol: Empirical Defect Shield for streetwriters/notesnook",
+      "repository": "streetwriters/notesnook",
+      "source_version": "a2ac794b",
+      "content_hash": "5c3449a07734cc17ac3ffe23954eae0d67380a05473ebbf7b378ba8c691363dd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T21:36:38.145Z"
+    },
+    "learn-github-microsoft-agent-governance-toolkit": {
+      "learning_id": "learn-github-microsoft-agent-governance-toolkit",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "microsoft/agent-governance-toolkit",
+      "repository": "microsoft/agent-governance-toolkit",
+      "slug": "microsoft-agent-governance-toolkit",
+      "platform": "github",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "c8939518",
+      "content_hash": "b926ded77a84b3341b3bc66fcb56019d724b45fb81c5932c8220221c385c0794",
+      "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8389,
+          "title": "docs(changelog): record the conversation guardian invisible-character fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T21:36:41.073Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8389": {
+      "learning_id": "rule-8389",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8389,
+      "title": "docs(changelog): record the conversation guardian invisible-character fix",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "c8939518",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T21:36:41.073Z"
+    },
+    "candidate_directive-docs-changelog-record-the-conversation-guardian-invisible-character-fix": {
+      "item_id": "candidate_directive-docs-changelog-record-the-conversation-guardian-invisible-character-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZBIB-docs-changelog-record-the-conversation-guardian-invisible-character-fix.md",
+      "title": "docs(changelog): record the conversation guardian invisible-character fix",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "42cb98d78d0b0f3c6faa7ee29c5e6c7daa8c5ec90051e16a4bb0f9235097021f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T21:37:18.851Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-c": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-c",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-research-knowledge-intelligence-h.md",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotronlabs-re-use-learnings Core Invariants",
+      "repository": "hf-nvidia-nvidia-nemotronlabs-re-use-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9300714cf96d8111a29481d763eb086d83c2982a46f0f5c23614a044788fd6e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T21:37:17.757Z"
+    },
+    "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-streetwriters-notesnook-learnings-architecture-intelligence-streetwriters-notesn.md",
+      "title": "Architecture Intelligence: streetwriters-notesnook-learnings Core Invariants",
+      "repository": "streetwriters-notesnook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "144ada95f57b1e2f8d18aeda28dae4f7b171a992a80e0bef640d8739fdfc28a0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T21:37:18.387Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-streetwriters-notesnook-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-streetwriters-notesnook-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/streetwriters-notesnook-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for streetwriters-notesnook-learnings",
+      "repository": "streetwriters-notesnook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d6d5f5063b6ba1825360690df811771516e41d76f50e9bbf0d27d4ae0b148bae",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T21:37:18.512Z"
     }
   },
   "ai-builder-brain": {

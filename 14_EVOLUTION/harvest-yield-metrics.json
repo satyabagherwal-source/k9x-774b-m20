@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:28:08.211Z",
-  "total_cycles_completed": 9384,
-  "total_learnings_persisted": 9384,
-  "total_rules_promoted": 9107,
+  "last_updated": "2026-11-13T21:36:41.243Z",
+  "total_cycles_completed": 9387,
+  "total_learnings_persisted": 9387,
+  "total_rules_promoted": 9109,
   "history": [
-    {
-      "timestamp": "2026-11-13T08:22:03.660Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T08:22:06.424Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T08:22:10.191Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T08:35:53.798Z",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
@@ -1403,6 +1382,27 @@
       "repository": "Qwen/Qwen3-0.6B",
       "learningId": "learn-huggingface-qwen-qwen3-0-6b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T21:36:29.281Z",
+      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T21:36:37.683Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T21:36:41.243Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T21:28:52.917Z",
+  "updated_at": "2026-11-13T21:37:18.054Z",
   "stats": {
-    "total_discovered": 2930,
-    "approved_pending_harvest": 2732,
+    "total_discovered": 2937,
+    "approved_pending_harvest": 2739,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2733,
+      "COMMUNITY_AND_EXPERT": 2740,
       "OFFICIAL_DOCUMENTATION": 105,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -63094,6 +63094,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
         "fileName": "hf-qwen-qwen3-0.6b-learnings.md"
+      }
+    },
+    "SRC-F2543C4CC8C5": {
+      "id": "SRC-F2543C4CC8C5",
+      "url": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "title": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:37:17.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
+        "fileName": "hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md"
+      }
+    },
+    "SRC-AA33C99A94D2": {
+      "id": "SRC-AA33C99A94D2",
+      "url": "https://github.com/streetwriters/notesnook",
+      "title": "https://github.com/streetwriters/notesnook",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:37:17.912Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-59B8064B883A": {
+      "id": "SRC-59B8064B883A",
+      "url": "https://notesnook.com/",
+      "title": "https://notesnook.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:37:17.947Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-5473CD3FA5D4": {
+      "id": "SRC-5473CD3FA5D4",
+      "url": "https://notesnook.com/api/v1/releases/$%7Bprocess.platform",
+      "title": "https://notesnook.com/api/v1/releases/$%7Bprocess.platform",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:37:17.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-7E78FADAC684": {
+      "id": "SRC-7E78FADAC684",
+      "url": "https://mozilla.cloudflare-dns.com/dns-query",
+      "title": "https://mozilla.cloudflare-dns.com/dns-query",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:37:18.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-CCD6C9EBC887": {
+      "id": "SRC-CCD6C9EBC887",
+      "url": "https://dns.quad9.net/dns-query",
+      "title": "https://dns.quad9.net/dns-query",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:37:18.030Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-F1A19305FAC2": {
+      "id": "SRC-F1A19305FAC2",
+      "url": "https://github.com/user-attachments/assets/ea8e6b8a-2c66-464c-b8c2-eeebb1d54470",
+      "title": "https://github.com/user-attachments/assets/ea8e6b8a-2c66-464c-b8c2-eeebb1d54470",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:37:18.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
       }
     }
   }
