@@ -9643,3 +9643,8 @@ Every entry in this ledger must capture:
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `76f5e82d` | Multi-dimensional audit evidence | 2026-11-13T20:27:08.318Z |
 | `learn-dom-d-43004423` | `project://hf-cloudflare-clef` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | 2026-11-13T20:27:42.809Z |
 | `learn-dom-d-4ca3bd2a` | `project://trufflesecurity-trufflehog` | `94dd9889` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | 2026-11-13T20:28:20.767Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-13T20:36:44.023Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `fb80161a` | Multi-dimensional audit evidence | 2026-11-13T20:36:45.674Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `37b5e4a9` | Multi-dimensional audit evidence | 2026-11-13T20:36:51.772Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `7ca6e772` | Multi-dimensional audit evidence | 2026-11-13T20:36:53.601Z |
+| `learn-dom-d-a812096f` | `project://hf-cloudflare-clef-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | 2026-11-13T20:37:26.656Z |

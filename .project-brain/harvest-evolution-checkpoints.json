@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:28:21.567Z",
+  "last_updated": "2026-11-13T20:37:27.514Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-13T20:16:28.256Z",
+      "processed_at": "2026-11-13T20:37:26.959Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -963,9 +963,9 @@
       "staged_for_review": 1
     },
     "salvo-rs-salvo-learnings.md": {
-      "processed_at": "2026-11-12T08:35:03.648Z",
-      "promoted_canonical": 2,
-      "staged_for_review": 0
+      "processed_at": "2026-11-13T20:36:56.679Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "digitalbazaar-pyld-learnings.md": {
       "processed_at": "2026-11-12T08:35:03.673Z",
@@ -2141,9 +2141,14 @@
       "processed_at": "2026-11-13T20:27:43.164Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-cloudflare-clef-flash-learnings.md": {
+      "processed_at": "2026-11-13T20:37:26.656Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 672,
-  "total_canonical_promoted": 129,
-  "total_staged_for_review": 537
+  "total_dossiers_evaluated": 675,
+  "total_canonical_promoted": 130,
+  "total_staged_for_review": 539
 }

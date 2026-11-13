@@ -695,8 +695,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "b3d0bb21ea65cf0676c94bac43b829eeffd4db5c14849f6050bed8acc17d1f6f",
-    "lastHarvestedAt": "2026-11-08T19:31:08.605Z",
+    "contentHash": "9a898aed6e616833ad642d03ed68925c82612d60c63403c8a7b0501d1b7a6fb2",
+    "lastHarvestedAt": "2026-11-13T20:36:44.023Z",
     "learningId": "learn-huggingface-cloudflare-clef-flash"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "f0f02bcb",
+    "sourceVersion": "37b5e4a9",
     "license": "Apache-2.0",
-    "contentHash": "b2efe3dcf41daf37e981320624af828ec596da799516d1713d330e3460f15b23",
-    "lastHarvestedAt": "2026-11-09T12:13:07.427Z",
+    "contentHash": "0539f00dabf0151f39c210fd60d52a0a69568796d7551c124fe0de7d4d1caf62",
+    "lastHarvestedAt": "2026-11-13T20:36:51.772Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "b695140a",
+    "sourceVersion": "fb80161a",
     "license": "Apache-2.0",
-    "contentHash": "29eef3136107920eb42cd39f5609682b99121bfe0d2fe542cf46541962533503",
-    "lastHarvestedAt": "2026-11-12T08:32:08.567Z",
+    "contentHash": "1e8a5f6c172d01179704444b2327c5158311fd5fbd0542400b6c7e46d410d94c",
+    "lastHarvestedAt": "2026-11-13T20:36:45.674Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "3967c693",
+    "sourceVersion": "7ca6e772",
     "license": "MPL-2.0",
-    "contentHash": "f7d8f2fb4cbad4da8100fd63a85baab6f21c34294ee6745e14f7d7a843f65830",
-    "lastHarvestedAt": "2026-11-12T22:05:24.900Z",
+    "contentHash": "cd8ee374022c7362d9cd7baddc2235c631aa861c1975dfb8830305f16952bf1d",
+    "lastHarvestedAt": "2026-11-13T20:36:53.601Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

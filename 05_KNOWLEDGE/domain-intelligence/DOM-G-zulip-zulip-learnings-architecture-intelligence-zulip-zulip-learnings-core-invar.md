@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T20:16:28.334Z",
+  "timestamp": "2026-11-13T20:37:27.097Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zulip-zulip-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zulip-zulip-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T20:16:28.334Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-13T20:37:27.097Z`  
 > **Learning ID**: `LEARN-EVO-zulip-zulip-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zulip-zulip-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `f0f02bcb`  
+> **Source Version**: `37b5e4a9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T12:13:06.017Z  
+> **Timestamp**: 2026-11-13T20:36:50.874Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T12:13:01.816Z  
+> **Harvest Timestamp**: 2026-11-13T20:36:50.868Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26193 stars
+- **Stars / Engagement**: 26223 stars
 
 ---
 
@@ -1238,11 +1238,11 @@ def check_rabbitmq_queues() -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40630** (2026-11-09): **settings / [component-name]: Element horizontally overflows viewport on mobile web**
-  *Symptoms*:  ### Summary On mobile web view (screen width < 500px), the [name of button/input] overflows horizontally past the right edge of the viewport.  ### Steps to reproduce: 1. Open Zulip in a mobile browser (or resize browser window to 375px width). 2. Go to [Settings / Modal name]. 3. Notice the layout and alignment of [element name].  ### Expected behavior: The element should wrap properly or have responsive padding/max-width so it fits within the viewport.  ### Screenshots: [Attach screenshot from DevTools]  ### Environment: - Browser: Chrome  - Device: Mobile viewport / Responsive view  *I would like to work on fixing this issue and submit a PR.*
+- **Issue #40648** (2026-11-13): **custom_profile_fields: Reject name/hint/field_data when updating default external account fields**
+  *Symptoms*: Description / Bug Summary  In zerver/views/custom_profile_fields.py, updating a default external account field (e.g. GitHub username or X username) is restricted: only the display_in_profile_summary property is allowed to be updated.  Historically, because name, hint, and field_data were required parameters on PATCH /realm/profile_fields/{id}, a helper function update_only_display_in_profile_summary was used to allow clients to pass the existing values of those fields.  A TODO in zerver/views/custom_profile_fields.py explicitly tracks this cleanup: ``` # TODO: Make the name/hint/field_data parameters optional, and # explicitly require that the client passes None for all of them for this case. # Right now, for name/hint/field_data we allow the client to send the existing # values for the respective fields. After this TODO is done, we will only allow # the client to pass None values if the field is unchanged. ``` Now that the endpoint uses @typed_endpoint and name, hint, and field_data are optional parameters (| None = None), sending any of name, hint, or field_data when updating a default external account field should be explicitly disallowed with "Default custom field cannot be updated.", and the unused update_only_display_in_profile_summary helper function can be removed.  I have a branch ready with this cleanup and updated test coverage. **Zulip Server and web app version:**  - [ ] Zulip Cloud (`*.zulipchat.com`) - [ ] Zulip Server 12.x - [ ] Zulip Server 11.x - [ ] Zulip S
 
-- **Issue #40600** (2026-11-09): **Safari on macOS does not scroll to the bottom**
-  *Symptoms*: On our self-hosted Zulip we have noticed that Safari on macOS does not automatically scroll to the bottom of the messages when loading a page. Whenever a new channel is selected, the view stays on top.  In the developer log the messages are  ``` [Info] ScrollTop did nothing when scrolling to 4635.71875, fixing... (app.9ce541840b7470231ad5.js, line 1) [Info] ScrollTop fix did not work when scrolling to 4635.71875!  space_to_scroll was 4512.171875 (app.9ce541840b7470231ad5.js, line 1) [Info] ScrollTop did nothing when scrolling to 17471.328125, fixing... (app.9ce541840b7470231ad5.js, line 1) [Info] ScrollTop fix did not work when scrolling to 17471.328125!  space_to_scroll was 21983.5 (app.9ce541840b7470231ad5.js, line 1) ```  Chrome on macOS does not have these issues. The behaviour started in Zulip 12.2 I think (or a little earlier).  <!-- Check the box for the version of Zulip you are using (see https://zulip.com/help/view-zulip-version).-->  **Zulip Server and web app version:**  - [ ] Zulip Cloud (`*.zulipchat.com`) - [x] Zulip Server 12.x - [ ] Zulip Server 11.x - [ ] Zulip Server 10.x - [ ] Zulip Server 9.x or older - [ ] Other or not sure 
+- **Issue #40631** (2026-11-09): **docs(help): Update legacy stream references to channels in help documentation**
+  *Symptoms*: ### Documentation link: https://zulip.com/help/introduction-to-topics  ### Problem: Zulip transitioned from the term "streams" to "channels" in Zulip 9.0+. While most help center articles have been updated, several explanatory sections in `help/introduction-to-topics.md` still use the word "streams" when explaining how topics organize conversations within channels.  ### Suggested fix: Update the remaining user-facing references from "stream" / "streams" to "channel" / "channels" in `help/introduction-to-topics.md` to maintain consistency with the current Zulip interface.  *I would like to submit a PR to update this documentation.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1259,255 +1259,511 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `619647b7` (2026-11-01)
-**Commit Message**: export: Fix consent of former subscribers covering private channels.
+### Incident Patch 1: `37b5e4a9` (2026-11-13)
+**Commit Message**: puppet: Fix PostgreSQL failing to start on new installs.
 
-An export with member consent included the private channels that a
-consenting user had unsubscribed from or been removed from, since
-either way their Subscription is only marked inactive. In channels
-with shared history, this exported messages that other members, who
-had not consented, sent after the user left or was removed.
+postgresql-common 294 leaves /var/log/postgresql owned by root on
+a new install. Its postinst runs systemd-tmpfiles before it creates
+the postgres user, and the error is ignored. Our configuration
+logs to that directory, so PostgreSQL failed to start with:
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+    FATAL:  could not open log file "...": Permission denied
 
-**File**: `zerver/lib/export.py` (modified, +1/-1)
+This broke every new-install CI job once 294 reached
+apt.postgresql.org. Upgrades are not affected, because older
+versions already set the owner.
+
+Fix this by managing the directory with the owner and mode that
+294's tmpfiles.d entry sets, so that systemd-tmpfiles does not
+change it back at boot. Tested in an ubuntu:resolute container with
+postgresql-common 294 and PostgreSQL 18.7.
+
+Reported upstream: https://bugs.debian.org/1153884
+
+**File**: `puppet/zulip/manifests/profile/postgresql.pp` (modified, +13/-1)
 ```diff
-@@ -1909,7 +1909,7 @@ def get_ids(records: Iterable[Mapping[str, Any]]) -> set[int]:
-         ).values_list("recipient_id", flat=True)
+@@ -69,6 +69,18 @@
+     fail("PostgreSQL ${version} not supported")
+   }
  
-         consented_recipient_ids = Subscription.objects.filter(
--            user_profile_id__in=consented_user_ids
-+            user_profile_id__in=consented_user_ids, active=True
-         ).values_list("recipient_id", flat=True)
- 
-         recipient_ids_set = (set(public_stream_recipient_ids) | set(consented_recipient_ids)) - set(
++  # Our configuration sets log_directory to this directory.  On a new
++  # install, postgresql-common 294 can leave it owned by root, because
++  # its tmpfiles.d entry runs before the postgres user exists.
++  # https://bugs.debian.org/1153884
++  file { '/var/log/postgresql':
++    ensure  => directory,
++    require => Package[$zulip::postgresql_base::postgresql],
++    owner   => 'postgres',
++    group   => 'postgres',
++    mode    => '2775',
++  }
++
+   # PostgreSQL 18's io_method = io_uring requires a larger
+   # RLIMIT_MEMLOCK than systemd's default on Linux 6.14 and newer
+   if $facts['os']['family'] == 'Debian' {
+@@ -110,7 +122,7 @@
+   }
+   service { 'postgresql':
+     ensure    => $start,
+-    require   => $require + [Exec['reload systemd']],
++    require   => $require + [Exec['reload systemd'], File['/var/log/postgresql']],
+     subscribe => [ File[$postgresql_conf_file] ],
+   }
+ }
 ```
 
-**File**: `zerver/tests/test_import_export.py` (modified, +14/-0)
+---
+
+### Incident Patch 2: `366c9ba5` (2026-11-05)
+**Commit Message**: create_realm: Handle race condition with RealmSubdomainUnavailableError.
+
+When concurrent realm creation requests race on subdomain selection,
+the second request hits a database unique constraint and raises an
+IntegrityError.
+
+Update do_create_realm to catch IntegrityError and raise a custom
+RealmSubdomainUnavailableError when the subdomain already exists,
+and remove the redundant pre-creation assertion.
+
+In the registration view, catch RealmSubdomainUnavailableError and
+re-render the form with an inline field-level error.
+
+Fixes #21160.
+
+**File**: `zerver/actions/create_realm.py` (modified, +72/-68)
 ```diff
-@@ -1027,6 +1027,18 @@ def test_export_realm_with_member_consent(self) -> None:
-         self.subscribe(self.example_user("hamlet"), "Private D")
-         self.send_stream_message(self.example_user("prospero"), "Private D", "Hello again stream D")
+@@ -3,7 +3,7 @@
+ from typing import Any
  
-+        create_stream_if_needed(
-+            realm, "Private E", invite_only=True, history_public_to_subscribers=True
-+        )
-+        self.subscribe(self.example_user("prospero"), "Private E")
-+        self.subscribe(self.example_user("hamlet"), "Private E")
-+        # Hamlet loses access to the channel when he unsubscribes, so his consent is
-+        # not sufficient to export its messages.
-+        self.unsubscribe(self.example_user("hamlet"), "Private E")
-+        stream_e_message_id = self.send_stream_message(
-+            self.example_user("prospero"), "Private E", "Hello stream E"
-+        )
+ from django.conf import settings
+-from django.db import transaction
++from django.db import IntegrityError, transaction
+ from django.utils.timezone import now as timezone_now
+ from django.utils.translation import gettext as _
+ from django.utils.translation import override as override_language
+@@ -15,6 +15,7 @@
+     do_deactivate_realm,
+ )
+ from zerver.lib.bulk_create import create_users
++from zerver.lib.exceptions import RealmSubdomainUnavailableError
+ from zerver.lib.push_notifications import sends_notifications_directly
+ from zerver.lib.realm_description import render_realm_description
+ from zerver.lib.remote_server import maybe_enqueue_audit_log_upload
+@@ -209,8 +210,6 @@ def do_create_realm(
+         raise AssertionError(
+             "Creating a realm on SOCIAL_AUTH_SUBDOMAIN or SELF_HOSTING_MANAGEMENT_SUBDOMAIN is not allowed!"
+         )
+-    if Realm.objects.filter(string_id=string_id).exists():
+-        raise AssertionError(f"Realm {string_id} already exists!")
+     if not server_initialized():
+         logging.info("Server not yet initialized. Creating the internal realm first.")
+         create_internal_realm()
+@@ -266,77 +265,82 @@ def do_create_realm(
+     # is required to do so correctly.
+     kwargs["push_notifications_enabled"] = sends_notifications_directly()
+ 
+-    with transaction.atomic(durable=True):
+-        realm = Realm(string_id=string_id, name=name, **kwargs)
+-        if is_demo_organization:
+-            assert settings.DEMO_ORG_DEADLINE_DAYS is not None
+-            realm.demo_organization_scheduled_deletion_date = realm.date_created + timedelta(
+-                days=settings.DEMO_ORG_DEADLINE_DAYS
++    try:
++        with transaction.atomic(durable=True):
++            realm = Realm(string_id=string_id, name=name, **kwargs)
++            if is_demo_organization:
++                assert settings.DEMO_ORG_DEADLINE_DAYS is not None
++                realm.demo_organization_scheduled_deletion_date = realm.date_created + timedelta(
++                    days=settings.DEMO_ORG_DEADLINE_DAYS
++                )
 +
-         # Create direct message groups
-         self.send_group_direct_message(
-             self.example_user("iago"), [self.example_user("cordelia"), self.example_user("AARON")]
-@@ -1200,6 +1212,7 @@ def test_export_realm_with_member_consent(self) -> None:
-                 "Private B",
-                 "Private C",
-                 "Private D",
-+                "Private E",
-             },
++            # For now a dummy value of -1 is given to groups fields which
++            # is changed later before the transaction is committed.
++            for setting_name in Realm.REALM_PERMISSION_GROUP_SETTINGS:
++                setattr(realm, setting_name + "_id", -1)
++
++            realm.save()
++
++            RealmAuditLog.objects.create(
++                # acting_user will be set as the initial realm owner inside
++                # do_create_user(..., realm_creation=True).
++                acting_user=None,
++                realm=realm,
++                event_type=AuditLogEventType.REALM_CREATED,
++                event_time=realm.date_created,
++                extra_data={
++                    "how_realm_creator_found_zulip": how_realm_creator_found_zulip,
++                    "how_realm_creator_found_zulip_extra_context": how_realm_creator_found_zulip_extra_context,
++                },
+             )
+ 
+-        # For now a dummy value of -1 is given to groups fields which
+-        # is changed later before the transaction is committed.
+-        for setting_name in Realm.REALM_PERMISSION_GROUP_SETTINGS:
+-            setattr(realm, setting_name + "_id", -1)
+-
+-        realm.save()
+-
+-        RealmAuditLog.objects.create(
+-            # acting_user will be set as the initial realm owner inside
+-            # do_create_user(..., realm_creation=True).
+-            acting_user=None,
+-            realm=realm,
+-            event_type=AuditLogEventType.REALM_CREATED,
+-            event_time=realm.date_created,
+-            extra_data={
+-                "how_realm_creator_found_zulip": how_realm_creator_found_zulip,
+-                "how_realm_creator_found_zulip_extra_context": how_realm_creator_found_zulip_extra_context,
+-            },
+-        )
+-
+-        RealmUserDefault.objects.create(
+-            realm=realm,
+-            email_address_visibility=get_email_address_visibility_default(realm.org_type),
+-        )
+-
+-        create_system_user_groups_for_realm(realm)
++            RealmUserDefault.objects.create(
++                realm=realm,
++                email_address_visibility=get_email_address_visibility_default(realm.org_type),
++            )
+ 
+-        group_settings_defaults_for_org_types = {
+-            "can_add_subscribers_group": {
+-                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.MODERATORS,
+-                Realm.ORG_TYPES["education"]["id"]: SystemGroups.MODERATORS,
+-            },
+-            "can_create_public_channel_group": {
+-                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.ADMINISTRATORS,
+-                Realm.ORG_TYPES["education"]["id"]: SystemGroups.ADMINISTRATORS,
+-            },
+-            "can_create_groups": {
+-                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.MODERATORS,
+-                Realm.ORG_TYPES["education"]["id"]: Syst
+```
+
+**File**: `zerver/lib/exceptions.py` (modified, +6/-0)
+```diff
+@@ -534,6 +534,12 @@ def msg_format() -> str:
+         return _("Invalid subdomain")
+ 
+ 
++class RealmSubdomainUnavailableError(Exception):
++    def __init__(self, string_id: str) -> None:
++        self.string_id = string_id
++        super().__init__(f"Realm {string_id} already exists!")
++
++
+ class InvitationError(JsonableError):
+     code = ErrorCode.INVITATION_FAILED
+     data_fields = [
+```
+
+**File**: `zerver/tests/test_signup.py` (modified, +96/-0)
+```diff
+@@ -34,6 +34,7 @@
+ from zerver.forms import HomepageForm
+ from zerver.lib.default_streams import get_slim_realm_default_streams
+ from zerver.lib.email_notifications import enqueue_welcome_emails
++from zerver.lib.exceptions import RealmSubdomainUnavailableError
+ from zerver.lib.i18n import get_default_language_for_new_user
+ from zerver.lib.initial_password import initial_password
+ from zerver.lib.mobile_auth_otp import (
+@@ -1904,6 +1905,101 @@ def test_signup_with_email_address_race(self) -> None:
+             )
          )
  
-@@ -1283,6 +1296,7 @@ def test_export_realm_with_member_consent(self) -> None:
-         self.assertNotIn(stream_b_first_message_id, exported_msg_ids)
- 
-         self.assertNotIn(stream_c_message_id, exported_msg_ids)
-+        self.assertNotIn(stream_e_message_id, exported_msg_ids)
-         self.assertNotIn(direct_message_group_c_message_id, exported_msg_ids)
- 
-         self.assertNotIn(pm_a_msg_id, exported_msg_ids)
-```
-
----
-
-### Incident Patch 2: `62c39213` (2026-10-25)
-**Commit Message**: export: Fix deleted users being treated as consenting to export.
-
-Deleted users have `is_mirror_dummy=True`, and every mirror dummy counts
-as consenting to private data export. As a result, an "export with
-member consent" included every direct message conversation a deleted
-user had been part of, including messages from other participants who
-hadn't consented.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `zerver/lib/export.py` (modified, +5/-2)
-```diff
-@@ -3090,7 +3090,10 @@ def get_consented_user_ids(realm: Realm) -> set[int]:
-     #       in it. Thus, only public data of the user was exported->imported.
-     #       Therefore, again we can consider the user as consenting and export
-     #       everything - all this data is public by construction.
--
-+    #
-+    #    Deleted users also have is_mirror_dummy=True set, but they aren't mirror dummies
-+    #    in the usual sense: they don't represent an account that a user can later claim
-+    #    by signing up. Neither (a) nor (b) applies, we treat them as not consenting.
-     query = sql.SQL("""
-         WITH consenting_humans AS (
-             SELECT id
-@@ -3109,7 +3112,7 @@ def get_consented_user_ids(realm: Realm) -> set[int]:
-                 AND is_bot
-                 AND realm_id = {realm_id}
-             )
--            OR (is_mirror_dummy AND realm_id = {realm_id})
-+            OR (is_mirror_dummy AND NOT is_deleted AND realm_id = {realm_id})
-     """).format(realm_id=sql.Literal(realm.id))
- 
-     with connection.cursor() as cursor:
-```
-
-**File**: `zerver/tests/test_import_export.py` (modified, +6/-1)
-```diff
-@@ -41,7 +41,7 @@
- from zerver.actions.user_settings import do_change_user_delivery_email, do_change_user_setting
- from zerver.actions.user_status import do_update_user_status
- from zerver.actions.user_topics import do_set_user_topic_visibility_policy
--from zerver.actions.users import do_deactivate_user
-+from zerver.actions.users import do_deactivate_user, do_delete_user_preserving_messages
- from zerver.lib import import_realm, upload
- from zerver.lib.avatar_hash import user_avatar_path
- from zerver.lib.bot_config import set_bot_config
-@@ -775,6 +775,11 @@ def test_get_consented_user_ids(self) -> None:
-         non_consented_user.save(update_fields=["is_mirror_dummy"])
-         self.assertIn(non_consented_user.id, get_consented_user_ids(realm))
- 
-+        # Deleted users aren't considered consented.
-+        deleted_user = self.example_user("othello")
-+        do_delete_user_preserving_messages(deleted_user, acting_user=None)
-+        self.assertNotIn(deleted_user.id, get_consented_user_ids(realm))
++    def test_do_create_realm_subdomain_unavailable_error(self) -> None:
++        """
++        do_create_realm raises RealmSubdomainUnavailableError when attempting to
++        create a realm with an existing subdomain.
++        """
++        with self.assertRaises(RealmSubdomainUnavailableError):
++            do_create_realm("zulip", "Zulip clone")
 +
-     def test_client_objects_export(self) -> None:
++    def test_do_create_realm_unexpected_integrity_error(self) -> None:
++        """
++        do_create_realm re-raises IntegrityError when an unexpected database
++        integrity error occurs during realm creation.
++        """
++        with (
++            patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
++            self.assertRaises(IntegrityError),
++        ):
++            do_create_realm("new-realm-subdomain", "New Realm")
++
++    def test_realm_creation_with_subdomain_race(self) -> None:
++        """
++        The availability check for a realm subdomain can race with another
++        realm creation. Verify that RealmSubdomainUnavailableError is handled
++        by re-rendering the registration form with an error without consuming
++        the confirmation link.
++        """
++        email = self.nonreg_email("newguy")
++        realm_subdomain = "custom-test"
++        realm_name = "Race organization"
++
++        self.submit_realm_creation_form(
++            email,
++            realm_subdomain=realm_subdomain,
++            realm_name=realm_name,
++        )
++        confirmation_url = self.get_confirmation_url_from_outbox(email)
++        self.client_get(confirmation_url)
++
++        with patch(
++            "zerver.views.registration.do_create_realm",
++            side_effect=RealmSubdomainUnavailableError(realm_subdomain),
++        ):
++            result = self.submit_reg_form_for_user(
++                email,
++                "password",
++                realm_subdomain=realm_subdomain,
++                realm_name=realm_name,
++            )
++
++        self.assertEqual(result.status_code, 400)
++        self.assert_in_response(
++            "Subdomain is already in use. Please choose a different one.", result
++        )
++        self.assert_in_response('id="registration"', result)
++        self.assert_in_response('name="realm_subdomain"', result)
++        self.assert_in_response(f'value="{realm_subdomain}"', result)
++        self.assert_in_response(f'value="{realm_name}"', result)
++
++        # The user can retry with the same confirmation link and only a new
++        # organization URL.
++        result = self.submit_reg_form_for_user(
++            email,
++            "password",
++            realm_subdomain="custom-test-2",
++            realm_name=realm_name,
++        )
++        self.assertEqual(result.status_code, 302)
++
++    def test_realm_creation_with_unexpected_integrity_error(self) -> None:
++        email = self.nonreg_email("newguy")
++        realm_subdomain = "custom-test"
++
++        self.submit_realm_creation_form(
++            email,
++            realm_subdomain=realm_subdomain,
++            realm_name="Zulip test",
++        )
++        confirmation_url = self.get_confirmation_url_from_outbox(email)
++        self.client_get(confirmation_url)
++
++        with (
++            patch(
++                "zerver.views.registration.do_create_realm",
++                side_effect=IntegrityError("unexpected error"),
++            ),
++            self.assertRaises(IntegrityError),
++            self.assertLogs("django.request", "ERROR"),
++        ):
++            self.submit_reg_form_for_user(
++                email,
++                "password",
++                realm_subdomain=realm_subdomain,
++                realm_name="Zulip test",
++            )
++
+     def test_signup_with_weak_password(self) -> None:
          """
-         Client objects require some special handling when exporting. They aren't
+         Check if signing up with a weak password fails.
+```
+
+**File**: `zerver/views/registration.py` (modified, +32/-12)
+```diff
+@@ -72,7 +72,7 @@
+     schedule_demo_organization_deletion_reminder,
+ )
+ from zerver.lib.email_validation import email_allowed_for_realm, validate_email_not_already_in_realm
+-from zerver.lib.exceptions import JsonableError, RateLimitedError
++from zerver.lib.exceptions import JsonableError, RateLimitedError, RealmSubdomainUnavailableError
+ from zerver.lib.i18n import (
+     get_browser_language_code,
+     get_default_language_for_anonymous_user,
+@@ -834,17 +834,37 @@ def registration_helper(
+                 extra_context_field = HOW_FOUND_ZULIP_EXTRA_CONTEXT[how_found_zulip]
+                 how_found_zulip_extra_context = form.cleaned_data[extra_context_field]
+ 
+-            realm = do_create_realm(
+-                string_id,
+-                realm_name,
+-                org_type=realm_type,
+-                default_language=realm_default_language,
+-                prereg_realm=prereg_realm,
+-                how_realm_creator_found_zulip=RealmAuditLog.HOW_REALM_CREATOR_FOUND_ZULIP_OPTIONS[
+-                    how_found_zulip
+-                ],
+-                how_realm_creator_found_zulip_extra_context=how_found_zulip_extra_context,
+-            )
++            try:
++                realm = do_create_realm(
++                    string_id,
++                    realm_name,
++                    org_type=realm_type,
++                    default_language=realm_default_language,
++                    prereg_realm=prereg_realm,
++                    how_realm_creator_found_zulip=RealmAuditLog.HOW_REALM_CREATOR_FOUND_ZULIP_OPTIONS[
++                        how_found_zulip
++                    ],
++                    how_realm_creator_found_zulip_extra_context=how_found_zulip_extra_context,
++                )
++            except RealmSubdomainUnavailableError:
++                form.add_error(
++                    "realm_subdomain",
++                    _("Subdomain is already in use. Please choose a different one."),
++                )
++                return render_registration_form(
++                    request,
++                    form=form,
++                    email=email,
++                    key=key,
++                    name_validated=name_validated,
++                    realm=realm,
++                    realm_creation=realm_creation,
++                    password_required=password_required,
++                    require_ldap_password=require_ldap_password,
++                    prereg_realm=prereg_realm,
++                    next_url=next,
++                    status=400,
++                )
+         assert realm is not None
+ 
+         full_name = form.cleaned_data["full_name"]
 ```
 
 ---
 
-### Incident Patch 3: `292dad42` (2026-10-16)
-**Commit Message**: attachments: Fix guests accessing files via content access groups.
+### Incident Patch 3: `b5b2af98` (2026-11-12)
+**Commit Message**: tests: Clean up realm creation subdomain race tests.
 
-Guests in a channel's can_subscribe_group or
-can_add_subscribers_group could download attachments from that
-channel without being subscribed, since the group-based check in
-validate_attachment_request did not exclude guests. This also let
-guests keep access to files in channels with protected history after
-unsubscribing.
+Move test_realm_creation_unexpected_integrity_error to test_realm.py
+with the other test_realm_creation_* tests. Remove the now-unnecessary
+test_realm_creation_with_unexpected_integrity_error from test_signup.py.
 
-These groups never grant guests content access, matching how message
-access already handles guests.
+In test_realm_creation_with_subdomain_race, simplify the assertions
+to just the status code and error message checks. Update the docstring
+to avoid spelling out the exception name.
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `zerver/lib/attachments.py` (modified, +5/-0)
+**File**: `zerver/tests/test_realm.py` (modified, +8/-0)
 ```diff
-@@ -213,6 +213,11 @@ def validate_attachment_request(
-         if channel.id in subscribed_channel_ids and channel.is_history_public_to_subscribers():
-             return True, attachment
+@@ -15,6 +15,7 @@
+ import time_machine
+ from django.conf import settings
+ from django.core import mail
++from django.db import IntegrityError
+ from django.test import override_settings
+ from django.utils.timezone import now as timezone_now
+ from typing_extensions import override
+@@ -132,6 +133,13 @@ def test_realm_creation_on_special_subdomains_disallowed(self) -> None:
+         ):
+             do_create_realm("zulipselfhosting", "Test Realm")
  
-+    if user_profile.is_guest:
-+        # All existing groups granting content access have
-+        # allow_everyone_group=False, so they never grant guests access.
-+        return False, attachment
++    def test_realm_creation_unexpected_integrity_error(self) -> None:
++        with (
++            mock.patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
++            self.assertRaises(IntegrityError),
++        ):
++            do_create_realm("new-realm-subdomain", "New Realm")
 +
-     user_recursive_group_ids = set(
-         get_recursive_membership_groups(user_profile).values_list("id", flat=True)
-     )
+     def test_permission_for_education_non_profit_organization(self) -> None:
+         realm = do_create_realm(
+             "test_education_non_profit",
 ```
 
-**File**: `zerver/tests/test_subs.py` (modified, +25/-5)
+**File**: `zerver/tests/test_signup.py` (modified, +3/-49)
 ```diff
-@@ -1273,6 +1273,7 @@ def test_stream_group_permission_changes_updates_updates_attachments(self) -> No
-         owner = self.example_user("desdemona")
-         realm = owner.realm
-         cordelia = self.example_user("cordelia")
-+        polonius = self.example_user("polonius")
-         private_stream_public_history = self.make_stream(
-             "private_stream_public_history",
-             realm=realm,
-@@ -1290,18 +1291,23 @@ def test_stream_group_permission_changes_updates_updates_attachments(self) -> No
-         self.assertFalse(attachment.is_realm_public)
+@@ -1906,30 +1906,15 @@ def test_signup_with_email_address_race(self) -> None:
+         )
  
-         # User should be able to see the attachment if they have
--        # content access to a channel with public history.
-+        # content access to a channel with public history, but guests
-+        # are never granted content access by these groups.
-         for setting_name in Stream.stream_permission_group_settings_requiring_content_access:
-             self.assertFalse(validate_attachment_request(cordelia, attachment.path_id)[0])
-+            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
-             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
-             do_change_stream_group_based_setting(
-                 private_stream_public_history,
-                 setting_name,
--                UserGroupMembersData(direct_members=[cordelia.id], direct_subgroups=[]),
-+                UserGroupMembersData(
-+                    direct_members=[cordelia.id, polonius.id], direct_subgroups=[]
-+                ),
-                 acting_user=cordelia,
-             )
-             self.assertFalse(check_subscriptions_exists(cordelia, private_stream_public_history))
-             self.assertTrue(validate_attachment_request(cordelia, attachment.path_id)[0])
-+            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
-             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
-             attachment.refresh_from_db()
-             self.assertFalse(attachment.is_realm_public)
-@@ -1335,24 +1341,31 @@ def test_stream_group_permission_changes_updates_updates_attachments(self) -> No
-         # sent.
-         for setting_name in Stream.stream_permission_group_settings_requiring_content_access:
-             self.assertFalse(validate_attachment_request(cordelia, attachment.path_id)[0])
-+            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
-             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
-             do_change_stream_group_based_setting(
-                 private_stream_protected_history,
-                 setting_name,
--                UserGroupMembersData(direct_members=[cordelia.id], direct_subgroups=[]),
-+                UserGroupMembersData(
-+                    direct_members=[cordelia.id, polonius.id], direct_subgroups=[]
-+                ),
-                 acting_user=cordelia,
-             )
-             self.assertFalse(check_subscriptions_exists(cordelia, private_stream_protected_history))
-             self.assertFalse(validate_attachment_request(cordelia, attachment.path_id)[0])
-+            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
-             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
+     def test_do_create_realm_subdomain_unavailable_error(self) -> None:
+-        """
+-        do_create_realm raises RealmSubdomainUnavailableError when attempting to
+-        create a realm with an existing subdomain.
+-        """
+         with self.assertRaises(RealmSubdomainUnavailableError):
+             do_create_realm("zulip", "Zulip clone")
  
-             # They should not have access to the upload if they are
-             # subscribed to the channel but they were not subscribed at
-             # the time of upload.
-             self.subscribe(cordelia, "private_stream_protected_history")
-+            self.subscribe(polonius, "private_stream_protected_history")
-             self.assertFalse(validate_attachment_request(cordelia, attachment.path_id)[0])
-+            self.assertFalse(validate_attachment_request(polonius, attachment.path_id)[0])
-             self.assertTrue(validate_attachment_request(owner, attachment.path_id)[0])
-             self.unsubscribe(cordelia, "private_stream_protected_history")
-+            self.unsubscribe(polonius, "private_stream_protected_history")
-             attachment.refresh_from_db()
+-    def test_do_create_realm_unexpected_integrity_error(self) -> None:
+-        """
+-        do_create_realm re-raises IntegrityError when an unexpected database
+-        integrity error occurs during realm creation.
+-        """
+-        with (
+-            patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
+-            self.assertRaises(IntegrityError),
+-        ):
+-            do_create_realm("new-realm-subdomain", "New Realm")
+-
+     def test_realm_creation_with_subdomain_race(self) -> None:
+         """
+         The availability check for a realm subdomain can race with another
+-        realm creation. Verify that RealmSubdomainUnavailableError is handled
+-        by re-rendering the registration form with an error without consuming
+-        the confirmation link.
++        realm creation. Verify that such a situation is handled by re-rendering
++        the registration form with an error without consuming the confirmation
++        link.
+         """
+         email = self.nonreg_email("newguy")
+         realm_subdomain = "custom-test"
+@@ -1958,10 +1943,6 @@ def test_realm_creation_with_subdomain_race(self) -> None:
+         self.assert_in_response(
+             "Subdomain is already in use. Please choose a different one.", result
+         )
+-        self.assert_in_response('id="registration"', result)
+-        self.assert_in_response('name="realm_subdomain"', result)
+-        self.assert_in_response(f'value="{realm_subdomain}"', result)
+-        self.assert_in_response(f'value="{realm_name}"', result)
  
-             nobody_group = NamedUserGroup.objects.get(
-@@ -1364,23 +1377,30 @@ def test_stream_group_permission_changes_updates_updates_attachments(self) -> No
+         # The user can retry with the same confirmation link and only a new
+         # organization URL.
+@@ -1973,33 +1954,6 @@ def test_realm_creation_with_subdomain_race(self) -> None:
+         )
+         self.assertEqual(result.status_code, 302)
  
-         # User should be able to see the attachment if they have
-         # content access to a private channel with protected history
--        # and were subscribed to the channel when the upload was sent.
-+        # and were subscribed to the channel when the upload was sent,
-+        # unless they are a guest.
-         self.subscribe(cordelia, "private_stream_protected_history")
-+        self.subscribe(polonius, "private_stream_protected_history")
-         body = f"Second message ...[zulip2.txt](http://{realm.host}" + url + ")"
-         msg_id = self.send_stream_message(owner, "private_stream_protected_history", body, "test")
-         attachment = Attachment.obje
+-    def test_realm_creation_with_unexpected_integrity_error(self) -> None:
+-        email = self.nonreg_email("newguy")
+-        realm_subdomain = "custom-test"
+-
+-        self.submit_realm_creation_form(
+-            email,
+-            realm_subdomain=realm_subdomain,
+-            realm_name="Zulip test",
+-        )
+-        confirmation_url = self.get_confirmation_url_from_outbox(email)
+-        self.client_get(confirmation_url)
+-
+-        with (
+-            patch(
+-                "zerver.views.registration.do_create_realm",
+-                side_effect=IntegrityError("unexpected error"),
+-            ),
+-            self.assertRaises(IntegrityError),
+-            self.assertLogs("django.request", "ERROR"),
+-        ):
+-            self.submit_reg_form_for_user(
+-                email,
+-                "password",
+-                realm_subdomain=realm_subdomain,
+-                realm_name="Zulip test",
+-            )
+-
+     def test_signup_with_weak_password(self) -> None:
+         """
+         Check if signing up with a weak password fails.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40611** (2026-11-06): locale: Add hr. (@mateuszmandera)
-- **PR #40610** (2026-11-06): util: Report page body state when `the` finds no element. (@evykassirer)
-- **PR #40605** (closed): Changes in the Introuction to topics page (@arnavpandey0714-glitch)
-- **PR #40602** (closed): Evidencia/video cicd fondo login (@jcelemin7)
-- **PR #40599** (2026-11-05): Updated translations for main from Weblate. (@mateuszmandera)
-- **PR #40598** (closed): Settings allow org admins to set default colors for channels (@Eklavya-byte16)
+- **PR #40675** (closed): left_sidebar: Remove leftover home-page-input class. (@lasyaishu05-spec)
+- **PR #40673** (2026-11-13): [ai] puppet: Fix PostgreSQL failing to start on new installs. (@benprew)
+- **PR #40672** (2026-11-12): version: Start 14.0 development branch. (@benprew)
+- **PR #40671** (2026-11-12): Release Zulip Server 13.0. (@benprew)
+- **PR #40668** (2026-11-13): tests: Clean up realm creation subdomain race tests. (@Tanaya-2007)
+- **PR #40659** (closed): [ai] inbox: Fix hotkeys acting on the wrong row after a background update. (@Cyberhet)
 
 ---
 
@@ -1527,31 +1783,43 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. export: Fix consent of former subscribers covering private channels.
+## X. puppet: Fix PostgreSQL failing to start on new installs.
 
 **RULE**:
-When implementing operations in `zerver/lib/export.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `puppet/zulip/manifests/profile/postgresql.pp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `619647b7`: export: Fix consent of former subscribers covering private channels.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `37b5e4a9`: puppet: Fix PostgreSQL failing to start on new installs.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `zerver/lib/export.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `puppet/zulip/manifests/profile/postgresql.pp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            user_profile_id__in=consented_user_ids, active=True
+  # Our configuration sets log_directory to this directory.  On a new
+  # install, postgresql-common 294 can leave it owned by root, because
+  # its tmpfiles.d entry runs before the postgres user exists.
+  # https://bugs.debian.org/1153884
+  file { '/var/log/postgresql':
+    ensure  => directory,
+    require => Package[$zulip::postgresql_base::postgresql],
+    owner   => 'postgres',
+    group   => 'postgres',
+    mode    => '2775',
+  }
+
+    require   => $require + [Exec['reload systemd'], File['/var/log/postgresql']],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-            user_profile_id__in=consented_user_ids
+// Induced defect failure mode:
+    require   => $require + [Exec['reload systemd']],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `619647b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `37b5e4a9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

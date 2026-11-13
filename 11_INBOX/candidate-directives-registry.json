@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:28:21.181Z",
+  "last_updated": "2026-11-13T20:37:27.198Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10210,6 +10210,59 @@
       "source_repo": "linkerd-linkerd2-learnings",
       "source_commit": "HEAD",
       "staged_file": "11_INBOX/candidate-directives/CD-HTVE-proxy-v2-374-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TP0H",
+      "directive_title": "endpoint request_body attribute path through the salvo facade",
+      "source_repo": "salvo-rs-salvo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TP0H-endpoint-request_body-attribute-path-through-the-salvo-facade.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-TKYQ",
+      "directive_title": "Fix PostgreSQL failing to start on new installs.",
+      "source_repo": "zulip/zulip",
+      "source_commit": "37b5e4a9",
+      "staged_file": "11_INBOX/candidate-directives/CD-TKYQ-fix-postgresql-failing-to-start-on-new-installs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TMDF",
+      "directive_title": "Propose to Forget instead of Delete when requested",
+      "source_repo": "opentofu/opentofu",
+      "source_commit": "7ca6e772",
+      "staged_file": "11_INBOX/candidate-directives/CD-TMDF-propose-to-forget-instead-of-delete-when-requested.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-295050",
+      "directive_title": "endpoint request_body attribute path through the salvo facade",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "salvo-rs-salvo",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-295050-endpoint-request-body-attribute-path-thr.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-UC5T",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "source_repo": "zulip-zulip-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UC5T-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-13",

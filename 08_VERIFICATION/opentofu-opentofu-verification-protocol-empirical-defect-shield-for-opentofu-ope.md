@@ -4,45 +4,31 @@
 {
   "source_repository": "opentofu/opentofu",
   "source_url": "https://github.com/opentofu/opentofu",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "7ca6e772",
+  "license": "MPL-2.0",
+  "timestamp": "2026-11-13T20:36:53.767Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-opentofu-opentofu",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [opentofu/opentofu](https://github.com/opentofu/opentofu) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [opentofu/opentofu](https://github.com/opentofu/opentofu) (Revision: `7ca6e772`).  
+> **License**: MPL-2.0 | **Timestamp**: `2026-11-13T20:36:53.767Z`  
+> **Learning ID**: `learn-github-opentofu-opentofu`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `opentofu/opentofu` (Commit: `historical`)
+- **Target Repository**: `opentofu/opentofu` (Commit: `7ca6e772`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
-> **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `0fb8b8f8`  
-> **License**: MPL-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:52:09.952Z  
-> **Learning ID**: `learn-github-opentofu-opentofu`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): opentofu/opentofu
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:52:09.947Z  
+> **Harvest Timestamp**: 2026-11-13T20:36:52.758Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30797 stars
+- **Stars / Engagement**: 30842 stars
 
 ---
 
@@ -1444,128 +1430,269 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51202c51` (2026-11-10)
-**Commit Message**: Update dependencies to fix high severity security issues (#4828)
+### Incident Patch 1: `7ca6e772` (2026-11-12)
+**Commit Message**: planning: Propose to Forget instead of Delete when requested
 
-Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
+If the resource instance object metadata says that the "action if unwanted"
+is forget then we'll now respect that, proposing the forget action instead
+and thus entering the preexisting execgraph building codepaths that handle
+those actions.
 
-**File**: `go.mod` (modified, +1/-1)
+Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
+
+**File**: `internal/engine/internal/exec/resource.go` (modified, +14/-0)
 ```diff
-@@ -169,7 +169,7 @@ require (
- 	github.com/fatih/color v1.19.0 // indirect
- 	github.com/felixge/httpsnoop v1.1.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
- 	github.com/go-openapi/jsonreference v0.20.2 // indirect
+@@ -8,6 +8,7 @@ package exec
+ import (
+ 	"fmt"
+ 
++	"github.com/hashicorp/hcl/v2"
+ 	"github.com/zclconf/go-cty/cty"
+ 
+ 	"github.com/opentofu/opentofu/internal/addrs"
+@@ -472,3 +473,16 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
+ 
+ 	return ret
+ }
++
++// PrimaryDeclRangeHCL returns the same information as in
++// [ResourceInstanceObjectMeta.PrimaryDeclRange], but using HCL's range type
++// instead of OpenTofu's.
++//
++// Use this instead of calling [tfdiags.SourceRange.ToHCL] directly to avoid
++// causing a nil pointer panic when it's unset.
++func (m *ResourceInstanceObjectMeta) PrimaryDeclRangeHCL() *hcl.Range {
++	if m.PrimaryDeclRange == nil {
++		return nil
++	}
++	return m.PrimaryDeclRange.ToHCL().Ptr()
++}
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `internal/engine/planning/plan_managed.go` (modified, +64/-1)
 ```diff
-@@ -212,8 +212,8 @@ github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/
- github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
- github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
- github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-logfmt/logfmt v0.3.0/go.mod h1:Qt1PoO58o5twSAckw1HlFXLmHsOX5/0LbT9GBnD5lWE=
+@@ -503,6 +503,40 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 		ret.PlaceholderValue = current.Value
+ 		plannedAction = plans.NoOp
+ 	}
++
++	if plannedAction.IsReplace() {
++		// If we've planned a "replace" action but the metadata for this object
++		// says it its "if unwanted" action is forget instead of delete then
++		// we'll plan to do a "forget"-based replace instead.
++		if unwantedAction, known := meta.ActionIfUnwanted.ValueOk(); known {
++			switch unwantedAction {
++			case resources.IfUnwantedDelete:
++				// We'll just keep the action we already planned then.
++			case resources.IfUnwantedForget:
++				plannedAction = plans.ForgetThenCreate
++			default:
++				// We expect that the function which builds "meta" should not
++				// generate any other values here. In particular if the
++				// configuration did not express an opinion then that function
++				// should provide a default fallback opinion.
++				panic(fmt.Sprintf("unsupported ActionIfUnwanted %s", unwantedAction))
++			}
++		} else {
++			// TODO: The resource instance object should be treated as "deferred"
++			// in this case, but we haven't fully implemented that yet so this
++			// is just a placeholder stub until we have a real way to handle that.
++			// This error message is using terminology from the current surface
++			// language edition out of pragmatism, even though internally we use
++			// different words to describe this setting.
++			diags = diags.Append(&hcl.Diagnostic{
++				Severity: hcl.DiagError,
++				Summary:  "Invalid value for \"destroy\" argument",
++				Detail:   fmt.Sprintf("The \"destroy\" value for %s is derived from other values that won't be known until the apply phase, which is not allowed.", inst.Addr),
++				Subject:  meta.PrimaryDeclRangeHCL(),
++			})
++		}
++	}
++
+ 	// (a "desired" object cannot have a Delete action; we handle those cases
+ 	// in planOrphanManagedResourceInstance and planDeposedManagedResourceInstanceObject below.)
+ 	ret.PlannedChange = &plans.ResourceInstanceChange{
+@@ -771,6 +805,35 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
+ 		return ret, diags
+ 	}
+ 
++	var action plans.Action
++	if unwantedAction, known := meta.ActionIfUnwanted.ValueOk(); known {
++		switch unwantedAction {
++		case resources.IfUnwantedDelete:
++			action = plans.Delete
++		case resources.IfUnwantedForget:
++			action = plans.Forget
++		default:
++			// We expect that the function which builds "meta" should not
++			// generate any other values here. In particular if the
++			// configuration did not express an opinion then that function
++			// should provide a default fallback opinion.
++			panic(fmt.Sprintf("unsupported ActionIfUnwanted %s", unwantedAction))
++		}
++	} else {
++		// TODO: The resource instance object should be treated as "deferred"
++		// in this case, but we haven't fully implemented that yet so this
++		// is just a placeholder stub until we have a real way to handle that.
++		// This error message is using terminology from the current surface
++		// language edition out of pragmatism, even though internally we use
++		// different words to describe this setting.
++		diags = diags.Append(&hcl.Diagnostic{
++			Severity: hcl.DiagError,
++			Summary:  "Invalid value for \"destroy\" argument",
++			Detail:   fmt.Sprintf("The \"destroy\" value for %s is derived from other values that won't be known until the apply phase, which is not allowed.", addr),
++			Subject:  meta.PrimaryDeclRangeHCL(),
++		})
++		action = plans.Delete // just to make the result valid enough to be inspected with commands like "tofu show -json", despite the error
++	}
+ 	reason := meta.OrphanActionReason
+ 
+ 	ret.PlannedChange = &plans.ResourceInstanceChange{
+@@ -788,7 +851,7 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
+ 		},
+ 		RequiredReplace: planResp.RequiresReplace,
+ 		Private:         planResp.Planned.Private,
+-		Action:          plans.Delete,
++		Action:          action,
+ 		Before:          prevState.Value,
+ 		After:           planResp.Planned.Value,
+ 
 ```
 
-**File**: `website/package-lock.json` (modified, +18/-18)
+---
+
+### Incident Patch 2: `8baf744f` (2026-11-12)
+**Commit Message**: tofu2024: ActionIfUnwanted should usually be known
+
+An unknown value in this field is reserved to mean that the argument was
+set to an expression whose result was an unknown value. We have a different
+way to represent "known to not be set at all", which is important because
+if nothing in the configuration expresses an opinion then the planning
+engine will make a final decision based on information in the prior state
+instead.
+
+This probably won't be the last field whose zero value represents something
+other than "unspecified", since we're likely to have other similar
+situations where unknown means "explicitly set to an unknown value", so
+the rules for what constitutes a completely-neutral configured metadata
+are factored out into a shared function that we'll now use in any place
+where we were previously using make(...) to build a completely-zero-valued
+object.
+
+Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
+
+**File**: `internal/lang/eval/internal/evalglue/resource.go` (modified, +24/-0)
 ```diff
-@@ -418,9 +418,9 @@
-       }
-     },
-     "node_modules/@npmcli/map-workspaces/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -772,9 +772,9 @@
-       }
-     },
-     "node_modules/brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -5881,9 +5881,9 @@
-       }
-     },
-     "node_modules/unified-engine/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -6786,9 +6786,9 @@
-       },
-       "dependencies": {
-         "brace-expansion": {
--          "version": "2.1.4",
--          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--          "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+          "version": "2.1.7",
-+          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+          "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-           "dev": true,
-           "requires": {
-             "balanced-match": "^1.0.0"
-@@ -7063,9 +7063,9 @@
-       }
-     },
-     "brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "requires": {
-         "balanced-match": "^1.0.0",
-@@ -10671,9 +10671,9 @@
-       },
-       "dependencies": {
-         "brace-expansion": {
--          "version": "2.1.4",
--          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--          "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+          "version": "2.1.7",
-+          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+          "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-           "dev": true,
-           "requires": {
-             "balanced-match": "^1.0.0"
+@@ -125,6 +125,30 @@ type ConfiguredResourceInstanceObjectMeta struct {
+ 	OrphanActionReason plans.ResourceInstanceChangeActionReason
+ }
+ 
++// NewDefaultConfiguredInstanceObjectMeta returns a newly-allocated
++// [ConfiguredResourceInstanceObjectMeta] which is configured so that all of
++// its fields have values that represent "unspecified", such that it effectively
++// represents the same as a nil ConfiguredResourceInstanceObjectMeta when it
++// comes to merging opinions from multiple modules.
++func NewDefaultConfiguredInstanceObjectMeta() *ConfiguredResourceInstanceObjectMeta {
++	return &ConfiguredResourceInstanceObjectMeta{
++		// An unknown value for ActionIfUnwanted means that the argument
++		// was set but the result of evaluating it was an unknown value.
++		// The situation where it isn't set at all is represented as
++		// a known "undecided" value, which we'll populate here by
++		// default and then the caller can override later if they find something
++		// in the configuration that specifies it.
++		//
++		// (Note that if nothing in the configuration expresses an opinion
++		// about this then the planning engine will fall back on using
++		// a value from the prior state instead, so we mustn't force this
++		// to a specific action here.)
++		ActionIfUnwanted: exprs.WithSourceRange[resources.ActionIfUnwanted]{
++			FromValue: exprs.Known(resources.IfUnwantedUndecided),
++		},
++	}
++}
++
+ // PrimaryDeclRangeHCL returns the same information as
+ // [ConfiguredResourceInstanceObjectMeta.PrimaryDeclRange] but using HCL's
+ // range type, instead of OpenTofu's.
+```
+
+**File**: `internal/lang/eval/internal/tofu2024/module_instance.go` (modified, +12/-8)
+```diff
+@@ -113,12 +113,19 @@ func (c *CompiledModuleInstance) ResultValuer(ctx context.Context) exprs.Valuer
+ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context, relativeModuleInst []addrs.ModuleInstanceStep, addr addrs.AbsResourceInstanceObject) *evalglue.ConfiguredResourceInstanceObjectMeta {
+ 	// Start with everything we know about the resource from the module context
+ 	var ret *evalglue.ConfiguredResourceInstanceObjectMeta
++	// We'll allocate a Meta object only once we know we have something to
++	// report.
++	ensureRet := func() {
++		if ret == nil {
++			ret = evalglue.NewDefaultConfiguredInstanceObjectMeta()
++		}
++	}
+ 	// We'll populate the Provider fields below only once we have
+ 	// a specific resource and resource instance in mind.
+ 
+ 	if len(c.moveStatements) != 0 {
+ 		if ret == nil {
+-			ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
++			ensureRet()
+ 		}
+ 		ret.MoveStatements = c.moveStatements
+ 	}
+@@ -132,9 +139,7 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
+ 		for _, instance := range instances {
+ 			statement, _ := instance.Statement(ctx)
+ 			if statement != nil && statement.Addr.Equal(addr.InstanceAddr) {
+-				if ret == nil {
+-					ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
+-				}
++				ensureRet()
+ 				// Conflicts are handled by callers of c.ImportStatements()
+ 				ret.ImportStatement = &evalglue.ImportStatement{
+ 					Addr:      statement.Addr,
+@@ -169,10 +174,9 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
+ 		return ret
+ 	}
+ 
+-	// Ensure that ret exists, regarless of module statements
+-	if ret == nil {
+-		ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
+-	}
++	// After this point we're definitely going to return something, because
++	// this object belongs to a resource in the current module.
++	ensureRet()
+ 	if addr.IsDeposed() {
+ 		// Deposed objects are always unwanted.
+ 		ret.Want = evalglue.ResourceInstanceObjectUnwanted
+```
+
+**File**: `internal/lang/eval/resource_instance.go` (modified, +4/-4)
+```diff
+@@ -225,11 +225,11 @@ func collectResourceInstanceObjectMeta(ctx context.Context, addr addrs.AbsResour
+ 			// the configuration, so any info we didn't already learn about
+ 			// this object will need to come from the previous run state, and
+ 			// that's the caller's responsibility to deal with.
++			configMeta := evalglue.NewDefaultConfiguredInstanceObjectMeta()
++			configMeta.OrphanActionReason = plans.ResourceInstanceDeleteBecauseNoModule
+ 			ret = append(ret, ModuleConfiguredResourceInstanceObjectMeta{
+-				ModuleInstance: moduleInstAddr,
+-				ConfiguredResourceInstanceObjectMeta: &ConfiguredResourceInstanceObjectMeta{
+-					OrphanActionReason: plans.ResourceInstanceDeleteBecauseNoModule,
+-				},
++				ModuleInstance:                       moduleInstAddr,
++				ConfiguredResourceInstanceObjectMeta: configMeta,
+ 			})
+ 
+ 			break
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4828** (2026-11-10): Update dependencies to fix high severity security issues (@yottta)
-- **PR #4825** (2026-11-10): `go get github.com/klauspost/compress@v1.20.2` (@yottta)
-- **PR #4823** (2026-11-09): Change opt-in flag for the new runtime outside of the engine (@cam72cam)
-- **PR #4822** (2026-11-10): New Runtime: Only compute module/resource value once (@cam72cam)
-- **PR #4816** (2026-11-06): Fix symbol libraries in plan snapshot (@cam72cam)
-- **PR #4813** (2026-11-05): [Backport 1.12] local statefile mutate bug (@cam72cam)
+- **PR #4842** (2026-11-13): planning: Propose to Forget instead of Delete when requested (@apparentlymart)
+- **PR #4839** (2026-11-12): Propagate the `destroy = false` setting from `resource` blocks through to `ResourceInstanceObjectMeta` (@apparentlymart)
+- **PR #4835** (2026-11-11): Add missing copyright headers (@yottta)
+- **PR #4834** (2026-11-12): [Govulncheck][GO-2026-6859][v1.13] Upgrade Go toolchain to 1.27.4 (@karlmoriaty)
+- **PR #4833** (2026-11-12): [Govulncheck][GO-2026-6859][v1.12] Upgrade Go toolchain to 1.26.11 (@karlmoriaty)
+- **PR #4831** (2026-11-11): [Govulncheck][GO-2026-6859][main] Upgrade Go toolchain to 1.27.4 (@karlmoriaty)
 
 ---
 
@@ -1585,31 +1712,44 @@ Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependencies to fix high severity security issues (#4828)
+## X. planning: Propose to Forget instead of Delete when requested
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/engine/internal/exec/resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51202c51`: Update dependencies to fix high severity security issues (#4828). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ca6e772`: planning: Propose to Forget instead of Delete when requested. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/internal/exec/resource.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+	"github.com/hashicorp/hcl/v2"
+
+// PrimaryDeclRangeHCL returns the same information as in
+// [ResourceInstanceObjectMeta.PrimaryDeclRange], but using HCL's range type
+// instead of OpenTofu's.
+//
+// Use this instead of calling [tfdiags.SourceRange.ToHCL] directly to avoid
+// causing a nil pointer panic when it's unset.
+func (m *ResourceInstanceObjectMeta) PrimaryDeclRangeHCL() *hcl.Range {
+	if m.PrimaryDeclRange == nil {
+		return nil
+	}
+	return m.PrimaryDeclRange.ToHCL().Ptr()
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51202c51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ca6e772` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

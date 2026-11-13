@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T20:28:21.312Z",
-  "total_records": 331,
+  "last_updated": "2026-11-13T20:37:27.295Z",
+  "total_records": 338,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 180,
+      "total": 183,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -213,7 +213,10 @@
         "DOM-D-43004423",
         "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants",
         "DOM-D-4CA3BD2A",
-        "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-flash-core-invariants",
+        "DOM-D-A812096F",
+        "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian"
       ]
     },
     "E": {
@@ -231,7 +234,7 @@
       ]
     },
     "G": {
-      "total": 38,
+      "total": 40,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -270,11 +273,13 @@
         "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants",
         "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-linkerd-linkerd2-core-invariants",
-        "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants",
+        "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants"
       ]
     },
     "H": {
-      "total": 70,
+      "total": 72,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -345,7 +350,9 @@
         "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
         "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6146,8 +6153,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c688eaeeeab8d1ff84d63ea5209a9407f209656a1f46bff192f55137d9cff37f",
-      "created_at": "2026-11-13T20:16:28.579Z"
+      "content_hash": "30aa87c94435b0b9810f3219c7801644812af7e0c10ba66117e6c665d7ad80f4",
+      "created_at": "2026-11-13T20:37:27.295Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8608,6 +8615,102 @@
       "repository": "trufflesecurity-trufflehog-learnings",
       "content_hash": "1f9d651231227d2a4533bf680ba2f788d9d7dd10b8f93668e5539ad0a3a64801",
       "created_at": "2026-11-13T20:28:21.312Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-flash-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-flash-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Cloudflare/clef-flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-flash-research-knowledge-intelligence-cloudflare-clef-flash-c.md",
+      "repository": "Cloudflare/clef-flash",
+      "content_hash": "86d7aea8bb65af76703a251d2445bc1076e5ee8040f46acb1c5113ab19b92e6d",
+      "created_at": "2026-11-13T20:36:44.189Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: salvo-rs/salvo Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-technical-construction-intelligence-salvo-rs-salvo-core-invariant.md",
+      "repository": "salvo-rs/salvo",
+      "content_hash": "248005196127d361dec1e6ae5561b497f3da7921ef378427d4d2129e61cb6ca6",
+      "created_at": "2026-11-13T20:36:45.971Z"
+    },
+    "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zulip/zulip Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-architecture-intelligence-zulip-zulip-core-invariants.md",
+      "repository": "zulip/zulip",
+      "content_hash": "d7403eb69adfdd023c454e96a1d63fb203de32e5472777ac11087aa0aff68347",
+      "created_at": "2026-11-13T20:36:52.035Z"
+    },
+    "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
+      "repository": "opentofu/opentofu",
+      "content_hash": "3fdf940829925b8f120020799e92918df7da75244aa953afc5012a1b005d85f7",
+      "created_at": "2026-11-13T20:36:53.858Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: salvo-rs-salvo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-learnings-technical-construction-intelligence-salvo-rs-salvo-lear.md",
+      "repository": "salvo-rs-salvo-learnings",
+      "content_hash": "f83b67bf5d8886bea79a7265b5c2e9bd65f316222c00483bf1727afc4e9c4d71",
+      "created_at": "2026-11-13T20:36:57.282Z"
+    },
+    "DOM-D-A812096F": {
+      "record_id": "DOM-D-A812096F",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Cloudflare/clef-flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash))  \n> **Source Version**: `hf-cloudflar`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "1caf143bafab01a640be983428e1543070c65f206748706c85aae6966673dcb7",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-cloudflare-clef-flash/hf-cloudflare-clef-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T20:36:57.555Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cloudflare-clef-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-cloudflare-clef-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T20:37:26.638Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-flash-learnings-research-knowledge-intelligence-hf-cloudflare.md",
+      "repository": "hf-cloudflare-clef-flash-learnings",
+      "content_hash": "f3245a3c4f35be26364830e9011774f9732ad5ecbd8d1ed33a5c745a46186dfe",
+      "created_at": "2026-11-13T20:37:26.841Z"
     }
   }
 }

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T20:28:20.766Z",
+  "updated_at": "2026-11-13T20:37:26.655Z",
   "statistics": {
-    "total_nodes": 121,
-    "total_edges": 66,
+    "total_nodes": 122,
+    "total_edges": 67,
     "domain_distribution": {
-      "D": 100,
+      "D": 101,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -17,7 +17,7 @@
       "F": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 66
+      "CONSTRAINED_BY_ARCHITECTURE": 67
     }
   },
   "nodes": {
@@ -2703,6 +2703,29 @@
       ],
       "created_at": "2026-11-13T20:28:20.766Z",
       "updated_at": "2026-11-13T20:28:20.766Z"
+    },
+    "DOM-D-A812096F": {
+      "id": "DOM-D-A812096F",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Cloudflare/clef-flash",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-cloudflare-clef-flash/hf-cloudflare-clef-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T20:36:57.555Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cloudflare-clef-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T20:37:26.655Z",
+      "updated_at": "2026-11-13T20:37:26.655Z"
     }
   },
   "edges": [
@@ -3365,6 +3388,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-4CA3BD2A [D] with Domain G",
       "created_at": "2026-11-13T20:28:20.766Z"
+    },
+    {
+      "id": "EDGE-090355F6368A",
+      "sourceId": "DOM-D-A812096F",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-A812096F [D] with Domain M",
+      "created_at": "2026-11-13T20:37:26.655Z"
     }
   ]
 }

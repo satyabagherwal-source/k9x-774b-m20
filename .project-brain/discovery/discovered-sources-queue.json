@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T20:27:43.411Z",
+  "updated_at": "2026-11-13T20:37:27.011Z",
   "stats": {
-    "total_discovered": 2872,
-    "approved_pending_harvest": 2686,
+    "total_discovered": 2888,
+    "approved_pending_harvest": 2690,
     "harvested_count": 0,
-    "rejected_count": 186,
+    "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2680,
+      "COMMUNITY_AND_EXPERT": 2696,
       "OFFICIAL_DOCUMENTATION": 100,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -61902,6 +61902,274 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
         "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-B4795219BF12": {
+      "id": "SRC-B4795219BF12",
+      "url": "http://t.dev/health",
+      "title": "http://t.dev/health",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-05F1E32C44BA": {
+      "id": "SRC-05F1E32C44BA",
+      "url": "http://t.dev/users/12345/articles/67890",
+      "title": "http://t.dev/users/12345/articles/67890",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-6E682A386104": {
+      "id": "SRC-6E682A386104",
+      "url": "http://t.dev/level0/v1/level2/v3/level4/v5/level6/v7/leaf",
+      "title": "http://t.dev/level0/v1/level2/v3/level4/v5/level6/v7/leaf",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-0EC35AEA5F09": {
+      "id": "SRC-0EC35AEA5F09",
+      "url": "http://t.dev/api/res099",
+      "title": "http://t.dev/api/res099",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.770Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-CE64B64B0365": {
+      "id": "SRC-CE64B64B0365",
+      "url": "http://t.dev/assets/css/site/theme/main.css",
+      "title": "http://t.dev/assets/css/site/theme/main.css",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.796Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-C8E2DE6CB96B": {
+      "id": "SRC-C8E2DE6CB96B",
+      "url": "http://t.dev/users/alice",
+      "title": "http://t.dev/users/alice",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.823Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-59A73B50C097": {
+      "id": "SRC-59A73B50C097",
+      "url": "http://t.dev/hello",
+      "title": "http://t.dev/hello",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.849Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-42F119A2DCD5": {
+      "id": "SRC-42F119A2DCD5",
+      "url": "http://t.dev/%7Bpath",
+      "title": "http://t.dev/%7Bpath",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-C2F113B850EC": {
+      "id": "SRC-C2F113B850EC",
+      "url": "https://github.com/salvo-rs/salvo/blob/master/examples/routing.rs",
+      "title": "https://github.com/salvo-rs/salvo/blob/master/examples/routing.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:36:56.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-09D1036560D5": {
+      "id": "SRC-09D1036560D5",
+      "url": "http://localhost/plain",
+      "title": "http://localhost/plain",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.934Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-3FEA530874D9": {
+      "id": "SRC-3FEA530874D9",
+      "url": "http://localhost/described",
+      "title": "http://localhost/described",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-0857233C2527": {
+      "id": "SRC-0857233C2527",
+      "url": "http://localhost/plain?value=hello",
+      "title": "http://localhost/plain?value=hello",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:56.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-A551FAB4A673": {
+      "id": "SRC-A551FAB4A673",
+      "url": "http://localhost/parameters?type=hello",
+      "title": "http://localhost/parameters?type=hello",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T20:36:57.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-2FCA604EF192": {
+      "id": "SRC-2FCA604EF192",
+      "url": "https://huggingface.co/Cloudflare/clef-flash",
+      "title": "https://huggingface.co/Cloudflare/clef-flash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:37:26.668Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+        "fileName": "hf-cloudflare-clef-flash-learnings.md"
+      }
+    },
+    "SRC-715D056F5DC3": {
+      "id": "SRC-715D056F5DC3",
+      "url": "https://zulip.com/help/introduction-to-topics",
+      "title": "https://zulip.com/help/introduction-to-topics",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:37:26.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-44505B2B8750": {
+      "id": "SRC-44505B2B8750",
+      "url": "https://bugs.debian.org/1153884",
+      "title": "https://bugs.debian.org/1153884",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:37:27.011Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
       }
     }
   }

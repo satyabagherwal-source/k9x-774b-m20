@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T20:27:08.329Z",
+  "last_updated": "2026-11-13T20:36:53.610Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -875,14 +875,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
-      "content_hash": "b3d0bb21ea65cf0676c94bac43b829eeffd4db5c14849f6050bed8acc17d1f6f",
-      "verified_at": "2026-11-08T19:31:08.629Z",
+      "content_hash": "9a898aed6e616833ad642d03ed68925c82612d60c63403c8a7b0501d1b7a6fb2",
+      "verified_at": "2026-11-13T20:36:44.032Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T19:31:08.629Z"
+      "last_updated": "2026-11-13T20:36:44.032Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -4056,14 +4056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zulip-zulip",
-      "content_hash": "b2efe3dcf41daf37e981320624af828ec596da799516d1713d330e3460f15b23",
-      "verified_at": "2026-11-09T12:13:07.448Z",
+      "content_hash": "0539f00dabf0151f39c210fd60d52a0a69568796d7551c124fe0de7d4d1caf62",
+      "verified_at": "2026-11-13T20:36:51.780Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:13:07.448Z"
+      "last_updated": "2026-11-13T20:36:51.780Z"
     },
     "goodrain/rainbond": {
       "repository": "goodrain/rainbond",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "29eef3136107920eb42cd39f5609682b99121bfe0d2fe542cf46541962533503",
-      "verified_at": "2026-11-12T08:32:08.575Z",
+      "content_hash": "1e8a5f6c172d01179704444b2327c5158311fd5fbd0542400b6c7e46d410d94c",
+      "verified_at": "2026-11-13T20:36:45.696Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:32:08.575Z"
+      "last_updated": "2026-11-13T20:36:45.696Z"
     },
     "react/metro": {
       "repository": "react/metro",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "f7d8f2fb4cbad4da8100fd63a85baab6f21c34294ee6745e14f7d7a843f65830",
-      "verified_at": "2026-11-12T22:05:24.936Z",
+      "content_hash": "cd8ee374022c7362d9cd7baddc2235c631aa861c1975dfb8830305f16952bf1d",
+      "verified_at": "2026-11-13T20:36:53.609Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:05:24.936Z"
+      "last_updated": "2026-11-13T20:36:53.609Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",

@@ -9610,3 +9610,8 @@
 | `CYCLE-20261113-H2MW` | `2026-11-13T20:27:08.312Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8374` | Yes (`a21edee8...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:27:42.809Z` | `hf-cloudflare-clef` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-43004423` [Domain D] | Yes (`5ceb17cf...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:28:20.767Z` | `trufflesecurity-trufflehog` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4CA3BD2A` [Domain D] | Yes (`d57aa4b9...`) |
+| `CYCLE-20261113-TEUS` | `2026-11-13T20:36:44.020Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`9a898aed...`) |
+| `CYCLE-20261113-TG4M` | `2026-11-13T20:36:45.670Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md` | Yes (`1e8a5f6c...`) |
+| `CYCLE-20261113-TKU0` | `2026-11-13T20:36:51.768Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8375` | Yes (`0539f00d...`) |
+| `CYCLE-20261113-TM8T` | `2026-11-13T20:36:53.597Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8376` | Yes (`cd8ee374...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:37:26.656Z` | `hf-cloudflare-clef-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A812096F` [Domain D] | Yes (`1caf143b...`) |

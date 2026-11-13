@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-6V8S",
-    "timestamp": "2026-11-13T00:43:28.300Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "f5e8cb4a2e0c04a7f5db3b797cf23ca047c89c0cf20507c9471e478bccc88d88",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-TTD0",
-    "timestamp": "2026-11-13T01:01:18.948Z",
-    "repository": "yyjeqhc/webcodex",
-    "learningId": "learn-github-yyjeqhc-webcodex",
-    "contentHash": "bf2e2e0040ab377dfd84c2ac137cdd55376fbd980f4f70410f8023836a9c87ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-U6KN",
-    "timestamp": "2026-11-13T01:01:36.071Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "d88fc978d7070c1d898b0bc2d20a7b2af30cab812d3d1048f1a678e40887b2b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-AOIP",
-    "timestamp": "2026-11-13T01:14:25.825Z",
-    "repository": "meta/docusaurus",
-    "learningId": "learn-github-meta-docusaurus",
-    "contentHash": "fbf247a2fc30082cdd538255789f0aff52f0de8e90b038c4f09bf2daabe13f2e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-AQ9Z",
     "timestamp": "2026-11-13T01:14:28.103Z",
     "repository": "Kong/kubernetes-ingress-controller",
@@ -7490,6 +7430,66 @@
     "repository": "linkerd/linkerd2",
     "learningId": "learn-github-linkerd-linkerd2",
     "contentHash": "a21edee86d890d7d55e2c6f02320468d81a3bdab177b3d9ea6ddd0e6671e0e6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-TEUS",
+    "timestamp": "2026-11-13T20:36:44.020Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-cloudflare-clef-flash",
+    "contentHash": "9a898aed6e616833ad642d03ed68925c82612d60c63403c8a7b0501d1b7a6fb2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-TG4M",
+    "timestamp": "2026-11-13T20:36:45.670Z",
+    "repository": "salvo-rs/salvo",
+    "learningId": "learn-github-salvo-rs-salvo",
+    "contentHash": "1e8a5f6c172d01179704444b2327c5158311fd5fbd0542400b6c7e46d410d94c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-TKU0",
+    "timestamp": "2026-11-13T20:36:51.768Z",
+    "repository": "zulip/zulip",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "0539f00dabf0151f39c210fd60d52a0a69568796d7551c124fe0de7d4d1caf62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-TM8T",
+    "timestamp": "2026-11-13T20:36:53.597Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "cd8ee374022c7362d9cd7baddc2235c631aa861c1975dfb8830305f16952bf1d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

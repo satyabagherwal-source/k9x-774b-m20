@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:27:08.325Z",
-  "total_cycles_completed": 9363,
-  "total_learnings_persisted": 9363,
-  "total_rules_promoted": 9093,
+  "last_updated": "2026-11-13T20:36:53.606Z",
+  "total_cycles_completed": 9367,
+  "total_learnings_persisted": 9367,
+  "total_rules_promoted": 9095,
   "history": [
-    {
-      "timestamp": "2026-11-13T06:51:00.370Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T06:51:10.961Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T06:58:10.238Z",
-      "repository": "ornith-ai/Ornith-1.5-122B",
-      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T06:58:30.080Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T07:06:25.997Z",
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-13T20:27:08.325Z",
       "repository": "linkerd/linkerd2",
       "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:36:44.029Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:36:45.692Z",
+      "repository": "salvo-rs/salvo",
+      "learningId": "learn-github-salvo-rs-salvo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:36:51.777Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:36:53.606Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
