@@ -20980,5 +20980,17 @@
     "downloads": 4011565,
     "qualityScore": 22420,
     "discoveredAt": "2026-11-13T07:15:39.785Z"
+  },
+  {
+    "name": "thinkingmachines/Inkling-2-Small",
+    "fullName": "thinkingmachines/Inkling-2-Small",
+    "url": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: thinkingmachines/Inkling-2-Small (162 likes, 12 downloads)",
+    "likes": 162,
+    "downloads": 12,
+    "qualityScore": 1632,
+    "discoveredAt": "2026-11-13T09:14:45.457Z"
   }
 ]

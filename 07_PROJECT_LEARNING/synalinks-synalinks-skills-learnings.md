@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md`  
 > **Source**: github ([https://github.com/SynaLinks/synalinks-skills](https://github.com/SynaLinks/synalinks-skills))  
-> **Source Version**: `2b5d7ed8`  
+> **Source Version**: `c5c3a70d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:41:43.234Z  
+> **Timestamp**: 2026-11-13T09:17:19.679Z  
 > **Learning ID**: `learn-github-synalinks-synalinks-skills`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SynaLinks/synalinks-skills](https://github.com/SynaLinks/synalinks-skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:41:43.219Z  
+> **Harvest Timestamp**: 2026-11-13T09:17:19.670Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -26,7 +26,7 @@
 - **Repository / Resource**: `SynaLinks/synalinks-skills`
 - **Description**: Coding Agents skills for Synalinks OSS
 - **Primary Language / Ecosystem**: Python
-- **Discovered Manifests / Configurations**: README.md
+- **Discovered Manifests / Configurations**: package.json, README.md
 - **Stars / Engagement**: 909 stars
 
 ---
@@ -34,8 +34,28 @@
 ## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
 ### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
+- Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `opencode/index.js`
+```
+// OpenCode plugin: registers this repo's skills/ directory as a skill source,
+// so OpenCode discovers every skill in it without copying files.
+import { fileURLToPath } from "node:url";
+
+const skillsDir = fileURLToPath(new URL("../skills", import.meta.url));
+
+export default {
+  id: "synalinks",
+  server: async () => ({
+    config: async (config) => {
+      config.skills = config.skills ?? {};
+      config.skills.paths = [...(config.skills.paths ?? []), skillsDir];
+    },
+  }),
+};
+
+```
 
 ### Core Architecture Module: `skills/synalinks/scripts/chain_of_thought.py`
 ```
@@ -1218,120 +1238,17 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `skills/synalinks/scripts/lmstudio_setup.py`
-```
-#!/usr/bin/env python3
-"""LMStudio / vLLM setup helper for Synalinks.
-
-Local OpenAI-compatible servers need:
-1. A dummy OPENAI_API_KEY (any non-empty string)
-2. A LiteLLM model registration (so cost tracking returns 0.0 instead of None)
-3. An api_base pointing to the local server
-
-Usage:
-    from lmstudio_setup import create_lmstudio_language_model
-
-    lm = create_lmstudio_language_model("ibm/granite-4-h-tiny")
-
-Run log:
-    references/lmstudio_setup.log
-
-The __main__ demo points the same helper at a *live* local OpenAI-compatible
-server — ollama at http://localhost:11434/v1 — so it runs without LMStudio.
-The helper itself is server-agnostic; LMStudio (:1234) / vLLM (:8000) just need
-their own api_base.
-"""
-
-import os
-
-import litellm
-import synalinks
-
-
-def create_lmstudio_language_model(
-    model_name: str,
-    api_base: str = "http://localhost:1234/v1",
-    max_tokens: int = 4096,
-    api_key: str = "lm-studio",
-    **kwargs,
-) -> synalinks.LanguageModel:
-    """Create a Synalinks LanguageModel configured for an LMStudio-compatible server.
-
-    Args:
-        model_name: Model name (without provider prefix). Will be prefixed with "openai/".
-        api_base: Base URL of the local OpenAI-compatible server.
-        max_tokens: Max output tokens (used for LiteLLM registration).
-        api_key: Dummy API key. Any non-empty string works.
-        **kwargs: Forwarded to synalinks.LanguageModel.
-    """
-    os.environ["OPENAI_API_KEY"] = api_key
-    full_model_name = f"openai/{model_name}"
-
-    litellm.register_model({
-        full_model_name: {
-            "max_tokens": max_tokens,
-            "input_cost_per_token": 0.0,
-            "output_cost_per_token": 0.0,
-            "litellm_provider": "openai",
-            "mode": "chat",
-        }
-    })
-
-    return synalinks.LanguageModel(
-        model=full_model_name,
-        api_base=api_base,
-        **kwargs,
-    )
-
-
-# Same helper, friendlier name for vLLM
-def create_vllm_language_model(
-    model_name: str,
-    api_base: str = "http://localhost:8000/v1",
-    **kwargs,
-) -> synalinks.LanguageModel:
-    """Create a Synalinks LanguageModel configured for a vLLM server."""
-    return create_lmstudio_language_model(model_name, api_base=api_base, **kwargs)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    async def main():
-        # Demo against a live local OpenAI-compatible server (ollama). For a real
-        # LMStudio server use create_lmstudio_language_model("ibm/granite-4-h-tiny")
-        # (defaults to :1234).
-        lm = create_lmstudio_language_model(
-            "mistral", api_base="http://localhost:11434/v1"
-        )
-
-        class Q(synalinks.DataModel):
-            query: str = synalinks.Field(description="The user query")
-
-        class A(synalinks.DataModel):
-            answer: str = synalinks.Field(description="The answer")
-
-        inputs = synalinks.Input(data_model=Q)
-        outputs = await synalinks.Generator(data_model=A, language_model=lm)(inputs)
-        program = synalinks.Program(inputs=inputs, outputs=outputs)
-        result = await program(Q(query="Capital of France?"))
-        print(result.prettify_json())
-
-    asyncio.run(main())
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #53** (2026-11-13): **Add OpenCode plugin**
+  *Symptoms*: Makes the repo installable as an OpenCode plugin, alongside the Claude Code and Codex manifests (#52).  - `package.json` + `opencode/index.js`: a plugin whose `config` hook adds this repo's `skills/` directory to `skills.paths`. No files are copied. - README: install with `opencode plugin github:SynaLinks/synalinks-skills` (`--global` for every project), or list it in `plugin` in `opencode.json`. - `.gitignore`: `*.json` is ignored, so `package.json` gets an exception. - CI: new `opencode-plugin` job installs the plugin from the checkout with the latest `opencode-ai` and fails if any skill is missing from `opencode debug skill`.  Tested locally with opencode 1.19.5: installing from git lists `synalinks` from the plugin's `skills/` folder, with all 47 skill files present. - README: a **Quick install** section at the top with the one-line plugin install for Claude Code, Codex and OpenCode (and `npx skills` for other agents). The Install section now lists the plugins first, then `npx skills`, then the Claude.ai upload.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
 - **Issue #52** (2026-11-12): **Add Claude Code and Codex plugin manifests**
   *Symptoms*: Makes this repo installable as a plugin, in addition to `npx skills`.  - `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json`: Claude Code plugin `synalinks` in marketplace `synalinks-skills` (`claude plugin validate .` passes) - `plugin.json` + `.agents/plugins/marketplace.json`: Codex plugin and marketplace - README: new "As a plugin" install section  `.gitignore` ignores `*.json`, so the manifests were force-added; future edits to them are tracked normally.  Install: - Claude Code: `/plugin install synalinks --marketplace SynaLinks/synalinks-skills` - Codex: `codex plugin marketplace add SynaLinks/synalinks-skills`, then `codex plugin add synalinks@synalinks-skills`  Tested against this branch in isolated config dirs: Claude Code (marketplace add + install, enabled) and Codex 0.167.2 (marketplace add + plugin add, installed and enabled, SKILL.md in plugin cache).  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-
-- **Issue #51** (2026-09-28): **ci: validate and install skills for all agents; fix SKILL.md frontmatter**
-  *Symptoms*: ## Why  A user reported the repo as broken. Reproduced with the documented install command:  ``` npx skills add SynaLinks/synalinks-skills --skill synalinks ⚠ Skipped .../synalinks/SKILL.md — YAML parse error: Nested mappings are not allowed in compact mappings └ No valid skills found. Skills require a SKILL.md with name and description. ```  The `description` in `skills/synalinks/SKILL.md` contains an unquoted `(Keras-inspired): DataModel...`. A colon followed by a space inside a plain YAML scalar is invalid, so the `skills` CLI discovers no skills and installs nothing, for every agent.  ## Changes  - **`skills/synalinks/SKILL.md`**: double-quote the description (content unchanged, 990 chars, under the 1024 spec limit). - **`.github/workflows/ci.yml`** (new):   - `validate`: runs the official Agent Skills validator (`agentskills validate`) on every `skills/*/` folder. Fails on the previous frontmatter.   - `install`: `npx skills add <checkout> --skill '*' --agent '*' --copy --json`, then asserts every skill in the repo reports `installed` and that `SKILL.md` landed in `.claude/skills/` and `.agents/skills/` (read by Codex, OpenCode, Cursor and most others). Runs on PRs so a bad merge is caught before users see it.   - `install-from-github`: on push to main, weekly schedule and manual dispatch, runs the exact command users run against the published repo.   - `package`: on main, zips each skill into a `.skill` archive (Claude.ai / Desktop upload format) and uploads it as a wor
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1348,17 +1265,24 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b5d7ed8` (2026-11-12)
-**Commit Message**: Add Claude Code and Codex plugin manifests (#52)
+### Incident Patch 1: `c5c3a70d` (2026-11-13)
+**Commit Message**: Add OpenCode plugin (#53)
 
-* Add Claude Code and Codex plugin manifests
+* Add OpenCode plugin
 
-Make the repo installable as a plugin marketplace in Claude Code and Codex,
-alongside the existing npx skills install.
+The repo installs as an OpenCode plugin (opencode plugin
+github:SynaLinks/synalinks-skills). Its config hook adds the repo's
+skills/ directory to skills.paths, so OpenCode discovers the skill
+without copying files. CI installs the plugin from the checkout and
+checks every skill is listed by opencode debug skill.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* README: non-interactive Codex plugin install
+* README: plugins first, then npx skills
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* README: quick plugin install at the top
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -1366,90 +1290,233 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.agents/plugins/marketplace.json` (added, +6/-0)
+**File**: `.github/workflows/ci.yml` (modified, +27/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+{
-+  "name": "synalinks-skills",
-+  "plugins": [
-+    { "name": "synalinks", "source": { "source": "local", "path": "./" }, "policy": { "installation": "AVAILABLE" } }
-+  ]
-+}
+@@ -85,6 +85,33 @@ jobs:
+               print("failed:", failed); sys.exit(1)
+           '
+ 
++  opencode-plugin:
++    name: Load as an OpenCode plugin
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v4
++        with:
++          path: repo
++      - uses: actions/setup-node@v4
++        with:
++          node-version: 22
++      - name: Install the plugin from the checkout and list skills
++        run: |
++          set -euo pipefail
++          npm i -g opencode-ai@latest
++          mkdir project && cd project
++          opencode plugin "git+file://$GITHUB_WORKSPACE/repo#$(git -C "$GITHUB_WORKSPACE/repo" rev-parse HEAD)"
++          opencode debug skill > skills.json
++          python3 - <<'PY'
++          import json, pathlib, sys
++          found = {s["name"] for s in json.load(open("skills.json"))}
++          expected = {p.parent.name for p in pathlib.Path("../repo/skills").glob("*/SKILL.md")}
++          missing = expected - found
++          if missing:
++              print("missing:", sorted(missing), "\nfound:", sorted(found)); sys.exit(1)
++          print("loaded:", sorted(expected))
++          PY
++
+   package:
+     # The `.skill` archive that Claude.ai / Claude Desktop uploads expect.
+     name: Package .skill archives
 ```
 
-**File**: `.claude-plugin/marketplace.json` (added, +8/-0)
+**File**: `.gitignore` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+{
-+  "name": "synalinks-skills",
-+  "owner": { "name": "SynaLinks" },
-+  "description": "Synalinks skills for coding agents",
-+  "plugins": [
-+    { "name": "synalinks", "source": "./", "description": "Idiomatic Synalinks for coding agents" }
-+  ]
-+}
+@@ -1,6 +1,7 @@
+ documentation/
+ *.html
+ *.json
++!package.json
+ local_cache/
+ *.zip
+ htmlcov/
 ```
 
-**File**: `.claude-plugin/plugin.json` (added, +7/-0)
+**File**: `README.md` (modified, +96/-56)
 ```diff
-@@ -0,0 +1,7 @@
+@@ -7,6 +7,30 @@
+ This repository contains skills for coding agents that read the open Agent
+ Skills format (`SKILL.md`): Claude Code, Codex, OpenCode, pi, and others.
+ 
++## Quick install
++
++Install it as a plugin in one command:
++
++```shell
++# Claude Code (2.1.275 or later)
++/plugin install synalinks --marketplace SynaLinks/synalinks-skills
++
++# Codex
++codex plugin marketplace add SynaLinks/synalinks-skills
++codex plugin add synalinks@synalinks-skills
++
++# OpenCode
++opencode plugin github:SynaLinks/synalinks-skills
++```
++
++Any other agent (Cursor, Gemini CLI, Copilot, pi, ...):
++
++```shell
++npx skills add SynaLinks/synalinks-skills --skill synalinks
++```
++
++Details, global installs and Claude.ai uploads are in [Install](#install).
++
+ ## What are Agent Skills?
+ 
+ Agent Skills are reusable instructions, in a plain `SKILL.md` file, that teach a
+@@ -51,100 +75,116 @@ The skill folder contains:
+ 
+ ## Install
+ 
+-The recommended way to install this skill is the official
+-[`skills`](https://skills.sh) CLI (`npx skills`). It clones this repo, discovers
+-the `synalinks` skill, and wires it into your agent's skills directory: no manual
+-cloning, copying, or zipping required. It needs Node.js (the `npx` that ships
+-with it); nothing else.
++Pick the route that matches your agent:
+ 
+-The CLI detects the agents installed on your machine, so the same command works
+-whether you use Claude Code, Codex, OpenCode, pi, or another supported agent.
+-The examples below use Claude Code; see [Other agents](#other-agents) to target
+-a specific one.
++| Agent | Install with |
++| --- | --- |
++| Claude Code, Codex, OpenCode | [the plugin](#as-a-plugin) (recommended) |
++| Any other agent (Cursor, Gemini CLI, Copilot, pi, ...) | [`npx skills`](#with-npx-skills) |
++| Claude.ai (web) and Claude Desktop | [a `.skill` upload](#claudeai-web-and-claude-desktop) |
+ 
+-### Quick start
++The skill content is identical in every case: one `SKILL.md`, no per-agent
++variants to maintain.
+ 
+-`synalinks` is a skill for the **synalinks Python library**, so the natural place
+-to install it is **the project where you use synalinks**, so the agent
+-gets idiomatic-synalinks guidance exactly where you write synalinks code. Project
+-scope is also the CLI default, so just run this from your project root:
++### As a plugin
++
++This repo is a plugin marketplace for Claude Code and Codex, and an OpenCode
++plugin. The agent fetches the skill itself: no Node.js, no copied files.
++
++**Claude Code** (2.1.275 or later):
+ 
+ ```shell
+-npx skills add SynaLinks/synalinks-skills --skill synalinks
++/plugin install synalinks --marketplace SynaLinks/synalinks-skills
+ ```
+ 
+-This installs into the current project (each agent reads it from its own
+-directory, e.g. `<repo>/.claude/skills/` for Claude Code). Commit the generated
+-`skills-lock.json` (see
+-[Updating](#updating)) so teammates and CI resolve the same skill content.
++Then run `/skills`: `synalinks` should appear.
+ 
+-Want it in **every** project instead of per-project? Install globally:
++**Codex:**
+ 
+ ```shell
+-npx skills add SynaLinks/synalinks-skills --skill synalinks --global
++codex plugin marketplace add SynaLinks/synalinks-skills
++codex plugin add synalinks@synalinks-skills
+ ```
+ 
+-That installs to the agent's user-level skills directory (`~/.claude/skills/`
+-for Claude Code). By default the CLI symlinks the skill; pass `--copy` to copy
+-the files instead.
++Start a new Codex session to load it.
+ 
+-List what's in the repo without installing anything:
++**OpenCode:**
+ 
+ ```shell
+-npx skills add SynaLinks/synalinks-skills --list
++opencode plugin github:SynaLinks/synalinks-skills           # this project
++opencode plugin github:SynaLinks/synalinks-skills --global  # every project
+ ```
+ 
+-Run `npx skills add SynaLinks/synalinks-skills` with no flags for an
+-interactive picker.
++This adds the plugin to `.opencode/opencode.json` (or your global config). You
++can also list it yourself:
+ 
+-### Other agents
++```json
 +{
-+  "name": "synalinks",
-+  "description": "Teaches coding agents idiomatic Synalinks (Keras-inspired neuro-symbolic LM framework).",
-+  "author": { "name": "SynaLinks" },
-+  "repository": "https://github.com/SynaLinks/synalinks-skills",
++  "$schema": "https://opencode.ai/config.json",
++  "plugin": ["github:SynaLinks/synalinks-skills"]
++}
++```
+ 
+-The `skills` CLI supports 70+ agents. Target one (or all) explicitly with
+-`-a`/`--agent`:
++The plugin registers the repo's `skills/` directory as a skill source, so
++OpenCode discovers the skill without copying files. Restart OpenCode to load it,
++then check with `opencode debug skill`.
+ 
+-```shell
+-npx skills add SynaLinks/synalinks-skills --skill synalinks -a claude-code   # Claude Code
+-npx skills add SynaLinks/synalinks-skills --skill synalinks -a codex         # Codex
+-npx skills add SynaLinks/synalinks-skills --skill synalinks -a opencode      # OpenCode
+-npx skills add SynaLinks/synalinks-skills --skill synalinks -a pi            # pi
+-npx skills add SynaLinks/synalinks-skills --all                              # everything, all agents
+-```
++### With `npx skills`
+ 
+-Passing an unknown name prints the full list of valid agent slugs, which
+-currently includes cursor, gemini-cli, github-copilot, winds
+```
+
+**File**: `opencode/index.js` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++// OpenCode plugin: registers this repo's skills/ directory as a skill source,
++// so OpenCode discovers every skill in it without copying files.
++import { fileURLToPath } from "node:url";
++
++const skillsDir = fileURLToPath(new URL("../skills", import.meta.url));
++
++export default {
++  id: "synalinks",
++  server: async () => ({
++    config: async (config) => {
++      config.skills = config.skills ?? {};
++      config.skills.paths = [...(config.skills.paths ?? []), skillsDir];
++    },
++  }),
++};
+```
+
+**File**: `package.json` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++{
++  "name": "synalinks-skills",
++  "version": "1.0.0",
++  "description": "Synalinks skills for coding agents, packaged as an OpenCode plugin.",
++  "type": "module",
++  "main": "opencode/index.js",
++  "files": ["opencode/", "skills/"],
++  "repository": "github:SynaLinks/synalinks-skills",
 +  "license": "Apache-2.0"
 +}
 ```
 
-**File**: `README.md` (modified, +19/-0)
-```diff
-@@ -117,6 +117,25 @@ goose, junie and roo, among others.
- The skill content is identical in every case: one `SKILL.md`, no per-agent
- variants to maintain.
- 
-+### As a plugin
-+
-+This repo is also a plugin marketplace for Claude Code and Codex.
-+
-+Claude Code (2.1.275 or later):
-+
-+```shell
-+/plugin install synalinks --marketplace SynaLinks/synalinks-skills
-+```
-+
-+Codex:
-+
-+```shell
-+codex plugin marketplace add SynaLinks/synalinks-skills
-+codex plugin add synalinks@synalinks-skills
-+```
-+
-+Start a new Codex session to load it.
-+
- ### Verify
- 
- ```shell
-```
-
-**File**: `plugin.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-+  "name": "synalinks",
-+  "description": "Teaches coding agents idiomatic Synalinks (Keras-inspired neuro-symbolic LM framework).",
-+  "author": { "name": "SynaLinks" }
-+}
-```
-
 #### Recent Merged Pull Requests:
+- **PR #53** (2026-11-13): Add OpenCode plugin (@YoanSallami)
 - **PR #52** (2026-11-12): Add Claude Code and Codex plugin manifests (@YoanSallami)
 - **PR #51** (2026-09-28): ci: validate and install skills for all agents; fix SKILL.md frontmatter (@YoanSallami)
 - **PR #49** (2026-09-26): Cover decision models and the new rewards (@YoanSallami)
 - **PR #47** (2026-08-07): docs: reframe the skill as agent-agnostic (open SKILL.md format) (@YoanSallami)
 - **PR #46** (closed): docs: add sk installation instructions (@alizain)
-- **PR #44** (closed): Implements Docling support (@RamXX)
 
 ---
 
@@ -1469,26 +1536,47 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Claude Code and Codex plugin manifests (#52)
+## X. Add OpenCode plugin (#53)
 
 **RULE**:
-When implementing operations in `.agents/plugins/marketplace.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SynaLinks/synalinks-skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SynaLinks/synalinks-skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b5d7ed8`: Add Claude Code and Codex plugin manifests (#52). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5c3a70d`: Add OpenCode plugin (#53). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/plugins/marketplace.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-{
-  "name": "synalinks-skills",
-  "plugins": [
-    { "name": "synalinks", "source": { "source": "local", "path": "./" }, "policy": { "installation": "AVAILABLE" } }
-  ]
-}
+  opencode-plugin:
+    name: Load as an OpenCode plugin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: repo
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install the plugin from the checkout and list skills
+        run: |
+          set -euo pipefail
+          npm i -g opencode-ai@latest
+          mkdir project && cd project
+          opencode plugin "git+file://$GITHUB_WORKSPACE/repo#$(git -C "$GITHUB_WORKSPACE/repo" rev-parse HEAD)"
+          opencode debug skill > skills.json
+          python3 - <<'PY'
+          import json, pathlib, sys
+          found = {s["name"] for s in json.load(open("skills.json"))}
+          expected = {p.parent.name for p in pathlib.Path("../repo/skills").glob("*/SKILL.md")}
+          missing = expected - found
+          if missing:
+              print("missing:", sorted(missing), "\nfound:", sorted(found)); sys.exit(1)
+          print("loaded:", sorted(expected))
+          PY
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1498,4 +1586,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b5d7ed8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5c3a70d` are properly handled with clean fallback behavior.

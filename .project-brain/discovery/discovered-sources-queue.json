@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T08:56:48.348Z",
+  "updated_at": "2026-11-13T09:17:56.473Z",
   "stats": {
-    "total_discovered": 2293,
-    "approved_pending_harvest": 2133,
+    "total_discovered": 2304,
+    "approved_pending_harvest": 2142,
     "harvested_count": 0,
-    "rejected_count": 160,
+    "rejected_count": 162,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2121,
+      "COMMUNITY_AND_EXPERT": 2131,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 73,
       "ENGINEERING_BLOGS": 1,
-      "SECURITY_ADVISORIES": 7,
+      "SECURITY_ADVISORIES": 8,
       "LEGAL_AND_REGULATORY": 1
     }
   },
@@ -49344,6 +49344,234 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
         "fileName": "hf-liquidai-lfm3-1.7b-learnings.md"
+      }
+    },
+    "SRC-0679810BB8B1": {
+      "id": "SRC-0679810BB8B1",
+      "url": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
+      "title": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.209Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md",
+        "fileName": "hf-thinkingmachines-inkling-2-small-learnings.md"
+      }
+    },
+    "SRC-A79961A8C970": {
+      "id": "SRC-A79961A8C970",
+      "url": "https://github.com/TanStack/router",
+      "title": "https://github.com/TanStack/router",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.239Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-C039EF08BD36": {
+      "id": "SRC-C039EF08BD36",
+      "url": "http://localhost/$%7Ba",
+      "title": "http://localhost/$%7Ba",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T09:17:56.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-52580CA9D9EA": {
+      "id": "SRC-52580CA9D9EA",
+      "url": "https://jsonplaceholder.typicode.com/$%7Bresource",
+      "title": "https://jsonplaceholder.typicode.com/$%7Bresource",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-B98FFE778566": {
+      "id": "SRC-B98FFE778566",
+      "url": "https://jsonplaceholder.typicode.com/*",
+      "title": "https://jsonplaceholder.typicode.com/*",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-A70DBAA79E68": {
+      "id": "SRC-A70DBAA79E68",
+      "url": "https://stackblitz.com/edit/tanstack-router-yoii3nte?file=src%2Froutes%2Fb.%24postId.tsx",
+      "title": "https://stackblitz.com/edit/tanstack-router-yoii3nte?file=src%2Froutes%2Fb.%24postId.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.324Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-2C9F30B3844A": {
+      "id": "SRC-2C9F30B3844A",
+      "url": "https://github.com/user-attachments/assets/a7cb6f5b-1493-487b-9f47-e179b2aad271",
+      "title": "https://github.com/user-attachments/assets/a7cb6f5b-1493-487b-9f47-e179b2aad271",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.343Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-49AFF63CA2F3": {
+      "id": "SRC-49AFF63CA2F3",
+      "url": "https://github.com/TanStack/router/blob/main/packages/router-core/src/router.ts",
+      "title": "https://github.com/TanStack/router/blob/main/packages/router-core/src/router.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.362Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-57DD1B8D8992": {
+      "id": "SRC-57DD1B8D8992",
+      "url": "http://localhost:${PORT",
+      "title": "http://localhost:${PORT",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T09:17:56.381Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-27938BB96B3E": {
+      "id": "SRC-27938BB96B3E",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-126187",
+      "title": "Vulnerability Advisory CVE-2026-126187",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-8198D1BAC40A": {
+      "id": "SRC-8198D1BAC40A",
+      "url": "https://example.org/",
+      "title": "https://example.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:17:56.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
       }
     }
   }

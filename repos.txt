@@ -5034,3 +5034,7 @@ https://github.com/agentes-chat/agentes-chat
 # --- Automatically Discovered by AI Scout Engine [2026-11-13T07:17:48.339Z] ---
 # [HUGGINGFACE-AI-MODELS] huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF (22420 score) - Verified Hugging Face Model: huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF (2042
 https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-13T09:16:53.959Z] ---
+# [HUGGINGFACE-AI-MODELS] thinkingmachines/Inkling-2-Small (1632 score) - Verified Hugging Face Model: thinkingmachines/Inkling-2-Small (162 likes, 12 dow
+https://huggingface.co/thinkingmachines/Inkling-2-Small

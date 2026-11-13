@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T08:56:48.417Z",
+  "last_updated": "2026-11-13T09:17:56.492Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T07:39:41.956Z",
@@ -788,7 +788,7 @@
       "staged_for_review": 1
     },
     "fabio-rovai-open-ontologies-learnings.md": {
-      "processed_at": "2026-11-12T04:24:41.331Z",
+      "processed_at": "2026-11-13T09:17:56.416Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1686,9 +1686,19 @@
       "processed_at": "2026-11-13T08:56:48.339Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-thinkingmachines-inkling-2-small-learnings.md": {
+      "processed_at": "2026-11-13T09:17:56.199Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "tanstack-router-learnings.md": {
+      "processed_at": "2026-11-13T09:17:56.230Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 516,
-  "total_canonical_promoted": 80,
-  "total_staged_for_review": 433
+  "total_dossiers_evaluated": 519,
+  "total_canonical_promoted": 81,
+  "total_staged_for_review": 435
 }

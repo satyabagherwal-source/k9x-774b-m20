@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
-> **Source Version**: `7dbce080`  
+> **Source Version**: `e7358c36`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T07:08:52.457Z  
+> **Timestamp**: 2026-11-13T09:17:08.413Z  
 > **Learning ID**: `learn-github-tanstack-router`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T07:08:52.448Z  
+> **Harvest Timestamp**: 2026-11-13T09:17:08.192Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 A client-first, server-capable, fully type-safe router and full-stack framework for the web (React and more).
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15289 stars
+- **Stars / Engagement**: 15319 stars
 
 ---
 
@@ -684,346 +684,464 @@ export const apiHandlers = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bbf9b758` (2026-11-08)
-**Commit Message**: fix(router-devtools-core): restore embedded panel styling (#8888)
+### Incident Patch 1: `e7358c36` (2026-11-12)
+**Commit Message**: fix(react-start-rsc): bump RSC bundler deps for RSC (#8919)
 
-* fix(router-devtools-core): restore embedded panel styling
+fix(react-start-rsc): bump RSC bundler deps for React Server Components advisories
 
-All devtools size tokens are `calc(var(--tsrd-font-size) * n)`, but only the
-floating devtools set `--tsrd-font-size` (via JS). The embedded
-TanStackRouterDevtoolsPanel never had it defined, so every size declaration
-was dropped: inherited font sizes, zero padding/gap/indentation and invisible
-route status dots. Regressed in #1222 (v1.17.0).
+Raise @vitejs/plugin-rsc to ^0.5.39 (peer >=0.5.38) and
+react-server-dom-rspack to ^0.1.1 (peer >=0.1.1) so both bundled React
+Flight runtimes include the fixes for GHSA-xqc2-xf4c-x3h3
+(CVE-2026-126187, unauthenticated RCE) and GHSA-h3gv-c5rc-p453 (server
+function DoS).
 
-Fall back to `1rem` when the variable is unset. Floating behavior is unchanged.
+Bump the react/react-dom catalog to ~19.2.9. Stay on 19.2.x because
+React 19.3 currently fails the rsc-deferred-hydration e2e suite.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+**File**: `.changeset/rsc-security-floor.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++---
++'@tanstack/react-start-rsc': patch
++---
++
++Raise the minimum RSC bundler peer dependencies to versions with the React Server Components fixes for GHSA-xqc2-xf4c-x3h3 (CVE-2026-126187, unauthenticated RCE) and GHSA-h3gv-c5rc-p453 (server function DoS):
++
++- `@vitejs/plugin-rsc` to `>=0.5.38` (GHSA-59pf-q495-3c99), which vendors a fixed `react-server-dom-webpack`.
++- `react-server-dom-rspack` to `>=0.1.1`, the first release built from React sources that include the fix.
+```
 
-* test(react-router): read devtools mode from a validated search param
+**File**: `e2e/react-start/rsc-deferred-hydration/package.json` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@
+     "@types/react": "^19.0.8",
+     "@types/react-dom": "^19.0.3",
+     "@vitejs/plugin-react": "^6.0.1",
+-    "@vitejs/plugin-rsc": "^0.5.37",
++    "@vitejs/plugin-rsc": "^0.5.39",
+     "srvx": "^1.0.0",
+     "@typescript/native": "npm:typescript@^7.0.2",
+     "typescript": "npm:@typescript/typescript6@^6.0.2",
+```
 
-Use root route validateSearch + useSearch instead of raw URLSearchParams,
-and render the shadow DOM panel through a portal instead of mounting the
-whole app in a shadow root.
+**File**: `e2e/react-start/rsc-query/package.json` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@
+     "@types/react": "^19.0.8",
+     "@types/react-dom": "^19.0.3",
+     "@vitejs/plugin-react": "^6.0.1",
+-    "@vitejs/plugin-rsc": "^0.5.37",
++    "@vitejs/plugin-rsc": "^0.5.39",
+     "srvx": "^1.0.0",
+     "typescript": "^5.7.2",
+     "vite": "^8.0.14"
+```
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+**File**: `e2e/react-start/rsc/package.json` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@
+     "@types/react-dom": "^19.0.3",
+     "@typescript-eslint/parser": "^8.23.0",
+     "@vitejs/plugin-react": "^6.0.1",
+-    "@vitejs/plugin-rsc": "^0.5.37",
++    "@vitejs/plugin-rsc": "^0.5.39",
+     "eslint": "^9.22.0",
+     "srvx": "^1.0.0",
+     "typescript": "^5.7.2",
+```
 
-* test(react-router): validate devtools search param with zod
+**File**: `examples/react/start-rscs/package.json` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@
+     "@types/react": "^19.2.2",
+     "@types/react-dom": "^19.2.2",
+     "@vitejs/plugin-react": "^6.0.1",
+-    "@vitejs/plugin-rsc": "^0.5.37",
++    "@vitejs/plugin-rsc": "^0.5.39",
+     "nitro": "^3.0.260903-beta",
+     "tailwindcss": "^4.1.18",
+     "typescript": "^5.7.2",
+```
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+**File**: `packages/react-start-rsc/package.json` (modified, +4/-4)
+```diff
+@@ -110,8 +110,8 @@
+     "@rspack/core": "2.2.7",
+     "@testing-library/react": "catalog:",
+     "@vitejs/plugin-react": "catalog:",
+-    "@vitejs/plugin-rsc": "^0.5.37",
+-    "react-server-dom-rspack": "^0.0.2",
++    "@vitejs/plugin-rsc": "^0.5.39",
++    "react-server-dom-rspack": "^0.1.1",
+     "@tanstack/vite-config": "catalog:",
+     "vitest": "catalog:",
+     "jsdom": "catalog:",
+@@ -127,10 +127,10 @@
+   },
+   "peerDependencies": {
+     "@rspack/core": ">=2.0.0-0",
+-    "@vitejs/plugin-rsc": ">=0.5.30",
++    "@vitejs/plugin-rsc": ">=0.5.38",
+     "react": ">=18.0.0 || >=19.0.0",
+     "react-dom": ">=18.0.0 || >=19.0.0",
+-    "react-server-dom-rspack": ">=0.0.2"
++    "react-server-dom-rspack": ">=0.1.1"
+   },
+   "peerDependenciesMeta": {
+     "@rspack/core": {
+```
 
-* test(react-router): add links to switch devtools variants
+**File**: `pnpm-workspace.yaml` (modified, +2/-2)
+```diff
+@@ -43,8 +43,8 @@ catalog:
+   '@vitejs/plugin-react': ^6.0.1
+   '@vitejs/plugin-vue-jsx': ^4.1.2
+   '@vitest/ui': ^5.0.4
+-  react: ^19.2.3
+-  react-dom: ^19.2.3
++  react: ~19.2.9
++  react-dom: ~19.2.9
+   '@types/react': ^19.2.8
+   '@types/react-dom': ^19.2.3
+   eslint: ^9.22.0
+```
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+---
 
----------
+### Incident Patch 2: `f8709334` (2026-11-08)
+**Commit Message**: chore(deps): bump @rsbuild/core to 2.3.1 (#8890)
+
+Bump the workspace catalog and every e2e, example and benchmark
+devDependency to ^2.3.1 so the lockfile resolves a single Rsbuild version.
+Published peer ranges are unchanged.
+
+The newer Rspack types allow falsy entries in a rule's `use` array, so the
+Rsbuild RSC SWC integration now skips them instead of treating them as
+loaders.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.changeset/happy-radios-call.md` (added, +5/-0)
+**File**: `.changeset/rsbuild-rule-use-falsy-loaders.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@tanstack/router-devtools-core': patch
++'@tanstack/start-plugin-core': patch
 +---
 +
-+Fix broken styling of the embedded `TanStackRouterDevtoolsPanel` (including inside shadow DOM) by giving the devtools size tokens a `1rem` fallback when `--tsrd-font-size` is not set.
++fix: the Rsbuild RSC integration skips falsy entries in a rule's `use` array (Rspack's conditionally disabled loaders) instead of treating them as loaders.
 ```
 
-**File**: `e2e/react-router/basic/package.json` (modified, +2/-1)
+**File**: `benchmarks/bundle-size/package.json` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,8 @@
-     "react": "^19.0.0",
-     "react-dom": "^19.0.0",
-     "redaxios": "catalog:",
--    "tailwindcss": "^4.2.2"
-+    "tailwindcss": "^4.2.2",
-+    "zod": "catalog:"
+@@ -68,7 +68,7 @@
+     "vue": "^3.5.16"
+   },
+   "devDependencies": {
+-    "@rsbuild/core": "^2.1.0",
++    "@rsbuild/core": "^2.3.1",
+     "@rsbuild/plugin-react": "^2.0.0",
+     "@tanstack/router-plugin": "workspace:^",
+     "@types/react": "^19.0.8",
+```
+
+**File**: `e2e/react-router/rspack-basic-file-based/package.json` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@
    },
    "devDependencies": {
      "@playwright/test": "^1.61.0",
+-    "@rsbuild/core": "^2.1.0",
++    "@rsbuild/core": "^2.3.1",
+     "@rsbuild/plugin-react": "^2.0.0",
+     "@tailwindcss/postcss": "^4.2.2",
+     "@tanstack/router-e2e-utils": "workspace:^",
 ```
 
-**File**: `e2e/react-router/basic/src/main.tsx` (modified, +58/-2)
+**File**: `e2e/react-router/rspack-basic-virtual-named-export-config-file-based/package.json` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,5 @@
-+import { useState } from 'react'
-+import { createPortal } from 'react-dom'
- import ReactDOM from 'react-dom/client'
- import {
-   ErrorComponent,
-@@ -9,12 +11,19 @@ import {
-   createRouter,
-   redirect,
- } from '@tanstack/react-router'
--import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-+import {
-+  TanStackRouterDevtoolsInProd as TanStackRouterDevtools,
-+  TanStackRouterDevtoolsPanelInProd as TanStackRouterDevtoolsPanel,
-+} from '@tanstack/react-router-devtools'
-+import { z } from 'zod'
- import { NotFoundError, fetchPost, fetchPosts } from './posts'
- import './styles.css'
- import type { ErrorComponentProps } from '@tanstack/react-router'
- 
- const rootRoute = createRootRoute({
-+  validateSearch: z.object({
-+    devtools: z.enum(['panel', 'shadow']).optional().catch(undefined),
-+  }),
-   component: RootComponent,
-   notFoundComponent: () => {
-     return (
-@@ -27,6 +36,8 @@ const rootRoute = createRootRoute({
- })
- 
- function RootComponent() {
-+  const { devtools } = rootRoute.useSearch()
-+
-   return (
-     <>
-       <div className="p-2 flex gap-2 text-lg border-b">
-@@ -86,12 +97,57 @@ function RootComponent() {
-             </Link>
-           </svg>
-         </div>
-+        <div className="ml-auto flex gap-2 text-sm items-center">
-+          Devtools:
-+          {(['floating', 'panel', 'shadow'] as const).map((mode) => (
-+            <Link
-+              key={mode}
-+              to="."
-+              search={(prev) => ({
-+                ...prev,
-+                devtools: mode === 'floating' ? undefined : mode,
-+              })}
-+              className={
-+                (devtools ?? 'floating') === mode ? 'font-bold' : undefined
-+              }
-+            >
-+              {mode}
-+            </Link>
-+          ))}
-+        </div>
-       </div>
-       <Outlet />
--      <TanStackRouterDevtools position="bottom-right" />
-+      {devtools === 'panel' ? (
-+        <TanStackRouterDevtoolsPanel />
-+      ) : devtools === 'shadow' ? (
-+        <ShadowDevtoolsPanel />
-+      ) : (
-+        <TanStackRouterDevtools position="bottom-right" />
-+      )}
-     </>
-   )
- }
-+
-+function ShadowDevtoolsPanel() {
-+  const [shadowRoot, setShadowRoot] = useState<ShadowRoot>()
-+
-+  return (
-+    <div
-+      ref={(host) => {
-+        if (host) {
-+          setShadowRoot(host.shadowRoot ?? host.attachShadow({ mode: 'open' }))
-+        }
-+      }}
-+    >
-+      {shadowRoot
-+        ? createPortal(
-+            <TanStackRouterDevtoolsPanel shadowDOMTarget={shadowRoot} />,
-+            shadowRoot,
-+          )
-+        : null}
-+    </div>
-+  )
-+}
- const indexRoute = createRoute({
-   getParentRoute: () => rootRoute,
-   path: '/',
-```
-
-**File**: `e2e/react-router/basic/tests/devtools.spec.ts` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+import { expect } from '@playwright/test'
-+import { test } from '@tanstack/router-e2e-utils'
-+
-+for (const mode of ['panel', 'shadow', 'floating']) {
-+  test(`devtools preserve typography and explorer indentation in ${mode} mode`, async ({
-+    page,
-+  }) => {
-+    await page.goto(mode === 'floating' ? '/' : `/?devtools=${mode}`)
-+    if (mode === 'floating') {
-+      await page
-+        .getByRole('button', { name: 'Open TanStack Router Devtools' })
-+        .click()
-+    }
-+
-+    const panel = page.locator('.TanStackRouterDevtoolsPanel')
-+    const router = panel.getByRole('button', { name: /^Router\s*\d+ items/ })
-+    const state = panel.getByRole('button', { name: /^state\s*\d+ items/ })
-+    await expect(router).toBeVisible()
-+    await expect(state).toBeVisible()
-+    await expect(router).toHaveCSS('font-size', '12px')
-+    await expect(router).toHaveCSS('gap', '4px')
-+    await expect(
-+      panel.getByText('Pathname', { exact: true }).locator('..'),
-+    ).toHaveCSS('padding-left', '8px')
-+
-+    const routerBox = await router.boundingBox()
-+    const stateBox = await state.boundingBox()
-+    expect(stateBox!.x - routerBox!.x).toBe(18)
-+
-+    if (mode !== 'floating') {
-+      await page.addStyleTag({ content: ':root { font-size: 20px; }' })
-+      await expect(router).toHaveCSS('font-size', '15px')
-+      await expect(router).toHaveCSS('gap', '5px')
-+
-+      await page.addStyleTag({
-+        content: ':root { --tsrd-font-size: 24px; }',
-+      })
-+      await expect(router).toHaveCSS('font-size', '18px')
-+      await expect(router).toHaveCSS('gap', '6px')
-+    }
-+  })
-+}
-```
-
-**File**: `packages/router-devtools-core/src/tokens.ts` (modified, +73/-73)
-```diff
-@@ -161,37 +161,37 @@ export const tokens = {
+@@ -18,7 +18,7 @@
    },
-   font: {
-     size: {
--      '2xs': 'calc(var(--tsrd-font-size) * 0.625)',
--      xs: 'calc(var(--tsrd-font-size) * 0.75)',
--      sm: 'calc(var(--tsrd-font-size) * 0.875)',
--      md: 'var(--tsrd-font-size)',
--      lg: 'calc(var(--tsrd-font-size) * 1.125)',
--      xl: 'calc(var(--tsrd-font-size) * 1.25)',
--      '2xl': 'calc(var(--tsrd-font-size) * 1.5)',
--      '3xl': 'calc(var(--tsrd-font-size) * 1.875)',
--      '4xl': 'calc(var(--tsrd-font-size) * 2.25)',
--      '5xl': 'calc(var(--tsrd-font-size) * 3)',
--      '6xl': 'calc(var(--tsrd-font-size) * 3.75)',
--      '7xl': 'calc(var(--tsrd-font-size) * 4.5)',
--      '8xl': 'calc(var(--tsrd-font-size) * 6)',
--      '9xl': 'calc(var(--tsrd-font-size) * 8)',
-+      '2xs': 'calc(var(--tsrd-font-size, 1rem) * 0.625)',
-+      xs: 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
-+      sm: 'calc(var(--tsrd-font-size, 1rem) * 0.875)',
-+      md: 'var(--tsrd-font-size, 1rem)',
-+      lg: 'calc(var(--tsrd-font-size, 1rem) * 1.125)',
-+      xl: 'calc(var(--tsrd-font-size, 1rem) * 1.25)',
-+      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
-+      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 1.875)',
-+      '4xl': 'calc(var(--tsrd-font-size, 1rem) * 2.25)',
-+      '5xl': 'calc(var(--tsrd-font-size, 1rem) * 3)',
-+      '6xl': 'calc(var(--tsrd-font-size, 1rem) * 3.75)',
-+      '7xl': 'calc(var(--tsrd-font-size, 1rem) * 4.5)',
-+      '8xl': 'calc(var(--tsrd-font-size, 1rem) * 6)',
-+      '9xl': 'calc(var(--tsrd-font-size, 1rem) * 8)',
-     },
-     lineHeight: {
--      '3xs': 'calc(var(--tsrd-font-size) * 0.75)',
--      '2xs': 'calc(var(--tsrd-font-size) * 0.875)',
--      xs: 'calc(var(--tsrd-font-size) * 1)',
--      sm: 'calc(var(--tsrd-font-size) * 1.25)',
--      md: 'calc(var(--tsrd-font-size) * 1.5)',
--      lg: 'calc(var(--tsrd-font-size) * 1.75)',
--      xl: 'calc(var(--tsrd-font-size) * 2)',
--      '2xl': 'calc(var(--tsrd-font-size) * 2.25)',
--      '3xl': 'calc(var(--tsrd-font-size) * 2.5)',
--      '4xl': 'calc(var(--tsrd-font-size) * 2.75)',
--      '5xl': 'calc(var(--tsrd-font-size) * 3)',
--      '6xl': 'calc(var(--tsrd-font-size) * 3.25)',
--      '7xl': 'calc(var(--tsrd-font-size) * 3.5)',
--      '8xl': 'calc(var(--tsrd-font-size) * 3.75)',
--      '9xl': 'calc(var(--tsrd-font-size) * 4)',
-+      '3xs': 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
-+      '2xs': 'calc(var(--tsrd-font-size, 1rem) * 0.875)',
-+      xs: 'calc(var(--tsrd-font-size, 1rem) * 1)',
-+      sm: 'calc(var(--tsrd-font-size, 1rem) * 1.25)',
-+      md: 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
-+      lg: 'calc(var(--tsrd-font-size, 1rem) * 1.75)',
-+      xl: 'calc(var(--tsrd-font-size, 1rem) * 2)',
-+      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 2.25)',
-+      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 2.5)',
-+      '4xl': 'calc(var(--tsrd-font-size, 1rem) * 2.75)',
-+      '5xl': 'calc(var(--tsrd-font-size, 1rem) * 3)',
-+      '6xl': 'calc(var(--tsrd-font-size, 1rem) * 3.25)',
-+      '7xl': 'calc(var(--tsrd-font-size, 1rem) * 3.5)',
-+      '8xl': 'calc(var(--tsrd-font-size, 1rem) * 3.75)',
-+      '9xl': 'calc(var(--tsrd-font-size, 1rem) * 4)',
-     },
-     weight: {
-       thin: '100',
-@@ -220,55 +220,55 @@ export const tokens = {
-   border: {
-     radius: {
-       none: '0px',
--      xs: 'calc(var(--tsrd-font-size) * 0.125)',
--      sm: 'calc(var(--tsrd-font-size) * 0.25)',
--      md: 'calc(var(--tsrd-font-size) * 0.375)',
--      lg: 'calc(var(--tsrd-font-size) * 0.5)',
--      xl: 'calc(var(--tsrd-font-size) * 0.75)',
--      '2xl': 'calc(var(--tsrd-font-size) * 1)',
--      '3xl': 'calc(var(--tsrd-font-size) * 1.5)',
-+      xs: 'calc(var(--tsrd-font-size, 1rem) * 0.125)',
-+      sm: 'calc(var(--tsrd-font-size, 1rem) * 0.25)',
-+      md: 'calc(var(--tsrd-font-size, 1rem) * 0.375)',
-+      lg: 'calc(var(--tsrd-font-size, 1rem) * 0.5)',
-+      xl: 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
-+      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 1)',
-+      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
-       full: '9999px',
-     },
-   },
-   size: {
-     0: '0px',
--    0.25: 'calc(var(--tsrd-font-size) * 0.0625)',
--    0.5: 'calc(var(--tsrd-font-size) * 0.125)',
--    1: 'calc(var(--tsrd-font-size) * 0.25)',
--    1.5: 'calc(var(--tsrd-font-size) * 0.375)',
--    2: 'calc(var(--tsrd-font-size) * 0.5)',
--    2.5: 'calc(var(--tsrd-font-size) * 0.625)',
--    3: 'calc(var(--tsrd-font-size) * 0.75)',
--    3.5: 'calc(var(--tsrd-font-size) * 0.875)',
--    4: 'calc(var(--tsrd-font-size) * 1)',
--    4.5: 'calc(var(--tsrd-font-size) * 1.125)',
--    5: 'calc(var(--tsrd-font-size) * 1.25)',
--    5.5: 'calc(var(--tsrd-font-size) * 1.375)',
--    6: 'calc(var(--tsrd-font-size) * 1.5)',
--    6.5: 'calc(var(--tsrd-font-size) * 1.625)',
--    7: 'calc(var(--tsrd-font-size) * 1.75)',
--    8: 'calc(var(--tsrd-font-size) * 2)',
--    9: 'calc(var(--tsrd-font-size) * 2.25)',
--    10: 'calc(var(--tsrd-font-size) * 2.5)',
--    11: 'calc(var(--tsrd-font-size) * 2.75)',
--    12:
+   "devDependencies": {
+     "@playwright/test": "^1.61.0",
+-    "@rsbuild/core": "^2.1.0",
++    "@rsbuild/core": "^2.3.1",
+     "@rsbuild/plugin-react": "^2.0.0",
+     "@tailwindcss/postcss": "^4.2.2",
+     "@tanstack/router-e2e-utils": "workspace:^",
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +3/-0)
+**File**: `e2e/react-start/basic/package.json` (modified, +1/-1)
 ```diff
-@@ -684,6 +684,9 @@ importers:
-       tailwindcss:
-         specifier: ^4.2.2
-         version: 4.2.2
-+      zod:
-+        specifier: 'catalog:'
-+        version: 4.5.4
-     devDependencies:
-       '@playwright/test':
-         specifier: ^1.63.0
+@@ -31,7 +31,7 @@
+   },
+   "devDependencies": {
+     "@playwright/test": "^1.61.0",
+-    "@rsbuild/core": "^2.1.0",
++    "@rsbuild/core": "^2.3.1",
+     "@rsbuild/plugin-react": "^2.0.0",
+     "@tailwindcss/postcss": "^4.2.2",
+     "@tailwindcss/vite": "^4.2.2",
+```
+
+**File**: `e2e/react-start/css-inline/package.json` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@
+   },
+   "devDependencies": {
+     "@playwright/test": "^1.61.0",
+-    "@rsbuild/core": "^2.1.0",
++    "@rsbuild/core": "^2.3.1",
+     "@rsbuild/plugin-react": "^2.0.0",
+     "@tanstack/router-e2e-utils": "workspace:^",
+     "@types/node": "^22.10.2",
+```
+
+**File**: `e2e/react-start/custom-server-rsbuild/package.json` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@
+   },
+   "devDependencies": {
+     "@playwright/test": "^1.61.0",
+-    "@rsbuild/core": "^2.1.0",
++    "@rsbuild/core": "^2.3.1",
+     "@rsbuild/plugin-react": "^2.0.0",
+     "@tailwindcss/postcss": "^4.2.2",
+     "@tanstack/router-e2e-utils": "workspace:^",
+```
+
+**File**: `e2e/react-start/deferred-hydration/package.json` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@
+     "react-dom": "^19.0.0"
+   },
+   "devDependencies": {
+-    "@rsbuild/core": "^2.1.0",
++    "@rsbuild/core": "^2.3.1",
+     "@rsbuild/plugin-react": "^2.0.0",
+     "@tanstack/router-e2e-utils": "workspace:^",
+     "@types/node": "^22.10.2",
+```
+
+---
+
+### Incident Patch 3: `559c7ded` (2026-11-08)
+**Commit Message**: fix(start-plugin-core): restore CSS in Rsbuild RSC dev SSR (#8892)
+
+fix(start-plugin-core): rebuild the Rsbuild RSC dev manifest after the client build
+
+#8889 moved the Rsbuild dev manifest from a build-process global into the
+server's manifest module. With React Server Components the client and server
+compile concurrently, so the manifest is written while the server
+compilation is already running, and dev SSR kept the fallback manifest
+without CSS.
+
+Run the existing RSC finishMake manifest rebuild in dev too. In dev it only
+rebuilds when the manifest was written since this compiler last rebuilt it.
+
+Add an Rsbuild dev mode to the rsc e2e app (test:e2e:dev:rsbuild). On main,
+nine CSS tests fail in it; with this change the full suite passes. Also
+accept Rsbuild dev's CSS module class names in the scoped-class assertion.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/rsbuild-rsc-dev-manifest.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@tanstack/start-plugin-core': patch
++---
++
++fix: Rsbuild dev with React Server Components includes stylesheet links in SSR again. The client and server compile concurrently, so the server's manifest module is now rebuilt once the client build is available, as in production builds.
+```
+
+**File**: `e2e/react-start/rsc/package.json` (modified, +2/-1)
+```diff
+@@ -13,7 +13,8 @@
+     "build:vite": "vite build && tsc --noEmit",
+     "preview": "vite preview",
+     "start": "node server.js",
+-    "test:e2e-full": "pnpm build && playwright test --project=chromium"
++    "test:e2e-full": "pnpm build && playwright test --project=chromium",
++    "test:e2e:dev:rsbuild": "MODE=dev E2E_TOOLCHAIN=rsbuild playwright test --project=chromium"
+   },
+   "nx": {
+     "metadata": {
+```
+
+**File**: `e2e/react-start/rsc/playwright.config.ts` (modified, +3/-1)
+```diff
+@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test'
+ import { appServerReady } from '@tanstack/router-e2e-utils'
+ 
+ const distDir = process.env.E2E_DIST_DIR ?? 'dist'
++// MODE=dev runs the suite against the Rsbuild dev server instead of a build
++const isRsbuildDev = process.env.MODE === 'dev'
+ 
+ const PORT = Number(process.env.E2E_APP_PORT ?? 0)
+ const baseURL = `http://localhost:${PORT}`
+@@ -16,7 +18,7 @@ export default defineConfig({
+   },
+ 
+   webServer: {
+-    command: 'pnpm start',
++    command: isRsbuildDev ? 'pnpm dev:rsbuild --port 0' : 'pnpm start',
+     wait: appServerReady,
+     reuseExistingServer: false,
+     stdout: 'pipe',
+```
+
+**File**: `e2e/react-start/rsc/tests/rsc-css-preload-complex.spec.ts` (modified, +4/-3)
+```diff
+@@ -116,15 +116,16 @@ test.describe('RSC Complex CSS Preload Tests', () => {
+   test('CSS module classes are scoped for all widgets', async ({ page }) => {
+     await page.goto('/rsc-css-preload-complex')
+ 
+-    // Widget A classes should be hashed (accept Vite `_widget_xxx` or Rspack `widget-xxx` scoped names)
++    // Widget A classes should be hashed (accept Vite `_widget_xxx`, Rspack
++    // `widget-xxx`, and Rsbuild dev `src-...-module__widget-xxx` scoped names)
+     const widgetA = page.locator('[data-testid="client-widget-a"]')
+     const widgetAClass = await widgetA.getAttribute('class')
+-    expect(widgetAClass).toMatch(/(^|\s)(_widget_|widget[-_])[\w-]+/)
++    expect(widgetAClass).toMatch(/(^|\s|__)(_widget_|widget[-_])[\w-]+/)
+ 
+     // Widget B classes should be hashed
+     const widgetB = page.locator('[data-testid="client-widget-b"]')
+     const widgetBClass = await widgetB.getAttribute('class')
+-    expect(widgetBClass).toMatch(/(^|\s)(_widget_|widget[-_])[\w-]+/)
++    expect(widgetBClass).toMatch(/(^|\s|__)(_widget_|widget[-_])[\w-]+/)
+ 
+     // Classes should be different (different modules)
+     expect(widgetAClass).not.toBe(widgetBClass)
+```
+
+**File**: `packages/start-plugin-core/src/rsbuild/plugin.ts` (modified, +40/-26)
+```diff
+@@ -578,36 +578,50 @@ export function tanStackStartRsbuild(
+               },
+             })
+ 
+-            if (api.context.action !== 'dev') {
+-              config.plugins.push({
+-                apply(compiler: RspackCompiler) {
+-                  compiler.hooks.finishMake.tapPromise(
+-                    {
+-                      name: 'TanStackStartRscManifestRebuild',
+-                      // The native RSC ServerPlugin completes the client-entry
+-                      // handoff during its finishMake hook. Rebuild the manifest
+-                      // after that point so the transform hook can emit the final
+-                      // manifest source instead of the placeholder.
+-                      stage: 10,
+-                    },
+-                    async (compilation: RspackCompilationExtended) => {
+-                      const clientBuild = getClientBuild()
++            config.plugins.push({
++              apply(compiler: RspackCompiler) {
++                // Dev manifest write count this compiler last rebuilt from.
++                let rebuiltAtWriteCount: number | undefined
++
++                compiler.hooks.finishMake.tapPromise(
++                  {
++                    name: 'TanStackStartRscManifestRebuild',
++                    // The native RSC ServerPlugin completes the client-entry
++                    // handoff during its finishMake hook. Rebuild the manifest
++                    // after that point so it reflects the client build: the
++                    // build transform emits the final source instead of the
++                    // placeholder, and dev picks up a manifest written while
++                    // this compilation was already running.
++                    stage: 10,
++                  },
++                  async (compilation: RspackCompilationExtended) => {
++                    const clientBuild = getClientBuild()
+ 
+-                      if (!clientBuild) {
++                    if (!clientBuild) {
++                      return
++                    }
++
++                    virtualModuleState.updateManifest(clientBuild)
++
++                    if (api.context.action === 'dev') {
++                      // Only rebuild when the manifest changed: rebuilding an
++                      // unchanged module can rebuild the whole chunk graph.
++                      const writeCount =
++                        virtualModuleState.getDevManifestWriteCount()
++                      if (writeCount === rebuiltAtWriteCount) {
+                         return
+                       }
++                      rebuiltAtWriteCount = writeCount
++                    }
+ 
+-                      virtualModuleState.updateManifest(clientBuild)
+-
+-                      await rebuildModulesContaining(
+-                        compilation,
+-                        virtualModuleState.manifestPath,
+-                      )
+-                    },
+-                  )
+-                },
+-              })
+-            }
++                    await rebuildModulesContaining(
++                      compilation,
++                      virtualModuleState.manifestPath,
++                    )
++                  },
++                )
++              },
++            })
+           }
+ 
+           if (isClientEnv) {
+```
+
+**File**: `packages/start-plugin-core/src/rsbuild/virtual-modules.ts` (modified, +8/-0)
+```diff
+@@ -42,6 +42,8 @@ function virtualPath(root: string, moduleId: string): string {
+ export interface VirtualModuleState {
+   /** Call to update manifest content after client build completes */
+   updateManifest: (clientBuild: NormalizedClientBuild) => void
++  /** Number of times the dev manifest module was written */
++  getDevManifestWriteCount: () => number
+   /** Call to update server fn resolver content after compilation discovers fns */
+   updateServerFnResolver: () => void
+   /** Write explicit server resolver content; queues if env not ready */
+@@ -270,6 +272,7 @@ export function registerVirtualModules(
+ 
+   let clientBuild: NormalizedClientBuild | undefined
+   let lastDevManifestContent: string | undefined
++  let devManifestWriteCount = 0
+   const lastResolverContentByEnvironment: Record<string, string | undefined> =
+     {}
+   const resolverWriteCountByEnvironment: Record<string, number> = {}
+@@ -573,6 +576,7 @@ export function createFromReadableStream() { throw new Error('RSC SSR decode is
+       // Only rewrite on change: each write rebuilds the server environment.
+       if (content !== lastDevManifestContent) {
+         lastDevManifestContent = content
++        devManifestWriteCount++
+         tryWriteModule(
+           RSBUILD_ENVIRONMENT_NAMES.server,
+           paths.manifest,
+@@ -603,6 +607,10 @@ export function createFromReadableStream() { throw new Error('RSC SSR decode is
+       writeResolverContent(RSBUILD_ENVIRONMENT_NAMES.server, content)
+     },
+ 
++    getDevManifestWriteCount(): number {
++      return devManifestWriteCount
++    },
++
+     getServerFnResolverWriteCount(environmentName: string): number {
+       return resolverWriteCountByEnvironment[environmentName] ?? 0
+     },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8888** (2026-11-08): fix(router-devtools-core): restore embedded panel styling (@schiller-manuel)
-- **PR #8871** (2026-11-04): fix(start-plugin-core): require exsolve ^1.1.3, and see new entry files after a dev server restart (@Sheraff)
-- **PR #8870** (2026-11-04): fix(router-plugin): write `import.meta.hot.accept(` out in Vite route HMR (@Sheraff)
-- **PR #8869** (2026-11-04): fix(vue-start): pre-bundle @tanstack/vue-store so a cold dev start doesn't reload the page (@Sheraff)
-- **PR #8867** (2026-11-04): fix(router-utils): parse decorators after `export` (@Sheraff)
-- **PR #8863** (2026-11-04): fix(start-plugin-core): keep the app's server.compress on Rsbuild (@Sheraff)
+- **PR #8920** (closed): Update and rename check-skills.yml to check-skills.ts (@leoreium)
+- **PR #8919** (2026-11-12): fix(react-start-rsc): bump RSC bundler deps for RSC (@DogPawHat)
+- **PR #8913** (2026-11-09): test(react-start): wait for SSR between HMR saves (@schiller-manuel)
+- **PR #8912** (2026-11-09): chore(pnpm): upgrade to pnpm 12 (@schiller-manuel)
+- **PR #8907** (2026-11-08): fix(start-plugin-core): restore the build of the Rsbuild virtual modules (@Sheraff)
+- **PR #8895** (closed): fix(history): discard stale blocker resolution after an intervening navigation (@EnesKartal)
 
 ---
 
@@ -1043,25 +1161,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. router-devtools-core): restore embedded panel styling (#8888)
+## X. react-start-rsc): bump RSC bundler deps for RSC (#8919)
 
 **RULE**:
-When implementing operations in `.changeset/happy-radios-call.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/rsc-security-floor.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bbf9b758`: router-devtools-core): restore embedded panel styling (#8888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7358c36`: react-start-rsc): bump RSC bundler deps for RSC (#8919). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/happy-radios-call.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/rsc-security-floor.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@tanstack/router-devtools-core': patch
+'@tanstack/react-start-rsc': patch
 ---
 
-Fix broken styling of the embedded `TanStackRouterDevtoolsPanel` (including inside shadow DOM) by giving the devtools size tokens a `1rem` fallback when `--tsrd-font-size` is not set.
+Raise the minimum RSC bundler peer dependencies to versions with the React Server Components fixes for GHSA-xqc2-xf4c-x3h3 (CVE-2026-126187, unauthenticated RCE) and GHSA-h3gv-c5rc-p453 (server function DoS):
+
+- `@vitejs/plugin-rsc` to `>=0.5.38` (GHSA-59pf-q495-3c99), which vendors a fixed `react-server-dom-webpack`.
+- `react-server-dom-rspack` to `>=0.1.1`, the first release built from React sources that include the fix.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1071,4 +1192,4 @@ Fix broken styling of the embedded `TanStackRouterDevtoolsPanel` (including insi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bbf9b758` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7358c36` are properly handled with clean fallback behavior.

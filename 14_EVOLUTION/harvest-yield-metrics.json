@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T08:56:04.849Z",
-  "total_cycles_completed": 9193,
-  "total_learnings_persisted": 9193,
-  "total_rules_promoted": 8986,
+  "last_updated": "2026-11-13T09:17:37.246Z",
+  "total_cycles_completed": 9197,
+  "total_learnings_persisted": 9197,
+  "total_rules_promoted": 8989,
   "history": [
-    {
-      "timestamp": "2026-11-12T13:10:23.053Z",
-      "repository": "yvgude/lean-ctx",
-      "learningId": "learn-github-yvgude-lean-ctx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T13:15:10.046Z",
-      "repository": "LiquidAI/LFM3-1.7B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T13:33:21.081Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T13:40:56.989Z",
-      "repository": "parcel-bundler/parcel",
-      "learningId": "learn-github-parcel-bundler-parcel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T13:41:09.144Z",
       "repository": "dathere/qsv",
@@ -1403,6 +1375,34 @@
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T09:17:21.785Z",
+      "repository": "TanStack/router",
+      "learningId": "learn-github-tanstack-router",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T09:17:28.120Z",
+      "repository": "fabio-rovai/open-ontologies",
+      "learningId": "learn-github-fabio-rovai-open-ontologies",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T09:17:35.639Z",
+      "repository": "SynaLinks/synalinks-skills",
+      "learningId": "learn-github-synalinks-synalinks-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T09:17:37.246Z",
+      "repository": "thinkingmachines/Inkling-2-Small",
+      "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

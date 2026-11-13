@@ -9421,3 +9421,8 @@ Every entry in this ledger must capture:
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `4a11f3af` | Multi-dimensional audit evidence | 2026-11-13T08:56:04.842Z |
 | `learn-dom-k-66271fdb` | `project://falkordb-falkordb` | `7df8e588` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md` | 2026-11-13T08:56:25.516Z |
 | `learn-dom-d-64627742` | `project://hf-liquidai-lfm3-1.7b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md` | 2026-11-13T08:56:48.338Z |
+| `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `e7358c36` | Multi-dimensional audit evidence | 2026-11-13T09:17:21.776Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `fa06a2f6` | Multi-dimensional audit evidence | 2026-11-13T09:17:28.110Z |
+| `learn-github-synalinks-synalinks-skills` | `https://github.com/SynaLinks/synalinks-skills` | `c5c3a70d` | Multi-dimensional audit evidence | 2026-11-13T09:17:35.632Z |
+| `learn-huggingface-thinkingmachines-inkling-2-small` | `https://huggingface.co/thinkingmachines/Inkling-2-Small` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-13T09:17:37.239Z |
+| `learn-dom-d-489bc9ca` | `project://hf-thinkingmachines-inkling-2-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md` | 2026-11-13T09:17:56.199Z |

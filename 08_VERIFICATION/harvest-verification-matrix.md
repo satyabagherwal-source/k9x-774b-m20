@@ -9412,3 +9412,8 @@
 | `CYCLE-20261113-SD7Q` | `2026-11-13T08:56:04.838Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3549a75...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:56:25.516Z` | `falkordb-falkordb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-66271FDB` [Domain K] | Yes (`5fb8add1...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:56:48.338Z` | `hf-liquidai-lfm3-1.7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-64627742` [Domain D] | Yes (`d7fd17e9...`) |
+| `CYCLE-20261113-JQI2` | `2026-11-13T09:17:21.770Z` | `TanStack/router` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5bd9d8c3...`) |
+| `CYCLE-20261113-JVE1` | `2026-11-13T09:17:28.105Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a6ad34f5...`) |
+| `CYCLE-20261113-K170` | `2026-11-13T09:17:35.628Z` | `SynaLinks/synalinks-skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2be2a924...`) |
+| `CYCLE-20261113-K2FN` | `2026-11-13T09:17:37.235Z` | `thinkingmachines/Inkling-2-Small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md` | Yes (`845378fe...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T09:17:56.199Z` | `hf-thinkingmachines-inkling-2-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-489BC9CA` [Domain D] | Yes (`88581401...`) |

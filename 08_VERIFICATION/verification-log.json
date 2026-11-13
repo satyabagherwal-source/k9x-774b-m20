@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-QIF3",
-    "timestamp": "2026-11-10T02:59:42.399Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "943f67d848fdb9df7650c9bcf04ca9d6aed2c0a574d6252ab45041fe28157a58",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-WUVQ",
-    "timestamp": "2026-11-10T03:04:38.486Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "96fec4b5c1f124ce23952f0a6209f3e9ae510b9898c19ff52808e71bacb3cde0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-7SBN",
-    "timestamp": "2026-11-10T04:37:07.235Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "23d7363bdfee3c0ab265462f6bdf87b0c9b065ad1253ae5600cd370df7a58594",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-H9US",
-    "timestamp": "2026-11-10T04:44:29.860Z",
-    "repository": "encoredev/encore",
-    "learningId": "learn-github-encoredev-encore",
-    "contentHash": "057cd7a8b6cc2b30c6a8f9b441b1ec03dcfecd5dc641d4585571f7e4c887bb82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-QOIP",
     "timestamp": "2026-11-10T04:51:48.769Z",
     "repository": "react/metro",
@@ -7492,6 +7432,66 @@
     "contentHash": "e3549a75afbef2e42464eb16c359524d4bccb9fe1d1f0d2c298af9a1bcc76aa0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-JQI2",
+    "timestamp": "2026-11-13T09:17:21.770Z",
+    "repository": "TanStack/router",
+    "learningId": "learn-github-tanstack-router",
+    "contentHash": "5bd9d8c3106be9ec4541bb7e4758f925a7ce35efe6b500ece2d3eefb4d023578",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-JVE1",
+    "timestamp": "2026-11-13T09:17:28.105Z",
+    "repository": "fabio-rovai/open-ontologies",
+    "learningId": "learn-github-fabio-rovai-open-ontologies",
+    "contentHash": "a6ad34f5b3ac10e5e1b9ce3e9ad9c04c65feb5c965fbf25da5dbd18fafc9df5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-K170",
+    "timestamp": "2026-11-13T09:17:35.628Z",
+    "repository": "SynaLinks/synalinks-skills",
+    "learningId": "learn-github-synalinks-synalinks-skills",
+    "contentHash": "2be2a9241c3f3c3ad03b07095ae19b2852ed34aead2d24ae2824cf76e1a8eb1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-K2FN",
+    "timestamp": "2026-11-13T09:17:37.235Z",
+    "repository": "thinkingmachines/Inkling-2-Small",
+    "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
+    "contentHash": "845378fe300a1bc7082e0ed1793e7ab5c5b971692d0b0be7c4efded35cb1dce9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
