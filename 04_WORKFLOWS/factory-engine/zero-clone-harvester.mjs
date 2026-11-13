@@ -611,6 +611,7 @@ export function extractMicroInvariantsFromAudit(audit) {
   const cleanMessage = (fixPatch.message || 'Defect Remediation Invariant')
     .split('\n')[0]
     .replace(/^(fix|bug|refactor|chore|feat|perf)[\(:\s]/i, '')
+    .replace(/\s*\([#\d\s]+\)|\s*PR\s*#\d+|\s*issue\s*#\d+|merge\s+pull\s+request\s+#\d+\s+from\s+[^\s]+/gi, '')
     .trim();
 
   const title = cleanMessage.length > 10 ? cleanMessage.slice(0, 80) : `Empirical Invariant Guard in ${path.basename(targetFile.filename || audit.name)}`;
@@ -635,7 +636,7 @@ ${added.slice(0, 1200)}
 
 **NEGATIVE CONSTRAINT**:
 \`\`\`${lang}
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 ${removed ? removed.slice(0, 1200) : '// Defect-prone omission of boundary validation'}
 \`\`\`
 

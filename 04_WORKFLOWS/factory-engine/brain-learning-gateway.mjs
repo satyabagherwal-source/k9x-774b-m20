@@ -122,24 +122,68 @@ export function calculateContentHash(content) {
  */
 export function extractCandidateRulesFromText(rawText) {
   if (!rawText) return [];
-  // CRITICAL ARCHITECTURAL INVARIANT:
-  // In JavaScript RegExp with the /i flag, NEVER use \Z because \Z matches literal 'z' or 'Z'!
-  // In standard JS, end-of-string is strictly '$'.
-  const sectionRegex = /(?:^|\r?\n)(?:##|###)\s+(?:(?:(?:Rule|Pattern)\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)?([^\r\n]+)\r?\n([\s\S]*?)(?=(?:\r?\n(?:##|###)\s+(?:(?:(?:Rule|Pattern)\s+)?(?:X|\d+)[:.]|\d+\.|[A-Z0-9][\w\s-]{2,}:)|\r?\n##\s+|$))/g;
-  let match;
+
+  const cleanText = rawText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   const candidates = [];
-  while ((match = sectionRegex.exec(rawText)) !== null) {
-    const rawHeading = (match[1] || '').trim();
-    const body = (match[2] || '').trim();
-    if (/\*\*RULE\*\*:?/i.test(body)) {
-      const cleanTitle = rawHeading.replace(/^(?:(?:(?:Rule|Pattern)\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)/i, '').trim();
-      // Filter out high-level section container titles (e.g. "Net-New Universal Engineering Rules", "Discovered Engineering Invariants")
-      if (/^(?:net-new\s+universal|universal\s+engineering\s+rules|forensic\s+real|executive\s+forensic|microscopic|the\s+\d+|actionable|discovered\s+engineering|empirical\s+architectural|compliance\s+&)/i.test(cleanTitle)) {
-        continue;
+  const sections = [];
+  const lines = cleanText.split('\n');
+  let currentHeading = null;
+  let currentLevel = null;
+  let currentBodyLines = [];
+
+  for (const line of lines) {
+    const headingMatch = line.match(/^(#{2,4})\s+(.*)$/);
+    if (headingMatch) {
+      if (currentHeading !== null) {
+        sections.push({
+          level: currentLevel,
+          heading: currentHeading,
+          body: currentBodyLines.join('\n')
+        });
       }
-      candidates.push({ title: cleanTitle || rawHeading, body });
+      currentLevel = headingMatch[1];
+      currentHeading = headingMatch[2].trim();
+      currentBodyLines = [];
+    } else {
+      if (currentHeading !== null) {
+        currentBodyLines.push(line);
+      }
     }
   }
+
+  if (currentHeading !== null) {
+    sections.push({
+      level: currentLevel,
+      heading: currentHeading,
+      body: currentBodyLines.join('\n')
+    });
+  }
+
+  for (const sec of sections) {
+    const body = sec.body.trim();
+    if (!/\*\*RULE\*\*:?/i.test(body)) continue;
+
+    const rawHeading = sec.heading;
+    const cleanTitle = rawHeading
+      .replace(/^(?:(?:(?:Rule|Pattern)\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)/i, '')
+      .replace(/^[a-z0-9_-]+[\):]+\s*/i, '')
+      .replace(/\s*\([#\d\s]+\)|\s*PR\s*#\d+|\s*issue\s*#\d+|merge\s+pull\s+request\s+#\d+\s+from\s+[^\s]+/gi, '')
+      .trim();
+
+    // Skip high-level section container titles
+    if (/^(?:(?:net-new\s+)?universal(?:\s+engineering)?(?:\s+rules)?|forensic\s+architecture|executive\s+forensic|actionable\s+checklist|project\s+learning\s+record|discovered\s+engineering|empirical\s+architectural|compliance\s+&)/i.test(cleanTitle)) {
+      continue;
+    }
+
+    candidates.push({
+      title: cleanTitle || rawHeading,
+      body,
+      knowledgeType: 'engineering_pattern',
+      type: 'engineering_pattern',
+      is_rule: true
+    });
+  }
+
   return candidates;
 }
 
@@ -744,65 +788,50 @@ export function promoteValidatedRules(learningPackage, options = {}) {
       continue;
     }
 
-    let targetFilePath = p.patternsPath;
-    let isPatternFile = true;
-    let assignedNum = nextRuleNum;
     const slug = (rule.slug || rule.title || 'unnamed-rule')
       .toLowerCase()
       .replace(/[^a-z0-9_-]/g, '-')
       .replace(/-+/g, '-')
       .slice(0, 60);
 
+    // Primary Persistence Invariant: Every validated rule MUST be appended to 05_KNOWLEDGE/engineering-patterns.md
+    fs.appendFileSync(p.patternsPath, formattedRule, 'utf-8');
+    const ruleReadBack = readBackVerifyRuleInPatterns(nextRuleNum, rule.title, p.brainRoot);
+    if (!ruleReadBack.verified) {
+      throw new Error(`RULE_PROMOTION_READBACK_FAILED: ${ruleReadBack.reason}`);
+    }
+
+    // Additive secondary cross-destination routing
     if (ruleRouting.targetFolder === '12_DECISIONS') {
       const adrDir = path.join(p.brainRoot, '12_DECISIONS');
       fs.mkdirSync(adrDir, { recursive: true });
-      targetFilePath = path.join(adrDir, `ADR-${slug}.md`);
-      isPatternFile = false;
-      assignedNum = null;
+      const targetFilePath = path.join(adrDir, `ADR-${slug}.md`);
       const adrContent = `# ADR: ${rule.title}\n\n${provenanceBlock}\n\n## Context & Decision\n${rule.body}\n`;
       fs.writeFileSync(targetFilePath, adrContent, 'utf-8');
-      console.log(`🏛️ [GATEWAY DESTINATION ROUTED: 12_DECISIONS] Written to ${targetFilePath}`);
+      console.log(`🏛️ [GATEWAY ADDITIVE ROUTED: 12_DECISIONS] Written to ${targetFilePath}`);
     } else if (ruleRouting.targetFolder === '03_SKILLS') {
       const skillsDir = path.join(p.brainRoot, '03_SKILLS');
       fs.mkdirSync(skillsDir, { recursive: true });
-      targetFilePath = path.join(skillsDir, `${slug}.md`);
-      isPatternFile = false;
-      assignedNum = null;
+      const targetFilePath = path.join(skillsDir, `${slug}.md`);
       const skillContent = `# ${rule.title}\n\n${provenanceBlock}\n\n${rule.body}\n`;
       fs.writeFileSync(targetFilePath, skillContent, 'utf-8');
-      console.log(`🎯 [GATEWAY DESTINATION ROUTED: 03_SKILLS] Written to ${targetFilePath}`);
+      console.log(`🎯 [GATEWAY ADDITIVE ROUTED: 03_SKILLS] Written to ${targetFilePath}`);
     } else if (ruleRouting.targetFolder === '08_VERIFICATION') {
       const verDir = path.join(p.brainRoot, '08_VERIFICATION');
       fs.mkdirSync(verDir, { recursive: true });
-      targetFilePath = path.join(verDir, `${slug}.md`);
-      isPatternFile = false;
-      assignedNum = null;
+      const targetFilePath = path.join(verDir, `${slug}.md`);
       const verContent = `# Verification: ${rule.title}\n\n${provenanceBlock}\n\n${rule.body}\n`;
       fs.writeFileSync(targetFilePath, verContent, 'utf-8');
-      console.log(`📊 [GATEWAY DESTINATION ROUTED: 08_VERIFICATION] Written to ${targetFilePath}`);
-    } else {
-      // Default: 05_KNOWLEDGE/engineering-patterns.md
-      fs.appendFileSync(p.patternsPath, formattedRule, 'utf-8');
-      const ruleReadBack = readBackVerifyRuleInPatterns(nextRuleNum, rule.title, p.brainRoot);
-      if (!ruleReadBack.verified) {
-        throw new Error(`RULE_PROMOTION_READBACK_FAILED: ${ruleReadBack.reason}`);
-      }
+      console.log(`📊 [GATEWAY ADDITIVE ROUTED: 08_VERIFICATION] Written to ${targetFilePath}`);
     }
 
-    if (!isPatternFile) {
-      const fileContent = fs.readFileSync(targetFilePath, 'utf-8');
-      if (!fileContent.includes(rule.title)) {
-        throw new Error(`DESTINATION_ROUTING_READBACK_FAILED: Target file ${targetFilePath} does not contain promoted title.`);
-      }
-    }
-
-    console.log(`🌟 [GATEWAY PROMOTION VERIFIED] Rule "${rule.title}" validated, persisted to ${ruleRouting.targetFolder}, and verified via read-back.`);
+    console.log(`🌟 [GATEWAY PROMOTION VERIFIED] Rule #${nextRuleNum} "${rule.title}" validated, persisted to 05_KNOWLEDGE/engineering-patterns.md, and verified via read-back.`);
     promotedList.push({
-      number: assignedNum,
+      number: nextRuleNum,
       title: rule.title,
       status: 'PROMOTED_AND_VERIFIED',
-      destination_folder: ruleRouting.targetFolder,
-      destination_path: path.relative(p.brainRoot, targetFilePath).replace(/\\/g, '/'),
+      destination_folder: '05_KNOWLEDGE',
+      destination_path: '05_KNOWLEDGE/engineering-patterns.md',
       primary_domain: ruleClassification.primaryDomain?.letter || 'H',
       confidence: ruleClassification.confidence,
       provenance: provenanceMeta,

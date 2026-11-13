@@ -146,8 +146,8 @@ const CANONICAL_INVARIANTS = [
     id: 'RULE-CANON-003',
     rule_number: 'CANON-003',
     title: 'Atomic Persistence File Staging Invariant',
-    rule: 'Always write to temporary staging files before renaming to destination paths.',
-    negative_constraint: 'Never bypass staging files during file persistence.'
+    rule: 'Always stage files to temporary storage before renaming to destination paths.',
+    negative_constraint: 'Never bypass staging paths during atomic persistence operations.'
   },
   {
     id: 'RULE-CANON-004',
@@ -347,12 +347,13 @@ export function validateEvidenceQuality(item, evidenceList = [], options = {}) {
   let empiricalAssertionCount = 0;
 
   for (const ev of validEvidence) {
+    const evType = String(ev.evidence_type || ev.type || '').toUpperCase();
     const isDirectType = [
       EVIDENCE_TYPES.CODE_IMPLEMENTATION,
       EVIDENCE_TYPES.COMMIT_DIFF,
       EVIDENCE_TYPES.REPRODUCIBLE_TEST,
       EVIDENCE_TYPES.BENCHMARK_RESULT
-    ].includes(ev.evidence_type);
+    ].includes(evType);
 
     if (isDirectType) directCount++;
 

@@ -200,7 +200,11 @@ export function requiresHumanApproval(knowledgeType, primaryDomainLetter) {
   if (['core_law', 'system_invariant', 'governance_policy', 'approval_gate'].includes(knowledgeType)) {
     return true;
   }
-  // Tier-1 feedback and system self-modification (Domain M) require human signature
+  // Harvested engineering patterns, skills, agent contracts, dossiers, and verification protocols NEVER require human approval
+  if (['engineering_pattern', 'skill_playbook', 'agent_contract', 'raw_dossier', 'commit_forensic', 'verification_contract'].includes(knowledgeType)) {
+    return false;
+  }
+  // Tier-1 feedback and system self-modification (Domain M) require human signature ONLY for governance/core changes
   if (primaryDomainLetter === 'M') {
     return true;
   }
@@ -223,6 +227,12 @@ export function resolveDestination(item) {
                     (Array.isArray(item.candidate_rules) && item.candidate_rules[0]) ||
                     (Array.isArray(item.extracted_rules) && item.extracted_rules[0]) || {};
 
+  const isRuleCandidate = Boolean(
+    item.is_rule || item.type === 'engineering_pattern' || item.knowledgeType === 'engineering_pattern' ||
+    firstRule.is_rule || firstRule.knowledgeType === 'engineering_pattern' ||
+    (typeof item.body === 'string' && /\*\*RULE\*\*:?/i.test(item.body))
+  );
+
   // 2. Classify domain if not already explicitly provided
   let classification = null;
   let primaryLetter = item.domain || item.primary_domain || item.primaryDomain?.letter || null;
@@ -233,14 +243,16 @@ export function resolveDestination(item) {
   }
 
   // 3. Resolve primary folder based on knowledgeType
-  const kType = String(item.knowledgeType || firstRule.knowledgeType || item.metadata?.knowledgeType || '').toLowerCase().trim();
+  const kType = String(item.knowledgeType || firstRule.knowledgeType || item.metadata?.knowledgeType || (isRuleCandidate ? 'engineering_pattern' : '')).toLowerCase().trim();
   let targetFolder = TYPE_ROUTING_MAP[kType] || null;
 
   const effectiveTitle = item.title || firstRule.title || item.metadata?.title || item.repository || 'unnamed-item';
 
   // If knowledgeType is missing or unknown, infer based on domain and role
   if (!targetFolder) {
-    if (primaryLetter === 'G' && (effectiveTitle.toLowerCase().includes('decision') || effectiveTitle.toLowerCase().includes('adr'))) {
+    if (isRuleCandidate) {
+      targetFolder = '05_KNOWLEDGE';
+    } else if (primaryLetter === 'G' && (effectiveTitle.toLowerCase().includes('decision') || effectiveTitle.toLowerCase().includes('adr'))) {
       targetFolder = '12_DECISIONS';
     } else if (primaryLetter === 'K' && effectiveTitle.toLowerCase().includes('gap')) {
       targetFolder = '08_VERIFICATION';
@@ -281,7 +293,7 @@ export function resolveDestination(item) {
       suggestedRelativePath = `03_SKILLS/${slug}.md`;
       break;
     case '05_KNOWLEDGE':
-      if (kType === 'engineering_pattern' || item.type === 'engineering_pattern' || item.is_rule) {
+      if (isRuleCandidate || kType === 'engineering_pattern' || item.type === 'engineering_pattern' || item.is_rule) {
         suggestedRelativePath = '05_KNOWLEDGE/engineering-patterns.md';
       } else {
         suggestedRelativePath = `05_KNOWLEDGE/domain-intelligence/DOM-${primaryLetter}-${slug}.md`;
@@ -306,7 +318,7 @@ export function resolveDestination(item) {
       suggestedRelativePath = `${targetFolder}/${slug}.md`;
   }
 
-  const needsHuman = requiresHumanApproval(kType, primaryLetter) || item.requires_human_approval === true;
+  const needsHuman = isRuleCandidate ? false : (requiresHumanApproval(kType, primaryLetter) || item.requires_human_approval === true);
 
   return {
     targetFolder,

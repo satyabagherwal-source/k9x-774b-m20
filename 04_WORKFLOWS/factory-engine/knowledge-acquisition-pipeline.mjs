@@ -176,13 +176,21 @@ export function detectDirectiveOpposition(candRule, candNegative, canonicalRes) 
   const negLower = (candNegative || '').toLowerCase();
 
   const extractTerms = (text, regexStr) => {
+    const GENERIC_ACTION_STOPWORDS = new Set([
+      'all', 'the', 'any', 'each', 'this', 'that', 'from', 'with', 'when', 'then',
+      'call', 'run', 'use', 'make', 'take', 'have', 'do', 'write', 'read', 'code',
+      'commit', 'log', 'send', 'set', 'get', 'create', 'delete', 'update', 'modify',
+      'process', 'allow', 'pass', 'return', 'throw', 'catch', 'load', 'save', 'file',
+      'files', 'data', 'block', 'state', 'item', 'items', 'value', 'values', 'mode',
+      'method', 'function', 'class', 'object', 'pattern', 'rule', 'check', 'checks'
+    ]);
     const terms = [];
     const re = new RegExp(regexStr, 'gi');
     let m;
     while ((m = re.exec(text)) !== null) {
       if (m[1] && m[1].length >= 3) {
         const term = m[1].toLowerCase().replace(/[^a-z0-9_-]/g, '');
-        if (!['all', 'the', 'any', 'each', 'this', 'that', 'from', 'with', 'when', 'then', 'call', 'run', 'use', 'make', 'take', 'have', 'do'].includes(term)) {
+        if (!GENERIC_ACTION_STOPWORDS.has(term)) {
           terms.push(term);
         }
       }

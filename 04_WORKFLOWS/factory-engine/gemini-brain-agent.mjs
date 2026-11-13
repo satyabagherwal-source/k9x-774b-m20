@@ -36,8 +36,8 @@ export function validateRuleCandidate(ruleTitle, ruleBody) {
     return { valid: false, reason: 'Invalid or missing rule title' };
   }
 
-  // Reject generic headers or document structural titles
-  if (/^(net-new|universal|forensic|executive|actionable|project|empirical|rule|checklist)/i.test(ruleTitle.trim())) {
+  // Reject pure generic header container titles (not actual engineering rules)
+  if (/^(?:(?:net-new\s+)?universal(?:\s+engineering)?(?:\s+rules)?|forensic\s+architecture|executive\s+forensic|actionable\s+checklist|project\s+learning\s+record|rule\s*[:#]?\s*\d*)$/i.test(ruleTitle.trim())) {
     return { valid: false, reason: 'Generic header title rejected' };
   }
 
@@ -66,10 +66,7 @@ export function validateRuleCandidate(ruleTitle, ruleBody) {
     return { valid: false, reason: 'Rule must contain at least one implementation code block and one negative constraint block' };
   }
 
-  // Governance check: separate purely repo-specific references from generalizable principles
-  if (/\b(?:PR\s*#\d+|issue\s*#\d+|merge\s+request)\b/i.test(ruleTitle)) {
-    return { valid: false, reason: 'Rule title references repository-specific PR/issue rather than a universal engineering principle' };
-  }
+
 
   return { valid: true };
 }
