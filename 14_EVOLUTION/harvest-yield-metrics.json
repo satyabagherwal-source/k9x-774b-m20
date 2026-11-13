@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:31:21.361Z",
-  "total_cycles_completed": 9121,
-  "total_learnings_persisted": 9121,
-  "total_rules_promoted": 8944,
+  "last_updated": "2026-11-13T03:48:27.728Z",
+  "total_cycles_completed": 9125,
+  "total_learnings_persisted": 9125,
+  "total_rules_promoted": 8947,
   "history": [
-    {
-      "timestamp": "2026-11-12T06:27:05.804Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T06:27:13.772Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T06:27:16.979Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T06:28:52.262Z",
-      "repository": "aio-libs/aiohttp",
-      "learningId": "learn-github-aio-libs-aiohttp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T06:41:45.553Z",
       "repository": "MohamedRejeb/Calf",
@@ -1403,6 +1375,34 @@
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
       "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T03:48:03.143Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T03:48:17.490Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T03:48:27.023Z",
+      "repository": "0xCUB3/wBlock",
+      "learningId": "learn-github-0xcub3-wblock",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T03:48:27.728Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

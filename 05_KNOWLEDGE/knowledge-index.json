@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T03:31:21.242Z",
+  "last_updated": "2026-11-13T03:48:27.583Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34,14 +34,19 @@
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "f593637b",
-      "content_hash": "f12dda7ecaf0305094d42859a11f158296126705a8759670e97a6ed17cb7dd0d",
+      "source_version": "6cd9c5b8",
+      "content_hash": "e9d63bd438a29df7c1b2db926ad1e5a26403045d11736a77f0182acca3374957",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "apply): commit the applied state as the run ends, not after cleanup (#1087)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "engine): leave more room when packing blocks into the fewest blockers",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -85,7 +90,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:45:39.673Z",
+      "verified_at": "2026-11-13T03:48:26.793Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46232,8 +46237,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "8cd4dbe1",
-      "content_hash": "119414c4fa5ea2bc0f7fcc382b01e17b50a349e875e54059fafc2b1d5dcf5024",
+      "source_version": "d667ec05",
+      "content_hash": "cb4b786957dd2966cf56883abee56463569fa541c7f947c9f4bceba784bc3638",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -46250,6 +46255,11 @@
         {
           "number": null,
           "title": "Merge pull request #7343 from locker95/fix-scratch-manifest-layers",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #7397 from moby/dependabot/github_actions/docker/github-build",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46313,7 +46323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:35:49.628Z",
+      "verified_at": "2026-11-13T03:48:27.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53252,8 +53262,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "d9e5ab1a",
-      "content_hash": "193da855418c131a54986412f34d30d90dff03118f8d58197127efbc5cf67759",
+      "source_version": "548e19a3",
+      "content_hash": "ca1e324c6534d227e1fa5021aa8d15ade23505296908a2f6593f31d3176d583b",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -53275,6 +53285,11 @@
         {
           "number": null,
           "title": "Avoid segfault on environment changes after a cloud scan (#30665)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GeoParquet default CRS, early errors, and user geo key pref (#30735)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53353,7 +53368,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:00:09.230Z",
+      "verified_at": "2026-11-13T03:48:17.258Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125425,7 +125440,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
-      "content_hash": "8673227ad392e495f41df825f28e41188d42564fb2efe65cdbea5b58d55b2943",
+      "content_hash": "3b9e2483700c2cec118487e9c149537e33d3941ec0d9a057a83cf7ea97b9b1aa",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "promoted_rules": [
@@ -125525,7 +125540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:35:55.633Z",
+      "verified_at": "2026-11-13T03:48:02.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

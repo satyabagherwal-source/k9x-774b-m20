@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "8cd4dbe1",
+    "sourceVersion": "d667ec05",
     "license": "Apache-2.0",
-    "contentHash": "119414c4fa5ea2bc0f7fcc382b01e17b50a349e875e54059fafc2b1d5dcf5024",
-    "lastHarvestedAt": "2026-11-11T18:35:49.754Z",
+    "contentHash": "cb4b786957dd2966cf56883abee56463569fa541c7f947c9f4bceba784bc3638",
+    "lastHarvestedAt": "2026-11-13T03:48:27.708Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "d9e5ab1a",
+    "sourceVersion": "548e19a3",
     "license": "MIT",
-    "contentHash": "193da855418c131a54986412f34d30d90dff03118f8d58197127efbc5cf67759",
-    "lastHarvestedAt": "2026-11-11T10:00:09.529Z",
+    "contentHash": "ca1e324c6534d227e1fa5021aa8d15ade23505296908a2f6593f31d3176d583b",
+    "lastHarvestedAt": "2026-11-13T03:48:17.481Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "f593637b",
+    "sourceVersion": "6cd9c5b8",
     "license": "GPL-3.0",
-    "contentHash": "f12dda7ecaf0305094d42859a11f158296126705a8759670e97a6ed17cb7dd0d",
-    "lastHarvestedAt": "2026-11-08T20:45:39.775Z",
+    "contentHash": "e9d63bd438a29df7c1b2db926ad1e5a26403045d11736a77f0182acca3374957",
+    "lastHarvestedAt": "2026-11-13T03:48:27.003Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {
@@ -10375,8 +10375,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "8673227ad392e495f41df825f28e41188d42564fb2efe65cdbea5b58d55b2943",
-    "lastHarvestedAt": "2026-11-08T03:35:55.755Z",
+    "contentHash": "3b9e2483700c2cec118487e9c149537e33d3941ec0d9a057a83cf7ea97b9b1aa",
+    "lastHarvestedAt": "2026-11-13T03:48:03.138Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {

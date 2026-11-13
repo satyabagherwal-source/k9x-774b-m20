@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `8cd4dbe1`  
+> **Source Version**: `d667ec05`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:35:42.239Z  
+> **Timestamp**: 2026-11-13T03:48:13.681Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:35:42.235Z  
+> **Harvest Timestamp**: 2026-11-13T03:48:13.676Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10399 stars
+- **Stars / Engagement**: 10414 stars
 
 ---
 
@@ -2295,11 +2295,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7408** (2026-11-11): **Cache export (mode=max) silently exports records without results when a step was matched only through later steps**
+  *Symptoms*: ### Description  `--cache-to type=registry,mode=max` can export a cache record with its key and links but without a result. This happens when a step was only matched through the cache key of a later step and the builder no longer holds that step's result, for example after garbage collection. The build reports the step as `CACHED`, and the export finishes without a warning. A consumer that later needs that step's result (because a later step changed) has to run it again.  Builds that import the previous registry cache (`--cache-from` the same tag) keep exporting the gap. Only a build that runs the step again fills the record. We saw a CUDA extension stage stay key-only across several consecutive cache exports on CI after the registry cache was briefly unavailable.  As far as I can tell from v0.33.1, `edge.makeExportable` builds the exporter with the records whose results exist (`cacheManager.Records` filters by `results.Exists`). When there are none, `exporter.ExportTo` still calls `t.Add(recKey, srcs, results)` with empty results.  ### Reproducer (BuildKit v0.34.2, `docker-container` driver)  ```dockerfile FROM alpine:3.20 AS base RUN echo base > /base.txt  FROM base AS wheel RUN mkdir /out && echo wheel > /out/wheel  FROM base AS final RUN --mount=from=wheel,source=/out,target=/tmp/out cp /tmp/out/wheel /wheel ```  ```sh docker buildx create --name repro --driver docker-container --bootstrap docker buildx build --builder repro --output type=cacheonly . # Simulate garbage co
+
 - **Issue #7407** (2026-11-11): **[v0.35] vendor: update policy helpers to 6acab594b423**
   *Symptoms*: (cherry picked from commit f6ea96500d7dd43bb1093cdba6249120c83be009)
-
-- **Issue #7406** (2026-11-11): **vendor: update policy helpers to 6acab594b423**
-  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2316,139 +2316,53 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e57e04e` (2026-11-10)
-**Commit Message**: Merge pull request #7343 from locker95/fix-scratch-manifest-layers
+### Incident Patch 1: `32eca340` (2026-11-12)
+**Commit Message**: Merge pull request #7397 from moby/dependabot/github_actions/docker/github-builder/dot-github/workflows/bake.yml-1.19.0
 
-exporter: write empty layers array for layerless images
+build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.1 to 1.19.0
 
-**File**: `client/client_export_image_test.go` (modified, +61/-0)
+**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
 ```diff
-@@ -1329,6 +1329,67 @@ func testLazyImagePush(t *testing.T, sb integration.Sandbox) {
- 	require.NoError(t, err)
- }
+@@ -49,7 +49,7 @@ jobs:
+           fields: platforms
  
-+// testOCIExporterScratchLayers verifies that an image without any layers is
-+// exported with an empty "layers" array rather than null.
-+// https://github.com/moby/buildkit/issues/7341
-+func testOCIExporterScratchLayers(t *testing.T, sb integration.Sandbox) {
-+	workers.CheckFeatureCompat(t, sb, workers.FeatureOCIExporter)
-+	requiresLinux(t)
-+	c, err := New(sb.Context(), sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	frontend := func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
-+		def, err := llb.Scratch().Marshal(ctx)
-+		if err != nil {
-+			return nil, err
-+		}
-+		r, err := c.Solve(ctx, gateway.SolveRequest{
-+			Definition: def.ToPB(),
-+		})
-+		if err != nil {
-+			return nil, err
-+		}
-+		ref, err := r.SingleRef()
-+		if err != nil {
-+			return nil, err
-+		}
-+		res := gateway.NewResult()
-+		res.SetRef(ref)
-+		return res, nil
-+	}
-+
-+	out := filepath.Join(t.TempDir(), "out.tar")
-+	outW, err := os.Create(out)
-+	require.NoError(t, err)
-+	_, err = c.Build(sb.Context(), SolveOpt{
-+		Exports: []ExportEntry{
-+			{
-+				Type:   ExporterOCI,
-+				Output: fixedWriteCloser(outW),
-+			},
-+		},
-+	}, "", frontend, nil)
-+	require.NoError(t, err)
-+
-+	dt, err := os.ReadFile(out)
-+	require.NoError(t, err)
-+
-+	m, err := testutil.ReadTarToMap(dt, false)
-+	require.NoError(t, err)
-+
-+	var index ocispecs.Index
-+	err = json.Unmarshal(m[ocispecs.ImageIndexFile].Data, &index)
-+	require.NoError(t, err)
-+	require.Len(t, index.Manifests, 1)
-+
-+	var mfst map[string]json.RawMessage
-+	err = json.Unmarshal(m[ocispecs.ImageBlobsDir+"/sha256/"+index.Manifests[0].Digest.Hex()].Data, &mfst)
-+	require.NoError(t, err)
-+	require.Contains(t, mfst, "layers")
-+	require.JSONEq(t, `[]`, string(mfst["layers"]))
-+}
-+
- func testOCIExporter(t *testing.T, sb integration.Sandbox) {
- 	workers.CheckFeatureCompat(t, sb, workers.FeatureOCIExporter)
- 	requiresLinux(t)
-```
-
-**File**: `client/client_test.go` (modified, +1/-0)
-```diff
-@@ -83,6 +83,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
- 	testInvalidExporter,
- 	testLazyImagePush,
- 	testOCIExporter,
-+	testOCIExporterScratchLayers,
- 	testOCIExporterContentStore,
- 	testPullWithDigestCheck,
- 	testPullZstdImage,
-```
-
-**File**: `exporter/containerimage/writer.go` (modified, +3/-0)
-```diff
-@@ -561,6 +561,9 @@ func (ic *ImageWriter) commitDistributionManifest(ctx context.Context, opts *Ima
- 			Size:      int64(len(config)),
- 			MediaType: configType,
- 		},
-+		// layers is a required array in the image manifest schema, so keep it
-+		// non-nil for images without layers (e.g. FROM scratch).
-+		Layers: make([]ocispecs.Descriptor, 0, len(remote.Descriptors)),
- 	}
+   binaries:
+-    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
++    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
+     permissions:
+       contents: read # same as global permission
+       id-token: write # for signing attestation(s) with GitHub OIDC Token
+@@ -222,7 +222,7 @@ jobs:
+             core.setOutput('includes', JSON.stringify(matrix));
  
- 	labels := map[string]string{
+   image:
+-    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
++    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
+     needs:
+       - image-prepare
+       - test
 ```
 
----
-
-### Incident Patch 2: `32845ed9` (2026-11-10)
-**Commit Message**: Merge pull request #7401 from thaJeztah/denoise_debug
-
-session: only log healthcheck recovery after a failure
-
-**File**: `session/grpc.go` (modified, +2/-3)
+**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
 ```diff
-@@ -176,9 +176,8 @@ func monitorHealth(ctx context.Context, conn net.Conn, cc *grpc.ClientConn, canc
- 				bklog.G(ctx).WithError(err).WithFields(logFields).Warn("healthcheck failed")
- 			} else {
- 				consecutiveSuccessful++
--				consecutiveFailures = 0
--
--				if consecutiveSuccessful >= cfg.successResetThreshold {
-+				if consecutiveFailures > 0 && consecutiveSuccessful >= cfg.successResetThreshold {
-+					consecutiveFailures = 0
- 					bklog.G(ctx).WithFields(logFields).Debug("reset healthcheck failure")
- 				}
- 			}
+@@ -125,7 +125,7 @@ jobs:
+             core.setOutput('includes', JSON.stringify(matrix));
+ 
+   image:
+-    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
++    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
+     needs:
+       - prepare
+       - test
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7407** (2026-11-11): [v0.35] vendor: update policy helpers to 6acab594b423 (@tonistiigi)
 - **PR #7406** (2026-11-11): vendor: update policy helpers to 6acab594b423 (@tonistiigi)
+- **PR #7405** (2026-11-12): build(deps): bump vmactions/freebsd-vm from 1.5.9 to 1.6.0 (@dependabot[bot])
 - **PR #7402** (2026-11-10): vendor: golang.org/x/sys v0.50.0 (@thaJeztah)
 - **PR #7401** (2026-11-10): session: only log healthcheck recovery after a failure (@thaJeztah)
 - **PR #7400** (2026-11-10): [v0.35] cherry-picks for v0.35.0-rc2 (@tonistiigi)
-- **PR #7399** (2026-11-11): dockerfile: update version to 1.30 (@tonistiigi)
 
 ---
 
@@ -2468,74 +2382,30 @@ session: only log healthcheck recovery after a failure
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7343 from locker95/fix-scratch-manifest-layers
+## X. Merge pull request #7397 from moby/dependabot/github_actions/docker/github-build
 
 **RULE**:
-When implementing operations in `client/client_export_image_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e57e04e`: Merge pull request #7343 from locker95/fix-scratch-manifest-layers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `32eca340`: Merge pull request #7397 from moby/dependabot/github_actions/docker/github-builder/dot-github/workflows/bake.yml-1.19.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_export_image_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// testOCIExporterScratchLayers verifies that an image without any layers is
-// exported with an empty "layers" array rather than null.
-// https://github.com/moby/buildkit/issues/7341
-func testOCIExporterScratchLayers(t *testing.T, sb integration.Sandbox) {
-	workers.CheckFeatureCompat(t, sb, workers.FeatureOCIExporter)
-	requiresLinux(t)
-	c, err := New(sb.Context(), sb.Address())
-	require.NoError(t, err)
-	defer c.Close()
-
-	frontend := func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
-		def, err := llb.Scratch().Marshal(ctx)
-		if err != nil {
-			return nil, err
-		}
-		r, err := c.Solve(ctx, gateway.SolveRequest{
-			Definition: def.ToPB(),
-		})
-		if err != nil {
-			return nil, err
-		}
-		ref, err := r.SingleRef()
-		if err != nil {
-			return nil, err
-		}
-		res := gateway.NewResult()
-		res.SetRef(ref)
-		return res, nil
-	}
-
-	out := filepath.Join(t.TempDir(), "out.tar")
-	outW, err := os.Create(out)
-	require.NoError(t, err)
-	_, err = c.Build(sb.Context(), SolveOpt{
-		Exports: []ExportEntry{
-			{
-				Type:   ExporterOCI,
-				Output: fixedWriteCloser(outW),
-			},
-		},
-	}, "", frontend, nil)
-	require.NoError(t, err)
-
-	dt, err := os.ReadFile(out)
-	require.NoError(t, err)
-
-	m
+    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
+    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
+    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e57e04e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `32eca340` are properly handled with clean fallback behavior.

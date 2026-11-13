@@ -9315,3 +9315,7 @@
 | `CYCLE-20261113-6RNQ` | `2026-11-13T03:31:21.350Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md` | Yes (`79e075ec...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:31:39.884Z` | `astral-sh-uv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B0538309` [Domain D] | Yes (`5969d47c...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:32:06.697Z` | `hf-lodestones-moss-image-sft-8-steps-dmd` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-27F43F41` [Domain D] | Yes (`3f303727...`) |
+| `CYCLE-20261113-S8N2` | `2026-11-13T03:48:03.134Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md` | Yes (`3b9e2483...`) |
+| `CYCLE-20261113-SJPG` | `2026-11-13T03:48:17.476Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ca1e324c...`) |
+| `CYCLE-20261113-SR1Z` | `2026-11-13T03:48:26.999Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e9d63bd4...`) |
+| `CYCLE-20261113-SRLK` | `2026-11-13T03:48:27.704Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cb4b7869...`) |

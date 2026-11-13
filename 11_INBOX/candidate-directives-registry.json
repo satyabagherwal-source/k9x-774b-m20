@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:32:06.732Z",
+  "last_updated": "2026-11-13T03:48:36.417Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8012,6 +8012,33 @@
       "source_repo": "siderolabs-talos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-103024-keep-xfs-unixroot-path-resolution-inside.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-F8B986",
+      "directive_title": "GeoParquet default CRS, early errors, and user geo key pref (#30735)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pola-rs-polars",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F8B986-geoparquet-default-crs-early-errors-and-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-CA9F67",
+      "directive_title": "Forensic Learning Record (Deep Inspection): dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CA9F67-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-68DD8C",
+      "directive_title": "engine): leave more room when packing blocks into the fewest blockers",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "0xcub3-wblock",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-68DD8C-engine-leave-more-room-when-packing-bloc.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `d9e5ab1a`  
+> **Source Version**: `548e19a3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:59:55.202Z  
+> **Timestamp**: 2026-11-13T03:48:06.042Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:59:54.970Z  
+> **Harvest Timestamp**: 2026-11-13T03:48:06.036Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40315 stars
+- **Stars / Engagement**: 40341 stars
 
 ---
 
@@ -1718,690 +1718,489 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6be8f4dd` (2026-11-09)
-**Commit Message**: fix: Avoid segfault on environment changes after a cloud scan (#30665)
+### Incident Patch 1: `fad42ed7` (2026-11-12)
+**Commit Message**: fix: GeoParquet default CRS, early errors, and user geo key pref (#30735)
 
-**File**: `crates/polars-config/src/lib.rs` (modified, +17/-0)
+**File**: `crates/polars-io/src/parquet/write/key_value_metadata.rs` (modified, +10/-0)
 ```diff
-@@ -60,6 +60,9 @@ const DEFAULT_VERBOSE_SENSITIVE: bool = false;
- const FORCE_ASYNC: &str = "POLARS_FORCE_ASYNC";
- const DEFAULT_FORCE_ASYNC: bool = false;
- 
-+const LOG_CONCURRENCY: &str = "POLARS_LOG_CONCURRENCY";
-+const DEFAULT_LOG_CONCURRENCY: bool = false;
-+
- const SCAN_CHUNK_STATISTICS: &str = "POLARS_SCAN_CHUNK_STATISTICS";
- const DEFAULT_SCAN_CHUNK_STATISTICS: bool = false;
- 
-@@ -216,6 +219,7 @@ static KNOWN_OPTIONS: &[&str] = &[
-     // Private.
-     VERBOSE_SENSITIVE,
-     FORCE_ASYNC,
-+    LOG_CONCURRENCY,
-     SCAN_CHUNK_STATISTICS,
-     IMPORT_INTERVAL_AS_STRUCT,
-     OOC_DRIFT_THRESHOLD,
-@@ -269,6 +273,7 @@ pub struct Config {
-     // Private.
-     verbose_sensitive: AtomicBool,
-     force_async: AtomicBool,
-+    log_concurrency: AtomicBool,
-     scan_chunk_statistics: AtomicBool,
-     import_interval_as_struct: AtomicBool,
-     ooc_spill_format: AtomicU8,
-@@ -329,6 +334,7 @@ impl Config {
-             // Private.
-             verbose_sensitive: AtomicBool::new(DEFAULT_VERBOSE_SENSITIVE),
-             force_async: AtomicBool::new(DEFAULT_FORCE_ASYNC),
-+            log_concurrency: AtomicBool::new(DEFAULT_LOG_CONCURRENCY),
-             scan_chunk_statistics: AtomicBool::new(DEFAULT_SCAN_CHUNK_STATISTICS),
-             import_interval_as_struct: AtomicBool::new(DEFAULT_IMPORT_INTERVAL_AS_STRUCT),
-             ooc_spill_format: AtomicU8::new(DEFAULT_OOC_SPILL_FORMAT as u8),
-@@ -514,6 +520,11 @@ impl Config {
-                     .unwrap_or(DEFAULT_FORCE_ASYNC),
-                 Ordering::Relaxed,
-             ),
-+            LOG_CONCURRENCY => self.log_concurrency.store(
-+                val.and_then(|x| parse::parse_bool(var, x))
-+                    .unwrap_or(DEFAULT_LOG_CONCURRENCY),
-+                Ordering::Relaxed,
-+            ),
-             SCAN_CHUNK_STATISTICS => self.scan_chunk_statistics.store(
-                 val.and_then(|x| parse::parse_bool(var, x))
-                     .unwrap_or(DEFAULT_SCAN_CHUNK_STATISTICS),
-@@ -787,6 +798,12 @@ impl Config {
-         self.force_async.load(Ordering::Relaxed)
+@@ -99,6 +99,16 @@ impl KeyValueMetadata {
+             Self::DynamicPython(py_func) => py_func.call(ctx),
+         }
      }
- 
-+    /// Whether to log the cloud and scan pipeline concurrency state.
-+    #[inline(always)]
-+    pub fn log_concurrency(&self) -> bool {
-+        self.log_concurrency.load(Ordering::Relaxed)
-+    }
 +
-     /// Whether a parquet scan, besides its per-column totals, keeps the min, max, null count and
-     /// sizes that each sampled row group records. Planners use these to estimate how a column's
-     /// values are distributed across the files, e.g. how many rows a filter keeps.
-```
-
-**File**: `crates/polars-io/src/cloud/concurrency/mod.rs` (modified, +1/-1)
-```diff
-@@ -514,7 +514,7 @@ impl ConcurrencyController {
-                 let head_rtt_window = head_rtt.take();
- 
-                 // Log snapshot.
--                if std::env::var("POLARS_LOG_CONCURRENCY").is_ok() {
-+                if polars_config::config().log_concurrency() {
-                     // The tick the knee saw, before this tick's resize.
-                     let bound = [
-                         ("bytes", knee_tick.bytes_bound()),
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sources/shared/pipeline_budget.rs` (modified, +6/-7)
-```diff
-@@ -25,9 +25,6 @@ use tokio::sync::{OwnedSemaphorePermit, Semaphore};
- // - A scan whose output is blocked (e.g. a join's probe side during the build) keeps fetching and
- //   can grow toward its store's budget.
- 
--static SHOULD_LOG_CONCURRENCY: LazyLock<bool> =
--    LazyLock::new(|| std::env::var("POLARS_LOG_CONCURRENCY").is_ok());
--
- /// Default of `POLARS_CLOUD_PREFETCH_ORDERED_SLACK_MS`.
- const DEFAULT_ORDERED_SLACK_MS: u64 = 100;
- 
-@@ -417,7 +414,7 @@ impl PipelineBudget {
-             }
-         }
- 
--        if *SHOULD_LOG_CONCURRENCY {
-+        if polars_config::config().log_concurrency() {
-             self.log_stats
-                 .grow_cap
-                 .store(grow_cap as u8, Ordering::Relaxed);
-@@ -455,7 +452,9 @@ impl PipelineBudget {
-         let mut charged_kbytes: u32 = self.permit_kbytes(n_bytes).try_into().unwrap_or(u32::MAX);
-         let mut oversized = (charged_kbytes as usize) < n_bytes.div_ceil(1 << 10);
- 
--        if *SHOULD_LOG_CONCURRENCY && self.kbytes.available_permits() < charged_kbytes as usize {
-+        if polars_config::config().log_concurrency()
-+            && self.kbytes.available_permits() < charged_kbytes as usize
-+        {
-             self.log_stats.kbytes_waits.fetch_add(1, Ordering::Relaxed);
-         }
- 
-@@ -490,12 +489,12 @@ impl PipelineBudget {
-         }
-         let _oversized = oversized.then(|| OversizedPermit::new(&self.oversized_in_flight));
- 
--        if *SHOULD_LOG_CONCURRENCY && self.count.available_permits() == 0 {
-+        if polars_config::config().log_concurrency() && self.count.available_permits() == 0 {
-             self.log_stats.count_waits.fetch_add(1, Ordering::Relaxed);
-         }
-         let _count = self.count.clone().acquire_owned().await.unwrap();
- 
--        if *SHOULD_LOG_CONCURRENCY {
-+        if polars_config::config().log_concurrency() {
-             if let Ok(mut last_log) = self.last_reported.lock() {
-                 let count_limit = self.count_limit();
-                 let kbytes_limit = self.kbytes_limit();
-```
-
----
-
-### Incident Patch 2: `f54a1f96` (2026-11-10)
-**Commit Message**: refactor(rust): Expose the building blocks of binning and `hist` (#30676)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-ops/src/chunked_array/hist.rs` (modified, +126/-85)
-```diff
-@@ -161,75 +161,132 @@ where
-     count
++    /// Whether the metadata may set `key`; dynamic metadata is only known when the file is finished.
++    pub fn may_contain(&self, key: &str) -> bool {
++        match self {
++            Self::Static(kv) => kv.iter().any(|kv| kv.key == key),
++            Self::DynamicRust(_) => true,
++            #[cfg(feature = "python")]
++            Self::DynamicPython(_) => true,
++        }
++    }
  }
  
--fn compute_hist<T>(
--    ca: &ChunkedArray<T>,
--    bin_count: Option<usize>,
--    bins: Option<&[f64]>,
--    include_category: bool,
--    include_breakpoint: bool,
--) -> PolarsResult<Series>
--where
--    T: PolarsNumericType,
--    ChunkedArray<T>: ChunkAgg<T::Native>,
--{
--    let (breaks, uniform) = get_breaks(ca, bin_count, bins)?;
--    let num_bins = std::cmp::max(breaks.len(), 1) - 1;
--    let count = if num_bins > 0 && ca.len() > ca.null_count() {
--        if uniform {
--            uniform_hist_count(&breaks, ca)
--        } else {
--            hist_count(&breaks, ca)
--        }
--    } else {
--        vec![0; num_bins]
+ #[derive(Clone)]
+```
+
+**File**: `crates/polars-io/src/parquet/write/writer.rs` (modified, +10/-0)
+```diff
+@@ -4,6 +4,7 @@ use std::sync::Mutex;
+ use polars_buffer::Buffer;
+ use polars_core::frame::chunk_df_for_writing;
+ use polars_core::prelude::*;
++use polars_parquet::arrow::geo::{GEO_KEY, validate_geo_schema};
+ use polars_parquet::write::{
+     CompressionOptions, Encoding, FileWriter, StatisticsOptions, Version, WriteOptions,
+     get_dtype_encoding, to_parquet_schema,
+@@ -128,6 +129,15 @@ where
+ 
+     pub fn batched(self, schema: &Schema) -> PolarsResult<BatchedWriter<W>> {
+         let schema = schema_to_arrow_checked(schema, CompatLevel::newest(), "parquet")?;
++        // Metadata that may set its own `geo` key skips the early checks.
++        // errors are only emitted at file end, because that's when the callable's keys are known.
++        if !self
++            .key_value_metadata
++            .as_ref()
++            .is_some_and(|kv| kv.may_contain(GEO_KEY))
++        {
++            validate_geo_schema(&schema)?;
++        }
+         let parquet_schema = to_parquet_schema(&schema)?;
+         let encodings = get_encodings(&schema);
+         let options = self.materialize_options();
+```
+
+**File**: `crates/polars-parquet/src/arrow/geo.rs` (modified, +102/-32)
+```diff
+@@ -1,11 +1,14 @@
+ //! Conversion between GeoParquet `geo` file metadata and GeoArrow extension types.
+-use polars_arrow::datatypes::{ArrowDataType, ArrowSchema, ExtensionType, Metadata};
++use polars_arrow::datatypes::{ArrowDataType, ArrowSchema, ExtensionType, Field, Metadata};
+ use polars_error::{PolarsResult, polars_bail, polars_err, polars_warn};
+ use serde_json::{Map, Value, json};
+ 
+ use crate::parquet::metadata::KeyValue;
+ 
+-const GEO_KEY: &str = "geo";
++pub const GEO_KEY: &str = "geo";
++
++/// The geoparquet spec states that something that has no `crs` key should be considered "OGC: CRS84".
++const DEFAULT_CRS: &str = "OGC:CRS84";
+ 
+ struct Encoding {
+     geoparquet: &'static str,
+@@ -49,24 +52,30 @@ const ENCODINGS: [Encoding; 7] = [
+     native("multipolygon", "geoarrow.multipolygon", "MultiPolygon", 3),
+ ];
+ 
++/// Returns the fields of the coordinate struct inside `dtype`, `None` for WKB.
++fn coordinate_fields<'a>(encoding: &Encoding, mut dtype: &'a ArrowDataType) -> Option<&'a [Field]> {
++    for _ in 0..encoding.list_depth? {
++        dtype = match dtype {
++            ArrowDataType::List(f) | ArrowDataType::LargeList(f) => &f.dtype,
++            _ => return None,
++        };
++    }
++    match dtype {
++        ArrowDataType::Struct(fields) => Some(fields),
++        _ => None,
++    }
++}
++
+ /// Returns `Some(has_z)` if `dtype` is a valid storage type for `encoding`.
+-fn check_storage(encoding: &Encoding, mut dtype: &ArrowDataType) -> Option<bool> {
+-    let Some(list_depth) = encoding.list_depth else {
++fn check_storage(encoding: &Encoding, dtype: &ArrowDataType) -> Option<bool> {
++    if encoding.list_depth.is_none() {
+         return matches!(
+             dtype,
+             ArrowDataType::Binary | ArrowDataType::LargeBinary | ArrowDataType::BinaryView
+         )
+         .then_some(false);
 -    };
-+fn ensure_hist_dtype(s: &Series) -> PolarsResult<()> {
-+    polars_ensure!(
-+        s.dtype().is_primitive_numeric(),
-+        opq = hist,
-+        got = s.dtype(),
-+        expected = "integer or float"
-+    );
+-    for _ in 0..list_depth {
+-        dtype = match dtype {
+-            ArrowDataType::List(f) | ArrowDataType::LargeList(f) => &f.dtype,
+-            _ => return None,
+-        };
+     }
+-    let ArrowDataType::Struct(fields) = dtype else {
+-        return None;
+-    };
++    let fields = coordinate_fields(encoding, dtype)?;
+     let valid = (2..=3).contains(&fields.len())
+         && fields
+             .iter()
+@@ -130,7 +139,18 @@ pub fn apply_geo_metadata(metadata: &Metadata, schema: &mut ArrowSchema) {
+         }
+ 
+         let mut ext_metadata = Map::new();
+-        for key in ["crs", "edges", "epoch"] {
++        match column.get("crs") {
++            None => {
++                ext_metadata.insert("crs".into(), DEFAULT_CRS.into());
++            },
++            // Geoarrow designates an 'unknown' CRS by leaving `crs` out,
++            // while GeoParquet explicitly writes it as `Null`.
++            Some(Value::Null) => {},
++            Some(crs) => {
++                ext_metadata.insert("crs".into(), crs.clone());
++            },
++        }
++        for key in ["edges", "epoch"] {
+             if let Some(value) = column.get(key) {
+                 ext_metadata.insert(key.into(), value.clone());
+             }
+@@ -145,9 +165,15 @@ pub fn apply_geo_metadata(metadata: &Metadata, schema: &mut ArrowSchema) {
+     }
+ }
+ 
++/// Called once per write, before any file is opened.
++pub fn validate_geo_schema(schema: &ArrowSchema) -> PolarsResult<()> {
++    geo_key_value(schema)?;
 +    Ok(())
 +}
++
+ /// Builds the GeoParquet `geo` metadata for the GeoArrow columns in `schema` if
+ /// `POLARS_GEOPARQUET_WRITE` is set to `1.0` or `1.1`.
+-pub fn geo_key_value(schema: &ArrowSchema) -> PolarsResult<Option<KeyValue>> {
++pub(crate) fn geo_key_value(schema: &ArrowSchema) -> PolarsResult<Option<KeyValue>> {
+     let version = match std::env::var("POLARS_GEOPARQUET_WRITE").as_deref() {
+         Err(_) | Ok("") => return Ok(None),
+         Ok("1.0") => "1.0.0",
+@@ -177,21 +203,21 @@ pub fn geo_key_value(schema: &ArrowSchema) -> PolarsResult<Option<KeyValue>> {
+                 )
+             })?;
+         let has_z = check_storage(encoding, &ext.inner).ok_or_else(|| {
++            let has_m = coordinate_fields(encoding, &ext.inner)
++                .is_some_and(|fields| fields.iter().any(|f| f.name == "m"));
++            if has_m {
++                return polars_err!(
++                    InvalidOperation: "cannot write column '{}' as GeoParquet {}: it cannot store M values",
++                    name, version
++                );
++            }
+             polars_err!(
+                 InvalidOperation: "cannot write column '{}' as GeoParquet: storage type {:?} does not match '{}'",
+                 name, ext.inner, ext.name
+             )
+         })?;
  
--    // Generate output: breakpoint (optional), breaks (optional), count
--    let mut fields = Vec::with_capacity(3);
-+/// The bin edges of `hist`, which for a bin count depend only on the min and max of the column.
-+#[derive(Clone, Debug)]
-+pub struct HistBreaks {
-+    edges: Vec<f64>,
-+    // Equal-width edges allow counting without sorting.
-+    uniform: bool,
-+}
- 
--    if include_breakpoint {
--        let breakpoints = if num_bins > 0 {
--            Series::new(PlSmallStr::from_static("breakpoint"), &breaks[1..])
--        } else {
--            let empty: &[f64; 0] = &[];
--            Series::new(PlSmallStr::from_static("breakpoint"), empty)
--        };
--        fields.push(breakpoints)
-+impl HistBreaks {
-+    /// The edges of `bin_count` bins over `s`, or the given `bins`.
-+    pub fn new(s: &Series, bin_count: Option<usize>, bins: Option<&Series>) -> PolarsResult<Self> {
-+        let bins = bins
-+            .map(|bins| {
-+                polars_ensure!(bins.null_count() == 0, InvalidOperation: "nulls not supported in 'bins' argument");
-+                Ok(bins.cast(&DataType::Float64)?.rechunk())
-+            })
-+            .transpose()?;
-+        let bins = bins
-+            .as_ref()
-+            .map(|bins| bins.f64().unwrap().cont_slice().unwrap());
-+        ensure_hist_dtype(s)?;
-+
-+        let (edges, uniform) = with_match_physical_numeric_polars_type!(s.dtype(), |$T| {
-+            let ca: &ChunkedArray<$T> = s.as_ref().as_ref().as_ref();
-+            get_breaks(ca, bin_count, bins)?
-+        });
-+        Ok(Self { edges, uniform })
-     }
- 
--    if include_category {
--        let mut categories =
--            StringChunkedBuilder::new(PlSmallStr::from_static("category"), breaks.len());
--        if num_bins > 0 {
--            let mut lower = AnyValue::Float64(breaks[0]);
--            let mut buf = String::new();
--            let mut open_bracket = "[";
--            for br in &breaks[1..] {
--                let br = AnyValue::Float64(*br);
--                buf.clear();
--                write!(buf, "{open_bracket}{lower}, {br}]").unwrap();
--                open_bracket = "(";
--                categories.append_value(buf.as_str());
--                lower = br;
-+    pub fn edges(&self) -> &[f64] {
-+        &self.edges
-+    }
-+
-+    pub fn num_bins(&self) -> usize {
-+        self.edges.len().saturating_sub(1)
-+    }
-+
-+    /// The number of values of `s` in each bin.
-+    pub fn count(&self, s: &Series) -> PolarsResult<Vec<IdxSize>> {
-+        ensure_hist_dtype(s)?;
-+        let num_bins = self.num_bins();
-+        if num_bins == 0 || s.len() == s.null_count() {
-+            return Ok(vec![0; num_bins]);
-+        }
-+        Ok(with_match_physical_numeric_polars_type!(s.dtype(), |$T| {
-+            let ca: &ChunkedArray<$T> = s.as_ref().as_ref().as_ref();
-+            if self.uniform {
-+                uniform_hist_count(&self.edges, ca)
-+            } else {
-+                hist_count(&self.edges, ca)
-             }
-+        }))
-+    }
-+
-+    /// The `hist` output named `name` for the `counts` of each bin.
-+    pub fn finish(
-+        &self,
-+        name: PlSmallStr,
-+        counts: &[IdxSize],
-+        include_category: bool,
-+        include_breakpoint: bool,
-+    ) -> PolarsResult<Series> {
-+        let breaks = &self.edges;
-+        let num_bins = self.num_bins();
-+        polars_ensure!(
-+            counts.len() == num_bins,
-+            ShapeMismatch: "`hist` has {} bins but got {} counts", num_bins, counts.len()
-+        );
-+
-+        // Generate output: breakpoint (optional), breaks (optional), count
-+        let mut fields = Vec::with_capacity(3);
-+
-+        if include_breakpoint {
-+            let breakpoints = if num_bins > 0 {
-+                Series::new(PlSmallStr::from_static("breakpoint"), &breaks[1..])
-+            } else {
-+                let empty: &[f64; 0] = &[];
-+                Series::new(PlSmallStr::from_static("breakpoint"), empty)
-+            };
-+            fields.push(breakpoints)
-         }
--        let categories = categories
--            .finish()
--            .ca
+-        let ext_metadata = match ext.metadata.as_deref() {
+-            None => Map::new(),
+-            Some(md) => match serde_json::from_str(md) {
+-                Ok(Value::Object(md)) => md,
+-                _ => polars_bail!(
+-                    InvalidOperation: "cannot write column '{}' as GeoParquet: invalid extension metadata", name
+-                ),
+-
 ```
 
-**File**: `crates/polars-ops/src/series/ops/binning.rs` (modified, +40/-22)
+**File**: `crates/polars-parquet/src/arrow/write/file.rs` (modified, +3/-3)
 ```diff
-@@ -1,5 +1,6 @@
- use polars_arrow::compute::concatenate::concatenate_validities;
- use polars_core::chunked_array::ops::binning::{FractionSpec, IntervalSpec};
-+use polars_core::prelude::gather::check_bounds_ca;
- use polars_core::prelude::*;
- use polars_core::with_match_physical_integer_polars_type;
+@@ -9,7 +9,7 @@ use polars_utils::version::{
  
-@@ -98,18 +99,23 @@ fn uniform_threshold_offsets(
-     })
- }
+ use super::schema::schema_to_metadata_key;
+ use super::{ThriftFileMetadata, WriteOptions, to_parquet_schema};
+-use crate::arrow::geo::geo_key_value;
++use crate::arrow::geo::{GEO_KEY, geo_key_value};
+ use crate::parquet::encryption::encrypt::FileEncryptionProperties;
+ use crate::parquet::metadata::{KeyValue, SchemaDescriptor};
+ use crate::parquet::write::{RowGroupIterColumns, WriteOptions as FileWriteOptions};
+@@ -116,8 +116,8 @@ impl<W: Write> FileWriter<W> {
+     pub fn end(&mut self, key_value_metadata: Option<Vec<KeyValue>>) -> PolarsResult<u64> {
+         let mut key_value_metadata =
+             key_value_metadata.unwrap_or_else(|| vec![schema_to_metadata_key(&self.schema)]);
+-        if let Some(geo) = geo_key_value(&self.schema)?
+-            && !key_value_metadata.iter().any(|kv| kv.key == geo.key)
++        if !key_value_metadata.iter().any(|kv| kv.key == GEO_KEY)
++            && let Some(geo) = geo_key_value(&self.schema)?
+         {
+             key_value_metadata.push(geo);
+         }
+```
+
+**File**: `crates/polars-stream/src/nodes/io_sinks/writers/parquet/mod.rs` (modified, +12/-0)
+```diff
+@@ -8,6 +8,7 @@ use polars_buffer::Buffer;
+ use polars_core::runtime::ASYNC;
+ use polars_error::PolarsResult;
+ use polars_io::prelude::{ParquetWriteOptions, get_encodings};
++use polars_parquet::arrow::geo::{GEO_KEY, validate_geo_schema};
+ use polars_parquet::write::{
+     CompressedPage, Encoding, SchemaDescriptor, Version, WriteOptions, to_parquet_schema,
+ };
+@@ -36,6 +37,17 @@ impl ParquetWriterStarter {
+         options: Arc<ParquetWriteOptions>,
+         arrow_schema: ArrowSchemaRef,
+     ) -> PolarsResult<Self> {
++        // Metadata that may set its own `geo` key skips the early checks,
++        // as that key replaces the derived one.
++        // A callable's keys are only known when each file ends,
++        // so for a callable any error comes from `FileWriter::end`.
++        if !options
++            .key_value_metadata
++            .as_ref()
++            .is_some_and(|kv| kv.may_contain(GEO_KEY))
++        {
++            validate_geo_schema(&arrow_schema)?;
++        }
+         let initialized_state = match &options.encryption {
+             Some(encryption) => {
+                 // Check the encrypted columns exist before any file is opened, rather than
+```
+
+**File**: `py-polars/tests/unit/io/test_geoparquet.py` (modified, +142/-10)
+```diff
+@@ -12,13 +12,18 @@
+ import polars as pl
  
--/// Equal-width breakpoints `min + (i + 1)/n_bins * (max - min)` for `0 <= i < n_bins - 1`,
--/// in the input dtype, or `None` when the column has no usable `min`/`max`.
--///
--/// Floats go through `f64` and are narrowed back afterwards; integers and `Decimal` (via
--/// its `Int128` physical) derive representable thresholds in their own width.
--fn uniform_interval_breaks(
-+/// The `bin_intervals` breakpoints of `n_bins` equal-width bins, which depend only on the dtype,
-+/// min and max of `s`, or `None` when `s` has no non-null values.
-+//
-+// Floats go through `f64` and are narrowed back afterwards; integers and `Decimal` (via
-+// its `Int128` physical) derive representable thresholds in their own width.
-+pub fn bin_interval_breaks(
-     s: &Series,
-     n_bins: usize,
-     right_closed: bool,
- ) -> PolarsResult<Option<Series>> {
--    let n_breaks = n_bins - 1;
-+    polars_ensure!(n_bins > 0, ComputeError: "binning requires at least one bin");
-     let dtype = s.dtype();
-+    polars_ensure!(
-+        dtype.is_numeric(),
-+        InvalidOperation: "`bin_intervals` requires a numeric input, got `{}`", dtype
-+    );
-+    let n_breaks = n_bins - 1;
- 
-     if dtype.is_float() {
-         let f = s.cast(&DataType::Float64)?;
-@@ -200,20 +206,23 @@ fn cum_bin_sizes_fractions(non_null_len: usize, fractions: &[f64]) -> Vec<IdxSiz
-         .collect()
- }
- 
--/// Turn a column of bin indices into the final output.
--///
--/// Without labels the bins are returned as `UInt32`, with labels as an `Enum` over them.
--/// When `breaks` is given the result is instead a struct of `bin`, `left` and `right`,
--/// where `left` is null for the first bin and `right` null for the last. `breaks` holds
--/// the `n_bins - 1` boundary values; for rank-based binning these are the gathered
--/// boundary *values*, not the rank positions.
--fn finish_bins(
-+/// The binning output for the bin indices `bin_idx` in `0..n_bins`, labelled by the `n_bins`
-+/// `labels` and with intervals bounded by the `n_bins - 1` boundary values `breaks`.
-+//
-+// Without labels the bins are returned as `UInt32`, with labels as an `Enum` over them.
-+// When `breaks` is given the result is instead a struct of `bin`, `left` and `right`,
-+// where `left` is null for the first bin and `right` null for the last. For rank-based
-+// binning `breaks` are the gathered boundary *values*, not the rank positions.
-+pub fn finish_bins(
-     out_name: PlSmallStr,
-     bin_idx: &IdxCa,
-     n_bins: usize,
-     breaks: Option<&Series>,
-     labels: Option<&[PlSmallStr]>,
- ) -> PolarsResult<Series> {
-+    polars_ensure!(n_bins > 0, ComputeError: "binning requires at least one bin");
-+    check_bounds_ca(bin_idx, n_bins.try_into().unwrap_or(IdxSize::MAX))?;
+ if TYPE_CHECKING:
++    from pathlib import Path
 +
-     let bin = match labels {
-         None => bin_idx.cast(&DataType::UInt32)?,
-         Some(labels) => {
-@@ -241,7 +250,11 @@ fn finish_bins(
-     let Some(breaks) = breaks else {
-         return Ok(bin.with_name(out_name));
-     };
--    debug_assert_eq!(breaks.len() + 1, n_bins);
-+    polars_ensure!(
-+        breaks.len() + 1 == n_bins,
-+        ShapeMismatch: "binning produces {} bins but got {} breakpoints",
-+        n_bins, breaks.len()
-+    );
+     from polars._typing import PolarsDataType
+     from tests.conftest import PlMonkeyPatch
  
-     // `left[i]` is `(null ++ breaks)[bin_idx[i]]` and `right[i]` is
-     // `(breaks ++ null)[bin_idx[i]]`. A null index gathers to null, so null inputs and
-@@ -294,7 +307,7 @@ pub fn bin_intervals(
-         IntervalSpec::Count(n_bins) => {
-             let n_bins = n_bins.get();
-             // No usable min/max: an empty or all-null column.
--            let Some(breaks) = uniform_interval_breaks(s, n_bins, right_closed)? else {
-+            let Some(breaks) = bin_interval_breaks(s, n_bins, right_closed)? else {
-                 return empty_bins(s, n_bins, labels, include_intervals);
-             };
-             breaks
-@@ -337,17 +350,22 @@ pub fn bin_quantiles(
-     )
- }
+ POINT_WKB = struct.pack("<bIdd", 1, 1, 1.0, 2.0)
+ PROJJSON = {"type": "GeographicCRS", "name": "WGS 84"}
++CRS84 = {"crs": "OGC:CRS84"}
+ XY = pl.Struct({"x": pl.Float64, "y": pl.Float64})
+ XYZ = pl.Struct({"x": pl.Float64, "y": pl.Float64, "z": pl.Float64})
++XYM = pl.Struct({"x": pl.Float64, "y": pl.Float64, "m": pl.Float64})
++XYZM = pl.Struct(dict.fromkeys(["x", "y", "z", "m"], pl.Float64))
  
-+/// The `bin_ranks` cuts among `non_null_len` non-null values: bin `i` holds the ranks from
-+/// `cuts[i - 1]` up to but excluding `cuts[i]`.
-+pub fn bin_rank_cuts(non_null_len: usize, spec: &FractionSpec) -> Vec<IdxSize> {
-+    match spec {
-+        FractionSpec::Explicit(fractions) => cum_bin_sizes_fractions(non_null_len, fractions),
-+        FractionSpec::Count(n_bins) => cum_bin_sizes_uniform(non_null_len, n_bins.get()),
+ 
+ def _write_geo(table: pa.Table, version: str, columns: dict[str, Any]) -> io.BytesIO:
+@@ -35,11 +40,23 @@ def _ext(dtype: PolarsDataType) -> tuple[str, PolarsDataType, Any]:
+     return dtype.ext_name(), dtype.ext_storage(), None if md is None else json.loads(md)
+ 
+ 
++def _metadata(source: io.BytesIO | Path) -> dict[bytes, bytes]:
++    where = (
++        pa.BufferReader(source.getvalue()) if isinstance(source, io.BytesIO) else source
++    )
++    metadata: dict[bytes, bytes] = pq.read_metadata(where).metadata
++    return metadata
++
++
++def _read_geo(source: io.BytesIO | Path) -> Any:
++    metadata = _metadata(source)
++    return json.loads(metadata[b"geo"]) if b"geo" in metadata else None
++
++
+ def _geo_metadata(df: pl.DataFrame) -> Any:
+     buf = io.BytesIO()
+     df.write_parquet(buf)
+-    metadata = pq.read_metadata(pa.BufferReader(buf.getvalue())).metadata
+-    return json.loads(metadata[b"geo"]) if b"geo" in metadata else None
++    return _read_geo(buf)
+ 
+ 
+ def test_read_geoparquet_1_0(plmonkeypatch: PlMonkeyPatch) -> None:
+@@ -56,8 +73,8 @@ def test_read_geoparquet_1_0(plmonkeypatch: PlMonkeyPatch) -> None:
+ 
+     plmonkeypatch.setenv("POLARS_GEOPARQUET_READ", "1")
+     df = pl.read_parquet(buf)
+-    assert _ext(df.schema["a"]) == ("geoarrow.wkb", pl.Binary, None)
+-    assert _ext(df.schema["b"]) == ("geoarrow.wkb", pl.Binary, {"crs": None})
++    assert _ext(df.schema["a"]) == ("geoarrow.wkb", pl.Binary, CRS84)
++    assert _ext(df.schema["b"]) == ("geoarrow.wkb", pl.Binary, None)
+     assert _ext(df.schema["c"]) == (
+         "geoarrow.wkb",
+         pl.Binary,
+@@ -75,8 +92,8 @@ def test_read_geoparquet_1_1_native(plmonkeypatch: PlMonkeyPatch) -> None:
+     }
+     plmonkeypatch.setenv("POLARS_GEOPARQUET_READ", "1")
+     df = pl.read_parquet(_write_geo(table, "1.1.0", columns))
+-    assert _ext(df.schema["a"]) == ("geoarrow.point", XY, None)
+-    assert _ext(df.schema["b"]) == ("geoarrow.linestring", pl.List(XYZ), None)
++    assert _ext(df.schema["a"]) == ("geoarrow.point", XY, CRS84)
++    assert _ext(df.schema["b"]) == ("geoarrow.linestring", pl.List(XYZ), CRS84)
+     assert df["a"].ext.storage().to_list() == [point]
+ 
+ 
+@@ -108,21 +125,62 @@ def test_write_geoparquet(plmonkeypatch: PlMonkeyPatch) -> None:
+         "columns": {
+             "a": a,
+             "b": {**wkb, "crs": None},
+-            "c": {"encoding": "multipoint", "geometry_types": ["MultiPoint Z"]},
++            "c": {
++                "encoding": "multipoint",
++                "geometry_types": ["MultiPoint Z"],
++                "crs": None,
++            },
+         },
+     }
+ 
+     buf = io.BytesIO()
+     df.write_parquet(buf)
+     plmonkeypatch.setenv("POLARS_GEOPARQUET_READ", "1")
+     out = pl.read_parquet(buf.getvalue())
+-    for name in df.columns:
++    # A `null` CRS reads back as no CRS at all, both meaning it is unknown.
++    for name in "ac":
+         assert _ext(out.schema[name]) == _ext(df.schema[name])
++    assert _ext(out.schema["b"]) == ("geoarrow.wkb", pl.Binary, None)
+     assert out.select(pl.all().ext.storage()).rows() == [
+         (POINT_WKB, POINT_WKB, [{"x": 1.0, "y": 2.0, "z": 3.0}])
+     ]
+ 
+ 
++@pytest.mark.parametrize(
++    ("metadata", "written", "read"),
++    [
++        (None, {"crs": None}, None),
++        ({"crs": None}, {"crs": None}, None),
++        (CRS84, {}, CRS84),
++        ({**CRS84, "crs_type": "authority_code"}, {}, CRS84),
++        ({"crs": {**PROJJSON, "id": {"authority": "OGC", "code": "CRS84"}}}, {}, CRS84),
++        ({"crs": PROJJSON}, {"crs": PROJJSON}, {"crs": PROJJSON}),
++    ],
++)
++def test_geoparquet_crs_round_trip(
++    plmonkeypatch: PlMonkeyPatch,
++    metadata: dict[str, Any] | None,
++    written: dict[str, Any],
++    read: dict[str, Any] | None,
++) -> None:
++    md = None if metadata is None else json.dumps(metadata)
++    df = pl.DataFrame(
++        {"a": [POINT_WKB]}, schema={"a": pl.Extension("geoarrow.wkb", pl.Binary, md)}
++    )
++    plmonkeypatch.setenv("POLARS_GEOPARQUET_WRITE", "1.1")
++    assert _geo_metadata(df)["columns"]["a"] == {
++        "encoding": "WKB",
++        "geometry_types": [],
++        **written,
 +    }
-+}
 +
- pub fn bin_ranks(
-     s: &Series,
-     spec: &FractionSpec,
-     labels: Option<&[PlSmallStr]>,
-     include_intervals: bool,
- ) -> PolarsResult<Series> {
--    let non_null_len = s.len() - s.null_count();
--    let cum_bin_sizes = match spec {
--        FractionSpec::Explicit(fractions) => cum_bin_sizes_fractions(non_
++    buf = io.BytesIO()
++    df.write_parquet(buf)
++    plmonkeypatch.setenv("POLARS_GEOPARQUET_READ", "1")
++    out = pl.read_parquet(buf.getvalue())
++    assert _ext(out.schema["a"]) == ("geoarrow.wkb", pl.Binary, read)
++
++
+ @pytest.mark.parametrize(
+     ("version", "dtype", 
 ```
 
 ---
 
-### Incident Patch 3: `d9e5ab1a` (2026-11-11)
-**Commit Message**: fix: Make `Expr.entropy` corner cases consistent across engines (#30699)
+### Incident Patch 2: `9c990c71` (2026-11-12)
+**Commit Message**: fix(python): Sync `prepare_cloud_plan` return type (#30733)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-expr/src/dispatch/misc.rs` (modified, +10/-0)
+**File**: `py-polars/src/polars/_plr.pyi` (modified, +1/-1)
 ```diff
-@@ -877,6 +877,16 @@ pub(super) fn log(columns: &[Column]) -> PolarsResult<Column> {
-     Column::try_apply_broadcasting_binary_elementwise(&columns[0], &columns[1], Series::log)
- }
+@@ -2833,7 +2833,7 @@ def _unregister_extension_type(name: str) -> None: ...
+ # cloud_client
+ def prepare_cloud_plan(
+     lf: PyLazyFrame,
+-) -> bytes: ...
++) -> tuple[bytes, int]: ...
  
-+#[cfg(feature = "log")]
-+pub(super) fn x_log_y(columns: &[Column], base: f64) -> PolarsResult<Column> {
-+    use polars_ops::series::LogSeries;
-+
-+    assert_eq!(columns.len(), 2);
-+    Column::try_apply_broadcasting_binary_elementwise(&columns[0], &columns[1], |x, y| {
-+        x.x_log_y(y, base)
-+    })
-+}
-+
- #[cfg(feature = "log")]
- pub(super) fn log1p(s: &Column) -> PolarsResult<Column> {
-     use polars_ops::series::LogSeries;
+ # cloud_server
+ def _execute_ir_plan_with_gpu(ir_plan_ser: Sequence[int]) -> PyDataFrame: ...
 ```
 
-**File**: `crates/polars-expr/src/dispatch/mod.rs` (modified, +2/-0)
+**File**: `py-polars/src/polars/_utils/cloud.py` (modified, +6/-1)
 ```diff
-@@ -386,6 +386,8 @@ pub fn function_expr_to_udf(
-         #[cfg(feature = "log")]
-         F::Entropy { base, normalize } => map!(misc::entropy, base, normalize),
-         #[cfg(feature = "log")]
-+        F::XLogY { base } => map_as_slice!(misc::x_log_y, base),
-+        #[cfg(feature = "log")]
-         F::Log => map_as_slice!(misc::log),
-         #[cfg(feature = "log")]
-         F::Log1p => map!(misc::log1p),
+@@ -13,7 +13,7 @@ def prepare_cloud_plan(
+     lf: LazyFrame,
+     *,
+     optimizations: QueryOptFlags = DEFAULT_QUERY_OPT_FLAGS,
+-) -> bytes:
++) -> tuple[bytes, int]:
+     """
+     Prepare the given LazyFrame for execution on Polars Cloud.
+ 
+@@ -24,6 +24,11 @@ def prepare_cloud_plan(
+     optimizations
+         Optimizations to enable or disable in the query optimizer.
+ 
++    Returns
++    -------
++    tuple[bytes, int]
++        The serialized plan, and the bits of the optimization flags it carries.
++
+     Raises
+     ------
+     InvalidOperationError
 ```
 
-**File**: `crates/polars-ops/src/series/ops/log.rs` (modified, +70/-23)
+---
+
+### Incident Patch 3: `655f0052` (2026-11-12)
+**Commit Message**: fix(python): Support numpy 0.28 and builds without the cloud feature (#30722)
+
+Co-authored-by: Damian Daniel <[REDACTED_EMAIL]>
+
+**File**: `crates/polars-python/src/functions/io.rs` (modified, +8/-4)
 ```diff
-@@ -1,5 +1,4 @@
--#[cfg(feature = "dtype-f16")]
--use num_traits::real::Real;
-+use num_traits::{Float, NumCast, One, ToPrimitive, Zero};
- use polars_core::prelude::arity::broadcast_binary_elementwise_values;
+@@ -37,7 +37,6 @@ pub fn read_parquet_metadata(
+ ) -> PyResult<Py<PyDict>> {
+     use std::io::Cursor;
+ 
+-    use polars_error::feature_gated;
+     use polars_parquet::read::read_metadata;
+     use polars_parquet::read::schema::read_custom_key_value_metadata;
+ 
+@@ -54,7 +53,12 @@ pub fn read_parquet_metadata(
+             )?;
+ 
+             if p.has_scheme() {
+-                feature_gated!("cloud", {
++                #[cfg(not(feature = "cloud"))]
++                return Err(pyo3::exceptions::PyNotImplementedError::new_err(
++                    "cloud support is not enabled",
++                ));
++                #[cfg(feature = "cloud")]
++                {
+                     use polars::prelude::ParquetObjectStore;
+                     use polars_error::PolarsResult;
+ 
+@@ -67,8 +71,8 @@ pub fn read_parquet_metadata(
+                             PolarsResult::Ok((**result).clone())
+                         })
+                     })
+-                })
+-                .map_err(PyPolarsErr::from)?
++                    .map_err(PyPolarsErr::from)?
++                }
+             } else {
+                 let file =
+                     polars_utils::io::open_file(p.as_std_path()).map_err(PyPolarsErr::from)?;
+```
+
+**File**: `crates/polars-python/src/interop/numpy/utils.rs` (modified, +2/-2)
+```diff
+@@ -3,7 +3,7 @@ use std::ffi::{c_int, c_void};
+ 
+ use ndarray::{Dim, Dimension};
+ use numpy::npyffi::PyArrayObject;
+-use numpy::{Element, PY_ARRAY_API, PyArrayDescr, PyArrayDescrMethods, ToNpyDims, npyffi};
++use numpy::{Element, PY_ARRAY_API, PyArrayDescr, PyArrayDescrMethods, ToNpyDims};
  use polars_core::prelude::*;
- use polars_core::{with_match_physical_float_polars_type, with_match_physical_integer_polars_type};
-@@ -188,36 +187,84 @@ pub trait LogSeries: SeriesSealed {
-     /// where `pk` are discrete probabilities.
-     fn entropy(&self, base: f64, normalize: bool) -> PolarsResult<f64> {
-         let s = self.as_series();
--
--        // If there is only one value in the series, return 0.0 to prevent the function from returning -0.0.
--        if s.len() == 1 {
--            return Ok(0.0);
--        }
-         match s.dtype() {
-             dt if dt.is_float() => {
--                let pk = s;
--
--                let pk = if normalize {
--                    let sum = pk.sum_reduce().unwrap().into_series(PlSmallStr::EMPTY);
--
--                    if sum.get(0).unwrap().extract::<f64>().unwrap() != 1.0 {
--                        (pk / &sum)?
--                    } else {
--                        pk.clone()
--                    }
--                } else {
--                    pk.clone()
--                };
--
--                let base = &Series::new(PlSmallStr::EMPTY, [base]);
--                (&pk * &pk.log(base)?)?.sum::<f64>().map(|v| -v)
-+                with_match_physical_float_polars_type!(s.dtype(), |$T| {
-+                    let ca: &ChunkedArray<$T> = s.as_ref().as_ref();
-+                    Ok(entropy_float(ca, base, normalize))
-+                })
-             },
-             dt if dt.is_integer() || dt.is_decimal() || dt.is_bool() => s
-                 .cast(&DataType::Float64)
-                 .map(|s| s.entropy(base, normalize))?,
-             dt => polars_bail!(opq = entropy, dt),
-         }
-     }
-+
-+    /// Compute `x * log(y, base)` elementwise, which is 0 where `x` is 0 unless `y` is NaN.
-+    ///
-+    /// `x` and `y` must have the same dtype; the planner casts them to their supertype.
-+    fn x_log_y(&self, y: &Series, base: f64) -> PolarsResult<Series> {
-+        let x = self.as_series();
-+        polars_ensure!(
-+            x.dtype() == y.dtype(),
-+            InvalidOperation: "`x_log_y` expects inputs of the same dtype, got `{}` and `{}`",
-+            x.dtype(), y.dtype()
-+        );
-+        match x.dtype() {
-+            dt if dt.is_float() => with_match_physical_float_polars_type!(dt, |$T| {
-+                let x_ca: &ChunkedArray<$T> = x.as_ref().as_ref();
-+                let y_ca: &ChunkedArray<$T> = y.as_ref().as_ref();
-+                let base = NumCast::from(base).unwrap();
-+                let out: ChunkedArray<$T> =
-+                    broadcast_binary_elementwise_values(x_ca, y_ca, |x, y| x_log_y(x, y, base));
-+                Ok(out.into_series())
-+            }),
-+            dt if dt.is_integer() || dt.is_decimal() || dt.is_bool() => {
-+                let f64 = DataType::Float64;
-+                x.cast(&f64)?.x_log_y(&y.cast(&f64)?, base)
-+            },
-+            dt => polars_bail!(opq = x_log_y, dt),
-+        }
-+    }
-+}
-+
-+fn x_log_y<F: Float>(x: F, y: F, base: F) -> F {
-+    if x == F::zero() && !y.is_nan() {
-+        F::zero()
-+    } else {
-+        x * y.log(base)
-+    }
-+}
-+
-+/// Entropy with `0 * log(0) = 0` and NaN for negative weights.
-+fn entropy_float<T>(ca: &ChunkedArray<T>, base: f64, normalize: bool) -> f64
-+where
-+    T: PolarsFloatType,
-+    T::Native: Float,
-+    ChunkedArray<T>: ChunkAgg<T::Native>,
-+{
-+    let zero = T::Native::zero();
-+    let total = if normalize {
-+        ca.sum().unwrap_or(zero)
-+    } else {
-+        T::Native::one()
-+    };
-+    // Also covers empty, all-null and all-zero input.
-+    if total == zero {
-+        return f64::NAN;
-+    }
-+    let base: T::Native = NumCast::from(base).unwrap();
-+    let plogp = ca.apply_values(|x| {
-+        // Checked before dividing, so that a negative weight can't underflow to `-0.0`.
-+        if x < zero {
-+            T::Native::nan()
-+        } else {
-+            let p = x / total;
-+            x_log_y(p, p, base)
-+        }
-+    });
-+    -plogp.sum().map_or(0.0, |t| t.to_f64().unwrap())
- }
- 
- impl LogSeries for Series {}
-```
-
-**File**: `crates/polars-plan/dsl-schema-hashes.json` (modified, +1/-1)
-```diff
-@@ -80,7 +80,7 @@
-   "FillNullStrategy": "459a9a9702415f9ca9e5218bb573609a60291e73162c38fbc046c97feb1b7500",
-   "FractionSpec": "4b742bb2b41bf40f12dc39cb067bc21c8f643aa2996901fd6e751070e0821106",
-   "Fractions": "38d7713cddff75a859aff1bdaf88613671fa714fd68d74b58e4544e9a140c74d",
--  "FunctionExpr": "ab50f8859854e74ab0c8df57a05794df2974c2c387851d6315df70d803712460",
-+  "FunctionExpr": "1221b5f22307a679ed1e360e38c80e45737b27c0abf47afb5ccc351d03ec11fb",
-   "FunctionFlags": "ac68b661d980cee7c3c7f499f4d8fa824b2f8617f7093613b00ec199a0f7c21f",
-   "FunctionOptions": "0784524479a30a7d91b890b03feac9eca6c46d04f0a7c3f4a9a2d827c3e34b5e",
-   "GroupbyOptions": "0cda61fc19eb9866157ae4afeed3dc018294aaea5f02692b085885de771bfcdb",
-```
-
-**File**: `crates/polars-plan/src/dsl/function_expr/mod.rs` (modified, +8/-0)
-```diff
-@@ -311,6 +311,10 @@ pub enum FunctionExpr {
-         normalize: bool,
-     },
-     #[cfg(feature = "log")]
-+    XLogY {
-+        base: f64,
-+    },
-+    #[cfg(feature = "log")]
-     Log,
-     #[cfg(feature = "log")]
-     Log1p,
-@@ -705,6 +709,8 @@ impl Hash for FunctionExpr {
-                 normalize.hash(state);
-             },
-             #[cfg(feature = "log")]
-+            XLogY { base } => base.to_bits().hash(state),
-+            #[cfg(feature = "log")]
-             Log => {},
-             #[cfg(feature = "log")]
-             Log1p => {},
-@@ -980,6 +986,8 @@ impl Display for FunctionExpr {
-             #[cfg(feature = "log")]
-             Entropy { .. } => "entropy",
-             #[cfg(feature = "log")]
-+            XLogY { .. } => "x_log_y",
-+            #[cfg(feature = "log")]
-             Log => "log",
-             #[cfg(feature = "log")]
-             Log1p => "log1p",
-```
-
-**File**: `crates/polars-plan/src/dsl/mod.rs` (modified, +6/-0)
-```diff
-@@ -1633,6 +1633,12 @@ impl Expr {
-         self.map_binary(FunctionExpr::Log, base)
-     }
- 
-+    #[cfg(feature = "log")]
-+    /// Compute `self * log(y, base)`, which is 0 where `self` is 0 unless `y` is NaN.
-+    pub fn x_log_y(self, y: Expr, base: f64) -> Self {
-+        self.map_binary(FunctionExpr::XLogY { base }, y)
-+    }
-+
-     #[cfg(feature = "log")]
-     /// Compute the natural logarithm of all elements plus one in the input array.
-     pub fn log1p(self) -> Self {
-```
-
-**File**: `crates/polars-plan/src/plans/aexpr/determinism.rs` (modified, +1/-1)
-```diff
-@@ -208,7 +208,7 @@ fn is_inherently_nondeterministic_fn(f: &IRFunctionExpr) -> bool {
-         #[cfg(feature = "log")]
-         F::Entropy { .. } => false,
-         #[cfg(feature = "log")]
--        F::Log | F::Log1p | F::Exp | F::Erf | F::Erfc => false,
-+        F::Log | F::Log1p | F::Exp | F::Erf | F::Erfc | F::XLogY { .. } => false,
-         F::Unique(_) => false,
-         #[cfg(feature = "round_series")]
-         F::Round { .. } | F::RoundSF { .. } | F::Truncate { .. } | F::Floor | F::Ceil => false,
-```
-
-**File**: `crates/polars-plan/src/plans/aexpr/function_expr/mod.rs` (modified, +10/-0)
-```diff
-@@ -290,6 +290,10 @@ pub enum IRFunctionExpr {
-         normalize: bool,
-     },
-     #[cfg(feature = "log")]
-+    XLogY {
-+        base: f64,
-+    },
-+    #[cfg(feature = "log")]
-     Log,
-     #[cfg(feature = "log")]
-     Log1p,
-@@ -696,6 +700,8 @@ impl Hash for IRFunctionExpr {
-                 normalize.hash(state);
-             },
-             #[cfg(feature = "log")]
-+            XLogY { base } => base.to_bits().hash(state),
-+            #[cfg(feature = "log")]
-             Log => {},
-             #[cfg(feature = "log")]
-             Log1p => {},
-@@ -1002,6 +1008,8 @@ impl IRFunctionExpr {
-             #[cfg(feature = "log")]
-             Entropy { .. } => "entropy",
-             #[cfg(feature = "log")]
-+            XLogY { .. } => "x_log_y",
-+            #[cfg(feature = "log")]
-             Log => "log",
-             #[cfg(feature = "log")]
-             Log1p => "log1p",
-@@ -1405,6 +1413,8 @@ impl IRFunctionExpr {
-             #[cfg(feature = "log")]
-             F::Log | F::Log1p | F::Exp | F::Erf | F::Erfc => FunctionOptions::elementwise(),
-             #[cfg(feature = "log")]
-+            F::XLogY { .. } => FunctionOptions::elementwise().with_supertyping(Default::default()),
-+            #[cfg(feature = "log")]
-             F::Entropy { .. } => {
-                 FunctionOptions::aggregation().flag(FunctionFlags::NON_ORDER_OBSERVING)
-             },
+ use pyo3::intern;
+ use pyo3::prelude::*;
+@@ -30,7 +30,7 @@ where
+     // See: https://numpy.org/doc/stable/reference/c-api/array.html
+     let array = PY_ARRAY_API.PyArray_NewFromDescr(
+         py,
+-        npyffi::get_type_object(py, npyffi::NpyTypes::PyArray_Type),
++        <numpy::PyArrayDyn<u8> as pyo3::PyTypeInfo>::type_object_raw(py),
+         dtype.into_dtype_ptr(),
+         shape.ndim_cint(),
+         shape.as_dims_ptr(),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30711** (2026-11-10): fix: Do not set `schema.name-mapping.default` on Iceberg commits (@kdn36)
-- **PR #30704** (2026-11-10): perf: Vectorize Decimal mean and sum reductions (@ritchie46)
-- **PR #30702** (2026-11-10): fix: Fix column order of unnest in projection pushdown (@nameexhaustion)
-- **PR #30701** (2026-11-10): fix: Slice pushdown with list/struct eval (@orlp)
-- **PR #30699** (2026-11-11): fix: Make `Expr.entropy` corner cases consistent across engines (@dancsi)
-- **PR #30698** (closed): fix: Don't push row slices into list.eval / struct.with_fields evaluations (@FazeelUsmani)
+- **PR #30736** (2026-11-12): feat: Geoparquet bbox metadata (@Aidavdw)
+- **PR #30735** (2026-11-12): fix: GeoParquet default CRS, early errors, and user geo key pref (@Aidavdw)
+- **PR #30733** (2026-11-12): fix(python): Sync `prepare_cloud_plan` return type (@carnarez)
+- **PR #30732** (2026-11-12): chore: Polars Nanook rebranding (@carnarez)
+- **PR #30731** (closed): fix: Fix `when().then(1).otherwise(-1)` returning null with unsigned columns (@ColonelToad)
+- **PR #30730** (closed): feat(python): add strict parameter to pl.datetime for silent failure (@LeonxLJX)
 
 ---
 
@@ -2421,37 +2220,30 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid segfault on environment changes after a cloud scan (#30665)
+## X. GeoParquet default CRS, early errors, and user geo key pref (#30735)
 
 **RULE**:
-When implementing operations in `crates/polars-config/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-io/src/parquet/write/key_value_metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6be8f4dd`: Avoid segfault on environment changes after a cloud scan (#30665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fad42ed7`: GeoParquet default CRS, early errors, and user geo key pref (#30735). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-config/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-io/src/parquet/write/key_value_metadata.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const LOG_CONCURRENCY: &str = "POLARS_LOG_CONCURRENCY";
-const DEFAULT_LOG_CONCURRENCY: bool = false;
 
-    LOG_CONCURRENCY,
-    log_concurrency: AtomicBool,
-            log_concurrency: AtomicBool::new(DEFAULT_LOG_CONCURRENCY),
-            LOG_CONCURRENCY => self.log_concurrency.store(
-                val.and_then(|x| parse::parse_bool(var, x))
-                    .unwrap_or(DEFAULT_LOG_CONCURRENCY),
-                Ordering::Relaxed,
-            ),
-    /// Whether to log the cloud and scan pipeline concurrency state.
-    #[inline(always)]
-    pub fn log_concurrency(&self) -> bool {
-        self.log_concurrency.load(Ordering::Relaxed)
+    /// Whether the metadata may set `key`; dynamic metadata is only known when the file is finished.
+    pub fn may_contain(&self, key: &str) -> bool {
+        match self {
+            Self::Static(kv) => kv.iter().any(|kv| kv.key == key),
+            Self::DynamicRust(_) => true,
+            #[cfg(feature = "python")]
+            Self::DynamicPython(_) => true,
+        }
     }
-
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2461,4 +2253,4 @@ const DEFAULT_LOG_CONCURRENCY: bool = false;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6be8f4dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fad42ed7` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:32:06.815Z",
+  "last_updated": "2026-11-13T03:48:36.527Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T01:31:37.311Z",
@@ -108,7 +108,7 @@
       "staged_for_review": 1
     },
     "pola-rs-polars-learnings.md": {
-      "processed_at": "2026-11-11T10:00:26.511Z",
+      "processed_at": "2026-11-13T03:48:36.334Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1496,9 +1496,19 @@
       "processed_at": "2026-11-13T03:32:06.697Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md": {
+      "processed_at": "2026-11-13T03:48:36.400Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "0xcub3-wblock-learnings.md": {
+      "processed_at": "2026-11-13T03:48:36.419Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 438,
+  "total_dossiers_evaluated": 441,
   "total_canonical_promoted": 55,
-  "total_staged_for_review": 381
+  "total_staged_for_review": 384
 }

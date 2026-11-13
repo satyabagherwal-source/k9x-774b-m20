@@ -9324,3 +9324,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-13T03:31:21.354Z |
 | `learn-dom-d-b0538309` | `project://astral-sh-uv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md` | 2026-11-13T03:31:39.884Z |
 | `learn-dom-d-27f43f41` | `project://hf-lodestones-moss-image-sft-8-steps-dmd` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md` | 2026-11-13T03:32:06.697Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-13T03:48:03.138Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `548e19a3` | Multi-dimensional audit evidence | 2026-11-13T03:48:17.481Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `6cd9c5b8` | Multi-dimensional audit evidence | 2026-11-13T03:48:27.003Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `d667ec05` | Multi-dimensional audit evidence | 2026-11-13T03:48:27.708Z |

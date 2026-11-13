@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-CQZK",
-    "timestamp": "2026-11-09T17:57:07.616Z",
-    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-    "contentHash": "38f4f10ec0d73b9ac5b09fe13b97bde04c5fecab4468c27b78ad29d1981eb36f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-UZKS",
-    "timestamp": "2026-11-09T18:11:18.556Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "ccd13871933ab6ba2dfc8aaaa1f76963834423c15c00f880d24640441dd168d7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-V22I",
-    "timestamp": "2026-11-09T18:11:21.786Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "153d986f0d49404ac745d2e7ec8314061512b77018bde1d296932634b04aa76d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-VDVR",
-    "timestamp": "2026-11-09T18:11:37.095Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "748f7dc9d2aff27981a15f57a9b0619a5e6edbd2757c0b266df525db9d476f4a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-VEOU",
     "timestamp": "2026-11-09T18:11:38.142Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7432,66 @@
     "contentHash": "79e075ec3f54f66f117b872ec257ec6c96c3c01ced088d6ae98652564946f088",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-S8N2",
+    "timestamp": "2026-11-13T03:48:03.134Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+    "contentHash": "3b9e2483700c2cec118487e9c149537e33d3941ec0d9a057a83cf7ea97b9b1aa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-SJPG",
+    "timestamp": "2026-11-13T03:48:17.476Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "ca1e324c6534d227e1fa5021aa8d15ade23505296908a2f6593f31d3176d583b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-SR1Z",
+    "timestamp": "2026-11-13T03:48:26.999Z",
+    "repository": "0xCUB3/wBlock",
+    "learningId": "learn-github-0xcub3-wblock",
+    "contentHash": "e9d63bd438a29df7c1b2db926ad1e5a26403045d11736a77f0182acca3374957",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-SRLK",
+    "timestamp": "2026-11-13T03:48:27.704Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "cb4b786957dd2966cf56883abee56463569fa541c7f947c9f4bceba784bc3638",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source**: github ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
-> **Source Version**: `f593637b`  
+> **Source Version**: `6cd9c5b8`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T20:45:38.559Z  
+> **Timestamp**: 2026-11-13T03:48:12.792Z  
 > **Learning ID**: `learn-github-0xcub3-wblock`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T20:45:38.393Z  
+> **Harvest Timestamp**: 2026-11-13T03:48:12.786Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3210 stars
+- **Stars / Engagement**: 3230 stars
 
 ---
 
@@ -153,19 +153,19 @@ public enum WBEngine {
     public final class Engine {
         private let handle: OpaquePointer
 
-        public init(data: Data) throws {
-            let handle = data.withUnsafeBytes { raw in
-                wbe_engine_open(raw.bindMemory(to: UInt8.self).baseAddress, raw.count)
-            }
-            guard let handle else { throw EngineError.last() }
+        /// Maps the engine that starts `offset` bytes into the file at `path`.
+        /// Replace the file by rename; never write it in place while open.
+        public init(path: String, offset: Int) throws {
+            guard let handle = wbe_engine_open(path, offset) else { throw EngineError.last() }
             self.handle = handle
         }
 
         deinit { wbe_engine_free(handle) }
 
         /// `{"hide":[..],"procedural":[..],"scriptlets":[[name, args..]],"generichide":bool}`.
-        public func lookup(url: String) throws -> Data {
-            guard let json = wbe_engine_lookup(handle, url) else { throw EngineError.last() }
+        /// `topUrl` is the page embedding a subframe, nil for a top frame.
+        public func lookup(url: String, topUrl: String? = nil) throws -> Data {
+            guard let json = wbe_engine_lookup(handle, url, topUrl) else { throw EngineError.last() }
             defer { wbe_string_free(json) }
             return Data(bytes: json, count: strlen(json))
         }
@@ -255,9 +255,11 @@ void wbe_compile_free(WbeCompileResult *result);
 bool wbe_engine_build(const char *runtime_text, uint8_t **out, size_t *out_len);
 void wbe_bytes_free(uint8_t *bytes, size_t len);
 
-WbeEngine *wbe_engine_open(const uint8_t *bytes, size_t len);
-/* PagePayload JSON: {"hide":[..],"procedural":[..],"scriptlets":[[name,args..],..],"generichide":bool}. */
-char *wbe_engine_lookup(const WbeEngine *engine, const char *url);
+/* Maps the engine at offset in the file at path; replace the file by rename, never write it in place. */
+WbeEngine *wbe_engine_open(const char *path, size_t offset);
+/* PagePayload JSON: {"hide":[..],"procedural":[..],"scriptlets":[[name,args..],..],"generichide":bool}.
+   top_url is NULL for a top frame, else the page embedding the frame (for `name>>` scriptlets). */
+char *wbe_engine_lookup(const WbeEngine *engine, const char *url, const char *top_url);
 void wbe_engine_free(WbeEngine *engine);
 
 /* Registrable domain (eTLD+1) of host, or NULL for a public suffix; free with wbe_string_free. */
@@ -295,15 +297,15 @@ use crate::ast::{
     DomainList, DomainMatcher, NetworkAction, NetworkRule, Party, ResourceTypes, Rule,
 };
 use crate::compile::{
-    compile_blocker, compile_rules, parallel_indices, parse_list, CompileOptions, CompileOutput,
-    NetworkContext, Others, RuleSet, Stats,
+    compile_blocker, parallel_indices, parse_list, CompileOptions, CompileOutput,
+    surviving, NetworkContext, Others, Stats,
 };
-use crate::parse::cosmetic::with_domains;
+use crate::compile::prune::Seen;
+use crate::parse::{cosmetic::with_domains, restate};
 use crate::webkit::{SafariVersion, WebkitJson, WkAction, WkRule, WkTrigger};
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use rustc_hash::{FxHashMap, FxHashSet};
-use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::ops::Range;
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
@@ -353,17 +355,19 @@ pub struct TargetSpec {
     pub lists: Vec<TargetList>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct CosmeticScope {
     #[serde(flatten)]
     pub sites: SiteScope,
     /// False drops hides that name no site.
-    #[serde(default = "yes")]
     pub generic: bool,
 }
 
-fn yes() -> bool {
-    true
+impl Default for CosmeticScope {
+    fn default() -> Self {
+        CosmeticScope { sites: SiteScope::default(), generic: true }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -374,11 +378,8 @@ pub struct PlanRequest {
     pub targets: Vec<TargetSpec>,
     #[serde(default)]
     pub cosmetics: CosmeticScope,
-    /// Keep each list's patterns in the cache for later plans, so a plan
-    /// fingerprints its blockers without parsing their rules again. It costs
-    /// memory for as long as the cache holds the list, so a phone leaves it off.
     #[serde(default)]
-    pub retain: bool,
+    pub limits: Limits,
 }
 
 /// Extra text one blocker compiles after its lists (zapper rules, wBlock's
@@ -388,6 +389,10 @@ pub struct Extra {
     pub text: String,
     #[serde(default)]
     pub trusted: bool,
+    /// Every blocker of the plan is given this text. Its blocks that
+    /// exceptions can reach then compile in the wide blocker alone (`Wide`).
+    #[serde(default)]
+    pub every_blocker: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -415,13 +420,14 @@ struct Parsed {
     identity: u64,
     /// Exceptions and `$badfilter` stay in every shard and drive #681.
     shared: bool,
-    /// An exception rule, which `shared` also covers with `$badfilter`.
-    exception: bool,
     /// A network rule, so the network pass can skip the other kinds unparsed.
     network: bool,
+    /// A network rule a blocker's `NetworkContext` holds, so its scan parses it.
+    in_context: bool,
     /// `is_plain_block`, which the segment of #925 compiles unscoped.
     plain: bool,
-    badfilter: bool,
+    /// What decides the rule's blocker.
+    route: Route,
     /// Affinity types of the enclosing `!#safari_cb_affinity` block.
     affinity: Option<u8>,
 }
@@ -429,33 +435,15 @@ struct Parsed {
 struct ParsedList {
     /// The records in line order, in the chunks they were parsed in.
     chunks: Vec<Vec<Parsed>>,
-    /// The patterns of the records, per chunk, when the list keeps them.
-    patterns: Option<Vec<PatternChunk>>,
     has_affinity: bool,
     /// A `!#` directive anywhere keeps the list out of #681 dedupe, as before.
     has_directive: bool,
     stats: Stats,
 }
 
-/// The patterns of one chunk's records: `text` holds them back to back, and
-/// `spans` gives each record's (start, length) in it, length 0 for none.
-#[derive(Default)]
-struct PatternChunk {
-    text: String,
-    spans: Vec<(u32, u32)>,
-}
-
 impl ParsedList {
     fn records(&self) -> impl Iterator<Item = &Parsed> + '_ {
         self.chunks.iter().flatten()
-    }
-
-    /// Record `i` of `chunk`'s pattern, when the list keeps patterns: `Some(None)`
-    /// for a record with none.
-    fn stored_pattern(&self, chunk: usize, i: usize) -> Option<Option<&str>> {
-        let kept = self.patterns.as_ref()?.get(chunk)?;
-        let (start, len) = kept.spans[i];
-        Some((len > 0).then(|| &kept.text[start as usize..(start + len) as usize]))
     }
 
     fn count(&self) -> usize {
@@ -473,18 +461,16 @@ struct ParseKey {
     trusted: bool,
     scope: u64,
     version: u32,
-    retain: bool,
 }
 
 impl ParseKey {
-    fn of(list: &ListSpec, text: u64, retain: bool) -> ParseKey {
+    fn of(list: &ListSpec, text: u64) -> ParseKey {
         ParseKey {
             text,
             len: list.text.len(),
             trusted: list.trusted,
             scope: hash(&(&list.scope.exclude, &list.scope.only)),
             version: crate::OUTPUT_VERSION,
-            retain,
         }
     }
 }
@@ -507,7 +493,7 @@ impl ParseCache {
         if let Some((_, hit)) = self.entries().iter().find(|(k, _)| *k == key) {
             return hit.clone();
         }
-        let parsed = Arc::new(parse(list, key.retain));
+        let parsed = Arc::new(parse(list));
         let mut entries = self.entries();
         if !entries.iter().any(|(k, _)| *k == key) {
             entries.push((key, parsed.clone()));
@@ -583,14 +569,34 @@ pub struct Plan {
     parsed: Vec<Arc<ParsedList>>,
     targets: Vec<TargetSpec>,
     cosmetics: CosmeticScope,
+    limits: Limits,
     /// List index -> rule identities a blocker other than this one owns (#681).
     duplicates: Vec<Vec<FxHashSet<u64>>>,
     /// Hash of each list's text, for `fingerprint`.
     text_hashes: Vec<u64>,
+    /// Where the blocks exceptions can reach go, when they go to one blocker.
+    wide: Option<Wide>,
 }
 
-impl Plan {
-    pub fn new(request: PlanRequest)
+/// What one blocker may hold. The wide blocker gains rules from every list,
+/// so a plan has one only while its estimated output stays within these.
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(default)]
+pub struct Limits {
+    /// Safari's rule limit per content blocker. 0 for a blocker built outside
+    /// the shared plan: every blocker then keeps its own lists' blocks.
+    pub rules: usize,
+    /// The app's budget for a blocker's JSON.
+    pub bytes: usize,
+}
+
+impl Default for Limits {
+    fn default() -> Self {
+        Limits { rules: 150_000, bytes: 19_000_000 }
+    }
+}
+
+/// Where a plan's blocks 
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/ast.rs`
@@ -657,6 +663,22 @@ pub enum DomainMatcher {
     Entity(String),
     /// `/regex/` (uBO extension), source without slashes.
     Regex(String),
+    /// `name>>` (uBO 1.64): a frame with the hostname or entity as an
+    /// ancestor. Only scriptlets accept it, as only uBO's scriptlet lookup
+    /// reads ancestors.
+    Ancestor(Box<DomainMatcher>),
+}
+
+impl DomainMatcher {
+    /// The entry as filter text, which is also its runtime host key.
+    pub fn text(&self) -> String {
+        match self {
+            Self::Hostname(h) => h.clone(),
+            Self::Entity(e) => format!("{e}.*"),
+            Self::Regex(r) => format!("/{r}/"),
+            Self::Ancestor(m) => format!("{}>>", m.text()),
+        }
+    }
 }
 
 /// Include and exclude lists. Empty `include` means "everywhere".
@@ -671,8 +693,10 @@ impl DomainList {
         self.include.is_empty() && self.exclude.is_empty()
     }
 
-    /// Drops excludes that no include can match, so `a.com,~b.com` is just
-    /// `a.com`, as uBO matches it. Only hostname lists are judged.
+    /// Drops excludes that share no host with any include, so `a.com,~b.com`
+    /// is just `a.com`, as uBO matches it. An exclude that is a parent of an
+    /// include (`b.a.com,~a.com`) still cancels it. Only hostname lists are
+    /// judged.
     pub fn without_unreachable_excludes(mut self) -> Self {
         let hosts: Option<Vec<&String>> = self
             .include
@@ -685,11 +709,8 @@ impl DomainList {
         let Some(hosts) = hosts.filter(|h| !h.is_empty()) else {
             return self;
         };
-        let reachable = |x: &str| {
-            hosts.iter().any(|h| {
-                x == h.as_str() || x.strip_suffix(h.as_str()).is_some_and(|p| p.ends_with('.'))
-            })
-        };
+        let within = |a: &str, b: &str| a == b || a.strip_suffix(b).is_some_and(|p| p.ends_with('.'));
+        let reachable = |x: &str| hosts.iter().any(|h| within(x, h) || within(h, x));
         let kept = self
             .exclude
             .iter()
@@ -861,24 +882,7 @@ pub struct NetworkRule {
 #[serde(tag = "type", content = "value", rename_all = "snake_case")]
 pub enum CosmeticBody {
     /// A selector that is plain CSS (may use `:has()`, `:is()`, `:not()`).
-    /// Whether a given Safari version accepts it is the compiler's call.
-    Hide(String),
-    /// Uses uBO procedural operators (`:has-text`, `:upward`, `:xpath`,
-    /// `:matches-css`, `:min-text-length`, `:watch-attr`, `:others`,
-    /// `:matches-attr`, `:matches-media`, `:matches-prop`, `:-abp-*`), or an
-    /// action (`:remove()`, `:style()`, `:remove-attr()`, `:remove-class()`).
-    /// Kept as the normalized uBO selector text.
-    Procedural(String),
-    /// A stylesheet, including conditional at-rules, injected by the extension.
-    Style(String),
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CosmeticRule {
-    pub source: SourceRef,
-    pub raw: String,
-    pub exception: bool,
-    pub domains: 
+    /// Whether a given Safari version accepts it is the compiler's ca
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/bin/wbe.rs`
@@ -886,12 +890,16 @@ pub struct CosmeticRule {
 //! `wbe compile [--safari 18.0] [--runtime-out FILE] [--trusted] LIST...`
 //! writes Safari JSON to stdout and stats JSON to stderr. `--trusted` marks
 //! the list after it as trusted (may use `trusted-*` scriptlets).
+//! `wbe plan REQUEST.json OUTDIR` compiles every blocker of an apply request
+//! (the JSON of `apply::PlanRequest`) to `OUTDIR/blocker-N.json` and prints
+//! each one's rule count and compile time.
 //! `wbe engine-build --out FILE RUNTIME.txt` serializes a runtime engine.
 //! `wbe lookup [--bench N] ENGINE URL...`
 //! prints PagePayload JSON per URL; with `--bench` it prints p50/p99 JSON for
 //! N lookups over the URLs in the file.
 
 use std::time::Instant;
+use wbe::apply::{Plan, PlanRequest};
 use wbe::runtime::Engine;
 use wbe::webkit::{to_json, SafariVersion};
 use wbe::{compile, CompileOptions, ListInput};
@@ -900,12 +908,14 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     match args.first().map(String::as_str) {
         Some("compile") => compile_cmd(&args[1..]),
+        Some("plan") => plan_cmd(&args[1..]),
         Some("engine-build") => engine_build_cmd(&args[1..]),
         Some("lookup") => lookup_cmd(&args[1..]),
         _ => {
             eprintln!(
                 "usage: wbe compile [--safari 18.0] [--runtime-out FILE] [--trusted] LIST..."
             );
+            eprintln!("       wbe plan REQUEST.json OUTDIR");
             eprintln!("       wbe engine-build --out FILE RUNTIME.txt");
             eprintln!("       wbe lookup [--bench N] ENGINE URL|URLFILE...");
             std::process::exit(2);
@@ -915,6 +925,34 @@ fn main() {
 
 fn read(path: &str) -> String {
     std::fs::read_to_string(path).unwrap_or_else(|e| panic!("{path}: {e}"))
+}
+
+fn plan_cmd(args: &[String]) {
+    let [request, out] = args else {
+        eprintln!("usage: wbe plan REQUEST.json OUTDIR");
+        std::process::exit(2);
+    };
+    let mut request: PlanRequest = serde_json::from_str(&read(request)).expect("request JSON");
+    for list in &mut request.lists {
+        if let Some(path) = &list.path {
+            list.text = read(path);
+        }
+    }
+    let start = Instant::now();
+    let plan = Plan::new(request);
+    let plan_ms = start.elapsed().as_secs_f64() * 1000.0;
+    for target in 0..plan.target_count() {
+        let start = Instant::now();
+        let compiled = plan.compile_target(target, &[]);
+        let compile_ms = start.elapsed().as_secs_f64() * 1000.0;
+        let rules = compiled.output.webkit.rules();
+        let path = format!("{out}/blocker-{}.json", target + 1);
+        std::fs::write(&path, compiled.output.webkit.as_str()).unwrap_or_else(|e| panic!("{path}: {e}"));
+        std::fs::write(format!("{out}/runtime-{}.txt", target + 1), compiled.output.runtime.join("\n"))
+            .expect("write runtime rules");
+        println!("{}", serde_json::json!({ "blocker": target + 1, "rules": rules, "compile_ms": compile_ms }));
+    }
+    println!("{}", serde_json::json!({ "plan_ms": plan_ms }));
 }
 
 fn engine_build_cmd(args: &[String]) {
@@ -968,8 +1006,7 @@ fn lookup_cmd(args: &[String]) {
     };
 
     let start = Instant::now();
-    let bytes = std::fs::read(engine_path).unwrap_or_else(|e| panic!("{engine_path}: {e}"));
-    let engine = Engine::deserialize(&bytes).unwrap_or_else(|e| panic!("{e}"));
+    let engine = Engine::open(engine_path.as_ref(), 0).unwrap_or_else(|e| panic!("{engine_path}: {e}"));
     let load_ms = start.elapsed().as_secs_f64() * 1000.0;
 
     match bench {
@@ -1078,23 +1115,32 @@ fn compile_cmd(args: &[String]) {
 //! Model: uBO's cosmetic-filtering.js. A filter's key is its selector plus its
 //! `:matches-path()` argument. On a page, every exception applicable to the page
 //! removes its key from every hide applicable to the page, generic or specific.
-//! Exceptions are resolved here when each page they touch can be expressed
-//! natively. Otherwise every hide and exception with that key goes to `runtime`.
+//!
+//! Only generic hides (no site named) compile natively: a hide scoped to sites
+//! costs WebKit a rule to compile on every apply, and the wBlock Scripts
+//! extension applies it per page from the runtime engine instead, with the
+//! key's exceptions. When a key's exceptions cannot be expressed natively,
+//! every hide and exception of the key goes to `runtime`.
 
 use super::{CompileOptions, Stats, Tier, Tiered};
 use crate::ast::{CosmeticBody, CosmeticRule, DomainMatcher};
 use crate::webkit::{SafariVersion, WkAction, WkResourceType, WkRule, WkTrigger};
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 
 /// Selectors per emitted rule. AdGuard's Compiler uses the same limit
 /// (`MAX_SELECTORS_PER_RULE`).
 const GROUP_SIZE: usize = 250;
 
-/// Host part of an `if-top-url` pattern that matches any host.
-const ANY_HOST: &str = r"[^\/]+";
-
 /// A selector and the `:matches-path()` argument it is scoped to.
 type Key<'a> = (&'a str, Option<&'a str>);
+
+/// The hides and exceptions of one key, with whether Safari takes the selector.
+#[derive(Default)]
+struct Group<'a> {
+    native: bool,
+    hides: Vec<&'a CosmeticRule>,
+    exceptions: Vec<&'a CosmeticRule>,
+}
 
 pub(super) fn compile(
     rules: &[&CosmeticRule],
@@ -1104,162 +1150,67 @@ pub(super) fn compile(
     stats: &mut Stats,
 ) {
     let safari = opts.safari;
-    // Each rule's verdict and scope depend on the rule alone, so they are
-    // worked out in parallel; the rest is in rule order.
-    let decided = super::parallel_indices(rules.len(), |i| match &rules[i].body {
-        CosmeticBody::Hide(selector) => {
-            let verdict = verdict(selector, safari);
-            let scope = if verdict == Verdict::Native {
-                Scope::of(rules[i])
-            } else {
-                None
-            };
-            Some((verdict, scope))
-        }
+    // Each selector's verdict depends on it alone, so they are worked out in
+    // parallel; the rest is in rule order.
+    let verdicts = super::parallel_indices(rules.len(), |i| match &rules[i].body {
+        CosmeticBody::Hide(selector) => Some(verdict(selector, safari)),
         CosmeticBody::Procedural(_) | CosmeticBody::Style(_) => None,
     });
-    let mut hides: BTreeMap<Key, Vec<Entry>> = BTreeMap::new();
-    let mut exceptions: BTreeMap<Key, Vec<Entry>> = BTreeMap::new();
+    let mut groups: BTreeMap<Key, Group> = BTreeMap::new();
     let mut runtime_lines = BTreeSet::new();
-    for (rule, decided) in rules.iter().zip(decided) {
-        match &rule.body {
-            CosmeticBody::Procedural(_) | CosmeticBody::Style(_) => {
+    for (rule, verdict) in rules.iter().zip(verdicts) {
+        let (selector, verdict) = match (&rule.body, verdict) {
+            (CosmeticBody::Hide(selector), Some(verdict)) => (selector, verdict),
+            _ => {
                 runtime_lines.insert(rule.raw.as_str());
+                continue;
             }
-            CosmeticBody::Hide(selector) => match decided.expect("hide has a verdict") {
-                (Verdict::Invalid, _) => stats.drop("invalid cosmetic selector"),
-                (_, scope) => {
-                    let key = (selector.as_str(), rule.matches_path.as_deref());
-                    let map = if rule.exception {
-                        &mut exceptions
-                    } else {
-                        &mut hides
-                    };
-                    map.entry(key).or_default().push(Entry { rule, scope });
-                }
-            },
+        };
+        if verdict == Verdict::Invalid {
+            stats.drop("invalid cosmetic selector");
+            continue;
+        }
+        let group = groups.entry((selector.as_str(), rule.matches_path.as_deref())).or_default();
+        group.native = verdict == Verdict::Native;
+        if rule.exception {
+            group.exceptions.push(rule);
+        } else {
+            group.hides.push(rule);
         }
     }
 
-    let keys: Vec<&Key> = hides
-        .keys()
-        .chain(exceptions.keys())
-        .collect::<BTreeSet<&Key>>()
-        .into_iter()
-        .collect();
-    let resolved_all = super::parallel_indices(keys.len(), |i| {
-        let key = keys[i];
-        let hs = hides.get(key).map(Vec::as_slice).unwrap_or_default();
-        let es = exceptions.get(key).map(Vec::as_slice).unwrap_or_default();
-        resolve(hs, es, safari)
-    });
-    let mut resolved: Vec<(&Key, Vec<(Tier, Trigger)>)> = Vec::new();
-    for (key, triggers) in keys.into_iter().zip(resolved_all) {
-        match triggers {
-            Some(triggers) => resolved.push((key, triggers)),
-            None => {
-                let hs = hides.get(key).map(Vec::as_slice).unwrap_or_default();
-                let es = exceptions.get(key).map(Vec::as_slice).unwrap_or_default();
-                for entry in hs.iter().chain(es) {
-                    runtime_lines.insert(entry.rule.raw.as_str());
-                }
-            }
+    // A specific copy of a generic hide goes to the runtime with the other
+    // specific hides: `$generichide` cancels only the generic one.
+    let mut native: BTreeMap<Trigger, BTreeSet<&str>> = BTreeMap::new();
+    for (key, group) in &groups {
+        let (triggers, to_runtime) = resolve(key.1, group);
+        for trigger in triggers {
+            native.entry(trigger).or_default().insert(key.0);
         }
+        runtime_lines.extend(to_runtime.into_iter().map(|r| r.raw.as_str()));
     }
-
-    // A selector hidden on every page makes its domain-specific copies redundant.
-    let universal: HashSet<&str> = resolved
-        .iter()
-        .filter(|(key, _)| key.1.is_none())
-        .filter(|(_, ts)| ts.contains(&(Tier::GenericHide, Trigger::Generic)))
-        .map(|(key, _)| key.0)
-        .collect();
-
-    let mut groups: BTreeMap<(Tier, &Trigger), BTreeSet<&str>> = BTreeMap::new();
-    for (key, triggers) in &resolved {
-        for (tier, trigger) in triggers {
-            let redundant =
-                *tier == Tier::SpecificHide && key.1.is_none() && universal.contains(key.0);
-            if !redundant {
-                groups.entry((*tier, trigger)).or_default().insert(key.0);
-            }
-        }
-    }
-    let groups: Vec<((Tier, &Trigger), Vec<&str>)> = groups
-        .into_iter()
-        .map(|(group, selectors)| (group, selectors.into_iter().collect()))
-        .collect();
-    let emitted = super::parallel_indices(groups.len(), |g| {
-        let ((_, trigger), selectors) = &groups[g];
-        selectors
-            .chunks(GROUP_SIZE)
-            .map(|chunk| WkRule {
+    for (trigger, selectors) in native {
+        let selectors: Vec<&str> = selectors.into_iter().collect();
+        out.extend(selectors.chunks(GROUP_SIZE).map(|chunk| Tiered {
+            tier: Tier::GenericHide,
+            rule: WkRule {
                 trigger: trigger.to_trigger(),
                 action: WkAction::CssDisplayNone {
                     selector: chunk.join(", "),
                 },
-            })
-            .collect::<Vec<WkRule>>()
-    });
-    for (((tier, _), _), rules) in groups.iter().zip(emitted) {
-        out.extend(rules.into_iter().map(|rule| Tiered { tier: *tier, rule }));
+            },
+        }));
     }
 
     runtime.extend(runtime_lines.into_iter().map(str::to_string));
 }
 
-/// A hide or exception that reached the compiler. `scope: None` means the
-/// rule needs the runtime (regex domain, entity exclusion, or a selector Safari
-/// cannot take).
-struct Entry<'a> {
-    rule: &'a CosmeticRule,
-    scope: Option<Scope>,
-}
-
-/// Domain and path conditions of a rule, split by kind.
-#[derive(Clone, Default)]
-struct Scope {
-    hosts: Vec<String>,
-    entities: Vec<String>,
-    excludes: Vec<String>,
-    path: Option<String>,
-}
-
-impl Scope {
-    fn of(rule: &CosmeticRule) -> Option<Self> {
-        let mut scope = Scope {
-            path: rule.matches_path.clone(),
-            ..Self::default()
-        };
-        for matcher in &rule.domains.include {
-            match matcher {
-                DomainMatcher::Hostname(h) => scope.hosts.push(h.clone()),
-                DomainMatcher::Entity(e) => scope.entities.push(e.clone()),
-                DomainMatcher::Regex(_) => return None,
-            }
-        }
-        for matcher in &rule.domains.exclude {
-            match matcher {
-                DomainMatcher::Hostname(h) => scope.excludes.push(h.clone()),
-                _ => return None,
-            }
-        }
-        Some(scope)
-    }
-
-    fn is_generic(&self) -> bool {
-        self.hosts.is_empty() && self.entities.is_empty()
-    }
-}
-
-/// One Safari trigger. `Generic` and `Unless` apply to every page, so they
-/// are generic hides. The rest are specific.
+/// One Safari trigger of a generic hide.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 enum Trigger {
     Generic,
     Unless(Vec<String>),
-    IfDomain(Vec<String>),
-    TopUrl(Vec<String>),
+    Url(String),
 }
 
 impl Trigger {
@@ -1271,8 +1222,10 @@ impl Trigger {
         match self {
             Trigger::Generic => return trigger,
             Trigger::Unless(d) => trigger.unless_domain = Some(d.clone()),
-            Trigger::IfDomain(d) => trigger.if_domain = Some(d.clone()),
-            Trigger::TopUrl(r) => trigger.if_top_url = Some(r.clone()),
+            Trigger::Url(r) => {
+                trigger.url_filter = r.clone();
+                trigger.url_filter_is_case_sensitive = Some(true);
+            }
         }
         // A scoped hide only needs checking when a document loads, not on
         // every subresource (wBlock #873).
@@ -1281,72 +1234,137 @@ impl Trigger {
     }
 }
 
-/// Resolves the hides and exceptions of one key. Returns the triggers the
-/// hides keep, or `None` when the key must go to the runtime.
-fn resolve(
-    hides: &[Entry],
-    exceptions: &[Entry],
-    safari: SafariVersion,
-) -> Option<Vec<(Tier, Trigger)>> {
-    let mut excepted_hosts: Vec<&str> = Vec::new();
-    let mut global = false;
-    for exception in exceptions {
-        let scope = exception.scope.as_ref()?;
-        if !scope.entities.is_empty() || !scope.excludes.is_empty() {
-            return None;
-        }
-        if scope.hosts.is_empty() {
-            global = true;
-        }
-        excepted_hosts.extend(scope.hosts.iter().map(String::as_str));
-    }
-    if global {
-        return Some(Vec::new());
-    }
+/// The hostnames of a domain list, or `None` if it has an entity or regex.
+fn hostnames(matchers: &[DomainMatcher]) -> Option<Vec<&str>> {
+    matchers
+        .iter()
+        .map(|m| match m {
+            DomainMatcher::Hostname(h) => Some(h.as_str()),
+            _ => None,
+        })
+        .collect()
+}
 
-    let mut triggers = Vec::new();
-    for hide in hides {
-        let mut scope = hide.scope.clone()?;
-        if !excepted_hosts.is_empty() {
-            if scope.is_generic() {
-                scope
-                    .excludes
-                    .extend(excepted_hosts.iter().map(|h| h.to_string()));
-            } else {
-                if !scope.entities.is_empty() {
-                    return None;
-                }
-                let had_hosts = !scope.hosts.is_empty();
-                for host in &scope.hosts {
-                    if excepted_hosts.iter().any(|x| within(host, x)) {
-                        continue;
-                    }
-                    if excepted_hosts.iter().any(|x| within(x, host)) {
-                        // Pages under the excepted host would need an unless-domain
-                        // on a domain-specific trigger, which Safari cannot combine.
-                        return None;
-                    }
-                }
-                scope
-                    .hosts
-                    .retain(|host| !excepted_hosts.iter().any(|x| within(host, x)));
-                if had_hosts && scope.hosts.is_empty() {
-                    continue;
-                }
+/// Resolves the hides and exceptions of one key: the native triggers of its
+/// generic hides, and the rules that go to the runtime. The runtime gets the
+/// hides that name sites, and the key's exceptions with them so they lift
+/// those hides too.
+fn resolve<'a>(path: Option<&str>, group: &Group<'a>) -> (Vec<Trigger>, Vec<&'a CosmeticRule>) {
+    let everything = || (Vec::new(), group.hides.iter().chain(&group.exceptions).copied().collect());
+    if !group.native {
+        return everything();
+    }
+    let mut excepted: Vec<&str> = Vec::new();
+    for exception in &group.exceptions {
+        let Some(hosts) = hostnames(&exception.domains.include).filter(|_| exception.domains.exclude.is_empty()) else {
+            return everything();
+        };
+        if hosts.is_empty() {
+            // A generic exception lifts the key everywhere.
+            return (Vec::new(), Vec::new());
+        }
+        excepted.extend(hosts);
+    }
+    // uBO compiles a negated hostname of a hide as an exception on that
+    // hostname, so it lifts every hide of the key there.
+    for hide in &group.hides {
+        let Some(hosts) = hostnames(&hide.domains.exclude) else {
+            return everything();
+        };
+        excepted.extend(hosts);
+    }
+    let (generic, specific): (Vec<&CosmeticRule>, Vec<&CosmeticRule>) =
+        group.hides.iter().partition(|h| h.domains.include.is_empty());
+    let trigger = match (generic.is_empty(), path, excepted.is_empty()) {
+        (true, ..) => None,
+        (false, None, true) => Some(Trigger::Generic),
+        (false, None, false) => Some(Trigger::Unless(domains(&excepted))),
+        (false, Some(path), true) => match url_regex(path) {
+            Some(regex) => Some(Trigger::Url(regex)),
+            None => return everything(),
+        },
+        (false, Some(_), false) => return everything(),
+    };
+    let mut to_runtime = Vec::new();
+    if !specific.is_empty() {
+        to_runtime.extend(specific);
+        to_runtime.extend(&group.exceptions);
+        // The runtime needs the negations of the generic hides as exceptions.
+        to_runtime.extend(generic.iter().filter(|h| !h.domains.exclude.is_empty()));
+    }
+    (trigger.into_iter().collect(), to_runtime)
+}
+
+fn domains(hosts: &[&str]) -> Vec<String> {
+    let mut out: Vec<String> = hosts.iter().map(|h| format!("*{h}")).collect();
+    out.sort();
+    out.dedup();
+    out
+}
+
+/// A url-filter for a `:matches-path()` argument on any host. uBO tests the
+/// argument against `pathname + search`, case-sensitively and unanchored, so
+/// it must match after the host and before any fragment. uBO matches it
+/// against each frame's own URL, which is what a document load's url-filter
+/// tests; `if-top-url` would follow the tab's page instead.
+fn url_regex(path: &str) -> Option<String> {
+    let head = r"^[^:]+:\/\/[^\/]+";
+    let re = if path.starts_with('/') {
+        // The argument may start at the pathname's leading slash.
+        format!(r"{head}(:[^\/#]*)?(\/[^#]*)?{}", plain_path(path)?)
+    } else {
+        format!(r"{head}(:[^\/#]*)?\/[^#]*{}", plain_path(path)?)
+    };
+    super::regex::webkit_accepts(&re).then_some(re)
+}
+
+/// uBO's `regexFromString` for a plain `:matches-path()` argument, in the
+/// url-filter subset Safari accepts. Regex arguments and characters that
+/// would need other escaping go to the runtime. A `#` would reach into the
+/// fragment, which uBO never tests.
+fn plain_path(path: &str) -> Option<String> {
+    let regex = path
+        .strip_prefix('/')
+        .and_then(|rest| rest.rsplit_once('/'))
+        .is_some_and(|(body, flags)| !body.is_empty() && flags.chars().all(|c| "imu".contains(c)));
+    if regex {
+        return None;
+    }
+    let mut out = String::new();
+    for c in path.chars() {
+        match c {
+            c if c.is_ascii_alphanumeric() || "-_%=&~,;:'\"<>@! ".contains(c) => out.push(c),
+            '/' | '.' | '?' | '+' | '*' => {
+                out.push('\\');
+                out.push(c);
             }
+            _ => return None,
         }
-        triggers.extend(scope_triggers(&scope, safari)?);
     }
-    Some(triggers)
+    Some(out)
 }
 
-/// `child` is `parent` or one of its subdomains.
-fn within(child: &str, parent: &str) -> bool {
-    child == parent || child.strip_suffix(parent).is_some_and(|p| p.ends_with('.'))
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Verdict {
+    /// Plain CSS that this Safari accepts.
+    Native,
+    /// Valid CSS that this Safari rejects. A JS runtime can still apply it.
+    NeedsJs,
+    /// Not CSS, or not a selector WebKit knows. Dropped.
+    Invalid,
 }
 
-/// The triggers that express a scope natively, or `None` if Safari cannot.
-fn scope_triggers(scope
+/// Checks a selector with the same parser brave/adblock-rust uses for its
+/// `css-validation` feature. A selector that only the permissive dialect
+/// accepts (`:lang()`, `:dir()`) is valid for JS, so it needs the runtime.
+/// Version gates follow AdGuard's CosmeticRule (`:has()` 16.4, `:is()` 14).
+fn verdict(selector: &str, safari: SafariVersion) -> Verdict {
+    let Some((permissive, js_only)) = css::canonical(selector, css::Dialect::Permissive) else {
+        return Verdict::Invalid;
+    };
+    // Without a JS-only pseudo-class, WebKit's dialect parses it the same way.
+    let webkit = match js_only {
+        true => css::canonical(selector, css::Dialect::Web
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/mod.rs`
@@ -1362,7 +1380,8 @@ fn scope_triggers(scope
 //! network rule.
 
 pub(crate) mod cosmetic;
-mod network;
+pub(crate) mod network;
+pub(crate) mod prune;
 pub mod regex;
 
 use crate::ast::{CosmeticRule, NetworkRule, ParsedLine, Rule, ScriptletRule, SourceRef};
@@ -1372,12 +1391,15 @@ use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum Tier {
+    /// Hides that name no site. Hides scoped to sites are the runtime's.
     GenericHide = 0,
-    /// `$generichide`: cancels generic hides only.
-    GenericHideException = 1,
-    SpecificHide = 2,
-    /// `$elemhide` (and `$specifichide`, widened): cancels all hides.
-    ElemHideException = 3,
+    /// `$generichide` and `$elemhide`: cancel the native hides.
+    HideException = 1,
+    /// `$denyallow`: the block, then its exclusions.
+    DenyallowBlock = 2,
+    /// The exclusions of a `$denyallow` block. Each cancels only the blocks
+    /// before it, so they sit ahead of every other block.
+    DenyallowException = 3,
     /// Blocks with no page domains, which `$genericblock` lifts.
     GenericBlock = 4,
     /// `$genericblock`: cancels the generic blocks before it on the page's
@@ -1387,8 +1409,8 @@ pub enum Tier {
     Exception = 7,
     /// `$important` with `$denyallow`: the block, then its exclusions.
     ImportantDenyallowBlock = 8,
-    /// The exclusions of an important `$denyallow` block. Each cancels only
-    /// the blocks before it, so they sit ahead of every other important block.
+    /// The exclusions of an important `$denyallow` block, ahead of every
+    /// other important block for the same reason.
     ImportantDenyallowException = 9,
     ImportantBlock = 10,
     /// AdGuard `$important` exceptions override important blocks.
@@ -1446,6 +1468,8 @@ pub(crate) struct Tiered {
 pub(crate) struct Emitted {
     arenas: Vec<Vec<u8>>,
     entries: Vec<Entry>,
+    /// The blocks anchored at a hostname, for `network::drop_subsumed`.
+    anchored: Vec<network::Anchored>,
 }
 
 #[derive(Debug)]
@@ -1457,6 +1481,7 @@ pub(super) struct Entry {
     end: usize,
     /// An `if-domain` rule: its domain list can grow when rules merge.
     domain: Option<Box<DomainSpan>>,
+    shape: prune::Shape,
 }
 
 #[derive(Debug)]
@@ -1466,30 +1491,36 @@ pub(super) struct DomainSpan {
     head: usize,
     tail: usize,
     domains: Vec<String>,
+    /// Written as `if-top-url` regexes (`regex::host_top_url`).
+    top: bool,
 }
 
-pub(crate) use network::Context as NetworkContext;
-
-/// Counts the bytes written to it.
-struct Count(usize);
-
-impl std::io::Write for Count {
-    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        self.0 += buf.len();
-        Ok(buf.len())
-    }
-
-    fn flush(&mut self) -> std::io::Result<()> {
-        Ok(())
+impl DomainSpan {
+    /// The condition's key and value, as written.
+    fn json(&self) -> (&'static [u8], Vec<u8>) {
+        let value = if self.top {
+            let urls: Vec<String> = self
+                .domains
+                .iter()
+                .map(|d| regex::host_top_url(d).expect("ASCII domain"))
+                .collect();
+            serde_json::to_vec(&urls)
+        } else {
+            serde_json::to_vec(&self.domains)
+        };
+        let key: &[u8] = if self.top { b",\"if-top-url\":" } else { b",\"if-domain\":" };
+        (key, value.expect("domains serialize"))
     }
 }
+
+pub(crate) use network::{split_host, surviving, Context as NetworkContext};
 
 /// Tiers in output order.
 const TIERS: [Tier; 13] = [
     Tier::GenericHide,
-    Tier::GenericHideException,
-    Tier::SpecificHide,
-    Tier::ElemHideException,
+    Tier::HideException,
+    Tier::DenyallowBlock,
+    Tier::DenyallowException,
     Tier::GenericBlock,
     Tier::GenericBlockException,
     Tier::Block,
@@ -1508,6 +1539,7 @@ impl Emitted {
         Self {
             arenas: vec![Vec::with_capacity(rules * 512)],
             entries: Vec::with_capacity(rules * 2),
+            anchored: Vec::new(),
         }
     }
 
@@ -1525,10 +1557,16 @@ impl Emitted {
         let mut out = Emitted {
             arenas: Vec::with_capacity(parts.len()),
             entries: Vec::with_capacity(rules),
+            anchored: Vec::new(),
         };
         for part in parts {
             let base = out.arenas.len() as u32;
+            let first = out.entries.len();
             out.arenas.extend(part.arenas);
+            out.anchored.extend(part.anchored.into_iter().map(|mut a| {
+                a.entry += first;
+                a
+            }));
             out.entries.extend(part.entries.into_iter().map(|mut e| {
                 e.arena += base;
                 e
@@ -1542,9 +1580,10 @@ impl Emitted {
         match &entry.domain {
             None => out.extend_from_slice(&arena[entry.start..entry.end]),
             Some(span) => {
+                let (key, value) = span.json();
                 out.extend_from_slice(&arena[entry.start..span.head]);
-                out.extend_from_slice(b",\"if-domain\":");
-                serde_json::to_writer(&mut *out, &span.domains).expect("domains serialize");
+                out.extend_from_slice(key);
+                out.extend_from_slice(&value);
                 out.extend_from_slice(&arena[span.tail..entry.end]);
             }
         }
@@ -1555,12 +1594,8 @@ impl Emitted {
         match &entry.domain {
             None => entry.end - entry.start,
             Some(span) => {
-                let mut domains = Count(0);
-                serde_json::to_writer(&mut domains, &span.domains).expect("domains serialize");
-                (span.head - entry.start)
-                    + b",\"if-domain\":".len()
-                    + domains.0
-                    + (entry.end - span.tail)
+                let (key, value) = span.json();
+                (span.head - entry.start) + key.len() + value.len() + (entry.end - span.tail)
             }
         }
     }
@@ -1571,94 +1606,48 @@ impl Emitted {
         let start = bytes.len();
         serde_json::to_writer(&mut *bytes, rule).expect("WkRule serializes");
         let end = bytes.len();
+        let ignore = rule.action == crate::webkit::WkAction::IgnorePreviousRules;
         self.entries.push(Entry {
             tier,
             arena: arena as u32,
             start,
             end,
             domain: None,
+            shape: prune::Shape::of_trigger(ignore, &rule.trigger),
         });
     }
 
     /// Everything emitted, in tier order; within a tier, emission order.
-    fn into_webkit(self) -> WebkitJson {
-        // Sized up front so the output is never copied to grow.
-        let size = self
-            .entries
-            .iter()
-            .map(|e| self.rendered_len(e) + 1)
-            .sum::<usize>()
-            + 2;
-        let mut json = Vec::with_capacity(size);
-        json.push(b'[');
-        let mut first = true;
+    /// `seen` holds the rules that come before these; an ignore that cancels
+    /// none of them or of the rules here before it is left out (`prune`).
+    /// `network_front` goes after the hides and their exceptions and before
+    /// every network tier: a hide exception applies to every load of its
+    /// page, so nothing it can cancel may come before it but hides.
+    fn into_webkit(mut self, seen: &mut prune::Seen, network_front: &WebkitJson) -> WebkitJson {
+        let mut order = Vec::with_capacity(self.entries.len());
+        let mut front_at = 0;
         for tier in TIERS {
-            for entry in self.entries.iter().filter(|e| e.tier == tier) {
-                if !first {
-                    json.push(b',');
+            if tier == Tier::DenyallowBlock {
+                front_at = order.len();
+            }
+            for (i, entry) in self.entries.iter_mut().enumerate().filter(|(_, e)| e.tier == tier) {
+                if let Some(span) = entry.domain.as_deref().filter(|s| s.top) {
+                    entry.shape.set_page(prune::Page::If(span.domains.iter().map(|d| prune::domain_host(d)).collect()));
                 }
-                first = false;
-                self.render(entry, &mut json);
+                if tier == Tier::GenericHide {
+                    seen.add_hide(&entry.shape);
+                } else if !entry.shape.ignore {
+                    seen.add(&entry.shape);
+                } else if !seen.overlaps(&entry.shape, matches!(tier, Tier::HideException | Tier::DocumentException)) {
+                    continue;
+                }
+                order.push(i);
             }
         }
-        json.push(b']');
-        WebkitJson::from_bytes(json, self.entries.len())
-    }
-
-    #[cfg(test)]
-    pub(crate) fn tiered(&self) -> Vec<Tiered> {
-        self.entries
-            .iter()
-            .map(|entry| {
-                let mut json = Vec::new();
-                self.render(entry, &mut json);
-                Tiered {
-                    tier: entry.tier,
-                    rule: serde_json::from_slice(&json).expect("rule parses back"),
-                }
-            })
-            .collect()
-    }
-}
-
-/// `body(i)` for every `i < count`, on all cores, results in order. Indices
-/// are handed out one at a time, so uneven items still balance.
-pub(crate) fn parallel_indices<R: Send>(count: usize, body: impl Fn(usize) -> R + Sync) -> Vec<R> {
-    use std::sync::atomic::{AtomicUsize, Ordering};
-    let threads = std::thread::available_parallelism()
-        .map_or(4, |n| n.get())
-        .min(count.max(1));
-    let next = AtomicUsize::new(0);
-    let done: Vec<(usize, R)> = std::thread::scope(|scope| {
-        let handles: Vec<_> = (0..threads)
-            .map(|_| {
-                let (body, next) = (&body, &next);
-                scope.spawn(move || {
-                    let mut done = Vec::new();
-                    loop {
-                        let i = next.fetch_add(1, Ordering::Relaxed);
-                        if i >= count {
-                            break done;
-                        }
-                        done.push((i, body(i)));
-                    }
-                })
-            })
-            .collect();
-        handles
-            .into_iter()
-            .flat_map(|h| h.join().expect("worker thread"))
-            .collect()
-    });
-    let mut slots: Vec<Option<R>> = (0..count).map(|_| None).collect();
-    for (i, r) in done {
-        slots[i] = Some(r);
-    }
-    slots.into_iter().map(|r| r.expect("every index ran")).collect()
-}
-
-/// The cosmetic and scriptlet rules of one blocker, in compile order.
-#[derive(Debug, Clone, Defa
+        // Sized up front so the output is never copied to grow.
+        let front = network_front.as_str();
+        let front = &front[1..front.len() - 1];
+        let size = order.iter().map(|&i| self.rendered_len(&self.entries[i]) + 1).sum::<usiz
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/network.rs`
@@ -1670,7 +1659,8 @@ pub(crate) fn parallel_indices<R: Send>(count: usize, body: impl Fn(usize) -> R 
 //! makes them wider and can only under-block. Each rule's tier follows
 //! `compile/mod.rs`; exceptions use ignore-previous-rules.
 
-use super::regex::{domain_top_url, url_filter};
+use super::regex::{apart, domain_top_url, host_top_url, url_filter};
+use super::prune::{domain_host, if_page, unless_page, Page, Shape};
 use super::{DomainSpan, Emitted, Entry, Stats, Tier};
 use crate::ast::{
     DomainList, DomainMatcher, ExceptionScope, NetworkAction, NetworkRule, Party, Pattern,
@@ -1699,25 +1689,57 @@ const DEFAULT_TYPES: ResourceTypes = ResourceTypes::all().difference(
 #[derive(Default)]
 pub(crate) struct Context {
     strict: StrictHosts,
-    bad: Vec<NetworkRule>,
-    bad_bodies: FxHashSet<String>,
+    /// `$badfilter` rules by pattern body.
+    bad: FxHashMap<String, Vec<Bad>>,
+    /// The pages of `$genericblock` exceptions (`genericblock_host`).
+    generic_pages: Vec<String>,
+}
+
+/// A `$badfilter` rule with the shapes `surviving` compares, made once.
+struct Bad {
+    types: ResourceTypes,
+    include: Vec<DomainMatcher>,
+    shape: NetworkRule,
+    /// The shape for a "just origin" filter, when the rule is one.
+    origin_shape: Option<NetworkRule>,
 }
 
 impl Context {
     pub(crate) fn add(&mut self, rule: &NetworkRule) {
         self.strict.add(rule);
+        self.generic_pages.extend(genericblock_host(rule));
         if rule.badfilter {
-            let bad = unlabeled(rule);
-            self.bad_bodies.insert(bad.pattern.body.clone());
-            self.bad.push(bad);
+            let bad = Bad {
+                types: rule.types,
+                include: rule.from.include.clone(),
+                shape: shape(rule, false),
+                origin_shape: just_origin(rule).then(|| shape(rule, true)),
+            };
+            self.bad.entry(rule.pattern.body.clone()).or_default().push(bad);
         }
+    }
+
+    /// Whether `add` keeps anything of `rule`.
+    pub(crate) fn holds(rule: &NetworkRule) -> bool {
+        rule.badfilter || StrictHosts::host(rule).is_some() || genericblock_host(rule).is_some()
+    }
+
+    /// Whether a `$genericblock` exception covers pages of `domain`.
+    fn generic_page(&self, domain: &DomainMatcher) -> bool {
+        let DomainMatcher::Hostname(host) = domain else {
+            return !self.generic_pages.is_empty();
+        };
+        let under = |a: &str, b: &str| a.strip_suffix(b).is_some_and(|rest| rest.is_empty() || rest.ends_with('.'));
+        self.generic_pages.iter().any(|page| under(host, page) || under(page, host))
     }
 
     pub(crate) fn merge(&mut self, other: Context) {
         self.strict.hosts.extend(other.strict.hosts);
         self.strict.parents.extend(other.strict.parents);
-        self.bad.extend(other.bad);
-        self.bad_bodies.extend(other.bad_bodies);
+        self.generic_pages.extend(other.generic_pages);
+        for (body, bad) in other.bad {
+            self.bad.entry(body).or_default().extend(bad);
+        }
     }
 }
 
@@ -1737,31 +1759,117 @@ fn genericblock_host(r: &NetworkRule) -> Option<String> {
 pub(crate) fn emit_rule(
     ctx: &Context,
     safari: SafariVersion,
-    rule: &NetworkRule,
+    rule: NetworkRule,
     out: &mut Emitted,
     stats: &mut Stats,
 ) {
-    if rule.badfilter {
-        return;
-    }
-    if ctx.bad_bodies.contains(rule.pattern.body.as_str())
-        && ctx.bad.contains(&unlabeled(rule))
-    {
-        return;
-    }
-    if let Err(reason) = compile_rule(rule, safari, ctx, out, None) {
-        stats.drop(&reason);
+    for rule in surviving(ctx, rule) {
+        if let Err(reason) = compile_rule(&rule, safari, ctx, out, None) {
+            stats.drop(&reason);
+        }
     }
 }
 
-/// A rule with its provenance and `$badfilter` flag cleared, for comparing
-/// filters. uBO cancels a filter only when its compiled form is identical
-/// (static-net-filtering.js, `freeze`); there is no domain-subset matching.
-fn unlabeled(r: &NetworkRule) -> NetworkRule {
+/// uBO's network types: a filter with all of them is stored typeless.
+const NETWORK_TYPES: ResourceTypes = ResourceTypes::SCRIPT
+    .union(ResourceTypes::IMAGE)
+    .union(ResourceTypes::CSS)
+    .union(ResourceTypes::OBJECT)
+    .union(ResourceTypes::XHR)
+    .union(ResourceTypes::FRAME)
+    .union(ResourceTypes::FONT)
+    .union(ResourceTypes::MEDIA)
+    .union(ResourceTypes::PING)
+    .union(ResourceTypes::WEBSOCKET)
+    .union(ResourceTypes::OTHER);
+
+/// What `$badfilter` leaves of `rule`. uBO stores a filter as one entry per
+/// type, a typeless one standing for every network type, and a
+/// `*$domain=a|b` filter as one per page hostname; a badfilter removes the
+/// entries identical to its own (static-net-filtering.js,
+/// `compileToAtomicFilter` and `freeze`).
+pub(crate) fn surviving(ctx: &Context, rule: NetworkRule) -> Vec<NetworkRule> {
+    if rule.badfilter {
+        return Vec::new();
+    }
+    let Some(bad) = ctx.bad.get(rule.pattern.body.as_str()) else {
+        return vec![rule];
+    };
+    // (typeless entry, typed entries) of a type set.
+    let split = |t: ResourceTypes| match t {
+        t if t.is_empty() => (true, t),
+        t if t.contains(NETWORK_TYPES) => (true, t.difference(NETWORK_TYPES)),
+        t => (false, t),
+    };
+    let by_origin = just_origin(&rule);
+    let key = shape(&rule, by_origin);
+    let origins: Vec<Option<&DomainMatcher>> = if by_origin {
+        rule.from.include.iter().map(Some).collect()
+    } else {
+        vec![None]
+    };
+    let mut left = vec![split(rule.types); origins.len()];
+    let same = |b: &&Bad| match by_origin {
+        true => b.origin_shape.as_ref() == Some(&key),
+        false => b.shape == key,
+    };
+    for bad in bad.iter().filter(same) {
+        let (typeless, typed) = split(bad.types);
+        for (origin, left) in origins.iter().zip(&mut left) {
+            if origin.is_none_or(|o| bad.include.contains(o)) {
+                left.0 &= !typeless;
+                left.1.remove(typed);
+            }
+        }
+    }
+    if left.iter().all(|&l| l == split(rule.types)) {
+        return vec![rule];
+    }
+    let network = if rule.types.is_empty() { ResourceTypes::empty() } else { NETWORK_TYPES };
+    origins
+        .into_iter()
+        .zip(left)
+        .filter(|(_, (typeless, typed))| *typeless || !typed.is_empty())
+        .map(|(origin, (typeless, typed))| {
+            let mut r = rule.clone();
+            r.types = if typeless { network.union(typed) } else { typed };
+            if let Some(origin) = origin {
+                r.from.include = vec![origin.clone()];
+            }
+            r
+        })
+        .collect()
+}
+
+/// uBO's "just origin" filter, `*$domain=a|b` with no other option, which it
+/// stores once per page hostname.
+fn just_origin(r: &NetworkRule) -> bool {
+    r.pattern.is_match_all()
+        && !r.from.include.is_empty()
+        && r.from.exclude.is_empty()
+        && !r.from.include.iter().any(|d| matches!(d, DomainMatcher::Regex(_)))
+        && r.to.is_empty()
+        && r.denyallow.is_empty()
+        && r.method.include.is_empty()
+        && r.method.exclude.is_empty()
+        && r.runtime_only_options.is_empty()
+        && r.negated_types.is_empty()
+        && !r.important
+        && !matches!(r.party, Party::StrictFirst | Party::StrictThird)
+        && matches!(r.action, NetworkAction::Block)
+}
+
+/// What `$badfilter` compares of a rule: no provenance, flag or types, and
+/// for a "just origin" filter (`by_origin`) no page hostnames.
+fn shape(r: &NetworkRule, by_origin: bool) -> NetworkRule {
     let mut r = r.clone();
     r.source = SourceRef::default();
     r.raw.clear();
     r.badfilter = false;
+    r.types = ResourceTypes::empty();
+    if by_origin {
+        r.from.include.clear();
+    }
     r
 }
 
@@ -1790,439 +1898,299 @@ fn compile_rule(
         NetworkAction::Other { option, .. } => return Err(format!("dnr:{option}")),
     }
     if !r.scope.is_empty() {
-        return if r.exception {
-            compile_scope(r, v, out)
-        } else {
-            Err("dnr:scope-on-block".into())
-        };
+        if !r.exception {
+            return Err("dnr:scope-on-block".into());
+        }
+        // uBO stores the page options as types beside the request types, so
+        // `@@...$elemhide,script` also allows the scripts it matches. The
+        // page exception already covers `$document`'s own request.
+        let types = r.types.difference(ResourceTypes::DOC);
+        let requests = NetworkRule { scope: ExceptionScope::empty(), types, ..r.clone() };
+        let page = compile_scope(r, v, out);
+        if !types.is_empty() {
+            compile_rule(&requests, v, ctx, out, tier)?;
+        }
+        return page;
     }
     let exception = r.exception;
-    // `@@...$cname` only exempts a request from CNAME uncloaking; it never
-    // allows one (static-net-filtering.js), so it has nothing to lift here.
-    if exception && r.runtime_only_options.iter().any(|o| o == "cname") {
-        return Err("dnr:cname-exception".into());
-    }
-    if r.runtime_only_options.iter().any(|o| o.starts_with("responseheader=")) {
-        return Err("response header matching: Safari DNR does not support responseHeaders conditions".into());
-    }
-    if !exception && !r.runtime_only_options.is_empty() {
-        return Err("dnr:runtime-option".into());
-    }
-    if !exception && (!r.method.include.is_empty() || !r.method.exclude.is_empty()) {
-        return Err("dnr:method".into());
-    }
-    if !exception && !r.denyallow.is_empty() {
-        return compile_denyallow(r, v, ctx, out);
-    }
-    let party = party(r.party, exception)?;
-    let urls = urls(r, exception)?;
-    let conds = domain_conds(&r.from, v, exception)?;
-    let types = effective_types(r);
-    // uBO also strict-blocks top-level navigation for an untyped filter whose
-    // match ends at the hostname (traffic.js, `shouldStrictBlock`), so such a
-    // block is one trigger over every type, documents included. An exception
-    // takes that form only where it must lift such a block: on a page load,
-    // ignore-previous-rules also cancels the page's cosmetic hides.
-    let untyped = r.types.is_empty()
-        && r.negated_types.is_empty()
-        && host_only(&r.pattern).is_some_and(|h| !exception || strict.related(&h));
-    let type_triggers = if untyped {
-        vec![(Vec::new(), None)]
-    } else {
-        type_triggers(types, v)
-    };
-    if type_triggers.is_empty() {
-        // An exception without a type WebKit can match cancels nothing.
-        return if exception {
-            Ok(())
-        } else {
-            Err(type_drop_reason(types, v))
-        };
-    }
-    let (ignore, default) = if exception {
-        (true, if r.important { Tier::ImportantException } else { Tier::Exception })
-    } else if r.important {
-        (false, Tier::ImportantBlock)
-    } else if r.from.include.is_empty() {
-        (false, Tier::GenericBlock)
-    } else {
-        (false, Tier::Block)
-    };
-    let tier = tier.unwrap_or(default);
-    for url in &urls {
-        for (types, context) in &type_triggers {
-            for cond in &conds {
-                emit(
-                    out,
-                    tier,
-                    &Trigger {
-                        url,
-                        case_sensitive: r.match_case,
-                        types: (!types.is_empty()).then_some(types.as_slice()),
-                        load_type: party,
-                        load_context: *context,
-                        cond: cond.as_ref(),
-                    },
-                    ignore,
-                );
-            }
-        }
-    }
-    Ok(())
-}
-
-/// uBO blocks what the rule matches except requests to the `$denyallow`
-/// hosts. For a match-all rule scoped to pages that is the block plus one
-/// exception per allowed host under the same options. The exceptions also
-/// lift other lists' blocks of those hosts on those pages (under-blocking);
-/// with a pattern they would lift more, so only match-all rules expand.
-/// An important block takes its exclusions in the tiers just before the
-/// important blocks: an exception there lifts this block and no other
-/// important block, and it cannot follow the block without lifting them.
-fn compile_denyallow(
-    r: &NetworkRule,
-    v: SafariVersion,
-    ctx: &Context,
-    out: &mut Emitted,
-) -> Result<(), String> {
-    if !r.pattern.is_match_all() || r.from.include.is_empty() {
-        return Err("dnr:denyallow".into());
-    }
-    let (block_tier, allow_tier) = if r.important {
-        (Tier::ImportantDenyallowBlock, Tier::ImportantDenyallowException)
-    } else {
-        (Tier::Block, Tier::Exception)
-    };
-    let block = NetworkRule {
-        denyallow: Vec::new(),
-        ..r.clone()
-    };
-    let arena = out.arena();
-    let mark = (out.arenas[arena].len(), out.entries.len());
-    let result = compile_rule(&block, v, ctx, out, Some(block_tier)).and_then(|()| {
-        r.denyallow.iter().try_for_each(|host| {
-            let allow = NetworkRule {
-                exception: true,
-                important: false,
-                pattern: Pattern {
-                    kind: PatternKind::Hostname,
-                    body: format!("{host}^"),
-                    right_anchored: false,
-                },
-                ..block.clone()
-            };
-            compile_rule(&allow, v, ctx, out, Some(allow_tier))
-        })
-    });
-    if result.is_err() {
-        // The block was emitted before a failing exception: drop it too.
-        out.arenas[arena].truncate(mark.0);
-        out.entries.truncate(mark.1);
-    }
-    result
-}
-
-/// `@@...$document`, `$generichide`, `$elemhide`, `$specifichide`: one
-/// ignore-previous-rules over every type, conditioned on the page URL.
-/// `$specifichide` is widened to `$elemhide`, which also cancels generic
-/// hides.
-fn compile_scope(r: &NetworkRule, v: SafariVersion, out: &mut Emitted) -> Result<(), String> {
-    let generic = r.scope.contains(ExceptionScope::GENERICBLOCK);
-    if let Some(host) = genericbloc
+    // `@@...$cname` only exempts a request 
 ```
 
-### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/regex.rs`
+### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/prune.rs`
 ```
-//! uBO URL patterns and regexes to WebKit's url-filter regex subset.
+//! Drops `ignore-previous-rules` that cancel nothing. WebKit applies one to
+//! the earlier rules of its own list that match the same load, so an ignore
+//! no earlier rule can match together with it changes no verdict, yet it
+//! still costs compile time. #836 copies exceptions into every blocker whose
+//! blocks they might lift, and shards keep all of a list's exceptions.
 //!
-//! Plain patterns follow AdGuard's SimpleRegex.swift (`||`, `|`, `*`, `^`).
-//! The separator is uBO's (`^` matches anything but a letter, digit, `_`, `-`,
-//! `.` or `%`; uBO static-filtering-parser.js). Regex sources are translated
-//! into the subset WebKit accepts (SafariRegex.swift and the WebKit compiler:
-//! no alternation, `\d`/`\w`/`\b`, `{n}`, lookaround, backreferences). Anything
-//! else returns `None`, and the caller drops the rule or widens the exception.
+//! The test errs toward keeping. Two triggers are disjoint only when their
+//! resource types, load types or load contexts share nothing, their page
+//! conditions provably exclude each other, or both url-filters are anchored
+//! at hosts that cannot be the same. Everything else, including any
+//! url-filter not anchored at a whole host, overlaps.
+//!
+//! Host anchors: `^[a-z]+://([a-z0-9._-]+\.)?host` or `^[a-z]+://host`, then `/`,
+//! `:`, `[/:?#]`, `\?` or `$`. In an http, https, ws or wss URL the text
+//! between `//` and the first `/` or `:` (the authority, up to a port or
+//! password) holds no `?` or `#`, so such a filter matches only when that
+//! text is `host` or ends in `.host` (or is exactly `host`). Two anchors meet
+//! exactly when one host is the other or, where subdomains match, a
+//! subdomain of it. Separator classes (`[^a-zA-Z0-9_.%-]`) can match `@` in
+//! a user name, so they do not end an anchor. The same holds for `if-top-url`
+//! and `unless-top-url` regexes, which `regex::host_top_url` writes in this
+//! form. `if-domain` compiles to an unanchored regex in WebKit, so it is any
+//! page.
 
-use crate::ast::{DomainMatcher, Pattern, PatternKind};
+use crate::webkit::{WkLoadContext, WkLoadType, WkResourceType, WkTrigger};
+use rustc_hash::{FxHashMap, FxHashSet};
 
-/// uBO separator class.
-pub(crate) const SEPARATOR: &str = "[^a-zA-Z0-9_.%-]";
-/// Hostname anchor (`||`), the expression Apple recommends.
-const HOST_START: &str = "^[^:]+://+([^:/]+\\.)?";
-/// What follows a host in a top-level URL. WHATWG URLs always have a path, so
-/// a host is always followed by one of these.
-const HOST_END: &str = "[/:?#]";
-/// Largest repetition count expanded inline.
-const MAX_REPEAT: u32 = 32;
-/// Largest repetition of `.` expanded inline. Each extra any-character step
-/// after a pattern grows WebKit's DFA: one `der-windows-papst.de/.{32}\?ver`
-/// rule took a cookie and annoyance blocker from 335 MB to 1150 MB of compile
-/// memory on macOS, and timed out Safari on an iPad 6; 12 adds about 6 MB.
-const MAX_ANY_REPEAT: u32 = 12;
+use super::regex::{EXACT_START, HOST_START};
+/// What may follow a host for the filter to end the host there.
+const HOST_ENDS: [&str; 5] = ["[/:?#]", "/", ":", "\\?", "$"];
 
-/// The url-filter for a uBO URL pattern, matched case-insensitively.
-pub fn url_filter(p: &Pattern) -> Option<String> {
-    if p.is_match_all() {
-        return Some(".*".into());
-    }
-    if p.kind == PatternKind::Regex {
-        // A regex that reduces to nothing (`/x{0}/`) matches every URL;
-        // WebKit rejects an empty url-filter, so say that as `.*`.
-        return translate(&p.body)
-            .map(|r| if r.is_empty() { ".*".into() } else { r })
-            .filter(|r| webkit_accepts(r));
-    }
-    let mut out = String::new();
-    let mut body = p.body.as_str();
-    match p.kind {
-        PatternKind::Hostname => {
-            out.push_str(HOST_START);
-            // A `^` right after a plain host ends the host, which in a URL is
-            // always followed by one of HOST_END. The narrower class makes the
-            // ~60k `||host^` blocks of EasyList and AdGuard Base compile 12%
-            // faster in WebKit.
-            let host = body.split_once('^').filter(|(h, _)| {
-                !h.is_empty() && h.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'.')
-            });
-            if let Some((host, rest)) = host {
-                literal(host, &mut out)?;
-                out.push_str(HOST_END);
-                body = rest;
-            }
-        }
-        PatternKind::Left => out.push('^'),
-        _ => {}
-    }
-    literal(body, &mut out)?;
-    if p.right_anchored {
-        out.push('$');
-    }
-    webkit_accepts(&out).then_some(out)
+/// A host a url-filter or top-URL regex is anchored at. `star` when its
+/// subdomains match too.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub(crate) struct Host {
+    name: Box<str>,
+    star: bool,
 }
 
-/// Longest url-filter emitted. Counted repeats expand, so this also bounds
-/// the work a single source rule can cause in WebKit's compiler.
-const MAX_FILTER_LEN: usize = 4096;
-
-/// Final check on an emitted url-filter, so one bad rule never reaches
-/// Safari (a rule WebKit rejects fails its whole content blocker): non-empty,
-/// ASCII, bounded, balanced groups and classes, ascending class ranges, and
-/// quantifiers only after something they can repeat.
-pub fn webkit_accepts(re: &str) -> bool {
-    let b = re.as_bytes();
-    if b.is_empty() || b.len() > MAX_FILTER_LEN || !re.is_ascii() {
-        return false;
-    }
-    let (mut depth, mut i, mut can_repeat) = (0usize, 0usize, false);
-    while i < b.len() {
-        match b[i] {
-            b'\\' => {
-                if i + 1 >= b.len() {
-                    return false;
-                }
-                i += 1;
-                can_repeat = true;
-            }
-            b'(' => {
-                depth += 1;
-                can_repeat = false;
-            }
-            b')' => {
-                if depth == 0 {
-                    return false;
-                }
-                depth -= 1;
-                can_repeat = true;
-            }
-            b'[' => {
-                let Some(end) = class_end(b, i) else {
-                    return false;
-                };
-                i = end;
-                can_repeat = true;
-            }
-            b']' => return false,
-            b'*' | b'+' | b'?' => {
-                if !can_repeat {
-                    return false;
-                }
-                can_repeat = false;
-            }
-            b'^' if i != 0 => return false,
-            b'$' if i != b.len() - 1 => return false,
-            b'|' | b'{' | b'}' => return false,
-            _ => can_repeat = true,
-        }
-        i += 1;
-    }
-    depth == 0
+/// The pages a trigger fires on.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub(crate) enum Page {
+    Any,
+    /// Only pages on one of these hosts.
+    If(Box<[Host]>),
+    /// Every page except some on these hosts (a subset of the excluded ones).
+    Unless(Box<[Host]>),
 }
 
-/// Index of the `]` closing the class that opens at `start`, or `None` when
-/// it is unterminated, empty, or has a descending range.
-fn class_end(b: &[u8], start: usize) -> Option<usize> {
-    let mut i = start + 1;
-    if b.get(i) == Some(&b'^') {
-        i += 1;
+/// What `prune` needs of one rule.
+#[derive(Clone, Debug)]
+pub(crate) struct Shape {
+    pub(crate) ignore: bool,
+    /// None when the url-filter is not anchored at a whole host.
+    url: Option<Host>,
+    types: u16,
+    load: u8,
+    context: u8,
+    page: Page,
+}
+
+const ALL_TYPES: u16 = (1 << 13) - 1;
+
+fn type_bit(t: WkResourceType) -> u16 {
+    1 << t as u16
+}
+
+impl Shape {
+    pub(crate) fn new(
+        ignore: bool,
+        url: &str,
+        types: Option<&[WkResourceType]>,
+        load: Option<&[WkLoadType]>,
+        context: Option<&[WkLoadContext]>,
+        page: Page,
+    ) -> Shape {
+        Shape {
+            ignore,
+            url: anchor(url).map(|(host, _)| host),
+            types: types.map_or(ALL_TYPES, |t| t.iter().fold(0, |m, &t| m | type_bit(t))),
+            load: load.map_or(3, |l| l.iter().fold(0, |m, &l| m | 1 << l as u8)),
+            context: context.map_or(3, |c| c.iter().fold(0, |m, &c| m | 1 << c as u8)),
+            page,
+        }
     }
-    let first = i;
-    let mut prev: Option<u8> = None;
-    while i < b.len() {
-        let c = match b[i] {
-            b']' if i > first => return Some(i),
-            b'\\' => {
-                i += 1;
-                *b.get(i)?
-            }
-            c => c,
-        };
-        if c == b'-' && prev.is_some() && b.get(i + 1).is_some_and(|&n| n != b']') {
-            let lo = prev?;
-            i += 1;
-            let hi = match b[i] {
-                b'\\' => {
-                    i += 1;
-                    *b.get(i)?
-                }
-                h => h,
-            };
-            if hi < lo {
-                return None;
-            }
-            prev = None;
+
+    pub(crate) fn of_trigger(ignore: bool, t: &WkTrigger) -> Shape {
+        let page = if let Some(urls) = &t.if_top_url {
+            if_page(urls.iter().map(String::as_str))
+        } else if let Some(urls) = &t.unless_top_url {
+            unless_page(urls.iter().map(String::as_str))
+        } else if let Some(domains) = &t.unless_domain {
+            Page::Unless(domains.iter().map(|d| domain_host(d)).collect())
         } else {
-            prev = Some(c);
-        }
-        i += 1;
+            // if-domain, if-frame-url and unless-frame-url: any page.
+            Page::Any
+        };
+        Shape::new(
+            ignore,
+            &t.url_filter,
+            t.resource_type.as_deref(),
+            t.load_type.as_deref(),
+            t.load_context.as_deref(),
+            page,
+        )
     }
-    None
-}
 
-/// An `if-top-url` regex for a domain option (uBO `$domain=`/`$to=` item).
-/// Hostnames match themselves and subdomains. Entities (`google.*`) accept a
-/// one-label suffix or `co.`/`com.` plus one label, approximating uBO's public
-/// suffix list: `google.de` and `google.co.uk` match, `google.evil.com` does
-/// not, and rarer two-label suffixes (`google.ne.jp`) are missed. Regex domains match the host
-/// with the regex, as uBO tests them against the hostname.
-pub fn domain_top_url(m: &DomainMatcher) -> Option<String> {
-    top_url(m).filter(|u| webkit_accepts(u))
-}
-
-fn top_url(m: &DomainMatcher) -> Option<String> {
-    match m {
-        DomainMatcher::Hostname(h) => {
-            let mut out = HOST_START.to_string();
-            literal(h, &mut out)?;
-            out.push_str(HOST_END);
-            Some(out)
-        }
-        DomainMatcher::Entity(e) => {
-            let mut out = HOST_START.to_string();
-            literal(e, &mut out)?;
-            // `name.<tld>` or `name.co.<tld>`/`name.com.<tld>`, not `name.evil.com`.
-            out.push_str("\\.(com?\\.)?[^:/.]+");
-            out.push_str(HOST_END);
-            Some(out)
-        }
-        DomainMatcher::Regex(src) => {
-            let (anchored, body) = match src.strip_prefix('^') {
-                Some(rest) => (true, rest),
-                None => (false, src.as_str()),
-            };
-            let (body, at_end) = match body.strip_suffix('$') {
-                Some(rest) if !rest.ends_with('\\') => (rest, true),
-                _ => (body, false),
-            };
-            let inner = translate(body)?;
-            let mut out = String::from("^[^:]+://");
-            if !anchored {
-                out.push_str("[^/:?#]*");
-            }
-            out.push_str(&inner);
-            if !at_end {
-                out.push_str("[^/:?#]*");
-            }
-            out.push_str(HOST_END);
-            Some(out)
-        }
+    /// The shape with its page condition replaced.
+    pub(crate) fn set_page(&mut self, page: Page) {
+        self.page = page;
     }
 }
 
-/// Literal pattern text with `*` and `^` translated. Escapes regex
-/// metacharacters. Returns `None` for non-ASCII input.
-fn literal(body: &str, out: &mut String) -> Option<()> {
-    for c in body.chars() {
-        match c {
-            '*' => out.push_str(".*"),
-            '^' => out.push_str(SEPARATOR),
-            c if c.is_ascii() => {
-                if ".+?()[]{}|$\\".contains(c) {
-                    out.push('\\');
-                }
-                out.push(c);
-            }
-            _ => return None,
-        }
-    }
-    Some(())
+/// `if-top-url` regexes: any page when one of them is not a host anchor.
+pub(crate) fn if_page<'a>(urls: impl Iterator<Item = &'a str>) -> Page {
+    urls.map(|u| anchor(u).map(|(host, _)| host))
+        .collect::<Option<Box<[Host]>>>()
+        .map_or(Page::Any, Page::If)
 }
 
-/// Translates a uBO regex body into the WebKit subset. `^` is accepted only
-/// as the first character and `$` only as the last.
-fn translate(src: &str) -> Option<String> {
-    if src.is_empty() || !src.is_ascii() {
+/// `unless-top-url` regexes. Only a regex that matches every page of its
+/// host (nothing after the host) may stand for that host; the rest are left
+/// out, which leaves fewer pages excluded.
+pub(crate) fn unless_page<'a>(urls: impl Iterator<Item = &'a str>) -> Page {
+    Page::Unless(urls.filter_map(anchor).filter(|(_, whole)| *whole).map(|(host, _)| host).collect())
+}
+
+/// An `if-domain`/`unless-domain` entry: `*host` also matches subdomains.
+pub(crate) fn domain_host(entry: &str) -> Host {
+    match entry.strip_prefix('*') {
+        Some(name) => Host { name: name.into(), star: true },
+        None => Host { name: entry.into(), star: false },
+    }
+}
+
+/// The host `filter` is anchored at, and whether nothing but the host's end
+/// follows it.
+fn anchor(filter: &str) -> Option<(Host, bool)> {
+    let (rest, star) = match filter.strip_prefix(HOST_START) {
+        Some(rest) => (rest, true),
+        None => (filter.strip_prefix(EXACT_START)?, false),
+    };
+    let bytes = rest.as_bytes();
+    let mut name = String::new();
+    let mut i = 0;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'\\' if bytes.get(i + 1) == Some(&b'.') => {
+                name.push('.');
+                i += 2;
+            }
+            b @ (b'a'..=b'z' | b'0'..=b'9' | b'-') => {
+                name.push(b as char);
+                i += 1;
+            }
+            // A case-sensitive filter can name an uppercase host, which no
+            // URL has; as lowercase it matches more, which is safe.
+            b @ b'A'..=b'Z' => {
+                name.push(b.to_ascii_lowercase() as char);
+                i += 1;
+            }
+            _ => break,
+        }
+    }
+    let tail = &rest[i..];
+    if name.is_empty() || name.starts_with('.') || name.ends_with('.') || name.contains("..") {
         return None;
     }
-    let mut p = Translator {
-        src: src.as_bytes(),
-        pos: 0,
+    HOST_ENDS.iter().any(|e| tail.starts_with(e)).then(|| (Host { name: name.into(), star }, tail == "[/:?#]"))
+}
+
+/// `host` and each parent of it: `a.b.c`, `b.c`, `c`.
+fn labels(host: &str) -> impl Iterator<Item = &str> {
+    std::iter::once(host).chain(host.match_indices('.').map(|(i, _)| &host[i + 1..]))
+}
+
+/// Whether one URL host can match both anchors.
+fn hosts_meet(a: &Host, b: &Host) -> bool {
+    let under = |x: &Host, y: &Host| {
+        y.star && x.name.len() > y.name.len() && x.name.ends_with(&*y.name)
+            && x.name.as_bytes()[x.name.len() - y.name.len() - 1] == b'.'
     };
-    let out = p.seq(0)?;
-    (p.pos == src.len()).then_some(out)
+    a.name == b.name || under(a, b) || under(b, a)
 }
 
-struct Translator<'a> {
-    src: &'a [u8],
-    pos: usize,
+/// Whether `unless` excludes every page `host` matches.
+fn covered(host: &Host, unless: &[Host]) -> bool {
+    unless.iter().any(|u| {
+        u.name == host.name && (u.star || !host.star)
+            || u.star && host.name.len() > u.name.len() && host.name.ends_with(&*u.name)
+                && host.name.as_bytes()[host.name.len() - u.name.len() - 1] == b'.'
+    })
 }
 
-impl Translator<'_> {
-    fn peek(&self) -> Option<u8> {
-        self.src.get(self.pos).copied()
-    }
-
-    fn next(&mut self) -> Option<u8> {
-        let c = self.peek()?;
-        self.pos += 1;
-        Some(c)
-    }
-
-    /// Parses atoms and quantifiers up to `)` (inside a group) or the end.
-    fn seq(&mut self, depth: u32) -> Option<String> {
-        let mut out = String::new();
-        while let Some(c) = self.peek() {
-            if c == b')' {
-                return (depth > 0).then_some(out);
-            }
-            let (atom, quantifiable) = self.atom(depth)?;
-            match self.quantifier()? {
-                None => out.push_str(&atom),
-                Some((min, max)) => {
-                    let limit = if atom == "." { MAX_ANY_REPEAT } else { MAX_REPEAT };
-                    if !quantifiable || min.max(max.unwrap_or(0)) > limit {
-                        return None;
-                    }
-                    repeat(&atom, min, max, &mut out);
-                }
-            }
+fn pages_meet(a: &Page, b: &Page) -> bool {
+    match (a, b) {
+        (Page::Any, _) | (_, Page::Any) | (Page::Unless(_), Page::Unless(_)) => true,
+        (Page::If(a), Page::If(b)) => a.iter().any(|x| b.iter().any(|y| hosts_meet(x, y))),
+        (Page::If(hosts), Page::Unless(unless)) | (Page::Unless(unless), Page::If(hosts)) => {
+            !hosts.iter().all(|h| covered(h, unless))
         }
-        (depth == 0).then_some(out)
+    }
+}
+
+/// A rule without its url, with its page interned in `Pages`.
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+struct Sig {
+    types: u16,
+    load: u8,
+    context: u8,
+    page: u32,
+}
+
+/// Interned page conditions and which pairs of them meet.
+#[derive(Default)]
+struct Pages {
+    ids: FxHashMap<Page, u32>,
+    list: Vec<Page>,
+    meets: FxHashMap<(u32, u32), bool>,
+}
+
+impl Pages {
+    fn sig(&mut self, shape: &Shape) -> Sig {
+        let page = match self.ids.get(&shape.page) {
+            Some(&id) => id,
+            None => {
+                let id = self.list.len() as u32;
+                self.ids.insert(shape.page.clone(), id);
+                self.list.push(shape.page.clone());
+                id
+            }
+        };
+        Sig { types: shape.types, load: shape.load, context: shape.context, page }
     }
 
-    /// Returns the translated atom and whether a quantifier may follow it.
-    fn atom(&mut self, depth: u32) -> Option<(String, bool)> {
-        let c = self.next()?;
-        Some(match c {
-            b'^' if self.pos == 1 => ("^".
+    fn meet(&mut self, a: Sig, b: Sig) -> bool {
+        if a.types & b.types == 0 || a.load & b.load == 0 || a.context & b.context == 0 {
+            return false;
+        }
+        let key = (a.page.min(b.page), a.page.max(b.page));
+        let list = &self.list;
+        *self.meets.entry(key).or_insert_with(|| pages_meet(&list[a.page as usize], &list[b.page as usize]))
+    }
+}
+
+/// The rules seen so far, indexed by the host their url-filter is anchored at.
+#[derive(Default)]
+pub(crate) struct Seen {
+    pages: Pages,
+    /// Every rule's signature.
+    all: FxHashSet<Sig>,
+    /// Rules not anchored at a host.
+    floating: FxHashSet<Sig>,
+    /// Cosmetic hides, which only the page exceptions meant for them cancel.
+    hides: FxHashSet<Sig>,
+    /// Host -> (subdomains too, signature) of the rules anchored there.
+    hosts: FxHashMap<Box<str>, FxHashSet<(bool, Sig)>>,
+    /// Host -> signatures of the rules anchored strictly below it.
+    below: FxHashMap<Box<str>, FxHashSet<Sig>>,
+}
+
+impl Seen {
+    /// Records a rule that is not an ignore.
+    pub(crate) fn add(&mut self, shape: &Shape) {
+        let sig = self.pages.sig(shape);
+        self.all.insert(sig);
+        match &shape.url {
+            None => {
+                self.floating.insert(sig);
+            }
+            Some(host) => {
+                self.hosts.entry(host.name.clone()).or_default().insert((host.star, sig));
+                for parent i
 ```
 
 
@@ -2231,11 +2199,11 @@ impl Translator<'_> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1094** (2026-11-08): **[BUG]**
-  *Symptoms*: ### Describe the bug  When Dark Reader is enabled through the wBlock beta user script, some areas of the page stay white instead of going dark. The search bar in the ask anything in google ai chat is also white while the rest of the page is black.  The Dark Reader OLED mode doesn't apply unless light mode is turned on, which leaves white spots on the page when the dark reader oled is on.  Device: iPhone 15 Pro iOS: 27.0.1 Browser: Safari wBlock: most update version   ### To reproduce  1. Install the wBlock beta and enable the Dark Reader user script Oled  <img width="590" height="1278" alt="Image" src="https://github.com/user-attachments/assets/1130438d-3912-444b-9fd7-851de12f6dba" />  2. Turn light mode in google via safari  3. Open any website (I tested with [google search) 4. Notice white areas on the page and in the “ask me anything “ google search 5. Turn on Dark Reader's OLED mode and see that it only works when light mode is on when dark mode is on doesnt even work   ### Expected behavior  i expect the oled mode to display with out light mode being on on regular dark mode   ### Screenshot or video  <img width="590" height="1278" alt="Image" src="https://github.com/user-attachments/assets/d315e12b-d4ac-4832-9456-a8fdfa864adb" />  ### Environment  Most updated version of wblock from app store  ios 27.0.1   Iphone 15 pro   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I ha
+- **Issue #1113** (2026-11-12): **[BUG] massive desync and bugs**
+  *Symptoms*: ### Describe the bug  I am on claude, i click the button to show the wblock popup, and first of all it shows for a completely different tab (uguu.se)(its the newest tab in private window) also i cant turn off the zapper. Also i have diff profiles so it might be the cause of desync too.  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  [wBlock_logs_12-11-2026.txt](https://github.com/user-attachments/files/34745465/wBlock_logs_12-11-2026.txt)  ### Environment  - OS: [e.g. iOS 26.2.1 - wBlock Version: 3.2.3 - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
 
-- **Issue #1086** (2026-11-06): **Apply fails on wBlock 2 (under the 150k limit); "Source Rules" count doesn't update after disabling cosmetic filtering.**
-  *Symptoms*: ### Describe the bug  A persistent reload failure that still happens after fully disabling cosmetic filtering. Apply ends with "Process completed with errors" / "Failed to reload wBlock 2." The failure survives retries, even though wBlock 2 is under the limit: 138,626 / 150,000 after disabling cosmetic filtering (144,599 before). Log (17:30:30-31, Filter Apply) 	•	"Failed to reload content blocker" 	•	"Reload phase had failures; continuing with advanced rules processing" 	•	targets 5, activeTargets 5, failedTargets 1 (wBlock 2), retriedTargets 1 	•	totalAttempts 9, avgAttempts 1.80 (consistent with wBlock 2 taking ~5 attempts) 	•	reloadDurationMs 25897; slowestTarget wBlock 1@7826ms 	•	source: AppFilterManager+ApplyPipeline.swift:899 and :1060 	•	No underlying NSError domain/code is logged. Capacity, before vs after disabling cosmetic filtering  	•	Total: 676,214 -> 654,863 	•	Element hiding: 21,351 -> 0 	•	wBlock Scripts: 20,003 -> 13,681 	•	Network rules: 654,863 -> 654,863 	•	Slots 1-5 before: 122,217 / 144,599 / 144,332 / 133,611 / 131,455 	•	Slots 1-5 after: 116,417 / 138,626 / 144,323 / 130,051 / 125,446  1.	The failure doesn't look tied to the rule-count limit. wBlock 2 (92%) fails while wBlock 3 (96%) reloads fine, and wBlock 1 has the fewest rules yet is the slowest (7.8 s). That points to compile timeout, memory pressure, or rule composition rather than raw count. 	2.	"Source Rules" stays at 707,712 after disabling cosmetic filtering, so the source-to-Safari gap gro
+- **Issue #1111** (2026-11-11): **[BUG]: UI glitches in blocler list**
+  *Symptoms*: ### Describe the bug  - when activate an entry, list is "hopping" - the gear symbol in the on/off switch missplaced  ### To reproduce  see video  ### Expected behavior  _No response_  ### Screenshot or video  https://github.com/user-attachments/assets/973b4b49-6d68-4414-8be0-e6bdcfd2925c  ### Environment  - OS: [e.g. iOS 27.2] - wBlock Version:  3.2.3   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [ ] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [ ] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2252,452 +2220,702 @@ impl Translator<'_> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3781122d` (2026-11-07)
-**Commit Message**: fix(apply): commit the applied state as the run ends, not after cleanup (#1087)
+### Incident Patch 1: `990783e2` (2026-11-10)
+**Commit Message**: fix(engine): leave more room when packing blocks into the fewest blockers
 
-Keeping the run open through cleanup stopped Apply flashing but showed the raw status line in the update banner. The applied state is now committed when the result comes in, and a failed cleanup marks changes pending again instead.
+The size estimate is calibrated on two setups and nothing re-plans a
+blocker that compiles over Safari's limit, so cap an estimate at 70% of
+the limit instead of 85%.
 
-**File**: `wBlock/AppFilterManager+ApplyPipeline.swift` (modified, +12/-9)
+**File**: `Packages/wblock-engine/crates/wbe/src/apply.rs` (modified, +6/-4)
 ```diff
-@@ -1078,6 +1078,13 @@ extension AppFilterManager {
-             : "\(advancedRulesByTarget.count) targets combined"
-         await MainActor.run {
-             self.progress = 1.0
-+            // The applied state is committed as the run ends, so pending
-+            // changes never outlive it and Apply can't flash (#1088). Ending
-+            // later showed the raw status line in the update banner (#1087).
-+            if allReloadsSuccessful && advancedEngineSucceeded && !self.hasError {
-+                self.commitApplySnapshot(runSnapshot)
-+            }
-+            self.isLoading = false
+@@ -375,8 +375,10 @@ impl Size {
+     const SHARED: (f64, f64, f64) = (1.5, 100.0, 8.5);
+     const TAKEN: (f64, f64, f64) = (1.7, 100.0, 3.0);
+     const REST: (f64, f64, f64) = (1.0, 100.0, 1.5);
+-    /// The part of a limit an estimate may fill.
+-    const ROOM: f64 = 0.85;
++    /// The part of a limit an estimate may fill. The estimate is calibrated on
++    /// two setups and nothing re-plans a blocker that compiles over its limit,
++    /// so leave room for list mixes that compile fatter than estimated.
++    const ROOM: f64 = 0.7;
  
-             // Hard failure already presented (e.g. advanced engine). Keep that terminal state.
-             if self.applyProgressViewModel.state.mode == .failed {
-@@ -1138,20 +1145,16 @@ extension AppFilterManager {
-                 appliedFilters: runSnapshot.filters,
-                 disabledScriptIDs: disabledScriptIDs
-             )
--            if cleanupSucceeded {
--                await MainActor.run {
-+            await MainActor.run {
-+                if cleanupSucceeded {
-                     self.lastApplySucceeded = true
-                     self.persistUpgradeRebuildSignature()
-                     self.clearFailedUpgradeRebuildSignature()
--                    self.commitApplySnapshot(runSnapshot)
-+                } else {
-+                    // Leftover downloads of turned-off lists need another apply.
-+                    self.markNonSelectionChangesPending()
-                 }
-             }
--        }
--        // The run ends once the applied state is committed. Ending it at the
--        // result left pending changes set for the cleanup, so the toolbar
--        // flashed Apply before going back to Update (#1088).
--        await MainActor.run { self.isLoading = false }
--        if applySucceeded {
-             await refreshAppliedSourceRuleCounts(
-                 for: allSelectedFilters,
-                 admittedCountsByFilterID: appliedSourceRuleCountsByFilterID
+     fn add(&mut self, line: &str, (rules, each, bytes): (f64, f64, f64)) {
+         self.rules += rules;
+@@ -2088,7 +2090,7 @@ mod tests {
+     fn blocks_exceptions_reach_share_one_blocker() {
+         // Room in the wide blocker for what it takes and no more.
+         let plan = plan_within(
+-            9,
++            11,
+             json!([{ "id":"left", "text":"||plain.example^\n@@||cdn.ads.example/ok.js" },
+                    { "id":"right", "text":"||ads.example^\n/banner.\n||other.example^\n||com/track.js" }]),
+             json!([{"slot":1,"lists":[{"list":0}]},{"slot":2,"lists":[{"list":1}]}]),
+@@ -2124,7 +2126,7 @@ mod tests {
+         assert_eq!(held(&one), [302, 0, 0, 0, 0]);
+         assert!((1..5).all(|t| actions(&one, t).is_empty()));
+         // Room for 170 rules each: two blockers, as full as each other.
+-        let two = plan_within(200, lists.clone(), targets.clone());
++        let two = plan_within(243, lists.clone(), targets.clone());
+         let counts = held(&two);
+         assert_eq!(counts.iter().sum::<usize>(), 302);
+         assert!(counts[..2].iter().all(|c| (130..170).contains(c)) && counts[2..] == [0, 0, 0], "{counts:?}");
+```
+
+**File**: `Packages/wblock-engine/crates/wbe/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ pub use parse::parse_line;
+ /// Version of everything the engine writes: Safari JSON, runtime rules, and
+ /// the serialized per-page engine. Bump it whenever any of them changes for
+ /// the same input, so callers discard outputs cached by an older engine.
+-pub const OUTPUT_VERSION: u32 = 29;
++pub const OUTPUT_VERSION: u32 = 30;
+ 
+ /// The registrable domain (eTLD+1) of `host`, or `None` for a public suffix
+ /// or an invalid name.
 ```
 
 ---
 
-### Incident Patch 2: `17af8839` (2026-11-07)
-**Commit Message**: fix(onboarding): use native toggles and a segmented picker for every choice (#1088)
+### Incident Patch 2: `3a5a91b3` (2026-11-11)
+**Commit Message**: fix(engine): keep a custom blocker's blocks when no list has exceptions
 
-Pick lists now draw the same control as the available-updates review, a checkbox on macOS and a switch on iOS, grouped in one box per list. Blocking level is a segmented control. Annoyances Info shares the rows.
+A blocker built outside the shared plan sends a zero rule limit to turn the wide blocker off. A plan with no exceptions still fit that limit, so its blocks went to blockers nobody compiled.
 
-**File**: `wBlock/ApplyChangesProgressView.swift` (modified, +1/-33)
+**File**: `Packages/wblock-engine/crates/wbe/src/apply.rs` (modified, +16/-4)
 ```diff
-@@ -225,23 +225,8 @@ struct ApplyChangesProgressView: View {
+@@ -302,7 +302,8 @@ pub struct Plan {
+ #[derive(Debug, Clone, Copy, Deserialize)]
+ #[serde(default)]
+ pub struct Limits {
+-    /// Safari's rule limit per content blocker.
++    /// Safari's rule limit per content blocker. 0 for a blocker built outside
++    /// the shared plan: every blocker then keeps its own lists' blocks.
+     pub rules: usize,
+     /// The app's budget for a blocker's JSON.
+     pub bytes: usize,
+@@ -453,9 +454,13 @@ impl Plan {
      }
  
-     /// One update per native toggle: a checkbox on macOS, a switch on iOS.
--    /// Type matches the filter rows on the main list.
-     private func updateToggle(_ title: String, subtitle: String, isOn: Bool, toggle: @escaping () -> Void) -> some View {
--        Toggle(isOn: Binding(get: { isOn }, set: { _ in toggle() })) {
--            VStack(alignment: .leading, spacing: 4) {
--                Text(verbatim: title)
--                    .fontWeight(.medium)
--                if !subtitle.isEmpty {
--                    Text(verbatim: subtitle)
--                        .font(.caption)
--                        .foregroundStyle(.secondary)
--                        .lineLimit(2)
--                }
--            }
--        }
--        #if os(macOS)
--        .toggleStyle(UpdateRowCheckboxStyle())
--        #endif
-+        SelectableRow(title: Text(verbatim: title), subtitle: subtitle, isSelected: isOn, action: toggle)
+     /// The wide blocker: the first of those with the fewest rules assigned.
+-    /// None for a single blocker, or when the blocks it would gain do not
+-    /// fit it.
++    /// None for a single blocker, for a zero rule limit, or when the blocks
++    /// it would gain do not fit it.
+     fn wide(&self) -> Option<Wide> {
++        // Nothing fits a zero limit, not even a plan with no exceptions.
++        if self.limits.rules == 0 {
++            return None;
++        }
+         let load = |t: &TargetSpec| -> usize {
+             t.lists.iter().map(|a| self.parsed[a.list].count() / a.shard.map_or(1, |(_, n)| n as usize)).sum()
+         };
+@@ -2201,9 +2206,16 @@ mod tests {
+         }))
+         .unwrap();
+         request.limits.rules = 1;
+-        let plan = Plan::new(request);
++        let plan = Plan::new(request.clone());
+         assert!(serde_json::to_string(&rules(&plan, 0)).unwrap().contains("plain"));
+         assert!(serde_json::to_string(&rules(&plan, 1)).unwrap().contains("banner"));
++        // A zero limit marks a blocker built outside the plan, even when no
++        // block would go to the wide blocker.
++        request.lists[1].text = "||other.example^".into();
++        request.limits.rules = 0;
++        let plan = Plan::new(request);
++        assert!(serde_json::to_string(&rules(&plan, 0)).unwrap().contains("plain"));
++        assert!(serde_json::to_string(&rules(&plan, 1)).unwrap().contains("other"));
      }
  
-     private var reviewToolbar: some View {
-@@ -602,20 +587,3 @@ struct FinishedResultDismissal: NSViewRepresentable {
- }
- #endif
- 
--#if os(macOS)
--/// A checkbox centered on its two-line label, toggled by a click anywhere on
--/// the row (#1034).
--private struct UpdateRowCheckboxStyle: ToggleStyle {
--    func makeBody(configuration: Configuration) -> some View {
--        HStack(spacing: 8) {
--            Toggle(isOn: configuration.$isOn) { configuration.label }
--                .toggleStyle(.checkbox)
--                .labelsHidden()
--            configuration.label.accessibilityHidden(true)
--            Spacer(minLength: 0)
--        }
--        .contentShape(Rectangle())
--        .onTapGesture { configuration.isOn.toggle() }
--    }
--}
--#endif
+     #[test]
 ```
 
-**File**: `wBlock/FilterCategoryInfoView.swift` (modified, +12/-15)
+**File**: `Packages/wblock-engine/crates/wbe/src/lib.rs` (modified, +1/-1)
 ```diff
-@@ -115,25 +115,22 @@ struct RecommendedNamesList: View {
-     }
- }
+@@ -19,7 +19,7 @@ pub use parse::parse_line;
+ /// Version of everything the engine writes: Safari JSON, runtime rules, and
+ /// the serialized per-page engine. Bump it whenever any of them changes for
+ /// the same input, so callers discard outputs cached by an older engine.
+-pub const OUTPUT_VERSION: u32 = 30;
++pub const OUTPUT_VERSION: u32 = 31;
  
--/// One card per choice, naming the lists it turns on.
-+/// One native toggle per choice, naming the lists it turns on.
- struct AnnoyanceChoicePicker: View {
-     @Binding var selection: Set<AnnoyanceChoice>
- 
-     var body: some View {
--        VStack(alignment: .leading, spacing: 10) {
--            ForEach(AnnoyanceChoice.allCases) { choice in
--                let isSelected = selection.contains(choice)
--                SelectableRow(
--                    title: Text(LocalizedStringKey(choice.title)),
--                    caption: ListFormatter.localizedString(byJoining: choice.filterNames.map {
--                        LocalizedStrings.text($0, comment: "Filter list name")
--                    }),
--                    subtitle: choice.subtitle,
--                    isSelected: isSelected,
--                    style: .card
--                ) {
--                    if isSelected { selection.remove(choice) } else { selection.insert(choice) }
--                }
-+        SelectableRowGroup(data: AnnoyanceChoice.allCases) { choice in
-+            let isSelected = selection.contains(choice)
-+            SelectableRow(
-+                title: Text(LocalizedStringKey(choice.title)),
-+                caption: ListFormatter.localizedString(byJoining: choice.filterNames.map {
-+                    LocalizedStrings.text($0, comment: "Filter list name")
-+                }),
-+                subtitle: choice.subtitle,
-+                isSelected: isSelected
-+            ) {
-+                if isSelected { selection.remove(choice) } else { selection.insert(choice) }
-             }
-         }
-     }
-```
-
-**File**: `wBlock/OnboardingView.swift` (modified, +28/-32)
-```diff
-@@ -452,26 +452,32 @@ struct OnboardingView: View {
-         .padding(.vertical, 36)
-     }
- 
--    private var blockingLevelStep: some View {
--        VStack(alignment: .leading, spacing: 14) {
--            ForEach(BlockingLevel.allCases) { level in
--                blockingLevelCard(for: level)
--            }
--        }
-+    /// The level the stored string names, matched as earlier builds wrote it.
-+    private var blockingLevel: Binding<BlockingLevel?> {
-+        Binding(
-+            get: {
-+                let stored = selectedBlockingLevel.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-+                return BlockingLevel.allCases.first { $0.rawValue.lowercased() == stored }
-+            },
-+            set: { selectedBlockingLevel = $0?.rawValue ?? "" }
-+        )
-     }
- 
--    private func blockingLevelCard(for level: BlockingLevel) -> some View {
--        let isSelected =
--            selectedBlockingLevel.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
--            == level.rawValue.lowercased()
--
--        return SelectableRow(
--            title: Text(LocalizedStringKey(level.rawValue)),
--            subtitle: blockingLevelDescription(level),
--            isSelected: isSelected,
--            style: .card
--        ) {
--            selectedBlockingLevel = level.rawValue
-+    /// A native segmented control, like the system's own pickers (#1088).
-+    private var blockingLevelStep: some View {
-+        VStack(alignment: .leading, spacing: 10) {
-+            Picker("Blocking Level", selection: blockingLevel) {
-+                ForEach(BlockingLevel.allCases) { level in
-+                    Text(LocalizedStringKey(level.rawValue)).tag(Optional(level))
-+                }
-+            }
-+            .pickerStyle(.segmented)
-+            .labelsHidden()
-+            if let level = blockingLevel.wrappedValue {
-+                Text(blockingLevelDescription(level))
-+                    .font(.subheadline)
-+                    .foregroundStyle(.secondary)
-+            }
-         }
-     }
- 
-@@ -536,7 +542,7 @@ struct OnboardingView: View {
-                 VStack(alignment: .leading, spacing: 10) {
-                     Text(LocalizedStrings.text("Regional", comment: "Filter list category"))
-                         .font(.headline)
--                    ForEach(ForeignFilterOrganizer.sortedFilters(regionalFilters)) { filter in
-+                    SelectableRowGroup(data: ForeignFilterOrganizer.sortedFilters(regionalFilters)) { filter in
-                         regionalToggle(for: filter)
-                     }
-                 }
-@@ -580,15 +586,7 @@ struct OnboardingView: View {
-     }
- 
-     private func userscriptList(_ scripts: [OnboardingUserScriptItem]) -> some View {
--        VStack(spacing: 0) {
--            ForEach(Array(scripts.enumerated()), id: \.element.id) { index, script in
--                userscriptCard(for: script)
--                if index < scripts.count - 1 {
--                    Divider().padding(.leading, 44)
--                }
--            }
--        }
--        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-+        SelectableRowGroup(data: scripts) { userscriptCard(for: $0) }
-     }
- 
-     private func regionalToggle(for filter: FilterList) -> some View {
-@@ -599,8 +597,7 @@ struct OnboardingView: View {
-             title: Text(filter.localizedDisplayName),
-             caption: languages,
-             subtitle: filter.localizedDisplayDescription,
--            isSelected: isSelected,
--            style: .card
-+            isSelected: isSelected
-         ) {
-             if isSelected {
-                 selectedRegionalFilters.remove(filter.id)
-@@ -874,8 +871,7 @@ struct OnboardingView: View {
-             title: Text(script.name),
-             subtitle: script.description,
-             badge: script.isBeta ? Text("Beta") : nil,
--            isSelected: isSelected,
--            style: .groupedRow
-+            isSelected: isSelected
-         ) {
-             if isSelected {
-                 selectedUserscripts.remove(script.id)
-```
-
-**File**: `wBlock/SelectionIndicator.swift` (modified, +65/-113)
-```diff
-@@ -1,139 +1,91 @@
- import SwiftUI
- 
--/// A shape-rendered selection mark that avoids SF Symbol circle-outline artifacts.
--struct SelectionIndicator: View {
--    let isSelected: Bool
--    var size: CGFloat = 20
--
--    var body: some View {
--        ZStack {
--            Circle()
--                .fill(isSelected ? Color.accentColor : Color.clear)
--            Circle()
--                .strokeBorder(
--                    Color.secondary.opacity(isSelected ? 0 : 0.7),
--                    lineWidth: 1.5
--                )
--
--            if isSelected {
--                Image(systemName: "checkmark")
--                    .font(.system(size: size * 0.5, weight: .bold))
--                    .foregroundStyle(.white)
--            }
--        }
--        .frame(width: size, height: size)
--        .animation(.easeInOut(duration: 0.15), value: isSelected)
--        .accessibilityHidden(true)
--    }
--}
--
--/// Shared tappable selection row used by onboarding pick lists and the
--/// apply-updates review sheet. Every selection list renders through this row
--/// so spacing, typography, and accessibility stay consistent.
-+/// One choice in a pick list, drawn with the native control as in the
-+/// available-updates review (#1088): a checkbox on macOS, a switch on iOS.
-+/// Onboarding, Annoyances Info, and the review share it.
- struct SelectableRow: View {
--    enum Style {
--        /// Bare row for use inside a `List` section.
--        case listRow
--        /// Row inside a shared grouped material container.
--        case groupedRow
--        /// Standalone material card.
--        case card
--    }
--
-     let title: Text
-     /// A short line under the title, such as the languages a list covers.
-     var caption: String = ""
-     var subtitle: String = ""
-     var badge: Text? = nil
-     let isSelected: Bool
--    var style: Style = .listRow
-     let action: () -> Void
- 
-     var body: some View {
--        Button(action: action) {
--            HStack(alignment: .top, spacing: 12) {
--                SelectionIndicator(isSelected: isSelected, size: indicatorSize)
--
--                VStack(alignment: .leading, spacing: 3) {
--                    HStack(spacing: 6) {
--                        title
--                            .font(titleFont)
--                            .foregroundStyle(.primary)
--                            .multilineTextAlignment(.leading)
--
--                        if let badge {
--                            badge
--                                .font(.caption2)
--                                .fontWeight(.medium)
--                                .padding(.horizontal, 6)
--                                .padding(.vertical, 2)
--                                .background(Color.orange.opacity(0.15))
--                                .foregroundStyle(.orange)
--                                .cornerRadius(4)
--                        }
--                    }
--
--                    if !caption.isEmpty {
--                        Text(caption)
--                            .font(.caption.weight(.medium))
--                            .foregroundStyle(.secondary)
--                            .multilineTextAlignment(.leading)
--                    }
--
--                    if !subtitle.isEmpty {
--                        Text(subtitle)
--                            .font(.caption)
--                            .foregroundStyle(.secondary)
--                            .lineLimit(2)
--                            .multilineTextAlignment(.leading)
-+        Toggle(isOn: Binding(get: { isSelected }, set: { _ in action() })) {
-+            VStack(alignment: .leading, spacing: 3) {
-+                HStack(spacing: 6) {
-+                    title
-+                        .fontWeight(.medium)
-+                        .foregroundStyle(.primary)
-+                        .multilineTextAlignment(.leading)
-+                    if let badge {
-+                        badge
-+                            .font(.caption2)
-+                            .fontWeight(.medium)
-+                            .padding(.horizontal, 6)
-+                            .padding(.vertical, 2)
-+                            .background(Color.orange.opacity(0.15))
-+                            .foregroundStyle(.orange)
-+                            .cornerRadius(4)
-                     }
-                 }
--
--                Spacer(minLength: 0)
-+                if !caption.isEmpty {
-+                    Text(caption)
-+                        .font(.caption.weight(.medium))
-+                        .foregroundStyle(.secondary)
-+                        .multilineTextAlignment(.leading)
-+                }
-+                if !subtitle.isEmpty {
-+                    Text(subtitle)
-+                        .font(.caption)
-+                        .foregroundStyle(.secondary)
-+                        .lineLimit(2)
-+                        .multilineTextAlignment(.leading)
-+                }
-             }
--            .frame(maxWidth: .infinity, alignment: .leading)
--          
-```
-
-**File**: `wBlock/ar.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -1083,3 +1083,4 @@ To re-enable these filters, disable other large filters and apply changes again.
- "Choose the annoyances to hide. You can change this later in Annoyances Info." = "اختر الإزعاجات التي تريد إخفاءها. يمكنك تغيير ذلك لاحقًا من معلومات الإزعاجات.";
- "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments." = "يحظر إعلانات YouTube ومشغّله على الويب ويشغّل الفيديو في مشغّل Safari الأصلي، مع الفصول وصورة داخل صورة والتشغيل في الخلفية ووضع الصوت فقط. يتضمن SponsorBlock الذي يتخطى المقاطع المموّلة.";
- "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info." = "يحظر مشغّلات الفيديو الخارجية على المواقع الأخرى ويشغّل الفيديو بعناصر تحكم Safari الأصلية، مضيفًا صورة داخل صورة تلقائيًا والتشغيل في الخلفية والترجمات والفصول ومعلومات قيد التشغيل.";
-+"Blocking Level" = "مستوى الحظر";
-```
-
-**File**: `wBlock/de.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -1083,3 +1083,4 @@ Um diese Filter wieder zu aktivieren, deaktiviere andere große Filter und wende
- "Choose the annoyances to hide. You can change this later in Annoyances Info." = "Wähle, welche Belästigungen ausgeblendet werden. Du kannst das später in den Infos zu Belästigungen ändern.";
- "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments." = "Blockiert YouTubes Werbung und Web-Player und spielt Videos im nativen Player von Safari ab, mit Kapiteln, Bild-in-Bild, Wiedergabe im Hintergrund und Nur-Audio-Modus. Enthält SponsorBlock, das gesponserte Abschnitte überspringt.";
- "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info." = "Blockiert Video-Player von Drittanbietern auf anderen Websites und spielt Videos mit den nativen Steuerelementen von Safari ab, inklusive automatischem Bild-in-Bild, Wiedergabe im Hintergrund, Untertiteln, Kapiteln und Infos unter „Jetzt läuft“.";
-+"Blocking Level" = "Blockierstufe";
-```
-
-**File**: `wBlock/el.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -1083,3 +1083,4 @@ To re-enable these filters, disable other large filters and apply changes again.
- "Choose the annoyances to hide. You can change this later in Annoyances Info." = "Επιλέξτε ποιες ενοχλήσεις θα κρύβονται. Μπορείτε να το αλλάξετε αργότερα στις πληροφορίες της κατηγορίας Ενοχλήσεις.";
- "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments." = "Αποκλείει τις διαφημίσεις και το web player του YouTube και παίζει τα βίντεο στο εγγενές player του Safari, με κεφάλαια, εικόνα σε εικόνα, αναπαραγωγή στο παρασκήνιο και λειτουργία μόνο ήχου. Περιλαμβάνει το SponsorBlock, που παραλείπει τα χορηγούμενα τμήματα.";
- "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info." = "Αποκλείει players βίντεο τρίτων σε άλλους ιστότοπους και παίζει τα βίντεο με τα εγγενή χειριστήρια του Safari, προσθέτοντας αυτόματη εικόνα σε εικόνα, αναπαραγωγή στο παρασκήνιο, υπότιτλους, κεφάλαια και πληροφορίες «Τώρα παίζει».";
-+"Blocking Level" = "Επίπεδο αποκλεισμού";
-```
-
-**File**: `wBlock/en.lproj/Localizable.strings` (modified, +1/-0)
-```diff
-@@ -1092,3 +1092,4 @@ To re-enable these filters, disable other large filters and apply changes again.
- "Choose the annoyances to hide. You can change this later in Annoyances Info." = "Choose the annoyances to hide. You can change this later in Annoyances Info.";
- "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments." = "Blocks YouTube's ads and web player and plays videos in Safari's native player, with chapters, picture-in-picture, background playback, and audio-only mode. Includes SponsorBlock, which skips sponsored segments.";
- "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info." = "Blocks third-party video players on other sites and plays videos with Safari's native controls, adding auto PiP, background playback, subtitles, chapters, and Now Playing info.";
-+"Blocking Level" = "Blocking Level";
+ /// The registrable domain (eTLD+1) of `host`, or `None` for a public suffix
+ /// or an invalid name.
 ```
 
 ---
 
-### Incident Patch 3: `4d00f496` (2026-11-08)
-**Commit Message**: fix(mac): keep the Other heading when its section regains lists (#1092)
+### Incident Patch 3: `0ca7fd10` (2026-11-12)
+**Commit Message**: fix(ios): hold off suspension while an app group lock is held
 
-A drag-only section that gains rows is no longer flagged drag-only, so it was left out of the heights noted after the update and AppKit kept its 0.01 pt concealed height. Sections whose concealed state changed are now noted too.
+3.2.3 on iOS was killed with 0xDEAD10CC when background time ran out
+mid-update: the auto-update shield waited for the whole run to unwind,
+so a short lock taken during that unwind (a downloaded list being swapped
+in) could still be held when the app suspended.
 
-**File**: `wBlock/MacReorderableList.swift` (modified, +10/-1)
+Every app group flock now goes through FileLock, whose SuspensionGuard
+keeps an expiring activity open while any lock is held. Once suspension
+is imminent it refuses new locks and lets go as soon as the held ones
+are released. macOS has no such API, so the guard is iOS only. The five
+hand-rolled flock loops are gone.
+
+**File**: `scripts/run-ci-tests.sh` (modified, +6/-1)
 ```diff
-@@ -714,9 +714,18 @@ struct MacReorderableList: NSViewRepresentable {
-             !(dragging && revealsDropTargets) && node.children.isEmpty && section(for: node)?.revealsOnlyWhileDragging == true
-         }
+@@ -137,6 +137,8 @@ compile_direct_test popover-window-shield \
+   wBlock/InfoPresentation.swift wBlock/MacReorderableList.swift scripts/test_popover_window_shield.swift
+ compile_direct_test info-popover-state \
+   wBlock/InfoPresentation.swift scripts/test_info_popover_state.swift
++compile_direct_test file-lock-suspension \
++  wBlockCoreService/FileLock.swift scripts/test_file_lock_suspension.swift
+ compile_direct_test main-window-frame-restore \
+   wBlock/MainWindowFrameRestorer.swift scripts/test_main_window_frame_restore.swift
+ compile_direct_test retired-userscript-sources \
+@@ -147,7 +149,7 @@ compile_direct_test userscript-update-operation \
+ compile_direct_test userscript-world-isolation scripts/test_userscript_world_isolation.swift
+ compile_direct_test tab-selection-isolation wBlock/AppTabView.swift scripts/test_tab_selection_isolation.swift
+ compile_direct_test shared-auto-update-lease \
+-  wBlockCoreService/SharedAutoUpdateLease.swift scripts/test_shared_auto_update_lease.swift
++  wBlockCoreService/FileLock.swift wBlockCoreService/SharedAutoUpdateLease.swift scripts/test_shared_auto_update_lease.swift
+ compile_direct_test foreground-run-gate \
+   wBlockCoreService/ForegroundRunGate.swift scripts/test_foreground_run_gate.swift
  
-+        /// Sections drawn concealed at the last note. A section that just
-+        /// gained rows is no longer drag-only, but AppKit still holds its
-+        /// concealed height until told, which left Other's rows under the
-+        /// section above with no heading (#1092, #1097).
-+        private var concealedSections: Set<Node.ID> = []
+@@ -215,6 +217,7 @@ compile_core_test tube-cleaner-dearrow scripts/test_tube_cleaner_dearrow_prefere
+ compile_core_test sponsorblock-settings-transfer scripts/test_sponsorblock_settings_transfer.swift
+ compile_core_test disabled-sites-normalization scripts/test_disabled_sites_normalization.swift
+ compile_direct_test filter-update-popup-status \
++  wBlockCoreService/FileLock.swift \
+   wBlockCoreService/FilterUpdatePopupStatus.swift \
+   scripts/test_filter_update_popup_status.swift
+ compile_core_test filter-list-setup scripts/test_filter_list_setup.swift wBlock/FilterListSetup.swift \
+@@ -416,11 +419,13 @@ compile_direct_test pause-store \
+ 
+ compile_direct_test pending-filter-update-revisions \
+   wBlockCoreService/GroupIdentifier.swift \
++  wBlockCoreService/FileLock.swift \
+   wBlockCoreService/PendingFilterUpdateRevisions.swift \
+   scripts/test_pending_filter_update_revisions.swift
+ 
+ compile_direct_test staged-filter-downloads \
+   wBlockCoreService/GroupIdentifier.swift \
++  wBlockCoreService/FileLock.swift \
+   wBlockCoreService/StagedFilterDownloads.swift \
+   scripts/test_staged_filter_downloads.swift
+ 
+```
+
+**File**: `scripts/test_file_lock_suspension.swift` (added, +104/-0)
+```diff
+@@ -0,0 +1,104 @@
++import Foundation
 +
-         private func noteConcealableSections() {
-             guard let outline else { return }
--            let rows = IndexSet(roots.filter { section(for: $0)?.revealsOnlyWhileDragging == true }
-+            let concealed = Set(roots.filter(isConcealed).map(\.id))
-+            let changed = concealed.symmetricDifference(concealedSections)
-+            concealedSections = concealed
-+            let rows = IndexSet(roots.filter { changed.contains($0.id) || section(for: $0)?.revealsOnlyWhileDragging == true }
-                 .map { outline.row(forItem: $0) }.filter { $0 >= 0 })
-             guard !rows.isEmpty else { return }
-             for row in rows {
++// App group locks and suspension (0xDEAD10CC in 3.2.3 on iOS and macOS):
++// a held lock keeps the process from suspending, imminent suspension refuses
++// new locks, and the process suspends as soon as held ones are released.
++
++/// Stands in for performExpiringActivity: runs each activity on its own
++/// thread and lets the test expire it, as the system does before suspending.
++final class FakeSystem: @unchecked Sendable {
++    let condition = NSCondition()
++    var bodies: [@Sendable (Bool) -> Void] = []
++    var openActivities = 0
++    var noBackgroundTime = false
++
++    func begin(_ body: @escaping @Sendable (Bool) -> Void) {
++        condition.lock()
++        let expiredAtOnce = noBackgroundTime
++        bodies.append(body)
++        openActivities += 1
++        condition.unlock()
++        Thread.detachNewThread { [self] in
++            body(expiredAtOnce)
++            condition.lock(); openActivities -= 1; condition.broadcast(); condition.unlock()
++        }
++    }
++
++    /// Calls the latest activity's expiration handler alongside its body.
++    func expire() {
++        condition.lock()
++        let body = bodies.last!
++        openActivities += 1
++        condition.unlock()
++        Thread.detachNewThread { [self] in
++            body(true)
++            condition.lock(); openActivities -= 1; condition.broadcast(); condition.unlock()
++        }
++    }
++
++    func waitForActivities(_ count: Int, timeout: TimeInterval = 2) -> Bool {
++        condition.lock(); defer { condition.unlock() }
++        let deadline = Date().addingTimeInterval(timeout)
++        while openActivities != count { if !condition.wait(until: deadline) { return false } }
++        return true
++    }
++}
++
++func expect(_ condition: Bool, _ message: String) {
++    if !condition { print("FAIL: \(message)"); exit(1) }
++}
++
++@main
++struct FileLockSuspensionTest {
++    static func main() {
++        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("file-lock-\(UUID())")
++        try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
++        defer { try? FileManager.default.removeItem(at: directory) }
++        let path = directory.appendingPathComponent("a.lock").path
++        let otherPath = directory.appendingPathComponent("b.lock").path
++
++        // A held lock keeps the activity open until it is released.
++        let system = FakeSystem()
++        let guardian = SuspensionGuard(beginActivity: system.begin)
++        let lock = FileLock(filePath: path, suspension: guardian)!
++        expect(lock.tryLock(), "takes a free lock")
++        expect(system.waitForActivities(1), "holding a lock opens one activity")
++        lock.unlock()
++        expect(system.waitForActivities(0), "releasing the last lock ends the activity")
++
++        // Imminent suspension refuses new locks and lets go once held ones are released.
++        expect(lock.tryLock(), "locks again after the activity ended")
++        system.expire()
++        Thread.sleep(forTimeInterval: 0.1)
++        let other = FileLock(filePath: otherPath, suspension: guardian)!
++        expect(!other.tryLock(), "refuses a new lock once suspension is imminent")
++        expect(!other.lock(before: Date().addingTimeInterval(5)), "a waiting lock gives up instead of polling on")
++        let start = Date()
++        lock.unlock()
++        expect(system.waitForActivities(0), "releasing the held lock ends the expired activity")
++        expect(Date().timeIntervalSince(start) < 1, "suspends as soon as the lock is released, not after the unwind timeout")
++
++        // Without background time a lock is never taken.
++        system.noBackgroundTime = true
++        expect(!other.tryLock(), "no lock without background time")
++        expect(system.waitForActivities(0), "the refused attempt leaves no activity open")
++
++        // After resuming, locks work again.
++        system.noBackgroundTime = false
++        expect(other.tryLock(), "locks again after resuming")
++        other.unlock()
++        expect(system.waitForActivities(0), "and lets go again")
++
++        // The kernel lock itself still excludes another holder.
++        let first = FileLock(filePath: path, suspension: guardian)!
++        let second = FileLock(filePath: path, suspension: guardian)!
++        expect(first.tryLock(), "first holder")
++        expect(!second.tryLock(), "second holder waits")
++        first.unlock()
++        expect(second.tryLock(), "second holder gets it after release")
++        second.unlock()
++        expect(system.waitForActivities(0), "every attempt was balanced")
++
++        print("file lock suspension: ok")
++    }
++}
+```
+
+**File**: `wBlockCoreService/FileLock.swift` (modified, +132/-8)
+```diff
+@@ -1,28 +1,152 @@
+ import Foundation
+ 
+ /// An exclusive `flock` on a file, shared across the app and its extensions
+-/// through the app group. Each instance is one lock holder.
++/// through the app group. Each instance is one lock holder, and every app
++/// group lock goes through this type.
++///
++/// iOS kills a process that suspends while holding one (0xDEAD10CC). So on
++/// iOS, while any lock is held, `SuspensionGuard.shared` keeps the process
++/// from suspending. Once suspension is imminent it refuses new locks, and the
++/// process suspends as soon as the held ones are released. macOS has no API
++/// for this, so there the guard is nil.
+ final class FileLock {
+     private let fileDescriptor: Int32
++    private let suspension: SuspensionGuard?
++    private var isLocked = false
+ 
+-    init?(filePath: String) {
++    init?(filePath: String, suspension: SuspensionGuard? = SuspensionGuard.shared) {
+         fileDescriptor = open(filePath, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
+         if fileDescriptor == -1 { return nil }
++        self.suspension = suspension
+     }
+ 
+-    deinit { close(fileDescriptor) }
++    deinit {
++        unlock()
++        close(fileDescriptor)
++    }
++
++    /// One attempt; false when another holder has it or suspension is imminent.
++    func tryLock() -> Bool {
++        if isLocked { return true }
++        guard suspension?.enter() ?? true else { return false }
++        var result: Int32
++        repeat { result = flock(fileDescriptor, LOCK_EX | LOCK_NB) } while result == -1 && errno == EINTR
++        guard result == 0 else {
++            suspension?.leave()
++            return false
++        }
++        isLocked = true
++        return true
++    }
+ 
+     /// Waits for the lock until `limit`; false when it was not acquired.
+     func lock(before limit: Date) -> Bool {
+-        while flock(fileDescriptor, LOCK_EX | LOCK_NB) == -1 {
+-            guard errno == EWOULDBLOCK || errno == EINTR, Date() < limit else { return false }
++        while !tryLock() {
++            guard Date() < limit, suspension?.isRefusing != true else { return false }
+             usleep(10_000)
+         }
+         return true
+     }
+ 
+-    @discardableResult
+-    func unlock() -> Bool {
+-        flock(fileDescriptor, LOCK_UN) == 0
++    func unlock() {
++        guard isLocked else { return }
++        isLocked = false
++        _ = flock(fileDescriptor, LOCK_UN)
++        suspension?.leave()
++    }
++
++    /// Runs `body` holding the lock at `url`, creating its directory if needed.
++    static func withLock<T>(at url: URL, timeout: TimeInterval, _ body: () throws -> T) throws -> T {
++        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
++        guard let lock = FileLock(filePath: url.path) else {
++            throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
++        }
++        let limit = timeout.isFinite ? Date().addingTimeInterval(timeout) : .distantFuture
++        guard lock.lock(before: limit) else { throw POSIXError(.ETIMEDOUT) }
++        defer { lock.unlock() }
++        return try body()
++    }
++}
++
++/// Counts the app group locks this process holds and keeps a
++/// suspension-deferring activity open while the count is above zero.
++final class SuspensionGuard: @unchecked Sendable {
++    /// Starts an expiring activity and calls `body(false)` on another thread,
++    /// holding its assertion until that call returns. `body(true)` comes
++    /// instead, or concurrently, when suspension is imminent.
++    typealias BeginActivity = (_ body: @escaping @Sendable (_ expired: Bool) -> Void) -> Void
++
++    #if os(iOS)
++    static let shared: SuspensionGuard? = SuspensionGuard { body in
++        ProcessInfo.processInfo.performExpiringActivity(withReason: "wBlock app group lock", using: body)
++    }
++    #else
++    static let shared: SuspensionGuard? = nil
++    #endif
++
++    private static let startTimeout: TimeInterval = 1
++    /// How long an expired activity waits for held locks before letting go.
++    private static let unwindTimeout: TimeInterval = 3
++
++    private let beginActivity: BeginActivity
++    private let condition = NSCondition()
++    private var held = 0
++    private var activityOpen = false
++    private var activityStarted = false
++    private var expired = false
++
++    init(beginActivity: @escaping BeginActivity) {
++        self.beginActivity = beginActivity
++    }
++
++    /// Whether new locks are refused because suspension is imminent.
++    var isRefusing: Bool {
++        condition.lock()
++        defer { condition.unlock() }
++        return activityOpen && expired
++    }
++
++    /// Counts a lock about to be taken; false when suspension is imminent.
++    func enter() -> Bool {
++        condition.lock()
++        defer { condition.unlock() }
++        // Counted first, so a newly started activity sees the lock it covers.
++        held += 1
++        if !activityOpen {
++            activityOpen = true
++            activityStarted 
+```
+
+**File**: `wBlockCoreService/FilterUpdatePopupStatus.swift` (modified, +1/-11)
+```diff
+@@ -255,18 +255,8 @@ public enum FilterUpdatePopupStatus {
+         let directory = lockDirectory
+             ?? FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier)
+         guard let directory else { return nil }
+-        do {
+-            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+-        } catch {
+-            return nil
+-        }
+         let lockURL = directory.appendingPathComponent(lockFilename, isDirectory: false)
+-        let descriptor = open(lockURL.path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
+-        guard descriptor >= 0 else { return nil }
+-        defer { close(descriptor) }
+-        guard flock(descriptor, LOCK_EX) == 0 else { return nil }
+-        defer { _ = flock(descriptor, LOCK_UN) }
+-        return operation()
++        return try? FileLock.withLock(at: lockURL, timeout: .infinity, operation)
+         #else
+         return operation()
+         #endif
+```
+
+**File**: `wBlockCoreService/HeadlessLaunch.swift` (modified, +1/-36)
+```diff
+@@ -38,7 +38,6 @@ public enum HeadlessLaunch {
+     public static let autoRebuildGateFilename = "headless-auto-rebuild-gate.json"
+     private static let autoRebuildGateLockFilename = "headless-auto-rebuild-gate.lock"
+     private static let autoRebuildGateLockTimeoutSeconds: TimeInterval = 2
+-    private static let autoRebuildGateLockRetryMicroseconds: UInt32 = 20_000
+ 
+     public enum Reason: String, Sendable {
+         case popupUpdate = "popup-update"
+@@ -225,42 +224,8 @@ public enum HeadlessLaunch {
+         gateDirectory: URL,
+         _ operation: () throws -> T
+     ) throws -> T {
+-        let fileManager = FileManager.default
+-        try fileManager.createDirectory(at: gateDirectory, withIntermediateDirectories: true)
+         let lockURL = gateDirectory.appendingPathComponent(autoRebuildGateLockFilename, isDirectory: false)
+-        let descriptor = open(lockURL.path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
+-        guard descriptor >= 0 else {
+-            let error = errno
+-            throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
+-        }
+-        do {
+-            try lockAutoRebuildGate(descriptor: descriptor)
+-        } catch {
+-            close(descriptor)
+-            throw error
+-        }
+-        defer {
+-            _ = flock(descriptor, LOCK_UN)
+-            close(descriptor)
+-        }
+-        return try operation()
+-    }
+-
+-    private static func lockAutoRebuildGate(descriptor: Int32) throws {
+-        let deadline = Date().timeIntervalSince1970 + autoRebuildGateLockTimeoutSeconds
+-        while true {
+-            if flock(descriptor, LOCK_EX | LOCK_NB) == 0 {
+-                return
+-            }
+-            let error = errno
+-            guard error == EWOULDBLOCK || error == EAGAIN else {
+-                throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
+-            }
+-            guard Date().timeIntervalSince1970 < deadline else {
+-                throw POSIXError(.ETIMEDOUT)
+-            }
+-            usleep(autoRebuildGateLockRetryMicroseconds)
+-        }
++        return try FileLock.withLock(at: lockURL, timeout: autoRebuildGateLockTimeoutSeconds, operation)
+     }
+ 
+     public static func isContainingAppRunning() -> Bool {
+```
+
+**File**: `wBlockCoreService/PendingFilterUpdateRevisions.swift` (modified, +1/-38)
+```diff
+@@ -64,7 +64,6 @@ public enum PendingFilterUpdateRevisions {
+ 
+     private static let lock = NSLock()
+     private static let fileLockTimeoutSeconds: TimeInterval = 2
+-    private static let fileLockRetryMicroseconds: useconds_t = 20_000
+ 
+     public static func storeURL(groupIdentifier: String = GroupIdentifier.shared.value) -> URL? {
+         FileManager.default
+@@ -373,43 +372,7 @@ public enum PendingFilterUpdateRevisions {
+     private static func withFileLock<T>(for storeURL: URL, _ body: () throws -> T) throws -> T {
+         let lockURL = storeURL.deletingLastPathComponent()
+             .appendingPathComponent(".\(filename).lock", isDirectory: false)
+-        try FileManager.default.createDirectory(
+-            at: lockURL.deletingLastPathComponent(),
+-            withIntermediateDirectories: true
+-        )
+-        let descriptor = open(lockURL.path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
+-        guard descriptor >= 0 else {
+-            let error = errno
+-            throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
+-        }
+-        do {
+-            try lockDescriptor(descriptor)
+-        } catch {
+-            close(descriptor)
+-            throw error
+-        }
+-        defer {
+-            _ = flock(descriptor, LOCK_UN)
+-            close(descriptor)
+-        }
+-        return try body()
+-    }
+-
+-    private static func lockDescriptor(_ descriptor: Int32) throws {
+-        let deadline = Date().timeIntervalSince1970 + fileLockTimeoutSeconds
+-        while true {
+-            if flock(descriptor, LOCK_EX | LOCK_NB) == 0 {
+-                return
+-            }
+-            let error = errno
+-            guard error == EWOULDBLOCK || error == EAGAIN else {
+-                throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
+-            }
+-            guard Date().timeIntervalSince1970 < deadline else {
+-                throw POSIXError(.ETIMEDOUT)
+-            }
+-            usleep(fileLockRetryMicroseconds)
+-        }
++        return try FileLock.withLock(at: lockURL, timeout: fileLockTimeoutSeconds, body)
+     }
+ 
+     private static func loadStateUnlocked(from url: URL) -> State {
+```
+
+**File**: `wBlockCoreService/SharedAutoUpdateLease.swift` (modified, +13/-62)
+```diff
+@@ -6,17 +6,10 @@ import Darwin
+ /// A kernel-backed, process-lifetime lease for shared auto-update work.
+ /// `flock` releases the lease automatically when the owning process exits.
+ public final class SharedAutoUpdateLease: @unchecked Sendable {
+-    private let fileDescriptor: Int32
++    private let lock: FileLock
+ 
+-    private init(fileDescriptor: Int32) {
+-        self.fileDescriptor = fileDescriptor
+-    }
+-
+-    deinit {
+-        #if canImport(Darwin)
+-        _ = flock(fileDescriptor, LOCK_UN)
+-        _ = close(fileDescriptor)
+-        #endif
++    private init(lock: FileLock) {
++        self.lock = lock
+     }
+ 
+     /// Blocks the calling thread while polling. Use from actors that own their
+@@ -25,17 +18,10 @@ public final class SharedAutoUpdateLease: @unchecked Sendable {
+         groupIdentifier: String,
+         timeout: TimeInterval = 0.25
+     ) -> SharedAutoUpdateLease? {
+-        #if canImport(Darwin)
+-        guard let descriptor = openLockFile(groupIdentifier: groupIdentifier) else { return nil }
+-        let deadline = Date().addingTimeInterval(max(0, timeout))
+-        repeat {
+-            if let lease = tryLock(descriptor) { return lease }
+-            if Date() >= deadline { break }
+-            usleep(pollIntervalMicroseconds)
+-        } while true
+-        closeLockFile(descriptor)
+-        #endif
+-        return nil
++        guard let lock = openLock(groupIdentifier: groupIdentifier),
++              lock.lock(before: Date().addingTimeInterval(max(0, timeout)))
++        else { return nil }
++        return SharedAutoUpdateLease(lock: lock)
+     }
+ 
+     /// Suspends instead of blocking while polling, so the main actor stays
+@@ -44,60 +30,25 @@ public final class SharedAutoUpdateLease: @unchecked Sendable {
+         groupIdentifier: String,
+         timeout: TimeInterval
+     ) async -> SharedAutoUpdateLease? {
+-        #if canImport(Darwin)
+-        guard let descriptor = openLockFile(groupIdentifier: groupIdentifier) else { return nil }
++        guard let lock = openLock(groupIdentifier: groupIdentifier) else { return nil }
+         let deadline = Date().addingTimeInterval(max(0, timeout))
+         repeat {
+-            if let lease = tryLock(descriptor) { return lease }
++            if lock.tryLock() { return SharedAutoUpdateLease(lock: lock) }
+             if Date() >= deadline || Task.isCancelled { break }
+             do {
+-                try await Task.sleep(nanoseconds: UInt64(pollIntervalMicroseconds) * 1_000)
++                try await Task.sleep(nanoseconds: 10_000_000)
+             } catch {
+                 break
+             }
+         } while true
+-        closeLockFile(descriptor)
+-        #endif
+         return nil
+     }
+ 
+-    private static let pollIntervalMicroseconds: UInt32 = 10_000
+-
+-    private static func openLockFile(groupIdentifier: String) -> Int32? {
+-        #if canImport(Darwin)
++    private static func openLock(groupIdentifier: String) -> FileLock? {
+         guard let containerURL = FileManager.default.containerURL(
+             forSecurityApplicationGroupIdentifier: groupIdentifier
+         ) else { return nil }
+-
+-        do {
+-            try FileManager.default.createDirectory(
+-                at: containerURL,
+-                withIntermediateDirectories: true
+-            )
+-        } catch {
+-            return nil
+-        }
+-
+-        let lockURL = containerURL.appendingPathComponent("auto-update.run.lock")
+-        let descriptor = open(lockURL.path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR)
+-        return descriptor >= 0 ? descriptor : nil
+-        #else
+-        return nil
+-        #endif
+-    }
+-
+-    private static func tryLock(_ descriptor: Int32) -> SharedAutoUpdateLease? {
+-        #if canImport(Darwin)
+-        guard flock(descriptor, LOCK_EX | LOCK_NB) == 0 else { return nil }
+-        return SharedAutoUpdateLease(fileDescriptor: descriptor)
+-        #else
+-        return nil
+-        #endif
+-    }
+-
+-    private static func closeLockFile(_ descriptor: Int32) {
+-        #if canImport(Darwin)
+-        _ = close(descriptor)
+-        #endif
++        try? FileManager.default.createDirectory(at: containerURL, withIntermediateDirectories: true)
++        return FileLock(filePath: containerURL.appendingPathComponent("auto-update.run.lock").path)
+     }
+ }
+```
+
+**File**: `wBlockCoreService/StagedFilterDownloads.swift` (modified, +1/-14)
+```diff
+@@ -121,19 +121,6 @@ public enum StagedFilterDownloads {
+         defer { lock.unlock() }
+         let lockURL = storeURL.deletingLastPathComponent()
+             .appendingPathComponent(".\(filename).lock", isDirectory: false)
+-        try? FileManager.default.createDirectory(
+-            at: lockURL.deletingLastPathComponent(),
+-            withIntermediateDirectories: true
+-        )
+-        let descriptor = open(lockURL.path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
+-        guard descriptor >= 0, flock(descriptor, LOCK_EX) == 0 else {
+-            if descriptor >= 0 { close(descriptor) }
+-            return nil
+-        }
+-        defer {
+-            _ = flock(descriptor, LOCK_UN)
+-            close(descriptor)
+-        }
+-        return try? operation()
++        return try? FileLock.withLock(at: lockURL, timeout: .infinity, operation)
+     }
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2726,47 +2944,36 @@ A drag-only section that gains rows is no longer flagged drag-only, so it was le
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. apply): commit the applied state as the run ends, not after cleanup (#1087)
+## X. engine): leave more room when packing blocks into the fewest blockers
 
 **RULE**:
-When implementing operations in `wBlock/AppFilterManager+ApplyPipeline.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Packages/wblock-engine/crates/wbe/src/apply.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3781122d`: apply): commit the applied state as the run ends, not after cleanup (#1087). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `990783e2`: engine): leave more room when packing blocks into the fewest blockers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock/AppFilterManager+ApplyPipeline.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Packages/wblock-engine/crates/wbe/src/apply.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            // The applied state is committed as the run ends, so pending
-            // changes never outlive it and Apply can't flash (#1088). Ending
-            // later showed the raw status line in the update banner (#1087).
-            if allReloadsSuccessful && advancedEngineSucceeded && !self.hasError {
-                self.commitApplySnapshot(runSnapshot)
-            }
-            self.isLoading = false
-            await MainActor.run {
-                if cleanupSucceeded {
-                } else {
-                    // Leftover downloads of turned-off lists need another apply.
-                    self.markNonSelectionChangesPending()
+    /// The part of a limit an estimate may fill. The estimate is calibrated on
+    /// two setups and nothing re-plans a blocker that compiles over its limit,
+    /// so leave room for list mixes that compile fatter than estimated.
+    const ROOM: f64 = 0.7;
+            11,
+        let two = plan_within(243, lists.clone(), targets.clone());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            if cleanupSucceeded {
-                await MainActor.run {
-                    self.commitApplySnapshot(runSnapshot)
-        }
-        // The run ends once the applied state is committed. Ending it at the
-        // result left pending changes set for the cleanup, so the toolbar
-        // flashed Apply before going back to Update (#1088).
-        await MainActor.run { self.isLoading = false }
-        if applySucceeded {
+    /// The part of a limit an estimate may fill.
+    const ROOM: f64 = 0.85;
+            9,
+        let two = plan_within(200, lists.clone(), targets.clone());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3781122d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `990783e2` are properly handled with clean fallback behavior.

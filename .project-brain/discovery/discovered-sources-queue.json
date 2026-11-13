@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T03:32:06.800Z",
+  "updated_at": "2026-11-13T03:48:36.518Z",
   "stats": {
-    "total_discovered": 2132,
-    "approved_pending_harvest": 1976,
+    "total_discovered": 2140,
+    "approved_pending_harvest": 1984,
     "harvested_count": 0,
     "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1965,
+      "COMMUNITY_AND_EXPERT": 1973,
       "OFFICIAL_DOCUMENTATION": 89,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -45830,6 +45830,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
         "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-57B32BD04822": {
+      "id": "SRC-57B32BD04822",
+      "url": "https://github.com/pola-rs/polars",
+      "title": "https://github.com/pola-rs/polars",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:48:36.343Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
+        "fileName": "pola-rs-polars-learnings.md"
+      }
+    },
+    "SRC-085916B85DCB": {
+      "id": "SRC-085916B85DCB",
+      "url": "https://en.wikipedia.org/wiki/Bit_numbering",
+      "title": "https://en.wikipedia.org/wiki/Bit_numbering",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:48:36.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
+        "fileName": "pola-rs-polars-learnings.md"
+      }
+    },
+    "SRC-6F48070512C2": {
+      "id": "SRC-6F48070512C2",
+      "url": "https://pypi.org/project/polars",
+      "title": "https://pypi.org/project/polars",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:48:36.373Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
+        "fileName": "pola-rs-polars-learnings.md"
+      }
+    },
+    "SRC-C828AB8AAFE3": {
+      "id": "SRC-C828AB8AAFE3",
+      "url": "https://numpy.org/doc/stable/reference/c-api/array.html",
+      "title": "https://numpy.org/doc/stable/reference/c-api/array.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:48:36.387Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
+        "fileName": "pola-rs-polars-learnings.md"
+      }
+    },
+    "SRC-5E2E940BEE13": {
+      "id": "SRC-5E2E940BEE13",
+      "url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "title": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:48:36.407Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
+        "fileName": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md"
+      }
+    },
+    "SRC-45569CA0550D": {
+      "id": "SRC-45569CA0550D",
+      "url": "https://github.com/0xCUB3/wBlock",
+      "title": "https://github.com/0xCUB3/wBlock",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:48:36.426Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-E12FE60D5713": {
+      "id": "SRC-E12FE60D5713",
+      "url": "https://github.com/user-attachments/files/34745465/wBlock_logs_12-11-2026.txt",
+      "title": "https://github.com/user-attachments/files/34745465/wBlock_logs_12-11-2026.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:48:36.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-E684E134139D": {
+      "id": "SRC-E684E134139D",
+      "url": "https://github.com/user-attachments/assets/973b4b49-6d68-4414-8be0-e6bdcfd2925c",
+      "title": "https://github.com/user-attachments/assets/973b4b49-6d68-4414-8be0-e6bdcfd2925c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:48:36.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
       }
     }
   }
