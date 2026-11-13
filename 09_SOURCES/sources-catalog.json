@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "c058816926a024a9ac04f00bc9ecf98dde063433f4d3d919df36b112049ece55",
-    "lastHarvestedAt": "2026-11-08T17:05:56.891Z",
+    "contentHash": "438a6eaebe65c570248510c548e8db05b0e15f9949a58ff4041fa7d0a78ee99e",
+    "lastHarvestedAt": "2026-11-13T18:05:50.417Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "44ea08ae",
+    "sourceVersion": "f071f047",
     "license": "MIT",
-    "contentHash": "4866bb9ad501ba5c96414f7fd973aee2e1b98ecd934cf31bbf83b2bb584e33b5",
-    "lastHarvestedAt": "2026-11-09T07:20:59.719Z",
+    "contentHash": "ae1bfdc3908fad183dc3067bbb72d308cfe09de12e1d08aafdfb21a1c82cdcb7",
+    "lastHarvestedAt": "2026-11-13T18:05:59.223Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {

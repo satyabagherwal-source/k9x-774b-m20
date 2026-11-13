@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T17:55:48.157Z",
+  "last_updated": "2026-11-13T18:06:49.774Z",
   "total_verified_learnings": 1265,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20406,7 +20406,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "c058816926a024a9ac04f00bc9ecf98dde063433f4d3d919df36b112049ece55",
+      "content_hash": "438a6eaebe65c570248510c548e8db05b0e15f9949a58ff4041fa7d0a78ee99e",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -20484,7 +20484,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-11-08T17:05:56.758Z",
+      "verified_at": "2026-11-13T18:05:50.273Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61413,8 +61413,8 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "44ea08ae",
-      "content_hash": "4866bb9ad501ba5c96414f7fd973aee2e1b98ecd934cf31bbf83b2bb584e33b5",
+      "source_version": "f071f047",
+      "content_hash": "ae1bfdc3908fad183dc3067bbb72d308cfe09de12e1d08aafdfb21a1c82cdcb7",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
@@ -61426,6 +61426,11 @@
         {
           "number": null,
           "title": "Merge pull request #37133 from yngvebn/fix/angular-vite-vitest-compiler-setup",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ecosystem-qa): redact the run result in a step of its own, also after a crash",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61464,7 +61469,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T07:20:59.604Z",
+      "verified_at": "2026-11-13T18:05:59.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -194753,13 +194758,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2G83-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GMO6-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8cb0c12084f61e683cc0c2f7c14300b451b1daaabecd3f7607c233402244c728",
+      "content_hash": "cde8ec7dee6a9190005b28ce2eafe54468e90afc763bc0d16c19a7db611ec260",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T17:55:48.008Z"
+      "persisted_at": "2026-11-13T18:06:49.552Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -194769,9 +194774,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "768641de8dd783525ec1f240afb17f8ae5e14d1b7b77785fd8a6a93d71c90556",
+      "content_hash": "52715bc394c7da67f273e094f41886d699a9973079f998b680162d5b6ee3afab",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T17:55:48.083Z"
+      "persisted_at": "2026-11-13T18:06:49.663Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -194781,9 +194786,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "aacbd3d6fb26a1ba32b33b8045ca1bc5c35141225d1b92500d7738ed8aae9c5a",
+      "content_hash": "6b42653a914436680860bf099f6f2ccb5ae14db095b97ed6887c459b83491f45",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T17:55:48.157Z"
+      "persisted_at": "2026-11-13T18:06:49.774Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -195309,6 +195314,114 @@
       "content_hash": "1ac390dc5aac5263729b4665a0fa1be0ae046a46b53436f24f01b93e9cdd452f",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T17:55:47.710Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-research-knowledge-intelligence-akatz.md",
+      "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "content_hash": "61a5cc735fd7ed6c1f9a153b035cf3e5ef39c268516ba04b14ce94abe2ab6725",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:05:50.612Z"
+    },
+    "candidate_directive-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash": {
+      "item_id": "candidate_directive-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GM2P-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash.md",
+      "title": "ecosystem-qa): redact the run result in a step of its own, also after a crash",
+      "repository": "storybookjs-storybook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0b0662dbb28099ac3a7874aa88ea79364c4fffa3974698e5c5e7452711c080a0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:06:48.769Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-technical-construction-intelligence-storybookjs-storybook-.md",
+      "title": "Technical Construction Intelligence: storybookjs/storybook Core Invariants",
+      "repository": "storybookjs/storybook",
+      "source_version": "f071f047",
+      "content_hash": "2a00dbfd93d7bb8e89649da19fea083e2ae8ce3b139844b557961586c1b6c758",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:05:59.553Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-storybookjs-storybook-adr-subsystem-boundary-modular-decoupling-in-storybookjs-s.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in storybookjs/storybook",
+      "repository": "storybookjs/storybook",
+      "source_version": "f071f047",
+      "content_hash": "18dc2490adf8cf1058a33c1c0b10cc8fcf085f7d24346d57121a993301e20b9c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:05:59.651Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/storybookjs-storybook-verification-protocol-empirical-defect-shield-for-storyboo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for storybookjs/storybook",
+      "repository": "storybookjs/storybook",
+      "source_version": "f071f047",
+      "content_hash": "78c6ee80348c666abe05fcab1957d98f913ad7ecc6d3abb2f8689f10cc7f7abd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:05:59.747Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-learnings-research-knowledge-intellig.md",
+      "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
+      "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0085f20e90cd40085fe1898561c027e3a64c719666cf9890f72b9a4d83de8f7f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:06:48.355Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-learnings-technical-construction-intelligence-storybookjs-.md",
+      "title": "Technical Construction Intelligence: storybookjs-storybook-learnings Core Invariants",
+      "repository": "storybookjs-storybook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "85d3b9fa7ad8569a7036e456227e25b3cc829963e7962e89f5ffaafa48418904",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:06:48.883Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-storybookjs-storybook-learnings-adr-subsystem-boundary-modular-decoupling-in-sto.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in storybookjs-storybook-learnings",
+      "repository": "storybookjs-storybook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d794576587f4d945ecf80c89c54d1895365a55abdb5f2ff6152f6cb52717447",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:06:48.996Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/storybookjs-storybook-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for storybookjs-storybook-learnings",
+      "repository": "storybookjs-storybook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cdd9bf00a14baca8dbf43b835414d48c16a2e2583f654879afd850d09c1573ce",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:06:49.104Z"
     }
   },
   "aliases": {
@@ -201307,5 +201420,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9223
+  "total_items": 9232
 }

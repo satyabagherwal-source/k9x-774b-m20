@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T17:55:47.423Z",
+  "updated_at": "2026-11-13T18:06:48.575Z",
   "stats": {
-    "total_discovered": 2765,
-    "approved_pending_harvest": 2586,
+    "total_discovered": 2770,
+    "approved_pending_harvest": 2591,
     "harvested_count": 0,
     "rejected_count": 179,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2579,
+      "COMMUNITY_AND_EXPERT": 2583,
       "OFFICIAL_DOCUMENTATION": 96,
       "STANDARDS_AND_SPECIFICATIONS": 78,
       "ENGINEERING_BLOGS": 1,
-      "SECURITY_ADVISORIES": 9,
+      "SECURITY_ADVISORIES": 10,
       "LEGAL_AND_REGULATORY": 1,
       "RESEARCH_AND_ACADEMIA": 1
     }
@@ -59597,6 +59597,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
         "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-57B4E46E8879": {
+      "id": "SRC-57B4E46E8879",
+      "url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "title": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:06:48.163Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
+        "fileName": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md"
+      }
+    },
+    "SRC-77884E06CDB6": {
+      "id": "SRC-77884E06CDB6",
+      "url": "https://github.com/storybookjs/storybook",
+      "title": "https://github.com/storybookjs/storybook",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:06:48.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-AD95553ECA1A": {
+      "id": "SRC-AD95553ECA1A",
+      "url": "https://storybook.new/",
+      "title": "https://storybook.new/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:06:48.527Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-AE02CBF826A5": {
+      "id": "SRC-AE02CBF826A5",
+      "url": "https://storybook.js.org/docs",
+      "title": "https://storybook.js.org/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:06:48.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-4D90EE8C6458": {
+      "id": "SRC-4D90EE8C6458",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-118773",
+      "title": "Vulnerability Advisory CVE-2026-118773",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:06:48.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
       }
     }
   }

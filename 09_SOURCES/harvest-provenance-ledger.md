@@ -9585,3 +9585,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-13T17:54:56.150Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `03d63d65` | Multi-dimensional audit evidence | 2026-11-13T17:55:12.204Z |
 | `learn-dom-d-e7346ff5` | `project://hf-efficient-large-model-open-h3-regenerate-2k` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | 2026-11-13T17:55:47.130Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-13T18:05:50.417Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `f071f047` | Multi-dimensional audit evidence | 2026-11-13T18:05:59.223Z |
+| `learn-dom-d-33d763c2` | `project://hf-akatz-ai-minimax-h3-character-swap-lora` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | 2026-11-13T18:06:48.150Z |

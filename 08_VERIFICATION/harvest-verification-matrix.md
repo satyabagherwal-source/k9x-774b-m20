@@ -9552,3 +9552,6 @@
 | `CYCLE-20261113-1C7N` | `2026-11-13T17:54:56.147Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | Yes (`47e6732a...`) |
 | `CYCLE-20261113-1OLE` | `2026-11-13T17:55:12.194Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6c781b4b...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T17:55:47.130Z` | `hf-efficient-large-model-open-h3-regenerate-2k` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E7346FF5` [Domain D] | Yes (`b09fdc89...`) |
+| `CYCLE-20261113-FD1O` | `2026-11-13T18:05:50.412Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`438a6eae...`) |
+| `CYCLE-20261113-FJU1` | `2026-11-13T18:05:59.209Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ae1bfdc3...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:06:48.150Z` | `hf-akatz-ai-minimax-h3-character-swap-lora` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-33D763C2` [Domain D] | Yes (`3058a97e...`) |

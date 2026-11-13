@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T17:55:48.083Z",
-  "total_records": 243,
+  "last_updated": "2026-11-13T18:06:49.663Z",
+  "total_records": 248,
   "domains": {
     "A": {
       "total": 1,
@@ -28,7 +28,7 @@
       ]
     },
     "D": {
-      "total": 139,
+      "total": 142,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -168,7 +168,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-learnings-cor",
         "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
         "DOM-D-E7346FF5",
-        "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l"
+        "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
+        "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
+        "DOM-D-33D763C2",
+        "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn"
       ]
     },
     "E": {
@@ -212,7 +215,7 @@
       ]
     },
     "H": {
-      "total": 47,
+      "total": 49,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -260,7 +263,9 @@
         "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
         "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants",
         "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria"
       ]
     },
     "I": {
@@ -6976,8 +6981,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "768641de8dd783525ec1f240afb17f8ae5e14d1b7b77785fd8a6a93d71c90556",
-      "created_at": "2026-11-13T17:55:48.083Z"
+      "content_hash": "52715bc394c7da67f273e094f41886d699a9973079f998b680162d5b6ee3afab",
+      "created_at": "2026-11-13T18:06:49.663Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -7332,6 +7337,84 @@
       "repository": "milvus-io-milvus-learnings",
       "content_hash": "e740148e150ba066ef713fe1b266ad61a9543fdf252b282581be565a68af75d7",
       "created_at": "2026-11-13T17:55:47.633Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-research-knowledge-intelligence-akatz.md",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "content_hash": "61a5cc735fd7ed6c1f9a153b035cf3e5ef39c268516ba04b14ce94abe2ab6725",
+      "created_at": "2026-11-13T18:05:50.612Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: storybookjs/storybook Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-technical-construction-intelligence-storybookjs-storybook-.md",
+      "repository": "storybookjs/storybook",
+      "content_hash": "2a00dbfd93d7bb8e89649da19fea083e2ae8ce3b139844b557961586c1b6c758",
+      "created_at": "2026-11-13T18:05:59.553Z"
+    },
+    "DOM-D-33D763C2": {
+      "record_id": "DOM-D-33D763C2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA](https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA))  \n> **Source Version**: `hf-",
+      "content_hash": "3058a97e9664d3dd444ce931b89986dcbb9aaee68bee1b2c93dd3fcf6969857d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md`  \n> **Source**: huggingface",
+      "provenance": {
+        "source_uri": "project://hf-akatz-ai-minimax-h3-character-swap-lora/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T18:06:02.486Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-akatz-ai-minimax-h3-character-swap-lora)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-akatz-ai-minimax-h3-character-swap-lora"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T18:06:48.142Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-learnings-research-knowledge-intellig.md",
+      "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
+      "content_hash": "0085f20e90cd40085fe1898561c027e3a64c719666cf9890f72b9a4d83de8f7f",
+      "created_at": "2026-11-13T18:06:48.355Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: storybookjs-storybook-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-learnings-technical-construction-intelligence-storybookjs-.md",
+      "repository": "storybookjs-storybook-learnings",
+      "content_hash": "85d3b9fa7ad8569a7036e456227e25b3cc829963e7962e89f5ffaafa48418904",
+      "created_at": "2026-11-13T18:06:48.883Z"
     }
   }
 }

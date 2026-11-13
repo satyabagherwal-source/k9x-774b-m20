@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T17:55:48.228Z",
+  "last_updated": "2026-11-13T18:06:49.887Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T15:11:07.403Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-13T17:55:47.786Z",
+      "processed_at": "2026-11-13T18:06:49.216Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2026,9 +2026,19 @@
       "processed_at": "2026-11-13T17:55:47.130Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md": {
+      "processed_at": "2026-11-13T18:06:48.151Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "storybookjs-storybook-learnings.md": {
+      "processed_at": "2026-11-13T18:06:48.481Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 636,
-  "total_canonical_promoted": 119,
-  "total_staged_for_review": 511
+  "total_dossiers_evaluated": 639,
+  "total_canonical_promoted": 120,
+  "total_staged_for_review": 513
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-YUCF",
-    "timestamp": "2026-11-12T21:49:16.191Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "65b550e47a164dcf0b4c44acd7451a77b8e66bab5e9c43d457aac1847ef64962",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-YX65",
-    "timestamp": "2026-11-12T21:49:19.853Z",
-    "repository": "yshrsmz/BuildKonfig",
-    "learningId": "learn-github-yshrsmz-buildkonfig",
-    "contentHash": "f256fb687c7f7d8c3be3cf5d2318715ddff0a540fe0536a22326469e7f8829c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-Z5RY",
     "timestamp": "2026-11-12T21:49:31.006Z",
     "repository": "lancedb/lancedb",
@@ -7490,6 +7460,36 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "6c781b4bb58ccda7a5e3002f1333bce8edfcb10eb430927f92f83a8388b1cf28",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-FD1O",
+    "timestamp": "2026-11-13T18:05:50.412Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "438a6eaebe65c570248510c548e8db05b0e15f9949a58ff4041fa7d0a78ee99e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-FJU1",
+    "timestamp": "2026-11-13T18:05:59.209Z",
+    "repository": "storybookjs/storybook",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "ae1bfdc3908fad183dc3067bbb72d308cfe09de12e1d08aafdfb21a1c82cdcb7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
