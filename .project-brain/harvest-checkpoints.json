@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T01:39:13.109Z",
+  "last_updated": "2026-11-13T01:57:53.045Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4791,14 +4791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-neuron-core-neuron-ai",
-      "content_hash": "138829b71c2ac36b4c6625b4b583659ad6028c4f9f2d93a3dc8e7552b75934d9",
-      "verified_at": "2026-11-07T04:44:31.297Z",
+      "content_hash": "c1661565bc09dfab4c3eaec2a109ec1442b3facbd39f673adfca2c4fb2b6da6b",
+      "verified_at": "2026-11-13T01:57:53.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:44:31.297Z"
+      "last_updated": "2026-11-13T01:57:53.044Z"
     },
     "GeekyAnts/NativeBase": {
       "repository": "GeekyAnts/NativeBase",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "236425e8b7010ba3c9063c1979c5040f4c47c704b34acf79905bdacf085cbeb0",
-      "verified_at": "2026-11-12T15:34:10.613Z",
+      "content_hash": "e28f8670f8da3808ed65373b204070315f53395a37d6d6d928087307c4dbd1c6",
+      "verified_at": "2026-11-13T01:57:51.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T15:34:10.613Z"
+      "last_updated": "2026-11-13T01:57:51.277Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "7fb28f5c0b9f55f7b5fb6dd064669e46eb80c9856b5ad09221b78799b5c7e754",
-      "verified_at": "2026-11-11T16:36:03.009Z",
+      "content_hash": "b36b0e67516a986704045308519ff440d5572145bb80f590a9d56329024d765e",
+      "verified_at": "2026-11-13T01:57:48.759Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T16:36:03.009Z"
+      "last_updated": "2026-11-13T01:57:48.759Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
-      "verified_at": "2026-11-11T07:46:13.522Z",
+      "content_hash": "83e9c8248f962dd1e3c9f2af6eeb9328ef98994ad992e2b16d94321e21abac21",
+      "verified_at": "2026-11-13T01:57:37.814Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T07:46:13.522Z"
+      "last_updated": "2026-11-13T01:57:37.814Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",
@@ -15845,15 +15845,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
-      "content_hash": "0f869480fdc3ab1e946b21e88ccd7d45aaf2f9e2e1fd4590bbb5a7287689ea80",
-      "verified_at": "2026-11-08T04:42:29.334Z",
+      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
+      "content_hash": "4b00b8fbfb0f41e60343b24ab4accdf5922f7b1735139f89fecea1a9d7cf42c7",
+      "verified_at": "2026-11-13T01:57:18.027Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:42:29.334Z"
+      "last_updated": "2026-11-13T01:57:18.027Z"
     },
     "unsloth/flint-GGUF": {
       "repository": "unsloth/flint-GGUF",

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:39:13.104Z",
-  "total_cycles_completed": 9093,
-  "total_learnings_persisted": 9093,
-  "total_rules_promoted": 8927,
+  "last_updated": "2026-11-13T01:57:53.039Z",
+  "total_cycles_completed": 9098,
+  "total_learnings_persisted": 9098,
+  "total_rules_promoted": 8931,
   "history": [
-    {
-      "timestamp": "2026-11-12T03:10:45.848Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T03:23:54.816Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T03:24:02.405Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T03:24:03.369Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T03:30:47.946Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T03:30:53.975Z",
       "repository": "trinodb/trino",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-13T01:39:13.104Z",
       "repository": "emberstack/kubernetes-reflector",
       "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:57:18.023Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:57:37.809Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:57:48.754Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:57:51.272Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T01:57:53.039Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

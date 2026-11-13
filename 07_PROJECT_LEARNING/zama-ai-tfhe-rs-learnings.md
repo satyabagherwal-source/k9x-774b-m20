@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `0f0b3e7e`  
+> **Source Version**: `9066683f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T15:33:53.278Z  
+> **Timestamp**: 2026-11-13T01:57:28.754Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T15:33:53.271Z  
+> **Harvest Timestamp**: 2026-11-13T01:57:28.743Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,131 +1927,322 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f014579e` (2026-11-12)
-**Commit Message**: fix(integer): reject unexpected last block in modulus switched radix conformance (#4157)
+### Incident Patch 1: `9066683f` (2026-11-12)
+**Commit Message**: chore: better python pinning (#4090)
 
-**File**: `tfhe/src/integer/ciphertext/compressed_modulus_switched_ciphertext.rs` (modified, +110/-1)
+* chore: fix useless venv setup for doxygen check
+
+* chore: better python pinning
+
+* chore: make the python additions more maintainable
+
+- centralized code
+- updated workflows to make sure safe chain is available
+
+**File**: `.github/actions/setup_python/action.yml` (added, +16/-0)
 ```diff
-@@ -162,9 +162,118 @@ impl ParameterSetConformant for CompressedModulusSwitchedRadixCiphertextGeneric
-                 .as_ref()
-                 .is_some_and(|last_block| last_block.is_conformant(&params.shortint_params))
-         } else {
--            true
-+            last_block.is_none()
-         };
+@@ -0,0 +1,16 @@
++name: Setup Python
++description: Install the minimum Python version supported by the python tooling of the repository, see PYTHON_MIN_VERSION in make/python.mk
++
++runs:
++  using: composite
++  steps:
++    - name: Get minimum Python version
++      id: get_python_min_version
++      shell: bash
++      run: |
++        echo "version=$(make python_min_version)" >> "${GITHUB_OUTPUT}"
++
++    - name: Install Python
++      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
++      with:
++        python-version: ${{ steps.get_python_min_version.outputs.version }}
+```
+
+**File**: `.github/workflows/aws_tfhe_wasm_tests.yml` (modified, +4/-0)
+```diff
+@@ -86,6 +86,10 @@ jobs:
+           token: ${{ env.CHECKOUT_TOKEN }}
  
-         paired_blocks_len_ok && paired_blocks_ok && last_item_ok
-     }
- }
+       # GitHub has been causing issues with unauthenticated HTTPS traffic breaking several software
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::integer::keycache::KEY_CACHE;
-+    use crate::integer::{IntegerKeyKind, RadixCiphertext, ServerKey};
-+    use crate::shortint::parameters::test_params::TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
++      - name: Setup Python
++        uses: ./.github/actions/setup_python
 +
-+    #[test]
-+    fn test_even_blocks_rejects_unexpected_last_block_conformance() {
-+        let num_blocks = 4;
-+        let (cks, sks) = KEY_CACHE.get_from_params(
-+            TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+            IntegerKeyKind::Radix,
-+        );
+       - name: Authenticate all github.com git traffic
+         run: |
+           # single quotes expected to avoid replacing the token inline to not have it saved on disk
+```
+
+**File**: `.github/workflows/benchmark_cpu.yml` (modified, +10/-2)
+```diff
+@@ -95,18 +95,25 @@ jobs:
+           persist-credentials: "false"
+           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+ 
++      - name: Setup Python
++        uses: ./.github/actions/setup_python
 +
-+        let conformance_params = CompressedModulusSwitchedRadixCiphertextConformanceParams {
-+            shortint_params: sks.key.compressed_modswitched_conformance_params(),
-+            num_blocks_per_integer: num_blocks,
-+        };
++      - name: Setup Python venv
++        run: |
++          make setup_python_venv
 +
-+        let ct = cks.encrypt_radix(3u64, num_blocks);
-+        let mut compressed = sks.switch_modulus_and_compress_parallelized(&ct);
-+        assert!(compressed.0.last_block.is_none());
-+        assert!(compressed.is_conformant(&conformance_params));
+       - name: Parse profile and hardware name
+         id: parse_profile_and_hardware_name
+         env:
+           INPUTS_PROFILE: ${{ inputs.profile }}
+-        run: python3 ci/parse_benchmark_profile.py "$INPUTS_PROFILE" "$GITHUB_OUTPUT"
++        run: venv/bin/python ci/parse_benchmark_profile.py "$INPUTS_PROFILE" "$GITHUB_OUTPUT"
+ 
+       - name: Get additional file to parse
+         id: set_file_to_parse
+-        shell: python
+         env:
+           INPUTS_COMMAND: ${{ inputs.command }}
+         run: |
++          venv/bin/python - <<'EOF'
+           import os
+ 
+           inputs_command = os.environ["INPUTS_COMMAND"]
+@@ -130,6 +137,7 @@ jobs:
+ 
+           with open(output_file, "a") as f:
+             f.write(f"""additional_file_to_parse={",".join(files_to_parse)}\n""")
++          EOF
+ 
+   run-benchmarks:
+     name: benchmark_cpu/run-benchmarks
+```
+
+**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +8/-1)
+```diff
+@@ -167,6 +167,9 @@ jobs:
+           persist-credentials: "false"
+           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+ 
++      - name: Setup Python
++        uses: ./.github/actions/setup_python
 +
-+        // An even number of blocks is fully stored in paired_blocks, an extra block would
-+        // decompress to num_blocks + 1 blocks
-+        let extra_block = sks
-+            .key
-+            .switch_modulus_and_compress(&cks.encrypt_one_block(1u64));
-+        compressed.0.last_block = Some(extra_block.clone());
-+        assert!(!compressed.is_conformant(&conformance_params));
+       - name: Get benchmark details
+         run: |
+           COMMIT_DATE=$(git --no-pager show -s --format=%cd --date=iso8601-strict "${SHA}");
+@@ -245,10 +248,14 @@ jobs:
+           merge-multiple: true
+           path: previous_protocol_table
+ 
++      - name: Setup Python venv
++        run: |
++          make setup_python_venv
 +
-+        let signed_ct = cks.encrypt_signed_radix(-3i64, num_blocks);
-+        let mut signed_compressed = sks.switch_modulus_and_compress_signed_parallelized(&signed_ct);
-+        assert!(signed_compressed.is_conformant(&conformance_params));
+       - name: Render protocol results table
+         if: ${{ contains(matrix.command, 'protocol') }}
+         run: |
+-          python3 ci/protocol_results_table.py "${RESULTS_FILENAME}" \
++          venv/bin/python ci/protocol_results_table.py "${RESULTS_FILENAME}" \
+           --hardware "${HARDWARE_NAME}" \
+           --csv "${PROTOCOL_TABLE_CSV}" \
+           --merge "previous_protocol_table/${PROTOCOL_TABLE_CSV}"
+```
+
+**File**: `.github/workflows/benchmark_gpu.yml` (modified, +10/-2)
+```diff
+@@ -108,18 +108,25 @@ jobs:
+           persist-credentials: "false"
+           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+ 
++      - name: Setup Python
++        uses: ./.github/actions/setup_python
 +
-+        signed_compressed.0.last_block = Some(extra_block);
-+        assert!(!signed_compressed.is_conformant(&conformance_params));
-+    }
++      - name: Setup Python venv
++        run: |
++          make setup_python_venv
 +
-+    /// Mimics a server handling untrusted inputs: anything that passes conformance is then
-+    /// decompressed and computed on, so it must not be able to make the server panic
-+    fn conformant_decompress_and_add(
-+        sks: &ServerKey,
-+        conformance_params: &CompressedModulusSwitchedRadixCiphertextConformanceParams,
-+        lhs: &CompressedModulusSwitchedRadixCiphertext,
-+        rhs: &CompressedModulusSwitchedRadixCiphertext,
-+    ) -> Option<RadixCiphertext> {
-+        if !lhs.is_conformant(conformance_params) || !rhs.is_conformant(conformance_params) {
-+            return None;
-+        }
+       - name: Parse profile and hardware name
+         id: parse_profile_and_hardware_name
+         env:
+           INPUTS_PROFILE: ${{ inputs.profile }}
+-        run: python3 ci/parse_benchmark_profile.py "$INPUTS_PROFILE" "$GITHUB_OUTPUT"
++        run: venv/bin/python ci/parse_benchmark_profile.py "$INPUTS_PROFILE" "$GITHUB_OUTPUT"
+ 
+       - name: Get additional file to parse
+         id: set_file_to_parse
+-        shell: python
+         env:
+           INPUTS_COMMAND: ${{ inputs.command }}
+         run: |
++          venv/bin/python - <<'EOF'
+           import os
+ 
+           inputs_command = os.environ["INPUTS_COMMAND"]
+@@ -143,6 +150,7 @@ jobs:
+ 
+           with open(output_file, "a") as f:
+             f.write(f"""additional_file_to_parse={",".join(files_to_parse)}\n""")
++          EOF
+ 
+   run-benchmarks:
+     name: benchmark_gpu/run-benchmarks
+```
+
+**File**: `.github/workflows/benchmark_gpu_common.yml` (modified, +9/-2)
+```diff
+@@ -188,6 +188,9 @@ jobs:
+           persist-credentials: "false"
+           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+ 
++      - name: Setup Python
++        uses: ./.github/actions/setup_python
 +
-+        let lhs = sks.decompress_parallelized(lhs);
-+        let rhs = sks.decompress_parallelized(rhs);
+       - name: Get benchmark details
+         run: |
+           COMMIT_DATE=$(git --no-pager show -s --format=%cd --date=iso8601-strict "${SHA}");
+@@ -257,6 +260,10 @@ jobs:
+           REF_NAME: ${{ github.ref_name }}
+           BENCH_TYPE: ${{ matrix.bench_type }}
+ 
++      - name: Setup Python venv
++        run: |
++          make setup_python_venv
 +
-+        Some(sks.add_parallelized(&lhs, &rhs))
-+    }
+       - name: Parse and merge multi_group results
+         if: ${{ endsWith(inputs.command, '_multi_group') }}
+         run: |
+@@ -275,7 +282,7 @@ jobs:
+             --bench-type "${BENCH_TYPE}"
+             group_results+=("${group_result}")
+           done
+-          python3 ./ci/merge_multi_group_results.py --bench-type "${BENCH_TYPE}" --output "${RESULTS_FILENAME}" "${group_results[@]}"
++          venv/bin/python ./ci/merge_multi_group_results.py --bench-type "${BENCH_TYPE}" --output "${RESULTS_FILENAME}" "${group_results[@]}"
+         env:
+           REF_NAME: ${{ github.ref_name }}
+           BENCH_TYPE: ${{ matrix.bench_type }}
+@@ -309,7 +316,7 @@ jobs:
+           if [[ "${BENCH_COMMAND}" == *_multi_group ]]; then
+             gpus_used="${NUM_GROUPS}"
+           fi
+-          python3 ci/protocol_results_table.py "${RESULTS_FILENAME}" \
++          venv/bin/python ci/protocol_results_table.py "${RESULTS_FILENAME}" \
+           --gpu-info gpu_info.txt \
+           --hardware "${HARDWARE_NAME}" \
+           --gpus-used "${gpus_used}" \
+```
+
+**File**: `.github/workflows/benchmark_gpu_coprocessor.yml` (modified, +8/-1)
+```diff
+@@ -72,6 +72,13 @@ jobs:
+           persist-credentials: "false"
+           token: ${{ env.CHECKOUT_TOKEN }}
+ 
++      - name: Setup Python
++        uses: ./.github/actions/setup_python
 +
-+    #[test]
-+    fn test_even_blocks_extra_last_block_does_not_panic_after_conformance() {
-+        let num_blocks = 4;
-+        let (cks, sks) = KEY_CACHE.get_from_params(
-+            TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+            IntegerKeyKind::Radix,
-+        );
++      - name: Setup Python venv
++        run: |
++          make setup_python_venv
 +
-+        let conformance_params = CompressedModulusSwitchedRadixCiphertextConformanceParams {
-+            shortint_params: sks.key.compressed_modswitched_conformance_params(),
-+            num_blocks_per_integer: num_blocks,
-+        };
+       - name: Parse profile and hardware name
+         id: parse_profile
+         run: |
+@@ -80,7 +87,7 @@ jobs:
+           else
+             PROFILE_RAW="${PROFILE_SCHEDULED_RUN}"
+           fi
+-          python3 ci/parse_benchmark_profile.py "$PROFILE_RAW" "$GITHUB_OUTPUT"
++          venv/bin/python ci/parse_benchmark_profile.py "$PROFILE_RAW" "$GITHUB_OUTPUT"
+ 
+   setup-instance:
+     name: benchmark_gpu_coprocessor/setup-instance
+```
+
+**File**: `.github/workflows/benchmark_perf_regression.yml` (modified, +20/-12)
+```diff
+@@ -55,6 +55,9 @@ jobs:
+           persist-credentials: "false"
+           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+ 
++      - name: Setup Python
++        uses: ./.github/actions/setup_python
 +
-+        let honest = cks.encrypt_radix(3u64, num_blocks);
+       - name: Acknowledge issue comment
+         if: github.event_name == 'issue_comment'
+         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
+@@ -83,14 +86,18 @@ jobs:
+ 
+       # TODO add support for HPU backend
+ 
++      - name: Install Safe-Chain
++        run: |
++          make install_aikido_safe_chain
 +
-+        // num_blocks + 2 blocks give one more paired_block than expected
-+        let too_many_pairs = cks.encrypt_radix(3u64, num_blocks + 2);
+       - name: Install Python requirements
+         run: |
+-          python3 -m pip install -r ci/perf_regression/requirements.txt
++          make perf_regression_setup_venv
+ 
+       - name: Generate cargo commands and env from label
+         if: github.event_name == 'pull_request'
+         run: |
+-          python3 ci/perf_regression/perf_regression.py parse_profile --issue-comment "/bench ${DEFAULT_BENCH_OPTIONS}"
++          venv_perf_regression/bin/python ci/perf_regression/perf_regression.py parse_profile --issue-comment "/bench ${DEFAULT_BENCH_OPTIONS}"
+           echo "COMMANDS=$(cat ci/perf_regression/perf_regression_generated_commands.json)" >> "${GITHUB_ENV}"
+ 
+       - name: Dump issue comment into file # To avoid possible code-injection
+@@ -103,7 +110,7 @@ jobs:
+       - name: Generate cargo commands and env
+         if: github.event_name == 'issue_comment'
+         run: |
+-          python3 ci/perf_regression/perf_regression.py parse_profile --issue-comment "$(cat dumped_comment.txt)"
++          venv_perf_regression/bin/python ci/perf_regression/perf_regression.py parse_profile --issue-comment "$(cat dumped_comment.txt)"
+           echo "COMMANDS=$(cat ci/perf_regression/perf_regression_generated_commands.json)" >> "${GITHUB_ENV}"
+ 
+       - name: Set commands output
+@@ -121,7 +128,7 @@ jobs:
+         id: get_hardware_name
+         run:
+           | # zizmor: ignore[template-injection] these interpolations are safe
+-          HARDWARE_NAME=$(python3 ci/hardware_finder.py "${{ steps.set_slab_details.outputs.backend }}" "${{ steps.set_slab_details.outputs.profile }}");
++          HARDWARE_NAME=$(venv_perf_regression/bin/python ci/hardware_finder.py "${{ steps.set_slab_details.outputs.backend }}" "${{ steps.set_slab_details.outputs.profile }}");
+           echo "name=${HARDWARE_NAME}" >> "${GITHUB_OUTPUT}"
+ 
+       - name: Set regression details outputs
+@@ -290,19 +297,20 @@ jobs:
+           persist-credentials: "false"
+           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+ 
+-      - name: Install recent Python
+-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+-        with:
+-          python-version: "3.12"
++      - name: Setup Python
++        uses: ./.github/actions/setup_python
 +
-+        // num_blocks + 1 blocks give the same number of paired_blocks as num_blocks, plus a
-+        // last_block that would decompress to an extra block
-+        let extra_last_block = cks.encrypt_radix(3u64, num_blocks + 1);
-+
-+        let res = conformant_decompress_and_add(
-+            &sks,
-+            &conformance_params,
-+            &sks.switch_modulus_and_compress_parallelized(&honest),
-+            &sks.switch_modulus_and_compress_parallelized(&honest),
-+        )
-+        .unwrap();
-+        let dec: u64 = cks.decrypt_radix(&res);
-+        assert_eq!(dec, 6);
-+
-+        assert!(conformant_decompress_and_add(
-+            &sks,
-+            &conformance_params,
-+            &sks.switch_modulus_and_compress_parallelized(&honest),
-+            &sks.switch_modulus_and_compress_parallelized(&too_many_pairs),
-+        )
-+        .is_none());
-+
-+        assert!(conformant_decompress_and_add(
-+            &sks,
-+            &conformance_params,
-+            &sks.switch_modulus_and_compress_parallelized(&honest),
-+            &sks.switch_modulus_and_compress_parallelized(&extra_last_block),
-+        )
-+        .is_none());
-+    }
-+}
++      - name: Install Safe-Chain
++        run: |
++          make install_aikido_safe_chain
+ 
+       - name: Install requirements
+         run: |
+-          python3.12 -m venv venv
+-          venv/bin/pip3 install -r ci/data_extractor/requirements.txt -r ci/perf_regression/requirements.txt
++          make perf_regression_setup_venv PYTHON_EXE=python3.12
+ 
+       - name: Fetch data
+         run: |
+-          venv/bin/python3 ci/data_extractor/src/data_extractor.py regression_data \
++          venv_perf_regression/bin/python3 ci/data_extractor/src/data_extractor.py regression_data \
+           --generate-regression-json \
+           --regression-profiles ci/regression.toml \
+           --regression-selected-profile "${REGRESSION_PROFILE}" \
+@@ -320,7 +328,7 @@ jobs:
+ 
+       - name: Generate regression report
+         run: |
+-          venv/bin/python3 ci/perf_regression/perf_regression.py check_regression \
++          venv_perf_regression/bin/python3 ci/perf_regression/perf_regression.py check_regression \
+           --results-file regression_data.json \
+           --generate-report
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2080,57 +2271,43 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. integer): reject unexpected last block in modulus switched radix conformance (#4
+## X. better python pinning (#4090)
 
 **RULE**:
-When implementing operations in `tfhe/src/integer/ciphertext/compressed_modulus_switched_ciphertext.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/setup_python/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f014579e`: integer): reject unexpected last block in modulus switched radix conformance (#4157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9066683f`: better python pinning (#4090). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/ciphertext/compressed_modulus_switched_ciphertext.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/setup_python/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            last_block.is_none()
+name: Setup Python
+description: Install the minimum Python version supported by the python tooling of the repository, see PYTHON_MIN_VERSION in make/python.mk
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::integer::keycache::KEY_CACHE;
-    use crate::integer::{IntegerKeyKind, RadixCiphertext, ServerKey};
-    use crate::shortint::parameters::test_params::TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
+runs:
+  using: composite
+  steps:
+    - name: Get minimum Python version
+      id: get_python_min_version
+      shell: bash
+      run: |
+        echo "version=$(make python_min_version)" >> "${GITHUB_OUTPUT}"
 
-    #[test]
-    fn test_even_blocks_rejects_unexpected_last_block_conformance() {
-        let num_blocks = 4;
-        let (cks, sks) = KEY_CACHE.get_from_params(
-            TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-            IntegerKeyKind::Radix,
-        );
-
-        let conformance_params = CompressedModulusSwitchedRadixCiphertextConformanceParams {
-            shortint_params: sks.key.compressed_modswitched_conformance_params(),
-            num_blocks_per_integer: num_blocks,
-        };
-
-        let ct = cks.encrypt_radix(3u64, num_blocks);
-        let mut compressed = sks.switch_modulus_and_compress_parallelized(&ct);
-        assert!(compressed.0.last_block.is_none());
-        assert!(compressed.is_conformant(&conformance_params));
-
-        // An even number of blocks is fully stored in paired_blocks, an extra block would
-        // decompress to num_blocks + 1 blocks
-        
+    - name: Install Python
+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      with:
+        python-version: ${{ steps.get_python_min_version.outputs.version }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            true
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f014579e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9066683f` are properly handled with clean fallback behavior.

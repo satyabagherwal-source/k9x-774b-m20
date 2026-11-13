@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T01:39:34.313Z",
+  "updated_at": "2026-11-13T01:58:00.685Z",
   "stats": {
-    "total_discovered": 1960,
-    "approved_pending_harvest": 1804,
+    "total_discovered": 1985,
+    "approved_pending_harvest": 1829,
     "harvested_count": 0,
     "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1803,
-      "OFFICIAL_DOCUMENTATION": 80,
+      "COMMUNITY_AND_EXPERT": 1826,
+      "OFFICIAL_DOCUMENTATION": 82,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 7
@@ -42045,6 +42045,556 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
         "fileName": "emberstack-kubernetes-reflector-learnings.md"
+      }
+    },
+    "SRC-6A1DE1AB9F40": {
+      "id": "SRC-6A1DE1AB9F40",
+      "url": "https://github.com/biomejs/biome",
+      "title": "https://github.com/biomejs/biome",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.214Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-C01D2797D4B2": {
+      "id": "SRC-C01D2797D4B2",
+      "url": "https://drafts.csswg.org/css-extensions",
+      "title": "https://drafts.csswg.org/css-extensions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.234Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-E535505A45FA": {
+      "id": "SRC-E535505A45FA",
+      "url": "https://github.com/css-modules/css-modules",
+      "title": "https://github.com/css-modules/css-modules",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.252Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-3E7A04D60154": {
+      "id": "SRC-3E7A04D60154",
+      "url": "https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.270Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-46A35EC5B629": {
+      "id": "SRC-46A35EC5B629",
+      "url": "https://github.com/biomejs/biome/issues/12176",
+      "title": "https://github.com/biomejs/biome/issues/12176",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-B48831896B54": {
+      "id": "SRC-B48831896B54",
+      "url": "https://biomejs.dev/linter/rules/use-await-thenable",
+      "title": "https://biomejs.dev/linter/rules/use-await-thenable",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-2299CE0A0990": {
+      "id": "SRC-2299CE0A0990",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.330Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-6A817FF6B8F8": {
+      "id": "SRC-6A817FF6B8F8",
+      "url": "https://biomejs.dev/linter",
+      "title": "https://biomejs.dev/linter",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.349Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-49FD529DF949": {
+      "id": "SRC-49FD529DF949",
+      "url": "https://biomejs.dev/linter/rules/no-dynamic-require",
+      "title": "https://biomejs.dev/linter/rules/no-dynamic-require",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.368Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-49851F6AD78A": {
+      "id": "SRC-49851F6AD78A",
+      "url": "https://biomejs.dev/linter/rules/no-duplicate-selectors",
+      "title": "https://biomejs.dev/linter/rules/no-duplicate-selectors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.386Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-E50AE55C6933": {
+      "id": "SRC-E50AE55C6933",
+      "url": "https://biomejs.dev/linter/rules/no-duplicate-type-constituents",
+      "title": "https://biomejs.dev/linter/rules/no-duplicate-type-constituents",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.405Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-77233B367E0B": {
+      "id": "SRC-77233B367E0B",
+      "url": "https://biomejs.dev/linter/rules/no-dynamic-delete",
+      "title": "https://biomejs.dev/linter/rules/no-dynamic-delete",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-8D50A1640F41": {
+      "id": "SRC-8D50A1640F41",
+      "url": "https://biomejs.dev/linter/rules/no-eager-array-methods-in-loops",
+      "title": "https://biomejs.dev/linter/rules/no-eager-array-methods-in-loops",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-5A5808EF40F9": {
+      "id": "SRC-5A5808EF40F9",
+      "url": "https://biomejs.dev/linter/rules/no-empty-object-keys",
+      "title": "https://biomejs.dev/linter/rules/no-empty-object-keys",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-41AFA3359A2D": {
+      "id": "SRC-41AFA3359A2D",
+      "url": "https://biomejs.dev/linter/rules/no-erasing-operation",
+      "title": "https://biomejs.dev/linter/rules/no-erasing-operation",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.485Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-3C27D0815F75": {
+      "id": "SRC-3C27D0815F75",
+      "url": "https://biomejs.dev/linter/rules/no-common-js",
+      "title": "https://biomejs.dev/linter/rules/no-common-js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-0019AF28EDE5": {
+      "id": "SRC-0019AF28EDE5",
+      "url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "title": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.525Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
+        "fileName": "hf-comfy-org-z-image-turbo-learnings.md"
+      }
+    },
+    "SRC-1F5B70E92823": {
+      "id": "SRC-1F5B70E92823",
+      "url": "https://github.com/pingcap/tidb",
+      "title": "https://github.com/pingcap/tidb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.551Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-F5B399BE4FA7": {
+      "id": "SRC-F5B399BE4FA7",
+      "url": "https://github.com/tikv/pd/pull/3088",
+      "title": "https://github.com/tikv/pd/pull/3088",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.577Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-1527A0C8CC90": {
+      "id": "SRC-1527A0C8CC90",
+      "url": "https://github.com/tikv/pd/pull/3131",
+      "title": "https://github.com/tikv/pd/pull/3131",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-24FA00B03E85": {
+      "id": "SRC-24FA00B03E85",
+      "url": "https://github.com/pingcap/br/pull/592",
+      "title": "https://github.com/pingcap/br/pull/592",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-6068EFB33A30": {
+      "id": "SRC-6068EFB33A30",
+      "url": "https://github.com/tikv/pd/blob/master/conf/config.toml",
+      "title": "https://github.com/tikv/pd/blob/master/conf/config.toml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-2A06EC705ECC": {
+      "id": "SRC-2A06EC705ECC",
+      "url": "https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html",
+      "title": "https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.645Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-A89109B01D70": {
+      "id": "SRC-A89109B01D70",
+      "url": "https://github.com/user-attachments/assets/4b92c23c-1f34-4b27-9360-9b39d22518c4",
+      "title": "https://github.com/user-attachments/assets/4b92c23c-1f34-4b27-9360-9b39d22518c4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-B8303392A121": {
+      "id": "SRC-B8303392A121",
+      "url": "https://docs.coderabbit.ai/pr-reviews/automatic-approvals",
+      "title": "https://docs.coderabbit.ai/pr-reviews/automatic-approvals",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:58:00.685Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
       }
     }
   }

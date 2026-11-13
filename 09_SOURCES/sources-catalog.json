@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "fdae7e29",
+    "sourceVersion": "aeea883b",
     "license": "MIT",
-    "contentHash": "138829b71c2ac36b4c6625b4b583659ad6028c4f9f2d93a3dc8e7552b75934d9",
-    "lastHarvestedAt": "2026-11-07T04:44:31.280Z",
+    "contentHash": "c1661565bc09dfab4c3eaec2a109ec1442b3facbd39f673adfca2c4fb2b6da6b",
+    "lastHarvestedAt": "2026-11-13T01:57:53.030Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "0f0b3e7e",
+    "sourceVersion": "9066683f",
     "license": "NOASSERTION",
-    "contentHash": "236425e8b7010ba3c9063c1979c5040f4c47c704b34acf79905bdacf085cbeb0",
-    "lastHarvestedAt": "2026-11-12T15:34:10.587Z",
+    "contentHash": "e28f8670f8da3808ed65373b204070315f53395a37d6d6d928087307c4dbd1c6",
+    "lastHarvestedAt": "2026-11-13T01:57:51.245Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -7005,8 +7005,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/z_image_turbo",
     "sourceVersion": "hf-comfy-org-z_image_turbo",
     "license": "Open-Source",
-    "contentHash": "d79159801758c0b1dddf5f05891cc2ef3bfd0916a864d7e0ebc6bb871c9b98db",
-    "lastHarvestedAt": "2026-11-08T02:32:50.153Z",
+    "contentHash": "4b00b8fbfb0f41e60343b24ab4accdf5922f7b1735139f89fecea1a9d7cf42c7",
+    "lastHarvestedAt": "2026-11-13T01:57:18.016Z",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo"
   },
   "jhspetersson-fselect": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "32a53ec1",
+    "sourceVersion": "c3adc8df",
     "license": "Apache-2.0",
-    "contentHash": "7fb28f5c0b9f55f7b5fb6dd064669e46eb80c9856b5ad09221b78799b5c7e754",
-    "lastHarvestedAt": "2026-11-11T16:36:02.983Z",
+    "contentHash": "b36b0e67516a986704045308519ff440d5572145bb80f590a9d56329024d765e",
+    "lastHarvestedAt": "2026-11-13T01:57:48.744Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "f6cf28e3",
+    "sourceVersion": "e7c8297c",
     "license": "Apache-2.0",
-    "contentHash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
-    "lastHarvestedAt": "2026-11-11T07:46:13.492Z",
+    "contentHash": "83e9c8248f962dd1e3c9f2af6eeb9328ef98994ad992e2b16d94321e21abac21",
+    "lastHarvestedAt": "2026-11-13T01:57:37.769Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

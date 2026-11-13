@@ -9288,3 +9288,8 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `8aa7707d` | Multi-dimensional audit evidence | 2026-11-13T01:39:06.656Z |
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `19cceb3b` | Multi-dimensional audit evidence | 2026-11-13T01:39:13.078Z |
 | `learn-dom-d-e9be8727` | `project://hf-comfy-org-moss-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | 2026-11-13T01:39:34.253Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-13T01:57:18.016Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `e7c8297c` | Multi-dimensional audit evidence | 2026-11-13T01:57:37.769Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `c3adc8df` | Multi-dimensional audit evidence | 2026-11-13T01:57:48.744Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `9066683f` | Multi-dimensional audit evidence | 2026-11-13T01:57:51.245Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `aeea883b` | Multi-dimensional audit evidence | 2026-11-13T01:57:53.030Z |

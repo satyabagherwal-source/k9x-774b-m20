@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-TX9Y",
-    "timestamp": "2026-11-09T16:18:30.454Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "85bb04aedc010e220647d8d0156fa00c5d79a56e3948debbb9d466a08545bfe1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-TYYQ",
-    "timestamp": "2026-11-09T16:18:32.642Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "b60390073ec57e5050150b2512867ec6ff6f890b91d751b5179104e2aa1c18bc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-U1TJ",
-    "timestamp": "2026-11-09T16:18:36.343Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "47d6ca5e739a8027bb9683646b42ee38fec985728b1ed57bc169c1e616c756ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-3O1Z",
-    "timestamp": "2026-11-09T16:26:05.063Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-    "contentHash": "bd6fc8dab6f78b89892319089c9775bc5a08a66e7964d58567ce72370e584322",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-3PCG",
-    "timestamp": "2026-11-09T16:26:06.736Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "ffd2ccd36238b11fd650bfb973f5f56aae1720951ff5dfc59d31bacbbe3d8bd6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-3PLS",
     "timestamp": "2026-11-09T16:26:07.072Z",
     "repository": "apple/foundationdb",
@@ -7490,6 +7415,81 @@
     "repository": "emberstack/kubernetes-reflector",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
     "contentHash": "ce1ea69f72a6da4217801c78f5d7a570240e3db0c93c9bda2d109c3d28588588",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-TT8C",
+    "timestamp": "2026-11-13T01:57:18.012Z",
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+    "contentHash": "4b00b8fbfb0f41e60343b24ab4accdf5922f7b1735139f89fecea1a9d7cf42c7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-U8H0",
+    "timestamp": "2026-11-13T01:57:37.764Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "83e9c8248f962dd1e3c9f2af6eeb9328ef98994ad992e2b16d94321e21abac21",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-UGXU",
+    "timestamp": "2026-11-13T01:57:48.738Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "b36b0e67516a986704045308519ff440d5572145bb80f590a9d56329024d765e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-UIVB",
+    "timestamp": "2026-11-13T01:57:51.239Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "e28f8670f8da3808ed65373b204070315f53395a37d6d6d928087307c4dbd1c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-UK8W",
+    "timestamp": "2026-11-13T01:57:53.024Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "c1661565bc09dfab4c3eaec2a109ec1442b3facbd39f673adfca2c4fb2b6da6b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

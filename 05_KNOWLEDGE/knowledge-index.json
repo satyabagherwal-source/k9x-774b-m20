@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T01:39:12.907Z",
+  "last_updated": "2026-11-13T01:57:52.830Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5524,8 +5524,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "f6cf28e3",
-      "content_hash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
+      "source_version": "e7c8297c",
+      "content_hash": "83e9c8248f962dd1e3c9f2af6eeb9328ef98994ad992e2b16d94321e21abac21",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -5552,6 +5552,11 @@
         {
           "number": null,
           "title": "format/md): keep table rows in blockquotes aligned (#13035)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "inference): overload in local inference (#13123)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5635,7 +5640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T07:46:13.352Z",
+      "verified_at": "2026-11-13T01:57:37.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47936,14 +47941,19 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "fdae7e29",
-      "content_hash": "138829b71c2ac36b4c6625b4b583659ad6028c4f9f2d93a3dc8e7552b75934d9",
+      "source_version": "aeea883b",
+      "content_hash": "c1661565bc09dfab4c3eaec2a109ec1442b3facbd39f673adfca2c4fb2b6da6b",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cli loading arguments",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47992,7 +48002,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:44:31.160Z",
+      "verified_at": "2026-11-13T01:57:52.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52741,8 +52751,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "32a53ec1",
-      "content_hash": "7fb28f5c0b9f55f7b5fb6dd064669e46eb80c9856b5ad09221b78799b5c7e754",
+      "source_version": "c3adc8df",
+      "content_hash": "b36b0e67516a986704045308519ff440d5572145bb80f590a9d56329024d765e",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -52769,6 +52779,11 @@
         {
           "number": null,
           "title": "expression: fix flaky TestGetLock internal session check (#72941)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "statistics, domain: keep stats workers running after a panic (#72768)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52867,7 +52882,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T16:36:02.859Z",
+      "verified_at": "2026-11-13T01:57:48.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69037,8 +69052,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "0f0b3e7e",
-      "content_hash": "236425e8b7010ba3c9063c1979c5040f4c47c704b34acf79905bdacf085cbeb0",
+      "source_version": "9066683f",
+      "content_hash": "e28f8670f8da3808ed65373b204070315f53395a37d6d6d928087307c4dbd1c6",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -69075,6 +69090,11 @@
         {
           "number": null,
           "title": "integer): reject unexpected last block in modulus switched radix conformance (#4",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "better python pinning (#4090)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -69173,7 +69193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T15:34:10.397Z",
+      "verified_at": "2026-11-13T01:57:51.024Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113018,7 +113038,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
       "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "d79159801758c0b1dddf5f05891cc2ef3bfd0916a864d7e0ebc6bb871c9b98db",
+      "content_hash": "4b00b8fbfb0f41e60343b24ab4accdf5922f7b1735139f89fecea1a9d7cf42c7",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "promoted_rules": [
@@ -113083,7 +113103,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:32:49.953Z",
+      "verified_at": "2026-11-13T01:57:17.875Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

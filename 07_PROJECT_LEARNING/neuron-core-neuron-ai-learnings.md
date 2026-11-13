@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `fdae7e29`  
+> **Source Version**: `aeea883b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:44:29.414Z  
+> **Timestamp**: 2026-11-13T01:57:31.204Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:44:29.256Z  
+> **Harvest Timestamp**: 2026-11-13T01:57:31.190Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2166 stars
+- **Stars / Engagement**: 2172 stars
 
 ---
 
@@ -540,731 +540,209 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fdae7e29` (2026-11-05)
-**Commit Message**: Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32
+### Incident Patch 1: `aeea883b` (2026-11-11)
+**Commit Message**: fix cli loading arguments
 
-Let installed packages add commands to the neuron CLI
-
-**File**: `bin/neuron` (modified, +3/-1)
+**File**: `.github/dependabot.yml` (modified, +2/-2)
 ```diff
-@@ -51,10 +51,12 @@ if ($defaultAutoload === null) {
- 
- require_once $defaultAutoload;
- 
-+use NeuronAI\Console\InstalledCommandProviders;
- use NeuronAI\Console\NeuronCli;
- 
- try {
--    $command = new NeuronCli();
-+    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
-+    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
-     $exitCode = $command->run($args);
-     exit($exitCode);
- } catch (Throwable $e) {
-```
-
-**File**: `src/Console/AGENTS.md` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@ CLI entry point (`php vendor/bin/neuron <command>`) for code generation and for
- ## Design
- 
- - `NeuronCli::commands()` is the single registry: command name => [description, factory closure]. The help output is generated from it, so there is nowhere else to register a command.
-+- Installed packages add commands through a `CommandProvider`, declared under `extra.neuron.command-provider` in their composer.json. `InstalledCommandProviders` finds them in `vendor/composer/installed.json` and `bin/neuron` passes them to `NeuronCli`. Built-in commands win name collisions, so a package can never change what an existing command does.
- - `Command` is the abstract base: `run(array $args): int` plus print helpers (errors go to STDERR).
- - `MakeCommand` is one concrete class for every `make:*` command, configured with (command name, resource type, stub file). Adding a generator means adding a stub in `Make/Stubs/` and one registry entry, never a new command class.
- - `EvaluationCommand` is a thin CLI over `src/Evaluation/`: flag parsing (`--verbose`, `--concurrency`, `--cache`, `--fresh`) lives here, the semantics live in the Evaluation module. A framework console command wraps it, passing a resolver and a runner that replace the `resolver` and `runner` entries of `evaluation.php`.
-```
-
-**File**: `src/Console/CommandProvider.php` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Console;
-+
-+use Closure;
-+
-+/**
-+ * Adds commands to the neuron CLI from an installed package, which declares it
-+ * under "extra.neuron.command-provider" in its composer.json.
-+ */
-+interface CommandProvider
-+{
-+    /**
-+     * @return array<string, array{string, Closure(): Command}> Command name => [description, factory].
-+     */
-+    public function commands(): array;
-+}
-```
-
-**File**: `src/Console/InstalledCommandProviders.php` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Console;
-+
-+use RuntimeException;
-+
-+use function file_get_contents;
-+use function is_file;
-+use function json_decode;
-+
-+use const JSON_THROW_ON_ERROR;
-+
-+/**
-+ * The command providers declared by the packages Composer installed.
-+ */
-+class InstalledCommandProviders
-+{
-+    /**
-+     * @param string $installedPackagesFile Composer's vendor/composer/installed.json.
-+     */
-+    public function __construct(protected string $installedPackagesFile)
-+    {
-+    }
-+
-+    /**
-+     * @return CommandProvider[]
-+     */
-+    public function discover(): array
-+    {
-+        if (!is_file($this->installedPackagesFile)) {
-+            return [];
-+        }
-+
-+        $installed = json_decode((string) file_get_contents($this->installedPackagesFile), true, flags: JSON_THROW_ON_ERROR);
-+
-+        $providers = [];
-+        foreach ($installed['packages'] ?? [] as $package) {
-+            $providerClass = $package['extra']['neuron']['command-provider'] ?? null;
-+
-+            if ($providerClass !== null) {
-+                $providers[] = $this->instantiate($package['name'], $providerClass);
-+            }
-+        }
-+
-+        return $providers;
-+    }
-+
-+    protected function instantiate(string $packageName, string $providerClass): CommandProvider
-+    {
-+        $provider = new $providerClass();
-+
-+        if (!$provider instanceof CommandProvider) {
-+            throw new RuntimeException(
-+                "{$packageName} declares {$providerClass} as its command provider, "
-+                . 'but it does not implement ' . CommandProvider::class
-+            );
-+        }
-+
-+        return $provider;
-+    }
-+}
-```
-
-**File**: `src/Console/NeuronCli.php` (modified, +17/-1)
-```diff
-@@ -17,11 +17,21 @@
- class NeuronCli extends Command
- {
-     /**
-+     * @param CommandProvider[] $providers
-+     */
-+    public function __construct(protected array $providers = [])
-+    {
-+    }
-+
-+    /**
-+     * Built-in commands come first and win name collisions, so an installed
-+     * package can add commands but never change what an existing one does.
-+     *
-      * @return array<string, array{string, Closure(): Command}>
-      */
-     public function commands(): array
-     {
--        return [
-+        $commands = [
-             'evaluation' => ['Run AI evaluation tests on a directory of evaluators', fn (): Command => new EvaluationCommand()],
-             'make:agent' => ['Create a new Agent class', fn (): Command => new MakeCommand('make:agent', 'Agent', 'agent.stub')],
-             'make:middleware' => ['Create a new Workflow Middleware class', fn (): Command => new MakeCommand('make:middleware', 'Middleware', 'middleware.stub')],
-@@ -32,6 +42,12 @@ public function commands(): array
-             'make:event' => ['Create a new Event class', fn (): Command => new MakeCommand('make:event', 'Event', 'event.stub')],
-             'make:evaluators' => ['Create a new Evaluator class', fn (): Command => new MakeCommand('make:evaluators', 'Evaluator', 'evaluator.stub')],
-         ];
-+
-+        foreach ($this->providers as $provider) {
-+            $commands += $provider->commands();
-+        }
-+
-+        return $commands;
-     }
- 
-     /**
-```
-
-**File**: `tests/Console/InstalledCommandProvidersTest.php` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Tests\Console;
-+
-+use NeuronAI\Console\CommandProvider;
-+use NeuronAI\Console\InstalledCommandProviders;
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
-+use NeuronAI\Tests\Support\FileSystemSandbox;
-+use PHPUnit\Framework\TestCase;
-+use RuntimeException;
-+use stdClass;
-+
-+use function file_put_contents;
-+use function json_encode;
-+
-+use const JSON_THROW_ON_ERROR;
-+
-+class InstalledCommandProvidersTest extends TestCase
-+{
-+    use FileSystemSandbox;
-+
-+    protected string $sandbox;
-+
-+    protected function setUp(): void
-+    {
-+        $this->sandbox = $this->createSandbox('installed-command-providers');
-+    }
-+
-+    protected function tearDown(): void
-+    {
-+        $this->removeSandbox($this->sandbox);
-+    }
-+
-+    public function test_discovers_the_providers_declared_by_installed_packages(): void
-+    {
-+        $file = $this->installedPackages([
-+            ['name' => 'acme/without-commands', 'extra' => ['branch-alias' => ['dev-main' => '1.x-dev']]],
-+            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
-+            ['name' => 'acme/without-extra'],
-+        ]);
-+
-+        $providers = (new InstalledCommandProviders($file))->discover();
-+
-+        $this->assertCount(1, $providers);
-+        $this->assertInstanceOf(GreetingCommandProvider::class, $providers[0]);
-+    }
-+
-+    public function test_a_missing_installed_packages_file_has_no_providers(): void
-+    {
-+        $providers = (new InstalledCommandProviders($this->sandbox . '/missing.json'))->discover();
-+
-+        $this->assertSame([], $providers);
-+    }
-+
-+    public function test_a_declared_class_that_is_not_a_command_provider_is_reported_with_its_package(): void
-+    {
-+        $file = $this->installedPackages([
-+            ['name' => 'acme/broken', 'extra' => ['neuron' => ['command-provider' => stdClass::class]]],
-+        ]);
-+
-+        $this->expectException(RuntimeException::class);
-+        $this->expectExceptionMessage(
-+            'acme/broken declares stdClass as its command provider, but it does not implement ' . CommandProvider::class
-+        );
-+
-+        (new InstalledCommandProviders($file))->discover();
-+    }
-+
-+    /**
-+     * @param array<array<string, mixed>> $packages
-+     */
-+    protected function installedPackages(array $packages): string
-+    {
-+        $file = $this->sandbox . '/installed.json';
-+        file_put_contents($file, json_encode(['packages' => $packages], JSON_THROW_ON_ERROR));
-+
-+        return $file;
-+    }
-+}
-```
-
-**File**: `tests/Console/NeuronBinTest.php` (modified, +26/-0)
-```diff
-@@ -4,15 +4,19 @@
- 
- namespace NeuronAI\Tests\Console;
- 
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
- use NeuronAI\Tests\Support\FileSystemSandbox;
- use PHPUnit\Framework\TestCase;
- 
- use function dirname;
- use function escapeshellarg;
- use function exec;
- use function file_put_contents;
-+use function json_encode;
-+use function mkdir;
- use function var_export;
- 
-+use const JSON_THROW_ON_ERROR;
- use const PHP_BINARY;
- 
- class NeuronBinTest extends TestCase
-@@ -52,4 +56,26 @@ public function test_loads_the_autoloader_named_by_the_composer_bin_proxy(): voi
-         $this->assertSame(0, $exitCode);
-         $this->assertSame('project autoloader', $output[0]);
-     }
-+
-+    public function test_lists_the_commands_of_installed_packages_next_to_the_autoloader(): void
-+    {
-+        $root = dirname(__DIR__, 2);
-+        $proxy = $this->sandbox . '/neuron';
-+
-+        mkdir($this->sandbox . '/composer');
-+        file_put_contents($this->sandbox . '/composer/installed.json', json_encode(['packages' => [
-+            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
-+        ]], JSON_THROW_ON_ERROR));
-+        file_put_contents($this->sandbox . '/autoload.php', '<?php require ' . var_export($root . '/vendor/autoload.php', true) . ';');
-+        file_put_contents(
-+            $proxy,
-+            "<?php \$GLOBALS['_composer_autoload_path'] = " . var_export($this->sandbox . '/autoload.php', true) . ';'
-+            . ' return include ' . var_export($root . '/bin/neuron', true) . ';'
-+        );
-+
-+        exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($proxy) . ' greeting:hello 2>&1', $output, $exitCode);
-+
-+        $this->assertSame(0, $exitCode);
-+        $this->assertSame(['Hello from an installed package'], $output);
-+    }
- }
-```
-
-**File**: `tests/Console/NeuronCliTest.php` (modified, +29/-0)
-```diff
-@@ -6,9 +6,11 @@
- 
- use Closure;
- use NeuronAI\Console\Command;
-+use NeuronAI\Console\CommandProvider;
- use NeuronAI\Console\Evaluation\EvaluationCommand;
- use NeuronAI\Console\Make\MakeCommand;
- use NeuronAI\Console\NeuronCli;
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
- use PHPUnit\Framework\Attributes\DataProvider;
- use PHPUnit\Framework\TestCase;
- use RuntimeException;
-@@ -106,6 +108,33 @@ public function test_registry_exposes_the_documented_commands(): void
-         }
-     }
- 
-+    public function test_provider_commands_are_listed_and_dispatched(): void
-+    {
-+        $cli = new NeuronCli([new GreetingCommandProvider()]);
-+
-+        [, $usage] = $this->runCli($cli, 'neuron', '--help');
-+        [$exitCode, $output] = $this->runCli($cli, 'neuron', 'greeting:hello');
-+
-+        $this->assertMatchesRegularExpression('/^  greeting:hello +Say hello$/m', $usage);
-+        $this->assertSame(0, $exitCode);
-+        $this->assertSame('Hello from an installed package' . PHP_EOL, $output);
-+    }
-+
-+    public function test_a_provider_cannot_replace_a_built_in_command(): void
-+    {
-+        $provider = new class () implements CommandProvider {
-+            public function commands(): array
-+            {
-+                return ['make:agent' => ['Hijacked', fn (): Command => throw new RuntimeException('hijacked')]];
-+            }
-+        };
-+
-+        $commands = (new NeuronCli([$provider]))->commands();
-+
-+        $this->assertSame('Create a new Agent class', $commands['make:agent'][0]);
-+        $this->assertInstanceOf(MakeCommand::class, $commands['make:agent'][1]());
-+    }
-+
-     public function test_dispatches_the_remaining_arguments_to_the_sub_command(): void
-     {
-         $received = [];
+@@ -4,7 +4,7 @@ updates:
+   - package-ecosystem: github-actions
+     directory: /
+     schedule:
+-      interval: "weekly"
++      interval: "monthly"
+     cooldown:
+       default-days: 5
+     groups:
+@@ -15,7 +15,7 @@ updates:
+   - package-ecosystem: npm
+     directory: /
+     schedule:
+-      interval: "weekly"
++      interval: "monthly"
+     cooldown:
+       default-days: 5
+     ignore:
 ```
 
 ---
 
-### Incident Patch 2: `1464641e` (2026-11-05)
-**Commit Message**: Let installed packages add commands to the neuron CLI
+### Incident Patch 2: `655adb5f` (2026-11-11)
+**Commit Message**: fix cli loading arguments
 
-A package declares a CommandProvider under "extra.neuron.command-provider"
-in its composer.json. bin/neuron finds the declared providers in
-vendor/composer/installed.json and passes them to NeuronCli, which appends
-their commands to the built-in registry. Built-in commands win name
-collisions, so a package can add commands but never change what an existing
-one does.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01H82s6KprwfcSdPkRT9ZdfF
-
-**File**: `bin/neuron` (modified, +3/-1)
+**File**: `bin/neuron` (modified, +6/-0)
 ```diff
-@@ -51,10 +51,12 @@ if ($defaultAutoload === null) {
+@@ -6,6 +6,12 @@ declare(strict_types=1);
+ $autoloadFile = null;
+ $args = [$argv[0]];
+ for ($i = 1; $i < $argc; $i++) {
++    // Everything from "--" on belongs to the command, even an argument that looks like this option
++    if ($argv[$i] === '--') {
++        $args = [...$args, ...array_slice($argv, $i)];
++        break;
++    }
++
+     if ($argv[$i] === '--autoload-file') {
+         if (!isset($argv[$i + 1])) {
+             fwrite(STDERR, 'The --autoload-file option requires a file path' . PHP_EOL);
+```
+
+**File**: `src/Console/NeuronCli.php` (modified, +8/-2)
+```diff
+@@ -9,8 +9,12 @@
+ use NeuronAI\Console\Make\MakeCommand;
+ use Throwable;
  
- require_once $defaultAutoload;
++use function array_keys;
++use function array_map;
+ use function array_shift;
++use function max;
+ use function str_pad;
++use function strlen;
  
-+use NeuronAI\Console\InstalledCommandProviders;
- use NeuronAI\Console\NeuronCli;
+ use const PHP_EOL;
  
- try {
--    $command = new NeuronCli();
-+    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
-+    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
-     $exitCode = $command->run($args);
-     exit($exitCode);
- } catch (Throwable $e) {
-```
-
-**File**: `src/Console/AGENTS.md` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@ CLI entry point (`php vendor/bin/neuron <command>`) for code generation and for
- ## Design
+@@ -98,8 +102,10 @@ protected function printUsage(): void
+         echo 'Usage: neuron <command> [options]' . PHP_EOL . PHP_EOL;
  
- - `NeuronCli::commands()` is the single registry: command name => [description, factory closure]. The help output is generated from it, so there is nowhere else to register a command.
-+- Installed packages add commands through a `CommandProvider`, declared under `extra.neuron.command-provider` in their composer.json. `InstalledCommandProviders` finds them in `vendor/composer/installed.json` and `bin/neuron` passes them to `NeuronCli`. Built-in commands win name collisions, so a package can never change what an existing command does.
- - `Command` is the abstract base: `run(array $args): int` plus print helpers (errors go to STDERR).
- - `MakeCommand` is one concrete class for every `make:*` command, configured with (command name, resource type, stub file). Adding a generator means adding a stub in `Make/Stubs/` and one registry entry, never a new command class.
- - `EvaluationCommand` is a thin CLI over `src/Evaluation/`: flag parsing (`--verbose`, `--concurrency`, `--cache`, `--fresh`) lives here, the semantics live in the Evaluation module. A framework console command wraps it, passing a resolver and a runner that replace the `resolver` and `runner` entries of `evaluation.php`.
-```
-
-**File**: `src/Console/CommandProvider.php` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Console;
-+
-+use Closure;
-+
-+/**
-+ * Adds commands to the neuron CLI from an installed package, which declares it
-+ * under "extra.neuron.command-provider" in its composer.json.
-+ */
-+interface CommandProvider
-+{
-+    /**
-+     * @return array<string, array{string, Closure(): Command}> Command name => [description, factory].
-+     */
-+    public function commands(): array;
-+}
-```
-
-**File**: `src/Console/InstalledCommandProviders.php` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Console;
-+
-+use RuntimeException;
-+
-+use function file_get_contents;
-+use function is_file;
-+use function json_decode;
-+
-+use const JSON_THROW_ON_ERROR;
-+
-+/**
-+ * The command providers declared by the packages Composer installed.
-+ */
-+class InstalledCommandProviders
-+{
-+    /**
-+     * @param string $installedPackagesFile Composer's vendor/composer/installed.json.
-+     */
-+    public function __construct(protected string $installedPackagesFile)
-+    {
-+    }
-+
-+    /**
-+     * @return CommandProvider[]
-+     */
-+    public function discover(): array
-+    {
-+        if (!is_file($this->installedPackagesFile)) {
-+            return [];
-+        }
-+
-+        $installed = json_decode((string) file_get_contents($this->installedPackagesFile), true, flags: JSON_THROW_ON_ERROR);
-+
-+        $providers = [];
-+        foreach ($installed['packages'] ?? [] as $package) {
-+            $providerClass = $package['extra']['neuron']['command-provider'] ?? null;
-+
-+            if ($providerClass !== null) {
-+                $providers[] = $this->instantiate($package['name'], $providerClass);
-+            }
-+        }
-+
-+        return $providers;
-+    }
-+
-+    protected function instantiate(string $packageName, string $providerClass): CommandProvider
-+    {
-+        $provider = new $providerClass();
-+
-+        if (!$provider instanceof CommandProvider) {
-+            throw new RuntimeException(
-+                "{$packageName} declares {$providerClass} as its command provider, "
-+                . 'but it does not implement ' . CommandProvider::class
-+            );
-+        }
-+
-+        return $provider;
-+    }
-+}
-```
-
-**File**: `src/Console/NeuronCli.php` (modified, +17/-1)
-```diff
-@@ -17,11 +17,21 @@
- class NeuronCli extends Command
- {
-     /**
-+     * @param CommandProvider[] $providers
-+     */
-+    public function __construct(protected array $providers = [])
-+    {
-+    }
-+
-+    /**
-+     * Built-in commands come first and win name collisions, so an installed
-+     * package can add commands but never change what an existing one does.
-+     *
-      * @return array<string, array{string, Closure(): Command}>
-      */
-     public function commands(): array
-     {
--        return [
-+        $commands = [
-             'evaluation' => ['Run AI evaluation tests on a directory of evaluators', fn (): Command => new EvaluationCommand()],
-             'make:agent' => ['Create a new Agent class', fn (): Command => new MakeCommand('make:agent', 'Agent', 'agent.stub')],
-             'make:middleware' => ['Create a new Workflow Middleware class', fn (): Command => new MakeCommand('make:middleware', 'Middleware', 'middleware.stub')],
-@@ -32,6 +42,12 @@ public function commands(): array
-             'make:event' => ['Create a new Event class', fn (): Command => new MakeCommand('make:event', 'Event', 'event.stub')],
-             'make:evaluators' => ['Create a new Evaluator class', fn (): Command => new MakeCommand('make:evaluators', 'Evaluator', 'evaluator.stub')],
-         ];
-+
-+        foreach ($this->providers as $provider) {
-+            $commands += $provider->commands();
-+        }
-+
-+        return $commands;
-     }
+         echo 'Available Commands:' . PHP_EOL;
+-        foreach ($this->commands() as $name => [$description]) {
+-            echo '  ' . str_pad($name, 16) . $description . PHP_EOL;
++        $commands = $this->commands();
++        $nameWidth = max(array_map(strlen(...), array_keys($commands))) + 1;
++        foreach ($commands as $name => [$description]) {
++            echo '  ' . str_pad($name, $nameWidth) . $description . PHP_EOL;
+         }
+         echo PHP_EOL;
  
-     /**
 ```
 
-**File**: `tests/Console/InstalledCommandProvidersTest.php` (added, +81/-0)
+**File**: `tests/Console/NeuronBinTest.php` (modified, +33/-0)
 ```diff
-@@ -0,0 +1,81 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Tests\Console;
-+
-+use NeuronAI\Console\CommandProvider;
-+use NeuronAI\Console\InstalledCommandProviders;
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
-+use NeuronAI\Tests\Support\FileSystemSandbox;
-+use PHPUnit\Framework\TestCase;
-+use RuntimeException;
-+use stdClass;
-+
-+use function file_put_contents;
-+use function json_encode;
-+
-+use const JSON_THROW_ON_ERROR;
-+
-+class InstalledCommandProvidersTest extends TestCase
-+{
-+    use FileSystemSandbox;
-+
-+    protected string $sandbox;
-+
-+    protected function setUp(): void
-+    {
-+        $this->sandbox = $this->createSandbox('installed-command-providers');
-+    }
-+
-+    protected function tearDown(): void
-+    {
-+        $this->removeSandbox($this->sandbox);
-+    }
-+
-+    public function test_discovers_the_providers_declared_by_installed_packages(): void
-+    {
-+        $file = $this->installedPackages([
-+            ['name' => 'acme/without-commands', 'extra' => ['branch-alias' => ['dev-main' => '1.x-dev']]],
-+            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
-+            ['name' => 'acme/without-extra'],
-+        ]);
-+
-+        $providers = (new InstalledCommandProviders($file))->discover();
-+
-+        $this->assertCount(1, $providers);
-+        $this->assertInstanceOf(GreetingCommandProvider::class, $providers[0]);
-+    }
-+
-+    public function test_a_missing_installed_packages_file_has_no_providers(): void
-+    {
-+        $providers = (new InstalledCommandProviders($this->sandbox . '/missing.json'))->discover();
-+
-+        $this->assertSame([], $providers);
-+    }
-+
-+    public function test_a_declared_class_that_is_not_a_command_provider_is_reported_with_its_package(): void
-+    {
-+        $file = $this->installedPackages([
-+            ['name' => 'acme/broken', 'extra' => ['neuron' => ['command-provider' => stdClass::class]]],
-+        ]);
-+
-+        $this->expectException(RuntimeException::class);
-+        $this->expectExceptionMessage(
-+            'acme/broken declares stdClass as its command provider, but it does not implement ' . CommandProvider::class
-+        );
-+
-+        (new InstalledCommandProviders($file))->discover();
-+    }
-+
-+    /**
-+     * @param array<array<string, mixed>> $packages
-+     */
-+    protected function installedPackages(array $packages): string
-+    {
-+        $file = $this->sandbox . '/installed.json';
-+        file_put_contents($file, json_encode(['packages' => $packages], JSON_THROW_ON_ERROR));
-+
-+        return $file;
-+    }
-+}
-```
-
-**File**: `tests/Console/NeuronBinTest.php` (modified, +26/-0)
-```diff
-@@ -4,15 +4,19 @@
+@@ -4,14 +4,17 @@
  
  namespace NeuronAI\Tests\Console;
  
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
++use NeuronAI\Tests\Console\Stub\ArgumentsCommandProvider;
+ use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
  use NeuronAI\Tests\Support\FileSystemSandbox;
  use PHPUnit\Framework\TestCase;
  
++use function array_map;
  use function dirname;
  use function escapeshellarg;
  use function exec;
  use function file_put_contents;
-+use function json_encode;
-+use function mkdir;
++use function implode;
+ use function json_encode;
+ use function mkdir;
  use function var_export;
- 
-+use const JSON_THROW_ON_ERROR;
- use const PHP_BINARY;
- 
- class NeuronBinTest extends TestCase
-@@ -52,4 +56,26 @@ public function test_loads_the_autoloader_named_by_the_composer_bin_proxy(): voi
+@@ -78,4 +81,34 @@ public function test_lists_the_commands_of_installed_packages_next_to_the_autolo
          $this->assertSame(0, $exitCode);
-         $this->assertSame('project autoloader', $output[0]);
+         $this->assertSame(['Hello from an installed package'], $output);
      }
 +
-+    public function test_lists_the_commands_of_installed_packages_next_to_the_autoloader(): void
++    public function test_passes_everything_after_the_double_dash_to_the_command(): void
 +    {
 +        $root = dirname(__DIR__, 2);
 +        $proxy = $this->sandbox . '/neuron';
++        $payload = $this->sandbox . '/payload.php';
 +
 +        mkdir($this->sandbox . '/composer');
 +        file_put_contents($this->sandbox . '/composer/installed.json', json_encode(['packages' => [
-+            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
++            ['name' => 'acme/arguments', 'extra' => ['neuron' => ['command-provider' => ArgumentsCommandProvider::class]]],
 +        ]], JSON_THROW_ON_ERROR));
 +        file_put_contents($this->sandbox . '/autoload.php', '<?php require ' . var_export($root . '/vendor/autoload.php', true) . ';');
++        file_put_contents($payload, "<?php echo 'payload ran', PHP_EOL;");
 +        file_put_contents(
 +            $proxy,
 +            "<?php \$GLOBALS['_composer_autoload_path'] = " . var_export($this->sandbox . '/autoload.php', true) . ';'
 +            . ' return include ' . var_export($root . '/bin/neuron', true) . ';'
 +        );
 +
-+        exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($proxy) . ' greeting:hello 2>&1', $output, $exitCode);
++        $arguments = ['first', '--', '--autoload-file=' . $payload, '--autoload-file', $payload];
++        exec(
++            escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($proxy) . ' arguments:echo '
++            . implode(' ', array_map(escapeshellarg(...), $arguments)) . ' 2>&1',
++            $output,
++            $exitCode,
++        );
 +
 +        $this->assertSame(0, $exitCode);
-+        $this->assertSame(['Hello from an installed package'], $output);
++        $this->assertSame($arguments, $output);
 +    }
  }
 ```
 
-**File**: `tests/Console/NeuronCliTest.php` (modified, +29/-0)
+**File**: `tests/Console/NeuronCliTest.php` (modified, +15/-0)
 ```diff
-@@ -6,9 +6,11 @@
- 
- use Closure;
- use NeuronAI\Console\Command;
-+use NeuronAI\Console\CommandProvider;
- use NeuronAI\Console\Evaluation\EvaluationCommand;
- use NeuronAI\Console\Make\MakeCommand;
- use NeuronAI\Console\NeuronCli;
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
- use PHPUnit\Framework\Attributes\DataProvider;
- use PHPUnit\Framework\TestCase;
- use RuntimeException;
-@@ -106,6 +108,33 @@ public function test_registry_exposes_the_documented_commands(): void
+@@ -85,6 +85,21 @@ public function test_usage_lists_every_registered_command_with_its_description()
          }
      }
  
-+    public function test_provider_commands_are_listed_and_dispatched(): void
-+    {
-+        $cli = new NeuronCli([new GreetingCommandProvider()]);
-+
-+        [, $usage] = $this->runCli($cli, 'neuron', '--help');
-+        [$exitCode, $output] = $this->runCli($cli, 'neuron', 'greeting:hello');
-+
-+        $this->assertMatchesRegularExpression('/^  greeting:hello +Say hello$/m', $usage);
-+        $this->assertSame(0, $exitCode);
-+        $this->assertSame('Hello from an installed package' . PHP_EOL, $output);
-+    }
-+
-+    public function test_a_provider_cannot_replace_a_built_in_command(): void
++    public function test_usage_aligns_descriptions_after_the_longest_command_name(): void
 +    {
 +        $provider = new class () implements CommandProvider {
 +            public function commands(): array
 +            {
-+                return ['make:agent' => ['Hijacked', fn (): Command => throw new RuntimeException('hijacked')]];
++                return ['make:subagent-task' => ['Create a subagent task', fn (): Command => throw new RuntimeException('not run')]];
 +            }
 +        };
 +
-+        $commands = (new NeuronCli([$provider]))->commands();
++        [, $output] = $this->runCli(new NeuronCli([$provider]), 'neuron', '--help');
 +
-+        $this->assertSame('Create a new Agent class', $commands['make:agent'][0]);
-+        $this->assertInstanceOf(MakeCommand::class, $commands['make:agent'][1]());
++        $this->assertStringContainsString('  make:subagent-task Create a subagent task' . PHP_EOL, $output);
++        $this->assertStringContainsString('  make:agent         Create a new Agent class' . PHP_EOL, $output);
 +    }
 +
-     public function test_dispatches_the_remaining_arguments_to_the_sub_command(): void
+     public function test_registry_exposes_the_documented_commands(): void
      {
-         $received = [];
+         $commands = (new NeuronCli())->commands();
+```
+
+**File**: `tests/Console/Stub/ArgumentsCommandProvider.php` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++<?php
++
++declare(strict_types=1);
++
++namespace NeuronAI\Tests\Console\Stub;
++
++use NeuronAI\Console\Command;
++use NeuronAI\Console\CommandProvider;
++
++use function array_slice;
++
++use const PHP_EOL;
++
++class ArgumentsCommandProvider implements CommandProvider
++{
++    public function commands(): array
++    {
++        return [
++            'arguments:echo' => ['Print each argument on its own line', fn (): Command => new class () extends Command {
++                public function run(array $args): int
++                {
++                    foreach (array_slice($args, 1) as $arg) {
++                        echo $arg . PHP_EOL;
++                    }
++
++                    return 0;
++                }
++            }],
++        ];
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #709** (2026-11-11): Bump the npm group with 9 updates (@dependabot[bot])
+- **PR #708** (2026-11-11): Bump docker/login-action from 4.7.0 to 4.8.0 in the github-actions group (@dependabot[bot])
 - **PR #707** (2026-11-05): Let installed packages add commands to the neuron CLI (@ilvalerione)
 - **PR #706** (2026-11-04): Bump the npm group with 4 updates (@dependabot[bot])
 - **PR #703** (2026-10-28): Bump the npm group with 3 updates (@dependabot[bot])
 - **PR #702** (2026-10-28): Bump docker/login-action from 4.6.0 to 4.7.0 in the github-actions group (@dependabot[bot])
-- **PR #700** (2026-10-29): Echo an empty reasoning_content from the deepseek mapper (@wpjscc)
-- **PR #697** (closed): Add deed.page toolkit to publish a web page (@f-o-x11)
 
 ---
 
@@ -1284,30 +762,30 @@ Claude-Session: https://claude.ai/code/session_01H82s6KprwfcSdPkRT9ZdfF
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32
+## X. cli loading arguments
 
 **RULE**:
-When implementing operations in `bin/neuron`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fdae7e29`: Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aeea883b`: cli loading arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/neuron`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-use NeuronAI\Console\InstalledCommandProviders;
-    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
-    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
+      interval: "monthly"
+      interval: "monthly"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-    $command = new NeuronCli();
+      interval: "weekly"
+      interval: "weekly"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fdae7e29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aeea883b` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:39:34.276Z",
+  "last_updated": "2026-11-13T01:58:00.542Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7841,6 +7841,24 @@
       "source_repo": "emberstack-kubernetes-reflector",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-751C67-bump-the-all-dependencies-group-with-1-u.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-FF653D",
+      "directive_title": "inference): overload in local inference (#13123)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "biomejs-biome",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FF653D-inference-overload-in-local-inference-13.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-8D2C0A",
+      "directive_title": "statistics, domain: keep stats workers running after a panic (#72768)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pingcap-tidb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8D2C0A-statistics-domain-keep-stats-workers-run.md",
       "staged_date": "2026-11-13"
     }
   ]
