@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `7f808225`  
+> **Source Version**: `4a11f3af`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T02:48:43.421Z  
+> **Timestamp**: 2026-11-13T08:55:50.432Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T02:48:43.411Z  
+> **Harvest Timestamp**: 2026-11-13T08:55:50.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20828 stars
+- **Stars / Engagement**: 20829 stars
 
 ---
 
@@ -1434,13 +1434,13 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40500** (2026-11-12): **Refactor Oracle parenthesized expression parsing**
-  *Symptoms*: Changes proposed in this pull request:   - Share the handling of parenthesized expressions between Oracle expression visitor entry points, and unwrap nested expression contexts before visiting the inner expression.   - Preserve the outermost parentheses and their original source ranges for column segments.   - Add 12 Oracle Parser IT cases covering simple, qualified, nested, quoted, spaced and full-width columns, unparenthesized columns, calculations, literals, functions and row-value comparisons; also run the existing parenthesized DISTINCT case for Oracle.  Validation: - Installed the Oracle parser module from the original implementation and ran the new fixtures before the refactor: 2,085 Oracle supported/unsupported parser tests passed. - Installed the refactored Oracle parser module and ran Oracle supported/unsupported and MySQL Parser IT: 4,039 tests passed (2,066 Oracle supported, 19 Oracle unsupported, 1,954 in the MySQL/H2 suite). - Exact-file Spotless and Checkstyle checks passed for `OracleStatementVisitor.java`: one Java file selected, zero error-severity Checkstyle violations. - Full reactor `clean install -B -T1C -Pcheck` and native Oracle database execution were not run. The full-width case protects the Oracle lexer's existing compatibility behavior. - Documentation and release notes are not applicable to this internal refactor.  Material AI assistance: OpenAI Codex assisted implementation, fixture porting, review and PR text. The affected files are: - `parser/s
-
-- **Issue #40496** (2026-11-10): **Refactor sql parser metadata for MySQL UPDATE and LOAD DATA**
-  *Symptoms*: Changes proposed in this pull request:   - Preserve the explicit `IGNORE` modifier in the UPDATE AST and statement binding.   - Preserve LOAD DATA `IGNORE`, `REPLACE`, and partition source ranges; rebuild partition metadata using the bound table and copied partitions.   - Populate these fields in the MySQL visitors and extend parser IT and binder regression coverage, including the distinction between duplicate handling and `IGNORE n LINES`.  Validation:   - Internal SQL Parser IT: 11,756 tests, zero failures or errors; one existing disabled openGauss unsupported-syntax test.   - All binder modules: 564 unit tests passed, zero failures, errors, or skipped tests.   - Exact-file Spotless and Checkstyle passed for all 12 changed Java files; Apache RAT passed.   - Current-source dependencies were built and installed with the selected reactor modules. A full repository clean install was not run.  SQL syntax references: [MySQL LOAD DATA](https://dev.mysql.com/doc/refman/8.4/en/load-data.html), [MySQL UPDATE](https://dev.mysql.com/doc/refman/8.4/en/update.html).  ---  Before submitting this PR, I confirm that: - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [x] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant docum
+- **Issue #40506** (2026-11-13): **Restore query timeout readback for circuit breaker prepared statements**
+  *Symptoms*: Related to #40503.  Changes proposed in this pull request:   - Restore query timeout readback for circuit breaker prepared statements  ---  Before submitting this PR, I confirm that: - [ ] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [ ] I have added or updated unit tests for my changes, if applicable. - [ ] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [ ] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary The change retains explicit MySQL UPDATE and LOAD DATA modifiers and partition spans in the AST and after binding. It reuses existing statement and segment owners with focused regression coverage.  ### Result Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence Internal parser IT: 11,756 tests, zero failures/errors, one pre-existing disabled test. Binder suites: 564 tests passed. Exact-file Spotless and Checkstyle passed for all 12 changed Java files; Apache RAT passed.  ### Coverage Reviewed all 16 files and 30 changed blocks from `633ccf2e34c3` to `3ded23578f73`. One round of independent review and confirmation completed; the published candidate matches the reviewed content. Code scope only: CI was not reviewed, and a full repository clean install was not run. 
+  > ### Summary  Commit `5edc1038ad68de3b39f1b133515c6d72026b9e66` restores query timeout readback for circuit-breaker prepared statements. Each statement stores its configured timeout in its own `StatementManager`. Circuit-breaker execution and close behavior are preserved.  ### Result  Review Result: Mergeable  Two independent assessments found no blocking issues or recommended changes.  ### Evidence  - A JDBC probe set a 3-second timeout and read back `0` on the parent commit and `3` on the reviewed commit. - All 217 focused tests passed. The regression tests cover positive timeout readback, reset to zero, rejection of negative values while retaining the previous timeout, and normal close. - Spotless and Checkstyle passed for both changed files.  ### Coverage  Code Correctness Review of both files changed by the exact local commit against its parent, `9e74c70c2bd3b17e0c78e26396c2a1ed3cc5cb17`. This verdict applies to the local commit. PR and CI status were outside the 
+
+- **Issue #40503** (2026-11-13): **Consolidate JDBC query timeout in StatementManager**
+  *Symptoms*:  Changes proposed in this pull request:   - Consolidate JDBC query timeout in StatementManager  ---  Before submitting this PR, I confirm that: - [ ] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [ ] I have added or updated unit tests for my changes, if applicable. - [ ] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [ ] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1457,482 +1457,289 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f808225` (2026-11-12)
-**Commit Message**: Refactor Oracle parenthesized expression parsing (#40500)
+### Incident Patch 1: `4a11f3af` (2026-11-13)
+**Commit Message**: Restore query timeout readback for circuit breaker prepared statements (#40506)
 
-**File**: `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/OracleStatementVisitor.java` (modified, +17/-12)
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatement.java` (modified, +5/-5)
 ```diff
-@@ -619,12 +619,7 @@ public final ASTNode visitExpr(final ExprContext ctx) {
-             return visit(ctx.booleanPrimary());
-         }
-         if (null != ctx.LP_()) {
--            ASTNode result = visit(ctx.expr(0));
--            if (result instanceof ColumnSegment) {
--                ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(ctx.LP_().getSymbol().getStartIndex(), ctx.LP_().getSymbol().getStopIndex(), ctx.LP_().getSymbol().getText()));
--                ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(ctx.RP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex(), ctx.RP_().getSymbol().getText()));
--            }
--            return result;
-+            return visitParenthesizedExpression(ctx.expr(0), ctx.LP_(), ctx.RP_());
-         }
-         if (null != ctx.andOperator()) {
-             return createBinaryOperationExpression(ctx, ctx.andOperator().getText());
-@@ -644,6 +639,21 @@ public final ASTNode visitExpr(final ExprContext ctx) {
-         return new NotExpression(ctx.start.getStartIndex(), ctx.stop.getStopIndex(), (ExpressionSegment) visit(ctx.expr(0)), false);
+@@ -17,6 +17,8 @@
+ 
+ package org.apache.shardingsphere.driver.state.circuit.statement;
+ 
++import lombok.AccessLevel;
++import lombok.Getter;
+ import org.apache.shardingsphere.driver.jdbc.core.statement.StatementManager;
+ import org.apache.shardingsphere.driver.jdbc.unsupported.AbstractUnsupportedOperationPreparedStatement;
+ import org.apache.shardingsphere.driver.state.circuit.connection.CircuitBreakerConnection;
+@@ -46,6 +48,9 @@
+  */
+ public final class CircuitBreakerPreparedStatement extends AbstractUnsupportedOperationPreparedStatement {
+     
++    @Getter(AccessLevel.PROTECTED)
++    private final StatementManager statementManager = new StatementManager();
++    
+     @Override
+     public void setNull(final int parameterIndex, final int sqlType) {
+     }
+@@ -273,11 +278,6 @@ protected Collection<? extends Statement> getRoutedStatements() {
+         return Collections.emptyList();
      }
      
-+    private ASTNode visitParenthesizedExpression(final ExprContext ctx, final TerminalNode leftParentheses, final TerminalNode rightParentheses) {
-+        ExprContext expression = ctx;
-+        while (null != expression.LP_()) {
-+            expression = expression.expr(0);
-+        }
-+        ASTNode result = visit(expression);
-+        if (result instanceof ColumnSegment) {
-+            ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(leftParentheses.getSymbol().getStartIndex(), leftParentheses.getSymbol().getStopIndex(),
-+                    leftParentheses.getSymbol().getText()));
-+            ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(rightParentheses.getSymbol().getStartIndex(), rightParentheses.getSymbol().getStopIndex(),
-+                    rightParentheses.getSymbol().getText()));
-+        }
-+        return result;
+-    @Override
+-    protected StatementManager getStatementManager() {
+-        return null;
+-    }
+-    
+     @Override
+     public ResultSet executeQuery() {
+         return new CircuitBreakerResultSet();
+```
+
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatementTest.java` (modified, +23/-3)
+```diff
+@@ -41,6 +41,8 @@
+ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
+ import static org.junit.jupiter.api.Assertions.assertNull;
++import static org.junit.jupiter.api.Assertions.assertThrows;
++import static org.junit.jupiter.api.Assertions.assertTrue;
+ 
+ @SuppressWarnings("resource")
+ class CircuitBreakerPreparedStatementTest {
+@@ -191,12 +193,28 @@ void assertSetObjectWithScale() {
+     }
+     
+     @Test
+-    void assertGetQueryTimeout() throws SQLException {
++    void assertGetQueryTimeoutAfterSetting() throws SQLException {
+         CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
+         statement.setQueryTimeout(1);
++        assertThat(statement.getQueryTimeout(), is(1));
 +    }
 +    
-     private ASTNode createMultisetExpression(final ExprContext ctx) {
-         ExpressionSegment left = (ColumnSegment) visitColumnName(ctx.multisetExpr().columnName(0));
-         ExpressionSegment right = (ColumnSegment) visitColumnName(ctx.multisetExpr().columnName(1));
-@@ -859,12 +869,7 @@ public final ASTNode visitSimpleExpr(final SimpleExprContext ctx) {
-             return visit(ctx.privateExprOfDb());
-         }
-         if (null != ctx.LP_() && 1 == ctx.expr().size()) {
--            ASTNode result = visit(ctx.expr(0));
--            if (result instanceof ColumnSegment) {
--                ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(ctx.LP_().getSymbol().getStartIndex(), ctx.LP_().getSymbol().getStopIndex(), ctx.LP_().getSymbol().getText()));
--                ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(ctx.RP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex(), ctx.RP_().getSymbol().getText()));
--            }
--            return result;
-+            return visitParenthesizedExpression(ctx.expr(0), ctx.LP_(), ctx.RP_());
-         }
-         if (null != ctx.LP_()) {
-             ListExpression result = new ListExpression(ctx.LP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex());
-```
-
-**File**: `test/it/parser/src/main/resources/case/dml/select.xml` (modified, +169/-0)
-```diff
-@@ -16782,4 +16782,173 @@
-             </expression-projection>
-         </projections>
-     </select>
-+    <select sql-case-id="select_parenthesized_column_simple_oracle">
-+        <from>
-+            <simple-table start-index="21" stop-index="29" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="14">
-+            <column-projection start-index="8" stop-index="13" name="foo_id">
-+                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
-+                <right-parentheses start-index="14" stop-index="14" parentheses=")" />
-+            </column-projection>
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_parenthesized_column_qualified_oracle">
-+        <from>
-+            <simple-table start-index="23" stop-index="31" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="16">
-+            <column-projection start-index="8" stop-index="15" name="foo_id">
-+                <owner start-index="8" stop-index="8" name="t" />
-+                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
-+                <right-parentheses start-index="16" stop-index="16" parentheses=")" />
-+            </column-projection>
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_parenthesized_column_nested_oracle">
-+        <from>
-+            <simple-table start-index="23" stop-index="31" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="16">
-+            <column-projection start-index="9" stop-index="14" name="foo_id">
-+                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
-+                <right-parentheses start-index="16" stop-index="16" parentheses=")" />
-+            </column-projection>
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_parenthesized_column_deep_nested_oracle">
-+        <from>
-+            <simple-table start-index="25" stop-index="33" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="18">
-+            <column-projection start-index="10" stop-index="15" name="foo_id">
-+                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
-+                <right-parentheses start-index="18" stop-index="18" parentheses=")" />
-+            </column-projection>
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_parenthesized_column_quoted_oracle">
-+        <from>
-+            <simple-table start-index="23" stop-index="31" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="16">
-+            <column-projection start-index="8" stop-index="15" name="foo_id" start-delimiter="&quot;" end-delimiter="&quot;">
-+                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
-+                <right-parentheses start-index="16" stop-index="16" parentheses=")" />
-+            </column-projection>
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_parenthesized_column_spaced_oracle">
-+        <from>
-+            <simple-table start-index="23" stop-index="31" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="16">
-+            <column-projection start-index="9" stop-index="14" name="foo_id">
-+                <left-parentheses start-index="7" stop-index="7" parentheses="(" />
-+                <right-parentheses start-index="16" stop-index="16" parentheses=")" />
-+            </column-projection>
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_parenthesized_column_full_width_compatibility_oracle">
-+        <from>
-+            <simple-table start-index="21" stop-index="29" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="14">
-+            <column-projection start-index="8" stop-index="13" name="foo_id">
-+                <left-parentheses start-index="7" stop-index="7" parentheses="（" />
-+                <right-parentheses start-index="14" stop-index="14" parentheses="）" />
-+            </column-projection>
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_parenthesized_column_unparenthesized_oracle">
-+        <from>
-+            <simple-table start-index="19" stop-index="27" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="12">
-+            <column-projection start-index="7" stop-index="12" name="foo_id" />
-+        </projections>
-+    </select>
-+    <select sql-case-id="select_parenthesized_calculation_oracle">
-+        <from>
-+            <simple-table start-index="25" stop-index="33" name="foo_tbl" alias="t" />
-+        </from>
-+        <projections start-index="7" stop-index="18">
-+            <expression-projection start-index="8" stop-index="17" text="foo_id + 1">
-+                <expr>
-+                    <binary
-```
-
-**File**: `test/it/parser/src/main/resources/sql/supported/dml/select-distinct.xml` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
-     <sql-case id="select_unique_with_multi_column_without_order_by" value="SELECT UNIQUE order_id, user_id, status FROM t_order" db-types="Oracle" />
- 
-     <sql-case id="select_distinct_with_owner_column_without_order_by" value="SELECT DISTINCT t_order.order_id FROM t_order order by t_order.order_id" db-types="MySQL" />
--    <sql-case id="select_distinct_with_brackets" value="SELECT DISTINCT (item_id) FROM t_order_item" db-types="MySQL" />
-+    <sql-case id="select_distinct_with_brackets" value="SELECT DISTINCT (item_id) FROM t_order_item" db-types="MySQL,Oracle" />
-     <sql-case id="select_distinct_with_owner_star_without_order_by" value="SELECT DISTINCT t_order.*, t_order_item.order_id FROM t_order, t_order_item WHERE t_order.order_id = t_order_item.order_id" db-types="MySQL" />
-     <!-- for with owner column with group by without order by  -->
-     <sql-case id="select_distinct_with_owner_column_with_group_by" value="SELECT DISTINCT t_order.order_id FROM t_order GROUP BY t_order.order_id" db-types="MySQL" />
-```
-
-**File**: `test/it/parser/src/main/resources/sql/supported/dml/select.xml` (modified, +12/-0)
-```diff
-@@ -662,4 +662,16 @@
-     <sql-case id="select_fixed_operator_between_left_associative_pg" value="SELECT 0 BETWEEN `1 ` 2 AND 3, 0 BETWEEN &lt;=&gt;1 &lt;=&gt; 2 AND 3" db-types="PostgreSQL" case-types="Literal" />
-     <sql-case id="select_mixed_symbolic_operator_precedence_pg" value="SELECT $1 &amp;&amp; $2 &lt;=&gt; $3, $4 &lt;=&gt; $5 &amp; $6, $7 ~~ $8 &lt;=&gt; $9, @ $10 @ $11" db-types="PostgreSQL" case-types="Placeholder" />
-     <sql-case id="select_mixed_symbolic_operator_between_pg" value="SELECT 0 BETWEEN $1 &amp;&amp; $2 &lt;=&gt; $3 AND 4" db-types="PostgreSQL" case-types="Placeholder" />
-+    <sql-case id="select_parenthesized_column_simple_oracle" value="SELECT (foo_id) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_column_qualified_oracle" value="SELECT (t.foo_id) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_column_nested_oracle" value="SELECT ((foo_id)) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_column_deep_nested_oracle" value="SELECT (((foo_id))) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_column_quoted_oracle" value='SELECT ("foo_id") FROM foo_tbl t' db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_column_spaced_oracle" value="SELECT ( foo_id ) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_column_full_width_compatibility_oracle" value="SELECT （foo_id） FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_column_unparenthesized_oracle" value="SELECT foo_id FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_calculation_oracle" value="SELECT (foo_id + 1) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_literal_oracle" value="SELECT (1) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_function_oracle" value="SELECT (ABS(foo_id)) FROM foo_tbl t" db-types="Oracle" case-types="LITERAL" />
-+    <sql-case id="select_parenthesized_column_list_oracle" value="SELECT foo_id FROM foo_tbl WHERE (foo_id, bar_id) = ((1, 2))" db-types="Oracle" case-types="LITERAL" />
- </sql-cases>
++    @Test
++    void assertGetQueryTimeoutAfterReset() throws SQLException {
++        CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
++        statement.setQueryTimeout(1);
++        statement.setQueryTimeout(0);
+         assertThat(statement.getQueryTimeout(), is(0));
+     }
+     
++    @Test
++    void assertSetQueryTimeoutWithNegativeValue() throws SQLException {
++        CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
++        statement.setQueryTimeout(1);
++        assertThrows(SQLException.class, () -> statement.setQueryTimeout(-1));
++        assertThat(statement.getQueryTimeout(), is(1));
++    }
++    
+     @Test
+     void assertExecute() {
+         assertFalse(new CircuitBreakerPreparedStatement().execute());
+@@ -323,8 +341,10 @@ void assertGetRoutedStatements() {
+     }
+     
+     @Test
+-    void assertGetStatementManager() {
+-        assertNull(new CircuitBreakerPreparedStatement().getStatementManager());
++    void assertClose() throws SQLException {
++        CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
++        statement.close();
++        assertTrue(statement.isClosed());
+     }
+     
+     @Test
 ```
 
 ---
 
-### Incident Patch 2: `13a165ad` (2026-11-10)
-**Commit Message**: Refactor sql parser metadata for MySQL UPDATE and LOAD DATA (#40496)
+### Incident Patch 2: `9e74c70c` (2026-11-13)
+**Commit Message**: Consolidate JDBC query timeout in StatementManager (#40503)
 
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/statement/dml/UpdateStatementBinder.java` (modified, +1/-1)
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java` (modified, +9/-4)
 ```diff
-@@ -101,7 +101,7 @@ private JoinTableSegment createReturningTableScope(final TableSegment table, fin
-     private UpdateStatement copy(final UpdateStatement sqlStatement, final WithSegment boundWith, final TableSegment boundTable, final TableSegment boundFrom,
-                                  final SetAssignmentSegment boundSetAssignment, final WhereSegment boundWhere, final OrderBySegment boundOrderBy,
-                                  final ReturningSegment boundReturning) {
--        UpdateStatement result = UpdateStatement.builder().databaseType(sqlStatement.getDatabaseType()).with(boundWith).table(boundTable)
-+        UpdateStatement result = UpdateStatement.builder().databaseType(sqlStatement.getDatabaseType()).with(boundWith).table(boundTable).ignore(sqlStatement.isIgnore())
-                 .from(boundFrom).setAssignment(boundSetAssignment).where(boundWhere).orderBy(boundOrderBy).limit(sqlStatement.getLimit().orElse(null))
-                 .returning(boundReturning).errorLogging(sqlStatement.getErrorLogging().orElse(null))
-                 .targetTableIsFromAlias(sqlStatement.isTargetTableIsFromAlias()).build();
+@@ -60,8 +60,6 @@ public abstract class AbstractStatementAdapter extends WrapperAdapter implements
+     
+     private int maxRows;
+     
+-    private int queryTimeout;
+-    
+     private boolean closeOnCompletion;
+     
+     private boolean closed;
+@@ -168,14 +166,21 @@ public final void setMaxRows(final int max) throws SQLException {
+     
+     @Override
+     public final int getQueryTimeout() throws SQLException {
+-        return getRoutedStatements().isEmpty() ? queryTimeout : getRoutedStatements().iterator().next().getQueryTimeout();
++        if (!getRoutedStatements().isEmpty()) {
++            return getRoutedStatements().iterator().next().getQueryTimeout();
++        }
++        StatementManager statementManager = getStatementManager();
++        return null == statementManager ? 0 : statementManager.getQueryTimeout();
+     }
+     
+     @SuppressWarnings({"unchecked", "rawtypes"})
+     @Override
+     public final void setQueryTimeout(final int seconds) throws SQLException {
+         ShardingSpherePreconditions.checkState(seconds >= 0, () -> new SQLException("Query timeout must be a value greater than or equal to 0."));
+-        queryTimeout = seconds;
++        StatementManager statementManager = getStatementManager();
++        if (null != statementManager) {
++            statementManager.setQueryTimeout(seconds);
++        }
+         getMethodInvocationRecorder().record("setQueryTimeout", statement -> statement.setQueryTimeout(seconds));
+         forceExecuteTemplate.execute((Collection) getRoutedStatements(), statement -> statement.setQueryTimeout(seconds));
+     }
 ```
 
-**File**: `infra/binder/core/src/test/java/org/apache/shardingsphere/infra/binder/engine/statement/dml/UpdateStatementBinderTest.java` (modified, +2/-0)
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/StatementManager.java` (modified, +6/-0)
 ```diff
-@@ -85,13 +85,15 @@ void assertBind() {
-         UpdateStatement updateStatement = UpdateStatement.builder()
-                 .databaseType(databaseType)
-                 .table(simpleTableSegment)
-+                .ignore(true)
-                 .where(new WhereSegment(0, 0, new BinaryOperationExpression(0, 0, new ColumnSegment(0, 0, new IdentifierValue("status")),
-                         new LiteralExpressionSegment(0, 0, 0), "=", "status = 1")))
-                 .errorLogging(errorLogging)
-                 .returning(returning)
-                 .build();
-         UpdateStatement actual = new UpdateStatementBinder().bind(updateStatement, new SQLStatementBinderContext(createMetaData(), "foo_db", new HintValueContext(), updateStatement));
-         assertThat(actual, not(updateStatement));
-+        assertTrue(actual.isIgnore());
-         assertThat(actual.getErrorLogging().get(), is(errorLogging));
-         assertThat(actual.getReturning().get().getStartIndex(), is(returning.getStartIndex()));
-         assertThat(actual.getReturning().get().getStopIndex(), is(returning.getStopIndex()));
-```
-
-**File**: `infra/binder/dialect/mysql/src/main/java/org/apache/shardingsphere/infra/binder/mysql/bind/type/MySQLLoadDataStatementBinder.java` (modified, +5/-0)
-```diff
-@@ -25,6 +25,7 @@
- import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementBinder;
- import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementBinderContext;
- import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementCopyUtils;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionDefinitionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
- import org.apache.shardingsphere.sql.parser.statement.mysql.dml.MySQLLoadDataStatement;
+@@ -18,7 +18,9 @@
+ package org.apache.shardingsphere.driver.jdbc.core.statement;
  
-@@ -45,6 +46,10 @@ private MySQLLoadDataStatement copy(final MySQLLoadDataStatement sqlStatement, f
-         result.setColumnListStartIndex(sqlStatement.getColumnListStartIndex());
-         result.setColumnListStopIndex(sqlStatement.getColumnListStopIndex());
-         result.setLocal(sqlStatement.isLocal());
-+        result.setIgnore(sqlStatement.isIgnore());
-+        result.setReplace(sqlStatement.isReplace());
-+        sqlStatement.getPartitionDefinition().ifPresent(each -> result.setPartitionDefinition(new PartitionDefinitionSegment(each.getStartIndex(), each.getStopIndex(),
-+                boundTableSegment, result.getPartitions())));
-         result.setFileName(sqlStatement.getFileName());
-         result.getPartitions().addAll(sqlStatement.getPartitions());
-         sqlStatement.getColumnSeparator().ifPresent(result::setColumnSeparator);
-```
-
-**File**: `infra/binder/dialect/mysql/src/test/java/org/apache/shardingsphere/infra/binder/mysql/bind/type/MySQLLoadDataStatementBinderTest.java` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one or more
-+ * contributor license agreements.  See the NOTICE file distributed with
-+ * this work for additional information regarding copyright ownership.
-+ * The ASF licenses this file to You under the Apache License, Version 2.0
-+ * (the "License"); you may not use this file except in compliance with
-+ * the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.shardingsphere.infra.binder.mysql.bind.type;
-+
-+import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.infra.binder.engine.segment.dml.from.type.SimpleTableSegmentBinder;
-+import org.apache.shardingsphere.infra.binder.engine.statement.SQLStatementBinderContext;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionDefinitionSegment;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionSegment;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.TableNameSegment;
-+import org.apache.shardingsphere.sql.parser.statement.core.value.identifier.IdentifierValue;
-+import org.apache.shardingsphere.sql.parser.statement.mysql.dml.MySQLLoadDataStatement;
-+import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.params.ParameterizedTest;
-+import org.junit.jupiter.params.provider.CsvSource;
-+import org.mockito.MockedStatic;
-+
-+import static org.hamcrest.MatcherAssert.assertThat;
-+import static org.hamcrest.Matchers.is;
-+import static org.hamcrest.Matchers.sameInstance;
-+import static org.junit.jupiter.api.Assertions.assertFalse;
-+import static org.junit.jupiter.api.Assertions.assertTrue;
-+import static org.mockito.ArgumentMatchers.any;
-+import static org.mockito.ArgumentMatchers.same;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.mockStatic;
-+
-+class MySQLLoadDataStatementBinderTest {
-+    
-+    @ParameterizedTest(name = "{index}: ignore={0}, replace={1}, local={2}")
-+    @CsvSource({"true,false,false", "false,true,true", "false,false,false"})
-+    void assertBindPreservesNativeInputFlags(final boolean ignore, final boolean replace, final boolean local) {
-+        SimpleTableSegment source = createTable("foo_source");
-+        SimpleTableSegment bound = createTable("foo_bound");
-+        MySQLLoadDataStatement statement = new MySQLLoadDataStatement(mock(DatabaseType.class), source);
-+        statement.setIgnore(ignore);
-+        statement.setReplace(replace);
-+        statement.setLocal(local);
-+        statement.setStopIndex(120);
-+        SQLStatementBinderContext context = mock(SQLStatementBinderContext.class);
-+        try (MockedStatic<SimpleTableSegmentBinder> binder = mockStatic(SimpleTableSegmentBinder.class)) {
-+            binder.when(() -> SimpleTableSegmentBinder.bind(same(source), same(context), any())).thenReturn(bound);
-+            MySQLLoadDataStatement actual = new MySQLLoadDataStatementBinder().bind(statement, context);
-+            assertTrue(actual.isIgnore() == ignore);
-+            assertTrue(actual.isReplace() == replace);
-+            assertTrue(actual.isLocal() == local);
-+            assertThat(actual.getTable(), sameInstance(bound));
-+            assertThat(actual.getStopIndex(), is(120));
-+            assertFalse(actual.getPartitionDefinition().isPresent());
-+        }
-+    }
-+    
-+    @Test
-+    void assertBindPreservesPartitionSpanUsingBoundTable() {
-+        SimpleTableSegment source = createTable("foo_source");
-+        SimpleTableSegment bound = createTable("foo_bound");
-+        MySQLLoadDataStatement statement = new MySQLLoadDataStatement(mock(DatabaseType.class), source);
-+        statement.getPartitions().add(new PartitionSegment(52, 53, new IdentifierValue("p0")));
-+        statement.setPartitionDefinition(new PartitionDefinitionSegment(42, 54, source, statement.getPartitions()));
-+        SQLStatementBinderContext context = mock(SQLStatementBinderContext.class);
-+        try (MockedStatic<SimpleTableSegmentBinder> binder = mockStatic(SimpleTableSegmentBinder.class)) {
-+            binder.when(() -> SimpleTableSegmentBinder.bind(same(source), same(context), any())).thenReturn(bound);
-+            MySQLLoadDataStatement actual = new MySQLLoadDataStatementBinder().bind(statement, context);
-+            PartitionDefinitionSegment actualDefinition = actual.getPartitionDefinition().get();
-+            assertThat(actual.getPartitions(), is(statement.getPartitions()));
-+        
-```
-
-**File**: `parser/sql/engine/dialect/mysql/src/main/java/org/apache/shardingsphere/sql/parser/engine/mysql/visitor/statement/MySQLStatementVisitor.java` (modified, +1/-1)
-```diff
-@@ -1910,7 +1910,7 @@ private List<ColumnSegment> createInsertColumns(final FieldsContext fields) {
-     
-     @Override
-     public ASTNode visitUpdate(final UpdateContext ctx) {
--        UpdateStatement.UpdateStatementBuilder result = UpdateStatement.builder().databaseType(databaseType);
-+        UpdateStatement.UpdateStatementBuilder result = UpdateStatement.builder().databaseType(databaseType).ignore(null != ctx.updateSpecification_().IGNORE());
-         if (null != ctx.withClause()) {
-             result.with((WithSegment) visit(ctx.withClause()));
-         }
-```
-
-**File**: `parser/sql/engine/dialect/mysql/src/main/java/org/apache/shardingsphere/sql/parser/engine/mysql/visitor/statement/type/MySQLDMLStatementVisitor.java` (modified, +14/-1)
-```diff
-@@ -23,6 +23,7 @@
- import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.CallContext;
- import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.DoStatementContext;
- import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.HandlerStatementContext;
-+import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.IdentifierContext;
- import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.ImportStatementContext;
- import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.IndexHintContext;
- import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.LeadLagInfoContext;
-@@ -39,6 +40,8 @@
- import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.WindowSpecificationContext;
- import org.apache.shardingsphere.sql.parser.autogen.MySQLStatementParser.WindowingClauseContext;
- import org.apache.shardingsphere.sql.parser.engine.mysql.visitor.statement.MySQLStatementVisitor;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionDefinitionSegment;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.ReturningSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ExpressionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.FunctionSegment;
-@@ -105,7 +108,17 @@ public ASTNode visitLoadStatement(final LoadStatementContext ctx) {
-     
-     @Override
-     public ASTNode visitLoadDataStatement(final LoadDataStatementContext ctx) {
--        return new MySQLLoadDataStatement(getDatabaseType(), (SimpleTableSegment) visit(ctx.tableName()));
-+        MySQLLoadDataStatement result = new MySQLLoadDataStatement(getDatabaseType(), (SimpleTableSegment) visit(ctx.tableName()));
-+        result.setIgnore(!ctx.IGNORE().isEmpty() && ctx.IGNORE(0).getSymbol().getTokenIndex() < ctx.INTO().getSymbol().getTokenIndex());
-+        result.setReplace(null != ctx.REPLACE());
-+        if (null != ctx.partitionNames()) {
-+            for (IdentifierContext each : ctx.partitionNames().identifier()) {
-+                result.getPartitions().add(new PartitionSegment(each.start.getStartIndex(), each.stop.getStopIndex(), (IdentifierValue) visit(each)));
-+            }
-+            result.setPartitionDefinition(new PartitionDefinitionSegment(ctx.partitionNames().start.getStartIndex(), ctx.partitionNames().stop.getStopIndex(),
-+                    result.getTable(), result.getPartitions()));
-+        }
-+        return result;
-     }
-     
-     @Override
-```
-
-**File**: `parser/sql/statement/core/src/main/java/org/apache/shardingsphere/sql/parser/statement/core/statement/type/dml/LoadDataStatement.java` (modified, +16/-0)
-```diff
-@@ -20,6 +20,7 @@
- import lombok.Getter;
- import lombok.Setter;
+ import lombok.EqualsAndHashCode;
++import lombok.Getter;
+ import lombok.RequiredArgsConstructor;
++import lombok.Setter;
  import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionDefinitionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dal.PartitionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.property.PropertiesSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.assignment.SetAssignmentSegment;
-@@ -55,10 +56,16 @@ public abstract class LoadDataStatement extends DMLStatement {
+ import org.apache.shardingsphere.driver.jdbc.adapter.executor.ForceExecuteTemplate;
+ import org.apache.shardingsphere.infra.executor.sql.context.ExecutionUnit;
+@@ -44,6 +46,10 @@ public final class StatementManager implements ExecutorJDBCStatementManager, Aut
      
-     private boolean local;
+     private final ForceExecuteTemplate<Statement> forceExecuteTemplate = new ForceExecuteTemplate<>();
      
-+    private boolean ignore;
++    @Getter
++    @Setter
++    private int queryTimeout;
 +    
-+    private boolean replace;
-+    
-     private LiteralValueSegment fileName;
-     
-     private final Collection<PartitionSegment> partitions = new LinkedList<>();
-     
-+    private PartitionDefinitionSegment partitionDefinition;
-+    
-     private LiteralValueSegment columnSeparator;
-     
-     private LiteralValueSegment lineDelimiter;
-@@ -77,6 +84,15 @@ protected LoadDataStatement(final DatabaseType databaseType, final SimpleTableSe
-         attributes = new SQLStatementAttributes(new TableSQLStatementAttribute(table), new UnsupportedDistributeSQLStatementAttribute());
-     }
-     
-+    /**
-+     * Get partition definition.
-+     *
-+     * @return partition definition, or empty when no partition selection is specified
-+     */
-+    public Optional<PartitionDefinitionSegment> getPartitionDefinition() {
-+        return Optional.ofNullable(partitionDefinition);
-+    }
-+    
-     /**
-      * Get column separator.
-      *
+     @Override
+     public Statement createStorageResource(final Connection connection, final ConnectionMode connectionMode, final StatementOption option, final DatabaseType databaseType) throws SQLException {
+         return createStatement(connection, option);
 ```
 
-**File**: `parser/sql/statement/core/src/main/java/org/apache/shardingsphere/sql/parser/statement/core/statement/type/dml/UpdateStatement.java` (modified, +4/-2)
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatementTest.java` (modified, +8/-0)
 ```diff
-@@ -70,14 +70,15 @@ public final class UpdateStatement extends DMLStatement {
-     
-     private final boolean targetTableIsFromAlias;
-     
-+    private final boolean ignore;
-+    
-     private final SQLStatementAttributes attributes;
-     
-     @Builder
-     private UpdateStatement(final DatabaseType databaseType, final TableSegment table, final SetAssignmentSegment setAssignment, final WhereSegment where,
-                             final OrderBySegment orderBy, final LimitSegment limit, final TableSegment from, final WhereSegment deleteWhere, final WithSegment with,
-                             final ReturningSegment returning, final ErrorLoggingSegment errorLogging, final WithTableHintSegment withTableHint, final OptionHintSegment optionHint,
--                            final OutputSegment output,
--                            final boolean targetTableIsFromAlias) {
-+                            final OutputSegment output, final boolean targetTableIsFromAlias, final boolean ignore) {
-         super(databaseType);
-         this.table = table;
-         this.setAssignment = setAssignment;
-@@ -93,6 +94,7 @@ private UpdateStatement(final DatabaseType databaseType, final TableSegment tabl
-         this.optionHint = optionHint;
-         this.output = output;
-         this.targetTableIsFromAlias = targetTableIsFromAlias;
-+        this.ignore = ignore;
-         attributes = new SQLStatementAttributes(new WithSQLStatementAttribute(with));
+@@ -29,6 +29,7 @@
+ import java.sql.Clob;
+ import java.sql.Date;
+ import java.sql.ResultSet;
++import java.sql.SQLException;
+ import java.sql.Time;
+ import java.sql.Timestamp;
+ import java.util.Calendar;
+@@ -189,6 +190,13 @@ void assertSetObjectWithScale() {
+         assertDoesNotThrow(() -> new CircuitBreakerPreparedStatement().setObject(1, new Object(), 0, 0));
      }
      
++    @Test
++    void assertGetQueryTimeout() throws SQLException {
++        CircuitBreakerPreparedStatement statement = new CircuitBreakerPreparedStatement();
++        statement.setQueryTimeout(1);
++        assertThat(statement.getQueryTimeout(), is(0));
++    }
++    
+     @Test
+     void assertExecute() {
+         assertFalse(new CircuitBreakerPreparedStatement().execute());
+```
+
+---
+
+### Incident Patch 3: `434de483` (2026-11-12)
+**Commit Message**: JDBC query timeout readback before execution (#40499)
+
+Remember the configured timeout on the logical statement before a physical statement is available. Reject negative values before recording the setting and cover Statement and PreparedStatement readback.
+
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractStatementAdapter.java` (modified, +5/-1)
+```diff
+@@ -60,6 +60,8 @@ public abstract class AbstractStatementAdapter extends WrapperAdapter implements
+     
+     private int maxRows;
+     
++    private int queryTimeout;
++    
+     private boolean closeOnCompletion;
+     
+     private boolean closed;
+@@ -166,12 +168,14 @@ public final void setMaxRows(final int max) throws SQLException {
+     
+     @Override
+     public final int getQueryTimeout() throws SQLException {
+-        return getRoutedStatements().isEmpty() ? 0 : getRoutedStatements().iterator().next().getQueryTimeout();
++        return getRoutedStatements().isEmpty() ? queryTimeout : getRoutedStatements().iterator().next().getQueryTimeout();
+     }
+     
+     @SuppressWarnings({"unchecked", "rawtypes"})
+     @Override
+     public final void setQueryTimeout(final int seconds) throws SQLException {
++        ShardingSpherePreconditions.checkState(seconds >= 0, () -> new SQLException("Query timeout must be a value greater than or equal to 0."));
++        queryTimeout = seconds;
+         getMethodInvocationRecorder().record("setQueryTimeout", statement -> statement.setQueryTimeout(seconds));
+         forceExecuteTemplate.execute((Collection) getRoutedStatements(), statement -> statement.setQueryTimeout(seconds));
+     }
+```
+
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/adapter/StatementAdapterTest.java` (modified, +17/-0)
+```diff
+@@ -225,6 +225,15 @@ void assertGetQueryTimeoutWithoutRoutedStatements() throws SQLException {
+         assertThat(mockShardingSphereStatement().getQueryTimeout(), is(0));
+     }
+     
++    @Test
++    void assertGetQueryTimeoutAfterSettingBeforeExecution() throws SQLException {
++        ShardingSphereStatement statement = mockShardingSphereStatement();
++        statement.setQueryTimeout(3);
++        assertThat(statement.getQueryTimeout(), is(3));
++        statement.setQueryTimeout(0);
++        assertThat(statement.getQueryTimeout(), is(0));
++    }
++    
+     @Test
+     void assertGetQueryTimeoutWithRoutedStatements() throws SQLException {
+         Statement statement = mock(Statement.class);
+@@ -241,6 +250,14 @@ void assertSetQueryTimeout() throws SQLException {
+         verify(statement).setQueryTimeout(10);
+     }
+     
++    @Test
++    void assertSetNegativeQueryTimeoutBeforeExecution() throws SQLException {
++        ShardingSphereStatement statement = mockShardingSphereStatement();
++        statement.setQueryTimeout(3);
++        assertThrows(SQLException.class, () -> statement.setQueryTimeout(-1));
++        assertThat(statement.getQueryTimeout(), is(3));
++    }
++    
+     @Test
+     void assertExecutionWhenTransactionFailed() {
+         DatabaseType databaseType = TypedSPILoader.getService(DatabaseType.class, "PostgreSQL");
+```
+
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSpherePreparedStatementTest.java` (modified, +7/-0)
+```diff
+@@ -86,6 +86,13 @@
+ 
+ class ShardingSpherePreparedStatementTest {
+     
++    @Test
++    void assertGetQueryTimeoutBeforeExecution() throws SQLException {
++        ShardingSpherePreparedStatement preparedStatement = createPreparedStatement();
++        preparedStatement.setQueryTimeout(3);
++        assertThat(preparedStatement.getQueryTimeout(), is(3));
++    }
++    
+     @Test
+     void assertCreatePreparedStatementAfterDatabaseRemoved() {
+         DatabaseType databaseType = TypedSPILoader.getService(DatabaseType.class, "MySQL");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40506** (2026-11-13): Restore query timeout readback for circuit breaker prepared statements (@sandynz)
+- **PR #40503** (2026-11-13): Consolidate JDBC query timeout in StatementManager (@sandynz)
 - **PR #40500** (2026-11-12): Refactor Oracle parenthesized expression parsing (@strongduanmu)
+- **PR #40499** (2026-11-12): JDBC query timeout readback before execution (@sandynz)
 - **PR #40496** (2026-11-10): Refactor sql parser metadata for MySQL UPDATE and LOAD DATA (@strongduanmu)
 - **PR #40493** (2026-11-08): Refactor code for 64 approved Sonar findings (@terrymanu)
-- **PR #40492** (2026-11-08): Move pipeline data source configuration implementations to core (@terrymanu)
-- **PR #40491** (2026-11-08): Exclude AI tool files and Python caches from RAT (@terrymanu)
-- **PR #40490** (2026-11-08): Fix RAT site report exclusion configuration (@terrymanu)
 
 ---
 
@@ -1952,55 +1759,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Oracle parenthesized expression parsing (#40500)
+## X. Restore query timeout readback for circuit breaker prepared statements (#40506)
 
 **RULE**:
-When implementing operations in `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/OracleStatementVisitor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jdbc/src/main/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatement.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f808225`: Oracle parenthesized expression parsing (#40500). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4a11f3af`: Restore query timeout readback for circuit breaker prepared statements (#40506). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/OracleStatementVisitor.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `jdbc/src/main/java/org/apache/shardingsphere/driver/state/circuit/statement/CircuitBreakerPreparedStatement.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            return visitParenthesizedExpression(ctx.expr(0), ctx.LP_(), ctx.RP_());
-    private ASTNode visitParenthesizedExpression(final ExprContext ctx, final TerminalNode leftParentheses, final TerminalNode rightParentheses) {
-        ExprContext expression = ctx;
-        while (null != expression.LP_()) {
-            expression = expression.expr(0);
-        }
-        ASTNode result = visit(expression);
-        if (result instanceof ColumnSegment) {
-            ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(leftParentheses.getSymbol().getStartIndex(), leftParentheses.getSymbol().getStopIndex(),
-                    leftParentheses.getSymbol().getText()));
-            ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(rightParentheses.getSymbol().getStartIndex(), rightParentheses.getSymbol().getStopIndex(),
-                    rightParentheses.getSymbol().getText()));
-        }
-        return result;
-    }
+import lombok.AccessLevel;
+import lombok.Getter;
+    @Getter(AccessLevel.PROTECTED)
+    private final StatementManager statementManager = new StatementManager();
     
-            return visitParenthesizedExpression(ctx.expr(0), ctx.LP_(), ctx.RP_());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-            ASTNode result = visit(ctx.expr(0));
-            if (result instanceof ColumnSegment) {
-                ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(ctx.LP_().getSymbol().getStartIndex(), ctx.LP_().getSymbol().getStopIndex(), ctx.LP_().getSymbol().getText()));
-                ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(ctx.RP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex(), ctx.RP_().getSymbol().getText()));
-            }
-            return result;
-            ASTNode result = visit(ctx.expr(0));
-            if (result instanceof ColumnSegment) {
-                ((ColumnSegment) result).setLeftParentheses(new ParenthesesSegment(ctx.LP_().getSymbol().getStartIndex(), ctx.LP_().getSymbol().getStopIndex(), ctx.LP_().getSymbol().getText()));
-                ((ColumnSegment) result).setRightParentheses(new ParenthesesSegment(ctx.RP_().getSymbol().getStartIndex(), ctx.RP_().getSymbol().getStopIndex(), ctx.RP_().getSymbol().getText()));
-            }
-            return result;
+    @Override
+    protected StatementManager getStatementManager() {
+        return null;
+    }
+    
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f808225` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4a11f3af` are properly handled with clean fallback behavior.

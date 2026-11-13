@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T08:40:58.447Z",
+  "updated_at": "2026-11-13T08:56:48.348Z",
   "stats": {
-    "total_discovered": 2287,
-    "approved_pending_harvest": 2128,
+    "total_discovered": 2293,
+    "approved_pending_harvest": 2133,
     "harvested_count": 0,
-    "rejected_count": 159,
+    "rejected_count": 160,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2115,
+      "COMMUNITY_AND_EXPERT": 2121,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 73,
       "ENGINEERING_BLOGS": 1,
@@ -49219,6 +49219,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
         "fileName": "hf-ccore-qwen3.5-4b-3d-coder-learnings.md"
+      }
+    },
+    "SRC-EF789C16B9AC": {
+      "id": "SRC-EF789C16B9AC",
+      "url": "https://github.com/FalkorDB/FalkorDB",
+      "title": "https://github.com/FalkorDB/FalkorDB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:56:25.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-F67B3904AE0E": {
+      "id": "SRC-F67B3904AE0E",
+      "url": "https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/parser/cypher.rs",
+      "title": "https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/parser/cypher.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:56:25.547Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-5194EA597242": {
+      "id": "SRC-5194EA597242",
+      "url": "https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/planner/binder.rs",
+      "title": "https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/planner/binder.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:56:25.566Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-998BD826F83E": {
+      "id": "SRC-998BD826F83E",
+      "url": "https://sh.rustup.rs/",
+      "title": "https://sh.rustup.rs/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:56:25.584Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-7760F4F8ACB0": {
+      "id": "SRC-7760F4F8ACB0",
+      "url": "https://apt.llvm.org/llvm.sh",
+      "title": "https://apt.llvm.org/llvm.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T08:56:25.608Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-8E0B9ACADF5D": {
+      "id": "SRC-8E0B9ACADF5D",
+      "url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "title": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:56:48.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
+        "fileName": "hf-liquidai-lfm3-1.7b-learnings.md"
       }
     }
   }

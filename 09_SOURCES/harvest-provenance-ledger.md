@@ -9415,3 +9415,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-13T08:35:53.793Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `0fd0a1f1` | Multi-dimensional audit evidence | 2026-11-13T08:40:40.147Z |
 | `learn-dom-d-0f6d40be` | `project://hf-ccore-qwen3.5-4b-3d-coder` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | 2026-11-13T08:40:58.438Z |
+| `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-13T08:55:38.376Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `7df8e588` | Multi-dimensional audit evidence | 2026-11-13T08:55:49.411Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `f5ebc6a8` | Multi-dimensional audit evidence | 2026-11-13T08:55:59.885Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `4a11f3af` | Multi-dimensional audit evidence | 2026-11-13T08:56:04.842Z |
+| `learn-dom-k-66271fdb` | `project://falkordb-falkordb` | `7df8e588` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md` | 2026-11-13T08:56:25.516Z |
+| `learn-dom-d-64627742` | `project://hf-liquidai-lfm3-1.7b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md` | 2026-11-13T08:56:48.338Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T08:40:58.486Z",
+  "last_updated": "2026-11-13T08:56:48.376Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8489,6 +8489,15 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BBFE97-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-29DAFD",
+      "directive_title": "k8s): make YAML deployment and deletion order deterministic (#5083)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "koderover-zadig",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-29DAFD-k8s-make-yaml-deployment-and-deletion-or.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -9406,3 +9406,9 @@
 | `CYCLE-20261113-2ERH` | `2026-11-13T08:35:53.789Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | Yes (`7e448dac...`) |
 | `CYCLE-20261113-8JPS` | `2026-11-13T08:40:40.144Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`578a7d95...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:40:58.438Z` | `hf-ccore-qwen3.5-4b-3d-coder` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0F6D40BE` [Domain D] | Yes (`87044bc9...`) |
+| `CYCLE-20261113-RSSK` | `2026-11-13T08:55:38.372Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md` | Yes (`73c3b581...`) |
+| `CYCLE-20261113-S1A9` | `2026-11-13T08:55:49.377Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7550396d...`) |
+| `CYCLE-20261113-S9E1` | `2026-11-13T08:55:59.881Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a3fb031f...`) |
+| `CYCLE-20261113-SD7Q` | `2026-11-13T08:56:04.838Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3549a75...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:56:25.516Z` | `falkordb-falkordb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-66271FDB` [Domain K] | Yes (`5fb8add1...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:56:48.338Z` | `hf-liquidai-lfm3-1.7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-64627742` [Domain D] | Yes (`d7fd17e9...`) |

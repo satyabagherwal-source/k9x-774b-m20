@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "eaa238ef",
+    "sourceVersion": "7df8e588",
     "license": "NOASSERTION",
-    "contentHash": "e3a3ada39ca1b020b9ba7be58aad703b0c82f6b4875d5a4de5cd13e35946f7ee",
-    "lastHarvestedAt": "2026-11-11T16:35:51.612Z",
+    "contentHash": "7550396d292aa72564783c47b2326fcbf7b5c0f7e83d28069b9c7cc258c81ef4",
+    "lastHarvestedAt": "2026-11-13T08:55:49.411Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "e00d4622",
+    "sourceVersion": "f5ebc6a8",
     "license": "NOASSERTION",
-    "contentHash": "76f6fe6fa387325c55ea2c867206b68d2cd8d253cf29e083e209cf75b2304261",
-    "lastHarvestedAt": "2026-11-12T03:56:23.368Z",
+    "contentHash": "a3fb031f67a5c54c2db1da31b5f2fc90ca4dfd44201f6e69fc2b5015ca8407ec",
+    "lastHarvestedAt": "2026-11-13T08:55:59.885Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "7f808225",
+    "sourceVersion": "4a11f3af",
     "license": "Apache-2.0",
-    "contentHash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
-    "lastHarvestedAt": "2026-11-12T02:48:56.771Z",
+    "contentHash": "e3549a75afbef2e42464eb16c359524d4bccb9fe1d1f0d2c298af9a1bcc76aa0",
+    "lastHarvestedAt": "2026-11-13T08:56:04.842Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -11365,8 +11365,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
     "sourceVersion": "hf-liquidai-lfm3-1.7b",
     "license": "Open-Source",
-    "contentHash": "d9af71410f65ebee9f42cb1474568713d61d26828913795b644f1b3ee4cd3520",
-    "lastHarvestedAt": "2026-11-08T06:59:42.050Z",
+    "contentHash": "73c3b58137ecc2c9069eaf582b25b6481dbf48f05edc6aed10aa2f2783e10172",
+    "lastHarvestedAt": "2026-11-13T08:55:38.376Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b"
   },
   "michael-denyer-pstack-claude": {

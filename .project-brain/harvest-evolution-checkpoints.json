@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T08:40:58.515Z",
+  "last_updated": "2026-11-13T08:56:48.417Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T07:39:41.956Z",
@@ -403,9 +403,9 @@
       "staged_for_review": 1
     },
     "falkordb-falkordb-learnings.md": {
-      "processed_at": "2026-11-11T16:36:08.770Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-13T08:56:25.516Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "nativescript-nativescript-learnings.md": {
       "processed_at": "2026-11-11T16:36:08.777Z",
@@ -783,7 +783,7 @@
       "staged_for_review": 1
     },
     "koderover-zadig-learnings.md": {
-      "processed_at": "2026-11-12T03:56:31.402Z",
+      "processed_at": "2026-11-13T08:56:48.378Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1681,9 +1681,14 @@
       "processed_at": "2026-11-13T08:40:58.438Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-liquidai-lfm3-1.7b-learnings.md": {
+      "processed_at": "2026-11-13T08:56:48.339Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 513,
-  "total_canonical_promoted": 78,
-  "total_staged_for_review": 432
+  "total_dossiers_evaluated": 516,
+  "total_canonical_promoted": 80,
+  "total_staged_for_review": 433
 }

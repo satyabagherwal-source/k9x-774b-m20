@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T08:40:40.157Z",
+  "last_updated": "2026-11-13T08:56:04.853Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "e3a3ada39ca1b020b9ba7be58aad703b0c82f6b4875d5a4de5cd13e35946f7ee",
-      "verified_at": "2026-11-11T16:35:51.620Z",
+      "content_hash": "7550396d292aa72564783c47b2326fcbf7b5c0f7e83d28069b9c7cc258c81ef4",
+      "verified_at": "2026-11-13T08:55:49.426Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T16:35:51.620Z"
+      "last_updated": "2026-11-13T08:55:49.426Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "76f6fe6fa387325c55ea2c867206b68d2cd8d253cf29e083e209cf75b2304261",
-      "verified_at": "2026-11-12T03:56:23.399Z",
+      "content_hash": "a3fb031f67a5c54c2db1da31b5f2fc90ca4dfd44201f6e69fc2b5015ca8407ec",
+      "verified_at": "2026-11-13T08:55:59.896Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T03:56:23.399Z"
+      "last_updated": "2026-11-13T08:55:59.896Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
-      "verified_at": "2026-11-12T02:48:56.780Z",
+      "content_hash": "e3549a75afbef2e42464eb16c359524d4bccb9fe1d1f0d2c298af9a1bcc76aa0",
+      "verified_at": "2026-11-13T08:56:04.853Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T02:48:56.780Z"
+      "last_updated": "2026-11-13T08:56:04.853Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -17076,14 +17076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
-      "content_hash": "d9af71410f65ebee9f42cb1474568713d61d26828913795b644f1b3ee4cd3520",
-      "verified_at": "2026-11-08T06:59:42.059Z",
+      "content_hash": "73c3b58137ecc2c9069eaf582b25b6481dbf48f05edc6aed10aa2f2783e10172",
+      "verified_at": "2026-11-13T08:55:38.386Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T06:59:42.059Z"
+      "last_updated": "2026-11-13T08:55:38.386Z"
     },
     "michael-denyer/pstack-claude": {
       "repository": "michael-denyer/pstack-claude",

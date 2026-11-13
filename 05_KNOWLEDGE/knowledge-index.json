@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T08:40:40.019Z",
+  "last_updated": "2026-11-13T08:56:04.722Z",
   "total_verified_learnings": 1262,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2618,8 +2618,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "7f808225",
-      "content_hash": "cd0b0f3a46e0a573186152a0b5984bfd8fd27956155aa3af16fa4bf98dc0b8f6",
+      "source_version": "4a11f3af",
+      "content_hash": "e3549a75afbef2e42464eb16c359524d4bccb9fe1d1f0d2c298af9a1bcc76aa0",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2641,6 +2641,11 @@
         {
           "number": null,
           "title": "Oracle parenthesized expression parsing (#40500)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Restore query timeout readback for circuit breaker prepared statements (#40506)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2724,7 +2729,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T02:48:56.632Z",
+      "verified_at": "2026-11-13T08:56:04.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15019,8 +15024,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "eaa238ef",
-      "content_hash": "e3a3ada39ca1b020b9ba7be58aad703b0c82f6b4875d5a4de5cd13e35946f7ee",
+      "source_version": "7df8e588",
+      "content_hash": "7550396d292aa72564783c47b2326fcbf7b5c0f7e83d28069b9c7cc258c81ef4",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -15032,6 +15037,11 @@
         {
           "number": null,
           "title": "module): load on Valkey by repairing environ under RTLD_DEEPBIND (#3494)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test: revert #3722's test counting and wait_for_replica (#3762)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15095,7 +15105,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T16:35:51.487Z",
+      "verified_at": "2026-11-13T08:55:49.139Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39739,8 +39749,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "e00d4622",
-      "content_hash": "76f6fe6fa387325c55ea2c867206b68d2cd8d253cf29e083e209cf75b2304261",
+      "source_version": "f5ebc6a8",
+      "content_hash": "a3fb031f67a5c54c2db1da31b5f2fc90ca4dfd44201f6e69fc2b5015ca8407ec",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -39752,6 +39762,11 @@
         {
           "number": null,
           "title": "workflow): honor runtime commit source for builds (#5053)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "k8s): make YAML deployment and deletion order deterministic (#5083)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39810,7 +39825,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T03:56:23.169Z",
+      "verified_at": "2026-11-13T08:55:59.693Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157059,7 +157074,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
       "source_version": "hf-liquidai-lfm3-1.7b",
-      "content_hash": "111b2c24dadf6cb53debbfbed0b5481903e6d4dfa2cda40b80530bd34350f3bc",
+      "content_hash": "73c3b58137ecc2c9069eaf582b25b6481dbf48f05edc6aed10aa2f2783e10172",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "promoted_rules": [
@@ -157114,7 +157129,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T20:25:09.174Z",
+      "verified_at": "2026-11-13T08:55:38.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

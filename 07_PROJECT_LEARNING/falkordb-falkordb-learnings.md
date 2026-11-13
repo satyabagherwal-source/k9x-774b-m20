@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `eaa238ef`  
+> **Source Version**: `7df8e588`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:35:43.507Z  
+> **Timestamp**: 2026-11-13T08:55:36.784Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:35:43.276Z  
+> **Harvest Timestamp**: 2026-11-13T08:55:36.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10511 stars
+- **Stars / Engagement**: 10516 stars
 
 ---
 
@@ -1262,1422 +1262,968 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `874b6d87` (2026-11-11)
-**Commit Message**: fix(module): load on Valkey by repairing environ under RTLD_DEEPBIND (#3494)
+### Incident Patch 1: `5ab8fddc` (2026-11-12)
+**Commit Message**: test: revert #3722's test counting and wait_for_replica (#3762)
 
-* fix(module): repair environ under RTLD_DEEPBIND so the module loads on Valkey
+* ci: count the TCK as one test again
 
-Valkey dlopen()s modules with RTLD_DEEPBIND. When valkey-server
-copy-relocates environ (e.g. Ubuntu's package), the module and libomp
-bind to libc's original environ, which stays NULL, and libomp
-segfaults in omp_init_lock during GxB_init. Sync the module's environ
-with the executable's before GraphBLAS starts libomp; a no-op on Redis.
-
-Closes #3493
-
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
-
-* ci: smoke-test the engine under Ubuntu's valkey-server
-
-Loads the built module into a real valkey-server, runs queries, an
-index and BGSAVE, and fails on a crash. Ubuntu's package is used
-because it copy-relocates environ; the official valkey images do not
-and would not catch #3493.
-
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
-
-* fix(module): address review on Valkey environ fix and smoke test
-
-- Gate sync_deepbind_environ to Linux; macOS dylibs must not reference
-  environ directly and RTLD_DEEPBIND is glibc-only.
-- valkey-cli -e so server error replies fail the smoke test.
-- Fail if BGSAVE is still in progress after polling.
-
-
-**File**: `graph/src/env_snapshot.rs` (added, +103/-0)
-```diff
-@@ -0,0 +1,103 @@
-+//! Owned, process-lifetime copies of a C `environ` array.
-+//!
-+//! The module repairs libc's `environ` when a server loads it with
-+//! `RTLD_DEEPBIND` and copy-relocates `environ` (issue #3493); see
-+//! `sync_deepbind_environ` in the module crate. The copy lives here, apart
-+//! from the loader-specific lookup, so it can be unit-tested on any platform.
-+
-+use std::ffi::{CStr, c_char};
-+
-+/// Deep-copy a NULL-terminated `char **` environment and leak the copy.
-+///
-+/// Both the pointer array and every string are fresh allocations that are
-+/// never freed, so the result stays valid whatever later happens to `src`: a
-+/// `setenv` that `realloc`s the array, or a `putenv` caller freeing its buffer
-+/// after `unsetenv`. A NULL `src` yields an empty environment (a lone NULL).
-+///
-+/// # Safety
-+///
-+/// `src` must be NULL or point to a NULL-terminated array of pointers to
-+/// NUL-terminated strings, none of which is modified or freed during the call.
-+#[must_use]
-+pub unsafe fn leak_deep_copy(src: *const *mut c_char) -> *mut *mut c_char {
-+    let mut len = 0;
-+    // SAFETY: the caller guarantees `src` is NULL or NULL-terminated.
-+    while !src.is_null() && unsafe { !(*src.add(len)).is_null() } {
-+        len += 1;
-+    }
-+    let mut copy: Vec<*mut c_char> = Vec::with_capacity(len + 1);
-+    for i in 0..len {
-+        // SAFETY: `i < len`, so the entry is a non-NULL pointer to a
-+        // NUL-terminated string, per the caller's contract.
-+        let entry = unsafe { CStr::from_ptr(*src.add(i)) };
-+        copy.push(entry.to_owned().into_raw());
-+    }
-+    copy.push(std::ptr::null_mut());
-+    Box::leak(copy.into_boxed_slice()).as_mut_ptr()
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use std::ffi::CString;
-+
-+    /// Read a NULL-terminated `char **` back into owned strings.
-+    unsafe fn read(env: *mut *mut c_char) -> Vec<String> {
-+        let mut out = Vec::new();
-+        let mut i = 0;
-+        // SAFETY: `env` came from `leak_deep_copy`, which NULL-terminates it.
-+        while unsafe { !(*env.add(i)).is_null() } {
-+            out.push(
-+                unsafe { CStr::from_ptr(*env.add(i)) }
-+                    .to_str()
-+                    .unwrap()
-+                    .to_owned(),
-+            );
-+            i += 1;
-+        }
-+        out
-+    }
-+
-+    #[test]
-+    fn null_source_is_empty() {
-+        let copy = unsafe { leak_deep_copy(std::ptr::null()) };
-+        assert!(unsafe { read(copy) }.is_empty());
-+    }
-+
-+    #[test]
-+    fn empty_source_is_empty() {
-+        let src = [std::ptr::null_mut::<c_char>()];
-+        let copy = unsafe { leak_deep_copy(src.as_ptr()) };
-+        assert!(unsafe { read(copy) }.is_empty());
-+    }
-+
-+    #[test]
-+    fn copies_entries_in_order() {
-+        let a = CString::new("A=1").unwrap();
-+        let b = CString::new("KMP_BLOCKTIME=0").unwrap();
-+        let src = [
-+            a.as_ptr().cast_mut(),
-+            b.as_ptr().cast_mut(),
-+            std::ptr::null_mut(),
-+        ];
-+        let copy = unsafe { leak_deep_copy(src.as_ptr()) };
-+        assert_eq!(unsafe { read(copy) }, ["A=1", "KMP_BLOCKTIME=0"]);
-+    }
-+
-+    /// The copy owns its strings and array: freeing or overwriting the
-+    /// source afterwards (as `unsetenv` + `free` of a `putenv` buffer, or a
-+    /// `setenv` realloc, would) must not change what the copy reads.
-+    #[test]
-+    fn survives_source_being_freed_and_overwritten() {
-+        let a = CString::new("PUTENV_OWNED=yes").unwrap().into_raw();
-+        let b = CString::new("B=2").unwrap();
-+        let mut src = vec![a, b.as_ptr().cast_mut(), std::ptr::null_mut()];
-+        let copy = unsafe { leak_deep_copy(src.as_ptr()) };
-+        assert_ne!(unsafe { *copy }, a, "strings must be copied, not borrowed");
-+        assert_ne!(copy, src.as_mut_ptr(), "the array must be copied");
-+        drop(unsafe { CString::from_raw(a) });
-+        src[0] = std::ptr::null_mut();
-+        drop(src);
-+        assert_eq!(unsafe { read(copy) }, ["PUTENV_OWNED=yes", "B=2"]);
-+    }
-+}
-```
-
-**File**: `graph/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -66,12 +66,14 @@
- //! - [`storage`]: Shared storage seam (per-store backend registry; an in-memory
- //!   backend by default, an alternate backend swapped in by a statically-linked add-on)
- //! - [`entity_type`]: Node and relationship entity type discriminator
-+//! - [`env_snapshot`]: Owned copies of a C `environ` array (Valkey `RTLD_DEEPBIND` repair)
- //! - [`identifier_limits`]: Maximum accepted length of an identifier
- //! - [`threadpool`]: Thread pool for parallel query execution
- //! - [`udf`]: User-defined function registration and dispatch
- 
- pub mod effects;
- pub mod entity_type;
-+pub mod env_snapshot;
- pub mod graph;
- pub mod identifier_limits;
- pub mod index;
-```
-
-**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +13/-11)
-```diff
-@@ -163,17 +163,19 @@ src/query_session.rs	Gil::acquire	502	PROVEN	QuerySession.gilAcquire: gil_nested
- src/query_session.rs	Gil::drop	525	PROVEN	QuerySession.gilDrop: gil_stack, gil_out_of_order
- src/query_session.rs	lock_gil	546	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
- src/query_session.rs	release_gil	559	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
--src/module_init.rs	pthread_atfork	91	AXIOMATISED	libc pthread_atfork declaration
--src/module_init.rs	on_fork_child	118	PROVEN	ModuleInit.forkChildAborts: fork_gc_never_aborts, fork_all_synced
--src/module_init.rs	graph_init	139	PROVEN	ModuleInit.graphInitArgs (args → apply_module_args; Err ⇒ Status::Err): graphInitArgs_refuses; LoadArgs.rust_c_same_accept; table_defaults_in_range; historical pre3328_* (W4-redis-3 / #3268, fixed by #3328)
--src/module_init.rs	info_func	423	PROVEN	ModuleInit.infoSections: info_normal
--src/module_init.rs	on_flush	438	PROVEN	ModuleInit.onFlush: onFlush_id
--src/module_init.rs	on_shutdown	465	PROVEN	ModuleInit.onShutdown: onShutdown_flusher_first, onShutdown_no_teardown_under_a_left_worker, onShutdown_without_native_index
--src/module_init.rs	on_role_change	466	PROVEN	ModuleInit.onRoleChange: onRoleChange_promote, onRoleChange_demote
--src/module_init.rs	enforce_pending_constraints_after_promotion	496	PROVEN	ModuleInit.pendingPerGraph: pending_only_uc
--src/module_init.rs	on_replica_change	564	PROVEN	ModuleInit.onReplicaChange: onReplicaChange_latches
--src/module_init.rs	on_loading	576	PROVEN	ModuleInit.onLoading: onLoading_only_end
--src/module_init.rs	on_keyspace_event	597	PROVEN	ModuleInit.onKeyspace: rename_pair, rename_to_alone, other_event
-+src/module_init.rs	pthread_atfork	97	AXIOMATISED	libc pthread_atfork declaration
-+src/module_init.rs	on_fork_child	124	PROVEN	ModuleInit.forkChildAborts: fork_gc_never_aborts, fork_all_synced
-+src/module_init.rs	sync_deepbind_environ	160	NOT COVERED	Linux-only; not modelled. Bound to ld.so/libc: dlopen(NULL) + dlsym("environ"), then points libc's own environ at graph::env_snapshot::leak_deep_copy of that array. CI reaches only its no-op return; the snapshot path runs only under a valkey-server that copy-relocates environ (#3493).
-+graph/src/env_snapshot.rs	leak_deep_copy	22	NOT COVERED	Not modelled. Deep-copies a NULL-terminated char** (array and strings) and leaks it; unit-tested in env_snapshot::tests (NULL, empty, order, source freed after copy)
-+src/module_init.rs	graph_init	205	PROVEN	ModuleInit.graphInitArgs (args → apply_module_args; Err ⇒ Status::Err): graphInitArgs_refuses; LoadArgs.rust_c_same_accept; table_defaults_in_range; historical pre3328_* (W4-redis-3 / #3268, fixed by #3328)
-+src/module_init.rs	info_func	502	PROVEN	ModuleInit.infoSections: info_normal
-+src/module_init.rs	on_flush	517	PROVEN	ModuleInit.onFlush: onFlush_id
-+src/module_init.rs	on_shutdown	530	PROVEN	ModuleInit.onShutdown: onShutdown_flusher_first, onShutdown_no_teardown_under_a_left_worker, onShutdown_without_native_index
-+src/module_init.rs	on_role_change	554	PROVEN	ModuleInit.onRoleChange: onRoleChange_promote, onRoleChange_demote
-+src/module_init.rs	enforce_pending_constraints_after_promotion	584	PROVEN	ModuleInit.pendingPerGraph: pending_only_uc
-+src/module_init.rs	on_replica_change	651	PROVEN	ModuleInit.onReplicaChange: onReplicaChange_latches
-+src/module_init.rs	on_loading	663	PROVEN	ModuleInit.onLoading: onLoading_only_end
-+src/module_init.rs	on_keyspace_event	684	PROVEN	ModuleInit.onKeyspace: rename_pair, rename_to_alone, other_event
- src/telemetry.rs	truncate	34	PROVEN	Telemetry.truncate: truncate_short, truncate_len, truncate_prefix
- src/telemetry.rs	truncate_arc	50	PROVEN	Telemetry.truncateArc: truncateArc_eq
- src/telemetry.rs	stream_name	66	PROVEN	Telemetry.streamName: streamName_key_name, streamName_inj, streamName_nul, stream_same_slot, stream_other_slot
-```
-
-**File**: `src/module_init.rs` (modified, +65/-0)
-```diff
-@@ -141,6 +141,67 @@ unsafe extern "C" fn on_fork_child() {
-     }
- }
- 
-+/// Point this module's view of `environ` at a snapshot of the live environment.
-+///
-+/// Valkey `dlopen`s modules with `RTLD_DEEPBIND`, so the module and its
-+/// dependencies (notably libomp) bind `environ` to libc's own definition
-+/// before the global scope. When the server executable copy-relocates
-+/// `environ` (Ubuntu's valkey-server package does), libc's startup code and
-+/// `setenv` only ever update that copy, leaving libc's original NULL. libomp
-+/// iterates `environ` directly during its first initialization and segfaults
-+/// on the NULL.
-+///
-+/// When both views are already the same object (Redis, or a valkey-server
-+/// without the copy relocation) this is a no-op. Valkey passes
-+/// `RTLD_DEEPBIND` only on glibc and FreeBSD (musl ignores it), and macOS
-+/// dylibs must not reference `environ` directly. FalkorDB ships only for
-+/// Linux and macOS, so the helper exists only on Linux.
-+#[cfg(target_os = "linux")]
-+unsafe fn sync_deepbind_environ() {
-+    unsafe extern "C" {
-+        static mut environ: *mut *mut libc::c_char;
-+    }
-+    unsafe {
-+        // `dlopen(NULL)` searches the global scope starting at the executable,
-+        // which yields the copy-relocated `environ` that libc keeps updated.
-+        let main = libc::dlopen(std::ptr::null(), libc::RTLD_NOW | libc::RTLD_NOLOAD);
-+        if main.is_null() {
-+            return;
-+        }
-+        let live = libc::dlsym(main, c"environ".as_ptr()).cast::<*mut *mut libc::c_char>();
-+        libc::dlclose(main);
-+        let ours = &raw mut environ;
-+        if live.is_null() || live == ours {
-+            return;
-+        }
-+        // Install an owned, leaked snapshot rather than aliasing `*live`: the
-+        // live array is typically the one glibc's `setenv` allocated, so a
-+        // later `setenv` (e.g. libomp registering itself) may `realloc` it and
-+        // leave `*ours` dangling. Copy the strings too: a `putenv` caller owns
-+        // its buffer and may free it after `unsetenv`, so borrowing it could
-+        // leave the snapshot pointing at freed memory.
-+        let snapshot = graph::env_snapshot::leak_deep_copy(*live);
-+        // The snapshot is a point-in-time view: a later `setenv` updates only
-+        // the executable's copy, so code that scans `environ` directly (e.g.
-+        // `std::env::vars()`) will not see it. That includes every other
-+        // module the server loaded with `RTLD_DEEPBIND`, since they share
-+        // libc's `environ`; they saw NULL before, so this is still an
-+        // improvement. `getenv`/`std::env::var` go through libc and are
-+        // unaffected. libomp only needs it once, at init.
-+        //
-+        // SAFETY: `ours` points to libc's `char **environ`; this runs on the
-+        // main thread during module load. At startup no other thread reads
-+        // it. Under a runtime `MODULE LOAD`, a thread of an earlier
-+        // DEEPBIND-loaded module could read it concurrently; that is a single
-+        // aligned pointer store, so it sees either the old or the new array,
-+        // both NULL-terminated. `*live` and its strings are only read here.
-+        // The snapshot owns both the pointer array and every string, all
-+        // leaked, so it stays valid for the life of the process whatever a
-+        // later `setenv`, `putenv` or `unsetenv` does to the live environment.
-+        *ours = snapshot;
-+    }
-+}
-+
- pub fn graph_init(
-     ctx: &Context,
-     args: &[redis_module::RedisString],
-@@ -209,6 +270,10 @@ pub fn graph_init(
-         if RediSearch_SetDefaultScorer(c"TFIDF".as_ptr()) != REDISMODULE_OK as c_int {
-             ctx.log_warning("Failed to set RediSearch default scorer to TFIDF");
-         }
-+        // Must run after the `KMP_*` `set_var` calls above and before
-+        // GraphBLAS starts libomp, which reads `environ` once at init.
-+        #[cfg(target_os = "linux")]
-+        sync_deepbind_environ();
-         if let Err(err) = init(
-             RedisModule_Alloc,
-             RedisModule_Calloc,
-```
-
----
-
-### Incident Patch 2: `7472d6a8` (2026-11-10)
-**Commit Message**: feat(index): CREATE INDEX returns before the index is built; a background builder fills it (#3585)
-
-* fix(threadpool): a bounded shutdown keeps the workers it left behind
-
-`ThreadPool::shutdown_within` detached a worker still running a job when
-the time ran out, so a second call found no workers and reported that
-every one had exited. It now keeps them: a later call waits for them
-again, reports them while their jobs run, and joins them once the jobs
-return.
-
-The index builder (#2355) stops its pool this way at shutdown, and calls
-it again when the pool restarts.
-
-* feat(index): a background builder runs each Building index's batches
-
-The builder runs the indexer batches of every `Building` index, in every
-graph, on a pool of its own (`online_build`). It keeps one chain of turns
-per index, so no two batches ever run on one index, and indexes build side
-by side. A turn takes one batch on a new build version of the published
-one with no lock held, then publishes it through the graph's host with
-`commit_indexer_batch`, which decides how it goes in. The chain goes on
-until the index is `Ready`.
-
-A host registers a `BuildHost` with each graph. `read` gives the
-published version, loaded 
-
-**File**: `graph/src/graph/graph.rs` (modified, +77/-0)
-```diff
-@@ -4184,13 +4184,23 @@ impl Graph {
-         }
-     }
- 
-+    /// Whether the planner may answer `label.field` from an index of `index_type`.
-+    ///
-+    /// Under `index-falkordb` a Range lookup is the native column's alone, and the column is part
-+    /// of this version: it serves once its build is done. RediSearch's readiness lives in its
-+    /// index map, which every version shares, so it says nothing about this version's column, and
-+    /// a version without the column must not plan a lookup it cannot answer.
-     #[must_use]
-     pub fn is_indexed(
-         &self,
-         label: &Arc<String>,
-         field: &Arc<String>,
-         index_type: &IndexType,
-     ) -> bool {
-+        #[cfg(feature = "index-falkordb")]
-+        if *index_type == IndexType::Range {
-+            return self.falkordb_index.is_ready(EntityType::Node, label, field);
-+        }
-         self.node_indexer.is_label_indexed(label, field, index_type)
-     }
- 
-@@ -4281,13 +4291,20 @@ impl Graph {
-             .is_some_and(|value| scan_filter.matches(&value))
-     }
- 
-+    /// The relationship counterpart of [`Self::is_indexed`].
-     #[must_use]
-     pub fn is_edge_indexed(
-         &self,
-         label: &Arc<String>,
-         field: &Arc<String>,
-         index_type: &IndexType,
-     ) -> bool {
-+        #[cfg(feature = "index-falkordb")]
-+        if *index_type == IndexType::Range {
-+            return self
-+                .falkordb_index
-+                .is_ready(EntityType::Relationship, label, field);
-+        }
-         self.edge_indexer.is_label_indexed(label, field, index_type)
-     }
- 
-@@ -4475,15 +4492,75 @@ impl Graph {
-         let mut infos = self.node_indexer.index_info();
-         for info in &mut infos {
-             info.entity_type = String::from("NODE");
-+            #[cfg(feature = "index-falkordb")]
-+            self.add_native_build(EntityType::Node, info);
-         }
-         let mut edge_infos = self.edge_indexer.index_info();
-         for info in &mut edge_infos {
-             info.entity_type = String::from("RELATIONSHIP");
-+            #[cfg(feature = "index-falkordb")]
-+            self.add_native_build(EntityType::Relationship, info);
-         }
-         infos.extend(edge_infos);
-         infos
-     }
- 
-+    /// Under `index-falkordb`, `info`'s label is under construction while any of its Range
-+    /// attributes' native columns is `Building` in this version: each such column counts as
-+    /// pending. The progress shown is the label's build as a whole, out of the label's or type's
-+    /// entities, as C shows it: the least any of those columns has read, or what RediSearch has
-+    /// populated of another of the label's fields (a fulltext or vector one) if that is less. The
-+    /// label's or type's entities are counted once, and only while one of its columns builds.
-+    #[cfg(feature = "index-falkordb")]
-+    fn add_native_build(
-+        &self,
-+        entity: EntityType,
-+        info: &mut IndexInfo,
-+    ) {
-+        let mut building: Option<(i32, u64)> = None;
-+        for attr in &info.field_order {
-+            let range = info
-+                .fields
-+                .get(attr)
-+                .is_some_and(|fields| fields.iter().any(|f| f.ty == IndexType::Range));
-+            if range
-+                && let Some(read) = self.falkordb_index.building_read(entity, &info.label, attr)
-+            {
-+                building = Some(
-+                    building.map_or((1, read), |(columns, least)| (columns + 1, least.min(read))),
-+                );
-+            }
-+        }
-+        let Some((columns, least)) = building else {
-+            return;
-+        };
-+        let total = self.native_build_total(entity, &info.label);
-+        let done = least.min(total);
-+        // RediSearch reports what it has populated while it has a field pending.
-+        info.progress = if info.pending > 0 {
-+            done.min(info.progress)
-+        } else {
-+            done
-+        };
-+        info.pending += columns;
-+        info.total = total;
-+    }
-+
-+    /// The entities of `label`, or of relationship type `label`: what a build's progress is out of.
-+    #[cfg(feature = "index-falkordb")]
-+    fn native_build_total(
-+        &self,
-+        entity: EntityType,
-+        label: &Arc<String>,
-+    ) -> u64 {
-+        match entity {
-+            EntityType::Node => self.get_label_matrix(label).map_or(0, |lm| lm.nvals()),
-+            EntityType::Relationship => self
-+                .get_relationship_matrix(label)
-+                .map_or(0, |t| t.edge_count()),
-+        }
-+    }
-+
-     // ── Constraint management ─────────────────────────────────────────
- 
-     #[must_use]
-```
-
-**File**: `graph/src/graph/graph/falkordb_index_tests.rs` (modified, +1268/-21)
-```diff
-@@ -2,26 +2,37 @@
- //! and checks the index column it should have changed. The build's tests drive indexer batches
- //! between writes.
- 
--use super::{Graph, NodeId, RelationshipId};
-+use super::{Graph, NodeId, Plan, RelationshipId};
- use crate::entity_type::EntityType;
- use crate::graph::mvcc_graph::{CommitError, MvccGraph};
- use crate::index::Field;
- use crate::index::falkordb::encode::encode_numeric;
- use crate::index::falkordb::falkordb_index::{BuildCursor, IndexColumn, IndexKey};
- use crate::index::falkordb::graph_writes;
-+use crate::index::falkordb::online_build::{
-+    self, BuildHost, Builder, Job, LocalHost, Sizing, Step,
-+};
- use crate::index::falkordb::versioned::{
-     BuildState, CatchUp, Discarded, IndexId, IndexerCommit, PreparedBatch, REFRESH_COST,
-     VersionedIndex,
- };
- use crate::index::index_docs::IndexDocs;
--use crate::index::{IndexQuery, IndexType};
-+use crate::index::{IndexInfo, IndexQuery, IndexType};
-+use crate::locks::WriteEscalation;
-+use crate::planner::IR;
-+use crate::runtime::functions::init_functions;
- use crate::runtime::orderset::OrderSet;
-+use crate::runtime::runtime::Runtime;
- use crate::runtime::value::Value;
-+use orx_tree::{Dfs, NodeRef};
- use roaring::RoaringTreemap;
- use rustc_hash::FxHashMap;
- use std::collections::{BTreeMap, BTreeSet, HashMap};
- use std::ffi::CString;
--use std::sync::Arc;
-+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-+use std::sync::{Arc, Weak, mpsc};
-+use std::thread;
-+use std::time::{Duration, Instant};
- 
- /// Run one graph write with its own [`IndexDocs`] and apply its native-index changes straight
- /// away, the way each write call changed the index before they were batched. Tests that check
-@@ -125,15 +136,13 @@ fn new_version_isolates_the_falkordb_index() {
-     assert_eq!(writer.version, committed.version + 1);
- }
- 
--/// CREATE INDEX builds the column from real graph state: three
--/// `:Person {age}` nodes, then a range scan returns the right ids in
--/// `(value, id)` order. The column is built by one indexer batch over every node
--/// (its `get_label_matrix` → `get_node_attribute_by_idx` reads), so it is
--/// `Ready` and serves reads when CREATE INDEX returns. Drives the native half of
--/// `Graph::create_index` directly, bypassing the RediSearch FFI (uninitialised
--/// in a unit test).
-+/// CREATE INDEX leaves the column `Building`, its cursor at the start, for the background builder:
-+/// the planner does not use it, and a read that reaches it is told to scan. Once indexer batches
-+/// have built it from real graph state (three `:Person {age}` nodes), it is `Ready`, the planner
-+/// uses it, and a range scan returns the right ids in `(value, id)` order. Drives the native half
-+/// of `Graph::create_index` directly, bypassing the RediSearch FFI (uninitialised in a unit test).
- #[test]
--fn create_index_builds_the_column_from_live_nodes() {
-+fn create_index_leaves_the_node_column_to_its_batches() {
-     ensure_graphblas();
-     let mut g = Graph::new(64, 64, 10, 1, "t");
-     let label = Arc::new("Person".to_string());
-@@ -166,19 +175,38 @@ fn create_index_builds_the_column_from_live_nodes() {
-     }
-     applied!(g, |w| g.set_nodes_attributes(&attrs, &mut w)).unwrap();
- 
--    // Build the index numeric column from the live nodes.
-     graph_writes::create_index(
-         &mut g,
-         &IndexType::Range,
-         EntityType::Node,
-         &label,
-         std::slice::from_ref(&attr),
-     );
-+    assert_eq!(
-+        cursor(&g, EntityType::Node, &label, &attr),
-+        Some(BuildCursor::new(EntityType::Node)),
-+        "CREATE INDEX takes no batch"
-+    );
-+    assert!(
-+        !g.is_indexed(&label, &attr, &IndexType::Range),
-+        "the planner does not use a Building column"
-+    );
-+    assert!(
-+        matches!(
-+            g.falkordb_index
-+                .query_numeric(EntityType::Node, &label, &eq(&attr, 20)),
-+            Some(Err(_))
-+        ),
-+        "a read that reaches a Building column scans"
-+    );
-+
-+    assert_eq!(build_to_end(&mut g, 2), 2, "two batches of two nodes");
-     assert_eq!(
-         g.falkordb_index
-             .column_state(EntityType::Node, &label, &attr),
-         Some(BuildState::Ready)
-     );
-+    assert!(g.is_indexed(&label, &attr, &IndexType::Range));
-     assert!(
-         matches!(
-             g.falkordb_index
-@@ -242,11 +270,11 @@ fn rdb_load_populate_builds_each_column() {
-     );
- }
- 
--/// The edge counterpart: CREATE INDEX on a relationship type builds its column from the live
--/// edges, a multi-edge pair included, in one indexer batch dispatched to the edge column, so it is
--/// `Ready` and serves reads when CREATE INDEX returns, and holds what a one-pass build does.
-+/// The edge counterpart: CREATE INDEX on a relationship type leaves its column `Building`, and
-+/// indexer batches dispatched to the edge column build it from the live edges, a multi-edge pair
-+/// included, into what a one-pass build holds. Until then the planner does not use it.
- #[test]
--fn create
-```
-
-**File**: `graph/src/graph/mvcc_graph.rs` (modified, +33/-14)
-```diff
-@@ -72,6 +72,8 @@ use thiserror::Error;
- 
- use crate::graph::graph::{Graph, NodeOpError};
- #[cfg(feature = "index-falkordb")]
-+use crate::index::falkordb::online_build;
-+#[cfg(feature = "index-falkordb")]
- use crate::index::falkordb::versioned::{IndexerCommit, PreparedBatch};
- 
- /// MVCC coordinator for concurrent graph access.
-@@ -106,17 +108,17 @@ impl MvccGraph {
-         e: u64,
-         cache_size: usize,
-         name: &str,
--    ) -> Self {
-+    ) -> Arc<Self> {
-         Self::from_graph(Graph::new(n, e, cache_size, 0, name))
-     }
- 
-     /// Create an `MvccGraph` from an already-constructed `Graph`.
-     /// Used by the RDB load path.
-     #[must_use]
--    pub fn from_graph(graph: Graph) -> Self {
--        Self {
-+    pub fn from_graph(graph: Graph) -> Arc<Self> {
-+        Arc::new(Self {
-             graph: ArcSwap::from_pointee(graph),
--        }
-+        })
-     }
- 
-     /// The published version. Takes no lock.
-@@ -188,10 +190,11 @@ impl MvccGraph {
-     /// A refusal needs no cleanup: nothing was taken, and the refused version
-     /// is dropped.
-     ///
--    /// Takes `&self`: publishing is a compare-and-swap of the published
-+    /// Takes a shared reference: publishing is a compare-and-swap of the published
-     /// pointer. The caller holds the host's global lock, which keeps commits
-     /// apart and the swap out of the way of the host forking (#452); it needs no
--    /// per-graph lock.
-+    /// per-graph lock. It takes the `Arc` the graph lives in so that it can hand each background
-+    /// index build it starts a weak handle to it ([`Arc::downgrade`]).
-     ///
-     /// # Errors
-     ///
-@@ -200,12 +203,23 @@ impl MvccGraph {
-     /// a host publishing without the global lock lets that happen),
-     /// [`CommitError::Invalid`] if [`Graph::validate`] refuses it.
-     pub fn commit(
--        &self,
-+        self: &Arc<Self>,
-         mut fork: Graph,
-     ) -> Result<Arc<Graph>, CommitError> {
-         let published = self.graph.load_full();
-         Self::prepare(&published, &mut fork, true)?;
--        self.publish(&published, Arc::new(fork))
-+        // The indexes to build, asked of the version this one replaces before it is replaced.
-+        #[cfg(feature = "index-falkordb")]
-+        let to_build = fork.indexes_to_build_since(&published);
-+        let version = self.publish(&published, Arc::new(fork))?;
-+        // Each `Building` index this version brings in, new or created again, starts its build: a
-+        // job per generation, started only by the commit that brings it in, so a commit made during
-+        // the build, an indexer batch's included, starts nothing.
-+        #[cfg(feature = "index-falkordb")]
-+        for (id, generation) in to_build {
-+            online_build::enqueue(Arc::downgrade(self), id, generation);
-+        }
-+        Ok(version)
-     }
- 
-     /// Commit an indexer batch. `prepared` is a build version of a published one
-@@ -220,27 +234,32 @@ impl MvccGraph {
-     ///   `prepared`'s copy, or the batch, without them, is inserted into the published copy. The
-     ///   result goes into a new build version of the published one, which is published
-     ///   ([`Graph::caught_up_onto`]);
-+    /// - writers, and catching up would do more than `batch`'s limit allows
-+    ///   ([`PreparedBatch::limit_catch_up`]): nothing is published
-+    ///   ([`CatchUpTooLarge`](crate::index::falkordb::versioned::Discarded::CatchUpTooLarge)), and
-+    ///   the index's next batch starts from its published cursor;
-     /// - `batch`'s index was dropped or created again, or another batch committed on the same
-     ///   index: nothing is published, and the index's next batch starts from its published cursor.
--    ///   Another batch on the index is a bug in the builder's one chain per index
--    ///   ([`AnotherBatch`](crate::index::falkordb::versioned::Discarded::AnotherBatch)), which the
--    ///   caller reports.
-+    ///   Another batch on the index is a bug in the builder's one job per generation
-+    ///   ([`AnotherBatch`](crate::index::falkordb::versioned::Discarded::AnotherBatch)), which
-+    ///   leaves nothing wrong.
-     ///
-     /// The commit changes no graph data and keeps the data version, so it does not make a writer's
-     /// fork stale ([`Self::is_stale`]).
-     ///
-     /// The caller holds the host's global lock, as a writer does to publish; it needs no
-     /// per-graph lock. The fit is made against the published version this commit loads, and the
--    /// version is published over that one: a batch that writers overtook is caught up, not
--    /// refused.
-+    /// version is published over that one: a batch that writers overtook is caught up, or, if that
-+    /// would do more than its limit allows, discarded; it is never refused as stale
-+    /// ([`CommitError::Stale`]) for being overtaken.
-     ///
-     /// # Errors
-     ///
-     /// [`CommitError::Invalid`] if [`Graph::validate`] refuses the version, [`CommitError::Stale`]
-     /// if another
-```
-
-**File**: `graph/src/index/falkordb/falkordb_index.rs` (modified, +36/-5)
-```diff
-@@ -318,7 +318,7 @@ impl VersionedIndex for IndexColumn {
-         place: impl Fn(u64) -> Option<BuildCursor>,
-         (removes, adds): &mut (EncodedTuples, EncodedTuples),
-     ) {
--        if let BuildState::Building { next, written } = state {
-+        if let BuildState::Building { next, written, .. } = state {
-             written.by_this_version.extend(log.iter().map(|w| w.id));
-             let next = *next;
-             // A batch reads an entity at or above the cursor when it reaches it, so its
-@@ -640,8 +640,8 @@ impl FalkorDbIndex {
- 
-     /// Create an empty numeric column in the `Building` state, its cursor at the start, replacing
-     /// any existing one. Indexer batches fill it from the start, live writes keep the part below
--    /// the cursor current, and reads fall through to RediSearch until the last batch flips it
--    /// `Ready`.
-+    /// the cursor current, and a read it would serve scans instead ([`ScanFilter`]) until the last
-+    /// batch flips it `Ready`.
-     pub fn create_building(
-         &mut self,
-         entity: EntityType,
-@@ -768,6 +768,33 @@ impl FalkorDbIndex {
-             .contains_key(&(label.clone(), attr.clone()))
-     }
- 
-+    /// Whether column `(entity, label, attr)` exists and is `Ready`: whether this version's index
-+    /// serves reads on it. A `Building` column answers with a [`ScanFilter`] instead.
-+    #[must_use]
-+    pub fn is_ready(
-+        &self,
-+        entity: EntityType,
-+        label: &Arc<String>,
-+        attr: &Arc<String>,
-+    ) -> bool {
-+        self.entry(entity, label, attr)
-+            .is_some_and(|entry| !entry.is_building())
-+    }
-+
-+    /// How many entities column `(entity, label, attr)`'s batches have read
-+    /// ([`BuildState::Building`]), or `None` if the column is `Ready` or does not exist.
-+    pub(crate) fn building_read(
-+        &self,
-+        entity: EntityType,
-+        label: &Arc<String>,
-+        attr: &Arc<String>,
-+    ) -> Option<u64> {
-+        match self.entry(entity, label, attr)?.state {
-+            BuildState::Building { read, .. } => Some(read),
-+            BuildState::Ready => None,
-+        }
-+    }
-+
-     /// Ready this version to be published: each index's sets of written entities are settled
-     /// ([`IndexEntry::publish`]).
-     pub(crate) fn publish(&mut self) {
-@@ -988,8 +1015,8 @@ impl FalkorDbIndex {
-         })
-     }
- 
--    /// Whether any column is still `Building`.
--    #[cfg(test)]
-+    /// Whether any column is still `Building`. Walks the columns' states without hashing a name,
-+    /// so a per-write check that only matters during a build costs next to nothing outside one.
-     #[must_use]
-     pub(crate) fn has_building_columns(&self) -> bool {
-         self.node_columns
-@@ -1185,6 +1212,8 @@ mod tests {
-                 name: (Node, column.clone()),
-                 work: tuples,
-                 next,
-+                read: 3,
-+                catch_up_limit: None,
-             }
-         };
-         let next = BuildCursor::Node(NodeId::from(3));
-@@ -1704,6 +1733,8 @@ mod tests {
-             name: (Node, (label.clone(), attr.clone())),
-             work,
-             next: Some(BuildCursor::Node(NodeId::from(11))),
-+            read: 11,
-+            catch_up_limit: None,
-         }));
-         assert_eq!(
-             idx.numeric(Node, &label, &attr)
-```
-
-**File**: `graph/src/index/falkordb/graph_writes.rs` (modified, +16/-14)
-```diff
-@@ -382,17 +382,15 @@ pub fn edges_deleted(
- 
- // ---- Index DDL ----
- 
--/// CREATE INDEX: build each attribute's column from the live graph, so the index serves reads as
--/// soon as CREATE INDEX returns. Only a Range index has native columns; any other type does
--/// nothing.
-+/// CREATE INDEX: create each attribute's column `Building`, its cursor at the start, and leave it to
-+/// the background builder ([`online_build`](super::online_build)), which the commit that publishes
-+/// the column hands it to. Until its last batch flips it `Ready`, the column serves no reads: the
-+/// planner does not use it ([`Graph::is_indexed`]), and `db.indexes()` reports the index under
-+/// construction. Only a Range index has native columns; any other type does nothing.
- ///
--/// Each column is created `Building` and filled by one indexer batch with no limit on its size
--/// ([`Graph::indexer_prepare`]), which reaches the end and flips it `Ready`. A batch into an empty
--/// column bulk-builds its tree, so this costs what building the column in one pass does.
--///
--/// Built here on the write thread, with the graph borrowed. It is never built through the
--/// RediSearch populate, which reaches the graph through the `Indexer`'s back-pointer. This index
--/// is part of the graph version, and keeping that reference out is the point.
-+/// The column is never built through the RediSearch populate, which reaches the graph through the
-+/// `Indexer`'s back-pointer. This index is part of the graph version, and keeping that reference
-+/// out is the point.
- pub fn create_index(
-     g: &mut Graph,
-     index_type: &IndexType,
-@@ -402,13 +400,15 @@ pub fn create_index(
- ) {
-     if *index_type == IndexType::Range {
-         for attr in attrs {
--            build_in_one_batch(g, entity, label, attr);
-+            g.falkordb_index.create_building(entity, label, attr);
-         }
-     }
- }
- 
- /// Create column `(entity, label, attr)` `Building`, replacing any column there, and fill it with
--/// one indexer batch with no limit on its size, which reaches the end and flips it `Ready`.
-+/// one indexer batch with no limit on its size, which reaches the end and flips it `Ready`. A batch
-+/// into an empty column bulk-builds its tree, so this costs what building the column in one pass
-+/// does.
- fn build_in_one_batch(
-     g: &mut Graph,
-     entity: EntityType,
-@@ -485,8 +485,10 @@ pub(crate) fn entity_tuples(
- }
- 
- /// Index population after an RDB load: build every column that a population snapshot of
--/// `label` covers, as CREATE INDEX does ([`create_index`]). `fields` maps each attribute to its
--/// index fields, and an attribute has a native column when one of its fields is a Range field.
-+/// `label` covers, before the loaded graph is published, in one indexer batch each. `fields` maps
-+/// each attribute to its index fields, and an attribute has a native column when one of its fields
-+/// is a Range field. Unlike CREATE INDEX ([`create_index`]), the column is `Ready` when this
-+/// returns: the RDB holds no record of which indexes were still building.
- pub fn populate(
-     g: &mut Graph,
-     entity: EntityType,
-```
-
-**File**: `graph/src/index/falkordb/mod.rs` (modified, +3/-0)
-```diff
-@@ -23,6 +23,9 @@ pub mod graph_writes;
- #[cfg(feature = "index-falkordb")]
- pub mod numeric;
- 
-+#[cfg(feature = "index-falkordb")]
-+pub mod online_build;
-+
- #[cfg(feature = "index-falkordb")]
- pub mod pending_writes;
- 
-```
-
-**File**: `graph/src/index/falkordb/numeric.rs` (modified, +11/-0)
-```diff
-@@ -526,6 +526,17 @@ impl NumericIndex {
-     pub fn tuples(&self) -> Vec<(u64, u64)> {
-         self.tree.range_tuples(0, u64::MAX).collect()
-     }
-+
-+    /// The column's leaf pages, shared with every version that holds them: for a test of when they
-+    /// are freed.
-+    #[cfg(test)]
-+    pub(crate) fn pages(&self) -> Vec<Arc<[u8]>> {
-+        self.tree
-+            .leaves()
-+            .into_iter()
-+            .map(|(_, page)| page)
-+            .collect()
-+    }
- }
- 
- #[cfg(test)]
-```
-
-**File**: `graph/src/index/falkordb/online_build.rs` (added, +566/-0)
-```diff
-@@ -0,0 +1,566 @@
-+//! The background index builder: builds every `Building` index, in every graph, in batches, on a
-+//! pool of its own.
-+//!
-+//! A commit that brings in a `Building` index starts a [`Job`] for it ([`MvccGraph::commit`]). A
-+//! job builds one generation of one index ([`IndexEntry::generation`]): it runs one batch on the
-+//! pool, and submits itself again while that generation is `Building`, unless the batch's version
-+//! was refused ([`Step::Failed`]). An index dropped, or dropped and created again, is another
-+//! generation, so its job ends, and the commit that created the new one started a job of its own.
-+//! Each generation is started once, so no two jobs build one index. A job holds its graph weakly:
-+//! once the graph is gone, so is the job. Nothing here knows about Redis: a batch publishes
-+//! through the builder's [`BuildHost`].
-+//!
-+//! **A batch holds no lock while it reads.** It reads on a new build version of the published one
-+//! ([`Graph::new_build_version`]), which only it holds, and then publishes through the host
-+//! ([`MvccGraph::commit_indexer_batch`]). What committed meanwhile decides how the batch goes in;
-+//! the rules writers and batches follow so that every published version stays correct, in whatever
-+//! order they commit, are on [`BuildState`](super::versioned::BuildState). A batch's commit keeps
-+//! the data version, so it never makes a writer's fork stale.
-+//!
-+//! **Stopping.** Only the Redis shutdown handler stops the builder, and only where the server tears
-+//! its modules down (`RS_GLOBAL_DTORS`: the sanitizer runs). [`stop`] waits a bounded time for the
-+//! pool's workers, since one may be waiting for the GIL, which the shutdown handler holds, and says
-+//! whether they all exited: the handler tears GraphBLAS down only then, so a worker left behind may
-+//! still free what it holds. A batch checks for the stop before it reads and again once it holds
-+//! what publishing needs: after the stop, one that has not started reading does not, and one that
-+//! waited to publish publishes nothing. One already reading goes on, inside the stop's wait or
-+//! left behind by it. The stop is for good.
-+//!
-+//! [`IndexEntry::generation`]: super::versioned::IndexEntry::generation
-+//! [`MvccGraph::commit`]: crate::graph::mvcc_graph::MvccGraph::commit
-+//! [`MvccGraph::commit_indexer_batch`]: crate::graph::mvcc_graph::MvccGraph::commit_indexer_batch
-+
-+use std::sync::atomic::{AtomicBool, Ordering};
-+use std::sync::{Arc, OnceLock, Weak};
-+use std::time::Duration;
-+
-+use super::versioned::{Discarded, IndexId, IndexerCommit, PreparedBatch};
-+use crate::graph::graph::Graph;
-+use crate::graph::mvcc_graph::{CommitError, MvccGraph};
-+use crate::threadpool::ThreadPool;
-+#[cfg(test)]
-+use parking_lot::{FairMutex, FairMutexGuard, Mutex};
-+
-+/// What the builder needs of the host its graphs live in: one for every graph, given to the builder
-+/// as it starts ([`start`]). The Redis module's takes the GIL; this crate's tests have one of
-+/// their own.
-+pub trait BuildHost: Send + Sync {
-+    /// Run `f`, which publishes a batch, holding what a writer holds to publish a version: the
-+    /// host's global lock.
-+    fn publish(
-+        &self,
-+        f: &mut dyn FnMut(),
-+    );
-+
-+    /// Report what an operator should see: a batch whose version was refused, after which its
-+    /// index's build stops. The default writes to stderr; the Redis host logs it.
-+    fn warn(
-+        &self,
-+        message: &str,
-+    ) {
-+        eprintln!("{message}");
-+    }
-+}
-+
-+/// The host of this crate's tests, without Redis: its global lock is a mutex of its own, in the
-+/// place of the GIL. A writer holds it to commit ([`Self::lock`]), and a batch publishes holding
-+/// it. Fair, so that writers committing back to back do not keep a batch out. Only tests use it,
-+/// until the crate runs on its own somewhere.
-+#[cfg(test)]
-+#[derive(Default)]
-+pub(crate) struct LocalHost {
-+    global: FairMutex<()>,
-+}
-+
-+#[cfg(test)]
-+impl LocalHost {
-+    /// The global lock, which a writer holds to commit.
-+    pub(crate) fn lock(&self) -> FairMutexGuard<'_, ()> {
-+        self.global.lock()
-+    }
-+}
-+
-+#[cfg(test)]
-+impl BuildHost for LocalHost {
-+    fn publish(
-+        &self,
-+        f: &mut dyn FnMut(),
-+    ) {
-+        let _global = self.lock();
-+        f();
-+    }
-+}
-+
-+/// How a job sizes its batches ([`Sizing::batch`]).
-+///
-+/// A build goes in batches, not in one pass, because it runs while writers write. Each batch's
-+/// commit catches up, under the host's global lock, on what writers changed in its index while it
-+/// read, and holds what it read in memory until then: a batch bounds both. A job's batches grow:
-+/// each reads as many entities as the index's batches have read so far, between `floor` and the
-+/// job's limit ([`Job::limit`]). With no writers they go 10,000, 10,000, 20,000, 40,000, ...,
-+/// doubling, and reach the 4M cap on the 11th, once 5.12M entities are
-```
-
----
-
-### Incident Patch 3: `2b690221` (2026-11-10)
-**Commit Message**: perf: SAVE no longer re-walks attributes per key or rebuilds edge matrices (#3438)
-
-* perf: SAVE no longer re-walks attributes per key or rebuilds edge matrices (#3433, #3434)
-
-- `AttributeStore::encode_with_range` jumps to the first entity of its
-  slice (`nth_live_id`: binary search on `deleted.rank`) and steps over
-  deleted ids in order, instead of walking from id 0 with a `contains`
-  per id for every virtual key: quadratic in the graph size.
-- The deleted-ids encoder seeks to its start the same way.
-- `Encode for Tensor` writes the committed base directly when no delta
-  is pending and no pair holds several edges, as `VersionedMatrix`
-  already does and as C does, instead of copying every edge out and
-  building a second matrix.
-- `Matrix::encode` unloads a private `dup()` instead of the shared
-  matrix, which read queries may be traversing lock-free during a
-  foreground SAVE / DUMP / GRAPH.COPY (#3434).
+Reverts the TCK part of #3722. test_tck.py no longer takes TCK_JUNIT_DIR,
+the two pytest jobs write the TCK's pytest JUnit file again, and
+count_results.py drops --behave, so the run summary counts the TCK as the
+one pytest test that runs it. The test-counts job stays continue-on-error.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* test: guard the source matrix during encode and the sliced treemap encode
+* test: one short wait_for_replica, used by every replica wait
 
-Copilot / cubic review: a Writer holding a shallow clone reads the matrix from
-inside write_buffer (fails when encode unloads the shared matrix i
+wait_for_replica ran each INFO on its own thread, over a fresh retry-free
+connection, so a hung server couldn't hold it past its deadline. RLTest and
+the CI job timeouts already catch a hung server, so it is back to a plain
+poll: read the primary's offset, then wait for the replica's link to be up
+and its offset to reach it.
 
-**File**: `graph/src/graph/attribute_store.rs` (modified, +110/-9)
+effects_common.py and test_replication.py each had their own copy of that
+offset poll. Both now call wait_for_replica. The effects copy didn't check
+the link; every call to it is made while the replica is attached.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci: drop the per-server test counts
+
+Reverts the rest of #3722's counting: tests/count_result
+
+**File**: `.github/workflows/_ci-pipeline.yml` (modified, +9/-89)
 ```diff
-@@ -1430,15 +1430,27 @@ impl AttributeStore {
-         count: u64,
-         offset: u64,
-     ) {
--        let mut skipped = 0u64;
--        let mut encoded = 0u64;
-+        if count == 0 {
-+            return;
-+        }
-+        // Seek straight to the `offset`-th live id. Walking from id 0 and skipping
-+        // `offset` live ids one by one made a multi-key save quadratic: each of the
-+        // ~N / VKEY_MAX_ENTITY_COUNT virtual keys re-walked every id before its
-+        // slice, which for a 117M-edge graph was ~90% of a 90 s SAVE.
-+        let Some(start) = nth_live_id(deleted, max_id, offset) else {
-+            return;
-+        };
+@@ -98,38 +98,13 @@ jobs:
+           path: target/release
+       - run: chmod +x target/release/libfalkordb.so
+       - name: Run tests
+-        id: pytest
+         run: |
+           . /data/venv/bin/activate
+-          RELEASE=1 pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv --junitxml=test-results/pytest.xml
++          RELEASE=1 pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv
+       - name: Run TCK tests
+-        id: tck
+         run: |
+           . /data/venv/bin/activate
+-          RELEASE=1 TCK_DONE=tck_done.txt TCK_JUNIT_DIR=test-results/tck pytest tests/tck/test_tck.py -s
+-      # tests/common.py starts the server with --logfile redis-test.log.
+-      # Counts for the run summary (tests/count_results.py, summed per server by
+-      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
+-      # failing cell still counts, including one whose setup failed before its
+-      # tests ran. STATUS is the job's, so any failed step marks the cell. The
+-      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
+-      # tests/common.py and the images default it: redis unless set.
+-      - name: Record test counts
+-        if: ${{ !cancelled() }}
+-        continue-on-error: true
+-        env:
+-          RUN: artifact, amd64
+-          STATUS: ${{ job.status }}
+-          NAME: test-counts-artifact
+-        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --junit test-results/pytest.xml --behave test-results/tck --logs redis-test.log --out "test-counts/$NAME.json"
+-      - name: Upload test counts
+-        if: ${{ !cancelled() }}
+-        continue-on-error: true
+-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+-        with:
+-          name: test-counts-artifact
+-          path: test-counts/
+-          retention-days: 7
++          RELEASE=1 TCK_DONE=tck_done.txt pytest tests/tck/test_tck.py -s
+   # Release flavour. The vehicle is the whole difference between the two events:
+   # a pull request tests the binary it just built, the queue tests the image it
+   # is about to promote. Same file list, same flavour config — two thin calls
+@@ -305,35 +280,6 @@ jobs:
  
--        for id in 0..=max_id {
--            if deleted.contains(id) {
--                continue;
--            }
--            if skipped < offset {
--                skipped += 1;
-+        // Deleted ids are visited in order alongside the id walk, rather than
-+        // probed with `contains` for every id.
-+        let mut deleted_iter = deleted.iter();
-+        deleted_iter.advance_to(start);
-+        let mut next_deleted = deleted_iter.next();
-+
-+        let mut encoded = 0u64;
-+        for id in start..=max_id {
-+            if next_deleted == Some(id) {
-+                next_deleted = deleted_iter.next();
-                 continue;
-             }
- 
-@@ -1462,6 +1474,35 @@ impl AttributeStore {
-     }
- }
- 
-+/// The `n`-th (0-based) id in `0..=max_id` that is not in `deleted`, or `None`
-+/// when there are not that many.
-+///
-+/// The number of live ids in `0..=x` is `x + 1 - deleted.rank(x)`, which is
-+/// monotone in `x`, so the answer is the smallest `x` where it exceeds `n` —
-+/// found by binary search in `O(log max_id)` rank queries.
-+fn nth_live_id(
-+    deleted: &RoaringTreemap,
-+    max_id: u64,
-+    n: u64,
-+) -> Option<u64> {
-+    // `rank(x) <= x + 1`, so this neither underflows nor overflows in u128.
-+    let live_through = |x: u64| u128::from(x) + 1 - u128::from(deleted.rank(x));
-+    let n128 = u128::from(n);
-+    if live_through(max_id) <= n128 {
-+        return None;
-+    }
-+    let (mut lo, mut hi) = (n, max_id);
-+    while lo < hi {
-+        let mid = lo + (hi - lo) / 2;
-+        if live_through(mid) > n128 {
-+            hi = mid;
-+        } else {
-+            lo = mid + 1;
-+        }
-+    }
-+    Some(lo)
-+}
-+
- impl Decode<19> for AttributeStore {
-     fn decode(_r: &mut dyn Reader) -> Result<Self, String> {
-         unimplemented!("use decode_with_count for AttributeStore")
-@@ -1974,7 +2015,7 @@ mod tests {
-         ops: Vec<Op>,
-     }
- 
--    #[derive(Clone)]
-+    #[derive(Clone, Debug, PartialEq)]
-     enum Op {
-         Unsigned(u64),
-         Signed(i64),
-@@ -2220,4 +2261,64 @@ mod tests {
-             "only the in-range attribute should have been stored"
-         );
-     }
-+
-+    /// A store split across virtual keys is encoded one `(count, offset)` slice
-+    /// at a time. However the live ids are sliced — deleted ids at the start, in
-+    /// runs, at the end, slices wider than what is left — the slices must
-+    /// concatenate to exactly the walk over every live id in order.
-+    #[test]
-+    fn encode_slices_concatenate_to_the_full_walk() {
-+        let max_id = 60u64;
-+        let deleted: RoaringTreemap = [0u64, 1, 7, 8, 9, 23, 40, 59, 60].into_iter().collect();
-+        let mut store = AttributeStore::default();
-+        // Every third id has an attribute, so spans and empty entities interleave.
-+        let mut data: Vec<(u64, Vec<(u16, Value)>)> = (0..=max_id)
-+            .filter(|id| id % 3 == 0 && !deleted.contains(*id))
-+            .map(|id| (id, vec![(0, Value::Int(id as i64))]))
-+            .collect();
-+        store.import_attrs_resolved(&mut data);
-+
-+        let mut expected = Recorder::default();
-+        let live: Vec<u64> = (0..=max_id).filter(|id| !deleted.contains(*id)).collect();
-+        for &id in &live {
-+            expected.write_unsigned(id);
-+            if id % 3 == 0 {
-+                expected.write_unsigned(1);
-+                expected.write_unsigned(0);
-+                Value::Int(id as i64).encode(&mut expected);
-+            } else {
-+                expected.write_unsigned(0);
-+            }
-+        }
-+
-+        let total = live.len() as u64;
-+        for slice in [1u64, 2, 5, 13, total, total + 7] {
-+            let mut got = Recorder::default();
-+            let mut offset = 0;
-+            while offset < total {
-+                let count = slice.min(total - offset);
-+                store.encode_with_range(&mut got, &deleted, max_id, count, offset);
-+                offset += count;
-+            }
-+            assert_eq!(got.ops, expected.ops, "slices of {slice} disagree");
-+        }
-+
-+        // An offset past the last live id writes nothing.
-+        let mut past = Recorder::default();
-+        store.encode_with_range(&mut past, &deleted, max_id, 5, total);
-+        assert!(past.ops.is_empty());
-+    }
-+
-+    #[test]
-+    fn nth_live_id_skips_deleted_ids() {
-+        let deleted: RoaringT
-```
-
-**File**: `graph/src/graph/graphblas/matrix.rs` (modified, +58/-4)
-```diff
-@@ -529,6 +529,11 @@ impl<T> Encode<19> for Matrix<T> {
-         &self,
-         w: &mut dyn Writer,
-     ) {
-+        // Unloading empties the matrix it is applied to, and a foreground SAVE,
-+        // DUMP or GRAPH.COPY encodes the published version while read queries
-+        // traverse it lock-free. So unload a private copy — a memcpy of the
-+        // arrays — and free it with the container, never touching `self`.
-+        let copy = self.dup();
-         unsafe {
-             let mut container: MaybeUninit<super::GxB_Container> = MaybeUninit::uninit();
-             let info = GxB_Container_new(container.as_mut_ptr());
-@@ -539,7 +544,7 @@ impl<T> Encode<19> for Matrix<T> {
-             );
-             let container = container.assume_init();
- 
--            let info = GxB_unload_Matrix_into_Container(self.inner(), container, null_mut());
-+            let info = GxB_unload_Matrix_into_Container(copy.inner(), container, null_mut());
-             debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
- 
-             // Write container struct bytes. Its pointer fields are heap
-@@ -568,9 +573,7 @@ impl<T> Encode<19> for Matrix<T> {
-             ManuallyDrop::new(Vector::<bool>::from((*container).i)).encode(w);
-             ManuallyDrop::new(Vector::<bool>::from((*container).b)).encode(w);
- 
--            let info = GxB_load_Matrix_from_Container(self.inner(), container, null_mut());
--            debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
+   # Build the asan instrumented runtime image (amd64-only). Single cell,
+   # no manifest needed (push directly to the bare tag).
+-  # Adds up, per server, the passed, failed and skipped tests every suite cell
+-  # recorded (tests/count_results.py, `test-counts-*` artifacts), and writes
+-  # them to the run summary, with the server versions the cells' logs name.
+-  # A report, not a gate: each cell's own result gates. continue-on-error, so
+-  # a failure here (an artifact download, the summary) can't fail this
+-  # workflow and, through ci-gate, a pull request whose tests all passed.
+-  test-counts:
+-    needs: [test, flow-release, flow-release-image, flow-coverage, test-image, flow-asan]
+-    if: ${{ !cancelled() }}
+-    continue-on-error: true
+-    runs-on: ubuntu-latest
+-    timeout-minutes: 10
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+-        with:
+-          persist-credentials: false
+-          sparse-checkout: tests/count_results.py
+-          sparse-checkout-cone-mode: false
+-      - name: Download the recorded counts
+-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+-        with:
+-          pattern: test-counts-*
+-          path: test-counts
+-          merge-multiple: true
+-      - name: Summarise per server
+-        run: |
+-          mkdir -p test-counts
+-          python3 tests/count_results.py summary test-counts | tee -a "$GITHUB_STEP_SUMMARY"
 -
-+            // Frees the copy's arrays with the container; `copy` is left empty.
-             let mut c = container;
-             let info = GxB_Container_free(&raw mut c);
-             debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
-@@ -2268,4 +2271,55 @@ mod tests {
-         // encoding unloads and reloads the matrix; it must be intact
-         assert_eq!(m.get(1, 2), Some(true));
-     }
-+
-+    /// A foreground SAVE / DUMP / GRAPH.COPY encodes a matrix that read queries
-+    /// share (a shallow clone) while they traverse it. The source must stay
-+    /// readable for the whole encode, not only after it returns: a Writer
-+    /// holding a clone reads the entries from inside `write_buffer`.
-+    #[test]
-+    fn source_matrix_stays_readable_while_encoding() {
-+        struct ReadsSource {
-+            reader: Matrix<bool>,
-+            seen: usize,
-+        }
-+        impl super::Writer for ReadsSource {
-+            fn write_unsigned(
-+                &mut self,
-+                _: u64,
-+            ) {
-+            }
-+            fn write_signed(
-+                &mut self,
-+                _: i64,
-+            ) {
-+            }
-+            fn write_double(
-+                &mut self,
-+                _: f64,
-+            ) {
-+            }
-+            fn write_buffer(
-+                &mut self,
-+                _: &[u8],
-+            ) {
-+                assert_eq!(self.reader.get(1, 2), Some(true));
-+                assert_eq!(self.reader.get(5, 6), Some(true));
-+                assert_eq!(self.reader.get(3, 3), None);
-+                self.seen += 1;
-+            }
-+        }
-+
-+        ensure_init();
-+        let mut m = Matrix::<bool>::new(8, 8);
-+        m.set(1, 2, true);
-+        m.set(5, 6, true);
-+        m.wait();
-+        let mut w = ReadsSource {
-+            reader: m.clone(),
-+            seen: 0,
-+        };
-+        super::Encode::encode(&m, &mut w);
-+        assert!(w.seen > 0, "the writer never ran");
-+        assert_eq!(m.get(1, 2), Some(true));
-+    }
- }
+   build-rc-asan-image:
+     if: ${{ inputs.use_image }}
+     uses: ./.github/workflows/_build-flavour.yml
+@@ -405,24 +351,20 @@ jobs:
+           # The module crate's own unit tests (the RDB codec); `--lib` skips doctests.
+           CARGO_PROFILE_RELEASE_LTO=false cargo test --release -p falkordb-rs --lib
+       - name: Run pytest tests against the RC image
+-        id: pytest
+         run: |
+           . /data/venv/bin/activate
+-          pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv --junitxml=test-results/pytest.xml
++          pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv
+       - name: Run TCK tests against the RC image
+-        id: tck
+         run: |
+           . /data/venv/bin/activate
+-          TCK_DONE=tck_done.txt TCK_JUNIT_DIR=test-results/tck pytest tests/tck/test_tck.py -s
+-      # Capture the GHA service container's stdout/stderr so the run carries
+-      # the server lifecycle, module RedisModule_Log output, and any
++          TCK_DONE=tck_done.txt pytest tests/tck/test_tck.py -s
++      # Capture the GHA service container's stdout/stde
 ```
 
-**File**: `graph/src/graph/graphblas/serialization.rs` (modified, +68/-2)
+**File**: `.github/workflows/_flow-artifact.yml` (modified, +1/-28)
 ```diff
-@@ -184,8 +184,14 @@ impl Encode<19> for RoaringTreemap {
-         offset: u64,
-     ) {
-         let mut buf = Vec::with_capacity(count as usize * 8);
--        for id in self.iter().skip(offset as usize).take(count as usize) {
--            buf.extend_from_slice(&id.to_le_bytes());
-+        // Seek to the `offset`-th id instead of skipping up to it, so a save split
-+        // across many virtual keys does not re-walk every earlier id per key.
-+        if let Some(first) = self.select(offset) {
-+            let mut iter = self.iter();
-+            iter.advance_to(first);
-+            for id in iter.take(count as usize) {
-+                buf.extend_from_slice(&id.to_le_bytes());
-+            }
-         }
-         w.write_buffer(&buf);
-     }
-@@ -266,6 +272,66 @@ mod tests {
-         }
-     }
- 
-+    struct Collect(Vec<u8>);
-+
-+    impl Writer for Collect {
-+        fn write_unsigned(
-+            &mut self,
-+            _: u64,
-+        ) {
-+        }
-+        fn write_signed(
-+            &mut self,
-+            _: i64,
-+        ) {
-+        }
-+        fn write_double(
-+            &mut self,
-+            _: f64,
-+        ) {
-+        }
-+        fn write_buffer(
-+            &mut self,
-+            d: &[u8],
-+        ) {
-+            self.0.extend_from_slice(d);
-+        }
-+    }
-+
-+    /// A save split across virtual keys encodes the ids in slices; the slices,
-+    /// seeked to a nonzero offset, must concatenate to the whole encode, including
-+    /// ids spread over several 32-bit buckets and a slice past the end.
-+    #[test]
-+    fn deleted_entities_slices_concatenate_to_the_full_encode() {
-+        let ids = [
-+            0u64,
-+            3,
-+            4,
-+            70_000,
-+            70_001,
-+            1 << 32,
-+            (1 << 32) + 9,
-+            (3 << 32) + 5,
-+            u64::MAX,
-+        ];
-+        let bitmap: RoaringTreemap = ids.iter().copied().collect();
-+        let mut whole = Collect(Vec::new());
-+        bitmap.encode(&mut whole);
-+        assert_eq!(whole.0.len(), ids.len() * 8);
-+        for step in [1u64, 2, 4, 100] {
-+            let mut sliced = Collect(Vec::new());
-+            let mut offset = 0;
-+            while offset < bitmap.len() {
-+                bitmap.encode_with_range(&mut sliced, step, offset);
-+                offset += step;
-+            }
-+            assert_eq!(sliced.0, whole.0, "slices of {step}");
-+        }
-+        let mut past = Collect(Vec::new());
-+        bitmap.encode_with_range(&mut past, 5, bitmap.len());
-+        assert!(past.0.is_empty());
-+    }
-+
-     /// `count * 8` used to wrap for a payload count of `2^61`, match an empty
-     /// buffer and index past its end.
-     #[test]
+@@ -99,16 +99,11 @@ jobs:
+           path: ${{ inputs.artifact_path }}
+       - run: chmod +x ${{ inputs.artifact_path }}/libfalkordb.so
+       - name: Run Flow test - ${{ matrix.test_file }} (${{ inputs.flavour }}, ${{ matrix.arch }})
+-        id: flow
+-        # bash, for pipefail: the tee keeps RLTest's output for the counts
+-        # below without hiding flow.sh's exit status.
+-        shell: bash
+         env:
+           TEST_FILE: ${{ matrix.test_file }}
+         run: |
+           . /data/venv/bin/activate
+-          mkdir -p test-results
+-          TEST="$TEST_FILE" FAIL_FAST=1 ./flow.sh 2>&1 | tee test-results/flow.log
++          TEST="$TEST_FILE" FAIL_FAST=1 ./flow.sh
+       - name: Collect coverage (profraw -> lcov)
+         if: ${{ !cancelled() && inputs.collect_coverage }}
+         env:
+@@ -136,28 +131,6 @@ jobs:
+           files: ./codecov.txt
+           flags: flow-${{ inputs.flavour }}
+           disable_search: true
+-      # Counts for the run summary (tests/count_results.py, summed per server by
+-      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
+-      # failing cell still counts, including one whose setup failed before its
+-      # tests ran. STATUS is the job's, so any failed step marks the cell. The
+-      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
+-      # tests/common.py and the images default it: redis unless set.
+-      - name: Record test counts
+-        if: ${{ !cancelled() }}
+-        continue-on-error: true
+-        env:
+-          RUN: ${{ inputs.flavour }} flow (artifact, ${{ matrix.arch }})
+-          STATUS: ${{ job.status }}
+-          NAME: test-counts-${{ inputs.flavour }}-artifact-${{ strategy.job-index }}
+-        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --rltest test-results/flow.log --logs tests/flow/logs --out "test-counts/$NAME.json"
+-      - name: Upload test counts
+-        if: ${{ !cancelled() }}
+-        continue-on-error: true
+-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+-        with:
+-          name: test-counts-${{ inputs.flavour }}-artifact-${{ strategy.job-index }}
+-          path: test-counts/
+-          retention-days: 7
+       - name: Upload flow logs on failure
+         if: failure()
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
 ```
 
-**File**: `graph/src/graph/graphblas/tensor.rs` (modified, +90/-29)
+**File**: `.github/workflows/_flow-flavour.yml` (modified, +4/-60)
 ```diff
-@@ -1482,39 +1482,54 @@ impl Encode<19> for Tensor {
-         // inline state. Single-edge pairs store the edge id directly; multi-edge
-         // pairs (inline value == MULTI_EDGE) store `(edge_count | MSB)` and push
-         // their full id list from `me` into the tensor section below.
--        let mut f_rows: Vec<u64> = Vec::new();
--        let mut f_cols: Vec<u64> = Vec::new();
--        let mut f_vals: Vec<u64> = Vec::new();
-+        //
-+        // When there is nothing pending in the deltas and no pair holds more than
-+        // one edge, the base `m` already *is* that matrix — every value an edge
-+        // id with the MSB clear — so it is written as is, the way
-+        // `VersionedMatrix::encode` writes its base. Rebuilding it through an
-+        // iterator and `build` costs three `u64` per edge in scratch vectors plus
-+        // a second matrix (gigabytes, and most of a SAVE, at 10^8 edges).
-+        self.wait_fwd();
-         let mut multi: Vec<(u64, u64, Vec<u64>)> = Vec::new();
--        for (src, dst, inline) in self.fwd_iter(0, u64::MAX) {
--            f_rows.push(src);
--            f_cols.push(dst);
--            if inline == MULTI_EDGE {
--                let (block, key) = compound_key(src, dst);
--                let ids: Vec<u64> = self
--                    .me_block(block)
--                    .map(|me| me.iter(key, key).map(|(_, id)| id).collect())
--                    .unwrap_or_default();
--                f_vals.push(ids.len() as u64 | MSB_MASK);
--                multi.push((src, dst, ids));
--            } else {
--                f_vals.push(inline);
-+        if self.dp.nvals() == 0 && self.dm.nvals() == 0 && !self.has_multi_edge() {
-+            let empty = Matrix::<u64>::new(nrows, ncols);
-+            self.m.encode(w);
-+            empty.encode(w); // delta-plus
-+            empty.encode(w); // delta-minus
-+        } else {
-+            let mut f_rows: Vec<u64> = Vec::new();
-+            let mut f_cols: Vec<u64> = Vec::new();
-+            let mut f_vals: Vec<u64> = Vec::new();
-+            for (src, dst, inline) in self.fwd_iter(0, u64::MAX) {
-+                f_rows.push(src);
-+                f_cols.push(dst);
-+                if inline == MULTI_EDGE {
-+                    let (block, key) = compound_key(src, dst);
-+                    let ids: Vec<u64> = self
-+                        .me_block(block)
-+                        .map(|me| me.iter(key, key).map(|(_, id)| id).collect())
-+                        .unwrap_or_default();
-+                    f_vals.push(ids.len() as u64 | MSB_MASK);
-+                    multi.push((src, dst, ids));
-+                } else {
-+                    f_vals.push(inline);
-+                }
-             }
--        }
+@@ -123,16 +123,11 @@ jobs:
+           # that token is the base repository's.
+           persist-credentials: false
+       - name: Run Flow test - ${{ matrix.test_file }} (${{ inputs.flavour }}, ${{ matrix.arch }})
+-        id: flow
+-        # bash, for pipefail: the tee keeps RLTest's output for the counts
+-        # below without hiding flow.sh's exit status.
+-        shell: bash
+         env:
+           TEST_FILE: ${{ matrix.test_file }}
+         run: |
+           . /data/venv/bin/activate
+-          mkdir -p test-results
+-          TEST="$TEST_FILE" FAIL_FAST=1 RELEASE=1 ./flow.sh 2>&1 | tee test-results/flow.log
++          TEST="$TEST_FILE" FAIL_FAST=1 RELEASE=1 ./flow.sh
+       - name: Collect coverage (profraw → lcov)
+         if: ${{ !cancelled() && inputs.collect_coverage }}
+         env:
+@@ -174,38 +169,14 @@ jobs:
+           token: ${{ secrets.CODECOV_TOKEN }}
+           files: ./codecov.txt
+           disable_search: true
+-      # On every outcome, not only on failure: the counts below read the
+-      # server's start-up banner from these logs.
+-      - name: Capture service container logs
+-        if: ${{ !cancelled() }}
++      - name: Capture service container logs on failure
++        if: failure()
+         run: |
+           mkdir -p tests/flow/logs
+           for cid in $(docker ps -aq); do
+             name=$(docker inspect -f '{{.Name}}' "$cid" 2>/dev/null | sed 's|^/||')
+             docker logs "$cid" > "tests/flow/logs/service-${name:-$cid}.log" 2>&1 || true
+           done
+-      # Counts for the run summary (tests/count_results.py, summed per server by
+-      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
+-      # failing cell still counts, including one whose setup failed before its
+-      # tests ran. STATUS is the job's, so any failed step marks the cell. The
+-      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
+-      # tests/common.py and the images default it: redis unless set.
+-      - name: Record test counts
+-        if: ${{ !cancelled() }}
+-        continue-on-error: true
+-        env:
+-          RUN: ${{ inputs.flavour }} flow (image, ${{ matrix.arch }})
+-          STATUS: ${{ job.status }}
+-          NAME: test-counts-${{ inputs.flavour }}-svc-${{ strategy.job-index }}
+-        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --rltest test-results/flow.log --logs tests/flow/logs --out "test-counts/$NAME.json"
+-      - name: Upload test counts
+-        if: ${{ !cancelled() }}
+-        continue-on-error: true
+-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+-        with:
+-          name: test-counts-${{ inputs.flavour }}-svc-${{ strategy.job-index }}
+-          path: test-counts/
+-          retention-days: 7
+       - name: Upload flow logs on failure
+         if: failure()
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+@@ -273,16 +244,11 @@ jobs:
+           # already local, so hand the credential back first.
+           docker logout ghcr.io
+       - name: Run Flow test - ${{ matrix.test_file }} (${{ inputs.flavour }}, ${{ matrix.arch }})
+-        id: flow
+-        # bash, for pipefail: the tee keeps RLTest's output for the counts
+-        # below without hiding flow.sh's exit status.
+-        shell: bash
+         env:
+           TEST_FILE: ${{ matrix.test_file }}
+         run: |
+           . /data/venv/bin/activate
+-          mkdir -p test-results
+-          TEST="$TEST_FILE" FAIL_FAST=1 RELEASE=1 ./flow.sh 2>&1 | tee test-results/flow.log
++          TEST="$TEST_FILE" FAIL_FAST=1 RELEASE=1 ./flow.sh
+       - name: Collect coverage (profraw → lcov)
+         if: ${{ !cancelled() && inputs.collect_coverage }}
+         env:
+@@ -307,28 +273,6 @@ jobs:
+           token: ${{ secrets.CODECOV_TOKEN }}
+           files: ./codecov.txt
+           disable_search: true
+-      # Counts for the run summary (tests/count_results.py, summed per server by
+-      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
+-      # failing cell still counts, including one whose setup failed before its
+-      # tests ran. STATUS is the job's, so any failed step marks the cell. The
+-      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
+-      # tests/common.py and the images default it: redis unless set.
+-      - name: Record test counts
+-        if: ${{ !cancelled() }}
+-        continue-on-error: true
+-        env:
+-          RUN: ${{ inputs.flavour }} flow (image, ${{ matrix.arch }})
+-          STATUS: ${{ job.status }}
+-          NAME: test-counts-${{ inputs.flavour }}-spawn-${{ strategy.job-index }}
+-        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --rltest test-results/flow.log --logs redis-logs tests/flow/logs --out "test-counts/$NAME.json"
+-      -
+```
+
+**File**: `tests/count_results.py` (removed, +0/-243)
+```diff
+@@ -1,243 +0,0 @@
+-#!/usr/bin/env python3
+-"""Count passed, failed and skipped tests per server, for the CI run summary.
+-
+-Each CI cell that runs a suite records what it ran:
+-
+-    count_results.py record --server valkey --run "release flow (image, amd64)" \\
+-        --rltest flow.log --logs tests/flow/logs --status failure --out counts/x.json
+-    count_results.py record --server redis --run "image" \\
+-        --junit e2e.xml tck.xml --logs tests/flow/logs --out counts/y.json
+-
+-and one job adds them up:
+-
+-    count_results.py summary counts/ >> "$GITHUB_STEP_SUMMARY"
+-
+-A record is a JSON list of rows: server, the version its start-up banner names,
+-the run (how the cell ran), the suite, and the counts. RLTest output gives the
+-counts from its per-test verdict lines (`[PASS]`, `[FAIL]`, `[ERROR]`,
+-`[SKIP]`); pytest gives them through `--junitxml`, split by test file into the
+-e2e, function, MVCC and concurrency suites; TCK counts its scenarios from
+-Behave's own JUnit reports (tests/tck/test_tck.py writes them to
+-TCK_JUNIT_DIR), not the one pytest test that runs them all.
+-
+-A cell whose test step failed but recorded no failed test (the harness died, a
+-class's `__init__` raised, the server crashed between tests) records one failed
+-test named for the cell, so a broken cell never reads as a clean one.
+-"""
+-
+-import argparse
+-import json
+-import os
+-import re
+-import sys
+-import xml.etree.ElementTree as ET
+-from collections import defaultdict
+-
+-ANSI = re.compile(r"\x1b\[[0-9;]*m")
+-# The banner every Redis or Valkey start logs, e.g.
+-# `Valkey version=9.1.2, bits=64, commit=00000000, modified=0, pid=9, just started`.
+-BANNER = re.compile(r"\b(Valkey|Redis) version=([0-9][0-9A-Za-z.\-]*)")
+-VERDICTS = {"[PASS]": "passed", "[FAIL]": "failed", "[ERROR]": "failed", "[SKIP]": "skipped"}
+-# pytest file name -> the suite name the issue tracker and the summary use.
+-PYTEST_SUITES = {
+-    "test_e2e": "e2e",
+-    "test_functions": "function",
+-    "test_mvcc": "MVCC",
+-    "test_concurrency": "concurrency",
+-    "test_tck": "TCK",
+-}
+-
+-
+-def empty():
+-    return {"passed": 0, "failed": 0, "skipped": 0}
+-
+-
+-def count_rltest(text):
+-    """Counts from RLTest output. RLTest prints each test's verdict on a line of
+-    its own, right under the test's name, so counting those lines counts tests;
+-    the failure summary at the end repeats names, not verdicts."""
+-    counts = empty()
+-    for line in ANSI.sub("", text).splitlines():
+-        key = VERDICTS.get(line.strip())
+-        if key:
+-            counts[key] += 1
+-    return counts
+-
+-
+-def suite_of(case):
+-    """The suite a pytest testcase belongs to, from its file or class name."""
+-    where = case.get("file") or case.get("classname") or ""
+-    for part in re.split(r"[./\\]", where):
+-        if part in PYTEST_SUITES:
+-            return PYTEST_SUITES[part]
+-    return "pytest"
+-
+-
+-def junit_files(paths):
+-    """The given files, and the .xml files in the given directories."""
+-    for path in paths:
+-        if os.path.isdir(path):
+-            for root, _, names in os.walk(path):
+-                yield from (os.path.join(root, n) for n in sorted(names) if n.endswith(".xml"))
+-        else:
+-            yield path
+-
+-
+-def count_junit(paths, suite=None):
+-    """Counts per suite from JUnit XML files: pytest's --junitxml, split by
+-    test file, or, with `suite`, every testcase under that one suite (Behave's
+-    per-scenario reports, one file per feature, for TCK)."""
+-    suites = defaultdict(empty)
+-    for path in junit_files(paths):
+-        if not os.path.exists(path):
+-            print(f"count_results: {path} does not exist, skipped", file=sys.stderr)
+-            continue
+-        try:
+-            root = ET.parse(path).getroot()
+-        except ET.ParseError as e:
+-            # A truncated or empty file (pytest killed mid-run): report it and
+-            # count nothing from it, so the caller's --status failure fallback
+-            # counts the cell instead of the record crashing.
+-            print(f"count_results: {path} is not valid JUnit XML ({e}), skipped", file=sys.stderr)
+-            continue
+-        for case in root.iter("testcase"):
+-            counts = suites[suite or suite_of(case)]
+-            if case.find("skipped") is not None:
+-                counts["skipped"] += 1
+-            elif case.find("failure") is not None or case.find("error") is not None:
+-                counts["failed"] += 1
+-            else:
+-                counts["passed"] += 1
+-    return dict(suites)
+-
+-
+-def banner_versions(paths):
+-    """`{server: {versions}}` from the start-up banners in the given files and
+-    directories, the same banners tests/assert_server_log.sh checks."""
+-    found = defaultdict(set)
+-    files = []
+-    for path in paths:
+-        if os.path.isdir(path):
+-            for root, _, names in os.walk(path):
+-                files.extend(os.path.join(root, n) for n in names)
+-        elif os.path.isfile(path):
+-          
+```
+
+**File**: `tests/flow/common.py` (modified, +0/-73)
+```diff
+@@ -4,7 +4,6 @@
+ import subprocess
+ import sys
+ import tempfile
+-import threading
+ import time
+ import uuid
+ from functools import wraps
+@@ -857,75 +856,3 @@ def assert_error_reply(env, conn, *cmd):
+         msg = str(e)
+     env.assertTrue(conn.ping())
+     return msg
+-
+-
+-def wait_for_replica(primary, replica, timeout=30):
+-    """Block until `replica` has applied everything `primary` has propagated so
+-    far, whichever connection or module thread made the writes. Call it after
+-    the writes it should cover.
+-
+-    `WAIT` can't promise that. It waits only up to the offset of the calling
+-    connection's last write, so it doesn't cover later writes made through
+-    another connection (such as a FalkorDB client's pool) or by a module
+-    thread. And when the caller has written nothing, it counts any replica the
+-    primary has marked online, which can be before the replica has loaded its
+-    initial sync. So read the primary's offset, then wait for the replica's
+-    link to be up and its offset to reach it."""
+-    deadline = time.time() + timeout
+-
+-    def bounded_info(conn):
+-        # Bound each INFO, connection handshake included, by the time left in
+-        # the budget, so an unresponsive server can't block past the deadline.
+-        # A new connection does several reads before INFO's (CLIENT SETINFO,
+-        # and AUTH or SELECT when set), each under its own socket timeout, so
+-        # socket timeouts alone can't promise that. Run the call on a thread
+-        # and stop waiting for it at the deadline. A thread given up on is
+-        # abandoned: it is a daemon, and it and its connection may linger
+-        # until its socket timeouts expire. A fresh client is used, with
+-        # retries off, so the caller's connection and settings are untouched.
+-        left = deadline - time.time()
+-        if left <= 0:
+-            raise redis.exceptions.TimeoutError("wait_for_replica deadline passed")
+-        kwargs = dict(conn.connection_pool.connection_kwargs)
+-        kwargs.update(socket_timeout=left, socket_connect_timeout=left,
+-                      retry=NO_RETRY, retry_on_error=[],
+-                      retry_on_timeout=False)
+-        pool = redis.ConnectionPool(
+-            connection_class=conn.connection_pool.connection_class, **kwargs)
+-        result = {}
+-
+-        def run():
+-            client = redis.Redis(connection_pool=pool)
+-            try:
+-                result["info"] = client.info("replication")
+-            except Exception as e:
+-                result["error"] = e
+-            finally:
+-                client.close()
+-                pool.disconnect()
+-
+-        t = threading.Thread(target=run, daemon=True)
+-        t.start()
+-        t.join(left)
+-        if t.is_alive():
+-            raise redis.exceptions.TimeoutError("INFO did not reply within the deadline")
+-        if "error" in result:
+-            raise result["error"]
+-        return result["info"]
+-
+-    target = bounded_info(primary)["master_repl_offset"]
+-    info = {}
+-    while time.time() < deadline:
+-        try:
+-            info = bounded_info(replica)
+-        except (redis.exceptions.TimeoutError, redis.exceptions.ConnectionError):
+-            info = {}
+-        else:
+-            if (info.get("master_link_status") == "up"
+-                    and info.get("slave_repl_offset", -1) >= target):
+-                return
+-        time.sleep(0.01)
+-    raise AssertionError(
+-        f"replica did not reach the primary's offset {target} within {timeout}s "
+-        f"(link {info.get('master_link_status')}, "
+-        f"offset {info.get('slave_repl_offset')})")
+```
+
+**File**: `tests/flow/test_constraint.py` (modified, +6/-8)
+```diff
+@@ -1232,8 +1232,8 @@ def __init__(self):
+         # clear DB
+         self.source.delete(GRAPH_ID)
  
--        // Forward VersionedMatrix layout: base (effective), empty delta-plus,
--        // empty delta-minus. Folding dp into the base keeps the on-disk form
--        // canonical and matches what decode expects.
--        let empty = Matrix::<u64>::new(nrows, ncols);
--        if f_rows.is_empty() {
--            empty.encode(w);
--        } else {
--            let mut fm = Matrix::<u64>::new(nrows, ncols);
--            fm.build(&f_rows, &f_cols, &f_vals);
--            fm.encode(w);
-+            // Forward VersionedMatrix layout: base (effective), empty delta-plus,
-+            // empty delta-minus. Folding dp into the base keeps the on-disk form
-+            // canonical and matches what decode expects.
-+            let empty = Matrix::<u64>::new(nrows, ncols);
-+            if f_rows.is_empty() {
-+                empty.encode(w);
-+            } else {
-+                let mut fm = Matrix::<u64>::new(nrows, ncols);
-+                fm.build(&f_rows, &f_cols, &f_vals);
-+                fm.encode(w);
-+            }
-+            empty.encode(w); // delta-plus
-+            empty.encode(w); // delta-minus
-         }
--        empty.encode(w); // delta-plus
--        empty.encode(w); // delta-minus
+-        # wait for the replica's initial sync to complete
+-        wait_for_replica(self.source, self.replica)
++        # the WAIT command forces master slave sync to complete
++        self.source.execute_command("WAIT", 1, 0)
  
-         let total = self.edge_count();
-         w.write_unsigned(total);
-@@ -2493,6 +2508,52 @@ mod tests {
-         }
-     }
+     def monitor_thread(self):
+         global MONITOR_ATTACHED
+@@ -1296,13 +1296,12 @@ def test_01_constraint_replication(self):
+         # `test_effects_ddl.py` pins the per-shape announcement counts, where
+         # the payloads are read off the wire rather than counted through
+         # MONITOR.
+-        wait_for_replica(self.source, self.replica)
++        self.source.execute_command("WAIT", 1, 0)
  
-+    /// A single-edge tensor with nothing pending in its deltas is written
-+    /// straight from its base matrix; one with pending deltas is rebuilt from
-+    /// the effective view. Both must decode to the same edges.
-+    #[test]
-+    fn encode_decode_round_trips_with_and_without_pending_deltas() {
-+        ensure_init();
-+        let round_trip = |t: &Tensor| {
-+            let mut tape = Tape::default();
-+            t.encode(&mut tape);
-+            let mut back = Tensor::decode(&mut tape).expect("decode");
-+            assert!(tape.ops.is_empty(), "decode left part of the stream");
-+            back.rebuild_backward();
-+            back.wait();
-+            back
-+        };
-+        let edges = |t: &Tensor| {
-+            let mut e: Vec<(u64, u64, u64)> = t.fwd_iter(0, u64::MAX).collect();
-+            e.sort_unstable();
-+            e
-+        };
+         replica_g = Graph(self.replica, GRAPH_ID)
+         deadline = time.time() + 30
+         while time.time() < deadline:
+-            wait_for_replica(self.source, self.replica,
+-                             timeout=max(deadline - time.time(), 0.01))
++            self.source.execute_command("WAIT", 1, 0)
+             cs = list_constraints(replica_g)
+             if len(cs) == 6 and all(c.status == 'OPERATIONAL' for c in cs):
+                 break
+@@ -1348,16 +1347,15 @@ def test_02_async_validation_reaches_operational_on_replica(self):
+         # validates synchronously on the main thread and never spawns.
+         lbl = 'AsyncValidated'
+         self.g.query(f"UNWIND range(1, 10500) AS x CREATE (:{lbl} {{v: x}})")
+-        wait_for_replica(self.source, self.replica)
++        self.source.execute_command("WAIT", 1, 0)
+ 
+         create_mandatory_node_constraint(self.g, lbl, 'v', sync=True)
+ 
+         replica_g = Graph(self.replica, GRAPH_ID)
+         deadline = time.time() + 30
+         c = None
+         while time.time() < deadline:
+-            wait_for_replica(self.source, self.replica,
+-                             timeout=max(deadline - time.time(), 0.01))
++            self.source.execute_command("WAIT", 1, 0)
+             c = get_constraint(replica_g, 'MANDATORY', 'NODE', lbl, 'v')
+             if c is not None and c.status != 'UNDER CONSTRUCTION':
+                 break
+```
+
+**File**: `tests/flow/test_intern_string.py` (modified, +4/-3)
+```diff
+@@ -440,9 +440,9 @@ def __init__(self):
+         self.source_con.execute_command("GRAPH.CONFIG", "SET", 'ASYNC_DELETE', 'no')
+         self.replica_con.execute_command("GRAPH.CONFIG", "SET", 'ASYNC_DELETE', 'no')
+ 
+-        # clear DB, and wait for the replica's initial sync to complete
++        # clear DB
+         self.conn.flushall()
+-        wait_for_replica(self.source_con, self.replica_con)
++        self.source_con.execute_command("WAIT", "1", "0")
+ 
+     def tearDown(self):
+         # clear DB
+@@ -458,7 +458,8 @@ def query_and_wait(self, q, p=None):
+ 
+         res = self.graph.query(q, p)
+ 
+-        wait_for_replica(self.source_con, self.replica_con)
++        # the WAIT command forces master slave sync to complete
++        self.source_con.execute_command("WAIT", "1", "0")
+ 
+         return res
+ 
+```
+
+**File**: `tests/tck/test_tck.py` (modified, +0/-5)
+```diff
+@@ -28,11 +28,6 @@ def test_tck():
+                 tck_include = "|".join(line.strip() for line in file if line.strip())
+     if tck_include:
+         cmd = [tck_features, '--format=progress', '--tags=-crash', '--tags=-skip', "--no-capture", "--stop", "--include", tck_include]
+-    # TCK_JUNIT_DIR: write Behave's per-scenario JUnit reports there, so CI
+-    # can count scenarios (tests/count_results.py) rather than this one test.
+-    tck_junit_dir = os.getenv("TCK_JUNIT_DIR", "")
+-    if tck_junit_dir:
+-        cmd += ["--junit", "--junit-directory", tck_junit_dir]
+     res = behave_main(cmd)
+     res = 'pass' if res == 0 else 'fail'
+     assert res == 'pass'
+```
+
+---
+
+### Incident Patch 2: `7df8e588` (2026-11-12)
+**Commit Message**: build: Alpine (musl) falkordb-server image running Valkey (#3725)
+
+* build: Alpine (musl) falkordb-server image running Valkey
+
+build/runtime/Dockerfile.alpine builds the module against musl and ships it
+in an Alpine image with Valkey (or Redis, by SERVER) built from source on
+Alpine, the same way the RHEL 9 and Amazon Linux 2023 images do: libomp
+linked statically, GraphBLAS, LAGraph and RediSearch through native-deps,
+the server through build/build-server.sh, and the image interface of the
+other server images (FALKORDB_SERVER, the server labels, run.sh, user
+falkordb as 999:999).
+
+.cargo/config.toml turns crt-static off for musl targets. Rust's musl
+targets link the C runtime statically by default, which drops the cdylib
+crate type and makes build scripts unable to load libclang.
+
+Closes #2312
+
+* ci: build and smoke-test the Alpine image on amd64 and arm64
+
+_build-artifacts.yml gains alpine-x64 and alpine-arm64v8 cells. Each builds
+the musl .so through Dockerfile.alpine's builder (which checks that it is
+self-contained), builds the Alpine server image, and runs the per-OS smoke
+test against it, as the RHEL 9 and Amazon Linux 2023 cells do.
+
+Every cell now carries a boolean `publi
+
+**File**: `.cargo/config.toml` (modified, +10/-1)
+```diff
+@@ -6,7 +6,8 @@
+ # tolerates it already, and we don't want to relax the local dev link.
+ #
+ # NOTE: `RUSTFLAGS` / `CARGO_TARGET_*_RUSTFLAGS` env vars REPLACE (not merge)
+-# these config flags, so build steps that set them must repeat this flag:
++# these config flags -- this one and the musl `-crt-static` below -- so build
++# steps that set them must repeat the ones that apply to their target:
+ # the coverage steps (`-C instrument-coverage`), the `cargo fuzz` steps, and
+ # build/runtime/Dockerfile.asan all set `-Clink-arg=-Wl,--allow-multiple-definition`
+ # explicitly for the same reason.
+@@ -19,3 +20,11 @@ rustflags = ["-C", "link-arg=-Wl,--allow-multiple-definition"]
+ # ld64. So the CI jobs that run doctests (`cargo test -p graph` in the `test`
+ # and `coverage` jobs) set RUSTDOCFLAGS explicitly; a local Linux doctest run
+ # (`cargo test -p graph`) needs the same env.
 +
-+        let t = Tensor::new(16, 16);
-+        let mut t = t.
++# musl (the Alpine image). Rust's musl targets link the C runtime statically by
++# default, which drops the `cdylib` crate type with only a warning -- so no
++# libfalkordb.so -- and makes every build script a static executable, which
++# cannot dlopen the libclang that bindgen needs. Cargo joins the flags of every
++# matching `[target.<cfg>]` table, so the Linux flag above still applies.
++[target.'cfg(all(target_os = "linux", target_env = "musl"))']
++rustflags = ["-C", "target-feature=-crt-static"]
+```
+
+**File**: `.github/workflows/_build-artifacts.yml` (modified, +33/-18)
+```diff
+@@ -7,15 +7,21 @@
+ # never carry their own copy. New platforms (see #608) are added here.
+ #
+ # Each cell extracts the .so from the `artifact` target of its Dockerfile (for
+-# x64/arm64v8, the exact .so the runtime image ships) and uploads it as
+-# `falkordb-<suffix>.so` together with its `.sha256`. Cells are independent
+-# (fail-fast: false) and run on native runners (no QEMU) for maximum parallelism.
++# x64/arm64v8, the exact .so the runtime image ships) and, unless the cell is
++# `test_only`, uploads it as `falkordb-<suffix>.so` together with its `.sha256`.
++# Cells are independent (fail-fast: false) and run on native runners (no QEMU)
++# for maximum parallelism.
+ #
+-# Cells marked `image` (rhel9, amazonlinux2023) also build their Dockerfile's
+-# `server` target, the falkordb-server image for that OS, and start it to check
+-# that the module loads and answers a query. With `export_images` the image is
+-# uploaded too, as `image-falkordb-server-<suffix>`, for the release to push.
+-# x64/arm64v8 have no such step: the merge queue builds the Debian images.
++# Cells marked `image` (rhel9, amazonlinux2023, alpine) also build their
++# Dockerfile's `server` target, the falkordb-server image for that OS, and start
++# it to check that the module loads and answers a query. With `export_images`
++# the image is uploaded too, as `image-falkordb-server-<suffix>`, for the
++# release to push. x64/arm64v8 have no such step: the merge queue builds the
++# Debian images.
++#
++# Cells marked `test_only` (alpine) are built and smoke-tested like any other,
++# but upload nothing and are left out of the `suffixes`/`image_suffixes`
++# outputs, so a release does not ship them.
+ 
+ name: Build artifacts (reusable)
+ 
+@@ -53,13 +59,15 @@ on:
+     outputs:
+       suffixes:
+         description: >-
+-          JSON array of the suffixes this run built. The release's publish step
+-          requires an artifact for every one of them.
++          JSON array of the suffixes this run built, `test_only` cells
++          excluded. The release's publish step requires an artifact for every
++          one of them.
+         value: ${{ jobs.cells.outputs.suffixes }}
+       image_suffixes:
+         description: >-
+-          JSON array of the suffixes this run built a server image for. The
+-          release's image push requires every one of them.
++          JSON array of the suffixes this run built a server image for,
++          `test_only` cells excluded. The release's image push requires every
++          one of them.
+         value: ${{ jobs.cells.outputs.image_suffixes }}
+ 
+ jobs:
+@@ -77,16 +85,22 @@ jobs:
+           PLATFORMS: ${{ inputs.platforms }}
+         run: |
+           set -euo pipefail
+-          # {suffix, arch, platform, runner, dockerfile, build_image, cxx, image}.
++          # {suffix, arch, platform, runner, dockerfile, build_image, cxx, image[, test_only]}.
+           # `dockerfile` provides the `artifact` target; `build_image` is the
+           # chef/builder base (Debian toolchain image) or "" for self-contained
+           # per-OS Dockerfiles; `cxx` is the C++ compiler passed to the builder;
+           # `image` says the Dockerfile's `server` target is built here too.
++          # `test_only` (missing means false): build and smoke-test but upload
++          # nothing, because release-tag.yml uploads every falkordb-*.so
++          # artifact; dropping them from `suffixes` alone would not keep them
++          # out of a release.
+           ALL='[
+             {"suffix":"x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23","image":false},
+             {"suffix":"arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23","image":false},
+             {"suffix":"rhel9-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.rhel9","build_image":"","cxx":"clang++","image":true},
+-            {"suffix":"amazonlinux2023-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.amazonlinux2023","build_image":"","cxx":"clang++-19","image":true}
++            {"suffix":"amazonlinux2023-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.amazonlinux2023","build_image":"","cxx":"clang++-19","image":true},
++            {"suffix":"alpine-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.alpine","build_image":"","cxx":"clang++","image":true,"test_only":true},
++            {"suffix":"alpine-arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":"build/runtime/Dockerfile.alpine","build_image":"","cxx":"clang++","image":true,"test_only":true}
+    
+```
+
+**File**: `.github/workflows/build-artifacts.yml` (modified, +3/-3)
+```diff
+@@ -1,13 +1,13 @@
+ # Build the shared-library (.so) artifacts for every release platform, and the
+-# rhel9/amazonlinux2023 server images, WITHOUT releasing anything, so a broken
++# rhel9/amazonlinux2023/alpine server images, WITHOUT releasing anything, so a broken
+ # platform shows up on the pull request that broke it instead of at release
+ # time. The images are started and queried, never pushed; only the .so files
+ # are uploaded, as workflow artifacts.
+ #
+ # Triggers:
+ #   - pull_request → runs when the PR changes something the artifact builds
+ #     depend on (PATTERN below), or carries the `verify-artifacts` label. The
+-#     per-OS cells (rhel9, amazonlinux2023) build their own toolchain from
++#     per-OS cells (rhel9, amazonlinux2023, alpine) build their own toolchain from
+ #     source and nothing else in PR CI exercises them, so without this a change
+ #     that breaks them (as #3163 did) surfaces only at release time.
+ #     Re-runs on each push while either holds.
+@@ -76,7 +76,7 @@ jobs:
+           # build/Dockerfile (the Debian toolchain) is not here: the x64/arm64v8
+           # cells build on the PUBLISHED toolchain, and rust-pr.yml already
+           # rebuilds it when it changes.
+-          PATTERN='^(Cargo\.(toml|lock)|graph/Cargo\.toml|(graph/)?build\.rs|\.cargo/config\.toml|build/build-server\.sh|build/libomp\.sh|build/runtime/Dockerfile(\.rhel9|\.amazonlinux2023)?|build/runtime/(run|gen-certs|gosu-setpriv)\.sh|build/graphblas/.*|native-deps/.*|deps/native-deps\.lock|deps/(GraphBLAS|LAGraph|RediSearch)|\.gitmodules|\.dockerignore|\.github/workflows/(_build-artifacts|build-artifacts)\.yml)$'
++          PATTERN='^(Cargo\.(toml|lock)|graph/Cargo\.toml|(graph/)?build\.rs|\.cargo/config\.toml|build/build-server\.sh|build/libomp\.sh|build/runtime/Dockerfile(\.rhel9|\.amazonlinux2023|\.alpine)?|build/runtime/(run|gen-certs|gosu-setpriv)\.sh|build/graphblas/.*|native-deps/.*|deps/native-deps\.lock|deps/(GraphBLAS|LAGraph|RediSearch)|\.gitmodules|\.dockerignore|\.github/workflows/(_build-artifacts|build-artifacts)\.yml)$'
+           # Materialise the list first: `gh ... | grep -q` under pipefail
+           # reports 141 on an early match (see rust-pr.yml).
+           gh api "repos/${REPO}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename' > /tmp/changed-files.txt
+```
+
+**File**: `build/check-server-pins.sh` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ files="build/Dockerfile
+ build/runtime/Dockerfile
+ build/runtime/Dockerfile.rhel9
+ build/runtime/Dockerfile.amazonlinux2023
++build/runtime/Dockerfile.alpine
+ build/runtime/Dockerfile.coverage
+ build/runtime/Dockerfile.asan"
+ 
+```
+
+**File**: `build/runtime/Dockerfile.alpine` (added, +250/-0)
+```diff
+@@ -0,0 +1,250 @@
++# Self-contained Alpine (musl) builder for the FalkorDB shared library. Unlike
++# build/runtime/Dockerfile (which consumes the prebuilt Debian `falkordb-build`
++# toolchain image), this image installs its own toolchain and builds GraphBLAS
++# + LAGraph + libomp + RediSearch from source via the SAME scripts the Debian
++# toolchain uses -- so the produced .so is linked against musl and the
++# single-.so self-containment contract still holds.
++#
++# Two targets:
++#   artifact  the .so alone:  docker build --target artifact --output type=local,dest=<dir>
++#   server    an Alpine server image: Valkey or Redis (--build-arg SERVER)
++#             built from source on this OS, plus that same .so. The
++#             counterpart of the Debian image's `server` target; no browser.
++# The musl-specific packages (bsd-compat-headers, the static clang archives,
++# ncurses-dev, libffi-dev) come from the C repo's
++# build/docker/builder/Dockerfile.alpine; each one is explained where it is
++# installed.
++
++# Consumed (unused) so the shared _build-artifacts.yml can pass --build-arg
++# BUILD_IMAGE uniformly without a "not consumed" warning; self-contained OSes
++# don't use a toolchain base image.
++ARG BUILD_IMAGE
++# Which server the `server` target ships, and the server releases: the same
++# as build/runtime/Dockerfile (build/check-server-pins.sh enforces it).
++ARG SERVER=valkey
++ARG REDIS_VERSION=8.10.2
++ARG VALKEY_VERSION=9.1.2
++
++# The one Alpine pin: a literal FROM, so Dependabot can bump it.
++FROM alpine:3.24.4 AS alpine-base
++
++# ---------------------------------------------------------------------------
++# Toolchain + dependency build.
++# ---------------------------------------------------------------------------
++FROM alpine-base AS builder
++
++ARG LLVM_MAJOR=22
++
++# Beyond the compilers and the headers the deps compile against:
++#   bsd-compat-headers        : <sys/cdefs.h>, which RediSearch includes
++#   clang-static,             : RediSearch's Rust crates link libclang.a
++#   ncurses-dev, libffi-dev     statically on musl (rlookup/Cargo.toml,
++#                               rust-bindgen#2360), and clang-sys then adds
++#                               -lffi -lncursesw. LLVM itself comes from
++#                               libLLVM.so: Alpine's llvm-config reports
++#                               shared mode.
++#   clang-libclang            : libclang.so, which bindgen loads at run time
++#                               for FalkorDB's own crates
++#   python3                   : the pip-pinned cmake below
++RUN apk add --no-cache \
++      bash git curl ca-certificates make findutils binutils \
++      gcc g++ musl-dev linux-headers bsd-compat-headers \
++      openssl-dev zlib-dev zstd-dev ncurses-dev libffi-dev \
++      clang${LLVM_MAJOR} clang${LLVM_MAJOR}-dev clang${LLVM_MAJOR}-libclang clang${LLVM_MAJOR}-static \
++      llvm${LLVM_MAJOR} llvm${LLVM_MAJOR}-dev \
++      python3
++
++# llvm-config (which clang-sys runs) and the llvm-objcopy/objdump that
++# graph/build.rs runs have no bare names on Alpine's PATH; they live under
++# /usr/lib/llvm<N>/bin. Putting that first also pins `clang` to LLVM <N>.
++ENV PATH="/usr/lib/llvm${LLVM_MAJOR}/bin:/venv/bin:/root/.cargo/bin:${PATH}"
++
++# Pin cmake to the same version the other builders use. Alpine's python is
++# externally managed (PEP 668), hence the venv.
++RUN python3 -m venv /venv && pip install --no-cache-dir 'cmake==3.31.6'
++
++# Rust toolchain (rustup) -- Alpine's packaged rust lags what redisearch_rs
++# needs. The musl host triple is picked automatically.
++RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
++
++WORKDIR /data
++
++# libomp.a (static) matched to the system clang version, installed to /opt/libomp
++# so graph/build.rs links it statically (single-.so OpenMP contract).
++COPY build/libomp.sh /tmp/libomp.sh
++RUN LLVMORG_VERSION=$(clang --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) && \
++    test -n "${LLVMORG_VERSION}" && \
++    CC=clang CXX=clang++ /tmp/libomp.sh "${LLVMORG_VERSION}" && \
++    rm -f /tmp/libomp.sh
++
++# GraphBLAS + LAGraph + RediSearch, built by the native-deps crate, which owns
++# the recipes and a content-addressed cache keyed on the submodule revisions,
++# the GB_control patch, the vendored PreJIT kernels, $CC/$CXX, the target
++# triple and the OpenMP flavour -- so the key computed by `cargo build` below
++# matches what is published here. CC/CXX/LIBOMP_PREFIX are ENV, not per-RUN,
++# because they are cache-key inputs.
++#
++# RUST_DYN_CRT=1 makes RediSearch's build.sh build its Rust with -crt-static
++# (see .cargo/config.toml), which native-deps' cleared RUSTFLAGS would drop.
++#
++# The sources and RediSearch's in-tree build output are removed in the same
++# RUN: only the native-deps cache (~/.cache/falkordb/native-deps) is needed
++# below, and the build tree is several GB.
++ARG CC=clang
++ARG CXX=clang++
++ENV CC=${CC} \
++    CXX=${CXX} \
++    LIBOMP_PREFIX=/opt/libomp \
++    RUST_DY
+```
+
+**File**: `build/runtime/gosu-setpriv.sh` (modified, +5/-3)
+```diff
+@@ -1,9 +1,11 @@
+ #!/bin/sh
+-# gosu(1) for the RPM-based server images (Dockerfile.rhel9,
+-# Dockerfile.amazonlinux2023), installed there as /usr/local/bin/gosu.
++# gosu(1) for the per-OS server images (Dockerfile.rhel9,
++# Dockerfile.amazonlinux2023, Dockerfile.alpine), installed there as
++# /usr/local/bin/gosu.
+ #
+ # run.sh drops root with `gosu falkordb redis-server ...`. gosu is not packaged
+-# for RHEL or Amazon Linux; setpriv(1) from util-linux makes the same switch:
++# for RHEL or Amazon Linux; setpriv(1) from util-linux (on Alpine, the setpriv
++# package) makes the same switch:
+ # real and effective uid and gid, plus the user's supplementary groups.
+ # Only the `gosu USER COMMAND...` form run.sh uses is supported.
+ set -eu
+```
+
+---
+
+### Incident Patch 3: `3b14db4b` (2026-11-12)
+**Commit Message**: build(toolchain): reach apt.llvm.org over IPv4, with retries (#3775)
+
+* build(toolchain): reach apt.llvm.org over IPv4, with retries
+
+The GitHub arm64 runners resolve apt.llvm.org to an IPv6 address they
+cannot route to. llvm.sh's HEAD probe then fails and reports it as
+"Distribution 'debian' in version '13 (trixie)' is not supported".
+Force IPv4 and retry in both apt and wget.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* build(toolchain): retry wget on transient HTTP errors too
+
+wget does not retry a 429 or 5xx by default, so a 503 from apt.llvm.org
+during llvm.sh's probe would still fail the build. Bounded by the same
+tries = 5.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* build(toolchain): retry llvm.sh itself, not only its downloads
+
+In the merge queue (run 43182163998), llvm.sh's HEAD probe of
+llvm-snapshot.gpg.key failed in 0.3s with "GPG key not reachable" and
+exit 2. The probe passes its own --tries=3, and whatever error it hit
+was one wget does not retry, so the wgetrc settings could not help.
+Bring back the bounded 3-attempt loop around llvm.sh. Each retry clears
+the key and the sources file a failed attempt can leave behind.
+
+Co-Authored-By: Claude Op
+
+**File**: `build/Dockerfile` (modified, +19/-2)
+```diff
+@@ -64,13 +64,30 @@ ENV DEBIAN_FRONTEND=noninteractive
+ # Base runtime libs that previously came with the `redis:` base image
+ # (ca-certificates for git/curl HTTPS, libssl3 for the redis-server binary
+ # copied into the final stage).
+-RUN apt update -y && \
++#
++# apt.llvm.org is reached over IPv4 only, with retries. The GitHub arm64
++# runners resolve it to an IPv6 address they cannot route to ("Network is
++# unreachable"), and llvm.sh probes the repo URL with `wget --method=HEAD`
++# before installing, reporting any failure as "Distribution 'debian' in
++# version '13 (trixie)' is not supported by this script." -- so a network
++# failure looked like a distro one. /etc/wgetrc covers llvm.sh's own wget
++# calls; the apt.conf.d entry covers apt here and in the stages below.
++# llvm.sh's HEAD probes can still fail at once on an error wget does not
++# retry (the GPG key probe did, in the merge queue), so llvm.sh itself is
++# retried too, clearing the key and sources a failed attempt may leave.
++RUN printf 'Acquire::ForceIPv4 "true";\nAcquire::Retries "5";\n' \
++        > /etc/apt/apt.conf.d/99falkordb-network && \
++    apt update -y && \
+     apt install -y --no-install-recommends \
+         ca-certificates libssl3 openssl && \
+     apt install -y lsb-release gnupg wget && \
++    printf 'inet4_only = on\ntries = 5\nwaitretry = 5\nretry_connrefused = on\nretry_on_http_error = 429,500,502,503,504\n' >> /etc/wgetrc && \
+     wget https://apt.llvm.org/llvm.sh && \
+     chmod +x llvm.sh && \
+-    ./llvm.sh "${CLANG_MAJOR}" && \
++    for i in 1 2 3; do ./llvm.sh "${CLANG_MAJOR}" && break; \
++        [ "$i" = 3 ] && exit 1; echo "llvm.sh failed (attempt $i), retrying"; \
++        rm -f /etc/apt/trusted.gpg.d/apt.llvm.org.asc /etc/apt/sources.list.d/http_apt_llvm_org_*.sources; \
++        sleep 15; done && \
+     apt update -y
+ 
+ # Toolchain + headers the three deps compile against.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3783** (2026-11-12): 4.22.4 (@DvirDukhan)
+- **PR #3775** (2026-11-12): build(toolchain): reach apt.llvm.org over IPv4, with retries (@dudizimber)
+- **PR #3763** (2026-11-12): fix(constraint): don't freeze the server waiting for the write lock behind a long read (@DvirDukhan)
+- **PR #3762** (2026-11-12): test: revert #3722's test counting and wait_for_replica (@DvirDukhan)
+- **PR #3759** (2026-11-11): fix(telemetry): keep telemetry streams node-local and strip them from snapshots (alt to #3724) (@swilly22)
 - **PR #3758** (closed): ci: count passed, failed and skipped tests per server in the run summary (@dudizimber)
-- **PR #3749** (2026-11-11): refactor(index): the Range column reaches its kind only through RangeKind (@DvirDukhan)
-- **PR #3748** (2026-11-10): proofs: re-line Dup::dup's PROVEN rows instead of axiomatising it (@AviAvni)
-- **PR #3745** (2026-11-10): proofs: re-line #3438's rows so the coverage gate passes on main (@AviAvni)
-- **PR #3736** (2026-11-11): refactor(index): a Range column that answers with a Selection (@AviAvni)
-- **PR #3722** (2026-11-11): test: make four flow tests pass on Valkey as well as Redis (@DvirDukhan)
 
 ---
 
@@ -2697,53 +2243,50 @@ inside write_buffer (fails when encode unloads the shared matrix i
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. module): load on Valkey by repairing environ under RTLD_DEEPBIND (#3494)
+## X. test: revert #3722's test counting and wait_for_replica (#3762)
 
 **RULE**:
-When implementing operations in `graph/src/env_snapshot.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/_ci-pipeline.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `874b6d87`: module): load on Valkey by repairing environ under RTLD_DEEPBIND (#3494). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ab8fddc`: test: revert #3722's test counting and wait_for_replica (#3762). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/env_snapshot.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_ci-pipeline.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Owned, process-lifetime copies of a C `environ` array.
-//!
-//! The module repairs libc's `environ` when a server loads it with
-//! `RTLD_DEEPBIND` and copy-relocates `environ` (issue #3493); see
-//! `sync_deepbind_environ` in the module crate. The copy lives here, apart
-//! from the loader-specific lookup, so it can be unit-tested on any platform.
-
-use std::ffi::{CStr, c_char};
-
-/// Deep-copy a NULL-terminated `char **` environment and leak the copy.
-///
-/// Both the pointer array and every string are fresh allocations that are
-/// never freed, so the result stays valid whatever later happens to `src`: a
-/// `setenv` that `realloc`s the array, or a `putenv` caller freeing its buffer
-/// after `unsetenv`. A NULL `src` yields an empty environment (a lone NULL).
-///
-/// # Safety
-///
-/// `src` must be NULL or point to a NULL-terminated array of pointers to
-/// NUL-terminated strings, none of which is modified or freed during the call.
-#[must_use]
-pub unsafe fn leak_deep_copy(src: *const *mut c_char) -> *mut *mut c_char {
-    let mut len = 0;
-    // SAFETY: the caller guarantees `src` is NULL or NULL-terminated.
-    while !src.is_null() && unsafe { !(*src.add(len)).is_null() } {
-   
+          RELEASE=1 pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv
+          RELEASE=1 TCK_DONE=tck_done.txt pytest tests/tck/test_tck.py -s
+          pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv
+          TCK_DONE=tck_done.txt pytest tests/tck/test_tck.py -s
+      # Capture the GHA service container's stdout/stde
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        id: pytest
+          RELEASE=1 pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv --junitxml=test-results/pytest.xml
+        id: tck
+          RELEASE=1 TCK_DONE=tck_done.txt TCK_JUNIT_DIR=test-results/tck pytest tests/tck/test_tck.py -s
+      # tests/common.py starts the server with --logfile redis-test.log.
+      # Counts for the run summary (tests/count_results.py, summed per server by
+      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
+      # failing cell still counts, including one whose setup failed before its
+      # tests ran. STATUS is the job's, so any failed step marks the cell. The
+      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
+      # tests/common.py and the images default it: redis unless set.
+      - name: Record test counts
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        env:
+          RUN: artifact, amd64
+          STATUS: ${{ job.status }}
+          NAME: test-counts-artifact
+        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --junit 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `874b6d87` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ab8fddc` are properly handled with clean fallback behavior.

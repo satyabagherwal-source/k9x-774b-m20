@@ -2,21 +2,21 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T08:40:58.438Z",
+  "updated_at": "2026-11-13T08:56:48.338Z",
   "statistics": {
-    "total_nodes": 65,
-    "total_edges": 33,
+    "total_nodes": 68,
+    "total_edges": 35,
     "domain_distribution": {
-      "D": 51,
+      "D": 52,
       "M": 1,
-      "H": 8,
+      "H": 9,
       "J": 2,
-      "K": 1,
+      "K": 2,
       "L": 1,
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 33
+      "CONSTRAINED_BY_ARCHITECTURE": 35
     }
   },
   "nodes": {
@@ -1455,6 +1455,65 @@
       ],
       "created_at": "2026-11-13T08:40:58.437Z",
       "updated_at": "2026-11-13T08:40:58.437Z"
+    },
+    "DOM-K-66271FDB": {
+      "id": "DOM-K-66271FDB",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "test: revert #3722's test counting and wait_for_replica (#3762)",
+      "summary": "Prevents defects observed in production commit `5ab8fddc`: test: revert #3722's test counting and wait_for_replica (#3762). Unvalidated exec -> When implementing operations in `.github/workflows/_ci-pipeline.yml`, engineers MUST enforce rigorous boundary validation, safe state transi",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://falkordb-falkordb/falkordb-falkordb-learnings.md",
+        "source_version": "7df8e588",
+        "observed_at": "2026-11-13T08:55:36.784Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (falkordb-falkordb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "H"
+      ],
+      "created_at": "2026-11-13T08:56:25.515Z",
+      "updated_at": "2026-11-13T08:56:25.515Z"
+    },
+    "NODE-H-domain-bridge-h": {
+      "id": "NODE-H-domain-bridge-h",
+      "domain": "H",
+      "type": "DOMAIN_CONCEPT_BRIDGE",
+      "title": "Domain H Concept Space",
+      "summary": "",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {},
+      "tags": [],
+      "created_at": "2026-11-13T08:56:25.515Z",
+      "updated_at": "2026-11-13T08:56:25.515Z"
+    },
+    "DOM-D-64627742": {
+      "id": "DOM-D-64627742",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM3-1.7B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-liquidai-lfm3-1.7b/hf-liquidai-lfm3-1.7b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T08:56:25.619Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm3-1.7b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T08:56:48.338Z",
+      "updated_at": "2026-11-13T08:56:48.338Z"
     }
   },
   "edges": [
@@ -1787,6 +1846,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-0F6D40BE [D] with Domain M",
       "created_at": "2026-11-13T08:40:58.437Z"
+    },
+    {
+      "id": "EDGE-FF8CC5E82D61",
+      "sourceId": "DOM-K-66271FDB",
+      "targetId": "NODE-H-domain-bridge-h",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-66271FDB [K] with Domain H",
+      "created_at": "2026-11-13T08:56:25.515Z"
+    },
+    {
+      "id": "EDGE-B771EB1C444E",
+      "sourceId": "DOM-D-64627742",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-64627742 [D] with Domain M",
+      "created_at": "2026-11-13T08:56:48.338Z"
     }
   ]
 }
