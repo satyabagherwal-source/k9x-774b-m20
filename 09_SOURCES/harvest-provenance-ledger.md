@@ -9588,3 +9588,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-13T18:05:50.417Z |
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `f071f047` | Multi-dimensional audit evidence | 2026-11-13T18:05:59.223Z |
 | `learn-dom-d-33d763c2` | `project://hf-akatz-ai-minimax-h3-character-swap-lora` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | 2026-11-13T18:06:48.150Z |
+| `learn-github-foreactlabs-openexecutive` | `https://github.com/ForeactLabs/OpenExecutive` | `e023f2f3` | Multi-dimensional audit evidence | 2026-11-13T18:17:14.943Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-13T18:17:17.287Z |
+| `learn-dom-d-dc65f2a5` | `project://hf-unsloth-qwen-image-2.1-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | 2026-11-13T18:18:05.134Z |

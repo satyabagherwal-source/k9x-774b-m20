@@ -535,8 +535,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "2d996ffecacb67b1f32002fcae8e3b224798e66e4c29b29c64be778b172eee3b",
-    "lastHarvestedAt": "2026-11-08T17:13:15.268Z",
+    "contentHash": "ddfa54153e32b8814cb316daf58626e074e75de6a4525e8da6ebba6b1677cb07",
+    "lastHarvestedAt": "2026-11-13T18:17:17.287Z",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
@@ -12468,5 +12468,15 @@
     "contentHash": "a83032b88467d1e522e9bc5c00b1c6251686679c7926f1b175fe2a187cc0af1c",
     "lastHarvestedAt": "2026-11-13T17:37:27.404Z",
     "learningId": "learn-github-mixelpixx-kicad-mcp-server"
+  },
+  "foreactlabs-openexecutive": {
+    "repository": "ForeactLabs/OpenExecutive",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ForeactLabs/OpenExecutive",
+    "sourceVersion": "e023f2f3",
+    "license": "Apache-2.0",
+    "contentHash": "19aed3104b376870df8fdffe049eb55a237922cd4592cf7f507d044a8bf1929e",
+    "lastHarvestedAt": "2026-11-13T18:17:14.943Z",
+    "learningId": "learn-github-foreactlabs-openexecutive"
   }
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-Z5RY",
-    "timestamp": "2026-11-12T21:49:31.006Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "ca61faadccdee55028c0c57fb2bee9907aa396e9f7f12bd0b5c1b4c3b1001f7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-Z72M",
-    "timestamp": "2026-11-12T21:49:32.686Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d74fb9f2111ff7918c159c7884245dc4a8c39d464a57dadfb327b6d959b71664",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-8AE5",
     "timestamp": "2026-11-12T21:56:36.893Z",
     "repository": "restatedev/restate",
@@ -7492,6 +7462,36 @@
     "contentHash": "ae1bfdc3908fad183dc3067bbb72d308cfe09de12e1d08aafdfb21a1c82cdcb7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-U185",
+    "timestamp": "2026-11-13T18:17:14.933Z",
+    "repository": "ForeactLabs/OpenExecutive",
+    "learningId": "learn-github-foreactlabs-openexecutive",
+    "contentHash": "19aed3104b376870df8fdffe049eb55a237922cd4592cf7f507d044a8bf1929e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-U31G",
+    "timestamp": "2026-11-13T18:17:17.284Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "ddfa54153e32b8814cb316daf58626e074e75de6a4525e8da6ebba6b1677cb07",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

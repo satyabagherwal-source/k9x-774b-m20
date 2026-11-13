@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:05:59.238Z",
-  "total_cycles_completed": 9319,
-  "total_learnings_persisted": 9319,
-  "total_rules_promoted": 9064,
+  "last_updated": "2026-11-13T18:17:17.291Z",
+  "total_cycles_completed": 9321,
+  "total_learnings_persisted": 9321,
+  "total_rules_promoted": 9065,
   "history": [
-    {
-      "timestamp": "2026-11-13T03:26:42.148Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T03:31:21.361Z",
-      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T03:48:03.143Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
@@ -1403,6 +1389,20 @@
       "repository": "storybookjs/storybook",
       "learningId": "learn-github-storybookjs-storybook",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:17:14.952Z",
+      "repository": "ForeactLabs/OpenExecutive",
+      "learningId": "learn-github-foreactlabs-openexecutive",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T18:17:17.291Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

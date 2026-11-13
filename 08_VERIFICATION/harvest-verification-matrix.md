@@ -9555,3 +9555,6 @@
 | `CYCLE-20261113-FD1O` | `2026-11-13T18:05:50.412Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`438a6eae...`) |
 | `CYCLE-20261113-FJU1` | `2026-11-13T18:05:59.209Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ae1bfdc3...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:06:48.150Z` | `hf-akatz-ai-minimax-h3-character-swap-lora` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-33D763C2` [Domain D] | Yes (`3058a97e...`) |
+| `CYCLE-20261113-U185` | `2026-11-13T18:17:14.933Z` | `ForeactLabs/OpenExecutive` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`19aed310...`) |
+| `CYCLE-20261113-U31G` | `2026-11-13T18:17:17.284Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`ddfa5415...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:18:05.134Z` | `hf-unsloth-qwen-image-2.1-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DC65F2A5` [Domain D] | Yes (`90d65327...`) |

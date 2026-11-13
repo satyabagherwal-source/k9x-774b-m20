@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T18:06:02.386Z",
-    "lastVerified": "2026-11-13T18:06:02.386Z",
+    "lastChecked": "2026-11-13T18:17:29.384Z",
+    "lastVerified": "2026-11-13T18:17:29.384Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -256,8 +256,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T17:24:51.235Z",
-    "lastVerified": "2026-11-13T17:24:51.235Z",
+    "lastChecked": "2026-11-13T18:17:29.373Z",
+    "lastVerified": "2026-11-13T18:17:29.373Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -408,9 +408,9 @@
   "enaqx-awesome-react": {
     "name": "awesome-react",
     "officialUrl": "https://github.com/enaqx/awesome-react",
-    "lastChecked": "2026-11-09T07:31:54.070Z",
+    "lastChecked": "2026-11-13T18:17:19.347Z",
     "revisionIdentifier": "e6fd973e",
-    "lastVerified": "2026-11-09T07:31:54.070Z"
+    "lastVerified": "2026-11-13T18:17:19.347Z"
   },
   "nginx-kubernetes-ingress": {
     "name": "nginx/kubernetes-ingress",
@@ -668,8 +668,8 @@
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T12:58:00.969Z",
-    "lastVerified": "2026-11-12T12:58:00.969Z",
+    "lastChecked": "2026-11-13T18:17:26.766Z",
+    "lastVerified": "2026-11-13T18:17:26.766Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
@@ -1115,9 +1115,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-13T12:32:36.974Z",
+    "lastChecked": "2026-11-13T18:17:24.337Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-13T12:32:36.974Z"
+    "lastVerified": "2026-11-13T18:17:24.337Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -3083,12 +3083,12 @@
     "officialUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T17:13:14.009Z",
-    "lastVerified": "2026-11-08T17:13:14.009Z",
+    "lastChecked": "2026-11-13T18:17:17.067Z",
+    "lastVerified": "2026-11-13T18:17:17.067Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "2d996ffecacb67b1f32002fcae8e3b224798e66e4c29b29c64be778b172eee3b",
+    "contentHash": "ddfa54153e32b8814cb316daf58626e074e75de6a4525e8da6ebba6b1677cb07",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6676,9 +6676,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-12T14:31:39.705Z",
+    "lastChecked": "2026-11-13T18:17:21.814Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-12T14:31:39.705Z"
+    "lastVerified": "2026-11-13T18:17:21.814Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -15145,6 +15145,23 @@
     "contentHash": "a83032b88467d1e522e9bc5c00b1c6251686679c7926f1b175fe2a187cc0af1c",
     "promotedRulesCount": 1,
     "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "foreactlabs-openexecutive": {
+    "name": "ForeactLabs/OpenExecutive",
+    "officialUrl": "https://github.com/ForeactLabs/OpenExecutive",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-13T18:17:14.374Z",
+    "lastVerified": "2026-11-13T18:17:14.374Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-foreactlabs-openexecutive",
+    "contentHash": "19aed3104b376870df8fdffe049eb55a237922cd4592cf7f507d044a8bf1929e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

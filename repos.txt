@@ -5046,3 +5046,7 @@ https://github.com/tuist/tuist
 # --- Automatically Discovered by AI Scout Engine [2026-11-13T17:37:22.139Z] ---
 # [AI-AGENTS] mixelpixx/KiCAD-MCP-Server (2086 score) - KiCAD MCP is a Model Context Protocol (MCP) implementation that enables Large La
 https://github.com/mixelpixx/KiCAD-MCP-Server
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-13T18:17:08.679Z] ---
+# [AI-AGENTS] ForeactLabs/OpenExecutive (3256 score) - AI-powered virtual executive team — a single coherent executive persona backed b
+https://github.com/ForeactLabs/OpenExecutive

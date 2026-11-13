@@ -1,13 +1,15 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T18:06:49.663Z",
-  "total_records": 248,
+  "last_updated": "2026-11-13T18:18:05.682Z",
+  "total_records": 253,
   "domains": {
     "A": {
-      "total": 1,
+      "total": 3,
       "record_ids": [
-        "DOM-A-DD59FA01"
+        "DOM-A-DD59FA01",
+        "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
+        "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants"
       ]
     },
     "B": {
@@ -28,7 +30,7 @@
       ]
     },
     "D": {
-      "total": 142,
+      "total": 145,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -171,7 +173,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
         "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
         "DOM-D-33D763C2",
-        "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn"
+        "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn",
+        "domain_intelligence-research-knowledge-intelligence-unsloth-qwen-image-2-1-gguf-core-invariants",
+        "DOM-D-DC65F2A5",
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen-image-2-1-gguf-learnings-core-in"
       ]
     },
     "E": {
@@ -6018,8 +6023,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "1c1da427ff5042fec1c5265b5347ded1d4ae030656bea9f5de09ca56cec122e0",
-      "created_at": "2026-11-13T16:40:24.379Z"
+      "content_hash": "bcbcd326ef7daf859e42e5296b2fca046a7e1cd4030035edb357a0d71e16a393",
+      "created_at": "2026-11-13T18:18:05.682Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -7415,6 +7420,84 @@
       "repository": "storybookjs-storybook-learnings",
       "content_hash": "85d3b9fa7ad8569a7036e456227e25b3cc829963e7962e89f5ffaafa48418904",
       "created_at": "2026-11-13T18:06:48.883Z"
+    },
+    "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: ForeactLabs/OpenExecutive Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-foreactlabs-openexecutive-human-need-intelligence-foreactlabs-openexecutive-core.md",
+      "repository": "ForeactLabs/OpenExecutive",
+      "content_hash": "71d665adcb4773133015ad0bbfa0590d3b58e9035060955fe295324da0972432",
+      "created_at": "2026-11-13T18:17:15.144Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-qwen-image-2-1-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen-image-2-1-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: unsloth/Qwen-Image-2.1-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-research-knowledge-intelligence-unsloth-qwen-imag.md",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "content_hash": "799bb4d4079d8073355913d68d3761e9c4dbf1e5db0b51246d6c9417b5eda67c",
+      "created_at": "2026-11-13T18:17:17.406Z"
+    },
+    "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: foreactlabs-openexecutive-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-foreactlabs-openexecutive-learnings-human-need-intelligence-foreactlabs-openexec.md",
+      "repository": "foreactlabs-openexecutive-learnings",
+      "content_hash": "d9001493ff2e8fb749da01fcce2659e87cc28ac3b32cfcaa19802d3bc20b7aad",
+      "created_at": "2026-11-13T18:17:30.072Z"
+    },
+    "DOM-D-DC65F2A5": {
+      "record_id": "DOM-D-DC65F2A5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/Qwen-Image-2.1-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF](https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF))  \n> **Source Version**: `hf-unsloth-q`  \n> **License**: Open-Sou",
+      "content_hash": "90d653278b291d2963f328527f8518c18a445693ac40853cd6a5d18ecb512236",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-qwen-image-2.1-gguf/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T18:17:30.303Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-qwen-image-2.1-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-qwen-image-2.1-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T18:18:05.128Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen-image-2-1-gguf-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen-image-2-1-gguf-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-qwen-image-2.1-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
+      "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
+      "content_hash": "c7a667decdab45567b377ba7a5530c2a6c0a01ba095869f8c2c779fe6650768b",
+      "created_at": "2026-11-13T18:18:05.287Z"
     }
   }
 }

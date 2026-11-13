@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T18:06:48.575Z",
+  "updated_at": "2026-11-13T18:18:05.142Z",
   "stats": {
-    "total_discovered": 2770,
-    "approved_pending_harvest": 2591,
+    "total_discovered": 2799,
+    "approved_pending_harvest": 2617,
     "harvested_count": 0,
-    "rejected_count": 179,
+    "rejected_count": 182,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2583,
+      "COMMUNITY_AND_EXPERT": 2612,
       "OFFICIAL_DOCUMENTATION": 96,
       "STANDARDS_AND_SPECIFICATIONS": 78,
       "ENGINEERING_BLOGS": 1,
@@ -59707,6 +59707,623 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
         "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-D09CAE331B6C": {
+      "id": "SRC-D09CAE331B6C",
+      "url": "https://github.com/ForeactLabs/OpenExecutive",
+      "title": "https://github.com/ForeactLabs/OpenExecutive",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.483Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-A18EF66C9DBC": {
+      "id": "SRC-A18EF66C9DBC",
+      "url": "http://localhost:8000/documents",
+      "title": "http://localhost:8000/documents",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T18:17:29.497Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-5922057B37AA": {
+      "id": "SRC-5922057B37AA",
+      "url": "http://localhost:8000/",
+      "title": "http://localhost:8000/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T18:17:29.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-09E8D5F5229A": {
+      "id": "SRC-09E8D5F5229A",
+      "url": "https://github.com/mermaid-js/mermaid",
+      "title": "https://github.com/mermaid-js/mermaid",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-DCB792D71850": {
+      "id": "SRC-DCB792D71850",
+      "url": "https://github.com/vercel/next.js",
+      "title": "https://github.com/vercel/next.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-C2F36335D947": {
+      "id": "SRC-C2F36335D947",
+      "url": "https://github.com/tailwindlabs/tailwindcss/tree/HEAD/packages/@tailwindcss-postcss",
+      "title": "https://github.com/tailwindlabs/tailwindcss/tree/HEAD/packages/@tailwindcss-postcss",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-5194D25E0484": {
+      "id": "SRC-5194D25E0484",
+      "url": "https://github.com/vercel/next.js/tree/HEAD/packages/eslint-config-next",
+      "title": "https://github.com/vercel/next.js/tree/HEAD/packages/eslint-config-next",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-9679BAD0333B": {
+      "id": "SRC-9679BAD0333B",
+      "url": "https://github.com/tailwindlabs/tailwindcss/tree/HEAD/packages/tailwindcss",
+      "title": "https://github.com/tailwindlabs/tailwindcss/tree/HEAD/packages/tailwindcss",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-001CE0D058E3": {
+      "id": "SRC-001CE0D058E3",
+      "url": "https://github.com/xyflow/xyflow/releases",
+      "title": "https://github.com/xyflow/xyflow/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-1588A2673BE2": {
+      "id": "SRC-1588A2673BE2",
+      "url": "https://github.com/12",
+      "title": "https://github.com/12",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.616Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-010DB7C65290": {
+      "id": "SRC-010DB7C65290",
+      "url": "https://redirect.github.com/xyflow/xy",
+      "title": "https://redirect.github.com/xyflow/xy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-32FFB18D0B00": {
+      "id": "SRC-32FFB18D0B00",
+      "url": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz",
+      "title": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-A4BF736B1AF5": {
+      "id": "SRC-A4BF736B1AF5",
+      "url": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.6.0.tgz",
+      "title": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.6.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.658Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-46CB1E761830": {
+      "id": "SRC-46CB1E761830",
+      "url": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
+      "title": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-5D70822DB5D1": {
+      "id": "SRC-5D70822DB5D1",
+      "url": "https://registry.npmjs.org/@next/env/-/env-16.4.5.tgz",
+      "title": "https://registry.npmjs.org/@next/env/-/env-16.4.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.685Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-8AD3679A5124": {
+      "id": "SRC-8AD3679A5124",
+      "url": "https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-16.4.3.tgz",
+      "title": "https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-16.4.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.700Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-58FA74E24E14": {
+      "id": "SRC-58FA74E24E14",
+      "url": "https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-16.4.5.tgz",
+      "title": "https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-16.4.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-15DD22D4B3F9": {
+      "id": "SRC-15DD22D4B3F9",
+      "url": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
+      "title": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.727Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-719E4849B227": {
+      "id": "SRC-719E4849B227",
+      "url": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.5.tgz",
+      "title": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.743Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-43B0FA4BF4DA": {
+      "id": "SRC-43B0FA4BF4DA",
+      "url": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
+      "title": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.756Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-925B0BF1540B": {
+      "id": "SRC-925B0BF1540B",
+      "url": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.5.tgz",
+      "title": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.771Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-77E56B1A1277": {
+      "id": "SRC-77E56B1A1277",
+      "url": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
+      "title": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-3CF2D045EC54": {
+      "id": "SRC-3CF2D045EC54",
+      "url": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.5.tgz",
+      "title": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-6E7F4ACAF32A": {
+      "id": "SRC-6E7F4ACAF32A",
+      "url": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
+      "title": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-D9617135D6FD": {
+      "id": "SRC-D9617135D6FD",
+      "url": "https://api.openai.com/v1",
+      "title": "https://api.openai.com/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-89CAF70A6A58": {
+      "id": "SRC-89CAF70A6A58",
+      "url": "http://localhost:11434/v1",
+      "title": "http://localhost:11434/v1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T18:17:29.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-DDEF1480A659": {
+      "id": "SRC-DDEF1480A659",
+      "url": "https://claude.ai/code/project/chan_01KdjdZHJtboAfcbRxDQxY2F?thread=cmsg_01KdjdZHJtboAfcbRxDQxY2FAbZ6StSZAVn1AR2qDfti7g",
+      "title": "https://claude.ai/code/project/chan_01KdjdZHJtboAfcbRxDQxY2F?thread=cmsg_01KdjdZHJtboAfcbRxDQxY2FAbZ6StSZAVn1AR2qDfti7g",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.861Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-3A58390A30FD": {
+      "id": "SRC-3A58390A30FD",
+      "url": "https://regis/",
+      "title": "https://regis/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:17:29.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+        "fileName": "foreactlabs-openexecutive-learnings.md"
+      }
+    },
+    "SRC-74465619AB0A": {
+      "id": "SRC-74465619AB0A",
+      "url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
+      "title": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:18:05.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
+        "fileName": "hf-unsloth-qwen-image-2.1-gguf-learnings.md"
       }
     }
   }

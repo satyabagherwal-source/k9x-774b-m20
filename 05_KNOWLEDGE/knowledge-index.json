@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T18:06:49.774Z",
-  "total_verified_learnings": 1265,
+  "last_updated": "2026-11-13T18:18:05.835Z",
+  "total_verified_learnings": 1266,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -34899,7 +34899,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "2d996ffecacb67b1f32002fcae8e3b224798e66e4c29b29c64be778b172eee3b",
+      "content_hash": "ddfa54153e32b8814cb316daf58626e074e75de6a4525e8da6ebba6b1677cb07",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [
@@ -34957,7 +34957,7 @@
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv46v2n7",
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v"
       ],
-      "verified_at": "2026-11-08T17:13:15.131Z",
+      "verified_at": "2026-11-13T18:17:17.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -193102,13 +193102,13 @@
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DHP8-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-V4AX-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "title": "engine): restore text fallback for unknown file extensions (#394)",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "13105ea4680c729daf28f7a032c3bebeb6eb75682ca55133bc914cef1f072e0b",
+      "content_hash": "c8e1945f05b9643d0ac234e4666d7bb81c5c78ff4a987788992e0c52597e605a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:40:24.295Z"
+      "persisted_at": "2026-11-13T18:18:05.587Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -193118,9 +193118,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c1da427ff5042fec1c5265b5347ded1d4ae030656bea9f5de09ca56cec122e0",
+      "content_hash": "bcbcd326ef7daf859e42e5296b2fca046a7e1cd4030035edb357a0d71e16a393",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:40:24.379Z"
+      "persisted_at": "2026-11-13T18:18:05.682Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -193130,9 +193130,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5cccb7240effb2c9f00113ce3e4dcd30df3fd27eb1b0ef9aa994652a0f777e45",
+      "content_hash": "1eec7a4d28342d1863231ec254699490cc96d2a34d6b2b53d8e18a0431c5ffc5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:40:24.473Z"
+      "persisted_at": "2026-11-13T18:18:05.759Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -193142,9 +193142,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a3926243d89d6322c5cb6f51a2cf4202c27a52a1e6d153481b2dbd2d3d0c8f3a",
+      "content_hash": "6c3a032ca60004d14b81f379ae8a3adf0c25a52e1075883d141aeaa3eb1b9a61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:40:24.622Z"
+      "persisted_at": "2026-11-13T18:18:05.835Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -195422,6 +195422,171 @@
       "content_hash": "cdd9bf00a14baca8dbf43b835414d48c16a2e2583f654879afd850d09c1573ce",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T18:06:49.104Z"
+    },
+    "learn-github-foreactlabs-openexecutive": {
+      "learning_id": "learn-github-foreactlabs-openexecutive",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ForeactLabs/OpenExecutive",
+      "repository": "ForeactLabs/OpenExecutive",
+      "slug": "foreactlabs-openexecutive",
+      "platform": "github",
+      "source_url": "https://github.com/ForeactLabs/OpenExecutive",
+      "source_version": "e023f2f3",
+      "content_hash": "19aed3104b376870df8fdffe049eb55a237922cd4592cf7f507d044a8bf1929e",
+      "dossier_path": "07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/foreactlabs-openexecutive-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): Bump the npm-dependencies group in /packages/ui with 6 updates (#766)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T18:17:14.852Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766": {
+      "item_id": "candidate_directive-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UCV0-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766.md",
+      "title": "deps): Bump the npm-dependencies group in /packages/ui with 6 updates (#766)",
+      "repository": "foreactlabs-openexecutive-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e58ae248e757d6227cda173182b593c94be2489dc895600bcaac1f1c6b44dbcd",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T18:17:30.017Z"
+    },
+    "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-foreactlabs-openexecutive-human-need-intelligence-foreactlabs-openexecutive-core.md",
+      "title": "Human & Need Intelligence: ForeactLabs/OpenExecutive Core Invariants",
+      "repository": "ForeactLabs/OpenExecutive",
+      "source_version": "e023f2f3",
+      "content_hash": "71d665adcb4773133015ad0bbfa0590d3b58e9035060955fe295324da0972432",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T18:17:15.144Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-foreactlabs-openexecutive": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-foreactlabs-openexecutive",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/foreactlabs-openexecutive-skill-operational-integration-playbook-for-foreactlabs.md",
+      "title": "Skill: Operational & Integration Playbook for ForeactLabs/OpenExecutive",
+      "repository": "ForeactLabs/OpenExecutive",
+      "source_version": "e023f2f3",
+      "content_hash": "931e34e3beadd70fabdd06a2092d636660287af00a1b24646518a1840671fc7f",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T18:17:15.202Z"
+    },
+    "agent_contract-agent-contract-foreactlabs-openexecutive-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-foreactlabs-openexecutive-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/foreactlabs-openexecutive-agent-contract-foreactlabs-openexecutive-autonomous-sp.md",
+      "title": "Agent Contract: ForeactLabs/OpenExecutive Autonomous Specialist Persona",
+      "repository": "ForeactLabs/OpenExecutive",
+      "source_version": "e023f2f3",
+      "content_hash": "bcdc348df51f1c9a40af9c3bfda90f6eb79b56cc4de3ae079f3526b02ebf004b",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T18:17:15.257Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-foreactlabs-openexecutive": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-foreactlabs-openexecutive",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/foreactlabs-openexecutive-verification-protocol-empirical-defect-shield-for-fore.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ForeactLabs/OpenExecutive",
+      "repository": "ForeactLabs/OpenExecutive",
+      "source_version": "e023f2f3",
+      "content_hash": "1dabef08bd24569cbf4499548d4e56923910bba2480f79bec77b1da2bf410ed3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:17:15.314Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-qwen-image-2-1-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen-image-2-1-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-research-knowledge-intelligence-unsloth-qwen-imag.md",
+      "title": "Research & Knowledge Intelligence: unsloth/Qwen-Image-2.1-GGUF Core Invariants",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "source_version": "hf-unsloth-qwen-image-2.1-gguf",
+      "content_hash": "799bb4d4079d8073355913d68d3761e9c4dbf1e5db0b51246d6c9417b5eda67c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:17:17.406Z"
+    },
+    "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-foreactlabs-openexecutive-learnings-human-need-intelligence-foreactlabs-openexec.md",
+      "title": "Human & Need Intelligence: foreactlabs-openexecutive-learnings Core Invariants",
+      "repository": "foreactlabs-openexecutive-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d9001493ff2e8fb749da01fcce2659e87cc28ac3b32cfcaa19802d3bc20b7aad",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T18:17:30.072Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-foreactlabs-openexecutive-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-foreactlabs-openexecutive-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/foreactlabs-openexecutive-learnings-skill-operational-integration-playbook-for-f.md",
+      "title": "Skill: Operational & Integration Playbook for foreactlabs-openexecutive-learnings",
+      "repository": "foreactlabs-openexecutive-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9e5fb5b1ac069897b6322a613c27e603a17ac8c5a82aa11d44de63921961a8c6",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T18:17:30.129Z"
+    },
+    "agent_contract-agent-contract-foreactlabs-openexecutive-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-foreactlabs-openexecutive-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/foreactlabs-openexecutive-learnings-agent-contract-foreactlabs-openexecutive-lea.md",
+      "title": "Agent Contract: foreactlabs-openexecutive-learnings Autonomous Specialist Persona",
+      "repository": "foreactlabs-openexecutive-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a5356acd45e20b4087719fb357834e47aee35ef0a0e1c8acfece0c7c53d749f5",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T18:17:30.190Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-foreactlabs-openexecutive-lear": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-foreactlabs-openexecutive-lear",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/foreactlabs-openexecutive-learnings-verification-protocol-empirical-defect-shiel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for foreactlabs-openexecutive-learnings",
+      "repository": "foreactlabs-openexecutive-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06fb7d4b7173992ba38fc998173deaa85ee5ca8832d3de8fe14759a75c2cfda1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:17:30.245Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen-image-2-1-gguf-learnings-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen-image-2-1-gguf-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-qwen-image-2.1-gguf-learnings Core Invariants",
+      "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c7a667decdab45567b377ba7a5530c2a6c0a01ba095869f8c2c779fe6650768b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:18:05.287Z"
     }
   },
   "aliases": {
@@ -201420,5 +201585,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9232
+  "total_items": 9244
 }

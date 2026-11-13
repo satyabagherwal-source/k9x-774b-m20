@@ -21022,5 +21022,20 @@
     "qualityScore": 2086,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-13T17:34:04.444Z"
+  },
+  {
+    "name": "OpenExecutive",
+    "fullName": "ForeactLabs/OpenExecutive",
+    "url": "https://github.com/ForeactLabs/OpenExecutive",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI-powered virtual executive team — a single coherent executive persona backed by 8 specialist agents (FastAPI + Next.js).",
+    "stars": 5806,
+    "forks": 630,
+    "openIssues": 7,
+    "language": "Python",
+    "qualityScore": 3256,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-13T18:13:52.528Z"
   }
 ]
