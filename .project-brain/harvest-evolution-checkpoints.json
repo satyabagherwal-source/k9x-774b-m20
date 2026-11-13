@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:55:48.346Z",
+  "last_updated": "2026-11-13T15:04:06.064Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-13T13:34:34.562Z",
+      "processed_at": "2026-11-13T15:04:05.574Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-12T15:34:17.974Z",
+      "processed_at": "2026-11-13T15:04:04.762Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1883,8 +1883,8 @@
       "staged_for_review": 0
     },
     "hf-xingchen-agi-xing4.0-29b-a4b-learnings.md": {
-      "processed_at": "2026-11-13T14:26:28.004Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-13T15:04:04.434Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "software-mansion-react-native-screens-learnings.md": {
@@ -1903,7 +1903,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 594,
+  "total_dossiers_evaluated": 597,
   "total_canonical_promoted": 107,
-  "total_staged_for_review": 483
+  "total_staged_for_review": 485
 }

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:47:06.627Z",
+  "timestamp": "2026-11-13T15:04:05.660Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-zulip-zulip-learnings",
+  "learning_id": "LEARN-EVO-zulip-zulip-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zulip-zulip-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:47:06.627Z`  
-> **Learning ID**: `LEARN-REEXTRACT-zulip-zulip-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T15:04:05.660Z`  
+> **Learning ID**: `LEARN-EVO-zulip-zulip-learnings`
 
 
 ## 1. Scope & Verification Target

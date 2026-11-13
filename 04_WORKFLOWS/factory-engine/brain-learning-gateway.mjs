@@ -137,12 +137,7 @@ export function extractCandidateRulesFromText(rawText) {
       if (/^(?:net-new\s+universal|universal\s+engineering\s+rules|forensic\s+real|executive\s+forensic|microscopic|the\s+\d+|actionable|discovered\s+engineering|empirical\s+architectural|compliance\s+&)/i.test(cleanTitle)) {
         continue;
       }
-      candidates.push({
-        title: cleanTitle || rawHeading,
-        body,
-        knowledgeType: 'engineering_pattern',
-        is_rule: true
-      });
+      candidates.push({ title: cleanTitle || rawHeading, body });
     }
   }
   return candidates;
@@ -749,14 +744,8 @@ export function promoteValidatedRules(learningPackage, options = {}) {
       continue;
     }
 
-    // 1. Mandatory Primary Persistence into 05_KNOWLEDGE/engineering-patterns.md
-    fs.appendFileSync(p.patternsPath, formattedRule, 'utf-8');
-    const ruleReadBack = readBackVerifyRuleInPatterns(nextRuleNum, rule.title, p.brainRoot);
-    if (!ruleReadBack.verified) {
-      throw new Error(`RULE_PROMOTION_READBACK_FAILED: ${ruleReadBack.reason}`);
-    }
-
     let targetFilePath = p.patternsPath;
+    let isPatternFile = true;
     let assignedNum = nextRuleNum;
     const slug = (rule.slug || rule.title || 'unnamed-rule')
       .toLowerCase()
@@ -764,37 +753,56 @@ export function promoteValidatedRules(learningPackage, options = {}) {
       .replace(/-+/g, '-')
       .slice(0, 60);
 
-    // 2. Additive Secondary Artifact Generation if applicable
     if (ruleRouting.targetFolder === '12_DECISIONS') {
       const adrDir = path.join(p.brainRoot, '12_DECISIONS');
       fs.mkdirSync(adrDir, { recursive: true });
-      const adrPath = path.join(adrDir, `ADR-${slug}.md`);
+      targetFilePath = path.join(adrDir, `ADR-${slug}.md`);
+      isPatternFile = false;
+      assignedNum = null;
       const adrContent = `# ADR: ${rule.title}\n\n${provenanceBlock}\n\n## Context & Decision\n${rule.body}\n`;
-      fs.writeFileSync(adrPath, adrContent, 'utf-8');
-      console.log(`🏛️ [GATEWAY ADDITIVE ARTIFACT: 12_DECISIONS] Written to ${adrPath}`);
+      fs.writeFileSync(targetFilePath, adrContent, 'utf-8');
+      console.log(`🏛️ [GATEWAY DESTINATION ROUTED: 12_DECISIONS] Written to ${targetFilePath}`);
     } else if (ruleRouting.targetFolder === '03_SKILLS') {
       const skillsDir = path.join(p.brainRoot, '03_SKILLS');
       fs.mkdirSync(skillsDir, { recursive: true });
-      const skillPath = path.join(skillsDir, `${slug}.md`);
+      targetFilePath = path.join(skillsDir, `${slug}.md`);
+      isPatternFile = false;
+      assignedNum = null;
       const skillContent = `# ${rule.title}\n\n${provenanceBlock}\n\n${rule.body}\n`;
-      fs.writeFileSync(skillPath, skillContent, 'utf-8');
-      console.log(`🎯 [GATEWAY ADDITIVE ARTIFACT: 03_SKILLS] Written to ${skillPath}`);
+      fs.writeFileSync(targetFilePath, skillContent, 'utf-8');
+      console.log(`🎯 [GATEWAY DESTINATION ROUTED: 03_SKILLS] Written to ${targetFilePath}`);
     } else if (ruleRouting.targetFolder === '08_VERIFICATION') {
       const verDir = path.join(p.brainRoot, '08_VERIFICATION');
       fs.mkdirSync(verDir, { recursive: true });
-      const verPath = path.join(verDir, `${slug}.md`);
+      targetFilePath = path.join(verDir, `${slug}.md`);
+      isPatternFile = false;
+      assignedNum = null;
       const verContent = `# Verification: ${rule.title}\n\n${provenanceBlock}\n\n${rule.body}\n`;
-      fs.writeFileSync(verPath, verContent, 'utf-8');
-      console.log(`📊 [GATEWAY ADDITIVE ARTIFACT: 08_VERIFICATION] Written to ${verPath}`);
+      fs.writeFileSync(targetFilePath, verContent, 'utf-8');
+      console.log(`📊 [GATEWAY DESTINATION ROUTED: 08_VERIFICATION] Written to ${targetFilePath}`);
+    } else {
+      // Default: 05_KNOWLEDGE/engineering-patterns.md
+      fs.appendFileSync(p.patternsPath, formattedRule, 'utf-8');
+      const ruleReadBack = readBackVerifyRuleInPatterns(nextRuleNum, rule.title, p.brainRoot);
+      if (!ruleReadBack.verified) {
+        throw new Error(`RULE_PROMOTION_READBACK_FAILED: ${ruleReadBack.reason}`);
+      }
     }
 
-    console.log(`🌟 [GATEWAY PROMOTION VERIFIED] Rule "${rule.title}" validated, persisted to 05_KNOWLEDGE/engineering-patterns.md (Rule #${nextRuleNum}), and verified via read-back.`);
+    if (!isPatternFile) {
+      const fileContent = fs.readFileSync(targetFilePath, 'utf-8');
+      if (!fileContent.includes(rule.title)) {
+        throw new Error(`DESTINATION_ROUTING_READBACK_FAILED: Target file ${targetFilePath} does not contain promoted title.`);
+      }
+    }
+
+    console.log(`🌟 [GATEWAY PROMOTION VERIFIED] Rule "${rule.title}" validated, persisted to ${ruleRouting.targetFolder}, and verified via read-back.`);
     promotedList.push({
       number: assignedNum,
       title: rule.title,
       status: 'PROMOTED_AND_VERIFIED',
-      destination_folder: '05_KNOWLEDGE',
-      destination_path: '05_KNOWLEDGE/engineering-patterns.md',
+      destination_folder: ruleRouting.targetFolder,
+      destination_path: path.relative(p.brainRoot, targetFilePath).replace(/\\/g, '/'),
       primary_domain: ruleClassification.primaryDomain?.letter || 'H',
       confidence: ruleClassification.confidence,
       provenance: provenanceMeta,

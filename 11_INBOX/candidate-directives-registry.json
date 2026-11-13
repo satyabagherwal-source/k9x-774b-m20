@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:55:47.976Z",
+  "last_updated": "2026-11-13T15:04:05.761Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4413,13 +4413,15 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-REV-7479A7",
+      "id": "CD-XMYP",
       "directive_title": "export: Fix consent of former subscribers covering private channels.",
-      "status": "STAGED_FOR_HUMAN_REVIEW",
-      "source_repo": "zulip-zulip",
-      "domain_letter": "G",
-      "staged_file": "11_INBOX/candidate-directives/CD-REV-7479A7-export-fix-consent-of-former-subscribers.md",
-      "staged_date": "2026-11-11"
+      "source_repo": "zulip-zulip-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XMYP-export-fix-consent-of-former-subscribers-covering-private-channels.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "A"
     },
     {
       "id": "CD-REV-E91DAF",
@@ -9024,6 +9026,35 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A2DBE2-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-XMKT",
+      "directive_title": "docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XMKT-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-D26D26",
+      "directive_title": "docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D26D26-docs-fix-sqlp-and-polars-schema-file-nam.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-AF331A",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AF331A-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-13"
     }
   ]

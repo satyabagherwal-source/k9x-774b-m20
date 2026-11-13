@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T14:34:30.358Z",
+  "updated_at": "2026-11-13T15:04:05.055Z",
   "stats": {
-    "total_discovered": 2557,
-    "approved_pending_harvest": 2386,
+    "total_discovered": 2559,
+    "approved_pending_harvest": 2388,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2376,
+      "COMMUNITY_AND_EXPERT": 2378,
       "OFFICIAL_DOCUMENTATION": 95,
       "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
@@ -55076,6 +55076,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
         "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-6830F5CBD19F": {
+      "id": "SRC-6830F5CBD19F",
+      "url": "https://en.wikipedia.org/wiki/Three-way_comparison",
+      "title": "https://en.wikipedia.org/wiki/Three-way_comparison",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:04:04.895Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-A9FF7669B694": {
+      "id": "SRC-A9FF7669B694",
+      "url": "https://github.com/dathere/qsv/pull/5046",
+      "title": "https://github.com/dathere/qsv/pull/5046",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:04:05.055Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:52.714Z",
+  "timestamp": "2026-11-13T15:04:05.145Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-dathere-qsv-learnings",
+  "learning_id": "LEARN-EVO-dathere-qsv-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:52.714Z`  
-> **Learning ID**: `LEARN-REEXTRACT-dathere-qsv-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T15:04:05.145Z`  
+> **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `a90bee6a`  
+> **Source Version**: `ce4f6857`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T15:33:54.597Z  
+> **Timestamp**: 2026-11-13T15:04:00.599Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T15:33:54.583Z  
+> **Harvest Timestamp**: 2026-11-13T15:04:00.591Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3838 stars
+- **Stars / Engagement**: 3847 stars
 
 ---
 
@@ -2226,327 +2226,158 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a90bee6a` (2026-11-12)
-**Commit Message**: deps(viz): driver.js 1.12.1 for the Data Schematic Tour (#5038)
+### Incident Patch 1: `ce4f6857` (2026-11-13)
+**Commit Message**: docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)
 
-* deps(viz): driver.js 1.12.1 for the Data Schematic Tour; Enter advances from step 1
+* docs: fix sqlp `<=>` and Polars schema file name in USAGE
 
-Bump the vendored driver.js tour engine and hints widget from 1.10.2 to
-1.12.1: the four bundles in src/cmd/assets, DRIVERJS_CDN_VERSION and the
-four SRI digests. hints.css now carries a subset of driver.css's popover
-rules (it lacks the tour-only action-step/nudge/waiting rules), so the
-comment claiming a byte-identical duplicate is reworded; loading both is
-still order-independent.
+- sqlp: `<=>` is NULL-safe equality (IS NOT DISTINCT FROM), not a
+  -1/0/1 spaceship comparison; it returns true/false, never NULL.
+- sqlp, joinp, schema: a Polars schema file is named after the full
+  input file name (data.csv -> data.csv.pschema.json), per
+  util::pschema_path.
 
-What the Tour gets from the bump, checked against 1.10.2 in Chrome:
-- popovers focus Next instead of the close button, so Enter advances
-  instead of ending the tour;
-- Escape in a text field inside the spotlight (the data viewer's search
-  box) goes to the field instead of ending the tour.
+Help markdown and MCP skill JSONs regenerated.
 
-The Tour's first-popover hook no longer moves focus off Next onto the
-popover wrapper; it only focuses the wrapper when focus didn't land in
-the popover. Enter now advances on step 1 too (it did nothing before).
-The gallery-iframe reveal is unchanged.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Each Tour page embeds ~10.6 KB more (gzip+base64). All gallery Data
-Schematics are regenerated (gen_gallery.py + r
+* docs: CHANGELOG entry for #5046
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **docs: the `profile --locate census` USAGE gives the state-column threshold** ([#5025](https://github.com/dathere/qsv/pull/5025)): a state column lists states only when at least 90% of its values are US states.
- 
- ### Changed
-+- **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now [1.12.1](https://github.com/nilbuild/driver.js/releases/tag/1.12.1)** (was 1.10.2; [#5038](https://github.com/dathere/qsv/pull/5038)):
-+  - **Enter moves to the next step on every step.** Each popover focuses Next instead of the close button, and the Tour no longer moves focus off Next on the first step. Before, Enter did nothing on the first step and ended the tour on every later one.
-+  - Escape pressed in a text field inside the spotlighted element, such as the data viewer's search box, goes to that field, and the drawer stays open. Before, it ended the tour. While a tour runs, the dictionary and data drawers leave Escape to the tour, so Escape anywhere else ends the tour and closes the open drawer, as before.
-+  - Elements inside the spotlighted area keep their own `pointer-events: none`; before, driver.js forced every one of them to `auto`.
-+  - The bundle is larger: each Tour page embeds about 11 KB more (gzip + base64). The embedded payloads, the `QSV_VIZ_CDN` jsDelivr URLs and their SRI digests are updated together, and every gallery Data Schematic is regenerated with them.
- - **deps: the `webdriver-downloader` fork patch is gone** ([#5027](https://github.com/dathere/qsv/pull/5027)). [ik1ne/webdriver-downloader#67](https://github.com/ik1ne/webdriver-downloader/pull/67) (zip 9) was merged and released as 0.18.0. qsv's `plotly` pin moves to `dathere/plotly` rev [`d43be37`](https://github.com/dathere/plotly/commit/d43be3786c32ab2790a6c0e927ee39d2bb99704c), whose `plotly_static` build dependency requires 0.18, so `webdriver-downloader` now comes from crates.io. The fork was added in [#4828](https://github.com/dathere/qsv/pull/4828) because every zip 8.x was yanked.
- - **`luau`: Luau bumped to [0.745](https://github.com/luau-lang/luau/releases/tag/0.745)** (from 0.740, [#5026](https://github.com/dathere/qsv/pull/5026)). `luau0-src` 0.23.0+luau745 needs an unreleased mlua-sys, so `mlua` is patched to upstream rev [`a0ad453`](https://github.com/mlua-rs/mlua/commit/a0ad4535fc72ba89967a931c5be57b162b5f0f3f) until an mlua release includes it. The crate versions are unchanged (mlua 0.12.2, mlua-sys 0.13.0). The yank that reverted the 0.744 bump (#4923) is resolved: 0.23.0 replaces the yanked 0.22.1+luau744.
-   - **Native code (`luau-jit`) fixes** ([0.744](https://github.com/luau-lang/luau/releases/tag/0.744)): an Arm64 crash in functions with more than 256 constants, a dead-store-elimination bug, a `FORGLOOP` register reservation bug, and `bit32`/integer correctness fixes (`lrotate`, `extract`, `replace`).
+@@ -45,7 +45,7 @@
+       {
+         "flag": "--cache-schema",
+         "type": "number",
+-        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
++        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
+         "default": 0
+       },
+       {
 ```
 
-**File**: `THIRD_PARTY_NOTICES.md` (modified, +2/-2)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +2/-2)
 ```diff
-@@ -22,7 +22,7 @@ run `cargo tree` or a tool such as `cargo-about` for that inventory.
- | [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) | as bundled in plotly.js 3.7.0 | BSD-3-Clause | bundled *inside* plotly.js; ships wherever plotly.js does |
- | [plotly.rs](https://github.com/plotly/plotly.rs) | git rev `00fe051` | MIT | Cargo dependency, compiled into the `qsv` binary |
- | [DataTables](https://datatables.net/) + Buttons, ColumnControl, DateTime, SearchBuilder | `dt-3.1.5/b-4.1.3/cc-2.1.3/date-2.1.3/sb-2.1.1` | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML |
--| [driver.js](https://driverjs.com/) | 1.10.2 | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML (the guided tour) |
-+| [driver.js](https://driverjs.com/) | 1.12.1 | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML (the guided tour) |
- | [LuaDate](https://github.com/Tieske/date) | 2.2.1 | MIT | vendored in `resources/luau/vendor/luadate/`, compiled into the binary |
- | [DCAT-US v3 schemas](https://github.com/GSA/dcat-us) | commit `1ca074b` | CC0-1.0 | vendored in `resources/dcat-us-v3/`, compiled into the binary |
- | [DCAT-AP v3 SHACL](https://github.com/SEMICeu/DCAT-AP) | release 3.0.0 | CC-BY-4.0 | vendored in `resources/dcat-ap-v3/`, compiled into the binary |
-@@ -350,7 +350,7 @@ SOFTWARE.
- ## driver.js
- 
- Upstream: <https://github.com/nilbuild/driver.js> (formerly `kamranahmedse/driver.js`,
--which now redirects there) — version **1.10.2**.
-+which now redirects there) — version **1.12.1**.
- 
- Vendored unmodified at [`src/cmd/assets/driverjs.min.js`](src/cmd/assets/driverjs.min.js)
- (the `dist/driver.js.iife.js` build) and
+@@ -23,7 +23,7 @@
+       {
+         "flag": "--cache-schema",
+         "type": "flag",
+-        "description": "Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars \"table\" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension \".pschema.json\" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its \"Float64\" type to \"Float32\" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of \"Float64\", use {\"Decimal\": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`."
++        "description": "Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars \"table\" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with \".pschema.json\" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its \"Float64\" type to \"Float32\" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of \"Float64\", use {\"Decimal\": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`."
+       },
+       {
+         "flag": "--compress-level",
+@@ -177,7 +177,7 @@
+       "command": "qsv sqlp data.csv \"select CASE col*5 WHEN 10 THEN 'foo' WHEN 5 THEN 'bar' ELSE 'baz' END from _t_1\""
+     },
+     {
+-      "description": "spaceship operator: \"<=>\" (three-way comparison operator) returns -1 if left < right, 0 if left == right, 1 if left > right https://en.wikipedia.org/wiki/Three-way_comparison#Spaceship_operator",
++      "description": "NULL-safe equality operator: \"<=>\" (same as IS NOT DISTINCT FROM) returns true if both sides are equal or both are NULL, false otherwise (never NULL)",
+       "command": "qsv sqlp data.csv data2.csv \"select data.c2 <=> data2.c2 from data join data2 on data.c1 = data2.c1\""
+     },
+     {
 ```
 
-**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +37/-17)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Basemap tiles (c) OpenStreetMap contributors (ODbL 1.0), (c) CARTO
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
-@@ -77,7 +77,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -942,7 +942,7 @@ <h1>allegheny_dog_licenses.csv — Data Schematic</h1>
- <div class="qsv-dict-downloads">
- <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2VydmVzIHRvIGRvY3VtZW50IHBldCBvd25lcnNoaXAgYW5kIHZhbGlkIGxpY2Vuc2luZyBwZXJpb2RzIGFjcm9zcyB2YXJpb3VzIGNhdGVnb3JpZXMgb2YgbGlmZXRpbWUgYW5kIHNlbmlvciByZWdpc3RyYXRpb25zLlxuXG4jIyMgTm90YWJsZSBDaGFyYWN0ZXJpc3RpY3NcblxuKiAqKlNlbnRpbmVsIFZhbHVlczoqKiBUaGUgYEV4cFllYXJgIGZpZWxkIGNvbnNpc3RzIGVudGlyZWx5IG9mIHRoZSB2YWx1ZSBgMjA5OWAsIHdoaWNoIHNlcnZlcyBhcyBhIHNlbnRpbmVsIGluZGljYXRpbmcgbm8gZXhwaXJhdGlvbi5cbiogKipQSUkvU2Vuc2l0aXZlIERhdGE6KiogVGhlIGRhdGFzZXQgY29udGFpbnMgUGVyc29uYWxseSBJZGVudGlmaWFibGUgSW5mb3JtYXRpb24gKFBJSSkgaW4gdGhlIGZvcm0gb2YgYERvZ05hbWVgIGFuZCBnZW9ncmFwaGljIGlkZW50aWZpZXJzIHZpYSBgT3duZXJaaXBgLlxuKiAqKkhpZ2ggQ2FyZGluYWxpdHk6KiogVGhlIGBEb2dOYW1lYCBhbmQgYEJyZWVkYCBmaWVsZHMgZXhoaWJpdCBoaWdoIGNhcmRpbmFsaXR5LCBpbmRpY2F0aW5nIGEgd2lkZSB2YXJpZXR5IG9mIHVuaXF1ZSB2YWx1ZXMgYWNyb3NzIHRoZSBkYXRhc2V0LlxuKiAqKkRpc3RyaWJ1dGlvbiBQYXR0ZXJuczoqKiBUaGUgYExpY2Vuc2VUeXBlYCBmaWVsZCBzaG93cyBhIGNvbmNlbnRyYXRpb24gaW4gbGlmZXRpbWUgcmVnaXN0cmF0aW9ucywgcGFydGljdWxhcmx5IGZvciBzcGF5ZWQgZmVtYWxlcyBhbmQgbmV1dGVyZWQgbWFsZXMuXG4qICoqRGF0YSBRdWFsaXR5OioqIFRoZSBkYXRhc2V0IGlzIGhpZ2hseSBjb21wbGV0ZSB3aXRoIHZlcnkgbG93IG51bGwgY291bnRzIGFjcm9zcyBhbGwgZmllbGRzOyBob3dldmVyLCB0aGUgYEJyZWVkYCBhbmQgYENvbG9yYCBmaWVsZHMgY29udGFpbiBtaW5vciBzcGFyc2l0eS5cbiogKipUZW1wb3JhbCBSYW5nZToqKiBUaGUgYFZhbGlkRGF0ZWAgZmllbGQgc2hvd3MgYSB0ZW1wb3JhbCBzcGFuIG9mIGFwcHJveGltYXRlbHkgMjMgeWVhcnMsIGZyb20gMjAwMyB0byAyMDI2LlxuXG5HZW5lcmF0ZWQgYnkgcXN2IHYyMS4xLjAgZGVzY3JpYmVncHRcbkNvbW1hbmQgbGluZTogdGFyZ2V0L2RlYnVnL3FzdiBkZXNjcmliZWdwdCAtLWRpY3Rpb25hcnkgLS1kZXNjcmlwdGlvbiBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ19saWNlbnNlcy5jc3YgLS1mb3JtYXQganNvbnNjaGVtYSAtbyBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ3NfZGljdC5zY2hlbWEuanNvbiAtLWZyZXNoIC0tdHdvLXBhc3MgLS1pbmZlci1jb250ZW50LXR5cGUgLS1pbmZlci1udWxsLXZhbHVlc1xuUHJvbXB0IGZpbGU6IERlZmF1bHQgdjcuMi4wXG5Nb2RlbDogZ29vZ2xlL2dlbW1hLTQtMjZiLWE0YlxuTExNIEFQSSBVUkw6IGh0dHA6Ly9sb2NhbGhvc3Q6MTIzNC92MVxuTGFuZ3VhZ2U6IFxuVGltZXN0YW1wOiAyMDI2LTA3LTE3VDEzOjQyOjE0LjE2ODUyNSswMDowMFxuXG5XQVJOSU5HOiBEZXNjcmlwdGlvbiBnZW5lcmF0ZWQgYnkgYW4gTExNIGFuZCBtYXkgY29udGFpbiBpbmFjY3VyYWNpZXMuIFZlcmlmeSBiZWZvcmUgdXNpbmchXG4iLAogICJ0eXBlIjogIm9iamVjdCIsCiAgInByb3BlcnRpZXMiOiB7CiAgICAiX2lkIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAiaW50ZWdlciIKICAgICAgXSwKICAgICAgInRpdGxlIjogIlJlY29yZCBJRCIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJBIHVuaXF1ZSBpbnRlZ2VyIGlkZW50aWZpZXIgZm9yIGVhY2ggcmVjb3JkIGluIHRoZSBkYXRhc2V0LiIsCiAgICAgICJtaW5pbXVtIjogMjk1ODUyMjcsCiAgICAgICJtYXhpbXVtIjogMjk2MzUyMzksCiAgICAgICJ4LXFzdiI6IHsKICAgICAgICAicXN2X3R5cGUiOiAiSW50ZWdlciIsCiAgICAgICAgImNhcmRpbmFsaXR5IjogNTAwMTMsCiAgICAgICAgIm51bGxfY291bnQiOiAwLAogICAgICAgICJjb250ZW50X3R5cGUiOiAidW5pcXVlX2lkIiwKICAgICAgICAicm9sZSI6ICJpZGVudGlmaWVyIiwKICAgICAgICAiY29uY2VwdCI6ICJpZC5zdXJyb2dhdGVfa2V5IiwKICAgICAgICAiZXhhbXBsZV9jb3VudHMiOiAiPEFMTF9VTklRVUU+IgogICAgICB9CiAgICB9LAogICAgIkxpY2Vuc2VUeXBlIjogewogICAgICAidHlwZSI6IFs
+@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+ 
+ ### Fixed
++- **docs: `sqlp`, `joinp` and `schema` USAGE corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)). `sqlp`'s `<=>` is NULL-safe equality (the same as `IS NOT DISTINCT FROM`: true when both sides are equal or both are NULL, never NULL), not a -1/0/1 "spaceship" comparison. A Polars schema file is named after the full input file name, so `data.csv`'s is `data.csv.pschema.json`, not `data.pschema.json`.
+ - **`luau`: fixes from a review of `luau.rs`** ([#5036](https://github.com/dathere/qsv/pull/5036)):
+   - **An existing `./date.lua` is no longer overwritten and deleted.** A script using `require "./date"` made qsv write the bundled LuaDate over any `date.lua` in the current directory, then delete it at exit. An existing file is now used as-is and left alone. The bundled copy is also removed when the run fails; before, a failed run left it behind.
+   - **`luau filter` no longer keeps every row after the first error.** The keep check looked at the running error count, so after one row errored, every later row was kept whatever it returned. An errored row is still kept.
 ```
 
-**File**: `examples/viz/smart_cms_medicare.html` (modified, +32/-14)
+**File**: `docs/help/joinp.md` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
- <head>
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1854,6 +1854,9 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -1863,10 +1866,10 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
- 
- 
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"a2a26f17","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This short tour walks through cms_medicare_providers.csv — Data Schematic: what each part does, and why each chart was chosen for this data. Use the arrow keys or the buttons below; Esc leaves the tour at any time."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},{"id":"data-colsearch","open":"qsvOpenDat
+@@ -75,7 +75,7 @@ qsv joinp --help
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse the columns as dates. If the parse fails, columns remain as strings. This is useful when the join keys are formatted as dates with differing date formats, as the date formats will be normalized. Note that this will be automatically enabled when using asof joins. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
+-| &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
++| &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
+ | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
+ | &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
+ | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
 ```
 
-**File**: `examples/viz/smart_cpdb.html` (modified, +32/-14)
+**File**: `docs/help/schema.md` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
- <head>
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1894,6 +1894,9 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -1903,10 +1906,10 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+@@ -53,7 +53,7 @@ and then use that to generate the schema file.
  
+ When the "polars" feature is enabled, the `--polars` option will generate a Polars schema
+ instead of a JSON Schema. The generated Polars schema will be written to a file with the
+-`.pschema.json` suffix appended to the input file stem.
++`.pschema.json` suffix appended to the full input file name (data.csv -> data.csv.pschema.json).
  
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"6c154079","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This short tour walks through nyc_capital_projects.csv — Data Schematic: what each part does, and why each chart was chosen for this data. Use the arrow keys or the buttons below; Esc leaves the tour at any time."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},{"id":"data-colsearch","open":"qsvOpenData","clos
+ The Polars schema is a JSON object that describes the schema of a CSV file. When present,
+ the `sqlp`, `joinp`, and `pivotp` commands will use the Polars schema to read the CSV file
 ```
 
-**File**: `examples/viz/smart_dict_sunburst.html` (modified, +32/-14)
+**File**: `docs/help/sqlp.md` (modified, +3/-4)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
- <head>
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1902,6 +1902,9 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -1911,10 +1914,10 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+@@ -149,9 +149,8 @@ qsv sqlp data.csv "select CASE WHEN col1 > 10 THEN 'foo' WHEN col1 > 5 THEN 'bar
+ qsv sqlp data.csv "select CASE col*5 WHEN 10 THEN 'foo' WHEN 5 THEN 'bar' ELSE 'baz' END from _t_1"
+ ```
  
+-> spaceship operator: "<=>" (three-way comparison operator)
+-> returns -1 if left < right, 0 if left == right, 1 if left > right
+-> <https://en.wikipedia.org/wiki/Three-way_comparison#Spaceship_operator>
++> NULL-safe equality operator: "<=>" (same as IS NOT DISTINCT FROM)
++> returns true if both sides are equal or both are NULL, false otherwise (never NULL)
  
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"b84fe6ef","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This dataset contains sales information for various products across different regions, including pricing and customer satisfaction levels."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},{"id":"data-colsearch","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer thead tr:nt
+ ```console
+ qsv sqlp data.csv data2.csv "select data.c2 <=> data2.c2 from data join data2 on data.c1 = data2.c1"
+@@ -360,7 +359,7 @@ qsv sqlp --help
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+-| &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension ".pschema.json" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
++| &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's e
 ```
 
-**File**: `examples/viz/smart_dict_treemap.html` (modified, +32/-14)
+**File**: `src/cmd/joinp.rs` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
- <head>
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1838,6 +1838,9 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -1847,10 +1850,10 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
- 
- 
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"c870e5cd","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This dataset shows information about customers, including their subscription plans, regions, monthly spending, and how long they have been members. It is great for seeing how different groups of people spend money."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},{"id":"data-colsearch","open":"qsvOpenData","close":"qsvCloseData",
+@@ -145,7 +145,7 @@ joinp options:
+                                 * If no schema or stats cache: infer schema using --infer-len 
+                                   and cache the result
+                                 Schema files use the same name as input with .pschema.json extension
+-                                (e.g., data.csv -> data.pschema.json).
++                                (e.g., data.csv -> data.csv.pschema.json).
+                            ‎NOTE: If the input files have pschema.json files that are newer or created
+                            at the same time as the input files, they will be used to inform the join
+                            operation regardless of the value of --cache-schema unless --infer-len is 0.
 ```
 
-**File**: `examples/viz/smart_geo_outliers.html` (modified, +32/-14)
+**File**: `src/cmd/schema.rs` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-        (bundles MapLibre GL JS - BSD-3-Clause)
-      DataTables 3.1.5 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
--     driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-+     driver.js 1.12.1 - (c) Kamran Ahmed - MIT
-      Basemap tiles (c) OpenStreetMap contributors (ODbL 1.0), (c) CARTO
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
- <html lang="en">
-@@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -1791,6 +1791,9 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
-       // an open Buttons popover (the SearchBuilder "Filter" panel) owns this Esc — Buttons
-       // dismisses it itself; only a bare Esc closes the drawer
-       if (document.querySelector("div.dt-button-collection")) return;
-+      // during a guided tour Esc belongs to the tour: it ends the tour (whose teardown closes
-+      // this drawer), or stays with a text field inside the spotlight, e.g. the search box
-+      if (document.body.classList.contains("driver-active")) return;
-       var drawer = document.getElementById("qsv-data-drawer");
-       if (drawer && drawer.classList.contains("open")) window.qsvCloseData();
-     }
-@@ -2290,10 +2293,10 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
- </script>
+@@ -38,7 +38,7 @@ Polars Schema:
+ ==============
+ When the "polars" feature is enabled, the `--polars` option will generate a Polars schema
+ instead of a JSON Schema. The generated Polars schema will be written to a file with the
+-`.pschema.json` suffix appended to the input file stem.
++`.pschema.json` suffix appended to the full input file name (data.csv -> data.csv.pschema.json).
  
- 
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.css" integrity="sha384-q84NOjxOvSzdVT3EjRGos6w4J4t7ysF+ueMkf5CCMevHRH2IkF+sEvNvofEU67dW" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/driver.js.iife.js" integrity="sha384-5g481DgM/VdK19dNiL3kmTG/tz1fQriwUvSide6vc77uYGaXh0s5GLQCUN6dgI8n" crossorigin="anonymous"></script>
--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.css" integrity="sha384-E0PcnW6wtGAssOxWd7JDpsYR8eKlinn6frHOAW2KS8pwV0kXreVNT1weNM8rMHQP" crossorigin="anonymous">
--<script src="https://cdn.jsdelivr.net/npm/driver.js@1.10.2/dist/hints.iife.js" integrity="sha384-AbaQVT/io7rTQxGfXPHFMep4Omjv0lZLl2SEXmaZwTTUy1NPXqO6XhMleUYGdeAZ" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.css" integrity="sha384-d9oDl4f4CyHExY0wCz8kI/Fv+E1sqodsvcsFN2V9CG0CqeZzj1by6U3Va3ANbNOD" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/driver.js.iife.js" integrity="sha384-6TconHWzj1pkc91Tj9TrFXMQoqTwo4Xj0OakPdymcJawvjZDm1tnRlazMkqUH1fa" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.css" integrity="sha384-+iVToXMiLWYhN1QqObLiwSQnqlRAU1Mmgz04t6Ullfco7iBiOg1VB6uABx+5WIpB" crossorigin="anonymous">
-+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.12.1/dist/hints.iife.js" integrity="sha384-W+/r0gC8penxIowxhlX4IE7VNe1/CzBZPp/b34HT05bH9cyOJ4fehStrpQfg/HnH" crossorigin="anonymous"></script>
- <script type="application/json" id="qsv-tour-config">{"key":"98598047","steps":[{"id":"intro","title":"Welcome to your Data Schematic","body":"This short tour walks through delivery_stops.csv — Data Schematic: what each part does, and why each chart was chosen for this data. Use the arrow keys or the buttons below; Esc leaves the tour at any time."},{"id":"data-open","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer","title":"The data viewer","body":"The rows behind the charts, in a searchable table. Reopen it anytime from the link beside the row count."},{"id":"data-filter","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-buttons button","title":"Advanced filters","body":"The Filter button builds multi-condition searches - AND/OR groups over any column - complementing the quick searches."},{"id":"data-search","open":"qsvOpenData","close":"qsvCloseData","wait":"#qsv-data-drawer div.dt-container","target":"#qsv-data-drawer div.dt-search input","title":"Global search","body":"Type here to search across every column at once."},
+ The Polars schema is a JSON object that describes the schema of a CSV file. When present,
+ the `sqlp`, `joinp`, and `pivotp` commands will use the Polars schema to read the CSV file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5038** (2026-11-12): deps(viz): driver.js 1.12.1 for the Data Schematic Tour (@jqnatividad)
-- **PR #5037** (2026-11-12): build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (@dependabot[bot])
-- **PR #5036** (2026-11-12): fix(luau): date.lua clobbering, filter-after-error, insertrecord width & more (@jqnatividad)
-- **PR #5035** (2026-11-11): docs(viz): warn that plotly.js 4.x re-blanks sandboxed maps (@jqnatividad)
-- **PR #5034** (2026-11-10): deps: bump Polars to upstream main ff1b37d (@jqnatividad)
-- **PR #5033** (2026-11-10): fix(viz): load map panels in sandboxed frames without allow-same-origin (@jqnatividad)
+- **PR #5046** (2026-11-13): docs: fix sqlp `<=>` and Polars schema file name in USAGE (@jqnatividad)
+- **PR #5045** (2026-11-13): deps: bump Polars to upstream 61fdb30 (@jqnatividad)
+- **PR #5044** (2026-11-13): build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (@dependabot[bot])
+- **PR #5043** (2026-11-13): build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (@dependabot[bot])
+- **PR #5042** (2026-11-12): build(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /.claude/skills (@dependabot[bot])
+- **PR #5041** (2026-11-12): deps: bump Polars to upstream 8ecd1ca (@jqnatividad)
 
 ---
 
@@ -2566,35 +2397,31 @@ Schematics are regenerated (gen_gallery.py + r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps(viz): driver.js 1.12.1 for the Data Schematic Tour (#5038)
+## X. docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-joinp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a90bee6a`: deps(viz): driver.js 1.12.1 for the Data Schematic Tour (#5038). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce4f6857`: docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-joinp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now [1.12.1](https://github.com/nilbuild/driver.js/releases/tag/1.12.1)** (was 1.10.2; [#5038](https://github.com/dathere/qsv/pull/5038)):
-  - **Enter moves to the next step on every step.** Each popover focuses Next instead of the close button, and the Tour no longer moves focus off Next on the first step. Before, Enter did nothing on the first step and ended the tour on every later one.
-  - Escape pressed in a text field inside the spotlighted element, such as the data viewer's search box, goes to that field, and the drawer stays open. Before, it ended the tour. While a tour runs, the dictionary and data drawers leave Escape to the tour, so Escape anywhere else ends the tour and closes the open drawer, as before.
-  - Elements inside the spotlighted area keep their own `pointer-events: none`; before, driver.js forced every one of them to `auto`.
-  - The bundle is larger: each Tour page embeds about 11 KB more (gzip + base64). The embedded payloads, the `QSV_VIZ_CDN` jsDelivr URLs and their SRI digests are updated together, and every gallery Data Schematic is regenerated with them.
+        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a90bee6a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce4f6857` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
