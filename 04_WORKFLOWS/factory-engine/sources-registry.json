@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T10:55:38.461Z",
-    "lastVerified": "2026-11-13T10:55:38.461Z",
+    "lastChecked": "2026-11-13T11:14:01.130Z",
+    "lastVerified": "2026-11-13T11:14:01.130Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -434,8 +434,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T04:43:05.882Z",
-    "lastVerified": "2026-11-13T04:43:05.882Z",
+    "lastChecked": "2026-11-13T11:13:56.195Z",
+    "lastVerified": "2026-11-13T11:13:56.195Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -469,8 +469,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T09:31:23.023Z",
-    "lastVerified": "2026-11-13T09:31:23.023Z",
+    "lastChecked": "2026-11-13T11:14:01.120Z",
+    "lastVerified": "2026-11-13T11:14:01.120Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -494,13 +494,13 @@
     "officialUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T08:22:08.140Z",
-    "lastVerified": "2026-11-08T08:22:08.140Z",
+    "lastChecked": "2026-11-13T11:13:48.745Z",
+    "lastVerified": "2026-11-13T11:13:48.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "eec1463aa609d52869d0ac220f6b9e8a1e0a62646f528380e17dc207d2ebe45b",
-    "promotedRulesCount": 3,
+    "contentHash": "6dc88efa261b1eee917e20df05bc2d98592f44e0fa396c901d6368826d2f511a",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -2360,9 +2360,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-11T18:03:28.704Z",
+    "lastChecked": "2026-11-13T11:13:46.157Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-11-11T18:03:28.704Z"
+    "lastVerified": "2026-11-13T11:13:46.157Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4307,9 +4307,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-12T05:34:53.541Z",
+    "lastChecked": "2026-11-13T11:13:53.648Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-12T05:34:53.541Z"
+    "lastVerified": "2026-11-13T11:13:53.648Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -6465,8 +6465,8 @@
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-12T03:56:11.550Z",
-    "lastVerified": "2026-11-12T03:56:11.550Z",
+    "lastChecked": "2026-11-13T11:13:58.729Z",
+    "lastVerified": "2026-11-13T11:13:58.729Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -12216,9 +12216,9 @@
   "dodo-reach-hermes-desktop": {
     "name": "hermes-desktop",
     "officialUrl": "https://github.com/dodo-reach/hermes-desktop",
-    "lastChecked": "2026-11-09T01:26:11.337Z",
+    "lastChecked": "2026-11-13T11:13:51.172Z",
     "revisionIdentifier": "3b772afa",
-    "lastVerified": "2026-11-09T01:26:11.337Z"
+    "lastVerified": "2026-11-13T11:13:51.172Z"
   },
   "vitejs-vite": {
     "name": "vitejs/vite",

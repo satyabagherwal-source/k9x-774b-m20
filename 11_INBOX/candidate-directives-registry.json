@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T10:55:52.560Z",
+  "last_updated": "2026-11-13T11:14:09.153Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8579,6 +8579,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C81C64-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-A364BC",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A364BC-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-9BD4B1",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9BD4B1-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -9442,3 +9442,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-13T10:55:17.921Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `249d5f7d` | Multi-dimensional audit evidence | 2026-11-13T10:55:33.901Z |
 | `learn-dom-d-57460e8b` | `project://hf-sentence-transformers-all-minilm-l6-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | 2026-11-13T10:55:52.540Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-13T11:13:49.109Z |
+| `learn-dom-d-9703d9b4` | `project://hf-cross-encoder-ms-marco-minilm-l6-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | 2026-11-13T11:14:09.039Z |

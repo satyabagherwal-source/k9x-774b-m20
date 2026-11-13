@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T10:55:52.540Z",
+  "updated_at": "2026-11-13T11:14:09.038Z",
   "statistics": {
-    "total_nodes": 75,
+    "total_nodes": 76,
     "total_edges": 39,
     "domain_distribution": {
-      "D": 57,
+      "D": 58,
       "M": 1,
       "H": 9,
       "J": 2,
@@ -1663,6 +1663,28 @@
       ],
       "created_at": "2026-11-13T10:55:52.539Z",
       "updated_at": "2026-11-13T10:55:52.539Z"
+    },
+    "DOM-D-9703D9B4": {
+      "id": "DOM-D-9703D9B4",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): cross-encoder/ms-marco-MiniLM-L6-v2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md`  \n> **Source**: huggingface ([h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md`  \n> **Source**: huggingface ([h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-cross-encoder-ms-marco-minilm-l6-v2/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T11:14:01.204Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cross-encoder-ms-marco-minilm-l6-v2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T11:14:09.038Z",
+      "updated_at": "2026-11-13T11:14:09.038Z"
     }
   },
   "edges": [
