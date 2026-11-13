@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "2.0.0-universal",
+  "title": "AI-Builder-Brain Universal Knowledge Destination & Domain Registry",
+  "last_updated": "2026-11-13T11:45:00.000Z",
+  "governing_axiom": "AI THINKS. BRAIN STORES AND SUPPLIES INTELLIGENCE DATA. TOOLS EXECUTE. PRODUCTS DELIVER OUTCOMES.",
+  "canonical_destinations": {
+    "00_START_HERE": {
+      "folder": "00_START_HERE",
+      "purpose": "Onboarding, orientation, architecture overview, beginner pair-programming primer",
+      "allowed_types": ["orientation_guide", "sitemap", "onboarding_primer"],
+      "storage_format": "MARKDOWN",
+      "indexing_strategy": "UNINDEXED"
+    },
+    "01_CORE": {
+      "folder": "01_CORE",
+      "purpose": "Core immutable laws, operating rules, ethical invariants, foundational constraints",
+      "allowed_types": ["core_law", "operating_rule", "system_invariant"],
+      "canonical_file": "01_CORE/operating-rules.md",
+      "storage_format": "SINGLE_FILE_APPEND",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "02_AGENT_INTELLIGENCE": {
+      "folder": "02_AGENT_INTELLIGENCE",
+      "purpose": "Specialist autonomous agent contracts, fleet roles, subagent definitions",
+      "allowed_types": ["agent_contract", "fleet_roster", "subagent_spec"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "naming_convention": "02_AGENT_INTELLIGENCE/${repoSlug}-agent-contract-${slug}.md",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "03_SKILLS": {
+      "folder": "03_SKILLS",
+      "purpose": "Executable, model-independent playbooks, procedural guides, operational recipes",
+      "allowed_types": ["skill_playbook", "procedural_guide", "execution_recipe"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "naming_convention": "03_SKILLS/${repoSlug}-skill-${slug}.md",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "04_WORKFLOWS": {
+      "folder": "04_WORKFLOWS",
+      "purpose": "Automated factory engines, test harnesses, execution pipelines",
+      "allowed_types": ["automation_engine", "factory_workflow", "test_suite"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "05_KNOWLEDGE/engineering-patterns.md": {
+      "folder": "05_KNOWLEDGE",
+      "purpose": "Verified empirical engineering patterns, concurrency invariants, negative constraints",
+      "allowed_types": ["engineering_pattern"],
+      "canonical_file": "05_KNOWLEDGE/engineering-patterns.md",
+      "storage_format": "SINGLE_FILE_APPEND",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "05_KNOWLEDGE/domain-intelligence": {
+      "folder": "05_KNOWLEDGE/domain-intelligence",
+      "purpose": "Curated factual knowledge and domain specifications across 13 domains A through M",
+      "allowed_types": ["domain_intelligence", "domain_fact", "technical_specification"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "naming_convention": "05_KNOWLEDGE/domain-intelligence/DOM-${domainLetter}-${repoSlug}-${slug}.md",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "06_PROJECT_CONTEXT": {
+      "folder": "06_PROJECT_CONTEXT",
+      "purpose": "Active project state, child workspace configuration, build variables",
+      "allowed_types": ["project_context", "workspace_bridge", "environment_state"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "indexing_strategy": "UNINDEXED"
+    },
+    "07_PROJECT_LEARNING": {
+      "folder": "07_PROJECT_LEARNING",
+      "purpose": "Raw harvest dossiers, deep inspection learning records, repository commit audits",
+      "allowed_types": ["raw_dossier", "deep_inspection_learning_record", "commit_forensic"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "naming_convention": "07_PROJECT_LEARNING/${repoSlug}-learnings.md",
+      "indexing_strategy": "DEMAND_PAGED"
+    },
+    "08_VERIFICATION": {
+      "folder": "08_VERIFICATION",
+      "purpose": "Empirical defect shields, verification protocols, audit reports, regression logs",
+      "allowed_types": ["verification_contract", "audit_report", "test_log"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "naming_convention": "08_VERIFICATION/${repoSlug}-verification-protocol-${slug}.md",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "09_SOURCES": {
+      "folder": "09_SOURCES",
+      "purpose": "Source catalogs, trust tier registries, cryptographic provenance ledgers",
+      "allowed_types": ["source_entry", "provenance_ledger", "sources_catalog"],
+      "canonical_file": "09_SOURCES/harvest-provenance-ledger.md",
+      "storage_format": "SINGLE_FILE_APPEND",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "10_PROMPTS": {
+      "folder": "10_PROMPTS",
+      "purpose": "System metaprompts, pair-programming guidelines, task instruction templates",
+      "allowed_types": ["system_prompt", "instruction_template", "task_prompt"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "11_INBOX": {
+      "folder": "11_INBOX",
+      "purpose": "Pre-promotion quarantine buffer, candidate directives, unverified discoveries (Zero Silent Data Loss)",
+      "allowed_types": ["candidate_directive", "quarantined_finding", "staged_proposal"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "naming_convention": "11_INBOX/candidate-directives/${id}-${slug}.md",
+      "indexing_strategy": "BUFFER_ONLY"
+    },
+    "12_DECISIONS": {
+      "folder": "12_DECISIONS",
+      "purpose": "Architecture Decision Records (ADRs), structural trade-off evaluations",
+      "allowed_types": ["architecture_decision", "tradeoff_evaluation", "design_choice"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "naming_convention": "12_DECISIONS/ADR-${repoSlug}-${slug}.md",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "13_GOVERNANCE": {
+      "folder": "13_GOVERNANCE",
+      "purpose": "Change control protocols, security invariants, data classification policies",
+      "allowed_types": ["governance_policy", "security_invariant", "compliance_rule"],
+      "storage_format": "MULTI_FILE_INDIVIDUAL",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "14_EVOLUTION": {
+      "folder": "14_EVOLUTION",
+      "purpose": "Harvest yield metrics, evolution milestones, capability migration ledgers",
+      "allowed_types": ["evolution_metric", "yield_ledger", "milestone_report"],
+      "canonical_file": "14_EVOLUTION/harvest-yield-metrics.json",
+      "storage_format": "JSON_METRICS",
+      "indexing_strategy": "METRICS"
+    },
+    "15_METADATA": {
+      "folder": "15_METADATA",
+      "purpose": "System schemas, machine-readable taxonomies, type registries",
+      "allowed_types": ["system_schema", "destination_registry", "taxonomy_definition"],
+      "storage_format": "JSON_SCHEMA",
+      "indexing_strategy": "EXHAUSTIVE"
+    },
+    "16_BACKUPS": {
+      "folder": ".project-brain/backups",
+      "purpose": "Disaster recovery snapshots, immutable pre-modification backups",
+      "allowed_types": ["immutable_snapshot", "recovery_bundle", "disaster_manifest"],
+      "storage_format": "IMMUTABLE_SNAPSHOT",
+      "indexing_strategy": "UNINDEXED"
+    }
+  },
+  "intelligence_domains": {
+    "A": { "name": "Human Needs & User Research", "description": "User intent, cognitive needs, requirements discovery" },
+    "B": { "name": "Market & Business Intelligence", "description": "Competitive analysis, monetization, growth loops" },
+    "C": { "name": "Creative & Design Originality", "description": "Brand aesthetic, creative differentiation, narrative" },
+    "D": { "name": "Product Requirements & Specs", "description": "Functional specification, user stories, feature scoping" },
+    "E": { "name": "UX/UI & Design Systems", "description": "Information architecture, wireframes, interaction design" },
+    "F": { "name": "Frontend & Client Engineering", "description": "Client state, reactivity, DOM, Web/Mobile UI" },
+    "G": { "name": "Backend & Distributed Systems", "description": "Microservices, distributed state, concurrency, storage engines" },
+    "H": { "name": "Architecture & System Invariants", "description": "Subsystem boundaries, decoupling, modularity, patterns" },
+    "I": { "name": "Security & Cryptographic Defenses", "description": "Authentication, encryption, zero-trust, vulnerability shield" },
+    "J": { "name": "DevOps & Cloud Infrastructure", "description": "CI/CD, container orchestration, IaC, reliability" },
+    "K": { "name": "QA & Independent Verification", "description": "Defect shields, regression suites, empirical property testing" },
+    "L": { "name": "Performance & Scalability Optimization", "description": "Latency, throughput, memory profiling, caching" },
+    "M": { "name": "Developer Tooling & Evolution", "description": "CLI tools, compilers, AST analyzers, meta-programming" }
+  }
+}
