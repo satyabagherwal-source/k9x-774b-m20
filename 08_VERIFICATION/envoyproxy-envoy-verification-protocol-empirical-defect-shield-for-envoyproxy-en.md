@@ -4,45 +4,31 @@
 {
   "source_repository": "envoyproxy/envoy",
   "source_url": "https://github.com/envoyproxy/envoy",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "998221c8",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T20:54:29.578Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-envoyproxy-envoy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `998221c8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T20:54:29.578Z`  
+> **Learning ID**: `learn-github-envoyproxy-envoy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `envoyproxy/envoy` (Commit: `historical`)
+- **Target Repository**: `envoyproxy/envoy` (Commit: `998221c8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
-> **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `8085a1d8`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:10:31.644Z  
-> **Learning ID**: `learn-github-envoyproxy-envoy`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): envoyproxy/envoy
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:10:31.639Z  
+> **Harvest Timestamp**: 2026-11-13T20:54:28.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29221 stars
+- **Stars / Engagement**: 29230 stars
 
 ---
 
@@ -1049,15 +1035,13 @@ public:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49165** (2026-11-12): **compat/openssl: prefixer fails to link on aarch64 hosts (x86_64 libstdc++.a)**
+  *Symptoms*: *Title*: *compat/openssl: prefixer fails to link on aarch64 hosts (x86_64 libstdc++.a)*  *Description*:  `bazel build --config=openssl` cannot build the `compat/openssl` `prefixer` tool on a Linux aarch64 host. The tool is compiled for aarch64 but linked against the **x86_64** `libstdc++.a`:  ``` ld.lld: error: external/envoy_toolshed++gcc_extension+gcc_runtime_linux_x86_64/lib64/libstdc++.a(compatibility.o) is incompatible with elf64-littleaarch64 ld.lld: error: external/envoy_toolshed++gcc_extension+gcc_runtime_linux_x86_64/lib64/libstdc++.a(compatibility-debug_list.o) is incompatible with elf64-littleaarch64 ... (repeated for every object) ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors) Target //compat/openssl/prefixer:prefixer failed to build ```  `//compat/openssl:prefixed_ossl_source` runs the `prefixer`, so this blocks every `--config=openssl` build (including `//source/exe:envoy-static`) on aarch64, although `bazel/SSL.md` lists "Supported architectures: Linux x86_64, aarch64, ppc64le" for OpenSSL.  *Repro steps*:  * Host: Linux aarch64 (I used an NVIDIA BlueField-3 DPU). Build container: the  `docker.io/envoyproxy/envoy-build` image pinned in `.github/config.yml`. Bazel 9.3.2. * Source: `main` at 93aab937d9074b05c1b1d86dcfa85367a4cebf20 (`VERSION.txt` = 1.41.0-dev).  ``` bazel build -c opt --config=openssl //compat/openssl/prefixer:prefixer ```  I only reproduced this on the host above. The cause below is independent of th
+
 - **Issue #49003** (2026-11-07): **`connect_grpc_bridge`: update unary HTTP status code mappings to match current Connect spec**
   *Symptoms*: The `connect_grpc_bridge` filter currently maps gRPC status codes to HTTP status codes using the original Connect protocol specification from when the filter was introduced in #24836  In March 2024, the Connect specification updated the HTTP status mappings for four error codes (https://github.com/connectrpc/connectrpc.com/pull/130):  | Connect Error Code | Current Envoy Mapping | Current Connect Spec | | :--- | :--- | :--- | | `canceled` (1) | `408 Request Timeout` | `499 Client Closed Request` | | `deadline_exceeded` (4) | `408 Request Timeout` | `504 Gateway Timeout` | | `failed_precondition` (9) | `412 Precondition Failed` | `400 Bad Request` | | `unimplemented` (12) | `404 Not Found` | `501 Not Implemented` |  While Connect clients parse the `"code"` field directly from the JSON response body and aren't broken by this, infrastructure and observability tools that rely on raw HTTP status codes (such as access logs, metrics, 5xx alerting rules), and middleware misclassify these responses. Envoy's `connect_grpc_bridge` filter should be updated to match the current specification.  *Repro steps*: 1. Configure an Envoy listener with the `envoy.filters.http.connect_grpc_bridge` HTTP filter enabled in front of an upstream gRPC service. 2. Send a unary Connect request (with header `Connect-Protocol-Version: 1` and `Content-Type: application/proto`). 3. Have the upstream gRPC server respond with `grpc-status: 4` (`DEADLINE_EXCEEDED`), `grpc-status: 1` (`CANCELED`), `grpc-status: 9`
   **Post-Mortem & Fix Analysis**:
   > cc: @jchadwick-buf @mattklein123
-
-- **Issue #48991** (2026-11-05): **http: body_size_limit filter potential excessive logging**
-  *Symptoms*: The HTTP body_size_limit filter currently logs any breach of the limit via the application log at error level. If someone sends HTTP requests with the Content-Length header set to a value larger than the limit, an error-level message is logged. The request can be sent repeatedly, potentially overwhelming the logging infrastructure. 
-  **Post-Mortem & Fix Analysis**:
-  > I think this was just fixed with #48985 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1074,657 +1058,183 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86b4404b` (2026-11-10)
-**Commit Message**: [cache_v2] Fix upstream reset crash and stats (#48814)
+### Incident Patch 1: `d55d98c9` (2026-11-13)
+**Commit Message**: ci/gcc: Build and test with -c opt and no fission (#49236)
 
-Commit Message: [cache_v2] Fix upstream reset crash and stats
-Additional Description: Cache filter could crash if an upstream reset
-while more than one downstream was waiting on it (subject to a race
-going the wrong way). This makes it so an upstream reset fails harder,
-preventing the crash, and also fixes that there was previously no path
-to the upstream_reset metric being updated.
-Risk Level: WIP filter
-Testing: Yes
-Docs Changes: Yes
-Release Notes: Yes
-Platform Specific Features: Filter is already disabled for Windows
+The gcc build and test jobs ran with `-c fastbuild`, a configuration
+nothing ships: the clang release build and its tests use `-c opt`. They
+now use `-c opt` too.
 
----------
+They use a new `gcc-ci` config: `--config=gcc` with `-c opt` and without
+debug info (`--fission=no` and `-g0`), so `--config=gcc` itself keeps
+its debug info for other builds. At `-c opt` fission adds `-gsplit-dwarf
+-g` to every compile,
+test targets included, and with GCC that debug info pushed compiles
+over the small RBE pool (squeezed at its limit until they time out) and
+the kitchen-sink links (`envoy-static`, `config_test`, the
+router_check/config_load_check/schema_validator tools) to 12-13GB, on
+xlarge, with 1.2-1.3GB binaries. Without it, measured on `config_test`:
+compiles peak at 6.7GB, the link at 2.3GB with a 195MB binary
+(fastbuild:
+12.2GB and about 0.6GB). Nothing from these jobs is published.
 
-Signed-off-by: Raven Black <[REDACTED_EMAIL]>
+At `-c opt` the GCC toolchain links with `--gc-sections`, which drops
+the link array sections upb registers extensions in under GCC, leaving
+`__start_linkarr_upb_AllExts`/`__stop_linkarr_upb_AllExts` undefined.
+`--config=gcc` now links with `-z nostart-stop-g
 
-**File**: `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst` (added, +4/-0)
+**File**: `.bazelrc` (modified, +19/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+http: fixed a crash in the cache v2 filter when a late callback from a failed cache insertion affected a subsequent
-+  request for the same entry. Aborted insertions now reset waiting requests, and subsequent requests use a new cache session.
-+  Lookups aborted without a response source now increment the cache ``upstream_reset`` event counter.
-+  Upstream resets during cache validation reset waiting lookups while preserving existing cached readers.
-```
-
-**File**: `docs/root/configuration/http/http_filters/cache_v2_filter.rst` (modified, +7/-0)
-```diff
-@@ -52,6 +52,13 @@ persistent caches. They can be fully custom caches, or wrappers/adapters around
- Built-in cache storage backends include :ref:`SimpleHttpCacheV2Config <envoy_v3_api_msg_extensions.http.cache_v2.simple_http_cache.v3.SimpleHttpCacheV2Config>`
- (in-memory) and :ref:`FileSystemHttpCacheV2Config <envoy_v3_api_msg_extensions.http.cache_v2.file_system_http_cache.v3.FileSystemHttpCacheV2Config>` (persistent; LRU).
+@@ -150,11 +150,21 @@ build:gcc --test_env=HEAPCHECK=
+ # option not play well with fission:
+ # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110885
+ build:gcc --copt=-fno-debug-types-section
++# With `--gc-sections` (`-c opt`), LLD drops the link array sections upb's GCC build registers
++# extensions in, and their `__start_`/`__stop_` symbols are then undefined. Keep sections referenced
++# by those symbols, as LLD did before 13.
++# TODO(phlax): move this to the toolshed GCC toolchain's link flags.
++build:gcc --linkopt=-Wl,-z,nostart-stop-gc
+ # These trigger errors in multiple places both in Envoy dependecies
+ # and in Envoy code itself when using GCC.
+ # And in all cases the reports appear to be clear false positives.
+ build:gcc --copt=-Wno-error=restrict
+ build:gcc --copt=-Wno-error=uninitialized
++# With optimization (`-c opt`), GCC inlines through null checks and casts and reports the null
++# branch, eg a null source copied from in a death test, or a store through the result of a
++# `dynamic_cast` it cannot prove non-null.
++build:gcc --copt=-Wno-error=nonnull
++build:gcc --copt=-Wno-error=stringop-overflow
+ build:gcc --cxxopt=-Wno-missing-requires
+ build:gcc --cxxopt=-Wno-dangling-reference
+ build:gcc --cxxopt=-Wno-nonnull-compare
+@@ -186,6 +196,15 @@ build:gcc --host_per_file_copt=external/protobuf.*/src/google/protobuf/(port|mes
+ build:gcc --per_file_copt=external/tcmalloc.*@-Wno-sign-compare
+ build:gcc --per_file_copt=external/v8.*@-Wno-dangling-else
  
-+If an upstream response resets while it is being inserted into the cache, requests waiting for that insertion
-+are reset. A subsequent request performs a new cache lookup and can start a new upstream fetch. Requests using
-+the aborted response cannot continue by reading from the later fetch. Each lookup aborted without a response
-+source increments the ``cache.event`` counter with ``event_type=upstream_reset``. If an upstream cache validation
-+resets, requests waiting for validation are reset. Existing readers continue using the cached response, and
-+a subsequent request can retry validation.
++# The GCC reference build as Envoy CI builds and tests it: with `-c opt`, as the Clang release build
++# is, but without debug info. With GCC, the split debug info `-c opt` adds (and `-ggdb3` on
++# libraries) takes compiles over the small RBE pool and the larger links over the large one, and
++# makes the binaries about 6x the size, for output that CI never publishes.
++build:gcc-ci --config=gcc
++build:gcc-ci --compilation_mode=opt
++build:gcc-ci --fission=no
++build:gcc-ci --per_file_copt=.*@-g0
 +
- Architecture and extension points
- ---------------------------------
- 
+ #############################################################################
+ # tests
+ #############################################################################
 ```
 
-**File**: `source/extensions/filters/http/cache_v2/cache_filter.cc` (modified, +1/-0)
+**File**: `changelogs/current/minor_behavior_changes/build__gcc-opt.rst` (added, +14/-0)
 ```diff
-@@ -188,6 +188,7 @@ void CacheFilter::onLookupResult(ActiveLookupResultPtr lookup_result) {
-   lookup_result_ = std::move(lookup_result);
-   if (!lookup_result_->http_source_) {
-     // Lookup failed, typically implying upstream request was reset.
-+    stats().incForStatus(CacheEntryStatus::UpstreamReset);
-     decoder_callbacks_->streamInfo().setResponseCodeDetails(
-         CacheResponseCodeDetails::CacheFilterAbortedDuringLookup);
-     decoder_callbacks_->resetStream();
-```
-
-**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.cc` (modified, +65/-6)
-```diff
-@@ -94,6 +94,9 @@ void ActiveLookupContext::getHeaders(GetHeadersCallback&& cb) {
-         dispatcher(), lookup().timestamp(),
-         [ranges = std::move(ranges.value()), cl = content_length_,
-          cb = std::move(cb)](Http::ResponseHeaderMapPtr headers, EndStream end_stream) mutable {
-+          if (end_stream == EndStream::Reset) {
-+            return cb(nullptr, EndStream::Reset);
-+          }
-           ASSERT(headers != nullptr, "it should be impossible for headers to be null");
-           // The Range header field is evaluated after evaluating the precondition header
-           // fields defined in Section 13.1, and only if the result in absence of the Range
-@@ -152,12 +155,16 @@ void CacheSession::clearUncacheableState() {
-   state_ = State::New;
- }
- 
--void CacheSession::wantHeaders(Event::Dispatcher&, SystemTime lookup_timestamp,
-+void CacheSession::wantHeaders(Event::Dispatcher& dispatcher, SystemTime lookup_timestamp,
-                                GetHeadersCallback&& cb) {
-   Http::ResponseHeaderMapPtr headers;
-   EndStream end_stream_after_headers;
-   {
-     absl::MutexLock lock(mu_);
-+    if (state_ == State::Failed) {
-+      dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
-+      return;
-+    }
-     ASSERT(entry_.response_headers_ != nullptr,
-            "headers should have been initialized during lookup");
-     headers = Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*entry_.response_headers_);
-@@ -172,6 +179,10 @@ void CacheSession::wantHeaders(Event::Dispatcher&, SystemTime lookup_timestamp,
- void CacheSession::wantBodyRange(AdjustedByteRange range, Event::Dispatcher& dispatcher,
-                                  GetBodyCallback&& cb) {
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
-+    return;
-+  }
-   ASSERT(entry_.response_headers_ != nullptr,
-          "body should not be requested when headers haven't been sent");
-   if (auto cache_sessions = cache_sessions_.lock()) {
-@@ -184,6 +195,10 @@ void CacheSession::wantBodyRange(AdjustedByteRange range, Event::Dispatcher& dis
- 
- void CacheSession::wantTrailers(Event::Dispatcher& dispatcher, GetTrailersCallback&& cb) {
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    dispatcher.post([cb = std::move(cb)]() mutable { cb(nullptr, EndStream::Reset); });
-+    return;
-+  }
-   if (entry_.response_trailers_ != nullptr) {
-     auto trailers = Http::createHeaderMap<Http::ResponseTrailerMapImpl>(*entry_.response_trailers_);
-     dispatcher.post([cb = std::move(cb), trailers = std::move(trailers)]() mutable {
-@@ -202,6 +217,9 @@ void CacheSession::wantTrailers(Event::Dispatcher& dispatcher, GetTrailersCallba
- void CacheSession::onHeadersInserted(CacheReaderPtr cache_reader,
-                                      Http::ResponseHeaderMapPtr headers, bool end_stream) {
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    return;
-+  }
-   std::shared_ptr<CacheSessionsImpl> cache_sessions = cache_sessions_.lock();
-   if (!cache_sessions) {
-     ENVOY_LOG(error, "cache config was deleted while header-insertion was in flight");
-@@ -286,6 +304,9 @@ void CacheSession::sendSuccessfulLookupResultTo(LookupSubscriber& subscriber,
- 
- void CacheSession::onBodyInserted(AdjustedByteRange range, bool end_stream) {
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    return;
-+  }
-   body_length_available_ = range.end();
-   if (end_stream) {
-     insertComplete();
-@@ -297,6 +318,9 @@ void CacheSession::onBodyInserted(AdjustedByteRange range, bool end_stream) {
- void CacheSession::onTrailersInserted(Http::ResponseTrailerMapPtr trailers) {
-   ASSERT(trailers);
-   absl::MutexLock lock(mu_);
-+  if (state_ == State::Failed) {
-+    return;
-+  }
-   entry_.response_trailers_ = std::move(trailers);
-   insertComplete();
-   for (TrailerSubscriber& subscriber : trailer_subscribers_) {
-@@ -355,8 +379,14 @@ static void postUpstreamPassThroughWithReset(CacheSession::LookupSubscriber&& su
-   });
- }
- 
--void CacheSession::onCacheError() {
-+void CacheSession::onCacheError(bool reset_lookups) {
-   mu_.AssertHeld();
-+  if (state_ == State::Failed) {
-+    return;
-+  }
-+  // Old readers and insertion callbacks may outlive the failure. Keep them isolated from
-+  // subsequent lookups by retiring this session instead of reusing its state.
-+  state_ = State::Failed;
-   auto cache_sessions = cache_sessions_.lock();
-   if (cache_sessions) {
-     Event::Dispatcher* dispatcher = nullptr;
-@@ -377,7 +407,15 @@ void CacheSession::onCacheError() {
-     cache_sessions->stats().subCacheSessionsSubscribers(lookup_subscribers_.size());
-   }
-   for (LookupSubscriber& sub : lookup_subscribers_) {
--    postUpstreamPassThrough(std::move(sub), CacheEntryStatus::LookupError);
-+    if (reset_lookups) {
-+      sub.dispatcher().post([cb = std::move(sub.callback_)]() mutable {
-+        auto result = std::make_unique<Active
-```
-
-**File**: `source/extensions/filters/http/cache_v2/cache_sessions_impl.h` (modified, +8/-2)
-```diff
-@@ -123,7 +123,9 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
-     // If the passed-through response turns out to be cacheable (i.e. upstream has changed
-     // cache headers), client should update state to Writing, or, if state is already changed,
-     // client should abort the new upstream request and use the shared one.
--    NotCacheable
-+    NotCacheable,
-+    // Failed sessions remain failed for existing readers. New lookups use a new session.
-+    Failed
-   };
- 
-   EndStream endStreamAfterHeaders() const ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
-@@ -214,7 +216,7 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
-   bool canReadBodyRangeFromCacheEntry(BodySubscriber& subscriber);
-   void onBodyChunkFromCache(AdjustedByteRange range, Buffer::InstancePtr buffer,
-                             EndStream end_stream) ABSL_LOCKS_EXCLUDED(mu_);
--  void onCacheError() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
-+  void onCacheError(bool reset_lookups = true) ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
- 
-   void doCacheEntryInvalid() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
-   void doCacheMiss() ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_);
-@@ -259,6 +261,10 @@ class CacheSession : public Logger::Loggable<Logger::Id::cache_filter>,
-     absl::MutexLock lock(mu_);
-     return state_ == State::Inserting;
-   }
-+  bool failed() const {
-+    absl::MutexLock lock(mu_);
-+    return state_ == State::Failed;
-+  }
-   void setExpiry(SystemTime expiry) { expires_at_ = expiry; }
-   bool isExpiredAt(SystemTime t) const { return expires_at_ < t && !inserting(); }
- 
-```
-
-**File**: `test/extensions/filters/http/cache_v2/cache_filter_test.cc` (modified, +16/-9)
-```diff
-@@ -236,15 +236,22 @@ TEST_F(CacheFilterTest, FilterDestroyedBeforeLookupCompletesAbortsTheLookupCallb
-   captured_lookup_callback_(nullptr);
- }
- 
--TEST_F(CacheFilterTest, ResetDuringLookupResetsDownstream) {
--  CacheFilterSharedPtr filter = makeFilter(mock_cache_);
--  EXPECT_CALL(*mock_cache_, lookup);
--  EXPECT_THAT(filter->decodeHeaders(request_headers_, true),
--              Eq(Http::FilterHeadersStatus::StopIteration));
--  EXPECT_CALL(decoder_callbacks_, resetStream);
--  captured_lookup_callback_(std::make_unique<ActiveLookupResult>(
--      ActiveLookupResult{nullptr, CacheEntryStatus::LookupError}));
--  EXPECT_THAT(decoder_callbacks_.details(), Eq("cache.aborted_lookup"));
-+TEST_F(CacheFilterTest, ResetDuringLookupCountsUpstreamResetAndResetsDownstream) {
-+  for (CacheEntryStatus status : {CacheEntryStatus::LookupError, CacheEntryStatus::UpstreamReset}) {
-+    SCOPED_TRACE(cacheEntryStatusString(status));
-+    CacheFilterSharedPtr filter = makeFilter(mock_cache_);
-+    EXPECT_CALL(*mock_cache_, lookup);
-+    EXPECT_THAT(filter->decodeHeaders(request_headers_, true),
-+                Eq(Http::FilterHeadersStatus::StopIteration));
-+    {
-+      testing::InSequence sequence;
-+      EXPECT_CALL(stats(), incForStatus(CacheEntryStatus::UpstreamReset));
-+      EXPECT_CALL(decoder_callbacks_, resetStream);
-+    }
-+    captured_lookup_callback_(
-+        std::make_unique<ActiveLookupResult>(ActiveLookupResult{nullptr, status}));
-+    EXPECT_THAT(decoder_callbacks_.details(), Eq("cache.aborted_lookup"));
-+  }
- }
- 
- TEST_F(CacheFilterTest, ResetDuringGetHeadersResetsDownstream) {
-```
-
-**File**: `test/extensions/filters/http/cache_v2/cache_sessions_test.cc` (modified, +267/-58)
-```diff
-@@ -4,6 +4,7 @@
- 
- #include "source/common/http/headers.h"
- #include "source/extensions/filters/http/cache_v2/cache_sessions.h"
-+#include "source/extensions/filters/http/cache_v2/cache_sessions_impl.h"
- 
- #include "test/extensions/filters/http/cache_v2/mocks.h"
- #include "test/mocks/http/mocks.h"
-@@ -620,83 +621,210 @@ TEST_F(CacheSessionsTest, CacheHitGoesDirectlyToCachedResponses) {
-   pumpDispatcher();
- }
- 
--TEST_F(CacheSessionsTest, CacheInsertFailurePassesThroughLookupsAndWillLookupAgain) {
--  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _));
--  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _)).Times(2);
-+TEST_F(CacheSessionsTest, CacheInsertFailureResetsLookupsAndWillLookupAgain) {
-+  auto second_dispatcher = api_->allocateDispatcher("second_subscriber");
-+  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _)).Times(2);
-+  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _)).Times(3);
-+  EXPECT_CALL(*mock_http_cache_, evict(_, KeyHasPath("/a"))).Times(2);
-   ActiveLookupResultPtr result1, result2, result3;
--  auto response_headers = cacheableResponseHeadersByExpire();
-   cache_sessions_->lookup(testLookupRequest("/a"),
-                           [&result1](ActiveLookupResultPtr r) { result1 = std::move(r); });
--  cache_sessions_->lookup(testLookupRequest("/a"),
-+  cache_sessions_->lookup(testLookupRequest("/a", *second_dispatcher),
-                           [&result2](ActiveLookupResultPtr r) { result2 = std::move(r); });
-   pumpDispatcher();
--  // Cache miss.
-   consumeCallback(captured_lookup_callbacks_[0])(LookupResult{});
-   pumpDispatcher();
--  // Upstream request should have been sent.
--  ASSERT_THAT(fake_upstreams_.size(), Eq(1));
--  EXPECT_THAT(fake_upstream_sent_headers_[0],
--              Pointee(IsSupersetOfHeaders(Http::TestRequestHeaderMapImpl{{":path", "/a"}})));
--  ASSERT_THAT(fake_upstream_get_headers_callbacks_.size(), Eq(1));
-   std::shared_ptr<CacheProgressReceiver> progress;
--  EXPECT_CALL(
--      *mock_http_cache_,
--      insert(_, KeyHasPath("/a"), Pointee(IsSupersetOfHeaders(*response_headers)), _, IsNull(), _))
--      .WillOnce([&](Event::Dispatcher&, Key, Http::ResponseHeaderMapPtr, ResponseMetadata,
--                    HttpSourcePtr,
--                    std::shared_ptr<CacheProgressReceiver> receiver) { progress = receiver; });
--  consumeCallback(fake_upstream_get_headers_callbacks_[0])(
--      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
-+  EXPECT_CALL(*mock_http_cache_, insert)
-+      .WillRepeatedly(
-+          [&](Event::Dispatcher&, Key, Http::ResponseHeaderMapPtr, ResponseMetadata, HttpSourcePtr,
-+              std::shared_ptr<CacheProgressReceiver> receiver) { progress = std::move(receiver); });
-+  consumeCallback(fake_upstream_get_headers_callbacks_[0])(cacheableResponseHeadersByExpire(),
-+                                                           EndStream::End);
-   pumpDispatcher();
--  Mock::VerifyAndClearExpectations(mock_http_cache_);
--  EXPECT_CALL(*mock_http_cache_, touch(KeyHasPath("/a"), _));
--  EXPECT_CALL(*mock_http_cache_, evict(_, KeyHasPath("/a")));
--  progress->onInsertFailed(absl::InternalError("test error"));
-+  progress->onInsertFailed(absl::UnavailableError("upstream reset"));
-+  EXPECT_EQ(result1, nullptr);
-+  EXPECT_EQ(result2, nullptr);
-   pumpDispatcher();
--  ASSERT_THAT(result1->http_source_, NotNull());
--  ASSERT_THAT(result2->http_source_, NotNull());
--  MockFunction<void(Http::ResponseHeaderMapPtr, EndStream)> header_callback1, header_callback2;
--  EXPECT_CALL(header_callback1,
--              Call(Pointee(Http::IsSupersetOfHeaders(*response_headers)), EndStream::End));
--  EXPECT_CALL(header_callback2,
--              Call(Pointee(Http::IsSupersetOfHeaders(*response_headers)), EndStream::End));
--  result1->http_source_->getHeaders(header_callback1.AsStdFunction());
--  result2->http_source_->getHeaders(header_callback2.AsStdFunction());
--  // Both requests should have a fresh upstream for pass-through.
--  ASSERT_THAT(fake_upstream_get_headers_callbacks_.size(), Eq(3));
--  consumeCallback(fake_upstream_get_headers_callbacks_[1])(
--      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
--  consumeCallback(fake_upstream_get_headers_callbacks_[2])(
--      Http::createHeaderMap<Http::ResponseHeaderMapImpl>(*response_headers), EndStream::End);
--  pumpDispatcher();
--  // A new request should provoke a new lookup because the previous insertion failed.
--  EXPECT_CALL(*mock_http_cache_, lookup(LookupHasPath("/a"), _));
-+  EXPECT_EQ(result2, nullptr);
-+  second_dispatcher->run(Event::Dispatcher::RunType::Block);
-+  ASSERT_NE(result1, nullptr);
-+  ASSERT_NE(result2, nullptr);
-+  EXPECT_EQ(result1->status_, CacheEntryStatus::UpstreamReset);
-+  EXPECT_EQ(result2->status_, CacheEntryStatus::UpstreamReset);
-+  EXPECT_EQ(result1->http_source_, nullptr);
-+  EXPECT_EQ(result2->http_source_, nullptr);
-+  EXPECT_EQ(fake_upstreams_.size(), 1);
+@@ -0,0 +1,14 @@
++The GCC reference build (``--config=gcc``) is now built and tested in Envoy CI with ``-c opt``, for
++consistency with the Clang build, which is built and tested with ``-c opt``. The new ``gcc-ci``
++config builds it as CI does, without debug information (``--fission=no`` and ``-g0``): with GCC, the
++split debug information that ``-c opt`` adds took compiles and links over the memory of the RBE
++pools they run on and made the binaries several times larger, and nothing from the GCC build is
++published.
 +
++``--config=gcc`` now links with ``-z nostart-stop-gc``, as ``-c opt`` links with ``--gc-sections``,
++which otherwise drops the link array sections ``upb`` registers extensions in. It also no longer
++treats ``-Wnonnull`` and ``-Wstringop-overflow`` as errors, as GCC reports false positives for them
++with optimization.
++
++This has no effect on any production binaries produced by the project, but downstream projects that
++build with GCC and wish to continue building with ``-c fastbuild`` may require some adjustment.
+```
 
+**File**: `ci/do_ci.sh` (modified, +3/-4)
+```diff
+@@ -975,8 +975,9 @@ case $CI_TARGET in
+         ;;
+ 
+     gcc|gcc.build|gcc.test)
+-        BAZEL_BUILD_OPTIONS+=("--config=gcc")
+-        echo "gcc toolchain configured: gcc"
++        # `gcc-ci`: GCC with `-c opt`, as the release build and tests are, without debug info.
++        BAZEL_BUILD_OPTIONS+=("--config=gcc-ci")
++        echo "gcc toolchain configured: gcc-ci"
+         # Nothing built here is published, so the server and tools binaries are built in one
+         # invocation, with the tests if there are any, and are not downloaded.
+         GCC_BUILD_TARGETS=()
+@@ -991,15 +992,13 @@ case $CI_TARGET in
+         if [[ "$CI_TARGET" == "gcc.build" ]]; then
+             echo "Building ${GCC_BUILD_TARGETS[*]}"
+             bazel build "${BAZEL_BUILD_OPTIONS[@]}" \
+-                -c fastbuild \
+                 --remote_download_minimal \
+                 -- "${GCC_BUILD_TARGETS[@]}"
+             collect_build_profile build
+         else
+             echo "Building ${GCC_BUILD_TARGETS[*]} and testing ${TEST_TARGETS[*]}"
+             bazel_with_collection \
+                 test "${BAZEL_BUILD_OPTIONS[@]}" \
+-                -c fastbuild  \
+                 --remote_download_minimal \
+                 -- "${GCC_BUILD_TARGETS[@]}" "${TEST_TARGETS[@]}"
+         fi
 ```
 
 ---
 
-### Incident Patch 2: `9d3b9894` (2026-11-10)
-**Commit Message**: ci: Stop caching the build image (#49133)
+### Incident Patch 2: `bef6a20b` (2026-11-13)
+**Commit Message**: Fix //test/config_test/... on Windows (#49042)
 
-Since 2026-11-09T22:58Z restoring the cached build image intermittently
-leaves Docker unable to start on GitHub's hosted runners ("Job for
-docker.service failed"), failing jobs in their first 20s. The cache blob
-(primed 2026-10-21), the runner image (20261101.360 since 2026-11-03)
-and the restore path are unchanged, so this is on the runner side, and
-the restore action discards the journal that would say why.
+Risk Level: low
+Testing: unit tests
+Docs Changes: no
+Release Notes: no
+Platform Specific Features: windows only
 
-Since #48963 the CI build image is 275 MiB in six layers, pulled in
-seconds, so the cache saves nothing worth stopping Docker and swapping
-/var/lib/docker under sudo on every job. Drop the restore from the run
-workflow and stop priming the cache; the cache-build-image inputs are
-kept so callers need not change.
+Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
 
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/_load_env.yml` (modified, +0/-14)
+**File**: `configs/configgen.sh` (modified, +4/-4)
 ```diff
-@@ -15,9 +15,6 @@ on:
-       branch-name:
-         type: string
-         default: main
--      cache-docker:
--        type: boolean
--        default: true
-       config-file:
-         type: string
-         default: ./.github/config.yml
-@@ -100,14 +97,3 @@ jobs:
-         ref: ${{ fromJSON(steps.env.outputs.data).request.ref }}
-         sha: ${{ fromJSON(steps.env.outputs.data).request.sha }}
-         target-branch: ${{ fromJSON(steps.env.outputs.data).request.target-branch }}
--
--  cache:
--    secrets:
--      app-id: ${{ secrets.lock-app-id }}
--      app-key: ${{ secrets.lock-app-key }}
--    uses: ./.github/workflows/_request_cache_docker.yml
--    needs: request
--    if: ${{ inputs.cache-docker }}
--    with:
--      caches: ${{ needs.request.outputs.caches }}
--      image-tag: ${{ fromJSON(needs.request.outputs.build-image).default }}
+@@ -23,18 +23,18 @@ fi
+ for FILE in "$@"; do
+     case "$FILE" in
+         *.pem|*.der)
+-            cp "$FILE" "$OUT_DIR/certs"
++            cp -f "$FILE" "$OUT_DIR/certs"
+             ;;
+         *.lua|*.wasm|*.so)
+-            cp "$FILE" "$OUT_DIR/lib"
++            cp -f "$FILE" "$OUT_DIR/lib"
+             ;;
+         *.pb)
+-            cp "$FILE" "$OUT_DIR/protos"
++            cp -f "$FILE" "$OUT_DIR/protos"
+             ;;
+         *)
+             FILENAME="$(echo "$FILE" | sed -e 's/.*examples\///g')"
+             # Configuration filenames may conflict. To avoid this we use the full path.
+-            cp "$FILE" "$OUT_DIR/${FILENAME//\//_}"
++            cp -f "$FILE" "$OUT_DIR/${FILENAME//\//_}"
+             ;;
+     esac
+ done
 ```
 
-**File**: `.github/workflows/_request.yml` (modified, +0/-43)
+**File**: `test/config_test/BUILD` (modified, +2/-0)
 ```diff
-@@ -43,7 +43,6 @@ jobs:
-       pull-requests: read
-     outputs:
-       env: ${{ steps.data.outputs.value }}
--      caches: ${{ steps.caches.outputs.value }}
-       config: ${{ steps.config.outputs.config }}
-     steps:
-     - uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
-@@ -123,48 +122,6 @@ jobs:
-               "linked-title": $linkedTitle}
-           | del(.config.tables)
- 
--    # TODO(phlax): shift this to ci/request action above
--    - name: Check Docker cache (x64)
--      id: cache-exists-docker-x64
--      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
--      with:
--        lookup-only: true
--        path: /tmp/cache
--        key: ${{ fromJSON(steps.data.outputs.value).request.build-image.default }}
--    - name: Check Docker cache (arm64)
--      id: cache-exists-docker-arm64
--      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
--      with:
--        lookup-only: true
--        path: /tmp/cache
--        key: ${{ fromJSON(steps.data.outputs.value).request.build-image.default }}-arm64
--    - name: Caches
--      uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      id: caches
--      with:
--        input-format: yaml
--        input: |
--          docker:
--            x64: ${{ steps.cache-exists-docker-x64.outputs.cache-hit || 'false' }}
--            arm64: ${{ steps.cache-exists-docker-arm64.outputs.cache-hit || 'false' }}
--        filter: |
--          .
--
--  cache:
--    permissions:
--      actions: write
--      contents: read
--      packages: read
--    if: ${{ github.repository == 'envoyproxy/envoy' || vars.ENVOY_CI }}
--    needs: incoming
--    uses: ./.github/workflows/_request_cache.yml
--    secrets:
--      app-id: ${{ secrets.lock-app-id }}
--      app-key: ${{ secrets.lock-app-key }}
--    with:
--      caches: ${{ needs.incoming.outputs.caches }}
--      env: ${{ needs.incoming.outputs.env }}
--
-   checks:
-     if: ${{ github.repository == 'envoyproxy/envoy' || vars.ENVOY_CI }}
-     needs: incoming
-```
-
-**File**: `.github/workflows/_request_cache.yml` (removed, +0/-45)
-```diff
-@@ -1,45 +0,0 @@
--name: Request/cache
--
--permissions:
--  contents: read
--
--on:
--  workflow_call:
--    secrets:
--      app-id:
--        required: true
--      app-key:
--        required: true
--
--    inputs:
--      env:
--        type: string
--        required: true
--      caches:
--        type: string
--        required: true
--
--
--jobs:
--  docker:
--    secrets:
--      app-id: ${{ secrets.app-id }}
--      app-key: ${{ secrets.app-key }}
--    name: Docker/${{ matrix.arch }}
--    uses: ./.github/workflows/_request_cache_docker.yml
--    with:
--      arch: ${{ matrix.arch }}
--      cache-suffix: ${{ matrix.cache-suffix }}
--      caches: ${{ inputs.caches }}
--      image-tag: ${{ fromJSON(inputs.env).request.build-image.default }}
--      runs-on: ${{ matrix.runs-on }}
--    strategy:
--      fail-fast: false
--      matrix:
--        include:
--        - target: docker-x64
--          arch: x64
--        - target: docker-arm64
--          arch: arm64
--          cache-suffix: -arm64
--          runs-on: ${{ vars.ENVOY_ARM_VM || 'ubuntu-24.04-arm' }}
-```
-
-**File**: `.github/workflows/_request_cache_docker.yml` (removed, +0/-82)
-```diff
-@@ -1,82 +0,0 @@
--name: Request/cache (prime Docker)
--
--permissions:
--  contents: read
--
--on:
--  workflow_call:
--    secrets:
--      app-id:
--        required: true
--      app-key:
--        required: true
--    inputs:
--      caches:
--        type: string
--        required: true
--      image-tag:
--        type: string
--        required: true
--
--      arch:
--        type: string
--        default: x64
--      cache-suffix:
--        type: string
--        default:
--      runs-on:
--        type: string
--        default:
--      lock-repository:
--        type: string
--        default: envoyproxy/ci-mutex
--
--## Docker cache
--#
--# This workflow will only prime the cache, and should be done separately first, prior
--# to any jobs that require it.
--#
--# For a job that does, you can restore with something like:
--#
--#    steps:
--#    - uses: envoyproxy/toolshed/actions/docker/cache/restore@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--#      with:
--#        key: "${{ needs.env.outputs.build-image }}"
--#
--
--
--jobs:
--  docker:
--    runs-on: ${{ inputs.runs-on || 'ubuntu-24.04' }}
--    name: "[${{ inputs.arch }}] Prime Docker cache"
--    if: ${{ ! fromJSON(inputs.caches).docker[inputs.arch] }}
--    steps:
--    - uses: envoyproxy/toolshed/actions/appauth@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      id: appauth
--      name: Appauth (mutex lock)
--      with:
--        app_id: ${{ secrets.app-id }}
--        key: ${{ secrets.app-key }}
--    - uses: envoyproxy/toolshed/actions/docker/cache/prime@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      id: docker
--      name: Prime Docker cache (${{ inputs.image-tag }}${{ inputs.cache-suffix }})
--      with:
--        image-tag: ${{ inputs.image-tag }}
--        key-suffix: ${{ inputs.cache-suffix }}
--        lock-token: ${{ steps.appauth.outputs.token }}
--        lock-repository: ${{ inputs.lock-repository }}
--    - uses: envoyproxy/toolshed/actions/jq@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      id: data
--      name: Cache data
--      with:
--        input-format: yaml
--        input: |
--          cached: ${{ steps.docker.outputs.cached }}
--          key: ${{ inputs.image-tag }}${{ inputs.cache-suffix }}
--    - uses: envoyproxy/toolshed/actions/json/table@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      name: Summary
--      with:
--        json: ${{ steps.data.outputs.value }}
--        output-path: GITHUB_STEP_SUMMARY
--        title: >-
--          Cache (Docker ${{ inputs.arch }})
-```
-
-**File**: `.github/workflows/_run.yml` (modified, +2/-15)
-```diff
-@@ -40,6 +40,8 @@ on:
-           - src: /mnt/runner
-             target: RUNNER_TEMP/container/bazel_root
-             chown: "runner:runner"
-+      # The build image is no longer cached (it is pulled in seconds); these are accepted so
-+      # callers need not change, and ignored.
-       cache-build-image:
-         type: string
-       cache-build-image-key-suffix:
-@@ -280,21 +282,6 @@ jobs:
-             else . end
-           | "${{ inputs.template-docker-configure }}"
- 
--    # HACK/WORKAROUND for cache scope issue (https://github.com/envoyproxy/envoy/issues/37603)
--    - if: ${{ inputs.cache-build-image }}
--      id: cache-lookup
--      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
--      with:
--        lookup-only: true
--        path: /tmp/cache
--        key: ${{ inputs.cache-build-image }}${{ inputs.cache-build-image-key-suffix }}
--    - if: ${{ inputs.cache-build-image && steps.cache-lookup.outputs.cache-hit == 'true' }}
--      name: Restore Docker cache ${{ inputs.cache-build-image && format('({0})', inputs.cache-build-image) || '' }}
--      uses: envoyproxy/toolshed/actions/docker/cache/restore@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
--      with:
--        image-tag: ${{ inputs.cache-build-image }}
--        key-suffix: ${{ inputs.cache-build-image-key-suffix }}
--
-     - uses: envoyproxy/toolshed/actions/appauth@9bd3b300cf19f67cd2ef8b6e4aaa920f79894c24  # actions-v0.4.29
-       id: appauth
-       name: Appauth
-```
-
----
-
-### Incident Patch 3: `961fd728` (2026-11-10)
-**Commit Message**: typo: fix parse authority comment (#49117)
-
-Commit Message: fix a comment typo.
-Additional Description:
-Risk Level:
-Testing:
-Docs Changes:
-Release Notes:
-Platform Specific Features:
-
-Signed-off-by: Kuat Yessenov <[REDACTED_EMAIL]>
-
-**File**: `source/common/http/utility.h` (modified, +2/-3)
-```diff
-@@ -647,10 +647,9 @@ struct AuthorityAttributes {
- };
- 
- /**
-- * Parse passed authority, and get that is valid FQDN or IPv4/IPv6 address, hostname and port-name.
-+ * Parse passed authority, and get that is valid FQDN or IPv4/IPv6 address, hostname and port value.
-  * @param host host/authority
-- * @param default_port If passed authority does not have port, this value is returned
-- * @return hostname parse result. that includes whether host is IP Address, hostname and port-name
-+ * @return hostname parse result. that includes whether host is IP Address, hostname and port value.
-  */
- AuthorityAttributes parseAuthority(absl::string_view host);
- 
+@@ -108,5 +108,7 @@ py_binary(
+         "//configs:files",
+         "@envoy_api//:v3_proto_set",
+     ],
++    # envoy.base.utils depends on uvloop, which does not support Windows.
++    tags = ["skip_on_windows"],
+     deps = [requirement("envoy.base.utils")],
+ )
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49162** (closed): [WIP] ci: Name each Check/build job's run flag in the matrix (@phlax)
-- **PR #49155** (2026-11-10): dynamic_modules/bindgen: Stage clang's builtin headers for the bindin… (@phlax)
-- **PR #49150** (2026-11-10): ci/openssl: Leave incompatible targets out of the presubmit selection (@phlax)
-- **PR #49148** (2026-11-10): dynamic_modules: move the cluster writer's queue into a shared writer base (@agrawroh)
-- **PR #49147** (2026-11-11): listener: report an update that replaces a listener before the workers start (@agrawroh)
-- **PR #49145** (2026-11-11): listener: notify update callbacks when a listener fails to listen (@agrawroh)
+- **PR #49237** (2026-11-13): hot_restart: hold UDP forwarding listener configs as weakptrs attempt 2 (@filipcacky)
+- **PR #49236** (2026-11-13): ci/gcc: Build and test with -c opt and no fission (@phlax)
+- **PR #49233** (closed): [bp/1.40] flake stack (@phlax)
+- **PR #49232** (2026-11-13): test/ext_proc: Deflake the HTTP/1 streamed response body tests (@phlax)
+- **PR #49219** (2026-11-13): test/listener_ecds: Wait for the workers before connecting (@phlax)
+- **PR #49215** (2026-11-12): test/ext_proc: Deflake the HTTP client integration tests (@phlax)
 
 ---
 
@@ -1744,34 +1254,49 @@ Signed-off-by: Kuat Yessenov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [cache_v2] Fix upstream reset crash and stats (#48814)
+## X. ci/gcc: Build and test with -c opt and no fission
 
 **RULE**:
-When implementing operations in `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.bazelrc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86b4404b`: [cache_v2] Fix upstream reset crash and stats (#48814). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d55d98c9`: ci/gcc: Build and test with -c opt and no fission. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/http__cache_v2_insert_abort.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bazelrc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-http: fixed a crash in the cache v2 filter when a late callback from a failed cache insertion affected a subsequent
-  request for the same entry. Aborted insertions now reset waiting requests, and subsequent requests use a new cache session.
-  Lookups aborted without a response source now increment the cache ``upstream_reset`` event counter.
-  Upstream resets during cache validation reset waiting lookups while preserving existing cached readers.
+# With `--gc-sections` (`-c opt`), LLD drops the link array sections upb's GCC build registers
+# extensions in, and their `__start_`/`__stop_` symbols are then undefined. Keep sections referenced
+# by those symbols, as LLD did before 13.
+# TODO(phlax): move this to the toolshed GCC toolchain's link flags.
+build:gcc --linkopt=-Wl,-z,nostart-stop-gc
+# With optimization (`-c opt`), GCC inlines through null checks and casts and reports the null
+# branch, eg a null source copied from in a death test, or a store through the result of a
+# `dynamic_cast` it cannot prove non-null.
+build:gcc --copt=-Wno-error=nonnull
+build:gcc --copt=-Wno-error=stringop-overflow
+# The GCC reference build as Envoy CI builds and tests it: with `-c opt`, as the Clang release build
+# is, but without debug info. With GCC, the split debug info `-c opt` adds (and `-ggdb3` on
+# libraries) takes compiles over the small RBE pool and the larger links over the large one, and
+# makes the binaries about 6x the size, for output that CI never publishes.
+build:gcc-ci --config=gcc
+build:gcc-ci --compilation_mode=opt
+build:gcc-ci --fission=no
+build:gcc-ci --per_file_copt=.*@-g0
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86b4404b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d55d98c9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T20:47:21.142Z",
-  "total_records": 344,
+  "last_updated": "2026-11-13T20:55:41.787Z",
+  "total_records": 353,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 185,
+      "total": 188,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -218,7 +218,10 @@
         "DOM-D-A812096F",
         "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi",
-        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual"
+        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
+        "domain_intelligence-research-knowledge-intelligence-google-electra-base-discriminator-core-invariant",
+        "DOM-D-9936936B",
+        "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c"
       ]
     },
     "E": {
@@ -236,7 +239,7 @@
       ]
     },
     "G": {
-      "total": 40,
+      "total": 42,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -277,11 +280,13 @@
         "domain_intelligence-architecture-intelligence-linkerd-linkerd2-core-invariants",
         "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants",
-        "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants"
+        "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants",
+        "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants",
+        "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar"
       ]
     },
     "H": {
-      "total": 72,
+      "total": 76,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -354,7 +359,11 @@
         "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
         "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
+        "DOM-H-169AAD95",
+        "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6448,10 +6457,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "32e1e64bef265ee043092013bd81619e9034abd27acd9341e089f58c51c83f8f",
-      "created_at": "2026-11-13T18:26:01.424Z"
+      "content_hash": "7ff4b3550337afde913cb6f8907a730bc5b5e9018db863b59f12174daf7f0a32",
+      "created_at": "2026-11-13T20:54:30.994Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -8771,6 +8780,153 @@
       "repository": "alibaba-zvec-learnings",
       "content_hash": "51923df6ccda23a7fd2a752daf240a73ce4f2fc3ffb8b77181012819f8a0b35d",
       "created_at": "2026-11-13T20:47:21.142Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-electra-base-discriminator-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-google-electra-base-discriminator-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: google/electra-base-discriminator Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-electra-base-discriminator-research-knowledge-intelligence-google-elec.md",
+      "repository": "google/electra-base-discriminator",
+      "content_hash": "902047deaa7186f0d7bc1e746615e2e2a683ee8effef4e90061ca1af41d97e0e",
+      "created_at": "2026-11-13T20:54:19.579Z"
+    },
+    "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: react-navigation/react-navigation Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-react-navigation-react-navigation-architecture-intelligence-react-navigation-rea.md",
+      "repository": "react-navigation/react-navigation",
+      "content_hash": "38dcc92122ce92121d01db6b4963627b5e6c4ef1a763cd3f2eb9fbf3179743b1",
+      "created_at": "2026-11-13T20:54:26.411Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
+      "repository": "envoyproxy/envoy",
+      "content_hash": "e8d99c3b2d1c7c318150339dcef1ab122c7bc62078fd3393bdfe2c8350a8c716",
+      "created_at": "2026-11-13T20:54:29.673Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
+      "repository": "langchain4j/langchain4j",
+      "content_hash": "3ece1b4514d35b58ab7c2d5656d3a26dcf1d3d4a31a41352e2e66f74c7f78250",
+      "created_at": "2026-11-13T20:54:33.456Z"
+    },
+    "DOM-D-9936936B": {
+      "record_id": "DOM-D-9936936B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): google/electra-base-discriminator",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/google/electra-base-discriminator](https://huggingface.co/google/electra-base-discriminator))  \n> **Source Version**: `hf-google-el`  \n> **L",
+      "content_hash": "b7d162a29658c0c9aef4ad5481fcd0950a9367d5d64cd6e6b085f93c057689d9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md`  \n> **Source**: huggingface ([htt",
+      "provenance": {
+        "source_uri": "project://hf-google-electra-base-discriminator/hf-google-electra-base-discriminator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T20:54:36.285Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-electra-base-discriminator)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-google-electra-base-discriminator"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T20:55:04.950Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-google-electra-base-discriminator-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-electra-base-discriminator-learnings-research-knowledge-intelligence-h.md",
+      "repository": "hf-google-electra-base-discriminator-learnings",
+      "content_hash": "d8659980b0d03c072e23e596bde8b0bd2d52e75242b8a0cf3ba22413b091e2f9",
+      "created_at": "2026-11-13T20:55:05.171Z"
+    },
+    "DOM-H-169AAD95": {
+      "record_id": "DOM-H-169AAD95",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "keep underlying screens visible during overlapping transitions",
+      "content": "When implementing operations in `packages/stack/src/views/Stack/CardStack.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "b544c7c115faee921c2c636514b9f532b3a784dc1e9522076dd96f31be5f24bc",
+      "summary": "Prevents defects observed in production commit `5e31b0a0`: keep underlying screens visible during overlapping transitions. Unvalidated execu -> When implementing operations in `packages/stack/src/views/Stack/CardStack.tsx`, engineers MUST enforce rigorous boundary validation, safe st",
+      "provenance": {
+        "source_uri": "project://react-navigation-react-navigation/react-navigation-react-navigation-learnings.md",
+        "source_version": "5e31b0a0",
+        "observed_at": "2026-11-13T20:54:25.288Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-navigation-react-navigation)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-navigation-react-navigation"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T20:55:40.717Z"
+    },
+    "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar": {
+      "record_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: react-navigation-react-navigation-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-react-navigation-react-navigation-learnings-architecture-intelligence-react-navi.md",
+      "repository": "react-navigation-react-navigation-learnings",
+      "content_hash": "f5b7cf5bbcf8e48568fef899c537c0eca5f6a7a35538200a129d649c4372b433",
+      "created_at": "2026-11-13T20:55:41.212Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
+      "repository": "envoyproxy-envoy-learnings",
+      "content_hash": "fea654482ac5cffe1f4f68196edaf55b7db3fcae8a7e4b77cdb6f893d86748c6",
+      "created_at": "2026-11-13T20:55:41.787Z"
     }
   }
 }

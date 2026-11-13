@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T20:47:16.620Z",
+  "last_updated": "2026-11-13T20:54:33.211Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "2144473e74bfeed1664391e24a4cbae242982e7178d02166f0a006a5153daf08",
-      "verified_at": "2026-11-08T19:49:21.739Z",
+      "content_hash": "33f20a731b98c267520413e8f57747afdfe135a44018393c3efcc138aa0174dd",
+      "verified_at": "2026-11-13T20:54:19.424Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T19:49:21.739Z"
+      "last_updated": "2026-11-13T20:54:19.424Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "93c78f56607fc2f2722a5454fb96056347a38abb46044f722870beb4002965e7",
-      "verified_at": "2026-11-13T18:26:01.126Z",
+      "content_hash": "496e828588f077f8f0de650a17a53a07c3f502d8a45be017fc92ad2aa6be84a9",
+      "verified_at": "2026-11-13T20:54:30.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:26:01.126Z"
+      "last_updated": "2026-11-13T20:54:30.721Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4236,14 +4236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-navigation-react-navigation",
-      "content_hash": "174bfa9f977af362c1a2da2485137c275778a052c04369299b3805d5b990edb6",
-      "verified_at": "2026-11-09T12:42:12.489Z",
+      "content_hash": "57e23e45411d02cb3ccfd233b41ccce7a6bdf029fb6df575002f6fee4075503d",
+      "verified_at": "2026-11-13T20:54:26.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:42:12.489Z"
+      "last_updated": "2026-11-13T20:54:26.142Z"
     },
     "easegress-io/easegress": {
       "repository": "easegress-io/easegress",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "1ef504b5665d2e52b62841eb08623feecebc61f4cd0e4a360bc0348ed33e97fd",
-      "verified_at": "2026-11-12T22:33:46.035Z",
+      "content_hash": "fe9bfac98d4b2de803b2fe9c924aac493f1416ce1364b5582a16fa075ea4c14f",
+      "verified_at": "2026-11-13T20:54:29.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:33:46.036Z"
+      "last_updated": "2026-11-13T20:54:29.416Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "03ba868832fef014f146c8fa140d6b5753cc1a1cb76fdcb4a52aafbbf227321b",
-      "verified_at": "2026-11-12T21:31:14.552Z",
+      "content_hash": "b706159394d4afeb7a93872267c0afd5674bd59be93f3b7ad8651af19689aaf5",
+      "verified_at": "2026-11-13T20:54:33.211Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:31:14.552Z"
+      "last_updated": "2026-11-13T20:54:33.211Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",

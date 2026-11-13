@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `db4dee82`  
+> **Source Version**: `f77caec1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:30:51.777Z  
+> **Timestamp**: 2026-11-13T20:54:32.375Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:30:51.758Z  
+> **Harvest Timestamp**: 2026-11-13T20:54:32.369Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13394 stars
+- **Stars / Engagement**: 13401 stars
 
 ---
 
@@ -838,787 +838,328 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d93368d8` (2026-11-12)
-**Commit Message**: fix(mcp): preserve native images and embedded text resources (#6250)
+### Incident Patch 1: `a4809d33` (2026-11-13)
+**Commit Message**: Adds Infinispan Chat Memory store (#6973)
 
 ## Issue
-
-Related to #3364.
-
-## Change
-
-MCP image tool results previously failed as unsupported content. The
-default converter now returns native `ImageContent` through
-`ToolExecutionResult.resultContents()`, preserving mixed text/image
-order. Images explicitly use `DetailLevel.AUTO`, as requested in review;
-the global image default is unchanged.
-
-Text-only results retain newline-joined `resultText()` behavior,
-including empty results and embedded text resources. Malformed images
-and unsupported binary resources fail explicitly; custom converters
-remain available. Structured-content precedence, error handling and
-metadata are preserved. No API or dependency is added.
-
-The tutorial explains native tool contents and provider limitations.
-Anthropic and OpenAI Responses serialization tests preserve image
-blocks; Chat Completions rejection is tested and documented. The MCP
-fixture retains inherited exception coverage using unsupported audio.
-
-Merged current `main` and removed compatibility assertions/documentation
-for the legacy extractor API that upstream has since removed.
-
-## Verification
-
-JDK 17:
-
-```sh
-mvn clean 
-
-**File**: `docs/docs/tutorials/mcp.md` (modified, +8/-0)
-```diff
-@@ -420,6 +420,14 @@ that is retrieved from annotations - that one is exposed under the `McpToolMetad
- 
- If the tool has icons, they are exposed under the `McpToolMetadataKeys.ICONS` key in the metadata map.
- 
-+### MCP tool result conversion
-+
-+When a tool response uses `content[]`, the default `McpToolResultConverter` preserves text items, embedded text resources and native images. Text-only responses are joined with newlines and remain accessible through `ToolExecutionResult.resultText()`, including empty responses. Responses containing images preserve server order as `TextContent` / `ImageContent` blocks in `ToolExecutionResult.resultContents()`; calling `resultText()` on them throws `IllegalStateException`.
-+
-+Image results require a model integration that supports native images in tool results, such as Anthropic or OpenAI Responses. OpenAI Chat Completions rejects non-text tool results with `UnsupportedFeatureException`. Image bytes are not encoded as plain base64 text in the prompt.
-+
-+Embedded binary resources, audio and other unsupported content types fail explicitly. Applications that need them can set a custom converter with `DefaultMcpClient.Builder.toolResultConverter(...)`. Responses with `structuredContent` are handled separately and do not invoke this converter.
-+
- ### MCP tool result metadata
- 
- Besides the actual result, an MCP server can attach a `_meta` object to the response of a tool call.
-```
-
-**File**: `langchain4j-anthropic/src/test/java/dev/langchain4j/model/anthropic/AnthropicMapperTest.java` (modified, +29/-6)
-```diff
-@@ -21,7 +21,6 @@
- import static java.util.stream.Collectors.toMap;
- import static org.assertj.core.api.Assertions.assertThat;
- 
--import dev.langchain4j.model.anthropic.internal.client.Json;
- import com.fasterxml.jackson.core.JsonProcessingException;
- import com.fasterxml.jackson.databind.ObjectMapper;
- import dev.langchain4j.agent.tool.ToolExecutionRequest;
-@@ -50,6 +49,7 @@
- import dev.langchain4j.model.anthropic.internal.api.AnthropicToolResultContent;
- import dev.langchain4j.model.anthropic.internal.api.AnthropicToolSchema;
- import dev.langchain4j.model.anthropic.internal.api.AnthropicToolUseContent;
-+import dev.langchain4j.model.anthropic.internal.client.Json;
- import dev.langchain4j.model.anthropic.internal.mapper.AnthropicMapper;
- import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
- import dev.langchain4j.model.chat.request.json.JsonReferenceSchema;
-@@ -730,6 +730,28 @@ void should_map_tool_execution_result_message_with_single_text_and_cache_control
-         assertThat(content.cacheControl).extracting("type").isEqualTo("ephemeral");
-     }
- 
-+    @Test
-+    void should_serialize_base64_tool_image_as_native_image_block() throws Exception {
-+        ToolExecutionResultMessage message = ToolExecutionResultMessage.builder()
-+                .id("call_123")
-+                .toolName("screenshot")
-+                .contents(TextContent.from("diagnostic screenshot"), ImageContent.from("iVBORw0KGgo=", "image/png"))
-+                .isError(true)
-+                .build();
-+        AnthropicToolResultContent toolResult = (AnthropicToolResultContent)
-+                toAnthropicMessages(List.of(message)).get(0).content.get(0);
-+        com.fasterxml.jackson.databind.JsonNode json = new ObjectMapper().readTree(Json.toJson(toolResult));
-+        assertThat(json.get("type").asText()).isEqualTo("tool_result");
-+        assertThat(json.get("tool_use_id").asText()).isEqualTo("call_123");
-+        assertThat(json.get("is_error").asBoolean()).isTrue();
-+        assertThat(json.get("content").get(0).get("text").asText()).isEqualTo("diagnostic screenshot");
-+        com.fasterxml.jackson.databind.JsonNode image = json.get("content").get(1);
-+        assertThat(image.get("type").asText()).isEqualTo("image");
-+        assertThat(image.get("source").get("type").asText()).isEqualTo("base64");
-+        assertThat(image.get("source").get("media_type").asText()).isEqualTo("image/png");
-+        assertThat(image.get("source").get("data").asText()).isEqualTo("iVBORw0KGgo=");
-+    }
-+
-     @Test
-     void should_map_tool_execution_result_message_with_multiple_content_blocks_and_cache_control_metadata() {
-         // given
-@@ -1269,10 +1291,8 @@ static Stream<ChatMessage> messagesMarkedForCaching() {
-         Map<String, Object> cacheControl = singletonMap("cache_control", "ephemeral");
-         UserMessage userText = UserMessage.from("Hello");
-         userText.attributes().putAll(cacheControl);
--        UserMessage userImage = UserMessage.from(ImageContent.from(Image.builder()
--                .base64Data("base64data")
--                .mimeType("image/jpeg")
--                .build()));
-+        UserMessage userImage = UserMessage.from(ImageContent.from(
-+                Image.builder().base64Data("base64data").mimeType("image/jpeg").build()));
-         userImage.attributes().putAll(cacheControl);
-         UserMessage userPdf = UserMessage.from(PdfFileContent.from("base64data", "application/pdf"));
-         userPdf.attributes().putAll(cacheControl);
-@@ -1308,7 +1328,10 @@ static Stream<ChatMessage> messagesMarkedForCaching() {
-     void should_apply_cache_ttl_to_last_system_message_and_last_tool() {
-         // when
-         List<AnthropicTextContent> systemPrompt = toAnthropicSystemPrompt(
--                List.of(SystemMessage.from("one"), SystemMessage.from("two")), AnthropicCacheType.EPHEMERAL, false, "1h");
-+                List.of(SystemMessage.from("one"), SystemMessage.from("two")),
-+                AnthropicCacheType.EPHEMERAL,
-+                false,
-+                "1h");
-         List<AnthropicTool> tools = AnthropicMapper.toAnthropicTools(
-                 List.of(
-                         ToolSpecification.builder().name("one").build(),
-```
-
-**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/DefaultMcpToolResultConverter.java` (modified, +46/-11)
-```diff
-@@ -1,5 +1,10 @@
- package dev.langchain4j.mcp.client;
- 
-+import static dev.langchain4j.data.message.ImageContent.DetailLevel.AUTO;
-+
-+import dev.langchain4j.data.message.Content;
-+import dev.langchain4j.data.message.ImageContent;
-+import dev.langchain4j.data.message.TextContent;
- import dev.langchain4j.service.tool.ToolExecutionResult;
- import java.util.List;
- import java.util.Map;
-@@ -8,30 +13,60 @@
- /**
-  * Default converter for MCP tool responses backed by {@code content[]}.
-  * <p>
-- * It only supports {@code content} items of type {@code text}, joins multiple text
-- * fragments with newline characters, and stores the result in
-- * {@link ToolExecutionResult#resultText()}.
-+ * Supports text, images and embedded text resources. Images are returned as native
-+ * {@link ImageContent}, preserving mixed-content order. Text-only results are joined
-+ * with newlines so {@link ToolExecutionResult#resultText()} remains available.
-+ * Binary resources and other unsupported content types fail explicitly; applications
-+ * can provide a custom converter for them.
-  */
- public class DefaultMcpToolResultConverter implements McpToolResultConverter {
- 
-     @Override
-     public ToolExecutionResult convert(List<Map<String, Object>> content, boolean isError) {
--        String resultText = content.stream().map(this::extractText).collect(Collectors.joining("\n"));
-+        List<Content> contents = content.stream().map(this::extractContent).toList();
-+        if (contents.stream().allMatch(TextContent.class::isInstance)) {
-+            String resultText =
-+                    contents.stream().map(item -> ((TextContent) item).text()).collect(Collectors.joining("\n"));
-+            return ToolExecutionResult.builder()
-+                    .isError(isError)
-+                    .resultText(resultText)
-+                    .build();
-+        }
- 
-         return ToolExecutionResult.builder()
-                 .isError(isError)
--                .resultText(resultText)
-+                .resultContents(contents)
-                 .build();
-     }
- 
--    private String extractText(Map<String, Object> contentItem) {
-+    private Content extractContent(Map<String, Object> contentItem) {
-         Object type = contentItem.get("type");
--        if (!"text".equals(type)) {
--            // Preserve the historical error message format from ToolExecutionHelper,
--            // where the JSON string value is rendered with quotes.
-+        if ("text".equals(type)) {
-+            Object text = contentItem.get("text");
-+            return TextContent.from(text == null ? "" : String.valueOf(text));
-+        } else if ("image".equals(type)) {
-+            Object data = contentItem.get("data");
-+            Object mimeType = contentItem.get("mimeType");
-+            if (!(data instanceof String base64) || !(mimeType instanceof String mime)) {
-+                throw new IllegalArgumentException("Image content requires string data and mimeType");
-+            }
-+            return ImageContent.from(base64, mime, AUTO);
-+        } else if ("resource".equals(type)) {
-+            Object resource = contentItem.get("resource");
-+            if (resource instanceof Map<?, ?> resourceContents) {
-+                Object text = resourceContents.get("text");
-+                if (text != null) {
-+                    return TextContent.from(String.valueOf(text));
-+                }
-+                Object blob = resourceContents.get("blob");
-+                if (blob != null) {
-+                    throw new IllegalArgumentException(
-+                            "Unsupported embedded binary resource: provide a custom McpToolResultConverter");
-+                }
-+            }
-+            throw new IllegalArgumentException("Embedded resource must contain text or blob");
-+        } else {
-             throw new RuntimeException("Unsupported content type: \"" + type + "\"");
-         }
--        Object text = contentItem.get("text");
--        return text == null ? "" : String.valueOf(text);
-     }
- }
-```
-
-**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/client/McpToolResultConverter.java` (modified, +2/-2)
-```diff
-@@ -12,7 +12,7 @@
-  * Content items are presented as plain maps, so implementations do not need a JSON library.
-  * A text item, for example, looks like {@code {"type": "text", "text": "..."}}.
-  * <p>
-- * The default client only supports {@code structuredContent} and text content out of the box.
-+ * The default converter supports text, native images and embedded text resources.
-  * More specialized conversion strategies can be provided through
-  * {@link DefaultMcpClient.Builder#toolResultConverter(McpToolResultConverter)}.
-  */
-@@ -22,7 +22,7 @@ public interface McpToolResultConverter {
-     /**
-      * @param content the content blocks of {@code CallToolResult}.
-      * @param isError whether the tool response is marked as an application-level error.
--     * @return the result to hand back to the caller, whose text is what the model sees.
-+     * @return the result to hand back to the caller, whose contents are what the model sees.
-      */
-     ToolExecutionResult convert(List<Map<String, Object>> content, boolean isError);
- }
-```
-
-**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/DefaultMcpToolResultConverterTest.java` (modified, +124/-1)
-```diff
-@@ -1,8 +1,11 @@
- package dev.langchain4j.mcp.client;
- 
-+import static dev.langchain4j.data.message.ImageContent.DetailLevel.AUTO;
- import static org.assertj.core.api.Assertions.assertThat;
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
- 
-+import dev.langchain4j.data.message.ImageContent;
-+import dev.langchain4j.data.message.TextContent;
- import dev.langchain4j.service.tool.ToolExecutionResult;
- import java.util.List;
- import java.util.Map;
-@@ -37,11 +40,41 @@ void propagates_application_level_error_flag() {
- 
-     @Test
-     void rejects_unsupported_content_type() {
--        assertThatThrownBy(() -> extractor.convert(List.of(Map.of("type", "image", "data", "xxx")), false))
-+        assertThatThrownBy(() -> extractor.convert(List.of(Map.of("type", "audio", "data", "xxx")), false))
-                 .isInstanceOf(RuntimeException.class)
-                 .hasMessageContaining("Unsupported content type");
-     }
- 
-+    @Test
-+    void extracts_image_as_native_content() {
-+        ToolExecutionResult result = extractor.convert(
-+                List.of(Map.of("type", "image", "data", "iVBORw0KGgo=", "mimeType", "image/png")), false);
-+
-+        assertThat(result.resultContents()).containsExactly(ImageContent.from("iVBORw0KGgo=", "image/png", AUTO));
-+        assertThatThrownBy(result::resultText).isInstanceOf(IllegalStateException.class);
-+    }
-+
-+    @Test
-+    void rejects_malformed_image_instead_of_returning_placeholder_text() {
-+        for (Map<String, Object> image : List.<Map<String, Object>>of(
-+                Map.of("type", "image", "data", "xxx"),
-+                Map.of("type", "image", "mimeType", "image/png"),
-+                Map.of("type", "image", "data", 42, "mimeType", "image/png"),
-+                Map.of("type", "image", "data", "xxx", "mimeType", 42),
-+                Map.of("type", "image", "data", "", "mimeType", "image/png"))) {
-+            assertThatThrownBy(() -> extractor.convert(List.of(image), false))
-+                    .isInstanceOf(IllegalArgumentException.class);
-+        }
-+    }
-+
-+    @Test
-+    void extracts_resource_text_content() {
-+        ToolExecutionResult result = extractor.convert(
-+                List.of(Map.of("type", "resource", "resource", Map.of("text", "resource text"))), false);
-+
-+        assertThat(result.resultText()).isEqualTo("resource text");
-+    }
-+
-     @Test
-     void is_a_functional_interface_so_it_can_be_a_lambda() {
-         McpToolResultConverter lambda = (content, isError) -> ToolExecutionResult.builder()
-@@ -53,4 +86,94 @@ void is_a_functional_interface_so_it_can_be_a_lambda() {
-                         .resultText())
-                 .isEqualTo("items=1");
-     }
-+
-+    @Test
-+    void rejects_binary_resources_instead_of_sending_base64_as_text() {
-+        assertThatThrownBy(() -> extractor.convert(
-+                        List.of(Map.of(
-+                                "type",
-+                                "resource",
-+                                "resource",
-+                                Map.of(
-+                                        "uri",
-+                                        "file:///report.pdf",
-+                                        "blob",
-+                                        "JVBERg==",
-+                                        "mimeType",
-+                                        "application/pdf"))),
-+                        true))
-+                .isInstanceOf(RuntimeException.class)
-+                .hasMessageContaining("binary resource");
-+    }
-+
-+    @Test
-+    void rejects_binary_resource_without_mime_type() {
-+        assertThatThrownBy(() -> extractor.convert(
-+                        List.of(Map.of("type", "resource", "resource", Map.of("uri", "file:///data", "blob", "AA=="))),
-+                        false))
-+                .isInstanceOf(RuntimeException.class)
-+                .hasMessageContaining("binary resource");
-+    }
-+
-+    @Test
-+    void rejects_empty_binary_resource_explicitly() {
-+        assertThatThrownBy(() -> extractor.convert(
-+                        List.of(Map.of("type", "resource", "resource", Map.of("uri", "file:///empty", "blob", ""))),
-+                        false))
-+                .isInstanceOf(RuntimeException.class)
-+                .hasMessageContaining("binary resource");
-+    }
-+
-+    @Test
-+    void preserves_empty_text_resource() {
-+        ToolExecutionResult result = extractor.convert(
-+                List.of(Map.of("type", "resource", "resource", Map.of("uri", "file:///empty.txt", "text", ""))), false);
-+
-+        assertThat(result.resultText()).isEmpty();
-+    }
-+
-+    @Test
-+    void rejects_resource_without_text_or_blob() {
-+        for (Map<String, Object> contentItem : List.<Map<String, Object>>of(
-+                Map.of("type", "resource"),
-+                Map.of("type", "resource", "resource", "invalid"),
-+                Map.of("type", "resource", "resource", Map.of("uri", "file:///missing")))) {
-+            assertThatThrownB
-```
-
-**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/McpToolResultMetaParsingTest.java` (modified, +54/-7)
-```diff
-@@ -1,8 +1,9 @@
- package dev.langchain4j.mcp.client;
- 
-+import static dev.langchain4j.data.message.ImageContent.DetailLevel.AUTO;
- import static org.assertj.core.api.Assertions.assertThat;
- 
--import dev.langchain4j.mcp.client.transport.McpJson;
-+import dev.langchain4j.data.message.ImageContent;
- import dev.langchain4j.service.tool.ToolExecutionResult;
- import java.util.List;
- import java.util.Map;
-@@ -14,7 +15,7 @@ class McpToolResultMetaParsingTest {
- 
-     @Test
-     void should_map_meta_of_text_result_into_attributes() throws Exception {
--        String response = 
-+        String response =
-                 // language=json
-                 """
-                         {
-@@ -49,7 +50,7 @@ void should_map_meta_of_text_result_into_attributes() throws Exception {
- 
-     @Test
-     void should_map_meta_of_structured_content_result_into_attributes() throws Exception {
--        String response = 
-+        String response =
-                 // language=json
-                 """
-                         {
-@@ -74,7 +75,7 @@ void should_map_meta_of_structured_content_result_into_attributes() throws Excep
- 
-     @Test
-     void should_return_no_attributes_when_there_is_no_meta() throws Exception {
--        String response = 
-+        String response =
-                 // language=json
-                 """
-                         {
-@@ -96,9 +97,55 @@ void should_return_no_attributes_when_there_is_no_meta() throws Exception {
-         assertThat(result.attributes()).isEmpty();
-     }
- 
-+    @Test
-+    void should_preserve_native_image_and_meta_in_an_ignored_application_error() {
-+        String response = """
-+                {
-+                  "jsonrpc": "2.0",
-+                  "id": 7,
-+                  "result": {
-+                    "isError": true,
-+                    "content": [{
-+                      "type": "image", "data": "AQID", "mimeType": "image/png"
-+                    }],
-+                    "_meta": {"example.org/traceId": "blob-123"}
-+                  }
-+                }
-+                """;
-+
-+        ToolExecutionResult result = ToolExecutionHelper.extractResult(response, true, extractor);
-+
-+        assertThat(result.resultContents()).containsExactly(ImageContent.from("AQID", "image/png", AUTO));
-+        assertThat(result.isError()).isTrue();
-+        assertThat(result.attributes()).containsExactly(Map.entry("example.org/traceId", "blob-123"));
-+    }
-+
-+    @Test
-+    void should_prefer_structured_content_over_a_blob_resource() {
-+        String response = """
-+                {
-+                  "jsonrpc": "2.0",
-+                  "id": 8,
-+                  "result": {
-+                    "structuredContent": {"size": 3},
-+                    "content": [{
-+                      "type": "resource",
-+                      "resource": {"uri": "file:///diagnostic.bin", "blob": "AQID"}
-+                    }]
-+                  }
-+                }
-+                """;
-+
-+        ToolExecutionResult result = ToolExecutionHelper.extractResult(response, false, extractor);
-+
-+        assertThat(result.result()).isEqualTo(Map.of("size", 3));
-+        assertThat(result.resultText()).isEqualTo("{\"size\":3}");
-+        assertThat(result.isError()).isFalse();
-+    }
-+
-     @Test
-     void should_keep_meta_of_error_result_when_application_level_errors_are_ignored() throws Exception {
--        String response = 
-+        String response =
-                 // language=json
-                 """
-                         {
-@@ -128,7 +175,7 @@ void should_keep_meta_of_error_result_when_application_level_errors_are_ignored(
- 
-     @Test
-     void should_give_precedence_to_attributes_set_by_the_extractor() throws Exception {
--        String response = 
-+        String response =
-                 // language=json
-                 """
-                         {
-@@ -165,7 +212,7 @@ void should_give_precedence_to_attributes_set_by_the_extractor() throws Exceptio
- 
-     @Test
-     void should_skip_meta_keys_reserved_by_mcp() throws Exception {
--        String response = 
-+        String response =
-                 // language=json
-                 """
-                         {
-```
-
-**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/integration/McpToolsTestBase.java` (modified, +26/-2)
-```diff
-@@ -1,5 +1,6 @@
- package dev.langchain4j.mcp.client.integration;
- 
-+import static dev.langchain4j.data.message.ImageContent.DetailLevel.AUTO;
- import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
- import static org.assertj.core.api.Assertions.assertThat;
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
-@@ -8,12 +9,13 @@
- 
- import dev.langchain4j.agent.tool.ToolExecutionRequest;
- import dev.langchain4j.agent.tool.ToolSpecification;
-+import dev.langchain4j.data.message.ImageContent;
- import dev.langchain4j.exception.ToolErrorVisibleToLlm;
--import dev.langchain4j.mcp.client.McpApplicationErrorException;
- import dev.langchain4j.exception.ToolExecutionException;
- import dev.langchain4j.invocation.InvocationContext;
- import dev.langchain4j.mcp.McpToolExecutor;
- import dev.langchain4j.mcp.McpToolProvider;
-+import dev.langchain4j.mcp.client.McpApplicationErrorException;
- import dev.langchain4j.mcp.client.McpClient;
- import dev.langchain4j.memory.chat.MessageWindowChatMemory;
- import dev.langchain4j.model.chat.ChatModel;
-@@ -40,7 +42,7 @@ public void verifyToolSpecifications() {
-         ToolProviderResult toolProviderResult = obtainTools();
- 
-         Map<ToolSpecification, ToolExecutor> tools = toolProviderResult.tools();
--        assertThat(tools).hasSize(13);
-+        assertThat(tools).hasSize(14);
- 
-         ToolSpecification echoString = toolProviderResult.toolSpecificationByName("echoString");
-         assertThat(echoString.description()).isEqualTo("Echoes a string");
-@@ -89,6 +91,18 @@ public void executeTool() {
-         assertThat(toolExecutionResultString).isEqualTo("abc");
-     }
- 
-+    @Test
-+    public void executeToolThatReturnsNativeImage() {
-+        ToolProviderResult toolProviderResult = obtainTools();
-+        McpToolExecutor executor = (McpToolExecutor) toolProviderResult.toolExecutorByName("getImage");
-+        ToolExecutionRequest request =
-+                ToolExecutionRequest.builder().name("getImage").arguments("{}").build();
-+        ToolExecutionResult result =
-+                executor.executeWithContext(request, InvocationContext.builder().build());
-+        assertThat(result.resultContents()).containsExactly(ImageContent.from("AQID", "image/png", AUTO));
-+        assertThat(result.isError()).isFalse();
-+    }
-+
-     @Test
-     public void executeToolThatReturnsStructuredContent() {
-         ToolProviderResult toolProviderResult = obtainTools();
-@@ -222,6 +236,16 @@ protected void configureGetImageTool(AiServices<?> aiServiceBuilder) {
-         aiServiceBuilder.toolProvider(createMcpToolProvider());
-     }
- 
-+    @Override
-+    protected String toolNameThrowingExceptionWithoutCause() {
-+        return "getAudio";
-+    }
-+
-+    @Override
-+    protected String exceptionWithoutCauseMessage() {
-+        return "Unsupported content type: \"audio\"";
-+    }
-+
-     private static McpToolProvider createMcpToolProvider() {
-         return McpToolProvider.builder().mcpClients(mcpClient).build();
-     }
-```
-
-**File**: `langchain4j-mcp/src/test/resources/tools_mcp_server.java` (modified, +7/-1)
-```diff
-@@ -10,6 +10,7 @@
- import java.util.concurrent.TimeUnit;
- 
- import io.quarkiverse.mcp.server.Cancellation;
-+import io.quarkiverse.mcp.server.AudioContent;
- import io.quarkiverse.mcp.server.ImageContent;
- import io.quarkiverse.mcp.server.TextContent;
- import io.quarkiverse.mcp.server.Tool;
-@@ -101,6 +102,11 @@ public String getWeather(String arg0) {
- 
-     @Tool
-     public ToolResponse getImage() {
--        return new ToolResponse(false, List.of(new ImageContent("does not matter", "does not matter")));
-+        return new ToolResponse(false, List.of(new ImageContent("AQID", "image/png")));
-+    }
-+
-+    @Tool
-+    public ToolResponse getAudio() {
-+        return new ToolResponse(false, List.of(new AudioContent("AQID", "audio/wav")));
-     }
- }
-```
-
----
-
-### Incident Patch 2: `1f23f795` (2026-11-11)
-**Commit Message**: fix(mcp-docker): restore the interrupt status when the container start is interrupted (#6467)
-
-## Issue
-<!-- Please specify the ID of the issue this PR is addressing. For
-example: "Closes #1234" or "Fixes #1234" -->
-Closes #6466
+Closes #6974
 
 ## Change
-<!-- Please describe the changes you made. -->
+Infinispan Chat memory store in the langchain4j Infinispan integration
+module
 
-`DockerMcpTransport.start()` parks inside
-`dockerClient.waitContainerCmd(containerId).start().awaitStarted()`,
-which can throw `InterruptedException`. The surrounding broad `catch
-(Exception e)` swallowed that exception, so the interrupt flag was lost
-and callers could not observe cancellation while waiting for the
-container to start.
-
-This PR adds an explicit `catch (InterruptedException e)` that
-re-asserts the interrupt status (`Thread.currentThread().interrupt()`)
-before rethrowing — the same treatment the image-pull site in the same
-method received in #6411.
-
-The new test class `DockerMcpTransportStartInterruptTest` drives the
-transport against a stub Docker daemon over plain HTTP and covers both
-interruptible sites of `start()`:
-
-- `shouldRestoreInterruptStatusWhenImagePullIsInterrupted` — regression
-guard for the image-pull site (green on current main, since #6411);
-- `shouldRestoreInterruptSt
-
-**File**: `langchain4j-mcp-docker/src/main/java/dev/langchain4j/mcp/client/transport/docker/DockerMcpTransport.java` (modified, +3/-0)
-```diff
-@@ -147,6 +147,9 @@ public void start(McpOperationHandler messageHandler) {
-             dockerClient.startContainerCmd(containerId).exec();
-             dockerClient.waitContainerCmd(containerId).start().awaitStarted();
-             log.debug("ID of the started container: {}", exec.getId());
-+        } catch (InterruptedException e) {
-+            Thread.currentThread().interrupt();
-+            throw new RuntimeException(e);
-         } catch (Exception e) {
-             throw new RuntimeException(e);
-         }
-```
-
-**File**: `langchain4j-mcp-docker/src/test/java/dev/langchain4j/mcp/client/transport/docker/DockerMcpTransportStartInterruptTest.java` (added, +182/-0)
-```diff
-@@ -0,0 +1,182 @@
-+package dev.langchain4j.mcp.client.transport.docker;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.Mockito.mock;
-+
-+import com.sun.net.httpserver.HttpServer;
-+import dev.langchain4j.mcp.client.transport.McpOperationHandler;
-+import java.io.OutputStream;
-+import java.net.InetAddress;
-+import java.net.InetSocketAddress;
-+import java.nio.charset.StandardCharsets;
-+import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.CountDownLatch;
-+import java.util.concurrent.TimeUnit;
-+import org.junit.jupiter.api.Test;
-+
-+/**
-+ * The image pull is not the only blocking Docker call in {@link DockerMcpTransport#start}.
-+ * Once the pull completes, {@code start} also blocks on the container it just created:
-+ *
-+ * <pre>
-+ * dockerClient.startContainerCmd(containerId).exec();
-+ * dockerClient.waitContainerCmd(containerId).start().awaitStarted();
-+ * </pre>
-+ *
-+ * <p>{@code awaitStarted()} is declared to throw {@link InterruptedException}, but it sits inside a
-+ * broad {@code catch (Exception e)} block. An interrupt delivered while the container is starting is
-+ * therefore swallowed, and the caller receives a {@link RuntimeException} with the thread's interrupt
-+ * flag already cleared — so the cancellation is silently lost and the surrounding framework has no way
-+ * to observe it.
-+ *
-+ * <p>Both phases are exercised against a stub Docker daemon so that the real docker-java client issues
-+ * the real blocking calls. The image-pull phase already restores the flag (fixed in #6411, issue
-+ * #6410); it is included as a companion so the two blocking phases of {@code start} are covered side by
-+ * side and a regression in either one is caught. The container-start phase is the one that still drops
-+ * the flag.
-+ */
-+class DockerMcpTransportStartInterruptTest {
-+
-+    /** A stub response that satisfies docker-java's parsing for each endpoint {@code start()} hits. */
-+    private static String bodyFor(String path) {
-+        if (path.equals("/images/create")) {
-+            // PullImageResultCallback.isPullSuccessIndicated() requires one of a few known statuses.
-+            return "{\"status\":\"Download complete\"}";
-+        }
-+        if (path.startsWith("/containers/create")) {
-+            return "{\"Id\":\"stub-container-id\",\"Warnings\":[]}";
-+        }
-+        if (path.endsWith("/wait")) {
-+            return "{\"StatusCode\":0}";
-+        }
-+        return "";
-+    }
-+
-+    /**
-+     * Image-pull phase of {@code start}: the interrupt arrives while the pull is in flight. The flag is
-+     * already restored here (#6411); this test keeps that behaviour pinned as the sibling case.
-+     */
-+    @Test
-+    void shouldRestoreInterruptStatusWhenImagePullIsInterrupted() throws Exception {
-+        CountDownLatch pullRequested = new CountDownLatch(1);
-+        CountDownLatch releasePull = new CountDownLatch(1);
-+        HttpServer daemon = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
-+        daemon.setExecutor(java.util.concurrent.Executors.newFixedThreadPool(4));
-+        daemon.createContext("/", exchange -> {
-+            String path = exchange.getRequestURI().getPath();
-+            if (path.equals("/images/create")) {
-+                // Hold the response back so the pull is still in flight when the test interrupts.
-+                pullRequested.countDown();
-+                try {
-+                    releasePull.await();
-+                } catch (InterruptedException e) {
-+                    Thread.currentThread().interrupt();
-+                }
-+                exchange.sendResponseHeaders(200, -1);
-+                exchange.close();
-+                return;
-+            }
-+            writeJson(exchange, bodyFor(path));
-+        });
-+        daemon.start();
-+
-+        try {
-+            CompletableFuture<Boolean> interruptStatus = startThenInterrupt(daemon, pullRequested);
-+            assertThat(interruptStatus.get(15, TimeUnit.SECONDS))
-+                    .as("interrupt status must survive the image-pull phase of start()")
-+                    .isTrue();
-+        } finally {
-+            releasePull.countDown();
-+            daemon.stop(0);
-+        }
-+    }
-+
-+    /**
-+     * Container-start phase of {@code start}: the pull and the container creation both succeed, then the
-+     * interrupt arrives while the transport is parked in
-+     * {@code waitContainerCmd(containerId).start().awaitStarted()}. This is the site that still loses
-+     * the flag, because the whole {@code try} block is wrapped in {@code catch (Exception e)}.
-+     */
-+    @Test
-+    void shouldRestoreInterruptStatusWhenContainerStartIsInterrupted() throws Exception {
-+        CountDownLatch waitRequested = new CountDownLatch(1);
-+        CountDownLatch releaseWait = new CountDownLatch(1);
-+        HttpServer daemon = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
-+        daemon.setExecu
-```
-
----
-
-### Incident Patch 3: `db4dee82` (2026-11-12)
-**Commit Message**: Describe which versions get security fixes in SECURITY.md (#7084)
-
-## Change
-The "Supported Versions" section of `SECURITY.md` said that only the
-latest stable version gets security updates, and its table still showed
-1.0.x. That is out of date: some older release lines have also received
-security fixes.
-
-The table is replaced with a short description: security fixes are
-released in the latest version, some older release lines may also
-receive a fix, and the security advisory lists every version that
-contains the fix.
 
 ## General checklist
+<!-- Please double-check the following points and mark them like this:
+[X] -->
 - [X] There are no breaking changes (API, behaviour)
-- [ ] I have added unit and/or integration tests for my change
-- [ ] The tests cover both positive and negative cases
-- [ ] I have manually run all the unit and integration tests in the
+- [X] I have added unit and/or integration tests for my change
+- [X] The tests cover both positive and negative cases
+- [X] I have manually run all the unit and integration tests in the
 module I have added/changed, and they are all green
 - [ ] I have manually run all the unit and integration tests in the
 [core](https://github.com/langchain4j/langchain4j/tree/main/langchain4j-core)
 and
 [main](https://github.com/langchain4j/langchain4j/tree/main/langchain4j)
 modules, and they are all green
-- [ ] I have added/updated the
-[documentation](https://github.com/langchain4j/langchain4j/tree/main/docs/doc
+- [X] I have added/updated the
+[documentation](https://github.com/langchain4j/langchain4j/tree/main/docs/docs)
+- [ ] I have added an example in the [examples
+repo](https://github.com/langchain4j/langchain4j-examples) (only for
+"big" features)
+- [ ] I have added/updated [Spring Boot
+starter(s)](https://github.com/langchain4j/langchain4j-spring) (if
+applicable)
 
-**File**: `SECURITY.md` (modified, +3/-6)
+
+## Checklist for adding new maven 
+
+**File**: `docs/docs/integrations/chat-memory-stores/index.md` (modified, +1/-0)
 ```diff
-@@ -2,12 +2,9 @@
+@@ -12,6 +12,7 @@ sidebar_position: 0
+ | [Coherence](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-coherence/src/test/java/dev/langchain4j/store/memory/chat/coherence/CoherenceChatMemoryStoreIT.java)                     | ✅           |         |
+ | [Hazelcast (IMap)](https://github.com/langchain4j/langchain4j-community/blob/main/chat-memory-stores/langchain4j-community-hazelcast/src/test/java/dev/langchain4j/community/store/memory/chat/hazelcast/HazelcastChatMemoryStoreIT.java)                     | ✅           |         |
+ | [Hazelcast (CPMap)](https://github.com/langchain4j/langchain4j-community/blob/main/embedding-stores/langchain4j-community-hazelcast-enterprise/src/test/java/dev/langchain4j/community/store/memory/chat/hazelcast/HazelcastCPMapChatMemoryStoreIT.java)                     | ✅           |         |
++| [Infinispan](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java)                     | ✅           |         |
+ | [Neo4j](https://github.com/langchain4j/langchain4j-community/blob/main/embedding-stores/langchain4j-community-neo4j/src/test/java/dev/langchain4j/community/store/memory/chat/neo4j/Neo4jChatMemoryStoreIT.java)                             | ✅           |         |
+ | [Oracle](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-oracle/src/test/java/dev/langchain4j/store/memory/chat/oracle/OracleChatMemoryStoreIT.java) | ✅            |         |
+ | [Redis](https://github.com/langchain4j/langchain4j-community/blob/main/embedding-stores/langchain4j-community-redis/src/test/java/dev/langchain4j/community/store/memory/chat/redis/RedisChatMemoryStoreIT.java)                             | ✅           |         |
+```
+
+**File**: `docs/docs/integrations/embedding-stores/infinispan.md` (modified, +21/-0)
+```diff
+@@ -32,7 +32,28 @@ From 15.2 Infinispan Server and above, metadata filtering is supported.
+ ## APIs
  
- ## Supported Versions
+ - `InfinispanEmbeddingStore`
++- `InfinispanChatMemoryStore`
  
--Only the latest stable version of LangChain4j is supported with security updates.
--
--| Version   | Supported          |
--| --------- | ------------------ |
--| 1.0.x     | :white_check_mark: |
--| < 1.0.0   | :x:                |
-+Security fixes are released in the latest version of LangChain4j.
-+Some older release lines may also receive a fix.
-+The security advisory lists every version that contains the fix.
++### InfinispanChatMemoryStore
++
++A `ChatMemoryStore` backed by an Infinispan cache. Messages are serialized to JSON
++using `ChatMessageSerializer`, supporting all message types including multimodal
++content (images, audio, video, PDF), tool calls, and provider-specific attributes.
++
++```java
++// Using a ConfigurationBuilder
++InfinispanChatMemoryStore store = InfinispanChatMemoryStore.builder()
++    .infinispanConfigBuilder(builder)
++    .build();
++```
++
++When using a pre-configured `RemoteCacheManager` (e.g. in Quarkus):
++
++```java
++InfinispanChatMemoryStore store = InfinispanChatMemoryStore.builder()
++    .remoteCacheManager(remoteCacheManager)
++    .build();
++```
  
- ## Reporting a Vulnerability
+ ## Examples
  
 ```
 
+**File**: `langchain4j-infinispan/src/main/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStore.java` (added, +175/-0)
+```diff
+@@ -0,0 +1,175 @@
++package dev.langchain4j.store.memory.chat.infinispan;
++
++import static dev.langchain4j.internal.ValidationUtils.ensureNotBlank;
++import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
++
++import dev.langchain4j.data.message.ChatMessage;
++import dev.langchain4j.data.message.ChatMessageDeserializer;
++import dev.langchain4j.data.message.ChatMessageSerializer;
++import dev.langchain4j.store.memory.chat.ChatMemoryStore;
++import java.util.ArrayList;
++import java.util.List;
++import org.infinispan.client.hotrod.RemoteCache;
++import org.infinispan.client.hotrod.RemoteCacheManager;
++import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
++import org.infinispan.commons.configuration.StringConfiguration;
++
++/**
++ * A {@link ChatMemoryStore} backed by an Infinispan cache.
++ *
++ * <p>Messages are serialized to JSON using {@link ChatMessageSerializer} and stored as strings,
++ * following the same approach as the other ChatMemoryStore implementations (Coherence, Cassandra, Oracle).
++ * The cache uses {@code application/x-protostream} encoding since strings are a native ProtoStream type.
++ */
++public class InfinispanChatMemoryStore implements ChatMemoryStore {
++
++    public static final String DEFAULT_CACHE_NAME = "chat-memory";
++
++    private static final String DEFAULT_CACHE_CONFIG = "<distributed-cache name=\"CACHE_NAME\" statistics=\"true\">\n"
++            + "<encoding>\n"
++            + "<key media-type=\"application/x-protostream\"/>\n"
++            + "<value media-type=\"application/x-protostream\"/>\n"
++            + "</encoding>\n"
++            + "</distributed-cache>";
++
++    private final RemoteCache<String, String> remoteCache;
++
++    /**
++     * Creates an InfinispanChatMemoryStore from a pre-configured RemoteCacheManager.
++     *
++     * @param remoteCacheManager the already configured remote cache manager
++     * @param cacheName          the cache name to use
++     * @param createCache        whether to create the cache if it doesn't exist. When {@code false}, the cache must
++     *                           already exist on the server
++     * @param cacheConfig        optional custom cache configuration XML
++     */
++    public InfinispanChatMemoryStore(
++            RemoteCacheManager remoteCacheManager, String cacheName, boolean createCache, String cacheConfig) {
++        ensureNotNull(remoteCacheManager, "remoteCacheManager");
++        ensureNotBlank(cacheName, "cacheName");
++
++        if (createCache) {
++            String config = cacheConfig != null ? cacheConfig : DEFAULT_CACHE_CONFIG.replace("CACHE_NAME", cacheName);
++            this.remoteCache =
++                    remoteCacheManager.administration().getOrCreateCache(cacheName, new StringConfiguration(config));
++        } else {
++            this.remoteCache = getExistingCache(remoteCacheManager, cacheName);
++        }
++    }
++
++    /**
++     * Creates an InfinispanChatMemoryStore from a ConfigurationBuilder.
++     *
++     * @param builder     the Infinispan configuration builder
++     * @param cacheName   the cache name to use
++     * @param createCache whether to create the cache if it doesn't exist. When {@code false}, the cache must already
++     *                    exist on the server
++     * @param cacheConfig optional custom cache configuration XML
++     */
++    public InfinispanChatMemoryStore(
++            ConfigurationBuilder builder, String cacheName, boolean createCache, String cacheConfig) {
++        ensureNotNull(builder, "builder");
++        ensureNotBlank(cacheName, "cacheName");
++
++        if (createCache) {
++            String config = cacheConfig != null ? cacheConfig : DEFAULT_CACHE_CONFIG.replace("CACHE_NAME", cacheName);
++            builder.remoteCache(cacheName).configuration(config);
++        }
++
++        RemoteCacheManager remoteCacheManager = new RemoteCacheManager(builder.build());
++        this.remoteCache = getExistingCache(remoteCacheManager, cacheName);
++    }
++
++    private static RemoteCache<String, String> getExistingCache(
++            RemoteCacheManager remoteCacheManager, String cacheName) {
++        RemoteCache<String, String> cache = remoteCacheManager.getCache(cacheName);
++        if (cache == null) {
++            throw new IllegalStateException("Infinispan cache '" + cacheName
++                    + "' does not exist. Create it on the server, or set createCache(true) to let the store create it");
++        }
++        return cache;
++    }
++
++    @Override
++    public List<ChatMessage> getMessages(Object memoryId) {
++        ensureNotNull(memoryId, "memoryId");
++        String json = remoteCache.get(memoryId.toString());
++        return json == null ? new ArrayList<>() : ChatMessageDeserializer.messagesFromJson(json);
++    }
++
++    @Override
++    public void updateMessages(Object memoryId, List<ChatMessage> messages) {
++        ensureNotNull(memoryId, "memoryId");
++        ensureNotNull(messages, "messages");
++        String json = ChatMessageSerializer.mess
+```
+
+**File**: `langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java` (added, +251/-0)
+```diff
+@@ -0,0 +1,251 @@
++package dev.langchain4j.store.memory.chat.infinispan;
++
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++import static org.infinispan.testcontainers.InfinispanContainer.IMAGE_BASENAME;
++
++import dev.langchain4j.agent.tool.ToolExecutionRequest;
++import dev.langchain4j.data.message.AiMessage;
++import dev.langchain4j.data.message.ChatMessage;
++import dev.langchain4j.data.message.CustomMessage;
++import dev.langchain4j.data.message.ImageContent;
++import dev.langchain4j.data.message.SystemMessage;
++import dev.langchain4j.data.message.TextContent;
++import dev.langchain4j.data.message.ToolExecutionResultMessage;
++import dev.langchain4j.data.message.UserMessage;
++import java.util.List;
++import java.util.Map;
++import org.infinispan.client.hotrod.RemoteCacheManager;
++import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
++import org.infinispan.commons.util.Version;
++import org.infinispan.testcontainers.InfinispanContainer;
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
++
++class InfinispanChatMemoryStoreIT {
++
++    static InfinispanContainer infinispan = new InfinispanContainer(IMAGE_BASENAME + ":" + Version.getVersion());
++    InfinispanChatMemoryStore chatMemoryStore;
++
++    @BeforeAll
++    static void beforeAll() {
++        infinispan.start();
++    }
++
++    @AfterAll
++    static void afterAll() {
++        infinispan.stop();
++    }
++
++    @BeforeEach
++    void setUp() {
++        ConfigurationBuilder builder = new ConfigurationBuilder();
++        builder.uri(infinispan.getConnectionURI());
++        chatMemoryStore = InfinispanChatMemoryStore.builder()
++                .infinispanConfigBuilder(builder)
++                .build();
++    }
++
++    @Test
++    void should_get_empty_messages_for_unknown_memory_id() {
++        assertThat(chatMemoryStore.getMessages("unknown")).isEmpty();
++    }
++
++    @Test
++    void should_store_and_retrieve_simple_messages() {
++        List<ChatMessage> messages = List.of(
++                SystemMessage.from("You are a helpful assistant"),
++                UserMessage.from("Hello"),
++                AiMessage.from("Hi there!"));
++
++        chatMemoryStore.updateMessages("simple", messages);
++
++        List<ChatMessage> retrieved = chatMemoryStore.getMessages("simple");
++        assertThat(retrieved).hasSize(3);
++        assertThat(((SystemMessage) retrieved.get(0)).text()).isEqualTo("You are a helpful assistant");
++        assertThat(((UserMessage) retrieved.get(1)).singleText()).isEqualTo("Hello");
++        assertThat(((AiMessage) retrieved.get(2)).text()).isEqualTo("Hi there!");
++    }
++
++    @Test
++    void should_store_user_message_with_name() {
++        chatMemoryStore.updateMessages("user-name", List.of(UserMessage.from("John", "Hello")));
++
++        UserMessage msg = (UserMessage) chatMemoryStore.getMessages("user-name").get(0);
++        assertThat(msg.name()).isEqualTo("John");
++        assertThat(msg.singleText()).isEqualTo("Hello");
++    }
++
++    @Test
++    void should_store_multimodal_user_message() {
++        UserMessage message = UserMessage.from(
++                TextContent.from("What is in this image?"), ImageContent.from("https://example.com/image.png"));
++
++        chatMemoryStore.updateMessages("multimodal", List.of(message));
++
++        UserMessage msg =
++                (UserMessage) chatMemoryStore.getMessages("multimodal").get(0);
++        assertThat(msg.contents()).hasSize(2);
++        assertThat(((TextContent) msg.contents().get(0)).text()).isEqualTo("What is in this image?");
++        assertThat(((ImageContent) msg.contents().get(1)).image().url().toString())
++                .isEqualTo("https://example.com/image.png");
++    }
++
++    @Test
++    void should_store_ai_message_with_tool_execution_requests() {
++        ToolExecutionRequest request = ToolExecutionRequest.builder()
++                .id("call_123")
++                .name("get_weather")
++                .arguments("{\"city\":\"Paris\"}")
++                .build();
++
++        chatMemoryStore.updateMessages("tool-req", List.of(AiMessage.from(request)));
++
++        AiMessage msg = (AiMessage) chatMemoryStore.getMessages("tool-req").get(0);
++        assertThat(msg.toolExecutionRequests()).hasSize(1);
++        assertThat(msg.toolExecutionRequests().get(0).id()).isEqualTo("call_123");
++        assertThat(msg.toolExecutionRequests().get(0).name()).isEqualTo("get_weather");
++    }
++
++    @Test
++    void should_store_tool_execution_result_with_image() {
++        ToolExecutionResultMessage toolResult = ToolExecutionResultMessage.builder()
++                .id("call_img")
++                .toolName("screenshot")
++                .contents(List.of(
++                        TextContent.from("Screenshot captured"),
++                        ImageContent.from("https://example.com/screenshot.png")))
++   
+```
+
 #### Recent Merged Pull Requests:
-- **PR #7098** (2026-11-12): Renovate: keep Reactor in Cosmos NoSQL on the Azure SDK's line and gpu-llama3 on the 0.4 JDK 25 build (@dliubarskyi)
-- **PR #7097** (2026-11-12): Agentic: notify the suspension of an async agent only once (@dliubarskyi)
-- **PR #7094** (2026-11-12): CI: cache the Maven repository of the build jobs with restore keys (@dliubarskyi)
-- **PR #7091** (closed): Update dependency com.ibm.watsonx:watsonx-ai to v0.50.0 - autoclosed (@renovate[bot])
-- **PR #7087** (2026-11-12): Update watsonx.ai sdk to version 0.50.0 (@andreadimaio)
-- **PR #7084** (2026-11-12): Describe which versions get security fixes in SECURITY.md (@dliubarskyi)
+- **PR #7116** (2026-11-13): Renovate: keep io.weaviate:client below 5.6.0 and skip its client6 replacement (@dliubarskyi)
+- **PR #7109** (closed): Document the actual guardrail precedence in Javadoc (@edeandrea)
+- **PR #7105** (2026-11-13): Update dependency org.apache.maven.plugins:maven-compiler-plugin to v3.16.0 (@renovate[bot])
+- **PR #7104** (2026-11-13): Update dependency org.apache.logging.log4j:log4j-bom to v2.26.1 (@renovate[bot])
+- **PR #7103** (2026-11-13): Update dependency org.apache.commons:commons-lang3 to v3.22.0 (@renovate[bot])
+- **PR #7102** (2026-11-13): Update dependency net.minidev:json-smart to v2.6.1 (@renovate[bot])
 
 ---
 
@@ -1638,35 +1179,28 @@ modules, and they are all green
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): preserve native images and embedded text resources (#6250)
+## X. Adds Infinispan Chat Memory store
 
 **RULE**:
-When implementing operations in `docs/docs/tutorials/mcp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/integrations/chat-memory-stores/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d93368d8`: mcp): preserve native images and embedded text resources (#6250). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a4809d33`: Adds Infinispan Chat Memory store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/tutorials/mcp.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/integrations/chat-memory-stores/index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-### MCP tool result conversion
-
-When a tool response uses `content[]`, the default `McpToolResultConverter` preserves text items, embedded text resources and native images. Text-only responses are joined with newlines and remain accessible through `ToolExecutionResult.resultText()`, including empty responses. Responses containing images preserve server order as `TextContent` / `ImageContent` blocks in `ToolExecutionResult.resultContents()`; calling `resultText()` on them throws `IllegalStateException`.
-
-Image results require a model integration that supports native images in tool results, such as Anthropic or OpenAI Responses. OpenAI Chat Completions rejects non-text tool results with `UnsupportedFeatureException`. Image bytes are not encoded as plain base64 text in the prompt.
-
-Embedded binary resources, audio and other unsupported content types fail explicitly. Applications that need them can set a custom converter with `DefaultMcpClient.Builder.toolResultConverter(...)`. Responses with `structuredContent` are handled separately and do not invoke this converter.
-
+| [Infinispan](https://github.com/langchain4j/langchain4j/blob/main/langchain4j-infinispan/src/test/java/dev/langchain4j/store/memory/chat/infinispan/InfinispanChatMemoryStoreIT.java)                     | ✅           |         |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d93368d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a4809d33` are properly handled with clean fallback behavior.

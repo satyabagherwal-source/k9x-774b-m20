@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T20:37:26.655Z",
+  "updated_at": "2026-11-13T20:55:40.723Z",
   "statistics": {
-    "total_nodes": 122,
+    "total_nodes": 124,
     "total_edges": 67,
     "domain_distribution": {
-      "D": 101,
+      "D": 102,
       "M": 1,
-      "H": 9,
+      "H": 10,
       "J": 3,
       "K": 4,
       "L": 2,
@@ -2726,6 +2726,50 @@
       ],
       "created_at": "2026-11-13T20:37:26.655Z",
       "updated_at": "2026-11-13T20:37:26.655Z"
+    },
+    "DOM-D-9936936B": {
+      "id": "DOM-D-9936936B",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): google/electra-base-discriminator",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md`  \n> **Source**: huggingface ([htt",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-google-electra-base-discriminator/hf-google-electra-base-discriminator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T20:54:36.285Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-electra-base-discriminator)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T20:55:04.956Z",
+      "updated_at": "2026-11-13T20:55:04.956Z"
+    },
+    "DOM-H-169AAD95": {
+      "id": "DOM-H-169AAD95",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "keep underlying screens visible during overlapping transitions",
+      "summary": "Prevents defects observed in production commit `5e31b0a0`: keep underlying screens visible during overlapping transitions. Unvalidated execu -> When implementing operations in `packages/stack/src/views/Stack/CardStack.tsx`, engineers MUST enforce rigorous boundary validation, safe st",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://react-navigation-react-navigation/react-navigation-react-navigation-learnings.md",
+        "source_version": "5e31b0a0",
+        "observed_at": "2026-11-13T20:54:25.288Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-navigation-react-navigation)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-13T20:55:40.723Z",
+      "updated_at": "2026-11-13T20:55:40.723Z"
     }
   },
   "edges": [

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for react/navigation/react/navigation
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for react-navigation/react-navigation
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "react/navigation/react/navigation",
-  "source_url": "https://github.com/react/navigation/react/navigation",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "react-navigation/react-navigation",
+  "source_url": "https://github.com/react-navigation/react-navigation",
+  "source_version": "5e31b0a0",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "timestamp": "2026-11-13T20:54:26.302Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-react-navigation-react-navigation",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react/navigation/react/navigation](https://github.com/react/navigation/react/navigation) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [react-navigation/react-navigation](https://github.com/react-navigation/react-navigation) (Revision: `5e31b0a0`).  
+> **License**: PERMISSIVE_OPEN_SOURCE | **Timestamp**: `2026-11-13T20:54:26.302Z`  
+> **Learning ID**: `learn-github-react-navigation-react-navigation`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `react/navigation/react/navigation` (Commit: `historical`)
+- **Target Repository**: `react-navigation/react-navigation` (Commit: `5e31b0a0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
-> **Source**: github ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
-> **Source Version**: `7367af35`  
-> **License**: PERMISSIVE_OPEN_SOURCE  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T12:42:10.827Z  
-> **Learning ID**: `learn-github-react-navigation-react-navigation`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): react-navigation/react-navigation
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T12:42:10.628Z  
+> **Harvest Timestamp**: 2026-11-13T20:54:25.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Routing and navigation for React Native and Web apps
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 24520 stars
+- **Stars / Engagement**: 24524 stars
 
 ---
 
@@ -623,320 +609,98 @@ export function BaseNavigationContainer<ParamList extends {} = RootParamList>({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `486a70cc` (2026-11-08)
-**Commit Message**: fix: avoid flexBasis: 0% in screen to address slowdown on safari
+### Incident Patch 1: `5e31b0a0` (2026-11-11)
+**Commit Message**: fix: keep underlying screens visible during overlapping transitions
 
-**File**: `packages/elements/src/Screen.tsx` (modified, +6/-1)
+**File**: `packages/stack/src/views/Stack/CardStack.tsx` (modified, +4/-1)
 ```diff
-@@ -175,7 +175,12 @@ const styles = StyleSheet.create({
-     flex: 1,
-   },
-   content: {
--    flex: 1,
-+    // FIXME: A numeric flex shorthand uses a percentage basis in browsers.
-+    // With nested views, it slows down layout in Safari on iOS 27.
-+    // So we explicitly set flex properties with `flexBasis: 0`.
-+    flexGrow: 1,
-+    flexShrink: 1,
-+    flexBasis: 0,
-   },
-   page: {
-     flexGrow: 1,
+@@ -872,12 +872,15 @@ export class CardStack extends React.Component<Props, State> {
+               (isAnimationEnabled &&
+                 (isFocusing ||
+                   isRemoving ||
++                  // The screen below an opening card can still be visible during overlapping pushes
++                  (nextRoute != null &&
++                    openingRouteKeys.includes(nextRoute.key)) ||
+                   // Preloaded screens should stay mounted, but remain hidden until focused
+                   (!isPreloaded && index >= routes.length - 2)));
+ 
+             const activityMode =
+               // Keep focused and focusing screens interactive
+-              focused || isFocusing
++              focused || (isFocusing && !isRemoving)
+                 ? 'normal'
+                 : inactiveBehavior === 'none' ||
+                     // Keep effects running until the closing animation finishes
 ```
 
----
-
-### Incident Patch 2: `5f88c355` (2026-11-07)
-**Commit Message**: fix: make search bar in JS header on iOS 18 closer to native (#13315)
-
-**File**: `packages/elements/src/Header/Header.tsx` (modified, +20/-18)
+**File**: `packages/stack/src/views/Stack/StackView.tsx` (modified, +17/-5)
 ```diff
-@@ -1,6 +1,7 @@
- import {
-   MaterialSymbol,
-   UNSTABLE_LayoutRegionView,
-+  useLocale,
-   useNavigation,
-   useTheme,
- } from '@react-navigation/native';
-@@ -66,8 +67,6 @@ const STATUS_BAR_OFFSET = Platform.select({
-   default: 0,
- });
+@@ -163,6 +163,18 @@ export class StackView extends React.Component<Props, State> {
  
--const STATUS_BAR_TOP_ADJUSTMENT = 2;
--
- const warnIfHeaderStylesDefined = (styles: Record<string, any>) => {
-   Object.keys(styles).forEach((styleProp) => {
-     const value = styles[styleProp];
-@@ -92,6 +91,10 @@ const isLiquidGlassPhone =
- export function Header(props: Props) {
-   const insets = useSafeAreaInsets();
-   const { colors } = useTheme();
-+  const { direction } = useLocale();
+     let { openingRouteKeys, closingRouteKeys, replacingRouteKeys } = state;
+ 
++    // A route can be removed before its opening animation finishes
++    // e.g. when it was replaced while opening, so stop tracking it
++    // If a route being replaced is added back, it's handled like a newly focused route
++    openingRouteKeys = openingRouteKeys.filter(
++      (key) =>
++        state.routes.some((r) => r.key === key) &&
++        !(
++          replacingRouteKeys.includes(key) &&
++          activeRoutes.some((r) => r.key === key)
++        )
++    );
 +
-+  const startInset = direction === 'rtl' ? insets.right : insets.left;
-+  const endInset = direction === 'rtl' ? insets.left : insets.right;
+     // If a route that was closing or being replaced is now back in the routes,
+     // it was added back before the animation finished, so stop tracking it
+     closingRouteKeys = closingRouteKeys.filter(
+@@ -251,11 +263,11 @@ export class StackView extends React.Component<Props, State> {
+           if (!routes.some((r) => r.key === previousFocusedRoute.key)) {
+             // The previous focused route isn't present in state, we treat this as a replace
  
-   const navigation = useNavigation();
-   const isParentHeaderShown = React.use(HeaderShownContext);
-@@ -388,26 +391,25 @@ export function Header(props: Props) {
- 
-   let searchBarSpacingStyle: ViewStyle;
- 
--  if (isLiquidGlassSupported) {
-+  if (Platform.OS === 'ios') {
-     searchBarSpacingStyle = {
-       ...contentSpacingStyle,
--      marginHorizontal: isLiquidGlassPhone
--        ? liquidGlassEdgeSpacing
--        : BUTTON_SPACING,
--    };
--  } else if (Platform.OS === 'ios') {
--    // When status bar height is provided, add spacing below it
--    // Otherwise, use a smaller top margin to align with the header content
--    searchBarSpacingStyle = {
--      marginTop: statusBarSpacing
--        ? statusBarSpacing + BUTTON_SPACING
--        : BUTTON_SPACING - STATUS_BAR_TOP_ADJUSTMENT,
--      marginBottom: BUTTON_SPACING,
--      marginHorizontal: BUTTON_SPACING,
-+      ...(isLiquidGlassSupported
-+        ? {
-+            marginHorizontal: isLiquidGlassPhone
-+              ? liquidGlassEdgeSpacing
-+              : BUTTON_SPACING,
-+          }
-+        : {
-+            marginStart: startInset + BUTTON_SPACING,
-+            marginEnd: endInset + BUTTON_SPACING,
-+          }),
-     };
-   } else {
-     searchBarSpacingStyle = {
-       marginTop: statusBarSpacing,
-+      marginStart: startInset,
-+      marginEnd: endInset,
-     };
-   }
- 
-@@ -470,7 +472,7 @@ export function Header(props: Props) {
-               minWidth: buttonMinWidth,
-               marginStart: isLiquidGlassPhone
-                 ? liquidGlassEdgeSpacing - BUTTON_OFFSET
--                : insets.left,
-+                : startInset,
-             },
-           ]}
-         >
-@@ -503,7 +505,7 @@ export function Header(props: Props) {
-               minWidth: buttonMinWidth,
-               marginEnd: isLiquidGlassPhone
-                 ? liquidGlassEdgeSpacing - BUTTON_OFFSET
--                : insets.right,
-+                : endInset,
-             },
-           ]}
-         >
+-            openingRouteKeys = openingRouteKeys.filter(
+-              (key) => key !== previousFocusedRoute.key
+-            );
+-
+             if (getAnimationTypeForReplace(nextFocusedRoute.key) === 'pop') {
++              openingRouteKeys = openingRouteKeys.filter(
++                (key) => key !== previousFocusedRoute.key
++              );
++
+               closingRouteKeys = [
+                 ...closingRouteKeys,
+                 previousFocusedRoute.key,
+@@ -427,7 +439,7 @@ export class StackView extends React.Component<Props, State> {
+         return {
+           routes: newRoutes,
+           openingRouteKeys: state.openingRouteKeys.filter(
+-            (key) => key !== route.key
++            (key) => key !== route.key && !replacingRoutesToRemove.has(key)
+           ),
+           closingRouteKeys: state.closingRouteKeys.filter(
+             (key) => key !== route.key
 ```
 
-**File**: `packages/elements/src/Header/HeaderSearchBar.tsx` (modified, +19/-23)
+**File**: `packages/stack/src/views/Stack/__tests__/StackView.test.tsx` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,7 @@
- import {
-   MaterialSymbol,
-   SFSymbol,
-+  useLocale,
-   useNavigation,
-   useTheme,
- } from '@react-navigation/native';
-@@ -76,6 +77,7 @@ export function HeaderSearchBar({
- }: Props) {
-   const navigation = useNavigation();
-   const { dark, colors, fonts } = useTheme();
-+  const { direction } = useLocale();
-   const [value, setValue] = React.useState('');
-   const [clearVisibleAnim] = React.useState(() => new Animated.Value(0));
+@@ -223,7 +223,7 @@ describe('StackView.getDerivedStateFromProps', () => {
  
-@@ -188,6 +190,8 @@ export function HeaderSearchBar({
-         },
-         style,
-       ]}
-+      // @ts-expect-error: `dir` is supported by React Native Web but missing in React Native's types
-+      dir={Platform.OS === 'web' ? direction : undefined}
-     >
-       {Platform.OS !== 'ios' ? (
-         <HeaderBackButton
-@@ -205,12 +209,7 @@ export function HeaderSearchBar({
-             name="magnifyingglass"
-             size={SEARCH_ICON_SIZE}
-             color={textColor}
--            style={
--              StyleSheet.flatten([
--                styles.inputSearchIconIos,
--                !isLiquidGlassSupported && styles.inputSearchIconIosLegacy,
--              ]) ?? undefined
--            }
-+            style={styles.inputSearchIconIos}
-           />
-         ) : null}
-         <TextInput
-@@ -242,6 +241,11 @@ export function HeaderSearchBar({
-                   ? 'rgba(255, 255, 255, 0.1)'
-                   : 'rgba(0, 0, 0, 0.1)',
-               },
-+            {
-+              // TextInput doesn't align text based on the layout direction automatically
-+              // So we manually set it based on the layout direction
-+              textAlign: direction === 'rtl' ? 'right' : 'left',
-+            },
-             { color: textColor },
-           ]}
-         />
-@@ -256,7 +260,6 @@ export function HeaderSearchBar({
-                 transform: [{ scale: clearVisibleAnim }],
-               },
-               styles.clearButtonIos,
--              !isLiquidGlassSupported && styles.clearButtonIosLegacy,
-             ]}
-           >
-             <SFSymbol
-@@ -337,8 +340,8 @@ const SEARCHBAR_FONT_SIZE = Platform.OS === 'ios' ? 17 : 18;
- const SEARCHBAR_ICON_SPACING = 5;
- const SEARCHBAR_HEIGHT_IOS = isLiquidGlassSupported ? BUTTON_SIZE : 36;
+       expect(result.routes.map((r) => r.key)).toEqual(['A', 'B', 'C']);
+       expect(result.replacingRouteKeys).toEqual(['A', 'B']);
+-      expect(result.openingRouteKeys).toEqual(['C']);
++      expect(result.openingRouteKeys).toEqual(['B', 'C']);
+     });
+   });
  
--// The top inset on iOS is a bit less than the status bar height
--const SEARCHBAR_LEGACY_VERTICAL_OFFSET_IOS = -4;
-+// Native cancel button is slightly above the center of the search bar
-+const CANCEL_BUTTON_OFFSET_IOS = -1;
- 
- const styles = StyleSheet.create({
-   container: {
-@@ -354,19 +357,14 @@ const styles = StyleSheet.create({
-     height: SEARCH_ICON_SIZE,
-     width: SEARCH_ICON_SIZE,
-   },
--  inputSearchIconIosLegacy: {
--    marginTop:
--      -SEARCH_ICON_SIZE / 2 +
--      (SEARCHBAR_LEGACY_VERTICAL_OFFSET_IOS - SEARCHBAR_ICON_SPACING) / 2,
--  },
-   backButton: {
-     alignSelf: 'center',
--    marginLeft: BUTTON_SPACING / 2,
-+    marginStart: BUTTON_SPACING / 2,
-   },
-   closeButton: {
-     position: 'absolute',
-     opacity: 0.5,
--    right: BUTTON_SPACING,
-+    end: BUTTON_SPACING,
-     height: '100%',
-     justifyContent: 'center',
-   },
-@@ -382,16 +380,14 @@ const styles = StyleSheet.create({
-     justifyContent: 'center',
-     alignItems: 'center',
-   },
--  clearButtonIosLegacy: {
--    top: SEARCHBAR_LEGACY_VERTICAL_OFFSET_IOS - SEARCHBAR_ICON_SPACING,
--  },
-   clearIconIos: {
-     height: CLEAR_ICON_SIZE,
-     width: CLEAR_ICON_SIZE,
-     opacity: 0.5,
-   },
-   cancelButton: {
-     alignSelf: 'center',
-+    transform: [{ translateY: CANCEL_BUTTON_OFFSET_IOS }],
-   },
-   cancelText: {
-     fontSize: CANCEL_FONT_SIZE,
-@@ -405,7 +401,9 @@ const styles = StyleSheet.create({
-       ios: isLiquidGlassSupported
-         ? {}
-         : {
-+            height: SEARCHBAR_HEIGHT_IOS,
-             minHeight: SEARCHBAR_HEIGHT_IOS,
-+            alignSelf: 'center',
-           },
-       default: {
-         borderRadius: 0,
-@@ -422,16 +420,14 @@ const styles = StyleSheet.create({
-           BUTTON_SPACING + SEARCH_ICON_SIZE + SEARCHBAR_ICON_SPACING * 2,
-         ...(!isLiquidGlassSupported
-           ? {
--              marginTop: SEARCHBAR_LEGACY_VERTICAL_OFFSET_IOS,
--              marginBottom: SEARCHBAR_ICON_SPACING,
-               borderRadius: BUTTON_SPACING,
-               borderCurve: 'continuous',
-             }
-           : null),
-       },
-       default: {
--        paddingLeft: BUTTON_SPACING,
--        paddingRight: BUTTON_SIZE + BUTTON_SPACING,
-+        paddingStart: BUTTON_SPACING,
-+        paddingEnd: BUTTON_SIZE + BUTTON_SPACING,
-       },
-     }),
-   },
-```
-
----
-
-### Incident Patch 3: `79553fbf` (2026-11-06)
-**Commit Message**: fix: avoid window controls in JS header search bar on iPadOS (#13313)
-
-**File**: `packages/elements/src/Header/Header.tsx` (modified, +18/-14)
-```diff
-@@ -560,20 +560,24 @@ export function Header(props: Props) {
-         />
-       </Animated.View>
-       {searchBarRendered ? (
--        <HeaderSearchBar
--          {...headerSearchBarOptions}
--          visible={searchBarVisible}
--          onClose={() => {
--            setSearchBarVisible(false);
--            headerSearchBarOptions?.onClose?.();
--          }}
--          tintColor={headerTintColor}
--          style={[
--            StyleSheet.absoluteFill,
--            searchBarSpacingStyle,
--            { opacity: searchBarOpacity },
--          ]}
--        />
-+        <UNSTABLE_LayoutRegionView
-+          region="safeArea"
-+          cornerAdaptation="horizontal"
-+          cornerAdaptationOnly
-+          edges={{ start: 'additive', end: 'additive' }}
-+          style={StyleSheet.absoluteFill}
-+        >
-+          <HeaderSearchBar
-+            {...headerSearchBarOptions}
-+            visible={searchBarVisible}
-+            onClose={() => {
-+              setSearchBarVisible(false);
-+              headerSearchBarOptions?.onClose?.();
-+            }}
-+            tintColor={headerTintColor}
-+            style={[searchBarSpacingStyle, { opacity: searchBarOpacity }]}
-+          />
-+        </UNSTABLE_LayoutRegionView>
-       ) : null}
-     </Animated.View>
-   );
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13342** (closed): fix: Android front drawer stays hidden after opening (@akpor-kofi)
 - **PR #13338** (2026-11-05): fix: improve JS stack animation performance (@satya164)
 - **PR #13334** (closed): fix: drop custom history entries on browser back (@BartekObudzinski)
+- **PR #13332** (closed): fix: don't animate a resting drawer when its width changes (@BijuDey)
 - **PR #13330** (2026-11-06): fix: don't show header background if header is hidden (@satya164)
 - **PR #13318** (2026-11-05): feat: add UNSTABLE_ReservedRegions component on iOS 27.1 (@satya164)
-- **PR #13317** (2026-11-05): fix: show drawer toggle button on same side as drawer (@satya164)
-- **PR #13316** (2026-11-06): fix: fix RTL issues in search bar in JS header (@satya164)
 
 ---
 
@@ -956,36 +720,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid flexBasis: 0% in screen to address slowdown on safari
+## X. keep underlying screens visible during overlapping transitions
 
 **RULE**:
-When implementing operations in `packages/elements/src/Screen.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/stack/src/views/Stack/CardStack.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `486a70cc`: avoid flexBasis: 0% in screen to address slowdown on safari. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e31b0a0`: keep underlying screens visible during overlapping transitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/elements/src/Screen.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/stack/src/views/Stack/CardStack.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // FIXME: A numeric flex shorthand uses a percentage basis in browsers.
-    // With nested views, it slows down layout in Safari on iOS 27.
-    // So we explicitly set flex properties with `flexBasis: 0`.
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
+                  // The screen below an opening card can still be visible during overlapping pushes
+                  (nextRoute != null &&
+                    openingRouteKeys.includes(nextRoute.key)) ||
+              focused || (isFocusing && !isRemoving)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-    flex: 1,
+// Induced defect failure mode:
+              focused || isFocusing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `486a70cc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e31b0a0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

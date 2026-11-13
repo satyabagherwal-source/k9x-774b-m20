@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:47:16.615Z",
-  "total_cycles_completed": 9370,
-  "total_learnings_persisted": 9370,
-  "total_rules_promoted": 9097,
+  "last_updated": "2026-11-13T20:54:33.207Z",
+  "total_cycles_completed": 9375,
+  "total_learnings_persisted": 9375,
+  "total_rules_promoted": 9101,
   "history": [
-    {
-      "timestamp": "2026-11-13T07:17:56.727Z",
-      "repository": "HuggingFaceBio/Carbon-X",
-      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T07:25:26.784Z",
-      "repository": "Nanbeige/Nanbeige4.3-33B",
-      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T07:25:49.350Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T07:39:21.137Z",
-      "repository": "briaai/Fibo-2.0-dev",
-      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T07:46:57.961Z",
-      "repository": "XHToken/Spark-X2.6-4B-GGUF",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T07:47:17.096Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-13T20:47:16.615Z",
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:54:19.421Z",
+      "repository": "google/electra-base-discriminator",
+      "learningId": "learn-huggingface-google-electra-base-discriminator",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:54:26.139Z",
+      "repository": "react-navigation/react-navigation",
+      "learningId": "learn-github-react-navigation-react-navigation",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:54:29.413Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:54:30.718Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:54:33.207Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

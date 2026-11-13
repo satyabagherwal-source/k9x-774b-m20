@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T20:47:20.813Z",
+  "updated_at": "2026-11-13T20:55:41.504Z",
   "stats": {
-    "total_discovered": 2890,
-    "approved_pending_harvest": 2692,
+    "total_discovered": 2896,
+    "approved_pending_harvest": 2698,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2698,
+      "COMMUNITY_AND_EXPERT": 2704,
       "OFFICIAL_DOCUMENTATION": 100,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -62214,6 +62214,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
         "fileName": "alibaba-zvec-learnings.md"
+      }
+    },
+    "SRC-1383A7C5C935": {
+      "id": "SRC-1383A7C5C935",
+      "url": "https://huggingface.co/google/electra-base-discriminator",
+      "title": "https://huggingface.co/google/electra-base-discriminator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:55:04.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
+        "fileName": "hf-google-electra-base-discriminator-learnings.md"
+      }
+    },
+    "SRC-CA230978931A": {
+      "id": "SRC-CA230978931A",
+      "url": "https://github.com/react-navigation/react-navigation",
+      "title": "https://github.com/react-navigation/react-navigation",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:55:40.734Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
+        "fileName": "react-navigation-react-navigation-learnings.md"
+      }
+    },
+    "SRC-4A2995AEDCEE": {
+      "id": "SRC-4A2995AEDCEE",
+      "url": "https://github.com/Expensify/App/pull/104190",
+      "title": "https://github.com/Expensify/App/pull/104190",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:55:40.785Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
+        "fileName": "react-navigation-react-navigation-learnings.md"
+      }
+    },
+    "SRC-FEE9C620D00E": {
+      "id": "SRC-FEE9C620D00E",
+      "url": "https://github.com/react-navigation/react-navigation/blob/7db23d23b7/packages/bottom-tabs/src/views/BottomTabViewNativeImpl.tsx",
+      "title": "https://github.com/react-navigation/react-navigation/blob/7db23d23b7/packages/bottom-tabs/src/views/BottomTabViewNativeImpl.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:55:40.827Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
+        "fileName": "react-navigation-react-navigation-learnings.md"
+      }
+    },
+    "SRC-8D5147A7EACE": {
+      "id": "SRC-8D5147A7EACE",
+      "url": "https://github.com/so",
+      "title": "https://github.com/so",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:55:40.847Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
+        "fileName": "react-navigation-react-navigation-learnings.md"
+      }
+    },
+    "SRC-F6C502A09A79": {
+      "id": "SRC-F6C502A09A79",
+      "url": "https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110885",
+      "title": "https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110885",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:55:41.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
       }
     }
   }

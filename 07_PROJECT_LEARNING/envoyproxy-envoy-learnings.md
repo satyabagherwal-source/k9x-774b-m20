@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `1ad62cc8`  
+> **Source Version**: `998221c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:33:36.341Z  
+> **Timestamp**: 2026-11-13T20:54:28.603Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:33:36.173Z  
+> **Harvest Timestamp**: 2026-11-13T20:54:28.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29229 stars
+- **Stars / Engagement**: 29230 stars
 
 ---
 
@@ -1047,305 +1047,183 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0dfc4642` (2026-11-12)
-**Commit Message**: http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (#49209)
+### Incident Patch 1: `d55d98c9` (2026-11-13)
+**Commit Message**: ci/gcc: Build and test with -c opt and no fission (#49236)
 
-The test sets `max_connection_duration` to 1s and then pre-fills the
-downstream outbound queue. The duration timer runs from when the
-connection is made, so it also covers the pre-fill, and the pre-fill
-helper waits to see `http2.outbound_frames_active` at exactly 1000. If
-the timer fires before the test thread has seen that, the GOAWAY
-overflows the queue and the connection closes, which is what the test
-is after, but the gauge drops to 0 and the helper times out with
-"current value 0" and `http2.outbound_flood` already at 1.
+The gcc build and test jobs ran with `-c fastbuild`, a configuration
+nothing ships: the clang release build and its tests use `-c opt`. They
+now use `-c opt` too.
 
-This splits sending the pre-fill request out of the helper, and the
-test uses that and waits for the disconnect, without waiting on the
-state of the queue in between. The response and the GOAWAY are one
-frame over the limit together, so nothing has to be seen before the
-timer fires. The other users of the helper do not change.
+They use a new `gcc-ci` config: `--config=gcc` with `-c opt` and without
+debug info (`--fission=no` and `-g0`), so `--config=gcc` itself keeps
+its debug info for other builds. At `-c opt` fission adds `-gsplit-dwarf
+-g` to every compile,
+test targets included, and with GCC that debug info pushed compiles
+over the small RBE pool (squeezed at its limit until they time out) and
+the kitchen-sink links (`envoy-static`, `config_test`, the
+router_check/config_load_check/schema_validator tools) to 12-13GB, on
+xlarge, with 1.2-1.3GB binaries. Without it, measured on `config_test`:
+compiles peak at 6.7GB, the link at 2.3GB with a 195MB binary
+(fastbuild:
+12.2GB and about 0.6GB). Nothing from these jobs is published.
 
-Additional Description:
-Seen under tsan on IPv4Oghttp2. The test takes about 2s there, so the
-pre-fill normally fits in the second with little to spare. It did not
-reproduce in 1000 runs of the test or 100 runs of the suite under tsan
-on a quiet cluste
+At `-c opt` the GCC toolchain links with `--gc-sections`, which drops
+the link array sections upb registers extensions in under GCC, leaving
+`__start_linkarr_upb_AllExts`/`__stop_linkarr_upb_AllExts` undefined.
+`--config=gcc` now links with `-z nostart-stop-g
 
-**File**: `test/integration/http2_flood_integration_test.cc` (modified, +15/-3)
+**File**: `.bazelrc` (modified, +19/-0)
 ```diff
-@@ -87,6 +87,7 @@ class Http2FloodMitigationTest
-   // Avoid hiding the other form of beginSession.
-   using Http2RawFrameIntegrationTest::beginSession;
-   void beginSession() override;
-+  void sendPrefillRequest(uint32_t data_frame_count, uint32_t data_frame_size = 10);
-   void prefillOutboundDownstreamQueue(uint32_t data_frame_count, uint32_t data_frame_size = 10);
-   IntegrationStreamDecoderPtr prefillOutboundUpstreamQueue(uint32_t frame_count);
-   void triggerListenerDrain();
-@@ -217,8 +218,10 @@ void Http2FloodMitigationTest::floodServer(absl::string_view host, absl::string_
-             test_server_->counter("http.config_test.downstream_cx_delayed_close_timeout")->value());
- }
+@@ -150,11 +150,21 @@ build:gcc --test_env=HEAPCHECK=
+ # option not play well with fission:
+ # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110885
+ build:gcc --copt=-fno-debug-types-section
++# With `--gc-sections` (`-c opt`), LLD drops the link array sections upb's GCC build registers
++# extensions in, and their `__start_`/`__stop_` symbols are then undefined. Keep sections referenced
++# by those symbols, as LLD did before 13.
++# TODO(phlax): move this to the toolshed GCC toolchain's link flags.
++build:gcc --linkopt=-Wl,-z,nostart-stop-gc
+ # These trigger errors in multiple places both in Envoy dependecies
+ # and in Envoy code itself when using GCC.
+ # And in all cases the reports appear to be clear false positives.
+ build:gcc --copt=-Wno-error=restrict
+ build:gcc --copt=-Wno-error=uninitialized
++# With optimization (`-c opt`), GCC inlines through null checks and casts and reports the null
++# branch, eg a null source copied from in a death test, or a store through the result of a
++# `dynamic_cast` it cannot prove non-null.
++build:gcc --copt=-Wno-error=nonnull
++build:gcc --copt=-Wno-error=stringop-overflow
+ build:gcc --cxxopt=-Wno-missing-requires
+ build:gcc --cxxopt=-Wno-dangling-reference
+ build:gcc --cxxopt=-Wno-nonnull-compare
+@@ -186,6 +196,15 @@ build:gcc --host_per_file_copt=external/protobuf.*/src/google/protobuf/(port|mes
+ build:gcc --per_file_copt=external/tcmalloc.*@-Wno-sign-compare
+ build:gcc --per_file_copt=external/v8.*@-Wno-dangling-else
  
--void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_frame_count,
--                                                              uint32_t data_frame_size) {
-+// Starts a session and sends the request that pre-fills the downstream outbound frame queue,
-+// without waiting for the queue to fill.
-+void Http2FloodMitigationTest::sendPrefillRequest(uint32_t data_frame_count,
-+                                                  uint32_t data_frame_size) {
-   // Set large buffer limits so the test is not affected by the flow control.
-   config_helper_.setBufferLimits(1024 * 1024 * 1024, 1024 * 1024 * 1024);
-   autonomous_upstream_ = true;
-@@ -238,6 +241,11 @@ void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_fram
-        Http2Frame::Header("response_size_bytes", absl::StrCat(data_frame_size)),
-        Http2Frame::Header("no_trailers", "0")});
-   sendFrame(request);
-+}
++# The GCC reference build as Envoy CI builds and tests it: with `-c opt`, as the Clang release build
++# is, but without debug info. With GCC, the split debug info `-c opt` adds (and `-ggdb3` on
++# libraries) takes compiles over the small RBE pool and the larger links over the large one, and
++# makes the binaries about 6x the size, for output that CI never publishes.
++build:gcc-ci --config=gcc
++build:gcc-ci --compilation_mode=opt
++build:gcc-ci --fission=no
++build:gcc-ci --per_file_copt=.*@-g0
 +
-+void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_frame_count,
-+                                                              uint32_t data_frame_size) {
-+  sendPrefillRequest(data_frame_count, data_frame_size);
+ #############################################################################
+ # tests
+ #############################################################################
+```
+
+**File**: `changelogs/current/minor_behavior_changes/build__gcc-opt.rst` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++The GCC reference build (``--config=gcc``) is now built and tested in Envoy CI with ``-c opt``, for
++consistency with the Clang build, which is built and tested with ``-c opt``. The new ``gcc-ci``
++config builds it as CI does, without debug information (``--fission=no`` and ``-g0``): with GCC, the
++split debug information that ``-c opt`` adds took compiles and links over the memory of the RBE
++pools they run on and made the binaries several times larger, and nothing from the GCC build is
++published.
++
++``--config=gcc`` now links with ``-z nostart-stop-gc``, as ``-c opt`` links with ``--gc-sections``,
++which otherwise drops the link array sections ``upb`` registers extensions in. It also no longer
++treats ``-Wnonnull`` and ``-Wstringop-overflow`` as errors, as GCC reports false positives for them
++with optimization.
++
++This has no effect on any production binaries produced by the project, but downstream projects that
++build with GCC and wish to continue building with ``-c fastbuild`` may require some adjustment.
+```
+
+**File**: `ci/do_ci.sh` (modified, +3/-4)
+```diff
+@@ -975,8 +975,9 @@ case $CI_TARGET in
+         ;;
  
-   // Wait for some data to arrive and then wait for the upstream_rq_active to flip to 0 to indicate
-   // that the first request has completed.
-@@ -747,7 +755,11 @@ TEST_P(Http2FloodMitigationTest, DownstreamConnectionDurationTimeoutTriggersFloo
-         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(timeout);
-         max_connection_duration->set_seconds(seconds.count());
-       });
--  prefillOutboundDownstreamQueue(AllFrameFloodLimit - 1);
-+  // The duration timer runs from when the connection is made, so it also covers the pre-fill.
-+  // Do not wait to see the queue full: if the timer fires before the test thread has seen it, the
-+  // connection is already closed and the queue is empty again. The response and the GOAWAY are
-+  // one frame over the limit together, whichever is queued first.
-+  sendPrefillRequest(AllFrameFloodLimit - 1);
-   tcp_client_->waitForDisconnect();
- 
-   EXPECT_EQ(1, test_server_->counter("http2.outbound_flood")->value());
+     gcc|gcc.build|gcc.test)
+-        BAZEL_BUILD_OPTIONS+=("--config=gcc")
+-        echo "gcc toolchain configured: gcc"
++        # `gcc-ci`: GCC with `-c opt`, as the release build and tests are, without debug info.
++        BAZEL_BUILD_OPTIONS+=("--config=gcc-ci")
++        echo "gcc toolchain configured: gcc-ci"
+         # Nothing built here is published, so the server and tools binaries are built in one
+         # invocation, with the tests if there are any, and are not downloaded.
+         GCC_BUILD_TARGETS=()
+@@ -991,15 +992,13 @@ case $CI_TARGET in
+         if [[ "$CI_TARGET" == "gcc.build" ]]; then
+             echo "Building ${GCC_BUILD_TARGETS[*]}"
+             bazel build "${BAZEL_BUILD_OPTIONS[@]}" \
+-                -c fastbuild \
+                 --remote_download_minimal \
+                 -- "${GCC_BUILD_TARGETS[@]}"
+             collect_build_profile build
+         else
+             echo "Building ${GCC_BUILD_TARGETS[*]} and testing ${TEST_TARGETS[*]}"
+             bazel_with_collection \
+                 test "${BAZEL_BUILD_OPTIONS[@]}" \
+-                -c fastbuild  \
+                 --remote_download_minimal \
+                 -- "${GCC_BUILD_TARGETS[@]}" "${TEST_TARGETS[@]}"
+         fi
 ```
 
 ---
 
-### Incident Patch 2: `f8d13779` (2026-11-12)
-**Commit Message**: deps: Update QUICHE to 9917bea (#49197)
+### Incident Patch 2: `bef6a20b` (2026-11-13)
+**Commit Message**: Fix //test/config_test/... on Windows (#49042)
 
-Update QUICHE from 35cbd03 to 9917bea
-https://github.com/google/quiche/compare/35cbd03..9917bea
+Risk Level: low
+Testing: unit tests
+Docs Changes: no
+Release Notes: no
+Platform Specific Features: windows only
 
-Registry:
-https://github.com/envoyproxy/bazel-registry/commit/64473c18f651cde49d61788d0357b88b42fc7e52
+Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
 
-```
-$ git log 35cbd03..9917bea --date=short --no-merges --format="%ad %an %s"
-
-2026-11-05 ianswett Coalesce a lower-space PING with the last packet of a handshake flight when the CPLP connection option is sent by the client.
-2026-11-06 ianswett Move PATH_CHALLENGE new-path handling from UpdatePacketContent into OnPathChallengeFrame.
-2026-11-06 vasilvv Limit the amount of buffered QUIC receive timestamps
-2026-11-06 ianswett Batch standalone QUIC ACK-only packets across a receive batch with ScopedAckDeferrer.
-2026-11-06 QUICHE team QBONE Server session: remove set_send_packets_as_datagrams and stream fallback
-2026-11-09 martinduke Replace MoqtSessionParameters::deliver_partial_object with max_undelivered_object.
-2026-11-09 birenroy Fixes a small build breakage in //third_party/quic/core/http:end_to_end_test.
-2026-11-10 QUICHE team Fix OSS QUICHE build breakage in EndToEndTest.CustomTransportParameters.
-2026-11-10 martinduke Implement sending and 
-
-**File**: `.bazelrc` (modified, +1/-1)
+**File**: `configs/configgen.sh` (modified, +4/-4)
 ```diff
-@@ -26,7 +26,7 @@ common --noincompatible_disallow_ctx_resolve_tools
- common --legacy_external_runfiles
- 
- common --registry=https://bcr.bazel.build/
--common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c
-+common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371
- # common --registry=file:///bazel-registry
- # this can be useful for dev
- # common --lockfile_mode=off
-```
-
-**File**: `MODULE.bazel` (modified, +1/-1)
-```diff
-@@ -78,7 +78,7 @@ bazel_dep(name = "proxy-wasm-rust-sdk", version = "0.2.5")
- bazel_dep(name = "qat-zstd", version = "1.0.0.envoy")
- bazel_dep(name = "qatlib", version = "26.02.0.envoy")
- bazel_dep(name = "qatzip", version = "2.0.0.envoy")
--bazel_dep(name = "quiche", version = "0.0.0-261105-35cbd03.envoy")
-+bazel_dep(name = "quiche", version = "0.0.0-261111-9917bea.envoy")
- bazel_dep(name = "ragel", version = "7.0.4-211228-d4577c9.envoy")
- bazel_dep(name = "re2", version = "2025-11-05.bcr.1")
- bazel_dep(name = "rules_apple", version = "5.3.1")
+@@ -23,18 +23,18 @@ fi
+ for FILE in "$@"; do
+     case "$FILE" in
+         *.pem|*.der)
+-            cp "$FILE" "$OUT_DIR/certs"
++            cp -f "$FILE" "$OUT_DIR/certs"
+             ;;
+         *.lua|*.wasm|*.so)
+-            cp "$FILE" "$OUT_DIR/lib"
++            cp -f "$FILE" "$OUT_DIR/lib"
+             ;;
+         *.pb)
+-            cp "$FILE" "$OUT_DIR/protos"
++            cp -f "$FILE" "$OUT_DIR/protos"
+             ;;
+         *)
+             FILENAME="$(echo "$FILE" | sed -e 's/.*examples\///g')"
+             # Configuration filenames may conflict. To avoid this we use the full path.
+-            cp "$FILE" "$OUT_DIR/${FILENAME//\//_}"
++            cp -f "$FILE" "$OUT_DIR/${FILENAME//\//_}"
+             ;;
+     esac
+ done
 ```
 
-**File**: `MODULE.bazel.lock` (modified, +137/-137)
+**File**: `test/config_test/BUILD` (modified, +2/-0)
 ```diff
-@@ -461,7 +461,7 @@
-     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
--    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
-+    "https://bcr.bazel.build/modules/quiche/0.0.0-261111-9917bea.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
-     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
-@@ -775,142 +775,142 @@
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
-     "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel": "f5780cdbd6f4c5bb985a20f839844316fe48fb5e463056f372dbc37cfabdf450",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel": "ed40f4181373fb0e277d5511db521f5a77f5558141b5697499a9b22fa1dc96c4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/source.json": "20b0d19dc5c1e83f57c1cbc7e54ab0131291cc2220b374b0d222e44a6a0d914e",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/MODULE.bazel": "0e1c910a92138c676bb6d800afe89bfc1d0ee52e28ab7269132079c6a0b2c9b1",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/source.json": "bce05c68d40741e7d3ef41318b27720bf43dafcf02e0491e3d1c9ed570637f78",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel": "7e88398e1054b6d98f8a1c3388537a5dc150290d3f4eb2c0078730dbeda3c791",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/source.json": "0d0c44b9f99dd15d4607e9346ed4e3804daf7eafbc423f75061bc334752aa55c",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy/MODULE.bazel": "c7205963786fdbe14f5a384ff5a3a04da66ed0cecfee3d3cedecf5be173dcb66",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel": "5e634802b6ae4b25fb21ee82636c288b4ac5973fb5c981456751ec72a40ac463",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/source.json": "054bd9dff1076a6caf66c47a44aeafad70ffa0e0f9e701daa43f157da6a8f3e3",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel": "d80ba9dddc69a8d1900428c2f0b128cd1a41f63f058b4b0bce668357f7ec66a0",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/source.json": "9c57158c4b3a2b2ac0188c472249d1faacbfcf3fd3fa822a4785836b391fe8b4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel": "dce5f9c0643e0551aaeb0341ed90b994337ae3fbf232b584f2aaeae79ae47800",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json": "c699301760293b6ffa07f1117aa1c1763683aeef33f1e10a061e1db342873860",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/MODULE.bazel": "f835ee95427829db17d60fe1349839a759478fe89bb03c3869f39b5d6e56491d",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/source.json": "decb295094395a4ef83e0562a82c58487d580e1a89e86cfa575c5705471dbac7",
--    "https://raw.githubusercontent.com
-```
-
-**File**: `api/.bazelrc` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- 
- common --registry=https://bcr.bazel.build/
--common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c
-+common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371
- 
- # Build settings
- build --incompatible_strict_action_env
-```
-
-**File**: `api/MODULE.bazel.lock` (modified, +18/-18)
-```diff
-@@ -525,24 +525,24 @@
-     "https://bcr.bazel.build/modules/zlib/1.3/MODULE.bazel": "6a9c02f19a24dcedb05572b2381446e27c272cd383aed11d41d99da9e3167a72",
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed/0.5.20.envoy/MODULE.bazel": "5be0b018f959fa4b314ce712f99808d07044272d590316d890c1af8ccc6ad03f",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed/0.5.20.envoy/source.json": "e6fbcc7d663b82707fdf8268f9104790c9dc0e776841c515c6a6d231977219a8",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed_jq/0.5.20.envoy/MODULE.bazel": "ef2fd540600d4110f14a07d4a0f2487619233cc0f5e0408ddd249da6d5bf537b",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/envoy_toolshed_jq/0.5.20.envoy/source.json": "e13252255c0d9f7f178f62139f573c615faf5966d6bb35b6313a5502ed8f4f89",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/grpc/1.83.0.envoy/MODULE.bazel": "71ff92df79911a0975a09c1482791fd3983696383d4652277684e67884ac9d40",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/grpc/1.83.0.envoy/source.json": "39d70fd55602db781fc793f0417b7ecce8f2427e9fdaf6c18938e33acdc4d549",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/prometheus-metrics-model/0.6.2.envoy/MODULE.bazel": "40e1b9b9db52c3238fcc3e85c08ef35eb9157783e620009ed01eeed7631a9f67",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/prometheus-metrics-model/0.6.2.envoy/source.json": "0943a090f19491879321638e307bf6bea1459659fb8de4d85ff7e1eb153f12c9",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protobuf/35.1.bcr.envoy/MODULE.bazel": "97206075bc75d7aa4c3d580f488ad19de0f374f192c9e93da9e071b4780d1f23",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protobuf/35.1.bcr.envoy/source.json": "1e41359b39620019d80e22316fb8762780330dfbae99ea32e0dd98f3db233e56",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/MODULE.bazel": "bfa220406788d867e7358476be714494f0e7a9a2389fd67e826a04eff6dba4e5",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/source.json": "45bf54e4859f6031318404956ac2933654cc8494899fc84f1d4f5414c0e977ca",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy.1/MODULE.bazel": "63b697734e7cb831eff5970d184518fd614e31b3cb46470ab1555690a2005dc0",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy.1/source.json": "53ddbc94e66efe3b64ffbfd53c493cc757d1c03a3077bd1239e454657cfd1416",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/protoc-gen-validate/1.3.3.envoy/MODULE.bazel": "48db25694ec054d0bf9039ce2d51d292daf67b8ff8fc3c4071b43a807f313b41",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/rules_jq/0.0.1.envoy/MODULE.bazel": "8090e1bc10a859fe9283c2568db6e6fab1c484173f97d4307de91817576854c9",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/rules_jq/0.0.1.envoy/source.json": "ee505052c3c42793598b884a2a01f129d9b4f92067a628dbfeafd9aa73cbec5b"
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371/modules/envoy_toolshed/0.5.20.envoy/MODULE.bazel": "5be0b018f959fa4b314ce712f99808d07044272d590316d890c1af8ccc6ad03f",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7
-```
-
-**File**: `bazel/deps.yaml` (modified, +1/-1)
-```diff
-@@ -1437,7 +1437,7 @@ zstd:
-   project_name: "zstd"
-   project_desc: "zstd compression library"
-   project_url: "https://facebook.github.io/zstd"
--  release_date: "2026-11-05"
-+  release_date: "2026-11-11"
-   use_category:
-   - dataplane_ext
-   extensions:
-```
-
-**File**: `bazel/tests/codeql/.bazelrc` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- common --registry=https://bcr.bazel.build/
--common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c
-+common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/57ead154b7dfbe8a6a7092400e3c76730d17d371
- 
- common --noincompatible_disallow_empty_glob
- common --noincompatible_disallow_ctx_resolve_tools
-```
-
-**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +139/-139)
-```diff
-@@ -476,7 +476,7 @@
-     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
--    "https://bcr.bazel.build/modules/quiche/0.0.0-261105-35cbd03.envoy/MODULE.bazel": "not found",
-+    "https://bcr.bazel.build/modules/quiche/0.0.0-261111-9917bea.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
-     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
-@@ -788,144 +788,144 @@
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
-     "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel": "f5780cdbd6f4c5bb985a20f839844316fe48fb5e463056f372dbc37cfabdf450",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel": "ed40f4181373fb0e277d5511db521f5a77f5558141b5697499a9b22fa1dc96c4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/aws-c-auth-testdata/0.10.4.envoy/source.json": "20b0d19dc5c1e83f57c1cbc7e54ab0131291cc2220b374b0d222e44a6a0d914e",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/MODULE.bazel": "0e1c910a92138c676bb6d800afe89bfc1d0ee52e28ab7269132079c6a0b2c9b1",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/bazel-compdb/0.0.0-20220906-4086479.envoy.1/source.json": "bce05c68d40741e7d3ef41318b27720bf43dafcf02e0491e3d1c9ed570637f78",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel": "7e88398e1054b6d98f8a1c3388537a5dc150290d3f4eb2c0078730dbeda3c791",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy.1/source.json": "0d0c44b9f99dd15d4607e9346ed4e3804daf7eafbc423f75061bc334752aa55c",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boost.headers/1.89.0.envoy/MODULE.bazel": "c7205963786fdbe14f5a384ff5a3a04da66ed0cecfee3d3cedecf5be173dcb66",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel": "5e634802b6ae4b25fb21ee82636c288b4ac5973fb5c981456751ec72a40ac463",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-fips/0.20260929.0.envoy.1/source.json": "054bd9dff1076a6caf66c47a44aeafad70ffa0e0f9e701daa43f157da6a8f3e3",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel": "d80ba9dddc69a8d1900428c2f0b128cd1a41f63f058b4b0bce668357f7ec66a0",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/boringssl-source/0.20260929.0.envoy/source.json": "9c57158c4b3a2b2ac0188c472249d1faacbfcf3fd3fa822a4785836b391fe8b4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel": "dce5f9c0643e0551aaeb0341ed90b994337ae3fbf232b584f2aaeae79ae47800",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json": "c699301760293b6ffa07f1117aa1c1763683aeef33f1e10a061e1db342873860",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/MODULE.bazel": "f835ee95427829db17d60fe1349839a759478fe89bb03c3869f39b5d6e56491d",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/417c07db4ecb93a16c52ef73a350482dec76c00c/modules/cel-cpp/0.16.1.envoy/source.json": "decb295094395a4ef83e0562a82c58487d580e1a89e86cfa575c5705471dbac7",
--    "https://raw.githubusercontent.com
-```
-
----
-
-### Incident Patch 3: `573c0668` (2026-11-11)
-**Commit Message**: test: Fix use-after-free flake in ratelimit integration test cleanup (#49172)
-
-`cleanup()` closed the fake ratelimit connection with `FlushWrite` and
-returned without waiting for the disconnect. The fixture then destroyed
-the `FakeHttpConnection` codec on the main thread while the fake
-upstream thread could still be draining the write buffer, whose drain
-trackers call into the codec's `ProtocolConstraints`.
-
-ASAN caught this as a heap-use-after-free in
-`ProtocolConstraints::releaseOutboundFrame()` in
-`ResponseHeaderHitsAddendOnStreamDone`, which sends the ratelimit
-response immediately before cleanup (5 failures in 1000 runs).
-
-Wait for the disconnect before returning.
-
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
-
-**File**: `test/extensions/filters/http/ratelimit/ratelimit_integration_test.cc` (modified, +4/-0)
-```diff
-@@ -184,6 +184,10 @@ class RatelimitIntegrationTest : public Grpc::GrpcClientIntegrationParamTest,
-     if (fake_ratelimit_connection_ != nullptr) {
-       AssertionResult result = fake_ratelimit_connection_->close();
-       RELEASE_ASSERT(result, result.message());
-+      // close() only flushes: wait for the disconnect so that the fake upstream thread is not still
-+      // draining the write buffer, and releasing outbound frames, when the codec is destroyed.
-+      result = fake_ratelimit_connection_->waitForDisconnect();
-+      RELEASE_ASSERT(result, result.message());
-     }
-     cleanupUpstreamAndDownstream();
-   }
+@@ -108,5 +108,7 @@ py_binary(
+         "//configs:files",
+         "@envoy_api//:v3_proto_set",
+     ],
++    # envoy.base.utils depends on uvloop, which does not support Windows.
++    tags = ["skip_on_windows"],
+     deps = [requirement("envoy.base.utils")],
+ )
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49237** (2026-11-13): hot_restart: hold UDP forwarding listener configs as weakptrs attempt 2 (@filipcacky)
+- **PR #49236** (2026-11-13): ci/gcc: Build and test with -c opt and no fission (@phlax)
+- **PR #49233** (closed): [bp/1.40] flake stack (@phlax)
+- **PR #49232** (2026-11-13): test/ext_proc: Deflake the HTTP/1 streamed response body tests (@phlax)
+- **PR #49219** (2026-11-13): test/listener_ecds: Wait for the workers before connecting (@phlax)
 - **PR #49215** (2026-11-12): test/ext_proc: Deflake the HTTP client integration tests (@phlax)
-- **PR #49209** (2026-11-12): http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (@phlax)
-- **PR #49208** (closed): windows: enable CEL on windows (@anuraaga)
-- **PR #49207** (2026-11-12): signal: Write fatal signal backtraces with write(2) (@phlax)
-- **PR #49203** (2026-11-12): ci/release: Sign off the dev and sync commits correctly (@phlax)
-- **PR #49202** (2026-11-12): test/network_ecds: Wait for the workers before connecting (@phlax)
 
 ---
 
@@ -1365,44 +1243,46 @@ Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (#4920
+## X. ci/gcc: Build and test with -c opt and no fission
 
 **RULE**:
-When implementing operations in `test/integration/http2_flood_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.bazelrc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0dfc4642`: http2: deflake DownstreamConnectionDurationTimeoutTriggersFloodProtection (#49209). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d55d98c9`: ci/gcc: Build and test with -c opt and no fission. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/integration/http2_flood_integration_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bazelrc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  void sendPrefillRequest(uint32_t data_frame_count, uint32_t data_frame_size = 10);
-// Starts a session and sends the request that pre-fills the downstream outbound frame queue,
-// without waiting for the queue to fill.
-void Http2FloodMitigationTest::sendPrefillRequest(uint32_t data_frame_count,
-                                                  uint32_t data_frame_size) {
-}
+# With `--gc-sections` (`-c opt`), LLD drops the link array sections upb's GCC build registers
+# extensions in, and their `__start_`/`__stop_` symbols are then undefined. Keep sections referenced
+# by those symbols, as LLD did before 13.
+# TODO(phlax): move this to the toolshed GCC toolchain's link flags.
+build:gcc --linkopt=-Wl,-z,nostart-stop-gc
+# With optimization (`-c opt`), GCC inlines through null checks and casts and reports the null
+# branch, eg a null source copied from in a death test, or a store through the result of a
+# `dynamic_cast` it cannot prove non-null.
+build:gcc --copt=-Wno-error=nonnull
+build:gcc --copt=-Wno-error=stringop-overflow
+# The GCC reference build as Envoy CI builds and tests it: with `-c opt`, as the Clang release build
+# is, but without debug info. With GCC, the split debug info `-c opt` adds (and `-ggdb3` on
+# libraries) takes compiles over the small RBE pool and the larger links over the large one, and
+# makes the binaries about 6x the size, for output that CI never publishes.
+build:gcc-ci --config=gcc
+build:gcc-ci --compilation_mode=opt
+build:gcc-ci --fission=no
+build:gcc-ci --per_file_copt=.*@-g0
 
-void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_frame_count,
-                                                              uint32_t data_frame_size) {
-  sendPrefillRequest(data_frame_count, data_frame_size);
-  // The duration timer runs from when the connection is made, so it also covers the pre-fill.
-  // Do not wait to see the queue full: if the timer fires before the test thread has seen it, the
-  // connection is already closed and the queue is empty again. The response and the GOAWAY are
-  // one frame over the limit together, whichever is queued first.
-  sendPrefillRequest(AllFrameFloodLimit - 1);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-void Http2FloodMitigationTest::prefillOutboundDownstreamQueue(uint32_t data_frame_count,
-                                                              uint32_t data_frame_size) {
-  prefillOutboundDownstreamQueue(AllFrameFloodLimit - 1);
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0dfc4642` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d55d98c9` are properly handled with clean fallback behavior.

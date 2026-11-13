@@ -9618,3 +9618,10 @@
 | `CYCLE-20261113-6NIV` | `2026-11-13T20:47:01.783Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`835a087c...`) |
 | `CYCLE-20261113-6UKQ` | `2026-11-13T20:47:10.922Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8377` | Yes (`c0564083...`) |
 | `CYCLE-20261113-6YYK` | `2026-11-13T20:47:16.604Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8378` | Yes (`56e4128e...`) |
+| `CYCLE-20261113-G177` | `2026-11-13T20:54:19.411Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`33f20a73...`) |
+| `CYCLE-20261113-G6DS` | `2026-11-13T20:54:26.128Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8379` | Yes (`57e23e45...`) |
+| `CYCLE-20261113-G8WS` | `2026-11-13T20:54:29.404Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8380` | Yes (`fe9bfac9...`) |
+| `CYCLE-20261113-G9X0` | `2026-11-13T20:54:30.708Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`496e8285...`) |
+| `CYCLE-20261113-GBU7` | `2026-11-13T20:54:33.199Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8381` | Yes (`b7061593...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:55:04.957Z` | `hf-google-electra-base-discriminator` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9936936B` [Domain D] | Yes (`b7d162a2...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:55:40.724Z` | `react-navigation-react-navigation` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-169AAD95` [Domain H] | Yes (`b544c7c1...`) |

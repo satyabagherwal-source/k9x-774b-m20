@@ -9651,3 +9651,10 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-13T20:47:01.788Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `73f1acad` | Multi-dimensional audit evidence | 2026-11-13T20:47:10.927Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `0c2e67a2` | Multi-dimensional audit evidence | 2026-11-13T20:47:16.609Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-13T20:54:19.416Z |
+| `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `5e31b0a0` | Multi-dimensional audit evidence | 2026-11-13T20:54:26.133Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `998221c8` | Multi-dimensional audit evidence | 2026-11-13T20:54:29.408Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1f0ceab5` | Multi-dimensional audit evidence | 2026-11-13T20:54:30.712Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `f77caec1` | Multi-dimensional audit evidence | 2026-11-13T20:54:33.202Z |
+| `learn-dom-d-9936936b` | `project://hf-google-electra-base-discriminator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | 2026-11-13T20:55:04.957Z |
+| `learn-dom-h-169aad95` | `project://react-navigation-react-navigation` | `5e31b0a0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md` | 2026-11-13T20:55:40.724Z |
