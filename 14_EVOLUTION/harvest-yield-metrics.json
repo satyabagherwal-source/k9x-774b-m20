@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:32:50.572Z",
-  "total_cycles_completed": 9231,
-  "total_learnings_persisted": 9231,
+  "last_updated": "2026-11-13T12:42:27.718Z",
+  "total_cycles_completed": 9232,
+  "total_learnings_persisted": 9232,
   "total_rules_promoted": 9007,
   "history": [
-    {
-      "timestamp": "2026-11-12T21:31:14.862Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T21:41:38.111Z",
       "repository": "topgrade-rs/topgrade",
@@ -1403,6 +1396,13 @@
       "repository": "KeyboardKit/KeyboardKit",
       "learningId": "learn-github-keyboardkit-keyboardkit",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T12:42:27.718Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T12:33:10.761Z",
+  "updated_at": "2026-11-13T12:42:51.139Z",
   "stats": {
-    "total_discovered": 2447,
-    "approved_pending_harvest": 2277,
+    "total_discovered": 2448,
+    "approved_pending_harvest": 2278,
     "harvested_count": 0,
     "rejected_count": 170,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2270,
+      "COMMUNITY_AND_EXPERT": 2271,
       "OFFICIAL_DOCUMENTATION": 93,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
@@ -52663,6 +52663,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
         "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-3C44BE280A6C": {
+      "id": "SRC-3C44BE280A6C",
+      "url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "title": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:42:51.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
+        "fileName": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md"
       }
     }
   }

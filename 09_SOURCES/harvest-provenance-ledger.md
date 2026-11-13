@@ -9474,3 +9474,5 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `3e94495c` | Multi-dimensional audit evidence | 2026-11-13T12:32:44.682Z |
 | `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `0e3c01c8` | Multi-dimensional audit evidence | 2026-11-13T12:32:50.565Z |
 | `learn-dom-d-1551b43d` | `project://hf-moonshotai-kimi-k3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | 2026-11-13T12:33:10.578Z |
+| `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-13T12:42:27.712Z |
+| `learn-dom-d-73191b1b` | `project://hf-stabilityai-stable-diffusion-xl-base-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | 2026-11-13T12:42:51.114Z |

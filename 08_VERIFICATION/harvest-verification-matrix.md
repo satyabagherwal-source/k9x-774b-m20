@@ -9465,3 +9465,5 @@
 | `CYCLE-20261113-IZY8` | `2026-11-13T12:32:44.672Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0d3f6ab9...`) |
 | `CYCLE-20261113-J4HS` | `2026-11-13T12:32:50.560Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3501820c...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:33:10.578Z` | `hf-moonshotai-kimi-k3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1551B43D` [Domain D] | Yes (`ba694693...`) |
+| `CYCLE-20261113-VHTN` | `2026-11-13T12:42:27.707Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`09ee4bfb...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:42:51.114Z` | `hf-stabilityai-stable-diffusion-xl-base-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-73191B1B` [Domain D] | Yes (`2ce51ba3...`) |
