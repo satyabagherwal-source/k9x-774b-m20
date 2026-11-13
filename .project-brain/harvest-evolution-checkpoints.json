@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T04:50:32.299Z",
+  "last_updated": "2026-11-13T05:08:22.867Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T04:50:32.286Z",
@@ -543,7 +543,7 @@
       "staged_for_review": 1
     },
     "nolabs-ai-nono-learnings.md": {
-      "processed_at": "2026-11-12T12:33:11.494Z",
+      "processed_at": "2026-11-13T05:08:22.811Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -578,7 +578,7 @@
       "staged_for_review": 1
     },
     "authzed-spicedb-learnings.md": {
-      "processed_at": "2026-11-11T20:23:41.011Z",
+      "processed_at": "2026-11-13T05:08:22.698Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1546,9 +1546,14 @@
       "processed_at": "2026-11-13T04:50:32.271Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-internscience-sage-a1.5-learnings.md": {
+      "processed_at": "2026-11-13T05:08:22.677Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 456,
-  "total_canonical_promoted": 60,
-  "total_staged_for_review": 393
+  "total_dossiers_evaluated": 459,
+  "total_canonical_promoted": 61,
+  "total_staged_for_review": 395
 }

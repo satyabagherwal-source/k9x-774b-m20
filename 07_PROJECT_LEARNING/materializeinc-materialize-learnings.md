@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `a859dade`  
+> **Source Version**: `e598bd4c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:35:46.900Z  
+> **Timestamp**: 2026-11-13T05:07:46.498Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:35:46.894Z  
+> **Harvest Timestamp**: 2026-11-13T05:07:46.490Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6399 stars
+- **Stars / Engagement**: 6402 stars
 
 ---
 
@@ -1081,11 +1081,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40660** (2026-11-11): **ci: Nightly fixes (2026-11-11)**
-  *Symptoms*: Based on https://buildkite.com/materialize/nightly/builds/18717  Test run: https://buildkite.com/materialize/nightly/builds/18721 (edit: green) & https://buildkite.com/materialize/nightly/builds/18722
+- **Issue #40692** (2026-11-13): **release: bump to version v26.52.0-dev.0 and create its doc file**
+  *Symptoms*: Opened and merged by the Cut release workflow in MaterializeInc/release: auto_cut_release.py's bump of main to the next development version and the next release's doc file.
 
-- **Issue #40659** (2026-11-11): **AGENTS.md: drop skills section, resolve ambiguous guidance**
-  *Symptoms*: ### Motivation  Agent harnesses already present the skill descriptions to the agent along with the AGENTS.md, and I like being able to, say, disable certain skills, depending what I'm working on. For example, to not have the agent run the commit verification on every commit it does. If anything about the skills needs fixing, it should be fixed in the skill description.  Then, this also cleans up some contradictory or redundant parts in the guidance.  ### Description  **Remove the Skills section.** Agent runtimes already list every skill with its `name` and `description` from the `SKILL.md` frontmatter, and those descriptions carry the triggers ("run tests", "cargo fmt", "commit", "why is CI red"). The section repeated that list for four of the skills. It also said `bin/lint` is the entry point and "NOT a bare `cargo clippy`", while the `mz-commit` and `mz-run` skills both prescribe `cargo clippy --all-targets -- -D warnings`.  One thing this gives up: the section told agents to load `mz-test` before running any test "even mid-task", while the skill descriptions are phrased as user requests. If agents start skipping the skill for tests they run on their own initiative, the fix is a sentence in that skill's description.  **Resolve guidance that contradicted itself or a skill.**  * Checks: the bullet named `bin/fmt` and `cargo check` as what to run before reporting success and before committing. `mz-commit` asks for `bin/fmt`, `bin/lint`, and clippy before a commit. The bullet n
+- **Issue #40684** (2026-11-12): **expr: Make empty array_fill results zero-dimensional**
+  *Symptoms*: When the requested dimensions contained a zero, `array_fill` returned a one-dimensional array of length zero. PostgreSQL returns a zero-dimensional empty array. Both print as `{}`, but the result compared unequal to `'{}'`, reported a lower bound of 1, and nested into `{{},{}}` under `ARRAY[...]`. An empty dimension array also raised an array size error instead of returning `{}`.  The fix only changes results that have no elements. The function registry snapshot changes for `array_fill`'s body only. The current `LIR_VERSION` has not shipped, so the snapshot is regenerated in place. Regression cases are added to `test/sqllogictest/array_fill.slt`.  Closes: [CPU-334](https://linear.app/materializeinc/issue/CPU-334)  Release notes: This release will make `array_fill` return a zero-dimensional empty array when the result has no elements, matching PostgreSQL.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1102,716 +1102,310 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2bad1a0` (2026-11-10)
-**Commit Message**: storage: rate limit gauge regression error logs (#40589)
+### Incident Patch 1: `dfa514ea` (2026-11-12)
+**Commit Message**: docs: fix loader completeness gap in transactional downstream updates pattern (#40490)
+
+## Summary
+
+Materialize writes each batch of sink data records and its progress
+record in one Kafka transaction, so they become visible in Kafka
+atomically. Downstream loaders such as the Snowflake Kafka connector
+load each topic partition through its own channel and flush
+independently, so a progress record can land in the warehouse before
+every data record below its frontier has landed. The pattern's frontier
+join therefore could expose a timestamp with rows missing, and its
+closing claim that every row belongs to a fully loaded timestamp was
+false.
+
+## Changes
+
+- Restructured the page into two parts, per review:
+- "Step 3. Build a trusted frontier table": a `trusted_frontier` table
+plus the checks an external routine runs before advancing it (sample
+high watermark after the progress record is visible, wait for the LSO to
+reach it, account for transaction markers and aborted ranges, compare to
+the loader's committed offsets).
+- "Step 4. Create a view of committed changes": the single-table view
+now gates on `trusted_frontier`, not `raw_progress`.
+- New "Step 5. Join changes from multiple sinks
+
+**File**: `doc/user/content/export-data/patterns/transactional-downstream-updates-kafka.md` (modified, +144/-41)
+```diff
+@@ -17,7 +17,8 @@ destination:
+ 
+ 1. Create a Kafka sink in Materialize.
+ 1. Load the sink's data topic and progress topic into Snowflake.
+-1. Create a Snowflake view that exposes only committed changes.
++1. Build a table of trusted frontiers that Snowflake has fully loaded.
++1. Create Snowflake views that expose only changes below the trusted frontier.
+ 
+ The same approach works for any destination that stores Kafka headers and
+ message keys alongside the message value.
+@@ -37,14 +38,25 @@ the two topics and hide any row that is not yet covered by a progress record.
+ | Progress topic | Message key | `mz-sink-` followed by the sink's ID, for example `mz-sink-u123`. |
+ | Progress topic | Message value | JSON of the form `{"frontier":[1792700001000],"version":1}`. |
+ 
++All sinks on a Kafka connection share one progress topic, and each sink's
++records are keyed by `mz-sink-<sink_id>`. Joining on the `materialize-sink-id`
++header is what ties each data message to its own sink's frontier.
++
++{{< warning >}}
++This pattern parses progress records. Their format is not yet a documented,
++stable interface and may change in a future release. Ignore any fields you
++don't recognize when you parse them.
++{{< /warning >}}
++
+ The `frontier` is exclusive: the sink has committed every change with a
+-timestamp less than the frontier. To expose only committed data:
++timestamp less than the frontier. The pattern has two parts:
+ 
+-1. Match each data message to the progress records whose key equals
+-   `'mz-sink-' || <materialize-sink-id header>`.
+-1. Take the latest frontier for that sink.
+-1. Keep the data messages where `materialize-timestamp` is less than that
+-   frontier.
++1. **Build a trusted frontier.** For each sink, record a frontier only once
++   the loader has confirmed that every data message below it has landed in
++   the destination. The latest frontier in the progress topic is only a
++   candidate; see [Step 3](#step-3-build-a-trusted-frontier-table).
++1. **Gate views on the trusted frontier.** Keep the data messages whose
++   `materialize-timestamp` is less than the trusted frontier for their sink.
+ 
+ ## Before you begin
+ 
+@@ -108,14 +120,16 @@ timestamp less than the frontier. To expose only committed data:
+ ## Step 2. Load both topics into Snowflake
+ 
+ Configure the Snowflake connector to load the data topic into a table named
+-`raw_orders` and the progress topic into a table named `raw_progress`. For
+-example:
++`raw_orders` and the progress topic into a table named `raw_progress`. This
++guide uses version 3 of the connector with Snowpipe Streaming, which loads
++each partition through its own channel. For example:
+ 
+ ```json
+ {
+   "name": "materialize_orders",
+   "config": {
+     "connector.class": "com.snowflake.kafka.connector.SnowflakeSinkConnector",
++    "snowflake.ingestion.method": "SNOWPIPE_STREAMING",
+     "topics": "orders,<sink_progress_topic>",
+     "snowflake.topic2table.map": "orders:raw_orders,<sink_progress_topic>:raw_progress",
+     "snowflake.url.name": "<account>.snowflakecomputing.com:443",
+@@ -124,7 +138,8 @@ example:
+     "snowflake.database.name": "<database>",
+     "snowflake.schema.name": "<schema>",
+     "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+-    "value.converter": "com.snowflake.kafka.connector.records.SnowflakeJsonConverter",
++    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
++    "value.converter.schemas.enable": "false",
+     "consumer.override.isolation.level": "read_committed"
+   }
+ }
+@@ -137,8 +152,12 @@ Each Snowflake table gets two columns:
+ - `RECORD_METADATA`: the message metadata, as a `VARIANT`. The message key is
+   in `RECORD_METADATA:key` and the headers are in `RECORD_METADATA:headers`.
+ 
+-Two settings in this configuration matter for the pattern:
++These settings in this configuration matter for the pattern:
+ 
++- `snowflake.ingestion.method` must be `SNOWPIPE_STREAMING`. Each channel
++  then records an offset token, which [Step 3](#step-3-build-a-trusted-frontier-table)
++  relies on. Snowpipe Streaming does not support the Snowflake converters, so
++  this example uses `JsonConverter` for values.
+ - `key.converter` must be `org.apache.kafka.connect.storage.StringConverter`.
+   Otherwise, the connector does not keep the progress topic's message key, and
+   you can't tell which sink a progress record belongs to.
+@@ -147,46 +166,129 @@ Two settings in this configuration matter for the pattern:
+   Connect worker must allow client configuration overrides
+   (`connector.client.config.override.policy`). Alternatively, set
+   `consumer.isolation.level=read_committed` in the worker configuration.
++  This setting only excludes aborted transactions. It does not order the
++  connector's flushes across partitions; see [Step 3](#step-3-build-a-trusted-frontier-table).
++- `errors.tolerance` and `behavior.on.null.values` must keep their defaults,
++  `none` and `DEFAULT`. With other values, the connector can skip a message
++  but still a
+```
+
+---
+
+### Incident Patch 2: `19081e30` (2026-11-11)
+**Commit Message**: Bump Node to the November 2026 security releases (#40669)
 
 ### Motivation
 
-A regressed source statistics gauge logs an error on every statistics
-update until the source restarts, which drains the Sentry budget.
-Closes: [SS-570](https://linear.app/materializeinc/issue/SS-570)
+Node released [security
+fixes](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases)
+on 2026-11-11: 22.23.5, 24.22.3 and 26.13.1. The CVEs are in Node's
+HTTP/2 and HTTPS/TLS servers, zlib, proxy error messages and the
+permission model. Nothing we ship runs Node as a server, since the
+Console is served as static files by Vercel or nginx. This moves the
+build, CI, test and local development pins to the patched releases.
 
 ### Description
 
-Each `Total` and `Boolean` gauge now logs its first regression at error
-level and later ones at warn level, erroring again at most once every 15
-minutes.
+| Pin | Used by | Before | After |
+|---|---|---|---|
+| `node:26-alpine` digest | Console image builder stages | 26.13.0 |
+26.13.1 |
+| `node:26-trixie-slim` digest | ci-builder, Playwright | 26.13.0 |
+26.13.1 |
+| `node:22-slim` digest | Azurite | 22.23.4 | 22.23.5 |
+| `volta.node` in `console/package.json` | local development | 26.10.0 |
+26.13.1 |
+| `NODE_VERSION` in `misc/scratch/provision.bash` | scratch machines |
+24.16.0 | 24.22.3 |
 
-### Verification
+Each digest is the multi-arch index the floating tag points to, with the
+patched `NODE_VERSION` in its amd64 and arm64 images. Renovate's weekly
+Docker group would bring the digests too, but nothing updates the Volta
+pin or 
 
-A unit test checks that a second regression within the interval does not
-reset the error timestamp.
+**File**: `ci/builder/Dockerfile` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ # the Business Source License, use of this software will be governed
+ # by the Apache License, Version 2.0.
+ 
+-FROM node:26-trixie-slim@sha256:5adad64f9a1fca2d51972caa65983634c8a774eb300d72b20f7f2a0f60368072 AS node
++FROM node:26-trixie-slim@sha256:e6bedef217677b276c591795e169840edd9096dbf13f29df8ef8d1856b8820bc AS node
+ 
+ # Node 25 dropped corepack from the distribution, but the console pins its
+ # package manager through `packageManager` in console/package.json and CI drives
+```
+
+**File**: `console/Dockerfile` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@
+ 
+ # Pinned by rolling tag + multi-arch index digest so Renovate refreshes the
+ # digest for security fixes.
+-FROM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS builder
++FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS builder
+ 
+ WORKDIR /app
+ 
+```
+
+**File**: `console/misc/docker/Dockerfile` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ # the Business Source License, use of this software will be governed
+ # by the Apache License, Version 2.0.
+ 
+-FROM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS builder
++FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS builder
+ 
+ WORKDIR /app
+ 
+```
+
+**File**: `console/package.json` (modified, +1/-1)
+```diff
+@@ -212,7 +212,7 @@
+     "defaults"
+   ],
+   "volta": {
+-    "node": "26.10.0",
++    "node": "26.13.1",
+     "yarn": "4.14.1"
+   },
+   "packageManager": "yarn@4.14.1",
+```
+
+**File**: `misc/scratch/provision.bash` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ ARCH_GO=$(echo "$ARCH" | sed -e "s/aarch64/arm64/" -e "s/x86_64/amd64/")
+ # line until moby#51845 is fixed (Docker 29 is unstable).
+ DOCKER_VERSION=28.5.2
+ DOCKER_COMPOSE_VERSION=5.0.1
+-NODE_VERSION=24.16.0
++NODE_VERSION=24.22.3
+ NODE_ARCH=$(echo "$ARCH" | sed -e "s/aarch64/arm64/" -e "s/x86_64/x64/")
+ 
+ # Everything runs in parallel — no serial APT bottleneck.
+```
+
+**File**: `test/azurite/Dockerfile` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@
+ # CA bundle for apt's HTTPS transport, before ca-certificates is installed.
+ FROM gcr.io/distroless/cc-debian13:debug-nonroot@sha256:c69d16acb50ae6ee26adfb0645467b507753c0eb91c389afad87914cd2ecf6de AS ca-certs
+ 
+-FROM node:22-slim@sha256:5ec23b7c622b00547753bc6ffd78085dd868a68aeb41c8e0a1418f033e13d96d
++FROM node:22-slim@sha256:18052396bf1d0c6e0a8c58181b5c1457da19409efbd5032a3f4d86974e74d13c
+ 
+ # Fetch apt sources over HTTPS only.
+ COPY --from=ca-certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+```
+
+**File**: `test/playwright/Dockerfile` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@
+ # Pinned by rolling tag + multi-arch index digest so Renovate refreshes the
+ # digest for security fixes. mzbuild only rebuilds when this directory changes,
+ # so an unpinned tag kept serving whatever Node it resolved to at the last edit.
+-FROM node:26-trixie-slim@sha256:5adad64f9a1fca2d51972caa65983634c8a774eb300d72b20f7f2a0f60368072
++FROM node:26-trixie-slim@sha256:e6bedef217677b276c591795e169840edd9096dbf13f29df8ef8d1856b8820bc
+ 
+ COPY package.json /tmp/playwright-package.json
+ RUN playwright_version=$(node -p 'require("/tmp/playwright-package.json").devDependencies["@playwright/test"]') \
+```
+
+---
+
+### Incident Patch 3: `4c61185d` (2026-11-11)
+**Commit Message**: console: require Node 22.22.2, 24.15.0 or 26 (#40650)
+
+### Motivation
+
+`console/package.json` declares `"node": ">=20.12.2"`, but the installed
+dependency tree no longer runs there. Checking every installed package's
+`engines.node` against candidate versions:
+
+| Node | Packages whose `engines.node` rejects it |
+|---|---|
+| 20.12.2 | 60 (jsdom's CSS packages, …) |
+| 20.19.0 | 18 (`@mswjs/interceptors` 0.45, `@rolldown/plugin-babel`,
+`@testing-library/jest-dom` 7, `eslint-plugin-unicorn` 79, …) |
+| 22.12.0 | 25 (`@eslint/*` needs 22.13, …) |
+| 22.18.0 | 7 (`node-gyp` 13, `which` 7, `abbrev` 5, `nopt` 10,
+`lint-staged` 17, `undici` 8.12, …) |
+| 24.11.0 | 5 (`node-gyp` 13 and its helpers) |
+| 22.22.2, 24.15.0, 26.0.0 | none |
+
+msw 3 (#39684) and kysely 0.29 (#40550) both deferred this change to
+#39683, which is still open.
+
+### Description
+
+`engines.node` becomes `^22.22.2 || ^24.15.0 || >=26.0.0`, the
+intersection of every installed package's range. Volta (26.10.0),
+`console/Dockerfile` and CI already run Node 26. It is the same range as
+#39683, so that PR merges cleanly on this line.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
----------
-
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `src/storage-client/src/statistics.rs` (modified, +152/-65)
+**File**: `console/package.json` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,7 @@
- 
- use std::sync::LazyLock;
- use std::sync::atomic::{AtomicU64, Ordering};
--use std::time::Instant;
-+use std::time::{Duration, Instant};
- 
- use mz_controller_types::ReplicaId;
- use serde::{Deserialize, Serialize};
-@@ -140,7 +140,9 @@ pub trait StorageMetric {
-         Self: Sized + 'a;
- 
-     /// Incorporate this value with another.
--    fn incorporate(&mut self, other: Self, field_name: &'static str);
-+    ///
-+    /// `id` and `field_name` identify the metric in regression logs.
-+    fn incorporate(&mut self, other: Self, id: GlobalId, field_name: &'static str);
- }
- 
- /// A counter that never resets.
-@@ -157,7 +159,7 @@ impl StorageMetric for Counter {
-         Self(values.into_iter().map(|c| c.0).sum())
-     }
- 
--    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-         // Always add the new value to the existing one.
-         self.0 += other.0
-     }
-@@ -198,7 +200,7 @@ impl StorageMetric for ResettingLatency {
-         Self(Some(max))
-     }
- 
--    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-         // Reset to the new value.
-         self.0 = other.0;
-     }
-@@ -233,7 +235,7 @@ impl StorageMetric for ResettingNullableTotal {
-         Self(Some(sum))
-     }
- 
--    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-         match (&mut self.0, other.0) {
-             (None, other) => {
-                 self.0 = other;
-@@ -273,7 +275,7 @@ impl StorageMetric for ResettingTotal {
-         Self(values.into_iter().map(|c| c.0).sum())
-     }
- 
--    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-         // Reset the pre-existing value.
-         self.0 = other.0;
-     }
-@@ -291,9 +293,43 @@ impl ResettingTotal {
-     }
- }
- 
-+/// Throttles the `error!` log for gauge regressions.
-+///
-+/// A regressed gauge keeps regressing on every statistics update, every few
-+/// seconds, until the source restarts. Only the first regression in each
-+/// interval is logged at `error!`, which reaches Sentry, the rest at `warn!`.
-+#[derive(Clone, Debug, Default)]
-+struct RegressionLog {
-+    last_error: Option<Instant>,
-+}
-+
-+impl RegressionLog {
-+    const ERROR_INTERVAL: Duration = Duration::from_secs(15 * 60);
-+
-+    fn log(&mut self, message: std::fmt::Arguments<'_>) {
-+        let now = Instant::now();
-+        match self.last_error {
-+            Some(last) if now.duration_since(last) < Self::ERROR_INTERVAL => {
-+                tracing::warn!("{message}")
-+            }
-+            _ => {
-+                self.last_error = Some(now);
-+                tracing::error!("{message}")
-+            }
-+        }
-+    }
-+}
-+
-+// The throttle state is bookkeeping, not part of the gauge's value.
-+impl PartialEq for RegressionLog {
-+    fn eq(&self, _other: &Self) -> bool {
-+        true
-+    }
-+}
-+
- /// A boolean gauge that is never reset.
- #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Default)]
--pub struct Boolean(bool);
-+pub struct Boolean(bool, #[serde(skip)] RegressionLog);
- 
- impl StorageMetric for Boolean {
-     fn summarize<'a, I>(values: I) -> Self
-@@ -302,18 +338,21 @@ impl StorageMetric for Boolean {
-         Self: Sized + 'a,
-     {
-         // All workers must be true for this gauge to be true.
--        Self(values.into_iter().fold(true, |base, new| base & new.0))
-+        Self(
-+            values.into_iter().fold(true, |base, new| base & new.0),
-+            RegressionLog::default(),
-+        )
-     }
- 
--    fn incorporate(&mut self, other: Self, field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, id: GlobalId, field_name: &'static str) {
-         // A boolean regressing to `false` is a bug.
-         //
-         // Clippy's suggestion here is not good!
-         #[allow(clippy::bool_comparison)]
-         if other.0 < self.0 {
--            tracing::error!(
--                "boolean gauge for field {field_name} erroneously regressed from true to false",
--            );
-+            self.1.log(format_args!(
-+                "boolean gauge for field {field_name} of {id} erroneously regressed from true to false",
-+            ));
-             return;
-         }
-         self.0 = other.0;
-@@ -322,7 +361,7 @@ impl StorageMetric for Boolean {
- 
- impl From<bool> for Boolean {
-     fn from(f: bool) -> Self {
--        Boolean(f)
-+        Boolean(f, RegressionLog::default())
-     }
- }
- 
-@@ -336,13 +375,16 @@ pub struct Total {
-     #[serde(skip)]
-     regressions:
-         Option<mz_ore::metrics::DeleteOnDropCounter<prometheus::core::AtomicU64, Vec<String>>>,
-+    #[serde(skip)]
-+    regression_log: RegressionLog,
- }
- 
- impl From<Option<u64>> for Total
-```
-
----
-
-### Incident Patch 2: `a859dade` (2026-11-11)
-**Commit Message**: AGENTS.md: drop skills section, resolve ambiguous guidance (#40659)
-
-### Motivation
-
-Agent harnesses already present the skill descriptions to the agent
-along with the AGENTS.md, and I like being able to, say, disable certain
-skills, depending what I'm working on. For example, to not have the
-agent run the commit verification on every commit it does. If anything
-about the skills needs fixing, it should be fixed in the skill
-description.
-
-Then, this also cleans up some contradictory or redundant parts in the
-guidance.
-
-### Description
-
-**Remove the Skills section.** Agent runtimes already list every skill
-with its `name` and `description` from the `SKILL.md` frontmatter, and
-those descriptions carry the triggers ("run tests", "cargo fmt",
-"commit", "why is CI red"). The section repeated that list for four of
-the skills. It also said `bin/lint` is the entry point and "NOT a bare
-`cargo clippy`", while the `mz-commit` and `mz-run` skills both
-prescribe `cargo clippy --all-targets -- -D warnings`.
-
-One thing this gives up: the section told agents to load `mz-test`
-before running any test "even mid-task", while the skill descriptions
-are phrased as user requests. If agents start skippin
-
-**File**: `AGENTS.md` (modified, +21/-39)
-```diff
-@@ -1,22 +1,6 @@
- # Materialize
- 
--## Skills
--
--Canonical agent skills in `.agents/skills/`. `.claude/skills` is compat symlink
--for Claude Code. Check `mz-*` skill before tasks — encodes project conventions,
--saves time.
--
--Use the `mz-test` skill before running ANY tests, even mid-task — the canonical
--commands aren't the obvious ones (e.g. `bin/sqllogictest --optimized`, not
--`cargo build --bin sqllogictest`).
--
--Use the `mz-run` skill before building, running, formatting, or linting. `bin/fmt` and `bin/lint` are the canonical entry points, NOT `cargo fmt`, `rustfmt`, or a bare `cargo clippy`. `bin/environmentd`, not `cargo build --bin environmentd`.
--
--Use the `mz-commit` skill before `git commit`, `git push`, or `gh pr create`.
--
--Use the `mz-debug-ci` skill before the first `bk` or `gh pr checks` command, or when handed a Buildkite URL.
--
--## Code navigation
-+## Repository layout
- 
- `console/` is the web Console. It was moved in from the standalone
- `MaterializeInc/console` repository, which is now archived and stale.
-@@ -45,33 +29,33 @@ authors to squash on merge or to keep every intermediate commit green.
-   static snapshot. When you feel tempted to reduce scope or take a shortcut,
-   flag it to the user and workshop an alternative together rather than silently
-   downgrading the design.
--* When making code changes, run cheap checkers/linters and formatters before
--  reporting success and/or committing changes. For Rust, these would be
--  `bin/fmt` and `cargo check`.
-+* Before reporting success on a code change, run the cheap formatters and
-+  checkers. For Rust, these are `bin/fmt` and `cargo check`. Before committing,
-+  run the pre-commit checklist in the `mz-commit` skill.
- * When debugging CI or lint failures, start by reproducing the exact failing
-   command locally and reading its output. Do not run generic checks (clippy,
-   fmt, grep) in a shotgun approach.
--* We value simplicity and clear abstractions. We especially care about
--  designing the interfaces or boundaries between components well. This includes
--  components, traits, interfaces, modules, and crates.
-+* We value simplicity and clear abstractions. Simplicity means fewer concepts
-+  and moving parts, not less capability. Take the most care over the boundaries
-+  between components: the interfaces that traits, modules, and crates expose.
- * Avoid em-dashes for structuring sentences in any prose: code comments, specs,
-   design docs, all of it. Restructure with full stops and commas instead. The
-   same goes for semicolons, though one is fine where splitting would mangle the
-   sentence.
--* Our guidance applies both when writing new code or designs, or when we notice
--  deviations in code or architecture that we are working on. At the same time,
--  we want to keep our changes minimal so it's good to call out deviations and
--  then we can decide together what to do about it.
-+* Apply this guidance to the code and designs you write. When existing code
-+  you are working on deviates from it, do not fix it in passing. Keep the
-+  change minimal, call out the deviation, and let the user decide what to do
-+  about it.
- * Never put a side effect inside `debug_assert!` (or `debug_assert_eq!`, etc.).
-   The macro body compiles out whenever debug-assertions are off, which includes
--  `[profile.optimized]` (what `bin/environmentd` and mzcompose use) and
--  `[profile.release]`. Only `[profile.ci]` turns them on. A side effect written
--  there, for example `debug_assert!(map.insert(k, v).is_none())`, runs under
--  `cargo test` but silently vanishes in optimized and release builds, leaving
--  the logic it powered inert and profiler-blind. Bind the effect to a `let`
--  outside the assert, then assert on the bound value. Clippy's
--  `debug_assert_with_mut_call` catches `&mut self` receivers but not `&self` or
--  free-function side effects.
-+  `[profile.optimized]` (what `bin/environmentd --optimized` and mzcompose use)
-+  and `[profile.release]`. Only the dev profile and `[profile.ci]` turn them on.
-+  A side effect written there, for example
-+  `debug_assert!(map.insert(k, v).is_none())`, runs under `cargo test` but
-+  silently vanishes in optimized and release builds, leaving the logic it
-+  powered inert and profiler-blind. Bind the effect to a `let` outside the
-+  assert, then assert on the bound value. Clippy's `debug_assert_with_mut_call`
-+  catches `&mut self` receivers but not `&self` or free-function side effects.
- * Never write vendor, customer, or account names into durable or user-facing
-   surfaces: committed code, comments, column comments, docs, specs, commit
-   messages, PR bodies, or test fixtures. Anything persisted to disk gets shared,
-@@ -91,8 +75,6 @@ authors to squash on merge or to keep every intermediate commit green.
- 
- ## Code comments
- 
--Specifics for code comments and documentation:
--
- Spend comments on the non-obvious: concurrency and async hazards (races,
- lease/handle expiry, values that must not be held across an awa
-```
-
----
-
-### Incident Patch 3: `31efe6cd` (2026-11-11)
-**Commit Message**: adapter: Drop the frontend_ prefix from peek sequencing and read-then-write names (#39677)
-
-With the coordinator's peek sequencing and read-then-write paths gone,
-the `frontend_` prefix no longer tells two implementations apart in
-these names. Renames only, no behavior change.
-
-Best reviewed commit by commit:
-1. **Module.** `frontend_peek.rs` becomes `peek_sequencing.rs`. Pure
-rename (`git show -M`).
-2. **Peek sequencing names.** `try_frontend_peek(_inner)` becomes
-`try_peek(_inner)`, `frontend_determine_timestamp` becomes
-`determine_timestamp`,
-`Command::RegisterFrontendPeek`/`UnregisterFrontendPeek` and their
-handlers become `RegisterPeek`/`UnregisterPeek` and
-`handle_(un)register_peek`, and the MCP test case for SELECT becomes
-`select_not_vulnerable`. The debug span and the debug logs that name
-these functions follow.
-3. **Peek metric label values.**
-- `mz_slow_message_handling{message_kind}`: `register-frontend-peek` and
-`unregister-frontend-peek` become `register-peek` and `unregister-peek`.
-- `mz_catalog_snapshot_seconds{context}` and
-`mz_catalog_snapshot_cache{context}`: `try_frontend_peek` becomes
-`try_peek`.
-- No Grafana alert rule or shared dashboard selects these values 
-
-**File**: `src/adapter/src/client.rs` (modified, +32/-33)
-```diff
-@@ -64,8 +64,7 @@ use crate::coord::read_then_write::DependencyPolicy;
- use crate::coord::{Coordinator, ExecuteContextGuard};
- use crate::error::AdapterError;
- use crate::frontend_read_then_write::{
--    FrontendWriteAttemptState, FrontendWriteCancellation, contains_mz_now,
--    validate_selection_dependencies,
-+    WriteAttemptState, WriteCancellation, contains_mz_now, validate_selection_dependencies,
- };
- use crate::metrics::Metrics;
- use crate::notice::ExecutionTimeKind;
-@@ -839,8 +838,8 @@ impl SessionClient {
-         cancel_future: impl Future<Output = ()> + Send + Clone,
-     ) -> Result<ExecuteResponse, AdapterError> {
-         // Unroll SQL `EXECUTE <prepared> (...)` so the inner statement
--        // flows through `try_frontend_peek` /
--        // `try_frontend_read_then_write` below, rather than being
-+        // flows through `try_peek` /
-+        // `try_read_then_write` below, rather than being
-         // re-dispatched via `Command::Execute` from the coordinator's
-         // `Plan::Execute` handler. Without this, a prepared statement
-         // would route differently from the same statement issued
-@@ -855,7 +854,7 @@ impl SessionClient {
-         // Attempt peek sequencing in the session task.
-         // If unsupported, fall back to the Coordinator path.
-         let peek_result = self
--            .try_frontend_peek(&portal_name, logging, cancel_future.clone())
-+            .try_peek(&portal_name, logging, cancel_future.clone())
-             .await?;
-         if let Some(resp) = peek_result {
-             debug!("frontend peek succeeded");
-@@ -865,7 +864,7 @@ impl SessionClient {
- 
-         // Attempt read-then-write sequencing in the session task.
-         let rtw_result = self
--            .try_frontend_read_then_write_with_cancel(&portal_name, logging, cancel_future.clone())
-+            .try_read_then_write_with_cancel(&portal_name, logging, cancel_future.clone())
-             .await?;
-         if let Some(resp) = rtw_result {
-             debug!("frontend read-then-write succeeded");
-@@ -891,8 +890,8 @@ impl SessionClient {
-     /// If the named portal binds a SQL `EXECUTE <prepared>`, resolve the
-     /// prepared statement, install a fresh portal for the inner statement
-     /// (carrying the EXECUTE's actual parameter values), and return that
--    /// portal's name so the caller can run `try_frontend_peek` /
--    /// `try_frontend_read_then_write` against it.
-+    /// portal's name so the caller can run `try_peek` /
-+    /// `try_read_then_write` against it.
-     ///
-     /// Only ever unrolls one level: the parser rejects
-     /// `PREPARE foo AS EXECUTE bar` (matching Postgres), so the inner
-@@ -910,8 +909,8 @@ impl SessionClient {
-             let session = self.session.as_ref().expect("SessionClient invariant");
-             let portal = match session.get_portal_unverified(&portal_name) {
-                 Some(p) => p,
--                // No portal: let `try_frontend_peek` /
--                // `try_frontend_read_then_write` surface the
-+                // No portal: let `try_peek` /
-+                // `try_read_then_write` surface the
-                 // standard "missing portal" error.
-                 None => return Ok(portal_name),
-             };
-@@ -1402,8 +1401,8 @@ impl SessionClient {
-                 | Command::ExecuteCopyTo { .. }
-                 | Command::ExecuteSideEffectingFunc { .. }
-                 | Command::LookupConnection { .. }
--                | Command::RegisterFrontendPeek { .. }
--                | Command::UnregisterFrontendPeek { .. }
-+                | Command::RegisterPeek { .. }
-+                | Command::UnregisterPeek { .. }
-                 | Command::ExplainTimestamp { .. }
-                 | Command::FrontendStatementLogging(..)
-                 | Command::InjectAuditEvents { .. }
-@@ -1488,15 +1487,15 @@ impl SessionClient {
-     /// Returns `Ok(Some(response))` if we handled the peek, or `Ok(None)` if the statement is
-     /// not one that the frontend peek sequencing handles, in which case the Coordinator sequences
-     /// it. If it returns an error, it should be returned to the user.
--    pub(crate) async fn try_frontend_peek(
-+    pub(crate) async fn try_peek(
-         &mut self,
-         portal_name: &str,
-         logging: &mut ExecutionLogging,
-         connection_closed: impl Future<Output = ()> + Send,
-     ) -> Result<Option<ExecuteResponse>, AdapterError> {
-         let session = self.session.as_mut().expect("SessionClient invariant");
-         self.peek_client
--            .try_frontend_peek(portal_name, session, logging, connection_closed)
-+            .try_peek(portal_name, session, logging, connection_closed)
-             .await
-     }
- 
-@@ -1507,7 +1506,7 @@ impl SessionClient {
-     /// the peek path is tested against it. Everything expensive, including the
-     /// coordinator round-trip that registers the connection cancel watch, sits
-     /// behind it.
--    fn frontend_read_then_write_applies(&self, portal_name: &st
-```
-
-**File**: `src/adapter/src/command.rs` (modified, +6/-6)
-```diff
-@@ -356,7 +356,7 @@ pub enum Command {
-     /// Register a pending peek initiated by frontend sequencing. This is needed for:
-     /// - statement logging
-     /// - query cancellation
--    RegisterFrontendPeek {
-+    RegisterPeek {
-         uuid: Uuid,
-         conn_id: ConnectionId,
-         cluster_id: mz_controller_types::ClusterId,
-@@ -376,7 +376,7 @@ pub enum Command {
-     /// coordinator, so the frontend must not log the end itself. If a
-     /// concurrent teardown (e.g. a `DROP CLUSTER`) already retired the peek
-     /// and logged its end, this is a no-op.
--    UnregisterFrontendPeek {
-+    UnregisterPeek {
-         uuid: Uuid,
-         reason: StatementEndedExecutionReason,
-         tx: oneshot::Sender<()>,
-@@ -503,8 +503,8 @@ impl Command {
-             | Command::ExecuteCopyTo { .. }
-             | Command::ExecuteSideEffectingFunc { .. }
-             | Command::LookupConnection { .. }
--            | Command::RegisterFrontendPeek { .. }
--            | Command::UnregisterFrontendPeek { .. }
-+            | Command::RegisterPeek { .. }
-+            | Command::UnregisterPeek { .. }
-             | Command::ExplainTimestamp { .. }
-             | Command::FrontendStatementLogging(..)
-             | Command::InjectAuditEvents { .. }
-@@ -548,8 +548,8 @@ impl Command {
-             | Command::ExecuteCopyTo { .. }
-             | Command::ExecuteSideEffectingFunc { .. }
-             | Command::LookupConnection { .. }
--            | Command::RegisterFrontendPeek { .. }
--            | Command::UnregisterFrontendPeek { .. }
-+            | Command::RegisterPeek { .. }
-+            | Command::UnregisterPeek { .. }
-             | Command::ExplainTimestamp { .. }
-             | Command::FrontendStatementLogging(..)
-             | Command::InjectAuditEvents { .. }
-```
-
-**File**: `src/adapter/src/coord.rs` (modified, +2/-2)
-```diff
-@@ -517,8 +517,8 @@ impl Message {
-                 Command::ExecuteCopyTo { .. } => "execute-copy-to",
-                 Command::ExecuteSideEffectingFunc { .. } => "execute-side-effecting-func",
-                 Command::LookupConnection { .. } => "lookup-connection",
--                Command::RegisterFrontendPeek { .. } => "register-frontend-peek",
--                Command::UnregisterFrontendPeek { .. } => "unregister-frontend-peek",
-+                Command::RegisterPeek { .. } => "register-peek",
-+                Command::UnregisterPeek { .. } => "unregister-peek",
-                 Command::ExplainTimestamp { .. } => "explain-timestamp",
-                 Command::FrontendStatementLogging(..) => "frontend-statement-logging",
-                 Command::StartCopyFromStdin { .. } => "start-copy-from-stdin",
-```
-
-**File**: `src/adapter/src/coord/command_handler.rs` (modified, +7/-7)
-```diff
-@@ -558,7 +558,7 @@ impl Coordinator {
-                             });
-                     let _ = tx.send(conn);
-                 }
--                Command::RegisterFrontendPeek {
-+                Command::RegisterPeek {
-                     uuid,
-                     conn_id,
-                     cluster_id,
-@@ -567,7 +567,7 @@ impl Coordinator {
-                     watch_set,
-                     tx,
-                 } => {
--                    self.handle_register_frontend_peek(
-+                    self.handle_register_peek(
-                         uuid,
-                         conn_id,
-                         cluster_id,
-@@ -577,8 +577,8 @@ impl Coordinator {
-                         tx,
-                     );
-                 }
--                Command::UnregisterFrontendPeek { uuid, reason, tx } => {
--                    self.handle_unregister_frontend_peek(uuid, reason, tx);
-+                Command::UnregisterPeek { uuid, reason, tx } => {
-+                    self.handle_unregister_peek(uuid, reason, tx);
-                 }
-                 Command::ExplainTimestamp {
-                     conn_id,
-@@ -2276,7 +2276,7 @@ impl Coordinator {
- 
-     /// Handle registration of a frontend peek, for statement logging and query cancellation
-     /// handling.
--    fn handle_register_frontend_peek(
-+    fn handle_register_peek(
-         &mut self,
-         uuid: Uuid,
-         conn_id: ConnectionId,
-@@ -2320,9 +2320,9 @@ impl Coordinator {
-         let _ = tx.send(Ok(()));
-     }
- 
--    /// Handles [`Command::UnregisterFrontendPeek`]; see its documentation for
-+    /// Handles [`Command::UnregisterPeek`]; see its documentation for
-     /// the end-of-execution ownership contract.
--    fn handle_unregister_frontend_peek(
-+    fn handle_unregister_peek(
-         &mut self,
-         uuid: Uuid,
-         reason: StatementEndedExecutionReason,
-```
-
-**File**: `src/adapter/src/coord/sequencer.rs` (modified, +2/-2)
-```diff
-@@ -361,8 +361,8 @@ impl Coordinator {
-                     let result = self.sequence_explain_schema(plan);
-                     ctx.retire(result);
-                 }
--                // `SessionClient::execute_attempts` unrolls SQL `EXECUTE`, and `try_frontend_peek` and
--                // `try_frontend_read_then_write` take over every statement that plans to one of the
-+                // `SessionClient::execute_attempts` unrolls SQL `EXECUTE`, and `try_peek` and
-+                // `try_read_then_write` take over every statement that plans to one of the
-                 // others.
-                 // TODO(SQL-760): Drop the manual soft panic once internal errors soft-panic
-                 // centrally.
-```
-
-**File**: `src/adapter/src/frontend_read_then_write.rs` (modified, +24/-24)
-```diff
-@@ -26,7 +26,7 @@
- //! ## Whether the write reads persisted state
- //!
- //! Two predicates answer that one question, and they have to agree. Before
--//! anything runs, `SessionClient::try_frontend_read_then_write` decides it
-+//! anything runs, `SessionClient::try_read_then_write` decides it
- //! syntactically, from `depends_on()` on the planned selection, because inside
- //! a transaction a read-dependent write has to be refused while refusing is
- //! still possible. Once the dataflow runs, the subscribe answers it
-@@ -74,7 +74,7 @@
- //! committed on its own has no business claiming it.
- //!
- //! Disagreement is caught on both sides, and only one side can still refuse.
--//! `frontend_read_then_write` re-checks the syntactic predicate before running a
-+//! `PeekClient::read_then_write` re-checks the syntactic predicate before running a
- //! dataflow, which catches a caller that skipped the gate. If the syntactic
- //! predicate were laxer than the dynamic one, that check would pass and a write
- //! meant for staging would commit on its own, so the loop asserts wherever the
-@@ -162,23 +162,23 @@ use crate::{PeekClient, PeekResponseUnary, TimelineContext, optimize};
- 
- /// Reason a frontend write attempt is being torn down early.
- #[derive(Clone, Copy)]
--pub(crate) enum FrontendWriteCancellation {
-+pub(crate) enum WriteCancellation {
-     Canceled,
-     StatementTimeout,
- }
- 
--impl From<FrontendWriteCancellation> for AdapterError {
--    fn from(cancellation: FrontendWriteCancellation) -> Self {
-+impl From<WriteCancellation> for AdapterError {
-+    fn from(cancellation: WriteCancellation) -> Self {
-         match cancellation {
--            FrontendWriteCancellation::Canceled => AdapterError::Canceled,
--            FrontendWriteCancellation::StatementTimeout => AdapterError::StatementTimeout,
-+            WriteCancellation::Canceled => AdapterError::Canceled,
-+            WriteCancellation::StatementTimeout => AdapterError::StatementTimeout,
-         }
-     }
- }
- 
- /// State shared between an in-flight frontend write attempt and its
- /// cancellation wrapper,
--/// `SessionClient::try_frontend_read_then_write_with_cancel`.
-+/// `SessionClient::try_read_then_write_with_cancel`.
- ///
- /// The contract: `write_submitted` is true from just before the
- /// `AttemptWrite` command is sent until the attempt resolves as definitively
-@@ -189,13 +189,13 @@ impl From<FrontendWriteCancellation> for AdapterError {
- /// The wrapper and the attempt it wraps are polled by the same task, so the
- /// mutex and the atomic are here to satisfy `Send`, not to arbitrate between
- /// concurrent writers. There is one writer for each field.
--pub(crate) struct FrontendWriteAttemptState {
-+pub(crate) struct WriteAttemptState {
-     write_submitted: AtomicBool,
-     /// Set at most once, by the cancellation wrapper.
--    cancellation: Mutex<Option<FrontendWriteCancellation>>,
-+    cancellation: Mutex<Option<WriteCancellation>>,
- }
- 
--impl FrontendWriteAttemptState {
-+impl WriteAttemptState {
-     pub(crate) fn new() -> Self {
-         Self {
-             write_submitted: AtomicBool::new(false),
-@@ -223,7 +223,7 @@ impl FrontendWriteAttemptState {
- 
-     /// Records why the attempt is being torn down. The first reason recorded
-     /// is the one the attempt reports.
--    pub(crate) fn request(&self, cancellation: FrontendWriteCancellation) {
-+    pub(crate) fn request(&self, cancellation: WriteCancellation) {
-         self.cancellation
-             .lock()
-             .expect("cancellation lock poisoned")
-@@ -350,7 +350,7 @@ enum WriteOutcome {
- fn classify_write_result(
-     result: WriteResult,
-     target_id: CatalogItemId,
--    attempt_state: &FrontendWriteAttemptState,
-+    attempt_state: &WriteAttemptState,
- ) -> WriteOutcome {
-     match result {
-         WriteResult::Success { timestamp } => WriteOutcome::Committed(timestamp),
-@@ -694,20 +694,20 @@ impl Drop for SubscribeHandle {
- }
- 
- impl PeekClient {
--    /// Execute a read-then-write operation using frontend sequencing.
-+    /// Executes a read-then-write for a statement of `session`.
-     ///
-     /// The caller owns the end-of-execution logging for
-     /// `statement_logging_id` and verified and planned the portal against
-     /// `catalog`, which stays in force through optimization and write-target
-     /// generation capture.
--    pub(crate) async fn frontend_read_then_write(
-+    pub(crate) async fn session_read_then_write(
-         &mut self,
-         session: &mut Session,
-         plan: plan::ReadThenWritePlan,
-         target_cluster: TargetCluster,
-         catalog: &Arc<Catalog>,
-         statement_logging_id: Option<StatementLoggingId>,
--        attempt_state: Arc<FrontendWriteAttemptState>,
-+        attempt_state: Arc<WriteAttemptState>,
-     ) -> Result<ExecuteResponse, AdapterError> {
-         self.read_then_write(
-             session,
-@@ -755,7 +755,7 @@ impl PeekClient {
-             None,
-             // Nothing cancels a background write, so this state only 
-```
-
-**File**: `src/adapter/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -42,11 +42,11 @@ mod command;
- mod coord;
- mod error;
- mod explain;
--mod frontend_peek;
- mod frontend_read_then_write;
- mod frontend_transaction;
- mod notice;
- mod optimize;
-+mod peek_sequencing;
- mod util;
- 
- pub mod catalog;
-```
-
-**File**: `src/adapter/src/peek_client.rs` (modified, +2/-2)
-```diff
-@@ -542,7 +542,7 @@ impl PeekClient {
-         //
-         // Warning: If we fail to actually issue the peek after this point, then we need to
-         // unregister it to avoid an orphaned registration.
--        self.call_coordinator(|tx| Command::RegisterFrontendPeek {
-+        self.call_coordinator(|tx| Command::RegisterPeek {
-             uuid,
-             conn_id: conn_id.clone(),
-             cluster_id: compute_instance,
-@@ -593,7 +593,7 @@ impl PeekClient {
-             // a concurrent teardown already retired the peek, the end is
-             // already logged and the unregistration is a no-op.
-             let _ = self
--                .call_coordinator(|tx| Command::UnregisterFrontendPeek {
-+                .call_coordinator(|tx| Command::UnregisterPeek {
-                     uuid,
-                     reason: statement_logging::StatementEndedExecutionReason::Errored {
-                         error: err.to_string(),
+@@ -4,7 +4,7 @@
+   "private": true,
+   "type": "module",
+   "engines": {
+-    "node": ">=20.12.2"
++    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+   },
+   "scripts": {
+     "start": "vite",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40660** (2026-11-11): ci: Nightly fixes (2026-11-11) (@def-)
-- **PR #40659** (2026-11-11): AGENTS.md: drop skills section, resolve ambiguous guidance (@aljoscha)
-- **PR #40649** (closed): renovate: hold breaking 0.x console updates for review (@leedqin)
-- **PR #40644** (closed): storage: cap the error text in source and sink status rows (@leedqin)
-- **PR #40643** (2026-11-11): storage: name the mismatched field in the Iceberg schema error (@leedqin)
-- **PR #40642** (2026-11-10): ci: Move "Catalog command read-only admission" test to non-dedicated-cpu agent (@def-)
+- **PR #40692** (2026-11-13): release: bump to version v26.52.0-dev.0 and create its doc file (@materialize-bot)
+- **PR #40684** (2026-11-12): expr: Make empty array_fill results zero-dimensional (@antiguru)
+- **PR #40682** (2026-11-12): ci: Annotate failed steps outside mzcompose and cloudtest (@def-)
+- **PR #40679** (2026-11-12): ci: Tag optimized dev images separately from release builds (@def-)
+- **PR #40676** (closed): ci: Prevent spec-sheet from benchmarking the wrong build profile (@aljoscha)
+- **PR #40672** (2026-11-12): deps: bump rust-postgres fork (@def-)
 
 ---
 
@@ -1831,64 +1425,58 @@ these functions follow.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage: rate limit gauge regression error logs (#40589)
+## X. docs: fix loader completeness gap in transactional downstream updates pattern (#
 
 **RULE**:
-When implementing operations in `src/storage-client/src/statistics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `doc/user/content/export-data/patterns/transactional-downstream-updates-kafka.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d2bad1a0`: storage: rate limit gauge regression error logs (#40589). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dfa514ea`: docs: fix loader completeness gap in transactional downstream updates pattern (#40490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage-client/src/statistics.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc/user/content/export-data/patterns/transactional-downstream-updates-kafka.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::time::{Duration, Instant};
-    ///
-    /// `id` and `field_name` identify the metric in regression logs.
-    fn incorporate(&mut self, other: Self, id: GlobalId, field_name: &'static str);
-    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-/// Throttles the `error!` log for gauge regressions.
-///
-/// A regressed gauge keeps regressing on every statistics update, every few
-/// seconds, until the source restarts. Only the first regression in each
-/// interval is logged at `error!`, which reaches Sentry, the rest at `warn!`.
-#[derive(Clone, Debug, Default)]
-struct RegressionLog {
-    last_error: Option<Instant>,
-}
+1. Build a table of trusted frontiers that Snowflake has fully loaded.
+1. Create Snowflake views that expose only changes below the trusted frontier.
+All sinks on a Kafka connection share one progress topic, and each sink's
+records are keyed by `mz-sink-<sink_id>`. Joining on the `materialize-sink-id`
+header is what ties each data message to its own sink's frontier.
 
-impl RegressionLog {
-    const ERROR_INTERVAL: Duration = Duration::from_secs(15 * 60);
+{{< warning >}}
+This pattern parses progress records. Their format is not yet a documented,
+stable interface and may change in a future release. Ignore any fields you
+don't recognize when you parse them.
+{{< /warning >}}
 
-    fn log(&mut self, message: std::fmt::Arguments<'_>) {
-        let now = Instant::now();
-        match self.last_error {
-            Some(last) if now.duration_since(last) < Self::ER
+timestamp less than the frontier. The pattern has two parts:
+1. **Build a trusted frontier.** For each sink, record a frontier only once
+   the loader has confirmed that every data message below it has landed in
+   the destination. The latest frontier in the progress topic is only a
+   candidate; see [Step 3](#step-3-build-a-trusted-frontier-table).
+1. **Gate views on the trusted frontier.** Keep the data messages whose
+   `materialize-timestamp` is less than the trusted frontier for their sink.
+`raw_orders` and the progress topic into a table named `raw_progress`. This
+guide uses version 3 of the con
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use std::time::Instant;
-    fn incorporate(&mut self, other: Self, field_name: &'static str);
-    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-pub struct Boolean(bool);
-        Self(values.into_iter().fold(true, |base, new| base & new.0))
-    fn incorporate(&mut self, other: Self, field_name: &'static str) {
-            tracing::error!(
-                "boolean gauge for field {field_name} erroneously regressed from true to false",
-            );
-        Boolean(f)
+1. Create a Snowflake view that exposes only committed changes.
+timestamp less than the frontier. To expose only committed data:
+1. Match each data message to the progress records whose key equals
+   `'mz-sink-' || <materialize-sink-id header>`.
+1. Take the latest frontier for that sink.
+1. Keep the data messages where `materialize-timestamp` is less than that
+   frontier.
+`raw_orders` and the progress topic into a table named `raw_progress`. For
+example:
+    "value.converter": "com.snowflake.kafka.connector.records.SnowflakeJsonConverter",
+Two settings in this configuration matter for the pattern:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2bad1a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dfa514ea` are properly handled with clean fallback behavior.

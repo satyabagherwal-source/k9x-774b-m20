@@ -9340,3 +9340,8 @@
 | `CYCLE-20261113-028O` | `2026-11-13T04:50:07.320Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`0eab085b...`) |
 | `CYCLE-20261113-09ZS` | `2026-11-13T04:50:17.368Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`37009f43...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T04:50:32.271Z` | `hf-xhtoken-spark-x2.6-4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-90E0590C` [Domain D] | Yes (`75002cb1...`) |
+| `CYCLE-20261113-MFU1` | `2026-11-13T05:07:31.369Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md` | Yes (`559c4934...`) |
+| `CYCLE-20261113-MX9J` | `2026-11-13T05:07:53.959Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`44469fed...`) |
+| `CYCLE-20261113-N03Q` | `2026-11-13T05:07:57.638Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9fe31a22...`) |
+| `CYCLE-20261113-N361` | `2026-11-13T05:08:01.609Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b732636e...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T05:08:22.677Z` | `hf-internscience-sage-a1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F419AB78` [Domain D] | Yes (`e6f06008...`) |

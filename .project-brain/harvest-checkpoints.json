@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T04:50:17.379Z",
+  "last_updated": "2026-11-13T05:08:01.639Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "ba9b9eac7c07a97734bfd4103e6cd333bafdc5e71d2e67bdd5e17f438b5677bf",
-      "verified_at": "2026-11-12T12:33:02.214Z",
+      "content_hash": "9fe31a22db52273698c562e664d208d0afc1056e3ab615d17f5234cae8dd0808",
+      "verified_at": "2026-11-13T05:07:57.669Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T12:33:02.214Z"
+      "last_updated": "2026-11-13T05:07:57.669Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "aa233740ca5006e04310c3f265afbf20788dad9d6ee6ffcff02079220935d99a",
-      "verified_at": "2026-11-11T20:18:40.334Z",
+      "content_hash": "44469fedfade3260079501bfa347e110c4f45933feebb22e46880aaa9c360897",
+      "verified_at": "2026-11-13T05:07:53.996Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T20:18:40.334Z"
+      "last_updated": "2026-11-13T05:07:53.996Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
-      "verified_at": "2026-11-11T18:35:55.498Z",
+      "content_hash": "b732636e00141f8128bf8dd7a4f3f7f43c2307200742ad6286e922f234c4361c",
+      "verified_at": "2026-11-13T05:08:01.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:35:55.498Z"
+      "last_updated": "2026-11-13T05:08:01.638Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -15786,14 +15786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-internscience-sage-a1-5",
-      "content_hash": "658abb8e55b3bd9efe9753349ccc2b72ea8df99ad8cb226066af2df6a0cf0885",
-      "verified_at": "2026-11-08T04:26:53.915Z",
+      "content_hash": "559c49342e224b2cc779e9546c40df8e0b39a029df9258ac04c5bcf00203788e",
+      "verified_at": "2026-11-13T05:07:31.382Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:26:53.915Z"
+      "last_updated": "2026-11-13T05:07:31.382Z"
     },
     "RecursiveSI/flint": {
       "repository": "RecursiveSI/flint",

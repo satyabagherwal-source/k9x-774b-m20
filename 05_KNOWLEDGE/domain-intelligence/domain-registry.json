@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T04:50:32.269Z",
-  "total_records": 93,
+  "last_updated": "2026-11-13T05:08:22.674Z",
+  "total_records": 94,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 52,
+      "total": 53,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -77,7 +77,8 @@
         "DOM-D-C22A41DF",
         "DOM-D-527E8201",
         "DOM-D-FE25E160",
-        "DOM-D-90E0590C"
+        "DOM-D-90E0590C",
+        "DOM-D-F419AB78"
       ]
     },
     "E": {
@@ -3828,6 +3829,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T04:50:32.267Z"
+    },
+    "DOM-D-F419AB78": {
+      "record_id": "DOM-D-F419AB78",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): InternScience/Sage-A1.5",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/InternScience/Sage-A1.5](https://huggingface.co/InternScience/Sage-A1.5))  \n> **Source Version**: `hf-internsci`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "e6f06008bb1f5017da16792f2ce9174d58fb6d7059d679f1f6c999b42a5c6df1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-internscience-sage-a1.5/hf-internscience-sage-a1.5-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T05:08:08.756Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-internscience-sage-a1.5)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-internscience-sage-a1.5"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T05:08:22.672Z"
     }
   }
 }

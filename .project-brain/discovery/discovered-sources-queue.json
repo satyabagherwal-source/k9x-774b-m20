@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T04:50:32.276Z",
+  "updated_at": "2026-11-13T05:08:22.845Z",
   "stats": {
-    "total_discovered": 2180,
-    "approved_pending_harvest": 2022,
+    "total_discovered": 2184,
+    "approved_pending_harvest": 2026,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2012,
+      "COMMUNITY_AND_EXPERT": 2016,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -46872,6 +46872,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
         "fileName": "hf-xhtoken-spark-x2.6-4b-learnings.md"
+      }
+    },
+    "SRC-F42B672AA831": {
+      "id": "SRC-F42B672AA831",
+      "url": "https://huggingface.co/InternScience/Sage-A1.5",
+      "title": "https://huggingface.co/InternScience/Sage-A1.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:08:22.685Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
+        "fileName": "hf-internscience-sage-a1.5-learnings.md"
+      }
+    },
+    "SRC-3E0E4A4320A9": {
+      "id": "SRC-3E0E4A4320A9",
+      "url": "https://app.codecov.io/gh/authzed/spicedb/pull/3486?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/authzed/spicedb/pull/3486?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:08:22.733Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-71ED46F63740": {
+      "id": "SRC-71ED46F63740",
+      "url": "https://github.com/codecov/feedback/issues/255",
+      "title": "https://github.com/codecov/feedback/issues/255",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:08:22.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-5E6E66EF6FD9": {
+      "id": "SRC-5E6E66EF6FD9",
+      "url": "https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin",
+      "title": "https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:08:22.845Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
       }
     }
   }

@@ -9349,3 +9349,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-13T04:50:07.323Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `be35fa33` | Multi-dimensional audit evidence | 2026-11-13T04:50:17.371Z |
 | `learn-dom-d-90e0590c` | `project://hf-xhtoken-spark-x2.6-4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | 2026-11-13T04:50:32.271Z |
+| `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-11-13T05:07:31.373Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `602ce24e` | Multi-dimensional audit evidence | 2026-11-13T05:07:53.964Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `c2990d81` | Multi-dimensional audit evidence | 2026-11-13T05:07:57.643Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `e598bd4c` | Multi-dimensional audit evidence | 2026-11-13T05:08:01.615Z |
+| `learn-dom-d-f419ab78` | `project://hf-internscience-sage-a1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md` | 2026-11-13T05:08:22.677Z |

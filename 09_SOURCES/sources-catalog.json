@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "1afb2cc4",
+    "sourceVersion": "c2990d81",
     "license": "Apache-2.0",
-    "contentHash": "ba9b9eac7c07a97734bfd4103e6cd333bafdc5e71d2e67bdd5e17f438b5677bf",
-    "lastHarvestedAt": "2026-11-12T12:33:02.203Z",
+    "contentHash": "9fe31a22db52273698c562e664d208d0afc1056e3ab615d17f5234cae8dd0808",
+    "lastHarvestedAt": "2026-11-13T05:07:57.643Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "576278c9",
+    "sourceVersion": "602ce24e",
     "license": "Apache-2.0",
-    "contentHash": "aa233740ca5006e04310c3f265afbf20788dad9d6ee6ffcff02079220935d99a",
-    "lastHarvestedAt": "2026-11-11T20:18:40.325Z",
+    "contentHash": "44469fedfade3260079501bfa347e110c4f45933feebb22e46880aaa9c360897",
+    "lastHarvestedAt": "2026-11-13T05:07:53.964Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "a859dade",
+    "sourceVersion": "e598bd4c",
     "license": "NOASSERTION",
-    "contentHash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
-    "lastHarvestedAt": "2026-11-11T18:35:55.479Z",
+    "contentHash": "b732636e00141f8128bf8dd7a4f3f7f43c2307200742ad6286e922f234c4361c",
+    "lastHarvestedAt": "2026-11-13T05:08:01.615Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -10505,8 +10505,8 @@
     "sourceUrl": "https://huggingface.co/InternScience/Sage-A1.5",
     "sourceVersion": "hf-internscience-sage-a1.5",
     "license": "Open-Source",
-    "contentHash": "658abb8e55b3bd9efe9753349ccc2b72ea8df99ad8cb226066af2df6a0cf0885",
-    "lastHarvestedAt": "2026-11-08T04:26:53.906Z",
+    "contentHash": "559c49342e224b2cc779e9546c40df8e0b39a029df9258ac04c5bcf00203788e",
+    "lastHarvestedAt": "2026-11-13T05:07:31.373Z",
     "learningId": "learn-huggingface-internscience-sage-a1-5"
   },
   "hf-recursivesi-flint": {

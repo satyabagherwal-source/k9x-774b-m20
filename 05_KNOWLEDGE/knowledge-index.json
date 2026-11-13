@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T04:50:17.295Z",
+  "last_updated": "2026-11-13T05:08:01.440Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4549,8 +4549,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "576278c9",
-      "content_hash": "aa233740ca5006e04310c3f265afbf20788dad9d6ee6ffcff02079220935d99a",
+      "source_version": "602ce24e",
+      "content_hash": "44469fedfade3260079501bfa347e110c4f45933feebb22e46880aaa9c360897",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -4562,6 +4562,11 @@
         {
           "number": null,
           "title": "postgres): stop read-only SpiceDB from writing heartbeat rows (#3479)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "fix flaky tests (#3317)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4610,7 +4615,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T20:18:40.135Z",
+      "verified_at": "2026-11-13T05:07:53.569Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43208,8 +43213,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "a859dade",
-      "content_hash": "5ec5b17204b2cf2aa2dcac1f282b5861f379d737fea926bebe21505998017728",
+      "source_version": "e598bd4c",
+      "content_hash": "b732636e00141f8128bf8dd7a4f3f7f43c2307200742ad6286e922f234c4361c",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -43236,6 +43241,11 @@
         {
           "number": null,
           "title": "storage: rate limit gauge regression error logs (#40589)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs: fix loader completeness gap in transactional downstream updates pattern (#",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43324,7 +43334,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:35:55.344Z",
+      "verified_at": "2026-11-13T05:08:01.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48572,8 +48582,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "1afb2cc4",
-      "content_hash": "ba9b9eac7c07a97734bfd4103e6cd333bafdc5e71d2e67bdd5e17f438b5677bf",
+      "source_version": "c2990d81",
+      "content_hash": "9fe31a22db52273698c562e664d208d0afc1056e3ab615d17f5234cae8dd0808",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -48600,6 +48610,11 @@
         {
           "number": null,
           "title": "proxy): accept AWS GovCloud regions and s3 bucket-subdomain wildcards (#2302)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cli): allow mise to read ~/.tool-versions (#2307)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48708,7 +48723,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T12:33:02.007Z",
+      "verified_at": "2026-11-13T05:07:57.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132790,7 +132805,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
       "source_version": "hf-internscience-sage-a1.5",
-      "content_hash": "658abb8e55b3bd9efe9753349ccc2b72ea8df99ad8cb226066af2df6a0cf0885",
+      "content_hash": "559c49342e224b2cc779e9546c40df8e0b39a029df9258ac04c5bcf00203788e",
       "dossier_path": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "promoted_rules": [
@@ -132840,7 +132855,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:26:53.785Z",
+      "verified_at": "2026-11-13T05:07:31.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

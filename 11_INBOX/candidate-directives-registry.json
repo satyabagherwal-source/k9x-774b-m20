@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T04:50:32.285Z",
+  "last_updated": "2026-11-13T05:08:22.810Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8138,6 +8138,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-41A88D-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-EABC83",
+      "directive_title": "fix flaky tests (#3317)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "authzed-spicedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EABC83-fix-flaky-tests-3317-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-63AC39",
+      "directive_title": "cli): allow mise to read ~/.tool-versions (#2307)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nolabs-ai-nono",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-63AC39-cli-allow-mise-to-read-tool-versions-230.md",
       "staged_date": "2026-11-13"
     }
   ]
