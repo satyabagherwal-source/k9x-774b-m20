@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:21:07.371Z",
+  "last_updated": "2026-11-13T13:34:34.595Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8840,6 +8840,33 @@
       "source_repo": "planetable-planet",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-74556F-link-rss-items-by-slug.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-431B83",
+      "directive_title": "Forensic Learning Record (Deep Inspection): mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-431B83-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-B67480",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B67480-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-752D07",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-752D07-engine-restore-text-fallback-for-unknown.md",
       "staged_date": "2026-11-13"
     }
   ]

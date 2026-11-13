@@ -9493,3 +9493,4 @@ Every entry in this ledger must capture:
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `99d586a1` | Multi-dimensional audit evidence | 2026-11-13T13:20:39.042Z |
 | `learn-github-planetable-planet` | `https://github.com/Planetable/Planet` | `544b4253` | Multi-dimensional audit evidence | 2026-11-13T13:20:44.348Z |
 | `learn-dom-d-9802962d` | `project://hf-contrastive-lm-clm-v0.1-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | 2026-11-13T13:21:07.337Z |
+| `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-13T13:34:22.602Z |

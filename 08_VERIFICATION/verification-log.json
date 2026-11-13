@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-H5I4",
-    "timestamp": "2026-11-11T09:40:00.412Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "f7ba6704927ce71894fb077e3437601df0354adaa3efc3c3226ac57901f57f99",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-IB52",
     "timestamp": "2026-11-11T09:40:54.374Z",
     "repository": "webAI-Official/TwIL-8B",
@@ -7492,6 +7477,21 @@
     "contentHash": "b8adec3d614f250c86c6ba4a2e50189a103dfd25fdcd19a9ab5b6b6f45e562b5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-Q9AD",
+    "timestamp": "2026-11-13T13:34:22.597Z",
+    "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+    "contentHash": "9970d2b3fb06fad2935502eddaca45cf33c61f74b3884f28c11f2648208370c4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

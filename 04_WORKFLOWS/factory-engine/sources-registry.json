@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T13:20:51.035Z",
-    "lastVerified": "2026-11-13T13:20:51.035Z",
+    "lastChecked": "2026-11-13T13:34:34.403Z",
+    "lastVerified": "2026-11-13T13:34:34.403Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T12:51:47.680Z",
-    "lastVerified": "2026-11-13T12:51:47.680Z",
+    "lastChecked": "2026-11-13T13:34:34.390Z",
+    "lastVerified": "2026-11-13T13:34:34.390Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1658,9 +1658,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-13T07:18:04.007Z",
+    "lastChecked": "2026-11-13T13:34:29.407Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-13T07:18:04.007Z"
+    "lastVerified": "2026-11-13T13:34:29.407Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3408,9 +3408,9 @@
   "orf-gping": {
     "name": "gping",
     "officialUrl": "https://github.com/orf/gping",
-    "lastChecked": "2026-11-12T00:58:16.445Z",
+    "lastChecked": "2026-11-13T13:34:19.361Z",
     "revisionIdentifier": "fad1ee3c",
-    "lastVerified": "2026-11-12T00:58:16.445Z"
+    "lastVerified": "2026-11-13T13:34:19.361Z"
   },
   "hf-psrben-visionhope": {
     "name": "PSRben/VisionHOPE",
@@ -5190,12 +5190,12 @@
     "revisionIdentifier": "2bbc658c"
   },
   "openyurtio-openyurt": {
-    "name": "openyurtio/openyurt",
+    "name": "openyurt",
     "officialUrl": "https://github.com/openyurtio/openyurt",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T08:27:49.873Z",
-    "lastVerified": "2026-11-12T08:27:49.873Z",
+    "lastChecked": "2026-11-13T13:34:26.920Z",
+    "lastVerified": "2026-11-13T13:34:26.920Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openyurtio-openyurt",
@@ -5204,7 +5204,8 @@
     "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "552dac7a"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -7283,9 +7284,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-12T07:15:32.923Z",
+    "lastChecked": "2026-11-13T13:34:31.929Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-12T07:15:32.923Z"
+    "lastVerified": "2026-11-13T13:34:31.929Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -12594,9 +12595,9 @@
   "alyssaxuu-later": {
     "name": "later",
     "officialUrl": "https://github.com/alyssaxuu/later",
-    "lastChecked": "2026-11-09T03:42:39.794Z",
+    "lastChecked": "2026-11-13T13:34:24.472Z",
     "revisionIdentifier": "26e79369",
-    "lastVerified": "2026-11-09T03:42:39.794Z"
+    "lastVerified": "2026-11-13T13:34:24.472Z"
   },
   "testing-library-react-testing-library": {
     "name": "react-testing-library",
@@ -14706,13 +14707,13 @@
     "officialUrl": "https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T13:59:43.157Z",
-    "lastVerified": "2026-11-08T13:59:43.157Z",
+    "lastChecked": "2026-11-13T13:34:21.982Z",
+    "lastVerified": "2026-11-13T13:34:21.982Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
-    "contentHash": "bdeac2a1b57655740c51790e2acb1aad60627db3fb39c8aa9dfbdb01481d6a6e",
-    "promotedRulesCount": 1,
+    "contentHash": "9970d2b3fb06fad2935502eddaca45cf33c61f74b3884f28c11f2648208370c4",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

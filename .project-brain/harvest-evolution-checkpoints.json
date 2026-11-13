@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:21:07.721Z",
+  "last_updated": "2026-11-13T13:34:34.659Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-13T12:42:51.302Z",
+      "processed_at": "2026-11-13T13:34:34.562Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-13T13:11:41.105Z",
+      "processed_at": "2026-11-13T13:34:34.597Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1836,9 +1836,14 @@
       "processed_at": "2026-11-13T13:21:07.373Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md": {
+      "processed_at": "2026-11-13T13:34:34.530Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 570,
+  "total_dossiers_evaluated": 573,
   "total_canonical_promoted": 100,
-  "total_staged_for_review": 467
+  "total_staged_for_review": 470
 }

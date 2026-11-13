@@ -9484,3 +9484,4 @@
 | `CYCLE-20261113-8LTQ` | `2026-11-13T13:20:39.038Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2d0b8d38...`) |
 | `CYCLE-20261113-8PX3` | `2026-11-13T13:20:44.343Z` | `Planetable/Planet` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b8adec3d...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:21:07.337Z` | `hf-contrastive-lm-clm-v0.1-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9802962D` [Domain D] | Yes (`10cc166e...`) |
+| `CYCLE-20261113-Q9AD` | `2026-11-13T13:34:22.597Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md` | Yes (`9970d2b3...`) |

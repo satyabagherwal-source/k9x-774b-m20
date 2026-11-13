@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:20:44.355Z",
-  "total_cycles_completed": 9245,
-  "total_learnings_persisted": 9245,
+  "last_updated": "2026-11-13T13:34:22.608Z",
+  "total_cycles_completed": 9246,
+  "total_learnings_persisted": 9246,
   "total_rules_promoted": 9016,
   "history": [
-    {
-      "timestamp": "2026-11-12T22:05:24.932Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T22:05:29.510Z",
       "repository": "rustls/rustls",
@@ -1403,6 +1396,13 @@
       "repository": "Planetable/Planet",
       "learningId": "learn-github-planetable-planet",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:34:22.608Z",
+      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
