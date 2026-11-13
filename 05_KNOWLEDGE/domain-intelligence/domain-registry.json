@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T15:11:07.569Z",
-  "total_records": 154,
+  "last_updated": "2026-11-13T15:19:17.383Z",
+  "total_records": 163,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 101,
+      "total": 104,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -128,7 +128,10 @@
         "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
         "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
+        "DOM-D-A827EB1D",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants"
       ]
     },
     "E": {
@@ -145,14 +148,18 @@
       ]
     },
     "G": {
-      "total": 2,
+      "total": 6,
       "record_ids": [
         "DOM-G-D1C40B63",
-        "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-electron-electron-core-invariants",
+        "domain_intelligence-architecture-intelligence-tailscale-tailscale-core-invariants",
+        "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
+        "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 24,
+      "total": 26,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -177,7 +184,9 @@
         "DOM-H-414482D7",
         "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-encoredev-encore-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6007,6 +6016,120 @@
       "repository": "dragonflydb-dragonfly-learnings",
       "content_hash": "733274ac588f88c2004a041713eb55c7de082820672c8c9a990102ae54225cd8",
       "created_at": "2026-11-13T15:11:07.288Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/Wan-2.2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-wan-2-2-research-knowledge-intelligence-comfy-org-wan-2-2-core-inva.md",
+      "repository": "Comfy-Org/Wan-2.2",
+      "content_hash": "ca6d0b575ba26ab555ee4be708145bc052ec5ee86bd0853811d2ad6cdae6db88",
+      "created_at": "2026-11-13T15:18:24.716Z"
+    },
+    "domain_intelligence-architecture-intelligence-electron-electron-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-electron-electron-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: electron/electron Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-electron-electron-architecture-intelligence-electron-electron-core-invariants.md",
+      "repository": "electron/electron",
+      "content_hash": "10cbb968eaf43ced5dab1f8c4761f2acd0841758b629053d5688aafbb2263da4",
+      "created_at": "2026-11-13T15:18:32.800Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-encoredev-encore-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-encoredev-encore-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: encoredev/encore Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-encoredev-encore-technical-construction-intelligence-encoredev-encore-core-invar.md",
+      "repository": "encoredev/encore",
+      "content_hash": "51149a3282016220e3737bc71b3970544ec40a99e61ae4ffa98dc7135eb28ef4",
+      "created_at": "2026-11-13T15:18:34.298Z"
+    },
+    "domain_intelligence-architecture-intelligence-tailscale-tailscale-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
+      "repository": "tailscale/tailscale",
+      "content_hash": "71cf0b77674e4479e3175f05c37382e2d78b7809f3d84d165227fe98ca62dca5",
+      "created_at": "2026-11-13T15:18:37.114Z"
+    },
+    "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
+      "repository": "duckdb/duckdb",
+      "content_hash": "fb3af31aa77a11916162307285d693cd1c6aa2afc7dc5dcdb102dd040f570ae7",
+      "created_at": "2026-11-13T15:18:40.943Z"
+    },
+    "DOM-D-A827EB1D": {
+      "record_id": "DOM-D-A827EB1D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/Wan-2.2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/Wan-2.2](https://huggingface.co/Comfy-Org/Wan-2.2))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> **Synthesized By**: ze",
+      "content_hash": "c905e9289b41dd4ac3a1112bade49536ee3ef44041011725cc26a7c4708a29bd",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-wan-2.2/hf-comfy-org-wan-2.2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T15:18:43.698Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-wan-2.2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-wan-2.2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T15:19:16.377Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-wan-2.2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-wan-2-2-learnings-research-knowledge-intelligence-hf-comfy-org-wan-.md",
+      "repository": "hf-comfy-org-wan-2.2-learnings",
+      "content_hash": "4b5aa898716f0c22c6e5b437524226c37742c462e2889b6bfdd62ceab3615537",
+      "created_at": "2026-11-13T15:19:16.538Z"
+    },
+    "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: electron-electron-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-electron-electron-learnings-architecture-intelligence-electron-electron-learning.md",
+      "repository": "electron-electron-learnings",
+      "content_hash": "f4daef068dd4ced9f4398c1660632a21dff72872189d051cad3e834a784fd440",
+      "created_at": "2026-11-13T15:19:16.932Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: encoredev-encore-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-encoredev-encore-learnings-technical-construction-intelligence-encoredev-encore-.md",
+      "repository": "encoredev-encore-learnings",
+      "content_hash": "c7556a02b0f16a6acf971032d2c61a00fe6946a95c0a4fdd634ef0989e760424",
+      "created_at": "2026-11-13T15:19:17.383Z"
     }
   }
 }

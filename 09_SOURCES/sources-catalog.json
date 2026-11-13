@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "59064619",
+    "sourceVersion": "e0d532cc",
     "license": "BSD-3-Clause",
-    "contentHash": "7e10bc329b758fa0f0c00fa8900ae35a5e3f7caf758bd785099602e0f89a18fa",
-    "lastHarvestedAt": "2026-11-13T03:10:52.447Z",
+    "contentHash": "45ea91e4e73ceae47284b3095a08cf21857db91bbdb590d944b1b31153319edf",
+    "lastHarvestedAt": "2026-11-13T15:18:36.871Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "72d4626f",
+    "sourceVersion": "8a7465a4",
     "license": "MPL-2.0",
-    "contentHash": "4325fd9e34857af151d30061db21ec01c9d8c1ab82ed88d3f26c5d0545857a3f",
-    "lastHarvestedAt": "2026-11-12T10:52:51.122Z",
+    "contentHash": "94bef1b67a807f849105d446a72cd91d4700fc23fe5aff4a66793e08787928d4",
+    "lastHarvestedAt": "2026-11-13T15:18:34.032Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "988d97f3",
+    "sourceVersion": "399d7a83",
     "license": "MIT",
-    "contentHash": "eb04bd8559a6eeec47705f555abf5eee736042d62115ab548c8e6e0926b1d17f",
-    "lastHarvestedAt": "2026-11-12T08:53:04.385Z",
+    "contentHash": "fe578b2976f8ba1c3e34470d7cdbf3d9c75117c0629c1fa7e5a8950fb1ac8ceb",
+    "lastHarvestedAt": "2026-11-13T15:18:40.692Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "ef2710fa",
+    "sourceVersion": "cb318e5a",
     "license": "MIT",
-    "contentHash": "864a5937010296f22c9ca1d34349ed0a46c8583f211ac4112b9108aa0679c33f",
-    "lastHarvestedAt": "2026-11-09T04:49:38.560Z",
+    "contentHash": "f557062aca9923d45328ba84b33a84467648eb87f629f770219736edfb7c9f02",
+    "lastHarvestedAt": "2026-11-13T15:18:32.564Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {
@@ -11625,8 +11625,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Wan-2.2",
     "sourceVersion": "hf-comfy-org-wan-2.2",
     "license": "Open-Source",
-    "contentHash": "6451b5b394218e0e19f59cc450de910549c08a29ae184b9ae42182d65927a5d4",
-    "lastHarvestedAt": "2026-11-08T15:12:29.472Z",
+    "contentHash": "d7d7e794f0f7cc2831e56d2800bf81bb11a18a3d8a473109fdd982c0532a012a",
+    "lastHarvestedAt": "2026-11-13T15:18:24.575Z",
     "learningId": "learn-huggingface-comfy-org-wan-2-2"
   },
   "vercel-labs-agent-desktop": {

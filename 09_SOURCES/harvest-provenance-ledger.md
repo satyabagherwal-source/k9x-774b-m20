@@ -9531,3 +9531,9 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ce4f6857` | Multi-dimensional audit evidence | 2026-11-13T15:04:01.205Z |
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-13T15:10:49.283Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `383694c5` | Multi-dimensional audit evidence | 2026-11-13T15:11:03.840Z |
+| `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-13T15:18:24.575Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `cb318e5a` | Multi-dimensional audit evidence | 2026-11-13T15:18:32.564Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `8a7465a4` | Multi-dimensional audit evidence | 2026-11-13T15:18:34.032Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `e0d532cc` | Multi-dimensional audit evidence | 2026-11-13T15:18:36.871Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `399d7a83` | Multi-dimensional audit evidence | 2026-11-13T15:18:40.692Z |
+| `learn-dom-d-a827eb1d` | `project://hf-comfy-org-wan-2.2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md` | 2026-11-13T15:19:16.382Z |

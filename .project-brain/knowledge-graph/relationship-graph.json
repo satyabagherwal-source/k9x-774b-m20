@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T14:34:29.708Z",
+  "updated_at": "2026-11-13T15:19:16.382Z",
   "statistics": {
-    "total_nodes": 96,
-    "total_edges": 51,
+    "total_nodes": 97,
+    "total_edges": 52,
     "domain_distribution": {
-      "D": 77,
+      "D": 78,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 51
+      "CONSTRAINED_BY_ARCHITECTURE": 52
     }
   },
   "nodes": {
@@ -2137,6 +2137,29 @@
       ],
       "created_at": "2026-11-13T14:34:29.707Z",
       "updated_at": "2026-11-13T14:34:29.707Z"
+    },
+    "DOM-D-A827EB1D": {
+      "id": "DOM-D-A827EB1D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/Wan-2.2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-comfy-org-wan-2.2/hf-comfy-org-wan-2.2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T15:18:43.698Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-wan-2.2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T15:19:16.382Z",
+      "updated_at": "2026-11-13T15:19:16.382Z"
     }
   },
   "edges": [
@@ -2649,6 +2672,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-ACECC835 [D] with Domain M",
       "created_at": "2026-11-13T14:34:29.708Z"
+    },
+    {
+      "id": "EDGE-483D93034C40",
+      "sourceId": "DOM-D-A827EB1D",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-A827EB1D [D] with Domain M",
+      "created_at": "2026-11-13T15:19:16.382Z"
     }
   ]
 }

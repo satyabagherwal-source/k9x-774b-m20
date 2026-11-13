@@ -4,45 +4,31 @@
 {
   "source_repository": "duckdb/duckdb",
   "source_url": "https://github.com/duckdb/duckdb",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "399d7a83",
+  "license": "MIT",
+  "timestamp": "2026-11-13T15:18:40.867Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-duckdb-duckdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `399d7a83`).  
+> **License**: MIT | **Timestamp**: `2026-11-13T15:18:40.867Z`  
+> **Learning ID**: `learn-github-duckdb-duckdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `duckdb/duckdb` (Commit: `historical`)
+- **Target Repository**: `duckdb/duckdb` (Commit: `399d7a83`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
-> **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `988d97f3`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:52:50.088Z  
-> **Learning ID**: `learn-github-duckdb-duckdb`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): duckdb/duckdb
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:52:50.078Z  
+> **Harvest Timestamp**: 2026-11-13T15:18:40.270Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43026 stars
+- **Stars / Engagement**: 43060 stars
 
 ---
 
@@ -2032,13 +2018,15 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28731** (2026-11-12): **Preserve aggregate domains for proven singleton groups**
-  *Symptoms*: When DISTINCT ON is lowered to GROUP BY plus first(), aggregate outputs receive a cardinality-derived domain even when the grouping is known to contain exactly one row per key. This can distort join estimates although the aggregate preserves the input value.  Reuse child domain statistics only when the grouping covers a certified unique key and the bound aggregate has single-value identity. Reuse the existing functional-dependency machinery, preserve supported binding/cast lineage, and set singleton aggregate cardinality from the child. Carry identity through the ordered first/last/any_value rewrite, whose encoded sort key is non-NULL.  Nullable UNIQUE keys, deferred constraints, incomplete composite keys, lossy/TRY casts, multiplying joins, aggregate FILTER, list-returning overloads, and ordinary nullable-selector arg_min/max remain on the fallback. Tests include a concrete HLL false-positive case: 33 input rows are estimated as 33 groups although there are only 32 groups.  Related to #28615. This covers inputs with exact key evidence; it does not resolve the unconstrained CTAS reproduction. In the local 1M-node/5M-edge/5M-message experiment, repeated-query medians were about 29 ms for the declared-key variant and 149 ms for the unconstrained variant, with identical results. Serialized rewritten functions can conservatively lose identity metadata when rebound and consequently lose forwarding eligibility.  Validation on upstream main `39aeee12ef8`:  - `make reldebug`; formatt
-
-- **Issue #28724** (2026-11-12): **Keep test_concurrentqueue.cpp out of the test_common unity build (fixes macOS reldebug)**
-  *Symptoms*: Since #28674 added `test/common/test_concurrentqueue.cpp`, the `reldebug` build fails on macOS:  ``` .../MacOSX.sdk/usr/include/mach/host_info.h:123:2: error: reference to 'integer_t' is ambiguous   candidate: ::integer_t          (mach/arm/vm_types.h:97)   candidate: duckdb::integer_t    (src/include/duckdb/common/checked_integer.hpp:432) ```  `blockingconcurrentqueue.h` includes `mach/mach.h`, which uses the unqualified global `integer_t`. In the `test_common` unity translation unit that file is pasted in after `test_cast.cpp` and `test_checked_integer.cpp`, both of which have a file-scope `using namespace duckdb;`, so the SDK's `integer_t` now resolves to two candidates. Reordering does not help: with the mach headers first, `test_checked_integer.cpp`'s own unqualified `integer_t` becomes ambiguous instead. The two files cannot share a translation unit on macOS.  This PR removes `test_concurrentqueue.cpp` from the `add_library_unity` list and adds it to the same object library with `target_sources`, so it compiles as its own translation unit. The file already builds cleanly standalone, which is why Linux CI (and `DISABLE_UNITY` builds) never saw the error.  Verified locally on macOS 26 / Xcode 27 SDK: `make reldebug` completes and `unittest "[concurrentqueue]"` passes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #28801** (2026-11-13): **Remove obsolete Member-label workflow**
+  *Symptoms*: Remove `.github/workflows/OnPR.yml`, which only applies the `Member` label to newly opened pull requests. The label is no longer used.
   **Post-Mortem & Fix Analysis**:
-  > Thanks! Fix was merged via https://github.com/duckdb/duckdb/pull/28707 so this is no longer necessary
+  > Thanks!
+
+- **Issue #28800** (2026-11-13): **Add an escape_mode option to the CSV reader: 'quote' stops the escape from escaping the delimiter and newlines**
+  *Symptoms*: This adds an `escape_mode` option to `read_csv` and `COPY ... FROM`. The default, `'all'`, is today's behavior: with `strict_mode = false`, the escape character makes whatever byte follows it literal, including the delimiter and the line break. `'quote'` limits the escape to the quote and escape characters: before anything else the escape is dropped and the byte keeps its meaning, so a delimiter still separates values and a newline still ends the record. This is how Hive/Athena's OpenCSVSerde (and similar line-based readers) treat a `\` escape — files written that way currently read back corrupted: `a\,b` collapses into one field, and a line ending in `\` swallows the following row (`1,\` / `2,b` / `3,c` reads as 2 rows instead of 3).  The change is confined to the state machine: under `'quote'`, the `UNQUOTED_ESCAPE` row transitions to `DELIMITER`/`RECORD_SEPARATOR`/`CARRIAGE_RETURN` instead of staying in the field (multi-byte delimiters and comment characters keep their meaning too); value materialization is untouched since escape removal already drops the escape byte. The option is part of the state machine cache key, flows through the sniffer, and is serialized with a default so existing plans are unaffected. An invalid value gets an error explaining both modes; combining it with an explicit `strict_mode = true` errors (unset `strict_mode` is implied `false`); without an escape character distinct from the quote the option is inert, which keeps the prompt built by `sniff_c
+  **Post-Mortem & Fix Analysis**:
+  > Do we really need this to be yet another option? Can't we just use our existing options to model this?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2055,785 +2043,892 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cccba45` (2026-11-11)
-**Commit Message**: Preserve fixed allocator blocks when queue allocation fails
+### Incident Patch 1: `5c8008b4` (2026-11-13)
+**Commit Message**: Order small runtime filter builds before filtered and nested scans (#28768)
 
-Reserve bounded per-shard overflow before publishing the fixed pool so
-free-only threads and TLS teardown retain block IDs when queue metadata
-allocation fails. Release staged storage if pool initialization fails.
+IMDB 05c can report much higher intermediate cardinalities with an
+unchanged physical plan. Filtered scans and scans feeding nested join
+builds currently do not wait for ordinary runtime filter producers, so
+they can snapshot their filters before a small dimension build publishes
+its filter. In 05c, missing the `company_type_id = 2` filter makes the
+`movie_companies` scan emit 295,628 rows instead of 798.
 
-Exercise queue failures and actual allocator ownership/cleanup with a
-standalone fault-injection check, including the no-thread path. Record
-the vendored concurrentqueue retry customization.
+Allow these scans to wait when the producer's estimated build fits in
+one vector. Keep the existing build/probe size guard, cycle checks, and
+CTE disjunction scheduling behavior. The regression test checks the
+filtered nested build scan's cardinality with one and four threads, plus
+prepared executions after changing and emptying the dimension.
 
-**File**: `src/include/duckdb/storage/sharded_allocator_queue.hpp` (added, +175/-0)
+Reproduced the exact costs from [the failing CI job for
+#28750](https://github.com/duckdb/duckdb/actions/runs/43249792499/job/131303617671?pr=28750):
+
+| 05c measured cost | Before | After |
+| --- | ---: | ---: |
+| Total join output | 107,606 | 2,872 |
+| Build input | 296,506 | 1,676 |
+| Probe input | 190,121 | 2,843 |
+
+Both results were stable over 30 tries agains
+
+**File**: `src/parallel/runtime_filter_schedule.cpp` (modified, +29/-7)
 ```diff
-@@ -0,0 +1,175 @@
-+//===----------------------------------------------------------------------===//
-+//                         DuckDB
-+//
-+// duckdb/storage/sharded_allocator_queue.hpp
-+//
-+//
-+//===----------------------------------------------------------------------===//
-+
-+#pragma once
-+
-+#include "duckdb/common/atomic.hpp"
-+#include "duckdb/common/helper.hpp"
-+#include "duckdb/common/mutex.hpp"
-+#include "duckdb/common/vector.hpp"
-+#include "duckdb/parallel/concurrentqueue.hpp"
-+
-+#include <new>
-+#include <type_traits>
-+
-+namespace duckdb {
-+
-+template <class T, class QUEUE = duckdb_moodycamel::ConcurrentQueue<T>>
-+class ShardedAllocatorQueue {
-+	static_assert(std::is_trivially_copyable<T>::value, "Allocator queue entries must be trivially copyable");
-+
-+public:
-+	struct alignas(64) Shard {
-+		bool Enqueue(T value) {
-+			return EnqueueInternal(
-+			    1, [&] { return q.enqueue(value); }, [&] { return EnqueueOverflow(&value, 1); });
-+		}
-+		template <class ITERATOR>
-+		bool EnqueueBulk(ITERATOR begin, idx_t size) {
-+#ifdef DUCKDB_NO_THREADS
-+			// The single-threaded queue can throw after publishing a prefix of a batch.
-+			for (idx_t i = 0; i < size; i++) {
-+				if (!Enqueue(begin[i])) {
-+					return false;
-+				}
-+			}
-+			return true;
-+#else
-+			return EnqueueInternal(
-+			    size, [&] { return q.enqueue_bulk(begin, size); }, [&] { return EnqueueOverflow(begin, size); });
-+#endif
-+		}
-+		bool TryDequeue(T &value) {
-+			return TryDequeueInternal([&] { return idx_t(q.try_dequeue(value)); },
-+			                          [&] { return DequeueOverflow(&value, 1); }) != 0;
-+		}
-+		template <class ITERATOR>
-+		idx_t TryDequeueBulk(ITERATOR begin, idx_t size) {
-+			return TryDequeueInternal([&] { return q.try_dequeue_bulk(begin, size); },
-+			                          [&] { return DequeueOverflow(begin, size); });
-+		}
-+		idx_t SizeApprox() const {
-+			return track_count ? count.load(std::memory_order_relaxed)
-+			                   : q.size_approx() + overflow_count.load(std::memory_order_relaxed);
-+		}
-+		//! Reserve before publication: fixed-pool returns must survive queue allocation failure.
-+		void ReserveOverflow(idx_t capacity) {
-+			if (capacity == 0) {
-+				overflow.reset();
-+			} else {
-+				overflow = make_uniq<vector<T>>(capacity);
-+			}
-+		}
-+
-+		bool track_count = false;
-+
-+	private:
-+		template <class ENQUEUE, class OVERFLOW>
-+		bool EnqueueInternal(idx_t size, ENQUEUE enqueue, OVERFLOW enqueue_overflow) {
-+			if (track_count) {
-+				count.fetch_add(size, std::memory_order_relaxed);
-+			}
-+			try {
-+				bool queued = false;
-+				try {
-+					queued = enqueue();
-+				} catch (const std::bad_alloc &) {
-+					// The single-threaded queue reports allocation failure by throwing.
-+				}
-+				if (queued || enqueue_overflow()) {
-+					return true;
-+				}
-+			} catch (...) {
-+				if (track_count) {
-+					count.fetch_sub(size, std::memory_order_relaxed);
-+				}
-+				throw;
-+			}
-+			if (track_count) {
-+				count.fetch_sub(size, std::memory_order_relaxed);
-+			}
+@@ -23,6 +23,18 @@ static optional_ptr<PhysicalComparisonJoin> RuntimeFilterProducer(Pipeline &pipe
+ 	}
+ }
+ 
++static bool IsSmallBuild(const PhysicalOperator &op) {
++	if (op.estimated_cardinality > DEFAULT_STANDARD_VECTOR_SIZE || op.IsSink()) {
++		return false;
++	}
++	for (auto &child : op.children) {
++		if (!IsSmallBuild(child.get())) {
 +			return false;
 +		}
-+		template <class DEQUEUE, class OVERFLOW>
-+		idx_t TryDequeueInternal(DEQUEUE dequeue, OVERFLOW dequeue_overflow) {
-+			if (track_count && count.load(std::memory_order_relaxed) == 0) {
-+				return 0;
-+			}
-+			auto obtained = dequeue();
-+			if (obtained == 0) {
-+				obtained = dequeue_overflow();
-+			}
-+			if (track_count && obtained > 0) {
-+				count.fetch_sub(obtained, std::memory_order_relaxed);
-+			}
-+			return obtained;
-+		}
-+		template <class ITERATOR>
-+		bool EnqueueOverflow(ITERATOR begin, idx_t size) {
-+			if (!overflow) {
-+				return false;
-+			}
-+			lock_guard<mutex> guard(overflow_lock);
-+			const auto current = overflow_count.load(std::memory_order_relaxed);
-+			if (size > overflow->size() - current) {
-+				return false;
-+			}
-+			for (idx_t i = 0; i < size; i++) {
-+				(*overflow)[current + i] = begin[i];
-+			}
-+			overflow_count.store(current + size, std::memory_order_relaxed);
-+			return true;
-+		}
-+		template <class ITERATOR>
-+		idx_t DequeueOverflow(ITERATOR begin, idx_t size) {
-+			if (overflow_count.load(std::memory_order_relaxed) == 0) {
-+				return 0;
-+			}
-+			lock_guard<mutex> guard(overflow_lock);
-+			const auto current = overflow_count.load(std::memory_order_relaxed);
-+			const auto obtained = MinValue(size, current);
-+			for (idx_t i = 0; i < obtained; i++) {
-+				begin[i] = (*overflow)[current - obtained + i];
-+			}
-+			overflow_count.store(current - obtained, std::memory_order_relaxed);
-+			return obtained;
-+		}
-+
-+		QUEUE q;
-+		mutex overflow_lock;
-+		unique_ptr<vector<T>> overflow;
-+		atomic<idx_t> overflow_count {0};
-+		alignas(64) atomic<idx_t> count {0};
-+	};
-+
-+public:
-+	explicit ShardedAllocatorQueue(idx_t count, bool track_count = false) : queues(count) {
-+		D_ASSERT(count > 0);
-+		for (auto &queue : queues) {
-+			queue.track_count = track_count;
-+		}
 +	}
-+	idx_t Count() const {
-+		return queues.size();
-+	}
-+	Shard &Get(idx_t shard) {
-+		return queues[shard];
-+	}
-+	idx_t SizeApprox()
-```
-
-**File**: `src/storage/block_allocator.cpp` (modified, +18/-91)
-```diff
-@@ -1,4 +1,5 @@
- #include "duckdb/storage/block_allocator.hpp"
-+#include "duckdb/storage/sharded_allocator_queue.hpp"
- 
- #include "duckdb/common/allocator.hpp"
- #include "duckdb/common/types/uuid.hpp"
-@@ -214,102 +215,23 @@ static idx_t AllocatorLocalShard(const idx_t count) {
- 	return count == 1 ? 0 : (TaskScheduler::GetEstimatedCPUId() / 4) % count;
- }
- 
--template <class T>
--class ShardedAllocatorQueue {
--public:
--	struct alignas(64) Shard {
--		bool Enqueue(T value) {
--			return EnqueueInternal(1, [&] { return q.enqueue(value); });
--		}
--		template <class ITERATOR>
--		bool EnqueueBulk(ITERATOR begin, idx_t size) {
--			return EnqueueInternal(size, [&] { return q.enqueue_bulk(begin, size); });
--		}
--		bool TryDequeue(T &value) {
--			return TryDequeueInternal([&] { return idx_t(q.try_dequeue(value)); }) != 0;
--		}
--		template <class ITERATOR>
--		idx_t TryDequeueBulk(ITERATOR begin, idx_t size) {
--			return TryDequeueInternal([&] { return q.try_dequeue_bulk(begin, size); });
--		}
--		idx_t SizeApprox() const {
--			return track_count ? count.load(std::memory_order_relaxed) : q.size_approx();
--		}
--
--		bool track_count = false;
--
--	private:
--		template <class ENQUEUE>
--		bool EnqueueInternal(idx_t size, ENQUEUE enqueue) {
--			if (track_count) {
--				count.fetch_add(size, std::memory_order_relaxed);
--			}
--			try {
--				if (enqueue()) {
--					return true;
--				}
--			} catch (...) {
--				if (track_count) {
--					count.fetch_sub(size, std::memory_order_relaxed);
--				}
--				throw;
--			}
--			if (track_count) {
--				count.fetch_sub(size, std::memory_order_relaxed);
--			}
--			return false;
--		}
--		template <class DEQUEUE>
--		idx_t TryDequeueInternal(DEQUEUE dequeue) {
--			if (track_count && count.load(std::memory_order_relaxed) == 0) {
--				return 0;
--			}
--			const auto obtained = dequeue();
--			if (track_count && obtained > 0) {
--				count.fetch_sub(obtained, std::memory_order_relaxed);
--			}
--			return obtained;
--		}
--
--		duckdb_moodycamel::ConcurrentQueue<T> q;
--		alignas(64) atomic<idx_t> count {0};
--	};
--
--public:
--	explicit ShardedAllocatorQueue(idx_t count, bool track_count = false) : queues(count) {
--		D_ASSERT(count > 0);
--		for (auto &queue : queues) {
--			queue.track_count = track_count;
--		}
--	}
--	idx_t Count() const {
--		return queues.size();
--	}
--	idx_t LocalShard() const {
--		return AllocatorLocalShard(Count());
--	}
--	Shard &Get(idx_t shard) {
--		return queues[shard];
--	}
--	idx_t SizeApprox() const {
--		idx_t count = 0;
--		for (auto &queue : queues) {
--			count += queue.SizeApprox();
--		}
--		return count;
--	}
--
--private:
--	vector<Shard> queues;
--};
--
- struct BlockQueue {
- 	BlockQueue(idx_t blocks, idx_t shards)
- 	    : blocks_per_shard(MaxValue<idx_t>(1, blocks / shards + (blocks % shards != 0))),
- 	      queues(MaxValue<idx_t>(1, blocks / blocks_per_shard + (blocks % blocks_per_shard != 0)),
- 	             blocks > blocks_per_shard) {
- 	}
- 
-+	void ReserveOverflow(idx_t blocks) {
-+		for (idx_t shard = 0; shard < queues.Count(); shard++) {
-+			queues.Get(shard).ReserveOverflow(MinValue(blocks_per_shard, blocks - shard * blocks_per_shard));
-+		}
-+	}
-+	void ReleaseOverflow() {
-+		for (idx_t shard = 0; shard < queues.Count(); shard++) {
-+			queues.Get(shard).ReserveOverflow(0);
-+		}
-+	}
- 	idx_t Home(uint32_t block) const {
- 		return block / blocks_per_shard;
- 	}
-@@ -726,7 +648,7 @@ class AllocationCache {
- 
- private:
- 	idx_t LocalShard() const {
--		return buckets[0]->queues.LocalShard();
-+		return AllocatorLocalShard(buckets[0]->queues.Count());
- 	}
- 
- 	Allocator &allocator;
-@@ -806,6 +728,8 @@ bool BlockAllocator::InitializePool() const {
- 	unsafe_unique_ptr<BlockQueue> queue;
- 	try {
- 		queue = make_unsafe_uniq<BlockQueue>(DivBlockSize(pool_size), touched->queues.Count());
-+		queue->ReserveOverflow(DivBlockSize(pool_size));
-+		touched->ReserveOverflow(DivBlockSize(pool_size));
- 		uint32_t block_ids[STANDARD_VECTOR_SIZE];
- 		const auto count = DivBlockSize(pool_size);
- 		for (idx_t block_id = 0; block_id < count; block_id += STANDARD_VECTOR_SIZE) {
-@@ -814,17 +738,20 @@ bool BlockAllocator::InitializePool() const {
- 				block_ids[i] = NumericCast<uint32_t>(block_id + i);
- 			}
- 			if (!queue->EnqueueBulk(block_ids, next)) {
-+				touched->ReleaseOverflow();
- 				pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
- 				return false;
- 			}
- 		}
- 	} catch (const std::bad_alloc &) {
-+		touched->ReleaseOverflow();
- 		pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
- 		return false;
- 	}
- 
- 	const auto pointer = AllocateVirtualMemory(pool_size);
- 	if (!pointer) {
-+		touched->ReleaseOverflow();
- 		pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
- 		return false;
- 	}
-@@ -856,7 +783,7 @@ idx_t BlockAllocator::DivBlockSize(const idx_t n) const {
- }
- 
- idx_t BlockAllocator::GetLocalPoolShard() const {
--	return touched->queues.LocalShard();
-+	return AllocatorLocalShard(touched->queues.Count());
- }
- 
- uint32_t BlockAllocator::GetBlockID(const data_ptr_t pointer) c
-```
-
-**File**: `test/CMakeLists.txt` (modified, +40/-0)
-```diff
-@@ -71,6 +71,46 @@ endif()
- 
- add_executable(unittest unittest.cpp ${UNITTEST_OBJECT_FILES})
- 
-+if(CMAKE_SYSTEM_NAME STREQUAL "Linux"
-+   AND NOT CMAKE_CROSSCOMPILING
-+   AND CMAKE_SIZEOF_VOID_P EQUAL 8
-+   AND ENABLE_UNITTEST_CPP_TESTS
-+   AND TARGET duckdb)
-+  # Exercise real allocator failures without installing hooks in the library.
-+  add_executable(
-+    block_allocator_fault_injection api/block_allocator_fault_injection.cpp
-+                                    ../src/storage/block_allocator.cpp)
-+  target_link_libraries(block_allocator_fault_injection duckdb pthread)
-+  target_link_options(
-+    block_allocator_fault_injection
-+    PRIVATE
-+    -Wl,--wrap=malloc
-+    -Wl,--wrap=_Znwm
-+    -Wl,--wrap=_ZdlPv
-+    -Wl,--wrap=_ZdlPvm
-+    -Wl,--wrap=mmap)
-+  if(CMAKE_VERSION VERSION_LESS 3.20)
-+    set(allocator_probe_stamp
-+        "${CMAKE_CFG_INTDIR}/block_allocator_fault_injection.stamp")
-+    set(allocator_probe_executable
-+        $<TARGET_FILE:block_allocator_fault_injection>)
-+  else()
-+    set(allocator_probe_stamp "block_allocator_fault_injection-$<CONFIG>.stamp")
-+    set(allocator_probe_executable
-+        $<OUTPUT_CONFIG:$<TARGET_FILE:block_allocator_fault_injection>>)
-+  endif()
-+  add_custom_command(
-+    OUTPUT "${allocator_probe_stamp}"
-+    COMMAND ${CMAKE_COMMAND} -E env "${allocator_probe_executable}"
-+    COMMAND ${CMAKE_COMMAND} -E touch "${allocator_probe_stamp}"
-+    DEPENDS "${allocator_probe_executable}"
-+    COMMENT "Checking BlockAllocator allocation-failure ownership"
-+    VERBATIM)
-+  add_custom_target(check_block_allocator_fault_injection
-+                    DEPENDS "${allocator_probe_stamp}")
-+  add_dependencies(unittest check_block_allocator_fault_injection)
-+endif()
-+
- # Enable best-effort stack traces for fatal signals in the test runner without
- # enabling stack traces for every DuckDB exception.
- if((CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT MUSL_ENABLED) OR APPLE)
-```
-
-**File**: `test/api/block_allocator_fault_injection.cpp` (added, +220/-0)
-```diff
-@@ -0,0 +1,220 @@
-+#include "duckdb/common/allocator.hpp"
-+#include "duckdb/storage/block_allocator.hpp"
-+
-+#include <algorithm>
-+#include <cerrno>
-+#include <cstdio>
-+#include <cstdlib>
-+#include <new>
-+#include <thread>
-+#include <vector>
-+#include <sys/mman.h>
-+
-+// Link wrapping confines failures to this executable's allocator implementation.
-+static thread_local bool reject_malloc = false;
-+static thread_local bool reject_new = false;
-+static thread_local bool reject_mapping = false;
-+static thread_local size_t allowed_new = 0;
-+static thread_local size_t fail_new_at = 0;
-+static thread_local size_t failures = 0;
-+static thread_local size_t new_calls = 0;
-+static thread_local bool track_new = false;
-+static thread_local int64_t new_balance = 0;
-+
-+extern "C" {
-+void *__real_malloc(size_t size);
-+void *__real__Znwm(size_t size);
-+void __real__ZdlPv(void *pointer);
-+void __real__ZdlPvm(void *pointer, size_t size);
-+void *__real_mmap(void *address, size_t length, int protection, int flags, int fd, off_t offset);
-+
-+void *__wrap_malloc(size_t size) {
-+	if (reject_malloc) {
-+		failures++;
-+		return nullptr;
-+	}
-+	return __real_malloc(size);
++	return true;
 +}
 +
-+void *__wrap__Znwm(size_t size) {
-+	new_calls++;
-+	const bool fail_once = fail_new_at > 0 && --fail_new_at == 0;
-+	if (fail_once || (reject_new && allowed_new == 0)) {
-+		failures++;
-+		throw std::bad_alloc();
-+	}
-+	if (allowed_new > 0) {
-+		allowed_new--;
-+	}
-+	auto result = __real__Znwm(size);
-+	if (track_new) {
-+		new_balance++;
+ static bool HasJoinSink(Pipeline &pipeline) {
+ 	auto sink = pipeline.GetSink();
+ 	if (!sink) {
+@@ -128,7 +140,11 @@ static void ScheduleRuntimeFiltersInternal(PipelineSchedule &schedule, bool clea
+ 		dependency_check = RuntimeFilterDependencyCheck(schedule);
+ 		join_build_stages = CollectJoinBuildStages(schedule);
+ 	}
+-	reference_map_t<DynamicTableFilterSet, vector<idx_t>> sources;
++	struct FilterSource {
++		idx_t stage_idx;
++		bool small_build_only;
++	};
++	reference_map_t<DynamicTableFilterSet, vector<FilterSource>> sources;
+ 	for (idx_t stage_idx = 0; add_edges && stage_idx < schedule.stages.size(); stage_idx++) {
+ 		auto &stage = schedule.stages[stage_idx];
+ 		auto &pipeline = *stage.pipeline;
+@@ -143,12 +159,12 @@ static void ScheduleRuntimeFiltersInternal(PipelineSchedule &schedule, bool clea
+ 		    scan.function.global_initialization == TableFunctionInitialization::INITIALIZE_ON_SCHEDULE) {
+ 			continue;
+ 		}
+-		if (!join_build_stages[stage_idx] && (!scan.table_filters || (!scan.table_filters->HasFilters() &&
+-		                                                              !scan.table_filters->HasMultiColumnFilters()))) {
+-			sources[*scan.dynamic_filters].push_back(stage_idx);
+-		}
++		const auto small_build_only =
++		    join_build_stages[stage_idx] ||
++		    (scan.table_filters && (scan.table_filters->HasFilters() || scan.table_filters->HasMultiColumnFilters()));
++		sources[*scan.dynamic_filters].push_back({stage_idx, small_build_only});
+ 		for (auto &filters : scan.dynamic_filters->GetDisjunctionFilters()) {
+-			sources[filters.get()].push_back(stage_idx);
++			sources[filters.get()].push_back({stage_idx, false});
+ 		}
+ 	}
+ 
+@@ -157,6 +173,7 @@ static void ScheduleRuntimeFiltersInternal(PipelineSchedule &schedule, bool clea
+ 		auto &publication = publications[producer];
+ 		auto build_estimate = producer.children[1].get().estimated_cardinality;
+ 		auto probe_estimate = producer.children[0].get().estimated_cardinality;
++		const auto small_build = add_edges && IsSmallBuild(producer.children[1].get());
+ 		for (auto &target : producer.filter_pushdown->probe_info) {
+ 			if (clear_filters) {
+ 				// Clear previous executions before any scan can take its filter snapshot.
+@@ -170,7 +187,12 @@ static void ScheduleRuntimeFiltersInternal(PipelineSchedule &schedule, bool clea
+ 			    build_estimate >= MaxValue(probe_estimate, target.estimated_scan_cardinality)) {
+ 				continue;
+ 			}
+-			for (auto execution : source->second) {
++			for (auto &filter_source : source->second) {
++				// A small aggregate or join result can still require expensive inputs.
++				if (filter_source.small_build_only && !small_build) {
++					continue;
++				}
++				auto execution = filter_source.stage_idx;
+ 				if (dependency_check.TryAddDependency(execution, publication[0])) {
+ 					schedule.TryAddDependency(execution, publication[0]);
+ 				}
+```
+
+**File**: `test/optimizer/runtime_filter_schedule.cpp` (modified, +83/-0)
+```diff
+@@ -1,10 +1,16 @@
+ #include "catch.hpp"
+ #include "duckdb.hpp"
++#include "duckdb/execution/operator/aggregate/physical_ungrouped_aggregate.hpp"
+ #include "duckdb/execution/operator/join/physical_cross_product.hpp"
++#include "duckdb/execution/operator/join/physical_hash_join.hpp"
++#include "duckdb/execution/operator/projection/physical_projection.hpp"
+ #include "duckdb/execution/operator/scan/physical_dummy_scan.hpp"
++#include "duckdb/execution/operator/scan/physical_table_scan.hpp"
+ #include "duckdb/execution/physical_plan_generator.hpp"
+ #include "duckdb/parallel/meta_pipeline.hpp"
+ #include "duckdb/parallel/pipeline_schedule.hpp"
++#include "duckdb/planner/filter/expression_filter.hpp"
++#include "duckdb/planner/operator/logical_comparison_join.hpp"
+ 
+ using namespace duckdb;
+ 
+@@ -73,3 +79,80 @@ TEST_CASE("Sibling coordination uses build input cardinality", "[runtime_filter_
+ 		REQUIRE_FALSE(schedule->HasCycle());
+ 	}
+ }
++
++TEST_CASE("Small runtime filter builds exclude blocking and larger inputs", "[runtime_filter_schedule]") {
++	DuckDB db(nullptr);
++	Connection con(db);
++	Executor executor(*con.context);
++	PipelineBuildState state;
++	PhysicalPlan plan(Allocator::Get(*con.context));
++	auto &probe = plan.Make<PhysicalDummyScan>(vector<LogicalType> {}, 100000);
++	auto &small_input = plan.Make<PhysicalDummyScan>(vector<LogicalType> {}, DEFAULT_STANDARD_VECTOR_SIZE);
++	auto &large_input = plan.Make<PhysicalDummyScan>(vector<LogicalType> {}, DEFAULT_STANDARD_VECTOR_SIZE + 1);
++	auto &unknown_input = plan.Make<PhysicalDummyScan>(vector<LogicalType> {}, 0);
++	auto &small_projection =
++	    plan.Make<PhysicalProjection>(vector<LogicalType> {}, vector<unique_ptr<Expression>> {}, 1);
++	small_projection.children.push_back(small_input);
++	auto &large_projection =
++	    plan.Make<PhysicalProjection>(vector<LogicalType> {}, vector<unique_ptr<Expression>> {}, 1);
++	large_projection.children.push_back(large_input);
++	auto &aggregate = plan.Make<PhysicalUngroupedAggregate>(vector<LogicalType> {}, vector<unique_ptr<Expression>> {},
++	                                                        1, TupleDataValidityType::CAN_HAVE_NULL_VALUES);
++	aggregate.children.push_back(unknown_input);
++	auto &aggregate_projection =
++	    plan.Make<PhysicalProjection>(vector<LogicalType> {}, vector<unique_ptr<Expression>> {}, 1);
++	aggregate_projection.children.push_back(aggregate);
++	auto &scan =
++	    plan.Make<PhysicalTableScan>(vector<LogicalType> {}, BoundTableFunction(), nullptr, vector<LogicalType> {},
++	                                 vector<ColumnIndex> {}, vector<idx_t> {}, vector<string> {}, nullptr, 100000,
++	                                 ExtraOperatorInfo(), vector<Value> {}, virtual_column_map_t {})
++	        .Cast<PhysicalTableScan>();
++	scan.dynamic_filters = make_shared_ptr<DynamicTableFilterSet>();
++	auto &nested_join = plan.Make<PhysicalCrossProduct>(vector<LogicalType> {}, probe, scan, 100000);
++
++	vector<pair<reference<PhysicalOperator>, bool>> builds {{small_input, true},      {large_input, false},
++	                                                        {small_projection, true}, {large_projection, false},
++	                                                        {aggregate, false},       {aggregate_projection, false}};
++	vector<pair<bool, bool>> consumers {{false, false}, {true, false}, {false, true}};
++	for (auto &build : builds) {
++		for (auto &consumer : consumers) {
++			const auto nested = consumer.first;
++			const auto filtered = consumer.second;
++			CAPTURE(build.first.get().type);
++			CAPTURE(nested);
++			CAPTURE(filtered);
++			scan.table_filters.reset();
++			if (filtered) {
++				scan.table_filters = make_uniq<TableFilterSet>();
++				scan.table_filters->PushFilter(
++				    ProjectionIndex(0),
++				    ExpressionFilter::CreateComparisonFilter(ExpressionType::COMPARE_EQUAL, Value::BIGINT(0)));
++			}
++			LogicalComparisonJoin logical_join(JoinType::INNER);
++			auto &producer = plan.Make<PhysicalHashJoin>(logical_join, probe, build.first.get(),
++			                                             vector<JoinCondition> {}, JoinType::INNER, 100000)
++			                     .Cast<PhysicalHashJoin>();
++			producer.filter_pushdown = make_uniq<JoinFilterPushdownInfo>();
++			producer.filter_pushdown->build_side_has_filter = false;
++			JoinFilterPushdownFilter target;
++			target.dynamic_filters = scan.dynamic_filters;
++			target.estimated_scan_cardinality = 100000;
++			producer.filter_pushdown->probe_info.push_back(std::move(target));
++			auto consumer_pipeline = make_shared_ptr<Pipeline>(executor);
++			state.SetPipelineSource(*consumer_pipeline, scan);
++			auto producer_pipeline = make_shared_ptr<Pipeline>(executor);
++			state.SetPipelineSink(*producer_pipeline, producer, 1);
++			PipelineSchedule schedule;
++			schedule.stages.emplace_back(PipelineScheduleStageType::EXECUTE, consumer_pipeline);
++			schedule.stages.emplace_back(PipelineScheduleStageType::COMPLETE, producer_pipeline);
++			if (nested) {
++				state.SetPipeline
+```
+
+**File**: `test/sql/join/runtime_filter_nested_build_scheduling.test` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++# name: test/sql/join/runtime_filter_nested_build_scheduling.test
++# description: Small runtime filter producers finish before filtered nested build scans
++# group: [join]
++
++statement ok
++SET disabled_optimizers='statistics_propagation,join_order,build_side_probe_side,compressed_materialization';
++
++statement ok
++CREATE TABLE nested_probe AS SELECT i AS id FROM range(200000) t(i);
++
++statement ok
++CREATE TABLE nested_build AS
++SELECT i AS id,i%1000 AS k,CASE WHEN i%2=0 THEN 'USA' ELSE 'Sweden' END AS country
++FROM range(200000) t(i);
++
++statement ok
++CREATE TABLE dimension AS SELECT 0::BIGINT AS k,true AS selected;
++
++statement ok
++PREPARE nested_target AS
++SELECT count(*) FROM nested_probe p
++JOIN nested_build b ON p.id=b.id
++JOIN dimension d ON b.k=d.k
++WHERE b.country='USA' AND d.selected;
++
++foreach threads 1 4
++
++statement ok
++SET threads={threads};
++
++query I
++EXECUTE nested_target;
++----
++200
++
++# The dimension filter must be published before the nested build scan takes its snapshot.
++query II
++EXPLAIN (ANALYZE, FORMAT JSON)
++SELECT count(*) FROM nested_probe p
++JOIN nested_build b ON p.id=b.id
++JOIN dimension d ON b.k=d.k
++WHERE b.country='USA' AND d.selected;
++----
++analyzed_plan	<REGEX>:(?s).*"Table": "[^"]*[.]nested_build"[^}]*},\s*"intermediate_rows": 200,.*
++
++endloop
++
++statement ok
++UPDATE dimension SET k=1;
++
++query I
++EXECUTE nested_target;
++----
++0
++
++statement ok
++UPDATE dimension SET k=2;
++
++query I
++EXECUTE nested_target;
++----
++200
++
++statement ok
++DELETE FROM dimension;
++
++query I
++EXECUTE nested_target;
++----
++0
+```
+
+---
+
+### Incident Patch 2: `27c6fa82` (2026-11-13)
+**Commit Message**: Support MAP generic settings and migrate profiling_renderer_settings (#28787)
+
+Follow-up to #28700. This adds `MAP` support to generic settings and
+uses it to migrate `profiling_renderer_settings`, which was one of the
+remaining custom-implementation settings that stored its state in
+`ClientConfig`.
+
+### Generic settings: `MAP(K, V)`
+
+- `Settings::Get` turns a `MAP(K, V)` setting into an `unordered_map<K,
+V>`. Keys and values are converted with the existing `FromValue`
+overloads, so nested types work the same way they do for lists.
+- `ToSettingValue` gets an `unordered_map` overload that builds the
+`Value::MAP` for the typed default.
+- The only map default supported is `{}`. Any other default is an
+`InternalException` at startup.
+
+### `profiling_renderer_settings`
+
+- It is now a generic `LOCAL` setting of type `MAP(VARCHAR, VARCHAR)`
+with default `{}` and an `OnSet` callback. `RESET` goes through the same
+path.
+- `OnSet` keeps the existing validation. It lower-cases the keys,
+rejects NULL values, and eagerly configures the active renderer so bad
+values fail at `SET` time. It then stores the values as VARCHAR, sorted
+by key, so `current_setting` / `duckdb_settings()` output is
+deter
+
+**File**: `src/common/settings.json` (modified, +4/-1)
+```diff
+@@ -1542,7 +1542,10 @@
+         "description": "A map of settings passed to the renderer of the profiler output, e.g. {'max_extra_lines': 100}. Settings not recognized by the active renderer are ignored.",
+         "type": "MAP(VARCHAR, VARCHAR)",
+         "scope": "local",
+-        "custom_implementation": true
++        "default_value": "{}",
++        "on_callbacks": [
++            "set"
++        ]
+     },
+     {
+         "name": "progress_bar_time",
+```
+
+**File**: `src/common/tree_renderer.cpp` (modified, +30/-1)
+```diff
+@@ -11,6 +11,7 @@
+ #include "duckdb/common/string_util.hpp"
+ #include "duckdb/main/query_profiler.hpp"
+ #include "duckdb/main/client_config.hpp"
++#include "duckdb/main/settings.hpp"
+ #include "duckdb/main/profiler_extension.hpp"
+ 
+ namespace duckdb {
+@@ -89,6 +90,34 @@ unique_ptr<TreeRenderer> TreeRenderer::CreateRenderer(const ProfilerPrintFormat
+ 	return CreateRenderer(format.ToString());
+ }
+ 
++unordered_map<string, Value> TreeRenderer::GetRendererSettings(ClientContext &context) {
++	unordered_map<string, Value> result;
++	for (auto &entry : Settings::Get<ProfilingRendererSettingsSetting>(context)) {
++		result.emplace(entry.first, Value(entry.second));
 +	}
 +	return result;
 +}
 +
-+void __wrap__ZdlPv(void *pointer) {
-+	if (track_new && pointer) {
-+		new_balance--;
-+	}
-+	__real__ZdlPv(pointer);
++void TreeRenderer::SetRendererSettings(ClientContext &context, const unordered_map<string, Value> &settings) {
++	Settings::Set<ProfilingRendererSettingsSetting>(context, SetScope::SESSION, RendererSettingsToValue(settings));
 +}
 +
-+void __wrap__ZdlPvm(void *pointer, size_t size) {
-+	if (track_new && pointer) {
-+		new_balance--;
++Value TreeRenderer::RendererSettingsToValue(const unordered_map<string, Value> &settings) {
++	// sort the settings by name so that the rendered value is deterministic
++	vector<string> setting_names;
++	for (auto &entry : settings) {
++		setting_names.push_back(entry.first);
 +	}
-+	__real__ZdlPvm(pointer, size);
++	std::sort(setting_names.begin(), setting_names.end());
++	vector<Value> keys;
++	vector<Value> values;
++	for (auto &name : setting_names) {
++		keys.emplace_back(name);
++		values.push_back(settings.at(name).DefaultCastAs(LogicalType::VARCHAR));
++	}
++	return Value::MAP(LogicalType::VARCHAR, LogicalType::VARCHAR, std::move(keys), std::move(values));
 +}
 +
-+void *__wrap_mmap(void *address, size_t length, int protection, int flags, int fd, off_t offset) {
-+	if (reject_mapping) {
-+		errno = ENOMEM;
-+		return MAP_FAILED;
-+	}
-+	return __real_mmap(address, length, protection, flags, fd, offset);
-+}
-+}
-+
-+namespace duckdb {
-+class BlockAllocatorTestHelper {
-+public:
-+	static bool IsInPool(const BlockAllocator &allocator, data_ptr_t pointer) {
-+		return allocator.IsInPool(pointer);
-+	}
-+	static bool InitializePool(const BlockAllocator &allocator) {
-+		return allocator.InitializePool();
-+	}
-+};
-+} // namespace duckdb
-+
-+static void Check(bool condition, const char *message) {
-+	if (!condition) {
-+		std::fprintf(stderr, "BlockAllocator fault injection: %s\n", message);
-+		std::abort();
-+	}
-+}
-+
-+template <class FUNC>
-+static void OnFreeingThread(FUNC function) {
-+#ifndef DUCKDB_NO_THREADS
-+	std::thread worker(function);
-+	worker.join();
-+#else
-+	function();
-+#endif
-+}
-+
-+static void CheckAbandonedInitialization() {
-+	using namespace duckdb;
-+	constexpr idx_t BLOCK_SIZE = 65536;
-+	idx_t failure_points = 0;
-+	idx_t failed_reservations = 0;
-+	for (idx_t failure = 0; failure <= failure_points; failure++) {
-+		Allocator fallback;
-+		BlockAllocator allocator(fallback, BLOCK_SIZE, 257 * BLOCK_SIZE);
-+		new_balance = 0;
-+		new_calls = 0;
-+		track_new = true;
-+		reject_mapping = failure == 0;
-+		fail_new_at = failure;
-+		const auto previous_failures = failures;
-+		const auto initialized = BlockAllocatorTestHelper::InitializePool(allocator);
-+		track_new = false;
-+		reject_mapping = false;
-+		fail_new_at = 0;
-+		if (failure == 0) {
-+			Check(!initialized, "failed mapping must leave the pool unavailable");
-+			failure_points = new_calls;
-+		} else if (!initialized && failures != previous_failures) {
-+			failed_reservations++;
-+		}
-+		if (!initialized) {
-+			Check(new_balance == 0, "abandoned initialization retains queue storage");
-+		}
-+		auto pointer = allocator.AllocateData(BLOCK_SIZE);
-+		Check(BlockAllocatorTestHelper::IsInPool(allocator, pointer) == initialized, "allocation follows pool state");
-+		allocator.FreeData(pointer, BLOCK_SIZE);
-+	}
-+	Check(failed_reservations > 0, "reservation fault injection must activate");
-+}
-+
-+static void CheckPoolOwnership() {
-+	using namespace duckdb;
-+	constexpr idx_t BLOCK_SIZE = 65536;
-+	constexpr idx_t BLOCK_COUNT = 2049;
-+	for (idx_t mode = 0; mode < 4; mode++) {
-+		Allocator fallback;
-+		BlockAllocator allocator(fallback, BLOCK_SIZE, BLOCK_COUNT * BLOCK_SIZE);
-+		std::vector<data_ptr_t> original;
-+		reject_malloc = mode == 0;
-+		for (idx_t i = 0; i < BLOCK_COUNT; i++) {
-+			auto pointer = allocator.AllocateData(BLOCK_SIZE);
-+			Check(BlockAllocatorTestHelper::IsInPool(allocator, pointer), "initial pool capacity");
-+			pointer[0] = 42;
-+			original.push_back(pointer);
-+		}
-+		reject_malloc = false;
-+		size_t return_failures = 0;
-+		auto return_blocks = [&] {
-+			const auto previous_failures = failures;
-+			reject_malloc = true;
-+			reject_new = true;
-+			for (auto pointer : original) {
-+				allocator.FreeData(pointer, BLOCK_SIZE);
-+			}
-+			if (mode == 2) {
-+				allocator.ThreadExit();
-+			}
-+			reject_malloc = false;
-+			reject_new = false;
-+			return_failures = failures - previous_
+ unique_ptr<TreeRenderer> TreeRenderer::CreateRenderer(ClientContext &context, const string &name) {
+ 	// registered renderers take precedence over the built-in formats
+ 	auto extension = ProfilerExtension::Find(context, name);
+@@ -97,7 +126,7 @@ unique_ptr<TreeRenderer> TreeRenderer::CreateRenderer(ClientContext &context, co
+ 	}
+ 	auto renderer = CreateRenderer(name);
+ 	if (renderer) {
+-		renderer->Configure(ClientConfig::GetConfig(context).profiling_renderer_settings);
++		renderer->Configure(GetRendererSettings(context));
+ 	}
+ 	return renderer;
+ }
 ```
 
-**File**: `test/common/test_concurrentqueue.cpp` (modified, +122/-0)
+**File**: `src/include/duckdb/common/tree_renderer.hpp` (modified, +7/-0)
 ```diff
-@@ -2,6 +2,7 @@
+@@ -67,6 +67,13 @@ class TreeRenderer {
+ 	virtual void Configure(const unordered_map<string, Value> &settings) {
+ 	}
  
- #ifndef DUCKDB_NO_THREADS
- #include "blockingconcurrentqueue.h"
-+#include "duckdb/storage/sharded_allocator_queue.hpp"
- #include <thread>
- #include <vector>
- 
-@@ -90,8 +91,129 @@ struct FailingQueueTraits : SmallQueueTraits<std::size_t> {
- uint32_t FailingQueueTraits::allocations_until_failure = 0;
- uint32_t FailingQueueTraits::allocation_count = 0;
- 
-+struct AllocatorOverflowQueueTraits : SmallQueueTraits<std::size_t> {
-+	static std::atomic<bool> reject_allocations;
-+	static std::atomic<uint32_t> rejected_allocations;
++	//! The "profiling_renderer_settings" of the client, as passed to Configure
++	static unordered_map<string, Value> GetRendererSettings(ClientContext &context);
++	//! Overwrites the "profiling_renderer_settings" of the client without validating them
++	static void SetRendererSettings(ClientContext &context, const unordered_map<string, Value> &settings);
++	//! Converts renderer settings to the MAP(VARCHAR, VARCHAR) value of the setting, sorted by name
++	static Value RendererSettingsToValue(const unordered_map<string, Value> &settings);
 +
-+	static void *malloc(size_t bytes) {
-+		if (reject_allocations.load()) {
-+			rejected_allocations.fetch_add(1);
-+			return nullptr;
-+		}
-+		return std::malloc(bytes);
-+	}
-+};
-+
-+std::atomic<bool> AllocatorOverflowQueueTraits::reject_allocations {false};
-+std::atomic<uint32_t> AllocatorOverflowQueueTraits::rejected_allocations {0};
-+
-+class AllocatorOverflowQueue : public duckdb_moodycamel::ConcurrentQueue<uint32_t, AllocatorOverflowQueueTraits> {
-+public:
-+	AllocatorOverflowQueue() : ConcurrentQueue(0) {
-+	}
-+};
-+
-+struct RejectAllocatorQueueAllocations {
-+	RejectAllocatorQueueAllocations() {
-+		AllocatorOverflowQueueTraits::reject_allocations = true;
-+	}
-+	~RejectAllocatorQueueAllocations() {
-+		AllocatorOverflowQueueTraits::reject_allocations = false;
-+	}
-+};
-+
- } // namespace
- 
-+TEST_CASE("Allocator queue preserves fixed-pool returns when metadata allocation fails",
-+          "[concurrentqueue][allocator_locality]") {
-+	const bool track_count = GENERATE(false, true);
-+	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> queues(2, track_count);
-+	auto &first = queues.Get(0);
-+	auto &second = queues.Get(1);
-+	first.ReserveOverflow(4);
-+	second.ReserveOverflow(1);
-+	uint32_t input[] = {1, 2, 3, 4};
-+	const auto rejected = AllocatorOverflowQueueTraits::rejected_allocations.load();
-+	{
-+		RejectAllocatorQueueAllocations failures;
-+		REQUIRE(first.EnqueueBulk(input, 4));
-+		REQUIRE(second.Enqueue(5));
-+		CHECK(queues.SizeApprox() == 5);
-+		REQUIRE(AllocatorOverflowQueueTraits::rejected_allocations.load() > rejected);
-+	}
-+	// Both the recovered queue and overflow storage own live entries.
-+	REQUIRE(first.Enqueue(6));
-+	CHECK(queues.SizeApprox() == 6);
-+	bool seen[7] = {};
-+	uint32_t output[4];
-+	duckdb::idx_t total = 0;
-+	for (duckdb::idx_t shard = 0; shard < queues.Count(); shard++) {
-+		duckdb::idx_t obtained;
-+		while ((obtained = queues.Get(shard).TryDequeueBulk(output, 4)) != 0) {
-+			for (duckdb::idx_t i = 0; i < obtained; i++) {
-+				REQUIRE(output[i] >= 1);
-+				REQUIRE(output[i] <= 6);
-+				CHECK_FALSE(seen[output[i]]);
-+				seen[output[i]] = true;
-+			}
-+			total += obtained;
-+		}
-+	}
-+	CHECK(total == 6);
-+	CHECK(queues.SizeApprox() == 0);
-+	// A cache without a fixed-pool reserve remains fallible.
-+	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> unreserved(1, track_count);
-+	RejectAllocatorQueueAllocations failures;
-+	CHECK_FALSE(unreserved.Get(0).Enqueue(1));
-+	CHECK(unreserved.SizeApprox() == 0);
-+}
-+
-+TEST_CASE("Allocator queue overflow supports concurrent producers and consumers",
-+          "[concurrentqueue][allocator_locality]") {
-+	constexpr uint32_t COUNT = 128;
-+	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> queues(1, true);
-+	auto &queue = queues.Get(0);
-+	queue.ReserveOverflow(COUNT);
-+	std::atomic<uint32_t> seen[COUNT] {};
-+	std::atomic<uint32_t> remaining {4};
-+	std::atomic<uint32_t> returned {0};
-+	std::atomic<bool> success {true};
-+	std::vector<std::thread> threads;
-+	RejectAllocatorQueueAllocations failures;
-+	for (uint32_t worker = 0; worker < 4; worker++) {
-+		threads.emplace_back([&, worker] {
-+			for (uint32_t value = worker; value < COUNT; value += 4) {
-+				if (!queue.Enqueue(value)) {
-+					success = false;
-+				}
-+				returned.fetch_add(1);
-+			}
-+			remaining.fetch_sub(1);
-+		});
-+		threads.emplace_back([&] {
-+			uint32_t value;
-+			do {
-+				if (queue.TryDequeue(value)) {
-+					if (value >= COUNT || seen[value].fetch_add(1) != 0) {
-+						success = false;
-+					}
-+				} else {
-+					std::this_thread::yield();
-+				}
-+			} while (remaining.load() != 0 || queue.SizeApprox() != 0);
-+		});
-+	}
-+	for (auto &thread : threads) {
-+		thread.join();
-+	}
-+	CHECK(success.load());
-+	CHECK(returned.load() == COUNT);
-+	for (auto &entry : seen) {
-+		CHECK(entry.load() == 1);
-+	}
-+	CHECK(queues.SizeApprox() == 0);
-+}
-+
- TEST_CASE("Concurrent queue padding preserves custom allocation and producer lifetime", "[concurrentqueue]") {
- 	CheckQueueTraits<std::size_t>();
- 	CheckQueueTraits<uint8_t>();
+ 	virtual bool UsesRawKeyNames() {
+ 		return false;
+ 	}
 ```
 
-**File**: `third_party/concurrentqueue/README.duckdb` (modified, +1/-0)
+**File**: `src/include/duckdb/main/client_config.hpp` (modified, +0/-3)
 ```diff
-@@ -8,3 +8,4 @@ DuckDB customizations:
- * Use std::chrono for the non-monotonic semaphore clock fallback.
- * Keep implicit-producer thread-exit notification disabled for TLS destructor enqueueing.
- * Separate producer/consumer counters and semaphore state with byte padding.
-+* Retry failed initial implicit-producer block-index allocation on allocating enqueue.
+@@ -44,9 +44,6 @@ struct ClientConfig {
+ 	//! The format to print query profiling information in (default: query_tree), if enabled.
+ 	//! This is the profiler format name passed to QueryProfiler::CreateProfiler.
+ 	string profiler_print_format = "query_tree";
+-	//! Settings that are passed to the renderer of the profiler output (e.g. 'maximum_render_width' for the text
+-	//! renderer). Settings that are not recognized by the active renderer are ignored.
+-	unordered_map<string, Value> profiling_renderer_settings;
+ 
+ 	//! system-wide progress bar disable.
+ 	const char *system_progress_bar_disable_reason = nullptr;
+```
+
+**File**: `src/include/duckdb/main/settings.hpp` (modified, +41/-3)
+```diff
+@@ -21,6 +21,12 @@ struct IsSettingList : std::false_type {};
+ template <class T>
+ struct IsSettingList<vector<T>> : std::true_type {};
+ 
++template <class T>
++struct IsSettingMap : std::false_type {};
++
++template <class K, class V>
++struct IsSettingMap<unordered_map<K, V>> : std::true_type {};
++
+ struct Settings {
+ 	template <class OP, class SOURCE>
+ 	static typename OP::RETURN_TYPE Get(const SOURCE &source) {
+@@ -82,6 +88,17 @@ struct Settings {
+ 		return result;
+ 	}
+ 
++	template <class T>
++	static typename std::enable_if<IsSettingMap<T>::value, T>::type FromValue(const Value &value) {
++		T result;
++		for (auto &entry : MapValue::GetChildren(value)) {
++			auto &key_value = StructValue::GetChildren(entry);
++			result.emplace(FromValue<typename T::key_type>(key_value[0]),
++			               FromValue<typename T::mapped_type>(key_value[1]));
++		}
++		return result;
++	}
++
+ 	//! Parses the default value of a setting
+ 	template <class T>
+ 	static typename std::enable_if<std::is_enum<T>::value, T>::type FromDefault(const char *default_value) {
+@@ -115,6 +132,15 @@ struct Settings {
+ 		}
+ 		return result;
+ 	}
++	template <class T>
++	static typename std::enable_if<IsSettingMap<T>::value, T>::type FromDefault(const char *default_value) {
++		// only the empty map is supported as a default
++		if (!StringUtil::Equals(default_value, "{}")) {
++			throw InternalException("Default value \"%s\" of a map setting must be {}", default_value);
++		}
++		return T();
++	}
++
+ 	//! Splits a list literal (e.g. "['a', 'b']") into its entries
+ 	static vector<string> SplitListDefault(const char *default_value);
+ 
+@@ -153,6 +179,17 @@ struct Settings {
+ 		}
+ 		return Value::LIST(SettingLogicalType(static_cast<const T *>(nullptr)), std::move(children));
+ 	}
++	template <class K, class V>
++	static Value ToSettingValue(const unordered_map<K, V> &values) {
++		vector<Value> keys;
++		vector<Value> map_values;
++		for (auto &entry : values) {
++			keys.push_back(ToSettingValue(entry.first));
++			map_values.push_back(ToSettingValue(entry.second));
++		}
++		return Value::MAP(SettingLogicalType(static_cast<const K *>(nullptr)),
++		                  SettingLogicalType(static_cast<const V *>(nullptr)), std::move(keys), std::move(map_values));
++	}
+ 
+ 	//! The logical type of a setting value, selected by the (unused) pointer type
+ 	static LogicalType SettingLogicalType(const string *) {
+@@ -2536,9 +2573,10 @@ struct ProfilingRendererSettingsSetting {
+ 	static constexpr const char *InputType = "MAP(VARCHAR, VARCHAR)";
+ 	static constexpr bool IsDebug = false;
+ 	static constexpr bool IsDeprecated = false;
+-	static void SetLocal(ClientContext &context, const Value &parameter);
+-	static void ResetLocal(ClientContext &context);
+-	static Value GetSetting(const ClientContext &context);
++	static constexpr const char *DefaultValue = "{}";
++	static constexpr SettingScopeTarget Scope = SettingScopeTarget::LOCAL_ONLY;
++	static constexpr idx_t SettingIndex = NEXT_SETTING_INDEX();
++	static void OnSet(SettingCallbackInfo &info, Value &input);
+ };
+ 
+ struct ProgressBarTimeSetting {
+```
+
+**File**: `src/main/config.cpp` (modified, +1/-1)
+```diff
+@@ -250,7 +250,7 @@ static const ConfigurationOption internal_options[] = {
+     DUCKDB_SETTING_CALLBACK(ProfilingCoverageSetting),
+     DUCKDB_LOCAL(ProfilingModeSetting),
+     DUCKDB_SETTING_CALLBACK(ProfilingOutputSetting),
+-    DUCKDB_LOCAL(ProfilingRendererSettingsSetting),
++    DUCKDB_SETTING_CALLBACK(ProfilingRendererSettingsSetting),
+     DUCKDB_SETTING_CALLBACK(ProgressBarTimeSetting),
+     DUCKDB_SETTING_CALLBACK(ReadAheadDepthSetting),
+     DUCKDB_SETTING(RedactHttpLogsSetting),
+```
+
+**File**: `src/main/query_profiler.cpp` (modified, +1/-1)
+```diff
+@@ -1163,7 +1163,7 @@ void QueryProfiler::Initialize(const PhysicalOperator &root_op) {
+ 
+ void QueryProfiler::Render(const ProfilingNode &node, BaseTreeRenderer &ss) const {
+ 	TextTreeRenderer renderer;
+-	renderer.Configure(ClientConfig::GetConfig(context).profiling_renderer_settings);
++	renderer.Configure(TreeRenderer::GetRendererSettings(context));
+ 	renderer.Render(node, ss);
+ }
+ 
+```
+
+**File**: `src/main/settings/custom_settings.cpp` (modified, +8/-28)
+```diff
+@@ -1462,8 +1462,7 @@ void ProfilingOutputSetting::OnSet(SettingCallbackInfo &info, Value &input) {
+ //===----------------------------------------------------------------------===//
+ // Profiler Renderer Settings
+ //===----------------------------------------------------------------------===//
+-void ProfilingRendererSettingsSetting::SetLocal(ClientContext &context, const Value &input) {
+-	auto &config = ClientConfig::GetConfig(context);
++void ProfilingRendererSettingsSetting::OnSet(SettingCallbackInfo &info, Value &input) {
+ 	if (input.IsNull() || input.type().id() != LogicalTypeId::MAP) {
+ 		throw InvalidInputException("Invalid profiling_renderer_settings type \"%s\", expected a map of settings "
+ 		                            "(e.g. {'maximum_render_width': 300})",
+@@ -1476,35 +1475,16 @@ void ProfilingRendererSettingsSetting::SetLocal(ClientContext &context, const Va
+ 			throw InvalidInputException("profiling_renderer_settings: the value of \"%s\" cannot be NULL",
+ 			                            key_value[0].ToString());
+ 		}
+-		new_settings[StringUtil::Lower(key_value[0].ToString())] = key_value[1];
++		new_settings[StringUtil::Lower(key_value[0].ToString())] = key_value[1].DefaultCastAs(LogicalType::VARCHAR);
+ 	}
+ 	// eagerly configure the renderer of the current profiler format to validate the setting values
+-	auto renderer = QueryProfiler::Get(context).GetRenderer();
+-	if (renderer) {
+-		renderer->Configure(new_settings);
+-	}
+-	config.profiling_renderer_settings = std::move(new_settings);
+-}
+-
+-void ProfilingRendererSettingsSetting::ResetLocal(ClientContext &context) {
+-	ClientConfig::GetConfig(context).profiling_renderer_settings.clear();
+-}
+-
+-Value ProfilingRendererSettingsSetting::GetSetting(const ClientContext &context) {
+-	auto &config = ClientConfig::GetConfig(context);
+-	// sort the settings by name so that the rendered value is deterministic
+-	vector<string> setting_names;
+-	for (auto &entry : config.profiling_renderer_settings) {
+-		setting_names.push_back(entry.first);
+-	}
+-	std::sort(setting_names.begin(), setting_names.end());
+-	vector<Value> keys;
+-	vector<Value> values;
+-	for (auto &name : setting_names) {
+-		keys.emplace_back(name);
+-		values.push_back(config.profiling_renderer_settings.at(name).DefaultCastAs(LogicalType::VARCHAR));
++	if (info.context) {
++		auto renderer = QueryProfiler::Get(*info.context).GetRenderer();
++		if (renderer) {
++			renderer->Configure(new_settings);
++		}
+ 	}
+-	return Value::MAP(LogicalType::VARCHAR, LogicalType::VARCHAR, std::move(keys), std::move(values));
++	input = TreeRenderer::RendererSettingsToValue(new_settings);
+ }
+ 
+ //===----------------------------------------------------------------------===//
 ```
 
 ---
 
-### Incident Patch 2: `146f57a3` (2026-11-11)
-**Commit Message**: Bound threads in the memory-limited window regression test
+### Incident Patch 3: `399d7a83` (2026-11-13)
+**Commit Message**: Improve ALP size estimate and relax block size requirement (#28695)
 
-Cap this test at eight threads so its 300 MB limit is reproducible on
-large hosts, while preserving smaller and no-thread defaults. Keep the
-query, input size, memory limit and expected result unchanged.
+In the encoding analyze phase ALP calculates a multiplier, it does so
+for scaling the estimated bytes of the sample set to the total value
+count. This multiplier however is truncated, so for example x2.9 would
+become x2, leading to inaccurate size estimates. In addition,
+segment-scoped metadata was over counted and vector-scoped metadata was
+omitted.
 
-**File**: `test/issues/general/test_21431.test` (modified, +3/-0)
+We've also relaxed the minimum block size from 256KiB to 32KiB when we
+don't support the uncompressed fallback, since we'll never write close
+to 32KiB for a single vector anyway (exact calculation is present in a
+comment above the constant).
+
+**File**: `src/include/duckdb/storage/compression/alp/alp_analyze.hpp` (modified, +43/-68)
 ```diff
-@@ -2,6 +2,9 @@
- # description: Regression test for OOM with TopN window elimination
- # group: [general]
+@@ -23,61 +23,32 @@ struct AlpAnalyzeState : public AnalyzeState {
+ public:
+ 	using EXACT_TYPE = typename FloatingToExact<T>::TYPE;
  
-+statement ok
-+SET threads = least(current_setting('threads'), 8)
+-	explicit AlpAnalyzeState(BlockManager &block_manager) : AnalyzeState(block_manager), compression_data() {
++	AlpAnalyzeState(BlockManager &block_manager, bool has_fallback)
++	    : AnalyzeState(block_manager), has_fallback(has_fallback) {
+ 	}
+ 
+-	idx_t total_bytes_used = 0;
+-	idx_t current_bytes_used_in_segment = 0;
++	//! Flag indicating support for uncompressed storage in case of many exceptions.
++	const bool has_fallback;
+ 	idx_t vectors_sampled_count = 0;
+ 	idx_t total_values_count = 0;
+ 	idx_t vectors_count = 0;
+ 	vector<vector<T>> rowgroup_sample;
+ 	vector<vector<T>> complete_vectors_sampled;
+ 	alp::AlpCompressionData<T, true> compression_data;
+-	StorageVersion storage_version = StorageVersion::INVALID;
+-
+-public:
+-	// Returns the required space to hyphotetically store the compressed segment
+-	void FlushSegment() {
+-		// We add the size of the segment header (the pointer to the metadata)
+-		total_bytes_used += current_bytes_used_in_segment + AlpConstants::METADATA_POINTER_SIZE;
+-		current_bytes_used_in_segment = 0;
+-	}
+-
+-	void FlushVector(idx_t vector_size) {
+-		current_bytes_used_in_segment += vector_size;
+-		compression_data.Reset();
+-	}
+-
+-	// Check if we have enough space in the segment to hyphotetically store the compressed vector
+-	bool HasEnoughSpace(idx_t vector_size) {
+-		idx_t bytes_to_be_used = AlignValue(current_bytes_used_in_segment + vector_size);
+-		// We have enough space if the already used space + the required space for a new vector
+-		// does not exceed the space of the block - the segment header (the pointer to the metadata)
+-		return bytes_to_be_used <= (info.GetBlockSize() - AlpConstants::METADATA_POINTER_SIZE);
+-	}
+-
+-	idx_t TotalUsedBytes() const {
+-		return AlignValue(total_bytes_used);
+-	}
+ };
+ 
+ template <class T>
+ unique_ptr<AnalyzeState> AlpInitAnalyze(ColumnData &col_data, PhysicalType type) {
+-	auto &storage_manager = col_data.GetStorageManager();
+ 	auto &block_manager = col_data.GetBlockManager();
+-	const auto storage_version = storage_manager.GetStorageVersion();
++	const auto storage_version = col_data.GetStorageManager().GetStorageVersion();
++	const bool has_fallback = !StorageManager::IsPriorToVersion(StorageVersion::V1_5_0, storage_version);
+ 
+-	if (block_manager.GetBlockSize() + block_manager.GetBlockHeaderSize() < DEFAULT_BLOCK_ALLOC_SIZE) {
+-		if (StorageManager::IsPriorToVersion(StorageVersion::V1_5_0, storage_version)) {
+-			// Before v1.5.0, blocks cannot use uncompressed-vector fallback
+-			return nullptr;
+-		}
++	if (!has_fallback &&
++	    block_manager.GetBlockSize() + block_manager.GetBlockHeaderSize() < AlpConstants::MIN_BLOCK_SIZE) {
++		return nullptr;
+ 	}
+ 
+-	auto state = make_uniq<AlpAnalyzeState<T>>(block_manager);
+-	state->storage_version = storage_version;
+-	return unique_ptr<AnalyzeState>(std::move(state));
++	return make_uniq<AlpAnalyzeState<T>>(block_manager, has_fallback);
+ }
+ 
+ /*
+@@ -152,42 +123,46 @@ bool AlpAnalyze(AnalyzeState &state, const Vector &input) {
+ template <class T>
+ idx_t AlpFinalAnalyze(AnalyzeState &state) {
+ 	auto &analyze_state = state.Cast<AlpAnalyzeState<T>>();
+-
+-	// Finding the Top K combinations of Exponent and Factor
+-	alp::AlpCompression<T, true>::FindTopKCombinations(analyze_state.rowgroup_sample, analyze_state.compression_data);
+-
+-	// Encode the entire sampled vectors to estimate a compression size
+-	idx_t compressed_values = 0;
+-	for (auto &vector_to_compress : analyze_state.complete_vectors_sampled) {
+-		alp::AlpCompression<T, true>::Compress(vector_to_compress.data(), vector_to_compress.size(),
+-		                                       analyze_state.compression_data);
+-		const idx_t uncompressed_size = AlpConstants::EXPONENT_SIZE + sizeof(T) * vector_to_compress.size();
+-		const idx_t compressed_size = analyze_state.compression_data.RequiredSpace();
+-		const bool should_compress =
+-		    compressed_size < uncompressed_size ||
+-		    StorageManager::IsPriorToVersion(StorageVersion::V1_5_0, analyze_state.storage_version);
+-
+-		const idx_t vector_size = should_compress ? compressed_size : uncompressed_size;
+-
+-		if (!analyze_state.HasEnoughSpace(vector_size)) {
+-			analyze_state.FlushSegment();
++	auto &compression_data = analyze_state.compression_data;
 +
- statement ok
- SET memory_limit = '300MB'
- 
++	// Find the top combinations of exponent and factor.
++	alp::AlpCompression<T, true>::FindTopKCombinations(analyze_state.rowgroup_sample, compression_data);
++
++	// Encode the sampled vectors to estimate their storage size.
++	double sampled_values = 0;
++	double sampled_bytes = 0;
++	for (auto &sample : analyze_state.complete_vectors_sampled) {
++		alp::AlpCompression<T, true>::Compress(sample.data(), sample.size(), compression_data);
++		auto vector_size = compression_data.RequiredSpace();
++		if (analyze_state.has_fallback) {
++			const idx_t uncompressed_size = AlpConstants::EXPONENT_SIZE + sizeof(T) * sample.size();
++			vector_size = Mi
 ```
 
----
-
-### Incident Patch 3: `22e1eb15` (2026-11-11)
-**Commit Message**: Bound parallelism in the memory-limited window paging test
-
-Both the pre-change allocator and this branch can exhaust the 1GB limit at 192 threads. Cap this test at eight threads while retaining lower configured counts, the 20M-row workload, forced external execution, memory limit, and expected result.
-
-**File**: `test/sql/window/window_partition_paging.test_slow` (modified, +3/-0)
+**File**: `src/include/duckdb/storage/compression/alp/alp_compress.hpp` (modified, +0/-3)
 ```diff
-@@ -4,6 +4,9 @@
+@@ -9,12 +9,9 @@
+ #pragma once
  
- require 64bit
+ #include "duckdb/common/helper.hpp"
+-#include "duckdb/common/operator/subtract.hpp"
+-#include "duckdb/common/types/null_value.hpp"
+ #include "duckdb/function/compression_function.hpp"
+ #include "duckdb/storage/compression/standard_compression_state.hpp"
+ #include "duckdb/main/config.hpp"
+-#include "duckdb/storage/buffer_manager.hpp"
+ #include "duckdb/storage/compression/alp/algorithm/alp.hpp"
+ #include "duckdb/storage/compression/alp/alp_analyze.hpp"
+ #include "duckdb/storage/compression/patas/patas.hpp"
+```
+
+**File**: `src/include/duckdb/storage/compression/alp/alp_constants.hpp` (modified, +9/-0)
+```diff
+@@ -25,6 +25,15 @@ class AlpConstants {
+ 	using BIT_WIDTH_TYPE = uint8_t;
+ 	using METADATA_POINTER_TYPE = uint32_t;
  
-+statement ok
-+SET threads = least(current_setting('threads'), 8)
++	//! Conservative upper bounds on encoded vector size, combining maximum bitpacked data and exception sizes.
++	//! Formula: vector_size * max_bit_width / 8 + vector_size * (original_type_size + position_size) +
++	//! encoding_metadata
++	//!
++	//! DOUBLE: 1024 * 64 / 8 + 1024 * (8 + 2) + 13 = 18445 bytes < 32 KiB
++	//! FLOAT:  1024 * 64 / 8 + 1024 * (4 + 2) + 13 = 14349 bytes < 32 KiB
++	//! 32 KiB also accommodates block/segment headers, vector pointers and alignment.
++	static constexpr idx_t MIN_BLOCK_SIZE = static_cast<const idx_t>(1024 * 32);
 +
+ 	static constexpr uint32_t ALP_VECTOR_SIZE = 1024;
+ 	static constexpr uint32_t RG_SAMPLES = 8;
+ 	static constexpr uint16_t SAMPLES_PER_VECTOR = 32;
+```
+
+**File**: `test/configs/force_storage_restart.json` (modified, +2/-1)
+```diff
+@@ -107,7 +107,8 @@
+     {
+       "reason": "disabled_compression_methods doesn't survive database restarts",
+       "paths": [
+-        "test/sql/settings/setting_validation_and_reset.test"
++        "test/sql/settings/setting_validation_and_reset.test",
++        "test/sql/storage/compression/alp/alp_sampling_ratio.test"
+       ]
+     },
+     {
+```
+
+**File**: `test/sql/storage/compression/alp/alp_legacy_block_size.test` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++# name: test/sql/storage/compression/alp/alp_legacy_block_size.test
++# description: Legacy ALP supports 32 KiB blocks without uncompressed-vector fallback
++# group: [alp]
++
++require exact_vector_size 2048
++
++statement ok
++SET initial_column_segment_size=262144
++
++statement ok
++SET force_compression='alp'
++
++# The sampled values have a wide integer range; most other values are exceptions.
++statement ok
++CREATE TEMP TABLE source AS
++SELECT x::FLOAT AS f, x AS d FROM (
++    SELECT CASE WHEN i % 64 = 0 THEN 1152921504606846976.0::DOUBLE
++                WHEN i % 64 = 32 THEN -1152921504606846976.0::DOUBLE
++                WHEN i % 64 = 1 THEN NULL
++                ELSE 'NaN'::DOUBLE END AS x
++    FROM range(12345) t(i)
++)
++
++query RR rowsort original_data
++SELECT * FROM source
++----
++
++statement ok
++ATTACH '{TEST_DIR}/alp_legacy_32k.db' AS legacy (STORAGE_VERSION 'v1.4.0', BLOCK_SIZE 32768)
++
++statement ok
++CREATE TABLE legacy.exceptions AS SELECT * FROM source
++
++statement ok
++CHECKPOINT legacy
++
++query TT rowsort
++SELECT DISTINCT segment_type, compression FROM pragma_storage_info('legacy.exceptions')
++WHERE segment_type IN ('FLOAT', 'DOUBLE') AND compression <> 'Constant'
++----
++DOUBLE	ALP
++FLOAT	ALP
++
++statement ok
++DETACH legacy
++
++statement ok
++ATTACH '{TEST_DIR}/alp_legacy_32k.db' AS legacy (READ_ONLY)
++
++query RR rowsort original_data
++SELECT * FROM legacy.exceptions
++----
+```
+
+**File**: `test/sql/storage/compression/alp/alp_sampling_ratio.test` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++# name: test/sql/storage/compression/alp/alp_sampling_ratio.test
++# description: ALP size extrapolation retains fractional sampling ratios
++# group: [alp]
++
++require exact_vector_size 2048
++
++load {TEST_DIR}/alp_sampling_ratio.db
++
++# Ensure the first analyzed vector contains at least 1024 values for both types.
++statement ok
++SET initial_column_segment_size=262144
++
++# Isolate ALP's estimate against uncompressed storage.
++statement ok
++SET disabled_compression_methods='chimp,patas,alprd,rle'
++
++# An exact sampling ratio and a fractional ratio with a partial vector.
++foreach count 3072 3000
++
++statement ok
++CREATE OR REPLACE TABLE incompressible AS
++SELECT (hash(i)::DOUBLE / 18446744073709551616.0)::FLOAT AS f,
++       hash(i)::DOUBLE / 18446744073709551616.0 AS d
++FROM range({count}) t(i)
++
++statement ok
++CHECKPOINT
++
++query TT rowsort
++SELECT DISTINCT segment_type, compression FROM pragma_storage_info('incompressible')
++WHERE segment_type IN ('FLOAT', 'DOUBLE') AND compression <> 'Constant'
++----
++DOUBLE	Uncompressed
++FLOAT	Uncompressed
++
++endloop
++
++# Compressible data must still select ALP with a fractional sampling ratio.
++statement ok
++CREATE TABLE compressible AS
++SELECT i::FLOAT AS f, i::DOUBLE AS d FROM range(3000) t(i)
++
++statement ok
++CHECKPOINT
++
++query TT rowsort
++SELECT segment_type, compression FROM pragma_storage_info('compressible')
++WHERE segment_type IN ('FLOAT', 'DOUBLE')
++----
++DOUBLE	ALP
++FLOAT	ALP
+```
+
+**File**: `test/sql/storage/compression/alp/alp_storage_version.test` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ CHECKPOINT alp_v1_4_0_default;
  statement ok
- CREATE or replace TABLE big_table AS
-     SELECT
+ CHECKPOINT alp_v1_5_0;
+ 
+-# Before storage version v1.5.0 should disable ALP with block sizes smaller than the default
++# Before storage version v1.5.0, ALP is disabled for 16 KiB blocks.
+ 
+ query I
+ SELECT compression FROM pragma_storage_info('alp_v1_4_0.t') WHERE segment_type = 'DOUBLE' ORDER BY compression LIMIT 1;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28731** (closed): Preserve aggregate domains for proven singleton groups (@kevintruong)
-- **PR #28724** (closed): Keep test_concurrentqueue.cpp out of the test_common unity build (fixes macOS reldebug) (@hawkfish)
-- **PR #28712** (closed): [v2.0-cyanoptera] Backport 54 merged labeled PRs (@smvv)
-- **PR #28708** (closed): Fix macOS unity build failure in concurrentqueue tests (@HendrikLambert)
-- **PR #28707** (2026-11-12): NUMA-aware `BlockAllocator` (@lnkuiper)
-- **PR #28698** (2026-11-12): Fix wrong results and "Conflicting or cyclic column binding replacement" when a lateral join reads a CTE (@Robinho-MR)
+- **PR #28801** (2026-11-13): Remove obsolete Member-label workflow (@smvv)
+- **PR #28800** (closed): Add an escape_mode option to the CSV reader: 'quote' stops the escape from escaping the delimiter and newlines (@pdet)
+- **PR #28787** (2026-11-13): Support MAP generic settings and migrate profiling_renderer_settings (@Robinho-MR)
+- **PR #28783** (2026-11-13): Keep the loaded-copy extension test path under Windows MAX_PATH (@h4nsmuller)
+- **PR #28781** (2026-11-13): Run one-chunk task slices on the consumer of a parallel streaming result (@h4nsmuller)
+- **PR #28768** (2026-11-13): Order small runtime filter builds before filtered and nested scans (@smvv)
 
 ---
 
@@ -2853,71 +2948,65 @@ Both the pre-change allocator and this branch can exhaust the 1GB limit at 192 t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Preserve fixed allocator blocks when queue allocation fails
+## X. Order small runtime filter builds before filtered and nested scans (#28768)
 
 **RULE**:
-When implementing operations in `src/include/duckdb/storage/sharded_allocator_queue.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/parallel/runtime_filter_schedule.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cccba45`: Preserve fixed allocator blocks when queue allocation fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c8008b4`: Order small runtime filter builds before filtered and nested scans (#28768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/include/duckdb/storage/sharded_allocator_queue.hpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/parallel/runtime_filter_schedule.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-//===----------------------------------------------------------------------===//
-//                         DuckDB
-//
-// duckdb/storage/sharded_allocator_queue.hpp
-//
-//
-//===----------------------------------------------------------------------===//
-
-#pragma once
-
-#include "duckdb/common/atomic.hpp"
-#include "duckdb/common/helper.hpp"
-#include "duckdb/common/mutex.hpp"
-#include "duckdb/common/vector.hpp"
-#include "duckdb/parallel/concurrentqueue.hpp"
-
-#include <new>
-#include <type_traits>
-
-namespace duckdb {
-
-template <class T, class QUEUE = duckdb_moodycamel::ConcurrentQueue<T>>
-class ShardedAllocatorQueue {
-	static_assert(std::is_trivially_copyable<T>::value, "Allocator queue entries must be trivially copyable");
-
-public:
-	struct alignas(64) Shard {
-		bool Enqueue(T value) {
-			return EnqueueInternal(
-			    1, [&] { return q.enqueue(value); }, [&] { return EnqueueOverflow(&value, 1); });
+static bool IsSmallBuild(const PhysicalOperator &op) {
+	if (op.estimated_cardinality > DEFAULT_STANDARD_VECTOR_SIZE || op.IsSink()) {
+		return false;
+	}
+	for (auto &child : op.children) {
+		if (!IsSmallBuild(child.get())) {
+			return false;
 		}
-		template <class ITERATOR>
-		bool EnqueueBulk(ITERATOR begin, idx_t size) {
-#ifdef DUCKDB_NO_THREADS
-			// The single-threaded queue can throw after publishing a prefix of a batch.
-			for (idx_t i = 0; i < size; i++) {
-				if (!Enqueue(begin[i])) {
-					return false;
+	}
+	return true;
+}
+
+	struct FilterSource {
+		idx_t stage_idx;
+		bool small_build_only;
+	};
+	reference_map_t<DynamicTableFilterSet, vector<FilterSource>> sources;
+		const auto small_build_only =
+		    join_build_stages[stage_idx] ||
+		    (scan.table_filters && (scan.table_filters->HasFilters() || scan.table_filters->HasMultiColumnFilters()));
+		sources[*scan.dynamic_filters].push_back({stage_idx, small_build_only});
+			sources[filters.get()].push_back({stage_idx, false});
+		const auto small_build = add_edges && IsSmallBuild(producer.children[1].get());
+			for (auto &filter_source : source->second) {
+				// A small aggregate or join result can still require expensive inputs.
+				if (filter_source.small_build_only && !small_build) {
+					continue;
 				}
-			}
-			return t
+				auto execution = filter_source.stage_idx;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	reference_map_t<DynamicTableFilterSet, vector<idx_t>> sources;
+		if (!join_build_stages[stage_idx] && (!scan.table_filters || (!scan.table_filters->HasFilters() &&
+		                                                              !scan.table_filters->HasMultiColumnFilters()))) {
+			sources[*scan.dynamic_filters].push_back(stage_idx);
+		}
+			sources[filters.get()].push_back(stage_idx);
+			for (auto execution : source->second) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cccba45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c8008b4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

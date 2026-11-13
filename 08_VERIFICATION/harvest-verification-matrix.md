@@ -9498,3 +9498,9 @@
 | `CYCLE-20261113-XJG0` | `2026-11-13T15:04:01.200Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`909b9c49...`) |
 | `CYCLE-20261113-6ABJ` | `2026-11-13T15:10:49.279Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`7b4bf424...`) |
 | `CYCLE-20261113-6LJX` | `2026-11-13T15:11:03.837Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9b59296e...`) |
+| `CYCLE-20261113-G1MJ` | `2026-11-13T15:18:24.571Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md` | Yes (`d7d7e794...`) |
+| `CYCLE-20261113-G7SH` | `2026-11-13T15:18:32.561Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f557062a...`) |
+| `CYCLE-20261113-G8X8` | `2026-11-13T15:18:34.028Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`94bef1b6...`) |
+| `CYCLE-20261113-GB44` | `2026-11-13T15:18:36.868Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`45ea91e4...`) |
+| `CYCLE-20261113-GE28` | `2026-11-13T15:18:40.688Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fe578b29...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T15:19:16.382Z` | `hf-comfy-org-wan-2.2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A827EB1D` [Domain D] | Yes (`c905e928...`) |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T15:11:07.088Z",
+  "updated_at": "2026-11-13T15:19:17.141Z",
   "stats": {
-    "total_discovered": 2564,
-    "approved_pending_harvest": 2393,
+    "total_discovered": 2570,
+    "approved_pending_harvest": 2399,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2383,
+      "COMMUNITY_AND_EXPERT": 2389,
       "OFFICIAL_DOCUMENTATION": 95,
       "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
@@ -55230,6 +55230,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
         "fileName": "dragonflydb-dragonfly-learnings.md"
+      }
+    },
+    "SRC-3ECE9363CF82": {
+      "id": "SRC-3ECE9363CF82",
+      "url": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "title": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:19:16.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
+        "fileName": "hf-comfy-org-wan-2.2-learnings.md"
+      }
+    },
+    "SRC-9910C84915E9": {
+      "id": "SRC-9910C84915E9",
+      "url": "https://github.com/electron/electron",
+      "title": "https://github.com/electron/electron",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:19:16.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-7DDEE2A6D217": {
+      "id": "SRC-7DDEE2A6D217",
+      "url": "https://chromium-review.googlesource.com/c/chromium/src/+/8773412",
+      "title": "https://chromium-review.googlesource.com/c/chromium/src/+/8773412",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:19:16.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-4D8B5B691C71": {
+      "id": "SRC-4D8B5B691C71",
+      "url": "https://claude.ai/code/session_01JbwhJtyZNvyTVVxjxUGvLA",
+      "title": "https://claude.ai/code/session_01JbwhJtyZNvyTVVxjxUGvLA",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:19:16.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-9559BA52D421": {
+      "id": "SRC-9559BA52D421",
+      "url": "https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...1fc58d04a4d4374f921bdac573c3811c240f9c26",
+      "title": "https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...1fc58d04a4d4374f921bdac573c3811c240f9c26",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:19:16.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-69C2F546A1DB": {
+      "id": "SRC-69C2F546A1DB",
+      "url": "https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts",
+      "title": "https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:19:17.141Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
+        "fileName": "encoredev-encore-learnings.md"
       }
     }
   }

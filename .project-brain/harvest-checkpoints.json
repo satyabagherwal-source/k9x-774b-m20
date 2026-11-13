@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T15:11:03.861Z",
+  "last_updated": "2026-11-13T15:18:40.709Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "7e10bc329b758fa0f0c00fa8900ae35a5e3f7caf758bd785099602e0f89a18fa",
-      "verified_at": "2026-11-13T03:10:52.467Z",
+      "content_hash": "45ea91e4e73ceae47284b3095a08cf21857db91bbdb590d944b1b31153319edf",
+      "verified_at": "2026-11-13T15:18:36.889Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:10:52.467Z"
+      "last_updated": "2026-11-13T15:18:36.889Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -7476,14 +7476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "4325fd9e34857af151d30061db21ec01c9d8c1ab82ed88d3f26c5d0545857a3f",
-      "verified_at": "2026-11-12T10:52:51.133Z",
+      "content_hash": "94bef1b67a807f849105d446a72cd91d4700fc23fe5aff4a66793e08787928d4",
+      "verified_at": "2026-11-13T15:18:34.054Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T10:52:51.133Z"
+      "last_updated": "2026-11-13T15:18:34.054Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "eb04bd8559a6eeec47705f555abf5eee736042d62115ab548c8e6e0926b1d17f",
-      "verified_at": "2026-11-12T08:53:04.409Z",
+      "content_hash": "fe578b2976f8ba1c3e34470d7cdbf3d9c75117c0629c1fa7e5a8950fb1ac8ceb",
+      "verified_at": "2026-11-13T15:18:40.709Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:53:04.409Z"
+      "last_updated": "2026-11-13T15:18:40.709Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -12711,14 +12711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-electron-electron",
-      "content_hash": "864a5937010296f22c9ca1d34349ed0a46c8583f211ac4112b9108aa0679c33f",
-      "verified_at": "2026-11-09T04:49:38.570Z",
+      "content_hash": "f557062aca9923d45328ba84b33a84467648eb87f629f770219736edfb7c9f02",
+      "verified_at": "2026-11-13T15:18:32.584Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:49:38.570Z"
+      "last_updated": "2026-11-13T15:18:32.584Z"
     },
     "mistralai/Timestral-209M": {
       "repository": "mistralai/Timestral-209M",
@@ -17496,14 +17496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
-      "content_hash": "6451b5b394218e0e19f59cc450de910549c08a29ae184b9ae42182d65927a5d4",
-      "verified_at": "2026-11-08T15:12:29.482Z",
+      "content_hash": "d7d7e794f0f7cc2831e56d2800bf81bb11a18a3d8a473109fdd982c0532a012a",
+      "verified_at": "2026-11-13T15:18:24.582Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:12:29.482Z"
+      "last_updated": "2026-11-13T15:18:24.582Z"
     },
     "vercel-labs/agent-desktop": {
       "repository": "vercel-labs/agent-desktop",

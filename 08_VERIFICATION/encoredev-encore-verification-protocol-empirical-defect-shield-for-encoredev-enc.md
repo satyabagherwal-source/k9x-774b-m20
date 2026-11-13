@@ -4,45 +4,31 @@
 {
   "source_repository": "encoredev/encore",
   "source_url": "https://github.com/encoredev/encore",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "8a7465a4",
+  "license": "MPL-2.0",
+  "timestamp": "2026-11-13T15:18:34.214Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-encoredev-encore",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [encoredev/encore](https://github.com/encoredev/encore) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [encoredev/encore](https://github.com/encoredev/encore) (Revision: `8a7465a4`).  
+> **License**: MPL-2.0 | **Timestamp**: `2026-11-13T15:18:34.214Z`  
+> **Learning ID**: `learn-github-encoredev-encore`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `encoredev/encore` (Commit: `historical`)
+- **Target Repository**: `encoredev/encore` (Commit: `8a7465a4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
-> **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
-> **Source Version**: `72d4626f`  
-> **License**: MPL-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T10:52:37.032Z  
-> **Learning ID**: `learn-github-encoredev-encore`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): encoredev/encore
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T10:52:37.027Z  
+> **Harvest Timestamp**: 2026-11-13T15:18:33.556Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12706 stars
+- **Stars / Engagement**: 12712 stars
 
 ---
 
@@ -1793,516 +1779,600 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25591353` (2026-11-10)
-**Commit Message**: tsparser: match tsc for null conditions and pattern choice
+### Incident Patch 1: `8a7465a4` (2026-11-11)
+**Commit Message**: runtimes: finish internal call request on validation error
 
-A null under a condition ended the search, but only for the object it
-was in: a nested null stopped its own map while the enclosing map went
-on to its later conditions. Follow TypeScript, whose missing-file
-fallback we already copy: a null under a condition gives no target and
-the search goes on, at every nesting level. A subpath that maps
-directly to null is still excluded.
-
-Wildcard keys were tried in object order, and a pattern that gave
-nothing fell through to the next one, so {"./*": ..., "./internal/*":
-{"node": null}} resolved "internal/foo" through "./*". Choose the
-pattern like Node's PATTERN_KEY_COMPARE and let it alone decide, as
-Node and tsc do. Also stop a pattern's prefix and suffix from
-overlapping, which sliced out of bounds and panicked.
-
-Bump the encoredev/swc fork to pick up the same changes there
-(encoredev/swc#4).
-
-**File**: `Cargo.lock` (modified, +17/-17)
+**File**: `runtimes/go/appruntime/apisdk/api/handler.go` (modified, +14/-8)
 ```diff
-@@ -233,7 +233,7 @@ checksum = "9b34d609dfbaf33d6889b2b7106d3ca345eacad44200913df5ba02bfd31d2ba9"
- [[package]]
- name = "ast_node"
- version = "0.9.5"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "pmutil",
-  "proc-macro2",
-@@ -1086,7 +1086,7 @@ dependencies = [
- [[package]]
- name = "better_scoped_tls"
- version = "0.1.1"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "scoped-tls",
- ]
-@@ -2487,7 +2487,7 @@ dependencies = [
- [[package]]
- name = "from_variant"
- version = "0.1.6"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "pmutil",
-  "proc-macro2",
-@@ -7053,7 +7053,7 @@ dependencies = [
- [[package]]
- name = "string_enum"
- version = "0.4.1"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "pmutil",
-  "proc-macro2",
-@@ -7188,7 +7188,7 @@ dependencies = [
- [[package]]
- name = "swc_atoms"
- version = "0.6.4"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "hstr",
-  "once_cell",
-@@ -7199,7 +7199,7 @@ dependencies = [
- [[package]]
- name = "swc_cached"
- version = "0.3.18"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "ahash",
-  "anyhow",
-@@ -7212,7 +7212,7 @@ dependencies = [
- [[package]]
- name = "swc_common"
- version = "0.33.8"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "ast_node",
-  "atty",
-@@ -7239,7 +7239,7 @@ dependencies = [
- [[package]]
- name = "swc_ecma_ast"
- version = "0.110.9"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "bitflags 2.9.4",
-  "is-macro",
-@@ -7255,7 +7255,7 @@ dependencies = [
- [[package]]
- name = "swc_ecma_loader"
- version = "0.45.9"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "anyhow",
-  "dashmap 5.5.3",
-@@ -7274,7 +7274,7 @@ dependencies = [
- [[package]]
- name = "swc_ecma_parser"
- version = "0.141.21"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "either",
-  "new_debug_unreachable",
-@@ -7294,7 +7294,7 @@ dependencies = [
- [[package]]
- name = "swc_ecma_transforms_base"
- version = "0.134.30"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "better_scoped_tls",
-  "bitflags 2.9.4",
-@@ -7316,7 +7316,7 @@ dependencies = [
- [[package]]
- name = "swc_ecma_utils"
- version = "0.124.26"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "indexmap 1.9.3",
-  "num_cpus",
-@@ -7333,7 +7333,7 @@ dependencies = [
- [[package]]
- name = "swc_ecma_visit"
- version = "0.96.9"
--source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-+source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
- dependencies = [
-  "num-bigint",
-  "swc_atoms
+@@ -680,31 +680,37 @@ func (d *Desc[Req, Resp]) runCall(c CallContext, req Req, mocked bool, executor
+ 			},
+ 		})
+ 
++		if beginErr != nil {
++			respErr = errs.B().Cause(beginErr).Code(errs.Internal).Msg("internal error").Err()
++			return
++		}
++
++		// Request begun; must finish or op and trace leak.
++		failBeforeExec := func(err error) {
++			respErr = err
++			c.server.finishRequest(newErrResp(err, 0))
++		}
++
+ 		// Now round-trip any auth data that was set on the request
+ 		// to emulate what happens in the HTTP case.
+ 		if experiments.AuthDataRoundTrip.Enabled(c.server.experiments) && reqModel.RPCData.AuthData != nil {
+ 			jsonBytes, err := jsonapi.Default.Marshal(reqModel.RPCData.AuthData)
+ 			if err != nil {
+ 				c.server.rootLogger.Err(err).Msg("unable to marshal auth data")
+-				respErr = errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err()
++				failBeforeExec(errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err())
+ 				return
+ 			}
+ 
+ 			reqModel.RPCData.AuthData = newAuthDataObj()
+ 			if err := jsonapi.Default.Unmarshal(jsonBytes, reqModel.RPCData.AuthData); err != nil {
+ 				c.server.rootLogger.Err(err).Msg("unable to unmarshal auth data")
+-				respErr = errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err()
++				failBeforeExec(errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err())
+ 				return
+ 			}
+ 		}
+ 
+-		if beginErr != nil {
+-			respErr = errs.B().Cause(beginErr).Code(errs.Internal).Msg("internal error").Err()
+-			return
+-		}
+-
+ 		if err := d.validate(req); err != nil {
+-			respErr = err
++			failBeforeExec(err)
+ 			return
+ 		}
+ 
 ```
 
-**File**: `tsparser/src/exports.rs` (modified, +136/-34)
+**File**: `runtimes/go/appruntime/apisdk/api/handler_test.go` (modified, +52/-0)
 ```diff
-@@ -15,10 +15,14 @@ pub struct Exports {
- impl Exports {
-     /// Resolves a relative path to candidate target file paths, in priority order.
-     /// The caller should use the first candidate that exists.
-+    ///
-+    /// As in Node and TypeScript, an exact key wins, and otherwise the most specific
-+    /// matching pattern does. That entry alone decides the result: if it gives no
-+    /// target, the path isn't exported and less specific patterns aren't tried.
-     pub fn resolve_import_path(&self, rel_path: &str, conditions: &HashSet<&str>) -> Vec<PathBuf> {
--        let mut wildcard_match = None;
--        for (candidate, subpath) in self.subpaths.iter() {
--            match candidate_matches(candidate, rel_path) {
-+        let mut best: Option<(&str, &Subpath, &str)> = None;
-+        for (key, subpath) in self.subpaths.iter() {
-+            match candidate_matches(key, rel_path) {
-                 None => continue,
-                 Some(Match::Exact) => {
-                     return match subpath.matches(conditions) {
-@@ -29,34 +33,38 @@ impl Exports {
-                     };
-                 }
-                 Some(Match::Wildcard { replacement }) => {
--                    match subpath.matches(conditions) {
--                        None => continue,
--
--                        // If we have a target, save it as a candidate.
--                        // We have to keep looking as there may be an exclude directive later.
--                        Some(SubpathMatch::Targets(paths)) => {
--                            if wildcard_match.is_none() {
--                                wildcard_match = Some((paths, replacement));
--                            }
-+                    let more_specific = match best {
-+                        None => true,
-+                        Some((best_key, ..)) => {
-+                            pattern_specificity(key) > pattern_specificity(best_key)
-                         }
--
--                        // If we have an exclude, stop looking and immediately return none.
--                        Some(SubpathMatch::Exclude) => return vec![],
-+                    };
-+                    if more_specific {
-+                        best = Some((key, subpath, replacement));
-                     }
-                 }
-             }
-         }
+@@ -667,3 +667,55 @@ func TestMiddlewareHeadersOnError(t *testing.T) {
+ 		}
+ 	}
+ }
++
++type validatingReq struct {
++	Valid bool
++}
++
++func (r *validatingReq) Validate() error {
++	if !r.Valid {
++		return errs.B().Code(errs.InvalidArgument).Msg("not valid").Err()
++	}
++	return nil
++}
++
++// Validation failure on an internal call must still finish the request.
++func TestInternalCallValidationErrorFinishesRequest(t *testing.T) {
++	model.EnableTestMode(t)
++	server, traceMock, _ := testServer(t, clock.New(), true)
++
++	desc := &api.Desc[*validatingReq, *mockResp]{
++		Service:  "service",
++		Endpoint: "validating",
++		Path:     "/validating",
++		Access:   api.Private,
++		CloneReq: func(req *validatingReq) (*validatingReq, error) {
++			clone := *req
++			return &clone, nil
++		},
++		ReqPath: func(req *validatingReq) (string, api.UnnamedParams, error) {
++			return "/validating", nil, nil
++		},
++		ReqUserPayload: func(req *validatingReq) any {
++			return req
++		},
++		AppHandler: func(ctx context.Context, req *validatingReq) (*mockResp, error) {
++			t.Error("handler must not run when validation fails")
++			return &mockResp{}, nil
++		},
++		CloneResp: func(resp *mockResp) (*mockResp, error) {
++			clone := *resp
++			return &clone, nil
++		},
++	}
++
++	traceMock.EXPECT().RequestSpanStart(gomock.Any(), gomock.Any()).Times(1)
++	traceMock.EXPECT().RequestSpanEnd(gomock.Any()).Times(1)
++	traceMock.EXPECT().MarkDone().Times(1)
++	traceMock.EXPECT().WaitAndClear().Return(nil, true).AnyTimes()
++
++	_, err := desc.Call(server.NewCallContext(context.Background()), &validatingReq{Valid: false})
++	if errs.Code(err) != errs.InvalidArgument {
++		t.Fatalf("got error %v, want invalid_argument", err)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `56387a1d` (2026-11-12)
+**Commit Message**: sqldb: close cursors that are left with rows unread (#2653)
+
+## Summary
+
+`queryRow`, `rawQueryRow`, `exec` and `rawExec` read only the first row.
+A `for await` over `query`/`rawQuery` can also stop early. In both cases
+the native cursor stayed open with rows unread until JS garbage
+collected it.
+
+tokio-postgres delivers results in order, through a 2-slot channel per
+query. If a result arrives in more reads than that channel holds, the
+connection stops reading until the cursor takes them. Every later query
+on that connection then hangs. Inside a transaction, that's the next
+statement, and Postgres shows the connection `idle in transaction` /
+`ClientRead`. The hang lasts until a GC finalizes the cursor, which an
+idle process may never trigger. This matches a customer report of
+intermittent test hangs in Cloud builds.
+
+```diff
+ BaseQueryExecutor.queryRow / rawQueryRow / exec / rawExec / queryAll / rawQueryAll / query / rawQuery
+   cursor = impl.query(...)
+-  read rows
++  try
++    read rows
++  finally
++    cursor.close()        // new napi Cursor.close → drops the RowStream,
++                          // so the connection skips the rest of the result
+```
+
+## Evidence
+
+The new test
+`sql
+
+**File**: `docs/ts/runtime/storage-sqldb.mdx` (modified, +67/-37)
+```diff
+@@ -7,7 +7,7 @@ toc: true
+ ## Classes
  
--        match wildcard_match {
--            None => vec![],
--            Some((paths, replacement)) => paths
-+        let Some((_, subpath, replacement)) = best else {
-+            return vec![];
-+        };
-+        match subpath.matches(conditions) {
-+            Some(SubpathMatch::Targets(paths)) => paths
-                 .into_iter()
-                 .map(|path| path.replace('*', replacement).into())
-                 .collect(),
-+            Some(SubpathMatch::Exclude) | None => vec![],
+ <!-- symbol-start: Connection -->
+-### Connection <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L384" />
++### Connection <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L428" />
+ 
+ Represents a dedicated connection to a database.
+ 
+@@ -17,7 +17,7 @@ Represents a dedicated connection to a database.
+ 
+ #### Constructors
+ 
+-##### Constructor <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L387" />
++##### Constructor <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L431" />
+ 
+ `new Connection(impl): Connection`
+ 
+@@ -47,7 +47,7 @@ Represents a dedicated connection to a database.
+ 
+ #### Methods
+ 
+-##### close() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L394" />
++##### close() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L438" />
+ 
+ `close(): Promise<void>`
+ 
+@@ -57,7 +57,7 @@ Returns the connection to the database pool.
+ 
+ `Promise`\<`void`\>
+ 
+-##### exec() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L229" />
++##### exec() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L265" />
+ 
+ `exec(strings, ...params): Promise<void>`
+ 
+@@ -88,7 +88,7 @@ const result = database.exec`DELETE FROM users WHERE email=${email}`
+ 
+ `BaseQueryExecutor.exec`
+ 
+-##### query() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L69" />
++##### query() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L74" />
+ 
+ `query<T>(strings, ...params): AsyncGenerator<T>`
+ 
+@@ -98,6 +98,11 @@ with parametrised values without risking SQL injections.
+ It returns an async generator, that allows iterating over the results
+ in a streaming fashion using `for await`.
+ 
++A `for await` loop closes the query however it ends. If you call `next()`
++yourself, call `return()` when you stop before the last row: until then the
++query keeps its connection busy, and any other query on that connection
++(such as the next statement in a transaction) waits for it.
++
+ ###### Type Parameters
+ 
+ ###### T
+@@ -131,7 +136,7 @@ This produces the query: "SELECT id FROM users WHERE email=$1".
+ 
+ `BaseQueryExecutor.query`
+ 
+-##### queryAll() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L129" />
++##### queryAll() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L149" />
+ 
+ `queryAll<T>(strings, ...params): Promise<T[]>`
+ 
+@@ -173,7 +178,7 @@ This produces the query: "SELECT id FROM users WHERE email=$1".
+ 
+ `BaseQueryExecutor.queryAll`
+ 
+-##### queryRow() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L184" />
++##### queryRow() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L212" />
+ 
+ `queryRow<T>(strings, ...params): Promise<T | null>`
+ 
+@@ -212,7 +217,7 @@ const result = database.queryRow`SELECT id FROM users WHERE email=${email}`
+ 
+ `BaseQueryExecutor.queryRow`
+ 
+-##### rawExec() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L255" />
++##### rawExec() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L295" />
+ 
+ `rawExec(query, ...params): Promise<void>`
+ 
+@@ -250,7 +255,7 @@ await database.rawExec(query, email);
+ 
+ `BaseQueryExecutor.rawExec`
+ 
+-##### rawQuery() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L101" />
++##### rawQuery() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L116" />
+ 
+ `rawQuery<T>(query, ...params): AsyncGenerator<T>`
+ 
+@@ -259,6 +264,11 @@ rawQuery queries the database using a raw parametrised SQL query and parameters.
+ It returns an async generator, that allows iterating over the results
+ in a streaming fashion using `for await`.
+ 
++A `for await` loop closes the query however it ends. If you call `next()`
++yourself, call `return()` when you stop before the last row: until then the
++query keeps its connection busy, and any other query on that connection
++(such as the next statement in a transaction) waits for it.
++
+ ###### Type Parameters
+ 
+ ###### T
+@@ -299,7 +309,7 @@ for await (const row of database.rawQuery(
+```
+
+**File**: `runtimes/core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -182,4 +182,4 @@ insta = { version = "1.38.0", features = ["yaml"] }
+ quickcheck = "1.0.3"
+ proptest = "1.7.0"
+ tempfile = "3"
+-tokio = { version = "1.35.1", features = ["macros", "rt"] }
++tokio = { version = "1.35.1", features = ["macros", "rt", "net", "io-util", "time"] }
+```
+
+**File**: `runtimes/core/src/sqldb/client.rs` (modified, +191/-3)
+```diff
+@@ -265,17 +265,30 @@ impl Pool {
+ }
+ 
+ pub struct Cursor {
+-    stream: Pin<Box<tokio_postgres::RowStream>>,
++    /// `None` once the cursor is closed.
++    stream: Option<Pin<Box<tokio_postgres::RowStream>>>,
+ }
+ 
+ impl Cursor {
+     pub async fn next(&mut self) -> Option<Result<Row, tokio_postgres::Error>> {
+-        match self.stream.next().await {
++        match self.stream.as_mut()?.next().await {
+             Some(Ok(row)) => Some(Ok(Row { row })),
+             Some(Err(err)) => Some(Err(err)),
+             None => None,
          }
      }
++
++    /// Discards the rows not yet read.
++    ///
++    /// A connection hands each query's result to its caller in order, a few
++    /// messages at a time, and reads nothing further from the server until that
++    /// caller takes them. A cursor left open with rows unread therefore stalls
++    /// every later query on its connection, for as long as the cursor lives —
++    /// which, for one held by JavaScript, is until it is garbage collected.
++    /// Closing it lets the connection skip past the rest of the result.
++    pub fn close(&mut self) {
++        self.stream = None;
++    }
  }
  
-+/// Orders pattern keys like Node's PATTERN_KEY_COMPARE: a longer prefix before the
-+/// "*" is more specific, then a longer key.
-+fn pattern_specificity(key: &str) -> (usize, usize) {
-+    (key.find('*').unwrap_or(key.len()), key.len())
-+}
+ pub struct Row {
+@@ -393,7 +406,7 @@ impl QueryTracer {
+ 
+         let stream = result?;
+         Ok(Cursor {
+-            stream: Box::pin(stream),
++            stream: Some(Box::pin(stream)),
+         })
+     }
+ 
+@@ -452,3 +465,178 @@ mod key_test {
+         assert!(!rendered.contains("104"), "{rendered}");
+     }
+ }
 +
- enum Match<'a> {
-     Exact,
-     Wildcard { replacement: &'a str },
-@@ -80,7 +88,11 @@ fn candidate_matches<'a>(candidate: &str, rel_path: &'a str) -> Option<Match<'a>
-         let (prefix, suffix) = candidate.split_at(idx);
-         // Strip the "*" from the suffix.
-         let suffix = &suffix[1..];
--        if rel_path.starts_with(prefix) && rel_path.ends_with(suffix) {
-+        // The length check keeps the prefix and suffix from overlapping.
-+        if rel_path.len() >= prefix.len() + suffix.len()
-+            && rel_path.starts_with(prefix)
-+            && rel_path.ends_with(suffix)
-+        {
-             // Get the middle part of the path, to be injected into the result.
-             let replacement = &rel_path[prefix.len()..(rel_path.len() - suffix.len())];
-             return Some(Match::Wildcard { replacement });
-@@ -109,7 +121,8 @@ impl Subpath {
-     /// Like TypeScript, a matching condition doesn't end the search: the targets of
-     /// later matching conditions are kept as fallbacks, in object order. So when a
-     /// "types" target doesn't exist, the "import" target is tried next.
--    /// A null target (exclude) ends the search.
-+    /// A null under a condition gives no target, at any nesting level; only a
-+    /// subpath that maps directly to null is excluded.
-     fn matches(&self, active_conditions: &HashSet<&str>) -> Option<SubpathMatch<'_>> {
-         match self {
-             Subpath::Target(path) => Some(SubpathMatch::Targets(vec![path])),
-@@ -120,14 +133,10 @@ impl Subpath {
-                     if !active_conditions.contains(cond.as_str()) {
-                         continue;
-                     }
--                    match subpath.matches(active_conditions) {
--                        // Nested conditions with no match: try the next condition.
--                        None => continue,
--                        Some(SubpathMatch::Targets(paths)) => targets.extend(p
++#[cfg(test)]
++mod cursor_test {
++    use std::collections::HashMap;
++    use std::time::Duration;
++
++    use bytes::{Buf, BufMut, BytesMut};
++    use tokio::io::{AsyncReadExt, AsyncWriteExt};
++    use tokio::net::{TcpListener, TcpStream};
++
++    use super::*;
++
++    /// Rows in the result that is left unread. Each is sent on its own, so the
++    /// client reads them one at a time, as it would a large result.
++    const MANY: i32 = 20;
++
++    /// A cursor left open with rows unread used to hang every later query on
++    /// its connection until the cursor was garbage collected — in a
++    /// transaction, the very next statement. Closing it must free the
++    /// connection.
++    #[tokio::test]
++    async fn closing_a_cursor_frees_its_connection() {
++        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let port = listener.local_addr().unwrap().port();
++        tokio::spawn(async move {
++            let (socket, _) = listener.accept().await.unwrap();
++            serve(socket).await;
++        });
++
++        let mut config = tokio_postgres::Config::new();
++        config
++            .host("127.0.0.1")
++            .port(port)
++            .user("encore")
++            .dbname("db");
++        let (client, connection) = config.connect(tokio_postgres::NoTls).await.unwrap();
++        tokio::spawn(connection);
++        let client = Arc::new(client);
++
++        let tracer = QueryTracer(crate::trace::Tracer::noop());
++        let query = |sql: &'static str| {
++            let client = client.as_ref();
++            tracer.trace(None, sql, move || async move {
++                client
++                    .query_raw(sql, Vec::<i32>::new())
++                    .await
++                    .map_err(Error::from)
++            })
++        };
++
++        // Like `queryRow`: read the first row and leave the rest.
++        let mut cursor = query("SELECT many").await.unwrap();
++        let first = cursor.next().await.unwrap().unwrap();
++        assert_eq!(first.row.get::<_, i32>(0), 1);
++
++        let next = tokio::spawn({
++            let client = client.clone();
++            async move { client.query_one("SELECT one", &[]).await }
++        });
++
++        // The hazard being guarded against: while the cursor is open, the
++        // connection delivers nothing else.
++        tokio::time::sleep(Duration::from_millis(500)).await;
++        assert!(
++            !next.is_finished(),
++            "the next query completed while the cursor was open; \
++             this test no longer exercises the stall"
++        );
++
++        cursor.close();
++        assert!(cursor.next().await.is_none(), "a closed cursor yields rows");
++
++        let row = tokio::time::timeout(Duration::from_secs(5), next)
++            .await
++            .expect("the next query hung after the cursor was closed")
++            .unwrap()
++            .unwrap();
++        assert_eq!(row.get::<_, i32>(0), 1);
++    }
++
++    /// Plays a Postgres server well enough for `prepare` and `query`: every
++    /// statement returns one int4 column, counting up from 1, with [`MANY`]
++    /// rows if its text contains "many" and one row otherwise.
++    async fn serve(mut socket: TcpStream) {
++        let len = socket.read_i32().await.unwrap();
++        let mut startup = vec![0; len as usize - 4];
++        socket.read_exact(&mut startup).await.unwrap();
++
++        let mut out = BytesMut::new();
++        message(&mut out, b'R', |b| b.put_i32(0)); // AuthenticationOk
++        ready_for_query(&mut out);
++        
 ```
 
----
-
-### Incident Patch 2: `00617c4a` (2026-10-23)
-**Commit Message**: internal/etrace, runtimes/go: read goroutine ids with 64 bytes, and skip untraced steps
-
-Two copies of a snippet read the current goroutine's id from the first
-line of runtime.Stack, through a pool of up to eight 16 MB buffers. Only
-the first ~32 bytes are ever read, so a 64-byte array on the stack does
-the same job without the pool.
-
-etrace's Sync and Async helpers also read the goroutine id before checking
-for a tracer. Tracing is off unless the daemon sets a file tracer, so each
-traced step read its stack and allocated a closure for nothing. They now
-return straight away when there is no tracer.
-
-**File**: `internal/etrace/etrace.go` (modified, +10/-2)
+**File**: `runtimes/js/encore.dev/storage/sqldb/database.ts` (modified, +75/-31)
 ```diff
-@@ -35,9 +35,14 @@ func Async2[A, B any](ctx context.Context, cat, name string, fn func(context.Con
- 	return fn(ctx)
+@@ -58,6 +58,11 @@ class BaseQueryExecutor {
+    * It returns an async generator, that allows iterating over the results
+    * in a streaming fashion using `for await`.
+    *
++   * A `for await` loop closes the query however it ends. If you call `next()`
++   * yourself, call `return()` when you stop before the last row: until then the
++   * query keeps its connection busy, and any other query on that connection
++   * (such as the next statement in a transaction) waits for it.
++   *
+    * @example
+    *
+    * const email = "foo@example.com";
+@@ -74,10 +79,15 @@ class BaseQueryExecutor {
+     const args = buildQueryArgs(params);
+     const source = getCurrentRequest();
+     const cursor = await this.impl.query(query, args, source);
+-    while (true) {
+-      const row = await cursor.next();
+-      if (row === null) break;
+-      yield row.values() as T;
++    try {
++      while (true) {
++        const row = await cursor.next();
++        if (row === null) break;
++        yield row.values() as T;
++      }
++    } finally {
++      // Runs when the caller stops iterating early, too.
++      await cursor.close();
+     }
+   }
+ 
+@@ -87,6 +97,11 @@ class BaseQueryExecutor {
+    * It returns an async generator, that allows iterating over the results
+    * in a streaming fashion using `for await`.
+    *
++   * A `for await` loop closes the query however it ends. If you call `next()`
++   * yourself, call `return()` when you stop before the last row: until then the
++   * query keeps its connection busy, and any other query on that connection
++   * (such as the next statement in a transaction) waits for it.
++   *
+    * @example
+    * const query = "SELECT id FROM users WHERE email=$1";
+    * const email = "foo@example.com";
+@@ -104,11 +119,16 @@ class BaseQueryExecutor {
+   ): AsyncGenerator<T> {
+     const args = buildQueryArgs(params);
+     const source = getCurrentRequest();
+-    const result = await this.impl.query(query, args, source);
+-    while (true) {
+-      const row = await result.next();
+-      if (row === null) break;
+-      yield row.values() as T;
++    const cursor = await this.impl.query(query, args, source);
++    try {
++      while (true) {
++        const row = await cursor.next();
++        if (row === null) break;
++        yield row.values() as T;
++      }
++    } finally {
++      // Runs when the caller stops iterating early, too.
++      await cursor.close();
+     }
+   }
+ 
+@@ -134,13 +154,17 @@ class BaseQueryExecutor {
+     const args = buildQueryArgs(params);
+     const source = getCurrentRequest();
+     const cursor = await this.impl.query(query, args, source);
+-    const result: T[] = [];
+-    while (true) {
+-      const row = await cursor.next();
+-      if (row === null) break;
+-      result.push(row.values() as T);
++    try {
++      const result: T[] = [];
++      while (true) {
++        const row = await cursor.next();
++        if (row === null) break;
++        result.push(row.values() as T);
++      }
++      return result;
++    } finally {
++      await cursor.close();
+     }
+-    return result;
+   }
+ 
+   /**
+@@ -162,13 +186,17 @@ class BaseQueryExecutor {
+     const args = buildQueryArgs(params);
+     const source = getCurrentRequest();
+     const cursor = await this.impl.query(query, args, source);
+-    const result: T[] = [];
+-    while (true) {
+-      const row = await cursor.next();
+-      if (row === null) break;
+-      result.push(row.values() as T);
++    try {
++      const result: T[] = [];
++      while (true) {
++        const row = await cursor.next();
++        if (row === null) break;
++        result.push(row.values() as T);
++      }
++      return result;
++    } finally {
++      await cursor.close();
+     }
+-    return result;
+   }
+ 
+   /**
+@@ -188,9 +216,13 @@ class BaseQueryExecutor {
+     const query = buildQuery(strings, params);
+     const args = buildQueryArgs(params);
+     const source = getCurrentRequest();
+-    const result = await this.impl.query(query, args, source);
+-    const row = await result.next();
+-    return row ? (row.values() as T) : null;
++    const cursor = await this.impl.query(query, args, source);
++    try {
++      const row = await cursor.next();
++      return row ? (row.values() as T) : null;
++    } finally {
++      await cursor.close();
++    }
+   }
+ 
+   /**
+@@ -214,9 +246,13 @@ class BaseQueryExecutor {
+   ): Promise<T | null> {
+     const args = buildQueryArgs(params);
+     const source = getCurrentRequest();
+-    const result = await this.impl.query(query, args, source);
+-    const row = await result.next();
+-    return row ? (row.values() as T) : null;
++    const cursor = await this.impl.query(query, args, source);
++    try {
++      const row = await cursor.next();
++      return row ? (row.values() as T) : null;
++    } finally {
++      await cursor.close();
++    }
+   }
+ 
+   /**
+@@ -236,8 +272,12 @@ class BaseQueryExecutor {
+ 
+     // Need to await the cursor to process any errors from things like
+     // unique constraint violations.
+-    const cur = await this.
+```
+
+**File**: `runtimes/js/src/sqldb.rs` (modified, +7/-0)
+```diff
+@@ -222,6 +222,13 @@ impl Cursor {
+ 
+         Ok(row.map(|row| Row { row }))
+     }
++
++    /// Discards the rows not yet read, so the connection can move on to the
++    /// next query without waiting for this cursor to be garbage collected.
++    #[napi]
++    pub async fn close(&self) {
++        self.stream.lock().await.close();
++    }
  }
  
-+func noop() {}
-+
- func doSync(ctx context.Context, cat, name string) func() {
--	gid := goroutineID()
- 	tr := fromCtx(ctx)
-+	if tr == nil {
-+		return noop
-+	}
-+	gid := goroutineID()
- 	tr.Emit(beginSync, name, cat, nil, gid, 0)
- 	return func() {
- 		tr.Emit(endSync, name, cat, nil, gid, 0)
-@@ -47,9 +52,12 @@ func doSync(ctx context.Context, cat, name string) func() {
- var asyncID int64
- 
- func doAsync(ctx context.Context, cat, name string) func() {
-+	tr := fromCtx(ctx)
-+	if tr == nil {
-+		return noop
-+	}
- 	id := atomic.AddInt64(&asyncID, 1)
- 	gid := goroutineID()
--	tr := fromCtx(ctx)
- 	tr.Emit(beginAsync, name, cat, nil, gid, id)
- 	return func() {
- 		tr.Emit(endAsync, name, cat, nil, gid, id)
-```
-
-**File**: `internal/etrace/etrace_test.go` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+package etrace
-+
-+import (
-+	"context"
-+	"testing"
-+)
-+
-+// Tracing is off unless a tracer is set, so a traced step must cost nothing then.
-+func TestUntracedStepsDoNoWork(t *testing.T) {
-+	ctx := context.Background()
-+	step := func(context.Context) {}
-+	if n := testing.AllocsPerRun(100, func() { Sync0(ctx, "cat", "name", step) }); n != 0 {
-+		t.Errorf("Sync0 with no tracer allocates %v times per call, want 0", n)
-+	}
-+	if n := testing.AllocsPerRun(100, func() { Async0(ctx, "cat", "name", step) }); n != 0 {
-+		t.Errorf("Async0 with no tracer allocates %v times per call, want 0", n)
-+	}
-+}
-+
-+func TestGoroutineID(t *testing.T) {
-+	main := goroutineID()
-+	if main <= 0 {
-+		t.Fatalf("goroutineID() = %d, want > 0", main)
-+	}
-+	if again := goroutineID(); again != main {
-+		t.Fatalf("goroutineID() changed within one goroutine: %d then %d", main, again)
-+	}
-+	other := make(chan int64)
-+	go func() { other <- goroutineID() }()
-+	if id := <-other; id == main || id <= 0 {
-+		t.Fatalf("goroutineID() in another goroutine = %d, main = %d", id, main)
-+	}
-+}
-```
-
-**File**: `internal/etrace/gid.go` (modified, +3/-23)
-```diff
-@@ -20,32 +20,12 @@ import (
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--const stackBufSize = 16 << 20
--
--var stackBuf = make(chan []byte, 8)
--
--func getBuf() []byte {
--	select {
--	case b := <-stackBuf:
--		return b[:stackBufSize]
--	default:
--		return make([]byte, stackBufSize)
--	}
--}
--
--func putBuf(b []byte) {
--	select {
--	case stackBuf <- b:
--	default:
--	}
--}
--
- var goroutineSpace = []byte("goroutine ")
- 
- func goroutineID() int64 {
--	b := getBuf()
--	defer putBuf(b)
--	b = b[:runtime.Stack(b, false)]
-+	// Only the first line is read, and runtime.Stack stops when the buffer is full.
-+	var buf [64]byte
-+	b := buf[:runtime.Stack(buf[:], false)]
- 	// Parse the 4707 out of "goroutine 4707 ["
- 	b = bytes.TrimPrefix(b, goroutineSpace)
- 	i := bytes.IndexByte(b, ' ')
-```
-
-**File**: `runtimes/go/appruntime/shared/reqtrack/impl_noapp.go` (modified, +3/-23)
-```diff
-@@ -52,32 +52,12 @@ func (i *noappImpl) set(val *encoreG) {
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--const stackBufSize = 16 << 20
--
--var stackBuf = make(chan []byte, 8)
--
--func getBuf() []byte {
--	select {
--	case b := <-stackBuf:
--		return b[:stackBufSize]
--	default:
--		return make([]byte, stackBufSize)
--	}
--}
--
--func putBuf(b []byte) {
--	select {
--	case stackBuf <- b:
--	default:
--	}
--}
--
- var goroutineSpace = []byte("goroutine ")
- 
- func goroutineID() int64 {
--	b := getBuf()
--	defer putBuf(b)
--	b = b[:runtime.Stack(b, false)]
-+	// Only the first line is read, and runtime.Stack stops when the buffer is full.
-+	var buf [64]byte
-+	b := buf[:runtime.Stack(buf[:], false)]
- 	// Parse the 4707 out of "goroutine 4707 ["
- 	b = bytes.TrimPrefix(b, goroutineSpace)
- 	i := bytes.IndexByte(b, ' ')
-```
-
----
-
-### Incident Patch 3: `c414577e` (2026-10-26)
-**Commit Message**: pkg/paths: compare cleaned paths in FS.HasPrefix outside Windows
-
-HasPrefix called filepath.Rel, which builds a "../.." path whenever the
-path is not under the folder. The parser checks every package against
-every service, so most calls are misses and each one allocated. Outside
-Windows, filepath.Rel compares bytes, so a prefix check on the cleaned
-paths gives the same answer without allocating.
-
-**File**: `pkg/paths/paths.go` (modified, +12/-2)
-```diff
-@@ -85,8 +85,18 @@ func (fs FS) HasPrefix(other FS) bool {
- 	fs.checkValid()
- 	other.checkValid()
- 
--	// Note: we use filepath.Rel instead of strings.HasPrefix with filepath.Abs
--	// because that wouldn't work on case-insensitive filesystems.
-+	// Outside Windows, filepath.Rel compares paths byte by byte, so comparing the
-+	// cleaned paths gives the same answer without its allocations.
-+	if filepath.Separator == '/' && filepath.IsAbs(string(fs)) && filepath.IsAbs(string(other)) {
-+		dir, p := filepath.Clean(string(other)), filepath.Clean(string(fs))
-+		if dir == "/" {
-+			return true
-+		}
-+		return p == dir || (strings.HasPrefix(p, dir) && p[len(dir)] == '/')
-+	}
-+
-+	// On Windows, filepath.Rel compares without regard to case, which
-+	// strings.HasPrefix cannot.
- 	rel, err := filepath.Rel(string(other), string(fs))
- 	if err != nil {
- 		return false
-```
-
-**File**: `pkg/paths/paths_test.go` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+package paths
-+
-+import (
-+	"path/filepath"
-+	"testing"
-+)
-+
-+func TestFSHasPrefix(t *testing.T) {
-+	ps := []string{"/", "/a", "/a/", "/a/b", "/ab", "/a/bc", "/a/b/c", "/b", "/a/b/../c", "/a//b", "/A/b", "a", "a/b", "."}
-+
-+	t.Run("matches filepath.Rel", func(t *testing.T) {
-+		for _, p := range ps {
-+			for _, dir := range ps {
-+				rel, err := filepath.Rel(dir, p)
-+				want := err == nil && filepath.IsLocal(rel)
-+				if got := FS(p).HasPrefix(FS(dir)); got != want {
-+					t.Errorf("FS(%q).HasPrefix(%q) = %v, want %v", p, dir, got, want)
-+				}
-+			}
-+		}
-+	})
-+
-+	t.Run("clean absolute paths do not allocate", func(t *testing.T) {
-+		if filepath.Separator != '/' {
-+			t.Skip("Windows paths go through filepath.Rel")
-+		}
-+		// Most calls are a package checked against a service it is not in,
-+		// where filepath.Rel builds a "../.." path.
-+		p := FS("/app/svc/internal/store")
-+		for _, tc := range []struct {
-+			dir  FS
-+			want bool
-+		}{
-+			{dir: "/app/svc", want: true},
-+			{dir: "/app/other/svc", want: false},
-+		} {
-+			allocs := testing.AllocsPerRun(100, func() {
-+				if got := p.HasPrefix(tc.dir); got != tc.want {
-+					t.Fatalf("HasPrefix(%q) = %v, want %v", tc.dir, got, tc.want)
-+				}
-+			})
-+			if allocs != 0 {
-+				t.Errorf("HasPrefix(%q) allocated %v times per call, want 0", tc.dir, allocs)
-+			}
-+		}
-+	})
-+}
+ #[napi]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2653** (2026-11-12): sqldb: close cursors that are left with rows unread (@ekerfelt)
+- **PR #2649** (2026-11-13): runtimes: fix memory leak when internal call fails validation (@kutysam)
 - **PR #2648** (2026-11-10): tsparser: fall back to later export conditions (@eandre)
 - **PR #2646** (2026-11-10): runtimes: re-land GCP IAM database login, keeping the password in ConnString (@ekerfelt)
 - **PR #2641** (2026-11-09): Revert "runtimes: log in to Cloud SQL with GCP IAM database authentication (#2640)" (@ekerfelt)
 - **PR #2640** (2026-11-09): runtimes: log in to Cloud SQL with GCP IAM database authentication (@ekerfelt)
-- **PR #2638** (2026-11-03): v2/internals/pkginfo: resolve nested modules missing from the module cache (@eandre)
-- **PR #2637** (2026-11-06): sqldb: add 10 minutes of jitter to connection lifetimes by default (@gmtuca)
 
 ---
 
@@ -2322,51 +2392,51 @@ paths gives the same answer without allocating.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tsparser: match tsc for null conditions and pattern choice
+## X. runtimes: finish internal call request on validation error
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `runtimes/go/appruntime/apisdk/api/handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25591353`: tsparser: match tsc for null conditions and pattern choice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a7465a4`: runtimes: finish internal call request on validation error. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `runtimes/go/appruntime/apisdk/api/handler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#5870105e1b087f8dde85a84afa61c3f81fd1b803"
-source = "git+https://github.c
+		if beginErr != nil {
+			respErr = errs.B().Cause(beginErr).Code(errs.Internal).Msg("internal error").Err()
+			return
+		}
+
+		// Request begun; must finish or op and trace leak.
+		failBeforeExec := func(err error) {
+			respErr = err
+			c.server.finishRequest(newErrResp(err, 0))
+		}
+
+				failBeforeExec(errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err())
+				failBeforeExec(errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err())
+			failBeforeExec(err)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.com/encoredev/swc?branch=node-resolve-exports#91e1dbd3dc6295e629e4b5cd0b6d4ca7675d4980"
-source = "git+https://github.c
+				respErr = errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err()
+				respErr = errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err()
+		if beginErr != nil {
+			respErr = errs.B().Cause(beginErr).Code(errs.Internal).Msg("internal error").Err()
+			return
+		}
+
+			respErr = err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25591353` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a7465a4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
