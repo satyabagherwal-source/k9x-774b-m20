@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:51:14.903Z",
+  "last_updated": "2026-11-13T06:59:11.030Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T05:23:59.465Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-13T06:51:14.866Z",
+      "processed_at": "2026-11-13T06:59:10.972Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -658,9 +658,9 @@
       "staged_for_review": 1
     },
     "beclab-olares-learnings.md": {
-      "processed_at": "2026-11-12T01:52:12.643Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-13T06:59:10.944Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "taubyte-tau-learnings.md": {
       "processed_at": "2026-11-12T02:03:51.106Z",
@@ -1606,9 +1606,14 @@
       "processed_at": "2026-11-13T06:51:14.851Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-ornith-ai-ornith-1.5-122b-learnings.md": {
+      "processed_at": "2026-11-13T06:58:48.896Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 483,
-  "total_canonical_promoted": 68,
-  "total_staged_for_review": 412
+  "total_dossiers_evaluated": 486,
+  "total_canonical_promoted": 70,
+  "total_staged_for_review": 413
 }

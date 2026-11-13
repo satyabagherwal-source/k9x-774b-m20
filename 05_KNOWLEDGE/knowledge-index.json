@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T06:51:10.866Z",
+  "last_updated": "2026-11-13T06:58:29.959Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5119,8 +5119,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "36caf4ca",
-      "content_hash": "4731c5a82193f43b7de0c9033ad3da623f61e91d5c769a823e1c7cfc3fb5c005",
+      "source_version": "e61c4d06",
+      "content_hash": "efb445f7d58280df1cbe1d3ca62b763b1c3eed04a0f932b707ab2f970f862333",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -5137,6 +5137,11 @@
         {
           "number": null,
           "title": "market(fix): refine catalog handling and api safeguards (#4436)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs: remove incorrect Claude Code model restriction (#4434)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5240,7 +5245,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T01:52:07.012Z",
+      "verified_at": "2026-11-13T06:58:29.937Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138353,7 +138358,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
       "source_version": "hf-ornith-ai-ornith-1.5-122b",
-      "content_hash": "531539e0d7c0798a727f8bba739539f8f79a2762d316225017de9b3798f39db1",
+      "content_hash": "f8497378d391461e1411b703bc216de6885c997d4cc6a971702828645f47b8a3",
       "dossier_path": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "promoted_rules": [
@@ -138418,7 +138423,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:40:51.305Z",
+      "verified_at": "2026-11-13T06:58:10.097Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

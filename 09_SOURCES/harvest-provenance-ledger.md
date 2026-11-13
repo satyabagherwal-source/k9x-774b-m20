@@ -9381,3 +9381,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-64949094` | `project://hf-krafton-raon-1-mini-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | 2026-11-13T06:33:56.160Z |
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-13T06:51:00.365Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `d5b9a7e0` | Multi-dimensional audit evidence | 2026-11-13T06:51:10.956Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-13T06:58:10.233Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `e61c4d06` | Multi-dimensional audit evidence | 2026-11-13T06:58:30.062Z |
+| `learn-dom-d-552af493` | `project://hf-ornith-ai-ornith-1.5-122b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md` | 2026-11-13T06:58:48.895Z |
+| `learn-dom-h-414482d7` | `project://beclab-olares` | `e61c4d06` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md` | 2026-11-13T06:59:10.944Z |

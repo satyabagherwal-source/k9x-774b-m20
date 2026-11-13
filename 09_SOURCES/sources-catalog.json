@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "36caf4ca",
+    "sourceVersion": "e61c4d06",
     "license": "AGPL-3.0",
-    "contentHash": "4731c5a82193f43b7de0c9033ad3da623f61e91d5c769a823e1c7cfc3fb5c005",
-    "lastHarvestedAt": "2026-11-12T01:52:07.159Z",
+    "contentHash": "efb445f7d58280df1cbe1d3ca62b763b1c3eed04a0f932b707ab2f970f862333",
+    "lastHarvestedAt": "2026-11-13T06:58:30.062Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -10625,8 +10625,8 @@
     "sourceUrl": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
     "sourceVersion": "hf-ornith-ai-ornith-1.5-122b",
     "license": "Open-Source",
-    "contentHash": "531539e0d7c0798a727f8bba739539f8f79a2762d316225017de9b3798f39db1",
-    "lastHarvestedAt": "2026-11-08T05:40:51.435Z",
+    "contentHash": "f8497378d391461e1411b703bc216de6885c997d4cc6a971702828645f47b8a3",
+    "lastHarvestedAt": "2026-11-13T06:58:10.233Z",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b"
   },
   "lokoe-mehdi-scouter": {

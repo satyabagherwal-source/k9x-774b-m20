@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-G8NY",
-    "timestamp": "2026-11-10T00:59:44.734Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "3b19e3cc17f4d134094fc5f731ca0099a68870e5041dc28f65a29745ca902a29",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-GB04",
-    "timestamp": "2026-11-10T00:59:47.764Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-GE04",
     "timestamp": "2026-11-10T00:59:51.652Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7460,36 @@
     "repository": "max-sixty/worktrunk",
     "learningId": "learn-github-max-sixty-worktrunk",
     "contentHash": "45036269a1dfbcb997bbbb6b6892ffbf5143a49040dbb306323afa89f44fad81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-KQET",
+    "timestamp": "2026-11-13T06:58:10.229Z",
+    "repository": "ornith-ai/Ornith-1.5-122B",
+    "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+    "contentHash": "f8497378d391461e1411b703bc216de6885c997d4cc6a971702828645f47b8a3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-L5PN",
+    "timestamp": "2026-11-13T06:58:30.059Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "efb445f7d58280df1cbe1d3ca62b763b1c3eed04a0f932b707ab2f970f862333",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

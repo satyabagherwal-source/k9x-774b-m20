@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T06:33:56.157Z",
-  "total_records": 101,
+  "last_updated": "2026-11-13T06:59:10.942Z",
+  "total_records": 103,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 60,
+      "total": 61,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -85,7 +85,8 @@
         "DOM-D-7D4C4039",
         "DOM-D-80F82307",
         "DOM-D-B83FE1C6",
-        "DOM-D-64949094"
+        "DOM-D-64949094",
+        "DOM-D-552AF493"
       ]
     },
     "E": {
@@ -108,7 +109,7 @@
       ]
     },
     "H": {
-      "total": 20,
+      "total": 21,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -129,7 +130,8 @@
         "DOM-H-EE08D822",
         "DOM-H-B173C8F8",
         "DOM-H-B77A0FED",
-        "DOM-H-8C53C2BF"
+        "DOM-H-8C53C2BF",
+        "DOM-H-414482D7"
       ]
     },
     "I": {
@@ -4172,6 +4174,90 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T06:33:56.155Z"
+    },
+    "DOM-D-552AF493": {
+      "record_id": "DOM-D-552AF493",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ornith-ai/Ornith-1.5-122B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ornith-ai/Ornith-1.5-122B](https://huggingface.co/ornith-ai/Ornith-1.5-122B))  \n> **Source Version**: `hf-ornith-ai`  \n> **License**: Open-Source",
+      "content_hash": "226a0d4c622d4f5d5749df7c156d12657c43c53df7b2dbb807d4539e89fb5b81",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "provenance": {
+        "source_uri": "project://hf-ornith-ai-ornith-1.5-122b/hf-ornith-ai-ornith-1.5-122b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T06:58:34.780Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ornith-ai-ornith-1.5-122b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ornith-ai-ornith-1.5-122b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T06:58:48.891Z"
+    },
+    "DOM-H-414482D7": {
+      "record_id": "DOM-H-414482D7",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "docs: remove incorrect Claude Code model restriction (#4434)",
+      "content": "When implementing operations in `docs/use-cases/claude-code.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "65359d6aec2a9373d2608237a700063f9c35ad09db2524c6b56bdfd000b25b5b",
+      "summary": "Prevents defects observed in production commit `e61c4d06`: docs: remove incorrect Claude Code model restriction (#4434). Unvalidated executi -> When implementing operations in `docs/use-cases/claude-code.md`, engineers MUST enforce rigorous boundary validation, safe state transitions",
+      "provenance": {
+        "source_uri": "project://beclab-olares/beclab-olares-learnings.md",
+        "source_version": "e61c4d06",
+        "observed_at": "2026-11-13T06:58:19.822Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (beclab-olares)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of beclab-olares"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T06:59:10.940Z"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:51:14.865Z",
+  "last_updated": "2026-11-13T06:59:10.971Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8309,6 +8309,15 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-61D1B4-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-1A1A44",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1A1A44-engine-restore-text-fallback-for-unknown.md",
       "staged_date": "2026-11-13"
     }
   ]
