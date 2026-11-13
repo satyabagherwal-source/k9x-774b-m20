@@ -9506,3 +9506,8 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `6767731b` | Multi-dimensional audit evidence | 2026-11-13T13:50:43.881Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `08023735` | Multi-dimensional audit evidence | 2026-11-13T13:50:46.537Z |
 | `learn-dom-d-e7fd79e5` | `project://hf-lightricks-ltx-2.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | 2026-11-13T13:51:05.141Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-13T14:05:41.842Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `ca90fe79` | Multi-dimensional audit evidence | 2026-11-13T14:06:02.475Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `1e2c676a` | Multi-dimensional audit evidence | 2026-11-13T14:06:08.478Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `9e3190a8` | Multi-dimensional audit evidence | 2026-11-13T14:06:12.633Z |
+| `learn-dom-d-b39f30ba` | `project://hf-prism-ml-ternary-bonsai-2-27b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | 2026-11-13T14:06:34.285Z |

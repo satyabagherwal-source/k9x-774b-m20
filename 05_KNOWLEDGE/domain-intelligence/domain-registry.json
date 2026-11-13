@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T13:51:05.139Z",
-  "total_records": 136,
+  "last_updated": "2026-11-13T14:06:34.282Z",
+  "total_records": 137,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 91,
+      "total": 92,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -116,7 +116,8 @@
         "DOM-D-9802962D",
         "DOM-D-F5A07C9A",
         "DOM-D-B9912729",
-        "DOM-D-E7FD79E5"
+        "DOM-D-E7FD79E5",
+        "DOM-D-B39F30BA"
       ]
     },
     "E": {
@@ -5695,6 +5696,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T13:51:05.137Z"
+    },
+    "DOM-D-B39F30BA": {
+      "record_id": "DOM-D-B39F30BA",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf))  \n> **Source Version**: `hf-prism-ml-`  \n>",
+      "content_hash": "26e6ab127db49c3cfda9b98539710fcc5cade6be132cef3223f48879b383364e",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md`  \n> **Source**: huggingface ([ht -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md`  \n> **Source**: huggingface ([ht",
+      "provenance": {
+        "source_uri": "project://hf-prism-ml-ternary-bonsai-2-27b-gguf/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T14:06:18.664Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prism-ml-ternary-bonsai-2-27b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-prism-ml-ternary-bonsai-2-27b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T14:06:34.278Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `e449c978`  
+> **Source Version**: `9e3190a8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:46:09.208Z  
+> **Timestamp**: 2026-11-13T14:05:54.265Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:45:54.975Z  
+> **Harvest Timestamp**: 2026-11-13T14:05:54.256Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25899 stars
+- **Stars / Engagement**: 25904 stars
 
 ---
 
@@ -1688,15 +1688,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #25685** (2026-11-13): **v3.275.0: SHA512SUMS don't match any release binary**
+  *Symptoms*: ### What happened?  The hashes in `SHA512SUMS` for v3.275.0 don't match any of the six CLI binaries. `pulumi-3.275.0-checksums.txt` (SHA-256) matches all of them, so the binaries look fine. only `SHA512SUMS` (and maybe `.sig`) is off.  The binaries on the GitHub release and on `get.pulumi.com/releases/sdk/` are identical, so it doesn't depend on where you download from. v3.274.0 verifies fine against its `SHA512SUMS`.  ### Example  Repro:  ```bash v=3.275.0 gh="https://github.com/pulumi/pulumi/releases/download/v${v}" curl -sSLO "${gh}/SHA512SUMS" curl -sSLO "${gh}/pulumi-${v}-checksums.txt" for p in darwin-arm64.tar.gz darwin-x64.tar.gz linux-arm64.tar.gz linux-x64.tar.gz windows-arm64.zip windows-x64.zip; do   curl -sSLO "${gh}/pulumi-v${v}-${p}" done  grep -E "^\S+  pulumi-v${v}-" SHA512SUMS | shasum -a 512 -c   # all 6 FAILED shasum -a 256 -c "pulumi-${v}-checksums.txt"                   # all 6 OK ```  <details> <summary>Expected vs actual SHA-512</summary>  ``` darwin-arm64.tar.gz   expected 6d164b6a91bf49f8d3ac704e4cd8ccc4d39793174a9887a9356347e2ea32e18a6235d9baa0eac0dfb325c0bc83f88fd269b848706a404318b6d9106900dfb216   actual   6a215cac28620e558abad9a63d22cd3295dd5c1ddfec65559d6d76370cec864f0fa912d3c457d67ff81836bc9bfce753693db11a8eef67348723e6ad3c1ce6e9 darwin-x64.tar.gz   expected a92f37054fa1ab51fb56bdb6202f5e5f94b9b0ae1a2f76f256c01510f7b676842bd8b86eb71dfb27bdfa836c31d33fe233c4167ca3f6aa281215c4a493e127c4   actual   c7d96eea15d8dadb9514ad874220a661492c374117db7336c
+  **Post-Mortem & Fix Analysis**:
+  > This was due to a race in the release jobs, we're fixing it in https://github.com/pulumi/pulumi/pull/25684 and will pump a new release out shortly.
+
 - **Issue #25669** (2026-11-11): **Workflow failure: Pull Request on #25668**
   *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25668  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-11-11T10:11:09.000Z](https://github.com/pulumi/pulumi/actions/runs/42991764193)
   **Post-Mortem & Fix Analysis**:
   > This issue has been automatically closed because the associated PR #25668 was merged.  PR: https://github.com/pulumi/pulumi/pull/25668
-
-- **Issue #25658** (2026-11-10): **Workflow failure: On Push at dev-release / sign / sign**
-  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-11-10T14:08:41.000Z](https://github.com/pulumi/pulumi/actions/runs/42828741016)   - ❌ [dev-release / sign / sign](https://github.com/pulumi/pulumi/actions/runs/42828741016/job/129880044583): Sign binaries and checksums (failure)
-  **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-10T14:11:59.000Z](https://github.com/pulumi/pulumi/actions/runs/42829769689)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1713,256 +1713,68 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6199fe78` (2026-11-10)
-**Commit Message**: Fix pulumi import code generation for indexed modules (#25616)
+### Incident Patch 1: `a4fcfbeb` (2026-11-12)
+**Commit Message**: Serialize prepare-release runs to fix release checksum/binary mismatch (#25684)
 
-`pulumi import --from hcl` imports resources in a module that uses
-`count` or `for_each`, then fails to generate code and exits 1:
+## Background
 
-    error: internal error: Error: Missing newline after argument
-      on anonymous.pp line 76:
-      77: parent = m[0]_inner
+The `SHA256SUMS`, `SHA512SUMS`, and `B3SUMS` files published on recent
+GitHub releases (e.g.
+[v3.275.0](https://github.com/pulumi/pulumi/releases/tag/v3.275.0)) do
+not match the hashes of the binaries uploaded alongside them. For
+example, `SHA512SUMS` for v3.275.0 claims
+`pulumi-v3.275.0-linux-x64.tar.gz` hashes to `4db9be95…`, but the
+uploaded tarball actually hashes to `f4a18060…`.
 
-`sanitizeName` only replaced dots, so an address like `m[0].inner` kept
-its brackets, and quotes for `for_each` keys, which aren't valid in a
-PCL name. Names containing `[` now have every invalid character
-replaced. Other names are unchanged, so existing generated code stays
-the same.
+Nothing was tampered with — this is a race in our own release pipeline.
 
----------
+## Root cause
 
-Co-authored-by: Fraser Ashyggton <[REDACTED_EMAIL]>
+`on-merge.yml` runs on every `merge_group` event and calls
+`ci-prepare-release.yml`, which builds the binaries, computes the sums,
+and uploads everything to the `v${version}` draft release via
+`ncipollo/release-action` with `allowUpdates: true, replacesArtifacts:
+true`.
 
-**File**: `changelog/pending/cli-import-fix-20261106-121148.yaml` (added, +4/-0)
+The `on-merge.yml` concurrency group is keyed on `${{ github.workflow
+}}-${{ github.ref }}`, but `merge_group` events have a different
+`github.ref` per PR (e.g. `gh-readonly-queue/master/pr-25070-…`). So
+multiple merge-queue runs execute `ci-prepare-release` concurrently and
+all target the same draft release.
+
+Because Go binaries are not bit-reproducible
+
+**File**: `.github/workflows/ci-prepare-release.yml` (modified, +4/-0)
+```diff
+@@ -36,6 +36,10 @@ on:
+         description: "Whether to create a draft release"
+         type: boolean
+ 
++concurrency:
++  group: prepare-release-${{ inputs.version }}
++  cancel-in-progress: false
++
+ env:
+   PULUMI_VERSION: ${{ inputs.version }}
+ 
+```
+
+**File**: `changelog/pending/ci-fix-20261108-release-race.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: cli/import
++component: ci
 +kind: fix
-+body: Fix `pulumi import` failing to generate code for resources in indexed modules, such as those using `count` or `for_each`
-+time: 2026-11-06T12:11:48.366604-08:00
-```
-
-**File**: `pkg/importer/hcl2_test.go` (modified, +3/-1)
-```diff
-@@ -372,8 +372,10 @@ func TestGenerateHCL2Definition(t *testing.T) {
- 				},
- 			}
- 
-+			nameTable := maps.Clone(names)
-+			nameTable[state.URN] = sanitizeName(state.URN.Name())
- 			importState := ImportState{
--				Names:    maps.Clone(names),
-+				Names:    nameTable,
- 				Snapshot: snapshot,
- 			}
- 
-```
-
-**File**: `pkg/importer/language.go` (modified, +4/-1)
-```diff
-@@ -19,6 +19,7 @@ import (
- 	"encoding/base64"
- 	"fmt"
- 	"io"
-+	"regexp"
- 	"strings"
- 
- 	pkgresource "github.com/pulumi/pulumi/pkg/v3/resource"
-@@ -120,8 +121,10 @@ func createPathedValue(
- 	return nil
- }
- 
-+var invalidNameCharacters = regexp.MustCompile(`[^\p{L}\p{N}_-]`)
-+
- func sanitizeName(name string) string {
--	return strings.ReplaceAll(name, ".", "_")
-+	return invalidNameCharacters.ReplaceAllString(name, "_")
- }
- 
- func createImportState(states []*pkgresource.State, snapshot []*pkgresource.State, names NameTable) ImportState {
-```
-
-**File**: `pkg/importer/language_test.go` (modified, +26/-0)
-```diff
-@@ -532,3 +532,29 @@ const randomPet = new random.RandomPet("randomPet", {}, {
- `
- 	assert.Equal(t, expectedTypeScript, generatedTypeScript)
- }
-+
-+func TestSanitizeName(t *testing.T) {
-+	t.Parallel()
-+
-+	tests := []struct {
-+		name string
-+		want string
-+	}{
-+		{"bucket", "bucket"},
-+		{"my-bucket_1", "my-bucket_1"},
-+		{"m.inner", "m_inner"},
-+		{"m[0].inner", "m_0__inner"},
-+		{`m["us-east"].inner`, "m__us-east___inner"},
-+		{`m["a b"].inner`, "m__a_b___inner"},
-+		{"default/nginx", "default_nginx"},
-+		{"imported resource", "imported_resource"},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			assert.Equal(t, tt.want, sanitizeName(tt.name))
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `cde91143` (2026-11-10)
-**Commit Message**: Centralize Survey prompts behind ui.AskOne (#25634)
-
-This has no functional changes. Move all of our prompts from
-`survey.AskOne` to a shim in `ui.AskOne`. In the next PR
-https://github.com/pulumi/pulumi/pull/25635 we plugin the OSC 7501
-status code for "needs user input" into that shim.
-
-**File**: `pkg/cmd/pulumi/auth/login.go` (modified, +2/-2)
-```diff
-@@ -162,7 +162,7 @@ func (c *loginCmd) newCommand(ws pkgWorkspace.Context, lm backend.LoginManager,
- 					"warning: existing stored credentials can no longer be decrypted: %v\n", err)
- 				if cmdutil.Interactive() {
- 					replace := false
--					if err := survey.AskOne(&survey.Confirm{
-+					if err := ui.AskOne(&survey.Confirm{
- 						Message: "Replace the stored credentials with the ones from this login?",
- 						Default: false,
- 					}, &replace, ui.SurveyIcons(displayOptions.Color)); err != nil || !replace {
-@@ -517,7 +517,7 @@ func chooseAccount(accounts map[string]workspace.Account, opts display.Options)
- 	message = opts.Color.Colorize(colors.SpecPrompt + message + colors.Reset)
- 
- 	var option string
--	if err := survey.AskOne(&survey.Select{
-+	if err := ui.AskOne(&survey.Select{
- 		Message:  message,
- 		Options:  acts,
- 		PageSize: pageSize,
-```
-
-**File**: `pkg/cmd/pulumi/logs/decrypt.go` (modified, +1/-1)
-```diff
-@@ -290,7 +290,7 @@ func chooseLog(stackName, prompt string) (string, error) {
- 	options, optionMap := formatLogChoices(entries)
- 
- 	var choice string
--	if err := survey.AskOne(&survey.Select{
-+	if err := ui.AskOne(&survey.Select{
- 		Message:  prompt,
- 		Options:  options,
- 		PageSize: cmd.OptimalPageSize(cmd.OptimalPageSizeOpts{Nopts: len(options)}),
-```
-
-**File**: `pkg/cmd/pulumi/logs/remove.go` (modified, +1/-1)
-```diff
-@@ -192,7 +192,7 @@ func chooseLogToRemove(logsDir string) (logEntry, error) {
- 	options, optionMap := formatLogRemovalChoices(entries)
- 
- 	var choice string
--	if err := survey.AskOne(&survey.Select{
-+	if err := ui.AskOne(&survey.Select{
- 		Message:  "Select a log file to remove:",
- 		Options:  options,
- 		PageSize: cmd.OptimalPageSize(cmd.OptimalPageSizeOpts{Nopts: len(options)}),
-```
-
-**File**: `pkg/cmd/pulumi/operations/refresh.go` (modified, +3/-2)
-```diff
-@@ -34,6 +34,7 @@ import (
- 	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/metadata"
- 	cmdStack "github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/stack"
- 	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/state"
-+	"github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/ui"
- 	"github.com/pulumi/pulumi/pkg/v3/engine"
- 	pkgresource "github.com/pulumi/pulumi/pkg/v3/resource"
- 	"github.com/pulumi/pulumi/pkg/v3/resource/deploy"
-@@ -622,7 +623,7 @@ func interactiveFixPendingCreate(op pkgresource.Operation) (*pkgresource.Operati
- 			"skip (do nothing)",
- 			"import (the CREATE succeeded; provide a resource ID and complete the CREATE operation)",
- 		}
--		if err := survey.AskOne(&survey.Select{
-+		if err := ui.AskOne(&survey.Select{
- 			Message: fmt.Sprintf("Options for pending CREATE of %s", op.Resource.URN),
- 			Options: options,
- 		}, &option, nil); err != nil {
-@@ -637,7 +638,7 @@ func interactiveFixPendingCreate(op pkgresource.Operation) (*pkgresource.Operati
- 			return &op, nil
- 		case options[2]:
- 			var id string
--			err = survey.AskOne(&survey.Input{
-+			err = ui.AskOne(&survey.Input{
- 				Message: "ID: ",
- 			}, &id, nil)
- 			if err == nil {
-```
-
-**File**: `pkg/cmd/pulumi/packagecmd/package_new.go` (modified, +1/-1)
-```diff
-@@ -330,7 +330,7 @@ func choosePackageTemplate(
- 	options, optionToTemplateMap := packageTemplatesToOptions(templates)
- 
- 	var option string
--	if err := survey.AskOne(&survey.Select{
-+	if err := ui.AskOne(&survey.Select{
- 		Message:  message,
- 		Options:  options,
- 		PageSize: cmd.OptimalPageSize(cmd.OptimalPageSizeOpts{Nopts: len(options)}),
-```
-
-**File**: `pkg/cmd/pulumi/policy/policy_new.go` (modified, +1/-1)
-```diff
-@@ -311,7 +311,7 @@ func choosePolicyPackTemplate(templates []cmdTemplates.PolicyPackTemplate,
- 	options, optionToTemplateMap := policyTemplatesToOptionArrayAndMap(templates)
- 
- 	var option string
--	if err := survey.AskOne(&survey.Select{
-+	if err := ui.AskOne(&survey.Select{
- 		Message:  message,
- 		Options:  options,
- 		PageSize: cmd.OptimalPageSize(cmd.OptimalPageSizeOpts{Nopts: len(options)}),
-```
-
-**File**: `pkg/cmd/pulumi/project/newcmd/new.go` (modified, +1/-1)
-```diff
-@@ -800,7 +800,7 @@ func promptRuntimeOptions(ctx *plugin.Context, language plugin.LanguageRuntime,
- 
- 				var response string
- 				message := opts.Color.Colorize(colors.SpecPrompt + "\r" + optionPrompt.Description + colors.Reset)
--				if err := survey.AskOne(&survey.Select{
-+				if err := ui.AskOne(&survey.Select{
- 					Message: message,
- 					Options: choices,
- 				}, &response, ui.SurveyIcons(opts.Color), nil); err != nil {
-```
-
-**File**: `pkg/cmd/pulumi/stack/io.go` (modified, +1/-1)
-```diff
-@@ -284,7 +284,7 @@ func ChooseStack(ctx context.Context, sink diag.Sink, ws pkgWorkspace.Context,
- 	message = opts.Color.Colorize(colors.SpecPrompt + message + colors.Reset)
- 
- 	var option string
--	if err = survey.AskOne(&survey.Select{
-+	if err = ui.AskOne(&survey.Select{
- 		Message: message,
- 		Options: options,
- 		Default: defaultOption,
++body: Serialize prepare-release runs per version to prevent checksum/binary mismatches on draft releases
++time: 2026-11-08T12:00:00+00:00
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25691** (2026-11-13): Changelog for v3.276.0 (@pulumi-bot)
+- **PR #25687** (2026-11-12): Lock 3.276 for release (@Frassle)
+- **PR #25684** (2026-11-12): Serialize prepare-release runs to fix release checksum/binary mismatch (@Frassle)
+- **PR #25675** (2026-11-12): Changelog for v3.275.0 (@pulumi-bot)
+- **PR #25671** (closed): Fork CheckConfigResponse and expose CheckConfig as two Go methods (@VenelinMartinov)
 - **PR #25668** (2026-11-11): Freeze v3.275.0 (@pulumi-bot)
-- **PR #25635** (2026-11-10): Report operation and prompt status using OSC 7501 (@julienp)
-- **PR #25634** (2026-11-10): Centralize Survey prompts behind ui.AskOne (@julienp)
-- **PR #25633** (2026-11-10): Update dependency pulumi/pulumi-dotnet to v3.118.0 (@pulumi-renovate[bot])
-- **PR #25632** (2026-11-10): Lint against assert.Error (@Frassle)
-- **PR #25627** (2026-11-09): Fix Windows closure test tool resolution (@julienp)
 
 ---
 
@@ -1982,24 +1794,24 @@ status code for "needs user input" into that shim.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pulumi import code generation for indexed modules (#25616)
+## X. Serialize prepare-release runs to fix release checksum/binary mismatch (#25684)
 
 **RULE**:
-When implementing operations in `changelog/pending/cli-import-fix-20261106-121148.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci-prepare-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6199fe78`: pulumi import code generation for indexed modules (#25616). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a4fcfbeb`: Serialize prepare-release runs to fix release checksum/binary mismatch (#25684). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/cli-import-fix-20261106-121148.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-prepare-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: cli/import
-kind: fix
-body: Fix `pulumi import` failing to generate code for resources in indexed modules, such as those using `count` or `for_each`
-time: 2026-11-06T12:11:48.366604-08:00
+concurrency:
+  group: prepare-release-${{ inputs.version }}
+  cancel-in-progress: false
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2009,4 +1821,4 @@ time: 2026-11-06T12:11:48.366604-08:00
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6199fe78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a4fcfbeb` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T13:50:46.436Z",
+  "last_updated": "2026-11-13T14:06:12.505Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17236,8 +17236,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "d1e064e3",
-      "content_hash": "83484a7482d7d4dab1b3587f6044149c5a7cddad8ccf54fb70f9f564a3f2ca26",
+      "source_version": "ca90fe79",
+      "content_hash": "0615ef7b17e515d8be5f79284975e1a550f070cee0dae81be9949f33472d3a24",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -17259,6 +17259,11 @@
         {
           "number": null,
           "title": "gix-diff): count existing destinations when inferring directory renames",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "gix-sec): support long Windows ownership paths (#3196)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -17327,7 +17332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T01:31:20.687Z",
+      "verified_at": "2026-11-13T14:06:02.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31942,7 +31947,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "610c888e9f1f2d557a5650aa3cf2ccafda93f606677f05516bfddf3e5948104c",
+      "content_hash": "2c0dc47e94cfeb460e4b2fce18ef61e6fb4f89ca628340829a2e1a03c43c37bd",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -32037,7 +32042,7 @@
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe",
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo"
       ],
-      "verified_at": "2026-11-08T14:24:42.831Z",
+      "verified_at": "2026-11-13T14:05:41.700Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54432,8 +54437,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "e449c978",
-      "content_hash": "d4a545056fa7833e31ef17d2115022c4ed70b035b4a43ec408d7bf6a7e18cc83",
+      "source_version": "9e3190a8",
+      "content_hash": "f5b0f48434501de20c44175fb97281eeb5955469ede98aa70497f71ad3d0cd68",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -54455,6 +54460,11 @@
         {
           "number": null,
           "title": "pulumi import code generation for indexed modules (#25616)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Serialize prepare-release runs to fix release checksum/binary mismatch (#25684)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -54558,7 +54568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T09:46:20.272Z",
+      "verified_at": "2026-11-13T14:06:12.478Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67533,13 +67543,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "7a9b20cd",
-      "content_hash": "5d4326814472d60debf7b25295bc11dc8001ff31ccc47adf15f14f665e242f6a",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "1e2c676a",
+      "content_hash": "737dc8a2d4592d7909763ac11fefc35a0267188078cf33447755482c18c76681",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -67549,6 +67559,11 @@
         {
           "number": null,
           "title": "🤖): never make Android's main thread wait for the present thread (#4395)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "🐙): drop an e2e reply that comes after its request timed out (#4466)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67607,7 +67622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T23:17:46.395Z",
+      "verified_at": "2026-11-13T14:06:08.219Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

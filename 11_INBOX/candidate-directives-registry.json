@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:51:05.159Z",
+  "last_updated": "2026-11-13T14:06:34.315Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8912,6 +8912,24 @@
       "source_repo": "sweetpad-dev-sweetpad",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F939DD-support-debian-and-arch-linux-setup-355-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-BA3DD2",
+      "directive_title": "gix-sec): support long Windows ownership paths (#3196)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gitoxidelabs-gitoxide",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BA3DD2-gix-sec-support-long-windows-ownership-p.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-0474C8",
+      "directive_title": "🐙): drop an e2e reply that comes after its request timed out (#4466)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "wcandillon-react-native-skia",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0474C8--drop-an-e2e-reply-that-comes-after-its-.md",
       "staged_date": "2026-11-13"
     }
   ]

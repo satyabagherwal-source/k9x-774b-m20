@@ -9497,3 +9497,8 @@
 | `CYCLE-20261113-BAG5` | `2026-11-13T13:50:43.877Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a944044c...`) |
 | `CYCLE-20261113-BCHW` | `2026-11-13T13:50:46.532Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8cb0f4e2...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:51:05.141Z` | `hf-lightricks-ltx-2.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E7FD79E5` [Domain D] | Yes (`cea297ae...`) |
+| `CYCLE-20261113-UJBH` | `2026-11-13T14:05:41.837Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`2c0dc47e...`) |
+| `CYCLE-20261113-UZ8J` | `2026-11-13T14:06:02.467Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0615ef7b...`) |
+| `CYCLE-20261113-V3VC` | `2026-11-13T14:06:08.472Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`737dc8a2...`) |
+| `CYCLE-20261113-V72S` | `2026-11-13T14:06:12.628Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5b0f484...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:06:34.285Z` | `hf-prism-ml-ternary-bonsai-2-27b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B39F30BA` [Domain D] | Yes (`26e6ab12...`) |

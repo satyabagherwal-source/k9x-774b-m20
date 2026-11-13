@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "610c888e9f1f2d557a5650aa3cf2ccafda93f606677f05516bfddf3e5948104c",
-    "lastHarvestedAt": "2026-11-08T14:24:42.964Z",
+    "contentHash": "2c0dc47e94cfeb460e4b2fce18ef61e6fb4f89ca628340829a2e1a03c43c37bd",
+    "lastHarvestedAt": "2026-11-13T14:05:41.842Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "d1e064e3",
+    "sourceVersion": "ca90fe79",
     "license": "Apache-2.0",
-    "contentHash": "83484a7482d7d4dab1b3587f6044149c5a7cddad8ccf54fb70f9f564a3f2ca26",
-    "lastHarvestedAt": "2026-11-12T01:31:20.902Z",
+    "contentHash": "0615ef7b17e515d8be5f79284975e1a550f070cee0dae81be9949f33472d3a24",
+    "lastHarvestedAt": "2026-11-13T14:06:02.475Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "e449c978",
+    "sourceVersion": "9e3190a8",
     "license": "Apache-2.0",
-    "contentHash": "d4a545056fa7833e31ef17d2115022c4ed70b035b4a43ec408d7bf6a7e18cc83",
-    "lastHarvestedAt": "2026-11-12T09:46:20.424Z",
+    "contentHash": "f5b0f48434501de20c44175fb97281eeb5955469ede98aa70497f71ad3d0cd68",
+    "lastHarvestedAt": "2026-11-13T14:06:12.633Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "7541db92",
+    "sourceVersion": "1e2c676a",
     "license": "MIT",
-    "contentHash": "1a308824e88c60fb2c6be0ce236e92127848feb3d847a390ccbe75424f5e0096",
-    "lastHarvestedAt": "2026-11-09T04:10:28.553Z",
+    "contentHash": "737dc8a2d4592d7909763ac11fefc35a0267188078cf33447755482c18c76681",
+    "lastHarvestedAt": "2026-11-13T14:06:08.478Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {
