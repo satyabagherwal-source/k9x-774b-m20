@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:52:34.431Z",
-  "total_cycles_completed": 9336,
-  "total_learnings_persisted": 9336,
-  "total_rules_promoted": 9076,
+  "last_updated": "2026-11-13T19:01:28.361Z",
+  "total_cycles_completed": 9338,
+  "total_learnings_persisted": 9338,
+  "total_rules_promoted": 9077,
   "history": [
-    {
-      "timestamp": "2026-11-13T04:31:32.124Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T04:42:59.015Z",
-      "repository": "RecursiveSI/flint",
-      "learningId": "learn-huggingface-recursivesi-flint",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T04:43:18.016Z",
       "repository": "kubeedge/kubeedge",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T18:52:34.431Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:01:20.906Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:01:28.361Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

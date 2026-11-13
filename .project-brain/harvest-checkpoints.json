@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T18:52:34.434Z",
+  "last_updated": "2026-11-13T19:01:28.365Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -725,14 +725,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "c298544fe118bffd248a2cb28cf5bb812a3186a76d8e946adddf5fa5dd92106a",
-      "verified_at": "2026-11-08T17:59:03.151Z",
+      "content_hash": "fe8e36cc6da08d27c49ac30f15a8e5ea2af123b5d29c964f23a24d5fed559949",
+      "verified_at": "2026-11-13T19:01:20.909Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:59:03.151Z"
+      "last_updated": "2026-11-13T19:01:20.909Z"
     },
     "PSRben/VisionHOPE": {
       "repository": "PSRben/VisionHOPE",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "bffc3bcd0c6be4dc8479630d853cb6e5c03e4a8f41ff1170f3dd40fa67115867",
-      "verified_at": "2026-11-09T09:13:19.438Z",
+      "content_hash": "07646865b7ac5285dc55c2b56a91a12ee5acbbde8c072ddec797dc64f9eed00c",
+      "verified_at": "2026-11-13T19:01:28.364Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T09:13:19.438Z"
+      "last_updated": "2026-11-13T19:01:28.364Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",

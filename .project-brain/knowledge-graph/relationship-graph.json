@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T18:53:10.638Z",
+  "updated_at": "2026-11-13T19:02:15.715Z",
   "statistics": {
-    "total_nodes": 114,
+    "total_nodes": 115,
     "total_edges": 61,
     "domain_distribution": {
-      "D": 93,
+      "D": 94,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -2544,6 +2544,28 @@
       ],
       "created_at": "2026-11-13T18:53:10.638Z",
       "updated_at": "2026-11-13T18:53:10.638Z"
+    },
+    "DOM-D-D194A6F7": {
+      "id": "DOM-D-D194A6F7",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingfa",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T19:01:32.837Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T19:02:15.715Z",
+      "updated_at": "2026-11-13T19:02:15.715Z"
     }
   },
   "edges": [

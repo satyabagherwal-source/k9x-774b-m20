@@ -9576,3 +9576,6 @@
 | `CYCLE-20261113-3A6F` | `2026-11-13T18:52:26.055Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5f388e7b...`) |
 | `CYCLE-20261113-3GMJ` | `2026-11-13T18:52:34.411Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e4ed48be...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:53:10.638Z` | `actix-actix-web` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-199063A7` [Domain K] | Yes (`5ae06628...`) |
+| `CYCLE-20261113-EQV4` | `2026-11-13T19:01:20.896Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`fe8e36cc...`) |
+| `CYCLE-20261113-EWLV` | `2026-11-13T19:01:28.339Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`07646865...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T19:02:15.716Z` | `hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D194A6F7` [Domain D] | Yes (`415e4bd5...`) |

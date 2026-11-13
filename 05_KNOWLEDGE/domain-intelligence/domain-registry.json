@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T18:53:10.946Z",
-  "total_records": 280,
+  "last_updated": "2026-11-13T19:02:15.920Z",
+  "total_records": 284,
   "domains": {
     "A": {
       "total": 3,
@@ -30,7 +30,7 @@
       ]
     },
     "D": {
-      "total": 155,
+      "total": 158,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -186,7 +186,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning",
         "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
         "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
-        "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
+        "DOM-D-D194A6F7",
+        "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea"
       ]
     },
     "E": {
@@ -236,7 +239,7 @@
       ]
     },
     "H": {
-      "total": 59,
+      "total": 60,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -296,7 +299,8 @@
         "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria"
       ]
     },
     "I": {
@@ -7867,6 +7871,75 @@
       "repository": "actix-actix-web-learnings",
       "content_hash": "e6657e100ed2f90c0a2fab55a0b8567a3f2608c7ad7940b882e63c6ffcdd68f9",
       "created_at": "2026-11-13T18:53:10.946Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-uki.md",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "content_hash": "8dda5931f22f6a58e923e2e49dccefb89f9726fe778ecaf8002d9d074c6d3492",
+      "created_at": "2026-11-13T19:01:21.058Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
+      "repository": "react-hook-form/react-hook-form",
+      "content_hash": "608d13888f8a3bdcf7b6ac8c6becd4dcc6170b4ff6c0cd803017fb116563c1d6",
+      "created_at": "2026-11-13T19:01:28.604Z"
+    },
+    "DOM-D-D194A6F7": {
+      "record_id": "DOM-D-D194A6F7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF))  \n> **Source Version**",
+      "content_hash": "415e4bd56a19bbbd3f0623dc110d660053482ded1b5bcf868b6a1451e7a8cc65",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T19:01:32.837Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T19:02:15.709Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intell.md",
+      "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
+      "content_hash": "f24f67c29529ea348fc1c9604517902a90b21dc299207b2a8352bb156f59875a",
+      "created_at": "2026-11-13T19:02:15.920Z"
     }
   }
 }

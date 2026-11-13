@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T18:52:37.327Z",
-    "lastVerified": "2026-11-13T18:52:37.328Z",
+    "lastChecked": "2026-11-13T19:01:32.750Z",
+    "lastVerified": "2026-11-13T19:01:32.750Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,8 +368,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-13T18:25:57.760Z",
-    "lastVerified": "2026-11-13T18:25:57.760Z",
+    "lastChecked": "2026-11-13T19:01:32.738Z",
+    "lastVerified": "2026-11-13T19:01:32.738Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -915,14 +915,14 @@
     "officialUrl": "https://github.com/react-hook-form/react-hook-form",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T09:09:56.681Z",
-    "lastVerified": "2026-11-09T09:09:56.681Z",
+    "lastChecked": "2026-11-13T19:01:27.838Z",
+    "lastVerified": "2026-11-13T19:01:27.838Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "bffc3bcd0c6be4dc8479630d853cb6e5c03e4a8f41ff1170f3dd40fa67115867",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 17,
+    "contentHash": "07646865b7ac5285dc55c2b56a91a12ee5acbbde8c072ddec797dc64f9eed00c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1131,9 +1131,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-12T14:23:44.976Z",
+    "lastChecked": "2026-11-13T19:01:30.459Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-12T14:23:44.976Z"
+    "lastVerified": "2026-11-13T19:01:30.459Z"
   },
   "burntsushi-ripgrep": {
     "name": "ripgrep",
@@ -1594,9 +1594,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-13T13:20:30.422Z",
+    "lastChecked": "2026-11-13T19:01:27.877Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-13T13:20:30.422Z"
+    "lastVerified": "2026-11-13T19:01:27.877Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -3354,12 +3354,12 @@
     "officialUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T17:59:01.842Z",
-    "lastVerified": "2026-11-08T17:59:01.842Z",
+    "lastChecked": "2026-11-13T19:01:20.432Z",
+    "lastVerified": "2026-11-13T19:01:20.432Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "c298544fe118bffd248a2cb28cf5bb812a3186a76d8e946adddf5fa5dd92106a",
+    "contentHash": "fe8e36cc6da08d27c49ac30f15a8e5ea2af123b5d29c964f23a24d5fed559949",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4951,9 +4951,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-12T06:41:21.810Z",
+    "lastChecked": "2026-11-13T19:01:17.822Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-12T06:41:21.810Z"
+    "lastVerified": "2026-11-13T19:01:17.822Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -6993,9 +6993,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-12T15:33:41.158Z",
+    "lastChecked": "2026-11-13T19:01:25.253Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-12T15:33:41.158Z"
+    "lastVerified": "2026-11-13T19:01:25.253Z"
   },
   "lindb-lindb": {
     "name": "lindb",

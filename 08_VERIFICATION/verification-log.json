@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-2TD8",
-    "timestamp": "2026-11-12T22:48:20.780Z",
-    "repository": "matthart1983/netwatch",
-    "learningId": "learn-github-matthart1983-netwatch",
-    "contentHash": "afc65f8a161932f4efc1efc8734981cd668a8622fc7c0e790103c5d464096d93",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-366P",
-    "timestamp": "2026-11-12T22:48:37.393Z",
-    "repository": "mikepenz/multiplatform-markdown-renderer",
-    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
-    "contentHash": "2fb5ac5e864d9a9aa7a009e772e4df05fdb66aa9e2723bc384c72edc16410052",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-3E00",
     "timestamp": "2026-11-12T22:48:47.520Z",
     "repository": "openziti/zrok",
@@ -7490,6 +7460,36 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "e4ed48be14ce83ce16d3d5351f67867a9250869c1c93c3d085ea4177def2a47b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-EQV4",
+    "timestamp": "2026-11-13T19:01:20.896Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "fe8e36cc6da08d27c49ac30f15a8e5ea2af123b5d29c964f23a24d5fed559949",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-EWLV",
+    "timestamp": "2026-11-13T19:01:28.339Z",
+    "repository": "react-hook-form/react-hook-form",
+    "learningId": "learn-github-react-hook-form-react-hook-form",
+    "contentHash": "07646865b7ac5285dc55c2b56a91a12ee5acbbde8c072ddec797dc64f9eed00c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

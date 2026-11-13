@@ -9609,3 +9609,6 @@ Every entry in this ledger must capture:
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `b0c66974` | Multi-dimensional audit evidence | 2026-11-13T18:52:26.067Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `927ec35c` | Multi-dimensional audit evidence | 2026-11-13T18:52:34.422Z |
 | `learn-dom-k-199063a7` | `project://actix-actix-web` | `0ac7d216` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md` | 2026-11-13T18:53:10.638Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-13T19:01:20.900Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `77f6435d` | Multi-dimensional audit evidence | 2026-11-13T19:01:28.349Z |
+| `learn-dom-d-d194a6f7` | `project://hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | 2026-11-13T19:02:15.716Z |

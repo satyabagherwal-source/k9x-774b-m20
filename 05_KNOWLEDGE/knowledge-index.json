@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T18:53:11.067Z",
+  "last_updated": "2026-11-13T19:02:15.920Z",
   "total_verified_learnings": 1266,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34692,7 +34692,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "c298544fe118bffd248a2cb28cf5bb812a3186a76d8e946adddf5fa5dd92106a",
+      "content_hash": "fe8e36cc6da08d27c49ac30f15a8e5ea2af123b5d29c964f23a24d5fed559949",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -34795,7 +34795,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-11-08T17:59:03.003Z",
+      "verified_at": "2026-11-13T19:01:20.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55365,8 +55365,8 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "f31a882f",
-      "content_hash": "bffc3bcd0c6be4dc8479630d853cb6e5c03e4a8f41ff1170f3dd40fa67115867",
+      "source_version": "77f6435d",
+      "content_hash": "07646865b7ac5285dc55c2b56a91a12ee5acbbde8c072ddec797dc64f9eed00c",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
@@ -55389,6 +55389,11 @@
           "number": null,
           "title": "Referential Stability Enforcement for Immutable State Projections",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "🐞 fix(reset): keep mounted field names with keepFieldsRef so later resets resto",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1704,
@@ -55436,7 +55441,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T09:13:19.300Z",
+      "verified_at": "2026-11-13T19:01:28.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -196249,6 +196254,66 @@
       "content_hash": "c625b566dc65496c4e446deee9fd1d6cbe3e79bc3ac8fb5a67a9574e91c7c7fc",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T18:53:11.067Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-uki.md",
+      "title": "Research & Knowledge Intelligence: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "content_hash": "8dda5931f22f6a58e923e2e49dccefb89f9726fe778ecaf8002d9d074c6d3492",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T19:01:21.058Z"
+    },
+    "candidate_directive-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto": {
+      "item_id": "candidate_directive-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EWQS-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto.md",
+      "title": "🐞 fix(reset): keep mounted field names with keepFieldsRef so later resets resto",
+      "repository": "react-hook-form/react-hook-form",
+      "source_version": "77f6435d",
+      "content_hash": "1323e215c92634d63f819b111b0cfdf7c625def2a8b3de5e694feecd438a72b5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T19:01:28.518Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
+      "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
+      "repository": "react-hook-form/react-hook-form",
+      "source_version": "77f6435d",
+      "content_hash": "608d13888f8a3bdcf7b6ac8c6becd4dcc6170b4ff6c0cd803017fb116563c1d6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T19:01:28.604Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-react-hook-form-react-hook-for": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-hook-form-react-hook-for",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/react-hook-form-react-hook-form-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for react-hook-form/react-hook-form",
+      "repository": "react-hook-form/react-hook-form",
+      "source_version": "77f6435d",
+      "content_hash": "92a7c33db58c24f45f63fd5c02dd97017ab9968270df62428e66fdb50215f47c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T19:01:28.688Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intell.md",
+      "title": "Research & Knowledge Intelligence: hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
+      "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f24f67c29529ea348fc1c9604517902a90b21dc299207b2a8352bb156f59875a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T19:02:15.920Z"
     }
   },
   "aliases": {
@@ -202247,5 +202312,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9295
+  "total_items": 9300
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T18:53:10.693Z",
+  "updated_at": "2026-11-13T19:02:15.728Z",
   "stats": {
-    "total_discovered": 2817,
-    "approved_pending_harvest": 2635,
+    "total_discovered": 2818,
+    "approved_pending_harvest": 2636,
     "harvested_count": 0,
     "rejected_count": 182,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2628,
+      "COMMUNITY_AND_EXPERT": 2629,
       "OFFICIAL_DOCUMENTATION": 97,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -60720,6 +60720,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
         "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-46FD0E504581": {
+      "id": "SRC-46FD0E504581",
+      "url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "title": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:02:15.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+        "fileName": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md"
       }
     }
   }
