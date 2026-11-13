@@ -9627,3 +9627,7 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `b07e249c` | Multi-dimensional audit evidence | 2026-11-13T19:40:01.622Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `13626c16` | Multi-dimensional audit evidence | 2026-11-13T19:40:03.731Z |
 | `learn-dom-d-4aa06c1e` | `project://hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | 2026-11-13T19:40:46.216Z |
+| `learn-github-krishhgg-insomnia` | `https://github.com/krishhgg/Insomnia` | `3f474ff2` | Multi-dimensional audit evidence | 2026-11-13T19:52:54.731Z |
+| `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-13T19:54:20.244Z |
+| `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `b594ee55` | Multi-dimensional audit evidence | 2026-11-13T19:54:23.053Z |
+| `learn-dom-d-dfe22270` | `project://hf-prunaai-p-h3-image-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | 2026-11-13T19:54:48.263Z |

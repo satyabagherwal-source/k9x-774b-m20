@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T19:40:03.743Z",
+  "last_updated": "2026-11-13T19:54:23.065Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8286,14 +8286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-telemt-telemt",
-      "content_hash": "37ef238c6ebdcbb22a6e86aef5c33d0d157bb76a9ff141f198b86ac63fd0587d",
-      "verified_at": "2026-11-12T07:46:13.029Z",
+      "content_hash": "0e72d7a54a886c3d6fa0f276d5666f8b6a2aeaf72a3d9422891b9deb01c0439c",
+      "verified_at": "2026-11-13T19:54:23.064Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T07:46:13.029Z"
+      "last_updated": "2026-11-13T19:54:23.064Z"
     },
     "react-native-modal/react-native-modal": {
       "repository": "react-native-modal/react-native-modal",
@@ -17481,14 +17481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-krishhgg-insomnia",
-      "content_hash": "f0bc9a12bf5221da8a1a71f92ebbde4cf6e79ba90a6c5669be5e56b7d464b3af",
-      "verified_at": "2026-11-09T10:59:33.797Z",
+      "content_hash": "741d2ec6e8ac68dddfc30f309e783ffe936f7e3ab097b5bda9fbc963f5037806",
+      "verified_at": "2026-11-13T19:52:54.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T10:59:33.797Z"
+      "last_updated": "2026-11-13T19:52:54.738Z"
     },
     "Comfy-Org/Wan-2.2": {
       "repository": "Comfy-Org/Wan-2.2",
@@ -17946,14 +17946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prunaai-p-h3-image-comfy",
-      "content_hash": "56e4fe3c6a32388e6e0eef561287ab6296f1a3bc05e63d1e66506c977283a3d8",
-      "verified_at": "2026-11-08T18:38:42.772Z",
+      "content_hash": "ca3f8aabf280e7ff3d31d66c30494c62ed1d3fd9b3909646f0fe82eaca14177a",
+      "verified_at": "2026-11-13T19:54:20.251Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T18:38:42.772Z"
+      "last_updated": "2026-11-13T19:54:20.251Z"
     },
     "Jarvis322/macos-sysdata": {
       "repository": "Jarvis322/macos-sysdata",

@@ -9594,3 +9594,7 @@
 | `CYCLE-20261113-SHJL` | `2026-11-13T19:40:01.617Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8366` | Yes (`8dbf8f2b...`) |
 | `CYCLE-20261113-SJ66` | `2026-11-13T19:40:03.726Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8367` | Yes (`75c8c045...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T19:40:46.216Z` | `hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4AA06C1E` [Domain D] | Yes (`43efe3b6...`) |
+| `CYCLE-20261113-922W` | `2026-11-13T19:52:54.728Z` | `krishhgg/Insomnia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8368` | Yes (`741d2ec6...`) |
+| `CYCLE-20261113-AW29` | `2026-11-13T19:54:20.241Z` | `PrunaAI/P-H3-Image-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | Yes (`ca3f8aab...`) |
+| `CYCLE-20261113-AY8A` | `2026-11-13T19:54:23.050Z` | `telemt/telemt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8369` | Yes (`0e72d7a5...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T19:54:48.263Z` | `hf-prunaai-p-h3-image-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DFE22270` [Domain D] | Yes (`83b6c9e7...`) |

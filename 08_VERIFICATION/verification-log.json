@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-GMQM",
-    "timestamp": "2026-11-12T23:55:04.606Z",
-    "repository": "touchlab/Kermit",
-    "learningId": "learn-github-touchlab-kermit",
-    "contentHash": "d770c3af6590fe933da96ec7f4952d856c267deca18a459b1d5ef74338cd9f8a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-GMVH",
-    "timestamp": "2026-11-12T23:55:04.781Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-PC3K",
-    "timestamp": "2026-11-13T00:01:50.720Z",
-    "repository": "kubernetes-sigs/aws-load-balancer-controller",
-    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "9a4bfbadee74aed17076420373153c40633c624d3adae0e326badaabaf16b5fa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-7X5V",
     "timestamp": "2026-11-13T00:16:17.827Z",
     "repository": "bahdotsh/wrkflw",
@@ -7490,6 +7445,51 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "75c8c045c175b983e4796e5560984be060ab152716dbb26b11f6d82c23fe66b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-922W",
+    "timestamp": "2026-11-13T19:52:54.728Z",
+    "repository": "krishhgg/Insomnia",
+    "learningId": "learn-github-krishhgg-insomnia",
+    "contentHash": "741d2ec6e8ac68dddfc30f309e783ffe936f7e3ab097b5bda9fbc963f5037806",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-AW29",
+    "timestamp": "2026-11-13T19:54:20.241Z",
+    "repository": "PrunaAI/P-H3-Image-Comfy",
+    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+    "contentHash": "ca3f8aabf280e7ff3d31d66c30494c62ed1d3fd9b3909646f0fe82eaca14177a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-AY8A",
+    "timestamp": "2026-11-13T19:54:23.050Z",
+    "repository": "telemt/telemt",
+    "learningId": "learn-github-telemt-telemt",
+    "contentHash": "0e72d7a54a886c3d6fa0f276d5666f8b6a2aeaf72a3d9422891b9deb01c0439c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

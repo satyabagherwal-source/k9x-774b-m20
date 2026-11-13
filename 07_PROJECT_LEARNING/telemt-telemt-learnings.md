@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/telemt-telemt-learnings.md`  
 > **Source**: github ([https://github.com/telemt/telemt](https://github.com/telemt/telemt))  
-> **Source Version**: `5c3dabee`  
+> **Source Version**: `b594ee55`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:46:12.678Z  
+> **Timestamp**: 2026-11-13T19:54:22.385Z  
 > **Learning ID**: `learn-github-telemt-telemt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/telemt-telemt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/telemt/telemt](https://github.com/telemt/telemt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:46:12.479Z  
+> **Harvest Timestamp**: 2026-11-13T19:52:49.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MTProxy for Telegram on Rust + Tokio
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5795 stars
+- **Stars / Engagement**: 5798 stars
 
 ---
 
@@ -2271,10 +2271,363 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c3dabee` (2026-11-11)
-**Commit Message**: Merge pull request #974 from telemt/docs/3.5.17
+### Incident Patch 1: `b594ee55` (2026-11-12)
+**Commit Message**: Merge pull request #966 from AndreyOsipuk/fix/emulated-record-marker
 
-Docs/3.5.17
+Randomize the inner content type byte in emulated TLS ApplicationData
+
+**File**: `src/tls_front/emulator.rs` (modified, +4/-13)
+```diff
+@@ -508,21 +508,13 @@ pub fn build_emulated_server_hello(
+                     rec.extend_from_slice(&payload[payload_offset..payload_offset + copy_len]);
+                     payload_offset += copy_len;
+                 }
+-                if body_len > copy_len {
+-                    rec.extend_from_slice(&rng.bytes(body_len - copy_len));
+-                }
+-                rec.push(0x16);
+-                rec.extend_from_slice(&rng.bytes(16));
++                // The 17-byte tail stands in for the encrypted inner content
++                // type and AEAD tag. Both are ciphertext in real TLS 1.3, so a
++                // fixed plaintext content type byte would be a stable marker.
++                rec.extend_from_slice(&rng.bytes(body_len - copy_len + 17));
+             } else {
+                 rec.extend_from_slice(&rng.bytes(size));
+             }
+-        } else if size > 17 {
+-            let body_len = size - 17;
+-            let mut body = Vec::with_capacity(body_len);
+-            body.extend_from_slice(&rng.bytes(body_len));
+-            rec.extend_from_slice(&body);
+-            rec.push(0x16);
+-            rec.extend_from_slice(&rng.bytes(16));
+         } else {
+             rec.extend_from_slice(&rng.bytes(size));
+         }
+@@ -887,7 +879,6 @@ mod tests {
+ 
+         let payload = first_app_data_payload(&response);
+         assert!(payload.len() >= 64);
+-        assert_eq!(payload[payload.len() - 17], 0x16);
+     }
+ 
+     #[test]
+```
+
+**File**: `src/tls_front/tests/emulator_security_tests.rs` (modified, +55/-0)
+```diff
+@@ -1,3 +1,4 @@
++use std::collections::HashSet;
+ use std::time::SystemTime;
+ 
+ use crate::crypto::SecureRandom;
+@@ -156,3 +157,57 @@ fn emulated_server_hello_prefers_cert_payload_over_alpn_marker() {
+         "ALPN marker must not displace selected certificate payload"
+     );
+ }
++
++fn inner_content_type_bytes(
++    cached: &CachedTlsData,
++    client_tls_version: ClientHelloTlsVersion,
++) -> HashSet<u8> {
++    let rng = SecureRandom::new();
++    let mut seen = HashSet::new();
++    for _ in 0..32 {
++        let response = build_emulated_server_hello(
++            b"secret",
++            &[0x33; 32],
++            &[0x43; 16],
++            cached,
++            true,
++            true,
++            client_tls_version,
++            [0x13, 0x01],
++            &test_server_key_share(),
++            &rng,
++            None,
++            0,
++        );
++        let payload = first_app_data_payload(&response);
++        assert!(payload.len() > 17);
++        seen.insert(payload[payload.len() - 17]);
++    }
++    seen
++}
++
++#[test]
++fn emulated_server_hello_inner_content_type_position_is_not_constant() {
++    let cached = make_cached(None);
++
++    let seen = inner_content_type_bytes(&cached, ClientHelloTlsVersion::Tls13);
++    assert!(
++        seen.len() > 1,
++        "byte at the TLS 1.3 inner content type position must not be a fixed plaintext marker"
++    );
++}
++
++#[test]
++fn emulated_server_hello_with_cert_payload_inner_content_type_position_is_not_constant() {
++    let cert_msg = vec![0x0b, 0x00, 0x00, 0x05, 0x00, 0xaa, 0xbb, 0xcc, 0xdd];
++    let cached = make_cached(Some(TlsCertPayload {
++        cert_chain_der: vec![vec![0x30, 0x01, 0x00]],
++        certificate_message: cert_msg,
++    }));
++
++    let seen = inner_content_type_bytes(&cached, ClientHelloTlsVersion::Tls12);
++    assert!(
++        seen.len() > 1,
++        "byte after the certificate payload must not be a fixed plaintext content type marker"
++    );
++}
+```
+
+---
+
+### Incident Patch 2: `f3cc2017` (2026-11-12)
+**Commit Message**: Merge pull request #968 from AndreyOsipuk/fix/tls-profile-fast-retry
+
+Retry missing TLS front profiles with backoff instead of waiting for the regular refresh
+
+**File**: `src/maestro/tls_bootstrap.rs` (modified, +178/-33)
+```diff
+@@ -14,6 +14,11 @@ use crate::transport::UpstreamManager;
+ 
+ use super::generation::RuntimeTaskScope;
+ 
++/// First retry delay for domains that are still served from the default profile.
++const TLS_FRONT_RETRY_INITIAL: Duration = Duration::from_secs(30);
++/// Retry delay cap; far below the regular refresh period.
++const TLS_FRONT_RETRY_MAX: Duration = Duration::from_secs(600);
++
+ /// Readiness requirement for TLS-front cache initialization.
+ #[derive(Clone, Copy)]
+ pub(crate) enum TlsBootstrapPolicy {
+@@ -36,9 +41,10 @@ struct TlsFetchContext {
+ }
+ 
+ impl TlsFetchContext {
+-    async fn fetch_all(&self, failure_message: &'static str) {
++    async fn fetch_domains(&self, domains: &[String], failure_message: &'static str) {
+         let mut join = tokio::task::JoinSet::new();
+-        for domain in self.domains.clone() {
++        for domain in domains {
++            let domain = domain.clone();
+             let cache = self.cache.clone();
+             let host = tls_fetch_host_for_domain(&self.mask_host, &self.primary_domain, &domain);
+             let unix_sock = self.mask_unix_sock.clone();
+@@ -73,9 +79,16 @@ impl TlsFetchContext {
+     }
+ 
+     async fn fetch_all_with_budget(&self, phase: &'static str) {
+-        if tokio::time::timeout(self.strategy.total_budget, self.fetch_all(phase))
+-            .await
+-            .is_err()
++        self.fetch_with_budget(&self.domains, phase).await;
++    }
++
++    async fn fetch_with_budget(&self, domains: &[String], phase: &'static str) {
++        if tokio::time::timeout(
++            self.strategy.total_budget,
++            self.fetch_domains(domains, phase),
++        )
++        .await
++        .is_err()
+         {
+             warn!(
+                 phase,
+@@ -86,6 +99,69 @@ impl TlsFetchContext {
+     }
+ }
+ 
++/// Regular refresh period for fetched profiles: 4-6h base plus up to 2h jitter.
++fn regular_refresh_delay() -> Duration {
++    let base_secs = rand::rng().random_range(4 * 3600..=6 * 3600);
++    let jitter_secs = rand::rng().random_range(0..=7200);
++    Duration::from_secs(base_secs + jitter_secs)
++}
++
++/// Picks a delay in `[backoff / 2, backoff]` so that nodes restarted together do not
++/// probe the origin in lockstep, while the delay never exceeds the backoff.
++fn jittered_retry_delay(backoff: Duration) -> Duration {
++    let backoff_ms = u64::try_from(backoff.as_millis()).unwrap_or(u64::MAX);
++    Duration::from_millis(rand::rng().random_range(backoff_ms / 2..=backoff_ms))
++}
++
++/// Refresh cadence: exponential retries while any domain still has the default
++/// profile, the regular period once every domain has a fetched one.
++struct RefreshSchedule {
++    retry_backoff: Duration,
++}
++
++impl RefreshSchedule {
++    fn new() -> Self {
++        Self {
++            retry_backoff: TLS_FRONT_RETRY_INITIAL,
++        }
++    }
++
++    fn next_delay(&mut self, has_default_profiles: bool) -> Duration {
++        if !has_default_profiles {
++            self.retry_backoff = TLS_FRONT_RETRY_INITIAL;
++            return regular_refresh_delay();
++        }
++        let delay = jittered_retry_delay(self.retry_backoff);
++        self.retry_backoff = self
++            .retry_backoff
++            .saturating_mul(2)
++            .min(TLS_FRONT_RETRY_MAX);
++        delay
++    }
++}
++
++/// Retries only the domains without a fetched profile, so origins that already
++/// answered are not probed more often than the regular refresh.
++async fn run_refresh_loop(context: TlsFetchContext) {
++    let mut schedule = RefreshSchedule::new();
++    loop {
++        let pending = context
++            .cache
++            .default_profile_domains(&context.domains)
++            .await;
++        tokio::time::sleep(schedule.next_delay(!pending.is_empty())).await;
++        if pending.is_empty() {
++            context
++                .fetch_all_with_budget("TLS emulation refresh failed")
++                .await;
++        } else {
++            context
++                .fetch_with_budget(&pending, "TLS emulation retry failed")
++                .await;
++        }
++    }
++}
++
+ fn tls_fetch_host_for_domain(mask_host: &str, primary_tls_domain: &str, domain: &str) -> String {
+     if mask_host.eq_ignore_ascii_case(primary_tls_domain) {
+         domain.to_string()
+@@ -165,28 +241,8 @@ pub(crate) async fn bootstrap_tls_front(
+         proxy_protocol: config.censorship.mask_proxy_protocol,
+     };
+ 
+-    match policy {
+-        TlsBootstrapPolicy::BestEffort => {
+-            let initial_fetch = fetch_context.clone();
+-            let fake_cert_len = config.censorship.fake_cert_len;
+-            task_scope.spawn(async move {
+-                initial_fetch
+-                    .fetch_all_with_budget("TLS emulation initial fetch failed")
+-                    .await;
+-                for domain in initial_fetch
+-                    .cache
+-                    .default_profile_domains(&initial_fetch.domains)
+-                    .await
+-                {
+-                    warn!(
+-                        domain
+```
+
+---
+
+### Incident Patch 3: `55d26e0c` (2026-11-12)
+**Commit Message**: Merge branch 'main' into fix/tls-profile-fast-retry
+
+**File**: `Cargo.lock` (modified, +24/-7)
+```diff
+@@ -2780,7 +2780,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "telemt"
+-version = "3.5.16"
++version = "3.5.17"
+ dependencies = [
+  "aes",
+  "anyhow",
+@@ -2834,6 +2834,7 @@ dependencies = [
+  "tokio-tungstenite",
+  "tokio-util",
+  "toml",
++ "toml_edit",
+  "tracing",
+  "tracing-appender",
+  "tracing-subscriber",
+@@ -3076,27 +3077,40 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_datetime"
+-version = "1.1.1+spec-1.1.0"
++version = "1.1.3+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3165f65f62e28e0115a00b2ebdd37eb6f3b641855f9d636d3cd4103767159ad7"
++checksum = "173f25c883cd2176a2d8212155638c0a60d484a9d84546d270866f40f56b6e49"
+ dependencies = [
+  "serde_core",
+ ]
+ 
++[[package]]
++name = "toml_edit"
++version = "0.25.19+spec-1.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "dd43688c4858d7264ae1cf9a9f874a67c3feb74a883b1cd7bebd6a4ea8307218"
++dependencies = [
++ "indexmap",
++ "toml_datetime",
++ "toml_parser",
++ "toml_writer",
++ "winnow",
++]
++
+ [[package]]
+ name = "toml_parser"
+-version = "1.1.3+spec-1.1.0"
++version = "1.1.5+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1d38ac1cf9b95face32296c0a3ede1fdc270627c9d9c02a7274dd6d960dc4d56"
++checksum = "baa693a8032d7e1cada7d0041e96126df243179ff061456783ac7f12bda4744c"
+ dependencies = [
+  "winnow",
+ ]
+ 
+ [[package]]
+ name = "toml_writer"
+-version = "1.1.2+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
++checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+ 
+ [[package]]
+ name = "tower"
+@@ -3697,6 +3711,9 @@ name = "winnow"
+ version = "1.0.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81"
++dependencies = [
++ "memchr",
++]
+ 
+ [[package]]
+ name = "wit-bindgen"
+```
+
+**File**: `Cargo.toml` (modified, +2/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "telemt"
+-version = "3.5.16"
++version = "3.5.17"
+ edition = "2024"
+ rust-version = "1.88"
+ 
+@@ -49,6 +49,7 @@ shadowsocks = { version = "1.24.0", default-features = false, features = [
+ serde = { version = "1.0.229", features = ["derive"] }
+ serde_json = "1.0.151"
+ toml = "1.1.5"
++toml_edit = "0.25.19"
+ x509-parser = "0.18.1"
+ 
+ # Utils
+```
 
 **File**: `docs/Advanced_settings/HIGH_LOAD.en.md` (modified, +31/-14)
 ```diff
@@ -2544,373 +2897,103 @@ Docs/3.5.17
 -| Параметр | Тип | Default | Ограничения / валидация | Влияние на run
 ```
 
-**File**: `docs/Architecture/API/API.md` (modified, +82/-17)
+**File**: `docs/Architecture/API/API.md` (modified, +645/-33)
 ```diff
-@@ -222,6 +222,7 @@ operations or pending publication; they are not silently promoted to success.
- | `GET /v1/users` | Returns disk-first user views sorted by username. |
- | `POST /v1/users` | Creates a user and returns the effective user view plus secret. |
- | `GET /v1/users/{username}` | Returns one disk-first user view or `404` when absent. |
-+| `GET /v1/users/{username}/links?transport=web` | Credential-bearing WEB links for this user's exact profiles; effective by default, explicitly unusable desired preview available. |
- | `PATCH /v1/users/{username}` | Updates selected per-user fields with JSON Merge Patch semantics. |
- | `DELETE /v1/users/{username}` | Deletes one user and related API-managed per-user access-map entries. It does not modify `access.user_source_deny`. |
- | `POST /v1/users/{username}/rotate-secret` | Rotates one user's secret and returns the effective secret. |
-@@ -234,6 +235,7 @@ operations or pending publication; they are not silently promoted to success.
- | HTTP | `error.code` | Trigger |
- | --- | --- | --- |
- | `400` | `bad_request` | Invalid JSON, validation failures, malformed request body. |
-+| `400` | `too_many_links` | WEB link projection exceeds 4096 rows; no partial link response is returned. |
- | `400` | `access_not_editable` | `PATCH /v1/config` body contains an `access` key (managed via users API). |
- | `400` | `section_not_editable` | `PATCH /v1/config` body contains an unknown top-level key or a non-null, non-object partial section. |
- | `400` | `field_not_editable` | `PATCH /v1/config` body contains a forbidden nested field under a partially editable section (e.g. `server.api.auth_header`, `server.port`, `network.ipv4`). |
-@@ -243,7 +245,7 @@ operations or pending publication; they are not silently promoted to success.
- | `404` | `not_found` | Unknown route, unknown user, or unsupported sub-route. |
- | `405` | `method_not_allowed` | Unsupported method for `/v1/users/{username}` route shape. |
- | `409` | `revision_conflict` | `If-Match` mismatch, or the source graph/owner changed during a fenced write. |
--| `409` | `runtime_conflict` | Active generation/config publication changed during config preparation, or `If-Runtime-Match` is stale. |
-+| `409` | `runtime_conflict` | Active generation/config publication changed during config preparation, `If-Runtime-Match` is stale, or WEB link configuration/admission changed while being sampled. |
- | `429` | `config_preflight_busy` | Both config preflight preparation slots are occupied. |
- | `504` | `config_preflight_timeout` | Config preflight exceeded its 30-second deadline. |
- | `409` | `reload_in_progress` | Another reload operation is non-terminal. |
-@@ -294,9 +296,8 @@ applied. Reading that revision requires the source graph to remain readable.
- ### CapabilitiesData
+@@ -12,6 +12,7 @@ API runtime is configured in `[server.api]`.
+ | `enabled` | `bool` | `true` | Enables REST API listener. |
+ | `listen` | `string` (`IP:PORT`) | `0.0.0.0:9091` | API bind address. |
+ | `whitelist` | `CIDR[]` | `127.0.0.0/8` | Source IP allowlist. Empty list means allow all. |
++| `gray_action` | `"drop"`, `"api"`, `"200"` | `"drop"` | Response to a direct peer outside the whitelist: close without HTTP, structured `403 forbidden`, or empty `200` respectively. |
+ | `auth_header` | `string` | `""` | Exact value for `Authorization` header. Empty disables header auth. |
+ | `request_body_limit_bytes` | `usize` | `65536` | Maximum request body size. Must be within `[1, 1048576]`. |
+ | `minimal_runtime_enabled` | `bool` | `true` | Enables runtime snapshot endpoints requiring ME pool read-lock aggregation. |
+@@ -32,6 +33,16 @@ Runtime validation for API config:
+ - `server.api.runtime_edge_top_n` must be within `[1, 1000]`.
+ - `server.api.runtime_edge_events_capacity` must be within `[16, 4096]`.
  
- Top-level fields are `api_version` (`v1`), `schema_version` (`1`),
--`software_version`, `config_schema`, `openapi_artifact`, `read_only`,
--`availability_scope`, and `operations`. `openapi_artifact` identifies the versioned
--repository artifact; it is not another HTTP route.
-+`software_version`, `config_schema`, `read_only`, `availability_scope`, and
-+`operations`.
- 
- Each operation has a stable `id`, `method`, canonical `path`, optional `aliases`,
- `gate`, possible success status codes in `success`, `credential_bearing`, optional
-@@ -371,20 +372,19 @@ validation, and reset is unsupported. One mutation may touch only one independen
- writable source. This differs from supported user PATCH fields, where null
- removes an override. Discovery does not expand either write allowlist.
- 
--### Versioned artifact and maintenance
-+### Contract maintenance
- 
--[openapi-v1.json](openapi-v1.json) publishes the implemented routes, aliases,
--request shapes and common response envelopes, with detailed schemas for both
--discovery responses. Legacy response payloads and query filters remain described
--in this reference. The artifact is intentionally not a complete configuration
--validator; `/v1/config/schema` supplements it with field contracts.
-+`GET /v1/capabilities` lists implemented routes, aliases and operation metadata;
-+`GET /v1/config/schema` describes configuration field contracts. Request shapes,
-+response envelopes and query filters are documented in this reference.
- 
--Regenerate with `python3 tools/generate_api_openapi.py` and verify with
--`python3 tools/generate_api_openapi.py --check`. `cargo test --bin telemt
--api::discovery` checks route/field inventories, defaults, enums, application
--classification, credential exclusion and HTTP admission. Contract changes must
--update the registry and artifact together. Additive metadata and operations are
--compatible; incompatible discovery changes require a new `schema_version`.
-+`cargo test --bin telemt api::discovery` checks the operation catalog directly
-+against routing, plus field inventories, defaults, enums, application
-+classification, credential exclusion and HTTP admission. The Python client
-+suite checks user fields a
-```
-
-**File**: `docs/Architecture/API/PYTHON_CLIENT.md` (modified, +15/-2)
-```diff
-@@ -48,6 +48,7 @@ Existing statistics commands retain their names: `health`, `info`, `status`,
- | `reload-status ID` | `reload_status(id)` | Read one retained operation. |
- | `reload-wait ID [--expected-revision REV]` | `wait_reload(id, ...)` | Poll to `succeeded`, `failed` or `rolled_back`. |
- | `users`, `user NAME` | `list_users()`, `get_user(name)` | User/link responses can carry provisioning secrets. |
-+| `user-links NAME [--transport web] [--view effective]` | `user_links(name, transport="web", view="effective")` | Credential-bearing exact WEB profiles; `view="desired"` always returns an unusable preview. |
- | `create NAME`, `patch NAME`, `delete NAME` | `create_user()`, `patch_user()`, `delete_user()` | Existing convenience methods and command names remain available. |
- | `patch NAME --json FILE` or `--clear FIELD` | `patch_user_fields(name, fields)` | Exact omitted/null/value semantics. |
- | `secret NAME [--secret HEX]` | `rotate_secret(name, ...)` | Implemented rotation endpoint, not a reserved route. |
-@@ -69,11 +70,24 @@ Existing statistics commands retain their names: `health`, `info`, `status`,
- | `web-resume --runtime-instance INSTANCE` | `web_resume(instance)` | Resumes operator admission subject to other policy gates. |
- | `gen-secret` | `TelemtAPI.generate_secret()` | Generates a new 32-hex secret locally. |
- 
--The client covers all 53 JSON operations in the operation catalog. Open the
-+The client covers all 54 JSON operations in the operation catalog. Open the
- HTML `/web-status` viewer in a browser; it is not decoded as a JSON response.
- Feature gates and missing runtime planes still return the server's documented
- errors. Discovery availability is a snapshot, not a reservation.
- 
-+WEB provisioning uses the dedicated user-link endpoint. The client sends
-+`transport=web` explicitly and defaults to `view=effective`. It preserves the
-+server's `state`, `usable`, `reason`, runtime identity and link rows; a successful
-+HTTP response alone does not mean a link is usable. After a rotation, retry a
-+pending effective response after configuration publication. A desired preview
-+contains credentials but always has `usable=false`. See the
-+[WEB user-link contract](API.md#web-user-links).
++The file watcher retains every `server.api.*` field. Explicit generation reload
++applies `whitelist`, `gray_action`, `auth_header`, `request_body_limit_bytes`,
++`minimal_runtime_enabled`, `minimal_runtime_cache_ttl_ms`,
++`runtime_edge_enabled`, `runtime_edge_cache_ttl_ms`, `runtime_edge_top_n`, and
++`read_only`. `enabled`, `listen`, and `runtime_edge_events_capacity` remain
++process-owned and require a process restart. The five [observability settings](#api-observability-settings)
++are editable through `PATCH /v1/config`; other API settings require editing the
++owning TOML source. A client polling after an authentication change must use the
++new header explicitly.
 +
-+```bash
-+python3 tools/telemt_api.py user-links alice --json-output
-+python3 tools/telemt_api.py user-links alice --view desired --json-output
-+```
-+
- ## Sparse values and user updates
+ ## Protocol Contract
  
- `create`/`patch` accept `--secret`, `--ad-tag`, `--max-conns`, `--expires`,
-@@ -294,7 +308,6 @@ Run the local mock HTTP and CLI contract suite from the repository root:
- 
- ```bash
- PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/tests -v
--python3 tools/generate_api_openapi.py --check
+ | Item | Value |
+@@ -51,6 +62,10 @@ Runtime validation for API config:
+ }
  ```
  
- These checks need no live proxy, Telegram connection or deployment credentials.
-```
-
-**File**: `docs/CLI.de.md` (added, +74/-0)
-```diff
-@@ -0,0 +1,74 @@
-+# Telemt auf der Kommandozeile
++`GET /v1/config/state` is the additive exception to the non-null revision: its
++`revision` equals `data.desired_revision` and is `null` when the desired source
++cannot be captured. Its effective runtime identity remains available.
 +
-+[English](CLI.en.md) · [Русский](CLI.ru.md) · [Deutsch](CLI.de.md) · [Dokumentation](README.de.md)
-+
-+Dieses Handbuch beschreibt die CLI des vorliegenden Quellstands. Prüfen Sie die installierte Version mit `telemt --version` und `telemt --help`. Geben Sie zuerst die Optionen und zuletzt den Konfigurationspfad an. Ohne Pfad verwendet Telemt `config.toml` im Arbeitsverzeichnis.
-+
-+## Prozess starten und verwalten
-+
-+```bash
-+telemt run --log-level normal /etc/telemt/telemt.toml
-+```
-+
-+`run` kann entfallen. Unter systemd oder in einem Container sollte der Prozess im Vordergrund laufen; Start, Stopp und Neustart übernimmt die Dienstverwaltung. Unter Unix unterstützt Telemt auch einen eigenen Daemon-Modus:
-+
-+```bash
-+telemt start --pid-file /run/telemt/telemt.pid /etc/telemt/telemt.toml
-+telemt status --pid-file /run/telemt/telemt.pid
-+telemt reload --pid-file /run/telemt/telemt.pid
-+telemt stop --pid-file /run/telemt/telemt.pid
-+```
-+
-+Verwenden Sie bei allen Befehlen dieselbe PID-Datei. Ihr Verzeichnis muss vorhanden sein und geeignete Eigentümerrechte haben. `status` prüft den dort verzeichneten Prozess, nicht die Betriebsbereitschaft des Proxys. `reload` sendet SIGHUP an die Konfigurationsüberwachung. Rückgabecode `0` bestätigt die Signalzustellung, nicht die Übernahme aller Einstellungen. Prüfen Sie das Protokoll und die [Regeln zur Konfigurationsübernahme](Config_params/CONFIG_PARAMS.de.md#konfigurationsänderungen-anwenden). Ein Generationswechsel über `POST /v1/system/reload` und ein Prozessneustart sind eigene Vorgänge.
-+
-+`stop` sendet SIGTERM und wartet bis zu etwa zehn Sekunden auf das Entfernen der PID-Datei. Nach erfolgreicher Signalzustellung kann der Befehl `0` zurückgeben, obwohl der Prozess noch beendet wird. Prüfen Sie den Prozessstatus, wenn der nächste Schritt einen vollständig beendeten Prozess voraussetzt.
-+
-+| Option | Bedeutung |
-+| --- | --- |
-+| `--daemon`, `-d` | Unix-Daemon-Modus; auch `start` aktiviert ihn. |
-+| `--foreground`, `-f` | Prozess im Vordergrund ausführen. |
-+| `--pid-file PATH` | Gemeinsame PID-Datei für Start, `status`, `reload` und `stop`. |
-+| `--run-as-user USER`, `--run-as-group GROUP` | Benutzer und Gruppe des Unix-Prozesses. |
-+| `--working-dir PATH` | Arbeitsverzeichnis des Unix-Prozesses. Ein absoluter Konfigurationspfad ist vorzuziehen. |
-+| `--strict-runtime-paths` | Strengere Prüfung der Laufzeitpfade; bei Start und Daemon-Steuerung einheitlich verwenden. |
-+
-+## Funktionsprüfung
-+
-+```bash
-+telemt healthcheck --mode liveness /etc/telemt/telemt.toml
-+telemt healthcheck --mode ready /etc/telemt/telemt.toml
-+```
-+
-+`liveness` ist der Standardmodus und ruft `GET /v1/health` auf. `ready` ruft `GET /v1/health/ready` auf und verlangt `data.ready = true`. Beide erwarten HTTP `200` und `ok = true`; liveness verlangt zusätzlich `data.status = "ok"`.
-+
-+Der Befehl liest API-Adresse und Autorisierungswert aus der angegebenen Konfiguration. Bind-Adressen für alle Schnittstellen werden über Loopback geprüft. Führen Sie den Befehl dort aus, wo die Adresse erreichbar und durch die API-Zugriffsliste zugelassen ist. Er öffnet keine MTProxy-Sitzung und prüft nicht den vollständigen Weg vom Client zu Telegram.
-+
-+**Bei `server.api.enabled = false` endet der Befehl mit `0`, ohne eine Netzwerkanfrage zu senden.** Aktivieren Sie die API, bevor Sie das Ergebnis als Nachweis der Erreichbarkeit oder Bereitschaft verwenden. Rückgabecode `1` bedeutet einen Konfigurations- oder Prüffehler; ein ungültiger oder fehlender Wert für `--mode` ergibt `2`. Verbindungsaufbau, Lesen und Schreiben haben jeweils ein Zeitlimit von zwei Sekunden. Das ist keine gemeinsame Frist von zwei Sekunden für den gesamten Befehl.
-+
-+## Protokollierung
-+
-+| Option | Bedeutung |
-+| --- | --- |
-+| `--log-level LEVEL` | Stufe: `debug`, `verbose`, `normal` oder `silent`. |
-+| `--silent`, `-s` | Informationsmeldungen unterdrücken. |
-+| `--syslog` | Protokolle auf unterstützten Unix-Systemen an syslog senden. |
-+| `--log-file PATH` | In eine Datei schreiben. |
-+| `--log-file-daily PATH` | Dateiprotokollierung mit täglicher Rotation. |
-+| `--log-rotation MODE` | `never`, `minutely`, `hourly`, `daily` oder `weekly`. |
-+| `--log-max-size-bytes N` | Dateigröße als Schwelle für die Rotation. |
-+| `--log-max-files N` | Höchstzahl aufzubewahrender Dateien. |
-+| `--log-max-age-secs N` | Höchstalter aufzubewahrender Dateien in Sekunden. |
-+
-+`RUST_LOG` hat Vorrang vor den Einstellungen der Protokollstufe. CLI-Optionen überschreiben die entsprechenden Konfigurationswerte. Pfade, Rotation und Aufbewahrung erklärt die [Referenz zur Protokollierung](Config_params/CONFIG_PARAMS.de.md#logging). Dateiausgabe und syslog schließen einander aus.
-+
-+## Erstinstallation erzeugen
-+
-+`--init` schreibt Konfigurations- und Dienstdateien und kann den Dienst starten. Es handelt sich um eine Installation, nicht um eine Konfigurationsprüfung; ein erneuter Aufruf kann vorhandene Dateien neu er
-```
-
----
-
-### Incident Patch 2: `cec30d01` (2026-11-11)
-**Commit Message**: Config Apply + Pretty Params Descriptions in Docs
-
-Co-Authored-By: brekotis <[REDACTED_EMAIL]>
-
-**File**: `docs/Config_params/CONFIG_PARAMS.de.md` (modified, +52/-13)
-```diff
-@@ -1,5 +1,7 @@
- # Telemt-Referenz der Konfigurationsparameter
+ ### Error Envelope
+ ```json
+ {
+@@ -67,7 +82,9 @@ Runtime validation for API config:
  
-+[English](CONFIG_PARAMS.en.md) · [Русский](CONFIG_PARAMS.ru.md) · [Deutsch](CONFIG_PARAMS.de.md) · [Terminology](../TERMINOLOGY.md)
+ Requests are processed in this order:
+ 1. `api_enabled` gate (`503 api_disabled` if disabled).
+-2. Source IP whitelist gate (`403 forbidden`).
++2. Source IP whitelist gate: `gray_action="drop"` closes without an HTTP
++   response, `"api"` returns `403 forbidden`, and `"200"` returns an empty
++   `200 OK` with `text/html; charset=utf-8`.
+ 3. `Authorization` header gate when configured (`401 unauthorized`).
+ 4. Route and method matching (`404 not_found` or `405 method_not_allowed`).
+ 5. `read_only` gate for mutating routes (`403 read_only`).
+@@ -77,13 +94,34 @@ Requests are processed in this order:
+ Notes:
+ - Whitelist is evaluated against the direct TCP peer IP (`SocketAddr::ip`), without `X-Forwarded-For` support.
+ - `Authorization` check is exact constant-time byte equality against configured `auth_header`.
++- `gray_action` does not grant API access and does not mask authentication or
++  read-only failures for allowed peers. An empty gray `200` is not a JSON success
++  envelope; clients must not interpret it as a successful operation.
 +
- Dieses Dokument listet alle Konfigurationsschlüssel auf, die `config.toml` akzeptiert.
- 
- > [!NOTE]
-@@ -10,7 +12,20 @@ Dieses Dokument listet alle Konfigurationsschlüssel auf, die `config.toml` akze
- >
- > Die in diesem Dokument beschriebenen Konfigurationsparameter richten sich an erfahrene Nutzer und dienen dem Feintuning. Änderungen ohne klares Verständnis der jeweiligen Funktion können zu Instabilität oder anderem unerwarteten Verhalten führen. Gehen Sie entsprechend vorsichtig und auf eigenes Risiko vor.
- 
--> `Hot-Reload` zeigt an, ob der Config-Watcher einen geänderten Wert direkt übernimmt. `✘` bedeutet, dass der Watcher ihn nicht anwendet; je nach Feld ist für die vollständige Wirkung ein prozessinterner Runtime-Generation-Reload oder ein Prozessneustart erforderlich.
-+## Konfigurationsänderungen anwenden
++## Python client and CLI
 +
-+`Hot-Reload` beschreibt nur die Dateiüberwachung: `✔` bedeutet, dass sie den neuen Wert übernehmen kann; bei `✘` bleibt der aktive Wert erhalten. `telemt reload` sendet SIGHUP an dieselbe Dateiüberwachung und erzeugt keine neue Laufzeitgeneration.
++The standard-library [Python client](../../../tools/telemt_api.py) covers the 53
++JSON operations, including discovery, preflight/state, user quota/period/rates,
++generation reload and WEB lifecycle/session controls. The HTML `/web-status`
++viewer remains a browser endpoint. See the [client guide](PYTHON_CLIENT.md) for
++command and method mappings, exact sparse/null updates, source/runtime
++preconditions, process references and polling examples.
 +
-+| Verfahren | Einstellungen und Wirkung |
-+| --- | --- |
-+| Automatisches Neuladen der Datei | Mit `✔` markierte Felder, etwa `general.log_level`, `network.dns_overrides` und unterstützte Benutzerlimits. Die Übernahme erfolgt asynchron. Die Feldbeschreibung erläutert, ob laufende Vorgänge oder nur neue Verbindungen betroffen sind. |
-+| Expliziter Generationswechsel | `[censorship]`, `[timeouts]`, `upstreams` und die von der Generation verwalteten API-Einstellungen. Verwenden Sie `POST /v1/system/reload` oder einen zulässigen Konfigurations-PATCH mit `reload=instant` bzw. `reload=drain`. Warten Sie auf den Abschluss der Operation. Ob bestehende Verbindungen erhalten bleiben, hängt vom Modus ab. |
-+| Prozessneustart | `logging`, `general.data_path`, `general.quota_state_path`, `general.disable_colors`, `general.direct_relay_buffer_budget_max_bytes`, `server.metrics_listen`, `server.metrics_port`, `server.max_connections`, `server.conntrack_control`, `server.listen_unix_sock`, `server.listen_unix_sock_perm`, die API-Felder `enabled`/`listen`/`runtime_edge_events_capacity`, `web.limits`, `web.allow_wildcard_hosts` und `web.decoy_fasttrack_mode`. |
-+| Bedingt anwendbar | Adressänderungen nativer Listener sind nur im unterstützten Rebind-Verfahren möglich. WEB-Listener, Socket- und Vertrauensregeln sowie SYN-Regeln erfordern einen Prozessneustart. WEB-Lern- und Diagnoseeinstellungen können zurückgestellt werden, wenn sie größere Prozesslimits voraussetzen. |
-+
-+Für über die API bearbeitbare Felder zeigt `POST /v1/config/validate` vor dem Speichern `apply.watcher_paths`, `apply.generation_paths` und `apply.process_restart_paths`. Prüfen Sie danach das Operationsergebnis, `deferred_process_fields` und `GET /v1/config/state`. Das ältere Feld `restart_required` bedeutet, dass die Änderung außerhalb der Dateiüberwachung liegt; daraus folgt allein noch kein Prozessneustart. Siehe [API-Vertrag zum Neuladen](../Architecture/API/API.md#runtime-reload-endpoints) und [CLI-Referenz](../CLI.de.md).
-+
-+WEB-Einstellungen haben unterschiedliche Lebensdauern: `carrier_method` und Retry-Jitter gelten für neu erzeugte Bridge-Seiten, `conveyor` wird für neue Sitzungen ausgehandelt, und Prozesslimits bleiben bis zum Neustart fest. Bestehende Seiten und Sitzungen behalten die im [WEB-Leitfaden](../WEB/WEB_PROXY.de.md) beschriebenen Regeln.
++`APIResponse.http_status` retains HTTP status independently from the JSON `ok`
++flag. Readiness `503` and WEB tombstone `410` with `ok=true` are returned as data
++only by their documented wrappers. Mutations returning `202` remain accepted
++operations or pending publication; they are not silently promoted to success.
++`TelemtAPIError` retains `http_status`, `code`, `request_id` and field `details`.
  
- # Inhaltsverzeichnis
-  - [Schlüssel auf oberster Ebene](#schlüssel-auf-oberster-ebene)
-@@ -28,6 +43,7 @@ Dieses Dokument listet alle Konfigurationsschlüssel auf, die `config.toml` akze
-  - [web.debug](#webdebug)
-  - [web.limits](#weblimits)
-  - [web.limits.wildcard](#weblimitswildcard)
-+ - [web.retry_jitter](#webretry_jitter)
-  - [web.timeouts](#webtimeouts)
-  - [web.vhosts](#webvhosts)
-  - [web.vhosts.decoy](#webvhostsdecoy)
-@@ -42,7 +58,7 @@ Dieses Dokument listet alle Konfigurationsschlüssel auf, die `config.toml` akze
+ ## Endpoint Matrix
  
- | Schlüssel | Typ | Default | Hot-Reload |
- | --- | --- | --- | --- |
--| [`include`](#include) | `String` (Proberdirektive) | — | `✔` |
-+| [`include`](#include) | `String` (Include-Anweisung) | — | `✔` |
- | [`show_link`](#show_link) | `"*"` oder `String[]` | `[]` (`ShowLink::None`) | `✘` |
- | [`logging`](#logging) | Tabelle | Default-Werte | `✘` |
- | [`dc_overrides`](#dc_overrides) | `Map<String, String or String[]>` | `{}` | `✘` |
-@@ -106,7 +122,7 @@ Dieses Dokument listet alle Konfigurationsschlüssel auf, die `config.toml` akze
- 
- ## logging.destination
-   - **Einschränkungen / Validierung**: Muss `stderr`, `syslog` oder `file` sein. `syslog` wird nur auf Unix-Plattformen unterstützt. `file` erfordert `logging.path`.
--  - **Beschreibung**: Wählt das Runtime-Log-Ziel aus. CLI-Flags überschreiben diesen Wert.
-+  - **Besch
-```
-
-**File**: `docs/Config_params/CONFIG_PARAMS.en.md` (modified, +46/-7)
-```diff
-@@ -1,5 +1,7 @@
- # Telemt Config Parameters Reference
- 
-+[English](CONFIG_PARAMS.en.md) · [Русский](CONFIG_PARAMS.ru.md) · [Deutsch](CONFIG_PARAMS.de.md) · [Terminology](../TERMINOLOGY.md)
-+
- This document lists all configuration keys accepted by `config.toml`.
- 
- > [!NOTE]
-@@ -10,7 +12,20 @@ This document lists all configuration keys accepted by `config.toml`.
- >
- > The configuration parameters detailed in this document are intended for advanced users and fine-tuning purposes. Modifying these settings without a clear understanding of their function may lead to application instability or other unexpected behavior. Please proceed with caution and at your own risk.
- 
--> `Hot-Reload` marks whether a changed value is applied directly by the config watcher. `✘` means the watcher does not apply it; depending on the field, full effect requires an in-process runtime-generation reload or a process restart.
-+## Applying configuration changes
-+
-+`Hot-Reload` describes the file watcher only: `✔` means it can publish the setting, `✘` means it retains the active value. `telemt reload` sends SIGHUP to this same watcher; it does not create a runtime generation.
-+
-+| Application path | Settings and effect |
-+| --- | --- |
-+| Automatic file reload | Fields marked `✔`; examples include `general.log_level`, `network.dns_overrides` and supported user limits. Publication is asynchronous. Each field's description determines whether existing work or only new connections see it. |
-+| Explicit generation reload | `[censorship]`, `[timeouts]`, `upstreams` and generation-owned API settings. Use `POST /v1/system/reload` or an editable config PATCH with `reload=instant` or `reload=drain`. Follow the returned operation to completion. Connection survival depends on the selected mode. |
-+| Process restart | `logging`, `general.data_path`, `general.quota_state_path`, `general.disable_colors`, `general.direct_relay_buffer_budget_max_bytes`, `server.metrics_listen`, `server.metrics_port`, `server.max_connections`, `server.conntrack_control`, `server.listen_unix_sock`, `server.listen_unix_sock_perm`, API `enabled`/`listen`/`runtime_edge_events_capacity`, `web.limits`, `web.allow_wildcard_hosts`, and `web.decoy_fasttrack_mode`. |
-+| Conditional | Native listener address changes can use only the supported rebind plan; WEB listeners, listener socket/trust policy and SYN rules require process restart. WEB learning/debug changes depending on larger process limits can also be deferred. |
-+
-+For API-editable fields, `POST /v1/config/validate` reports `apply.watcher_paths`, `apply.generation_paths` and `apply.process_restart_paths` before saving. After an update, inspect the reload result, `deferred_process_fields` and `GET /v1/config/state`. The legacy `restart_required` flag means “outside the watcher subset”; it does not by itself require a process restart. See the [API reload contract](../Architecture/API/API.md#runtime-reload-endpoints) and [CLI reference](../CLI.en.md).
-+
-+WEB settings have separate lifetimes: `carrier_method` and retry jitter belong to newly rendered bridge pages, `conveyor` is negotiated for new sessions, and process limits stay fixed until restart. Existing pages and sessions retain the policies described in the [WEB guide](../WEB/WEB_PROXY.en.md#lifecycle-and-reload-behavior).
- 
- # Table of contents
-  - [Top-level keys](#top-level-keys)
-@@ -28,6 +43,7 @@ This document lists all configuration keys accepted by `config.toml`.
-  - [web.debug](#webdebug)
-  - [web.limits](#weblimits)
-  - [web.limits.wildcard](#weblimitswildcard)
-+ - [web.retry_jitter](#webretry_jitter)
-  - [web.timeouts](#webtimeouts)
-  - [web.vhosts](#webvhosts)
-  - [web.vhosts.decoy](#webvhostsdecoy)
-@@ -2632,6 +2648,8 @@ WEB mode carries Telegram Desktop MTProxy traffic through HTTPS terminated by an
- | `enabled` | `bool` | `false` | `✔` |
- | `allow_wildcard_hosts` | `bool` | `false` | `✘` |
- | `carrier` | `"https"`, `"https-lanes"`, `"websocket"`, or `"websocket-lanes"` | `"https"` | `✔` |
-+| [`carrier_method`](#webcarrier_method) | `"post"`, `"put"` | `"post"` | `✔` |
-+| [`conveyor`](#webconveyor) | `bool` | `true` | `✔` |
- | `carriers` | `false` or a non-empty array of unique carriers | `false` | `✔` |
- | `carrier_learning` | `bool` | `true` | `✔` |
- | `carrier_negotiation_aggressiveness` | `"conservative"`, `"balanced"`, or `"aggressive"` | `"conservative"` | `✔` |
-@@ -2652,6 +2670,24 @@ When `carriers` is missing or `false`, auto-negotiation and learning are disable
- 
- `carrier_learning` applies only while negotiation is enabled. Learning is process-local, in-memory, bounded, and positive-only: only a carrier that reaches the server-defined healthy state contributes evidence. `conservative` requires the broadest evidence and disables IP ranking, `balanced` admits moderate User-Agent/profile evidence plus eligible public-IP tie breaking, and `aggressive` reacts to the first bounded samples. Reported client failures remain diagnostic and never create negativ
-```
-
-**File**: `docs/Config_params/CONFIG_PARAMS.ru.md` (modified, +69/-30)
-```diff
-@@ -1,5 +1,7 @@
- # Справочник параметров конфигурации Telemt
- 
-+[English](CONFIG_PARAMS.en.md) · [Русский](CONFIG_PARAMS.ru.md) · [Deutsch](CONFIG_PARAMS.de.md) · [Terminology](../TERMINOLOGY.md)
-+
- В этом документе перечислены все ключи конфигурации, принимаемые `config.toml`.
- 
- > [!NOTE]
-@@ -10,7 +12,20 @@
- >
- > Параметры конфигурации, подробно описанные в этом документе, предназначены для опытных пользователей и для целей тонкой настройки. Изменение этих параметров без четкого понимания их функции может привести к нестабильности приложения или другому неожиданному поведению. Пожалуйста, действуйте осторожно и на свой страх и риск.
- 
--> `Hot-Reload` показывает, применяет ли config watcher изменение напрямую. `✘` означает, что watcher его не применяет; в зависимости от поля для полного эффекта требуется in-process reload runtime generation либо перезапуск процесса.
-+## Применение изменений конфигурации
-+
-+Столбец `Hot-Reload` описывает только автоматическое перечитывание файла: `✔` — новое значение может быть опубликовано, `✘` — сохраняется действующее значение. Команда `telemt reload` посылает SIGHUP тому же обработчику; новое поколение она не создаёт.
-+
-+| Способ применения | Настройки и результат |
-+| --- | --- |
-+| Автоматически после изменения файла | Поля с `✔`, например `general.log_level`, `network.dns_overrides` и поддерживаемые лимиты пользователей. Применение асинхронное. В описании поля указано, затрагивает ли оно текущую работу или только новые соединения. |
-+| Перезагрузка поколения | `[censorship]`, `[timeouts]`, `upstreams` и настройки API, принадлежащие поколению. Используйте `POST /v1/system/reload` или PATCH редактируемой конфигурации с `reload=instant` либо `reload=drain`. Дождитесь завершения операции. Сохранение действующих соединений зависит от выбранного режима. |
-+| Перезапуск процесса | `logging`, `general.data_path`, `general.quota_state_path`, `general.disable_colors`, `general.direct_relay_buffer_budget_max_bytes`, `server.metrics_listen`, `server.metrics_port`, `server.max_connections`, `server.conntrack_control`, `server.listen_unix_sock`, `server.listen_unix_sock_perm`, поля API `enabled`/`listen`/`runtime_edge_events_capacity`, `web.limits`, `web.allow_wildcard_hosts` и `web.decoy_fasttrack_mode`. |
-+| Зависит от изменения | Адрес нативного listener можно сменить только в рамках поддерживаемого плана перепривязки. WEB-listeners, параметры сокетов и доверия, а также правила ограничения SYN требуют перезапуска процесса. Изменения обучения и диагностики WEB могут откладываться, если требуют увеличения лимитов процесса. |
-+
-+Для полей, доступных через API, `POST /v1/config/validate` до сохранения возвращает `apply.watcher_paths`, `apply.generation_paths` и `apply.process_restart_paths`. После изменения проверьте результат операции, `deferred_process_fields` и `GET /v1/config/state`. Старое поле `restart_required` означает, что изменение выходит за пределы автоматического перечитывания; само по себе оно не требует перезапуска процесса. См. [контракт перезагрузки API](../Architecture/API/API.md#runtime-reload-endpoints) и [команды Telemt](../CLI.ru.md).
-+
-+У настроек WEB разные сроки действия: `carrier_method` и случайные задержки повторов закреплены за новыми страницами моста, `conveyor` согласуется для новых сессий, а лимиты процесса сохраняются до перезапуска. Политики существующих страниц и сессий описаны в [руководстве WEB](../WEB/WEB_PROXY.ru.md#lifecycle-и-reload).
- 
- # Содержание
-  - [Ключи верхнего уровня](#ключи-верхнего-уровня)
-@@ -28,6 +43,7 @@
-  - [web.debug](#webdebug)
-  - [web.limits](#weblimits)
-  - [web.limits.wildcard](#weblimitswildcard)
-+ - [web.retry_jitter](#webretry_jitter)
-  - [web.timeouts](#webtimeouts)
-  - [web.vhosts](#webvhosts)
-  - [web.vhosts.decoy](#webvhostsdecoy)
-@@ -53,7 +69,7 @@
- | [`beobachten_file`](#beobachten_file) | `String` | `"cache/beobachten.txt"` | `✘` |
- 
- ## include
--  - **Ограничения / валидация**: значение должно быть одной строкой в виде `include = "path/to/file.toml"`. Значения параметра обрабатываются перед анализом TOML. Максимальное количество - 10.
-+  - **Ограничения / валидация**: значение должно быть одной строкой в виде `include = "path/to/file.toml"`. Значения параметра обрабатываются перед анализом TOML. Максимальная глубина вложенности включаемых файлов — 10.
-   - **Описание**: Включает еще один файл TOML с помощью `include = "relative/or/absolute/path.toml"`; добавленные файлы обрабатываются рекурсивно.
-   - **Пример**:
- 
-@@ -73,7 +89,7 @@
-     # show_link = ["alice", "bob"]
-     ```
- ## dc_overrides
--  - **Ограничения / валидация**: значение должно быть положительным целым числом в формате строки (например, `"203"`). Значения разбираются как `SocketAddr` (`ip:port`). Пустые строки игнорируются.
-+  - **Ограничения / валидация**: ключ должен быть положительным индексом DC, записанным строкой (например, `"203"`). Значение — адрес или список адресов `SocketAddr` (`ip:port`). Пустые строки игнорируются.
-   - **Описание**
+ | Method | Path | Body | Success | `data` contract |
+ | --- | --- | --- | --- | --- |
+ | `GET` | `/v1/health` | none | `200` | `HealthData` |
+ | `GET` | `/v1/health/ready` | none | `200` or `503` | `HealthReadyData` |
++| `GET` | `/v1/capabilities` | none | `200` | `CapabilitiesData` |
++| `GET` | `/v1/config/schema` | none | `200` | `ConfigSchemaData` |
++| `GET` | `/v1/config/state` | optional `sections` query | `200` | `ConfigStateData`, including partial results |
+ | `GET` | `/v1/system/info` | none | `200` | `SystemInfoData` |
+ | `GET` | `/v1/runtime/gates` | none | `200` | `RuntimeGatesData` |
+ | `GET` | `/v1/runtime/initialization` | none | `200` | `RuntimeInitializationData` |
+@@ -117,8 +155,11 @@ Notes:
+ | `GET` | `/v1/stats/users/active-ips` | none | `200` | `UserActiveIps[]` |
+ | `GET` | `/v1/stats/users` | none | `200` | `UserInfo[]` |
+ | `GET` | `/v1/stats/users/quota` | none | `200` | User
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #974** (2026-11-11): Docs/3.5.17 (@axkurcom)
 - **PR #970** (2026-11-08): API Exposure enhanced (@axkurcom)
+- **PR #968** (2026-11-12): Retry missing TLS front profiles with backoff instead of waiting for the regular refresh (@AndreyOsipuk)
+- **PR #966** (2026-11-12): Randomize the inner content type byte in emulated TLS ApplicationData (@AndreyOsipuk)
 - **PR #964** (2026-10-31): Flow/3.5.16 (@axkurcom)
 - **PR #963** (2026-10-30): Webperf/3.5.15 (@axkurcom)
-- **PR #949** (2026-10-05): ME: Autonomous&Lifecycle-bounded Pool Convergence (@axkurcom)
-- **PR #948** (2026-10-04): WEB: Resolve opt-in decoy hostnames during config preparation (@axkurcom)
 
 ---
 
@@ -2930,50 +3013,43 @@ Co-Authored-By: brekotis <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #974 from telemt/docs/3.5.17
+## X. Empirical Invariant Guard in emulator.rs
 
 **RULE**:
-When implementing operations in `docs/Advanced_settings/HIGH_LOAD.en.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in telemt/telemt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/tls_front/emulator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in telemt/telemt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c3dabee`: Merge pull request #974 from telemt/docs/3.5.17. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b594ee55`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Advanced_settings/HIGH_LOAD.en.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/tls_front/emulator.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-[English](HIGH_LOAD.en.md) · [Русский](HIGH_LOAD.ru.md) · [Deutsch](HIGH_LOAD.de.md)
-
-Use this guide when measured load exposes a specific resource limit. The values below are example capacities, not a tested guarantee of a particular connection count. Record the kernel version, active configuration, connection rate, memory use and latency before changing a setting. Save the previous values and change one group at a time so you can compare and revert it.
-
-For terminology, see the [shared glossary](../TERMINOLOGY.md).
-First distinguish failed outbound connects caused by exhausted source ports from a large but harmless TIME-WAIT population. Inspect the failing error, destination tuples and `ss -s`. Expanding the ephemeral range can help when this is the limiting resource; account for ports reserved by other services:
-
-
-`tcp_tw_reuse` controls reuse of TIME-WAIT sockets when the protocol permits it. In the referenced kernel documentation, `0` disables it, `1` enables it globally and `2` limits it to loopback; inspect your running kernel's current value before changing it. `tcp_max_tw_buckets` limits retained TIME-WAIT entries, not the duration of TIME-WAIT.
-
-`tcp_fin_timeout` applies
+                // The 17-byte tail stands in for the encrypted inner content
+                // type and AEAD tag. Both are ciphertext in real TLS 1.3, so a
+                // fixed plaintext content type byte would be a stable marker.
+                rec.extend_from_slice(&rng.bytes(body_len - copy_len + 17));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-When deploying Telemt under high-traffic load (tens or hundreds of thousands of concurrent connections), the standard OS network stack limits can lead to packet drops, high CPU context switching, and connection failures. This guide covers Linux kernel tuning, hardware configuration, and architecture optimizations required to prepare the server for high-load scenarios.
-High churn rates lead to ephemeral port exhaustion. Expand the range and rapidly recycle closed sockets:
-net.ipv4.tcp_fin_timeout = 15
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.tcp_max_tw_buckets = 2000000
-### 2.3 TCP Keepalive (Aggressive Dead Connection Culling)
-By default, Linux keeps silent, dropped connections open for over 2 hours. This consumes memory at scale. The values below start probing after five idle minutes and abandon an unresponsive peer after the subsequent probe budget, roughly 7–8 minutes after it became idle:
-Optimize memory usage per socket and switch to BBR (Bottleneck Bandwidth and Round-trip propagation time) to improve latency on lossy networks:
-# Core buffer sizes
-# TCP-specific buffers (min, default, max)
-# Enable BBR
-If your server uses `iptables`, `ufw`, or `firewalld`, the Linux kernel tracks e
+// Induced defect failure mode:
+                if body_len > copy_len {
+                    rec.extend_from_slice(&rng.bytes(body_len - copy_len));
+                }
+                rec.push(0x16);
+                rec.extend_from_slice(&rng.bytes(16));
+        } else if size > 17 {
+            let body_len = size - 17;
+            let mut body = Vec::with_capacity(body_len);
+            body.extend_from_slice(&rng.bytes(body_len));
+            rec.extend_from_slice(&body);
+            rec.push(0x16);
+            rec.extend_from_slice(&rng.bytes(16));
+        assert_eq!(payload[payload.len() - 17], 0x16);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c3dabee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b594ee55` are properly handled with clean fallback behavior.

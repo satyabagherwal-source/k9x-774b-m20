@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T19:40:03.738Z",
-  "total_cycles_completed": 9351,
-  "total_learnings_persisted": 9351,
-  "total_rules_promoted": 9086,
+  "last_updated": "2026-11-13T19:54:23.057Z",
+  "total_cycles_completed": 9354,
+  "total_learnings_persisted": 9354,
+  "total_rules_promoted": 9088,
   "history": [
-    {
-      "timestamp": "2026-11-13T05:51:20.965Z",
-      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T05:51:35.694Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T06:06:58.280Z",
-      "repository": "wquguru/cicada",
-      "learningId": "learn-github-wquguru-cicada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T06:07:00.752Z",
       "repository": "karmada-io/karmada",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T19:40:03.738Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:52:54.735Z",
+      "repository": "krishhgg/Insomnia",
+      "learningId": "learn-github-krishhgg-insomnia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:54:20.249Z",
+      "repository": "PrunaAI/P-H3-Image-Comfy",
+      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:54:23.057Z",
+      "repository": "telemt/telemt",
+      "learningId": "learn-github-telemt-telemt",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

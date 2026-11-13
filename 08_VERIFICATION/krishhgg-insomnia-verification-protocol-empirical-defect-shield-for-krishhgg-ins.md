@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for krishhgg/insomnia
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for krishhgg/Insomnia
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "krishhgg/insomnia",
-  "source_url": "https://github.com/krishhgg/insomnia",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "krishhgg/Insomnia",
+  "source_url": "https://github.com/krishhgg/Insomnia",
+  "source_version": "3f474ff2",
+  "license": "MIT",
+  "timestamp": "2026-11-13T19:52:54.873Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-krishhgg-insomnia",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [krishhgg/insomnia](https://github.com/krishhgg/insomnia) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [krishhgg/Insomnia](https://github.com/krishhgg/Insomnia) (Revision: `3f474ff2`).  
+> **License**: MIT | **Timestamp**: `2026-11-13T19:52:54.873Z`  
+> **Learning ID**: `learn-github-krishhgg-insomnia`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `krishhgg/insomnia` (Commit: `historical`)
+- **Target Repository**: `krishhgg/Insomnia` (Commit: `3f474ff2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md`  
-> **Source**: github ([https://github.com/krishhgg/Insomnia](https://github.com/krishhgg/Insomnia))  
-> **Source Version**: `1044770e`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T10:59:32.579Z  
-> **Learning ID**: `learn-github-krishhgg-insomnia`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): krishhgg/Insomnia
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/krishhgg/Insomnia](https://github.com/krishhgg/Insomnia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T10:59:31.809Z  
+> **Harvest Timestamp**: 2026-11-13T19:52:53.884Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A macOS menu bar app that safely keeps your MacBook awake with the lid closed, for timed agent sessions.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2002 stars
+- **Stars / Engagement**: 2047 stars
 
 ---
 
@@ -210,7 +196,7 @@ final class AppServices {
 
         (notifier as? Notifier)?.requestAuthorizationIfNeeded()
 
-        lidActions = LidActions(manager: manager, freezer: freezer, docker: docker, audio: audio, display: display, keyboard: keyboard, sampler: sampler)
+        lidActions = LidActions(manager: manager, freezer: freezer, docker: docker, audio: audio, display: display, keyboard: keyboard, screenLock: LoginFrameworkScreenLocker(), sampler: sampler)
         floors = FloorRuleDriver(manager: manager, notifier: notifier)
         // The panel under Insomnia's own Low Power Mode reads the mode's
         // rescaled value: sample once more just before the mode goes on
@@ -219,10 +205,14 @@ final class AppServices {
         // A power command left running refuses lid and floor transactions
         // until it exits; the manager calls back then.
         manager.resyncAfterCommand = { [weak self] replayLid in self?.resyncAfterCommand(replayLid: replayLid) }
+        // A floor input changed in Settings applies now, not at the next
+        // battery, thermal or lid event.
+        manager.floorInputsChanged = { [weak self] in self?.reevaluateFloors() }
         sampler.follow(manager)
 
         lid.onChange = { [weak self] closed in self?.lidChanged(closed) }
-        lid.start()
+        lid.brightnessJournaled = { [weak manager] in manager?.effectiveState.brightnessJournaled ?? false }
+        lid.start(closed: manager.lidTakenAsClosed)
         status.lidClosed = lid.isClosed
         sampleBrightnessIfLidOpen()
         let timer = DispatchSource.makeTimerSource(queue: .main)
@@ -279,19 +269,7 @@ final class AppServices {
         networkTask = nil
         for task in lidTasks { task.cancel() }
         lidTasks.removeAll()
-        for task in floorTasks { task.cancel() }
-        floorTasks.removeAll()
-        cancelBrowserTasks()
-        network?.stop()
-        network = nil
-        status.hotspotPasswordReport = nil
-        lidActions = nil
-        floors = nil
-        syncState()
-    }
-
-    /// One-shot launch diagnostics. This does not start any observer or retry
-    /// timer, so system integrat
+   
 ```
 
 ### Core Architecture Module: `Sources/Insomnia/Core/BackstopCommand.swift`
@@ -351,7 +329,9 @@ enum FloorRules {
         case endSession(EndReason)
     }
 
-    /// Ordered actions for the current inputs.
+    /// Ordered actions for the current inputs. `hot` says the thermal state
+    /// read serious or critical earlier in the session and has not read
+    /// nominal since (`FloorRuleDriver` keeps it).
     ///
     /// - battery below `endFloor` while not charging: end session. 0 never
     ///   matches, so 0 turns the battery end off; Config keeps a non-zero
@@ -362,14 +342,16 @@ enum FloorRules {
     ///   applied to a level nobody can read, and the Mac is on a battery
     ///   that may be about to die. A desktop has no battery and no floor.
     /// - battery below `lowPowerFloor` while not charging, thermal
-    ///   `serious` (if `thermalRules`), or lid closed (if
-    ///   `lowPowerOnLidClose`, charging or not): Low Power Mode on
+    ///   `serious`, or still `hot` at `fair` (if `thermalRules`, the latter
+    ///   only with `thermalHoldUntilNominal`), or lid
+    ///   closed (if `lowPowerOnLidClose`, charging or not): Low Power Mode on
     /// - none of the above while we set Low Power Mode: Low Power Mode off
-    ///   ("charger connected", "thermal back to nominal/fair", "lid opened")
+    ///   ("charger connected", "thermal back to nominal", "lid opened")
     static func evaluate(
         battery: BatteryStatus,
         isCharging: Bool,
         thermal: ProcessInfo.ThermalState,
+        hot: Bool,
         lidClosed: Bool,
         lowPowerSetByUs: Bool,
         config: Config
@@ -385,7 +367,7 @@ enum FloorRules {
         if case let .unreadable(misses) = battery, onBattery, misses >= 2, config.endFloor > 0 {
             return [.endSession(.batteryUnreadable)]
         }
-        let cause = lowPowerCause(percent: percent, isCharging: isCharging, thermal: thermal, lidClosed: lidClosed, config: config)
+        let cause = lowPowerCause(percent: percent, isCharging: isCharging, thermal: thermal, hot: hot, lidClosed: lidClosed, config: config)
         if let cause, !lowPowerSetByUs { return [.enableLowPower(cause)] }
         if cause == nil, lowPowerSetByUs { return [.disableLowPower] }
         return []
@@ -395,14 +377,21 @@ enum FloorRules {
     /// then battery, then lid), or nil when none holds. Independent of
     /// whether the mode is already on, so the driver can track which cause
     /// is keeping it on as the inputs change.
+    ///
+    /// The thermal cause holds at serious, and at fair while the Mac is
+    /// still `hot` (with `thermalHoldUntilNominal`, on by default): switching
+    /// the mode off at the first step down brings back the load that made
+    /// it serious, and the mode goes on and off as the Mac heats up and
+    /// cools down again. With the hold off it ends at fair, as before.
     static func lowPowerCause(
         percent: Int?,
         isCharging: Bool,
         thermal: ProcessInfo.ThermalState,
+        hot: Bool,
         lidClosed: Bool,
         config: Config
     ) -> LowPowerCause? {
-        if config.thermalRules, thermal == .serious { return .thermal }
+        if config.thermalRules, thermal == .serious || (config.thermalHoldUntilNominal && hot && thermal == .fair) { return .thermal }
         if let p = percent, !isCharging, p < config.lowPowerFloor { return .battery }
         if lidClosed, config.lowPowerOnLidClose { return .lid }
         return nil
@@ -427,10 +416,30 @@ struct FloorRuleDriver {
     /// so the matching disable knows whether it is announced. Not
     /// journaled: after a relaunch the disable is announced as before.
     private let lastCause = LastCause()
+    /// Whether the runs of this session have read serious or critical with
+    /// no nominal since (`FloorRules.evaluate`'s `hot`). Not journaled:
+    /// after a relaunch a Mac at fair counts as cooled down.
+    private let heatLog = HeatLog()
 
     @MainActor
     private final class LastCause {
         var value: FloorRules.LowPowerCause?
+    }
+
+    @MainActor
+    private final class HeatLog {
+        var hot = false
+
+        /// Records the state a run reads and returns whether the Mac
+        /// counts as hot for that run.
+        func read(_ thermal: ProcessInfo.ThermalState) -> Bool {
+            switch thermal {
+            case .serious, .critical: hot = true
+            case .nominal: hot = false
+            default: break
+            }
+            return hot
+        }
     }
 
     init(manager: SessionManager, notifier: any Notifying) {
@@ -442,10 +451,12 @@ struct FloorRuleDriver {
         guard let manager, manager.isActive, !Task.isCancelled else { return }
         let config = manager.config
         let percent = battery.percent
+        let hot = heatLog.read(thermal)
         let actions = FloorRules.evaluate(
             battery: battery,
             isCharging: isCharging,
             thermal: thermal,
+            hot: hot,
             lidClosed: lidClosed,
             lowPowerSetByUs: manager.state.lowPowerSetByUs,
             config: config
@@ -453,7 +464,7 @@ struct FloorRuleDriver {
         // Track the effective cause while the mode is ours, not only at the
         // enable: another cause may have taken over since.
         if manager.state.lowPowerSetByUs,
-           let cause = FloorRules.lowPowerCause(percent: percent, isCharging: isCharging, thermal: thermal, lidClosed: lidClosed, config: config) {
+           let cause = FloorRules.lowPowerCause(percent: percent, isCharging: isCharging, thermal: thermal, hot: hot, lidClosed: lidClosed, config: config) {
             lastCause.value = cause
         }
         for action in actions {
@@ -465,7 +476,8 @@ struct FloorRuleDriver {
                 guard manager.isActive, !Task.isCancelled else { return }
                 switch cause {
                 case .thermal:
-                    notifier.post(title: "Low Power Mode on", body: "Thermal state is serious. Low Power Mode is on until it cools down.")
+                    let until = config.thermalHoldUntilNominal ? "stays on until it is back to nominal" : "is on until it cools down"
+                    notifier.post(title: "Low Power Mode on", body: "Thermal state is \(PowerMonitor.name(thermal)). Low Power Mode \(until).")
                 case .battery:
                     notifier.post(title: "Low Power Mode on", body: "Battery at \(percent ?? 0)%, below the \(config.lowPowerFloor)% floor.")
                 case .lid:
@@ -476,9 +488,12 @@ struct FloorRuleDriver {
                     let cause = lastCause.value
                     lastCause.value = nil
                     guard manager.isActive, !Task.isCancelled else { return }
-                    if cause == .lid {
+                    switch cause {
+                    case .lid:
                         Log.info("low power mode off (lid opened)")
-                    } else {
+                    case .thermal:
+                        notifier.post(title: "Low Power Mode off", body: config.thermalRules ? "Thermal state is back to \(PowerMonitor.name(thermal))." : "Thermal rules are off.")
+                    case .battery, nil:
                         notifier.post(title: "Low Power Mode off", body: isCharging ? "Charger connected." : "Back above the floor.")
                     }
                 }
@@ -693,7 +708,8 @@ import Foundation
 /// undone on lid open. Every step is journaled to state.json *before* the
 /// side effect; undo reads state.json, never memory.
 ///
-/// Order on close: darken (save display brightness and keyboard backlight
+/// Order on close: lock the screen (when on; not journaled, never undone),
+/// darken (save display brightness and keyboard backlight
 /// first, then set both to 0 and ask the display to sleep), mute (save
 /// volume + mute state first), freeze scope (the freeze list plus every
 /// other Dock app when `freezeAllApps` is on; one journal write per app),
@@ -707,6 +723,7 @@ final class LidActions {
     private let audio: any AudioControlling
     private let display: any DisplayDimming
     private let keyboard: any KeyboardBacklighting
+    private let screenLock: any ScreenLocking
     /// Last trusted brightness values, kept by AppServices while the lid is
     /// open. nil (tests) means the device's own asleep/suppressed reading
     /// decides alone.
@@ -726,6 +743,7 @@ final class LidActions {
         audio: any AudioControlling,
         display: any DisplayDimming = NoopDisplayDimmer(),
         keyboard: any KeyboardBacklighting = NoopKeyboardBacklight(),
+        screenLock: any ScreenLocking = NoopScreenLocker(),
         sampler: BrightnessSampler? = nil
     ) {
         self.manager = manager
@@ -734,6 +752,7 @@ final class LidActions {
         self.audio = audio
         self.display = display
         self.keyboard = keyboard
+        self.screenLock = screenLock
         self.sampler = sampler
     }
 
@@ -776,7 +795,25 @@ final class LidActions {
                 manager.isActive && manager.endTicket == ticket && lidEvents == event && !Task.isCancelled
             }
 
-            if config.darkenDisplayOnLidClose {
+            // Not journaled and not undone: the lid opening does nothing for
+            // it, the login password does. A failure is shown in the menu
+            // (the private call can break with an OS update) and the rest
+            // of the close still runs.
+            if config.lockScreenOnLidClose {
+                do {
+                    try screenLock.lockNow()
+                    Log.info("screen locked on lid close")
+                } catch {
+                    manager.fail("lid close: could not lock the screen: \(error.localizedDescription)")
+                }
+            }
+
+            // Off, the built-in display is under a lid closed at a desk, or
+            // one whose external display was just unplugged: macOS keeps the
+            // panel and keyboard dark, and there is nothing to darken.
+            if config.darkenDisplayOnLidClose, !display.builtInIsOnline {
+                Log.info("display and keyboard backlight left alone: the built-in display is off, as macOS keeps it under a lid closed at a desk")
+            } else if config.darkenDisplayOnLidClose {
                 darkenSavingCurrent(manager)
             }
 
@@ -870,25 +907,7 @@ final class LidActions {
     /// Mode goes on, held from then until it goes off); without one, the
     /// value a lid open restored under our Low Power Mode, still journaled
     /// as owed and the mode still ours (the app relaunched under the mode:
-    /// the new sampler has no sample and is held; an entry left behind
-    /// after the mode was released is stale and not used); only without
-    /// either the current read, dim or
-    /// not, since a dim panel on open beats a black one. The sample can be
-    /// up to 30 s old: a brightness change made right before closing the
-    /// lid is not seen. A value kept after a refused restore gives way only
-    /// to a sample, the value owed after the mode, or a current read that
-    /// is trusted and taken with our Low Power Mode never on in this run,
-    /// nor over the entry in this boot (`SessionManager.keptDisplayReadDoubt`).
-    /// Without one, the level may
-    /// be one the user set by hand, and the reading is no level to restore
-    /// either: the entry is left as it is, undecided, and the panel is not
-    /// darkened, since the open would read the 0 left here as the darkening
-    /// never undone and write the kept value. The display sleep request
-    /// still goes, and is then the only thing that turns that panel off.
-    /// A sample of 0, or the value owed after the mode at 0, replaces the
-    /// kept one only once a reading above 0 showed that entry's darkening
-    /// undone (`RuntimeState.keptDisplayReadLit`): before that, the 0 may
-    /// still be the darkening, and the kept 
+    /// the new sampler has no sample and is held; an entry left 
 ```
 
 ### Core Architecture Module: `Sources/Insomnia/Core/Log.swift`
@@ -1523,11 +1542,14 @@ enum ResumeFrozenCommand {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #171** (2026-11-09): **Keyboard backlight: land #136**
-  *Symptoms*: After a lid close, Insomnia could set the keyboard backlight back to 0 when the lid opened, and leave it off. On a MacBook Pro, macOS has already turned the backlight off by the time Insomnia reads it at a close, so Insomnia read 0, saved it, and wrote it back at the open. #136 by @addisonking stops that: a close that reads 0 leaves the keyboard to macOS.  Fixes #121.  This pull request lands #136 at 7fc79c2. Its first commit, b4f0960d, merges that head onto main unchanged, so GitHub marks #136 merged when this one merges, and its author keeps the credit. Git merged it with no conflicts. The second commit, 9293acb9, fixes a case the Codex bot found in #136, e1c663fe brings an older spec paragraph in line with it, c54a95f6 narrows 9293acb9 so a trusted 0 behaves as on main, 10dcb414 fixes the log and spec for a refused zero kept from an older version, and 2ad033d6 and 76a49270 keep the display sleep request when the keyboard journals no level.  To @addisonking: please don't push to your branch until this merges. A new commit there isn't in this pull request, so #136 would stay open instead of showing as merged.  ## What #136 changes  - A close that reads the keyboard at 0 saves nothing and writes nothing, unless a positive restore is already owed from an earlier close. A 0 can come from automatic adjustment or from the user turning it off, and neither should be restored over. - A positive reading is saved if trusted, otherwise a positive sample. A sample of 0 is never used. - 
+- **Issue #175** (2026-11-13): **Docs: record the 0.2.0 release checks**
+  *Symptoms*: 0.2.0 is out, so this records the checks it passed in docs/release-validation.md, the way the v0.1.0 section does. It covers what passed, failed and was not run on the release candidate (MacBook on macOS 26.2, a macOS 27 VM, real lid closes), the zip tested before tagging, and the published release's checksum, attestation and install.  Two rows failed:  - The right-click menu opens at the pointer instead of beneath the icon. That shipped as a known issue, #174. - Login Items showed a generic icon before a logout. The recheck after a login is still to do. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"e67049c02d64de2cc8b5e6d8ad80d1d9d5e77e99","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"e67049c02d64de2cc8b5e6d8ad80d1d9d5e77e99","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"e67049c02d64de2cc8b5e6d8ad80d1d9d5e77e99","mergeGateEnabled":false,"pullRequestNumber":175,"repository":"krishhgg/Insomnia","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-13T10:00:25.161678Z">2026-11-13T10:00:25.161678Z</relative-time> | `e67049c` | Manual request | |
+  > @codex review
 
-- **Issue #169** (2026-11-08): **Merge gate: the Codex bot's review replaces Greptile's score**
-  *Symptoms*: Greptile is off for this repository, so `merge-gate/greptile` would stay pending on every new head and nothing could merge. The ChatGPT Codex connector reviews pull requests now, and this replaces that gate with `merge-gate/codex-bot`, which reads the bot's result.  ## How the gate reads the bot  The bot keeps one summary comment per pull request and rewrites it for each review. A hidden state block at its top names the reviewed commit, the review's status and whether it found anything. The gate takes the newest summary the bot wrote and:  - passes when it covers the head, the review completed and it found nothing - waits when there is no review yet, the review covers an older commit, it is still running, or two summaries share a time and disagree - fails on findings, on an open security finding at the head, and on a summary that holds more than one state - fails if anyone but the bot made the newest edit to any comment the bot wrote, summary or not, or if GitHub names no account for that edit. Checking every bot comment means removing the marker from the newest summary can't bring back an older clean one.  GitHub keeps no record of a deleted comment, so deleting the bot's newest summary would bring back an older one if the bot had written two. That takes write access, which only the owner has, and the bot keeps one summary per pull request.  The bot leaves `has_any_findings` set after a finding's conversation is resolved, and the gate reads that flag. A finding therefore cou
+- **Issue #173** (2026-11-13): **Release 0.2.0**
+  *Symptoms*: Every pull request planned for 0.2.0 has merged, so main is ready to release. This sets the bundle version to 0.2.0, build 2, which is step 1 of "Cutting a stable release" in docs/releasing.md. After this merges, `v0.2.0` goes on this pull request's commit, 7b00449, since that's the commit tested below.  It also updates the Settings real-Mac check. #150 and #151 grew the Settings page to about 1,790 pt (1,788 measured), so it now scrolls on a 1440p display too. The check said about 1,215 pt and that a 1440p display fits it.  ## Tested  The Release workflow's manual run on this commit ([run 43392569350](https://github.com/krishhgg/Insomnia/actions/runs/43392569350)) passed `swift test` and built `Insomnia-0.2.0-macos.zip`, SHA-256 `c1e933a9863837efb2de95cd7d93e7cbef917422bb26e2fc6ff5570cbc383e4a`. On the maintainer's MacBook (Apple M5, macOS 26.2):  - `shasum -a 256 -c SHA256SUMS` passed. - The zip's own `./install.sh --allow-unverified-origin --app ./Insomnia.app` installed it, with the expected unverified origin warning. - The installed app reports 0.2.0 (2), CDHash `8b77253007886b30de9623f44aa2eb8f07870ae6`. - `Insomnia --session start 120` set `SleepDisabled` to 1, and `--session end` set it back to 0. - `launchctl print` shows the recovery agent running `Insomnia --backstop`, with last exit code 0.  The code under this commit is the same tree as the release candidate 8a7191c, which got the real-Mac checks on November 12 and 13: the MacBook on macOS 26.2, a macOS 27 VM, an
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1544,10 +1566,827 @@ enum ResumeFrozenCommand {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1044770e` (2026-11-09)
-**Commit Message**: Merge pull request #154 from krishhgg/integration/recovery-launcher
+### Incident Patch 1: `5435d268` (2026-11-13)
+**Commit Message**: Merge pull request #153 from krishhgg/integration/network-fixes
 
-Recovery launcher: land #142
+Nudges and hotspot failover: land #68 and #101
+
+**File**: `Sources/Insomnia/System/HotspotJoiner.swift` (modified, +11/-5)
+```diff
+@@ -2,7 +2,9 @@ import CoreWLAN
+ import Foundation
+ 
+ protocol HotspotJoining: Sendable {
+-    /// Returns false when the SSID-filtered scan finds no matching network.
++    /// Returns false when no SSID-filtered scan finds a matching network:
++    /// one for the SSID as given, then one per other spelling of its
++    /// apostrophes (`HotspotSSID.scanCandidates`).
+     func join(ssid: String, password: String, interfaceName: String) async throws -> Bool
+ }
+ 
+@@ -23,11 +25,15 @@ struct CoreWLANHotspotJoiner: HotspotJoining {
+             throw HotspotJoinError.missingInterface(interfaceName)
+         }
+         // macOS may require Location Services permission for SSID visibility.
+-        // Keep this scan SSID-filtered: association works with the returned
++        // Keep each scan SSID-filtered: association works with the returned
+         // CWNetwork even when its `ssid` property is redacted.
+-        let networks = try interface.scanForNetworks(withSSID: ssid.data(using: .utf8))
+-        guard let network = networks.first else { return false }
+-        try interface.associate(to: network, password: password)
++        guard let found = try HotspotSSID.firstFound(ssid, scan: { name in
++            try interface.scanForNetworks(withSSID: Data(name.utf8)).first
++        }) else { return false }
++        if found.name != ssid {
++            Log.info("hotspot \(ssid) found as \(found.name), its apostrophe swapped")
++        }
++        try interface.associate(to: found.network, password: password)
+         return true
+     }
+ 
+```
+
+**File**: `Sources/Insomnia/System/NetworkFailover.swift` (modified, +28/-2)
+```diff
+@@ -155,8 +155,10 @@ struct KeychainError: Error, LocalizedError, Sendable {
+ }
+ 
+ /// The configured hotspot SSID as the keychain account: what the failover
+-/// joins and Settings saves under. One rule for both, so a check that the
+-/// SSID is still the same after a keychain wait compares like with like.
++/// reads the password under and Settings saves under. One rule for both, so
++/// a check that the SSID is still the same after a keychain wait compares
++/// like with like. The failover's scan also tries the name with its
++/// apostrophes swapped (`scanCandidates`).
+ enum HotspotSSID {
+     static func normalized(_ configured: String) -> String {
+         configured.trimmingCharacters(in: .whitespacesAndNewlines)
+@@ -182,6 +184,30 @@ enum HotspotSSID {
+             .replacingOccurrences(of: "\u{2018}", with: "'")
+             .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+     }
++
++    /// The names the directed scan looks for, in order: `ssid` as
++    /// configured, then with every straight apostrophe (U+0027) made
++    /// typographic (U+2019), then the other way round. iOS names a Personal
++    /// Hotspot `Name’s iPhone` with U+2019, a Mac keyboard types U+0027,
++    /// and a directed scan matches the SSID's exact bytes (#87).
++    static func scanCandidates(_ ssid: String) -> [String] {
++        var names = [ssid]
++        for (straight, curly) in [("'", "\u{2019}"), ("\u{2019}", "'")] {
++            let swapped = ssid.replacingOccurrences(of: straight, with: curly)
++            if !names.contains(swapped) { names.append(swapped) }
++        }
++        return names
++    }
++
++    /// Scans for each of `scanCandidates(ssid)` in turn and returns the
++    /// first network found, with the name it was found under; nil when no
++    /// scan finds one. A scan that throws ends the search.
++    static func firstFound<Found>(_ ssid: String, scan: (String) throws -> Found?) rethrows -> (name: String, network: Found)? {
++        for name in scanCandidates(ssid) {
++            if let network = try scan(name) { return (name, network) }
++        }
++        return nil
++    }
+ }
+ 
+ /// Why the failover has no hotspot password to join with. Shown in the
+```
+
+**File**: `Sources/Insomnia/System/TmuxNudge.swift` (modified, +37/-10)
+```diff
+@@ -18,7 +18,13 @@ import Foundation
+ /// cancelled and that the session which asked for the nudge still exists,
+ /// and the live runner checks cancellation again before each command. The
+ /// live runner also refuses a pane whose state it cannot verify or where
+-/// keys would not reach the program (dead, in copy/choose mode, input off).
++/// keys would not reach the program (dead, in copy/choose mode, input off),
++/// and a pane whose foreground program is a shell: the mark stays on a pane
++/// after the program it was set for exits, and keys typed at the prompt go
++/// to the shell. A shell that runs the agent without `exec` (`tmux new
++/// 'agent; exec zsh'`, a launcher script) leads the foreground process
++/// group, so tmux names the shell and such a pane is skipped too, while its
++/// agent runs.
+ /// Residual risk, not closable from outside tmux: the flags above cannot
+ /// show text the pane's program has buffered but not yet submitted. If a
+ /// half-typed line is pending, `continue` is appended to it, and with Enter
+@@ -28,7 +34,23 @@ struct TmuxNudge: Sendable {
+     static let candidates = ["/opt/homebrew/bin/tmux", "/usr/local/bin/tmux", "/usr/bin/tmux"]
+ 
+     /// `display-message -p -F` format the live runner reads before sending.
+-    static let paneStateFormat = "#{pane_id} #{pane_dead} #{pane_in_mode} #{pane_input_off}"
++    /// tmux prints `pane_current_command` as one word: the basename of the
++    /// foreground process, cut at its first space.
++    static let paneStateFormat = "#{pane_id} #{pane_dead} #{pane_in_mode} #{pane_input_off} #{pane_current_command}"
++    /// Foreground program names that mean the pane is at a shell: the
++    /// basenames in /etc/shells, which lists the login shells an account can
++    /// have, and common shells it may leave out. Unreadable, the common ones.
++    static let shellNames = shellNames(etcShells: try? String(contentsOfFile: "/etc/shells", encoding: .utf8))
++    static let commonShellNames: Set<String> = ["sh", "bash", "zsh", "dash", "ksh", "mksh", "csh", "tcsh", "fish", "nu"]
++
++    static func shellNames(etcShells: String?) -> Set<String> {
++        let listed = (etcShells ?? "").split(whereSeparator: \.isNewline).compactMap { line -> String? in
++            let path = line.trimmingCharacters(in: .whitespaces)
++            guard !path.isEmpty, !path.hasPrefix("#") else { return nil }
++            return (path as NSString).lastPathComponent
++        }
++        return commonShellNames.union(listed)
++    }
+     /// Pane-scoped user option that marks a pane as nudgeable.
+     static let markOption = "@insomnia-nudge"
+     /// The command the user runs to mark a pane; shown in Settings.
+@@ -82,13 +104,14 @@ struct TmuxNudge: Sendable {
+ 
+     /// Decides from `display-message -p -F paneStateFormat` output whether
+     /// `send-keys` may run, and to which concrete pane. Anything but a `%N`
+-    /// pane id followed by three clean 0/1 flags is unverifiable and
+-    /// skipped: tmux prints blank fields, with exit 0, for a target it
+-    /// cannot resolve.
+-    static func check(paneState output: String) -> PaneCheck {
++    /// pane id followed by three clean 0/1 flags and a program name is
++    /// unverifiable and skipped: tmux prints blank fields, with exit 0, for a
++    /// target it cannot resolve. `shells` is `shellNames` unless a test
++    /// passes fixed names, so tests never read /etc.
++    static func check(paneState output: String, shells: Set<String>? = nil) -> PaneCheck {
+         let fields = output.split(whereSeparator: { $0 == " " || $0.isNewline }).map(String.init)
+         let shown = output.trimmingCharacters(in: .whitespacesAndNewlines)
+-        guard fields.count == 4, fields[1...].allSatisfy({ $0 == "0" || $0 == "1" }) else {
++        guard fields.count == 5, fields[1...3].allSatisfy({ $0 == "0" || $0 == "1" }) else {
+             return .skip(reason: "pane state unverifiable (\(shown.isEmpty ? "no such pane" : shown))")
+         }
+         let id = fields[0]
+@@ -98,6 +121,9 @@ struct TmuxNudge: Sendable {
+         if fields[1] == "1" { return .skip(reason: "pane \(id) is dead") }
+         if fields[2] == "1" { return .skip(reason: "pane \(id) is in copy/choose mode; keys would not reach the program") }
+         if fields[3] == "1" { return .skip(reason: "pane \(id) input is disabled") }
++        if (shells ?? shellNames).contains(fields[4]) {
++            return .skip(reason: "pane \(id) is at a shell (\(fields[4])); keys would go to the shell, not to a program")
++        }
+         return .ready(paneId: id)
+     }
+ 
+@@ -112,8 +138,9 @@ struct TmuxNudge: Sendable {
+     static let liveRunner: Runner = makeLiveRunner()
+ 
+     /// `socketName` selects a private tmux server (`tmux -L`); nil is the
+-    /// user's default server. `command` runs each tmux invocation.
+-    static func makeLiveRunner(socketName: String? = nil, command: CancellableCommand = CancellableCommand()) -> Runner {
++    /// user's default server. `shells` re
+```
+
+**File**: `Tests/InsomniaTests/AutomationSafetyTests.swift` (modified, +113/-25)
+```diff
+@@ -254,6 +254,9 @@ final class NetworkFailoverCancellationTests: XCTestCase {
+ 
+ // MARK: - TmuxNudge loop
+ 
++/// Fixed shell names for the tmux tests, so no test reads /etc/shells.
++private let testShells = TmuxNudge.commonShellNames
++
+ final class TmuxNudgeTests: XCTestCase {
+     func testLoopStopsOncePermissionIsWithdrawn() async {
+         let log = RunnerLog()
+@@ -299,26 +302,68 @@ final class TmuxNudgeTests: XCTestCase {
+     }
+ 
+     func testPaneStateGate() {
+-        // Real `display-message -p -F "#{pane_id} #{pane_dead} #{pane_in_mode} #{pane_input_off}"` output.
+-        XCTAssertEqual(TmuxNudge.check(paneState: "%0 0 0 0\n"), .ready(paneId: "%0"))
+-        XCTAssertEqual(TmuxNudge.check(paneState: "%12 0 0 0\n"), .ready(paneId: "%12"))
+-        for unsafe in ["%0 1 0 0\n", "%0 0 1 0\n", "%0 0 0 1\n"] {
+-            guard case .skip = TmuxNudge.check(paneState: unsafe) else {
++        // Real `display-message -p -F "#{pane_id} #{pane_dead} #{pane_in_mode} #{pane_input_off} #{pane_current_command}"` output.
++        XCTAssertEqual(TmuxNudge.check(paneState: "%0 0 0 0 cat\n", shells: testShells), .ready(paneId: "%0"))
++        XCTAssertEqual(TmuxNudge.check(paneState: "%12 0 0 0 claude\n", shells: testShells), .ready(paneId: "%12"))
++        for unsafe in ["%0 1 0 0 cat\n", "%0 0 1 0 cat\n", "%0 0 0 1 cat\n"] {
++            guard case .skip = TmuxNudge.check(paneState: unsafe, shells: testShells) else {
+                 return XCTFail("\(unsafe.debugDescription) was not skipped")
+             }
+         }
+         // tmux prints blank fields (exit 0) for a target it cannot find. A
+-        // missing or malformed pane id fails closed even with clean flags.
+-        for unverifiable in ["   \n", "", "0 0 0\n", "%0 0 0\n", "%0 0 0 0 0\n", "0 0 0 0\n", "% 0 0 0\n", "%x 0 0 0\n", "nudge:0.0 0 0 0\n", "no server running\n"] {
+-            guard case .skip = TmuxNudge.check(paneState: unverifiable) else {
++        // missing or malformed pane id, or no program name, fails closed
++        // even with clean flags.
++        for unverifiable in ["    \n", "", "0 0 0\n", "%0 0 0\n", "%0 0 0 0\n", "%0 0 0 0 \n", "%0 0 0 0 cat more\n",
++                             "0 0 0 0 cat\n", "% 0 0 0 cat\n", "%x 0 0 0 cat\n", "%0 0 0 x cat\n", "nudge:0.0 0 0 0 cat\n", "no server running\n"] {
++            guard case .skip = TmuxNudge.check(paneState: unverifiable, shells: testShells) else {
+                 return XCTFail("\(unverifiable.debugDescription) was not skipped")
+             }
+         }
+     }
++
++    /// A pane whose foreground program is a shell is at its prompt, or runs
++    /// a command list without job control: keys would go to the shell.
++    func testPaneAtAShellIsSkipped() {
++        for program in ["cat", "claude", "node", "vim", "ssh"] {
++            XCTAssertEqual(TmuxNudge.check(paneState: "%3 0 0 0 \(program)\n", shells: testShells), .ready(paneId: "%3"), program)
++        }
++        for shell in ["zsh", "bash", "sh", "fish"] {
++            XCTAssertEqual(TmuxNudge.check(paneState: "%3 0 0 0 \(shell)\n", shells: testShells),
++                           .skip(reason: "pane %3 is at a shell (\(shell)); keys would go to the shell, not to a program"))
++        }
++    }
++
++    /// The shells are the basenames in /etc/shells plus common ones it may
++    /// leave out; comments and blank lines are not shells.
++    func testShellNames() {
++        let names = TmuxNudge.shellNames(etcShells: "# List of acceptable shells for chpass(1).\n\n/bin/zsh\n /opt/homebrew/bin/xonsh \n")
++        XCTAssertTrue(names.isSuperset(of: ["zsh", "xonsh"]), "\(names)")
++        XCTAssertFalse(names.contains { $0.isEmpty || $0.hasPrefix("#") || $0.contains("/") || $0.contains(" ") }, "\(names)")
++        XCTAssertEqual(TmuxNudge.shellNames(etcShells: nil), TmuxNudge.commonShellNames)
++    }
+ }
+ 
+ // MARK: - TmuxNudge live runner against a private tmux server
+ 
++/// Polls a pane's foreground program, as tmux names it, until `accept`
++/// takes it, and fails the test if it never does. A new pane's command
++/// starts under the default shell (`sh -c`), and tmux names that shell until
++/// the command replaces it; the runner skips a pane at a shell.
++@discardableResult
++private func waitForForeground(tmux: String, socket: String, pane: String, _ what: String,
++                               file: StaticString = #filePath, line: UInt = #line,
++                               until accept: (String) -> Bool) async throws -> String {
++    var name = ""
++    for _ in 0..<250 {
++        let r = try await Shell.run(tmux, ["-L", socket, "display-message", "-p", "-t", pane, "-F", "#{pane_current_command}"], timeout: 5)
++        name = r.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
++        if accept(name) { return name }
++        try await Task.sleep(for: .milliseconds(20))
++    }
++    XCTFail("fixture: \(what) never reached the foreground of \(pane) (last: \(name))", file: file, line: line)
++    return name
++}
++
+ final clas
+```
+
+**File**: `Tests/InsomniaTests/FailoverMachineTests.swift` (modified, +38/-0)
+```diff
+@@ -22,6 +22,44 @@ final class RecordingHotspotJoiner: HotspotJoining, @unchecked Sendable {
+ final class FailoverMachineTests: XCTestCase {
+     let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+ 
++    /// iOS names a Personal Hotspot `Name’s iPhone` (U+2019) and a Mac
++    /// keyboard types U+0027. The directed scan tries the name as
++    /// configured, then with its apostrophes swapped; a name without one is
++    /// scanned once (#87).
++    func testHotspotScanTriesTheNameWithTheOtherApostrophe() {
++        XCTAssertEqual(HotspotSSID.scanCandidates("Name's iPhone"), ["Name's iPhone", "Name\u{2019}s iPhone"])
++        XCTAssertEqual(HotspotSSID.scanCandidates("Name\u{2019}s iPhone"), ["Name\u{2019}s iPhone", "Name's iPhone"])
++        XCTAssertEqual(HotspotSSID.scanCandidates("Office 5G"), ["Office 5G"])
++
++        var scanned: [String] = []
++        let found = HotspotSSID.firstFound("Name's iPhone") { name -> Int? in
++            scanned.append(name)
++            return name == "Name\u{2019}s iPhone" ? 7 : nil
++        }
++        XCTAssertEqual(found?.name, "Name\u{2019}s iPhone")
++        XCTAssertEqual(found?.network, 7)
++        XCTAssertEqual(scanned, ["Name's iPhone", "Name\u{2019}s iPhone"])
++
++        scanned = []
++        XCTAssertNil(HotspotSSID.firstFound("Office 5G") { name -> Int? in
++            scanned.append(name)
++            return nil
++        })
++        XCTAssertEqual(scanned, ["Office 5G"], "a name with no apostrophe was scanned more than once")
++
++        // Found as typed: the search stops at the first scan.
++        scanned = []
++        let asTyped = HotspotSSID.firstFound("Name\u{2019}s iPhone") { name -> Int? in
++            scanned.append(name)
++            return 1
++        }
++        XCTAssertEqual(asTyped?.name, "Name\u{2019}s iPhone")
++        XCTAssertEqual(scanned, ["Name\u{2019}s iPhone"], "a name found as typed was scanned again")
++
++        // Both apostrophes in one name: each swap is its own candidate.
++        XCTAssertEqual(HotspotSSID.scanCandidates("A's B\u{2019}s"), ["A's B\u{2019}s", "A\u{2019}s B\u{2019}s", "A's B's"])
++    }
++
+     func testShortBlipDoesNotJoin() {
+         var m = FailoverMachine()
+         XCTAssertEqual(m.pathUnsatisfied(at: t0), [.scheduleRetry(after: 5)])
+```
+
+**File**: `docs/extras.md` (modified, +11/-5)
+```diff
+@@ -11,7 +11,9 @@ apostrophe still finds an iPhone's curly one. Then enter the password and
+ click Save. The password is
+ stored in the login Keychain under service `insomnia-hotspot`. Insomnia uses
+ CoreWLAN to find and join that network without putting the password in process
+-arguments.
++arguments. An iPhone names its hotspot with a typographic apostrophe
++(`Name’s iPhone`), and a Mac keyboard types a straight one; when the name as
++typed finds nothing, Insomnia looks for it with the other apostrophe too.
+ 
+ The Keychain item's access list names only the build of Insomnia that saved
+ it, and Insomnia reads it with Keychain prompts switched off, so a join during
+@@ -58,10 +60,14 @@ tmux set-option -p -t <session:window.pane> @insomnia-nudge on
+ ```
+ 
+ Mark a dedicated, disposable agent pane, not one you type in, because pending
+-text is opaque to Insomnia. Enter is off by default, so the word is typed and
+-nothing submits it. Turn on "Press Enter after continue" in Settings, under
+-If Wi-Fi drops, to submit it, knowing that Enter also submits anything
+-already typed in that pane. The
++text is opaque to Insomnia. A marked pane whose agent has exited and left a
++shell prompt is skipped, because the keys would go to the shell. tmux also
++shows the shell while a shell runs the agent without `exec`, as in
++`tmux new 'agent; exec zsh'` or a launcher script, so such a pane is skipped
++too. Start the agent from an interactive shell or as the pane's command. Enter
++is off by default, so the word is typed and nothing submits it. Turn on "Press
++Enter after continue" in Settings, under If Wi-Fi drops, to submit it, knowing
++that Enter also submits anything already typed in that pane. The
+ option must be on the pane itself (`-p`). One set on the session or window
+ does not count. Pane options need tmux 3.0 or later. Ending a session cancels
+ pending automation but cannot retract keystrokes already sent.
+```
+
+**File**: `docs/releasing.md` (modified, +1/-0)
+```diff
+@@ -368,6 +368,7 @@ Settings > General opens with the Menu bar picker: Pills (the default), Compact,
+ ### Hotspot
+ 
+ - Hotspot permission, association, cancellation, and reconnect
++- An iPhone hotspot named `Name’s iPhone` (U+2019), with the SSID typed in Settings with a straight apostrophe: the outage join finds it on the first attempt and insomnia.log has "found as" with the typographic name
+ - Hotspot password after a reinstall: menu and Settings report it unreadable, no prompt during an outage, re-save replaces the item (prompt on Save allowed)
+ - Settings location note matches what System Settings shows after the grant
+ 
+```
+
+**File**: `docs/spec.md` (modified, +13/-2)
+```diff
+@@ -788,7 +788,15 @@ provided by the standalone backstop. Performance effects depend on workload.
+ 
+ - `NWPathMonitor` on the Wi-Fi interface. Event-driven.
+ - Path unsatisfied for more than 5 s: use CoreWLAN to run an SSID-filtered
+-  scan, then join with `associate(to:password:)`. The password is read from
++  scan, then join with `associate(to:password:)`. A scan that finds nothing
++  is tried again with the SSID's apostrophes swapped, straight (U+0027) for
++  typographic (U+2019) and back (`HotspotSSID.scanCandidates`): iOS names a
++  Personal Hotspot `Name’s iPhone` with U+2019, a Mac keyboard types U+0027,
++  and a directed scan matches the exact bytes. Measured on macOS 27.2: a
++  fresh directed scan takes about 2 s, and one made within about 10 s of it
++  answers from the scan cache in about 20 ms, so the other spelling costs a
++  join almost nothing. It is looked for among the networks the first scan
++  heard, which holds for an iPhone hotspot, since it broadcasts its name. The password is read from
+   the login Keychain (generic-password service `insomnia-hotspot`, account =
+   SSID) and is never placed in process arguments. Retry with backoff (5 s,
+   10 s, 20 s, 30 s, then every 30 s) until the path is satisfied or the
+@@ -899,7 +907,10 @@ provided by the standalone backstop. Performance effects depend on workload.
+     the user (`tmux set-option -p -t <target> @insomnia-nudge on`) gets
+     `tmux send-keys -t %N continue`, followed by `Enter` only when
+     `tmuxNudgePressesEnter` is on (default off). An unmarked pane is
+-    skipped and logged.
++    skipped and logged. So is a pane whose foreground program
++    (`pane_current_command`) is a shell, named in /etc/shells or a common
++    one: the mark outlives the program it was set for, and at the prompt
++    the keys would go to the shell.
+   - Post a notification: "Network was down 2m 10s. Nudged 2 tmux panes.
+     Check GUI agents."
+ - Recommended one-time setting, documented in docs/extras.md: System Settings >
+```
+
+---
+
+### Incident Patch 2: `f5a452f7` (2026-11-13)
+**Commit Message**: Merge main at 1044770 into integration/network-fixes
+
+No hand edits. Main adds #154 (lands #142) and #171 (lands #136) since 402f4bb.
+
+**File**: `.github/scripts/merge-gate-fake-gh.sh` (modified, +2/-2)
+```diff
+@@ -9,7 +9,7 @@
+ #                  --paginate reads them all, otherwise only the first.
+ #                  A commit's combined status (commits_<sha>_status) comes
+ #                  from its statuses, unless a test gives one.
+-#                  GraphQL queries read graphql-edits or graphql-threads. As
++#                  GraphQL queries read graphql-threads or graphql-comments. As
+ #                  real gh does, --paginate fetches another GraphQL page only
+ #                  while the last one says hasNextPage, and only if the query
+ #                  asks for pageInfo and takes $endCursor.
+@@ -84,8 +84,8 @@ graphql=no
+ if [ "$path" = graphql ]; then
+   graphql=yes
+   case $query in
+-    *userContentEdits*) key='graphql-edits' ;;
+     *reviewThreads*) key='graphql-threads' ;;
++    *"comments("*) key='graphql-comments' ;;
+     *) fail "unexpected GraphQL query: $query" ;;
+   esac
+ else
+```
+
+**File**: `.github/scripts/merge-gate-test.sh` (modified, +168/-58)
+```diff
+@@ -142,31 +142,41 @@ pr_json() {
+       head: {sha: $head}, user: {login: $author}, labels: $labels}' | json pulls_5
+ }
+ 
+-# greptile_body <score> <reviewed sha>: Greptile's block as it writes it.
+-greptile_body() {
+-  printf '<h3>Greptile Summary</h3>\n\n<!-- greptile_confidence_score:%s -->\n\n' "$1"
+-  printf '<sub>Last reviewed commit: ["Gate"](https://github.com/krishhgg/insomnia/commit/%s)</sub>\n' "$2"
+-}
+-
+-# edit <time> <editor> <description>: one description edit as GraphQL lists
+-# it; the diff is the whole description after the edit.
+-edit() {
+-  jq -n --arg t "2026-10-12T$1Z" --arg e "$2" --arg d "$3" '{editedAt: $t, editor: {login: $e}, diff: $d}'
+-}
+-
+-# edits <file> <true|false: another page follows> <edit>...: one page of
+-# description edits.
+-edits() {
++# summary_body <reviewed sha> <found: true, false or null> [status]
++# [security sha] [security open: true, false or null]: the Codex bot's
++# review summary as it writes it.
++summary_body() {
++  local state
++  state=$(jq -cn --arg c "$1" --argjson f "$2" --arg s "${3:-completed}" --arg sc "${4:-$1}" \
++    --argjson so "${5:-null}" '{code_review: {commit_sha: $c, has_any_findings: $f,
++      has_unresolved_findings: $f, status: $s}, security_review: {commit_sha: $sc,
++      has_any_findings: $so, has_unresolved_findings: $so, status: "completed"}}')
++  printf '<!-- codex-pull-request-review-summary -->\n<!-- codex-review-state:v1 %s -->\n' "$state"
++  printf '### Codex Review\n\nReviewed commit: %s\n' "${1:0:10}"
++}
++
++# comment <created> <edited or -> <author> <editor or -> <body>: one pull
++# request comment as GraphQL lists it.
++comment() {
++  jq -n --arg c "2026-10-12T$1Z" --arg l "$2" --arg a "$3" --arg e "$4" --arg b "$5" \
++    '{author: {login: $a}, editor: (if $e == "-" then null else {login: $e} end), createdAt: $c,
++      lastEditedAt: (if $l == "-" then null else "2026-10-12T\($l)Z" end), body: $b}'
++}
++
++# comments <file> <true|false: another page follows> <comment>...: one page
++# of pull request comments, oldest first, as GraphQL lists them.
++comments() {
+   local file=$1 more=$2
+   shift 2
+-  printf '%s\n' "$@" | jq -s --argjson more "$more" '{data: {repository: {pullRequest: {userContentEdits: {nodes: .,
++  printf '%s\n' "$@" | jq -s --argjson more "$more" '{data: {repository: {pullRequest: {comments: {nodes: .,
+     pageInfo: {hasNextPage: $more, endCursor: (if $more then "next" else null end)}}}}}}' >"$dir/$file.json"
+ }
+ 
+-# greptile <score> <reviewed sha>: Greptile's only edit.
+-greptile() {
+-  edits graphql-edits false "$(edit 10:00:00 greptile-apps "Fixes the gate.
+-$(greptile_body "$1" "$2")")"
++# codex_bot <summary_body arguments>...: the author's comment, then the
++# Codex bot's only summary.
++codex_bot() {
++  comments graphql-comments false "$(comment 09:00:00 - someone - "@codex review")" \
++    "$(comment 10:00:00 - chatgpt-codex-connector - "$(summary_body "$@")")"
+ }
+ 
+ # label_events <[[event, login], ...]>: who added and removed "accepted".
+@@ -233,7 +243,7 @@ rules() {
+     {type: "update", ruleset_id: 2, parameters: {}},
+     {type: "required_status_checks", ruleset_id: $rid, parameters: {required_status_checks:
+       ([$names[] | {context: ., integration_id: ($pin | tonumber? // null)}]
+-        + (["greptile", "accepted", "evidence", "config", "codex"] | map({context: "merge-gate/\(.)"}))
++        + (["codex-bot", "accepted", "evidence", "config", "codex"] | map({context: "merge-gate/\(.)"}))
+         | map(select(.context != $drop)))}}]' | json rules_branches_main
+   echo '{"id": 1, "current_user_can_bypass": "never"}' | json rulesets_1
+   echo '{"id": 2, "current_user_can_bypass": "pull_requests_only"}' | json rulesets_2
+@@ -248,12 +258,12 @@ threads() {
+ }
+ 
+ # Pull request #5 from "someone" changes a doc. The owner added the
+-# accepted label, Greptile scored the head 5/5, the four CI jobs passed on
++# accepted label, the Codex bot found nothing in the head, the four CI jobs passed on
+ # the current main, and a ruleset nobody can bypass requires everything.
+ baseline() {
+   echo '[]' | json "commits_${HEAD_SHA}_statuses"
+   pr_json someone '[{"name": "accepted"}]'
+-  greptile 5 "$HEAD_SHA"
++  codex_bot "$HEAD_SHA" false
+   label_events '[["labeled", "krishhgg"]]'
+   changed docs/guide.md
+   head_tree '[{"path": "docs", "mode": "040000"}, {"path": "docs/guide.md", "mode": "100644"}]'
+@@ -273,7 +283,7 @@ all_gates_pass() {
+ 
+ test_ready_pull_request_merges() {
+   run 0 evaluate 5
+-  gate greptile success "Greptile scored 1111111 5/5"
++  gate codex-bot success "the Codex bot reviewed 1111111 and found nothing"
+   gate accepted success "the owner accepted"
+   gate evidence success "not needed"
+   gate config success "unchanged"
+@@ -540,47 +550,147 @@ test_three_hundred_files_assume_the_worst() {
+   gate config pending
+ }
+ 
+-test_forged_greptile_score_fails() {
+-  # The author wrote a block of their own before Greptile's edit, so
+-  # Greptile's description holds both, the forged one first.
+-  edits g
+```
+
+**File**: `.github/scripts/merge-gate.sh` (modified, +98/-49)
+```diff
+@@ -6,12 +6,14 @@
+ # four CI jobs it requires five commit statuses, which this script posts and
+ # reads:
+ #
+-#   merge-gate/greptile  Greptile reviewed the head and scored it 5/5. Read
+-#                        from the newest description edit made by
+-#                        greptile-apps (GitHub records who made each edit),
+-#                        and only if that description names one score and
+-#                        one reviewed commit, so text the author adds next to
+-#                        Greptile's block cannot supply them.
++#   merge-gate/codex-bot The Codex bot (the ChatGPT Codex connector app)
++#                        reviewed the head and found nothing. Read from the
++#                        state the bot keeps in its review summary comment,
++#                        which names the reviewed commit and whether the
++#                        review found anything. Only if the comment holds one
++#                        state and nobody but the bot made the newest edit to
++#                        any comment the bot wrote (GitHub records who made
++#                        it, and a collaborator can edit anyone's comment).
+ #   merge-gate/accepted  The owner added the "accepted" label: they want the
+ #                        change in Insomnia. The newest add or removal of the
+ #                        label must be the owner adding it.
+@@ -57,7 +59,7 @@
+ #   merge-gate.sh merge <pr>
+ #       Runs check, then merges with a merge commit. GitHub refuses the merge
+ #       if the head moved after the check, or if a required check fails by
+-#       then. A label removed, a lower Greptile score or a main that moved
++#       then. A label removed, a new Codex bot finding or a main that moved
+ #       in the few seconds of the check's last reads and the merge does not
+ #       stop it.
+ #
+@@ -89,7 +91,9 @@ CI_CHECKS=(
+   "ShellCheck scripts"
+   "Lint workflows"
+ )
+-GATES=(greptile accepted evidence config codex)
++GATES=(codex-bot accepted evidence config codex)
++# The Codex bot's login, as GraphQL gives it.
++CODEX_BOT=chatgpt-codex-connector
+ 
+ usage() {
+   sed -n '/^# Usage/,/^# Environment/p' "$0" | sed 's/^# \{0,1\}//' >&2
+@@ -220,42 +224,68 @@ count_lines() {
+   fi
+ }
+ 
+-# "<scores> <reviewed commits> <score> <reviewed sha>" from the newest
+-# description edit by greptile-apps: how many score markers and "Last
+-# reviewed commit" lines that description holds, then the first of each
+-# ("none" if absent). Each edit's diff is the whole description after it.
+-# "tie tie tie tie" if Greptile's newest edits share a time but differ, since
+-# nothing then says which came last.
+-greptile_review() {
+-  local rows newest results
++# "<states> <reviewed sha> <status> <found> <security sha> <security open>"
++# from the Codex bot's newest review summary: a comment the bot wrote that
++# starts with its summary marker. <states> counts the review states the
++# comment holds, and the rest are read from the first: the commit the code
++# review covers, its status and whether it found anything, then the commit
++# the security review covers and whether it left findings open ("none" for
++# a value that is missing or can't be read, so a malformed state never stops
++# the read). "none" if the bot has no summary, and "tie" if its
++# newest summaries share a time but differ, since nothing then says which
++# came last.
++#
++# "edited <login>" comes first if someone else made the newest edit to any
++# comment the bot wrote, summary or not, so that removing the marker from
++# the bot's newest summary can't bring back an older one. "?" stands for an
++# edit GitHub names no account for, as after the account was deleted. A
++# deleted comment leaves nothing to read, so deleting the bot's newest
++# summary would bring back an older one; that takes write access, which only
++# the owner has, and the bot keeps one summary per pull request.
++codex_bot_review() {
++  local rows edited summaries newest results
+   # shellcheck disable=SC2016 # GraphQL and jq variables
+   rows=$(gh api graphql --paginate -F owner="$OWNER" -F name="${REPO#*/}" -F number="$1" -f query='
+     query($owner: String!, $name: String!, $number: Int!, $endCursor: String) {
+       repository(owner: $owner, name: $name) {
+         pullRequest(number: $number) {
+-          userContentEdits(first: 100, after: $endCursor) {
+-            nodes { editedAt editor { login } diff }
++          comments(first: 100, after: $endCursor) {
++            nodes { author { login } editor { login } createdAt lastEditedAt body }
+             pageInfo { hasNextPage endCursor }
+           }
+         }
+       }
+-    }' --jq '.data.repository.pullRequest.userContentEdits.nodes[]
+-      | select(.editor.login == "greptile-apps")
+-      | (.diff // "") as $d
+-      | [.editedAt,
+-         ([$d | match("greptile_confidence_score:"; "g")] | length),
+-         ([$d | match("Last reviewed commit:"; "g")] | length),
+-         (($d | capture("greptile_confidence_score:(?<s>[0-9]+)").s) // "non
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +5/-1)
+```diff
+@@ -235,7 +235,11 @@ jobs:
+           tools="$RUNNER_TEMP/shellcheck"
+           dump="$RUNNER_TEMP/test-scripts"
+           mkdir -p "$tools"
+-          curl -sSfL --retry 3 -o "$tools/shellcheck.tar.gz" \
++          # Release downloads can fail with curl 56, which --retry alone
++          # does not retry. Bound each attempt and keep checksum verification.
++          curl -sSfL --retry 3 --retry-all-errors \
++            --connect-timeout 20 --max-time 120 --retry-max-time 300 \
++            -o "$tools/shellcheck.tar.gz" \
+             "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.darwin.aarch64.tar.gz"
+           echo "${SHELLCHECK_SHA256}  $tools/shellcheck.tar.gz" | shasum -a 256 -c -
+           tar -xzf "$tools/shellcheck.tar.gz" -C "$tools" --strip-components 1 "shellcheck-v${SHELLCHECK_VERSION}/shellcheck"
+```
+
+**File**: `.github/workflows/merge-gate.yml` (modified, +17/-6)
+```diff
+@@ -5,16 +5,21 @@ name: Merge gate
+ # says what each status checks, and CONTRIBUTING.md, "How a pull request
+ # merges", says what a contributor needs.
+ #
+-# pull_request_target runs this file as it is on main, with a token that
+-# can write statuses, also for pull requests from forks. That is safe only
+-# because nothing here checks out, builds or runs a pull request's code: the
+-# jobs check out main and read pull requests through the API. Keep it so.
++# pull_request_target and issue_comment run this file as it is on main,
++# with a token that can write statuses, also for pull requests from forks.
++# That is safe only because nothing here checks out, builds or runs a pull
++# request's code: the jobs check out main and read pull requests through the
++# API. Keep it so.
+ 
+ on:
+   pull_request_target: # zizmor: ignore[dangerous-triggers] runs main's script only; reads the pull request through the API
+     types: [opened, reopened, synchronize, edited, labeled, unlabeled, ready_for_review]
++  # The Codex bot posts its review summary as a comment and edits that
++  # comment for each later review. The list job skips every other comment.
++  issue_comment:
++    types: [created, edited]
+   # A safety net for an event that ran before GitHub's data caught up, such
+-  # as a Greptile edit read before the edit history listed it.
++  # as a Codex bot edit read before the API listed it.
+   schedule:
+     - cron: '41 * * * *'
+   workflow_dispatch:
+@@ -29,6 +34,12 @@ permissions: {}
+ jobs:
+   list:
+     name: List pull requests
++    # Who wrote a comment only decides whether a run is worth it: evaluate
++    # reads everything it checks from the API, so a run from any comment
++    # posts what an hourly run would.
++    if: >-
++      github.event_name != 'issue_comment' ||
++      (github.event.issue.pull_request && github.event.comment.user.login == 'chatgpt-codex-connector[bot]')
+     runs-on: ubuntu-24.04
+     timeout-minutes: 5
+     permissions:
+@@ -50,7 +61,7 @@ jobs:
+         env:
+           GH_TOKEN: ${{ github.token }}
+           GH_REPO: ${{ github.repository }}
+-          PR: ${{ github.event.pull_request.number || inputs.pr || 'all' }}
++          PR: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr || 'all' }}
+         run: |
+           prs=$(.github/scripts/merge-gate.sh list "$PR")
+           echo "$prs"
+```
+
+**File**: `CONTRIBUTING.md` (modified, +11/-9)
+```diff
+@@ -12,9 +12,10 @@ because the LaunchAgent, install.sh and uninstall.sh run under 3.2 and
+ ShellCheck on Linux does not catch those. It then runs `swift test` and
+ builds the release with `-Xswiftc -warnings-as-errors`, so a compiler
+ warning fails the build. Two Linux jobs run ShellCheck over `scripts/` and
+-`.github/scripts/` and actionlint plus zizmor over `.github/workflows`. Greptile reviews every
+-push to a pull request with the rules in `.greptile/`; it reads that folder
+-from the pull request's branch.
++`.github/scripts/` and actionlint plus zizmor over `.github/workflows`. The
++Codex bot (the ChatGPT Codex connector) reviews a pull request when it opens
++or is marked ready for review. A push does not start a new review, so after
++your last push, comment `@codex review` to have it review the new head.
+ 
+ The ShellCheck job, with the ShellCheck version it pins, also lists every
+ finding that a directive hides in `scripts/`, and fails unless the list
+@@ -49,7 +50,7 @@ during in-flight work, failed restoration, persistence failures, and recovery
+ after interruption. Assert observable settings and journal consistency, not
+ only that a mock method was called.
+ 
+-Greptile comments and passing CI provide review evidence, not a safety
++Codex bot reviews and passing CI provide review evidence, not a safety
+ certification. Real-machine validation requires a supervised, separately
+ approved run on a ventilated surface with recoverable work. Record the exact
+ revision, macOS/hardware versions, observed result, and remaining limitations
+@@ -78,7 +79,7 @@ including a maintainer's fix or a merge of main, starts every check over.
+ |---|---|
+ | Swift test and release build (macOS 26) and (macOS 27) | `swift test` and the release build pass on both hosted macOS versions |
+ | ShellCheck scripts, Lint workflows | ShellCheck, actionlint and zizmor find nothing |
+-| merge-gate/greptile | Greptile reviewed the head and scored it 5/5 |
++| merge-gate/codex-bot | the Codex bot reviewed the head and found nothing |
+ | merge-gate/accepted | the owner added the `accepted` label |
+ | merge-gate/evidence | the maintainer checked a real-Mac report for the head, or the pull request only changes paths listed under "Real-Mac evidence" |
+ | merge-gate/config | the pull request leaves the config that steers checks alone (listed below), the owner wrote it, or the owner OK'd those changes at the head |
+@@ -98,9 +99,10 @@ all. Before you build a new feature or change a default, open an issue so
+ that is settled first.
+ 
+ `config` exists because some files can switch off a check: a pull request
+-from a fork runs the workflow files on its own branch, and Greptile reads
+-its rules from the branch it reviews. So the gate passes a change without
+-the owner's OK only when every file it touches is one of these kinds:
++from a fork runs the workflow files on its own branch, and an AGENTS.md
++file on the branch can steer a review agent. So the gate passes a change
++without the owner's OK only when every file it touches is one of these
++kinds:
+ 
+ - Swift files under `Sources/`, and `.swift`, `.h` or `.c` files under
+   `Tests/`
+@@ -110,7 +112,7 @@ the owner's OK only when every file it touches is one of these kinds:
+   `scripts/check-lid-simulation-gate.sh`, which CI runs
+ - `.plist` files under `Resources/`
+ - `README.md` and `LICENSE` (`SECURITY.md` and this file set the project's
+-  policy, and Greptile reads them as guidance for every review)
++  policy)
+ 
+ Even there, some files count as config:
+ 
+```
+
+**File**: `README.md` (modified, +43/-5)
+```diff
+@@ -113,7 +113,34 @@ file and explains how upgrades replace them.
+    undone. Saved audio for an output that isn't connected doesn't hold it up.
+    Insomnia restores that output if it reconnects while the app runs, or at
+    the next launch.
+-5. **From a script or an agent.** The app's binary drives the running app:
++5. **Menu bar style.** The Menu bar picker in Settings > General has four
++   styles. Pills, the default, works as described above. Compact keeps only
++   the eye in the bar, and a click opens the same pills, countdown and end
++   ring in a small panel. Minimal is the eye with a ring for the time left:
++   a click adds the default session length, and a 0.6 s hold ends the
++   session. Popover shows the eye and, during a session, the time left to
++   the minute (or the end time). Any click on it, left or right, opens a
++   popover with time buttons, Custom fields for days, hours and minutes,
++   the status, Settings and Quit. While a session runs it also has the
++   ring you hold to end it. Popover style has no right-click menu, since
++   the popover shows the same things.
++6. **One click.** Turn on "Start a session with one click" in Settings >
++   General, under the Menu bar picker. Then, in Pills, Compact and Popover,
++   a click on the eye with no session running starts the default session
++   length. Option-click opens the usual controls to pick another length,
++   and in Popover a right-click or Control-click does too. A click during a
++   session works as it does with the switch off, and never ends the
++   session. If the start is refused, the pills, the panel or the popover
++   opens with the reason. Minimal already adds the default length on every
++   click, so Settings greys the switch out there. It is off by default.
++7. **Sounds.** "Play a sound when you start or end a session" in Settings >
++   General plays a short tone when you start or end a session from the
++   menu bar. It is off by default, and while it is off Insomnia makes no
++   sound and loads none. A session that ends without you asking (the
++   timer, the recovery agent, Quit, a battery or heat rule, recovery after
++   a crash) makes no sound. Nothing plays while the displays sleep or the
++   lid is closed, and `--session` commands make no sound.
++8. **From a script or an agent.** The app's binary drives the running app:
+ 
+    ```bash
+    INSOMNIA=~/Applications/Insomnia.app/Contents/MacOS/Insomnia
+@@ -132,6 +159,16 @@ file and explains how upgrades replace them.
+ 
+ You don't have to close the lid, and opening it doesn't end the session.
+ 
++Insomnia stops system sleep, not display sleep, so the display still turns
++off when idle. If your Mac then asks for a password, agents that drive the
++screen stop at the lock screen. **Keep the screen on and unlocked** in Settings >
++General holds the display awake during a session, like `caffeinate -d`, so the
++screen saver never starts and the screen never locks. With the lid closed, the
++display goes to brightness 0 instead of sleeping. When the session ends or
++Insomnia quits or crashes, macOS drops the hold, and the display sleeps and
++locks as before. Insomnia never changes the lock setting. The switch is off by
++default because anyone who opens the Mac during a session finds it unlocked.
++
+ On battery power, Insomnia turns on Low Power Mode below 40% and ends the
+ session below 10%. Those are the defaults. You can change both in Settings,
+ and an end floor of 0 turns the battery end off. The heat rules turn on Low Power
+@@ -226,10 +263,11 @@ It doesn't press Enter unless you turn that on. Mark a pane you don't type in.
+ These browsers slow down windows that macOS reports as hidden, which includes
+ every window while the lid is closed. If a running browser lacks
+ `--disable-backgrounding-occluded-windows` or
+-`--disable-renderer-backgrounding`, the right-click menu offers "Relaunch
+-[browser] unthrottled". It asks first, because relaunching quits the browser,
+-and tabs come back only if the browser reopens them on startup. Some web apps
+-may still stop with the lid closed.
++`--disable-renderer-backgrounding`, the right-click menu (the popover in
++Popover style) offers "Relaunch [browser] unthrottled". It asks first,
++because relaunching quits the browser, and tabs come back only if the
++browser reopens them on startup. Some web apps may still stop with the lid
++closed.
+ [docs/extras.md](docs/extras.md#chrome-chromium-arc-and-comet-throttling) has the
+ details.
+ 
+```
 
 **File**: `Resources/Info.plist` (modified, +2/-0)
 ```diff
@@ -1562,932 +2401,13 @@ Recovery launcher: land #142
  </dict>
 ```
 
-**File**: `SECURITY.md` (modified, +16/-2)
-```diff
-@@ -47,8 +47,22 @@ a team id. Releases are ad-hoc signed, so both limits stay.
- 
- In releases built by the Release workflow and in builds of the current
- source, the recovery LaunchAgent runs only the `backstop.sh` sealed inside the
--signed app bundle, after `codesign --verify --strict` passes against the code
--requirement pinned in its plist (the build's cdhash for an ad-hoc signature).
-+signed app bundle, after strict signature and resource validation against the
-+code requirement pinned in its plist (the build's cdhash for an ad-hoc
-+signature). The native command uses the Security framework and directly
-+executes `/bin/bash` with the sealed script path; the external fallback uses
-+`codesign --verify --strict`.
-+For current ad-hoc builds, launchd first enforces a `SpawnConstraint` with
-+those cdhashes before starting `Insomnia --backstop`. A different binary,
-+even one re-signed ad-hoc that skips the script verifier, is rejected before
-+its entry point. This uses macOS launch-constraint enforcement, with System
-+Integrity Protection enabled. The installer and every `arm()` require an
-+affirmative `csrutil status` result before selecting native execution;
-+disabled, custom, unreadable or timed-out status uses the external
-+system-shell verifier, as do older bundles and requirements that cannot
-+be represented entirely as cdhashes. After changing SIP, a previously
-+registered native job depends on the new OS enforcement state until the
-+app next arms it; changing SIP does not itself rewrite the stored plist.
- An edited bundle or script is refused and logged. The app pins the code it is
- running (its own designated requirement, after confirming that the bundle on
- disk is still that code and passes the agent's check), so a bundle edited or
-```
-
-**File**: `Sources/Insomnia/Core/BackstopCommand.swift` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+import Darwin
-+import Foundation
-+
-+/// Launchd starts our signed executable so Login Items can attribute the
-+/// recovery agent to Insomnia, then we replace it with the verified script.
-+enum BackstopCommand {
-+    static let argument = "--backstop"
-+
-+    static func run(_ arguments: [String], bundle: URL = Bundle.main.bundleURL) -> Int32? {
-+        guard arguments.first == argument else { return nil }
-+        guard arguments.count == 2, !arguments[1].isEmpty, bundle.pathExtension == "app" else {
-+            fputs("usage: Insomnia --backstop <code-requirement> (from Insomnia.app)\n", stderr)
-+            return 64
-+        }
-+        do {
-+            try CodeRequirement.verify(codeAt: bundle, satisfies: arguments[1])
-+        } catch {
-+            let reason = error.localizedDescription.replacingOccurrences(of: "\n", with: " ")
-+            Log.error("backstop agent: \(bundle.path) does not satisfy the pinned code requirement; backstop.sh not run. Reinstall Insomnia (scripts/install.sh). \(reason)")
-+            return 1
-+        }
-+        let command = ["/bin/bash", Paths.backstopScript(inBundle: bundle).path]
-+        var argv = command.map { strdup($0) } + [nil]
-+        defer { for argument in argv { free(argument) } }
-+        return argv.withUnsafeMutableBufferPointer {
-+            execv("/bin/bash", $0.baseAddress!)
-+            perror("Insomnia backstop: exec /bin/bash")
-+            return 1
-+        }
-+    }
-+}
-```
-
-**File**: `Sources/Insomnia/Core/LaunchdBackstop.swift` (modified, +55/-8)
-```diff
-@@ -10,6 +10,9 @@ import Foundation
- /// signature against the requirement pinned in the plist and only then
- /// execs the script, so a backstop.sh edited on disk is never run by
- /// launchd. Nothing executable lives in a writable support directory.
-+/// Before launching the native entry point, launchd enforces SpawnConstraint
-+/// against the pinned cdhashes. A replacement binary cannot bypass the check
-+/// by declining to verify the script. Older bundles use the external shell.
- ///
- /// What the app pins is the requirement of the code it is itself running
- /// (CodeRequirement.pin), after checking that the bundle on disk still is
-@@ -34,6 +37,7 @@ struct BackstopTarget: Sendable, Equatable {
-     /// Designated requirement of the bundle's signature, in requirement
-     /// language, as `codesign -d -r-` prints it (see CodeRequirement).
-     let requirement: String
-+    var nativeExecutable: URL? = nil
- 
-     var script: URL { Paths.backstopScript(inBundle: bundle) }
- }
-@@ -45,11 +49,12 @@ struct LaunchdBackstop: BackstopScheduling {
-     typealias BundlePinner = @Sendable (_ bundle: URL) throws -> String
- 
-     static let launchctl = "/bin/launchctl"
-+    static let csrutil = "/usr/bin/csrutil"
-     /// Seconds between backstop.sh runs while loaded. install.sh writes the same value.
-     static let pollInterval = 60
-     static let commandTimeout: TimeInterval = 15
- 
--    /// What launchd runs: `/bin/sh -c <agentProgram> sh <requirement> <bundle>`.
-+    /// The external verifier for bundles without a constrained native command.
-     /// The program verifies the bundle ($2) against the requirement ($1) with
-     /// codesign and execs the sealed backstop.sh only when that passes; the
-     /// resource seal covers the script, so an edited copy fails here. On
-@@ -111,10 +116,28 @@ struct LaunchdBackstop: BackstopScheduling {
-         } catch {
-             throw BackstopError(message: "the recovery agent cannot pin \(bundle.path): \(error.localizedDescription). Reinstall with scripts/install.sh")
-         }
--        let desired = Self.plistDictionary(label: label, target: BackstopTarget(bundle: bundle, requirement: requirement))
-+        var executable = Self.nativeExecutable(in: bundle)
-+        if executable != nil, CodeRequirement.launchHashes(in: requirement) != nil {
-+            // Recheck each arm: launch constraints rely on SIP enforcement.
-+            do {
-+                let status = try await run(Self.csrutil, ["status"])
-+                let output = status.stdout.hasSuffix("\n") ? String(status.stdout.dropLast()) : status.stdout
-+                if !status.succeeded || !status.stderr.isEmpty || output != "System Integrity Protection status: enabled." {
-+                    executable = nil
-+                }
-+            } catch is CancellationError {
-+                throw CancellationError()
-+            } catch {
-+                executable = nil
-+            }
-+        }
-+        let desired = Self.plistDictionary(label: label, target: BackstopTarget(
-+            bundle: bundle, requirement: requirement, nativeExecutable: executable
-+        ))
-         // Armed when the plist the next login loads is this build's and the
-         // loaded job is the one it describes: the same command line, started
--        // every `pollInterval` seconds. A loaded label alone may be another
-+        // every `pollInterval` seconds, with the native spawn constraint
-+        // present. A loaded label alone may be another
-         // build's job, pinning a bundle or requirement this one does not
-         // satisfy (install.sh can leave one loaded when it stops between its
-         // bootstrap and publishing the plist), or a job loaded from a plist
-@@ -137,15 +160,30 @@ struct LaunchdBackstop: BackstopScheduling {
- 
-     // MARK: Plist
- 
-+    static func nativeExecutable(in bundle: URL) -> URL? {
-+        guard let data = try? Data(contentsOf: bundle.appendingPathComponent("Contents/Info.plist")),
-+              let info = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
-+              info["InsomniaBackstopCommand"] as? String == BackstopCommand.argument,
-+              let name = info["CFBundleExecutable"] as? String,
-+              !name.isEmpty, name != ".", name != "..", !name.contains("/") else { return nil }
-+        return bundle.appendingPathComponent("Contents/MacOS").appendingPathComponent(name)
-+    }
-+
-     /// Pure builder, testable without launchd. Must produce exactly what
-     /// install.sh writes, or every arm() reloads the agent.
-     static func plistDictionary(label: String, target: BackstopTarget) -> [String: Any] {
--        [
-+        var plist: [String: Any] = [
-             "Label": label,
-             "ProgramArguments": ["/bin/sh", "-c", agentProgram, "sh", target.requirement, target.bundle.path],
-             "RunAtLoad": true,
-             "StartInterval": pollInterval,
-         ]
-+        if let executable = target.nativeExecutable,
-```
-
-**File**: `Sources/Insomnia/System/CodeRequirement.swift` (modified, +20/-0)
-```diff
-@@ -16,6 +16,26 @@ import Security
- /// which install.sh reads; the two must agree for the app to recognise the
- /// plist install.sh wrote (PackagingTests checks this on a scratch bundle).
- enum CodeRequirement {
-+    /// Only a requirement made entirely of cdhash clauses can be enforced
-+    /// before executing ad-hoc code. Keep the external shell verifier for
-+    /// any other requirement instead of dropping a clause we do not know.
-+    static func launchHashes(in requirement: String) -> [Data]? {
-+        var hashes: [Data] = []
-+        for clause in requirement.components(separatedBy: " or ") {
-+            guard clause.hasPrefix("cdhash H\""), clause.hasSuffix("\"") else { return nil }
-+            let hex = Array(clause.dropFirst(9).dropLast().utf8)
-+            guard hex.count == 40, hex.allSatisfy({ "0123456789abcdefABCDEF".utf8.contains($0) }) else { return nil }
-+            var hash = Data()
-+            for offset in stride(from: 0, to: hex.count, by: 2) {
-+                let pair = String(decoding: hex[offset..<(offset + 2)], as: UTF8.self)
-+                guard let byte = UInt8(pair, radix: 16) else { return nil }
-+                hash.append(byte)
-+            }
-+            hashes.append(hash)
-+        }
-+        return hashes
-+    }
-+
-     struct ReadError: LocalizedError {
-         let path: String
-         let step: String
-```
-
-**File**: `Sources/Insomnia/main.swift` (modified, +10/-5)
-```diff
-@@ -1,10 +1,15 @@
- import Foundation
- 
--// Entry point. A one-shot command-line mode is answered here, before AppKit
--// or SwiftUI start: backstop.sh borrows the app's kernel-level identity
--// check (see ResumeFrozenCommand), which ends itself when its lifetime is
--// up, and scripts drive the running app's session (see SessionCommandLine).
--// Anything else starts the menu bar app.
-+// Entry point. One-shot command-line modes are answered here, before AppKit
-+// or SwiftUI start: the recovery agent's backstop mode execs the verified
-+// script (see BackstopCommand), backstop.sh borrows the app's kernel-level
-+// identity check (see ResumeFrozenCommand), which ends itself when its
-+// lifetime is up, and scripts drive the running app's session (see
-+// SessionCommandLine). Anything else starts the menu bar app.
-+if let status = BackstopCommand.run(Array(CommandLine.arguments.dropFirst())) {
-+    exit(status)
-+}
-+
- if let output = ResumeFrozenCommand.run(Array(CommandLine.arguments.dropFirst()), endAfter: ResumeFrozenCommand.endProcess) {
-     for line in output.lines { print(line) }
-     exit(output.status)
-```
-
-**File**: `Tests/InsomniaTests/LaunchdBackstopTests.swift` (modified, +216/-11)
-```diff
-@@ -10,15 +10,21 @@ final class LaunchdBackstopTests: XCTestCase {
-     /// fake reader below hands it out for the fixture bundle.
-     static let requirement = "cdhash H\"0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c\""
-     var home: TempHome!
--    /// (exe, args) of every command the backstop ran.
-+    /// (exe, args) of every launchctl command the backstop ran.
-     let calls = Locked<[[String]]>([])
-+    let integrityStatus = Locked(ShellResult(status: 0, stdout: "System Integrity Protection status: enabled.\n", stderr: ""))
-+    let integrityReadFails = Locked(false)
-+    let integrityReadCancelled = Locked(false)
-+    let integrityReads = Locked(0)
-     /// Whether `launchctl print` reports the job loaded.
-     let loaded = Locked(false)
-     /// The ProgramArguments of the plist the loaded job was bootstrapped
-     /// from, which `launchctl print` lists under `arguments`.
-     let loadedJob = Locked<[String]>([])
-     /// Its StartInterval, which `launchctl print` lists as `run interval`.
-     let loadedInterval = Locked<Int?>(nil)
-+    let loadedConstraint = Locked(false)
-+    let printedJob = Locked<String?>(nil)
-     let bootstrapFails = Locked(false)
-     /// bootout returns an error and leaves the job loaded, as launchd does
-     /// for a job that is mid-transition.
-@@ -34,9 +40,15 @@ final class LaunchdBackstopTests: XCTestCase {
-     override func setUp() {
-         home = TempHome()
-         calls.value = []
-+        integrityStatus.value = ShellResult(status: 0, stdout: "System Integrity Protection status: enabled.\n", stderr: "")
-+        integrityReadFails.value = false
-+        integrityReadCancelled.value = false
-+        integrityReads.value = 0
-         loaded.value = false
-         loadedJob.value = []
-         loadedInterval.value = nil
-+        loadedConstraint.value = false
-+        printedJob.value = nil
-         bootstrapFails.value = false
-         bootoutFails.value = false
-         onBootout.value = nil
-@@ -56,9 +68,14 @@ final class LaunchdBackstopTests: XCTestCase {
-             let script = home.paths.backstopScript
-             try FileManager.default.createDirectory(at: script.deletingLastPathComponent(), withIntermediateDirectories: true)
-             try Data("#!/bin/bash\n".utf8).write(to: script)
-+            let info: [String: Any] = ["InsomniaBackstopCommand": BackstopCommand.argument, "CFBundleExecutable": "Insomnia"]
-+            try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0)
-+                .write(to: home.paths.appBundle.appendingPathComponent("Contents/Info.plist"))
-         }
--        let calls = calls, loaded = loaded, loadedJob = loadedJob, loadedInterval = loadedInterval, bootstrapFails = bootstrapFails, bootoutFails = bootoutFails
-+        let calls = calls, loaded = loaded, loadedJob = loadedJob, loadedInterval = loadedInterval, loadedConstraint = loadedConstraint, bootstrapFails = bootstrapFails, bootoutFails = bootoutFails
-+        let integrityStatus = integrityStatus, integrityReadFails = integrityReadFails, integrityReadCancelled = integrityReadCancelled, integrityReads = integrityReads
-         let onBootout = onBootout, onBootstrapped = onBootstrapped, trustedPlistAtBootstrap = trustedPlistAtBootstrap
-+        let printedJob = printedJob
-         let trusted = home.paths.backstopPlist
-         let label = "com.insomnia.backstop"
-         // What launchd itself enforces on a path argument (proven against a
-@@ -85,11 +102,18 @@ final class LaunchdBackstopTests: XCTestCase {
-             return requirement
-         }
-         return LaunchdBackstop(paths: home.paths, bundle: bundle, pin: pin, uid: 501) { exe, args in
-+            if exe == LaunchdBackstop.csrutil {
-+                integrityReads.value += 1
-+                XCTAssertEqual(args, ["status"])
-+                if integrityReadCancelled.value { throw CancellationError() }
-+                if integrityReadFails.value { throw BackstopError(message: "status unavailable") }
-+                return integrityStatus.value
-+            }
-             calls.value.append([exe] + args)
-             switch args.first {
-             case "print":
-                 guard loaded.value else { return ShellResult(status: 113, stdout: "", stderr: "Could not find service") }
--                return ShellResult(status: 0, stdout: Self.printOutput(arguments: loadedJob.value, runInterval: loadedInterval.value), stderr: "")
-+                return ShellResult(status: 0, stdout: printedJob.value ?? Self.printOutput(arguments: loadedJob.value, runInterval: loadedInterval.value, hasSpawnConstraint: loadedConstraint.value), stderr: "")
-             case "bootstrap":
-                 trustedPlistAtBootstrap.value.append(try? Data(contentsOf: trusted))
-                 guard args.count == 3, launchdAccepts(args[2]) else {
-@@ -103,6 +127,7 @@ final class LaunchdBackstopTests: XCTestCase {
-                     .flatMap { try? PropertyListSerialization.propertyList(from: $0, format: nil
-```
-
-**File**: `Tests/InsomniaTests/PackagingTests.swift` (modified, +110/-14)
-```diff
-@@ -118,14 +118,16 @@ final class PackagingTests: XCTestCase {
-     /// A throwaway bundle laid out the way install.sh lays out Insomnia.app
-     /// (Mach-O main executable, Info.plist, backstop.sh under
-     /// Contents/Resources), ad-hoc signed afterwards so the resource seal
--    /// covers the script. The executable is a copy of /usr/bin/true. Nothing
-+    /// covers the script. The executable is a copy of the built Insomnia. Nothing
-     /// here touches an installed app, a LaunchAgent or a keychain.
-     private func makeSignedBundle(named name: String = "Insomnia") throws -> URL {
-         let fm = FileManager.default
-         let bundle = scratch.appendingPathComponent("\(name).app", isDirectory: true)
-         try fm.createDirectory(at: bundle.appendingPathComponent("Contents/MacOS"), withIntermediateDirectories: true)
-         try fm.createDirectory(at: bundle.appendingPathComponent("Contents/Resources"), withIntermediateDirectories: true)
--        try fm.copyItem(atPath: "/usr/bin/true", toPath: bundle.appendingPathComponent("Contents/MacOS/\(name)").path)
-+        let binary = Bundle(for: Self.self).bundleURL.deletingLastPathComponent().appendingPathComponent("Insomnia")
-+        _ = try XCTUnwrap(fm.isExecutableFile(atPath: binary.path) ? binary : nil, "Build the Insomnia product before running packaging tests; expected \(binary.path)")
-+        try fm.copyItem(at: binary, to: bundle.appendingPathComponent("Contents/MacOS/\(name)"))
-         let info: [String: Any] = [
-             "CFBundleExecutable": name, "CFBundleIdentifier": "com.kgarg.insomnia.packaging-test",
-             "CFBundlePackageType": "APPL", "CFBundleShortVersionString": "0.0.1",
-@@ -139,11 +141,72 @@ final class PackagingTests: XCTestCase {
-         return bundle
-     }
- 
-+    /// The two command lines the LaunchAgent can run. `native` is the app's
-+    /// `--backstop` mode. `shell` is the external verifier the plist falls
-+    /// back to for an older bundle, a requirement without cdhashes, or SIP
-+    /// not known to be enabled. Both refuse the same bundles, but the app
-+    /// logs through Log with Security's reason and the shell logs to
-+    /// ~/Library/Logs/Insomnia with codesign's.
-+    private enum AgentLauncher {
-+        case native, shell
-+
-+        var log: String { self == .native ? "Logs/insomnia.log" : "Library/Logs/Insomnia/insomnia.log" }
-+        var refusal: String { self == .native ? "[error] insomnia: backstop agent: " : "[error] backstop agent: " }
-+        var editedScriptReason: String { self == .native ? securityMessage(errSecCSBadResource) : "sealed resource" }
-+        var wrongBuildReason: String { self == .native ? securityMessage(errSecCSReqFailed) : "failed to satisfy specified code requirement" }
-+    }
-+
-     /// Runs the agent's command line exactly as launchd would, with HOME in
--    /// the scratch tree so the refusal log lands there.
--    private func runAgent(requirement: String, bundle: URL, home: URL) throws -> (status: Int32, output: String) {
-+    /// the scratch tree so the refusal log lands there. The shell command
-+    /// line is the one plistDictionary writes for a target without a native
-+    /// executable.
-+    private func runAgent(_ launcher: AgentLauncher = .native, requirement: String, bundle: URL, home: URL) throws -> (status: Int32, output: String) {
-         try FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
--        return try run("/bin/sh", ["-c", LaunchdBackstop.agentProgram, "sh", requirement, bundle.path], environment: ["HOME": home.path, "PATH": "/usr/bin:/bin"])
-+        switch launcher {
-+        case .native:
-+            return try run(bundle.appendingPathComponent("Contents/MacOS/\(bundle.deletingPathExtension().lastPathComponent)").path,
-+                           ["--backstop", requirement], environment: ["HOME": home.path, "INSOMNIA_HOME": home.path, "PATH": "/usr/bin:/bin"])
-+        case .shell:
-+            let plist = LaunchdBackstop.plistDictionary(label: Paths.backstopLabel, target: BackstopTarget(bundle: bundle, requirement: requirement))
-+            let arguments = try XCTUnwrap(plist["ProgramArguments"] as? [String])
-+            XCTAssertEqual(arguments.prefix(3), ["/bin/sh", "-c", LaunchdBackstop.agentProgram])
-+            return try run(arguments[0], Array(arguments.dropFirst()), environment: ["HOME": home.path, "PATH": "/usr/bin:/bin"])
-+        }
-+    }
-+
-+    func testBackstopModeRejectsMalformedArgumentsWithoutStartingTheApp() throws {
-+        let bundle = try makeSignedBundle()
-+        let executable = bundle.appendingPathComponent("Contents/MacOS/Insomnia").path
-+        for arguments in [["--backstop"], ["--backstop", ""], ["--backstop", "x", "extra"]] {
-+            let result = try run(executable, arguments)
-+            XCTAssertEqual(result.status, 64, result.output)
-+            XCTAssertTrue(result.output.contains("usage: Insomnia --backstop"), result.output)
-+        }
-+        XCTAsse
-```
-
----
-
-### Incident Patch 2: `402f4bb3` (2026-11-09)
-**Commit Message**: Merge pull request #171 from krishhgg/land/pr-136
-
-Keyboard backlight: land #136
-
-**File**: `Sources/Insomnia/Core/LidActions.swift` (modified, +58/-6)
-```diff
-@@ -69,6 +69,7 @@ final class LidActions {
-             Log.info("lid closed: no session, nothing to do")
-             return
-         }
-+        if lidEvents == event { manager.cancelBrightnessReassert() }
-         // One lifecycle transaction: journal writes and SIGSTOPs happen
-         // under the recovery lock, after any end already in flight.
-         let ran = await manager.runExclusive("lid close") { [self, manager] in
-@@ -204,9 +205,13 @@ final class LidActions {
-     /// closing lid. The entry is left undecided, as above, and the open
-     /// does not take a 0 it reads as a level set since: only a reading
-     /// above 0 decides that entry (`SessionManager.restoreDisplay`).
--    /// The keyboard reads 0 when suppressed by display sleep, so it takes
--    /// the current read if trusted now, else the last trusted sample, else
--    /// nothing, since restoring 0 would leave the backlight off for good.
-+    /// A keyboard value kept after a refused restore stays undecided unless
-+    /// the close reads the keyboard trusted, as for the display.
-+    /// A keyboard already at 0 is left alone unless a positive restore is
-+    /// already owed. Both manual off and ambient auto-off can read 0, with
-+    /// different suppression flags; neither needs another explicit off.
-+    /// A positive current read is saved if trusted, otherwise a positive
-+    /// sample is used. No zero becomes a new restore obligation.
-     private func darkenSavingCurrent(_ manager: SessionManager) {
-         do {
-             let current = try display.readBrightness()
-@@ -278,12 +283,34 @@ final class LidActions {
-             Log.error("display darken on lid close skipped: \(error.localizedDescription)")
-         }
- 
-+        var keyboardRead = false
-         do {
-             if let current = try keyboard.readBrightness() {
-+                keyboardRead = true
-+                let state = manager.effectiveState
-+                let trusted = sampler?.keyboardReadIsTrusted ?? !keyboard.isSuppressedOrDimmed()
-                 let value: Float?
--                if sampler?.keyboardReadIsTrusted ?? !keyboard.isSuppressedOrDimmed() {
-+                var keptUndecided: Float?
-+                if state.keyboardRestoreRefused, let kept = state.savedKeyboardBrightness, !trusted {
-+                    // As for the display above: after a refused restore the
-+                    // user was told to set the level by hand. A trusted 0
-+                    // is the backlight still dark as the earlier close left
-+                    // it, and a trusted level above 0 is the user's; both
-+                    // decide the entry below. A suppressed or dimmed
-+                    // reading, such as the 0 a real close reads once macOS
-+                    // has turned the backlight off, shows neither, and the
-+                    // sampler took no keyboard reading while the entry was
-+                    // journaled, so its sample is older than the refusal.
-+                    // The entry stays undecided and the open reads the
-+                    // level again. A kept 0, saved by an older version, is
-+                    // obsolete instead: the open discards it without a write.
-+                    value = nil
-+                    keptUndecided = kept
-+                } else if current == 0 {
-+                    value = state.savedKeyboardBrightness.flatMap { $0 > 0 ? $0 : nil }
-+                } else if trusted {
-                     value = current
--                } else if let sampled = sampler?.last?.keyboard {
-+                } else if let sampled = sampler?.last?.keyboard, sampled > 0 {
-                     value = sampled
-                     Log.info("keyboard backlight read while suppressed or dimmed (\(current)); journaling the last trusted sample \(sampled)")
-                 } else {
-@@ -303,8 +330,14 @@ final class LidActions {
-                     } catch {
-                         Log.error("keyboard backlight off failed: \(error.localizedDescription)")
-                     }
-+                } else if let kept = keptUndecided {
-+                    Log.info(kept > 0
-+                        ? "keyboard backlight reads \(current) at the close; the value kept after a refused restore, \(kept), stays journaled and undecided, and the backlight is left alone, so the open reads it again"
-+                        : "keyboard backlight reads \(current) at the close; the zero kept after a refused restore is obsolete, and the backlight is left alone, so the open discards it without a write")
-                 } else {
--                    Log.info("keyboard backlight suppressed by display sleep and no trusted sample; leaving it to macOS")
-+                    Log.info(current == 0
-+                        ? "keyboard backlight already reads zero; leaving its automatic or user-off state untouched"
-+                        : "keyboard backlight has no positive restore value; leaving it to macOS")
-                 }
-           
-```
-
-**File**: `Sources/Insomnia/Core/SessionManager.swift` (modified, +38/-3)
-```diff
-@@ -208,10 +208,14 @@ final class SessionManager {
-         /// failed restore, retried like any other and counted as dirty by
-         /// backstop.sh and uninstall.sh.
-         case unflag(Float)
-+        /// An old keyboard zero needs no hardware undo, even if the
-+        /// private-call guard refuses. Its clear still has to reach disk.
-+        case discardedZero
- 
-         var saved: Float {
-             switch self {
-             case .clear(let value), .restored(let value, _), .unflag(let value): value
-+            case .discardedZero: 0
-             }
-         }
- 
-@@ -224,10 +228,18 @@ final class SessionManager {
-         /// `s` still holds the entry with that value and its flag. Lost, it
-         /// leaves that entry for the next launch to read again.
-         func clearsEntry(in s: RuntimeState, saved: KeyPath<RuntimeState, Float?>, flag: KeyPath<RuntimeState, Bool>) -> Bool {
--            !isUnflag && s[keyPath: flag] && s[keyPath: saved] == self.saved
-+            if case .discardedZero = self { return s[keyPath: saved] == 0 }
-+            return !isUnflag && s[keyPath: flag] && s[keyPath: saved] == self.saved
-         }
- 
-         func apply(to s: inout RuntimeState, saved: WritableKeyPath<RuntimeState, Float?>, flag: WritableKeyPath<RuntimeState, Bool>, restoredUnderLowPower: WritableKeyPath<RuntimeState, Float?>? = nil) {
-+            if case .discardedZero = self {
-+                if s[keyPath: saved] == 0 {
-+                    s[keyPath: saved] = nil
-+                    s[keyPath: flag] = false
-+                }
-+                return
-+            }
-             guard s[keyPath: flag], s[keyPath: saved] == self.saved else { return }
-             if !isUnflag { s[keyPath: saved] = nil }
-             s[keyPath: flag] = false
-@@ -242,6 +254,7 @@ final class SessionManager {
-             case .clear(let value): "\(what) \(value), set since its refused restore, cleared from the journal"
-             case .restored(let value, _): "\(what) \(value), restored, cleared from the journal"
-             case .unflag(let value): "\(what) \(value), whose restore failed, marked in the journal for retry"
-+            case .discardedZero: "\(what) zero restore discarded without a brightness write"
-             }
-         }
-     }
-@@ -298,6 +311,7 @@ final class SessionManager {
-                 switch edit {
-                 case .clear(let value)?: "\(what) \(value), set since its refused restore, still to be cleared from the journal"
-                 case .restored(let value, _)?: "\(what) \(value), restored, still to be cleared from the journal"
-+                case .discardedZero?: "\(what) zero restore still to be cleared from the journal"
-                 case .unflag?, nil: nil
-                 }
-             }
-@@ -2318,7 +2332,7 @@ final class SessionManager {
-         } else if let saved = kept.savedDisplayBrightness {
-             restoredDisplay = restoreDisplay(saved: saved, waiting: &waiting, errors: &errors)
-         }
--        if let saved = kept.savedKeyboardBrightness, let why = keyboard.refusal() {
-+        if let saved = kept.savedKeyboardBrightness, saved != 0, let why = keyboard.refusal() {
-             refused.append(keepRefusedRestore("Keyboard backlight", saved: saved, why: why, flag: \.keyboardRestoreRefused))
-         } else if let saved = kept.savedKeyboardBrightness {
-             restoredKeyboard = restoreKeyboard(saved: saved, waiting: &waiting, errors: &errors)
-@@ -2423,6 +2437,19 @@ final class SessionManager {
- 
-     /// As restoreDisplay, for the keyboard backlight.
-     private func restoreKeyboard(saved: Float, waiting: inout [String], errors: inout [String]) -> Float? {
-+        if saved == 0 {
-+            do {
-+                try journal { s in
-+                    s.savedKeyboardBrightness = nil
-+                    s.keyboardRestoreRefused = false
-+                }
-+            } catch {
-+                owedEdits.keyboard = .discardedZero
-+                errors.append("could not clear the obsolete zero keyboard restore: \(error.localizedDescription); it will be retried")
-+            }
-+            Log.info("zero keyboard restore discarded without a brightness write")
-+            return nil
-+        }
-         if effectiveState.keyboardRestoreRefused {
-             switch keptLevel(read: { try keyboard.readBrightness() },
-                              untrusted: { keyboard.isSuppressedOrDimmed() ? "macOS has the backlight suppressed or dimmed" : nil }) {
-@@ -2500,7 +2527,7 @@ final class SessionManager {
-     private func recheckKeptBrightness() async {
-         let kept = effectiveState
-         let rereadDisplay = kept.savedDisplayBrightness != nil && kept.displayRestoreRefused && display.refusal() == nil
--        let rereadKeyboard = kept.savedKeyboardBrightness != nil && kept.keyboardRestoreRefused && keyboard.refusal() == nil
-+        let rereadKeyboard = kept.savedKeyboardBrightness != nil && kept.keyboardRestoreRefused && (kept.savedKeyboardBrig
-```
-
-**File**: `Tests/InsomniaTests/KeyboardBrightnessRestoreTests.swift` (added, +302/-0)
-```diff
-@@ -0,0 +1,302 @@
-+import XCTest
-+@testable import Insomnia
-+
-+@MainActor
-+final class KeyboardBrightnessRestoreTests: XCTestCase {
-+    var h: Harness!
-+    var m: SessionManager!
-+    var sampler: BrightnessSampler!
-+    var actions: LidActions!
-+    let idle = Locked<Double>(3)
-+
-+    override func setUp() async throws {
-+        h = Harness()
-+        m = h.makeManager(reassertDelay: .milliseconds(150))
-+        m.config.freezeList = []
-+        m.config.dockerRule = false
-+        m.config.muteOnLidClose = false
-+        sampler = BrightnessSampler(display: h.display, keyboard: h.keyboard, idleSeconds: { [idle] in idle.value })
-+        sampler.follow(m)
-+        let freezer = FakeFreezer(apps: [], processes: [], control: h.procs)
-+        actions = LidActions(manager: m, freezer: freezer, docker: DockerRule(freezer: freezer, probe: { false }), audio: h.audio, display: h.display, keyboard: h.keyboard, sampler: sampler)
-+        await m.start(duration: 3600)
-+    }
-+
-+    override func tearDown() async throws {
-+        m.cancelBrightnessReassert()
-+        h.home.destroy()
-+    }
-+
-+    func testAmbientZeroDoesNotOverwriteSystemPolicy() async throws {
-+        sampler.sample()
-+        h.keyboard.brightness = 0
-+        sampler.sample()
-+        XCTAssertEqual(sampler.last?.keyboard, 0)
-+        await actions.onClose()
-+        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-+        await actions.onOpen()
-+        try await Task.sleep(for: .milliseconds(300))
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        XCTAssertEqual(h.display.sets, [0, 0.7, 0.7])
-+    }
-+
-+    func testTrustedCloseZeroDoesNotUseStalePositiveCache() async throws {
-+        sampler.sample()
-+        h.keyboard.brightness = 0
-+        await actions.onClose()
-+        await actions.onOpen()
-+        XCTAssertEqual(sampler.last?.keyboard, 0.5)
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-+    }
-+
-+    func testManualOffWithSuppressionDoesNotResurrectPositiveCache() async throws {
-+        sampler.sample()
-+        h.keyboard.brightness = 0
-+        h.keyboard.suppressedOrDimmed = true
-+        await actions.onClose()
-+        await actions.onOpen()
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        XCTAssertEqual(h.keyboard.brightness, 0)
-+    }
-+
-+    func testZeroAtStartupNeedsNoSample() async throws {
-+        h.keyboard.brightness = 0
-+        await actions.onClose()
-+        await actions.onOpen()
-+        XCTAssertEqual(h.keyboard.sets, [])
-+    }
-+
-+    func testZeroCacheIsNotUsedForAnUntrustedPositiveRead() async throws {
-+        h.keyboard.brightness = 0
-+        sampler.sample()
-+        h.keyboard.brightness = 0.01
-+        idle.value = 40
-+        await actions.onClose()
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-+    }
-+
-+    func testLegacyZeroClearsWithoutWriteOrReassert() async throws {
-+        try m.journal { $0.savedKeyboardBrightness = 0 }
-+        await actions.onOpen()
-+        try await Task.sleep(for: .milliseconds(300))
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-+        XCTAssertNil(sampler.last?.keyboard)
-+    }
-+
-+    func testLegacyZeroClearsOnLaunchWithoutASession() async throws {
-+        await m.end(reason: .user)
-+        try m.journal { $0.savedKeyboardBrightness = 0 }
-+        let launched = h.makeManager()
-+        defer { launched.cancelBrightnessReassert() }
-+        await launched.reconcile()
-+        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-+        XCTAssertEqual(h.keyboard.sets, [])
-+    }
-+
-+    func testRefusedLegacyZeroAlsoClearsWithoutWrite() async throws {
-+        let calls = Locked<Int>(0)
-+        let unavailable = h.makeManager(keyboard: UnavailableKeyboard(calls: calls))
-+        defer { unavailable.cancelBrightnessReassert() }
-+        try unavailable.journal {
-+            $0.savedKeyboardBrightness = 0
-+            $0.keyboardRestoreRefused = true
-+        }
-+        await unavailable.undoLidActions()
-+        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-+        XCTAssertFalse(unavailable.state.keyboardRestoreRefused)
-+        XCTAssertEqual(calls.value, 0)
-+    }
-+
-+    func testLegacyZeroClearFailureRemainsOwedWithoutHardwareWrite() async throws {
-+        try m.journal { $0.savedKeyboardBrightness = 0 }
-+        let path = h.home.paths.stateFile.path
-+        try FileManager.default.setAttributes([.immutable: true], ofItemAtPath: path)
-+        defer { try? FileManager.default.setAttributes([.immutable: false], ofItemAtPath: path) }
-+        await actions.onOpen()
-+        XCTAssertNotNil(m.lastError)
-+        XCTAssertEqual(try h.store.loadState()?.savedKeyboardBrightness, 0)
-+        XCTAssertNil(m.effectiveState.savedKeyboardBrightness)
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        try 
-```
-
-**File**: `Tests/InsomniaTests/LidActionsTests.swift` (modified, +8/-8)
-```diff
-@@ -110,9 +110,9 @@ final class LidActionsTests: XCTestCase {
- 
-     /// The live defect: the lid closes after the panel idle-dimmed and
-     /// slept. The display reads its dim value and the keyboard reads 0.
--    /// Restoring those would leave a dim panel and a dead backlight; the
--    /// last trusted sample is journaled instead. Both are still set to 0.
--    func testAsleepAndSuppressedAtCloseJournalsTheLastTrustedSample() async throws {
-+    /// Restore the display sample; leave an already-zero keyboard alone,
-+    /// since suppression also describes a keyboard the user turned off.
-+    func testAsleepDisplayUsesSampleAndZeroKeyboardIsLeftAlone() async throws {
-         let idle = Locked<Double>(3)
-         let sampler = makeSampler(idle: idle)
-         let (m, actions) = await make(sampler: sampler)
-@@ -128,14 +128,14 @@ final class LidActionsTests: XCTestCase {
- 
-         let s = try XCTUnwrap(try h.store.loadState())
-         XCTAssertEqual(s.savedDisplayBrightness, 0.7, "the idle-dim value was journaled")
--        XCTAssertEqual(s.savedKeyboardBrightness, 0.5, "the suppressed 0 was journaled")
-+        XCTAssertNil(s.savedKeyboardBrightness)
-         XCTAssertEqual(h.display.sets, [0])
--        XCTAssertEqual(h.keyboard.sets, [0])
-+        XCTAssertEqual(h.keyboard.sets, [])
-         XCTAssertNil(m.lastError)
- 
-         await actions.onOpen()
-         XCTAssertEqual(h.display.sets, [0, 0.7])
--        XCTAssertEqual(h.keyboard.sets, [0, 0.5])
-+        XCTAssertEqual(h.keyboard.sets, [])
-     }
- 
-     /// Nothing trustworthy is known for the keyboard and it reads 0 under
-@@ -157,7 +157,7 @@ final class LidActionsTests: XCTestCase {
-         XCTAssertEqual(try h.store.loadState()?.savedDisplayBrightness, 0.7)
-         XCTAssertEqual(h.procs.suspended.count, 2)
-         XCTAssertNil(m.lastError)
--        XCTAssertTrue(logText().contains("keyboard backlight suppressed by display sleep and no trusted sample; leaving it to macOS"), logText())
-+        XCTAssertTrue(logText().contains("keyboard backlight already reads zero; leaving its automatic or user-off state untouched"), logText())
- 
-         await actions.onOpen()
-         XCTAssertEqual(h.keyboard.sets, [])
-@@ -649,7 +649,7 @@ final class LidActionsTests: XCTestCase {
-         XCTAssertEqual(h.keyboard.sets, [0, 0.5, 0])
-         XCTAssertEqual(try h.store.loadState()?.savedDisplayBrightness, 0.7, "the second close is journaled")
-         let log = (try? String(contentsOf: h.home.paths.logFile, encoding: .utf8)) ?? ""
--        XCTAssertTrue(log.contains("display restore re-assert skipped: darkened again"), log)
-+        XCTAssertTrue(log.contains("pending brightness re-assert canceled: lid closed again"), log)
-         XCTAssertFalse(log.contains("display restore re-asserted"), log)
-     }
- 
-```
-
-**File**: `Tests/InsomniaTests/PrivateDisplayGuardTests.swift` (modified, +82/-8)
-```diff
-@@ -221,7 +221,8 @@ final class RefusedDarkeningTests: XCTestCase {
-     /// display's sleep and wake land on `h.display`.
-     private func makeDarkeningOnly(
-         display: any DisplayDimming,
--        keyboard: any KeyboardBacklighting
-+        keyboard: any KeyboardBacklighting,
-+        sampler: BrightnessSampler? = nil
-     ) -> (SessionManager, LidActions) {
-         let m = h.makeManager()
-         m.config.muteOnLidClose = false
-@@ -235,7 +236,7 @@ final class RefusedDarkeningTests: XCTestCase {
-             audio: h.audio,
-             display: display,
-             keyboard: keyboard,
--            sampler: nil
-+            sampler: sampler
-         )
-         return (m, actions)
-     }
-@@ -276,6 +277,78 @@ final class RefusedDarkeningTests: XCTestCase {
-         XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-     }
- 
-+    /// A refused display journals nothing, and a keyboard that reads 0 is
-+    /// left to macOS. The 0 is journaled anyway, with no keyboard write, so
-+    /// the close still asks the display to sleep, which locks a screen set
-+    /// to lock on display sleep. The open wakes the display and discards
-+    /// the 0 without a write.
-+    func testARefusedDisplayAndAZeroKeyboardStillAskTheDisplayToSleep() async throws {
-+        h.keyboard.brightness = 0
-+        let (m, actions) = makeDarkeningOnly(display: refusedDisplay, keyboard: h.keyboard)
-+        await m.start(duration: 3600)
-+
-+        await actions.onClose()
-+
-+        XCTAssertEqual(h.display.sleepRequests, 1)
-+        XCTAssertEqual(h.display.sets, [])
-+        XCTAssertEqual(h.keyboard.sets, [], "the 0 stays with macOS")
-+        let closed = try XCTUnwrap(try h.store.loadState())
-+        XCTAssertNil(closed.savedDisplayBrightness)
-+        XCTAssertEqual(closed.savedKeyboardBrightness, 0)
-+        XCTAssertTrue(logText().contains("keyboard backlight zero journaled with no write, so the open wakes the display this asks to sleep"), logText())
-+
-+        await actions.onOpen()
-+
-+        XCTAssertEqual(h.display.wakes, 1, "the display the close asked to sleep is woken")
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-+        XCTAssertTrue(logText().contains("zero keyboard restore discarded without a brightness write"), logText())
-+        XCTAssertNil(m.lastError)
-+    }
-+
-+    /// A positive keyboard reading macOS holds down is not trusted, and a
-+    /// last sample of 0 is never restored, so the keyboard journals no
-+    /// level. The 0 for the sleep request is journaled all the same.
-+    func testARefusedDisplayAndAZeroSampleStillAskTheDisplayToSleep() async throws {
-+        h.keyboard.brightness = 0
-+        let sampler = BrightnessSampler(display: h.display, keyboard: h.keyboard, idleSeconds: { 3 })
-+        let (m, actions) = makeDarkeningOnly(display: refusedDisplay, keyboard: h.keyboard, sampler: sampler)
-+        sampler.follow(m)
-+        await m.start(duration: 3600)
-+        sampler.sample()
-+        XCTAssertEqual(sampler.last?.keyboard, 0)
-+        h.keyboard.brightness = 0.3
-+        h.keyboard.suppressedOrDimmed = true
-+
-+        await actions.onClose()
-+
-+        XCTAssertEqual(h.display.sleepRequests, 1)
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        XCTAssertEqual(try XCTUnwrap(try h.store.loadState()).savedKeyboardBrightness, 0)
-+
-+        h.keyboard.suppressedOrDimmed = false
-+        await actions.onOpen()
-+
-+        XCTAssertEqual(h.display.wakes, 1)
-+        XCTAssertEqual(h.keyboard.sets, [], "the 0 is discarded, and 0.3 stays as macOS has it")
-+        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
-+    }
-+
-+    /// With "Keep the screen on and unlocked" on, the close asks for no
-+    /// display sleep, so a keyboard that reads 0 journals nothing.
-+    func testKeepScreenAwakeJournalsNoZeroForTheSleepRequest() async throws {
-+        h.keyboard.brightness = 0
-+        let (m, actions) = makeDarkeningOnly(display: refusedDisplay, keyboard: h.keyboard)
-+        m.config.keepScreenAwake = true
-+        await m.start(duration: 3600)
-+
-+        await actions.onClose()
-+
-+        XCTAssertEqual(h.display.sleepRequests, 0)
-+        XCTAssertEqual(h.keyboard.sets, [])
-+        XCTAssertFalse(try XCTUnwrap(try h.store.loadState()).brightnessJournaled)
-+    }
-+
-     /// Both devices refused: nothing is darkened or journaled, so nothing
-     /// on open would wake the display. The close does not ask it to sleep,
-     /// and the open has nothing to wake.
-@@ -608,8 +681,8 @@ final class RefusedDarkeningTests: XCTestCase {
-     /// both come back, still at the 0 the old close left, the sampler takes
-     /// no reading of them while they are journaled, and the re-read's
-     /// restore becomes its sample. A lid close soon after, with the panel
--    /// pulled down by auto-brightness and the backlight suppressed again,
--    /// journals 0.8 and 0.3, not 0, and the open restores them.
-+    /// 
-```
-
-**File**: `docs/releasing.md` (modified, +1/-0)
-```diff
-@@ -337,6 +337,7 @@ Settings > General opens with the Menu bar picker: Pills (the default), Compact,
- 
- ### Display and keyboard backlight
- 
-+- Keyboard already off on close, both manually and through ambient auto-adjustment: no new keyboard save or write, no positive cached level restored over manual off, and macOS still adjusts automatically afterward. A positive restore owed from a previous close must survive. A legacy saved keyboard zero clears without a keyboard write, including after a refused restore or a failed journal clear. Repeat close before the two-second reassertion: no delayed write relights the keyboard. An already-off keyboard is left to macOS and may relight while closed; positive ambient-dimmed levels remain a limitation.
- - Lid-close display/keyboard darkening and restore
- - Darkening still runs under the private-call guards on macOS 26 (close the lid during a session: the log shows "display darkened" and "keyboard backlight off" and no "refused" line; Settings shows no note under the darken toggle)
- - Darkening refused on an unmeasured macOS version (a macOS major other than 26 or 27, or a `KeyboardBrightnessClient` whose methods changed: the log shows the "refused" line once and "skipped" at lid close, nothing is journaled for that device, and Settings names the reason under the darken toggle; with both refused the log shows "display sleep not requested" and the panel is lit when the lid opens; a level saved by the earlier build stays in state.json with `displayRestoreRefused` or `keyboardRestoreRefused` after the first open or launch, the menu says it could not be restored on this macOS build and names each saved level, Settings shows the saved level under the darken toggle, no "Restore incomplete" follows, and the backstop log does not fail for it)
-```
-
-**File**: `docs/spec.md` (modified, +39/-8)
-```diff
-@@ -391,7 +391,12 @@ owed. A write whose clear is owed is done all the same: the second write
- Mode still owes its write after the mode, as the clear would have
- journaled. A lid close that can read the device clears the flag too: it
- keeps the earlier saved value while the device reads 0, and saves the new
--level when it reads above 0. For the display that level must be trusted:
-+level when it reads above 0. For the keyboard the reading itself must be
-+trusted: a suppressed or dimmed reading, 0 or above, leaves the entry
-+flagged and the backlight as it is, and the last sample is no help, since
-+none is taken while an entry is journaled. A kept keyboard 0 from an older
-+version is obsolete: a close that reads 0 leaves it flagged, and the open
-+discards it without a write. For the display that level must be trusted:
- the last sample, the value owed after the mode, or a current read taken
- with the panel awake and Insomnia's Low Power Mode not on at any point in
- the run, nor over the entry since the Mac last started. Without one, the close leaves the entry flagged and the panel as
-@@ -521,7 +526,9 @@ does) is ignored while any process holds a display assertion, and agents
- routinely do, so brightness 0 is the primary mechanism and the sleep request
- is best effort. It is made only when a display or keyboard brightness is
- journaled, because the wake that undoes it on open, or on reconcile after
--a relaunch, runs only for such an entry. With "Keep the screen on and
-+a relaunch, runs only for such an entry. A keyboard that can be read but
-+journals no level is journaled as 0 for it when nothing else is, as
-+described below. With "Keep the screen on and
- unlocked" on it is not made at all: a display that sleeps locks the screen,
- and Insomnia's own assertion would refuse it anyway. Display brightness 0 does not
- switch the keyboard backlight off; it is set separately. Both values are journaled before they are changed
-@@ -561,15 +568,39 @@ level not yet decided. Each level the app writes from the journal, or
- finds set since in place of a kept value, becomes that device's sample,
- so a close soon after a restore that came late, from the re-read of a
- kept value or after the mode, journals the restored level and not a 0
--sampled before it. The keyboard journals the current
--read if trusted now, else its last sample; when nothing trustworthy is
--known for it, it is left to macOS entirely (no journal entry, no write),
--because restoring a suppressed 0 would leave the backlight off. On open the
-+sampled before it. A keyboard already reading 0 is left to macOS entirely
-+(no new journal entry or write), unless a positive restore is already owed
-+from an earlier close. One exception keeps the display sleep request: when
-+a close reads the keyboard but journals no level for it, nothing else is
-+journaled, as when the display is refused or unreadable, and "Keep the
-+screen on and unlocked" is off, the close journals a 0 with no keyboard
-+write, so the open still wakes the display it asked to sleep. The open
-+discards that 0 as below. Ambient auto-off can read 0 with neither suppression
-+nor dimming flagged, while manual off can set the suppression flag; neither
-+is a reason to restore an older positive sample over it. For a positive
-+current reading, the keyboard journals that reading if trusted now, else a
-+positive last sample; without either, it is left alone, apart from the 0
-+journaled for the sleep request above. A positive value
-+kept after a refused restore is decided only by a trusted reading, as for
-+the display: a 0 keeps it and a level above 0 replaces it. A suppressed or
-+dimmed reading leaves it journaled and undecided, and the last sample is no
-+help, since none is taken while an entry is journaled. A kept 0 is the
-+older version's zero below: only a trusted level above 0 replaces it, and
-+otherwise the open discards it.
-+A saved zero, from an
-+older version or journaled for the sleep request, is cleared without a
-+keyboard write or reassertion, including
-+when the private-call guard refuses; a failed clear stays owed for retry.
-+This avoids committing automatic zero as a permanent off setting. It leaves
-+macOS free to relight a keyboard that was already off, even while the lid is
-+closed, and positive ambient-dimmed readings remain possible restore values.
-+On open the
- restore is written, the entries cleared, and the same values written once
- more 2 s later, because powerd re-applies its own remembered brightness
- asynchronously after the wake and can override the first write; that second
--write is skipped if the lid closed again in the meantime (the close journals
--fresh values first) and superseded by any newer restore. A display restore
-+write is canceled if another current lid close starts in the meantime, even
-+when an already-zero keyboard creates no new journal entry, and superseded
-+by any newer restore. A display restore
- written while Insomnia's own Low Power Mode was on is journaled as
- `disp
-```
-
 #### Recent Merged Pull Requests:
+- **PR #175** (2026-11-13): Docs: record the 0.2.0 release checks (@krishhgg)
+- **PR #173** (2026-11-13): Release 0.2.0 (@krishhgg)
 - **PR #171** (2026-11-09): Keyboard backlight: land #136 (@krishhgg)
 - **PR #169** (2026-11-08): Merge gate: the Codex bot's review replaces Greptile's score (@krishhgg)
+- **PR #168** (2026-11-13): Lid close: land #157 (@krishhgg)
 - **PR #167** (2026-11-08): Session: land #160 (@krishhgg)
-- **PR #166** (2026-11-08): Recovery: land #158 (@krishhgg)
-- **PR #165** (2026-11-07): CI: keep pull requests from forks off the Mac mini (@krishhgg)
-- **PR #160** (2026-11-08): Session: keep the screen on and unlocked during a session (opt-in) (@GridGxly)
 
 ---
 
@@ -2507,32 +2427,45 @@ Keyboard backlight: land #136
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #154 from krishhgg/integration/recovery-launcher
+## X. Empirical Invariant Guard in HotspotJoiner.swift
 
 **RULE**:
-When implementing operations in `Resources/Info.plist`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krishhgg/Insomnia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/Insomnia/System/HotspotJoiner.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krishhgg/Insomnia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1044770e`: Merge pull request #154 from krishhgg/integration/recovery-launcher. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5435d268`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Resources/Info.plist`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Insomnia/System/HotspotJoiner.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-	<key>InsomniaBackstopCommand</key>
-	<string>--backstop</string>
+    /// Returns false when no SSID-filtered scan finds a matching network:
+    /// one for the SSID as given, then one per other spelling of its
+    /// apostrophes (`HotspotSSID.scanCandidates`).
+        // Keep each scan SSID-filtered: association works with the returned
+        guard let found = try HotspotSSID.firstFound(ssid, scan: { name in
+            try interface.scanForNetworks(withSSID: Data(name.utf8)).first
+        }) else { return false }
+        if found.name != ssid {
+            Log.info("hotspot \(ssid) found as \(found.name), its apostrophe swapped")
+        }
+        try interface.associate(to: found.network, password: password)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    /// Returns false when the SSID-filtered scan finds no matching network.
+        // Keep this scan SSID-filtered: association works with the returned
+        let networks = try interface.scanForNetworks(withSSID: ssid.data(using: .utf8))
+        guard let network = networks.first else { return false }
+        try interface.associate(to: network, password: password)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1044770e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5435d268` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -5443,10 +5443,10 @@
     "repository": "telemt/telemt",
     "platform": "github",
     "sourceUrl": "https://github.com/telemt/telemt",
-    "sourceVersion": "5c3dabee",
+    "sourceVersion": "b594ee55",
     "license": "NOASSERTION",
-    "contentHash": "37ef238c6ebdcbb22a6e86aef5c33d0d157bb76a9ff141f198b86ac63fd0587d",
-    "lastHarvestedAt": "2026-11-12T07:46:13.014Z",
+    "contentHash": "0e72d7a54a886c3d6fa0f276d5666f8b6a2aeaf72a3d9422891b9deb01c0439c",
+    "lastHarvestedAt": "2026-11-13T19:54:23.053Z",
     "learningId": "learn-github-telemt-telemt"
   },
   "react-native-modal-react-native-modal": {
@@ -11613,10 +11613,10 @@
     "repository": "krishhgg/Insomnia",
     "platform": "github",
     "sourceUrl": "https://github.com/krishhgg/Insomnia",
-    "sourceVersion": "1044770e",
+    "sourceVersion": "3f474ff2",
     "license": "MIT",
-    "contentHash": "f0bc9a12bf5221da8a1a71f92ebbde4cf6e79ba90a6c5669be5e56b7d464b3af",
-    "lastHarvestedAt": "2026-11-09T10:59:33.779Z",
+    "contentHash": "741d2ec6e8ac68dddfc30f309e783ffe936f7e3ab097b5bda9fbc963f5037806",
+    "lastHarvestedAt": "2026-11-13T19:52:54.731Z",
     "learningId": "learn-github-krishhgg-insomnia"
   },
   "hf-comfy-org-wan-2.2": {
@@ -11925,8 +11925,8 @@
     "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
     "sourceVersion": "hf-prunaai-p-h3-image-comfy",
     "license": "Open-Source",
-    "contentHash": "56e4fe3c6a32388e6e0eef561287ab6296f1a3bc05e63d1e66506c977283a3d8",
-    "lastHarvestedAt": "2026-11-08T18:38:42.755Z",
+    "contentHash": "ca3f8aabf280e7ff3d31d66c30494c62ed1d3fd9b3909646f0fe82eaca14177a",
+    "lastHarvestedAt": "2026-11-13T19:54:20.244Z",
     "learningId": "learn-huggingface-prunaai-p-h3-image-comfy"
   },
   "jarvis322-macos-sysdata": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T19:40:46.933Z",
+  "last_updated": "2026-11-13T19:54:48.729Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10048,6 +10048,46 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-13",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-BI18",
+      "directive_title": "Empirical Invariant Guard in HotspotJoiner.swift",
+      "source_repo": "krishhgg-insomnia-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BI18-empirical-invariant-guard-in-hotspotjoiner-swift.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-B0O3",
+      "directive_title": "Empirical Invariant Guard in emulator.rs",
+      "source_repo": "telemt-telemt-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B0O3-empirical-invariant-guard-in-emulator-rs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-05E1A3",
+      "directive_title": "Empirical Invariant Guard in emulator.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "telemt-telemt",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-05E1A3-empirical-invariant-guard-in-emulator-rs.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-DCBFA0",
+      "directive_title": "Empirical Invariant Guard in HotspotJoiner.swift",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "krishhgg-insomnia",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DCBFA0-empirical-invariant-guard-in-hotspotjoin.md",
+      "staged_date": "2026-11-13"
     }
   ]
 }

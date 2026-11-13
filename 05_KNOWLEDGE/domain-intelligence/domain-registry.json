@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T19:40:47.054Z",
-  "total_records": 306,
+  "last_updated": "2026-11-13T19:54:48.797Z",
+  "total_records": 313,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 166,
+      "total": 169,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -199,7 +199,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
         "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
         "DOM-D-4AA06C1E",
-        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l"
+        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
+        "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-comfy-core-invariants",
+        "DOM-D-DFE22270",
+        "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-invar"
       ]
     },
     "E": {
@@ -217,7 +220,7 @@
       ]
     },
     "G": {
-      "total": 34,
+      "total": 36,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -252,11 +255,13 @@
         "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-embassy-rs-embassy-core-invariants",
         "domain_intelligence-architecture-intelligence-rook-rook-core-invariants",
-        "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants",
+        "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 63,
+      "total": 65,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -320,7 +325,9 @@
         "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria",
         "domain_intelligence-technical-construction-intelligence-nervjs-taro-core-invariants",
         "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-nervjs-taro-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-nervjs-taro-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-telemt-telemt-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8226,6 +8233,102 @@
       "repository": "nervjs-taro-learnings",
       "content_hash": "86e1bf497a084276cae33def5ee2c0fb31c7807f996fc1f4c9418b8de77d7047",
       "created_at": "2026-11-13T19:40:47.054Z"
+    },
+    "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: krishhgg/Insomnia Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-krishhgg-insomnia-architecture-intelligence-krishhgg-insomnia-core-invariants.md",
+      "repository": "krishhgg/Insomnia",
+      "content_hash": "74519e71c68c76f7fbfb60ae6004e0227a4c4a295d8866342bd0c60d10ccc41f",
+      "created_at": "2026-11-13T19:52:54.939Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-comfy-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-comfy-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: PrunaAI/P-H3-Image-Comfy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-comfy-research-knowledge-intelligence-prunaai-p-h3-image-c.md",
+      "repository": "PrunaAI/P-H3-Image-Comfy",
+      "content_hash": "aa922abb761caae8d85dc4e7ba141246afd59c458a1d8bd9d2ad3fbfd240c451",
+      "created_at": "2026-11-13T19:54:20.372Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-telemt-telemt-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-telemt-telemt-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: telemt/telemt Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-telemt-telemt-technical-construction-intelligence-telemt-telemt-core-invariants.md",
+      "repository": "telemt/telemt",
+      "content_hash": "c359963790e9b13c024d9679ae2bf2cf921adb6b78de7ffdae61847a397c6d37",
+      "created_at": "2026-11-13T19:54:23.260Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: telemt-telemt-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-telemt-telemt-learnings-technical-construction-intelligence-telemt-telemt-learni.md",
+      "repository": "telemt-telemt-learnings",
+      "content_hash": "36246863d699b8dfebb754e56c8903da3d93d94e6bfc737a0d79ec2a35b01657",
+      "created_at": "2026-11-13T19:54:26.280Z"
+    },
+    "DOM-D-DFE22270": {
+      "record_id": "DOM-D-DFE22270",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): PrunaAI/P-H3-Image-Comfy",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/PrunaAI/P-H3-Image-Comfy](https://huggingface.co/PrunaAI/P-H3-Image-Comfy))  \n> **Source Version**: `hf-prunaai-p`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "83b6c9e7f8e0246280588b38cee2387619c3b84b16aff9b1cb5c728451cc0c38",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-prunaai-p-h3-image-comfy/hf-prunaai-p-h3-image-comfy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T19:54:26.431Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prunaai-p-h3-image-comfy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-prunaai-p-h3-image-comfy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T19:54:48.247Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-prunaai-p-h3-image-comfy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-comfy-learnings-research-knowledge-intelligence-hf-prunaai.md",
+      "repository": "hf-prunaai-p-h3-image-comfy-learnings",
+      "content_hash": "105e804ab2fb60cae66db829b86a494c749d69a6c172f259aefed1056f5a9351",
+      "created_at": "2026-11-13T19:54:48.417Z"
+    },
+    "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: krishhgg-insomnia-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-krishhgg-insomnia-learnings-architecture-intelligence-krishhgg-insomnia-learning.md",
+      "repository": "krishhgg-insomnia-learnings",
+      "content_hash": "2569cdcfc11ca701b9d282d02f82694c410b9122e092ca26e59db5b84656578a",
+      "created_at": "2026-11-13T19:54:48.797Z"
     }
   }
 }
