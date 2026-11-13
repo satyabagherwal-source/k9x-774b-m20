@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T14:26:05.374Z",
+  "last_updated": "2026-11-13T14:34:08.281Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -470,14 +470,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-supersoniclabs-julia-1",
-      "content_hash": "26426e069f975aaac548b919b21d2eb345a463a2961aa27cd9c17c01c833c391",
-      "verified_at": "2026-11-08T15:05:12.798Z",
+      "content_hash": "35b31d5f2ef3a70d5efe7dd6af3a152867e2cad82fa3dd46759aa6578efc2649",
+      "verified_at": "2026-11-13T14:33:40.313Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:05:12.798Z"
+      "last_updated": "2026-11-13T14:33:40.313Z"
     },
     "apple/LensVLM-9B": {
       "repository": "apple/LensVLM-9B",
@@ -7416,14 +7416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infracost-infracost",
-      "content_hash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
-      "verified_at": "2026-11-12T10:43:07.216Z",
+      "content_hash": "1e7eaa98d69bbe9724b9b6a62a412a55c8ba13d58ee26b9d9e2bc2b969864c5d",
+      "verified_at": "2026-11-13T14:34:03.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T10:43:07.216Z"
+      "last_updated": "2026-11-13T14:34:03.436Z"
     },
     "apache/shardingsphere": {
       "repository": "apache/shardingsphere",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "e354c9d4ea476e7d5b918f30b932583474763842e9712254b922db154aff6772",
-      "verified_at": "2026-11-12T08:28:20.020Z",
+      "content_hash": "da9c34972bcd3507e0c22e20dc393690558e435190bf779fc236f3ea5306800e",
+      "verified_at": "2026-11-13T14:34:08.280Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:28:20.020Z"
+      "last_updated": "2026-11-13T14:34:08.280Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -12771,14 +12771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tauri-apps-tauri",
-      "content_hash": "4a024d5c6d434d2d791cb85b27b967dfe40123098fd7f897b151d0ef5c21a2a5",
-      "verified_at": "2026-11-09T04:42:17.734Z",
+      "content_hash": "9df43c72ba753f71ea0ea9ede2d20f6e0f738b460759b223e9987af867155b5f",
+      "verified_at": "2026-11-13T14:34:00.190Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:42:17.734Z"
+      "last_updated": "2026-11-13T14:34:00.190Z"
     },
     "oliviertassinari/react-swipeable-views": {
       "repository": "oliviertassinari/react-swipeable-views",

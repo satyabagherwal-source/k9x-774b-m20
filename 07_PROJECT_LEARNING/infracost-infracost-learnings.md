@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source**: github ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
-> **Source Version**: `40ad0ac9`  
+> **Source Version**: `34e9cd06`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T10:42:55.834Z  
+> **Timestamp**: 2026-11-13T14:33:49.160Z  
 > **Learning ID**: `learn-github-infracost-infracost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T10:42:55.671Z  
+> **Harvest Timestamp**: 2026-11-13T14:33:49.154Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud cost intelligence for engineers, AI coding agents, and CI/CD 💰📉 Shift FinOps Left!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12620 stars
+- **Stars / Engagement**: 12619 stars
 
 ---
 
@@ -693,228 +693,229 @@ func regionToCDNZone(region string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40ad0ac9` (2026-11-10)
-**Commit Message**: fix(deps): bump brotli, go-jose and klauspost/compress (#3641)
+### Incident Patch 1: `34e9cd06` (2026-11-13)
+**Commit Message**: fix(config): ignore sensitive vars in working-directory .env (#3642)
 
-**File**: `go.mod` (modified, +3/-3)
-```diff
-@@ -155,7 +155,7 @@ require (
- 	github.com/ProtonMail/go-crypto v1.1.6 // indirect
- 	github.com/STARRY-S/zip v0.2.1 // indirect
- 	github.com/agnivade/levenshtein v1.2.1 // indirect
--	github.com/andybalholm/brotli v1.1.1 // indirect
-+	github.com/andybalholm/brotli v1.2.8 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
- 	github.com/apparentlymart/go-versions v1.0.1 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.24 // indirect
-@@ -183,7 +183,7 @@ require (
- 	github.com/felixge/httpsnoop v1.0.4 // indirect
- 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
- 	github.com/go-ini/ini v1.67.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
-@@ -294,7 +294,7 @@ require (
- 	github.com/hashicorp/go-version v1.6.0
- 	github.com/heimdalr/dag v1.3.1
- 	github.com/iancoleman/orderedmap v0.2.0 // indirect
--	github.com/klauspost/compress v1.18.7 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
- 	github.com/open-policy-agent/opa v1.6.0
- 	github.com/otiai10/copy v1.7.0
-```
+* fix(config): ignore sensitive vars in working-directory .env
 
-**File**: `go.sum` (modified, +6/-6)
-```diff
-@@ -732,8 +732,8 @@ github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible/go.mod h1:LDQHRZy
- github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 h1:bvNMNQO63//z+xNgfBlViaCIJKLlCJ6/fmUseuG0wVQ=
- github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
- github.com/andybalholm/brotli v1.0.4/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
--github.com/andybalholm/brotli v1.1.1 h1:PR2pgnyFznKEugtsUo0xLdDop5SKXd5Qf5ysW+7XdTA=
--github.com/andybalholm/brotli v1.1.1/go.mod h1:05ib4cKhjx3OQYUY22hTVd34Bc8upXjOLL2rKwwZBoA=
-+github.com/andybalholm/brotli v1.2.8 h1:H9F6r7RNwzSRsx/lytpIYkbjNFMt2yNBwsJ2+0gpx78=
-+github.com/andybalholm/brotli v1.2.8/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
- github.com/antchfx/xpath v0.0.0-20190129040759-c8489ed3251e/go.mod h1:Yee4kTMuNiPYJ7nSNorELQMr1J33uOpXDMByNYhvtNk=
-@@ -1038,8 +1038,8 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2
- github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
- github.com/go-ini/ini v1.67.0 h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
- github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.9 h1:pKfeQkig1NmgK4hJrZYXLEYURXfoJB61Larw0uIW4gY=
-+github.com/go-jose/go-jose/v4 v4.1.9/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-latex/latex v0.0.0-20210118124228-b3d85cf34e07/go.mod h1:CO1AlKB2CSIqUrmQPqA0gdRIlnLEY0gK5JGjh37zN5U=
- github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81/go.mod h1:SX0U8uGpxhq9o2S/CELCSUxEWWAuoCUcVCQWv7G2OCk=
-@@ -1400,8 +1400,8 @@ github.com/klauspost/asmfmt v1.3.2/go.mod h1:AG8TuvYojzulgDAMCnYn50l/5QV3Bs/tp6j
- github.com/klauspost/compress v1.4.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
- github.com/klauspost/compress v1.15.9/go.mod h1:PhcZ0MbTNciWF3rruxRgKxI5NkcHHrHUDtV4Yw2GlzU=
- github.com/klauspost/compress v1.15.11/go.mod h1:QPwzmACJjUTFsnSHH934V6woptycfrDDJnH7hvFVbGM=
--github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
--github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid v1.2.0/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
- github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
-```
+The working directory can be an untrusted checkout, so its .env must not
+set vars that run commands (e.g. GIT_SSH_COMMAND), redirect credentials
+or write files. Other vars still load as before.
 
-**File**: `internal/providers/terraform/google/testdata/compute_instance_test/compute_instance_test.golden` (modified, +15/-15)
-```diff
-@@ -10,16 +10,16 @@
-  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-  └─ NVIDIA Tesla K80 (on-demand)                                         2,920  hours       $919.80   
-                                                                                                       
-- google_compute_instance.preemptible_gpu                                                              
-- ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $332.75   
-- ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-- └─ NVIDIA Tesla K80 (preemptible)                                       2,920  hours       $501.95   
--                                                                                                      
-  google_compute_instance.gpu_l4                                                                       
-  ├─ Instance usage (Linux/UNIX, on-demand, g2-standard-4)                  730  hours       $515.99   
-  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-  └─ NVIDIA L4 (on-demand)                                                  730  hours       $286.18   
-                                                                                                       
-+ google_compute_instance.preemptible_gpu                                                              
-+ ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $298.70   
-+ ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-+ └─ NVIDIA Tesla K80 (preemptible)                                       2,920  hours       $501.95   
-+                                                                                                      
-  google_compute_instance.sud_20_perc_with_hours                                                       
-  ├─ Instance usage (Linux/UNIX, on-demand, n2-standard-8)                  730  hours       $226.87   
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-@@ -45,8 +45,13 @@
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-                                                                                                       
-  google_compute_instance.custom_preemptible                                                           
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $87.21   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $38.95   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $78.27   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $34.97   
-+ └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-+                                                                                                      
-+ google_compute_instance.custom_n2d                                                                   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $44.85   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $30.05   
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-                                                                                                       
-  google_compute_instance.custom_ext                                                                   
-@@ -55,11 +60,6 @@
-  ├─ Custom Instance Extended RAM (Linux/UNIX, on-demand, N1 2 GB)          730  hours         $9.76   
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-                                                                                                       
-- google_compute_instance.custom_n2d                                                                   
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $41.11   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $27.52   
-- └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
--                                                                                                      
-  google_compute_instance.local_ssd                                                                    
-  ├─ Instance usage (Linux/UNIX, on-demand, f1-micro)                       730  hours         $3.88   
-  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-@@ -68,7 +68,7 @@
-  google_compute_instance.preemptibl
-```
+* fix(config): ignore sensitive vars in working-directory .env
 
-**File**: `internal/providers/terraform/google/testdata/container_cluster_test/container_cluster_test.golden` (modified, +17/-17)
-```diff
-@@ -10,7 +10,7 @@
-  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 8,760  hours                  $4,660.30    
-  │  └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
-  └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
-     └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
-                                                                                                                          
-  google_container_cluster.with_node_pools_regional                                                                       
-@@ -22,7 +22,7 @@
-  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 4,380  hours                  $2,330.15    
-  │  └─ Standard provisioned storage (pd-standard)                               600  GB                        $24.00    
-  └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
-     └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
-                                                                                                                          
-  google_container_cluster.with_node_pools_node_locations_withUsage                                                       
-@@ -34,18 +34,9 @@
-  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 5,840  hours                  $3,106.86    
-  │  └─ Standard provisioned storage (pd-standard)                               800  GB                        $32.00    
-  └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,330.99    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,194.81    
-     └─ Standard provisioned storage (pd-standard)                               400  GB                        $16.00    
-                                                                                                                          
-- google_container_cluster.with_unsupported_node_pool                                                                     
-- ├─ Cluster management fee                                                      730  hours                     $73.00    
-- ├─ default_pool                                                                                                         
-- │  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                      6,570  hours                    $220.13    
-- │  └─ Standard provisioned storage (pd-standard)                               900  GB                        $36.00    
-- └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
--    └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
--                                                                                                                         
-  google_container_cluster.with_node_config                                                                               
-  ├─ Cluster management fee                                                      730  hours                     $73.00    
-  └─ default_pool                                                                                                         
-@@ -54,6 +45,15 @@
-     ├─ Local SSD provisioned storage                                          1,125  GB                        $90.00    
-     └─ NVIDIA Tesla K80 (on-demand)                                           8,760  hours                  $2,759.40    
-                                                                                                                          
-+ google_container_cluster.with_unsupported_node_pool                                                                     
-+ ├─ Cluster management fee                                                      730  hours                     $73.00    
-+ ├─ d
-```
+The working directory can be an untrusted checkout, so its .env must not
+set vars that run commands (e.g. GIT_SSH_COMMAND) or send credentials to
+another host. Other vars still load as before.
 
-**File**: `internal/providers/terraform/google/testdata/container_node_pool_test/container_node_pool_test.golden` (modified, +6/-6)
+* fix(config): block more sensitive vars in working-directory .env
+
+- block unprefixed forms of Infracost vars (envconfig reads both)
+- block AWS config/credentials file paths and Google executable sources
+- block policy v2 endpoint, TLS skip verify and metrics path
+
+* fix(config): refine .env blocklist and add trust opt-out
+
+- block DASHBOARD_ENDPOINT, CI_API_V4_URL and INFRACOST_JSON_DUMP_PATH
+- only strip INFRACOST_ for config vars, so TERRAGRUNT_FLAGS,
+  GIT_SSL_CAINFO and ENV still load
+- add INFRACOST_TRUST_ENVFILE=true to load the whole .env
+
+**File**: `internal/config/config.go` (modified, +91/-2)
 ```diff
-@@ -19,13 +19,13 @@
-  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
-                                                                                                   
-  google_container_node_pool.with_preemptible_instance                                             
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $261.62   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $116.86   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
-  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
-                                                                                                   
-  google_container_node_pool.with_spot_instance                                                    
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $261.62   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $116.86   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
-  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
-                                                                                                   
-  google_container_node_pool.initial_node_count_zonal                                              
-@@ -122,7 +122,7 @@
-  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                1,460  hours        $48.92   
-  └─ Standard provisioned storage (pd-standard)                         200  GB            $8.00   
-                                                                                                   
-- OVERALL TOTAL                                                                      $28,486.42 
-+ OVERALL TOTAL                                                                      $28,408.89 
+@@ -515,8 +515,97 @@ func loadDotEnv() error {
+ 	}
  
- *Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
- 
-@@ -133,5 +133,5 @@
- ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
- ┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
- ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
--┃ main                                               ┃       $28,486 ┃           - ┃    $28,486 ┃
-+┃ main                                               ┃       $28,409 ┃           - ┃    $28,409 ┃
- ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
-\ No newline at end of file
+ 	if FileExists(".env") {
+-		err := godotenv.Load()
+-		if err != nil {
++		if os.Getenv("INFRACOST_TRUST_ENVFILE") == "true" {
++			return godotenv.Load()
++		}
++		return loadUntrustedEnvFile(".env")
++	}
++
++	return nil
++}
++
++// The working directory .env may come from an untrusted checkout (e.g. a PR),
++// so vars that can run commands or send credentials to another host are
++// skipped.
++var blockedEnvFilePrefixes = []string{
++	"GIT_",
++	"SSH_",
++	"LD_",
++	"DYLD_",
++	"TF_CLI_",
++	"TF_PLUGIN_",
++	"TERRAGRUNT_",
++	"TG_",
++}
++
++var blockedEnvFileVars = map[string]bool{
++	"PATH":            true,
++	"HOME":            true,
++	"XDG_CONFIG_HOME": true,
++	"BASH_ENV":        true,
++	"ENV":             true,
++	"SHELL":           true,
++	"HTTP_PROXY":      true,
++	"HTTPS_PROXY":     true,
++	"ALL_PROXY":       true,
++	"NO_PROXY":        true,
++	"SSL_CERT_FILE":   true,
++	"SSL_CERT_DIR":    true,
++
++	"AWS_CONFIG_FILE":                           true,
++	"AWS_SHARED_CREDENTIALS_FILE":               true,
++	"GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES": true,
++	"CI_API_V4_URL":                             true,
++	"TERRAFORM_CLOUD_HOST":                      true,
++
++	"INFRACOST_REGISTRY_PROXY": true,
++	"INFRACOST_JSON_DUMP_PATH": true,
++}
++
++// Config fields that envconfig reads both with and without the INFRACOST_
++// prefix, so both forms are blocked.
++var blockedEnvFileConfigVars = map[string]bool{
++	"TERRAFORM_BINARY":             true,
++	"PRICING_API_ENDPOINT":         true,
++	"DEFAULT_PRICING_API_ENDPOINT": true,
++	"DASHBOARD_API_ENDPOINT":       true,
++	"DASHBOARD_ENDPOINT":           true,
++	"POLICY_V2_API_ENDPOINT":       true,
++	"USAGE_API_ENDPOINT":           true,
++	"SPACELIFT_API_KEY_ENDPOINT":   true,
++	"TERRAFORM_CLOUD_HOST":         true,
++	"TLS_INSECURE_SKIP_VERIFY":     true,
++	"METRICS_PATH":                 true,
++}
++
++func isBlockedEnvFileVar(key string) bool {
++	key = strings.ToUpper(key)
++	if blockedEnvFileVars[key] || blockedEnvFileConfigVars[strings.TrimPrefix(key, "INFRACOST_")] {
++		return true
++	}
++	for _, prefix := range blockedEnvFilePrefixes {
++		if strings.HasPrefix(key, prefix) {
++			return true
++		}
++	}
++	return false
++}
++
++func loadUntrustedEnvFile(path string) error {
++	vars, err := godotenv.Read(path)
++	if err != nil {
++		return err
++	}
++
++	for key, value := range vars {
++		if isBlockedEnvFileVar(key) {
++			logging.Logger.Warn().Msgf("Infracost ignored %s in %s for security reasons. Set it in the environment instead, or set INFRACOST_TRUST_ENVFILE=true to load the whole file.", key, path)
++			continue
++		}
++		if _, ok := os.LookupEnv(key); ok {
++			continue
++		}
++		if err := os.Setenv(key, value); err != nil {
+ 			return err
+ 		}
+ 	}
+```
+
+**File**: `internal/config/envfile_test.go` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
++package config
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++var envFileBlockedVars = []string{
++	"GIT_SSH_COMMAND",
++	"git_config_count",
++	"TERRAGRUNT_TFPATH",
++	"ENV",
++	"AWS_CONFIG_FILE",
++	"CI_API_V4_URL",
++	"INFRACOST_PRICING_API_ENDPOINT",
++	"PRICING_API_ENDPOINT",
++	"INFRACOST_POLICY_V2_API_ENDPOINT",
++	"INFRACOST_DASHBOARD_ENDPOINT",
++	"DASHBOARD_ENDPOINT",
++	"INFRACOST_JSON_DUMP_PATH",
++}
++
++var envFileAllowedVars = []string{
++	"INFRACOST_TEST_SAFE",
++	"INFRACOST_TERRAGRUNT_FLAGS",
++	"INFRACOST_GIT_SSL_CAINFO",
++	"INFRACOST_ENV",
++	"REGISTRY_PROXY",
++	"JSON_DUMP_PATH",
++}
++
++func writeEnvFile(t *testing.T, dir string) string {
++	t.Helper()
++
++	content := "INFRACOST_TEST_PRESET=fromfile\n"
++	for _, k := range append(envFileBlockedVars, envFileAllowedVars...) {
++		content += k + "=fromfile\n"
++		t.Setenv(k, "")
++		require.NoError(t, os.Unsetenv(k))
++	}
++	t.Setenv("INFRACOST_TEST_PRESET", "fromenv")
++
++	path := filepath.Join(dir, ".env")
++	require.NoError(t, os.WriteFile(path, []byte(content), 0600))
++	return path
++}
++
++func TestLoadUntrustedEnvFile(t *testing.T) {
++	path := writeEnvFile(t, t.TempDir())
++
++	require.NoError(t, loadUntrustedEnvFile(path))
++
++	assert.Equal(t, "fromenv", os.Getenv("INFRACOST_TEST_PRESET"))
++	for _, k := range envFileAllowedVars {
++		assert.Equal(t, "fromfile", os.Getenv(k), k)
++	}
++	for _, k := range envFileBlockedVars {
++		_, ok := os.LookupEnv(k)
++		assert.False(t, ok, k)
++	}
++}
++
++func TestLoadDotEnvTrusted(t *testing.T) {
++	dir := t.TempDir()
++	writeEnvFile(t, dir)
++	t.Chdir(dir)
++	t.Setenv("INFRACOST_TRUST_ENVFILE", "true")
++
++	require.NoError(t, loadDotEnv())
++
++	assert.Equal(t, "fromenv", os.Getenv("INFRACOST_TEST_PRESET"))
++	for _, k := range append(envFileBlockedVars, envFileAllowedVars...) {
++		assert.Equal(t, "fromfile", os.Getenv(k), k)
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3642** (2026-11-13): fix(config): ignore sensitive vars in working-directory .env (@liamg)
 - **PR #3641** (2026-11-10): fix(deps): bump brotli, go-jose and klauspost/compress (@aliscott)
 - **PR #3637** (2026-11-03): ci: release from master by dispatch, not from a pushed tag (@aliscott)
 - **PR #3636** (2026-11-03): ci: switch docker hub login to oidc [TRK-1401] (@owenrumney)
 - **PR #3635** (closed): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 (@dependabot[bot])
 - **PR #3634** (2026-10-21): fix: build with Go 1.26.10 and Alpine 3.24 (@liamg)
-- **PR #3633** (2026-10-15): docs: add AGENTS.md steering contributors to discussions for EOL 0.10.x repo (@glenngillen)
 
 ---
 
@@ -934,32 +935,77 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump brotli, go-jose and klauspost/compress (#3641)
+## X. config): ignore sensitive vars in working-directory .env (#3642)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/config/config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40ad0ac9`: deps): bump brotli, go-jose and klauspost/compress (#3641). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34e9cd06`: config): ignore sensitive vars in working-directory .env (#3642). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/config/config.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/andybalholm/brotli v1.2.8 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
-	github.com/klauspost/compress v1.20.2 // indirect
+		if os.Getenv("INFRACOST_TRUST_ENVFILE") == "true" {
+			return godotenv.Load()
+		}
+		return loadUntrustedEnvFile(".env")
+	}
+
+	return nil
+}
+
+// The working directory .env may come from an untrusted checkout (e.g. a PR),
+// so vars that can run commands or send credentials to another host are
+// skipped.
+var blockedEnvFilePrefixes = []string{
+	"GIT_",
+	"SSH_",
+	"LD_",
+	"DYLD_",
+	"TF_CLI_",
+	"TF_PLUGIN_",
+	"TERRAGRUNT_",
+	"TG_",
+}
+
+var blockedEnvFileVars = map[string]bool{
+	"PATH":            true,
+	"HOME":            true,
+	"XDG_CONFIG_HOME": true,
+	"BASH_ENV":        true,
+	"ENV":             true,
+	"SHELL":           true,
+	"HTTP_PROXY":      true,
+	"HTTPS_PROXY":     true,
+	"ALL_PROXY":       true,
+	"NO_PROXY":        true,
+	"SSL_CERT_FILE":   true,
+	"SSL_CERT_DIR":    true,
+
+	"AWS_CONFIG_FILE":                           true,
+	"AWS_SHARED_CREDENTIALS_FILE":               true,
+	"GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES": true,
+	"CI_API_V4_URL":                             true,
+	"TERRAFORM_CLOUD_HOST":                      true,
+
+	"INFRACOST_REGISTRY_PROXY": true,
+	"INFRACOST_JSON_DUMP_PATH": true,
+}
+
+// Config fields that envconfig reads both with and without the INFRACOST_
+//
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/andybalholm/brotli v1.1.1 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-	github.com/klauspost/compress v1.18.7 // indirect
+		err := godotenv.Load()
+		if err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40ad0ac9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34e9cd06` are properly handled with clean fallback behavior.

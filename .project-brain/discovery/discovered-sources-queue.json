@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T14:26:28.690Z",
+  "updated_at": "2026-11-13T14:34:30.358Z",
   "stats": {
-    "total_discovered": 2535,
-    "approved_pending_harvest": 2364,
+    "total_discovered": 2557,
+    "approved_pending_harvest": 2386,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2354,
+      "COMMUNITY_AND_EXPERT": 2376,
       "OFFICIAL_DOCUMENTATION": 95,
       "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
@@ -54592,6 +54592,490 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
         "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-4528AFCF38AA": {
+      "id": "SRC-4528AFCF38AA",
+      "url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "title": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
+        "fileName": "hf-supersoniclabs-julia-1-learnings.md"
+      }
+    },
+    "SRC-C73EFEDD6233": {
+      "id": "SRC-C73EFEDD6233",
+      "url": "https://github.com/tauri-apps/tauri",
+      "title": "https://github.com/tauri-apps/tauri",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.759Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-76A30D9E0682": {
+      "id": "SRC-76A30D9E0682",
+      "url": "https://go.microsoft.com/fwlink/p/?LinkId=2124703",
+      "title": "https://go.microsoft.com/fwlink/p/?LinkId=2124703",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.777Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-4F4CE10DFFDF": {
+      "id": "SRC-4F4CE10DFFDF",
+      "url": "https://go.microsoft.com/fwlink/?linkid=2099617",
+      "title": "https://go.microsoft.com/fwlink/?linkid=2099617",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-6E68D25ADDF4": {
+      "id": "SRC-6E68D25ADDF4",
+      "url": "https://go.microsoft.com/fwlink/?linkid=2124701",
+      "title": "https://go.microsoft.com/fwlink/?linkid=2124701",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-D7BCC56336C2": {
+      "id": "SRC-D7BCC56336C2",
+      "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files",
+      "title": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.831Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-FB229BEEFB54": {
+      "id": "SRC-FB229BEEFB54",
+      "url": "https://github.com/burtonageo/cargo-bundle",
+      "title": "https://github.com/burtonageo/cargo-bundle",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.847Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-961D046F1350": {
+      "id": "SRC-961D046F1350",
+      "url": "https://github.com/([^",
+      "title": "https://github.com/([^",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-96C5299AD990": {
+      "id": "SRC-96C5299AD990",
+      "url": "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip",
+      "title": "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-F5151434AE08": {
+      "id": "SRC-F5151434AE08",
+      "url": "https://someotherwebsite.com/somefile.zip",
+      "title": "https://someotherwebsite.com/somefile.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:29.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-28F412D2FE7E": {
+      "id": "SRC-28F412D2FE7E",
+      "url": "https://mirror.example.com/",
+      "title": "https://mirror.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-590295694563": {
+      "id": "SRC-590295694563",
+      "url": "https://mirror.example.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip",
+      "title": "https://mirror.example.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-6F860FD33F4E": {
+      "id": "SRC-6F860FD33F4E",
+      "url": "https://mirror.example.com/wix311-binaries.zip",
+      "title": "https://mirror.example.com/wix311-binaries.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-C50C07F860E2": {
+      "id": "SRC-C50C07F860E2",
+      "url": "https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Optimizing/Optimizing.html",
+      "title": "https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Optimizing/Optimizing.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.114Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-D73BA8DEEB5C": {
+      "id": "SRC-D73BA8DEEB5C",
+      "url": "https://schema.tauri.app/config/%7Bversion",
+      "title": "https://schema.tauri.app/config/%7Bversion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-02AAEBB13383": {
+      "id": "SRC-02AAEBB13383",
+      "url": "https://raw.githubusercontent.com/tauri-apps/tauri/tauri-v%7Bversion",
+      "title": "https://raw.githubusercontent.com/tauri-apps/tauri/tauri-v%7Bversion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.147Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-5452F04735D4": {
+      "id": "SRC-5452F04735D4",
+      "url": "https://crates.io/api/v1/crates/%7Bcrate_",
+      "title": "https://crates.io/api/v1/crates/%7Bcrate_",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-26E6CF14DBA0": {
+      "id": "SRC-26E6CF14DBA0",
+      "url": "https://*.mydomain.dev/",
+      "title": "https://*.mydomain.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-CA6D1BA7268D": {
+      "id": "SRC-CA6D1BA7268D",
+      "url": "https://urlpattern.spec.whatwg.org/",
+      "title": "https://urlpattern.spec.whatwg.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.242Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-8B0C08344FBA": {
+      "id": "SRC-8B0C08344FBA",
+      "url": "https://mydomain.dev/api/*",
+      "title": "https://mydomain.dev/api/*",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.258Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-82493D5F59DB": {
+      "id": "SRC-82493D5F59DB",
+      "url": "https://doc.rust-lang.org/cargo/reference/manifest.html",
+      "title": "https://doc.rust-lang.org/cargo/reference/manifest.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-025E3E273DF6": {
+      "id": "SRC-025E3E273DF6",
+      "url": "https://github.com/yonaskolb/XcodeGen",
+      "title": "https://github.com/yonaskolb/XcodeGen",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T14:34:30.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
       }
     }
   }

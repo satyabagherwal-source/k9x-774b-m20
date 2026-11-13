@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:26:05.369Z",
-  "total_cycles_completed": 9266,
-  "total_learnings_persisted": 9266,
-  "total_rules_promoted": 9029,
+  "last_updated": "2026-11-13T14:34:08.277Z",
+  "total_cycles_completed": 9270,
+  "total_learnings_persisted": 9270,
+  "total_rules_promoted": 9032,
   "history": [
-    {
-      "timestamp": "2026-11-12T23:41:45.899Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:41:55.999Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:41:57.649Z",
-      "repository": "giancarloerra/SocratiCode",
-      "learningId": "learn-github-giancarloerra-socraticode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:42:00.854Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T23:42:16.740Z",
       "repository": "fastapi/fastapi",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-13T14:26:05.369Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:33:40.310Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:34:00.185Z",
+      "repository": "tauri-apps/tauri",
+      "learningId": "learn-github-tauri-apps-tauri",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:34:03.414Z",
+      "repository": "infracost/infracost",
+      "learningId": "learn-github-infracost-infracost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:34:08.277Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

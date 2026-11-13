@@ -9520,3 +9520,8 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `79914032` | Multi-dimensional audit evidence | 2026-11-13T14:26:01.150Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `33d90342` | Multi-dimensional audit evidence | 2026-11-13T14:26:05.362Z |
 | `learn-dom-d-98796bf2` | `project://hf-xingchen-agi-xing4.0-29b-a4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | 2026-11-13T14:26:28.004Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-13T14:33:40.305Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `5edd31c8` | Multi-dimensional audit evidence | 2026-11-13T14:34:00.159Z |
+| `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `34e9cd06` | Multi-dimensional audit evidence | 2026-11-13T14:34:03.406Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `e00dd078` | Multi-dimensional audit evidence | 2026-11-13T14:34:08.257Z |
+| `learn-dom-d-acecc835` | `project://hf-supersoniclabs-julia-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | 2026-11-13T14:34:29.708Z |

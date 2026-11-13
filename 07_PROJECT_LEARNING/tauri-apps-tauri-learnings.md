@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
-> **Source Version**: `9a66eab8`  
+> **Source Version**: `5edd31c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T04:42:16.290Z  
+> **Timestamp**: 2026-11-13T14:33:47.195Z  
 > **Learning ID**: `learn-github-tauri-apps-tauri`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T04:42:16.150Z  
+> **Harvest Timestamp**: 2026-11-13T14:33:47.190Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 112626 stars
+- **Stars / Engagement**: 112881 stars
 
 ---
 
@@ -2262,13 +2262,13 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16478** (2026-11-09): **fix(bundler): close the main binary before running the Windows sign command**
-  *Symptoms*: Closes #16477  `bundle_project` opens the main binary to make its unsigned backup copy, but the handle was never dropped, so it stayed open through the whole bundling loop, including every `try_sign` call. On Windows a `signCommand` that writes a signed copy and renames it over the exe then fails with `Access is denied. (os error 5)`, since the file can't be replaced while another handle has it open. The handle is only needed for the copy, so this drops it right after.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through 17948a5529573bf55bb717a1d7ab7e95e391acf7 There are 8 changes which include @tauri-apps/api with patch, tauri-bundler with patch, tauri-cli with patch, @tauri-apps/cli with patch, tauri-runtime with patch, tauri with patch, tauri-runtime-wry with patch, tauri-utils with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.4 | 2.12.5 |  tauri-utils | 2.10.2 | 2.10.3 |  tauri-bundler | 2.10.4 | 2.10.5 |  tauri-runtime | 2.12.2 | 2.12.3 |  tauri-runtime-wry | 2.12.3 | 2.12.4 |  tauri-codegen | 2.7.4 | 2.7.5 |  tauri-macros | 2.7.4 | 2.7.5 |  tauri-plugin | 2.7.2 | 2.7.3 |  tauri-build | 2.7.4 | 2.7.5 |  tauri | 2.12.5 | 2.12.6 |  @tauri-apps/cli | 2.12.4 | 2.12.5 |  tauri-cli | 2.12.4 | 2.12.5 |  </details>  [Add another chang
+- **Issue #16512** (2026-11-12): **fix(macos): prevent scroll jump during RTL text input in WKWebView**
+  *Symptoms*: ## Summary  Fixes #15330  On certain macOS/WebKit versions, typing RTL text with spaces (triggering word wrap) in a `contenteditable` element causes ancestor scroll containers to jump on every keystroke. This happens because WebKit's native scroll-into-view uses incorrect caret geometry for wrapped RTL lines, and the scroll bypasses JavaScript event handlers entirely.  ## Approach  Injects an initialization script (macOS only) that temporarily freezes scrollable ancestor containers during RTL text input:  1. Listens for `beforeinput` events on contenteditable and textarea elements with RTL direction 2. Saves the scroll position of all scrollable ancestor elements 3. Sets `overflow: hidden` on those ancestors so WebKit's native scroll-into-view cannot move them 4. Restores overflow and scroll positions in `requestAnimationFrame` (before the next paint)  This is a zero-cost fix for non-RTL users (the listener exits early for LTR elements) and has no visual impact since the overflow change and restoration happen within a single animation frame.  ## Files changed  - `crates/tauri/src/webview/scripts/rtl-scroll-fix.js` — new initialization script - `crates/tauri/src/webview/plugin.rs` — include the script on macOS builds - `.changes/fix-rtl-scroll-jump.md` — changefile  ## Test plan  - [ ] On macOS: create a Tauri app with a scrollable container and a contenteditable element with `dir="auto"` or `dir="rtl"` - [ ] Scroll down to create an offset, then type Arabic text with spaces (
 
-- **Issue #16477** (2026-11-09): **[bug] Windows: bundler keeps the main binary open while signCommand runs**
-  *Symptoms*: ### Describe the bug  On Windows, `tauri build` opens the main binary and keeps that handle open for the whole bundling loop, including while the configured `signCommand` runs. A sign command that replaces the exe (write a signed copy next to it, then rename it over the original) fails with `Access is denied. (os error 5)`. A tool that rewrites the file in place, like signtool, works.  In `crates/tauri-bundler/src/bundle.rs` (tauri-cli 2.12.4, and still the same on `dev`):  ```rust let mut main_binary_original = std::fs::File::open(&main_binary_path)     .fs_context("can't open main binary", &main_binary_path)?; std::io::copy(&mut main_binary_original, &mut main_binary_copy)?; ```  `main_binary_original` is only used for that one copy, but it is never dropped, so it lives until `bundle_project` returns. The `windows::sign::try_sign(&main_binary_path, settings)?` call that runs the sign command is inside the loop below, so the handle is still open there.  Windows does not let `MoveFileExW` with `MOVEFILE_REPLACE_EXISTING` replace a file that another handle has open, even though that handle allows others to write to it.  I found this through a user of a third-party signing CLI (https://github.com/Le-Syl21/ssign) whose release job failed on `windows-latest` right after the certificate had signed the file:  ``` atomically replacing ...\wirecat-desktop.exe: Access is denied. (os error 5) ```  I read the code to check that the handle is really Tauri's. I did not reproduce it on a W
+- **Issue #16510** (2026-11-12): **refactor: release `WryWebviewDispatcher::window_id` early**
+  *Symptoms*: Fix #16169 (I can't reproduce it, but this change should make multiple calls at once slightly more efficient)  
+  **Post-Mortem & Fix Analysis**:
+  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through 5e55d8459c8874217c5ed827baedcb5841a63b68 There are 9 changes which include @tauri-apps/api with patch, tauri-bundler with patch, tauri-cli with patch, @tauri-apps/cli with patch, tauri-codegen with patch, tauri-runtime with patch, tauri with patch, tauri-runtime-wry with patch, tauri-utils with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.4 | 2.12.5 |  tauri-utils | 2.10.2 | 2.10.3 |  tauri-bundler | 2.10.4 | 2.10.5 |  tauri-runtime | 2.12.2 | 2.12.3 |  tauri-runtime-wry | 2.12.3 | 2.12.4 |  tauri-codegen | 2.7.4 | 2.7.5 |  tauri-macros | 2.7.4 | 2.7.5 |  tauri-plugin | 2.7.2 | 2.7.3 |  tauri-build | 2.7.4 | 2.7.5 |  tauri | 2.12.5 | 2.12.6 |  @tauri-apps/cli | 2.12.4 | 2.12.5 |  tauri-cli | 2.12.4 | 2.12.5 |  </de
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2285,10 +2285,153 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a66eab8` (2026-11-09)
-**Commit Message**: fix(bundler): close the main binary before running the Windows sign command (#16478)
+### Incident Patch 1: `7facf4f2` (2026-11-12)
+**Commit Message**: fix(cli): keep watching folders matched by .taurignore, filter entries and events (#16398)
 
-**File**: `.changes/bundler-close-main-binary-before-sign.md` (added, +7/-0)
+* fix(cli): don't ignore own directory in .taurignore
+
+Closes #9163.
+
+Prevents `IgnoreMatcher` from treating `.taurignore`'s root directory as ignored when using `/*`, matching standard `.gitignore` behavior. Includes unit tests.
+
+* fix(cli): keep watching folders matched by .taurignore, filter entries and events
+
+Walk every watch folder even when an ignore pattern such as `/*` matches the folder itself, and apply the ignore rules to its entries and to change events. This replaces the root special case in IgnoreMatcher::is_ignore.
+
+---------
+
+Co-authored-by: ashokram-si <[REDACTED_EMAIL]>
+
+**File**: `.changes/fix-taurignore-root.md` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++---
++"tauri-cli": "patch:bug"
++"@tauri-apps/cli": "patch:bug"
++---
++
++Fix `tauri dev` not watching the app at all when its `.taurignore` contains a pattern like `/*` that matches every entry at the top level, even if other entries are re-included with `!` negations. Watch folders are now always watched; ignore rules apply to their entries and to change events.
+```
+
+**File**: `crates/tauri-cli/src/interface/rust.rs` (modified, +69/-17)
+```diff
+@@ -402,6 +402,26 @@ fn lookup<F: FnMut(FileType, PathBuf)>(dir: &Path, mut f: F) {
+   }
+ }
+ 
++/// The paths the dev watcher watches: the entries of every watch folder that the ignore files
++/// don't exclude. Every folder is walked, even when a pattern such as `/*` matches the folder
++/// itself; ignore rules apply to its entries here and to every change event.
++fn watch_targets(watch_folders: &[PathBuf]) -> Vec<(PathBuf, RecursiveMode)> {
++  let mut targets = Vec::new();
++  for path in watch_folders {
++    lookup(path, |file_type, p| {
++      if p != *path {
++        let mode = if file_type.is_dir() {
++          RecursiveMode::Recursive
++        } else {
++          RecursiveMode::NonRecursive
++        };
++        targets.push((p, mode));
++      }
++    });
++  }
++  targets
++}
++
+ fn dev_options(
+   mobile: bool,
+   args: &mut Vec<String>,
+@@ -533,23 +553,12 @@ impl Rust {
+       }
+     })
+     .unwrap();
+-    for path in watch_folders {
+-      if !ignore_matcher.is_ignore(&path, true) {
+-        log::info!("Watching {} for changes...", display_path(&path));
+-        lookup(&path, |file_type, p| {
+-          if p != path {
+-            log::debug!("Watching {} for changes...", display_path(&p));
+-            let _ = watcher.watch(
+-              &p,
+-              if file_type.is_dir() {
+-                RecursiveMode::Recursive
+-              } else {
+-                RecursiveMode::NonRecursive
+-              },
+-            );
+-          }
+-        });
+-      }
++    for path in &watch_folders {
++      log::info!("Watching {} for changes...", display_path(path));
++    }
++    for (path, mode) in watch_targets(&watch_folders) {
++      log::debug!("Watching {} for changes...", display_path(&path));
++      let _ = watcher.watch(&path, mode);
+     }
+ 
+     while let Ok(events) = rx.recv() {
+@@ -1792,6 +1801,49 @@ mod tests {
+     );
+   }
+ 
++  fn taurignore_root_fixture() -> tempfile::TempDir {
++    let temp_dir = tempfile::tempdir().unwrap();
++    let dir = temp_dir.path();
++    fs::create_dir_all(dir.join("src")).unwrap();
++    fs::create_dir_all(dir.join("assets")).unwrap();
++    fs::write(dir.join("src/main.rs"), "").unwrap();
++    fs::write(dir.join("Cargo.toml"), "").unwrap();
++    fs::write(dir.join("README.md"), "").unwrap();
++    fs::write(dir.join(".taurignore"), "/*\n!/*.toml\n!/*.rs\n!/src\n").unwrap();
++    temp_dir
++  }
++
++  #[test]
++  fn watch_targets_watch_a_folder_whose_taurignore_matches_it() {
++    let temp_dir = taurignore_root_fixture();
++    let dir = temp_dir.path();
++
++    let mut watched: Vec<PathBuf> = watch_targets(&[dir.to_path_buf()])
++      .into_iter()
++      .map(|(path, _)| path.strip_prefix(dir).unwrap().to_path_buf())
++      .collect();
++    watched.sort();
++
++    assert_eq!(
++      watched,
++      vec![PathBuf::from("Cargo.toml"), PathBuf::from("src")]
++    );
++  }
++
++  #[test]
++  fn ignore_matcher_filters_events_under_a_root_wide_pattern() {
++    let temp_dir = taurignore_root_fixture();
++    let dir = temp_dir.path();
++
++    let ignore_matcher = build_ignore_matcher(dir);
++
++    assert!(!ignore_matcher.is_ignore(&dir.join("src"), true));
++    assert!(!ignore_matcher.is_ignore(&dir.join("src/main.rs"), false));
++    assert!(!ignore_matcher.is_ignore(&dir.join("Cargo.toml"), false));
++    assert!(ignore_matcher.is_ignore(&dir.join("README.md"), false));
++    assert!(ignore_matcher.is_ignore(&dir.join("assets"), true));
++  }
++
+   #[test]
+   fn parse_cargo_option() {
+     let args = [
+```
+
+---
+
+### Incident Patch 2: `5edd31c8` (2026-11-12)
+**Commit Message**: fix(bundler): don't re-create a deleted desktop shortcut on MSI upgrade (#16506)
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `.changes/bundler-msi-desktop-shortcut-upgrade.md` (added, +7/-0)
 ```diff
 @@ -0,0 +1,7 @@
 +---
@@ -2297,28 +2440,79 @@ Observed empirical fixes and code patches:
 +"@tauri-apps/cli": "patch:bug"
 +---
 +
-+Fix a Windows `signCommand` that replaces the main binary (for example by writing a signed copy and renaming it over the original) failing with `Access is denied. (os error 5)`. The bundler no longer keeps the main binary open after copying it.
++Fix the MSI installer re-creating the desktop shortcut on every update even after the user deleted it. The shortcut is now only re-created during an upgrade if it still exists, matching the NSIS installer.
 ```
 
-**File**: `crates/tauri-bundler/src/bundle.rs` (modified, +1/-0)
+**File**: `crates/tauri-bundler/src/bundle/windows/msi/main.wxs` (modified, +8/-0)
 ```diff
-@@ -143,6 +143,7 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<Bundle>> {
-   let mut main_binary_original = std::fs::File::open(&main_binary_path)
-     .fs_context("can't open main binary", &main_binary_path)?;
-   std::io::copy(&mut main_binary_original, &mut main_binary_copy)?;
-+  drop(main_binary_original);
+@@ -83,6 +83,13 @@
+         </Property>
  
-   let mut bundles = Vec::<Bundle>::new();
-   for package_type in &package_types {
+         <!-- launch app checkbox -->
++        <!-- Only re-create the desktop shortcut during a major upgrade if the user still has it -->
++        <Property Id="DESKTOPSHORTCUTEXISTS" Secure="yes">
++            <DirectorySearch Id="DesktopShortcutSearch" Path="[DesktopFolder]" Depth="0">
++                <FileSearch Id="DesktopShortcutFile" Name="{{product_name}}.lnk" />
++            </DirectorySearch>
++        </Property>
++
+         <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="!(loc.LaunchApp)" />
+         <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
+         <CustomAction Id="LaunchApplication" Impersonate="yes" FileKey="Path" ExeCommand="[LAUNCHAPPARGS]" Return="asyncNoWait" />
+@@ -113,6 +120,7 @@
+         <Directory Id="TARGETDIR" Name="SourceDir">
+             <Directory Id="DesktopFolder" Name="Desktop">
+                 <Component Id="ApplicationShortcutDesktop" Guid="*">
++                    <Condition>NOT WIX_UPGRADE_DETECTED OR DESKTOPSHORTCUTEXISTS</Condition>
+                     <Shortcut Id="ApplicationDesktopShortcut" Name="{{product_name}}" Description="Runs {{product_name}}" Target="[!Path]" WorkingDirectory="INSTALLDIR" />
+                     <RemoveFolder Id="DesktopFolder" On="uninstall" />
+                     <RegistryValue Root="HKCU" Key="Software\\{{manufacturer}}\\{{product_name}}" Name="Desktop Shortcut" Type="integer" Value="1" KeyPath="yes" />
+```
+
+---
+
+### Incident Patch 3: `b0bd849c` (2026-11-12)
+**Commit Message**: fix(ci): `webkit2gtk-driver` is now `webkitgtk-webdriver` on ubuntu 26 (#16509)
+
+* fix(ci): webkit2gtk-driver not on ubuntu 26
+
+* `webkit2gtk-driver` to `webkitgtk-webdriver`?
+
+* update readme
+
+**File**: `.github/workflows/test-api-e2e.yml` (modified, +1/-1)
+```diff
+@@ -76,7 +76,7 @@ jobs:
+           sudo apt-get update
+           sudo apt-get install -y \
+             libwebkit2gtk-4.1-dev \
+-            webkit2gtk-driver \
++            webkitgtk-webdriver \
+             libgtk-3-dev \
+             libayatana-appindicator3-dev \
+             librsvg2-dev \
+```
+
+**File**: `packages/api-e2e/README.md` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@ Platform driver dependencies:
+ | Platform | Requirement                                                                                                                                                                                                        |
+ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+ | macOS    | `CN_API_KEY` env var (CrabNebula Cloud). The automation plugin and test-runner-backend are wired up already.                                                                                                       |
+-| Linux    | `webkit2gtk-driver` package (provides `WebKitWebDriver`).                                                                                                                                                          |
++| Linux    | `webkit2gtk-driver` / `webkitgtk-webdriver` (>= Ubuntu 26.04) package (provides `WebKitWebDriver`).                                                                                                                |
+ | Windows  | `msedgedriver.exe` matching your Edge version, on `PATH`. Run the suite unelevated.                                                                                                                                |
+ | Android  | The usual Tauri Android setup (`ANDROID_HOME`, `NDK_HOME`, a JDK), plus a running emulator or a connected device with USB debugging. Network access the first time, for the chromedriver download.                 |
+ | iOS      | macOS with Xcode and an iOS simulator runtime. `tauri ios init` installs [xcodegen](https://github.com/yonaskolb/XcodeGen) through Homebrew if missing. The first session compiles WebDriverAgent (a few minutes). |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16478** (2026-11-09): fix(bundler): close the main binary before running the Windows sign command (@lazerg)
-- **PR #16466** (2026-11-05): chore(deps): update dependency eslint-plugin-security to v4.2.1 (@renovate[bot])
-- **PR #16464** (2026-11-05): fix(core): apply dataStoreIdentifier from the window config (fix #16461) (@lazerg)
-- **PR #16463** (2026-11-05): build(deps): bump follow-redirects from 1.16.1 to 1.16.2 (@dependabot[bot])
-- **PR #16462** (2026-11-05): fix(core): don't bring the app to the front on macOS restart (fix #16458) (@lazerg)
-- **PR #16456** (2026-11-05): refactor: take `Vec<Webview<R>>` in `emit_js` (@Legend-Master)
+- **PR #16512** (closed): fix(macos): prevent scroll jump during RTL text input in WKWebView (@sharmis-tp)
+- **PR #16510** (2026-11-12): refactor: release `WryWebviewDispatcher::window_id` early (@Legend-Master)
+- **PR #16509** (2026-11-12): fix(ci): `webkit2gtk-driver` is now `webkitgtk-webdriver` on ubuntu 26 (@Legend-Master)
+- **PR #16506** (2026-11-12): fix(bundler): don't re-create a deleted desktop shortcut on MSI upgrade (@TakahiroNago)
+- **PR #16504** (2026-11-10): fix(ci): e2e tests on unix platforms (@Legend-Master)
+- **PR #16502** (2026-11-10): chore(deps): update rust crate sha2 to 0.11 (@renovate[bot])
 
 ---
 
@@ -2338,27 +2532,26 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bundler): close the main binary before running the Windows sign command (#16478)
+## X. cli): keep watching folders matched by .taurignore, filter entries and events (#
 
 **RULE**:
-When implementing operations in `.changes/bundler-close-main-binary-before-sign.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/fix-taurignore-root.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a66eab8`: bundler): close the main binary before running the Windows sign command (#16478). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7facf4f2`: cli): keep watching folders matched by .taurignore, filter entries and events (#16398). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/bundler-close-main-binary-before-sign.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/fix-taurignore-root.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ---
-"tauri-bundler": "patch:bug"
 "tauri-cli": "patch:bug"
 "@tauri-apps/cli": "patch:bug"
 ---
 
-Fix a Windows `signCommand` that replaces the main binary (for example by writing a signed copy and renaming it over the original) failing with `Access is denied. (os error 5)`. The bundler no longer keeps the main binary open after copying it.
+Fix `tauri dev` not watching the app at all when its `.taurignore` contains a pattern like `/*` that matches every entry at the top level, even if other entries are re-included with `!` negations. Watch folders are now always watched; ignore rules apply to their entries and to change events.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2368,4 +2561,4 @@ Fix a Windows `signCommand` that replaces the main binary (for example by writin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a66eab8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7facf4f2` are properly handled with clean fallback behavior.

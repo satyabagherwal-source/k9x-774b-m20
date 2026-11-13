@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `86c191ba`  
+> **Source Version**: `e00dd078`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:28:05.318Z  
+> **Timestamp**: 2026-11-13T14:33:54.373Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:27:53.871Z  
+> **Harvest Timestamp**: 2026-11-13T14:33:54.363Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31883 stars
+- **Stars / Engagement**: 31894 stars
 
 ---
 
@@ -2321,397 +2321,338 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bebdf055` (2026-11-10)
-**Commit Message**: fix(tests): lift rss_oom_deny_ratio during populate in flaky test_rss_oom_ratio (#8762)
+### Incident Patch 1: `f1d175fa` (2026-11-13)
+**Commit Message**: fix(search): hold the HNSW resize lock in removals and vector updates (#8804)
 
-fix(tests): lift rss_oom_deny_ratio during populate
+Writers share the graph lock, so removals on one shard run while insertions on another grow
+the graph. DoAdd holds resize_mutex_ while it writes a node, because resizeIndex reallocates
+the level-0 block, but DoRemove and UpdateVectorData wrote the delete mark and the vector
+pointer into that block without it, and looked the label up without label_lookup_lock while
+other shards insert. A capacity doubling or a rehash on another shard could make them write
+into freed memory or lose the stub that keeps a deleted node from pointing into a freed value.
 
-DEBUG POPULATE writes go through the same RSS deny check the test verifies, so the populate was cut off at the threshold and any small RSS dip failed the test. This sets the ratio to 0 during populate and restores it afterward.
+Take resize_mutex_ for reading in both, and let markDelete hand out the internal id it finds
+under the lock.
 
-Fixes #8677
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-Signed-off-by: Hoang Nguyen Bich Ngoc <[REDACTED_EMAIL]>
-
-**File**: `tests/dragonfly/memory_test.py` (modified, +4/-0)
+**File**: `src/core/search/hnsw_alg.h` (modified, +3/-1)
 ```diff
-@@ -138,7 +138,11 @@ async def test_rss_oom_ratio(df_factory: DflyInstanceFactory, admin_port):
-     df_server.start()
+@@ -788,7 +788,7 @@ template <typename dist_t> class HierarchicalNSW : public hnswlib::AlgorithmInte
+   /*
+    * Marks an element with the given label deleted, does NOT really change the current graph.
+    */
+-  HnswErrorStatus markDelete(labeltype label) {
++  HnswErrorStatus markDelete(labeltype label, tableint* internal_id = nullptr) {
+     // lock all operations with element by label
+     std::unique_lock<std::mutex> lock_label(getLabelOpMutex(label));
  
-     client = df_server.client()
-+    # Populate writes are subject to the rss deny check too, so disable it while populating
-+    ratio = (await client.config_get("rss_oom_deny_ratio"))["rss_oom_deny_ratio"]
-+    await client.config_set("rss_oom_deny_ratio", 0)
-     await client.execute_command("DEBUG POPULATE 10100 key 40000 RAND")
-+    await client.config_set("rss_oom_deny_ratio", ratio)
- 
-     await asyncio.sleep(1)  # Wait for another RSS heartbeat update in Dragonfly
- 
-```
-
----
-
-### Incident Patch 2: `c882f31e` (2026-11-10)
-**Commit Message**: fix(facade): prevent V2 pipeline stalls under backpressure (#8771)
-
-* fix(facade): prevent V2 pipeline stalls under backpressure
-
-Allow already-parsed commands to progress above the pipeline limit and
-check reply readiness only for in-flight commands. Subscribe to the
-current async head before waiting to avoid losing completion wakeups.
-
-Add regressions for queued commands and consecutive pending replies.
-
-Fixes #8754
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-* fix: review comments
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-* fix: review comments
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-**File**: `src/facade/dragonfly_connection.cc` (modified, +24/-20)
-```diff
-@@ -3355,8 +3355,9 @@ Connection::ExecuteBatchResult Connection::ExecuteBatch() {
-     //   mid-flight waits for this command. A lone V2 command sets no other flag, so without it the
-     //   write can slip past CLIENT PAUSE.
-     // - async_dispatch (flush-before-block): makes MainService::DispatchCommand flush the buffered
--    //   pipeline replies before a blocking command (e.g. BLPOP) parks the fiber. Gating it avoids a
--    //   bogus flush / blocking-in-pipeline stat bump for a lone blocking command.
-+    //   pipeline replies before a blocking command (e.g. BLPOP) parks the fiber. Buffered replies
-+    //   can outlive their commands, so a lone tail still needs this flag until the prefix flushes.
-+    //   A standalone blocking command with no buffered replies keeps the flag clear.
-     // V1 sets these flags elsewhere (DispatchSingle / the AsyncFiber paths), hence the ioloop_v2_
-     // guard.
-     //
-@@ -3370,7 +3371,7 @@ Connection::ExecuteBatchResult Connection::ExecuteBatch() {
-       DCHECK(!cc_->sync_dispatch);
-       DCHECK(!cc_->async_dispatch);
-       cc_->sync_dispatch = true;
--      cc_->async_dispatch = is_true_pipeline;
-+      cc_->async_dispatch = is_true_pipeline || reply_builder_->HasBufferedOutput();
-       fiber_park_spot_ = FiberParkSpot::kSimpleHop;
+@@ -798,6 +798,8 @@ template <typename dist_t> class HierarchicalNSW : public hnswlib::AlgorithmInte
+       return HnswErrorStatus::LABEL_NOT_FOUND;
      }
-     // parse-in-proactor can append commands while we are parked in DispatchCommandSimple. We might
-@@ -4175,7 +4176,7 @@ bool Connection::HasControlEvent() const {
-   // a reply became ready, control-plane messages are queued (dispatch_q_), the socket errored or
-   // closed (io_ec_), or a thread migration is pending and actionable.
+     tableint internalId = search->second;
++    if (internal_id)
++      *internal_id = internalId;
+     lock_table.unlock();
+     if (!markDeletedInternal(internalId)) {
+       return HnswErrorStatus::ELEMENT_ALREADY_DELETED;
+```
+
+**File**: `src/core/search/hnsw_index.cc` (modified, +20/-11)
+```diff
+@@ -11,6 +11,7 @@
  
--  return (parsed_head_ && parsed_head_->CanReply()) || !dispatch_q_.empty() || io_ec_ ||
-+  return (HasInFlightCommands() && parsed_head_->CanReply()) || !dispatch_q_.empty() || io_ec_ ||
-          IsReadyToMigrate();
- }
+ #include <atomic>
+ #include <cstddef>
++#include <mutex>
  
-@@ -4239,9 +4240,12 @@ void Connection::DrainQueuedCommands() {
- }
+ #include "base/logging.h"
+ #include "core/search/hnsw_alg.h"
+@@ -241,9 +242,9 @@ struct HnswlibAdapter {
+   }
  
- void Connection::ParkOnBackpressure(util::fb2::detail::Waiter* backpressure_waiter) {
--  // Draining (by the caller) may have freed enough memory; only park if still over the limit, to
--  // prevent a busy-spin.
--  if (!IsOverPipelineLimit())
-+  // Draining may expose a command ready to execute even while the queue remains over the limit.
-+  // Let already-parsed work free memory, but keep new input subject to parse throttling.
-+  auto should_wake = [this] {
-+    return !IsOverPipelineLimit() || HasCommandToExecute() || HasControlEvent();
-+  };
-+  if (should_wake())
-     return;
- 
-   auto& conn_stats = GetLocalConnStats();
-@@ -4266,13 +4270,7 @@ void Connection::ParkOnBackpressure(util::fb2::detail::Waiter* backpressure_wait
-   if (auto ec = FlushReplies(); ec)
-     return;
- 
--  io_event_.await([this]() {
--    // Leave the backpressure wait once our own pipeline pressure clears, or on any control event
--    // (the latter lets a terminating/migrating connection escape the park).
--    bool under_limit = !GetQueueBackpressure().IsPipelineBufferOverLimit(
--        GetLocalConnStats().pipeline_queue_bytes, parsed_cmd_q_len_);
--    return under_limit || HasControlEvent();
--  });
-+  io_event_.await(should_wake);
- }
- 
- auto Connection::FinalizeV2ParserError() -> IoLoopResult {
-@@ -4325,6 +4323,14 @@ auto Connection::IoLoopV2() -> IoLoopResult {
-   util::fb2::detail::Waiter cmd_completion_waiter{ioevent_cb};
-   absl::Cleanup waiter_cleanup = [this] { current_wait_.reset(); };
- 
-+  // ReplyBatch can advance the head and clear its subscription during this iteration. Subscribe
-+  // before either park, and only for a pending reply: a ready captured payload has no blocker.
-+  auto subscribe_to_head_completion = [this, &cmd_completion_waiter] {
-+    if (HasInFlightCommands() && !current_wait_ && !parsed_head_->CanReply()) {
-+      current_wait_.emplace(parsed_head_, &cmd_completion_waiter);
-+    }
-+  };
-+
-   // Waiter used for transient, conditional subscriptions (via check_or_subscribe)
-   // to global pipeline-backpressure relief notifications.
-   util::fb2::detail::Waiter backpressure_waiter{ioevent_cb};
-@@ -4334,11 +4340,6 @@ auto Connection::IoLoopV2() -> IoLoopResult {
-   do {
-     HandleMigrateRequest();
- 
--    // Register completion for current head if its pending and we don't wait on current_wait_.
--    if (HasInFlightCommands() && !current_wait_.has_value()) {
--      current_wait_.emplace(parsed_head_, &cmd_completion_waiter);
--    }
+   void DoRemove(GlobalDocId id) {
+-    auto it = copy_vector_ ? world_.label_lookup_.end() : world_.label_lookup_.find(id);
 -
-     if (!parser_error_draining_) {
-       if (shared_read_buf_enabled_) {
-         parse_status = ReadAndParseShared(/*from_proactor_callback=*/false);
-@@ -4367,6 +4368,7 @@ auto Connection::IoLoopV2() -> IoLoopResult {
-       const bool wait_for_reply = HasInFlightCommands();
-       const uint64_t idle_wait_start = CycleClock::Now();
- 
-+      subscribe_to_head_completion();
-       fiber_park_spot_ = FiberParkSpot::kIdleAwait;
-       const bool parked = io_event_.await([this] { return ShouldWakeIdle(); });
-       fiber_park_spot_ = FiberParkSpot::kNone;
-@@ -4408,8 +4410,10 @@
-```
-
-**File**: `src/facade/dragonfly_connection.h` (modified, +2/-2)
-```diff
-@@ -683,8 +683,8 @@ class Connection : public util::Connection {
-   // replies, freeing pipeline memory without growing the queue.
-   void DrainQueuedCommands();
- 
--  // IoLoopV2 backpressure park: if still over the pipeline limit (draining may have relieved it),
--  // subscribe to global memory-relief notifications, flush, and park until pressure clears.
-+  // IoLoopV2 backpressure park: if still over the pipeline limit and queued work cannot progress,
-+  // subscribe to global memory-relief notifications, flush, and park until either changes.
-   void ParkOnBackpressure(util::fb2::detail::Waiter* backpressure_waiter);
- 
-   // Guard of the current subscription to a parsed commands async task blocker
-```
-
-**File**: `src/facade/reply_builder.h` (modified, +5/-0)
-```diff
-@@ -99,6 +99,11 @@ class SinkReplyBuilder {
-   // `additional_bytes` hints how many bytes did not fit into the buffer to possibly grow it
-   void Flush(size_t additional_bytes = 0);
- 
-+  // True if reply bytes are waiting to be flushed.
-+  bool HasBufferedOutput() const {
-+    return total_size_ != 0;
-+  }
-+
-   std::error_code GetError() const {
-     return ec_;
+-    HnswErrorStatus status = world_.markDelete(id);
++    absl::ReaderMutexLock resize_lock(&resize_mutex_);
++    hnswlib::tableint internal_id = 0;
++    HnswErrorStatus status = world_.markDelete(id, &internal_id);
+     if (status != HnswErrorStatus::SUCCESS) {
+       VLOG(1) << "HnswlibAdapter::Remove failed with status: " << static_cast<int>(status)
+               << " for global id: " << id;
+@@ -255,9 +256,9 @@ struct HnswlibAdapter {
+     // pointer with stub_vector_ so the caller can free the original data.
+     // Uses a native-encoded 1.0 (not zero) because a zero-norm vector yields
+     // cosine distance 0 and would bias traversal toward deleted nodes.
+-    if (it != world_.label_lookup_.end()) {
++    if (!copy_vector_) {
+       const char* safe_ptr = reinterpret_cast<const char*>(stub_vector_.data());
+-      char* ptr_location = world_.getDataPtrByInternalId(it->second);
++      char* ptr_location = world_.getDataPtrByInternalId(internal_id);
+       memcpy(ptr_location, &safe_ptr, sizeof(void*));
+     }
    }
+@@ -425,16 +426,20 @@ struct HnswlibAdapter {
+   // Returns false if the node doesn't exist in the index.
+   bool UpdateVectorData(GlobalDocId id, const void* data) {
+     MRMWMutexLock lock(&mrmw_mutex_, MRMWMutex::LockMode::kWriteLock);
++    absl::ReaderMutexLock resize_lock(&resize_mutex_);
+ 
+     // Find the internal id for this label
+-    auto it = world_.label_lookup_.find(id);
+-    if (it == world_.label_lookup_.end()) {
+-      VLOG(1) << "UpdateVectorData: label " << id << " not found in index";
+-      return false;
++    size_t internal_id;
++    {
++      std::lock_guard<std::mutex> lock_table(world_.label_lookup_lock);
++      auto it = world_.label_lookup_.find(id);
++      if (it == world_.label_lookup_.end()) {
++        VLOG(1) << "UpdateVectorData: label " << id << " not found in index";
++        return false;
++      }
++      internal_id = it->second;
+     }
+ 
+-    size_t internal_id = it->second;
+-
+     // Copy/store the vector data based on copy_vector_ mode
+     if (world_.copy_vector_) {
+       // Owned mode: copy data into world's vector memory
+@@ -470,6 +475,10 @@ struct HnswlibAdapter {
+  private:
+   HnswSpace space_;
+   HierarchicalNSW<float> world_;
++
++  // Writers share mrmw_mutex_, and resizeIndex moves the level-0 block under them: readers of
++  // this mutex touch nodes (DoAdd, DoRemove, UpdateVectorData), writers replace the memory
++  // (ResizeIfFull, RestoreFromNodes).
+   absl::Mutex resize_mutex_;
+   mutable MRMWMutex mrmw_mutex_;
+   std::atomic_bool retired_ = false;
 ```
 
-**File**: `src/server/dragonfly_connection_test.cc` (modified, +132/-1)
+**File**: `src/core/search/search_test.cc` (modified, +45/-0)
 ```diff
-@@ -3,6 +3,7 @@
+@@ -17,6 +17,7 @@
  
- #include "facade/dragonfly_connection.h"
+ #include <algorithm>
+ #include <array>
++#include <atomic>
+ #include <cmath>
+ #include <memory_resource>
+ #include <random>
+@@ -32,6 +33,7 @@
+ #include "core/search/scoring.h"
+ #include "core/search/stateless_allocator.h"
+ #include "core/search/vector_utils.h"
++#include "util/fibers/pool.h"
  
-+#include <absl/cleanup/cleanup.h>
- #include <absl/strings/match.h>
- #include <absl/strings/str_split.h>
- #include <arpa/inet.h>
-@@ -23,18 +24,22 @@
- #include "facade/dragonfly_listener.h"
- #include "facade/facade_test.h"
- #include "server/conn_context.h"
-+#include "server/engine_shard_set.h"
- #include "server/test_utils.h"
- #include "util/accept_server.h"
+ extern "C" {
+ #include "redis/zmalloc.h"
+@@ -1539,6 +1541,49 @@ TEST(HnswBorrowedMode, RetiredIndexReadsNoVectors) {
+   EXPECT_EQ(index.GetNodeCount(), kN);
+ }
  
- ABSL_DECLARE_FLAG(bool, enable_resp_io_loop_v2);
- ABSL_DECLARE_FLAG(bool, enable_shared_read_buffer);
-+ABSL_DECLARE_FLAG(bool, enable_pipeline_squashing_v2);
- ABSL_DECLARE_FLAG(bool, multi_exec_squash);
- 
- namespace dfly {
- namespace {
- 
- using namespace std::chrono_literals;
- using testing::HasSubstr;
-+using testing::Optional;
-+using testing::StartsWith;
- 
- // Some if the tests in this test suite must send malformed RESP bytes and verify the ordered raw
- // replies followed by EOF. We won't use ProtocolClient (protocol_client.cc) here - it does not
-@@ -203,7 +208,7 @@ class DragonflyConnectionTest : public BaseFamilyTest {
-   absl::FlagSaver flag_saver_;
- };
- 
--// Run every V2 parser-error test with private and shared read buffers.
-+// Run V2 connection tests with private and shared read buffers.
- class DragonflyV2ConnectionTest : public DragonflyConnectionTest,
-                                   public testing::WithParamInterface<bool> {
-  protected:
-@@ -212,6 +217,132 @@ class DragonflyV2ConnectionTest : public DragonflyConnectionTest,
-   }
- };
- 
-+// A drained batch can expose an undispatched head while the queue remains over its byte limit.
-+TEST_P(DragonflyV2ConnectionTest, DrainsQueuedCommandsOverPipelineLimit) {
-+  const std::string original_limit =
-+      Run({"CONFIG", "GET", "pipeline_buffer_limit"}).GetVec()[1].GetString();
-+  for (bool squash : {true, false}) {
-+    SCOPED_TRACE(squash);
-+    absl::SetFlag(&FLAGS_enable_pipeline_squashing_v2, squash);
-+    absl::Cleanup restore_limit = [&] {
-+      EXPECT_EQ(Run({"CONFIG", "SET", "pipeline_buffer_limit", original_limit}), "OK");
-+    };
++// Removals on one thread run while insertions on another grow the graph. Every removal must
++// still mark its node and swap in the stub, so the search after the buffers are freed reads
++// no vector.
++TEST(HnswBorrowedMode, ConcurrentRemoveWhileGrowing) {
++  constexpr size_t kDim = 256;
++  constexpr size_t kN = 2000;
 +
-+    RawRespClient client{port_};
-+    ASSERT_TRUE(client.valid());
++  SchemaField::VectorParams params;
++  params.use_hnsw = true;
++  params.dim = kDim;
++  params.capacity = 16;  // Grows at every doubling.
++  HnswVectorIndex index(params, /*copy_vector=*/false);
 +
-+    // Each PING ends a squash batch.
-+    ASSERT_TRUE(
-+        client.SendAll("CLIENT INFO\r\nCONFIG SET pipeline_buffer_limit 1\r\n"
-+                       "SET a b\r\nPING\r\nSET c d\r\nPING\r\n"));
++  std::vector<std::unique_ptr<float[]>> bufs(kN);
++  std::atomic_size_t added = 0;
 +
-+    // Verify the whole pipeline was parsed before CONFIG lowers the limit, counting CLIENT INFO.
-+    ASSERT_THAT(client.ReadLine(), Optional(StartsWith("$")));
-+    ASSERT_THAT(client.ReadLine(), Optional(HasSubstr(" pipeline=6 ")));
-+    for (std::string_view reply : {"+OK\r\n", "+OK\r\n", "+PONG\r\n", "+OK\r\n", "+PONG\r\n"}) {
-+      ASSERT_EQ(client.ReadLine(), reply);
++  std::unique_ptr<util::ProactorPool> pp(util::fb2::Pool::Epoll(2));
++  pp->Run();
++  auto adder = pp->at(0)->LaunchFiber([&] {
++    for (size_t i = 0; i < kN; i++) {
++      bufs[i] = std::make_unique<float[]>(kDim);
++      bufs[i][0] = static_cast<float>(i);
++      index.Add(i, BorrowedDoc{reinterpret_cast<const char*>(bufs[i].get())}, "vec");
++      added.store(i + 1);
 +    }
-+
-+    // The connection stays usable and both writes are visible without raising the limit.
-+    ASSERT_TRUE(client.SendAll("GET a\r\nGET c\r\nPING\r\n"));
-+    for (std::string_view reply : {"$1\r\n", "b\r\n", "$1\r\n", "d\r\n", "+PONG\r\n"}) {
-+      ASSERT_EQ(client.ReadLine(), reply);
++  });
++  auto remover = pp->at(1)->LaunchFiber([&] {
++    for (size_t i = 0; i < kN; i++) {
++      while (added.load() <= i)
++        util::ThisFiber::Yield();
++      index.Remove(i);
 +    }
-+  }
++  });
++  adder.Join();
++  remover.Join();
++  pp->Stop();
++  bufs.clear();
++
++  vector<float> query(kDim, 0.0f);
++  EXPECT_EQ(index.GetNodeCount(), kN);
++  EXPECT_THAT(index.Knn(query.data(), 5, std::nullopt), testing::IsEmpty());
 +}
 +
-+// Completing one async reply must leave a completion subscription for the next pending head.
-+TEST_P(DragonflyV2ConnectionTest, WakesForNextAsyncReplyOverPipelineLimit) {
-+  absl::SetFlag(&FLAGS_enable_pipeline_squashing_v2, false);
-+  const std::string original_limit =
-+      Run({"CONFIG", "GET", "pipeline_buffer_limit"}).GetVec()[1].GetString();
-+
-+  ASSERT_GE(shard_set->size(), 2u);
-+  const std::string first_key = "pipeline-async-first";
-+  std::string second_key = "pipeline-async-second";
-+  while (Shard(first_key, shard_set->size()) == Shard(second_key, shard_set->size()))
-+    second_key += "x";
-+
-+  auto* exec_cid = service_->FindCmd("EXEC");
-+  boost::intrusive_ptr<Transaction> first_lock(new Transaction{exec_cid});
-+  boost::intrusive_ptr<Transaction> second_lock(new Transaction{exec_cid});
-+  absl::Cleanup restore_state = [&] {
-+    pp_->at(0)->Await([&] {
-+      first_lock->UnlockMulti(true);
-+      second_lock->UnlockMulti(true);
-+    });
-+    EXPECT_EQ(Run({"CONFIG", "SET", "pipeline_buffer_limit", original_limit}), "OK");
-+  };
-+  pp_->at(0)->Await([&] {
-+    std::string_view first_keys[] = {first_key};
-+    std::string_view second_keys[] = {second_key};
-+    auto* ns = &namespaces->GetDefaultNamespace();
-+    first_lock->StartMultiLockedAhead(ns, 0, CmdArgList{first_keys}, 1);
-+    second_lock->StartMultiLockedAhead(ns, 0, CmdArgList{second_keys}, 1);
-+  });
-+
-+  RawRespClient client{port_};
-+  ASSERT_TRUE(client.valid());
-+  ASSERT_TRUE(client.SendAll("CLIENT INFO\r\nCONFIG SET pipeline_buffer_limit 1\r\nSET " +
-+                             first_key + " a\r\nSET " + second_key + " b\r\n"));
-+
-+  // Verify both SETs were parsed before CONFIG lowers the limit; the count includes CLIENT INFO.
-+  ASSERT_THAT(client.ReadLine(), Optional(StartsWith("$")));
-+  ASSERT_THAT(client.ReadLine(), Optional(HasSubstr(" pipeline=4 ")));
-+
-+  // CONFIG's batched reply flushes when backpressure parks behind the first locked SET.
-+  ASSERT_
+ INSTANTIATE_TEST_SUITE_P(HnswSer, HnswSerializationTest,
+                          testing::Values(HnswSerParam{0, 2, VectorSimilarity::L2},
+                                          HnswSerParam{10, 2, VectorSimilarity::L2},
 ```
 
 ---
 
-### Incident Patch 3: `bdb177fc` (2026-11-11)
-**Commit Message**: test: fix remaining queued sink writer capacity assertions on macOS (#8789)
+### Incident Patch 2: `0490613e` (2026-11-12)
+**Commit Message**: fix(rdb): load integer-root JSON documents as JSON (#8803)
 
-test: fix capacity assumptions in queued sink writer headroom tests
+The saver integer-encodes a short JSON text such as , and the loader turned every
+integer-encoded value into a string key regardless of the RDB type. A JSON document with
+an int32 root therefore became a string after DUMP/RESTORE, COPY, cross-shard RENAME,
+DEBUG RELOAD, restart, full sync or slot migration, and JSON.TYPE and JSON.NUMINCRBY
+then failed with WRONGTYPE.
+
+Parse such values as JSON text when the RDB type is JSON. Snapshots written by earlier
+versions and ReJSON-RL module values load correctly as well
 
 Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-**File**: `src/server/detail/queued_sink_writer_test.cc` (modified, +10/-7)
+**File**: `src/server/rdb_load.cc` (modified, +5/-0)
 ```diff
-@@ -55,6 +55,8 @@ string Chunk(char c) {
-   return Chunk(c, 1000);
- }
+@@ -348,6 +348,11 @@ class RdbLoaderBase::OpaqueObjLoader {
+   }
  
-+const size_t kChunkBytes = Chunk('a').capacity();
+   void operator()(long long val) {
++    // A JSON document with an int32 root is saved as an integer-encoded string.
++    if (rdb_type_ == RDB_TYPE_JSON) {
++      HandleBlob(absl::StrCat(val));
++      return;
++    }
+     pv_->SetInt(val);
+   }
+ 
+```
+
+**File**: `src/server/rdb_test.cc` (modified, +5/-1)
+```diff
+@@ -885,7 +885,8 @@ TEST_F(RdbTest, JsonTest) {
+       R"({"a":1})"sv,                          //
+       R"([1,2,3,4,5,6])"sv,                    //
+       R"({"a":1.0,"b":[1,2],"c":"value"})"sv,  //
+-      R"({"a":{"a":{"a":{"a":1}}}})"sv         //
++      R"({"a":{"a":{"a":{"a":1}}}})"sv,        //
++      "5"sv                                    //
+   };
+ 
+   for (auto test : data) {
+@@ -895,6 +896,9 @@ TEST_F(RdbTest, JsonTest) {
+     Run({"restore", "doc", "0", facade::ToSV(dump.GetBuf())});
+     auto res = Run({"json.get", "doc"});
+     ASSERT_EQ(res, test);
 +
- }  // namespace
- 
- class QueuedSinkWriterTest : public testing::Test {
-@@ -185,7 +187,7 @@ TEST_F(QueuedSinkWriterTest, LowerLimitDoesNotWaitForBacklog) {
-   writer_.Stop();
++    // JSON.GET reads plain strings too, so check that the value is still JSON.
++    EXPECT_EQ(Run({"type", "doc"}), "ReJSON-RL");
+   }
  }
  
--// Each write while LowerLimit runs lowers the limit by half of its size, so a small push right
-+// Each write while LowerLimit runs lowers the limit by half of its capacity, so a small push right
- // after a write fits in the other half and does not wait for the next write, however slow.
- TEST_F(QueuedSinkWriterTest, LowerLimitKeepsHeadroom) {
-   StartWriter(1 << 20);
-@@ -194,12 +196,12 @@ TEST_F(QueuedSinkWriterTest, LowerLimitKeepsHeadroom) {
+```
+
+---
+
+### Incident Patch 3: `e00dd078` (2026-11-13)
+**Commit Message**: fix: multi-exec data loss during slot migration (#8805)
+
+**File**: `src/server/cluster/cluster_family_test.cc` (modified, +45/-0)
+```diff
+@@ -722,6 +722,51 @@ TEST_F(ClusterFamilyTest, ClusterMultiExec) {
+   Run({"SET", "{tag}key", "value"});
+   Run({"MOVE", "{tag}key", "1"});
+   EXPECT_THAT(Run({"EXEC"}), RespElementsAre("OK", IntArg(1)));
++
++  Run({"MULTI"});
++  Run({"SET", "X1", "queued"});
++
++  // Change ownership on another connection while the transaction is queued.
++  pp_->at(1)->Await([&] { ConfigSingleNodeCluster("other-node"); });
++  EXPECT_THAT(Run({"EXEC"}), ErrArg("MOVED"));
++  EXPECT_THAT(Run({"DBSIZE"}), IntArg(0));
++}
++
++TEST_F(ClusterFamilyTest, ClusterMultiExecShardedPubSub) {
++  single_response_ = false;
++  ConfigSingleNodeCluster(GetMyId());
++
++  auto subscribe_resp = pp_->at(2)->Await([&] { return Run({"SSUBSCRIBE", "X1"}); });
++  ASSERT_THAT(subscribe_resp, RespElementsAre("ssubscribe", "X1", IntArg(1)));
++
++  EXPECT_EQ(Run({"MULTI"}), "OK");
++  EXPECT_EQ(Run({"SPUBLISH", "X1", "a transactional message"}), "QUEUED");
++  EXPECT_THAT(Run({"EXEC"}), RespElementsAre(IntArg(1)));
++  pp_->AwaitFiberOnAll([](util::ProactorBase* pb) {});
++  ASSERT_EQ(1, SubscriberMessagesLen("IO2"));
++  EXPECT_EQ("a transactional message", GetPublishedMessage("IO2", 0).message);
++
++  for (string_view command : {"SET", "SPUBLISH"}) {
++    EXPECT_EQ(Run({"MULTI"}), "OK");
++    EXPECT_EQ(Run({"SPUBLISH", "X1", "message"}), "QUEUED");
++    EXPECT_EQ(Run({command, "X2", "value"}), "QUEUED");
++    EXPECT_THAT(Run({"EXEC"}), ErrArg("CROSSSLOT"));
++  }
++  pp_->AwaitFiberOnAll([](util::ProactorBase* pb) {});
++  EXPECT_EQ(1, SubscriberMessagesLen("IO2"));
++  EXPECT_THAT(Run({"DBSIZE"}), IntArg(0));
++
++  EXPECT_EQ(Run({"MULTI"}), "OK");
++  EXPECT_EQ(Run({"SPUBLISH", "X1", "queued"}), "QUEUED");
++
++  // Change ownership on another connection while the transaction is queued.
++  pp_->at(1)->Await([&] { ConfigSingleNodeCluster("other-node"); });
++  EXPECT_THAT(Run({"EXEC"}), ErrArg("MOVED"));
++  pp_->AwaitFiberOnAll([](util::ProactorBase* pb) {});
++
++  // Slot migration sends a forced unsubscribe notification.
++  ASSERT_EQ(2, SubscriberMessagesLen("IO2"));
++  EXPECT_TRUE(GetPublishedMessage("IO2", 1).force_unsubscribe);
+ }
  
-   fb2::Fiber lowerer([&] { writer_.LowerLimit(0, 0); });
-   ThisFiber::SleepFor(1ms);
--  EXPECT_EQ(writer_.limit(), 4000u);
-+  EXPECT_EQ(writer_.limit(), 4 * kChunkBytes);
+ TEST_F(ClusterFamilyTest, ClusterConfigDeleteSlots) {
+```
+
+**File**: `src/server/main_service.cc` (modified, +12/-0)
+```diff
+@@ -2603,9 +2603,21 @@ void Service::Exec(CmdArgParser, CommandContext* cmd_cntx) {
+       slot_checker.Add(s);
+     }
  
-   sink_.Allow(1);
-   ThisFiber::SleepFor(1ms);
--  EXPECT_EQ(writer_.pending_bytes(), 3000u);
--  EXPECT_EQ(writer_.limit(), 3500u);
-+  EXPECT_EQ(writer_.pending_bytes(), 3 * kChunkBytes);
-+  EXPECT_EQ(writer_.limit(), 4 * kChunkBytes - kChunkBytes / 2);
++    // Sharded publish channels participate in slot checks without requiring database key locks.
++    for (const auto& scmd : exec_info.body) {
++      if (scmd.Cid()->IsSPublish())
++        slot_checker.Add(scmd.Args()[0]);
++    }
++
+     if (slot_checker.IsCrossSlot()) {
+       return rb->SendError(kCrossSlotError);
+     }
++
++    // Commands were validated when queued, but a migration may have moved their slot before EXEC.
++    if (auto slot = slot_checker.GetUniqueSlotId()) {
++      if (auto error = cluster::SlotOwnershipError(*slot); error.status != OpStatus::OK)
++        return rb->SendError(std::move(error));
++    }
+   }
  
-   bool pushed = false;
-   fb2::Fiber producer([&] {
-@@ -220,13 +222,14 @@ TEST_F(QueuedSinkWriterTest, LowerLimitKeepsHeadroom) {
- // LowerLimit starts `headroom` above the backlog, so a small push before the first write
- // completes does not wait for it.
- TEST_F(QueuedSinkWriterTest, LowerLimitStartsWithHeadroom) {
-+  constexpr size_t kHeadroom = 500;
-   StartWriter(1 << 20);
-   for (char c : {'a', 'b', 'c', 'd'})
-     writer_.Push(Chunk(c));
- 
--  fb2::Fiber lowerer([&] { writer_.LowerLimit(0, 500); });
-+  fb2::Fiber lowerer([&] { writer_.LowerLimit(0, kHeadroom); });
-   ThisFiber::SleepFor(1ms);
--  EXPECT_EQ(writer_.limit(), 4500u);
-+  EXPECT_EQ(writer_.limit(), 4 * kChunkBytes + kHeadroom);
- 
-   bool pushed = false;
-   fb2::Fiber producer([&] {
-@@ -339,7 +342,7 @@ TEST_F(QueuedSinkWriterTest, WaitBelowIgnoresLaterPushes) {
-   sink_.Allow(2);
-   ThisFiber::SleepFor(1ms);
-   EXPECT_TRUE(waited);
--  EXPECT_EQ(writer_.pending_bytes(), 1000u);
-+  EXPECT_EQ(writer_.pending_bytes(), kChunkBytes);
- 
-   sink_.Open();
-   waiter.Join();
+   // The transaction can contain script load script execution, determine their presence ahead to
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8797** (2026-11-12): chore(tests): Temporarily set snapshot limit to 0 (@abhijat)
-- **PR #8789** (2026-11-11): test: fix remaining queued sink writer capacity assertions on macOS (@vyavdoshenko)
-- **PR #8785** (2026-11-10): refactor: drop extra ascii codecs (@BorysTheDev)
-- **PR #8784** (closed): Perf/consolidate ascii codecs (@BorysTheDev)
-- **PR #8783** (2026-11-10): chore(tests): Introduce common parser for info stats (@abhijat)
-- **PR #8782** (2026-11-10): feat: Support numbered databases in cluster mode (@BorysTheDev)
+- **PR #8808** (2026-11-13): feat(search): index empty TEXT values with INDEXEMPTY and answer phrases on NOOFFSETS (@vyavdoshenko)
+- **PR #8805** (2026-11-13): fix: multi-exec data loss during slot migration (@BorysTheDev)
+- **PR #8804** (2026-11-13): fix(search): hold the HNSW resize lock in removals and vector updates (@vyavdoshenko)
+- **PR #8803** (2026-11-12): fix(rdb): load integer-root JSON documents as JSON (@vyavdoshenko)
+- **PR #8799** (2026-11-12): ci: skip flaky BullMQ waiting-children event test (@vyavdoshenko)
+- **PR #8798** (2026-11-12): feat(server): Handle restore,copy,replace,rename x-shard in new mem. metric (@abhijat)
 
 ---
 
@@ -2731,31 +2672,30 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests): lift rss_oom_deny_ratio during populate in flaky test_rss_oom_ratio (#87
+## X. search): hold the HNSW resize lock in removals and vector updates (#8804)
 
 **RULE**:
-When implementing operations in `tests/dragonfly/memory_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/core/search/hnsw_alg.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bebdf055`: tests): lift rss_oom_deny_ratio during populate in flaky test_rss_oom_ratio (#8762). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1d175fa`: search): hold the HNSW resize lock in removals and vector updates (#8804). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/dragonfly/memory_test.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/search/hnsw_alg.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    # Populate writes are subject to the rss deny check too, so disable it while populating
-    ratio = (await client.config_get("rss_oom_deny_ratio"))["rss_oom_deny_ratio"]
-    await client.config_set("rss_oom_deny_ratio", 0)
-    await client.config_set("rss_oom_deny_ratio", ratio)
+  HnswErrorStatus markDelete(labeltype label, tableint* internal_id = nullptr) {
+    if (internal_id)
+      *internal_id = internalId;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  HnswErrorStatus markDelete(labeltype label) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bebdf055` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1d175fa` are properly handled with clean fallback behavior.

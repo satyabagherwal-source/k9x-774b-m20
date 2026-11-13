@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:26:28.701Z",
+  "last_updated": "2026-11-13T14:34:30.416Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T13:34:34.562Z",
@@ -1023,7 +1023,7 @@
       "staged_for_review": 1
     },
     "infracost-infracost-learnings.md": {
-      "processed_at": "2026-11-12T10:43:12.655Z",
+      "processed_at": "2026-11-13T14:34:30.370Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1891,9 +1891,19 @@
       "processed_at": "2026-11-13T14:26:28.036Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-supersoniclabs-julia-1-learnings.md": {
+      "processed_at": "2026-11-13T14:34:29.709Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "tauri-apps-tauri-learnings.md": {
+      "processed_at": "2026-11-13T14:34:29.749Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 588,
-  "total_canonical_promoted": 106,
-  "total_staged_for_review": 479
+  "total_dossiers_evaluated": 591,
+  "total_canonical_promoted": 107,
+  "total_staged_for_review": 481
 }

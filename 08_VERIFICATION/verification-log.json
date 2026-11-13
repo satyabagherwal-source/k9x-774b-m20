@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-G8W5",
-    "timestamp": "2026-11-11T10:35:17.381Z",
-    "repository": "sqldelight/sqldelight",
-    "learningId": "learn-github-sqldelight-sqldelight",
-    "contentHash": "8ce858e905ff14a2a2e8e73d57a6b675b6c38f3c25ab49f86708f7c919d7c69c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-GGEW",
-    "timestamp": "2026-11-11T10:35:27.128Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "c0b2b52fa61799ce304685f75a4215c909fb3330d3c1c8d8d555ed7c33cb069e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-GH0K",
-    "timestamp": "2026-11-11T10:35:27.908Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "2a5f232ee31326a08e413cca3011802cd1e48e74a9d393d9e466d7f27337fd5c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-QMZK",
-    "timestamp": "2026-11-11T10:43:22.208Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "55b7f9eae1c66541813099ad024275ae5b7f6b8e3cb8ef3ed02ec611ea7177f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-QWZ5",
     "timestamp": "2026-11-11T10:43:35.153Z",
     "repository": "CaviraOSS/LongMemory",
@@ -7490,6 +7430,66 @@
     "repository": "RediSearch/RediSearch",
     "learningId": "learn-github-redisearch-redisearch",
     "contentHash": "01ee42e42216e448373c669626ab41e1d52eabb514b53e2008cfc32e8d4187d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-UIFH",
+    "timestamp": "2026-11-13T14:33:40.301Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "35b31d5f2ef3a70d5efe7dd6af3a152867e2cad82fa3dd46759aa6578efc2649",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-UXQZ",
+    "timestamp": "2026-11-13T14:34:00.155Z",
+    "repository": "tauri-apps/tauri",
+    "learningId": "learn-github-tauri-apps-tauri",
+    "contentHash": "9df43c72ba753f71ea0ea9ede2d20f6e0f738b460759b223e9987af867155b5f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-V096",
+    "timestamp": "2026-11-13T14:34:03.402Z",
+    "repository": "infracost/infracost",
+    "learningId": "learn-github-infracost-infracost",
+    "contentHash": "1e7eaa98d69bbe9724b9b6a62a412a55c8ba13d58ee26b9d9e2bc2b969864c5d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-V3ZX",
+    "timestamp": "2026-11-13T14:34:08.253Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "da9c34972bcd3507e0c22e20dc393690558e435190bf779fc236f3ea5306800e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

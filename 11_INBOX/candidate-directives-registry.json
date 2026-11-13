@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:26:28.320Z",
+  "last_updated": "2026-11-13T14:34:30.369Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8966,6 +8966,24 @@
       "source_repo": "aws-aws-cdk",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-523486-core-bump-bundled-minimatch-to-11-0-8-to.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-69B6A2",
+      "directive_title": "cli): keep watching folders matched by .taurignore, filter entries and events (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tauri-apps-tauri",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-69B6A2-cli-keep-watching-folders-matched-by-tau.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-57EE4A",
+      "directive_title": "config): ignore sensitive vars in working-directory .env (#3642)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "infracost-infracost",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-57EE4A-config-ignore-sensitive-vars-in-working-.md",
       "staged_date": "2026-11-13"
     }
   ]

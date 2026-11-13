@@ -9511,3 +9511,8 @@
 | `CYCLE-20261113-KO55` | `2026-11-13T14:26:01.145Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`81e86aa6...`) |
 | `CYCLE-20261113-KRE5` | `2026-11-13T14:26:05.357Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`01ee42e4...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:26:28.004Z` | `hf-xingchen-agi-xing4.0-29b-a4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-98796BF2` [Domain D] | Yes (`8add30aa...`) |
+| `CYCLE-20261113-UIFH` | `2026-11-13T14:33:40.301Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`35b31d5f...`) |
+| `CYCLE-20261113-UXQZ` | `2026-11-13T14:34:00.155Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9df43c72...`) |
+| `CYCLE-20261113-V096` | `2026-11-13T14:34:03.402Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1e7eaa98...`) |
+| `CYCLE-20261113-V3ZX` | `2026-11-13T14:34:08.253Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`da9c3497...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T14:34:29.708Z` | `hf-supersoniclabs-julia-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ACECC835` [Domain D] | Yes (`483c8205...`) |

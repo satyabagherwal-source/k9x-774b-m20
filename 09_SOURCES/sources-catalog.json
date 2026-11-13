@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "26426e069f975aaac548b919b21d2eb345a463a2961aa27cd9c17c01c833c391",
-    "lastHarvestedAt": "2026-11-08T15:05:12.790Z",
+    "contentHash": "35b31d5f2ef3a70d5efe7dd6af3a152867e2cad82fa3dd46759aa6578efc2649",
+    "lastHarvestedAt": "2026-11-13T14:33:40.305Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -4863,10 +4863,10 @@
     "repository": "infracost/infracost",
     "platform": "github",
     "sourceUrl": "https://github.com/infracost/infracost",
-    "sourceVersion": "40ad0ac9",
+    "sourceVersion": "34e9cd06",
     "license": "Apache-2.0",
-    "contentHash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
-    "lastHarvestedAt": "2026-11-12T10:43:07.206Z",
+    "contentHash": "1e7eaa98d69bbe9724b9b6a62a412a55c8ba13d58ee26b9d9e2bc2b969864c5d",
+    "lastHarvestedAt": "2026-11-13T14:34:03.406Z",
     "learningId": "learn-github-infracost-infracost"
   },
   "apache-shardingsphere": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "86c191ba",
+    "sourceVersion": "e00dd078",
     "license": "NOASSERTION",
-    "contentHash": "e354c9d4ea476e7d5b918f30b932583474763842e9712254b922db154aff6772",
-    "lastHarvestedAt": "2026-11-12T08:28:20.012Z",
+    "contentHash": "da9c34972bcd3507e0c22e20dc393690558e435190bf779fc236f3ea5306800e",
+    "lastHarvestedAt": "2026-11-13T14:34:08.257Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -8483,10 +8483,10 @@
     "repository": "tauri-apps/tauri",
     "platform": "github",
     "sourceUrl": "https://github.com/tauri-apps/tauri",
-    "sourceVersion": "9a66eab8",
+    "sourceVersion": "5edd31c8",
     "license": "Apache-2.0",
-    "contentHash": "4a024d5c6d434d2d791cb85b27b967dfe40123098fd7f897b151d0ef5c21a2a5",
-    "lastHarvestedAt": "2026-11-09T04:42:17.713Z",
+    "contentHash": "9df43c72ba753f71ea0ea9ede2d20f6e0f738b460759b223e9987af867155b5f",
+    "lastHarvestedAt": "2026-11-13T14:34:00.159Z",
     "learningId": "learn-github-tauri-apps-tauri"
   },
   "oliviertassinari-react-swipeable-views": {

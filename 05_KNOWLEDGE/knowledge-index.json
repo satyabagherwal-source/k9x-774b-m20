@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T14:26:05.230Z",
+  "last_updated": "2026-11-13T14:34:08.099Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12582,8 +12582,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "86c191ba",
-      "content_hash": "e354c9d4ea476e7d5b918f30b932583474763842e9712254b922db154aff6772",
+      "source_version": "e00dd078",
+      "content_hash": "da9c34972bcd3507e0c22e20dc393690558e435190bf779fc236f3ea5306800e",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -12610,6 +12610,11 @@
         {
           "number": null,
           "title": "tests): lift rss_oom_deny_ratio during populate in flaky test_rss_oom_ratio (#87",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "search): hold the HNSW resize lock in removals and vector updates (#8804)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12708,7 +12713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T08:28:19.858Z",
+      "verified_at": "2026-11-13T14:34:08.066Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34013,7 +34018,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "26426e069f975aaac548b919b21d2eb345a463a2961aa27cd9c17c01c833c391",
+      "content_hash": "35b31d5f2ef3a70d5efe7dd6af3a152867e2cad82fa3dd46759aa6578efc2649",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -34129,7 +34134,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-11-08T15:05:12.625Z",
+      "verified_at": "2026-11-13T14:33:40.188Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37165,14 +37170,19 @@
       "slug": "infracost-infracost",
       "platform": "github",
       "source_url": "https://github.com/infracost/infracost",
-      "source_version": "40ad0ac9",
-      "content_hash": "94ccab961112396b6e269a8c319e3c0ad3373d3beafb006eee3852afb7d3c335",
+      "source_version": "34e9cd06",
+      "content_hash": "1e7eaa98d69bbe9724b9b6a62a412a55c8ba13d58ee26b9d9e2bc2b969864c5d",
       "dossier_path": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): bump brotli, go-jose and klauspost/compress (#3641)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "config): ignore sensitive vars in working-directory .env (#3642)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -37196,7 +37206,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T10:43:07.049Z",
+      "verified_at": "2026-11-13T14:34:02.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63154,8 +63164,8 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "9a66eab8",
-      "content_hash": "4a024d5c6d434d2d791cb85b27b967dfe40123098fd7f897b151d0ef5c21a2a5",
+      "source_version": "5edd31c8",
+      "content_hash": "9df43c72ba753f71ea0ea9ede2d20f6e0f738b460759b223e9987af867155b5f",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
@@ -63167,6 +63177,11 @@
         {
           "number": null,
           "title": "bundler): close the main binary before running the Windows sign command (#16478)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "cli): keep watching folders matched by .taurignore, filter entries and events (#",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63200,7 +63215,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:42:17.589Z",
+      "verified_at": "2026-11-13T14:33:59.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
