@@ -14,6 +14,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { decryptSecretsFile, resolveVaultPassphrase } from '../04_WORKFLOWS/factory-engine/vault-crypto.mjs';
 import { computeFileSha256 } from '../04_WORKFLOWS/factory-engine/vault-manifest.mjs';
+import { ReleaseBackupAdapter } from '../04_WORKFLOWS/factory-engine/release-backup-adapter.mjs';
 
 const SNAPSHOT_BASE_DIR = path.resolve('.project-brain/backups/vault-snapshots');
 const RECOVERY_LOG_FILE = path.resolve('.project-brain/backups/recovery-log.json');
@@ -44,7 +45,8 @@ function getLatestSnapshotDir() {
 
 export async function executeDisasterRecovery(options = {}) {
   const {
-    snapshotDir = getLatestSnapshotDir(),
+    fromRelease = null,
+    snapshotDir = options.fromRelease ? null : getLatestSnapshotDir(),
     targetDir = null,
     restoreToOriginal = false,
     confirmOverwrite = false,
@@ -56,7 +58,18 @@ export async function executeDisasterRecovery(options = {}) {
   logger(`======================================================================`);
   logger(`🚑 AI-BUILDER-BRAIN DISASTER RECOVERY PROTOCOL`);
   logger(`======================================================================`);
-  logger(`Snapshot: ${snapshotDir}`);
+
+  let effectiveSnapshotDir = snapshotDir;
+  if (fromRelease) {
+    logger(`\n[REMOTE RELEASE RETRIEVAL] Downloading release assets for ${fromRelease}...`);
+    const tempDownloadDir = path.join(os.tmpdir(), `brain-vault-release-${fromRelease.replace(/[^a-zA-Z0-9_-]/g, '_')}`);
+    const adapter = new ReleaseBackupAdapter({ logger });
+    await adapter.downloadReleaseSnapshot(fromRelease, tempDownloadDir);
+    effectiveSnapshotDir = tempDownloadDir;
+    logger(`  ✅ Downloaded release snapshot to ${effectiveSnapshotDir}`);
+  }
+
+  logger(`Snapshot: ${effectiveSnapshotDir}`);
 
   const originalBrainDir = path.resolve('.');
   let destination = targetDir ? path.resolve(targetDir) : path.join(os.tmpdir(), 'brain-restored');
@@ -75,18 +88,18 @@ export async function executeDisasterRecovery(options = {}) {
   }
 
   // 1. Verify Snapshot Integrity
-  const manifestPath = path.join(snapshotDir, 'backup-manifest.json');
-  let bundlePath = path.join(snapshotDir, 'brain-history.bundle');
-  const secretsPath = path.join(snapshotDir, 'secrets.enc');
-  const auxTarPath = path.join(snapshotDir, 'auxiliary-state.tar.gz');
-  const treeDir = path.join(snapshotDir, 'tree');
+  const manifestPath = path.join(effectiveSnapshotDir, 'backup-manifest.json');
+  let bundlePath = path.join(effectiveSnapshotDir, 'brain-history.bundle');
+  const secretsPath = path.join(effectiveSnapshotDir, 'secrets.enc');
+  const auxTarPath = path.join(effectiveSnapshotDir, 'auxiliary-state.tar.gz');
+  const treeDir = path.join(effectiveSnapshotDir, 'tree');
 
   if (!fs.existsSync(bundlePath)) {
-    const part0 = path.join(snapshotDir, 'brain-history.bundle.part00');
+    const part0 = path.join(effectiveSnapshotDir, 'brain-history.bundle.part00');
     if (fs.existsSync(part0)) {
       logger(`  📦 Reassembling bundle from parts...`);
-      const parts = fs.readdirSync(snapshotDir).filter(f => f.startsWith('brain-history.bundle.part')).sort();
-      const bufs = parts.map(p => fs.readFileSync(path.join(snapshotDir, p)));
+      const parts = fs.readdirSync(effectiveSnapshotDir).filter(f => f.startsWith('brain-history.bundle.part')).sort();
+      const bufs = parts.map(p => fs.readFileSync(path.join(effectiveSnapshotDir, p)));
       fs.writeFileSync(bundlePath, Buffer.concat(bufs));
       logger(`  ✅ Reassembled brain-history.bundle (${(fs.statSync(bundlePath).size / 1024 / 1024).toFixed(1)} MB)`);
     }
@@ -96,13 +109,13 @@ export async function executeDisasterRecovery(options = {}) {
   if (!fs.existsSync(bundlePath)) throw new Error(`Snapshot git bundle missing: ${bundlePath}`);
 
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-  logger(`Snapshot ID: ${manifest.snapshotId || path.basename(snapshotDir)}`);
+  logger(`Snapshot ID: ${manifest.snapshotId || path.basename(effectiveSnapshotDir)}`);
   logger(`Snapshot Commit: ${manifest.gitHead}`);
   logger(`Total Files: ${manifest.stats.totalFiles} (${(manifest.stats.totalBytes / 1024 / 1024).toFixed(2)} MB)`);
 
   if (dryRun) {
     logger(`\n[DRY RUN] Verification passed. Target would be ${destination}. No changes written.`);
-    return { status: 'DRY_RUN_SUCCESS', destination, snapshot: snapshotDir };
+    return { status: 'DRY_RUN_SUCCESS', destination, snapshot: effectiveSnapshotDir };
   }
 
   // 2. Pre-recovery safety snapshot if restoring to original
@@ -179,7 +192,8 @@ export async function executeDisasterRecovery(options = {}) {
   // 8. Log Recovery Event
   const recoveryRecord = {
     timestamp: new Date().toISOString(),
-    snapshotId: manifest.snapshotId || path.basename(snapshotDir),
+    snapshotId: manifest.snapshotId || path.basename(effectiveSnapshotDir),
+    fromRelease: fromRelease || null,
     destination,
     verifiedFiles,
     gitHead: manifest.gitHead,
@@ -198,6 +212,7 @@ export async function executeDisasterRecovery(options = {}) {
   logger(`🎉 DISASTER RECOVERY SUCCESSFUL!`);
   logger(`Restored Location: ${destination}`);
   logger(`Restored Commit:   ${manifest.gitHead}`);
+  if (fromRelease) logger(`Restored Release:  ${fromRelease}`);
   logger(`======================================================================\n`);
 
   return recoveryRecord;
@@ -210,6 +225,9 @@ if (process.argv[1] && process.argv[1].endsWith('disaster-recovery.mjs')) {
   const confirmOverwrite = args.includes('--confirm-destructive-overwrite');
   const dryRun = args.includes('--dry-run');
 
+  const releaseIdx = args.indexOf('--from-release');
+  const fromRelease = releaseIdx !== -1 && args[releaseIdx + 1] ? args[releaseIdx + 1] : null;
+
   const targetDirIdx = args.indexOf('--target-dir');
   const targetDir = targetDirIdx !== -1 && args[targetDirIdx + 1] ? args[targetDirIdx + 1] : null;
 
@@ -219,7 +237,7 @@ if (process.argv[1] && process.argv[1].endsWith('disaster-recovery.mjs')) {
   const passIdx = args.indexOf('--passphrase');
   const passphrase = passIdx !== -1 && args[passIdx + 1] ? args[passIdx + 1] : undefined;
 
-  executeDisasterRecovery({ targetDir, snapshotDir, passphrase, restoreToOriginal, confirmOverwrite, dryRun })
+  executeDisasterRecovery({ fromRelease, targetDir, snapshotDir, passphrase, restoreToOriginal, confirmOverwrite, dryRun })
     .then(() => process.exit(0))
     .catch(err => {
       console.error(err);

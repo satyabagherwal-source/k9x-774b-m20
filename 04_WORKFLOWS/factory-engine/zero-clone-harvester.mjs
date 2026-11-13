@@ -17,6 +17,7 @@ import {
   LEARNING_STATUS,
   LEARNING_STAGES
 } from './brain-learning-gateway.mjs';
+import { submitWithUniversalDistribution } from './universal-distribution-gateway-adapter.mjs';
 import {
   checkServiceAvailability,
   inspectAndRecordHeaders,
@@ -968,9 +969,9 @@ export async function runZeroCloneHarvester(customUrls = null) {
           }
         });
 
-        // 2. Submit to Brain Learning Gateway:
+        // 2. Submit to Brain Learning Gateway via Universal Multi-Artifact Distributor:
         // Enforces: Validate -> Write -> Read-back Dossier -> Promote Rules -> Read-back Rules -> Update Index -> Read-back Index
-        const gatewayResult = await submitToBrainGateway(learningPkg);
+        const gatewayResult = await submitWithUniversalDistribution(learningPkg, { enableLiveMultiDistribution: true });
 
         // 3. HARD INVARIANT ASSERTION:
         // LEARNING_SUCCESS = extraction_success AND validation_success AND brain_write_success AND brain_readback_success AND index_update_success

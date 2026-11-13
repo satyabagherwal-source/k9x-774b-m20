@@ -473,6 +473,32 @@ export async function runHarvesterEvolutionCycle(options = {}) {
         // Non-fatal citation discovery
       }
 
+      // Universal Multi-Artifact Distribution across Patterns, Skills, Agents, Decisions, Verifications
+      try {
+        const { UniversalMultiArtifactDistributor, DISTRIBUTION_MODES } = await import('./universal-multi-artifact-distributor.mjs');
+        const distributor = new UniversalMultiArtifactDistributor({
+          brainRoot: root,
+          mode: DISTRIBUTION_MODES.CANONICAL_LIVE,
+          enableLiveMultiDistribution: true
+        });
+        const dText = fs.readFileSync(dPath, 'utf-8');
+        const repName = path.basename(dPath, '.md').replace(/^dossier-/, '');
+        const pkg = {
+          learning_id: `LEARN-EVO-${filename.replace('.md', '')}`,
+          repository: repName,
+          slug: repName,
+          raw_dossier_text: dText,
+          dossier_content: dText,
+          metadata: { timestamp: new Date().toISOString() }
+        };
+        const distRes = await distributor.distributeLearningPackage(pkg, { enableLiveMultiDistribution: true });
+        if (distRes.persistedCount > 0) {
+          console.log(`  🌟 [UNIVERSAL DISTRIBUTION] ${filename} distributed ${distRes.persistedCount} artifact(s) to canonical destinations.`);
+        }
+      } catch (distErr) {
+        console.warn(`  ⚠️ [UNIVERSAL DISTRIBUTION ERROR] ${path.basename(dPath)}: ${distErr.message}`);
+      }
+
       console.log(`  📄 [DOSSIER EVALUATED] ${filename} -> Promoted: ${dReport.promoted_canonical}, Staged: ${dReport.staged_for_review}, Duplicates: ${dReport.duplicates_skipped}`);
     } catch (err) {
       console.warn(`  ⚠️ [DOSSIER ERROR] Failed to process ${path.basename(dPath)}: ${err.message}`);

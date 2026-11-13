@@ -40,6 +40,29 @@ jobs:
           git config --global user.name "satyabgherval-source"
           git config --global user.email "315064083+satyabgherval-source@users.noreply.github.com"
 
+      - name: Reconcile Pending Staging Branches (Durable Outbox Replay)
+        run: |
+          git fetch origin '+refs/heads/harvest-staging/*:refs/remotes/origin/harvest-staging/*' 2>/dev/null || true
+          STAGING_BRANCHES=$(git branch -r | grep 'origin/harvest-staging/' | tr -d ' ' || true)
+          if [ -n "$STAGING_BRANCHES" ]; then
+            echo "🔄 Found pending staging branches to reconcile:"
+            echo "$STAGING_BRANCHES"
+            for b in $STAGING_BRANCHES; do
+              echo "  Merging $b into current branch..."
+              if git merge --no-edit -m "chore(harvest): reconcile durable staging branch $b [skip ci]" "$b"; then
+                SHORT_NAME=$(echo "$b" | sed 's|origin/||')
+                git push origin main || true
+                git push origin --delete "$SHORT_NAME" 2>/dev/null || true
+                echo "  ✅ Successfully reconciled and cleaned up $b"
+              else
+                echo "  ⚠️ Conflict during merge of $b; aborting merge for future reconciliation"
+                git merge --abort || true
+              fi
+            done
+          else
+            echo "ℹ️ No pending harvest-staging branches found."
+          fi
+
       - name: Verify Server-to-Server Multi-AI Swarm Pool (Live Inference Health Check)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -77,7 +100,7 @@ jobs:
           fi
           git add .
           # Only commit if actual knowledge artifacts, rules, skills, ledgers, or queue targets were modified:
-          if git diff --staged --name-only | grep -E '^(07_PROJECT_LEARNING/|05_KNOWLEDGE/|08_VERIFICATION/|09_SOURCES/|11_INBOX/|14_EVOLUTION/|15_METADATA/|03_SKILLS/|repos\.txt|LEARNINGS\.md|\.project-brain/incidents/)'; then
+          if git diff --staged --name-only | grep -E '^(07_PROJECT_LEARNING/|05_KNOWLEDGE/|08_VERIFICATION/|09_SOURCES/|02_AGENT_INTELLIGENCE/|03_SKILLS/|11_INBOX/|12_DECISIONS/|13_GOVERNANCE/|14_EVOLUTION/|15_METADATA/|repos\.txt|LEARNINGS\.md|\.project-brain/incidents/)'; then
             git commit -m "feat(harvest): micro-forensic learning harvested from sources [skip ci]"
             PUSH_SUCCESS=false
             for i in {1..5}; do
@@ -95,21 +118,41 @@ jobs:
             done
 
             if [ "$PUSH_SUCCESS" = false ]; then
-              echo "❌ [FAILED_PERSISTENCE] Remote git push failed after 5 retries! Ephemeral runner knowledge would be lost."
-              exit 1
+              STAGING_BRANCH="harvest-staging/run-${{ github.run_id }}"
+              echo "⚠️ Main push conflicted after 5 retries. Activating Staging Fallback to $STAGING_BRANCH..."
+              git checkout -b "$STAGING_BRANCH"
+              if git push origin "$STAGING_BRANCH"; then
+                echo "✅ [STAGING FALLBACK PERSISTED] Successfully pushed harvested intelligence to $STAGING_BRANCH."
+                PUSH_SUCCESS=true
+              else
+                echo "❌ [STAGING PUSH FAILED] Could not push to $STAGING_BRANCH. Preparing emergency Tier-3 Outbox Rescue Artifact..."
+                mkdir -p .project-brain/outbox-rescue
+                git diff origin/main...HEAD > .project-brain/outbox-rescue/rescue-diff-${{ github.run_id }}.patch || true
+                git bundle create .project-brain/outbox-rescue/rescue-commits-${{ github.run_id }}.bundle origin/main..HEAD || true
+                exit 1
+              fi
+            else
+              # Remote Verification Barrier: Confirm origin/main genuinely contains HEAD
+              git fetch origin main
+              if ! git branch -r --contains HEAD | grep -q 'origin/main'; then
+                echo "❌ [FAILED_PERSISTENCE] Remote branch verification barrier breached! HEAD not confirmed on origin/main."
+                exit 1
+              fi
+              echo "🏆 [REMOTE VERIFICATION SUCCESS] Verified commit on remote origin/main ledger."
             fi
-
-            # Remote Verification Barrier: Confirm origin/main genuinely contains HEAD
-            git fetch origin main
-            if ! git branch -r --contains HEAD | grep -q 'origin/main'; then
-              echo "❌ [FAILED_PERSISTENCE] Remote branch verification barrier breached! HEAD not confirmed on origin/main."
-              exit 1
-            fi
-            echo "🏆 [REMOTE VERIFICATION SUCCESS] Verified commit on remote origin/main ledger."
           else
             echo "ℹ️ No new knowledge files, rules, or queue targets were modified in this run (only timestamps/cursors). Skipping empty commit."
             git checkout HEAD -- harvest-control.json 04_WORKFLOWS/factory-engine/discovery-cursor.json 2>/dev/null || true
           fi
+
+      - name: Emergency Learning Outbox Rescue Artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unpushed-harvest-rescue-${{ github.run_id }}
+          path: .project-brain/outbox-rescue/
+          retention-days: 90
+          if-no-files-found: ignore
 
       - name: Autonomous 24/7 Self-Relay Dispatcher
         if: always()

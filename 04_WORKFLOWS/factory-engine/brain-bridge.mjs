@@ -165,3 +165,31 @@ export function initializeProjectBrainBridge(projectRoot, masterBrainPath, proje
 
   return bridgeConfig;
 }
+
+/**
+ * Submit project learning directly through the connected Brain Bridge
+ */
+export async function submitProjectLearningToMasterBrain(projectRoot, learningPayload, options = {}) {
+  const bridgeConfigPath = path.join(projectRoot, '.project-brain', 'brain-bridge.json');
+  let masterBrainPath = options.masterBrainPath;
+  let projectName = options.projectName;
+
+  if (fs.existsSync(bridgeConfigPath)) {
+    try {
+      const config = JSON.parse(fs.readFileSync(bridgeConfigPath, 'utf8'));
+      masterBrainPath = masterBrainPath || config.masterBrainPath;
+      projectName = projectName || config.projectName;
+    } catch (_) {}
+  }
+
+  const resolvedBrain = resolveMasterBrainPath(masterBrainPath);
+  if (!resolvedBrain) {
+    throw new Error('Master Brain not found. Ensure .project-brain/brain-bridge.json points to a valid Master Brain.');
+  }
+
+  const bridgeModule = await import('./project-learning-bridge.mjs');
+  return bridgeModule.submitProjectLearning({
+    projectName: projectName || 'unspecified-project',
+    ...learningPayload
+  }, { brainRoot: resolvedBrain, ...options });
+}

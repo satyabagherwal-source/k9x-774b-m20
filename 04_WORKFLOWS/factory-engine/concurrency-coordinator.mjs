@@ -223,7 +223,7 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
     // Strictly inspect if actual knowledge artifacts, engineering rules, verification matrices, or queue targets were staged:
     const stagedLines = staged.split(/\r?\n/).filter(Boolean);
     const hasKnowledge = stagedLines.some((file) =>
-      /^(07_PROJECT_LEARNING\/|05_KNOWLEDGE\/|08_VERIFICATION\/|09_SOURCES\/|03_SKILLS\/|14_EVOLUTION\/|repos\.txt|LEARNINGS\.md)/.test(file)
+      /^(07_PROJECT_LEARNING\/|05_KNOWLEDGE\/|08_VERIFICATION\/|09_SOURCES\/|02_AGENT_INTELLIGENCE\/|03_SKILLS\/|11_INBOX\/|12_DECISIONS\/|13_GOVERNANCE\/|14_EVOLUTION\/|15_METADATA\/|repos\.txt|LEARNINGS\.md)/.test(file)
     );
 
     if (!hasKnowledge) {

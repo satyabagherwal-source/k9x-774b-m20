@@ -274,11 +274,18 @@ export function resolveDestination(item) {
     case '01_CORE':
       suggestedRelativePath = '01_CORE/operating-rules.md';
       break;
+    case '02_AGENT_INTELLIGENCE':
+      suggestedRelativePath = `02_AGENT_INTELLIGENCE/${slug}.md`;
+      break;
     case '03_SKILLS':
       suggestedRelativePath = `03_SKILLS/${slug}.md`;
       break;
     case '05_KNOWLEDGE':
-      suggestedRelativePath = `05_KNOWLEDGE/domain-intelligence/DOM-${primaryLetter}-${slug}.md`;
+      if (kType === 'engineering_pattern' || item.type === 'engineering_pattern' || item.is_rule) {
+        suggestedRelativePath = '05_KNOWLEDGE/engineering-patterns.md';
+      } else {
+        suggestedRelativePath = `05_KNOWLEDGE/domain-intelligence/DOM-${primaryLetter}-${slug}.md`;
+      }
       break;
     case '08_VERIFICATION':
       suggestedRelativePath = `08_VERIFICATION/${slug}.md`;

@@ -623,7 +623,7 @@ export function promoteValidatedRules(learningPackage, options = {}) {
             license: learningPackage.license
           },
           evidenceList,
-          { brainRoot: p.brainRoot, strictMode: options.strictMode !== false }
+          { brainRoot: p.brainRoot, strictMode: options.strictMode !== false, skipBM25: options.skipBM25 ?? true }
         );
       } catch (valErr) {
         valReport = {
@@ -637,7 +637,11 @@ export function promoteValidatedRules(learningPackage, options = {}) {
       }
     }
 
-    if (!options.bypassQualityGate && valReport.decision !== VALIDATOR_DECISIONS.PASS) {
+    const isHardRejected = valReport.decision === VALIDATOR_DECISIONS.REJECT ||
+                           valReport.decision === VALIDATOR_DECISIONS.NEEDS_REVIEW ||
+                           (valReport.decision === VALIDATOR_DECISIONS.CONDITIONAL_PASS && options.strictSingleSourceBlock === true);
+
+    if (!options.bypassQualityGate && isHardRejected) {
       console.warn(`🛡️ [GATEWAY QUALITY GATE WITHHELD] Rule "${rule.title}" withheld from canonical promotion: ${valReport.decision} (${valReport.decision_reason})`);
       promotedList.push({
         number: null,
@@ -647,6 +651,26 @@ export function promoteValidatedRules(learningPackage, options = {}) {
         reason: valReport.decision_reason,
         recommended_action: valReport.recommended_action,
         quality_gate: valReport
+      });
+      // Zero Silent Data Loss: Preserve HIQV withheld candidates for quarantine staging in 11_INBOX
+      learningPackage.rejected_rules = learningPackage.rejected_rules || [];
+      learningPackage.rejected_rules.push({
+        title: rule.title,
+        body: rule.body,
+        reason: `HIQV quality gate withheld: ${valReport.decision} (${valReport.decision_reason})`,
+        validationReport: valReport
+      });
+      continue;
+    }
+
+    if (valReport.dimensions?.conflict?.is_duplicate) {
+      console.log(`ℹ️ [GATEWAY DUPLICATE SKIPPED] Rule "${rule.title}" already exists canonically. Skipping duplicate append.`);
+      promotedList.push({
+        number: null,
+        title: rule.title,
+        status: 'DUPLICATE_SKIPPED',
+        decision: valReport.decision,
+        reason: valReport.decision_reason
       });
       continue;
     }

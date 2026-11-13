@@ -702,28 +702,31 @@ export function validateDuplicationAndConflict(item, options = {}) {
   let score = 1.0;
 
   // 1. Check Against Existing Canonical Patterns via BM25 Search
-  try {
-    const searchRes = searchBrain(item.title, {
-      topK: 3,
-      brainRoot: p.brainRoot,
-      forceRebuild: false
-    });
+  if (!options.skipBM25 && !p.skipBM25) {
+    try {
+      const searchRes = searchBrain(item.title, {
+        topK: 3,
+        brainRoot: p.brainRoot,
+        forceRebuild: false,
+        noDossiers: true
+      });
 
-    if (searchRes && searchRes.results && searchRes.results.length > 0) {
-      const topMatch = searchRes.results[0];
-      const titleA = item.title.toLowerCase().replace(/[^\w]/g, '');
-      const titleB = topMatch.title.toLowerCase().replace(/[^\w]/g, '');
+      if (searchRes && searchRes.results && searchRes.results.length > 0) {
+        const topMatch = searchRes.results[0];
+        const titleA = item.title.toLowerCase().replace(/[^\w]/g, '');
+        const titleB = topMatch.title.toLowerCase().replace(/[^\w]/g, '');
 
-      // Check Exact/Near-Exact Duplicate
-      if (titleA === titleB || (topMatch.score > 25 && titleB.includes(titleA))) {
-        isDuplicate = true;
-        duplicateTarget = topMatch.id;
-        findings.push(`DUPLICATE_KNOWLEDGE: Highly similar canonical rule already exists (${topMatch.id}: "${topMatch.title}")`);
-        score -= 0.4;
+        // Check Exact/Near-Exact Duplicate
+        if (titleA === titleB || (topMatch.score > 25 && titleB.includes(titleA))) {
+          isDuplicate = true;
+          duplicateTarget = topMatch.id;
+          findings.push(`DUPLICATE_KNOWLEDGE: Highly similar canonical rule already exists (${topMatch.id}: "${topMatch.title}")`);
+          score -= 0.4;
+        }
       }
+    } catch (searchErr) {
+      // Search unavailable in isolated sandbox: gracefully bypass
     }
-  } catch (searchErr) {
-    // Search unavailable in isolated sandbox: gracefully bypass
   }
 
   // 2. Check Semantic Opposition / Invariant Clash

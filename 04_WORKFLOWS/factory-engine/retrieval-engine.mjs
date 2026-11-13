@@ -1605,7 +1605,8 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
   const p = getRetrievalPaths(resolvedRoot);
   const normalizedRoot = resolvedRoot ? path.resolve(resolvedRoot) : BRAIN_ROOT;
   const isDefaultRoot = normalizedRoot.toLowerCase() === BRAIN_ROOT.toLowerCase();
-  const cacheKey = isDefaultRoot ? 'DEFAULT' : normalizedRoot;
+  const noDossiers = Boolean(resolvedOpts && (resolvedOpts.skipDossiers || resolvedOpts.includeDossiers === false));
+  const cacheKey = (isDefaultRoot ? 'DEFAULT' : normalizedRoot) + (noDossiers ? ':NO_DOSSIERS' : '');
   const currentHash = computeSourceFilesHash(resolvedRoot, forceRebuild);
 
   const rootMemory = _indexCacheByRoot.get(cacheKey);
@@ -1613,8 +1614,8 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
     return rootMemory;
   }
 
-  // Check persistent disk cache if valid
-  if (!forceRebuild && fs.existsSync(p.cacheIndexFile)) {
+  // Check persistent disk cache if valid (only for full index)
+  if (!noDossiers && !forceRebuild && fs.existsSync(p.cacheIndexFile)) {
     try {
       const raw = fs.readFileSync(p.cacheIndexFile, 'utf-8');
       const cached = JSON.parse(raw);
@@ -1659,7 +1660,7 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
   const workflowDocs = parseWorkflowPlaybooks(resolvedRoot);
   const governanceDocs = parseGovernanceDocuments(resolvedRoot);
   const personaDocs = parseAgentPersonas(resolvedRoot);
-  const dossierChunkDocs = parseDossierChunks(p, resolvedOpts);
+  const dossierChunkDocs = noDossiers ? [] : parseDossierChunks(p, resolvedOpts);
   const documents = [
     ...patternDocs,
     ...coreDocs,
@@ -1819,7 +1820,7 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
 export function searchBrain(query, options = {}) {
   const startTime = Date.now();
   const customRoot = options.brainRoot || null;
-  const index = buildSearchIndex(options.forceRebuild || false, customRoot);
+  const index = buildSearchIndex(options.forceRebuild || false, customRoot, options);
   const queryTokens = tokenize(query);
 
   if (queryTokens.length === 0) {

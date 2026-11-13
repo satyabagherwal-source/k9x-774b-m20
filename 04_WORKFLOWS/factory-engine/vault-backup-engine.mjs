@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { encryptSecretsFile, resolveVaultPassphrase } from './vault-crypto.mjs';
 import { buildBackupManifest, computeFileSha256 } from './vault-manifest.mjs';
+import { ReleaseBackupAdapter } from './release-backup-adapter.mjs';
 
 const VAULT_REPO = 'satyabagherwal-source/ai-builder-brain-private-vault';
 const SNAPSHOT_BASE_DIR = path.resolve('.project-brain/backups/vault-snapshots');
@@ -314,84 +315,22 @@ export async function executeVaultBackup(options = {}) {
     logger(`  ✅ Critical files match source SHA-256 hashes perfectly`);
 
     // ------------------------------------------------------------------
-    // STEP 7: Remote Vault Push (satyabagherwal-source/ai-builder-brain-private-vault)
+    // STEP 7: Remote Vault Synchronization via GitHub Releases
     // ------------------------------------------------------------------
     if (!skipRemote) {
-      logger(`\n[STEP 7] Synchronizing Backup to Private Vault Remote...`);
+      logger(`\n[STEP 7] Synchronizing Backup to Private Vault via Release Assets...`);
       try {
-        if (!fs.existsSync(VAULT_CACHE_DIR)) {
-          logger(`  ⏳ Initializing local vault cache clone from ${VAULT_REPO}...`);
-          fs.mkdirSync(path.dirname(VAULT_CACHE_DIR), { recursive: true });
-          run(`gh repo clone ${VAULT_REPO} "${VAULT_CACHE_DIR}"`);
-        }
-
-        // Configure git inside vault cache repo
-        run('git config user.name "AI-Builder-Brain-Vault-Engine"', VAULT_CACHE_DIR);
-        run('git config user.email "brain-vault@antigravity.local"', VAULT_CACHE_DIR);
-        run('git config http.postBuffer 524288000', VAULT_CACHE_DIR);
-
-        // Copy latest snapshot bundle, manifest, secrets, and core recovery files into vault repo
-        const vaultSnapshotsDir = path.join(VAULT_CACHE_DIR, 'snapshots', snapshotId);
-        fs.mkdirSync(vaultSnapshotsDir, { recursive: true });
-
-        // GitHub has a strict 100 MB per file limit.
-        // Chunk bundle into 45 MB parts if bundle size > 90 MB:
-        const BUNDLE_CHUNK_SIZE = 45 * 1024 * 1024;
-        if (bundleStats.size > 90 * 1024 * 1024) {
-          logger(`  📦 Git bundle size (${(bundleStats.size / 1024 / 1024).toFixed(1)} MB) > 90 MB. Splitting into 45 MB chunks for GitHub 100 MB compliance...`);
-          const parts = splitFileIntoChunks(bundlePath, vaultSnapshotsDir, BUNDLE_CHUNK_SIZE);
-          fs.writeFileSync(
-            path.join(vaultSnapshotsDir, 'bundle-parts.json'),
-            JSON.stringify({ originalSize: bundleStats.size, sha256: bundleSha256, parts }, null, 2),
-            'utf8'
-          );
-          logger(`  ✅ Split into ${parts.length} compliant parts (< 45 MB each)`);
-        } else {
-          fs.copyFileSync(bundlePath, path.join(vaultSnapshotsDir, 'brain-history.bundle'));
-        }
-
-        fs.copyFileSync(manifestDstPath, path.join(vaultSnapshotsDir, 'backup-manifest.json'));
-        if (fs.existsSync(secretsTargetPath)) {
-          fs.copyFileSync(secretsTargetPath, path.join(vaultSnapshotsDir, 'secrets.enc'));
-        }
-        if (fs.existsSync(auxTarPath)) {
-          fs.copyFileSync(auxTarPath, path.join(vaultSnapshotsDir, 'auxiliary-state.tar.gz'));
-          logger(`  ✅ Copied auxiliary-state.tar.gz to vault remote snapshot`);
-        }
-
-        // Standalone disaster recovery runner in vault root
-        const srcDr = path.join(rootDir, 'scripts/disaster-recovery.mjs');
-        const srcDrPs = path.join(rootDir, 'scripts/disaster-recovery.ps1');
-        if (fs.existsSync(srcDr)) fs.copyFileSync(srcDr, path.join(VAULT_CACHE_DIR, 'recover.mjs'));
-        if (fs.existsSync(srcDrPs)) fs.copyFileSync(srcDrPs, path.join(VAULT_CACHE_DIR, 'recover.ps1'));
-
-        // Write a README in vault repo root
-        const vaultReadmePath = path.join(VAULT_CACHE_DIR, 'README.md');
-        const readmeContent = `# AI-Builder-Brain — Private Disaster Recovery Vault\n\n` +
-          `**Confidential & Encrypted Disaster Recovery Storage**\n\n` +
-          `- Latest Snapshot ID: \`${snapshotId}\`\n` +
-          `- Created At: \`${new Date().toISOString()}\`\n` +
-          `- Git HEAD: \`${gitHead}\`\n` +
-          `- Total Indexed Files: \`${manifest.stats.totalFiles}\`\n` +
-          `- Bundle SHA-256: \`${bundleSha256}\`\n\n` +
-          `*All secrets are encrypted with AES-256-GCM. Plaintext secrets are never committed.*\n`;
-        fs.writeFileSync(vaultReadmePath, readmeContent, 'utf8');
-
-        // Git add, commit, push in vault repo only
-        run('git add .', VAULT_CACHE_DIR);
-        const vaultDiff = run('git status --porcelain', VAULT_CACHE_DIR);
-        if (vaultDiff.length > 0) {
-          run(`git commit -m "vault: automated backup ${snapshotId} [HEAD ${gitHead.slice(0, 7)}]"`, VAULT_CACHE_DIR);
-          logger(`  ⏳ Pushing backup to ${VAULT_REPO}...`);
-          run('git push origin main', VAULT_CACHE_DIR);
-          logger(`  ✅ [REMOTE SYNC CONFIRMED] Successfully pushed ${snapshotId} to private vault`);
-          backupReport.remoteSyncStatus = 'SUCCESS';
-        } else {
-          logger(`  ℹ️ Vault repo already up-to-date with current state`);
-          backupReport.remoteSyncStatus = 'UP_TO_DATE';
-        }
+        const releaseAdapter = new ReleaseBackupAdapter({
+          vaultRepo: VAULT_REPO,
+          logger
+        });
+        const uploadResult = await releaseAdapter.uploadSnapshotToRelease(targetSnapshotDir);
+        backupReport.remoteSyncStatus = uploadResult.status;
+        backupReport.remoteReleaseTag = uploadResult.tag;
+        backupReport.remoteRetention = uploadResult.retention;
+        logger(`  ✅ [REMOTE SYNC CONFIRMED] Successfully synchronized ${snapshotId} to private vault release ${uploadResult.tag}`);
       } catch (remoteErr) {
-        logger(`  ⚠️ Remote vault sync failed: ${remoteErr.message}`);
+        logger(`  ⚠️ Remote vault release sync failed: ${remoteErr.message}`);
         backupReport.remoteSyncStatus = 'FAILED';
         backupReport.errors.push(`Remote sync error: ${remoteErr.message}`);
       }
@@ -485,9 +424,9 @@ function enforceRetentionPolicy(snapshotsDir, logger = console.log) {
 
   logger(`  Total valid snapshots found: ${entries.length}`);
 
-  // INVARIANT: Never delete if <= 1 backup exists
-  if (entries.length <= 1) {
-    logger(`  ℹ️ Single backup retention protection active; no backups pruned.`);
+  // INVARIANT: Never delete if <= 3 backups exist (Rule of 3)
+  if (entries.length <= 3) {
+    logger(`  ℹ️ Minimum retention protection active (Count ${entries.length} <= 3); zero backups pruned.`);
     return;
   }
 
@@ -505,6 +444,8 @@ function enforceRetentionPolicy(snapshotsDir, logger = console.log) {
     }
   }
 }
+
+export { ReleaseBackupAdapter };
 
 // Allow direct CLI invocation
 if (process.argv[1] && process.argv[1].endsWith('vault-backup-engine.mjs')) {

@@ -53,4 +53,8 @@ keys.txt
 .project-brain/backups/
 .project-brain/vault-remote-cache/
 
+# Simulation Sandbox
+.project-brain/simulation-sandbox/
+
+
 
