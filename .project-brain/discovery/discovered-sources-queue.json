@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T21:50:53.667Z",
+  "updated_at": "2026-11-13T21:59:58.303Z",
   "stats": {
-    "total_discovered": 2943,
-    "approved_pending_harvest": 2745,
+    "total_discovered": 2963,
+    "approved_pending_harvest": 2765,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2746,
-      "OFFICIAL_DOCUMENTATION": 105,
+      "COMMUNITY_AND_EXPERT": 2765,
+      "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
@@ -63380,6 +63380,446 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
         "fileName": "callstack-react-native-paper-learnings.md"
+      }
+    },
+    "SRC-F090FB358B2C": {
+      "id": "SRC-F090FB358B2C",
+      "url": "https://huggingface.co/amazon/chronos-2",
+      "title": "https://huggingface.co/amazon/chronos-2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
+        "fileName": "hf-amazon-chronos-2-learnings.md"
+      }
+    },
+    "SRC-B8644F8C0557": {
+      "id": "SRC-B8644F8C0557",
+      "url": "https://github.com/FaridSafi/react-native-gifted-chat",
+      "title": "https://github.com/FaridSafi/react-native-gifted-chat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-CB7177200E6F": {
+      "id": "SRC-CB7177200E6F",
+      "url": "https://docs.expo.dev/guides/color-schemes",
+      "title": "https://docs.expo.dev/guides/color-schemes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.835Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-FE6FD196B64A": {
+      "id": "SRC-FE6FD196B64A",
+      "url": "https://user-images.githubusercontent.com/4968936/81480928-59078680-91f2-11ea-91f7-1d4706f8dba0.gif",
+      "title": "https://user-images.githubusercontent.com/4968936/81480928-59078680-91f2-11ea-91f7-1d4706f8dba0.gif",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.860Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-C58274021A1D": {
+      "id": "SRC-C58274021A1D",
+      "url": "https://user-images.githubusercontent.com/4968936/81480937-66247580-91f2-11ea-8f79-ad3e41ea4d08.png",
+      "title": "https://user-images.githubusercontent.com/4968936/81480937-66247580-91f2-11ea-8f79-ad3e41ea4d08.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.886Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-07F260B9636C": {
+      "id": "SRC-07F260B9636C",
+      "url": "https://github.com/kesha-antonov/react-native-chat",
+      "title": "https://github.com/kesha-antonov/react-native-chat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.911Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-44F294C72F14": {
+      "id": "SRC-44F294C72F14",
+      "url": "https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md",
+      "title": "https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.935Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-049A93474B24": {
+      "id": "SRC-049A93474B24",
+      "url": "https://github.com/FaridSafi/react-native-gifted-chat/issues/2736",
+      "title": "https://github.com/FaridSafi/react-native-gifted-chat/issues/2736",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-3F6E8FAA923B": {
+      "id": "SRC-3F6E8FAA923B",
+      "url": "https://github.com/FaridSafi/react-native-gifted-chat/issues/2755",
+      "title": "https://github.com/FaridSafi/react-native-gifted-chat/issues/2755",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:57.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-C426E55B5AD1": {
+      "id": "SRC-C426E55B5AD1",
+      "url": "https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider",
+      "title": "https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.023Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-CFABD861F7DC": {
+      "id": "SRC-CFABD861F7DC",
+      "url": "https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/components/keyboard-avoiding-view",
+      "title": "https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/components/keyboard-avoiding-view",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.048Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-5F23F59A3C13": {
+      "id": "SRC-5F23F59A3C13",
+      "url": "https://github.com/juliangruber/brace-expansion",
+      "title": "https://github.com/juliangruber/brace-expansion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-0D9651F79995": {
+      "id": "SRC-0D9651F79995",
+      "url": "https://github.com/juliangruber/brace-expansion/releases",
+      "title": "https://github.com/juliangruber/brace-expansion/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-E4875620F6DB": {
+      "id": "SRC-E4875620F6DB",
+      "url": "https://github.com/juliangruber/brace-expansion/compare/v1.1.15...v1.1.21",
+      "title": "https://github.com/juliangruber/brace-expansion/compare/v1.1.15...v1.1.21",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-44E1F6627996": {
+      "id": "SRC-44E1F6627996",
+      "url": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.15.tgz",
+      "title": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.15.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.162Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-FFC92FF22EC1": {
+      "id": "SRC-FFC92FF22EC1",
+      "url": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz",
+      "title": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.186Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-FA15BDE3CD86": {
+      "id": "SRC-FA15BDE3CD86",
+      "url": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.1.tgz",
+      "title": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.211Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-B4EA718973C7": {
+      "id": "SRC-B4EA718973C7",
+      "url": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.7.tgz",
+      "title": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.249Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-00FF3F633FFF": {
+      "id": "SRC-00FF3F633FFF",
+      "url": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.6.tgz",
+      "title": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.278Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-FA236A2A6FFD": {
+      "id": "SRC-FA236A2A6FFD",
+      "url": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.12.tgz",
+      "title": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.12.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:59:58.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
       }
     }
   }

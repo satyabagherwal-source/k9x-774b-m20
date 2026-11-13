@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T21:50:53.278Z",
+  "updated_at": "2026-11-13T21:59:57.440Z",
   "statistics": {
-    "total_nodes": 130,
-    "total_edges": 70,
+    "total_nodes": 131,
+    "total_edges": 71,
     "domain_distribution": {
-      "D": 107,
+      "D": 108,
       "M": 1,
       "H": 10,
       "J": 3,
@@ -17,7 +17,7 @@
       "F": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 70
+      "CONSTRAINED_BY_ARCHITECTURE": 71
     }
   },
   "nodes": {
@@ -2905,6 +2905,29 @@
       ],
       "created_at": "2026-11-13T21:50:53.277Z",
       "updated_at": "2026-11-13T21:50:53.277Z"
+    },
+    "DOM-D-6F87F39B": {
+      "id": "DOM-D-6F87F39B",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): amazon/chronos-2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface. -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-amazon-chronos-2/hf-amazon-chronos-2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:59:22.280Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-amazon-chronos-2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T21:59:57.440Z",
+      "updated_at": "2026-11-13T21:59:57.440Z"
     }
   },
   "edges": [
@@ -3607,6 +3630,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-B528111D [D] with Domain M",
       "created_at": "2026-11-13T21:50:53.278Z"
+    },
+    {
+      "id": "EDGE-6A247EAB41BA",
+      "sourceId": "DOM-D-6F87F39B",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-6F87F39B [D] with Domain M",
+      "created_at": "2026-11-13T21:59:57.440Z"
     }
   ]
 }

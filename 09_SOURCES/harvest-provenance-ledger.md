@@ -9680,3 +9680,8 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `328efad7` | Multi-dimensional audit evidence | 2026-11-13T21:45:20.694Z |
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-13T21:50:21.308Z |
 | `learn-dom-d-b528111d` | `project://hf-google-t5-t5-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | 2026-11-13T21:50:53.279Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `52489997` | Multi-dimensional audit evidence | 2026-11-13T21:58:35.573Z |
+| `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `ea2d83f9` | Multi-dimensional audit evidence | 2026-11-13T21:58:39.443Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `831a1ce2` | Multi-dimensional audit evidence | 2026-11-13T21:58:48.274Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-13T21:59:18.743Z |
+| `learn-dom-d-6f87f39b` | `project://hf-amazon-chronos-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | 2026-11-13T21:59:57.441Z |

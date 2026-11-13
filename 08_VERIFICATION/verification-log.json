@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-FXZ0",
-    "timestamp": "2026-11-13T03:10:29.820Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-    "contentHash": "82dfa5b1b00f466879d47754500f817e5c992f198e9d39e7d25b8ab70b5688ae",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-G0PW",
-    "timestamp": "2026-11-13T03:10:33.380Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "c98a961c993009a16ea770aa915d47da3c173468a12cbe3140b446e5dd2a6d58",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-GAW6",
-    "timestamp": "2026-11-13T03:10:46.566Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "b5c65542003761eb5a2d2caeb8536ee8d630e09839655037da7e454f6abd7f4f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-GFFF",
-    "timestamp": "2026-11-13T03:10:52.443Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "7e10bc329b758fa0f0c00fa8900ae35a5e3f7caf758bd785099602e0f89a18fa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-QDUH",
     "timestamp": "2026-11-13T03:18:36.953Z",
     "repository": "agentes-chat/agentes-chat",
@@ -7490,6 +7430,66 @@
     "repository": "google-t5/t5-small",
     "learningId": "learn-huggingface-google-t5-t5-small",
     "contentHash": "da3282fae4b163e86cce4ffecee66fb870984d625505162de2c0bc37ff9dcbe5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QOMP",
+    "timestamp": "2026-11-13T21:58:35.569Z",
+    "repository": "Xudong-Huang/may",
+    "learningId": "learn-github-xudong-huang-may",
+    "contentHash": "e88e8b5195a76c7ce3913fd16863afddb2a759dd8faec3ae841cb10b45950762",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QRM6",
+    "timestamp": "2026-11-13T21:58:39.438Z",
+    "repository": "FaridSafi/react-native-gifted-chat",
+    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+    "contentHash": "91fb6f02cef4942a8ee82c3b2627cceee706c18e77be8ad64a8d3cb4563bc212",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QYFI",
+    "timestamp": "2026-11-13T21:58:48.270Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "78a04f292e2b84aee5de9bbbb739bb9a310f75a7d8e6969da4a03945b15e054c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-RLXU",
+    "timestamp": "2026-11-13T21:59:18.738Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "0c2e170e3099386f6ac70638462bc1a4e1cedbed0e6ec53f7d9538a79f64d067",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

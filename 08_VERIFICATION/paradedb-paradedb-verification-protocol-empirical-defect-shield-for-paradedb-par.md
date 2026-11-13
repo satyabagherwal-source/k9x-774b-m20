@@ -4,45 +4,31 @@
 {
   "source_repository": "paradedb/paradedb",
   "source_url": "https://github.com/paradedb/paradedb",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "831a1ce2",
+  "license": "AGPL-3.0",
+  "timestamp": "2026-11-13T21:58:48.492Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-paradedb-paradedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `831a1ce2`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-13T21:58:48.492Z`  
+> **Learning ID**: `learn-github-paradedb-paradedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `paradedb/paradedb` (Commit: `historical`)
+- **Target Repository**: `paradedb/paradedb` (Commit: `831a1ce2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
-> **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `781cb511`  
-> **License**: AGPL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:17:26.254Z  
-> **Learning ID**: `learn-github-paradedb-paradedb`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): paradedb/paradedb
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:17:26.242Z  
+> **Harvest Timestamp**: 2026-11-13T21:58:47.284Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9504 stars
+- **Stars / Engagement**: 9511 stars
 
 ---
 
@@ -1155,7 +1141,7 @@ pub trait PgMemoryContextsExt {
     /// std, tokio, tantivy and DataFusion types: there is no `Drop` of ours on them to put
     /// `impl_safe_drop!` on. Our own `Drop`s are checked by `.github/scripts/check_impl_drop.py`.
     ///
-    /// The body mirrors pgrx 0.19.2's `leak_and_drop_on_delete` (`memcxt.rs`) plus the
+    /// The body mirrors pgrx 0.20.0's `leak_and_drop_on_delete` (`memcxt.rs`) plus the
     /// `proc_exit` check; keep it in sync when bumping pgrx.
     fn leak_and_drop_unless_exiting<T>(&mut self, v: T) -> *mut T;
 }
@@ -1172,15 +1158,16 @@ impl PgMemoryContextsExt for PgMemoryContexts {
             drop(unsafe { Box::from_raw(ptr.cast::<T>()) });
         }
 
-        let leaked = Box::leak(Box::new(v));
         unsafe {
             // SAFETY: the callback struct is plain pointers, all set before it is registered.
             let callback = self.palloc_struct::<pg_sys::MemoryContextCallback>();
+            // Keep Rust ownership until callback allocation succeeds.
+            let leaked = Box::leak(Box::new(v));
             (*callback).func = Some(drop_unless_exiting::<T>);
             (*callback).arg = (leaked as *mut T).cast();
             pg_sys::MemoryContextRegisterResetCallback(self.value(), callback);
+            leaked
         }
-        leaked
     }
 }
 
@@ -1201,8 +1188,7 @@ pub fn proc_exit_in_progress() -> bool {
 /// Automatically frees the context when dropped
 ///
 /// let context_guard = ExprContextGuard::new();
-/// // Use context_guard.as_ptr() to get the raw pointer
-/// // Context is automatically freed when
+/// // Use context_g
 ```
 
 ### Core Architecture Module: `index_read/src/index/directory/utils.rs`
@@ -2229,11 +2215,11 @@ impl AggregateScanState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7433** (2026-11-12): **CI: Citus 13 build fails on PostgreSQL 15.20 with a redeclared `have_createdb_privilege`**
+  *Symptoms*: # What happens?  Since PostgreSQL 15.20 reached `apt.postgresql.org` on 2026-11-12, the `Build & install Citus 13 (PG 15)` step of `Test pg_search` fails.  ``` citus/src/include/pg_version_compat.h:604:1: error: static declaration of ‘have_createdb_privilege’ follows non-static declaration /usr/include/postgresql/15/server/commands/dbcommands.h:33:13: note: previous declaration of ‘have_createdb_privilege’ with type ‘_Bool(void)’ ```  PostgreSQL 15.20 exports `have_createdb_privilege` from `commands/dbcommands.h` (postgres/postgres@98ec97f673). Citus 13 has a `static inline` copy of it for PostgreSQL versions before 16 in `src/include/pg_version_compat.h`, so the two declarations collide. `v13.4.0` and `v13.5.0` have the same copy, so a newer 13.x tag doesn't help.  The last green run of this job installed `postgresql-server-dev-15` `15.19-1.pgdg26.04+2`. The red runs install `15.20-1.pgdg26.04+1`. PostgreSQL 16 to 18 aren't affected, because those jobs build Citus 14.  These runs fail at the same step.  - https://github.com/paradedb/paradedb/actions/runs/43280487148/job/131400357675 (#7430) - https://github.com/paradedb/paradedb/actions/runs/43272838607 - https://github.com/paradedb/paradedb/actions/runs/43267298415 - https://github.com/paradedb/paradedb/actions/runs/43266693756  ## To Reproduce  Run this on Ubuntu with the PGDG apt repository.  ```bash sudo apt-get install -y postgresql-15 postgresql-server-dev-15 git clone --depth 1 --branch v13.3.0 https://github.com/citu
+
 - **Issue #7313** (2026-11-08): **JoinScan segfaults when a projected expression contains a scalar subquery**
   *Symptoms*: ### What happens?  ParadeDB Join Scan crashes the server (segmentation fault) when an expression in the SELECT list contains a scalar subquery, such as `a.q + (SELECT 1)`. Postgres then restarts all connections. A prepared statement parameter in the same place, with a generic plan, fails with ERROR: no value found for parameter 1.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE a (id int PRIMARY KEY, q int); CREATE TABLE b (id int PRIMARY KEY, a_id int);  INSERT INTO a VALUES (1, 5); INSERT INTO b VALUES (1, 1);  CREATE INDEX a_idx ON a USING paradedb (id, q); CREATE INDEX b_idx ON b USING paradedb (id, a_id);  SELECT a.id, a.q + (SELECT 1) FROM a JOIN b ON b.a_id = a.id WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; ```  The server crashes with "terminated by signal 11: Segmentation fault". Expected 1 | 6. With SET paradedb.enable_join_custom_scan = off; it returns 1 | 6.  The parameter case:  ```sql SET plan_cache_mode = force_generic_plan; PREPARE s(int) AS   SELECT a.id, a.q + $1 FROM a JOIN b ON b.a_id = a.id   WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; EXECUTE s(1); ```  Returns ERROR: no value found for parameter 1. Expected 1 | 6.  ### OS:  macOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  e80cf37  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB pg_search Extension  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant da
-
-- **Issue #7293** (2026-11-10): **Server crashes when a join filter compares an expression over two tables to a scalar subquery**
-  *Symptoms*: ### What happens?  ParadeDB crashes the backend with a segmentation fault when a join query has a filter that uses columns from both tables and an uncorrelated scalar subquery, for example `a.price * b.qty > (SELECT 1)`. Postgres then terminates all active connections and restarts. Plain `EXPLAIN` crashes too, because the fault happens during planning.  Both Aggregate Scan and Join Scan are affected. The same query without aggregates crashes through Join Scan when it has an `ORDER BY` and `LIMIT`.  The crash report shows DataFusion's constant evaluator calling `PgExprUdf`, which faults in `ExecEvalParamExec` on a NULL address:  ``` ExecEvalParamExec        (KERN_INVALID_ADDRESS at 0x0) ExecInterpExpr ExecEvalExpr PgExprUdf                (pg_expr_udf.rs) ScalarUDF::invoke_with_args ConstEvaluator           (datafusion_optimizer expr_simplifier) ```  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE ca (id int PRIMARY KEY, name text, price float8); CREATE TABLE cb (id int PRIMARY KEY, a_id int, qty float8);  INSERT INTO ca VALUES (1, 'x shoes', 1.5), (2, 'y shoes', 2.5); INSERT INTO cb VALUES (1, 1, 1), (2, 2, 2);  CREATE INDEX ca_idx ON ca USING paradedb (id, name, price); CREATE INDEX cb_idx ON cb USING paradedb (id, a_id, qty);  SELECT COUNT(*) FROM ca JOIN cb ON cb.a_id = ca.id WHERE ca.id @@@ pdb.all()   AND ca.price * cb.qty > (SELECT 1); ```  Crashes with `server closed the connection unexpectedly`. The Postgres log shows `terminated by si
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2250,680 +2236,492 @@ impl AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61edff0a` (2026-11-10)
-**Commit Message**: fix: correct Tantivy revision after clustering update (#7365)
+### Incident Patch 1: `831a1ce2` (2026-11-13)
+**Commit Message**: fix: exclude retired segments after cancelled vacuum (#7453)
 
 ## What
 
-Restore compilation on main by pinning Tantivy to
-`05b861b5ef138c4f4a3d93544d3b174e1994e207`, the merged revision of
-paradedb/tantivy#392.
+Prevent mergers with cached metadata from selecting segments that VACUUM
+or another merger has changed or retired.
 
 ## Why
 
-#7346 pinned the pre-merge branch commit `1c7c2150`, which lacks the
-vector-routing APIs already required by #7295, including
-`VectorSearchBudget`, `AtomicVectorWork`, and
-`TopClustersBySimilarityCollector`. Both
-[HN](https://github.com/paradedb/paradedb/actions/runs/42894121461) and
-[MS
-MARCO](https://github.com/paradedb/paradedb/actions/runs/42894122837)
-pg_vectorsearch runs failed while compiling `pg_search` during cluster
-setup.
+VACUUM can publish segment retirements or updated deletion metadata and
+then be cancelled while waiting for readers or mergers to leave. Once
+its sentinel disappears, a merger with stale metadata can select those
+inputs and either fail on already-retired segments or overwrite updated
+deletion metadata. A cancelled concurrent merger can similarly leave
+cached inputs stale.
 
 ## How
 
-Update all four Tantivy dependency/patch pins and the ten Tantivy-family
-lockfile entries. The merged revision retains the geometric
-`target_leaf_size` changes and includes the required routing APIs. No
-other dependency versions change. The existing Nix CI workflow will
-refresh `cargoHash` for the updated lockfile.
+Compare cached merge candidates against the full current
+`SegmentMetaEntry`, while holding `MergeLock`. The controlled regression
+covers both mutable and immutable segments: pause merge selection, let
+VACUUM publish metadata changes, cancel VACUUM, then resume the merger.
+The test helper counts only retirements of its selected inputs,
+excluding concurrent VACUUM retirements.
 
 ## Tests
 
-- `cargo metadata --format-version 1 --locked`: all ten Tantivy-family
-packages resolve to the new revision.
-- `cargo check --workspace --all-targets --locked`: passed locally with
-PostgreSQL 18, including 
+Locally on PostgreSQL 18.7 with pgrx 0.20.0:
 
-**File**: `Cargo.lock` (modified, +10/-10)
+- The original mutable-segment regression failed on community main with
+the test/helper changes alone: `SegmentMetaEntry ... should not already
+be deleted` (SQLSTATE `XX000`).
+- The expa
+
+**File**: `index_write/src/index/merge_policy.rs` (modified, +12/-1)
 ```diff
-@@ -5254,7 +5254,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7513,7 +7513,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7572,15 +7572,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "bitpacking",
- ]
+@@ -90,13 +90,24 @@ impl LayeredMergePolicy {
+             pgrx::debug1!("do_merge: non_mergeable_segments={non_mergeable_segments:?}");
+         }
  
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7595,7 +7595,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -7628,7 +7628,7 @@ dependencies = [
- [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7637,7 +7637,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7649,7 +7649,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7662,7 +7662,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7699,7 +7699,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
- dependencies = [
-  "serde",
- ]
++        // VACUUM or another merger can publish metadata changes and then be canceled while
++        // this merger holds an older view. Their exclusions disappear on ERROR, so compare
++        // full entries to catch both retired segments and updated deletion metadata.
++        // The caller holds MergeLock, preventing a new VACUUM from starting during selection.
++        let live_entries: HashMap<_, _> = unsafe { metadata.segment_metas().list(None) }
++            .into_iter()
++            .filter(|entry| entry.xmax() == pg_sys::InvalidTransactionId)
++            .map(|entry| (entry.segment_id(), entry))
++            .collect();
++
+         // tell the MergePolicy which segments it's initially allowed to consider for merging
+         self.mergeable_segments = merger
+             .all_entries()
+             .into_iter()
+-            .filter(|(segment_id, _)| {
++            .filter(|(segment_id, entry)| {
+                 // skip segments that are already being vacuumed or merged
+                 !non_mergeable_segments.contains(segment_id)
++                    && live_entries.get(segment_id) == Some(entry)
+             })
+             .collect();
+     }
 ```
 
-**File**: `Cargo.toml` (modified, +4/-4)
+**File**: `pg_search/src/postgres/coordination_test.rs` (modified, +8/-1)
 ```diff
-@@ -89,7 +89,7 @@ pgrx-tests = "=0.19.3"
+@@ -53,6 +53,10 @@ unsafe fn test_merge_index(index: PgRelation) -> i64 {
+         .into_iter()
+         .map(|(_, candidate)| candidate)
+         .collect::<Vec<_>>();
++    let selected: HashSet<SegmentId> = candidates
++        .iter()
++        .flat_map(|candidate| candidate.0.iter().copied())
++        .collect();
+     merge_index(
+         &index,
+         merger,
+@@ -67,7 +71,10 @@ unsafe fn test_merge_index(index: PgRelation) -> i64 {
+         .iter()
+         .map(SegmentMetaEntry::segment_id)
+         .collect();
+-    before.difference(&after).count() as i64
++    before
++        .difference(&after)
++        .filter(|id| selected.contains(*id))
++        .count() as i64
+ }
  
- # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
- # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207", features = [
-   "columnar-zstd-compression",
-   "lz4-compression",
-   "paradedb",
-@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
-   "stemmer",
-   "stopwords",
- ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
- tantivy-jieba = "0.21.0"
+ #[pg_extern]
+```
+
+**File**: `pg_search/tests/merge_cleanup.rs` (modified, +35/-0)
+```diff
+@@ -390,6 +390,41 @@ fn merger_admission_and_vacuum_waits_remain_interruptible() {
+     fixture.assert_rows(500);
+ }
  
- async-trait = "0.1.92"
-@@ -185,8 +185,8 @@ rstest = "0.28.0"
- postgres = "0.19.14"
- 
- [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "1c7c2150a97bc04fb71fd4808afddad19e9c17d7" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "05b861b5ef138c4f4a3d93544d3b174e1994e207" }
- 
- [workspace.lints.rust]
- unused_crate_dependencies = "warn"
++#[test]
++fn cancelled_vacuum_does_not_make_retired_segments_mergeable() {
++    let _schedule = SCHEDULE.lock().unwrap_or_else(|error| error.into_inner());
++    for mutable in [false, true] {
++        let mut fixture = Fixture::new("merge_cancelled_vacuum", mutable);
++        let live_docs = if mutable { 300 } else { 500 };
++        fixture.segments();
++        let vacuum = fixture.actor("vacuum", format!("VACUUM {}", fixture.table));
++        fixture.stage(&vacuum);
++        let merger = fixture.actor(
++            "selection",
++            format!("SELECT paradedb.test_merge_index('{}')", fixture.index),
++        );
++        // The merger has cached the original segments but has not selected inputs.
++        fixture.stage(&merger);
++        fixture.release(&vacuum);
++        wait_until("segment metadata publication", || {
++            fixture.value::<i64>(&format!(
++                "SELECT paradedb.test_live_docs('{}')",
++                fixture.index
++            )) == live_docs
++        });
++        fixture.waiting(&vacuum, "page");
++        fixture.cancel(&vacuum, false);
++        assert_error(vacuum.finish().1, "57014");
++        assert!(!fixture.value::<bool>(&format!(
++            "SELECT paradedb.test_vacuum_active('{}')",
++            fixture.index
++        )));
++        fixture.release(&merger);
++        assert_eq!(merger.finish().1.unwrap()[0].get::<_, i64>(0), 0);
++        fixture.assert_rows(live_docs);
++    }
++}
++
+ #[test]
+ fn vacuum_exclusion_handoff_and_reader_barrier_are_preserved() {
+     let _schedule = SCHEDULE.lock().unwrap_or_else(|error| error.into_inner());
 ```
 
 ---
 
-### Incident Patch 2: `29cca447` (2026-11-09)
-**Commit Message**: fix: bypass planner hooks during mutable sweeps (#7301)
+### Incident Patch 2: `3add723a` (2026-11-13)
+**Commit Message**: fix: keep serial Join Scan and Aggregate Scan streams across partial fetches (#7444)
 
 # Ticket(s) Closed
 
-- Addresses #7299
+- Part of #7443
 
 ## What
 
-Make mutable-sweep catalog discovery bypass planner hooks, allowing the
-worker to find Citus shard indexes and avoid the Citus crash path during
-concurrent table drops.
+A Join Scan read in parts now resumes where the previous fetch stopped,
+and so does a DataFusion Aggregate Scan. This covers a cursor, a
+PL/pgSQL `FOR` loop, and a portal fetched in batches. Before, a Join
+Scan started over from its first row on every fetch, so a `FOR` loop
+over it never ended. An Aggregate Scan stopped after its first 8192
+groups.
 
 ## Why
 
-Citus rewrites SQL queries against `pg_class` to hide shard indexes. Its
-visibility check can dereference a null relation name during concurrent
-`DROP TABLE`, crashing the sweeper and causing PostgreSQL to terminate
-other backends.
+PostgreSQL calls `ExecShutdownNode` at the end of every `ExecutePlan`
+that cannot scan backward, then runs the same plan again for the next
+fetch. Both scans' `ShutdownCustomScan` call `shutdown_mpp_scan`, which
+dropped the DataFusion stream even when MPP had not launched. The Join
+Scan then rebuilt its plan from the start, and the Aggregate Scan read
+the missing stream as the end of its output.
 
 ## How
 
-Read the extension version through `pg_extension_name_index`, avoiding
-an extension syscache that is unavailable on older PostgreSQL minor
-releases.
+- `shutdown_mpp_scan` now drops the stream and winds down the leader
+only when MPP launched. A serial scan keeps its stream until
+`EndCustomScan` or `ReScanCustomScan`, which still drop it and quiesce
+the runtime's tasks.
+- Not covered: an extended-protocol portal fetched in batches can still
+launch
 
-Scan `pg_class` directly and filter relation kind, persistence, and
-access method before looking up `INDEXRELID` to check index validity and
-readiness. This limits per-pass index syscache probes to ParadeDB
-candidates. Reuse the existing syscache guard and access-method checks,
-preserving the extension-version gate, OID ordering, and nonblocking
-relation locking.
-
-## Tests
-
-- Passed the catalog-discovery regression test on PostgreSQL 17.6 and
-18.3. The test rejects every planner-hook invocation and checks
-filtering of te
-
-**File**: `pg_search/src/postgres/catalog.rs` (modified, +146/-0)
+**File**: `docs/project/changelog/unreleased/7444.bugfix.mdx` (added, +5/-0)
 ```diff
-@@ -78,6 +78,87 @@ pub fn lookup_namespace(namespace: &CStr) -> Option<pg_sys::Oid> {
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++- Fixed Join Scans restarting from the first row on each cursor fetch, which could cause PL/pgSQL `FOR` loops to run indefinitely. Fixed cursors over DataFusion Aggregate Scans stopping after the first 8192 groups.
+```
+
+**File**: `joinscan/src/postgres/customscan/mpp/glue.rs` (modified, +8/-8)
+```diff
+@@ -392,23 +392,23 @@ fn warn_if_spilled(spilled_locally: &AtomicBool, finish: Option<&ParallelProcess
      }
  }
  
-+pub fn lookup_extension_version(name: &CStr) -> Option<String> {
-+    unsafe {
-+        let relation =
-+            pg_sys::table_open(pg_sys::ExtensionRelationId, pg_sys::AccessShareLock as _);
-+        let mut key = pg_sys::ScanKeyData::default();
-+        pg_sys::ScanKeyInit(
-+            &mut key,
-+            pg_sys::Anum_pg_extension_extname as _,
-+            pg_sys::BTEqualStrategyNumber as _,
-+            pg_sys::F_NAMEEQ.into(),
-+            pg_sys::Datum::from(name.as_ptr()),
-+        );
-+        let scan = pg_sys::systable_beginscan(
-+            relation,
-+            pg_sys::ExtensionNameIndexId.into(),
-+            true,
-+            std::ptr::null_mut(),
-+            1,
-+            &mut key,
-+        );
-+        let tuple = pg_sys::systable_getnext(scan);
-+        let version = if tuple.is_null() {
-+            None
-+        } else {
-+            let mut is_null = false;
-+            let datum = pg_sys::heap_getattr(
-+                tuple,
-+                pg_sys::Anum_pg_extension_extversion as _,
-+                (*relation).rd_att,
-+                &mut is_null,
-+            );
-+            String::from_datum(datum, is_null)
-+        };
-+        pg_sys::systable_endscan(scan);
-+        pg_sys::table_close(relation, pg_sys::AccessShareLock as _);
-+        version
-+    }
-+}
-+
-+pub fn paradedb_index_oids() -> Vec<pg_sys::Oid> {
-+    unsafe {
-+        let relation = pg_sys::table_open(pg_sys::RelationRelationId, pg_sys::AccessShareLock as _);
-+        let scan = pg_sys::systable_beginscan(
-+            relation,
-+            pg_sys::InvalidOid,
-+            false,
-+            std::ptr::null_mut(),
-+            0,
-+            std::ptr::null_mut(),
-+        );
-+        let mut indexes = Vec::new();
-+        loop {
-+            let tuple = pg_sys::systable_getnext(scan);
-+            if tuple.is_null() {
-+                break;
-+            }
-+            let class = &*pg_sys::GETSTRUCT(tuple).cast::<pg_sys::FormData_pg_class>();
-+            if class.relkind as u8 != pg_sys::RELKIND_INDEX
-+                || class.relpersistence as u8 == pg_sys::RELPERSISTENCE_TEMP
-+                || !class.relam.is_paradedb_am()
-+            {
-+                continue;
-+            }
-+            let Some(entry) = SysCacheEntry::search1(
-+                pg_sys::SysCacheIdentifier::INDEXRELID,
-+                class.oid.into_datum().unwrap(),
-+            ) else {
-+                continue;
-+            };
-+            let index = &*pg_sys::GETSTRUCT(entry.tuple).cast::<pg_sys::FormData_pg_index>();
-+            if index.indisvalid && index.indisready {
-+                indexes.push(class.oid);
-+            }
-+        }
-+        pg_sys::systable_endscan(scan);
-+        pg_sys::table_close(relation, pg_sys::AccessShareLock as _);
-+        indexes.sort_unstable_by_key(|oid| oid.to_u32());
-+        indexes
-+    }
-+}
-+
- /// Helper function to lookup a type's assigned `typcategory` attribute from `pg_catalog.pg_type`
- pub fn lookup_type_category(typoid: pg_sys::Oid) -> Option<u8> {
-     unsafe {
-@@ -320,3 +401,68 @@ pub fn lookup_collation_locale(collation: pg_sys::Oid) -> Option<CollationLocale
-         })
+-/// Shared `ShutdownCustomScan` step for `JoinScan` and `AggregateScan`:
+-/// drops `stream` (triggering `EndStreamNotifier` on `DistributedExec` so `c2w_stream` closes and
+-/// workers flush their final `TaskMetrics`), shuts down the leader session or quiesces serial
+-/// runtime tasks, joins the producer workers so their metrics land before `EXPLAIN ANALYZE`
+-/// renders, and emits the spill warning if any operator spilled.
++/// Shared `ShutdownCustomScan` step for `JoinScan` and `AggregateScan`. Postgres also calls it at
++/// the end of every partial `ExecutePlan` (each `FETCH` of a cursor, each batch of a PL/pgSQL `FOR`
++/// loop) and then resumes the scan, so a serial scan keeps its `stream` until `EndCustomScan` or
++/// `ReScanCustomScan` tears it down. An MPP launch drops `stream` (triggering `EndStreamNotifier`
++/// on `DistributedExec` so `c2w_stream` closes and workers flush their final `TaskMetrics`), shuts
++/// down the leader session, and joins the producer workers so their metrics land before
++/// `EXPLAIN ANALYZE` renders. Either way, emits the spill warning if any operator spilled.
+ pub fn shutdown_mpp_scan(
+     stream: &mut Option<SendableRecordBatchStream>,
+     runtime: Option<&PgTokioRuntime>,
+     physical_plan: Option<&Arc<dyn ExecutionPlan>>,
+     mpp: &mut MppLifecycle,
+     spilled: &AtomicBool,
+ ) {
+-    *stream = None;
+     if let Some(leader) = mpp.leader() {
++        *stream = None;
+         finish_leader_execution(runtime, physical_plan, leader);
+-    } else if let Some(rt) = runtime {
+-        rt.quiesce_tasks();
      }
- }
-+
-+#[cfg(any(test, feature = "pg_test"))]
-+#[pgrx::pg_schema]
-+mod tests {
-+    use super::*;
-+    use pgrx::{PgTryBuilder, Spi, pg_guard, pg_test};
-+
-+    #[pg_guard]
-+    unsafe extern "C-unwind" fn reject_planning(
-+        _parse: *mut pg_sys::Query,
-+        _query: *const std::ffi::c_char,
-+        _options: std::ffi::c_int,
-+        _params: pg_sys::ParamListInfo,
-+    ) -> *mut pg_sys::PlannedStmt {
-+        pgrx::error!("catalog discovery must not invoke planner hooks");
-+    }
-+
-+    #[pg_test]
-+    fn sweep_catalog_discovery_bypasses_planner_hooks() {
-+        let mut expected = paradedb_index_oids();
-+        Spi::run(
-+            "CREATE TABLE sweep_catalog (id int, body text);
-+             CREATE INDEX sweep_catalog_idx ON sweep_catalog USING paradedb(id, body);
-+             CREATE INDEX sweep_catalog_btree ON sweep_catalog(id);
-+             CREATE TABLE sweep_catalog_invalid_table (id int, body text);
-+             CREATE INDEX sweep_catalog_invalid ON sweep_catalog_invalid_table USING paradedb(id, body);
-+             CREATE TABLE sweep_catalog_unready_table (id int, body text);
-+             CREATE INDEX sweep_catalog_unready ON sweep_catalog_unready_table USING paradedb(id, body);
-+             UPDATE pg_index SET indisvalid = false WHERE indexrelid = 'sweep_catalog_invalid'::regclass;
-+             UPDATE pg_index SET indisready = false WHERE indexrelid = 'sweep_catalog_unready'::regclass;
-+             CREATE TEMP TABLE sweep_catalog_temp (id int, body text);
-+             CREATE INDEX sweep_catalog_temp_idx ON sweep_catalog_temp USING paradedb(id, body);
-+             CREATE UNLOGGED TABLE sweep_catalog_unlogged (id int, body text);
-+             CREATE INDEX sweep_catalog_u
+     if let Some(leader) = mpp.leader_mut()
+         && let Some(finish) = leader.finish.as_mut()
 ```
 
-**File**: `pg_search/src/postgres/mutable_sweep.rs` (modified, +28/-27)
+**File**: `pg_search/tests/pg_regress/expected/issue_7443.out` (added, +146/-0)
 ```diff
-@@ -19,7 +19,7 @@ use crate::api::{HashMap, HashSet};
- use crate::index::merge_policy::LayeredMergePolicy;
- use crate::index::mvcc::MvccSatisfies;
- use crate::index::writer::index::SearchIndexMerger;
--use crate::postgres::catalog::OidExt;
-+use crate::postgres::catalog::{OidExt, lookup_extension_version, paradedb_index_oids};
- use crate::postgres::delete::VacuumSignal;
- use crate::postgres::index::free_leaf_partition_indexes;
- use crate::postgres::locks::AdvisoryLock;
-@@ -31,8 +31,8 @@ use crate::postgres::ps_status::{MERGING, set_ps_display_suffix};
- use crate::postgres::storage::metadata::MetaPage;
- use pgrx::bgworkers::{BackgroundWorker, BackgroundWorkerBuilder, SignalWakeFlags};
- use pgrx::{
--    GucContext, GucFlags, GucRegistry, GucSetting, IntoDatum, PgTryBuilder, Spi,
--    check_for_interrupts, pg_guard, pg_sys,
-+    GucContext, GucFlags, GucRegistry, GucSetting, IntoDatum, PgTryBuilder, check_for_interrupts,
-+    pg_guard, pg_sys,
- };
- use std::ffi::CStr;
- use std::panic::AssertUnwindSafe;
-@@ -226,25 +226,12 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-         if sweeping {
-             let observed_counts = pass_context.switch_to(|_| {
-                 let indexes = BackgroundWorker::transaction(|| {
--                    let version = Spi::get_one::<String>(
--                        "SELECT max(extversion::text) FROM pg_catalog.pg_extension WHERE extname = 'pg_search'",
--                    )
--                    .expect("should be able to inspect pg_search version");
-+                    let version = lookup_extension_version(c"pg_search");
-                     if version.as_deref() != Some(env!("CARGO_PKG_VERSION")) {
-                         return None;
-                     }
--                    let indexes = Spi::get_one::<Vec<pg_sys::Oid>>(
--                        "SELECT array_agg(i.indexrelid ORDER BY i.indexrelid)
--                         FROM pg_catalog.pg_index i
--                         JOIN pg_catalog.pg_class c ON c.oid = i.indexrelid
--                         JOIN pg_catalog.pg_am am ON am.oid = c.relam
--                         JOIN pg_catalog.pg_proc p ON p.oid = am.amhandler
--                         JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
--                         WHERE n.nspname = 'paradedb' AND p.proname = 'bm25_handler'
--                           AND i.indisvalid AND i.indisready AND c.relkind = 'i' AND c.relpersistence <> 't'",
--                    )
--                    .expect("should be able to discover ParadeDB indexes")
--                    .unwrap_or_default();
-+                    // Planner hooks can hide shard indexes or race with concurrent drops.
-+                    let indexes = paradedb_index_oids();
-                     let mut current_counts = HashMap::default();
-                     let indexes = free_leaf_partition_indexes(&indexes)
-                         .filter_map(|index| {
-@@ -253,7 +240,9 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             }
-                             let mut idle_segments = HashMap::default();
-                             MetaPage::open(&index).segment_metas().for_each(|_, entry| {
--                                if entry.is_mutable() && entry.xmax() == pg_sys::InvalidTransactionId {
-+                                if entry.is_mutable()
-+                                    && entry.xmax() == pg_sys::InvalidTransactionId
-+                                {
-                                     let key = (index.oid(), entry.segment_id());
-                                     let count = entry.num_docs();
-                                     current_counts.insert(key, count);
-@@ -282,7 +271,8 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             if VacuumSignal::new(index.oid()).wants_cancel() {
-                                 return;
-                             }
--                            let Some(_slot) = MergeSlot::new(index.oid(), MergeSlotVariant::Small).lock()
-+                            let Some(_slot) =
-+                                MergeSlot::new(index.oid(), MergeSlotVariant::Small).lock()
-                             else {
-                                 return;
-                             };
-@@ -293,7 +283,8 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
-                             let merge_lock = metadata.acquire_merge_lock();
-                             PgTryBuilder::new(AssertUnwindSafe(|| {
-                                 let frozen = metadata.freeze_mutable_segments_matching(|entry| {
--                                    idle_segments.get(&entry.segment_id()) == Some(&entry.num_docs())
-+                                    idle_segments.get(&entry.segment_id())
-+                                        == Some(&entry.num_docs())
-                                 });
-                                 if 
+@@ -0,0 +1,146 @@
++-- A Join Scan or an Aggregate Scan that is read in parts, by a cursor or a PL/pgSQL
++-- FOR loop, must go on from the row where the previous fetch stopped. Postgres shuts
++-- the plan down at the end of each partial fetch and then runs it again (#7443).
++\i common/common_setup.sql
++CREATE EXTENSION IF NOT EXISTS pg_search;
++-- Disable parallel workers to avoid differences in plans
++SET max_parallel_workers_per_gather = 0;
++SET enable_indexscan to OFF;
++SET paradedb.enable_columnar_exec = true;
++CREATE TABLE issue_7443_s (id int PRIMARY KEY, title text);
++CREATE TABLE issue_7443_e (id int PRIMARY KEY, s_id int);
++INSERT INTO issue_7443_s SELECT g, 'dragon ' || g FROM generate_series(1, 9000) g;
++INSERT INTO issue_7443_e SELECT g, g FROM generate_series(1, 9000) g;
++CREATE INDEX issue_7443_s_idx ON issue_7443_s USING paradedb (id, title);
++CREATE INDEX issue_7443_e_idx ON issue_7443_e USING paradedb (id, s_id);
++SET paradedb.enable_join_custom_scan = on;
++SET paradedb.enable_aggregate_custom_scan = on;
++EXPLAIN (COSTS OFF)
++SELECT s.id, e.id AS e_id
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++ORDER BY s.id LIMIT 6;
++                                                                                                                       QUERY PLAN                                                                                                                        
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: s INNER e
++   Join Cond: e.s_id = s.id
++   Limit: 6
++   Order By: e.s_id asc
++   DataFusion Physical Plan: 
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, ctid_0@0 as ctid_0, ctid_1@2 as ctid_1]
++     :   SortExec: TopK(fetch=6), expr=[id@1 ASC NULLS LAST], preserve_partitioning=[false]
++     :     VisibilityFilterExec: tables=[s, e]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, s_id@1)]
++     :         CooperativeExec
++     :           PgSearchScan: table=s, segments=1, dynamic_filters=1, query={"with_index":{"query":{"match":{"field":"title","value":"dragon","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
++(14 rows)
++
++-- Join Scan: three fetches of 4 rows return rows 1-4, then 5-6, then none.
++BEGIN;
++DECLARE issue_7443_join CURSOR FOR
++SELECT s.id, e.id AS e_id
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++ORDER BY s.id LIMIT 6;
++FETCH 4 FROM issue_7443_join;
++ id | e_id 
++----+------
++  1 |    1
++  2 |    2
++  3 |    3
++  4 |    4
++(4 rows)
++
++FETCH 4 FROM issue_7443_join;
++ id | e_id 
++----+------
++  5 |    5
++  6 |    6
++(2 rows)
++
++FETCH 4 FROM issue_7443_join;
++ id | e_id 
++----+------
++(0 rows)
++
++COMMIT;
++-- Join Scan: a FOR loop in a procedure called at the top level fetches one row at
++-- a time. It must see each of the 12 rows once and then end.
++CREATE PROCEDURE issue_7443_join_loop(INOUT ids int[] DEFAULT '{}')
++LANGUAGE plpgsql AS $$
++DECLARE
++    r record;
++BEGIN
++    FOR r IN
++        SELECT s.id
++        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++        WHERE s.title ||| 'dragon'
++        ORDER BY s.id LIMIT 12
++    LOOP
++        ids := ids || r.id;
++        EXIT WHEN cardinality(ids) > 30;
++    END LOOP;
++END
++$$;
++CALL issue_7443_join_loop();
++             ids              
++------------------------------
++ {1,2,3,4,5,6,7,8,9,10,11,12}
++(1 row)
++
++EXPLAIN (COSTS OFF)
++SELECT s.id, count(*)
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++GROUP BY s.id;
++                                                                                                                     QUERY PLAN                                                                                                                     
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Aggregate Scan)
++   Backend: DataFusion
++   Indexes: issue_7443_s_idx (s), issue_7443_e_idx (e)
++   Group By: id
++   Aggregates: COUNT(*)
++   DataFusion Physical Plan: 
++     : AggregateExec: mode=Single, gby=[id@0 as id], aggr=[count(1) as agg_0]
++     :   HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, s_id@0)], projection=[id@0]
++     :     CooperativeExec
++     :       PgSearchScan: table=s, segments=1, visibility=eager, query={"with_index":{"query":{"match":{"field":"title","value":"dragon","tok
+```
+
+**File**: `pg_search/tests/pg_regress/sql/issue_7443.sql` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++-- A Join Scan or an Aggregate Scan that is read in parts, by a cursor or a PL/pgSQL
++-- FOR loop, must go on from the row where the previous fetch stopped. Postgres shuts
++-- the plan down at the end of each partial fetch and then runs it again (#7443).
++
++\i common/common_setup.sql
++
++CREATE TABLE issue_7443_s (id int PRIMARY KEY, title text);
++CREATE TABLE issue_7443_e (id int PRIMARY KEY, s_id int);
++INSERT INTO issue_7443_s SELECT g, 'dragon ' || g FROM generate_series(1, 9000) g;
++INSERT INTO issue_7443_e SELECT g, g FROM generate_series(1, 9000) g;
++CREATE INDEX issue_7443_s_idx ON issue_7443_s USING paradedb (id, title);
++CREATE INDEX issue_7443_e_idx ON issue_7443_e USING paradedb (id, s_id);
++
++SET paradedb.enable_join_custom_scan = on;
++SET paradedb.enable_aggregate_custom_scan = on;
++
++EXPLAIN (COSTS OFF)
++SELECT s.id, e.id AS e_id
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++ORDER BY s.id LIMIT 6;
++
++-- Join Scan: three fetches of 4 rows return rows 1-4, then 5-6, then none.
++BEGIN;
++DECLARE issue_7443_join CURSOR FOR
++SELECT s.id, e.id AS e_id
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++ORDER BY s.id LIMIT 6;
++FETCH 4 FROM issue_7443_join;
++FETCH 4 FROM issue_7443_join;
++FETCH 4 FROM issue_7443_join;
++COMMIT;
++
++-- Join Scan: a FOR loop in a procedure called at the top level fetches one row at
++-- a time. It must see each of the 12 rows once and then end.
++CREATE PROCEDURE issue_7443_join_loop(INOUT ids int[] DEFAULT '{}')
++LANGUAGE plpgsql AS $$
++DECLARE
++    r record;
++BEGIN
++    FOR r IN
++        SELECT s.id
++        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++        WHERE s.title ||| 'dragon'
++        ORDER BY s.id LIMIT 12
++    LOOP
++        ids := ids || r.id;
++        EXIT WHEN cardinality(ids) > 30;
++    END LOOP;
++END
++$$;
++CALL issue_7443_join_loop();
++
++EXPLAIN (COSTS OFF)
++SELECT s.id, count(*)
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++GROUP BY s.id;
++
++-- Aggregate Scan: a FOR loop in a function fetches 10 rows, then 50 at a time. The
++-- 9000 groups are more than one DataFusion batch (8192 rows), and the loop must
++-- see all of them.
++CREATE FUNCTION issue_7443_agg_loop() RETURNS bigint
++LANGUAGE plpgsql AS $$
++DECLARE
++    r record;
++    n bigint := 0;
++BEGIN
++    FOR r IN
++        SELECT s.id, count(*)
++        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++        WHERE s.title ||| 'dragon'
++        GROUP BY s.id
++    LOOP
++        n := n + 1;
++    END LOOP;
++    RETURN n;
++END
++$$;
++SELECT issue_7443_agg_loop();
++
++RESET paradedb.enable_join_custom_scan;
++RESET paradedb.enable_aggregate_custom_scan;
++
++DROP PROCEDURE issue_7443_join_loop;
++DROP FUNCTION issue_7443_agg_loop;
++DROP TABLE issue_7443_s;
++DROP TABLE issue_7443_e;
 ```
 
 ---
 
-### Incident Patch 3: `781cb511` (2026-11-11)
-**Commit Message**: fix: restore IVF split logic while keeping target_leaf_size (#7377)
+### Incident Patch 3: `2159270d` (2026-11-13)
+**Commit Message**: docs: explain that BM25 scores can depend on rows hidden by row-level security (#7419)
+
+# Ticket(s) Closed
+
+- None. Follow-up to an email exchange with the ParadeDB team.
 
 ## What
 
-Soft-revert geometric clustering while keeping the `target_leaf_size`
-name and default of 200. ParadeDB's source integration, option names,
-and SQL regression fixtures remain identical to the PR base. Update the
-dependency pins and correct two descriptions of the training-leaf cap;
-retain the original option-rename changelog entry.
+Adds a short "Scores and Row-Level Security" section to the BM25 scoring
+page, after "Score Refresh".
 
-## Dependencies and scope
+## Why
 
-- [superkmeans-rs
-#45](https://github.com/paradedb/superkmeans-rs/pull/45),
-`6b0d0bc08e2071220b99222db0c79ad49305f8dc`: restore `ceil(n_sub /
-target_leaf_size)` recursive splitting and enforce the training-leaf cap
-while preserving the API name.
-- [Tantivy #399](https://github.com/paradedb/tantivy/pull/399),
-`98b3d5c1570c912f51f40530ba1645f1695b458b` (merged): use that
-implementation for IVF and stacked routing; preserve
-`with_target_leaf_size` and `DEFAULT_TARGET_LEAF_SIZE`.
-- Preserve donor revival, convergence guards, statistics, and later
-dependency changes. Sampling remains 0.32. Explicit `k` sizing is
-separate. Both dependency PRs are merged; the direct superkmeans pin
-matches the revision used by the merged Tantivy commit.
+Row-level security filters the rows a query returns, but BM25 statistics
+are computed over every row in the index, so a score returned to a
+restricted role can depend on rows that role cannot read. The page
+already says that a row scores the same for every user (#7366). The new
+section states the consequence and two ways to avoid it.
 
-Updated against cur
+## How
 
-**File**: `.github/scripts/docs_snippet_coverage.json` (modified, +4/-4)
+Documentation only, in docs/reference/full-text/score.mdx.
+
+## Tests
+
+None. No code change.
+
+---------
+
+Signed-off-by: ionuthrubaru <[REDACTED_EMAIL]>
+Signed-off-by: Philippe Noël <[REDACTED_EMAIL]>
+Co-authored-by: Philippe Noël <[REDACTED_EMAIL]>
+
+**File**: `docs/reference/full-text/score.mdx` (modified, +6/-0)
 ```diff
-@@ -176,13 +176,13 @@
-       ]
-     },
-     {
--      "reason": "Uses the 0.27 target_leaf_size option before the published ORM client packages ship support; the SQL fence runs in the standalone inventory.",
-+      "reason": "The vector index-options CodeGroup contains 0.27 target_leaf_size examples awaiting ORM client support; its SQL fence runs in the standalone inventory.",
-       "fences": [
-         ["reference/indexing/indexing-vectors.mdx::fence-014", "53c92670d4bf64621e64b1db4aa59eb7476bfc799d4ba4134ef9fd8372135c15"],
--        ["reference/indexing/indexing-vectors.mdx::fence-015", "821236f776b5cb115dc2ea7124ab3edd9d7e2fa853164d4f00c2f0a98ad5bcc3"],
-+        ["reference/indexing/indexing-vectors.mdx::fence-015", "5cab4e761805be2b46f77a7b2cc649fe55e0d6c6bdb0a6e327e6fb1246764812"],
-         ["reference/indexing/indexing-vectors.mdx::fence-016", "cd2cc9292117f96cd302bdb88ca5a30074992a9ca9c106eb1d948e99df350d73"],
--        ["reference/indexing/indexing-vectors.mdx::fence-017", "61bbc3322127cc2c471e9e161cafbeae0ef27a0172362974e1fdcdbfd2078388"],
--        ["reference/indexing/indexing-vectors.mdx::fence-018", "e3cd48db5fa758ad4e47dfdf5c3426af64262a260ebdea73337ac4c56ef9bcf4"]
-+        ["reference/indexing/indexing-vectors.mdx::fence-017", "582e688c81c32cf2ef26addb3286c298067a04f5e5250d448e6e8bc3b8aecf5f"],
-+        ["reference/indexing/indexing-vectors.mdx::fence-018", "126340fc1e720d46471e7e7e121434ad4ec13784b130d13ee5b814de15becdee"]
-       ]
-     }
-   ],
-```
-
-**File**: `Cargo.lock` (modified, +11/-11)
-```diff
-@@ -5192,7 +5192,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7329,7 +7329,7 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
- [[package]]
- name = "superkmeans-rs"
- version = "0.4.0"
--source = "git+https://github.com/paradedb/superkmeans-rs?rev=06c8e247a6a0241a996a640080c7245f6c7b5940#06c8e247a6a0241a996a640080c7245f6c7b5940"
-+source = "git+https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc#6b0d0bc08e2071220b99222db0c79ad49305f8dc"
- dependencies = [
-  "matrixmultiply",
-  "pkg-config",
-@@ -7414,7 +7414,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7473,15 +7473,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "bitpacking",
- ]
+@@ -354,3 +354,9 @@ VACUUM mock_items;
+ ```
  
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7496,7 +7496,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -7529,7 +7529,7 @@ dependencies = [
- [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7538,7 +7538,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7550,7 +7550,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7563,7 +7563,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7600,7 +7600,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=71a9b0e6fca86a3a1e9962748f881f9654107c6b#71a9b0e6fca86a3a1e9962748f881f9654107c6b"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98b3d5c1570c912f51f40530ba1645f1695b458b#98b3d5c1570c912f51f40530ba1645f1695b458b"
- dependencies = [
-  "serde",
- ]
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -89,7 +89,7 @@ pgrx-tests = "=0.20.0-beta.1"
- 
- # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
- # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b", features = [
-   "columnar-zstd-compression",
-   "lz4-compression",
-   "paradedb",
-@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
-   "stemmer",
-   "stopwords",
- ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
- tantivy-jieba = "0.21.0"
- 
- async-trait = "0.1.92"
-@@ -185,8 +185,8 @@ rstest = "0.28.0"
- postgres = "0.19.14"
- 
- [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "71a9b0e6fca86a3a1e9962748f881f9654107c6b" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "98b3d5c1570c912f51f40530ba1645f1695b458b" }
- 
- [workspace.lints.rust]
- unused_crate_dependencies = "warn"
-```
-
-**File**: `docs/project/changelog/unreleased/7346.breaking.mdx` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@
- header: breaking
- ---
- 
--Renamed the IVF index option `max_leaf_size` to `target_leaf_size`. The value is a clustering target rather than a hard cap; actual leaves may be somewhat larger. Indexes that explicitly store `max_leaf_size` must be updated with `ALTER INDEX ... SET (target_leaf_size = ...)` or recreated.
-+Renamed the IVF index option `max_leaf_size` to `target_leaf_size`. The value caps the number of sampled training vectors per leaf; it does not cap the number of indexed vectors assigned to a cluster. Indexes that explicitly store `max_leaf_size` must be updated with `ALTER INDEX ... SET (target_leaf_size = ...)` or recreated.
-```
-
-**File**: `docs/reference/indexing/indexing-vectors.mdx` (modified, +4/-4)
-```diff
-@@ -254,10 +254,10 @@ modelBuilder.Entity<MockItem>()
- <ParamField body="target_leaf_size" default={200}>
-   The target number of sampled training vectors in a leaf of the hierarchical
-   clustering tree. Must be an integer between `1` and `2147483647`. Smaller
--  values generally produce more centroids and smaller clusters. Actual leaves
--  may be somewhat larger than the target. This setting is independent of
--  `training_sample_ratio` and does not cap the number of indexed vectors
--  assigned to a cluster.
-+  values generally produce more centroids and smaller clusters. Training leaves
-+  are split until they contain at most this many vectors. This setting is
-+  independent of `training_sample_ratio` and does not cap the number of indexed
-+  vectors assigned to a cluster.
- </ParamField>
- <ParamField body="vector_router_quantization" default={true}>
-   Route each query through one-bit codes of the IVF centroids, then rerank the
-```
-
-**File**: `index_write/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -31,12 +31,12 @@ serde_json.workspace = true
- tantivy.workspace = true
- 
- [target.'cfg(target_os = "macos")'.dependencies]
--superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "06c8e247a6a0241a996a640080c7245f6c7b5940", features = [
-+superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
-   "accelerate",
- ] }
- 
- [target.'cfg(not(target_os = "macos"))'.dependencies]
--superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "06c8e247a6a0241a996a640080c7245f6c7b5940", features = [
-+superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
-   "openblas",
- ] }
- 
-```
-
-**File**: `nix/pg_search.nix` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ buildPgrxExtension (finalAttrs: {
-   # If maintainers forget to do so, Nix will throw an error message that begins
-   # like this and then provides the correct new hash:
-   # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-4BtZK4+7KXsuqsJODOvlUzTsRXtvx1yTlxFt3ePUHJg=";
-+  cargoHash = "sha256-3VMVjQ0izB1fY6hX9LDapCcUJyiCOFviV4wsj4Dt+vU=";
- 
-   inherit postgresql;
-   # The Nix builder also passes cargoPgrxFlags to `stop`, which does not accept
+ This can be automated with [autovacuum](/operate/performance-tuning/overview).
++
++## Scores and Row-Level Security
++
++BM25 scores are computed from statistics over every row in the index, including rows that a row-level security policy hides from the current role. Row-level security filters which rows a query returns, but not the statistics behind their scores, so a score returned to a restricted role can depend on rows that role cannot read.
++
++If scores must not depend on rows a role cannot read, keep those rows in a separate table with its own ParadeDB index, or do not return scores to that role.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7378** (closed): perf: pin Tantivy with SIMD rotation kernels for vector quantization (@walter-woodall)
-- **PR #7377** (2026-11-11): fix: restore IVF split logic while keeping target_leaf_size (@rebasedming)
-- **PR #7373** (closed): perf(vector): lower default target leaf size to 150 (@rebasedming)
-- **PR #7371** (2026-11-10): chore: Fix docs after vector updates. (@stuhood)
-- **PR #7367** (closed): chore: Ignore (@stuhood)
-- **PR #7365** (2026-11-10): fix: correct Tantivy revision after clustering update (@rebasedming)
+- **PR #7455** (closed): chore: benchmark unfiltered vector FastScan (@rebasedming)
+- **PR #7454** (2026-11-13): fix: exclude retired segments after cancelled vacuum (@paradedb-github-bot[bot])
+- **PR #7453** (2026-11-13): fix: exclude retired segments after cancelled vacuum (@philippemnoel)
+- **PR #7452** (2026-11-13): fix: Remove "autoscaling" from the cloud docs (@isaacvando)
+- **PR #7451** (2026-11-13): docs: Fix Homebrew installation instructions for icu4c (@philippemnoel)
+- **PR #7446** (2026-11-13): fix: store columnar section lengths as u64 (@paradedb-github-bot[bot])
 
 ---
 
@@ -2943,47 +2741,42 @@ Updated against cur
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. correct Tantivy revision after clustering update (#7365)
+## X. exclude retired segments after cancelled vacuum
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `index_write/src/index/merge_policy.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61edff0a`: correct Tantivy revision after clustering update (#7365). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `831a1ce2`: exclude retired segments after cancelled vacuum. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `index_write/src/index/merge_policy.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c4f4a3d93544d3b174e1994e207#05b861b5ef138c4f4a3d93544d3b174e1994e207"
-source = "git+https://github.com/paradedb/tantivy.git?rev=05b861b5ef138c
+        // VACUUM or another merger can publish metadata changes and then be canceled while
+        // this merger holds an older view. Their exclusions disappear on ERROR, so compare
+        // full entries to catch both retired segments and updated deletion metadata.
+        // The caller holds MergeLock, preventing a new VACUUM from starting during selection.
+        let live_entries: HashMap<_, _> = unsafe { metadata.segment_metas().list(None) }
+            .into_iter()
+            .filter(|entry| entry.xmax() == pg_sys::InvalidTransactionId)
+            .map(|entry| (entry.segment_id(), entry))
+            .collect();
+
+            .filter(|(segment_id, entry)| {
+                    && live_entries.get(segment_id) == Some(entry)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc04fb71fd4808afddad19e9c17d7#1c7c2150a97bc04fb71fd4808afddad19e9c17d7"
-source = "git+https://github.com/paradedb/tantivy.git?rev=1c7c2150a97bc0
+// Induced defect failure mode:
+            .filter(|(segment_id, _)| {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61edff0a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `831a1ce2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

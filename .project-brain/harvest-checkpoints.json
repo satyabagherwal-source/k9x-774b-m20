@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T21:50:21.316Z",
+  "last_updated": "2026-11-13T21:59:18.754Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1025,14 +1025,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-amazon-chronos-2",
-      "content_hash": "5d4af4930b771a8cdd08f1b216401893ec4ed3e2df69f29f6e8553737ca06537",
-      "verified_at": "2026-11-08T20:45:46.470Z",
+      "content_hash": "0c2e170e3099386f6ac70638462bc1a4e1cedbed0e6ec53f7d9538a79f64d067",
+      "verified_at": "2026-11-13T21:59:18.753Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:45:46.470Z"
+      "last_updated": "2026-11-13T21:59:18.753Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -4746,14 +4746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
-      "content_hash": "95de33744831670f2e0e3bc1f5839e6b764d4823b07e9ea303ec83af1c6e51c9",
-      "verified_at": "2026-11-06T19:23:48.744Z",
+      "content_hash": "91fb6f02cef4942a8ee82c3b2627cceee706c18e77be8ad64a8d3cb4563bc212",
+      "verified_at": "2026-11-13T21:58:39.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T19:23:48.744Z"
+      "last_updated": "2026-11-13T21:58:39.460Z"
     },
     "taubyte/tau": {
       "repository": "taubyte/tau",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "59d3cf139775170cb72b792e7c9b1658eeae49646df3da672b63ee2b8fc37eed",
-      "verified_at": "2026-11-12T11:00:58.688Z",
+      "content_hash": "e88e8b5195a76c7ce3913fd16863afddb2a759dd8faec3ae841cb10b45950762",
+      "verified_at": "2026-11-13T21:58:35.583Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:00:58.688Z"
+      "last_updated": "2026-11-13T21:58:35.583Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "75d4ca476417ef039a430a64887bbfe68ccb9d586c55bc3ab54c3fc98acca3cb",
-      "verified_at": "2026-11-12T22:33:49.105Z",
+      "content_hash": "78a04f292e2b84aee5de9bbbb739bb9a310f75a7d8e6969da4a03945b15e054c",
+      "verified_at": "2026-11-13T21:58:48.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:33:49.105Z"
+      "last_updated": "2026-11-13T21:58:48.284Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",

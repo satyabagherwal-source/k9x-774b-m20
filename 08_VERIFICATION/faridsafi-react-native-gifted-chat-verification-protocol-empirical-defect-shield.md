@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for faridsafi/react/native/gifted/chat
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for FaridSafi/react-native-gifted-chat
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "faridsafi/react/native/gifted/chat",
-  "source_url": "https://github.com/faridsafi/react/native/gifted/chat",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "FaridSafi/react-native-gifted-chat",
+  "source_url": "https://github.com/FaridSafi/react-native-gifted-chat",
+  "source_version": "ea2d83f9",
+  "license": "MIT",
+  "timestamp": "2026-11-13T21:58:39.653Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [faridsafi/react/native/gifted/chat](https://github.com/faridsafi/react/native/gifted/chat) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat) (Revision: `ea2d83f9`).  
+> **License**: MIT | **Timestamp**: `2026-11-13T21:58:39.653Z`  
+> **Learning ID**: `learn-github-faridsafi-react-native-gifted-chat`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `faridsafi/react/native/gifted/chat` (Commit: `historical`)
+- **Target Repository**: `FaridSafi/react-native-gifted-chat` (Commit: `ea2d83f9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md`  
-> **Source**: github ([https://github.com/FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat))  
-> **Source Version**: `8f4d2140`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T19:23:48.446Z  
-> **Learning ID**: `learn-github-faridsafi-react-native-gifted-chat`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): FaridSafi/react-native-gifted-chat
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T19:23:47.465Z  
+> **Harvest Timestamp**: 2026-11-13T21:58:39.007Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 💬 The most complete chat UI for React Native
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14448 stars
+- **Stars / Engagement**: 14446 stars
 
 ---
 
@@ -208,7 +194,7 @@ export function useThemeColor (
 
 ### Core Architecture Module: `example/hooks/useKeyboardVerticalOffset.ts`
 ```
-import { useHeaderHeight } from '@react-navigation/elements'
+import { useHeaderHeight } from 'expo-router/react-navigation'
 
 /**
  * Hook to get the correct keyboardVerticalOffset for GiftedChat.
@@ -261,28 +247,45 @@ export function useColorScheme() {
 
 ```
 
-### Core Architecture Module: `src/hooks/useUpdateLayoutEffect.ts`
+### Core Architecture Module: `src/hooks/useIsKeyboardVisible.ts`
 ```
-import { DependencyList, useLayoutEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
+import { KeyboardController, KeyboardEvents } from 'react-native-keyboard-controller'
 
 /**
- * A custom useEffect hook that only triggers on updates, not on initial mount
- * Idea stolen from: https://stackoverflow.com/a/55075818/1526448
- * @param {()=>void} effect the function to call
- * @param {DependencyList} dependencies the state(s) that fires the update
+ * Whether the software keyboard is currently on screen.
+ *
+ * Tracks `keyboardWillShow` / `keyboardWillHide` rather than the `Did` events so layout
+ * reacts *with* the keyboard animation instead of a beat after it.
+ *
+ * `isEnabled` exists because this re-renders its consumer on every keyboard transition:
+ * pass `false` and no listener is registered at all, so features that don't need the
+ * keyboard state pay nothing for it.
  */
-export function useUpdateLayoutEffect (
-  effect: () => void,
-  dependencies: DependencyList = []
-) {
-  const isInitialMount = useRef(true)
+export function useIsKeyboardVisible (isEnabled: boolean = true): boolean {
+  const [isVisible, setIsVisible] = useState(
+    () => isEnabled && (KeyboardController.isVisible?.() ?? false)
+  )
 
-  useLayoutEffect(() => {
-    if (isInitialMount.current)
-      isInitialMount.current = false
-    else
-      effect()
-  }, dependencies)
+  useEffect(() => {
+    if (!isEnabled) {
+      setIsVisible(false)
+      return
+    }
+
+    // The keyboard may already be up when this turns on (e.g. the prop flipped while the
+    // composer was focused), and it can also change between render and subscribing.
+    setIsVisible(KeyboardController.isVisible?.() ?? false)
+
+    const subscriptions = [
+      KeyboardEvents.addListener('keyboardWillShow', () => setIsVisible(true)),
+      KeyboardEvents.addListener('keyboardWillHide', () => setIsVisible(false)),
+    ]
+
+    return () => subscriptions.forEach(subscription => subscription.remove())
+  }, [isEnabled])
+
+  return isVisible
 }
 
 ```
@@ -314,205 +317,261 @@ export function useUpdateLayoutEffect (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f4d2140` (2026-11-06)
-**Commit Message**: chore: release 3.4.2 - point users to @kesha-antonov/react-native-chat after install
+### Incident Patch 1: `49acbf52` (2026-11-10)
+**Commit Message**: fix: Android system bars after leaving the chat, keyboard-aware isAlignedTop, Expo 58 example
 
-**File**: `CHANGELOG.md` (modified, +9/-0)
+- KeyboardProvider no longer forces statusBarTranslucent /
+  navigationBarTranslucent. On Android they rewrite the activity content
+  view's margins and are never restored, so the app kept drawing under the
+  navigation bar after the chat screen was gone (#2755).
+- isAlignedTop takes 'auto': top while the keyboard is closed, bottom while
+  it is open (#2736). Alignment moved onto the list's content container,
+  which also fixes isAlignedTop clipping chats taller than the screen.
+- Stop passing dependency arrays to Reanimated worklet hooks; Reanimated 4
+  warned about them on every render.
+- Example app on Expo SDK 58 / React Native 0.88. iOS builds again (the
+  placeholder googleMapsApiKey pulled in a pod that no longer exists).
+  Adds a Top Aligned (short chat) screen covering #2736 and #2617.
+- Dev toolchain on React Native 0.88, Jest 30, testing-library/react-native
+  14, ESLint 10. Peer dependency ranges are unchanged.
+
+**File**: `CHANGELOG.md` (modified, +14/-0)
 ```diff
-@@ -2,6 +2,15 @@
+@@ -2,6 +2,20 @@
  
  > **Maintenance notice:** Active development has moved to **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**. This package is now in maintenance mode and won't receive new features. See the fork for streaming AI messages and ongoing updates. Migrating is mostly a rename - see the fork's [migration guide](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md).
  
-+## [3.4.2] - 2026-11-06
++## [Unreleased]
 +
-+### ✨ Features
-+- Dev-only notice: in development builds `GiftedChat` logs a one-time `console.warn` pointing to **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**, since the install-time notice is hidden by npm 7+ and skipped by pnpm 10 and bun. Never shown in production or under Jest. Turn it off with the new `disableMaintenanceNotice()` export.
++### Features
++- `isAlignedTop='auto'` ([#2736](https://github.com/FaridSafi/react-native-gifted-chat/issues/2736)): a short conversation sits at the top while the keyboard is closed and moves to the bottom while it is open. Works with both `isInverted` settings.
 +
-+### 🗒️ Maintenance
-+- Added links to the maintained fork **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)** in the README (installation, AI chat, questions, contributing), the issue template, the stale-bot comment and the Expo Snack README.
-+- The npm package description and the install-time notice now point to the fork and its [migration guide](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md). No API or runtime changes.
++### Bug Fixes
++- Android navigation bar overlapping the app after leaving the chat ([#2755](https://github.com/FaridSafi/react-native-gifted-chat/issues/2755)): the built-in `KeyboardProvider` no longer forces `statusBarTranslucent` / `navigationBarTranslucent`, which changed the activity window and stayed changed. Set them via `keyboardProviderProps` if you need them.
++- `isAlignedTop` cut off chats taller than the screen, which then could not be scrolled.
++- Reanimated 4 logged "Dependencies should only be used on the web" on every render.
 +
- ## [3.4.1] - 2026-06-19
++### Maintenance
++- Example app on Expo SDK 58 (React Native 0.88, gesture-handler 3, Reanimated 4.7); iOS builds again. New "Top Aligned (short chat)" screen.
++- Dev toolchain on React Native 0.88, Jest 30, `@testing-library/react-native` 14, ESLint 10. Peer dependency ranges unchanged.
++
+ ## [3.4.2] - 2026-11-06
  
  ### ✨ Features
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `README.md` (modified, +4/-6)
+```diff
+@@ -263,12 +263,10 @@ interface User {
+ 
+ ### Keyboard & Layout
+ 
+-- **`keyboardProviderProps`** _(Object)_ - Props to be passed to the [`KeyboardProvider`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider) for keyboard handling. Default values:
+-  - `statusBarTranslucent: true` - Required on Android for correct keyboard height calculation when status bar is translucent (edge-to-edge mode)
+-  - `navigationBarTranslucent: true` - Required on Android for correct keyboard height calculation when navigation bar is translucent (edge-to-edge mode)
+-- **`disableKeyboardProvider`** _(Bool)_ - Skip rendering the built-in `KeyboardProvider` wrapper; default is `false`. Enable this when your app already mounts its own `KeyboardProvider` (e.g. once at the root), or when the default edge-to-edge behavior causes a layout shift, flicker on mount, or a header/content jump on Android/Expo. See [Using your own `KeyboardProvider`](#using-your-own-keyboardprovider) below.
++- **`keyboardProviderProps`** _(Object)_ - Props to be passed to the [`KeyboardProvider`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider) for keyboard handling. No defaults are applied - in particular GiftedChat does **not** set `statusBarTranslucent` / `navigationBarTranslucent`, because on Android those change the *activity window* and the change outlives the chat screen ([#2755](https://github.com/FaridSafi/react-native-gifted-chat/issues/2755)). `react-native-keyboard-controller` turns them on by itself when the app is genuinely edge-to-edge, so there is nothing to set in a normal app.
++- **`disableKeyboardProvider`** _(Bool)_ - Skip rendering the built-in `KeyboardProvider` wrapper; default is `false`. Enable this when your app already mounts its own `KeyboardProvider` (e.g. once at the root), so that only one provider is in the tree. See [Using your own `KeyboardProvider`](#using-your-own-keyboardprovider) below.
+ - **`keyboardAvoidingViewProps`** _(Object)_ - Props to be passed to the [`KeyboardAvoidingView`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/components/keyboard-avoiding-view). See **keyboardVerticalOffset** below for proper keyboard handling.
+-- **`isAlignedTop`** _(Boolean)_ Controls whether or not the message bubbles appear at the top of the chat (Default is false - bubbles align to bottom)
++- **`isAlignedTop`** _(Boolean or `'auto'`)_ - Where the bubbles sit while the whole conversation fits on screen; once it is taller than the list the messages fill it and this has no effect. `false` (default) - bottom; `true` - top; `'auto'` - top while the keyboard is closed, bottom while it is open, so a short conversation starts under the header and re-anchors above the composer when the keyboard opens ([#2736](https://github.com/FaridSafi/react-native-gifted-chat/issues/2736)). Works with both `isInverted` settings.
+ - **`isInverted`** _(Bool)_ - Reverses display order of `messages`; default is `true`
+ 
+ #### Understanding `keyboardVerticalOffset`
+@@ -305,7 +303,7 @@ function ChatScreen() {
+ 
+ #### Using your own `KeyboardProvider`
+ 
+-By default GiftedChat wraps itself in a [`KeyboardProvider`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider) with `statusBarTranslucent` and `navigationBarTranslucent` enabled. On some Android/Expo (edge-to-edge) setups this can cause the screen to shift down, flicker on mount, or distort a navigation header - especially when another `KeyboardProvider` already exists higher in the tree.
++By default GiftedChat wraps itself in a [`KeyboardProvider`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider). If your app already mounts one higher in the tree, nesting a second one is not harmless on Android: each provider rewrites the activity content view's insets, so the nested one can shift the screen or a navigation header.
+ 
+ Set **`disableKeyboardProvider`** to skip the built-in wrapper:
+ 
+```
+
+**File**: `eslint.config.js` (modified, +2/-2)
+```diff
+@@ -128,7 +128,7 @@ export default [
+         'warn',
+         {
+           additionalHooks:
+-            '(useAnimatedStyle|useSharedValue|useAnimatedGestureHandler|useAnimatedScrollHandler|useAnimatedProps|useDerivedValue|useAnimatedRef|useAnimatedReact|useAnimatedReaction|useCallbackDebounced|useCallbackThrottled)',
++            '(useAnimatedStyle|useAnimatedGestureHandler|useAnimatedScrollHandler|useAnimatedProps|useDerivedValue|useCallbackDebounced|useCallbackThrottled)',
+         },
+       ],
+ 
+@@ -305,7 +305,7 @@ export default [
+         'warn',
+         {
+           additionalHooks:
+-            '(useAnimatedStyle|useSharedValue|useAnimatedGestureHandler|useAnimatedScrollHandler|useAnimatedProps|useDerivedValue|useAnimatedRef|useAnimatedReact|useAnimatedReaction|useCallbackDebounced|useCallbackThrottled)',
++            '(useAnimatedStyle|useAnimatedGestureHandler|useAnimatedScrollHandler|useAnimatedProps|useDerivedValue|useCallbackDebounced|useCallbackThrottled)',
+         },
+       ],
+ 
+```
+
+**File**: `example/app.json` (modified, +1/-5)
+```diff
+@@ -10,10 +10,7 @@
+     "newArchEnabled": true,
+     "ios": {
+       "supportsTablet": true,
+-      "bundleIdentifier": "com.anonymous.example",
+-      "config": {
+-        "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+-      }
++      "bundleIdentifier": "com.anonymous.example"
+     },
+     "android": {
+       "adaptiveIcon": {
+@@ -22,7 +19,6 @@
+         "backgroundImage": "./assets/images/android-icon-background.png",
+         "monochromeImage": "./assets/images/android-icon-monochrome.png"
+       },
+-      "edgeToEdgeEnabled": true,
+       "predictiveBackGestureEnabled": false,
+       "package": "com.anonymous.example",
+       "config": {
+```
+
+**File**: `example/app/(tabs)/explore.tsx` (modified, +2/-1)
+```diff
+@@ -8,7 +8,7 @@ import { ThemedText } from '@/components/themed-text'
+ import { ThemedView } from '@/components/themed-view'
+ import { useThemeColor } from '@/hooks/use-theme-color'
+ 
+-type ChatExample = 'basic' | 'customized-rendering' | 'slack' | 'links' | 'reply' | 'day-animated' | 'reactions'
++type ChatExample = 'basic' | 'customized-rendering' | 'slack' | 'links' | 'reply' | 'day-animated' | 'reactions' | 'aligned-top'
+ 
+ const examples: Array<{ id: ChatExample, title: string, description: string }> = [
+   { id: 'basic', title: 'Basic Example', description: 'Basic chat with keyboard logging for testing' },
+@@ -18,6 +18,7 @@ const examples: Array<{ id: ChatExample, title: string, description: string }> =
+   { id: 'reply', title: 'Reply Example', description: 'Example demonstrating reply functionality' },
+   { id: 'day-animated', title: 'Day Animated', description: 'Multi-day chat with Load earlier for testing the animated day header' },
+   { id: 'reactions', title: 'Reactions', description: 'Long-press a message to react with emojis, with a full emoji browser' },
++  { id: 'aligned-top', title: 'Top Aligned (short chat)', description: 'isAlignedTop false / true / auto on a short chat, with optional very tall bubbles' },
+ ]
+ 
+ export default function ExploreScreen () {
+```
+
+**File**: `example/app/_layout.tsx` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
- {
-   "name": "react-native-gifted-chat",
--  "version": "3.4.1",
-+  "version": "3.4.2",
-   "description": "The most complete chat UI for React Native. Maintenance mode - active development continues in @kesha-antonov/react-native-chat",
-   "keywords": [
-     "android",
+ import { LogBox, StyleSheet } from 'react-native'
+-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+ import { Stack } from 'expo-router'
++import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
+ import { StatusBar } from 'expo-status-bar'
+ import { GestureHandlerRootView } from 'react-native-gesture-handler'
+ import 'react-native-reanimated'
+```
+
+**File**: `example/app/chat/_layout.tsx` (modified, +12/-0)
+```diff
+@@ -12,6 +12,14 @@ export default function ChatLayout () {
+       screenOptions={{
+         headerShown: true,
+         headerTitleAlign: 'center',
++        // Expo Router 58 defaults to a transparent Liquid Glass header that the
++        // screen scrolls under. iOS 26+ then blurs scroll content beneath it with a
++        // scroll edge effect, and on an inverted chat list that blur covers the
++        // whole list. An opaque header keeps the list below it.
++        headerTransparent: false,
++        // Even under an opaque header iOS still attaches its scroll edge effects to the
++        // list, and the inverted list flips them, blurring the messages.
++        scrollEdgeEffects: { top: 'hidden', bottom: 'hidden', left: 'hidden', right: 'hidden' },
+         contentStyle: { paddingBottom: insets.bottom, backgroundColor: '#fff' },
+         headerLeft: () => (
+           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+@@ -48,6 +56,10 @@ export default function ChatLayout () {
+         name='reactions'
+         options={{ title: 'Reactions' }}
+       />
++      <Stack.Screen
++        name='aligned-top'
++        options={{ title: 'Top Aligned (short chat)' }}
++      />
+     </Stack>
+   )
+ }
+```
+
+**File**: `example/app/chat/aligned-top.tsx` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++import AlignedTopExample from '@/components/chat-examples/AlignedTopExample'
++
++export default AlignedTopExample
 ```
 
 ---
 
-### Incident Patch 2: `9ec9c937` (2026-11-06)
-**Commit Message**: feat: one-time dev notice pointing to @kesha-antonov/react-native-chat
+### Incident Patch 2: `0741ee29` (2026-11-10)
+**Commit Message**: chore(deps): bump brace-expansion from 1.1.15 to 1.1.21 in /example (#2772)
 
-The postinstall notice is rarely seen: npm 7+ hides dependency script
-output, pnpm 10 and bun skip untrusted scripts. Log it once per session
-in dev builds instead, never in production or tests. Can be turned off
-with disableMaintenanceNotice().
+Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion) from 1.1.15 to 1.1.21.
+- [Release notes](https://github.com/juliangruber/brace-expansion/releases)
+- [Commits](https://github.com/juliangruber/brace-expansion/compare/v1.1.15...v1.1.21)
 
-**File**: `README.md` (modified, +2/-0)
+---
+updated-dependencies:
+- dependency-name: brace-expansion
+  dependency-version: 1.1.21
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `example/yarn.lock` (modified, +7/-14)
 ```diff
-@@ -21,6 +21,8 @@
+@@ -2494,28 +2494,21 @@ bplist-parser@^0.3.1:
+     big-integer "1.6.x"
  
- > [!NOTE]
- > **Active development has moved.** This package is now in maintenance mode and isn't receiving new features. Development continues - including streaming AI messages and the latest fixes - in a maintained fork: **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**. New projects are encouraged to use it; migrating is mostly a rename ([migration guide with a codemod](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md)).
-+>
-+> In development builds, `GiftedChat` logs this notice once per session (never in production). To hide it, call `disableMaintenanceNotice()` (exported from `react-native-gifted-chat`) before the first render.
+ brace-expansion@^1.1.7:
+-  version "1.1.15"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.15.tgz#a6d90d54067236e5f42570a3b7378d594d9b7738"
+-  integrity sha512-EwOCDEex4quD37XhqM3omwtMoJjr//isUZz1JopUNWms+4Z2ViyM/k1YIRePpoVNnQhENnxtFjLaxNHrT7xIUg==
++  version "1.1.21"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz#edf4fab5c64d051aea5a8def49aba1c7522279f3"
++  integrity sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==
+   dependencies:
+     balanced-match "^1.0.0"
+     concat-map "0.0.1"
  
- ---
+ brace-expansion@^2.0.1:
+-  version "2.1.1"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.1.tgz#c68b1c4111c76aae3a6fba55d496cee10c39dad8"
+-  integrity sha512-WR1cURNjuvBLMZBMbqM0UoE+WAfdUcEV1ccD8PVBVOI+Z3ND4+SZbN8RsfT2bMuG1qwz5RFvPukSZm5fF2D5eA==
++  version "2.1.7"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.7.tgz#14ea3836731823bb24740225ea43b941b436f9d1"
++  integrity sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==
+   dependencies:
+     balanced-match "^1.0.0"
  
-```
-
-**File**: `src/GiftedChat/index.tsx` (modified, +5/-0)
-```diff
-@@ -24,6 +24,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
- import { TEST_ID } from '../Constant'
- import { GiftedChatContext } from '../GiftedChatContext'
- import { InputToolbar } from '../InputToolbar'
-+import { showMaintenanceNotice } from '../maintenanceNotice'
- import { MessagesContainer, AnimatedList } from '../MessagesContainer'
- import { IMessage, ReplyMessage } from '../Models'
- import stylesCommon from '../styles'
-@@ -351,6 +352,10 @@ function GiftedChatWrapper<TMessage extends IMessage = IMessage> (props: GiftedC
-     ...rest
-   } = props
- 
-+  useEffect(() => {
-+    showMaintenanceNotice()
-+  }, [])
-+
-   const chat = <GiftedChat<TMessage> {...rest} />
- 
-   return (
-```
-
-**File**: `src/__tests__/maintenanceNotice.test.ts` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+describe('maintenance notice', () => {
-+  const env = { ...process.env }
-+
-+  beforeEach(() => {
-+    jest.resetModules()
-+    // Pretend we're in an app dev build, not under Jest
-+    process.env = { ...env, NODE_ENV: 'development' }
-+    delete process.env.JEST_WORKER_ID
-+    ;(global as any).__DEV__ = true
-+  })
-+
-+  afterEach(() => {
-+    process.env = env
-+    jest.restoreAllMocks()
-+  })
-+
-+  it('warns once per session and points to the fork', () => {
-+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
-+    const { showMaintenanceNotice } = require('../maintenanceNotice')
-+
-+    showMaintenanceNotice()
-+    showMaintenanceNotice()
-+
-+    expect(warn).toHaveBeenCalledTimes(1)
-+    expect(warn.mock.calls[0][0]).toContain('https://github.com/kesha-antonov/react-native-chat')
-+  })
-+
-+  it('stays quiet after disableMaintenanceNotice()', () => {
-+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
-+    const { showMaintenanceNotice, disableMaintenanceNotice } = require('../maintenanceNotice')
-+
-+    disableMaintenanceNotice()
-+    showMaintenanceNotice()
-+
-+    expect(warn).not.toHaveBeenCalled()
-+  })
-+
-+  it('stays quiet in production builds', () => {
-+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
-+    ;(global as any).__DEV__ = false
-+    const { showMaintenanceNotice } = require('../maintenanceNotice')
-+
-+    showMaintenanceNotice()
-+
-+    expect(warn).not.toHaveBeenCalled()
-+  })
-+})
-```
-
-**File**: `src/index.ts` (modified, +2/-1)
-```diff
-@@ -29,4 +29,5 @@ export { MessageAudio } from './MessageAudio'
- export { MessageVideo } from './MessageVideo'
- export { MessageReply } from './components/MessageReply'
- export { ReplyPreview } from './components/ReplyPreview'
--export { useColorScheme } from './hooks/useColorScheme'
-\ No newline at end of file
-+export { useColorScheme } from './hooks/useColorScheme'
-+export { disableMaintenanceNotice } from './maintenanceNotice'
-\ No newline at end of file
-```
-
-**File**: `src/maintenanceNotice.ts` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+// Dev-only, once-per-session notice that this package is in maintenance mode.
-+// The postinstall notice is often hidden (npm 7+ hides dependency script
-+// output, pnpm 10 and bun skip untrusted scripts), so this is the place most
-+// developers actually see it. Never shown in production builds or under Jest.
-+
-+const FORK = 'https://github.com/kesha-antonov/react-native-chat'
-+const MIGRATION_GUIDE = `${FORK}/blob/main/docs/MIGRATION.md`
-+
-+let isShown = false
-+
-+declare const __DEV__: boolean | undefined
-+declare const process: { env?: Record<string, string | undefined> } | undefined
-+
-+const isDev = () => typeof __DEV__ !== 'undefined' && __DEV__
-+
-+const isTest = () =>
-+  typeof process !== 'undefined' &&
-+  (process.env?.NODE_ENV === 'test' || process.env?.JEST_WORKER_ID !== undefined)
-+
-+/**
-+ * Turns off the dev-only maintenance notice. Call it once, before the first
-+ * GiftedChat render (for example next to your app's root component).
-+ */
-+export function disableMaintenanceNotice () {
-+  isShown = true
-+}
-+
-+export function showMaintenanceNotice () {
-+  if (isShown || !isDev() || isTest())
-+    return
-+
-+  isShown = true
-+
-+  console.warn(
-+    '[react-native-gifted-chat] This package is in maintenance mode and won\'t get new features. ' +
-+    'Active development continues in @kesha-antonov/react-native-chat ' +
-+    '(same API, streaming AI messages, latest fixes): ' + FORK + '\n' +
-+    'Migrating is mostly a rename (GiftedChat to Chat): ' + MIGRATION_GUIDE + '\n' +
-+    'Hide this message with disableMaintenanceNotice() from react-native-gifted-chat.'
-+  )
-+}
+-brace-expansion@^5.0.5:
+-  version "5.0.6"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.6.tgz#ec68fe0a641a29d8711579caf641d05bae1f2285"
+-  integrity sha512-kLpxurY4Z4r9sgMsyG0Z9uzsBlgiU/EFKhj/h91/8yHu0edo7XuixOIH3VcJ8kkxs6/jPzoI6U9Vj3WqbMQ94g==
+-  dependencies:
+-    balanced-match "^4.0.2"
+-
+-brace-expansion@^5.0.8:
++brace-expansion@^5.0.5, brace-expansion@^5.0.8:
+   version "5.0.12"
+   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.12.tgz#995fbb4750a77c4d16a7dc942ff2ca6ef8e675ec"
+   integrity sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2762** (closed): chore(deps): bump joi from 17.13.4 to 17.13.7 (@dependabot[bot])
-- **PR #2759** (closed): chore(deps): bump js-yaml from 3.14.2 to 3.15.1 in /example (@dependabot[bot])
-- **PR #2758** (closed): chore(deps): bump brace-expansion from 1.1.15 to 1.1.18 in /example (@dependabot[bot])
-- **PR #2757** (closed): chore(deps): bump shell-quote from 1.8.4 to 1.10.0 (@dependabot[bot])
-- **PR #2756** (closed): 🐛 [Fix] Today label is not translated and hardcoded (@kevinhuang78)
-- **PR #2753** (closed): chore(deps): bump js-yaml from 3.14.2 to 3.15.0 in /example (@dependabot[bot])
+- **PR #2773** (2026-11-10): chore(deps): bump shell-quote from 1.8.4 to 1.12.0 in /example (@dependabot[bot])
+- **PR #2772** (2026-11-10): chore(deps): bump brace-expansion from 1.1.15 to 1.1.21 in /example (@dependabot[bot])
+- **PR #2771** (2026-11-10): chore(deps): bump compression from 1.8.1 to 1.8.2 in /example (@dependabot[bot])
+- **PR #2770** (closed): chore(deps): bump qs from 6.15.2 to 6.17.1 (@dependabot[bot])
+- **PR #2769** (closed): chore(deps): bump launch-editor from 2.14.1 to 2.14.2 (@dependabot[bot])
+- **PR #2768** (closed): chore(deps): bump brace-expansion from 1.1.15 to 1.1.21 (@dependabot[bot])
 
 ---
 
@@ -532,13 +591,13 @@ with disableMaintenanceNotice().
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release 3.4.2 - point users to @kesha-antonov/react-native-chat after install
+## X. Android system bars after leaving the chat, keyboard-aware isAlignedTop, Expo 58
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FaridSafi/react-native-gifted-chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f4d2140`: release 3.4.2 - point users to @kesha-antonov/react-native-chat after install. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49acbf52`: Android system bars after leaving the chat, keyboard-aware isAlignedTop, Expo 58 example. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -546,25 +605,30 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [3.4.2] - 2026-11-06
+## [Unreleased]
 
-### ✨ Features
-- Dev-only notice: in development builds `GiftedChat` logs a one-time `console.warn` pointing to **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**, since the install-time notice is hidden by npm 7+ and skipped by pnpm 10 and bun. Never shown in production or under Jest. Turn it off with the new `disableMaintenanceNotice()` export.
+### Features
+- `isAlignedTop='auto'` ([#2736](https://github.com/FaridSafi/react-native-gifted-chat/issues/2736)): a short conversation sits at the top while the keyboard is closed and moves to the bottom while it is open. Works with both `isInverted` settings.
 
-### 🗒️ Maintenance
-- Added links to the maintained fork **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)** in the README (installation, AI chat, questions, contributing), the issue template, the stale-bot comment and the Expo Snack README.
-- The npm package description and the install-time notice now point to the fork and its [migration guide](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md). No API or runtime changes.
+### Bug Fixes
+- Android navigation bar overlapping the app after leaving the chat ([#2755](https://github.com/FaridSafi/react-native-gifted-chat/issues/2755)): the built-in `KeyboardProvider` no longer forces `statusBarTranslucent` / `navigationBarTranslucent`, which changed the activity window and stayed changed. Set them via `keyboardProviderProps` if you need them.
+- `isAlignedTop` cut off chats taller than the screen, which then could not be scrolled.
+- Reanimated 4 logged "Dependencies should only be used on the web" on every render.
+
+### Maintenance
+- Example app on Expo SDK 58 (React Native 0.88, gesture-handler 3, Reanimated 4.7); iOS builds again. New "Top Aligned (short chat)" screen.
+- Dev toolchain on React Native 0.88, Jest 30, `@testing-library/react-native` 14, ESLint 10. Peer dependency ranges unchanged.
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f4d2140` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49acbf52` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

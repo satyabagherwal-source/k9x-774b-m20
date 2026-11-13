@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:50:54.156Z",
+  "last_updated": "2026-11-13T21:59:58.879Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T21:28:54.085Z",
@@ -1038,7 +1038,7 @@
       "staged_for_review": 1
     },
     "xudong-huang-may-learnings.md": {
-      "processed_at": "2026-11-12T11:01:20.387Z",
+      "processed_at": "2026-11-13T21:59:21.731Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2211,9 +2211,19 @@
       "processed_at": "2026-11-13T21:50:53.567Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-amazon-chronos-2-learnings.md": {
+      "processed_at": "2026-11-13T21:59:57.442Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "faridsafi-react-native-gifted-chat-learnings.md": {
+      "processed_at": "2026-11-13T21:59:57.785Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 696,
-  "total_canonical_promoted": 138,
-  "total_staged_for_review": 552
+  "total_dossiers_evaluated": 699,
+  "total_canonical_promoted": 139,
+  "total_staged_for_review": 554
 }

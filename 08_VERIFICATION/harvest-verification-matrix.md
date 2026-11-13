@@ -9647,3 +9647,8 @@
 | `CYCLE-20261113-9NAQ` | `2026-11-13T21:45:20.690Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8391` | Yes (`cec55f56...`) |
 | `CYCLE-20261113-G394` | `2026-11-13T21:50:21.304Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`da3282fa...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:50:53.279Z` | `hf-google-t5-t5-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B528111D` [Domain D] | Yes (`4353f327...`) |
+| `CYCLE-20261113-QOMP` | `2026-11-13T21:58:35.569Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8392` | Yes (`e88e8b51...`) |
+| `CYCLE-20261113-QRM6` | `2026-11-13T21:58:39.438Z` | `FaridSafi/react-native-gifted-chat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md` | Yes (`91fb6f02...`) |
+| `CYCLE-20261113-QYFI` | `2026-11-13T21:58:48.270Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8393` | Yes (`78a04f29...`) |
+| `CYCLE-20261113-RLXU` | `2026-11-13T21:59:18.738Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`0c2e170e...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:59:57.441Z` | `hf-amazon-chronos-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6F87F39B` [Domain D] | Yes (`0b31585a...`) |

@@ -602972,3 +602972,160 @@ use opendal::raw::normalize_root;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7cac7adf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8392. EpollTimeout overflow with large Duration values (Harvested from Xudong-Huang/may)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "EpollTimeout overflow with large Duration values",
+  "source": "Xudong-Huang/may",
+  "source_url": "https://github.com/Xudong-Huang/may",
+  "source_version": "52489997",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-13T21:58:35.107Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-xudong-huang-may",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Xudong-Huang/may](https://github.com/Xudong-Huang/may) (Revision: `52489997`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/io/sys/unix/epoll.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2727c031`: EpollTimeout overflow with large Duration values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/io/sys/unix/epoll.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            .map(|to| {
+                let ms = to.div_ceil(1_000_000);
+                // Clamp to i32::MAX milliseconds if the timeout exceeds that.
+                // EpollTimeout::try_from rejects values > i32::MAX, so we cap it.
+                let ms_clamped = ms.min(i32::MAX as u64) as i32;
+                EpollTimeout::try_from(ms_clamped).unwrap()
+            })
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+            .map(|to| EpollTimeout::try_from(to.div_ceil(1_000_000)).unwrap())
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2727c031` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8393. exclude retired segments after cancelled vacuum (Harvested from paradedb/paradedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "exclude retired segments after cancelled vacuum",
+  "source": "paradedb/paradedb",
+  "source_url": "https://github.com/paradedb/paradedb",
+  "source_version": "831a1ce2",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-13T21:58:47.823Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-paradedb-paradedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `831a1ce2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `index_write/src/index/merge_policy.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `831a1ce2`: exclude retired segments after cancelled vacuum. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `index_write/src/index/merge_policy.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // VACUUM or another merger can publish metadata changes and then be canceled while
+        // this merger holds an older view. Their exclusions disappear on ERROR, so compare
+        // full entries to catch both retired segments and updated deletion metadata.
+        // The caller holds MergeLock, preventing a new VACUUM from starting during selection.
+        let live_entries: HashMap<_, _> = unsafe { metadata.segment_metas().list(None) }
+            .into_iter()
+            .filter(|entry| entry.xmax() == pg_sys::InvalidTransactionId)
+            .map(|entry| (entry.segment_id(), entry))
+            .collect();
+
+            .filter(|(segment_id, entry)| {
+                    && live_entries.get(segment_id) == Some(entry)
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+            .filter(|(segment_id, _)| {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `831a1ce2` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `96bba17f`  
+> **Source Version**: `831a1ce2`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:33:37.793Z  
+> **Timestamp**: 2026-11-13T21:58:47.291Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:33:37.786Z  
+> **Harvest Timestamp**: 2026-11-13T21:58:47.284Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9508 stars
+- **Stars / Engagement**: 9511 stars
 
 ---
 
@@ -1130,7 +1130,7 @@ pub trait PgMemoryContextsExt {
     /// std, tokio, tantivy and DataFusion types: there is no `Drop` of ours on them to put
     /// `impl_safe_drop!` on. Our own `Drop`s are checked by `.github/scripts/check_impl_drop.py`.
     ///
-    /// The body mirrors pgrx 0.19.2's `leak_and_drop_on_delete` (`memcxt.rs`) plus the
+    /// The body mirrors pgrx 0.20.0's `leak_and_drop_on_delete` (`memcxt.rs`) plus the
     /// `proc_exit` check; keep it in sync when bumping pgrx.
     fn leak_and_drop_unless_exiting<T>(&mut self, v: T) -> *mut T;
 }
@@ -1147,15 +1147,16 @@ impl PgMemoryContextsExt for PgMemoryContexts {
             drop(unsafe { Box::from_raw(ptr.cast::<T>()) });
         }
 
-        let leaked = Box::leak(Box::new(v));
         unsafe {
             // SAFETY: the callback struct is plain pointers, all set before it is registered.
             let callback = self.palloc_struct::<pg_sys::MemoryContextCallback>();
+            // Keep Rust ownership until callback allocation succeeds.
+            let leaked = Box::leak(Box::new(v));
             (*callback).func = Some(drop_unless_exiting::<T>);
             (*callback).arg = (leaked as *mut T).cast();
             pg_sys::MemoryContextRegisterResetCallback(self.value(), callback);
+            leaked
         }
-        leaked
     }
 }
 
@@ -1176,8 +1177,7 @@ pub fn proc_exit_in_progress() -> bool {
 /// Automatically frees the context when dropped
 ///
 /// let context_guard = ExprContextGuard::new();
-/// // Use context_guard.as_ptr() to get the raw pointer
-/// // Context is automatically freed when
+/// // Use context_g
 ```
 
 ### Core Architecture Module: `index_read/src/index/directory/utils.rs`
@@ -2225,869 +2225,492 @@ impl AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2eac0bb` (2026-11-11)
-**Commit Message**: perf(vector): faster IVF builds (#7389)
-
-Faster IVF builds: pins the build speedups in paradedb/tantivy#405 and
-paradedb/superkmeans-rs#46.
-
-Commits `d1820b571` and `5dfd90fb6`, on #7384 `e5740017b`:
-- tantivy `98c0f9436` (main: merged paradedb/tantivy#405, then the
-router test fix paradedb/tantivy#409): encode cluster blocks on the
-rayon pool; fused multiply-add and round under x86 features; SOAR
-assignment through one prepared assigner.
-- superkmeans-rs `b605bff` (main, merged #46): SOAR secondary from the
-centroid Gram matrix. `index_write`'s superkmeans pin matches tantivy's,
-so the build links one superkmeans-rs.
-- Changelog fragment `vector-build-speedups.performance.mdx`.
-
-The cargoHash bot follows with its nix commit.
-
-## Cohere CI
-
-The CI runs below benchmarked `460cf111a`: the same pins before #7384
-and the tantivy stack were restacked onto main and superkmeans #46 was
-merged. The tantivy patches are identical, and the superkmeans tree is
-identical.
-
-Before: #7384's label run
-[43044680001](https://github.com/paradedb/paradedb/actions/runs/43044680001),
-head `6256ec8e9`. After: run
-[43078291563](https://github.com/paradedb/paradedb/actions/runs/43078291563)
-on `460cf111a`,
-
-**File**: `Cargo.lock` (modified, +11/-11)
-```diff
-@@ -5192,7 +5192,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7329,7 +7329,7 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
- [[package]]
- name = "superkmeans-rs"
- version = "0.4.0"
--source = "git+https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc#6b0d0bc08e2071220b99222db0c79ad49305f8dc"
-+source = "git+https://github.com/paradedb/superkmeans-rs?rev=b605bff02aaf76cd633efe5f4747080b31b21421#b605bff02aaf76cd633efe5f4747080b31b21421"
- dependencies = [
-  "matrixmultiply",
-  "pkg-config",
-@@ -7414,7 +7414,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7473,15 +7473,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "bitpacking",
- ]
- 
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7496,7 +7496,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -7529,7 +7529,7 @@ dependencies = [
- [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7538,7 +7538,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7550,7 +7550,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7563,7 +7563,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7600,7 +7600,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
- dependencies = [
-  "serde",
- ]
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -89,7 +89,7 @@ pgrx-tests = "=0.20.0-beta.1"
- 
- # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
- # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "c7fcfd70321f8eb7cfce1bbd2997e0974083af1d", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "98c0f943610fb16e38e20abab6887b1ea26ec65f", features = [
-   "columnar-zstd-compression",
-   "lz4-compression",
-   "paradedb",
-@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
-   "stemmer",
-   "stopwords",
- ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "c7fcfd70321f8eb7cfce1bbd2997e0974083af1d" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98c0f943610fb16e38e20abab6887b1ea26ec65f" }
- tantivy-jieba = "0.21.0"
- 
- async-trait = "0.1.92"
-@@ -185,8 +185,8 @@ rstest = "0.28.0"
- postgres = "0.19.14"
- 
- [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "c7fcfd70321f8eb7cfce1bbd2997e0974083af1d" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "c7fcfd70321f8eb7cfce1bbd2997e0974083af1d" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "98c0f943610fb16e38e20abab6887b1ea26ec65f" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "98c0f943610fb16e38e20abab6887b1ea26ec65f" }
- 
- [workspace.lints.rust]
- unused_crate_dependencies = "warn"
-```
-
-**File**: `docs/project/changelog/unreleased/vector-build-speedups.performance.mdx` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+header: performance
-+---
-+
-+Vector index builds run faster. Each vector's second (replica) cluster comes from the nearest-centroid pass and the centroids' Gram matrix instead of a second pass over every centroid, and a quantized segment encodes its clusters in parallel. On x86 CPUs with AVX2 and FMA, and with SSE4.1, quantized scoring and query preparation use those instructions instead of math-library calls. Quantized encoding and scoring are unchanged bit for bit; replica clusters can differ where two candidates tie to floating-point rounding.
-```
-
-**File**: `index_write/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -31,12 +31,12 @@ serde_json.workspace = true
- tantivy.workspace = true
- 
- [target.'cfg(target_os = "macos")'.dependencies]
--superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
-+superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "b605bff02aaf76cd633efe5f4747080b31b21421", features = [
-   "accelerate",
- ] }
- 
- [target.'cfg(not(target_os = "macos"))'.dependencies]
--superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "6b0d0bc08e2071220b99222db0c79ad49305f8dc", features = [
-+superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "superkmeans-rs", rev = "b605bff02aaf76cd633efe5f4747080b31b21421", features = [
-   "openblas",
- ] }
- 
-```
-
-**File**: `nix/pg_search.nix` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ buildPgrxExtension (finalAttrs: {
-   # If maintainers forget to do so, Nix will throw an error message that begins
-   # like this and then provides the correct new hash:
-   # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-QqyMDAe7/f3gG35rKJbD7Yb/kcGNmGKb6CngL4JcGVE=";
-+  cargoHash = "sha256-3ynWDCbl4HzSM9tlZdYkggn7/wPFYmejp69Ol3WHz9A=";
- 
-   inherit postgresql;
-   # The Nix builder also passes cargoPgrxFlags to `stop`, which does not accept
-```
-
----
-
-### Incident Patch 2: `4bc497cb` (2026-11-11)
-**Commit Message**: perf: keep the rank join for row-level security policies of any shape and score them 0.0 in every plan (#7366)
-
-# Ticket(s) Closed
-
-- N/A: reported out of band in
-https://github.com/mm-zacharydavison/parade-db-rank-join-bug/blob/main/REPORT-0.26.6.md
-(problems 1 and 2).
+### Incident Patch 1: `831a1ce2` (2026-11-13)
+**Commit Message**: fix: exclude retired segments after cancelled vacuum (#7453)
 
 ## What
 
-A row-level security policy adds nothing to `pdb.score` in any plan and
-keeps `RankJoinExec`
-whatever its shape. The rank join also admits a `@@@` filter whose score
-is constant
-(`pdb.range`, `pdb.term_set`, `pdb.exists`) and any query at
-`::pdb.const(0)`.
+Prevent mergers with cached metadata from selecting segments that VACUUM
+or another merger has changed or retired.
 
 ## Why
 
-Since #7298 the rank join applies a pushed filter at `0.0`, but the base
-scan and the hash
-join still add Tantivy's score for it, so a policy made the same
-statement return different
-scores by plan (report case 13). A policy written as a `@@@` query, or
-as an `OR`, was refused
-by the rank join's gate and fell back to a hash join over every
-permitted row (cases 7, 8, 10,
-11, 12).
+VACUUM can publish segment retirements or updated deletion metadata and
+then be cancelled while waiting for readers or mergers to leave. Once
+its sentinel disappears, a merger with stale metadata can select those
+inputs and either fail on already-retired segments or overwrite updated
+deletion metadata. A cancelled concurrent merger can similarly leave
+cached inputs stale.
 
 ## How
 
-- PostgreSQL labels every clause with a `security_level`; a policy
-clause is below
-`root->qual_security_level`, a clause the statement wrote is equal to
-it. `extract_quals`
-  marks a clause below that level as `Qual::Security`, which lowers to
-`ConstScore { scor
+Compare cached merge candidates against the full current
+`SegmentMetaEntry`, while holding `MergeLock`. The controlled regression
+covers both mutable and immutable segments: pause merge selection, let
+VACUUM publish metadata changes, cancel VACUUM, then resume the merger.
+The test helper counts only retirements of its selected inputs,
+excluding concurrent VACUUM retirements.
 
-**File**: `docs/project/changelog/unreleased/7366.breaking.mdx` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+header: breaking
-+---
-+
-+A row-level security policy no longer adds a constant to `pdb.score`. Previously a policy added a constant to the score in base scans and hash joins and `0.0` in the rank join, so the same statement returned different scores depending on the plan. Conditions the statement itself writes are unchanged.
-```
+## Tests
 
-**File**: `docs/project/changelog/unreleased/7366.performance.mdx` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+header: performance
-+---
-+
-+- Top-K joins ordered by combined search scores keep the rank join when a single-table filter is a row-level security policy of any shape, a `@@@` query whose score is constant (`pdb.range`, `pdb.term_set`, `pdb.exists`), or any query at `::pdb.const(0)`. Such filters previously forced a hash join over every permitted row. As for every filter the rank join admits, it scores them `0.0`.
-```
+Locally on PostgreSQL 18.7 with pgrx 0.20.0:
 
-**File**: `docs/reference/full-text/score.mdx` (modified, +2/-0)
-```diff
-@@ -175,6 +175,8 @@ await dbContext
- While BM25 scores will be returned as long as `description` is indexed, including `rating` in the ParadeDB index definition will allow results matching
- `rating < 2` to rank higher than those that do not match.
- 
-+A row-level security policy restricts which rows a user may see and adds nothing to the score. A row scores the same for every user and in every plan, whatever the policy's shape.
-+
- ## Joined Scores
- 
- First, let's create a second table called `orders` that can be joined with `mock_items`:
-```
+- The original mutable-segment regression failed on community main with
+the test/helper changes alone: `SegmentMetaEntry ... should not already
+be deleted` (SQLSTATE `XX000`).
+- The expa
 
-**File**: `index_read/src/index/reader/index.rs` (modified, +9/-8)
+**File**: `index_write/src/index/merge_policy.rs` (modified, +12/-1)
 ```diff
-@@ -3802,6 +3802,7 @@ mod tests {
-     use crate::index::segment_pruning::{InjectedStatsFailure, STATS_OPENS, inject_stats_failure};
-     use crate::index::stats::SegmentStats;
-     use crate::query::pdb_query::pdb;
-+    use crate::query::pdb_query::to_search_query_input;
-     use crate::scan::range_partitioning::RangePartitioning;
-     use pgrx::prelude::*;
-     use std::ops::Bound;
-@@ -3903,9 +3904,9 @@ mod tests {
-             (match_query.clone(), 10),
-             (phrase.clone(), 1),
-             (
--                SearchQueryInput::FieldedQuery {
--                    field: "title".into(),
--                    query: pdb::Query::ScoreAdjusted {
-+                to_search_query_input(
-+                    "title".into(),
-+                    pdb::Query::ScoreAdjusted {
-                         query: Box::new(pdb::Query::ScoreAdjusted {
-                             query: Box::new(pdb::Query::TokenizedPhrase {
-                                 phrase: "silver dragon".into(),
-@@ -3915,7 +3916,7 @@ mod tests {
-                         }),
-                         score: Some(pdb::ScoreAdjustStyle::Const(0.0)),
-                     },
--                },
-+                ),
-                 1,
-             ),
-             (term_query("title", "absent"), 0),
-@@ -4025,15 +4026,15 @@ mod tests {
-                     pattern: "sil.*".into(),
-                 },
-             },
--            SearchQueryInput::FieldedQuery {
--                field: "title".into(),
--                query: pdb::Query::ScoreAdjusted {
-+            to_search_query_input(
-+                "title".into(),
-+                pdb::Query::ScoreAdjusted {
-                     query: Box::new(pdb::Query::Regex {
-                         pattern: "sil.*".into(),
-                     }),
-                     score: Some(pdb::ScoreAdjustStyle::Boost(2.0)),
-                 },
--            },
-+            ),
-         ] {
-             for query in [
-                 unsupported.clone(),
-```
-
-**File**: `index_read/src/postgres/customscan/solve_expr.rs` (modified, +10/-0)
-```diff
-@@ -148,6 +148,16 @@ impl SearchQueryInput {
-         found
-     }
- 
-+    pub fn has_score_filter(&self) -> bool {
-+        let mut found = false;
-+        self.visit_ref(&mut |sqi| {
-+            if let SearchQueryInput::ScoreFilter { .. } = sqi {
-+                found = true;
-+            }
-+        });
-+        found
-+    }
-+
-     pub fn has_postgres_expressions(&self) -> bool {
-         let mut found = false;
-         self.visit_ref(&mut |sqi| {
-```
-
-**File**: `index_read/src/query/mod.rs` (modified, +134/-65)
-```diff
-@@ -367,11 +367,7 @@ impl SearchQueryInput {
-                 conjunction_mode: None,
-             },
-             pdb::Query::ScoreAdjusted { query, score } => {
--                let query = Box::new(Self::from_unfielded(*query));
--                match score.expect("score adjustment value should have been set") {
--                    pdb::ScoreAdjustStyle::Boost(factor) => Self::Boost { query, factor },
--                    pdb::ScoreAdjustStyle::Const(score) => Self::ConstScore { query, score },
--                }
-+                Self::score_adjusted(Self::from_unfielded(*query), score)
-             }
-             _ => {
-                 ErrorReport::new(
-@@ -386,6 +382,16 @@ impl SearchQueryInput {
+@@ -90,13 +90,24 @@ impl LayeredMergePolicy {
+             pgrx::debug1!("do_merge: non_mergeable_segments={non_mergeable_segments:?}");
          }
-     }
  
-+    /// `pdb.boost` and `pdb.const` become [`Self::Boost`] and [`Self::ConstScore`] around the
-+    /// lowered query, so a score adjustment never sits inside a [`Self::FieldedQuery`].
-+    pub fn score_adjusted(query: Self, score: Option<pdb::ScoreAdjustStyle>) -> Self {
-+        let query = Box::new(query);
-+        match score.expect("score adjustment value should have been set") {
-+            pdb::ScoreAdjustStyle::Boost(factor) => Self::Boost { query, factor },
-+            pdb::ScoreAdjustStyle::Const(score) => Self::ConstScore { query, score },
-+        }
-+    }
++        // VACUUM or another merger can publish metadata changes and then be canceled while
++        // this merger holds an older view. Their exclusions disappear on ERROR, so compare
++        // full entries to catch both retired segments and updated deletion metadata.
++        // The caller holds MergeLock, preventing a new VACUUM from starting during selection.
++        let live_entries: HashMap<_, _> = unsafe { metadata.segment_metas().list(None) }
++            .into_iter()
++            .filter(|entry| entry.xmax() == pg_sys::InvalidTransactionId)
++            .map(|entry| (entry.segment_id(), entry))
++            .collect();
 +
-     pub fn postgres_expression(node: *mut pg_sys::Node, expr_desc: String) -> Self {
-         SearchQueryInput::PostgresExpression {
-             expr: PostgresExpression {
-@@ -414,10 +420,6 @@ impl SearchQueryInput {
-             | Self::ConstScore { query, .. }
-             | Self::Boost { query, .. } => query.supports_statistics_estimation(),
-             Self::FieldedQuery { query, .. } => {
--                let mut query = query;
--                while let pdb::Query::ScoreAdjusted { query: inner, .. } = query {
--                    query = inner;
--                }
-                 matches!(
-                     query,
-                     pdb::Query::All
-@@ -501,35 +503,37 @@ impl SearchQueryInput {
-         }
+         // tell the MergePolicy which segments it's initially allowed to consider for merging
+         self.mergeable_segments = merger
+             .all_entries()
+             .into_iter()
+-            .filter(|(segment_id, _)| {
++            .filter(|(segment_id, entry)| {
+                 // skip segments that are already being vacuumed or merged
+                 !non_mergeable_segments.contains(segment_id)
++                    && live_entries.get(segment_id) == Some(entry)
+             })
+             .collect();
      }
- 
--    /// Whether this is a plain SQL restriction as pushdown lowers it (`=`, `= ANY`, a range,
--    /// `IS NOT NULL`, `<>`, or an AND of those), which the rank join can keep as a `0.0`-score
--    /// filter. A term counts only on a field `term_is_filter` accepts. A `PostgresExpression` is
--    /// accepted for plain `EXPLAIN` (before `solve_postgres_expressions` resolves it at
--    /// execution). Every explicit `@@@` search (`WithIndex`), any boost or non-zero constant
--    /// score, an OR, and every other form is refused.
-+    /// Whether the rank join can keep this as a `0.0`-score filter: a query that scores every
-+    /// row it matches the same, so dropping its score reorders nothing. That is a pushed SQL
-+    /// restriction (`=`, `= ANY`, a range, `IS NOT NULL`, `<>`), an explicit `@@@` of a
-+    /// constant-score shape (a range, a term set, `exists`), an AND or NOT of those, or a
-+    /// `0.0` constant over anything without a score condition, which is how a row-level
-+    /// security policy and a `::pdb.const(0)` arrive. An OR is admitted only when every branch
-+    /// already scores `0.0`: a row matching two branches of a scored OR outranks a row matching
-+    /// one, which the rank join cannot reproduce. A term counts only on a field
-+    /// `term_is_filter` accepts. A `PostgresExpression` is accepted for plain `EXPLAIN` (before
-+    /// `solve_postgres_expressions` resolves it at execution). A text search, a boost, and a
-+    /// non-zero constant score are refused.
-     pub fn is_pushdown_filter(&self, term_is_filter: &dyn Fn(&FieldName) -> bool) -> bool {
-         match self {
-             SearchQueryInput::All
-             | SearchQueryInput::Empty
-             | SearchQueryInput::Null
-             | SearchQueryInput::TermSet { .. }
-             | SearchQueryInput::PostgresExpression { .. } => true,
--            // The negation of a pushed filter guards NULLs with a `0.0` constant.
--            SearchQueryInput::ConstScore { query, score } => {
--                *score == 0.0 && query.is_pushdown_filter(term_is_filter)
--            }
-+            SearchQueryInput::ConstScore { .. } => self.is_zero_constant(),
-+            SearchQueryInput::WithIndex { query, .. } => query.is_pushdown_filter(term_is_filter),
-             // An excluded clause adds no score, but deciding what it excludes may need one.
-             SearchQueryInput::Boolean {
-                 must,
-                 should,
-                 must_not,
-                 ..
-             } => {
--                should.is_empty()
--                    && must
--                        .iter()
--                        .chain(must_not)
--                        .all(|q| q.is_pushdown_filter(term_is_filter))
-+                must.iter()
-+                    .chain(must_not)
-+                    .all(|q| q.is_pushdown_filter(term_is_filter))
-+                    && should.iter().all(Self::is_zero_constant)
-             }
-    
 ```
 
-**File**: `index_read/src/query/pdb_query.rs` (modified, +30/-2)
+**File**: `pg_search/src/postgres/coordination_test.rs` (modified, +8/-1)
 ```diff
-@@ -61,7 +61,12 @@ use tokenizers::SearchTokenizer;
- use super::dot_path_to_facet;
- 
- pub fn to_search_query_input(field: FieldName, query: pdb::Query) -> SearchQueryInput {
--    SearchQueryInput::FieldedQuery { field, query }
-+    match query {
-+        pdb::Query::ScoreAdjusted { query, score } => {
-+            SearchQueryInput::score_adjusted(to_search_query_input(field, *query), score)
-+        }
-+        query => SearchQueryInput::FieldedQuery { field, query },
-+    }
+@@ -53,6 +53,10 @@ unsafe fn test_merge_index(index: PgRelation) -> i64 {
+         .into_iter()
+         .map(|(_, candidate)| candidate)
+         .collect::<Vec<_>>();
++    let selected: HashSet<SegmentId> = candidates
++        .iter()
++        .flat_map(|candidate| candidate.0.iter().copied())
++        .collect();
+     merge_index(
+         &index,
+         merger,
+@@ -67,7 +71,10 @@ unsafe fn test_merge_index(index: PgRelation) -> i64 {
+         .iter()
+         .map(SegmentMetaEntry::segment_id)
+         .collect();
+-    before.difference(&after).count() as i64
++    before
++        .difference(&after)
++        .filter(|id| selected.contains(*id))
++        .count() as i64
  }
  
- pub fn to_search_query_input_unfielded(query: pdb::Query) -> SearchQueryInput {
-@@ -749,7 +754,6 @@ impl pdb::Query {
-     ) -> bool {
-         match self {
-             pdb::Query::Term { .. } => term_is_filter(field),
--            pdb::Query::ScoreAdjusted { .. } => false,
-             _ => self.is_constant_score(),
-         }
-     }
-@@ -2843,6 +2847,30 @@ mod tests {
-         }
-     }
- 
-+    #[pg_test]
-+    fn to_search_query_input_hoists_score_adjustment() {
-+        use super::pdb::ScoreAdjustStyle;
-+        use crate::query::SearchQueryInput;
-+
-+        let nested = Query::ScoreAdjusted {
-+            query: Box::new(Query::ScoreAdjusted {
-+                query: Box::new(match_query("x")),
-+                score: Some(ScoreAdjustStyle::Boost(2.0)),
-+            }),
-+            score: Some(ScoreAdjustStyle::Const(0.0)),
-+        };
-+        assert_eq!(
-+            super::to_search_query_input(crate::api::FieldName::from("field"), nested),
-+            SearchQueryInput::ConstScore {
-+                query: Box::new(SearchQueryInput::Boost {
-+                    query: Box::new(fielded(match_query("x"))),
-+                    factor: 2.0,
-+                }),
-+                score: 0.0,
-+            }
-+        );
-+    }
-+
-     #[pg_test]
-     fn term_scoring_does_not_open_positions() {
-         use crate::postgres::pdb_owned_value::PdbOwnedValue;
+ #[pg_extern]
 ```
 
-**File**: `joinscan/src/postgres/customscan/joinscan/predicate.rs` (modified, +1/-9)
+**File**: `pg_search/tests/merge_cleanup.rs` (modified, +35/-0)
 ```diff
-@@ -237,21 +237,13 @@ pub unsafe fn extract_single_table_predicate(
- ) -> Option<crate::postgres::customscan::joinscan::build::JoinLevelSearchPredicate> {
-     let (_, bm25_idx) = rel_get_bm25_index(side.heaprelid)?;
+@@ -390,6 +390,41 @@ fn merger_admission_and_vacuum_waits_remain_interruptible() {
+     fixture.assert_rows(500);
+ }
  
--    // Create a RestrictInfo wrapping the expression for extract_quals
--    let mut ri_list = PgList::<pg_sys::RestrictInfo>::new();
--    let fake_ri =
--        pg_sys::palloc0(std::mem::size_of::<pg_sys::RestrictInfo>()) as *mut pg_sys::RestrictInfo;
--    (*fake_ri).type_ = pg_sys::NodeTag::T_RestrictInfo;
--    (*fake_ri).clause = expr.cast();
--    ri_list.push(fake_ri);
--
-     let context = PlannerContext::from_planner(root);
-     let mut state = QualExtractState::default();
- 
-     let qual = extract_quals(
-         &context,
-         rti,
--        ri_list.as_ptr().cast(),
-+        expr,
-         RestrictInfoType::BaseRelation,
-         &bm25_idx,
-         false,
++#[test]
++fn cancelled_vacuum_does_not_make_retired_segments_mergeable() {
++    let _schedule = SCHEDULE.lock().unwrap_or_else(|error| error.into_inner());
++    for mutable in [false, true] {
++        let mut fixture = Fixture::new("merge_cancelled_vacuum", mutable);
++        let live_docs = if mutable { 300 } else { 500 };
++        fixture.segments();
++        let vacuum = fixture.actor("vacuum", format!("VACUUM {}", fixture.table));
++        fixture.stage(&vacuum);
++        let merger = fixture.actor(
++            "selection",
++            format!("SELECT paradedb.test_merge_index('{}')", fixture.index),
++        );
++        // The merger has cached the original segments but has not selected inputs.
++        fixture.stage(&merger);
++        fixture.release(&vacuum);
++        wait_until("segment metadata publication", || {
++            fixture.value::<i64>(&format!(
++                "SELECT paradedb.test_live_docs('{}')",
++                fixture.index
++            )) == live_docs
++        });
++        fixture.waiting(&vacuum, "page");
++        fixture.cancel(&vacuum, false);
++        assert_error(vacuum.finish().1, "57014");
++        assert!(!fixture.value::<bool>(&format!(
++            "SELECT paradedb.test_vacuum_active('{}')",
++            fixture.index
++        )));
++        fixture.release(&merger);
++        assert_eq!(merger.finish().1.unwrap()[0].get::<_, i64>(0), 0);
++        fixture.assert_rows(live_docs);
++    }
++}
++
+ #[test]
+ fn vacuum_exclusion_handoff_and_reader_barrier_are_preserved() {
+     let _schedule = SCHEDULE.lock().unwrap_or_else(|error| error.into_inner());
 ```
 
 ---
 
-### Incident Patch 3: `ad1df4ae` (2026-11-12)
-**Commit Message**: fix: estimate range selectivity for vector routing (#7396)
+### Incident Patch 2: `3add723a` (2026-11-13)
+**Commit Message**: fix: keep serial Join Scan and Aggregate Scan streams across partial fetches (#7444)
 
-Range filters previously had no statistics estimate, so parallel vector
-routing treated their match fraction as zero and requested excessive
-cluster candidates. This change estimates numeric and timestamp range
-filters from each segment's existing min/max statistics assuming a
-uniform distribution, and defaults unknown match fractions to 1%.
+# Ticket(s) Closed
 
-Canonical bounds stay alongside the Tantivy range query and reuse the
-existing Boolean estimator and `.stats` reader. Inclusive/exclusive
-endpoints and constant fields are handled; missing or unsupported
-statistics fall back to 1%. Nullable and multivalued fields remain
-unknown when min/max cannot determine their document counts. Known-empty
-estimates remain zero. The index format is unchanged.
+- Part of #7443
 
-This branch includes the merged per-worker memory fix from #7398. The HN
-benchmark's fractional probe configuration is fixed separately in #7408.
+## What
 
-Validation:
+A Join Scan read in parts now resumes where the previous fetch stopped,
+and so does a DataFusion Aggregate Scan. This covers a cursor, a
+PL/pgSQL `FOR` loop, and a portal fetched in batches. Before, a Join
+Scan started over from its first row on every fetch, so a `FOR` loop
+over it never ended. An Aggregate Scan stopped after its first 8192
+groups.
 
-- Five focused estimator tests passed, including synonym coverage and
-PostgreSQL tests for numeric/timestamp bounds, floats, constants, large
-integers, nullable fields, Boolean wrappers, missing statistics, and the
-1% fallback.
-- Existi
+## Why
 
-**File**: `index_read/src/index/reader/index.rs` (modified, +208/-8)
+PostgreSQL calls `ExecShutdownNode` at the end of every `ExecutePlan`
+that cannot scan backward, then runs the same plan again for the next
+fetch. Both scans' `ShutdownCustomScan` call `shutdown_mpp_scan`, which
+dropped the DataFusion stream even when MPP had not launched. The Join
+Scan then rebuilt its plan from the start, and the Aggregate Scan read
+the missing stream as the end of its output.
+
+## How
+
+- `shutdown_mpp_scan` now drops the stream and winds down the leader
+only when MPP launched. A serial scan keeps its stream until
+`EndCustomScan` or `ReScanCustomScan`, which still drop it and quiesce
+the runtime's tasks.
+- Not covered: an extended-protocol portal fetched in batches can still
+launch
+
+**File**: `docs/project/changelog/unreleased/7444.bugfix.mdx` (added, +5/-0)
 ```diff
-@@ -84,6 +84,8 @@ use tantivy::{
- /// `SearchIndexReader::search_top_k_in_segments`.
- pub const MAX_TOPK_FEATURES: usize = 5;
- 
-+const DEFAULT_VECTOR_MATCH_FRACTION: f64 = 0.01;
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
 +
- #[derive(Debug, Clone, Copy)]
- pub struct DocsEstimate {
-     pub matching_docs: usize,
-@@ -940,16 +942,14 @@ impl SearchIndexReader {
-     pub fn estimate_vector_match_fraction(&self) -> f64 {
-         let (matches, docs) =
-             self.candidate_segment_readers()
--                .fold((0u64, 0u64), |(matches, docs), (_, reader)| {
--                    let estimated = self
--                        .query
--                        .estimate_docs(reader)
--                        .ok()
--                        .flatten()
--                        .map_or(0, |estimate| estimate.live_docs(reader));
-+                .fold((0.0, 0u64), |(matches, docs), (_, reader)| {
-+                    let estimated = self.query.estimate_docs(reader).ok().flatten().map_or(
-+                        f64::from(reader.num_docs()) * DEFAULT_VECTOR_MATCH_FRACTION,
-+                        |estimate| estimate.live_docs(reader) as f64,
-+                    );
-                     (matches + estimated, docs + u64::from(reader.num_docs()))
-                 });
--        matches as f64 / docs.max(1) as f64
-+        matches / docs.max(1) as f64
-     }
- 
-     pub fn vector_search_budget(&self, name: &FieldName) -> VectorSearchBudget {
-@@ -3862,6 +3862,206 @@ mod tests {
-         }
-     }
- 
-+    #[pg_test]
-+    fn vector_match_fraction_uses_range_statistics() {
-+        let (index, _) = segmented_index_fixture("vector_range_estimate", 1, false);
-+        let range = range_query("id", 9, 10);
-+        for query in [
-+            range.clone(),
-+            SearchQueryInput::Boolean {
-+                must: vec![SearchQueryInput::All, range.clone()],
-+                should: vec![],
-+                must_not: vec![],
-+                minimum_should_match: None,
-+            },
-+            SearchQueryInput::ConstScore {
-+                query: Box::new(range),
-+                score: 1.0,
-+            },
-+        ] {
-+            let reader = open_snapshot_reader(&index, query, false);
-+            assert_eq!(reader.estimate_vector_match_fraction(), 0.2);
-+            assert_eq!(reader.search().count(), 2);
-+        }
-+        for (query, expected) in [
-+            (SearchQueryInput::All, 1.0),
-+            (SearchQueryInput::Empty, 0.0),
-+            (
-+                SearchQueryInput::FieldedQuery {
-+                    field: "title".into(),
-+                    query: pdb::Query::Regex {
-+                        pattern: "sil.*".into(),
-+                    },
-+                },
-+                0.01,
-+            ),
-+        ] {
-+            let reader = open_snapshot_reader(&index, query, false);
-+            assert_eq!(reader.estimate_vector_match_fraction(), expected);
-+        }
-+        let (mutable, _) = segmented_index_fixture("vector_range_without_stats", 0, true);
-+        unsafe { pg_sys::PushActiveSnapshot(pg_sys::GetTransactionSnapshot()) };
-+        let reader = open_snapshot_reader(&mutable, range_query("id", 1, 5), false);
-+        assert_eq!(reader.estimate_vector_match_fraction(), 0.01);
-+        drop(reader);
-+        unsafe { pg_sys::PopActiveSnapshot() };
-+
-+        Spi::run(
-+            "CREATE TABLE vector_date_estimate AS
-+             SELECT g AS id, TIMESTAMPTZ '2000-01-01 00:00:00+00' + g * INTERVAL '1 microsecond' AS time
-+             FROM generate_series(1, 100) g;
-+             ALTER TABLE vector_date_estimate ADD PRIMARY KEY (id);
-+             CREATE INDEX vector_date_estimate_idx ON vector_date_estimate
-+             USING paradedb (id, time) WITH (target_segment_count = 1);",
-+        ).unwrap();
-+        let index = open_index("vector_date_estimate_idx");
-+        let query = SearchQueryInput::FieldedQuery {
-+            field: "time".into(),
-+            query: pdb::Query::Range {
-+                lower_bound: std::ops::Bound::Included(PdbOwnedValue::Date(
-+                    crate::postgres::datetime::PostgresDateTime::try_from_raw(91).unwrap(),
-+                )),
-+                upper_bound: std::ops::Bound::Unbounded,
-+            },
-+        };
-+        let reader = open_snapshot_reader(&index, query, false);
-+        assert_eq!(reader.estimate_vector_match_fraction(), 0.1);
-+        assert_eq!(reader.search().count(), 10);
-+    }
-+
-+    #[pg_test]
-+    fn uniform_range_estimates_numeric_and_timestamp_bounds() {
-+        use crate::postgres::datetime::PostgresDateTime;
-+
-+        Spi::run(
-+            "CREATE TABLE range_bounds_estimate AS
-+             SELECT g AS id, g::oid AS unsigned,
-+                    TIMESTAMPTZ '2000-01-01 00:00:00+00' + g * INTERVAL '1 microsecond' AS time,
-+                    9223372036854775707::bigint + g AS wide
-+             FROM generate_series(1, 100) g;
-+             ALTER TABLE range_bounds_estimate ADD PRIMARY KEY (id);
-+             CREATE INDEX range_bounds_estimate_id
++- Fixed Join Scans restarting from the first row on each cursor fetch, which could cause PL/pgSQL `FOR` loops to run indefinitely. Fixed cursors over DataFusion Aggregate Scans stopping after the first 8192 groups.
 ```
 
-**File**: `index_read/src/query/estimate.rs` (modified, +83/-3)
+**File**: `joinscan/src/postgres/customscan/mpp/glue.rs` (modified, +8/-8)
 ```diff
-@@ -15,12 +15,31 @@
- // You should have received a copy of the GNU Affero General Public License
- // along with this program. If not, see <http://www.gnu.org/licenses/>.
- 
-+use std::ops::Bound;
-+
-+use crate::index::stats::SegmentStats;
-+use crate::postgres::pdb_owned_value::PdbOwnedValue;
-+use crate::schema::SearchField;
- use tantivy::SegmentReader;
- use tantivy::query::{
--    AllQuery, BooleanQuery, BoostQuery, ConstScoreQuery, EmptyQuery, Occur, PhraseQuery, Query,
--    SynonymQuery, TermQuery,
-+    AllQuery, BooleanQuery, BoostQuery, ConstScoreQuery, EmptyQuery, EnableScoring, Occur,
-+    PhraseQuery, Query, RangeQuery, SynonymQuery, TermQuery, Weight,
- };
- 
-+#[derive(Clone, Debug)]
-+pub(super) struct RangeQueryWithEstimate {
-+    pub query: RangeQuery,
-+    pub field: SearchField,
-+    pub lower_bound: Bound<PdbOwnedValue>,
-+    pub upper_bound: Bound<PdbOwnedValue>,
-+}
-+
-+impl Query for RangeQueryWithEstimate {
-+    fn weight(&self, enable_scoring: EnableScoring<'_>) -> tantivy::Result<Box<dyn Weight>> {
-+        self.query.weight(enable_scoring)
-+    }
-+}
-+
- pub trait QueryEstimate {
-     fn is_fast_count(&self) -> bool {
-         false
-@@ -67,7 +86,7 @@ impl QueryEstimate for dyn Query {
-         }
-         estimate_as! {
-             AllQuery, TermQuery, SynonymQuery, PhraseQuery, BooleanQuery, EmptyQuery,
--            ConstScoreQuery, BoostQuery
-+            ConstScoreQuery, BoostQuery, RangeQueryWithEstimate
-         }
-         // SearchQueryInput::All wraps AllQuery directly, without boxing it.
-         if let Some(query) = self.downcast_ref::<ConstScoreQuery<AllQuery>>() {
-@@ -77,6 +96,67 @@ impl QueryEstimate for dyn Query {
+@@ -392,23 +392,23 @@ fn warn_if_spilled(spilled_locally: &AtomicBool, finish: Option<&ParallelProcess
      }
  }
  
-+impl QueryEstimate for RangeQueryWithEstimate {
-+    fn estimate_docs(&self, reader: &SegmentReader) -> tantivy::Result<Option<Estimate>> {
-+        // Assume values are uniformly distributed between the segment's minimum and maximum.
-+        // TODO: Keep more granular statistics to estimate nonuniform distributions.
-+        let Some(stats) = SegmentStats::of_reader(reader)? else {
-+            return Ok(None);
-+        };
-+        Ok(stats.empirical_for(&self.field)?.and_then(|stats| {
-+            let distance = |value: &PdbOwnedValue| {
-+                let distance = match (&stats.min, value) {
-+                    (PdbOwnedValue::I64(min), PdbOwnedValue::I64(value)) => {
-+                        (i128::from(*value) - i128::from(*min)) as f64
-+                    }
-+                    (PdbOwnedValue::U64(min), PdbOwnedValue::U64(value)) => {
-+                        (i128::from(*value) - i128::from(*min)) as f64
-+                    }
-+                    (PdbOwnedValue::Date(min), PdbOwnedValue::Date(value)) => {
-+                        (i128::from(value.into_inner()) - i128::from(min.into_inner())) as f64
-+                    }
-+                    (PdbOwnedValue::F64(min), PdbOwnedValue::F64(value)) => value - min,
-+                    _ => return None,
-+                };
-+                distance.is_finite().then_some(distance)
-+            };
-+            let span = distance(&stats.max)?;
-+            let step = if matches!(stats.min, PdbOwnedValue::F64(_)) {
-+                0.0
-+            } else {
-+                1.0
-+            };
-+            let lower_offset = match &self.lower_bound {
-+                Bound::Included(value) => distance(value)?,
-+                Bound::Excluded(value) => distance(value)? + step,
-+                Bound::Unbounded => 0.0,
-+            };
-+            let upper_offset = match &self.upper_bound {
-+                Bound::Included(value) => distance(value)? + step,
-+                Bound::Excluded(value) => distance(value)?,
-+                Bound::Unbounded => span + step,
-+            };
-+            let fraction = if !stats.intersects(&self.lower_bound, &self.upper_bound)
-+                || lower_offset > upper_offset
-+            {
-+                0.0
-+            } else if stats.nullable {
-+                // Nullability also covers multivalued fields; min/max cannot estimate their document counts.
-+                return None;
-+            } else if span == 0.0 {
-+                1.0
-+            } else {
-+                ((upper_offset.min(span + step) - lower_offset.max(0.0)) / (span + step))
-+                    .clamp(0.0, 1.0)
-+            };
-+            Some(Estimate {
-+                matches: fraction * f64::from(reader.max_doc()),
-+                cost: u64::from(reader.max_doc()),
-+            })
-+        }))
-+    }
-+}
-+
- impl QueryEstimate for AllQuery {
-     fn is_fast_count(&self) -> bool {
-         true
+-/// Shared `ShutdownCustomScan` step for `JoinScan` and `AggregateScan`:
+-/// drops `stream` (triggering `EndStreamNotifier` on `DistributedExec` so `c2w_stream` closes and
+-/// workers flush their final `TaskMetrics`), shuts down the leader session or quiesces serial
+-/// runtime tasks, joins the producer workers so their metrics land before `EXPLAIN ANALYZE`
+-/// renders, and emits the spill warning if any operator spilled.
++/// Shared `ShutdownCustomScan` step for `JoinScan` and `AggregateScan`. Postgres also calls it at
++/// the end of every partial `ExecutePlan` (each `FETCH` of a cursor, each batch of a PL/pgSQL `FOR`
++/// loop) and then resumes the scan, so a serial scan keeps its `stream` until `EndCustomScan` or
++/// `ReScanCustomScan` tears it down. An MPP launch drops `stream` (triggering `EndStreamNotifier`
++/// on `DistributedExec` so `c2w_stream` closes and workers flush their final `TaskMetrics`), shuts
++/// down the leader session, and joins the producer workers so their metrics land before
++/// `EXPLAIN ANALYZE` renders. Either way, emits the spill warning if any operator spilled.
+ pub fn shutdown_mpp_scan(
+     stream: &mut Option<SendableRecordBatchStream>,
+     runtime: Option<&PgTokioRuntime>,
+     physical_plan: Option<&Arc<dyn ExecutionPlan>>,
+     mpp: &mut MppLifecycle,
+     spilled: &AtomicBool,
+ ) {
+-    *stream = None;
+     if let Some(leader) = mpp.leader() {
++        *stream = None;
+         finish_leader_execution(runtime, physical_plan, leader);
+-    } else if let Some(rt) = runtime {
+-        rt.quiesce_tasks();
+     }
+     if let Some(leader) = mpp.leader_mut()
+         && let Some(finish) = leader.finish.as_mut()
 ```
 
-**File**: `index_read/src/query/pdb_query.rs` (modified, +11/-4)
+**File**: `pg_search/tests/pg_regress/expected/issue_7443.out` (added, +146/-0)
 ```diff
-@@ -22,6 +22,7 @@ use crate::index::synonym_index::{expand_with_index, open_synonym_index, rule_to
- use crate::postgres::datetime::PostgresDateTime;
- use crate::postgres::pdb_owned_value::PdbOwnedValue;
- use crate::postgres::types::is_datetime_type;
-+use crate::query::estimate::RangeQueryWithEstimate;
- use crate::query::more_like_this::MoreLikeThisQueryBuilder;
- use crate::query::numeric::{
-     clamp_int_bounds, convert_value_for_field, convert_value_for_range_field,
-@@ -1752,7 +1753,8 @@ fn range_query_from_bounds(
-     index_created_by_version: Option<Version>,
-     lower_bound: Bound<PdbOwnedValue>,
-     upper_bound: Bound<PdbOwnedValue>,
--) -> anyhow::Result<RangeQuery> {
-+) -> anyhow::Result<RangeQueryWithEstimate> {
-+    let bounds = (lower_bound.clone(), upper_bound.clone());
-     let field_type = search_field.field_entry().field_type();
-     let lower_bound = match lower_bound {
-         Bound::Included(value) => Bound::Included(value_to_term(
-@@ -1790,7 +1792,12 @@ fn range_query_from_bounds(
-         Bound::Unbounded => Bound::Unbounded,
-     };
+@@ -0,0 +1,146 @@
++-- A Join Scan or an Aggregate Scan that is read in parts, by a cursor or a PL/pgSQL
++-- FOR loop, must go on from the row where the previous fetch stopped. Postgres shuts
++-- the plan down at the end of each partial fetch and then runs it again (#7443).
++\i common/common_setup.sql
++CREATE EXTENSION IF NOT EXISTS pg_search;
++-- Disable parallel workers to avoid differences in plans
++SET max_parallel_workers_per_gather = 0;
++SET enable_indexscan to OFF;
++SET paradedb.enable_columnar_exec = true;
++CREATE TABLE issue_7443_s (id int PRIMARY KEY, title text);
++CREATE TABLE issue_7443_e (id int PRIMARY KEY, s_id int);
++INSERT INTO issue_7443_s SELECT g, 'dragon ' || g FROM generate_series(1, 9000) g;
++INSERT INTO issue_7443_e SELECT g, g FROM generate_series(1, 9000) g;
++CREATE INDEX issue_7443_s_idx ON issue_7443_s USING paradedb (id, title);
++CREATE INDEX issue_7443_e_idx ON issue_7443_e USING paradedb (id, s_id);
++SET paradedb.enable_join_custom_scan = on;
++SET paradedb.enable_aggregate_custom_scan = on;
++EXPLAIN (COSTS OFF)
++SELECT s.id, e.id AS e_id
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++ORDER BY s.id LIMIT 6;
++                                                                                                                       QUERY PLAN                                                                                                                        
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: s INNER e
++   Join Cond: e.s_id = s.id
++   Limit: 6
++   Order By: e.s_id asc
++   DataFusion Physical Plan: 
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, ctid_0@0 as ctid_0, ctid_1@2 as ctid_1]
++     :   SortExec: TopK(fetch=6), expr=[id@1 ASC NULLS LAST], preserve_partitioning=[false]
++     :     VisibilityFilterExec: tables=[s, e]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, s_id@1)]
++     :         CooperativeExec
++     :           PgSearchScan: table=s, segments=1, dynamic_filters=1, query={"with_index":{"query":{"match":{"field":"title","value":"dragon","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
++(14 rows)
++
++-- Join Scan: three fetches of 4 rows return rows 1-4, then 5-6, then none.
++BEGIN;
++DECLARE issue_7443_join CURSOR FOR
++SELECT s.id, e.id AS e_id
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++ORDER BY s.id LIMIT 6;
++FETCH 4 FROM issue_7443_join;
++ id | e_id 
++----+------
++  1 |    1
++  2 |    2
++  3 |    3
++  4 |    4
++(4 rows)
++
++FETCH 4 FROM issue_7443_join;
++ id | e_id 
++----+------
++  5 |    5
++  6 |    6
++(2 rows)
++
++FETCH 4 FROM issue_7443_join;
++ id | e_id 
++----+------
++(0 rows)
++
++COMMIT;
++-- Join Scan: a FOR loop in a procedure called at the top level fetches one row at
++-- a time. It must see each of the 12 rows once and then end.
++CREATE PROCEDURE issue_7443_join_loop(INOUT ids int[] DEFAULT '{}')
++LANGUAGE plpgsql AS $$
++DECLARE
++    r record;
++BEGIN
++    FOR r IN
++        SELECT s.id
++        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++        WHERE s.title ||| 'dragon'
++        ORDER BY s.id LIMIT 12
++    LOOP
++        ids := ids || r.id;
++        EXIT WHEN cardinality(ids) > 30;
++    END LOOP;
++END
++$$;
++CALL issue_7443_join_loop();
++             ids              
++------------------------------
++ {1,2,3,4,5,6,7,8,9,10,11,12}
++(1 row)
++
++EXPLAIN (COSTS OFF)
++SELECT s.id, count(*)
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++GROUP BY s.id;
++                                                                                                                     QUERY PLAN                                                                                                                     
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Aggregate Scan)
++   Backend: DataFusion
++   Indexes: issue_7443_s_idx (s), issue_7443_e_idx (e)
++   Group By: id
++   Aggregates: COUNT(*)
++   DataFusion Physical Plan: 
++     : AggregateExec: mode=Single, gby=[id@0 as id], aggr=[count(1) as agg_0]
++     :   HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, s_id@0)], projection=[id@0]
++     :     CooperativeExec
++     :       PgSearchScan: table=s, segments=1, visibility=eager, query={"with_index":{"query":{"match":{"field":"title","value":"dragon","tok
+```
+
+**File**: `pg_search/tests/pg_regress/sql/issue_7443.sql` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++-- A Join Scan or an Aggregate Scan that is read in parts, by a cursor or a PL/pgSQL
++-- FOR loop, must go on from the row where the previous fetch stopped. Postgres shuts
++-- the plan down at the end of each partial fetch and then runs it again (#7443).
++
++\i common/common_setup.sql
++
++CREATE TABLE issue_7443_s (id int PRIMARY KEY, title text);
++CREATE TABLE issue_7443_e (id int PRIMARY KEY, s_id int);
++INSERT INTO issue_7443_s SELECT g, 'dragon ' || g FROM generate_series(1, 9000) g;
++INSERT INTO issue_7443_e SELECT g, g FROM generate_series(1, 9000) g;
++CREATE INDEX issue_7443_s_idx ON issue_7443_s USING paradedb (id, title);
++CREATE INDEX issue_7443_e_idx ON issue_7443_e USING paradedb (id, s_id);
++
++SET paradedb.enable_join_custom_scan = on;
++SET paradedb.enable_aggregate_custom_scan = on;
++
++EXPLAIN (COSTS OFF)
++SELECT s.id, e.id AS e_id
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++ORDER BY s.id LIMIT 6;
++
++-- Join Scan: three fetches of 4 rows return rows 1-4, then 5-6, then none.
++BEGIN;
++DECLARE issue_7443_join CURSOR FOR
++SELECT s.id, e.id AS e_id
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++ORDER BY s.id LIMIT 6;
++FETCH 4 FROM issue_7443_join;
++FETCH 4 FROM issue_7443_join;
++FETCH 4 FROM issue_7443_join;
++COMMIT;
++
++-- Join Scan: a FOR loop in a procedure called at the top level fetches one row at
++-- a time. It must see each of the 12 rows once and then end.
++CREATE PROCEDURE issue_7443_join_loop(INOUT ids int[] DEFAULT '{}')
++LANGUAGE plpgsql AS $$
++DECLARE
++    r record;
++BEGIN
++    FOR r IN
++        SELECT s.id
++        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++        WHERE s.title ||| 'dragon'
++        ORDER BY s.id LIMIT 12
++    LOOP
++        ids := ids || r.id;
++        EXIT WHEN cardinality(ids) > 30;
++    END LOOP;
++END
++$$;
++CALL issue_7443_join_loop();
++
++EXPLAIN (COSTS OFF)
++SELECT s.id, count(*)
++FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++WHERE s.title ||| 'dragon'
++GROUP BY s.id;
++
++-- Aggregate Scan: a FOR loop in a function fetches 10 rows, then 50 at a time. The
++-- 9000 groups are more than one DataFusion batch (8192 rows), and the loop must
++-- see all of them.
++CREATE FUNCTION issue_7443_agg_loop() RETURNS bigint
++LANGUAGE plpgsql AS $$
++DECLARE
++    r record;
++    n bigint := 0;
++BEGIN
++    FOR r IN
++        SELECT s.id, count(*)
++        FROM issue_7443_s s JOIN issue_7443_e e ON e.s_id = s.id
++        WHERE s.title ||| 'dragon'
++        GROUP BY s.id
++    LOOP
++        n := n + 1;
++    END LOOP;
++    RETURN n;
++END
++$$;
++SELECT issue_7443_agg_loop();
++
++RESET paradedb.enable_join_custom_scan;
++RESET paradedb.enable_aggregate_custom_scan;
++
++DROP PROCEDURE issue_7443_join_loop;
++DROP FUNCTION issue_7443_agg_loop;
++DROP TABLE issue_7443_s;
++DROP TABLE issue_7443_e;
+```
+
+---
+
+### Incident Patch 3: `2159270d` (2026-11-13)
+**Commit Message**: docs: explain that BM25 scores can depend on rows hidden by row-level security (#7419)
+
+# Ticket(s) Closed
+
+- None. Follow-up to an email exchange with the ParadeDB team.
+
+## What
+
+Adds a short "Scores and Row-Level Security" section to the BM25 scoring
+page, after "Score Refresh".
+
+## Why
+
+Row-level security filters the rows a query returns, but BM25 statistics
+are computed over every row in the index, so a score returned to a
+restricted role can depend on rows that role cannot read. The page
+already says that a row scores the same for every user (#7366). The new
+section states the consequence and two ways to avoid it.
+
+## How
+
+Documentation only, in docs/reference/full-text/score.mdx.
+
+## Tests
+
+None. No code change.
+
+---------
+
+Signed-off-by: ionuthrubaru <[REDACTED_EMAIL]>
+Signed-off-by: Philippe Noël <[REDACTED_EMAIL]>
+Co-authored-by: Philippe Noël <[REDACTED_EMAIL]>
+
+**File**: `docs/reference/full-text/score.mdx` (modified, +6/-0)
+```diff
+@@ -354,3 +354,9 @@ VACUUM mock_items;
+ ```
  
--    Ok(RangeQuery::new(lower_bound, upper_bound))
-+    Ok(RangeQueryWithEstimate {
-+        query: RangeQuery::new(lower_bound, upper_bound),
-+        field: search_field.clone(),
-+        lower_bound: bounds.0,
-+        upper_bound: bounds.1,
-+    })
- }
- 
- /// Creates a range query for the given field and bounds.
-@@ -1815,7 +1822,7 @@ fn range(
-     index_created_by_version: Option<Version>,
-     lower_bound: Bound<PdbOwnedValue>,
-     upper_bound: Bound<PdbOwnedValue>,
--) -> anyhow::Result<RangeQuery> {
-+) -> anyhow::Result<RangeQueryWithEstimate> {
-     let search_field = schema
-         .search_field(field.root())
-         .ok_or(QueryError::NonIndexedField(field.clone()))?;
-@@ -1844,7 +1851,7 @@ fn stored_range(
-     index_created_by_version: Option<Version>,
-     lower_bound: Bound<PdbOwnedValue>,
-     upper_bound: Bound<PdbOwnedValue>,
--) -> anyhow::Result<RangeQuery> {
-+) -> anyhow::Result<RangeQueryWithEstimate> {
-     let search_field = schema
-         .search_field(field.root())
-         .ok_or(QueryError::NonIndexedField(field.clone()))?;
+ This can be automated with [autovacuum](/operate/performance-tuning/overview).
++
++## Scores and Row-Level Security
++
++BM25 scores are computed from statistics over every row in the index, including rows that a row-level security policy hides from the current role. Row-level security filters which rows a query returns, but not the statistics behind their scores, so a score returned to a restricted role can depend on rows that role cannot read.
++
++If scores must not depend on rows a role cannot read, keep those rows in a separate table with its own ParadeDB index, or do not return scores to that role.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7437** (2026-11-12): ci: build Citus 13 against PostgreSQL 15.20 (@paradedb-github-bot[bot])
-- **PR #7435** (2026-11-12): ci: build Citus 13 against PostgreSQL 15.20 (@mdashti)
-- **PR #7434** (2026-11-12): perf: use the selectivity heuristic for fuzzy matches (@mdashti)
-- **PR #7424** (closed): fix: prevent double-lowercasing in lower(text) indexed expressions under C collation (@sachinsharma3191)
-- **PR #7422** (2026-11-12): ci: run Cohere router quality on its own label (@RuchirRaj)
-- **PR #7413** (closed): Check broad range filters on IVF candidate documents (@rebasedming)
+- **PR #7455** (closed): chore: benchmark unfiltered vector FastScan (@rebasedming)
+- **PR #7454** (2026-11-13): fix: exclude retired segments after cancelled vacuum (@paradedb-github-bot[bot])
+- **PR #7453** (2026-11-13): fix: exclude retired segments after cancelled vacuum (@philippemnoel)
+- **PR #7452** (2026-11-13): fix: Remove "autoscaling" from the cloud docs (@isaacvando)
+- **PR #7451** (2026-11-13): docs: Fix Homebrew installation instructions for icu4c (@philippemnoel)
+- **PR #7446** (2026-11-13): fix: store columnar section lengths as u64 (@paradedb-github-bot[bot])
 
 ---
 
@@ -3107,44 +2730,39 @@ integers, nullable fields, Boolean wrappers, missing statistics, and the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vector): faster IVF builds (#7389)
+## X. exclude retired segments after cancelled vacuum
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `index_write/src/index/merge_policy.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2eac0bb`: vector): faster IVF builds (#7389). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `831a1ce2`: exclude retired segments after cancelled vacuum. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `index_write/src/index/merge_policy.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
-source = "git+https://github.com/paradedb/superkmeans-rs?rev=b605bff02aaf76cd633efe5f4747080b31b21421#b605bff02aaf76cd633efe5f4747080b31b21421"
-source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
-source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
-source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
-source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
-source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
-source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610fb16e38e20abab6887b1ea26ec65f#98c0f943610fb16e38e20abab6887b1ea26ec65f"
-source = "git+https://github.com/paradedb/tantivy.git?rev=98c0f943610
+        // VACUUM or another merger can publish metadata changes and then be canceled while
+        // this merger holds an older view. Their exclusions disappear on ERROR, so compare
+        // full entries to catch both retired segments and updated deletion metadata.
+        // The caller holds MergeLock, preventing a new VACUUM from starting during selection.
+        let live_entries: HashMap<_, _> = unsafe { metadata.segment_metas().list(None) }
+            .into_iter()
+            .filter(|entry| entry.xmax() == pg_sys::InvalidTransactionId)
+            .map(|entry| (entry.segment_id(), entry))
+            .collect();
+
+            .filter(|(segment_id, entry)| {
+                    && live_entries.get(segment_id) == Some(entry)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-source = "git+https://github.com/paradedb/superkmeans-rs?rev=6b0d0bc08e2071220b99222db0c79ad49305f8dc#6b0d0bc08e2071220b99222db0c79ad49305f8dc"
-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321f8eb7cfce1bbd2997e0974083af1d#c7fcfd70321f8eb7cfce1bbd2997e0974083af1d"
-source = "git+https://github.com/paradedb/tantivy.git?rev=c7fcfd70321
+// Induced defect failure mode:
+            .filter(|(segment_id, _)| {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2eac0bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `831a1ce2` are properly handled with clean fallback behavior.

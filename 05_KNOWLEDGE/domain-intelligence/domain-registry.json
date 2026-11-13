@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T21:50:53.947Z",
-  "total_records": 386,
+  "last_updated": "2026-11-13T21:59:58.624Z",
+  "total_records": 394,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 203,
+      "total": 206,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -236,7 +236,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-c",
         "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants",
         "DOM-D-B528111D",
-        "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-amazon-chronos-2-core-invariants",
+        "DOM-D-6F87F39B",
+        "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants"
       ]
     },
     "E": {
@@ -256,7 +259,7 @@
       ]
     },
     "G": {
-      "total": 50,
+      "total": 52,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -307,11 +310,13 @@
         "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants",
         "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-ntex-rs-ntex-core-invariants",
-        "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants",
+        "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 81,
+      "total": 84,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -393,7 +398,10 @@
         "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva",
+        "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings"
       ]
     },
     "I": {
@@ -9455,6 +9463,111 @@
       "repository": "callstack-react-native-paper-learnings",
       "content_hash": "96b3c53608cd2a82c0a566edf0bf9691401054184c48fe1595d05d5a18b8caeb",
       "created_at": "2026-11-13T21:50:53.947Z"
+    },
+    "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Xudong-Huang/may Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-architecture-intelligence-xudong-huang-may-core-invariants.md",
+      "repository": "Xudong-Huang/may",
+      "content_hash": "892dcf92df587534b3d2f46cfe6d4b5bc03d6d3cb2065f2e57fe6715ac36ea64",
+      "created_at": "2026-11-13T21:58:35.903Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: FaridSafi/react-native-gifted-chat Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-faridsafi-react-native-gifted-chat-technical-construction-intelligence-faridsafi.md",
+      "repository": "FaridSafi/react-native-gifted-chat",
+      "content_hash": "28977bae4dec64a8ac508f392d12e4cdea9c50a5908d94752a961c541a8acf20",
+      "created_at": "2026-11-13T21:58:39.770Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: paradedb/paradedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-paradedb-paradedb-technical-construction-intelligence-paradedb-paradedb-core-inv.md",
+      "repository": "paradedb/paradedb",
+      "content_hash": "4afd8b18a63cfc7dce700806853ec57481b0e61d3cf3d71082a2fdea47c67bc1",
+      "created_at": "2026-11-13T21:58:48.606Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-amazon-chronos-2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-amazon-chronos-2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: amazon/chronos-2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-amazon-chronos-2-research-knowledge-intelligence-amazon-chronos-2-core-invari.md",
+      "repository": "amazon/chronos-2",
+      "content_hash": "5023a1fb51de282c625542b181705653611abca2877a78cdb1eb65c38cd6d250",
+      "created_at": "2026-11-13T21:59:18.938Z"
+    },
+    "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: xudong-huang-may-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-learnings-architecture-intelligence-xudong-huang-may-learnings-.md",
+      "repository": "xudong-huang-may-learnings",
+      "content_hash": "5ea64d234d1b5aa01a13087cada77bbd640d0fcf271494091b76ed21f56b583e",
+      "created_at": "2026-11-13T21:59:22.055Z"
+    },
+    "DOM-D-6F87F39B": {
+      "record_id": "DOM-D-6F87F39B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): amazon/chronos-2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/amazon/chronos-2](https://huggingface.co/amazon/chronos-2))  \n> **Source Version**: `hf-amazon-ch`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-",
+      "content_hash": "0b31585a494c5bbf38b047f2dff13c42183441dbed1e77b1e3184a1845fbe7c7",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface. -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.",
+      "provenance": {
+        "source_uri": "project://hf-amazon-chronos-2/hf-amazon-chronos-2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:59:22.280Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-amazon-chronos-2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-amazon-chronos-2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T21:59:57.431Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-amazon-chronos-2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-amazon-chronos-2-learnings-research-knowledge-intelligence-hf-amazon-chronos-.md",
+      "repository": "hf-amazon-chronos-2-learnings",
+      "content_hash": "c8f17da9a146bf5b5670151ac3344a69e8bbb8640e37b889c8e5ca5e3665aa8f",
+      "created_at": "2026-11-13T21:59:57.647Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: faridsafi-react-native-gifted-chat-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-faridsafi-react-native-gifted-chat-learnings-technical-construction-intelligence.md",
+      "repository": "faridsafi-react-native-gifted-chat-learnings",
+      "content_hash": "087271b38c479f9309b9da649dcb9e16b908b52fb51494a18e60493376439dd8",
+      "created_at": "2026-11-13T21:59:58.624Z"
     }
   }
 }
