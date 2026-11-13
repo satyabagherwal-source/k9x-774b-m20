@@ -9563,3 +9563,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-13T16:39:32.248Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `c3342ce2` | Multi-dimensional audit evidence | 2026-11-13T16:39:42.832Z |
 | `learn-dom-d-21095cb7` | `project://hf-taichuai-zdtaichu5.0-9b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | 2026-11-13T16:40:23.117Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-13T16:48:55.749Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `3dd3844e` | Multi-dimensional audit evidence | 2026-11-13T16:49:03.217Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `07432564` | Multi-dimensional audit evidence | 2026-11-13T16:49:10.617Z |
+| `learn-dom-d-e243bb51` | `project://hf-comfy-org-qwen-image-2.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | 2026-11-13T16:49:52.696Z |

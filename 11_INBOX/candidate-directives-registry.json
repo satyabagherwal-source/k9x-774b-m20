@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T16:40:24.295Z",
+  "last_updated": "2026-11-13T16:49:53.905Z",
   "directives": [
     {
       "id": "CD-001",
@@ -9408,6 +9408,46 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9B0577-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-POTR",
+      "directive_title": "Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2",
+      "source_repo": "makecindy-cindy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-POTR-merge-pull-request-9878-from-97three-fix-queued-route-refresh-6793-v2.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-PP7R",
+      "directive_title": "react): align the file browser search dialog with the console design (#7570)",
+      "source_repo": "volcengine-openviking-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PP7R-react-align-the-file-browser-search-dialog-with-the-console-design-7570.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-71A3A2",
+      "directive_title": "Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "makecindy-cindy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-71A3A2-merge-pull-request-9878-from-97three-fix.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-E1A65F",
+      "directive_title": "react): align the file browser search dialog with the console design (#7570)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "volcengine-openviking",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E1A65F-react-align-the-file-browser-search-dial.md",
       "staged_date": "2026-11-13"
     }
   ]

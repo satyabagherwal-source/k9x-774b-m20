@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T16:40:24.622Z",
+  "last_updated": "2026-11-13T16:49:54.085Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24450,7 +24450,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
       "source_version": "hf-comfy-org-qwen-image-2.1",
-      "content_hash": "51237698650ba68fc773cf1f3362e1bb3704d3b1ec0f780db56c308cebbd2371",
+      "content_hash": "e031e5033ec72c948132c5fafab23b6811b6536e4af5cb9531b816261bdba506",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -24591,7 +24591,7 @@
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv467olr",
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
       ],
-      "verified_at": "2026-11-08T16:07:57.603Z",
+      "verified_at": "2026-11-13T16:48:55.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79665,8 +79665,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "bcdaac0c",
-      "content_hash": "aa703bb2421db91084a561af3a6c5a79efd5e46abbd52e30e0a93cb6c58220d0",
+      "source_version": "07432564",
+      "content_hash": "42251535feba979e0dafdd04df3b3834b5e024562758ffffa76d54a914ce68d7",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -79688,6 +79688,11 @@
         {
           "number": null,
           "title": "react): improve directory guidance and file preview (#7472)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "react): align the file browser search dialog with the console design (#7570)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -79791,7 +79796,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T11:01:13.633Z",
+      "verified_at": "2026-11-13T16:49:10.415Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142733,14 +142738,19 @@
       "slug": "makecindy-cindy",
       "platform": "github",
       "source_url": "https://github.com/makecindy/cindy",
-      "source_version": "4d5f787b",
-      "content_hash": "dea001b9937ebd71e58a6f7520c7251485f143349194a207b47d7e5c51ac0778",
+      "source_version": "3dd3844e",
+      "content_hash": "ea290ce6f3ddb9d729c695145e9d23b2e0100934cc072a28cf09ba9a887b4e82",
       "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "providers): wrap account controls in narrow weighted layouts",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -142779,7 +142789,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T06:00:14.793Z",
+      "verified_at": "2026-11-13T16:49:03.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -194475,6 +194485,150 @@
       "content_hash": "b7b38d51290f4a310021a332de1b85c9d8a7ca5640acd694047baeeb803e1ea2",
       "domain_letter": "G",
       "persisted_at": "2026-11-13T16:40:23.877Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-research-knowledge-intelligence-comfy-org-qwen-image.md",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/Qwen-Image-2.1 Core Invariants",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "content_hash": "2a93b5218f581a3c723f1aec39bb831448a4370cfe08349671f54196ef53cc1f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:48:55.911Z"
+    },
+    "candidate_directive-merge-pull-request-9878-from-97three-fix-queued-route-refresh-6793-v2": {
+      "item_id": "candidate_directive-merge-pull-request-9878-from-97three-fix-queued-route-refresh-6793-v2",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-POTR-merge-pull-request-9878-from-97three-fix-queued-route-refresh-6793-v2.md",
+      "title": "Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2",
+      "repository": "makecindy-cindy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "215ed6ca7ac7c309e26d20d03286a2d9100f65744948805d5a424fa4fe9803f5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:49:53.401Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
+      "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
+      "repository": "makecindy/cindy",
+      "source_version": "3dd3844e",
+      "content_hash": "ade0b324a5a850bc5406fe5e01a554180dd27acea887dd811c7e6971c934a4e7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:49:03.485Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/makecindy-cindy-verification-protocol-empirical-defect-shield-for-makecindy-cind.md",
+      "title": "Verification Protocol: Empirical Defect Shield for makecindy/cindy",
+      "repository": "makecindy/cindy",
+      "source_version": "3dd3844e",
+      "content_hash": "32ef10f68eb04b280e40af4074be9cd57c8004972b62e55289a2f2184bdb6b27",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:49:03.565Z"
+    },
+    "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570": {
+      "item_id": "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PP7R-react-align-the-file-browser-search-dialog-with-the-console-design-7570.md",
+      "title": "react): align the file browser search dialog with the console design (#7570)",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b0efd57954491b5a349f0c4e756abbd29cd36029cf505b3cb9579e64ad4338f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-13T16:49:53.905Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
+      "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
+      "repository": "volcengine/OpenViking",
+      "source_version": "07432564",
+      "content_hash": "2aac4ab6faf944d7ec84106c6fa57869e3d3a5983488a03a42b8f158f725ef89",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:49:10.888Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
+      "repository": "volcengine/OpenViking",
+      "source_version": "07432564",
+      "content_hash": "d949f3ad03996f66c0681bce4afd905f34d6b13c5acea7dadb41cc50a1d7ee3a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:49:11.014Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-comfy-o.md",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-qwen-image-2.1-learnings Core Invariants",
+      "repository": "hf-comfy-org-qwen-image-2.1-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1c725f29300b5464386dd70d1037d5cfc3d219ea6a5f8154f6516f21d4be018b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:49:52.953Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-learnings-technical-construction-intelligence-makecindy-cindy-le.md",
+      "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
+      "repository": "makecindy-cindy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c1db447987bbe579513a7c7a38ad510a49b9df093621027ee849a096fda78f53",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:49:53.521Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/makecindy-cindy-learnings-verification-protocol-empirical-defect-shield-for-make.md",
+      "title": "Verification Protocol: Empirical Defect Shield for makecindy-cindy-learnings",
+      "repository": "makecindy-cindy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "14c562bbe959fc366d970d879f7138c42039a3fb5c2c8887c671c8d77fbb40ea",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:49:53.614Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
+      "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4119b20b86c941b8b9027d27f9101a3cc80b3128541cc67cfb8c130f45f43b38",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:49:53.991Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/volcengine-openviking-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for volcengine-openviking-learnings",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b19511e2adee878fb5db7871eb4cc0c2db5b4eb4b4037be6c75478513241042",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:49:54.085Z"
     }
   },
   "aliases": {
@@ -200473,5 +200627,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9159
+  "total_items": 9171
 }

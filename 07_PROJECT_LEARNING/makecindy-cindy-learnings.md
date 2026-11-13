@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source**: github ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
-> **Source Version**: `4d5f787b`  
+> **Source Version**: `3dd3844e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T06:00:13.568Z  
+> **Timestamp**: 2026-11-13T16:49:02.734Z  
 > **Learning ID**: `learn-github-makecindy-cindy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T06:00:13.152Z  
+> **Harvest Timestamp**: 2026-11-13T16:49:02.729Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9548 stars
+- **Stars / Engagement**: 10049 stars
 
 ---
 
@@ -650,6 +650,7 @@ const user = () => fixtureState.__cindyAiScenario === 'personal'
 export const useAuth = () => ({ mode: 'cloud', dataOwnerId: 'fixture', dataOwnerGeneration: 1, user: user() });
 export const useOptionalAuthDeviceId = () => 'fixture-device';
 export const useOptionalAuthUser = () => user();
+export const useOptionalDataOwnerGeneration = () => 1;
 export const useProviders = () => ({
   providers: [{
     id: 'xd', name: cindyAiAccountName(user(), key => i18n.t(key)), source: 'builtin',
@@ -666,6 +667,119 @@ export const useClaudeAccountUsageResult = () => ({ usage: null, unlimited: true
 export const useXdAssetPrimaryAction = () => null;
 export const isChatGptConnectionConnected = () => false;
 export const useCodexAuth = () => ({ state: { kind: 'unauthenticated' }, recoveryCheck: 'idle', refresh: async () => {} });
+
+```
+
+### Core Architecture Module: `apps/desktop/scripts/fixtures/group-layout-states/ui-page.mjs`
+```
+import assert from 'node:assert/strict';
+import group from '../group-control/ui-page.mjs';
+
+// Exercise production states before resizing the same mounted chat. This adds
+// the combinations the individual happy-path fixtures do not cover.
+export default {
+  ...group,
+  name: 'group-layout-states',
+  entry: '../group-control/group-control-fixture.tsx',
+  cases: {
+    ...Object.fromEntries(Object.entries(group.cases).filter(([name]) => !['settings', 'division', 'share-pending', 'read-receipts-thread'].includes(name))),
+    'task-statuses': { ...group.cases.bubbles, about: 'All six posted task states, long title and waiting detail inside a narrow group pane' },
+    ...Object.fromEntries(['proposed', 'failed', 'done', 'stopped', 'dismissed', 'superseded'].map(state => [`division-${state}`, {
+      ...group.cases['division-waiting'], about: `Work plan ${state}, long step descriptions and narrow-pane controls`,
+    }])),
+  },
+  async check(page, ui) {
+    const planState = /^division-(proposed|failed|done|stopped|dismissed|superseded)$/.exec(ui.case)?.[1];
+    if (planState || ui.case === 'task-statuses') {
+      // UI tier: earlier fixtures covered only a started task and a successful
+      // hand-off. Real timeline cards must also fit with terminal/error states
+      // and unbroken waiting details; no host write or real task is started.
+      await page.evaluate(async ({ planState }) => {
+        const { group } = await window.electronAPI.maker.getBotGroup('fixture-group');
+        if (planState) {
+          const plan = group.plans[0];
+          plan.status = planState === 'failed' ? 'waiting' : planState;
+          plan.currentStep = planState === 'done' ? 1 : 0;
+          plan.steps = plan.steps.map((step, i) => ({ ...step,
+            task: `${i + 1}. 核对长内容、状态与进度，确认操作入口仍然可见。`.repeat(5),
+            status: planState === 'done' ? 'done' : planState === 'failed' && i === 0 ? 'failed' : 'pending',
+          }));
+          group.openPlan = ['proposed', 'failed'].includes(planState) ? {
+            ...group.openPlan, status: plan.status, currentStep: plan.currentStep,
+            currentStepStatus: plan.steps[plan.currentStep].status,
+          } : null;
+        } else {
+          const source = group.messages.find(message => message.task);
+          group.messages = ['started', 'waiting', 'completed', 'failed', 'cancelled', 'timed-out'].map((state, i) => ({
+            ...source, id: `task-${state}`, sequence: i + 1, content: '',
+            task: { ...source.task, state, title: '这是一项名称很长的群内任务，用于检查省略与状态展示。'.repeat(5),
+              summary: 'WaitingForOwnerConfirmation_'.repeat(18) },
+          }));
+        }
+        window.__uiPage.emit('botGroupChanged', { groupId: group.id, change: 'messages' });
+      }, { planState });
+      if (planState) await page.locator(`[data-testid="bot-group-plan"][data-plan-status="${planState === 'failed' ? 'waiting' : planState}"]`).waitFor();
+      else await page.locator('[data-testid="bot-group-task"][data-state="timed-out"]').waitFor();
+    } else await group.check.call(this, page, ui);
+    const subject = page.locator('[data-ui-page-subject]');
+    const timeline = page.getByTestId('bot-group-timeline');
+    // The historical journal must also be exercised open, not just as a title.
+    const journal = page.locator('[data-teammate-process]');
+    if (await journal.count()) {
+      const toggle = journal.first().locator(':scope > button');
+      if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
+    }
+    for (const width of [540, 400]) {
+      await subject.evaluate((el, width) => {
+        el.style.height = `${el.getBoundingClientRect().height}px`;
+        el.style.width = `${width}px`;
+        el.style.maxWidth = '100%';
+        el.style.flex = 'none';
+      }, width);
+      await page.waitForFunction(() => {
+        const timeline = document.querySelector('[data-testid="bot-group-timeline"]');
+        const main = timeline.closest('main');
+        const width = main.getBoundingClientRect().width;
+        return Math.abs(timeline.firstElementChild.getBoundingClientRect().width - Math.min(914, width - (width < 700 ? 40 : 100))) < 1;
+      });
+      const geometry = await timeline.evaluate(el => {
+        const main = el.closest('main'), limit = main.getBoundingClientRect();
+        const violations = [...main.querySelectorAll('[data-testid="bot-group-bubble"], [data-testid="bot-group-self-bubble"], [data-testid="bot-group-plan"], [data-testid="bot-group-task"], [data-teammate-process], [data-bot-task-card], .chat-bubble-toolbar')].flatMap(node => {
+          const r = node.getBoundingClientRect();
+          return r.width > 0 && r.height > 0 && (r.left < limit.left - 1 || r.right > limit.right + 1)
+            ? [{ node: node.getAttribute('data-testid') ?? node.className, width: r.width, left: r.left - limit.left, right: r.right - limit.right }] : [];
+        });
+        const card = main.querySelector('[data-testid="bot-group-arrangement"]');
+        const overflowNodes = el.scrollWidth > el.clientWidth + 1 ? [...el.querySelectorAll('*')].flatMap(node => {
+          const r = node.getBoundingClientRect();
+          return r.width > 0 && (r.left < limit.left - 1 || r.right > limit.right + 1)
+            ? [{ tag: node.tagName, className: node.className, text: node.textContent?.slice(0, 40), left: r.left-limit.left, right: r.right-limit.right }] : [];
+        }).slice(0, 12) : [];
+        return { overflow: el.scrollWidth - el.clientWidth, violations, overflowNodes,
+          column: el.firstElementChild.getBoundingClientRect().width, card: card?.getBoundingClientRect().width };
+      });
+      await timeline.evaluate(el => { el.scrollTop = 0; });
+      await ui.capture(`narrow-${width}-top`);
+      await timeline.evaluate(el => { el.scrollTop = el.scrollHeight; });
+      await ui.capture(`narrow-${width}-bottom`);
+      // The in-flow narrow toolbar must not cover the absolutely positioned
+      // read receipt. Pane overflow checks alone missed this collision.
+      const coveredReceipts = await timeline.locator('[data-testid="read-receipt"]').evaluateAll(marks => marks.flatMap(mark => {
+        const row = mark.closest('[data-bot-group-message-id]');
+        const toolbar = row.querySelector('.chat-bubble-toolbar');
+        if (!toolbar) return [];
+        const m = mark.getBoundingClientRect(), a = toolbar.getBoundingClientRect();
+        return m.left < a.right && m.right > a.left && m.top < a.bottom && m.bottom > a.top
+          ? [row.getAttribute('data-bot-group-message-id')] : [];
+      }));
+      assert.deepEqual(coveredReceipts, [], `Read receipts must stay clear of the toolbar at ${width}px`);
+      assert.ok(geometry.overflow <= 1 && geometry.violations.length === 0,
+        `${ui.case} at ${width}px must keep content and controls in its pane: ${JSON.stringify(geometry)}`);
+      if (geometry.card && geometry.column <= 480) assert.ok(geometry.card >= geometry.column - 39,
+        `A narrow queue card must not reserve an unused toolbar gutter: ${JSON.stringify(geometry)}`);
+    }
+  },
+};
 
 ```
 
@@ -876,267 +990,22 @@ export default {
 
 ```
 
-### Core Architecture Module: `apps/desktop/scripts/fixtures/orca-worker-project/worker-project-fixture.tsx`
-```
-import { useEffect } from 'react';
-import {
-  addSessionAttention,
-  clearSessionAttention,
-} from '../../../src/renderer/lib/sessionAttentionStore';
-import {
-  markWorkerAttention,
-  clearWorkerAttention,
-} from '../../../src/renderer/features/cc-agent/lib/workerAttentionStore';
-import {
-  RolePillDropdown,
-  WorkerListToolbar,
-} from '../../../src/renderer/features/cc-agent/RolePillDropdown';
-import type { WorkerInfo } from '../../../src/renderer/features/cc-agent/hooks/useWorkers';
-import { mountPage } from '../../ui-page/harness';
-import {
-  WorkerProjectField,
-  useWorkerProjectSelection,
-} from '../../../src/renderer/features/cc-agent/WorkerProjectField';
-import type {
-  WorkerProjectContext,
-  WorkerProjectInfo,
-} from '../../../src/shared/orca-worker-project';
-
-const inherited: WorkerProjectInfo = {
-  directory: '/projects/cindy/.cindy-worktrees/worker-picker',
-  baseRepo: '/projects/cindy',
-  branch: 'feat/worker-project-picker',
-  headState: 'branch',
-  exists: true,
-  dirty: true,
-  isWorktree: true,
-};
-const projects = [
-  'cindy',
-  'design-system',
-  'mobile-app',
-  'website',
-  'notes',
-  'missing-project',
-].map((name) => ({
-  path: `/projects/${name}`,
-  name,
-  description: `/projects/${name}`,
-  missing: name === 'missing-project',
-}));
-function Fixture() {
-  const selection = useWorkerProjectSelection(true, 'fixture-lead', true);
-  return (
-    <main className="mx-auto w-full max-w-[440px] p-4">
-      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-primary)] p-4">
-        <WorkerProjectField selection={selection} disabled={false} />
-      </div>
-    </main>
-  );
-}
-const workers: WorkerInfo[] = ['frontend', 'reviewer'].map((role, index) => ({
-  workerId: role,
-  sessionId: role,
-  role,
-  agent: 'codex',
-  model: 'gpt-5',
-  effort: 'high',
-  label: null,
-  status: 'idle',
-  focused: index === 0,
-  idleSince: null,
-}));
-function WorkersFixture() {
-  return (
-    <main className="mx-auto w-full max-w-[440px] p-4">
-      <RolePillDropdown
-        worker={workers[0]}
-        workers={workers}
-        selectedWorkerId="frontend"
-        activeWorkerCount={2}
-        onSwitchFocus={() => {}}
-        onArchiveWorker={() => {}}
-      />
-    </main>
-  );
-}
-/** 真实 store 驱动提醒，Worker 运行状态始终 idle，以覆盖原来的漏报。 */
-function AttentionFixture({ kind }: { kind: 'error' | 'awaiting' | 'done' }) {
-  useEffect(() => {
-    if (kind === 'done') markWorkerAttention('reviewer');
-    else addSessionAttention('reviewer', kind);
-    return () => {
-      clearSessionAttention('reviewer', { intent: 'explicit' });
-      clearWorkerAttention('reviewer');
-    };
-  }, [kind]);
-  return (
-    <main className="mx-auto w-full max-w-[480px] space-y-12 p-5">
-      <section data-testid="attention-tabs">
-        <WorkerListToolbar
-          worker={workers[0]}
-          workers={workers}
-          selectedWorkerId="frontend"
-          activeWorkerCount={2}
-          softLimit={5}
-          hardLimit={8}
-          clearAttentionWhenVisible={false}
-          onSwitchFocus={() => {}}
-          onArchiveWorker={() => {}}
-          onOpenCreate={() => {}}
-          onOpenSettings={() => {}}
-        />
-      </section>
-      <section data-testid="attention-dropdown">
-        <RolePillDropdown
-          worker={workers[0]}
-          workers={workers}
-          selectedWorkerId="frontend"
-          activeWorkerCount={2}
-          onSwitchFocus={() => {}}
-          onArchiveWorker={() => {}}
-        />
-      </section>
-    </main>
-  );
-}
-void mountPage({
-  host: (ctx) => ({
-    notificationMarkSessionAttention: async () => {},
-    notificationClearSessionAttention: async () => {},
-    showOpenDirectoryDialog: async () => {
-      if (ctx.case === 'same-repo') return { canceled: false, path: '/projects/cindy' };
-      throw new Error('fixture dialog unavailable');
-    },
-    localDb: {
-      orcaWorkflows: {
-        projectLabel: async (id: string) =>
-          id === 'frontend' ? { name: 'design-system', path: '/projects/design-system' } : null,
-        projectContext: async (
-          _id: string,
-          directory?: string,
-        ): Promise<WorkerProjectContext | WorkerProjectInfo> => {
-          const lead =
-            ctx.case === 'missing'
-              ? {
-                  ...inherited,
-                  directory: '/projects/missing-project',
-                  baseRepo: null,
-                  branch: null,
-                  exists: false,
-                  isWorktree: false,
-                  dirty: false,
-                }
-              : ctx.case === 'dialogue'
-                ? {
-                    ...inherited,
-                    baseRepo: null,
-                    branch: null,
-                    directory: '/tasks/dialogue',
-                    isWorktree: false,
-                  }
-                : ctx.case === 'empty'
-                  ? {
-                      ...inherited,
-                      directory: '/projects/cindy',
-                      branch: null,
-                      headState: 'unborn' as const,
-                      isWorktree: false,
-                    }
-                  : ctx.case === 'detached'
-                    ? {
-                        ...inherited,
-                        branch: 'abcdef0123456789abcdef0123456789abcdef0123',
-                        headState: 'detached' as const,
-                      }
-                    : inherited;
-          const selected = directory
-            ? {
-                ...inherited,
-                directory,
-                baseRepo: directory,
-                branch: ctx.case === 'detached' ? lead.branch : 'main',
-                headState: ctx.case === 'detached' ? lead.headState : ('branch' as const),
-                isWorktree: false,
-              }
-            : lead;
-          if (directory) return selected;
-          return {
-            recordedDirectory: ctx.case === 'dialogue' ? lead.directory : '/projects/cindy',
-            inherited: lead,
-            selected,
-            dialogue: ctx.case === 'dialogue',
-            projects,
-          };
-        },
-      },
-    },
-    worktreeBranchSyncStatus: async ({ branch }: { branch: string }) => ({
-      branch,
-      remote: 'origin',
-      remoteBranch: branch,
-      remoteOnly: false,
-      ahead: 0,
-      behind: 3,
-      dirtyFiles: 2,
-      checkoutPath: inherited.directory,
-    }),
-    worktreeSyncBranch: async ({ branch }: { branch: string }) => ({
-      updated: 3,
-      status: {
-        branch,
-        remote: 'origin',
-        remoteBranch: branch,
-        remoteOnly: false,
-        ahead: 0,
-        behind: 0,
-        dirtyFiles: 2,
-      },
-    }),
-    getNewMakerWorktreeBranchPreference: async (baseRepo: string) =>
-      ['/projects/design-system', '/projects/cindy'].includes(baseRepo)
-        ? { baseRepo, sourceBranch: 'release/v2', revision: 1 }
-        : null,
-    worktreeListBranches: async () => ({
-      remoteDefaultBranch: 'refs/remotes/origin/main',
-      branches: ['main', 'feat/worker-project-picker', 'release/v2'],
-    }),
-  }),
-  render: (ctx) => {
-    if (ctx.case.startsWith('attention-')) {
-      localStorage.setItem('orca-worker-list-layout-v1', 'tabs');
-      return (
-        <AttentionFixture
-          kind={
-            ctx.case === 'attention-error'
-              ? 'error'
-              : ctx.case === 'attention-awaiting'
-                ? 'awaiting'
-                : 'done'
-          }
-        />
-      );
-    }
-    return ctx.case === 'workers' ? <WorkersFixture /> : <Fixture />;
-  },
-});
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9423** (2026-11-09): **bug: 远程任务的手机通知深链指向控制端电脑，点击后提示「这台电脑没有返回该任务的信息」**
-  *Symptoms*: ### 问题描述 / What happened  电脑 A 远程查看电脑 B 上的任务时，B 的任务完成、出错或等待回复，A 会替它给手机发系统推送。但推送深链里写的是 **A 的设备 ID**，任务实际在 B 上。  iOS 点击这条通知后去 A 读取任务，A 本地没有这条任务，返回 `NOT_FOUND`，入口页显示：  > 打开任务 > 这台电脑没有返回该任务的信息 > [重新读取] [返回]  点「重新读取」仍然去问 A，所以永远打不开。  **期望**：通知深链指向任务实际所在的电脑（B），点击后直接打开任务。  ### 环境 / Environment  - Cindy 版本或 commit：代码链路已在 upstream main `5c81ec6d7e` 上核对，仍然存在 - 平台与版本：macOS 桌面端（多台电脑同一账号，A 远程查看 B 的任务）+ iOS 手机端 - 安装方式：桌面端为基于 upstream 自行打包；iOS 为 Cindy Mobile  ### 复现步骤 / Steps to reproduce  1. 电脑 A、电脑 B 和 iOS 手机登录同一账号，手机开启推送；A 的侧栏能看到 B 的任务。 2. 让 A 的 Cindy 窗口失去焦点（`deliverSessionEventNotification` 在 `document.hasFocus()` 时不发通知）。 3. 在 B 上运行一个任务，等它完成、出错或等待回复。 4. 手机收到由 A 代发的通知，点击后提示「这台电脑没有返回该任务的信息」；点「重新读取」仍然失败。  ### 代码链路（upstream main `5c81ec6d7e`）  **1. 控制端 A 会对远程任务发通知事件** - [`CCAgentSidebarUpper.tsx#L1244`](https://github.com/makecindy/cindy/blob/5c81ec6d7ee47d07677ac1ff762915e8421e3d13/apps/desktop/src/renderer/features/cc-agent/CCAgentSidebarUpper.tsx#L1244)：查找通知对象时包含远程任务镜像 `remoteSessionsForNotificationRef`。 - [`CCAgentSidebarUpper.tsx#L1274`](https://github.com/makecindy/cindy/blob/5c81ec6d7ee47d07677ac1ff762915e8421e3d13/apps/desktop/src/renderer/features/cc-agent/CCAgentSidebarUpper.tsx#L1274)：远程任务以 `remoteDevice: !!session.deviceLinkDeviceId` 发出。 - [`sessionEventNotification.ts#L140`](https://github.com/makecindy/cindy/blob/5c81ec6d7ee47d07677ac1ff762915e8421e3d13/apps/desktop/src/renderer/lib/sessionEventNotification.ts#L140)：远程任务完成时同样走到投递。  **2. 交给 main 时开着手机通道，但没带任务所在设备** - [`sessionEv
-
-- **Issue #9364** (2026-11-09): **回合结束派发队首时撞上「伙伴能力正在刷新」，输入队列永久卡住、不再自动派发**
-  *Symptoms*: **提交人**: Max **客户端版本**: 0.1.124  ---  ## 现象  伙伴（teammate）名下的一个任务，上一回合正常结束时，输入队列里已经排着几条其他任务通过跨任务投递（send_to_session）发来的消息。回合结束后队列没有派发，之后约 8 小时一直不动：  - 后续每条跨任务投递都只记 `send_to_session queued while target busy`，不会触发派发； - 该任务挂的定时任务每次叫醒都排到队尾，等满 30 分钟后 `queued heartbeat exceeded max dispatch wait, withdrawing`，90 秒后重排，循环往复； - 任务摘要（get_task_digest）显示 `phase=finished`、`error=null`、`queued_count=5`；get_session_runtime 显示 `completed`、未在运行；list_session_queue 里所有条目 `consuming=false`。从这几个查询看不出任务被卡住。  ## 时序（来自本机主日志）  1. 回合结束（reason: turn-done），输入协调器尝试派发队首； 2. 同一秒内，伙伴运行时在空闲边界刷新（`Bot compact runtime refreshed at idle boundary`，约 18 秒后完成）； 3. 队首派发被拒：`pre-accept send failed; restored queue head`，error 为 `[PRECONDITION_FAILED] 伙伴能力正在刷新，请稍后再发送`； 4. 刷新完成后，没有任何重新派发；队列保持卡住，直到人工处理。  ## 可能的原因（根据日志推断）  - 这个拒绝本身是暂时性的（刷新几秒后就完成），但走的是「派发前失败 → 恢复队首、进入队首恢复态」的路径，没有像「会话仍在运行」那类竞态一样自动重试； - 队首恢复态下，回合结束和新消息入队都不会再派发；跨任务投递和定时任务投递也不会解除这个状态，只有在该任务界面里手动重试才行； - 还有一个风险：如果用户此时在这个任务里直接打字，会丢弃这条失败的队首消息（日志 `explicit user input abandoned queue-head message (never accepted)`）。这条消息往往是别的任务的移交，丢了也不会提示发送方。  ## 同类记录  最近 6 天本机日志里还有 3 次同一条 `pre-accept send failed; restored queue head`（reason 也是 turn-done），错误是 `Session ... is closing`（协同 worker 关闭期间）。其中 2 个 worker 的队列里至今各压着 1 条消息。  ## 期望  1. 「伙伴能力正在刷新」这类暂时性拒绝，按暂时性失败处理：刷新完成后自动重试队首； 2. 至少让任务摘要、队列查询暴露这个阻塞状态（例如 error / 恢复态），并给跨任务调用方一个「重试队首」的入口。现在其他任务和定时任务只能看到「排队中」，不知道需要人工点重试； 3. 手打新消息时，如果要丢弃失败的队首，最好提示一下，或者改成把它保留在队列里。  ## 出问题的任务  - 伙伴名下任务，Claude Code，权限为完全放开 - 队列里的消息来自其他任务的 send_to_session 和定
+- **Issue #10298** (2026-11-13): **bug(desktop): 创建伙伴时误报已有同名伙伴，但提交仍可成功**
+  *Symptoms*: ## 问题描述  在 Windows 11 和 macOS 上创建伙伴时，输入名字 `testc`，即使当前并没有同名伙伴，表单仍显示红色提示「已有同名伙伴，换一个更容易分辨的名字吧。」点击创建后，伙伴最终仍可创建成功。该提示与实际情况不符，容易误导用户。  ## 环境  - Cindy Desktop：0.1.136 CN - Windows：Windows 11 - macOS：系统版本未提供 - 创建的伙伴名称：`testc`  ## 复现步骤  1. 打开「创建伙伴」。 2. 在名字输入框填写 `testc`，确认当前没有同名伙伴。 3. 观察到「已有同名伙伴，换一个更容易分辨的名字吧。」提示。 4. 点击创建并等待操作完成。  ## 实际结果  - 当前没有同名伙伴，但创建表单显示同名提示。 - 创建按钮进入加载状态。 - 根据用户反馈，伙伴最终创建成功。 - 用户确认 Windows 11 和 macOS 上均出现此现象。  ## 预期结果  没有同名伙伴时，不应显示“已有同名伙伴”错误；名字校验结果应与实际伙伴列表一致。  ## 截图与证据边界  <img width="531" height="422" alt="c77dd15643ffbf6a5580d90a53fa57a9aa244b1b8e3e17b609e2632fa4134ffb" src="https://github.com/user-attachments/assets/9db9629d-d54b-406e-b4f3-5bf0f1e512d6" />  ## 相关 Issue  - [#6578](https://github.com/makecindy/cindy/issues/6578)：该 Issue 描述隐藏的旧伙伴副本实际占用名字并导致创建被拒。本次反馈是没有同名伙伴却显示提示，且仍创建成功；表现不同，是否同源尚未确认。
   **Post-Mortem & Fix Analysis**:
-  > ## 判断与分析  伙伴在回合结束触发空闲边界能力刷新时，输入协调器应当安全等待或自动重试排队的队首输入，保障跨任务投递与自动化调度的消息可靠派发。结合当前 main 工作区快照（`4b11aa5de9eed001c501467ea8e0adc8ed8b8a92`）源码与近期 PR 演进核查：  1. **根因时序与状态锁定**：    - 上一回合结束触发 `turn-done` 调度 `AgentInputCoordinator.drain()`；同时会话转入空闲边界，触发伙伴紧凑运行时刷新（`Bot compact runtime refreshed at idle boundary`，进程级重建耗时约十余秒）。    - `drain()` 提取队首并调用 `sendToAgentAccepted`，进入 `prepareBotCapabilityEpochBeforeSend`。因能力刷新正在进行（`inFlight`），接口返回 `deferred` 并抛出 `[PRECONDITION_FAILED] 伙伴能力正在刷新，请稍后再发送`。    - `AgentInputCoordinator.drain()` 捕获该错误后，未将其归入类似 `SESSION_RUNNING` 的暂时性生命周期让位，而是按普通 pre-accept 失败执行 `latest.recovery = { kind: 'queue-head', clientId }` 并还原队首。    - 队首一旦处于 `queue-head` 恢复态，`explainDrainBlockGate` 恒返回 `recovery-pending`，阻断后续一切自动派发；刷新完成后没有向协调器发唤醒通知，后续 `send_to_session` 与定时任务也被判定为目标忙碌，形成死锁。    - 任务摘要（`get_task_digest`）读取的是上一轮正常结算的观测层状态，因而显示 `phase=finished, error=null`，使外部任务无法感知队列已陷入恢复态。  2. **已有修复的覆盖范围**：    - 已合并的 PR #9079（`fix(bots): 后台任务运行时不再拦截伙伴发送`）处理了“仅被后台任务推迟能力刷新”的场景（返回 `'kept-current-run
-  > 我来认领并调查这个队列卡住问题。先复现能力刷新与队首派发撞车的最小时序，区分暂时性拒绝和真正需要人工处理的失败，再补回归测试和修复，完成后提交 PR。
+  > 更新：提报者已补充现场截图，确凿证实了表单在同名红字提示与创建按钮转圈加载中同时呈现。  ### 判断  新建伙伴时严格保持重名拦截是既定产品规则，本次反馈的实际情况属于提交在途的提示误显，而非重名拦截失效或放行。  进一步检查发现，现有交互逻辑与“输入重名后仍可提交”略有不同。在 `BotRosterView.tsx` 中，若在点击前检测到重名（`duplicate` 为 `true`），生成按钮受 `disabled` 属性严格禁用且提交函数前置早退，无法触发加载状态。截图所呈现的“同名提示与加载中按钮并存”，真实原因是用户提交了未重名的新伙伴，底层 `addBotProfileAndWait` 先执行了 store 的乐观更新，而当前表单在组件重新渲染时未隔离本次在途提交，误将刚被乐观推入列表的自身计算为重名。主进程随后在数据库层正常校验通过并完成创建。  ### 行动  建议 Desktop 前端开发牵头，修复创建表单对在途提交乐观状态的查重逻辑： - **具体动作**：在 `apps/desktop/src/renderer/features/bots/BotRosterView.tsx` 中，确保在异步提交状态（`creating` 为 `true`）期间抑制或排除对当前在途创建伙伴的重名判断； - 在 `apps/desktop/src/renderer/features/bots/__tests__/botRosterView.test.tsx` 中补充回归用例，模拟 `addBotProfileAndWait` 触发 store 乐观广播时组件的行为； - **完成条件**：新建未重名伙伴并点击创建后，按钮转圈期间不再闪现「已有同名伙伴」报错；若输入框填入真实存活的同名伙伴名称，继续保持在点击前禁用按钮并呈现明确提示。  ### 技术依据与范围  核查基线：`68caff760d2a3b40466f5427fc80ff58cb1a7e76`（origin/main）。以下为静态代码证据与时序核对：  1. **查重与禁用联动**：`BotRosterView.tsx` 中 `Button` 绑定 `disabled={creating || !name.trim() || duplicate || !portrait}`，且 `create()` 
+
+- **Issue #10270** (2026-11-13): **Crash on system resume: uncaughtException from WebSocket.terminate on a CONNECTING socket (device-link reconnect)**
+  *Symptoms*: **提交人**: 计三勇 **客户端版本**: 0.1.135  ---  ## 问题  Cindy 在 macOS 上于系统从睡眠唤醒的瞬间意外退出（uncaughtException，exitCode 1）。  ## 复现路径  1. 电脑断网（日志出现 `ERR_INTERNET_DISCONNECTED`、`getaddrinfo ENOTFOUND device-link.cindy.com.cn`），device-link WebSocket 反复重连失败，始终处于 CONNECTING 状态（`onlineForMs=never-online`）。 2. 系统进入睡眠。 3. 系统唤醒。Cindy 立即重建 device-link 连接：`system resume: rebuilding device-link connection immediately` → `discarding live socket for reconnect (reason=system-resume)`。  ## 崩溃点  清理旧 socket 时调用 `WebSocket.terminate()`。ws 库对仍处于 CONNECTING 状态的 WebSocket 调用 terminate() 会抛出 `Error: WebSocket was closed before the connection was established`，该错误未被捕获，触发 uncaughtException，应用退出。  关键日志：`FATAL process uncaughtException ... at WebSocket.terminate (ws/lib/websocket.js:496) at bootstrap-electron-*.js`，紧跟在 system resume 与 discarding live socket for reconnect 之后。  ## 预期行为  重连清理路径中 terminate() 一个 CONNECTING 状态的 socket 应当被容忍或捕获（例如先检查 readyState，或对该调用包 try/catch），系统唤醒不应导致应用崩溃。  ## 备注  故障环境：macOS，Cindy 0.1.135。数据无损坏，关闭流程（DbClient dispose、quit disposers）正常完成。 --- ## 相关日志  提交客户端本机最近 2 小时的运行日志摘录，不代表已定位故障，也不包含 SSH 远端或手机日志。已按来源和字段白名单过滤并脱敏；不读取对话正文或原始请求响应。 ```text - 2026-11-13T02:00:12.846Z [ERROR] [proxy/codex-proxy] upstream request failed ↵   reqId  : 128 ↵   err    : Error: getaddrinfo ENOTFOUND c - 2026-11-13T02:00:13.265Z [ERROR] [proxy/codex-proxy] upstream request failed ↵   reqId  : 129 ↵   err    : Error: getaddrinfo ENOTFOUND c - 2026-11-13T02:00:14.112Z [ERROR] [proxy/codex-proxy] upstream request failed ↵ 
+  **Post-Mortem & Fix Analysis**:
+  > ### 判断  系统从休眠唤醒时重建 device-link 连接应具备完整的容错清理能力，即使旧连接尚未建立成功也不应因 socket 销毁导致主进程退出。经源码排查，该崩溃现象定位明确，属于重连路径上的异常防护缺口与单测覆盖盲区，建议直接进行最小修复。  ### 根因与机理分析  1. **清理路径缺少安全捕获与错误事件吸收**：    在 `packages/device-link/src/client.ts` 的 `connect(reason)` 丢弃旧 socket 阶段（约 2522–2526 行）：    ```ts    try {      prev.close(1000, 'reconnecting');    } catch {      prev.terminate?.();    }    ```    当电脑处于断网或重连失败阶段，旧 socket 保持在 `CONNECTING` 状态。此时外层的 `prev.terminate?.()` 没有 `try/catch` 保护；同时 Node.js `ws` 库在未建连阶段调用 `terminate()` 或 `close()` 会进入 `abortHandshake`，创建 `Error: WebSocket was closed before the connection was established` 并通过 EventEmitter 派发 `'error'` 事件。在旧 socket 闭包脱离主流程后，若未挂载静默监听器，该错误将直接冒泡为主进程的 `FATAL process uncaughtException` 并导致进程退出。    值得注意的是，同文件第 6577 行的 `closeOrTerminate` 函数已明确标注「已断开的 socket 上 close/terminate 可能抛，忽略」并带有完整捕获，但 `connect()` 与 `stop()` 的旧连接清理分支尚未接入统一的安全回收逻辑。  2. **单测替身覆盖盲区**：    `packages/device-link/src/__tests__/client.test.ts` 中注入的 `FakeWs` 替身其 `terminate()` 仅设置 `this.terminated = true`，
+  > Cindy 解决这个问题，发PR  _来自 Slack #cindy-issue · @dashhuang_ <!-- slack-sync hash=ca7fd655030706ac --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1153,490 +1022,961 @@ void mountPage({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6ad1f40` (2026-11-09)
-**Commit Message**: fix(providers): wrap account controls in narrow weighted layouts
+### Incident Patch 1: `0bbf1dc8` (2026-11-13)
+**Commit Message**: Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2
 
-Constrain and wrap the account action group to the available width. Reproduce the overflow with a 320px weighted Codex fixture and verify the existing browser overflow check fails before the fix and passes after it.
+fix(desktop): refresh queued inputs after model route changes
 
-Assisted-by: Cindy (https://cindy.app)
-Signed-off-by: Lizi <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/scripts/fixtures/subscription-accounts/fixture.tsx` (modified, +3/-3)
+**File**: `apps/desktop/src/main/maker-ipc/__tests__/agent-input-coordinator.test.ts` (modified, +80/-0)
 ```diff
-@@ -76,7 +76,7 @@ function Section({ codexPool }: { codexPool: boolean }) {
- 
- void mountPage({
-   host: (ctx) => {
--    const isCodex = ctx.case === 'codex';
-+    const isCodex = ctx.case === 'codex' || ctx.case === 'narrow-weight';
-     let view: SubscriptionPoolView = {
-       providerId: isCodex ? 'openai' : 'anthropic',
-       configured: true,
-@@ -146,9 +146,9 @@ void mountPage({
-   render: (ctx) => (
-     <main
-       className="mx-auto w-full max-w-[680px] min-w-0"
--      style={ctx.case === 'narrow' ? { maxWidth: 320 } : undefined}
-+      style={ctx.case === 'narrow' || ctx.case === 'narrow-weight' ? { maxWidth: 320 } : undefined}
-     >
--      <Section codexPool={ctx.case === 'codex'} />
-+      <Section codexPool={ctx.case === 'codex' || ctx.case === 'narrow-weight'} />
-     </main>
-   ),
+@@ -11510,6 +11510,86 @@ describe('AgentInputCoordinator queue mutations', () => {
  });
-```
-
-**File**: `apps/desktop/scripts/fixtures/subscription-accounts/ui-page.mjs` (modified, +2/-1)
-```diff
-@@ -9,6 +9,7 @@ export default {
-   cases: {
-     default: { about: 'Three Claude accounts: provider card on the default row, a low weekly quota, a paused limited account' },
-     narrow: { about: '320-pixel content width without clipped account controls' },
-+    'narrow-weight': { about: '320-pixel content width with task limit, weight, assignment and account menu controls' },
-     codex: { about: 'Codex accounts and weight strategy' },
-     error: { about: 'Unavailable status read and inline retry on focus' },
-   },
-@@ -28,7 +29,7 @@ export default {
-         return `${Math.round(box.left)}-${Math.round(box.right)}`;
-       }),
-     );
--    assert.equal(bars.length, ui.case === 'codex' ? 6 : 8);
-+    assert.equal(bars.length, ui.case === 'codex' || ui.case === 'narrow-weight' ? 6 : 8);
-     assert.deepEqual([...new Set(bars)], [bars[0]]);
-     await page.getByRole('button', { name: await ui.t('providerGroup.member.moreAria', { name: 'alex@example.com' }) }).click();
-     await page.getByRole('menuitem', { name: await ui.t('subscriptionAccounts.openDirectory') }).waitFor();
-```
-
-**File**: `apps/desktop/src/renderer/components/settings/SubscriptionAccountsSection.tsx` (modified, +1/-1)
-```diff
-@@ -329,7 +329,7 @@ export function SubscriptionAccountsSection({
-                           </div>
-                         </div>
-                       </div>
--                      <div className="ml-auto flex shrink-0 items-center gap-1.5">
-+                      <div className="ml-auto flex max-w-full shrink-0 flex-wrap items-center justify-end gap-1.5">
-                         <Select
-                           {...accountSetting.controlProps}
-                           label={t('providerGroup.member.limitAria', { name })}
-```
-
----
-
-### Incident Patch 2: `68eab812` (2026-11-09)
-**Commit Message**: fix(pi): 采集重试的末次上报修正与模板派发的 provisional 等待
-
-Review round 1(Greptile 1 + Codex 2,P2×3):
-
-- isFinalAttempt 差一:第 3 次失败就打 giving up,但第 4 次采集还会跑
-  ——末次成功留下错误的放弃记录,末次失败反而无日志。改为每次失败的
-  采集都上报,只有不会再有下一次采集时才标 final。
-- 非 loaded manifest 提前发布后,awaitRuntimeCapabilitiesForSlashCommand
-  因 runtimeCapabilityManifest 已定义而早退,重试 pending 期间 /template
-  被当普通文本逃逸。门收窄为 status==='loaded':重试链在跑就等它
-  (per-attempt 发布让等待中的清单升级为 loaded),耗尽时 race 立即返回。
-- 测试断言同步更新(末次失败也进 failures,且标 final)。
-
-Assisted-by: Cindy (https://cindy.app)
-Signed-off-by: Zhang Yunjin <[REDACTED_EMAIL]>
-
-**File**: `packages/maker-core/src/agents/pi/__tests__/runtime-capabilities.test.ts` (modified, +6/-1)
-```diff
-@@ -475,7 +475,12 @@ describe('capturePiRuntimeCapabilitiesWithRetry', () => {
-     expect(manifest.status).toBe('unknown');
-     expect(manifest.error?.code).toBe('timeout');
-     expect(requests).toBe(3);
--    expect(failures).toEqual([{ attempt: 1, isFinal: false }, { attempt: 2, isFinal: true }]);
-+    // 每次(含末次)失败都上报;只有末次(不会再有下一采)标 final。
-+    expect(failures).toEqual([
-+      { attempt: 1, isFinal: false },
-+      { attempt: 2, isFinal: false },
-+      { attempt: 3, isFinal: true },
-+    ]);
-   });
  
-   it('stops retrying once the session is closed or a newer generation superseded the refresh', async () => {
-```
-
-**File**: `packages/maker-core/src/agents/pi/index.ts` (modified, +4/-1)
-```diff
-@@ -6456,7 +6456,10 @@ export class PiAgent extends BaseAgent {
-     };
-     const awaitRuntimeCapabilitiesForSlashCommand = async (text: string): Promise<void> => {
-       const trimmed = text.trimStart();
--      if (!trimmed.startsWith('/') || trimmed.startsWith('/skill:') || runtimeCapabilityManifest) return;
-+      // 只有已确认 loaded 的清单才能放行派发;非 loaded(unknown/failed)清单是
-+      // 过渡快照:若重试链仍在跑,等它(重试成功会升级为 loaded);重试已耗尽时
-+      // runtimeCapabilityRefreshPromise 为 undefined,race 立即返回,按原样逃逸。
-+      if (!trimmed.startsWith('/') || trimmed.startsWith('/skill:') || runtimeCapabilityManifest?.status === 'loaded') return;
-       // get_commands starts asynchronously after Pi's ready boundary. A prompt
-       // template selected on a brand-new task must wait for that exact runtime
-       // catalog instead of being escaped into ordinary model text.
-```
-
-**File**: `packages/maker-core/src/agents/pi/runtime-capabilities.ts` (modified, +8/-4)
-```diff
-@@ -365,7 +365,7 @@ export async function capturePiRuntimeCapabilityManifest(
-  * Skill 永远灰)。所以在非 loaded 结果上带退避重试,覆盖 bridge 的预算上界。
-  * 每个 attempt 的结果都经 onAttemptFailed 即时上报(调用方应即时发布,
-  * 让面板先看到 failed/unknown 而不是长时间 undefined);isFinalAttempt=true
-- * 表示重试已耗尽(此后不会再采),调用方应升级为 warn。
-+ * 表示重试已耗尽且不会再有下一次采集,调用方应升级为 warn。
-  */
- export const PI_RUNTIME_CAPABILITY_RETRY_DELAYS_MS = [4_000, 10_000, 20_000] as const;
- 
-@@ -391,10 +391,14 @@ export async function capturePiRuntimeCapabilitiesWithRetry(
-     }));
-   let manifest = await capturePiRuntimeCapabilityManifest(requester, identity, generation, stage);
-   let attempt = 0;
--  while (manifest.status !== 'loaded' && attempt < retryDelaysMs.length) {
-+  while (manifest.status !== 'loaded') {
-     attempt += 1;
--    opts.onAttemptFailed?.(manifest, attempt, attempt === retryDelaysMs.length);
--    if (opts.isCurrent && !opts.isCurrent()) return manifest;
-+    // 每次失败的采集都要上报(含最后一次);isFinalAttempt 只在不会再有
-+    // 下一次采集时为 true —— 否则「放弃」日志先于真正的末次尝试出现,
-+    // 末次成功留下错误的放弃记录、末次失败反而无日志(Greptile/Codex P2)。
-+    const isFinalAttempt = attempt > retryDelaysMs.length;
-+    opts.onAttemptFailed?.(manifest, attempt, isFinalAttempt);
-+    if (isFinalAttempt || (opts.isCurrent && !opts.isCurrent())) return manifest;
-     await sleep(retryDelaysMs[attempt - 1]!);
-     if (opts.isCurrent && !opts.isCurrent()) return manifest;
-     manifest = await capturePiRuntimeCapabilityManifest(requester, identity, generation, stage);
-```
-
----
-
-### Incident Patch 3: `2dcf9281` (2026-11-09)
-**Commit Message**: fix(pi): 运行时能力采集带退避重试,治新任务预热后项目 Skill 永灰
-
-bridge MCP 初始化在扩展加载期同步占用 ready 窗口:每 server startup
-预算默认 10s(可配至 30s),而 runtime capability 采集的请求超时只有
-5s(PI_RUNTIME_CAPABILITY_TIMEOUT_MS)。宿主侧任何慢/黑洞 MCP 都让
-首次采集超时 → manifest status='unknown' → merge 门跳过 → 项目
-Skill 永远 discovered(面板置灰)。采集一次性、无重试、完全静默
-(2026-11-09 实报:新任务打字预热后 openspec 命令 5 分钟不亮)。
-
-修复:
-- capturePiRuntimeCapabilitiesWithRetry:非 loaded 结果带退避重试
-  (4s/10s/20s,覆盖 bridge 启动预算上界),会话关闭/更新代接替立即中止;
-- 每个 attempt 的 manifest 都立即发布(失败也发),面板先看到
-  failed/unknown 而不是长时间 undefined,重试成功自动升级 loaded;
-- 采集失败从完全静默改为可观测:重试期 info,耗尽仍失败升 warn;
-- 模板派发的 capabilities 等待加 10s 上限,不随重试链拖长。
-
-回归测试:runtime-capabilities.test.ts 新增 4 用例(超时后重试成功/
-有界放弃/关闭即中止/首次即成功不 sleep);红→绿已验证。
-
-Assisted-by: Cindy (https://cindy.app)
-Signed-off-by: Zhang Yunjin <[REDACTED_EMAIL]>
-
-**File**: `packages/maker-core/src/agents/pi/__tests__/runtime-capabilities.test.ts` (modified, +120/-0)
-```diff
-@@ -1,7 +1,9 @@
- import { describe, expect, it } from 'vitest';
- import path from 'node:path';
-+import type { PiRpcResponse } from '../rpc-client.js';
- 
- import {
-+  capturePiRuntimeCapabilitiesWithRetry,
-   capturePiRuntimeCapabilityManifest,
-   identifyManagedPiPackageCommandNames,
-   parsePiRuntimeCommands,
-@@ -392,3 +394,121 @@ describe('Pi runtime capability parsing', () => {
-     expect(manifest).toMatchObject({ status: 'failed', error: { code: 'malformed_response' } });
-   });
- });
+ describe('AgentInputCoordinator crash-recovery queue snapshots (issue #761)', () => {
++  it('refreshes a queued route and its crash snapshot after a model switch (#6793)', async () => {
++    const sid = 'queued-route-switch';
++    const h = createHarness();
++    await h.coordinator.ensureQueueRestored(sid);
++    h.setRunning(true);
++    const queued = makeItem('queued', 'Send on the selected route');
++    queued.createOpts.providerId = 'old-provider';
++    h.coordinator.enqueue(sid, queued);
++    await flush();
 +
-+describe('capturePiRuntimeCapabilitiesWithRetry', () => {
-+  // 2026-11-09 实报:bridge MCP 初始化在扩展加载期占用 ready 窗口(每 server
-+  // startup 预算默认 10s),单次采集的 5s 请求预算必超 —— 一次性采集产出
-+  // status='unknown' 后无重试、无日志,新任务预热的项目 Skill 永远灰。
-+  const command = {
-+    name: 'skill:fixture',
-+    description: 'fixture skill',
-+    source: 'skill',
-+    sourceInfo: { source: 'auto', scope: 'project', baseDir: '/proj', path: '/proj/.pi/skills/fixture' },
-+  };
-+  const loadedResponse: PiRpcResponse = {
-+    type: 'response',
-+    id: '1',
-+    command: 'get_commands',
-+    success: true,
-+    data: { commands: [command] },
-+  };
-+  const timeoutError = new Error('pi rpc timeout after 5000ms: get_commands');
++    h.coordinator.refreshQueuedRoute(sid, { model: 'new-model', providerId: 'new-provider' });
++    const snapshot = h.persistQueueSnapshot.mock.calls.at(-1)?.[1][0];
++    expect(snapshot?.createOpts).toMatchObject({ model: 'new-model', providerId: 'new-provider' });
++    const restarted = createHarness();
++    restarted.setLoadQueueSnapshot(async () => JSON.parse(JSON.stringify([snapshot])));
++    await restarted.coordinator.ensureQueueRestored(sid);
++    expect(restarted.coordinator.getQueueControlSnapshot(sid).pendingQueue[0]?.createOpts)
++      .toMatchObject({ model: 'new-model', providerId: 'new-provider' });
 +
-+  function deferredRequester(failTimes: number) {
-+    const requests: Array<Promise<unknown>> = [];
-+    let calls = 0;
-+    return {
-+      get callCount() { return calls; },
-+      request: async () => {
-+        calls += 1;
-+        const promise = calls <= failTimes
-+          ? Promise.reject(timeoutError)
-+          : Promise.resolve(loadedResponse);
-+        requests.push(promise);
-+        return promise;
-+      },
-+    };
++    h.setRunning(false);
++    h.coordinator.onTurnEvent(sid, 'done');
++    await flush();
++    expect(h.sendToAgent.mock.calls[0]?.[2]).toMatchObject({ model: 'new-model', providerId: 'new-provider' });
++  });
++
++  it('rebases an old snapshot that finishes loading after the model switch (#6793)', async () => {
++    const sid = 'route-switch-during-restore';
++    const h = createHarness();
++    const loading = deferred<void>();
++    const snapshot = deferred<AgentInputQueuedMessage[]>();
++    h.setLoadQueueSnapshot(async () => {
++      loading.resolve();
++      return snapshot.promise;
++    });
++    const restoring = h.coordinator.ensureQueueRestored(sid);
++    await loading.promise;
++    h.coordinator.refreshQueuedRoute(sid, { model: 'new-model', providerId: 'new-provider' });
++    const old = makeItem('restored-old-route', 'Recovered input');
++    old.createOpts.providerId = 'old-provider';
++    snapshot.resolve([old]);
++    await restoring;
++    await flush();
++    expect(h.coordinator.getQueueControlSnapshot(sid).pendingQueue[0]?.createOpts)
++      .toMatchObject({ model: 'new-model', providerId: 'new-provider' });
++    expect(h.persistQueueSnapshot.mock.calls.at(-1)?.[1][0]?.createOpts)
++      .toMatchObject({ model: 'new-model', providerId: 'new-provider' });
++  });
++
++  it('keeps a scheduled run route scoped to that run during a user model switch (#6793)', async () => {
++    const h = createHarness();
++    const sid = 'scheduled-route-scope';
++    await h.coordinator.ensureQueueRestored(sid);
++    h.setRunning(true);
++    const scheduled = makeItem('scheduled', 'Scheduled input', {
++      origin: { kind: 'scheduler', scheduleId: 'schedule-1', scheduleName: 'Check', runId: 'run-1' },
++    });
++    scheduled.createOpts.providerId = 'run-provider';
++    h.coordinator.enqueue(sid, scheduled);
++    h.coordinator.refreshQueuedRoute(sid, { model: 'user-model', providerId: 'user-provider' });
++    expect(h.coordinator.getQueueControlSnapshot(sid).pendingQueue[0]?.createOpts.providerId)
++      .toBe('run-provider');
++  });
++
++  it('retries a failed queue head on the newly selected provider (#6793)', async () => {
++    const h = createHarness();
++    const sid = 'failed-head-route';
++    await h.coordinator.ensureQueueRestored(sid);
++    h.sendToAgent.mockRejectedValueOnce(new Error('old provider unavailable'));
++    const queued = makeItem('failed-head', 'Retry me');
++    queued.createOpts.providerId = 'old-provider';
++    h.coordinator.enqueue(sid, queued);
++    await flush();
++    expect(h.coordinator.getProjection(sid).recovery).toEqual({ kind: 'queue-head', clientId: 'failed-head' });
++
++    h.coordinator.refreshQueuedRoute(sid, { model: 'new-model', providerId: 'new-provider' });
++    await h.coordinator.retryLastError(sid);
++    await flush();
++    expect(h.sendToAgent.mock.calls.at(-1)?.[2]).toMatchObject({ model: 'new-model', providerId: 'new-provider' });
++  });
++
+   it.each(['member', 'plan'] as const)('drops restored %s group inputs before a new execution can use their lane', async kind => {
+     const sid = 'reused-group-lane';
+     const oldId = kind === 'member' ? BOT_GROUP_CLIENT_ID.memberTurn('room', 'old-execution', 'bot')
+```
+
+**File**: `apps/desktop/src/main/maker-ipc/agent-input-coordinator.ts` (modified, +44/-0)
+```diff
+@@ -765,6 +765,8 @@ type AgentInputSendFailure = Extract<
+ interface SessionInputState {
+   /** Runtime courtesy clock; never persisted or used for list ordering. */
+   lastUserActionAt: number | null;
++  /** Last committed route while a crash snapshot may still be loading. */
++  queuedRoute: Pick<AgentInputCreateOpts, 'model' | 'providerId' | 'effort' | 'fastMode'> | null;
+   pendingQueue: AgentInputQueuedMessage[];
+   pendingCompacts: PendingCompactRequest[];
+   steeringQueueClientIds: string[];
+@@ -925,6 +927,7 @@ function createInitialInputState(
+ ): SessionInputState {
+   return {
+     lastUserActionAt: null,
++    queuedRoute: null,
+     pendingQueue: [],
+     pendingCompacts: [],
+     steeringQueueClientIds: [],
+@@ -1297,6 +1300,20 @@ function isHostGeneratedSteerItem(item: AgentInputQueuedMessage): boolean {
+     || isSyntheticTriggerText((item.persistedContent ?? '').trimStart());
+ }
+ 
++function rebaseQueuedItemRoute(
++  item: AgentInputQueuedMessage,
++  route: Pick<AgentInputCreateOpts, 'model' | 'providerId' | 'effort' | 'fastMode'>,
++): void {
++  // A scheduled run can select its own route for this one execution.
++  if (item.origin?.kind === 'scheduler') return;
++  item.model = route.model;
++  item.createOpts.model = route.model;
++  item.createOpts.providerId = route.providerId;
++  item.createOpts.effort = route.effort;
++  item.createOpts.fastMode = route.fastMode;
++  if (route.effort) item.effort = route.effort;
++}
++
+ export class AgentInputCoordinator {
+   private readonly states = new Map<string, SessionInputState>();
+   /** 账号限额等待计划的单调令牌（跨会话唯一，迟到的 host 定时器据此失效）。 */
+@@ -1760,6 +1777,11 @@ export class AgentInputCoordinator {
+       item.origin?.kind !== 'scheduler' && !isBotGroupClientId(item.clientId) && isUnrestorableMcpAppMessage(item));
+     const restored = restorable.filter((item) =>
+       item.origin?.kind !== 'scheduler' && !isBotGroupClientId(item.clientId) && !isUnrestorableMcpAppMessage(item));
++    // set-model can finish while loadQueueSnapshot is still awaiting storage.
++    // Apply that committed route before publishing or persisting restored rows.
++    if (state.queuedRoute) {
++      for (const item of restored) rebaseQueuedItemRoute(item, state.queuedRoute);
++    }
+     for (const item of staleAppItems) {
+       this.deps.onDiscardedQueuedMessage?.(sessionId, item);
+     }
+@@ -5958,6 +5980,28 @@ export class AgentInputCoordinator {
+     }
+   }
+ 
++  /** Rebase unsent inputs after a committed user route selection, including the crash snapshot. */
++  refreshQueuedRoute(
++    sessionId: string,
++    route: Pick<AgentInputCreateOpts, 'model' | 'providerId' | 'effort' | 'fastMode'>,
++  ): void {
++    const state = this.getState(sessionId);
++    state.queuedRoute = { ...route };
++    for (const item of state.pendingQueue) rebaseQueuedItemRoute(item, route);
++    // A head may already have left pendingQueue while pre-dispatch checks run.
++    const active = state.activeTurn;
++    // sendStarted may already be true while sendToAgent waits for the same
++    // session lock held by set-model; no vendor dispatch has happened yet.
++    if (active?.item && !active.persisted) rebaseQueuedItemRoute(active.item, route);
++    for (const compact of state.pendingCompacts) {
++      compact.createOpts.model = route.model;
++      compact.createOpts.providerId = route.providerId;
++      compact.createOpts.effort = route.effort;
++      compact.createOpts.fastMode = route.fastMode;
++    }
++    this.emit(sessionId);
 +  }
 +
-+  const instantSleep = async () => undefined;
+   /** host 侧异步边界(pending 凭证切换 apply 完成等)后恢复该会话的队列派发。 */
+   wakeSession(sessionId: string, reason: string): void {
+     this.scheduleDrain(sessionId, reason);
+```
+
+**File**: `apps/desktop/src/main/maker-ipc/register.ts` (modified, +17/-0)
+```diff
+@@ -21193,6 +21193,14 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
+       assertPendingOwner();
+       setSessionEffort(sessionId, finalEffort);
+       setSessionFastMode(sessionId, finalFastMode);
++      if (finalModel) {
++        agentInputCoordinatorHolder?.refreshQueuedRoute(sessionId, {
++          model: finalModel,
++          providerId: route.providerId,
++          effort: finalEffort ?? undefined,
++          fastMode: finalFastMode,
++        });
++      }
+       broadcastSessionPatched(sessionId, patch);
+     },
+     logger: log,
+@@ -24751,6 +24759,15 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
+                 currentFastMode: getSessionFastMode(sessionId),
+               })
+             : undefined;
++        if (result.status !== 'deferred') {
++          agentInputCoordinatorHolder?.refreshQueuedRoute(sessionId, {
++            model,
++            providerId: getSessionProvider(sessionId),
++            effort: getSessionEffort(sessionId) ?? undefined,
++            fastMode: getSessionFastMode(sessionId),
++          });
++          wakeSessionInputAfterCredentialSwitch(sessionId);
++        }
+         await broadcastSessionRuntimeProjection(sessionId, userBaselineOverride).catch((error) => {
+           log.debug('session runtime projection broadcast failed', {
+             sessionId,
+```
+
+---
+
+### Incident Patch 2: `3dd3844e` (2026-11-13)
+**Commit Message**: Merge pull request #10408 from makecindy/fix/codex-default-account-quota
+
+fix(openai): 修复默认订阅账号额度读取失败
+
+**File**: `apps/desktop/src/main/maker-ipc/usage.ts` (modified, +16/-2)
+```diff
+@@ -78,6 +78,11 @@ import { observeSubscriptionAccountUsage, pooledCodexResetTarget, onSubscription
+ import { getGrokAccessToken, hasGrokOAuthLogin } from '../maker-host/grok-oauth-login.desktop.js';
+ import { outboundFetch } from '../maker-host/outbound-fetch.desktop.js';
+ import { CodexResetAutoUse, parseCodexResetAutoUse } from '../usage/codexResetAutoUse.js';
++import {
++  detachedDefaultCodexHome,
++  readDefaultCodexHomeIdentity,
++  withDetachedDefaultCodexHome,
++} from '../usage/codexDefaultAccountHome.js';
+ import { codexResetAutoUseStore, codexResetAccountKey } from '../usage/codexResetAutoUseStore.js';
+ import { observeUsageChanges } from '../usageBroadcaster.js';
+ import type { CodexResetAutoUseSettings } from '@cindy/maker-shared/device-link-contract';
+@@ -291,7 +296,7 @@ export function registerMakerUsageIpc(maker: Maker): void {
+     const assertScope = () => {
+       if (isAppSessionBoundaryPending() || scope !== activeOwnerScopeKey()) throw new Error('PRECONDITION_FAILED: Account scope changed');
+     };
+-  const service = createCodexRateLimitResetService(pooledCodexResetTarget(key) ?? {
++  const nativeTarget: Parameters<typeof withDetachedDefaultCodexHome>[0] = {
+     readRateLimits: async () => { assertScope(); const result = await maker.readAgentAccountRateLimits('codex', providerId); assertScope(); return result; },
+     consumeResetCredit: async (params) => { assertScope(); const result = await maker.consumeAgentAccountRateLimitResetCredit('codex', params, providerId); assertScope(); return result; },
+     readAccountIdentity: async () => {
+@@ -306,7 +311,10 @@ export function registerMakerUsageIpc(maker: Maker): void {
+       return { email: identity, accountId };
+     },
+     recordRateLimitSnapshot: (snapshot) => scope === activeOwnerScopeKey() ? recordCodexAccountUsageSnapshot(snapshot, providerId) : Promise.resolve(),
+-  });
++  };
++  // The built-in target is the pool's default account; without its own login it reads that account's home.
++  const service = createCodexRateLimitResetService(pooledCodexResetTarget(key)
++    ?? (providerId ? nativeTarget : withDetachedDefaultCodexHome(nativeTarget, assertScope)));
+ 
+     resetServices.set(key, service);
+     return service;
+@@ -320,6 +328,12 @@ export function registerMakerUsageIpc(maker: Maker): void {
+       const identity = await pooled.readAccountIdentity();
+       return codexResetAccountKey(identity.email, identity.accountId);
+     }
++    const defaultHome = id ? null : await detachedDefaultCodexHome();
++    if (defaultHome) {
++      const identity = await readDefaultCodexHomeIdentity(defaultHome);
++      if (scope !== activeOwnerScopeKey() || isAppSessionBoundaryPending()) throw new Error('Account scope changed');
++      return codexResetAccountKey(identity.email, identity.accountId);
++    }
+     const state = await desktopCodexAuthAdapter.getState({ providerId: id });
+     const accountId = state.authSource === 'oauth' ? await desktopCodexAuthAdapter.getAccountId(id) : null;
+     if (scope !== activeOwnerScopeKey() || isAppSessionBoundaryPending()) throw new Error('Account scope changed');
+```
+
+**File**: `apps/desktop/src/main/subscription-accounts/__tests__/nativeCli.test.ts` (modified, +60/-0)
+```diff
+@@ -61,6 +61,66 @@ it('does not dispatch a reset after its credential guard expires during startup'
+   const methods = children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method);
+   expect(methods).toEqual(['initialize', 'initialized']);
+ });
 +
-+  it('retries a timed-out capture until the runtime catalog answers (bridge startup budget > capture budget)', async () => {
-+    const requester = deferredRequester(1);
-+    const sleeps: number[] = [];
-+    const failures: Array<{ status: string; attempt: number; isFinal: boolean }> = [];
-+    const manifest = await capturePiRuntimeCapabilitiesWithRetry(
-+      requester,
-+      { sessionId: 's1' },
-+      1,
-+      'ready',
-+      {
-+        retryDelaysMs: [4_000, 10_000, 20_000],
-+        sleep: async (delayMs) => { sleeps.push(delayMs); },
-+        onAttemptFailed: (failed, attempt, isFinal) => failures.push({ status: failed.status, attempt, isFinal }),
-+      },
-+    );
-+    expect(manifest.status).toBe('loaded');
-+    expect(manifest.commands).toHaveLength(1);
-+    expect(requester.callCount).toBe(2);
-+    expect(sleeps).toEqual([4_000]);
-+    expect(failures).toEqual([{ status: 'unknown', attempt: 1, isFinal: false }]);
++// Existing pooled accounts use synchronous proofs. Do not insert a new yield between proof and write.
++it('preserves synchronous guarded dispatch before the next microtask', async () => {
++  let methodsAtNextMicrotask: string[] = [];
++  await codexAccountRpc('/second', 'account/rateLimitResetCredit/consume', { idempotencyKey: 'key' }, () => {
++    queueMicrotask(() => {
++      methodsAtNextMicrotask = children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method);
++    });
++    return true;
 +  });
++  expect(methodsAtNextMicrotask).toEqual(['initialize', 'initialized', 'account/rateLimitResetCredit/consume']);
++});
 +
-+  it('gives up after the bounded retries and keeps the last failed manifest', async () => {
-+    let requests = 0;
-+    const probe = {
-+      get callCount() { return requests; },
-+      request: async () => { requests += 1; throw timeoutError; },
++// #10408, unit: filesystem/source checks are asynchronous. A Promise is not authorization;
++// inspect actual CLI writes, including connection termination while the proof is pending.
++it.each([true, false])('waits for an asynchronous dispatch proof (allowed: %s)', async (allowed) => {
++  let decide!: (allowed: boolean) => void;
++  let entered!: () => void;
++  const started = new Promise<void>(resolve => { entered = resolve; });
++  const proof = new Promise<boolean>(resolve => { decide = resolve; });
++  const pending = codexAccountRpc('/second', 'account/rateLimitResetCredit/consume',
++    { idempotencyKey: 'key' }, () => { entered(); return proof; });
++  const observed = allowed ? expect(pending).resolves.toBeDefined()
++    : expect(pending).rejects.toThrow('changed before dispatch');
++  await started;
++  try {
++    expect(children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method))
++      .toEqual(['initialize', 'initialized']);
++  } finally {
++    decide(allowed);
++    await observed;
++  }
++  expect(children[0].stdin.write.mock.calls.some(([line]) =>
++    JSON.parse(line).method === 'account/rateLimitResetCredit/consume')).toBe(allowed);
++});
++
++it('does not dispatch after the connection closes while an asynchronous proof is pending', async () => {
++  let decide!: (allowed: boolean) => void;
++  let entered!: () => void;
++  const started = new Promise<void>(resolve => { entered = resolve; });
++  const proof = new Promise<boolean>(resolve => { decide = resolve; });
++  const pending = expect(codexAccountRpc('/second', 'account/rateLimitResetCredit/consume',
++    { idempotencyKey: 'key' }, () => { entered(); return proof; })).rejects.toThrow('connection closed');
++  await started;
++  children[0].emit('close', null);
++  await pending;
++  decide(true);
++  await Promise.resolve();
++  expect(children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method))
++    .toEqual(['initialize', 'initialized']);
++});
++
++it('rejects a failed asynchronous proof without sending or exposing its error details', async () => {
++  await expect(codexAccountRpc('/second', 'account/rateLimitResetCredit/consume',
++    { idempotencyKey: 'key' }, async () => { throw new Error('fixture-secret-must-not-leak'); }))
++    .rejects.toThrow('Codex account changed before dispatch');
++  expect(children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method))
++    .toEqual(['initialize', 'initialized']);
++});
++
+ beforeEach(() => {
+   h.binary = '/fixture/codex';
+   h.error = false;
+```
+
+**File**: `apps/desktop/src/main/subscription-accounts/nativeCli.ts` (modified, +16/-3)
+```diff
+@@ -204,7 +204,7 @@ export function codexAccountRpc(
+   directory: string,
+   method: string,
+   params: unknown,
+-  canDispatch?: () => boolean,
++  canDispatch?: () => boolean | Promise<boolean>,
+ ): Promise<unknown> {
+   const binary = getReadyBinaryPath('codex');
+   if (!binary) return Promise.reject(new Error('Codex CLI unavailable'));
+@@ -227,6 +227,20 @@ export function codexAccountRpc(
+     };
+     const timer = setTimeout(() => finish(new Error('Codex account read timed out')), 15_000);
+     const send = (message: unknown) => child.stdin.write(JSON.stringify(message) + '\n');
++    const dispatch = async () => {
++      try {
++        if (canDispatch) {
++          const allowed = canDispatch();
++          // Existing synchronous proofs and the write must stay in the same synchronous segment.
++          if (!(typeof allowed === 'boolean' ? allowed : await allowed))
++            return finish(new Error('Codex account changed before dispatch'));
++        }
++        // An asynchronous credential/source check can outlive this control connection.
++        if (!settled) send({ id: 2, method, params });
++      } catch {
++        finish(new Error('Codex account changed before dispatch'));
++      }
 +    };
-+    const failures: Array<{ attempt: number; isFinal: boolean }> = [];
-+    const manifest = await capturePiRuntimeCapabilitiesWithRetry(
-+      probe as Parameters<typeof capturePiRuntimeCapabilityManifest>[0],
-+      { sessionId: 's1' },
-+      1,
-+      'ready',
-+      {
-+        retryDelaysMs: [4_000, 10_000],
-+        sleep: instantSleep,
-+        onAttemptFailed: (_failed, attempt, isFinal) => failures.push({ attempt, isFinal }),
-+      },
-+    );
-+    expect(manifest.status).toBe('unknown');
-+    expect(manifest.error?.code).toBe('timeout');
-+    expect(requests).toBe(3);
-+    expect(failures).toEqual([{ attempt: 1, isFinal: false }, { attempt: 2, isFinal: true }]);
+     child.stdin.on('error', () => finish(new Error('Codex account connection closed')));
+     child.on('error', () => finish(new Error('Codex CLI unavailable')));
+     child.on('close', () => finish(new Error('Codex account connection closed')));
+@@ -248,8 +262,7 @@ export function codexAccountRpc(
+           send({ method: 'initialized', params: {} });
+           // Startup may await configuration/auth refresh. A reset must still use
+           // the exact credential observed before spawning this control connection.
+-          if (canDispatch && !canDispatch()) return finish(new Error('Codex account changed before dispatch'));
+-          send({ id: 2, method, params });
++          void dispatch();
+         } else if (message.id === 2) finish(undefined, message.result);
+       }
+     });
+```
+
+**File**: `apps/desktop/src/main/usage/__tests__/codexDefaultAccountHome.test.ts` (added, +199/-0)
+```diff
+@@ -0,0 +1,199 @@
++/**
++ * 测试价值
++ * - 生产入口与可观察结果：`maker:usage:codex-rate-limits` 的 `openai` 目标由
++ *   `createCodexRateLimitResetService(withDetachedDefaultCodexHome(内置目标))` 组成（maker-ipc/usage.ts），
++ *   这里用同样的组合读取额度并兑换重置次数，断言返回的额度与兑换落在哪个账号目录。
++ * - Bug 依据：2026-11-13 Windows 无建链接权限，Cindy 的 codex-home 没有 auth.json，账号池默认账号在
++ *   `~/.codex` 正常运行任务，设置页却一直「ChatGPT 配额更新失败」（`codex not authenticated: no_oauth`）。
++ * - 现有覆盖缺口：codexRateLimitReset.test.ts 只用假依赖测重置控制面，没有覆盖内置目标与默认账号目录的选择。
++ * - 最小失败输入：账号池含非旧版默认账号；codex-home 无 auth.json；默认账号目录有 auth.json。
++ * - tier：unit（真实临时目录 + 进程内假 CLI，不启动 Codex）。
++ * - 实测耗时：见交付说明。
++ */
++import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
++import { tmpdir } from 'node:os';
++import path from 'node:path';
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
++
++const h = vi.hoisted(() => ({
++  nativeHome: '',
++  defaultHome: '',
++  pool: null as null | { disconnected?: boolean; legacyCodexDefault?: boolean; accounts: Array<{ id: string; paused: boolean }> },
++  rpc: vi.fn(),
++  readNativeAccount: vi.fn(),
++  readNativeCodexTokens: vi.fn(),
++  readPool: vi.fn(),
++  credentialCurrent: true,
++}));
++
++vi.mock('../../maker-host/codex-home-path.js', () => ({ getCodexHome: () => h.nativeHome }));
++vi.mock('../../subscription-accounts/store.js', () => ({
++  readPool: h.readPool,
++  accountDirectory: () => h.defaultHome,
++}));
++vi.mock('../../subscription-accounts/nativeCli.js', () => ({
++  codexAccountRpc: h.rpc,
++  readNativeAccount: h.readNativeAccount,
++  // The real token reader parses auth.json; the fake only proves the guard is consulted.
++  readNativeCodexTokens: h.readNativeCodexTokens,
++}));
++
++import { createCodexRateLimitResetService } from '../codexRateLimitReset.js';
++import { detachedDefaultCodexHome, withDetachedDefaultCodexHome } from '../codexDefaultAccountHome.js';
++
++const DEFAULT_LIMITS = {
++  rateLimits: { planType: 'pro', primary: { usedPercent: 42, windowDurationMins: 10_080 } },
++  rateLimitsByLimitId: null,
++  rateLimitResetCredits: { availableCount: 1, credits: null },
++};
++
++let root = '';
++function native() {
++  return {
++    readRateLimits: vi.fn(async () => {
++      throw new Error('codex not authenticated: no_oauth');
++    }),
++    consumeResetCredit: vi.fn(async () => ({ outcome: 'reset' as const })),
++    readAccountIdentity: vi.fn(async () => ({ email: null, accountId: null })),
++    recordRateLimitSnapshot: vi.fn(async () => undefined),
++  };
++}
++
++beforeEach(() => {
++  root = mkdtempSync(path.join(tmpdir(), 'cindy-codex-default-home-'));
++  h.nativeHome = path.join(root, 'codex-home');
++  h.defaultHome = path.join(root, '.codex');
++  mkdirSync(h.nativeHome);
++  mkdirSync(h.defaultHome);
++  writeFileSync(path.join(h.defaultHome, 'auth.json'), '{"tokens":"fake"}');
++  h.pool = { accounts: [{ id: 'default', paused: false }, { id: 'cindy-abc-1', paused: false }] };
++  h.readPool.mockReset().mockImplementation(() => h.pool);
++  h.credentialCurrent = true;
++  h.readNativeCodexTokens.mockReset().mockImplementation(async () => ({
++    accessToken: 'fake-token', chatgptAccountId: 'workspace-default', canDispatch: () => h.credentialCurrent,
++  }));
++  h.rpc.mockReset().mockImplementation(async (_home: string, method: string) =>
++    method === 'account/rateLimits/read' ? DEFAULT_LIMITS : { outcome: 'reset' });
++  h.readNativeAccount.mockReset().mockResolvedValue({ authenticated: true, identity: 'default@example.com' });
++});
++afterEach(() => rmSync(root, { recursive: true, force: true }));
++
++describe('built-in Codex quota target of the account pool default account', () => {
++  it('reads and redeems on the default account home when the built-in connection has no login', async () => {
++    const builtIn = native();
++    const service = createCodexRateLimitResetService(withDetachedDefaultCodexHome(builtIn, () => {}));
++
++    const snapshot = await service.read();
++    expect(snapshot.rateLimits?.primary?.usedPercent).toBe(42);
++    expect(snapshot.account?.email).toBe('de***@example.com');
++    expect(builtIn.readRateLimits).not.toHaveBeenCalled();
++    // The built-in usage cache is not overwritten by another home's read.
++    expect(builtIn.recordRateLimitSnapshot).not.toHaveBeenCalled();
++
++    const result = await service.consume(snapshot.resetOffer!.idempotencyKey);
++    expect(result.outcome).toBe('reset');
++    expect(h.rpc).toHaveBeenCalledWith(
++      h.defaultHome, 'account/rateLimitResetCredit/consume', expect.anything(), expect.any(Function));
++    expect(builtIn.consumeResetCredit).not.toHaveBeenCalled();
 +  });
 +
-+  it('stops retrying once the session is closed or a newer generation superseded the refresh', async () => {
-+    const requester = deferredRequester(Number.POSITIVE_INFINITY);
-+    let current = true;
-+    const manifest = await capturePiRuntimeCapabilitiesWithRetry(
-+      requester,
-+      { sessionId: 's1' },
-+      1,
-+      'ready',
-+      {
-+        sleep: instantSleep,
-+        isCurrent: () => current,
-+        // 首次失败即关闭会话/被新代接替:重试必须立刻中止。
-+        onAttemptFailed: () => { current = false; },
-+      },
++  it.each([
++    ['the built-in connection has its own login', () => writeFileSync(path.join(h.nativeHome, 'auth.json'), '{}')],
++    ['the default account is the legacy private home', () => { h.pool = { ...h.pool!, legacyCodexDefault: true }; }],
++    ['there is no account pool', () => { h.pool = null; }],
++    ['the default account has no login file', () => rmSync(path.join(h.defaultHome, 'auth.json'))],
+```
+
+**File**: `apps/desktop/src/main/usage/__tests__/codexRateLimitReset.test.ts` (modified, +13/-14)
+```diff
+@@ -9,6 +9,7 @@ import {
+ const NOW_MS = Date.UTC(2026, 6, 22, 12, 0, 0);
+ const KEY = '018f4ec7-c6d8-7f10-8d43-9f8791d33000';
+ const NEXT_KEY = '018f4ec7-c6d8-7f10-8d43-9f8791d33001';
++const ACCOUNT = { email: 'person@example.com', accountId: 'workspace-123456789' };
+ 
+ function response(over: Partial<AccountRateLimitsResponse> = {}): AccountRateLimitsResponse {
+   return {
+@@ -48,10 +49,7 @@ function harness(over: Partial<Parameters<typeof createCodexRateLimitResetServic
+   const deps = {
+     readRateLimits: vi.fn().mockResolvedValue(response()),
+     consumeResetCredit: vi.fn().mockResolvedValue({ outcome: 'reset' as const }),
+-    readAccountIdentity: vi.fn().mockResolvedValue({
+-      email: 'person@example.com',
+-      accountId: 'workspace-123456789',
+-    }),
++    readAccountIdentity: vi.fn().mockResolvedValue(ACCOUNT),
+     recordRateLimitSnapshot: vi.fn().mockResolvedValue(undefined),
+     now: () => NOW_MS,
+     createIdempotencyKey: vi.fn()
+@@ -94,13 +92,14 @@ describe('Codex rate-limit reset control plane', () => {
+     expect(snapshot.rateLimitResetCredits?.credits?.[0]).not.toHaveProperty('id');
+     expect(deps.recordRateLimitSnapshot).toHaveBeenCalledWith(expect.objectContaining({
+       primary: expect.objectContaining({ windowMinutes: 300 }),
+-    }));
++    }), ACCOUNT);
+ 
+     await service.consume(KEY);
+     expect(deps.consumeResetCredit).toHaveBeenCalledWith({
+       idempotencyKey: KEY,
+       creditId: 'earlier',
+-    });
++    }, ACCOUNT);
++    expect(vi.mocked(deps.consumeResetCredit).mock.calls[0][1]).toBe(ACCOUNT);
+   });
+ 
+   function detailedHarness(over: Partial<Parameters<typeof createCodexRateLimitResetService>[0]> = {}) {
+@@ -127,7 +126,7 @@ describe('Codex rate-limit reset control plane', () => {
+     await service.consume(later.resetOffer!.idempotencyKey);
+     expect(deps.consumeResetCredit).toHaveBeenCalledExactlyOnceWith({
+       idempotencyKey: later.resetOffer!.idempotencyKey, creditId: 'later',
+-    });
++    }, ACCOUNT);
+   });
+ 
+   it('joins retries of the selected row and blocks another row during the same attempt', async () => {
+@@ -160,7 +159,7 @@ describe('Codex rate-limit reset control plane', () => {
+     await expect(service.consume(snapshot.resetOffer!.idempotencyKey)).rejects.toMatchObject({ reason: 'RESET_IN_PROGRESS' });
+     await service.consume(key);
+     expect(consumeResetCredit.mock.calls).toEqual([
+-      [{ idempotencyKey: key, creditId: 'later' }], [{ idempotencyKey: key, creditId: 'later' }],
++      [{ idempotencyKey: key, creditId: 'later' }, ACCOUNT], [{ idempotencyKey: key, creditId: 'later' }, ACCOUNT],
+     ]);
+   });
+ 
+@@ -179,7 +178,7 @@ describe('Codex rate-limit reset control plane', () => {
+     expect(refreshed.resetOffer).toMatchObject({ idempotencyKey: key, retryOnly: true });
+     await expect(service.consume(refreshed.resetOffer!.idempotencyKey)).resolves.toMatchObject({ outcome: 'alreadyRedeemed' });
+     expect(consumeResetCredit.mock.calls).toEqual([
+-      [{ idempotencyKey: key, creditId: 'later' }], [{ idempotencyKey: key, creditId: 'later' }],
++      [{ idempotencyKey: key, creditId: 'later' }, ACCOUNT], [{ idempotencyKey: key, creditId: 'later' }, ACCOUNT],
+     ]);
+   });
+ 
+@@ -227,7 +226,7 @@ describe('Codex rate-limit reset control plane', () => {
+     expect(deps.recordRateLimitSnapshot).toHaveBeenCalledWith(expect.objectContaining({
+       primary: expect.objectContaining({ windowMinutes: 300 }),
+       credits: { hasCredits: false, unlimited: false, balance: null },
+-    }));
++    }), ACCOUNT);
+   });
+ 
+   it('reuses a count-only offer and lets app-server select the credit', async () => {
+@@ -255,7 +254,7 @@ describe('Codex rate-limit reset control plane', () => {
+     expect(createIdempotencyKey).toHaveBeenCalledOnce();
+ 
+     await service.consume(KEY);
+-    expect(deps.consumeResetCredit).toHaveBeenCalledWith({ idempotencyKey: KEY });
++    expect(deps.consumeResetCredit).toHaveBeenCalledWith({ idempotencyKey: KEY }, ACCOUNT);
+   });
+ 
+   it('replaces an unused offer when a fresh read selects a different credit', async () => {
+@@ -286,7 +285,7 @@ describe('Codex rate-limit reset control plane', () => {
+     expect(deps.consumeResetCredit).toHaveBeenCalledWith({
+       idempotencyKey: NEXT_KEY,
+       creditId: 'replacement',
+-    });
++    }, ACCOUNT);
+   });
+ 
+   it('coalesces concurrent consumes and caches the terminal result for retries', async () => {
+@@ -346,11 +345,11 @@ describe('Codex rate-limit reset control plane', () => {
+     expect(deps.consumeResetCredit).toHaveBeenNthCalledWith(1, {
+       idempotencyKey: KEY,
+       creditId: 'earlier',
+-    });
++    }, ACCOUNT);
+     expect(deps.consumeResetCredit).toHaveBeenNthCalledWith(2, {
+       idempotencyKey: NEXT_KEY,
+       creditId: 'later',
+-    });
++    }, ACCOUNT);
+   });
+ 
+   it('does not evict an in-flight offer when the registry reaches its soft limit', async () => {
+```
+
+**File**: `apps/desktop/src/main/usage/__tests__/codexResetAutoUseStore.test.ts` (modified, +4/-1)
+```diff
+@@ -50,7 +50,10 @@ describe('reset preferences persistence', () => {
+       restored: async () => { await waiter.resumeRestored(async () => redeemed); }, warn: vi.fn(),
+     });
+     await Promise.all([engine.check('openai'), engine.check('openai')]);
+-    expect(consumeRpc).toHaveBeenCalledExactlyOnceWith({ creditId: 'one-credit', idempotencyKey: '00000000-0000-4000-8000-000000000001' });
++    expect(consumeRpc).toHaveBeenCalledExactlyOnceWith(
++      { creditId: 'one-credit', idempotencyKey: '00000000-0000-4000-8000-000000000001' },
++      { email: 'test@example.com', accountId: 'workspace' },
 +    );
-+    expect(manifest.status).toBe('unknown');
-+    expect(requester.callCount).toBe(1);
-+  });
+     expect(continueSession).toHaveBeenCalledOnce();
+     expect(store.read('openai', account).lastUsedAt).toBe(now);
+     expect((await service.read()).rateLimitResetCredits?.availableCount).toBe(0);
+```
+
+**File**: `apps/desktop/src/main/usage/codexDefaultAccountHome.ts` (added, +149/-0)
+```diff
+@@ -0,0 +1,149 @@
++/**
++ * apps/desktop/src/main/usage/codexDefaultAccountHome.ts
++ *
++ * 额度读取／重置的 `openai` 目标属于 OpenAI 账号池的默认账号（官方 CLI 的 `~/.codex`）。
++ * 通常内置连接的 `codex-home/auth.json` 就是它的共享链接，原有读取直接可用；Windows 没有
++ * 建链接权限时内置连接改走独立登录（auth-adapters 的 `link-unsupported`），在用户没有另行
++ * 登录前 Cindy 目录里没有任何登录，原有读取只会报未登录，而默认账号本身正常运行任务
++ * （2026-11-13 实测：设置页默认账号一直显示「配额更新失败」）。
++ *
++ * 只有「内置连接没有自己的登录文件、默认账号目录有登录文件」时才改读默认账号自己的目录，
++ * 读法与其它池内账号相同；内置连接有任何登录条目（共享链接、独立登录、恢复流程）或默认账号
++ * 仍是旧版私有目录时，一律保留原读取。
++ */
 +
-+  it('does not sleep when the first capture already reports loaded', async () => {
-+    const requester = deferredRequester(0);
-+    const sleeps: number[] = [];
-+    const manifest = await capturePiRuntimeCapabilitiesWithRetry(
-+      requester,
-+      { sessionId: 's1' },
-+      1,
-+      'ready',
-+      { retryDelaysMs: [4_000], sleep: async (delayMs) => { sleeps.push(delayMs); } },
-+    );
-+    expect(manifest.status).toBe('loaded');
-+    expect(requester.callCount).toBe(1);
-+    expect(sleeps).toEqual([]);
-+  });
++import { lstat, stat } from 'node:fs/promises';
++import path from 'node:path';
++import type { CodexRateLimitAccountIdentity, CodexRateLimitResetServiceDeps } from './codexRateLimitReset.js';
++import { getCodexHome } from '../maker-host/codex-home-path.js';
++import { accountDirectory, readPool } from '../subscription-accounts/store.js';
++import {
++  codexAccountRpc,
++  readNativeAccount,
++  readNativeCodexTokens,
++} from '../subscription-accounts/nativeCli.js';
++
++type ResetTarget = Pick<
++  CodexRateLimitResetServiceDeps,
++  'readRateLimits' | 'consumeResetCredit' | 'readAccountIdentity' | 'recordRateLimitSnapshot'
++>;
++
++async function entryMissing(file: string): Promise<boolean> {
++  try {
++    // lstat: even a dangling link is still the built-in connection's own entry.
++    await lstat(file);
++    return false;
++  } catch (err) {
++    return (err as NodeJS.ErrnoException).code === 'ENOENT';
++  }
++}
++
++function defaultAccountAvailable(): boolean {
++  const pool = readPool('openai');
++  return Boolean(pool && !pool.disconnected && pool.legacyCodexDefault !== true
++    && pool.accounts.some((account) => account.id === 'default'));
++}
++
++/** The default account's CLI home when the built-in connection has no login entry of its own. */
++export async function detachedDefaultCodexHome(): Promise<string | null> {
++  if (!defaultAccountAvailable()) return null;
++  let home: string;
++  try {
++    home = accountDirectory('openai', 'default');
++  } catch {
++    return null;
++  }
++  const nativeHome = getCodexHome();
++  if (path.resolve(home) === path.resolve(nativeHome)) return null;
++  try {
++    // Keyring-only logins keep the original reader: the account bridge needs this file.
++    if (!(await stat(path.join(home, 'auth.json'))).isFile()) return null;
++  } catch {
++    return null;
++  }
++  if (!await entryMissing(path.join(nativeHome, 'auth.json'))) return null;
++  // Pool authorization can change while the filesystem checks yield.
++  return defaultAccountAvailable() && accountDirectory('openai', 'default') === home ? home : null;
++}
++
++/** Identity of that home, with the credential guard used before a redemption. */
++export async function readDefaultCodexHomeIdentity(
++  home: string,
++): Promise<CodexRateLimitAccountIdentity & { canDispatch: () => boolean }> {
++  const auth = await readNativeAccount('openai', home);
++  const tokens = await readNativeCodexTokens(home);
++  if (!auth.authenticated || !auth.identity || !tokens.canDispatch())
++    throw new Error('PRECONDITION_FAILED: ChatGPT account changed');
++  return { email: auth.identity, accountId: tokens.chatgptAccountId, canDispatch: tokens.canDispatch };
++}
++
++/**
++ * Wraps the built-in connection's reset target. Each call decides again, so a later built-in
++ * login or a removed default account takes effect at once; the reset service's identity bracket
++ * rejects a read or redemption that straddles the switch.
++ */
++export function withDetachedDefaultCodexHome(
++  native: ResetTarget,
++  assertScope: () => void,
++  resolveHome: () => Promise<string | null> = detachedDefaultCodexHome,
++): ResetTarget {
++  // A concurrent read must not replace the credential proof that this redemption verified.
++  const credentials = new WeakMap<CodexRateLimitAccountIdentity,
++    { home: string | null; current: () => boolean }>();
++  const assertHome = async (home: string) => {
++    assertScope();
++    if (await resolveHome() !== home) throw new Error('PRECONDITION_FAILED: ChatGPT account changed');
++    assertScope();
++  };
++  return {
++    readAccountIdentity: async () => {
++      const home = await resolveHome();
++      if (!home) {
++        const identity = await native.readAccountIdentity();
++        credentials.set(identity, { home: null, current: () => true });
++        return identity;
++      }
++      await assertHome(home);
++      const { canDispatch, ...identity } = await readDefaultCodexHomeIdentity(home);
++      await assertHome(home);
++      credentials.set(identity, { home, current: canDispatch });
++      return identity;
++    },
++    readRateLimits: async () => {
++      const home = await resolveHome();
++      if (!home) return native.readRateLimits();
++      await assertHome(home);
++      const result = await codexAccountRpc(home, 'account/rateLimits/read', {});
++      await assertHome(home);
++      return result as Awaited<ReturnType<ResetTarget['readRateLimits']>>;
++    },
++    consumeResetCredit: async (params, identity) => {
++      const bound = identity && cr
+```
+
+**File**: `apps/desktop/src/main/usage/codexRateLimitReset.ts` (modified, +4/-3)
+```diff
+@@ -30,9 +30,10 @@ export interface CodexRateLimitResetServiceDeps {
+   readRateLimits(): Promise<AccountRateLimitsResponse>;
+   consumeResetCredit(
+     params: ConsumeAccountRateLimitResetCreditParams,
++    identity?: CodexRateLimitAccountIdentity,
+   ): Promise<ConsumeAccountRateLimitResetCreditResponse>;
+   readAccountIdentity(): Promise<CodexRateLimitAccountIdentity>;
+-  recordRateLimitSnapshot(snapshot: unknown): Promise<void>;
++  recordRateLimitSnapshot(snapshot: unknown, identity?: CodexRateLimitAccountIdentity): Promise<void>;
+   now?: () => number;
+   createIdempotencyKey?: () => string;
+ }
+@@ -241,7 +242,7 @@ export function createCodexRateLimitResetService(
+         source: 'codex-app-server',
+         updatedAt: now(),
+         accountId,
+-      });
++      }, identity);
+     }
+ 
+     const availableCount = normalizeAvailableCount(
+@@ -390,7 +391,7 @@ export function createCodexRateLimitResetService(
+       const response = await deps.consumeResetCredit({
+         idempotencyKey,
+         ...(offer.creditId ? { creditId: offer.creditId } : {}),
+-      });
++      }, currentAccount);
+       // Mark the attempt settled before refreshing. That refresh may expose another
+       // available credit and must receive a fresh idempotency key, while concurrent
+       // retries of this attempt still join offer.pending until the final result is ready.
+```
+
+---
+
+### Incident Patch 3: `dcd6b2f6` (2026-11-13)
+**Commit Message**: Merge pull request #10423 from Lyz1116-FOUND/fix/buddy-creation-duplicate-feedback
+
+fix(buddies): 创建伙伴时不再将自身误报为同名伙伴
+
+**File**: `apps/desktop/scripts/fixtures/buddy-creation/fixture.tsx` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++import { useState } from 'react';
++import { mountPage, subscription } from '../../ui-page/harness';
++import { BotRosterView } from '../../../src/renderer/features/bots/BotRosterView';
++import { refreshBotProfiles, type BotProfile } from '../../../src/renderer/features/bots/botStore';
++import { beginProvidersRefresh, commitProvidersSnapshot } from '../../../src/renderer/lib/providersSnapshotStore';
++import { getDataOwnerGeneration } from '../../../src/renderer/contexts/dataOwnerGeneration';
++import { BUNDLED_CATALOG, type ProviderView } from '@cindy/model-providers';
++
++const route = { harness: 'codex' as const, model: 'fixture-model', providerId: 'openai', effort: 'high', fastMode: false };
++const model = { id: route.model, name: 'GPT', contextWindow: 200000, efforts: ['high'], defaultEffort: 'high' };
++const provider: ProviderView = { ...BUNDLED_CATALOG.providers.find(p => p.id === 'openai')!,
++  connected: true, agents: ['codex'], access: { kind: 'subscription' }, models: { codex: [model] } };
++
++function Fixture() {
++  const [created, setCreated] = useState<BotProfile | null>(null);
++  return created ? <p role="status">{created.name}</p> : <BotRosterView onCreated={setCreated} />;
++}
++
++void mountPage({
++  route: '/bots',
++  host: () => {
++    Math.random = () => 0; // Keep the portrait identical in before/after captures.
++    const owner = getDataOwnerGeneration();
++    commitProvidersSnapshot(beginProvidersRefresh(), { dataOwnerId: owner.dataOwnerId,
++      ownerGeneration: owner.generation, providers: [provider], providerOrder: ['openai'] });
++    return {
++      localDb: { bots: {
++        list: async () => [],
++        getModelChainSettings: async () => ({ modelChain: [route], isCustomized: true }),
++        // Leave the real store's optimistic profile pending, without touching a database.
++        create: () => {
++          (window as unknown as { __buddyCreationPending: boolean }).__buddyCreationPending = true;
++          return new Promise(() => {});
++        },
++      } },
++      maker: {
++        listAvailableAgents: async () => ['codex'],
++        getCapabilities: async () => ({ hasFastMode: false, availableModels: [{ ...model, displayName: model.name }],
++          effortLevels: [], permissionModes: [], turnPermissionPolicy: { supported: { supported: true }, unsupportedPermissionModes: [] } }),
++        onProvidersChanged: subscription('providers'),
++      },
++    };
++  },
++  render: () => { refreshBotProfiles(); return <Fixture />; },
 +});
 ```
 
-**File**: `packages/maker-core/src/agents/pi/index.ts` (modified, +61/-31)
+**File**: `apps/desktop/scripts/fixtures/buddy-creation/ui-page.mjs` (added, +25/-0)
 ```diff
-@@ -211,7 +211,7 @@ import { PI_RPC_OVERSIZED_FRAME_ERROR, PiRpcProcess, type PiRpcEvent } from './r
- import { createPiStdioTransport, type PiTransport } from './transport.js';
- import type { PiRemoteFileOps } from '../base-agent.js';
- import {
--  capturePiRuntimeCapabilityManifest,
-+  capturePiRuntimeCapabilitiesWithRetry,
-   identifyManagedPiPackageCommandNames,
-   preparePinnedPiSkillInvocation,
-   snapshotManagedPiPackageSkills,
-@@ -6383,43 +6383,68 @@ export class PiAgent extends BaseAgent {
-     let runtimeCapabilityRefreshPromise: Promise<void> | undefined;
-     const refreshRuntimeCapabilities = async (stage: 'ready' | 'switch_session' | 'fork'): Promise<void> => {
-       const generation = ++runtimeCapabilityGeneration;
--      const capturedManifest = await capturePiRuntimeCapabilityManifest(
-+      // 每个 attempt 的结果都立即发布(失败也发):面板轮询先看到 failed/unknown
-+      // 而不是长时间 undefined,后续重试成功再升级为 loaded(2026-11-09 实报:
-+      // bridge 10s 启动预算 vs 采集 5s 请求预算的结构性冲突,一次失败曾永灰)。
-+      const publishDecoratedCapabilityManifest = (captured: PiRuntimeCapabilityManifest): void => {
-+        const managedPackageRoots = [...nativePackageRoots, ...managedPackageResources.packageRoots];
-+        const managedPackageCommandNames = identifyManagedPiPackageCommandNames(
-+          captured.commands,
-+          managedPackageRoots,
-+        );
-+        const authorizedSlashCommandNames = identifyManagedPiPackageCommandNames(
-+          captured.commands,
-+          [
-+            ...managedPackageRoots,
-+            ...projectResourceCli.skills,
-+            ...managedSkillPaths,
-+            ...(managedSkillRoot ? [managedSkillRoot] : []),
-+            ...projectResourceCli.promptTemplates,
-+            ...projectResourceCli.extensions,
-+          ],
-+        );
-+        const manifest = {
-+          ...captured,
-+          managedPackageCommandNames,
-+          authorizedSlashCommandNames,
-+          managedPackageSkills: snapshotManagedPiPackageSkills(
-+            managedPackageResources.skills,
-+            captured.commands,
-+            managedPackageCommandNames,
-+          ),
-+          projectResources: reconcilePiProjectResourceRuntime(projectResourceAssembly, captured),
-+        };
-+        if (!closed && generation === runtimeCapabilityGeneration) publishRuntimeCapabilities(manifest);
-+      };
-+      const capturedManifest = await capturePiRuntimeCapabilitiesWithRetry(
-         proc,
-         {
-           ...(opts.sessionId ? { sessionId: opts.sessionId } : {}),
-           ...(sdkSessionId ? { sdkSessionId } : {}),
-         },
-         generation,
-         stage,
-+        {
-+          // 会话已关闭或被更新代刷新接替时停止重试,避免僵尸采集覆写新代结果。
-+          isCurrent: () => !closed && generation === runtimeCapabilityGeneration,
-+          // 采集失败此前完全静默:5s 请求预算 vs bridge 10s 启动预算的结构性冲突
-+          // 只能靠日志发现(考古教训)。重试期 info,耗尽仍失败升 warn。
-+          onAttemptFailed: (failedManifest, attempt, isFinalAttempt) => {
-+            publishDecoratedCapabilityManifest(failedManifest);
-+            const logFields = {
-+              sessionId: opts.sessionId,
-+              stage,
-+              attempt,
-+              status: failedManifest.status,
-+              code: failedManifest.error?.code,
-+              message: failedManifest.error?.message,
-+            };
-+            if (isFinalAttempt) this.deps.logger.warn('pi runtime capability capture failed; giving up', logFields);
-+            else this.deps.logger.info('pi runtime capability capture failed; retrying', logFields);
-+          },
-+        },
-       );
--      const managedPackageRoots = [...nativePackageRoots, ...managedPackageResources.packageRoots];
--      const managedPackageCommandNames = identifyManagedPiPackageCommandNames(
--        capturedManifest.commands,
--        managedPackageRoots,
--      );
--      const authorizedSlashCommandNames = identifyManagedPiPackageCommandNames(
--        capturedManifest.commands,
--        [
--          ...managedPackageRoots,
--          ...projectResourceCli.skills,
--          ...managedSkillPaths,
--          ...(managedSkillRoot ? [managedSkillRoot] : []),
--          ...projectResourceCli.promptTemplates,
--          ...projectResourceCli.extensions,
--        ],
--      );
--      const manifest = {
--        ...capturedManifest,
--        managedPackageCommandNames,
--        authorizedSlashCommandNames,
--        managedPackageSkills: snapshotManagedPiPackageSkills(
--          managedPackageResources.skills,
--          capturedManifest.commands,
--          managedPackageCommandNames,
--        ),
--        projectResources: reconcilePiProjectResourceRuntime(projectResourceAssembly, capturedManifest),
--      };
--      if (!closed && generation === runtimeCapabilityGeneration) publishRuntimeCapabilities(manifest);
-+      publishDecoratedCapabilityManifest(capturedManifest);
-     };
-     const scheduleRuntimeCapabilityRefresh = (stage: 'ready' | 'switch_session' | 'fork'): Promise<void> => {
-       const pending = refreshRuntimeCapabilities(stage);
-@@ -643
+@@ -0,0 +1,25 @@
++import assert from 'node:assert/strict';
++
++export default {
++  name: 'buddy-creation', entry: './fixture.tsx', viewport: { width: 800, height: 680 },
++  real: 'BotRosterView, botStore optimistic creation, portrait picker, model editor, buttons, translations and themes',
++  notCovered: 'Host persistence, account bootstrap, model execution and remote devices; unit tests cover completion and failure/retry',
++  stubs: {
++    'src/renderer/contexts/AuthContext': { partial: 'export const useAuth = () => ({ dataOwnerId: null });' },
++    'src/renderer/hooks/useModelRouteDevices': 'export const useModelRouteDevices = () => ({ devices: [], leadAgentDeviceId: null });',
++  },
++  cases: { default: { about: 'Pending optimistic creation must not show a duplicate-name error (#10298)' } },
++  async ready(page) {
++    await page.getByRole('dialog').waitFor();
++    await page.locator('input').fill('Mika');
++    await page.waitForFunction(() => !document.querySelector('button[type="submit"]')?.disabled);
++  },
++  async check(page, ui) {
++    await page.locator('button[type="submit"]').click();
++    await page.waitForFunction(() => document.querySelector('button[type="submit"]')?.disabled);
++    // Wait until the real store has emitted the optimistic row, not only the local busy state.
++    await page.waitForFunction(() => window.__buddyCreationPending === true);
++    await ui.capture('creating');
++    assert.equal(await page.getByRole('alert').count(), 0, 'Its own optimistic profile is not a duplicate');
++  },
++};
 ```
 
-**File**: `packages/maker-core/src/agents/pi/runtime-capabilities.ts` (modified, +44/-0)
+**File**: `apps/desktop/src/renderer/features/bots/BotRosterView.tsx` (modified, +2/-1)
 ```diff
-@@ -357,3 +357,47 @@ export async function capturePiRuntimeCapabilityManifest(
-     return errorManifest(identity, generation, stage, failure, statusForFailureCode(failure.code));
-   }
- }
+@@ -60,7 +60,8 @@ export function BotRosterView({ onCreated, onClose, restoreFocus, inline = false
+     }).catch(() => { if (!cancelled) setError(t('bots.profile.avatarSelectionFailed')); });
+     return () => { cancelled = true; alive.current = false; };
+   }, [initialPortrait]);
+-  const duplicate = bots.some(bot => bot.status !== 'archived' && normalizeBotName(bot.name) === normalizeBotName(name));
++  // Creation publishes its own optimistic profile before the request settles.
++  const duplicate = !creating && bots.some(bot => bot.status !== 'archived' && normalizeBotName(bot.name) === normalizeBotName(name));
+   const close = () => { if (onClose) onClose(); else navigate('/bots'); };
+   const create = async () => {
+     if (!name.trim() || duplicate || submitting.current || !portrait) return;
+```
+
+**File**: `apps/desktop/src/renderer/features/bots/__tests__/botRosterView.test.tsx` (modified, +47/-1)
+```diff
+@@ -213,6 +213,47 @@ describe('name-only creation', () => {
+     expect(mocks.generateDraft).not.toHaveBeenCalled();
+   });
+ 
++  // #10298: creation publishes its own optimistic profile before the request settles.
++  // The existing immediate-success fixture never rendered this pending state.
++  it.each(['success', 'failure'] as const)('does not report its pending profile as a duplicate: %s', async outcome => {
++    let resolve!: (value: unknown) => void;
++    let reject!: (error: Error) => void;
++    const pending = new Promise((yes, no) => { resolve = yes; reject = no; });
++    const profile = { id: 'bot-pending', name: 'Mika', invitation: { stage: 'ready' } };
++    mocks.addBotProfileAndWait.mockImplementationOnce(() => {
++      mocks.profiles = [profile];
++      return pending;
++    });
++    render(<BotRosterView />);
++    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Mika' } });
++    const submit = screen.getByRole('button', { name: 'bots.guided.generate' }) as HTMLButtonElement;
++    await waitFor(() => expect(submit.disabled).toBe(false));
++    fireEvent.click(submit);
++    expect(submit.disabled).toBe(true);
++    expect(screen.queryByRole('alert')).toBeNull();
++    // A programmatic second submit must still be blocked during the request.
++    fireEvent.submit(submit.closest('form')!);
++    expect(mocks.addBotProfileAndWait).toHaveBeenCalledTimes(1);
++    await act(async () => {
++      if (outcome === 'success') resolve(profile);
++      else {
++        mocks.profiles = []; // Production rolls back its optimistic projection on failure.
++        reject(new Error('Create failed'));
++      }
++    });
++    if (outcome === 'success') {
++      expect(mocks.navigate).toHaveBeenCalledWith('/bots/bot-pending');
++    } else {
++      expect(screen.getByRole('alert').textContent).toBe('bots.createWizard.createFailed');
++      expect(mocks.navigate).not.toHaveBeenCalled();
++      expect(submit.disabled).toBe(false);
++      expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('Mika');
++      fireEvent.click(submit);
++      await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/bots/bot-new'));
++      expect(mocks.addBotProfileAndWait).toHaveBeenCalledTimes(2);
++    }
++  });
 +
-+/**
-+ * Bridge MCP 初始化在扩展加载期内同步占用 ready 窗口:每个 server 的 startup
-+ * 预算默认 10s(可配至 30s),而单次采集的请求超时只有 5s —— 宿主侧任何
-+ * 慢/黑洞 MCP 都会让首次采集超时(2026-11-09 实报:新任务打字预热后项目
-+ * Skill 永远灰)。所以在非 loaded 结果上带退避重试,覆盖 bridge 的预算上界。
-+ * 每个 attempt 的结果都经 onAttemptFailed 即时上报(调用方应即时发布,
-+ * 让面板先看到 failed/unknown 而不是长时间 undefined);isFinalAttempt=true
-+ * 表示重试已耗尽(此后不会再采),调用方应升级为 warn。
-+ */
-+export const PI_RUNTIME_CAPABILITY_RETRY_DELAYS_MS = [4_000, 10_000, 20_000] as const;
-+
-+export async function capturePiRuntimeCapabilitiesWithRetry(
-+  requester: Parameters<typeof capturePiRuntimeCapabilityManifest>[0],
-+  identity: { sessionId?: string; sdkSessionId?: string },
-+  generation: number,
-+  stage: PiRuntimeCapabilityErrorStage,
-+  opts: {
-+    retryDelaysMs?: readonly number[];
-+    sleep?: (delayMs: number) => Promise<void>;
-+    /** 会话已关闭或刷新已被更新代接替时中止重试。 */
-+    isCurrent?: () => boolean;
-+    onAttemptFailed?: (manifest: PiRuntimeCapabilityManifest, attempt: number, isFinalAttempt: boolean) => void;
-+  } = {},
-+): Promise<PiRuntimeCapabilityManifest> {
-+  const retryDelaysMs = opts.retryDelaysMs ?? PI_RUNTIME_CAPABILITY_RETRY_DELAYS_MS;
-+  const sleep = opts.sleep
-+    ?? ((delayMs: number) => new Promise<void>((resolve) => {
-+      // 后台自愈重试不应托住进程退出。
-+      const timer = setTimeout(resolve, delayMs);
-+      timer.unref?.();
-+    }));
-+  let manifest = await capturePiRuntimeCapabilityManifest(requester, identity, generation, stage);
-+  let attempt = 0;
-+  while (manifest.status !== 'loaded' && attempt < retryDelaysMs.length) {
-+    attempt += 1;
-+    opts.onAttemptFailed?.(manifest, attempt, attempt === retryDelaysMs.length);
-+    if (opts.isCurrent && !opts.isCurrent()) return manifest;
-+    await sleep(retryDelaysMs[attempt - 1]!);
-+    if (opts.isCurrent && !opts.isCurrent()) return manifest;
-+    manifest = await capturePiRuntimeCapabilityManifest(requester, identity, generation, stage);
-+  }
-+  return manifest;
-+}
+   it.each([false, true])('keeps default-chain inheritance but saves only the visible explicit model: selected=%s', async selected => {
+     mocks.withDefaultBackup = true;
+     render(<BotRosterView />);
+@@ -264,8 +305,13 @@ describe('name-only creation', () => {
+     mocks.profiles = [{ id: 'existing', name: 'Mika', invitation: { stage: 'ready' } }];
+     render(<BotRosterView inline />);
+     expect(screen.queryByRole('dialog')).toBeNull();
++    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Another buddy' } });
++    const submit = screen.getByRole('button', { name: 'bots.guided.generate' }) as HTMLButtonElement;
++    await waitFor(() => expect(submit.disabled).toBe(false));
+     fireEvent.change(screen.getByRole('textbox'), { target: { value: ' Mika ' } });
+-    expect((screen.getByRole('button', { name: 'bots.guided.generate' }) as HTMLButtonElement).disabled).toBe(true);
++    expect(submit.disabled).toBe(true);
++    expect(screen.getByRole('alert').textContent).toBe('bots.guided.duplicateName');
++    fireEvent.submit(submit.closest('form')!);
+     expect(mocks.addBotProfileAndWait).not.toHaveBeenCalled();
+   });
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9442** (2026-11-09): fix(desktop): keep provider-share activation off hidden capture windows (@CS-LX)
-- **PR #9438** (2026-11-09): fix(provider-share): 修复远程用量缓存统计与明细对账 (@yan-xdt)
-- **PR #9432** (2026-11-09): fix(providers): 统一订阅账号行与用量布局 (@MagicLizi)
-- **PR #9430** (2026-11-09): fix(desktop): route remote task pushes to execution device (@97Three)
-- **PR #9428** (2026-11-09): fix(mobile): 修复 Android 小组件字体资源的 AGP 9 兼容性 (@guyong-zapo)
-- **PR #9425** (2026-11-09): fix(desktop): keep Windows backdrop at 0% desktop transparency (@sakiko-toyokawa)
+- **PR #10423** (2026-11-13): fix(buddies): 创建伙伴时不再将自身误报为同名伙伴 (@Lyz1116-FOUND)
+- **PR #10420** (closed): feat(dingtalk): acknowledge incoming messages with reactions (@qykong)
+- **PR #10415** (closed): fix(bridge): keep an ambiguous tool_choice selector unresolved (@cjyang)
+- **PR #10411** (closed): fix(codex): negotiate Responses exec format after HTTP 400 (@xuzini-xzn)
+- **PR #10408** (2026-11-13): fix(openai): 修复默认订阅账号额度读取失败 (@MagicLizi)
+- **PR #10407** (2026-11-13): fix(orca): 直投派单改用 durable 用户消息写入口，worker 才能自动续跑 (@zyjisdog)
 
 ---
 
@@ -1656,32 +1996,50 @@ Signed-off-by: Zhang Yunjin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. providers): wrap account controls in narrow weighted layouts
+## X. Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2
 
 **RULE**:
-When implementing operations in `apps/desktop/scripts/fixtures/subscription-accounts/fixture.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/main/maker-ipc/__tests__/agent-input-coordinator.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6ad1f40`: providers): wrap account controls in narrow weighted layouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0bbf1dc8`: Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/scripts/fixtures/subscription-accounts/fixture.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/maker-ipc/__tests__/agent-input-coordinator.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    const isCodex = ctx.case === 'codex' || ctx.case === 'narrow-weight';
-      style={ctx.case === 'narrow' || ctx.case === 'narrow-weight' ? { maxWidth: 320 } : undefined}
-      <Section codexPool={ctx.case === 'codex' || ctx.case === 'narrow-weight'} />
+  it('refreshes a queued route and its crash snapshot after a model switch (#6793)', async () => {
+    const sid = 'queued-route-switch';
+    const h = createHarness();
+    await h.coordinator.ensureQueueRestored(sid);
+    h.setRunning(true);
+    const queued = makeItem('queued', 'Send on the selected route');
+    queued.createOpts.providerId = 'old-provider';
+    h.coordinator.enqueue(sid, queued);
+    await flush();
+
+    h.coordinator.refreshQueuedRoute(sid, { model: 'new-model', providerId: 'new-provider' });
+    const snapshot = h.persistQueueSnapshot.mock.calls.at(-1)?.[1][0];
+    expect(snapshot?.createOpts).toMatchObject({ model: 'new-model', providerId: 'new-provider' });
+    const restarted = createHarness();
+    restarted.setLoadQueueSnapshot(async () => JSON.parse(JSON.stringify([snapshot])));
+    await restarted.coordinator.ensureQueueRestored(sid);
+    expect(restarted.coordinator.getQueueControlSnapshot(sid).pendingQueue[0]?.createOpts)
+      .toMatchObject({ model: 'new-model', providerId: 'new-provider' });
+
+    h.setRunning(false);
+    h.coordinator.onTurnEvent(sid, 'done');
+    await flush();
+    expect(h.sendToAgent.mock.calls[0]?.[2]).toMatchObject({ model: 'new
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    const isCodex = ctx.case === 'codex';
-      style={ctx.case === 'narrow' ? { maxWidth: 320 } : undefined}
-      <Section codexPool={ctx.case === 'codex'} />
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6ad1f40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0bbf1dc8` are properly handled with clean fallback behavior.

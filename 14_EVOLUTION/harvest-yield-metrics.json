@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T16:39:42.850Z",
-  "total_cycles_completed": 9301,
-  "total_learnings_persisted": 9301,
-  "total_rules_promoted": 9053,
+  "last_updated": "2026-11-13T16:49:10.635Z",
+  "total_cycles_completed": 9304,
+  "total_learnings_persisted": 9304,
+  "total_rules_promoted": 9055,
   "history": [
-    {
-      "timestamp": "2026-11-13T02:24:30.560Z",
-      "repository": "mistralai/Timestral-209M",
-      "learningId": "learn-huggingface-mistralai-timestral-209m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T02:24:48.298Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T02:24:54.670Z",
-      "repository": "duongductrong/Snapzy",
-      "learningId": "learn-github-duongductrong-snapzy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T02:24:59.304Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T16:39:42.850Z",
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T16:48:55.754Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T16:49:03.237Z",
+      "repository": "makecindy/cindy",
+      "learningId": "learn-github-makecindy-cindy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T16:49:10.635Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T16:40:23.527Z",
+  "updated_at": "2026-11-13T16:49:53.217Z",
   "stats": {
-    "total_discovered": 2670,
-    "approved_pending_harvest": 2499,
+    "total_discovered": 2674,
+    "approved_pending_harvest": 2503,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2489,
+      "COMMUNITY_AND_EXPERT": 2493,
       "OFFICIAL_DOCUMENTATION": 95,
       "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
@@ -57562,6 +57562,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
         "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-00E93445A44A": {
+      "id": "SRC-00E93445A44A",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "title": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:49:52.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+        "fileName": "hf-comfy-org-qwen-image-2.1-learnings.md"
+      }
+    },
+    "SRC-A012A4C93429": {
+      "id": "SRC-A012A4C93429",
+      "url": "https://github.com/makecindy/cindy",
+      "title": "https://github.com/makecindy/cindy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:49:53.170Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+        "fileName": "makecindy-cindy-learnings.md"
+      }
+    },
+    "SRC-9FFD911508C1": {
+      "id": "SRC-9FFD911508C1",
+      "url": "https://github.com/user-attachments/assets/9db9629d-d54b-406e-b4f3-5bf0f1e512d6",
+      "title": "https://github.com/user-attachments/assets/9db9629d-d54b-406e-b4f3-5bf0f1e512d6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:49:53.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+        "fileName": "makecindy-cindy-learnings.md"
+      }
+    },
+    "SRC-566A211FAF8D": {
+      "id": "SRC-566A211FAF8D",
+      "url": "https://github.com/makecindy/cindy/issues/6578",
+      "title": "https://github.com/makecindy/cindy/issues/6578",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:49:53.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+        "fileName": "makecindy-cindy-learnings.md"
       }
     }
   }

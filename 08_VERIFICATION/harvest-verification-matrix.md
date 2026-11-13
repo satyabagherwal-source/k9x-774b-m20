@@ -9530,3 +9530,7 @@
 | `CYCLE-20261113-CDJO` | `2026-11-13T16:39:32.244Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`929bfc80...`) |
 | `CYCLE-20261113-CLPP` | `2026-11-13T16:39:42.829Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`82d82e2a...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T16:40:23.117Z` | `hf-taichuai-zdtaichu5.0-9b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-21095CB7` [Domain D] | Yes (`1d523c28...`) |
+| `CYCLE-20261113-OGCH` | `2026-11-13T16:48:55.745Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`e031e503...`) |
+| `CYCLE-20261113-OM3Y` | `2026-11-13T16:49:03.214Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ea290ce6...`) |
+| `CYCLE-20261113-ORRU` | `2026-11-13T16:49:10.554Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`42251535...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T16:49:52.696Z` | `hf-comfy-org-qwen-image-2.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E243BB51` [Domain D] | Yes (`dc2cf0bf...`) |

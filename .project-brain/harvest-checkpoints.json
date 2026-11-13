@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T16:39:42.854Z",
+  "last_updated": "2026-11-13T16:49:10.639Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -575,14 +575,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "51237698650ba68fc773cf1f3362e1bb3704d3b1ec0f780db56c308cebbd2371",
-      "verified_at": "2026-11-08T16:07:57.749Z",
+      "content_hash": "e031e5033ec72c948132c5fafab23b6811b6536e4af5cb9531b816261bdba506",
+      "verified_at": "2026-11-13T16:48:55.757Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:07:57.749Z"
+      "last_updated": "2026-11-13T16:48:55.757Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "aa703bb2421db91084a561af3a6c5a79efd5e46abbd52e30e0a93cb6c58220d0",
-      "verified_at": "2026-11-12T11:01:13.816Z",
+      "content_hash": "42251535feba979e0dafdd04df3b3834b5e024562758ffffa76d54a914ce68d7",
+      "verified_at": "2026-11-13T16:49:10.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:01:13.816Z"
+      "last_updated": "2026-11-13T16:49:10.638Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -16056,14 +16056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-makecindy-cindy",
-      "content_hash": "dea001b9937ebd71e58a6f7520c7251485f143349194a207b47d7e5c51ac0778",
-      "verified_at": "2026-11-09T06:00:14.918Z",
+      "content_hash": "ea290ce6f3ddb9d729c695145e9d23b2e0100934cc072a28cf09ba9a887b4e82",
+      "verified_at": "2026-11-13T16:49:03.241Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T06:00:14.918Z"
+      "last_updated": "2026-11-13T16:49:03.241Z"
     },
     "Fei2411/DS-Bot": {
       "repository": "Fei2411/DS-Bot",

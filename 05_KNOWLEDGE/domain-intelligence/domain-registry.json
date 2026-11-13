@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T16:40:24.379Z",
-  "total_records": 206,
+  "last_updated": "2026-11-13T16:49:53.991Z",
+  "total_records": 213,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 122,
+      "total": 125,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -149,7 +149,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
         "DOM-D-21095CB7",
-        "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
+        "DOM-D-E243BB51",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar"
       ]
     },
     "E": {
@@ -188,7 +191,7 @@
       ]
     },
     "H": {
-      "total": 34,
+      "total": 38,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -223,7 +226,11 @@
         "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
         "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian",
         "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria"
       ]
     },
     "I": {
@@ -6758,6 +6765,102 @@
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "content_hash": "fe71720ea5c71e4c523376e391d9460e056461296817238e3af2411dc7943e80",
       "created_at": "2026-11-13T16:40:23.782Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/Qwen-Image-2.1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-research-knowledge-intelligence-comfy-org-qwen-image.md",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "content_hash": "2a93b5218f581a3c723f1aec39bb831448a4370cfe08349671f54196ef53cc1f",
+      "created_at": "2026-11-13T16:48:55.911Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
+      "repository": "makecindy/cindy",
+      "content_hash": "ade0b324a5a850bc5406fe5e01a554180dd27acea887dd811c7e6971c934a4e7",
+      "created_at": "2026-11-13T16:49:03.485Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
+      "repository": "volcengine/OpenViking",
+      "content_hash": "2aac4ab6faf944d7ec84106c6fa57869e3d3a5983488a03a42b8f158f725ef89",
+      "created_at": "2026-11-13T16:49:10.888Z"
+    },
+    "DOM-D-E243BB51": {
+      "record_id": "DOM-D-E243BB51",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/Qwen-Image-2.1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "dc2cf0bf98784f43f95b9106cb8393918219f4ce772d68d1b9e8257a93382bdc",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-qwen-image-2.1/hf-comfy-org-qwen-image-2.1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T16:49:13.766Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-qwen-image-2.1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-qwen-image-2.1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T16:49:52.689Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-qwen-image-2.1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-comfy-o.md",
+      "repository": "hf-comfy-org-qwen-image-2.1-learnings",
+      "content_hash": "1c725f29300b5464386dd70d1037d5cfc3d219ea6a5f8154f6516f21d4be018b",
+      "created_at": "2026-11-13T16:49:52.953Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-learnings-technical-construction-intelligence-makecindy-cindy-le.md",
+      "repository": "makecindy-cindy-learnings",
+      "content_hash": "c1db447987bbe579513a7c7a38ad510a49b9df093621027ee849a096fda78f53",
+      "created_at": "2026-11-13T16:49:53.521Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
+      "repository": "volcengine-openviking-learnings",
+      "content_hash": "4119b20b86c941b8b9027d27f9101a3cc80b3128541cc67cfb8c130f45f43b38",
+      "created_at": "2026-11-13T16:49:53.991Z"
     }
   }
 }

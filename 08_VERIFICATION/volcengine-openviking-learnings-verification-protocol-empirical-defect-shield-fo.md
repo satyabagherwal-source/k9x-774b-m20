@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:30.234Z",
+  "timestamp": "2026-11-13T16:49:53.798Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-volcengine-openviking-learnings",
+  "learning_id": "LEARN-EVO-volcengine-openviking-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [volcengine-openviking-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:30.234Z`  
-> **Learning ID**: `LEARN-REEXTRACT-volcengine-openviking-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T16:49:53.798Z`  
+> **Learning ID**: `LEARN-EVO-volcengine-openviking-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `bcdaac0c`  
+> **Source Version**: `07432564`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:01:02.650Z  
+> **Timestamp**: 2026-11-13T16:49:10.033Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:01:02.642Z  
+> **Harvest Timestamp**: 2026-11-13T16:49:10.027Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42058 stars
+- **Stars / Engagement**: 42189 stars
 
 ---
 
@@ -1499,13 +1499,13 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7412** (2026-11-13): **[Bug]: Gateway session memory_policy overrides user-level memory_types**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  ### Version  - OpenViking: v0.5.3 - Also reproducible on main `9c48090b0e6a48303909cb87333c778acca34cd6`  ### Description  OpenViking Gateway creates every capture session with:  ```json {"memory_policy":{"working_memory":{"enabled":false}}}   Session policy precedence selects the whole Session policy before the User policy. It does not merge missing fields from lower-priority policies. Therefore a User-level memory_policy.memory_types allowlist is ignored for Gateway-created sessions.  Because the Gateway policy omits memory_types, it resolves to null, meaning all enabled memory types are allowed.  ### Steps to Reproduce  Configure a User policy such as:   {"memory_policy":{"memory_types":["events"]}}   Start a new conversation through OpenViking Gateway.  Inspect the generated OV session and commit it.  The session carries a Session-level policy with Working Memory disabled but no memory_types restriction; extraction is not limited to events.  ### Expected Behavior  Gateway should disable only Working Memory while preserving User-level self, peer, and memory_types policy resolution.  ### Actual Behavior  The partial Session policy masks the complete User policy.   ### Minimal Reproducible Example  ```python Remove memory_policy from Gateway create_session().  Send enable_working_memory: false in the Gateway commit request. This existing per-commit field overrides only Working Memory and pre
+
 - **Issue #7356** (2026-11-12): **[Bug]: 同一用户批量 session commit 时，记忆操作组产生同 URI 冲突并导致任务失败**
   *Symptoms*: ## 问题描述  在为记忆编译准备真实会议记忆时，同一用户下的多个 session 正常完成消息写入，`session commit` 请求也已受理，但部分后台任务最终失败，报 `Conflicting add/update/delete results for URIs`。  本轮错误表明，不同操作组的结果落到了同一个记忆 URI，合并时判定冲突，导致对应 `session commit` 失败；日志反复指向同一条“录音项目”记忆。  这是**真实环境观察到的问题**。失败发生在 `session commit` 的记忆提取／更新阶段，当时尚未开始调用 `POST /api/v1/compile`。  ## 环境与输入  - 服务端：商业个人版，`/health` 返回版本 `v0.5.2.5`；同一个用户、同一个 API Key。 - 客户端：Linux 容器，Python 3.12，通过 HTTP API 调用；模型服务为 Volcengine。 - 数据：公开 [ICSI 会议转写](https://groups.inf.ed.ac.uk/ami/icsi/download/)，50 场不同的完整会议，对应 **50 个 session**。 - 每段会议发言作为一条 `role=user` 的 message，正文保留说话人标签，保留 `created_at` 和 `turn_id`。 - 共 **71,998 条 message**；每个 session 平均约 **1,440 条**，实际范围 256–2,494 条。每个 session 仅执行一次手动 `session commit`。 - 创建 session 时设置 `auto_commit_policy=null`，未设置自定义 `memory_extraction_config`。  ## 实际操作流程  1. 在同一用户下创建 50 个不同 session：     ```http    POST /api/v1/sessions    {"session_id": "<每场会议独立的 session_id>", "auto_commit_policy": null}    ```  2. 通过 `POST /api/v1/sessions/{session_id}/messages/batch` 写入各自的会议转写，每个请求最多 100 条；同一个 session 内按原顺序写入。 3. **全部 session 的消息写入完成后**，以 HTTP 并发 16 提交整批 50 个 commit：     ```http    POST /api/v1/sessions/{session_id}/commit    {"keep_recent_count": 0}    ```  4. 收集所有已受理请求返回的 `task_id`，整批提交完成后，再通过 `GET /api/v1/tasks/{task_id}` 等待各自终态。  以上是本次实测流程，尚未缩减为每次运行都必然触发的最小复现。  ## 实际结果与错误  已核对完整任务回执，50 个 commit 均已进入终态：  | 已受理 commit | 成功 | 失败 | 尚未确认终态 | | --- | --- | --- | --- | | 50 | 34 | 16 | 0 |  最终任务失败率为 **32%（16/50）**。16 个失败任务均包含同类 URI 操作冲突错误。  一条真实任务回执：  ```j
   **Post-Mortem & Fix Analysis**:
   > I reproduced a **target-selection collision with disjoint input URIs** at `main@32de68480d36593648563f749d9af7a4a817489f`, using fixed completion responses and the real `StreamingMemoryUpdater.submit` → patch prefetch → `ExtractLoop` → apply path.  The inputs use the repository's `_registry`, `_note_op`, `_note_update_op`, `_ctx` and `InMemoryVikingFS` fixtures:  ```text Stored: canonical.md = "old canonical" Session A: ADD alias_0.md; UPDATE canonical.md Session B: ADD alias_1.md ```  All three input targets are distinct. The search fixture returns `canonical.md` as a candidate for the add group. Its real read tool assigns `page_id=1`. The scripted completion selects that existing page:  ```json {"notes":[{"page_id":1,"content":{"blocks":[{"search":"old canonical","replace":"old canonical\nfrom_adds"}]}}],"delete_ids":[]} ```  The real parser/resolver returns an **update** to `canonical.md` (`old_memory_file_content` is populated). However, the final conflict check still associates th
-
-- **Issue #7219** (2026-11-09): **[Bug]: Markdown directory link rewriting changes literal links in code examples**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  Directory ingestion adjusts Markdown links when it relocates a document. The relative-link pass also rewrites literal `[example](./linked.md)` text inside fenced blocks and inline code spans. This changes copyable examples in the saved document. Codex found and reproduced this locally.  ### Steps to Reproduce  Run the example below from a source checkout. It uses the same link-rewrite flags as directory parsing and writes through the local artifact store.  ### Expected Behavior  The two code examples keep `./linked.md`. The rendered link is adjusted to `../linked/` after the move.  ### Actual Behavior  The artifact contains `../linked/` in all three places, including the fenced example and the inline code span.  ### Minimal Reproducible Example  ```python import asyncio from pathlib import Path from tempfile import TemporaryDirectory  from openviking.parse.output import LocalParseOutputStore from openviking.parse.parsers.markdown import MarkdownParser  async def main():     with TemporaryDirectory() as tmp:         root = Path(tmp)         (root / "linked.md").write_text("# Linked\n", encoding="utf-8")         source = root / "guide.md"         source.write_text(             "# Guide\n\n\n[example](./linked.md)\n\n\n"             "`[inline](./linked.md)`\n\n[actual](./linked.md)",             encoding="utf-8",         )         output = root / "parsed"         await MarkdownParser().parse(   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1522,1064 +1522,1332 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5043e1f3` (2026-11-12)
-**Commit Message**: fix(react): improve directory guidance and file preview (#7472)
+### Incident Patch 1: `cf14a0cb` (2026-11-13)
+**Commit Message**: fix(react): align the file browser search dialog with the console design (#7570)
 
-* feat(studio): improve Compile first-use workflow
+* fix(react): align the file browser search dialog with the console design
 
-* fix(studio): refresh filesystem caches after Compile completes
+The dialog drifted from the design: the empty state was two lines of centred
+text with no artwork, a hover preview panel split the result list in two, the
+count line put the mode chip before the retrieval label, and the advanced panel
+referenced `--ov-ui-file-search-*` variables that were never declared, so its
+surface was transparent.
 
-* feat(react): 封装可配置的认证表单组件
+Match the design node by node:
 
-* feat(react): align file tree and preview with console UI
+- Empty state: the design's 258x140 artwork above the title and hint, 24px
+  apart, with the block starting 120px below the content top.
+- Results: the list fills the dialog again. The preview panel and its split
+  layout are gone; rows keep the design's 20px/12px padding, 24px icon tile,
+  14px name and bottom divider. Arrow keys still move the current row and Enter
+  opens it.
+- Count line: `N results ・ [mode] Vector retrieval Switch`, indented to the
+  row's text edge, and rendered only when there are results — the design draws
+  neither the empty, loading nor failure state with it.
+- Advanced panel: the design's `bg-2` surface, which needed `--ov-ui-bg-2-defa
 
-* feat(react): align shared file previews with console controls
-
-Give standalone FilePreview and FileBrowser the same capability-based preview, source, copy and edit controls. Align tab spacing, summary indicators and source wrapping, and wire module editing and internal Markdown images through scoped native content requests.
-
-* chore(ui): reconcile fork navigation and theme formatting
-
-* fix(react): decouple auth validation from localized copy
-
-Store validation issue keys separately from rendered labels and resolve auth copy through the inherited locale. Cover empty label overrides, provider language changes, and invitation copy.
-
-* fix(react): localize experience injection rate formatting
-
-* ci(react): automate npm releases with Changesets
-
-* ci(react): publish source changes as next-stable betas
-
-* chore(react): release 0.1.8
-
-* fix(react): skip unavailable directory tour steps and match designs
-
-* fix(react): s
-
-**File**: `frontend/.changeset/align-console-workflows.md` (added, +5/-0)
+**File**: `frontend/.changeset/file-browser-search-design-alignment.md` (added, +12/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'@openviking/react': minor
-+---
-+
-+Align the Console command palette, quick actions, and result cards with the Volcengine console. Add native resource and Skill imports, memory submission, and compile commands. Show VikingBot availability reasons near the composer and add controls to copy and locate the current session.
-```
-
-**File**: `frontend/.changeset/directory-tour-auto-skip.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,12 @@
 +---
 +'@openviking/react': patch
 +---
 +
-+Keep the directory walkthrough hidden until its target is available, and automatically skip unavailable steps. Bundle the six standard illustrations and keep the card clear of the highlighted row on narrow screens.
-```
-
-**File**: `frontend/.changeset/file-preview-yaml-collections.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@openviking/react': patch
-+---
++Align the FileBrowser search dialog with the console design and drop the result preview panel it gained in 0.1.10.
 +
-+Render YAML flow mappings and sequences in Markdown front matter as code blocks, while preserving ordinary Markdown separators.
++- The empty state shows the design's artwork above the title and hint instead of two centred lines of text.
++- Results fill the dialog width again: the hover/keyboard preview panel and its split layout are gone, and each row keeps its bottom divider, 24px icon tile and 14px name. `↑`/`↓` still move the current row and `Enter` opens it.
++- The count line reads `N results ・ [mode] Vector retrieval Switch` in the design's order, and appears only when there are results; the empty, loading and failure states no longer carry it.
++- The advanced panel takes the design's `bg-2` surface, and the mode menu its 259px popover with a 6px radius and card shadow.
++
++BREAKING CHANGE: `FileBrowserLabels.searchPreview`, `searchPreviewEmpty` and `searchPreviewFailed` are removed, because the search dialog no longer previews results. Drop those overrides; the keys have no effect.
 ```
 
-**File**: `frontend/docs/docs/_demos/console-transport.ts` (modified, +25/-2)
+**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +2/-2)
 ```diff
-@@ -26,8 +26,31 @@ export function consoleTransport(): typeof fetch {
-       name: 'notes.md',
-       isDir: false,
-     };
-+    const configOnly =
-+      path === '/api/v1/compile' &&
-+      typeof init?.body === 'string' &&
-+      (JSON.parse(init.body) as { args?: { auto_update?: boolean } }).args
-+        ?.auto_update === false;
-+    const writes: Record<string, unknown> = {
-+      '/api/v1/resources': { task_id: 'demo-resource', root_uri: resource.uri },
-+      '/api/v1/skills': { root_uri: 'viking://agent/skills/llm-wiki' },
-+      '/api/v1/compile': configOnly
-+        ? { to: 'viking://resources/demo-wiki', auto_update: false }
-+        : {
-+            task_id: 'demo-compile',
-+            status: 'pending',
-+            resource_id: resource.uri,
-+          },
-+    };
-+    const writeResult =
-+      writes[path] ??
-+      (path.endsWith('/messages') ? { message_count: 1 } : undefined) ??
-+      (path.endsWith('/commit')
-+        ? { task_id: 'demo-memory', status: 'pending' }
-+        : undefined);
-     const result =
--      path.endsWith('/ls') || path.endsWith('/tree')
-+      writeResult ??
-+      (path.endsWith('/ls') || path.endsWith('/tree')
-         ? [resource]
-         : ['/read', '/abstract', '/overview'].some((suffix) =>
-               path.endsWith(suffix),
-@@ -47,7 +70,7 @@ export function consoleTransport(): typeof fetch {
-                   },
-                 ],
-               }
--            : { state: 'ready', demonstration: true };
-+            : { state: 'ready', demonstration: true });
-     return Response.json({ status: 'ok', result });
-   };
- }
-```
-
-**File**: `frontend/docs/docs/_demos/directory-tour-basic.tsx` (modified, +2/-23)
-```diff
-@@ -1,7 +1,7 @@
- import { Button } from '#demo-controls';
- import { useCallback, useRef, useState } from 'react';
- import { flushSync } from 'react-dom';
--import { useLang, withBase } from '@rspress/core/runtime';
-+import { useLang } from '@rspress/core/runtime';
- import { FileTree } from '@openviking/react/components/file-tree';
- import type {
-   FileTreeHandle,
-@@ -90,14 +90,6 @@ export default function DirectoryTourBasic() {
-     nextLabel: zh && index === 4 ? '下一个' : undefined,
-     title: zh ? TITLES[index] : step.title,
-     description: zh ? DESCRIPTIONS[index] : step.description,
--    illustration: (
--      <img
--        src={withBase(`/directory-tour/step-${index + 1}.png`)}
--        alt=""
--        width={212}
--        height={70}
--      />
--    ),
-   }));
-   const rows: FileTreeRow[] = [entry('user', 'Alice', 0, expanded.has('user'))];
-   if (expanded.has('user')) {
-@@ -188,21 +180,8 @@ export default function DirectoryTourBasic() {
-         onComplete={({ skippedStepIds }) => {
-           close();
-           setSkipped(skippedStepIds.length);
--          setComplete(skippedStepIds.length === 0);
-+          setComplete(true);
-         }}
--        labels={
--          zh
--            ? {
--                close: '关闭指引',
--                next: '下一步',
--                done: '知道了',
--                locating: '正在定位目录…',
--                unavailable: '目录不存在或暂时无法加载，请重试或跳过。',
--                retry: '重试',
--                skip: '跳过',
--              }
--            : undefined
--        }
-       />
-     </div>
-   );
-```
-
-**File**: `frontend/docs/docs/_demos/file-browser-basic-data.ts` (modified, +1/-1)
-```diff
-@@ -96,7 +96,7 @@ const FILES: Record<string, string> = {
-   [`${RESOURCES}/design-system-alignment-notes.md`]:
-     '# Design alignment\n\nColours come from the console theme; components never hard-code them.\n',
-   [DEMO_PREVIEW_FILE]:
--    '# Rollout\n\nStage first, then production once the release ticket passes.\n\n![CLI](./cli.svg)',
-+    '# Rollout\n\nStage first, then production once the release ticket passes.\n\n![CLI](./cli.svg)\n\n| Check | Result |\n| --- | --- |\n| First open | Ready |',
- };
+@@ -241,7 +241,7 @@ All fields are optional, and omitted fields follow `locale`.
+ | searchIgnoreCase        | Case-insensitive matching                                                                                                    | `string`                             | `'Ignore case'`                                                       |
+ | searchFilterUnsupported | Why a filter is unavailable in the current mode                                                                              | `string`                             | `'This filter is unavailable for the current mode'`                   |
+ | searchResultCount       | Result count; receives the number                                                                                            | `(count: number) => string`          | `'N results'`                                                         |
+-| searchVia               | Copy between the count and the mode chip                                                                                     | `string`                             | `'Vector retrieval'`                                                  |
++| searchVia               | Copy that follows the mode chip                                                                                              | `string`                             | `'Vector retrieval'`                                                  |
+ | searchSwitchMode        | Entry that switches the retrieval mode                                                                                       | `string`                             | `'Switch'`                                                            |
+ | searchAdvancedLabel     | Accessible name of the advanced-filter button                                                                                | `string`                             | `'Advanced filters'`                                                  |
+ | previewMode             | Preview in the Preview / Source switch                                                                                       | `string`                             | `'Preview'`                                                           |
+@@ -424,7 +424,7 @@ Reveal defaults to `true`; `{ reveal: false }` only requests a preview and resol
+ - Semantic results rank by score and deduplicate by URI. `grep` keeps each match and its line number, even when several matches share a file.
+ - A `glob` pattern without `/` gains a `**/` prefix; a directory match drops its trailing slash before navigation and records the directory fact on `isDir`.
+ - Filter groups enable or disable with the mode. A disabled group stays visible but dimmed, with the reason beside its title. Directory candidates derive from `rootUri` with the `~` alias; selections invalidated by a root change are dropped.
+-- Hover a result or use **↑ / ↓** to preview it. Click or press **Enter** to close the dialog, open the resource and reveal its tree row. The preview moves below the list on narrow screens.
++- Use **↑ / ↓** to move the current result. Click or press **Enter** to close the dialog, open the resource and reveal its tree row.
  
- /** 目录的两级摘要。The two summary levels of a directory. */
-```
-
-**File**: `frontend/docs/docs/_demos/file-preview-console.tsx` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ export default function FilePreviewConsole() {
-               source: {
-                 content:
-                   draftContent ??
--                  `${zh ? '# 完整正文' : '# Full content'}\n\n![CLI](viking://resources/manual/cli.svg)\n\n${zh ? '正文中的 Viking URI 图片。' : 'A Viking URI image in the full content.'}`,
-+                  `---\ntitle: Guide\nversion: 1\n---\n\n${zh ? '# 完整正文' : '# Full content'}\n\n![CLI](viking://resources/manual/cli.svg)\n\n${zh ? '正文中的 Viking URI 图片。' : 'A Viking URI image in the full content.'}\n\n| Item | Status |\n| --- | --- |\n| Table | Ready |`,
-                 fileName: 'guide.md',
-                 path: `${root}/guide.md`,
-               },
-```
-
-**File**: `frontend/docs/docs/_demos/use-console-conversation.tsx` (modified, +44/-2)
-```diff
-@@ -16,7 +16,7 @@ export function useConsoleConversation(zh: boolean): Partial<VikingBotProps> {
-   >([]);
-   const [sessions, setSessions] = useState<readonly VikingBotSession[]>([
-     {
--      id: 'docs-wiki',
-+      id: 'session_20261109030400_6c4ebf',
-       title: zh ? '整理项目资料' : 'Organize project resources',
-       updatedAt: '2026-11-09T03:04:00Z',
-     },
-@@ -44,7 +44,48 @@ export function useConsoleConversation(zh: boolean): Partial<VikingBotProps> {
-         'Create a daily report from the selected directory and schedule updates.',
-       ];
-   return {
--    messages: [],
-+    messages:
-+      currentId === 'session_20261109030400_6c4ebf'
-+        ? [
-+            {
-+              id: 'demo-user',
-+              role: 'user',
-+              parts: [{ type: 'text', text: prompts[0] }],
-+            },
-+            {
-+              id: 'demo-assistant',
-+              role: 'assistant',
-+              parts: [
-+                {
-+                  type: 'tool',
-+                  id: 'list',
-+                  name: 'List files',
-+                  status: 'completed',
-+                  durationMs: 5000,
-+                },
-+                {
-+                  type: 'text',
-+                  text: zh
-+                    ? '我已查看目录中的资料。接下来会创建 Wiki 索引，保留来源和文档关联。'
-+                    : 'I checked the directory. Next I will create a Wiki index and preserve the source links.',
-+                },
-+                {
-+                  type: 'tool',
-+                  id: 'index',
-+                  name: 'Write Wiki index',
-+                  status: 'completed',
-+                  durationMs: 9000,
-+                },
-+                {
-+                  type: 'text',
-+                  text: zh
-+                    ? 'Wiki 索引已生成，可以从目录查看。'
-+                    : 'The Wiki index is ready to view in the directory.',
-+                },
-+              ],
-+            },
-+          ]
-+        : [],
-     draft,
-     onDraftChange: setDraft,
-     attachments,
-@@ -80,6 +121,7 @@ export function useConsoleConversation(zh: boolean): Partial<VikingBotProps> {
-     sessions: {
-       items: sessions,
-       currentId,
-+      currentUri: currentId ? `viking://session/${currentId}` : undefined,
-       onNew: () => {
-         const id = `docs-${Date.now()}`;
-         setSessions((items) => [
-```
-
----
-
-### Incident Patch 2: `12b188a7` (2026-11-11)
-**Commit Message**: fix(security): 修复 Git 导入链路的 SSRF 绕过 (#7441)
-
-* fix(security): guard Git import redirects and unsafe destinations
-
-Apply remote target validation across Git preflight, clone, watch probes and
-archive downloads so redirects cannot bypass the server's network policy.
-
-* refactor(security): simplify address checks and regression coverage
-
-Classify each resolved address once and keep regression coverage in existing
-contracts, removing repeated matrices and private-helper tests.
-
-**File**: `docs/en/guides/01-configuration.md` (modified, +3/-3)
-```diff
-@@ -1060,7 +1060,7 @@ The remaining `code` configuration fields are for remote code resource network g
- 
- #### Remote resource network guard
- 
--For URL ingestion, the default network check rejects destinations resolving to non-public addresses. Ordinary public URLs do not need to be on the code-hosting allowlist; trusted code hosts on that list bypass the address-range check. Add self-hosted GitHub Enterprise, GitLab, or Azure DevOps hosts to the corresponding platform list under `code`:
-+For URL ingestion, the default network check rejects destinations resolving to non-public addresses. Ordinary public URLs do not need to be on the code-hosting allowlist. Trusted code hosts on that list may access private networks, but their DNS addresses are still checked. Loopback, link-local, unspecified, multicast, reserved and known cloud metadata addresses are always rejected, even with an allowlist entry or `allow_private_networks=true`. Add self-hosted GitHub Enterprise, GitLab, or Azure DevOps hosts to the corresponding platform list under `code`:
- 
- | Field | Type | Description | Default |
- |-------|------|-------------|---------|
-@@ -1069,7 +1069,7 @@ For URL ingestion, the default network check rejects destinations resolving to n
- | `azure_devops_domains` | list[str] | Allowed Azure DevOps hosts | `["dev.azure.com", "ssh.dev.azure.com", "vs-ssh.visualstudio.com"]` |
- | `code_hosting_domains` | list[str] | Allowed generic code-hosting hosts | `["github.com", "gitlab.com", "gitcode.com", "gitee.com", "bitbucket.org", "codeberg.org", "gitea.com", "atomgit.com", "git.sr.ht"]` |
- 
--To allow other private-network targets, such as internal mirrors, set the top-level `allow_private_networks` to `true`. It is disabled by default; local hostnames such as `localhost` and its subdomains remain rejected. This example enables private-network access and registers a code host:
-+To allow other private-network targets, such as internal mirrors, set the top-level `allow_private_networks` to `true`. It is disabled by default. Enabling it does not override the address restrictions above; `localhost` and its subdomains also remain rejected. This example enables private-network access and registers a code host:
- 
- ```json
- {
-@@ -1082,7 +1082,7 @@ To allow other private-network targets, such as internal mirrors, set the top-le
- 
- Use `github_domains`, `gitlab_domains`, or `azure_devops_domains` when the host
- needs those platform-specific URL semantics. Add other Git hosts to
--`code_hosting_domains`.
-+`code_hosting_domains`. For HTTP server requests, Git preflight, clone and fetch do not follow HTTP redirects; use the final repository URL. GitHub/GitLab ZIP downloads support redirects and validate each destination before requesting it.
- 
- ### pdf
+ ### Preview actions
  
 ```
 
-**File**: `docs/zh/guides/01-configuration.md` (modified, +3/-3)
+**File**: `frontend/docs/docs/zh/modules/file-browser.mdx` (modified, +2/-2)
 ```diff
-@@ -1050,7 +1050,7 @@ ollama pull guoxuter/ov_intent_analysis_sft:v7_q8
+@@ -241,7 +241,7 @@ import '@openviking/react/modules/file-browser/style.css';
+ | searchIgnoreCase        | 忽略大小写                                                                                    | `string`                             | `'忽略大小写'`                           |
+ | searchFilterUnsupported | 某个筛选在当前检索方式下不可用的原因                                                          | `string`                             | `'当前检索方式不支持此筛选'`             |
+ | searchResultCount       | 检索结果数量，参数为条数                                                                      | `(count: number) => string`          | `'检索到 N 条结果'`                      |
+-| searchVia               | 结果数量与模式之间的分隔说明                                                                  | `string`                             | `'向量检索方式'`                         |
++| searchVia               | 模式 chip 之后的检索方式说明                                                                  | `string`                             | `'向量检索方式'`                         |
+ | searchSwitchMode        | 切换检索方式的入口                                                                            | `string`                             | `'切换'`                                 |
+ | searchAdvancedLabel     | 高级筛选按钮的无障碍名称                                                                      | `string`                             | `'高级筛选'`                             |
+ | previewMode             | 「预览 / 源码」切换里的「预览」                                                               | `string`                             | `'预览'`                                 |
+@@ -424,7 +424,7 @@ await browserRef.current?.openResource(resultUri, { reveal: true });
+ - 结果按 URI 去重；`grep` 例外——同一文件的多行命中是不同结果，各带自己的行号。
+ - `glob` 的模式不含 `/` 时自动补 `**/` 前缀；目录命中去掉尾斜杠后再参与导航，目录这一事实记在 `isDir` 上。
+ - 高级面板的筛选项按当前方式启用或禁用，禁用的分区保留可见并置灰，标题旁说明原因。目录候选从 `rootUri` 派生，用户根用 `~` 别名；切换根时失效的已选目录会被丢弃。
+-- 悬停结果或按 **↑ / ↓** 查看预览。点击或按 **Enter** 关闭弹窗、打开资源并在树中定位。窄屏时预览移到列表下方。
++- 按 **↑ / ↓** 切换当前结果，点击或按 **Enter** 关闭弹窗、打开资源并在树中定位。
  
- #### 远程资源网络防护
+ ### 预览操作区
  
--通过 URL 拉取资源时，默认网络检查会拒绝解析到非公网地址的目标。普通公网 URL 无需加入代码托管白名单；列入白名单的可信代码主机会跳过地址范围检查。接入自建 GitHub Enterprise / GitLab / Azure DevOps 时，可将主机加入 `code` 下对应的平台列表：
-+通过 URL 拉取资源时，默认网络检查会拒绝解析到非公网地址的目标。普通公网 URL 无需加入代码托管白名单；列入白名单的可信代码主机可以访问私有网络，但仍须通过 DNS 地址检查。回环、link-local、未指定、组播、保留地址和已知云元数据地址始终被拒绝，白名单和 `allow_private_networks` 均不能放行这些目标。接入自建 GitHub Enterprise / GitLab / Azure DevOps 时，可将主机加入 `code` 下对应的平台列表：
- 
- | 字段 | 类型 | 说明 | 默认值 |
- |------|------|------|--------|
-@@ -1059,7 +1059,7 @@ ollama pull guoxuter/ov_intent_analysis_sft:v7_q8
- | `azure_devops_domains` | list[str] | 允许的 Azure DevOps 主机 | `["dev.azure.com", "ssh.dev.azure.com", "vs-ssh.visualstudio.com"]` |
- | `code_hosting_domains` | list[str] | 允许的通用代码托管主机 | `["github.com", "gitlab.com", "gitcode.com", "gitee.com", "bitbucket.org", "codeberg.org", "gitea.com", "atomgit.com", "git.sr.ht"]` |
- 
--如果需要允许其他私有网络目标（例如内部镜像），可将顶层 `allow_private_networks` 设为 `true`。该开关默认关闭；`localhost` 及其子域等本地主机名仍会被拒绝。下面同时演示启用私有网络访问和添加代码主机：
-+如果需要允许其他私有网络目标（例如内部镜像），可将顶层 `allow_private_networks` 设为 `true`。该开关默认关闭，启用后仍受上述地址限制；`localhost` 及其子域也会被拒绝。下面同时演示启用私有网络访问和添加代码主机：
- 
- ```json
- {
-@@ -1071,7 +1071,7 @@ ollama pull guoxuter/ov_intent_analysis_sft:v7_q8
- ```
- 
- 需要 GitHub、GitLab 或 Azure DevOps 专属 URL 语义时，应配置到对应的平台字段；
--其他 Git 主机统一添加到 `code_hosting_domains`。
-+其他 Git 主机统一添加到 `code_hosting_domains`。HTTP 服务的 Git 预检、clone 和 fetch 不跟随 HTTP 重定向，请提供最终仓库 URL；GitHub/GitLab ZIP 下载保留重定向支持，并在请求每个跳转目标前进行同样的地址校验。
- 
- #### 语法包下载与镜像（网络受限 / 离线）
- 
-```
-
-**File**: `openviking/parse/accessors/git_accessor.py` (modified, +38/-3)
-```diff
-@@ -43,6 +43,8 @@
-     parse_git_http_auth_config,
-     raise_git_auth_error,
- )
-+from openviking.utils.network_guard import RequestValidator
-+from openviking_cli.exceptions import PermissionDeniedError
- from openviking_cli.utils.logger import get_logger
- 
- from .base import DataAccessor, LocalResource, SourceType
-@@ -124,6 +126,7 @@ async def access(self, source: Union[str, Path], **kwargs) -> LocalResource:
-             branch = None
-         auth_config = parse_git_http_auth_config(kwargs.get("auth_config"), source_str)
-         git_env = None
-+        request_validator = kwargs.get("request_validator")
-         used_git_clone = False
-         # Exact immutable revision fetched. Branch tracking resolves this from
-         # the remote/local HEAD; commit-only imports use the supplied commit.
-@@ -150,6 +153,7 @@ async def access(self, source: Union[str, Path], **kwargs) -> LocalResource:
-                     branch=branch,
-                     commit=commit,
-                     env=git_env,
-+                    request_validator=request_validator,
-                 )
-                 used_git_clone = True
-             elif source_str.startswith(("http://", "https://", "git://", "ssh://")):
-@@ -186,7 +190,10 @@ async def access(self, source: Union[str, Path], **kwargs) -> LocalResource:
-                             download_ref,
-                             temp_local_dir,
-                             github_token=github_token,
-+                            request_validator=request_validator,
-                         )
-+                    except PermissionDeniedError:
-+                        raise
-                     except Exception as zip_exc:
-                         logger.warning(
-                             f"[GitAccessor] GitHub ZIP download failed, falling back to git clone: {zip_exc}"
-@@ -207,14 +214,20 @@ def _cleanup():
-                             branch=branch,
-                             commit=commit,
-                             env=git_env,
-+                            request_validator=request_validator,
-                         )
-                         used_git_clone = True
-                 elif self._can_use_gitlab_zip(repo_url) and auth_config is None:
-                     # Try GitLab ZIP API first, fall back to git clone
-                     try:
-                         local_dir, repo_name = await self._gitlab_zip_download(
--                            repo_url, download_ref, temp_local_dir
-+                            repo_url,
-+                            download_ref,
-+                            temp_local_dir,
-+                            request_validator=request_validator,
-                         )
-+                    except PermissionDeniedError:
-+                        raise
-                     except Exception as zip_exc:
-                         logger.warning(
-                             f"[GitAccessor] GitLab ZIP download failed, falling back to git clone: {zip_exc}"
-@@ -235,6 +248,7 @@ def _cleanup():
-                             branch=branch,
-                             commit=commit,
-                             env=git_env,
-+                            request_validator=request_validator,
-                         )
-                         used_git_clone = True
-                 else:
-@@ -245,6 +259,7 @@ def _cleanup():
-                         branch=branch,
-                         commit=commit,
-                         env=git_env,
-+                        request_validator=request_validator,
-                     )
-                     used_git_clone = True
-             else:
-@@ -366,6 +381,7 @@ async def probe_git_remote_head(
-         env = overlay_parser_subprocess_env(
-             ParserNetworkContext(ParserNetworkOperation.GIT_COMMAND, repo_url),
-             env,
-+            request_validator=kwargs.get("request_validator"),
-         )
-         return await self._git_ls_remote_head(repo_url, branch, env)
- 
-@@ -521,6 +537,7 @@ async def _git_clone(
-         branch: Optional[str] = None,
-         commit: Optional[str] = None,
-         env: Optional[dict[str, str]] = None,
-+        request_validator: Optional[RequestValidator] = None,
-     ) -> str:
-         """Clone a git repository into target_dir; return the repo name."""
-         name = self._get_repo_name(url)
-@@ -530,6 +547,7 @@ async def _git_clone(
-         network_env = overlay_parser_subprocess_env(
-             ParserNetworkContext(ParserNetworkOperation.GIT_COMMAND, url),
-             env,
-+            request_validator=request_validator,
-         )
- 
-         clone_args = [
-@@ -649,6 +667,7 @@ async def _github_zip_download(
-         target_dir: str,
-         *,
-         github_token: Optional[str] = None,
-+        request_validator: Optional[RequestValidator] = None,
-     ) -> Tuple[Path, str]:
-         """Download a GitHub repo as a ZIP archive and extract it."""
-         repo_name = self._get_repo_name(repo_url)
-@@ -680,11 +699,18 @@ def _download() -> None:
- 
-             req =
-```
-
-**File**: `openviking/parse/network.py` (modified, +54/-12)
-```diff
-@@ -10,9 +10,38 @@
- from enum import Enum
- from threading import RLock
- from typing import Any, Mapping, Protocol
-+from urllib.parse import urlparse
- 
- import httpx
- 
-+from openviking.utils.git_auth import append_git_process_config
-+from openviking.utils.network_guard import RequestValidator
-+
-+
-+class _ValidatedRedirectHandler(urllib.request.HTTPRedirectHandler):
-+    """Validate archive redirects before urllib sends the next request."""
-+
-+    handler_order = 100  # Run before an adapter opener's default redirect handler.
-+
-+    def __init__(self, request_validator: RequestValidator):
-+        self.request_validator = request_validator
-+
-+    def redirect_request(self, req, fp, code, msg, headers, newurl):
-+        try:
-+            self.request_validator(newurl)
-+        except Exception:
-+            fp.close()
-+            raise
-+        redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
-+        old_origin = urlparse(req.full_url)
-+        new_origin = urlparse(newurl)
-+        if redirected is not None and (old_origin.scheme, old_origin.netloc) != (
-+            new_origin.scheme,
-+            new_origin.netloc,
-+        ):
-+            redirected.remove_header("Authorization")
-+        return redirected
-+
- 
- class ParserNetworkOperation(str, Enum):
-     """Network operations whose routing may be extended by a distribution."""
-@@ -118,36 +147,49 @@ def create_parser_httpx_client(
- def open_parser_url(
-     context: ParserNetworkContext,
-     request: urllib.request.Request | str,
-+    *,
-+    request_validator: RequestValidator | None = None,
-     **open_kwargs: Any,
- ):
--    """Open one parser URL through an adapter opener when available."""
-+    """Open a parser URL, validating the initial target and every redirect."""
- 
-     adapter = _adapter_for(context)
--    if adapter is not None:
--        opener = adapter.create_urllib_opener(context)
--        if opener is not None:
--            return opener.open(request, **open_kwargs)
-+    opener = adapter.create_urllib_opener(context) if adapter is not None else None
-+    if request_validator is not None:
-+        source = request.full_url if isinstance(request, urllib.request.Request) else request
-+        request_validator(source)
-+        handler = _ValidatedRedirectHandler(request_validator)
-+        if opener is None:
-+            opener = urllib.request.build_opener(handler)
-+        else:
-+            opener.add_handler(handler)
-+    if opener is not None:
-+        return opener.open(request, **open_kwargs)
-     return urllib.request.urlopen(request, **open_kwargs)
- 
- 
- def overlay_parser_subprocess_env(
-     context: ParserNetworkContext,
-     base_env: Mapping[str, str] | None,
-+    *,
-+    request_validator: RequestValidator | None = None,
- ) -> dict[str, str] | None:
--    """Merge adapter variables into a child environment without mutating it."""
-+    """Apply parser routing and caller-owned Git safeguards to a child environment."""
- 
-     adapter = _adapter_for(context)
--    if adapter is None:
--        return base_env if isinstance(base_env, dict) or base_env is None else dict(base_env)
--
--    overlay = dict(adapter.subprocess_env_overlay(context))
--    if not overlay:
--        return base_env if isinstance(base_env, dict) or base_env is None else dict(base_env)
-+    overlay = dict(adapter.subprocess_env_overlay(context)) if adapter is not None else {}
-     if not all(isinstance(key, str) and isinstance(value, str) for key, value in overlay.items()):
-         raise TypeError("Parser subprocess environment overlay must contain string pairs")
- 
-+    if request_validator is None and not overlay:
-+        return base_env if isinstance(base_env, dict) or base_env is None else dict(base_env)
-     merged = dict(os.environ if base_env is None else base_env)
-     merged.update(overlay)
-+    if request_validator is not None:
-+        request_validator(context.source_url)
-+        # Git cannot invoke a Python validator on redirects. Refuse them at the
-+        # same URL-specific precedence as credentials, including inherited config.
-+        append_git_process_config(merged, f"http.{context.source_url}.followRedirects", "false")
-     return merged
- 
- 
-```
-
-**File**: `openviking/resource/watch_manager.py` (modified, +2/-0)
-```diff
-@@ -46,6 +46,7 @@
- from openviking.service.task_tracker_concurrency import KeyedAsyncLockPool, run_to_completion
- from openviking.storage.errors import LockAcquisitionError, ResourceBusyError
- from openviking.utils.git_auth import GIT_AUTH_FAILED
-+from openviking.utils.network_guard import ensure_public_remote_target
- from openviking_cli.exceptions import ConflictError, FailedPreconditionError
- from openviking_cli.session.user_id import UserIdentifier
- from openviking_cli.utils.logger import get_logger
-@@ -742,6 +743,7 @@ async def _probe_git_checkpoint(
-             return None
-         try:
-             probe_kwargs = dict(kwargs)
-+            probe_kwargs["request_validator"] = ensure_public_remote_target
-             if probe_kwargs.get("auth_config") is None:
-                 processor = getattr(self._resource_service, "_resource_processor", None)
-                 if processor is not None:
-```
-
-**File**: `openviking/server/openviking_assets.py` (modified, +14/-13)
-```diff
-@@ -18,13 +18,20 @@
- 
- from openviking.core.namespace import classify_uri, uri_parts
- from openviking.core.uri_validation import validate_content_target_uri, validate_viking_uri
-+from openviking.parse.network import (
-+    ParserNetworkContext,
-+    ParserNetworkOperation,
-+    overlay_parser_subprocess_env,
-+)
- from openviking.server.identity import RequestContext
- from openviking.server.local_input_guard import require_remote_resource_source
- from openviking.utils.git_auth import (
-     GitHttpAuthConfig,
-+    append_git_process_config,
-     build_git_http_auth_env,
-     reject_git_http_userinfo,
- )
-+from openviking.utils.network_guard import ensure_public_remote_target
- from openviking_cli.exceptions import (
-     DeadlineExceededError,
-     InvalidArgumentError,
-@@ -258,18 +265,6 @@ def _normalize_commit_sha(commit: str | None, where: str) -> str | None:
-     return normalized.lower()
- 
- 
--def _append_git_process_config(env: dict[str, str], key: str, value: str) -> None:
--    """Append one process-local Git config entry without putting secrets in argv."""
--
--    try:
--        count = int(env.get("GIT_CONFIG_COUNT", "0"))
--    except ValueError:
--        count = 0
--    env[f"GIT_CONFIG_KEY_{count}"] = key
--    env[f"GIT_CONFIG_VALUE_{count}"] = value
--    env["GIT_CONFIG_COUNT"] = str(count + 1)
--
--
- async def preflight_git_repository(
-     *,
-     asset_name: str,
-@@ -324,7 +319,13 @@ async def preflight_git_repository(
-             base_env=env,
-         )
-     elif normalized_username:
--        _append_git_process_config(env, "credential.username", normalized_username)
-+        append_git_process_config(env, "credential.username", normalized_username)
-+
-+    env = overlay_parser_subprocess_env(
-+        ParserNetworkContext(ParserNetworkOperation.GIT_COMMAND, repo_url),
-+        env,
-+        request_validator=ensure_public_remote_target,
-+    )
- 
-     command = ["git", "ls-remote", "--exit-code", repo_url]
-     if normalized_branch:
-```
-
-**File**: `openviking/service/resource_service.py` (modified, +10/-8)
-```diff
-@@ -86,7 +86,7 @@
- )
- from openviking.utils.ingest_options import IngestOptions
- from openviking.utils.media_processor import _smart_stem
--from openviking.utils.network_guard import ensure_public_remote_target
-+from openviking.utils.network_guard import RequestValidator, ensure_public_remote_target
- from openviking.utils.path_safety import normalize_storage_target_uri
- from openviking.utils.resource_processor import ResourceProcessor
- from openviking.utils.skill_processor import SkillProcessingPreparation, SkillProcessor
-@@ -1174,6 +1174,7 @@ async def _prepare_standard_source_plan(
-             source_info = await self._preflight_git_source(
-                 path,
-                 auth_config=preflight_git_auth,
-+                request_validator=processor_kwargs.get("request_validator"),
-                 branch=processor_kwargs.get("branch") or processor_kwargs.get("ref"),
-                 commit=processor_kwargs.get("commit"),
-             )
-@@ -1663,6 +1664,7 @@ async def _preflight_git_source(
-         source: str,
-         *,
-         auth_config: Optional[GitHttpAuthConfig] = None,
-+        request_validator: Optional[RequestValidator] = None,
-         branch: Optional[str] = None,
-         commit: Optional[str] = None,
-     ) -> _ResourceSourceInfo:
-@@ -1692,15 +1694,15 @@ async def _preflight_git_source(
-             ref = "HEAD"
-             ls_remote_args = ["git", "ls-remote", repo_url, "HEAD"]
- 
-+        env = build_git_http_auth_env(auth_config, repo_url) if auth_config is not None else None
-+        env = overlay_parser_subprocess_env(
-+            ParserNetworkContext(ParserNetworkOperation.GIT_COMMAND, repo_url),
-+            env,
-+            request_validator=request_validator,
-+        )
-+
-         proc = None
-         try:
--            env = (
--                build_git_http_auth_env(auth_config, repo_url) if auth_config is not None else None
--            )
--            env = overlay_parser_subprocess_env(
--                ParserNetworkContext(ParserNetworkOperation.GIT_COMMAND, repo_url),
--                env,
--            )
-             proc = await asyncio.create_subprocess_exec(
-                 *ls_remote_args,
-                 env=env,
-```
-
-**File**: `openviking/utils/git_auth.py` (modified, +7/-7)
-```diff
-@@ -107,7 +107,7 @@ def git_http_basic_auth_header(config: GitHttpAuthConfig) -> str:
-     return f"Authorization: Basic {encoded}"
- 
- 
--def _append_git_process_config(env: dict[str, str], key: str, value: str) -> None:
-+def append_git_process_config(env: dict[str, str], key: str, value: str) -> None:
-     """Append a process-local Git config entry without putting it in argv."""
- 
-     try:
-@@ -130,21 +130,21 @@ def build_git_http_auth_env(
-     env = dict(os.environ if base_env is None else base_env)
-     env["GIT_TERMINAL_PROMPT"] = "0"
-     env["GCM_INTERACTIVE"] = "Never"
--    _append_git_process_config(env, "credential.helper", "")
--    _append_git_process_config(env, f"credential.{normalized_repo_url}.helper", "")
-+    append_git_process_config(env, "credential.helper", "")
-+    append_git_process_config(env, f"credential.{normalized_repo_url}.helper", "")
-     # Clear inherited extraHeader values before adding the one request-local
-     # Authorization value. Git treats extraHeader as multi-valued otherwise.
--    _append_git_process_config(env, "http.extraHeader", "")
-+    append_git_process_config(env, "http.extraHeader", "")
-     scoped_extra_header = f"http.{normalized_repo_url}.extraHeader"
--    _append_git_process_config(env, scoped_extra_header, "")
--    _append_git_process_config(
-+    append_git_process_config(env, scoped_extra_header, "")
-+    append_git_process_config(
-         env,
-         scoped_extra_header,
-         git_http_basic_auth_header(config),
-     )
-     # Refuse redirects at the same URL-specific precedence as the header, so
-     # inherited per-repository config cannot move it to another host or HTTP.
--    _append_git_process_config(
-+    append_git_process_config(
-         env,
-         f"http.{normalized_repo_url}.followRedirects",
-         "false",
-```
-
----
-
-### Incident Patch 3: `c6def608` (2026-11-11)
-**Commit Message**: fix(react): restore VikingBot message layout and references (#7460)
-
-* fix(react): restore VikingBot message layout and references
-
-Keep user bubbles content-sized within a right-aligned message group and render attachments outside the bubble. Restore full-path file and directory tags with host-owned open/remove callbacks and keyboard-accessible overflow controls.
-
-* fix(react): preserve fallback popover tab navigation
-
-Bridge Tab and Shift+Tab across the portalled reference controls without moving focus on hover. Let forward Tab resume beside the trigger after the last control, and only emit the native popover attribute when supported. Exercise real key events in the fallback regressions.
-
-**File**: `frontend/.changeset/yummy-eggs-yell.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+Fix VikingBot user-message alignment by placing width limits on the message group and keeping attachments outside the bubble. Restore file and directory reference tags with full paths, type icons, open/remove actions, and accessible overflow controls. Standalone composers now accept `onOpenUri` for selected references.
-```
-
-**File**: `frontend/docs/docs/_demos/viking-bot-references.tsx` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+import { useLang } from '@rspress/core/runtime';
-+import { useState } from 'react';
-+import { VikingBot } from '@openviking/react/components/viking-bot';
-+import type { VikingBotReference } from '@openviking/react/components/viking-bot';
-+import '@openviking/react/components/viking-bot/style.css';
-+
-+const INITIAL: VikingBotReference[] = [
-+  { name: 'project', type: 'directory', uri: 'viking://resources/project' },
-+  {
-+    name: 'README.md',
-+    type: 'file',
-+    uri: 'viking://resources/project/README.md',
-+  },
-+  {
-+    name: 'README.md',
-+    type: 'file',
-+    uri: 'viking://resources/other-project/README.md',
-+  },
-+  {
-+    name: 'report.pdf',
-+    type: 'file',
-+    uri: 'viking://resources/project/report.pdf',
-+  },
-+  {
-+    name: 'archive',
-+    type: 'directory',
-+    uri: 'viking://resources/project/archive',
-+  },
-+  {
-+    name: 'notes.md',
-+    type: 'file',
-+    uri: 'viking://resources/project/archive/notes.md',
-+  },
-+  {
-+    name: 'data.json',
-+    type: 'file',
-+    uri: 'viking://resources/project/archive/data.json',
-+  },
-+];
-+const ROWS = INITIAL.map((item) => ({
-+  ...item,
-+  kind: 'entry' as const,
-+  id: item.uri,
-+  depth: 0,
-+}));
-+
-+export default function VikingBotReferences() {
-+  const lang = useLang() === 'zh' ? 'zh' : 'en';
-+  const text = {
-+    zh: { reset: '重置示例引用' },
-+    en: { reset: 'Reset example references' },
-+  }[lang];
-+  const [selected, setSelected] =
-+    useState<readonly VikingBotReference[]>(INITIAL);
-+  const [draft, setDraft] = useState('');
-+  const [result, setResult] = useState('');
-+  return (
-+    <>
-+      <button type="button" onClick={() => setSelected(INITIAL)}>
-+        {text.reset}
-+      </button>
-+      <div style={{ height: 390 }}>
-+        <VikingBot
-+          locale={lang === 'zh' ? 'zh-CN' : 'en-US'}
-+          messages={[]}
-+          emptyState={null}
-+          draft={draft}
-+          onDraftChange={setDraft}
-+          references={{ rows: ROWS, selected, onChange: setSelected }}
-+          onOpenUri={setResult}
-+          onSend={(value) => setResult(JSON.stringify(value, null, 2))}
-+        />
-+      </div>
-+      <output
-+        aria-live="polite"
-+        style={{
-+          display: 'block',
-+          whiteSpace: 'pre-wrap',
-+          overflowWrap: 'anywhere',
-+        }}
-+      >
-+        {result}
-+      </output>
-+    </>
-+  );
-+}
-```
-
-**File**: `frontend/docs/docs/_demos/viking-bot-user-messages.tsx` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+import { useLang } from '@rspress/core/runtime';
-+import { useState } from 'react';
-+import { VikingBot } from '@openviking/react/components/viking-bot';
-+import type { VikingBotMessage } from '@openviking/react/components/viking-bot';
-+import '@openviking/react/components/viking-bot/style.css';
-+
-+const messages: readonly VikingBotMessage[] = [
-+  {
-+    id: 'short',
-+    role: 'user',
-+    createdAt: '2026-11-09T03:04:00Z',
-+    parts: [{ type: 'text', text: '你好' }],
-+  },
-+  {
-+    id: 'with-files',
-+    role: 'user',
-+    createdAt: '2026-11-09T03:05:00Z',
-+    parts: [
-+      {
-+        type: 'attachment',
-+        name: 'README.md',
-+        uri: 'viking://resources/README.md',
-+      },
-+      {
-+        type: 'attachment',
-+        name: 'notes.md',
-+        uri: 'viking://resources/notes.md',
-+      },
-+      {
-+        type: 'attachment',
-+        name: 'report.pdf',
-+        uri: 'viking://resources/report.pdf',
-+      },
-+      {
-+        type: 'text',
-+        format: 'plain',
-+        text: '请整理这些资料，并保留来源。\nhttps://example.com/resources/a-long-path-without-spaces-to-check-message-wrapping',
-+      },
-+    ],
-+  },
-+  {
-+    id: 'files-only',
-+    role: 'user',
-+    createdAt: '2026-11-09T03:06:00Z',
-+    parts: [
-+      {
-+        type: 'attachment',
-+        name: 'summary.md',
-+        uri: 'viking://resources/summary.md',
-+      },
-+    ],
-+  },
-+];
-+
-+export default function VikingBotUserMessages() {
-+  const locale = useLang() === 'zh' ? 'zh-CN' : 'en-US';
-+  const [result, setResult] = useState('');
-+  return (
-+    <>
-+      <div style={{ height: 440 }}>
-+        <VikingBot
-+          messages={messages}
-+          locale={locale}
-+          onOpenUri={setResult}
-+          onCopy={setResult}
-+        />
-+      </div>
-+      <output
-+        aria-live="polite"
-+        style={{
-+          display: 'block',
-+          overflowWrap: 'anywhere',
-+          whiteSpace: 'pre-wrap',
-+        }}
-+      >
-+        {result}
-+      </output>
-+    </>
-+  );
-+}
-```
-
-**File**: `frontend/docs/docs/en/components/viking-bot.mdx` (modified, +19/-1)
-```diff
-@@ -16,6 +16,14 @@ The `tool` and `tool_result` parts accept `results: readonly VikingBotToolResult
- 
- ```
- 
-+### User message layout
-+
-+User messages follow the reference message-group structure: the outer group owns the width limit and right alignment, attachments appear outside the content-sized bubble, and attachment-only messages show the timestamp and actions without an empty bubble. This example uses fixed data; attachment and copy actions only display their callback value below it.
-+
-+```tsx file="../../_demos/viking-bot-user-messages.tsx" preview
-+
-+```
-+
- ## How the two hosts connect
- 
- | Difference          | Handling                                                                |
-@@ -41,6 +49,16 @@ The host supplies `quickInputs` as `{ id, label, prompt, icon? }`; no business c
- 
- Input extensions also work with standalone `VikingBotComposer`. Customize welcome, session, reference, loading and removal text through `labels`.
- 
-+### File and directory references
-+
-+Selected references are separate from uploaded attachments. Each tag shows a file-type or directory icon and the full URI, with ellipsis and a full-path title when space is limited. The first five tags remain visible; `+N` reveals the rest on hover, focus, or click. Each tag can be removed independently, and `onOpenUri` enables opening the selected file or directory. Standalone `VikingBotComposer` also accepts `onOpenUri`. Sending keeps references in `VikingBotDraft.references` without rewriting the draft text.
-+
-+This example uses fixed public data and never accesses real resources; open and send actions only display their callback values.
-+
-+```tsx file="../../_demos/viking-bot-references.tsx" preview
-+
-+```
-+
- ## Props
- 
- ### VikingBotProps
-@@ -70,7 +88,7 @@ Input extensions also work with standalone `VikingBotComposer`. Customize welcom
- | `onAttachmentRemove` | `(attachment: VikingBotAttachment) => void`      | —                 | Removes an attachment.                                                                              |
- | `onSend`             | `(draft: VikingBotDraft) => void`                | —                 | Reports the send intent; omission disables sending.                                                 |
- | `onCancel`           | `() => void`                                     | —                 | Stops the streaming reply.                                                                          |
--| `onOpenUri`          | `(uri: string) => void`                          | —                 | Opens a resource referenced by a message.                                                           |
-+| `onOpenUri`          | `(uri: string) => void`                          | —                 | Opens a message resource or a selected file or directory reference in the composer.                 |
- | `onCopy`             | `(text: string) => void`                         | —                 | Handles message-text copy; user messages use Ark copy when omitted.                                 |
- | `onMessageAction`    | `(messageId: string, actionKey: string) => void` | —                 | Fires a message action.                                                                             |
- | `labels`             | `VikingBotLabels`                                | locale            | Replaceable copy.                                                                                   |
-```
-
-**File**: `frontend/docs/docs/zh/components/viking-bot.mdx` (modified, +19/-1)
-```diff
-@@ -16,6 +16,14 @@
- 
- ```
- 
-+### 用户消息布局
-+
-+用户消息沿用参考版的消息组结构：外层消息组统一限宽并靠右，附件在气泡外显示，正文气泡按内容收缩。仅有附件时不生成空气泡，时间与操作区单独显示。以下为固定示例数据，点击附件或复制按钮只在示例下方显示回调内容。
-+
-+```tsx file="../../_demos/viking-bot-user-messages.tsx" preview
-+
-+```
-+
- ## 两版宿主怎么接
- 
- | 差异           | 处理方式                                                             |
-@@ -41,6 +49,16 @@
- 
- 这些能力也可直接传给独立 `VikingBotComposer`。标题、说明、会话、引用、加载及移除按钮的文案均通过 `labels` 定制。
- 
-+### 文件与目录引用
-+
-+输入区引用与上传附件分别展示。引用标签显示文件类型或目录图标及完整 URI，路径过长时省略并保留完整标题；默认展示前 5 项，其余通过 `+N` 在悬停、聚焦或点击时展开。标签可独立移除，传入 `onOpenUri` 后可打开文件或目录。独立 `VikingBotComposer` 同样支持 `onOpenUri`。发送时引用仍保存在 `VikingBotDraft.references`，不改写草稿文本。
-+
-+以下使用固定公开示例数据，不访问真实资源；打开与发送操作仅展示回调内容。
-+
-+```tsx file="../../_demos/viking-bot-references.tsx" preview
-+
-+```
-+
- ## 属性
- 
- ### VikingBotProps
-@@ -70,7 +88,7 @@
- | `onAttachmentRemove` | `(attachment: VikingBotAttachment) => void`      | —                | 移除一个附件。                                                        |
- | `onSend`             | `(draft: VikingBotDraft) => void`                | —                | 上报发送意图；不传时不能发送。                                        |
- | `onCancel`           | `() => void`                                     | —                | 停止正在进行的回复。                                                  |
--| `onOpenUri`          | `(uri: string) => void`                          | —                | 打开消息中引用的资源。                                                |
-+| `onOpenUri`          | `(uri: string) => void`                          | —                | 打开消息中的资源或输入区已选中的文件、目录引用。                      |
- | `onCopy`             | `(text: string) => void`                         | —                | 接管消息文本复制；省略时用户消息使用 Ark 内置复制。                   |
- | `onMessageAction`    | `(messageId: string, actionKey: string) => void` | —                | 触发一条消息声明的动作。                                              |
- | `labels`             | `VikingBotLabels`                                | locale           | 可替换文案。                                                          |
 ```
 
 **File**: `frontend/packages/icons/README.md` (modified, +7/-0)
 ```diff
-@@ -66,6 +66,13 @@ React imports these SVG files directly during its build.
- 
- `viking-bot/remove.svg` is an OpenViking-authored close glyph under the repository license.
- 
-+- `svg/viking-bot/context-folder.svg` and `context-close.svg` — reference-tag
-+  artwork from the user-supplied OpenViking console source at
-+  `release/openviking/2026-11-12`, commit `602a7382d`, under
-+  `vikingbot/assets/`. They follow this repository's license. Paths, viewBox and
-+  stroke geometry are unchanged; fixed paint is replaced with `currentColor`
-+  to follow the host theme. File references reuse the file-type assets above.
+@@ -28,6 +28,13 @@ React imports these SVG files directly during its build. This file records where
+   ISC; the same artwork is present in 0.0.134. The 14 × 14 viewBox, path and
+   1.2-unit `currentColor` stroke are unchanged. Only the runtime wrapper is
+   removed; the React package bundles the local SVG through SVGR.
++- `svg/file-browser/` — the search dialog's filter glyph, the toolbar's refresh
++  glyph and the empty search state's artwork. `search-filter.svg` and
++  `refresh-cw-01.svg` keep the design's geometry with `currentColor` paint;
++  `search-empty.svg` redraws the design's 258 × 140 dashed grid, document outline
++  and magnifier in the style of `svg/console/history-empty.svg`, with its colours
++  mapped to theme variables. See that directory's README.
 +
- - `svg/viking-bot/tool.svg` — unchanged `IconTool` artwork from the public MIT-licensed `@arco-design/web-react` 2.66.18, matching the tool row in `vikingdb-fe` release/openviking/2026-11-12.
+ - `svg/scope-switcher/` — the chevron and check assets were supplied by the
+   designer. Chevron is 14 × 14 and check is 16 × 16. Their paint was changed from
+   the design's fixed colours to `currentColor` so a host theme can recolour them;
+```
+
+**File**: `frontend/packages/icons/svg/file-browser/README.md` (modified, +9/-0)
+```diff
+@@ -3,3 +3,12 @@
+ - `search-filter.svg` comes from the supplied `Frame.svg`. The 28 × 28
+   viewBox and paths are unchanged. Its stroke inherits the button's theme color.
+   The artwork follows the repository license.
++- `refresh-cw-01.svg` is the console's refresh glyph. The 14 × 14 viewBox and
++  paths are unchanged; its stroke inherits the button's theme color.
++- `search-empty.svg` is the empty search state's artwork, redrawn in the style of
++  `svg/console/history-empty.svg`: the same 258 × 140 canvas, document outline,
++  fold and magnifier geometry, but the design's five per-row grid paths collapsed
++  into one dashed grid masked by a radial fade, and the white backdrop dropped so
++  the dialog's own surface shows through. The design's fixed colours become theme
++  variables: `--ov-ui-color-border-2` for the grid, `--ov-ui-color-border-3` for
++  the sheet behind, `currentColor` for the front sheet and glyph.
+```
+
+**File**: `frontend/packages/icons/svg/file-browser/search-empty.svg` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="258" height="140" viewBox="0 0 258 140" fill="none">
++  <g
++    opacity=".36"
++    stroke="var(--ov-ui-color-border-2, var(--ov-ui-border-2-default))"
++    stroke-dasharray="2 2"
++    style="
++      mask-image: radial-gradient(
++        ellipse at center,
++        currentColor,
++        transparent 72%
++      );
++    "
++  >
++    <path d="M0 28H258M0 56H258M0 84H258M0 112H258M37 0V140M75 0V140M117 0V140M159 0V140M199 0V140M235 0V140" />
++  </g>
++  <path
++    d="M109.974 93.6485V43.9883C109.974 39.57 113.555 35.9883 117.974 35.9883H151.613C154.247 35.9883 156.712 37.2844 158.204 39.4541L165.495 50.0515C166.412 51.3855 166.904 52.9665 166.904 54.5857V93.6485C166.904 98.0667 163.322 101.648 158.904 101.648H117.974C113.555 101.648 109.974 98.0667 109.974 93.6485Z"
++    fill="var(--ov-ui-color-bg-1, var(--ov-ui-bg-1-default))"
++    stroke="var(--ov-ui-color-border-3, var(--ov-ui-border-3-default))"
++    stroke-width="1.5"
++  />
++  <path
++    d="M108.68 107.328H151.207C155.625 107.328 159.207 103.747 159.207 99.3283V60.8783C159.207 58.9881 158.537 57.1589 157.317 55.715L148.037 44.732C146.517 42.9331 144.281 41.8954 141.926 41.8954H108.68C104.262 41.8954 100.68 45.4771 100.68 49.8954V99.3283C100.68 103.747 104.262 107.328 108.68 107.328Z"
++    fill="var(--ov-ui-color-bg-1, var(--ov-ui-bg-1-default))"
++    stroke="currentColor"
++    stroke-width="1.5"
++    stroke-linecap="round"
++  />
++  <path
++    d="M144.3 41.8954V48.2817C144.3 54.3568 149.225 59.2817 155.3 59.2817H159.204"
++    stroke="currentColor"
++    stroke-width="1.5"
++  />
++  <circle
++    cx="126.114"
++    cy="73.6377"
++    r="11.0244"
++    stroke="currentColor"
++    stroke-width="1.5"
++    stroke-linecap="round"
++  />
++  <path
++    d="M135.746 79.8945L141.385 85.5332C142.195 86.3438 142.195 87.6581 141.385 88.4687C140.574 89.2794 139.26 89.2794 138.449 88.4687L132.811 82.83"
++    stroke="currentColor"
++    stroke-width="1.5"
++    stroke-linecap="round"
++  />
++  <g
++    stroke="currentColor"
++    stroke-width="1.5"
++    stroke-linecap="round"
++    opacity=".8"
++  >
++    <path d="M129.019 58.2283L129.168 53.9442" />
++    <path d="M133.498 59.8939L136.088 56.4783" />
++    <path d="M137.098 63.4613L140.95 61.5799" />
++  </g>
++</svg>
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/file-browser-search-mode-menu.tsx` (modified, +62/-36)
+```diff
+@@ -1,64 +1,90 @@
+-import { useEffect, useRef, useState } from 'react';
++import { useCallback, useEffect } from 'react';
++import type { RefObject } from 'react';
  
- - `svg/directory-tour/` — the folder and up-right arrow artwork from the
+ import { SEARCH_MODES } from './search-types.js';
+ import type { SearchMode } from './search-types.js';
+ import type { ResolvedLabels } from './file-browser-labels.js';
+ 
+ /**
+- * 模式下拉：四种检索方式各一行，带一句说明。选中项打勾。
++ * 模式下拉的内容：四种检索方式各一行，带一句说明，选中项打勾。
+  *
+- * 展开状态由调用方持有——结果区的「切换」按钮与下拉本身是两个触发器，共用一个
+- * 开关比各自维护一份状态更简单。
++ * 浮层本身由结果区的 `Popover` 提供——它挂到 `document.body` 并用视口坐标定位，
++ * 结果区裁掉的溢出不会波及菜单。这里只画内容，另外补两件事：挂载后把焦点交给
++ * 调用方（键盘打开时移进第一项），以及点击菜单外时关闭。
+  *
+- * The mode menu: one row per retrieval mode with a one-line description, and a check
+- * on the current one.
++ * The mode menu's content: one row per retrieval mode with a one-line description and a
++ * check on the current one.
+  *
+- * The open state belongs to the caller: the result header's switch button and the menu
+- * are two triggers, and sharing one flag is simpler than keeping two.
++ * The surface comes from the result area's `Popover`, which portals into `document.body`
++ * and positions in viewport coordinates, so the results area's clipping cannot reach it.
++ * This draws the content, hands the node to the caller after mount (so a keyboard opening
++ * can move focus to the first item) and closes on Escape. Outside clicks stay with
++ * `Popover`, which already excludes both the surface and the trigger.
+  */
+ export interface FileBrowserSearchModeMenuProps {
+-  open: boolean;
+   value: SearchMode;
+   text: ResolvedLabels;
++  menuRef?: RefObject<HTMLDivElement | null>;
+   onSelect: (mode: SearchMode) => void;
+-  onClose: () => void;
++  /** 菜单挂载后调用，供调用方移动焦点。 Called after mount so the caller can focus. */
++  onMounted?: () => void;
++  /** 点击菜单外部时调用。 Called on a click outside the menu. */
++  onDismiss: () => void;
+ }
+ 
+ export function FileBrowserSearchModeMenu({
+-  open,
+   value,
+   text,
++  menuRef,
+   onSelect,
+-  onClose,
++  onMounted,
++  onDismiss,
+ }: FileBrowserSearchModeMenuProps) {
+-  const ref = useRef<HTMLDivElement>(null);
+-  const [active, setActive] = useState(value);
+-
+-  useEffect(() => {
+-    setActive(value);
+-  }, [value, open]);
+-
+-  // useEffect 必要性：与 document 的指针事件同步。下拉挂在结果区里，点击外部
+-  // 关闭必须监听整个文档——只监听自己的节点收不到外部点击。卸载或关闭时移除。
++  // 回调 ref 必须稳定：每次渲染新建函数会让 React 先 `ref(null)` 再 `ref(node)`，
++  // 而 `onMounted` 在挂载回调里移焦点，重复触发会让焦点反复跳动。
++  //
++  // The callback ref must be stable: a fresh function per render makes React call
++  // `ref(null)` then `ref(node)`, and since `onMounted` moves focus from that callback,
++  // repeated firing would bounce focus around.
++  const attachMenu = useCallback(
++    (node: HTMLDivElement | null) => {
++      if (menuRef) menuRef.current = node;
++      if (node) onMounted?.();
++    },
++    [menuRef, onMounted],
++  );
++  // 点击外部关闭交给 `Popover`：它的点击态已经同时排除浮层与触发按钮，点「切换」
++  // 才能正常切换关闭。这里再挂一份只排除菜单的 `pointerdown` 监听，会把「切换」
++  // 当成外部点击——先关掉，随后的 click 又把它打开，菜单永远关不上。
++  //
++  // Outside clicks belong to `Popover`, whose click trigger already excludes both the
++  // surface and its trigger, so clicking the switch toggles it closed. A second
++  // `pointerdown` listener here that excludes only the menu would treat the switch as an
++  // outside click — closing on pointerdown and reopening on the following click, so the
++  // menu could never be dismissed by clicking it again.
++  //
++  // useEffect 必要性：Esc 要监听整个文档。菜单容器是 `role="group"`，给它挂键盘
++  // 监听既不合语义，也拦不住焦点在按钮上时的冒泡。捕获阶段先于弹窗的 Esc 处理，
++  // 一次 Esc 只关菜单。卸载时移除。
+   //
+-  // Syncs with the document's pointer events. The menu sits inside the result area,
+-  // so closing on an outside click needs a document-level listener: a listener on its
+-  // own node never sees that click. Removed on unmount or close.
++  // The Escape listener has to sit on the document. The menu is a `role="group"`, so a
++  // key listener on it is both wrong semantically and unable to intercept events while
++  // focus sits on a button. Capture runs before the dialog's own Escape handler, so one
++  // Escape closes the menu only. Removed on unmount.
+   useEffect(() => {
+-    if (!open) return;
+-    const onPointerDown = (event: PointerEvent) => {
+-      if (!(event.target instanceof Node)) return;
+-      if (ref.current?.contains(event.target)) return;
+-      onClose();
++    const onKeyDown = (event: KeyboardEvent) => {
++      if (event.key !== 'Escape' || event.defaultPrevented) return;
++      event.preventDefault();
++      event.stopPropagation();
++      onDismiss();
+     };
+-    document.addEventListener('pointerdown', onPointerDown);
+-    return () => document.removeEventListener('pointerdown', onPointerDown);
+-  }, [open, onClose]);
++    document.addEventListener('keydown', onKeyDown, true);
++    return () => document.removeEventListener('keydown', onKeyDown, true);
++  }, [onDismiss]);
+ 
+-  if (!open) return null;
+   return (
+     <div
+-      ref={ref}
++      ref={attachMenu}
+       className="ov-file-browser-search__menu"
+       role="g
 ```
 
-**File**: `frontend/packages/icons/svg/viking-bot/context-close.svg` (added, +5/-0)
+**File**: `frontend/packages/react/src/modules/file-browser/file-browser-search-mode-row.tsx` (modified, +135/-15)
 ```diff
-@@ -0,0 +1,5 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="x-close">
-+<path id="Icon" d="M10.5 3.5L7 7M7 7L3.5 10.5M7 7L3.5 3.5M7 7L10.5 10.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>
-+</g>
-+</svg>
+@@ -1,47 +1,167 @@
+-import { useState } from 'react';
++import { useCallback, useRef, useState } from 'react';
++import type { KeyboardEvent, RefObject } from 'react';
++
++import { Popover } from '../../shared/primitives/popover/popover.js';
+ import { FileBrowserSearchModeMenu } from './file-browser-search-mode-menu.js';
+ import type { SearchMode } from './search-types.js';
+ import type { ResolvedLabels } from './file-browser-labels.js';
+ 
++/**
++ * 结果区顶部的模式行：数量、模式 chip、检索方式说明与切换入口。
++ *
++ * 顺序与设计稿一致：先给数量，再给当前模式，最后才是切换入口。
++ *
++ * 下拉挂在「切换」按钮上，由 `Popover` 渲染到 `document.body`：结果区为了固定
++ * 头部会裁掉溢出，菜单留在原地时在窄屏会被裁掉大半。菜单 portal 出去后不在弹窗
++ * 的 DOM 子树里，`Popover` 会把它登记进弹窗的焦点范围，Tab 因此仍能进入。
++ *
++ * 键盘打开（Enter、Space、↓ 进第一项，↑ 进最后一项）时焦点移进菜单；关闭时若
++ * 焦点还在菜单里就还给「切换」按钮——否则 portal 的菜单虽然能被 Tab 到，键盘
++ * 用户仍要多按几次才知道菜单开了。
++ *
++ * The mode row above the results: the count, the mode chip, what the mode retrieves
++ * and the switch.
++ *
++ * The order follows the design: the count first, then the current mode, then the
++ * switch.
++ *
++ * The menu hangs off the switch button and is rendered by `Popover` into
++ * `document.body`: the results area clips its overflow so the header can stay put, and a
++ * menu left in place would lose most of itself on a narrow viewport. Once portaled it is
++ * outside the dialog's DOM subtree, so `Popover` registers it into the dialog's focus
++ * scope and Tab can still reach it.
++ *
++ * Opening from the keyboard (Enter, Space and ↓ land on the first item, ↑ on the last)
++ * moves focus into the menu; closing returns it to the switch when it was inside the
++ * menu. Without that, the portaled menu would be reachable but a keyboard user would
++ * have no sign it had opened.
++ */
+ export interface FileBrowserSearchModeRowProps {
+   mode: SearchMode;
+   count: number;
+   text: ResolvedLabels;
++  /** 「切换」不在时的焦点去处；选完模式会立刻重新检索，本行在加载态里不渲染。 */
++  fallbackFocusRef?: RefObject<HTMLElement | null>;
+   onSelectMode: (mode: SearchMode) => void;
+ }
+ 
+ export function FileBrowserSearchModeRow({
+   mode,
+   count,
+   text,
++  fallbackFocusRef,
+   onSelectMode,
+ }: FileBrowserSearchModeRowProps) {
+   const [menuOpen, setMenuOpen] = useState(false);
++  const anchorRef = useRef<HTMLButtonElement>(null);
++  // 菜单内容在 `Popover` 里，节点要等它挂载后才拿得到；用 ref 交给它的回调，
++  // 不额外存 state——焦点只在打开那一刻移动一次。
++  //
++  // The menu lives inside `Popover` and only exists after it mounts; hand the node over
++  // through a ref rather than extra state, since focus moves exactly once per opening.
++  const menuRef = useRef<HTMLDivElement | null>(null);
++  const pendingFocus = useRef<'first' | 'last' | null>(null);
++
++  const focusPendingItem = useCallback(() => {
++    const edge = pendingFocus.current;
++    if (!edge) return;
++    pendingFocus.current = null;
++    const items = menuRef.current?.querySelectorAll<HTMLButtonElement>(
++      'button:not(:disabled)',
++    );
++    const target = edge === 'first' ? items?.[0] : items?.[items.length - 1];
++    target?.focus();
++  }, []);
++
++  // 焦点去处取决于菜单怎么关的：
++  //
++  // - 选中某个模式时，`onSelectMode` 会立刻重新检索，结果区在加载态里不渲染模式行，
++  //   「切换」按钮随这一行卸载，`focus()` 会落空并把焦点丢给 `body`。所以这里交给
++  //   搜索输入框。
++  // - Esc 与点击外部时这一行还在，焦点回到「切换」；焦点本来就不在菜单里（用户点
++  //   了别处）则不动，免得把焦点从刚点的地方抢走。
++  //
++  // Where focus goes depends on how the menu closed:
++  //
++  // - Picking a mode triggers a new search at once, and the results area renders no mode
++  //   row while loading, so the switch unmounts with that row and `focus()` would land
++  //   nowhere, dropping focus to `body`. The search input takes it instead.
++  // - Escape and outside clicks leave the row in place, so focus returns to the switch —
++  //   unless it was never inside the menu (the user clicked elsewhere), where moving it
++  //   would steal focus from where they just clicked.
++  const close = useCallback(
++    (focusTarget: 'switch' | 'fallback' = 'switch') => {
++      const inside =
++        !!menuRef.current?.contains(document.activeElement) ||
++        pendingFocus.current !== null;
++      pendingFocus.current = null;
++      setMenuOpen(false);
++      if (focusTarget === 'fallback') {
++        fallbackFocusRef?.current?.focus();
++        return;
++      }
++      if (inside) anchorRef.current?.focus();
++    },
++    [fallbackFocusRef],
++  );
++
++  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
++    if (event.key === 'Escape' && menuOpen) {
++      event.preventDefault();
++      close();
++      return;
++    }
++    if (!['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(event.key)) return;
++    if (menuOpen) return;
++    // Enter 与 Space 的默认行为是点击，这里显式接管，焦点移动只发生一次。
++    // Enter and Space would otherwise click; take over so focus moves exactly once.
++    event.preventDefault();
++    pendingFocus.current = event.key === 'ArrowUp' ? 'last' : 'first';
++    setMenuOpen(true);
++  };
++
+   return (
+     <div className="ov-file-browser-search__summary">
+       <span>{text.searchResultCount?.(count)}</span>
+       <span aria-hidden="true">・</span>
+-      <span>{text.searchVia
 ```
 
-**File**: `frontend/packages/icons/svg/viking-bot/context-folder.svg` (added, +5/-0)
+---
+
+### Incident Patch 2: `297847cd` (2026-11-13)
+**Commit Message**: fix(opencode): load bundled skills on OpenCode v2 and run v2 prompt context concurrently (#7582)
+
+* fix(opencode): register bundled skills through the v2 skill editor
+
+The v2 entrypoint called draft.source() on the skill editor, which the
+OpenCode v2 plugin API does not have (the editor exposes list/get/add/
+update/remove). It was also unreachable: the host batches plugin setup, so
+the MCP transform callback had not run yet and `registered` was still
+false when the skill transform was gated on it. The bundled skills were
+never loaded.
+
+Read the bundled SKILL.md files at setup and add them through the public
+editor in a transform registered at setup time, reading the MCP decision
+inside the callback. A missing directory or unparsable skill is logged and
+skipped so it cannot throw into setup and disable the plugin.
+
+Co-authored-by: stefanielizeth73-art <[REDACTED_EMAIL]>
+
+* fix(opencode): run v2 session context and recall concurrently
+
+prepareV2Prompt awaited the session-start injection before starting
+recall, so the first prompt of each v2 session waited for both round
+trips back to back while the prompt hook held the message. The v1
+chat.message path already runs them together. Sta
+
+**File**: `examples/opencode-plugin/lib/v2-plugin.mjs` (modified, +42/-22)
+```diff
+@@ -1,3 +1,5 @@
++import { readFile, readdir } from "node:fs/promises"
++import { join } from "node:path"
+ import { isRecallEnabled } from "./shared/recall-core.mjs"
+ import { createOpenVikingV2McpConfig, openVikingSkillsDir } from "./mcp-config.mjs"
+ import { contextMessageEvents, normalizeV2LifecycleEvent } from "./v2-events.mjs"
+@@ -39,15 +41,19 @@ export async function startV2Plugin(ctx, runtime, { pluginRoot }) {
+   if (config.mcp.enabled && ctx?.mcp?.transform) {
+     let registered = false
+     await ctx.mcp.transform((editor) => {
+-      const current = editor.get?.("openviking")
+-      if (current?.disabled === true) return
+-      editor.set("openviking", createOpenVikingV2McpConfig(pluginRoot))
+-      registered = true
++      registered = editor.get?.("openviking")?.disabled !== true
++      if (registered) editor.set("openviking", createOpenVikingV2McpConfig(pluginRoot))
+     })
+     log("INFO", "mcp", "Registered OpenViking MCP server for OpenCode v2")
+-    if (registered && ctx?.skill?.transform) {
+-      await ctx.skill.transform((draft) => {
+-        draft.source({ type: "directory", path: openVikingSkillsDir(pluginRoot) })
++    if (ctx?.skill?.transform) {
++      const skills = await loadBundledSkills(openVikingSkillsDir(pluginRoot))
++      // Transforms run again after setup, so read the MCP decision on each run.
++      await ctx.skill.transform((editor) => {
++        if (!registered) return
++        // A user skill overrides a bundled one by ID or by name; the host keys
++        // skills by ID only, so a same-name skill would otherwise be listed twice.
++        const taken = new Set(editor.list().flatMap((skill) => [skill.id, skill.name]))
++        for (const skill of skills) if (!taken.has(skill.id) && !taken.has(skill.name)) editor.add(skill)
+       })
+     }
+   } else if (!config.mcp.enabled) {
+@@ -160,6 +166,29 @@ export async function startV2Plugin(ctx, runtime, { pluginRoot }) {
+   }
+ }
+ 
++async function loadBundledSkills(root) {
++  const entries = await readdir(root, { withFileTypes: true }).catch((error) => {
++    logHookError("skill.load", error)
++    return []
++  })
++  const skills = []
++  for (const entry of entries.filter((item) => item.isDirectory())) {
++    const path = join(root, entry.name, "SKILL.md")
++    try {
++      const text = await readFile(path, "utf8")
++      const frontmatter = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/)
++      // Bundled descriptions are a plain scalar or a folded (`>`) block.
++      const [, head = "", folded = ""] = frontmatter?.[1].match(/^description:(.*)((?:\r?\n[ \t]+.*)*)/m) ?? []
++      const description = (/^\s*>-?\s*$/.test(head) ? folded : head).trim().replace(/\s+/g, " ")
++      if (!description) throw new Error(`no description in ${path}`)
++      skills.push({ id: entry.name, name: entry.name, description, path, content: text.slice(frontmatter[0].length) })
++    } catch (error) {
++      logHookError("skill.load", error)
++    }
++  }
++  return skills
++}
++
+ async function consumeEvents(ctx, signal, handle) {
+   try {
+     for await (const event of ctx.event.subscribe({ signal })) {
+@@ -187,21 +216,12 @@ export async function prepareV2Prompt(event, {
+   const text = event?.prompt?.text
+   const parts = typeof text === "string" && text.trim() ? [{ type: "text", text }] : []
+   const input = { sessionID, messageID, directory }
+-  const blocks = []
+-  try {
+-    const sessionBlock = await sessionInject.buildSessionContext(input)
+-    if (sessionBlock) blocks.push(sessionBlock)
+-  } catch (error) {
+-    logHookError("session.prompt.profile", error)
+-  }
+-  if (recallEnabled) {
+-    try {
+-      const recallBlock = await recall.buildRelevantMemories(input, parts)
+-      if (recallBlock) blocks.push(recallBlock)
+-    } catch (error) {
+-      logHookError("session.prompt.recall", error)
+-    }
+-  }
++  const blocks = (await Promise.all([
++    sessionInject.buildSessionContext(input).catch((error) => logHookError("session.prompt.profile", error)),
++    recallEnabled
++      ? recall.buildRelevantMemories(input, parts).catch((error) => logHookError("session.prompt.recall", error))
++      : undefined,
++  ])).filter(Boolean)
+   if (blocks.length === 0) return
+ 
+   event.metadata = event.metadata && typeof event.metadata === "object" ? event.metadata : {}
+```
+
+**File**: `examples/opencode-plugin/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@openviking/opencode-plugin",
+-  "version": "0.5.25",
++  "version": "0.5.26",
+   "author": "@openviking",
+   "description": "Unified OpenCode plugin for OpenViking repository retrieval and long-term memory",
+   "type": "module",
+```
+
+**File**: `examples/opencode-plugin/tests/v2-plugin.test.mjs` (modified, +80/-4)
+```diff
+@@ -1,9 +1,12 @@
+ import test from "node:test"
+ import assert from "node:assert/strict"
+-import { resolve } from "node:path"
++import { fileURLToPath } from "node:url"
+ import { captureV2Context, injectV2Context, prepareV2Prompt, startV2Plugin } from "../lib/v2-plugin.mjs"
+ import { createVikingUriNotice } from "../lib/viking-uri-guard.mjs"
+ 
++const pluginRoot = fileURLToPath(new URL("..", import.meta.url))
++const BUNDLED_SKILLS = ["openviking-memory", "openviking-rule-search", "openviking-skills", "ov-experience-memory"]
++
+ function runtimeFixture(overrides = {}) {
+   const events = []
+   return {
+@@ -39,7 +42,11 @@ function contextFixture(messages = []) {
+     skillSources,
+     ctx: {
+       skill: {
+-        transform: async (callback) => callback({ source: (source) => skillSources.push(source), list: () => skillSources }),
++        transform: async (callback) => callback({
++          list: () => skillSources,
++          get: (id) => skillSources.find((skill) => skill.id === id),
++          add: (skill) => skillSources.push(skill),
++        }),
+       },
+       location: { directory: "/tmp/project" },
+       mcp: {
+@@ -61,16 +68,65 @@ function contextFixture(messages = []) {
+ test("startV2Plugin registers direct MCP tools and all v2 hooks", async () => {
+   const { runtime } = runtimeFixture()
+   const { ctx, hooks, registered, skillSources } = contextFixture()
+-  const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot: "/tmp/ov" })
++  const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot })
+ 
+-  assert.deepEqual(skillSources, [{ type: "directory", path: resolve("/tmp/ov", "skills") }])
++  assert.deepEqual(skillSources.map((skill) => skill.id).sort(), BUNDLED_SKILLS)
++  for (const skill of skillSources) {
++    assert.ok(skill.description.length > 20 && !skill.description.includes("\n"))
++    assert.match(skill.content, /^\s*# /)
++  }
+   assert.equal(registered[0][0], "openviking")
+   assert.equal(registered[0][1].type, "local")
+   assert.equal(registered[0][1].codemode, false)
+   assert.deepEqual(Object.keys(hooks).sort(), ["compaction", "context", "execute.after", "execute.before", "prompt"])
+   await cleanup()
+ })
+ 
++for (const disabled of [false, true]) {
++  test(`bundled skills follow MCP registration when transforms run after setup, disabled=${disabled}`, async () => {
++    const { runtime } = runtimeFixture()
++    const { ctx } = contextFixture()
++    const transforms = []
++    ctx.mcp.transform = async (callback) => { transforms.push(callback) }
++    ctx.skill.transform = async (callback) => { transforms.push(callback) }
++    const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot })
++    const [mcp, skill] = transforms
++    const skills = new Map()
++    mcp({ get: () => (disabled ? { disabled: true } : undefined), set: () => {} })
++    skill({ list: () => [...skills.values()], get: (id) => skills.get(id), add: (value) => skills.set(value.id, value) })
++    assert.deepEqual([...skills.keys()].sort(), disabled ? [] : BUNDLED_SKILLS)
++    await cleanup()
++  })
++}
++
++test("existing skills override bundled skills by ID or name", async () => {
++  const { runtime } = runtimeFixture()
++  const { ctx, skillSources } = contextFixture()
++  skillSources.push(
++    { id: "project-memory", name: "openviking-memory", path: "/tmp/project/.opencode/skills/project-memory/SKILL.md", content: "" },
++    { id: "openviking-skills", name: "Custom skills", path: "/tmp/project/.opencode/skills/openviking-skills/SKILL.md", content: "" },
++  )
++  const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot })
++  assert.deepEqual(skillSources.map((skill) => skill.id).sort(), [
++    "openviking-rule-search",
++    "openviking-skills",
++    "ov-experience-memory",
++    "project-memory",
++  ])
++  assert.equal(skillSources.find((skill) => skill.id === "openviking-skills").name, "Custom skills")
++  await cleanup()
++})
++
++test("a missing skills directory leaves MCP and hooks registered", async () => {
++  const { runtime } = runtimeFixture()
++  const { ctx, hooks, registered, skillSources } = contextFixture()
++  const cleanup = await startV2Plugin(ctx, runtime, { pluginRoot: "/nonexistent" })
++  assert.deepEqual(skillSources, [])
++  assert.equal(registered[0][0], "openviking")
++  assert.equal(typeof hooks.prompt, "function")
++  await cleanup()
++})
++
+ test("compaction captures messages before the host drops them and contains read failures", async () => {
+   const { runtime, events } = runtimeFixture()
+   const messages = [
+@@ -126,6 +182,26 @@ test("cleanup waits for background initialization before flushing", async () =>
+   assert.equal(flushed, true)
+ })
+ 
++test("prompt starts session context and recall together and keeps block order", async () => {
++  const started = []
++  const pending = {}
++  const call = (name) => new Promise((resolve) => {
++    started.push(name)
++    pending[name] = resolve
++  })
++  const event = { sessionID: "ses_1", messageID: "msg_1", prompt: { text: "query" } }
++  const preparing
+```
+
+---
+
+### Incident Patch 3: `dbb22428` (2026-11-13)
+**Commit Message**: fix(react): keep the quick command tooltip when the description is truncated (#7558)
+
+* fix(react): show the quick command tooltip only when a summary hides the description
+
+The empty state row prints `summary ?? description`, so a command without a
+`summary` had the same sentence in the row and in the Tooltip. Only mount the
+Tooltip when the host supplied a `summary`, which is the only case where the
+description is not already visible.
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+* fix(react): keep the quick command tooltip when the description is truncated
+
+The empty state row prints `summary ?? description` and clips it to one line
+with an ellipsis, so a command without a `summary` lost the rest of its
+description once the panel narrowed. Mount the Tooltip whenever the row cannot
+show the text in full: a `summary` hides it, or the description is truncated.
+
+Truncation is measured per description node rather than on the list, because a
+longer text can appear while the container keeps its width. The measurement
+re-runs on resize and drops the Tooltip again when the text fits.
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+* fix(react): keep the quick command tooltip subscrip
+
+**File**: `frontend/.changeset/quick-command-tooltip-summary.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
-+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<g id="24x24">
-+<path id="Vector" d="M11.9 6.2747H2.63457V8.63242C2.63457 9.10499 2.63494 9.43294 2.65576 9.68788C2.67615 9.9375 2.71374 10.0785 2.76718 10.1835L2.81435 10.2676C2.9316 10.4589 3.10006 10.615 3.30107 10.7174L3.3872 10.7543C3.48281 10.7885 3.60916 10.8135 3.79667 10.8288C4.05165 10.8496 4.37956 10.85 4.85214 10.85H9.68242C10.155 10.85 10.4829 10.8496 10.7379 10.8288C10.9875 10.8084 11.1285 10.7709 11.2335 10.7174L11.3175 10.6702C11.5089 10.5529 11.665 10.3845 11.7674 10.1835L11.8043 10.0974C11.8385 10.0018 11.8635 9.87541 11.8788 9.68788C11.8996 9.43294 11.9 9.10499 11.9 8.63242V6.2747ZM12.7845 8.63242C12.7845 9.09057 12.7851 9.46094 12.7607 9.76033C12.7388 10.0268 12.6953 10.2667 12.5993 10.4904L12.5549 10.5854C12.3783 10.9319 12.11 11.222 11.7804 11.4242L11.6354 11.5049C11.385 11.6326 11.1149 11.6858 10.8103 11.7107C10.5109 11.7351 10.1406 11.7345 9.68242 11.7345H4.85214C4.39396 11.7345 4.02359 11.7351 3.72421 11.7107C3.45772 11.6888 3.21782 11.6453 2.99414 11.5493L2.89912 11.5049C2.55266 11.3283 2.26253 11.06 2.06034 10.7304L1.97968 10.5854C1.85204 10.335 1.79881 10.0649 1.77392 9.76033C1.74946 9.46094 1.75 9.09057 1.75 8.63242V4.85215C1.75 4.39396 1.74946 4.02359 1.77392 3.72422C1.79881 3.41969 1.85204 3.14964 1.97968 2.89912L2.06034 2.7542C2.26253 2.42453 2.55266 2.15626 2.89912 1.97968L2.99414 1.93525C3.21782 1.83928 3.45772 1.7957 3.72421 1.77393C4.02359 1.74946 4.39396 1.75 4.85214 1.75H5.33886C5.43941 1.74999 5.5083 1.74993 5.57607 1.7541L5.75175 1.77255C6.15778 1.83204 6.53932 2.00911 6.84755 2.28388L7.01777 2.45C7.0961 2.529 7.12268 2.55495 7.14833 2.57783L7.22694 2.64277C7.41722 2.78579 7.64619 2.8707 7.88524 2.88545L8.06843 2.8875H9.68242C10.1406 2.8875 10.5109 2.88696 10.8103 2.91143C11.1149 2.93631 11.385 2.98954 11.6354 3.11718L11.7804 3.19785C12.11 3.40003 12.3783 3.69016 12.5549 4.03662L12.5993 4.13164C12.6953 4.35532 12.7388 4.59522 12.7607 4.86172C12.7851 5.16109 12.7845 5.53146 12.7845 5.98965V8.63242ZM2.63457 5.39013H11.8973C11.8946 5.21289 11.8894 5.06407 11.8788 4.93417C11.8635 4.74666 11.8385 4.62032 11.8043 4.5247L11.7674 4.43857C11.665 4.23756 11.5089 4.06911 11.3175 3.95185L11.2335 3.90468C11.1285 3.85124 10.9875 3.81365 10.7379 3.79326C10.4829 3.77245 10.155 3.77207 9.68242 3.77207H8.06843L7.83057 3.76797C7.41834 3.74254 7.02393 3.5968 6.6958 3.35029L6.55976 3.23818C6.50899 3.19292 6.4605 3.14364 6.38955 3.07207L6.25898 2.94424C6.08019 2.78485 5.85877 2.68199 5.62324 2.64755L5.52207 2.63662C5.48773 2.6345 5.45029 2.63457 5.33886 2.63457H4.85214C4.37956 2.63457 4.05165 2.63495 3.79667 2.65576C3.60916 2.67108 3.48281 2.69604 3.3872 2.73027L3.30107 2.76718C3.10006 2.8696 2.9316 3.02571 2.81435 3.21699L2.76718 3.30107C2.71374 3.40612 2.67615 3.54708 2.65576 3.79667C2.63494 4.05165 2.63457 4.37956 2.63457 4.85215V5.39013Z" fill="currentColor"/>
-+</g>
-+</svg>
++---
++'@openviking/react': patch
++---
++
++Show a quick command's description on hover only when the row cannot show it in full: when the command defines a `summary`, or when the description is truncated by the row's single-line ellipsis. The row prints `summary ?? description`, so a command without a `summary` used to repeat the same sentence in the Tooltip, while removing it outright hid the full text of a long description in a narrow panel.
+```
+
+**File**: `frontend/docs/docs/en/components/command-console.mdx` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ The example uses fixed simulated data: submitting appends a pending record that
+ 
+ ### Empty state and quick commands
+ 
+-Quick commands appear while there are no records. Clicking one only fills the input; press Enter to submit, and the first submission replaces the empty state with records.
++Quick commands appear while there are no records. Clicking one only fills the input; press Enter to submit, and the first submission replaces the empty state with records. Each row shows its `summary`, falling back to `description`; hovering the row shows the full `description` when a `summary` is provided or when the description is truncated by the single-line ellipsis.
+ 
+ ```tsx file="../../_demos/command-console-empty.tsx" preview
+ 
+```
+
+**File**: `frontend/docs/docs/zh/components/command-console.mdx` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ import '@openviking/react/components/command-console/style.css';
+ 
+ ### 空态与快捷命令
+ 
+-没有记录时显示快捷入口，点击只把命令填入输入区，按 Enter 才提交，提交后空态被记录取代。
++没有记录时显示快捷入口，点击只把命令填入输入区，按 Enter 才提交，提交后空态被记录取代。每行显示 `summary`，省略时回退到 `description`；提供了 `summary`，或说明被单行省略截断时，悬停该行显示完整的 `description`。
+ 
+ ```tsx file="../../_demos/command-console-empty.tsx" preview
+ 
+```
+
+**File**: `frontend/packages/react/src/components/command-console/command-console-empty.tsx` (modified, +55/-25)
+```diff
+@@ -8,6 +8,7 @@ import {
+   DEFAULT_COMMAND_CONSOLE_LABELS,
+   type ResolvedCommandConsoleLabels,
+ } from './command-console-labels.js';
++import { useCommandConsoleQuickOverflow } from './use-command-console-quick-overflow.js';
+ 
+ /**
+  * 按名称从宿主目录中取快捷命令，保持传入顺序，未命中的名称直接跳过。
+@@ -53,6 +54,10 @@ export function CommandConsoleEmptyRegion({
+   disabled?: boolean;
+   onPick: (value: string) => void;
+ }) {
++  // Hook 必须在提前返回之前调用；内置空态不渲染时列表 ref 为空，测量直接跳过。
++  // Hooks run before the early returns; with no built-in empty state the list ref
++  // stays null and the measurement is skipped.
++  const { listRef, truncated } = useCommandConsoleQuickOverflow();
+   if (emptyState !== undefined) {
+     return emptyState === null ? null : (
+       <div className="ov-command-console__empty">{emptyState}</div>
+@@ -88,34 +93,59 @@ export function CommandConsoleEmptyRegion({
+       <p className="ov-command-console__empty-quick-label">
+         {labels.quickStart}
+       </p>
+-      <ul className="ov-command-console__empty-list">
+-        {commands.map((command) => (
+-          <li key={command.name} className="ov-command-console__empty-item">
+-            <Tooltip
+-              content={command.description}
+-              placement="top"
++      <ul ref={listRef} className="ov-command-console__empty-list">
++        {commands.map((command, index) => {
++          const action = (
++            <button
++              type="button"
++              className="ov-command-console__empty-action"
+               disabled={disabled}
+-              className="ov-command-console__quick-tooltip"
++              onClick={() => onPick(command.value)}
+             >
+-              <button
+-                type="button"
+-                className="ov-command-console__empty-action"
+-                disabled={disabled}
+-                onClick={() => onPick(command.value)}
+-              >
+-                <ArrowRightIcon width={14} height={14} focusable="false" />
+-                <span className="ov-command-console__empty-content">
+-                  <span className="ov-command-console__empty-name">
+-                    {command.name}
+-                  </span>
+-                  <span className="ov-command-console__empty-desc">
+-                    {command.summary ?? command.description}
+-                  </span>
++              <ArrowRightIcon width={14} height={14} focusable="false" />
++              <span className="ov-command-console__empty-content">
++                <span className="ov-command-console__empty-name">
++                  {command.name}
++                </span>
++                <span className="ov-command-console__empty-desc">
++                  {command.summary ?? command.description}
+                 </span>
+-              </button>
+-            </Tooltip>
+-          </li>
+-        ))}
++              </span>
++            </button>
++          );
++          // 行内显示 summary ?? description：宿主另给了 summary 时完整说明被藏起来，
++          // 没有 summary 但说明被单行省略截断时同样看不到全文。两种情况下 Tooltip
++          // 才有行内没有的内容，其余情况弹出的会是同一句话。
++          //
++          // Tooltip 始终挂载、只切 disabled，而不是按需包一层：包与不包会替换整棵
++          // 子树，说明节点随之卸载，截断测量仍盯着已脱离 DOM 的旧节点，测出的 0
++          // 宽又会把 Tooltip 关掉。保持节点身份稳定，订阅才一直有效。
++          //
++          // The row shows `summary ?? description`: the full description is hidden
++          // when the host supplied a `summary`, and equally when the description is
++          // truncated by the single-line ellipsis. Only then does the Tooltip add
++          // something the row does not already show.
++          //
++          // The Tooltip stays mounted and only toggles `disabled` instead of being
++          // added on demand: adding it replaces the whole subtree, so the
++          // description node unmounts while the measurement still watches the
++          // detached old node, whose zero width then switches the Tooltip back off.
++          // Keeping the node's identity stable keeps the subscription valid.
++          const hasTooltip =
++            command.summary !== undefined || truncated.includes(index);
++          return (
++            <li key={command.name} className="ov-command-console__empty-item">
++              <Tooltip
++                content={command.description}
++                placement="top"
++                disabled={disabled || !hasTooltip}
++                className="ov-command-console__quick-tooltip"
++              >
++                {action}
++              </Tooltip>
++            </li>
++          );
++        })}
+       </ul>
+     </div>
+   );
+```
+
+**File**: `frontend/packages/react/src/components/command-console/use-command-console-quick-overflow.ts` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++import {
++  useCallback,
++  useEffect,
++  useLayoutEffect,
++  useRef,
++  useState,
++} from 'react';
++
++// 服务端渲染没有布局，useLayoutEffect 在那里只会告警；测量只在浏览器有意义。
++// A server render has no layout, so a layout effect would only warn there.
++const useMeasureEffect =
++  typeof window === 'undefined' ? useEffect : useLayoutEffect;
++
++const DESC_SELECTOR = '.ov-command-console__empty-desc';
++
++/**
++ * 跟踪哪些快捷命令的说明被单行省略截断，返回列表的 callback ref 与截断项下标。
++ *
++ * 说明是单行省略的文本，容器变窄或文案变长时会被截断，行内便看不到全文。
++ *
++ * 返回 callback ref 而不是 ref 对象：空态区域在快捷命令尚未匹配到、或宿主提供
++ * 了 `emptyState` 时照样挂载却不渲染列表，此时没有可观察的节点。用 effect 建订阅
++ * 会在这时提前返回，而空依赖的 effect 之后不会再跑，列表后来出现就永远没有观察器；
++ * 列表隐藏再恢复时，旧观察器也仍绑在已卸载的节点上。callback ref 在节点挂载与
++ * 卸载时各触发一次，订阅始终跟随当前列表。
++ *
++ * useLayoutEffect 必要性：是否截断取决于容器的布局宽度与文本的自然宽度，二者
++ * 只有提交后才可测量，无法在渲染或事件里算出；窗口缩放和面板宽度变化都会改变
++ * 结果。
++ *
++ * 观察列表容器，而不是说明节点：说明是网格列里的单行文本，宽度由列宽决定，
++ * 文本溢出时它自己的 content box 不变，观察它收不到回调。容器宽度随面板与窗口
++ * 变化，是可靠的触发源。
++ *
++ * 文案变长不改变任何盒尺寸，观察器不会回调，因此每次渲染后再测一次：测量只读
++ * scrollWidth/clientWidth，不写 DOM，代价是一次同步布局查询。
++ *
++ * Tracks which quick command descriptions the single-line ellipsis truncates,
++ * returning the list's callback ref and the truncated indices.
++ *
++ * A layout effect is required: truncation depends on the container's laid-out
++ * width and the text's natural width, measurable only after commit, and both
++ * change with the window and the panel.
++ *
++ * It returns a callback ref rather than a ref object: the empty region mounts
++ * while no quick command resolves or while the host supplies `emptyState`, and
++ * renders no list then. An effect would return early with no node to observe, and
++ * an empty-dependency effect never runs again, so a list that appears later would
++ * never get an observer; a list hidden and shown again would keep the observer on
++ * the unmounted node. A callback ref fires on both mount and unmount, so the
++ * subscription always follows the current list.
++ *
++ * The list container is observed rather than the description nodes: each
++ * description is a single line inside a grid column, so its width follows the
++ * column and its own content box does not change when the text overflows —
++ * watching it receives no callback. The container's width tracks the panel and
++ * the window.
++ *
++ * Longer copy changes no box at all, so the observer never fires; measuring after
++ * every render covers it. The measurement only reads `scrollWidth`/`clientWidth`
++ * and writes no DOM, so it costs one synchronous layout query.
++ */
++export function useCommandConsoleQuickOverflow() {
++  const listRef = useRef<HTMLUListElement | null>(null);
++  const observerRef = useRef<ResizeObserver | null>(null);
++  const [truncated, setTruncated] = useState<readonly number[]>([]);
++
++  const measure = useCallback(() => {
++    const list = listRef.current;
++    if (!list) return;
++    const next: number[] = [];
++    list.querySelectorAll<HTMLElement>(DESC_SELECTOR).forEach((node, index) => {
++      if (node.scrollWidth > node.clientWidth) next.push(index);
++    });
++    // 只在结果变化时提交，避免每次渲染都触发一轮新渲染。
++    // Commit only on change so a render does not schedule another one.
++    setTruncated((current) =>
++      current.length === next.length &&
++      current.every((value, index) => value === next[index])
++        ? current
++        : next,
++    );
++  }, []);
++
++  const attachList = useCallback(
++    (list: HTMLUListElement | null) => {
++      listRef.current = list;
++      observerRef.current?.disconnect();
++      observerRef.current = null;
++      if (!list) {
++        // 列表消失后下标不再对应任何一行，清空避免残留。
++        // Without a list the indices point at nothing; drop them.
++        setTruncated((current) => (current.length ? [] : current));
++        return;
++      }
++      const observer = new ResizeObserver(measure);
++      observer.observe(list);
++      observerRef.current = observer;
++      measure();
++    },
++    [measure],
++  );
++
++  // 每次渲染后补测一次，覆盖文案变长这类不改变盒尺寸的变化。
++  // Re-measure after every render to cover changes that resize no box, such as
++  // longer copy.
++  useMeasureEffect(measure);
++
++  // 订阅的建立与释放全部交给 callback ref：它在节点挂载时收到列表、卸载时收到
++  // null。不要再加一个「卸载时断开」的 effect——StrictMode 会重放 effect 的
++  // setup→cleanup→setup，却不会重新调用 DOM callback ref，cleanup 断开的订阅
++  // 便无人恢复。
++  //
++  // The callback ref owns both ends of the subscription: it receives the list on
++  // mount and null on unmount. Do not add an "disconnect on unmount" effect —
++  // StrictMode replays an effect's setup→cleanup→setup without re-invoking DOM
++  // callback refs, so a cleanup that disconnects leaves nothing to restore it.
++  return { listRef: attachList, truncated };
++}
+```
+
+**File**: `frontend/packages/react/test/command-console-empty-tooltip-lifecycle.test.mjs` (added, +104/-0)
+```diff
+@@ -0,0 +1,104 @@
++import assert from 'node:assert/strict';
++import { test } from 'node:test';
++import { mount } from './helpers/command-console-dom.mjs';
++import {
++  hover,
++  observedLists,
++  resize,
++  setDescWidth,
++} from './helpers/quick-command-widths.mjs';
++
++const commands = [
++  {
++    name: 'ls',
++    description: 'List directory entries',
++    usage: 'ov ls [uri]',
++  },
++];
++
++const actions = (container) => [
++  ...container.querySelectorAll('.ov-command-console__empty-action'),
++];
++
++const withCommand = {
++  commands,
++  quickCommands: [{ name: 'ls', value: '' }],
++};
++
++test('a list that appears after mount still gets observed', async () => {
++  // 空态区域在没有匹配到快捷命令时照样挂载、但不渲染列表。订阅若只在首次挂载
++  // 时建立，这里会因 ref 为空而跳过，之后列表出现也不会被观察。
++  //
++  // The empty region mounts without a list when no quick command resolves. A
++  // subscription built only on first mount would skip it and never observe the
++  // list that appears later.
++  setDescWidth(1000);
++  const view = await mount({ commands, quickCommands: [] });
++  try {
++    assert.equal(observedLists(), 0, 'no list, nothing to observe');
++    await view.render(withCommand);
++    assert.equal(observedLists(), 1, 'the list that appeared is observed');
++    setDescWidth(80);
++    await resize();
++    assert.equal(
++      await hover(actions(view.container)[0]),
++      'List directory entries',
++    );
++  } finally {
++    await view.dispose();
++    setDescWidth(1000);
++  }
++});
++
++test('StrictMode keeps the list observed', async () => {
++  // StrictMode 会重放 effect 的 setup→cleanup→setup，但不重新调用 DOM callback
++  // ref。若另有 effect 在 cleanup 里断开订阅，这里就再也没人恢复它。
++  //
++  // StrictMode replays an effect's setup→cleanup→setup without re-invoking DOM
++  // callback refs, so a cleanup that disconnects the subscription leaves nothing
++  // to restore it.
++  setDescWidth(1000);
++  const view = await mount(withCommand, true, { strict: true });
++  try {
++    assert.equal(
++      observedLists(),
++      1,
++      'the list stays observed under StrictMode',
++    );
++    setDescWidth(80);
++    await resize();
++    assert.equal(
++      await hover(actions(view.container)[0]),
++      'List directory entries',
++    );
++  } finally {
++    await view.dispose();
++    setDescWidth(1000);
++  }
++});
++
++test('a list hidden and shown again is observed afresh', async () => {
++  // 列表消失后旧观察器绑在已卸载的节点上；恢复时必须重新订阅当前列表，否则
++  // 之后的宽度变化收不到。
++  //
++  // Once the list goes away the old observer holds an unmounted node; showing it
++  // again has to subscribe to the new one, or later resizes go unheard.
++  setDescWidth(1000);
++  const view = await mount(withCommand);
++  try {
++    assert.equal(observedLists(), 1);
++    await view.render({ commands, quickCommands: [] });
++    assert.equal(observedLists(), 0, 'the old list is no longer observed');
++    await view.render(withCommand);
++    assert.equal(observedLists(), 1, 'the new list is observed');
++    setDescWidth(80);
++    await resize();
++    assert.equal(
++      await hover(actions(view.container)[0]),
++      'List directory entries',
++    );
++  } finally {
++    await view.dispose();
++    setDescWidth(1000);
++  }
++});
+```
+
+**File**: `frontend/packages/react/test/command-console-empty-tooltip.test.mjs` (added, +156/-0)
+```diff
+@@ -0,0 +1,156 @@
++import assert from 'node:assert/strict';
++import { test } from 'node:test';
++import { mount } from './helpers/command-console-dom.mjs';
++import {
++  hover,
++  resize,
++  setDescWidth,
++} from './helpers/quick-command-widths.mjs';
++
++const commands = [
++  {
++    name: 'ls',
++    description: 'List directory entries',
++    usage: 'ov ls [uri]',
++  },
++  {
++    name: 'find',
++    summary: 'Find matching context',
++    description: 'Unused when a summary exists',
++    usage: 'ov find <query>',
++  },
++];
++
++const actions = (container) => [
++  ...container.querySelectorAll('.ov-command-console__empty-action'),
++];
++
++test('a row shows its description on hover only when a summary hides it', async () => {
++  const withSummary = await mount({
++    commands,
++    quickCommands: [{ name: 'find', value: '' }],
++  });
++  try {
++    assert.equal(
++      await hover(actions(withSummary.container)[0]),
++      'Unused when a summary exists',
++    );
++  } finally {
++    await withSummary.dispose();
++  }
++  const withoutSummary = await mount({
++    commands,
++    quickCommands: [{ name: 'ls', value: '' }],
++  });
++  try {
++    assert.equal(await hover(actions(withoutSummary.container)[0]), null);
++  } finally {
++    await withoutSummary.dispose();
++  }
++});
++
++test('a truncated description keeps its tooltip without a summary', async () => {
++  // 'List directory entries' 是 22 个字符，自然宽度 176px；容器给 80px 便截断。
++  // The 22-character description measures 176px; an 80px container truncates it.
++  setDescWidth(80);
++  const view = await mount({
++    commands,
++    quickCommands: [{ name: 'ls', value: '' }],
++  });
++  try {
++    assert.equal(
++      await hover(actions(view.container)[0]),
++      'List directory entries',
++    );
++  } finally {
++    await view.dispose();
++    setDescWidth(1000);
++  }
++});
++
++test('a description that fits keeps no tooltip and gains one when truncated', async () => {
++  setDescWidth(1000);
++  const view = await mount({
++    commands,
++    quickCommands: [{ name: 'ls', value: '' }],
++  });
++  try {
++    assert.equal(await hover(actions(view.container)[0]), null);
++    // 容器收窄后重新测量，Tooltip 随之出现。
++    // Re-measuring after the container narrows brings the tooltip back.
++    setDescWidth(80);
++    await resize();
++    assert.equal(
++      await hover(actions(view.container)[0]),
++      'List directory entries',
++    );
++    // 恢复宽度后说明完整可见，Tooltip 撤销。
++    // Widening again makes the whole description visible, so the tooltip goes.
++    setDescWidth(1000);
++    await resize();
++    assert.equal(await hover(actions(view.container)[0]), null);
++  } finally {
++    await view.dispose();
++    setDescWidth(1000);
++  }
++});
++
++test('narrowing then widening repeatedly keeps tracking the current node', async () => {
++  // 覆盖评审指出的节点替换问题：Tooltip 开关会替换子树，若观察器盯着旧节点，
++  // 旧节点脱离文档后宽度为 0，第二轮收窄就再也测不到截断。
++  //
++  // Covers the stale-node regression: toggling the tooltip replaces the subtree,
++  // and a watcher bound to the old node reads 0 once it detaches, so the second
++  // narrowing would never be detected.
++  setDescWidth(1000);
++  const view = await mount({
++    commands,
++    quickCommands: [{ name: 'ls', value: '' }],
++  });
++  try {
++    for (const width of [80, 1000, 80, 1000, 80]) {
++      setDescWidth(width);
++      await resize();
++      const expected = width < 176 ? 'List directory entries' : null;
++      assert.equal(await hover(actions(view.container)[0]), expected);
++    }
++  } finally {
++    await view.dispose();
++    setDescWidth(1000);
++  }
++});
++
++test('a longer description at the same width gains its tooltip', async () => {
++  // 单行文本变长不改变节点盒尺寸，ResizeObserver 不会回调；只有按内容重测才
++  // 能发现新的截断。这里不触发 resize，只替换 commands 的文案。
++  //
++  // A longer single-line text keeps the node's box unchanged, so the observer
++  // never fires; only a content-driven re-measure reveals the new truncation.
++  // No resize is fired here — only the command copy changes.
++  setDescWidth(200);
++  const short = [{ name: 'ls', description: 'Short', usage: 'ov ls [uri]' }];
++  const view = await mount({
++    commands: short,
++    quickCommands: [{ name: 'ls', value: '' }],
++  });
++  try {
++    assert.equal(await hover(actions(view.container)[0]), null);
++    await view.render({
++      commands: [
++        {
++          name: 'ls',
++          description: 'A much longer description that no longer fits the row',
++          usage: 'ov ls [uri]',
++        },
++      ],
++      quickCommands: [{ name: 'ls', value: '' }],
++    });
++    assert.equal(
++      await hover(actions(view.container)[0]),
++      'A much longer description that no longer fits the row',
++    );
++  } finally {
++    await view.dispose();
++    setDescWidth(1000);
++  }
++});
+```
+
+**File**: `frontend/packages/react/test/helpers/command-console-dom.mjs` (modified, +25/-3)
+```diff
+@@ -1,6 +1,6 @@
+ import { after } from 'node:test';
+ import { JSDOM } from 'jsdom';
+-import { act, createElement, useState } from 'react';
++import { act, createElement, StrictMode, useState } from 'react';
+ import { CommandConsole } from '@openviking/react/components/command-console';
+ 
+ const dom = new JSDOM('<!doctype html><html><body></body></html>', {
+@@ -13,6 +13,19 @@ Object.defineProperty(globalThis, 'navigator', {
+   value: dom.window.navigator,
+ });
+ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
++// jsdom 没有 ResizeObserver，而快捷命令的截断测量依赖它；替身只记录目标、
++// 从不回调，测试断言的是渲染结果而非尺寸变化。需要模拟尺寸的用例自行覆盖。
++//
++// jsdom has no ResizeObserver and the quick-command truncation measurement needs
++// one; the stub records its target and never calls back, since these tests assert
++// on rendered output rather than size changes. Cases that need sizes override it.
++if (typeof globalThis.ResizeObserver === 'undefined') {
++  globalThis.ResizeObserver = class {
++    observe() {}
++    unobserve() {}
++    disconnect() {}
++  };
++}
+ const { createRoot } = await import('react-dom/client');
+ after(() => dom.window.close());
+ 
+@@ -33,7 +46,7 @@ export const record = (content, id = 'one') => ({
+   content,
+ });
+ 
+-export async function mount(props = {}, controlled = true) {
++export async function mount(props = {}, controlled = true, options = {}) {
+   const container = document.createElement('div');
+   document.body.append(container);
+   const root = createRoot(container);
+@@ -45,9 +58,18 @@ export async function mount(props = {}, controlled = true) {
+       controlled ? { ...input, value, onValueChange: setValue } : input,
+     );
+   }
++  // StrictMode 会重放 effect 的 setup→cleanup→setup，但不重新调用 DOM
++  // callback ref；订阅类实现必须在这个模式下同样成立。
++  //
++  // StrictMode replays an effect's setup→cleanup→setup without re-invoking DOM
++  // callback refs, so a subscription must survive that replay too.
++  const tree = (input) => {
++    const host = createElement(Host, { input });
++    return options.strict ? createElement(StrictMode, null, host) : host;
++  };
+   const render = async (next = {}) => {
+     current = { ...current, ...next };
+-    await act(() => root.render(createElement(Host, { input: current })));
++    await act(() => root.render(tree(current)));
+   };
+   await render();
+   return {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7507** (2026-11-12): chore(superagent): internal switch to omit OpenViking tools from personal_agent (@ZaynJarvis)
-- **PR #7506** (2026-11-12): feat(react)!: rename public components and rewrite frontend docs (@yufeng201)
-- **PR #7501** (2026-11-12): fix(storage): 修复增量导入分页漏读并按 URI 补查 (@qin-ctx)
-- **PR #7500** (2026-11-12): fix: 避免重复解析已合并的内存标签 (@hezhang-1216)
-- **PR #7499** (2026-11-12): feat(react): implement the file browser search with four retrieval modes (@LaamGinghong)
-- **PR #7498** (2026-11-12): fix(react): restore dotted file preview backdrops (@LaamGinghong)
+- **PR #7635** (2026-11-13): ci(react): publish GitHub releases with bilingual notes (@LaamGinghong)
+- **PR #7628** (2026-11-13): chore(react): prepare 0.1.11 stable release (@LaamGinghong)
+- **PR #7626** (2026-11-13): fix(react): highlight conversation error notices (@LaamGinghong)
+- **PR #7613** (closed): feat(superagent): load Role from OpenViking soul.md (@openviking-superagent)
+- **PR #7611** (2026-11-13): fix(superagent): show the model the text of a quoted message (@t0saki)
+- **PR #7609** (2026-11-13): feat(react): isolate rendering failures and support local retries (@LaamGinghong)
 
 ---
 
@@ -2599,25 +2867,32 @@ Bridge Tab and Shift+Tab across the portalled reference controls without moving 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react): improve directory guidance and file preview (#7472)
+## X. react): align the file browser search dialog with the console design (#7570)
 
 **RULE**:
-When implementing operations in `frontend/.changeset/align-console-workflows.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/.changeset/file-browser-search-design-alignment.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5043e1f3`: react): improve directory guidance and file preview (#7472). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cf14a0cb`: react): align the file browser search dialog with the console design (#7570). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/.changeset/align-console-workflows.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/.changeset/file-browser-search-design-alignment.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
 ---
-'@openviking/react': minor
+'@openviking/react': patch
 ---
 
-Align the Console command palette, quick actions, and result cards with the Volcengine console. Add native resource and Skill imports, memory submission, and compile commands. Show VikingBot availability reasons near the composer and add controls to copy and locate the current session.
+Align the FileBrowser search dialog with the console design and drop the result preview panel it gained in 0.1.10.
+
+- The empty state shows the design's artwork above the title and hint instead of two centred lines of text.
+- Results fill the dialog width again: the hover/keyboard preview panel and its split layout are gone, and each row keeps its bottom divider, 24px icon tile and 14px name. `↑`/`↓` still move the current row and `Enter` opens it.
+- The count line reads `N results ・ [mode] Vector retrieval Switch` in the design's order, and appears only when there are results; the empty, loading and failure states no longer carry it.
+- The advanced panel takes the design's `bg-2` surface, and the mode menu its 259px popover with a 6px radius and card shadow.
+
+BREAKING CHANGE: `FileBrowserLabels.searchPreview`, `searchPreviewEmpty` and `searchPreviewFailed` are removed, because the search dialog no longer previews results. Drop those overrides; the keys have no effect.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2627,7 +2902,7 @@ Align the Console command palette, quick actions, and result cards with the Volc
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5043e1f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cf14a0cb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

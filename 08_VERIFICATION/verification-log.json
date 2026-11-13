@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-LDW8",
-    "timestamp": "2026-11-12T21:10:48.728Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "8f0168830209c6f974f10fe7559d98c21e99eaae0c7c0ef3fa600b72298c77e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-WFSB",
-    "timestamp": "2026-11-12T21:19:24.395Z",
-    "repository": "Qwen/Qwen3-Embedding-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-    "contentHash": "f9e404b624c1e28ff982810c75613f23bc7330abcf148eb9ba5ed041627fb528",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-WLYS",
-    "timestamp": "2026-11-12T21:19:32.404Z",
-    "repository": "SimonSchubert/Kai",
-    "learningId": "learn-github-simonschubert-kai",
-    "contentHash": "a23e2af8713cf1f87a318bf3003b424ec3b95776aa73ebe1da769e2db2a151d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-WSWM",
     "timestamp": "2026-11-12T21:19:41.398Z",
     "repository": "rook/rook",
@@ -7490,6 +7445,51 @@
     "repository": "microsoft/agent-governance-toolkit",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
     "contentHash": "82d82e2a89c4da7ed16fcb29a83fb77af647a05c934b8ba71e0f8f177eb5a25c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-OGCH",
+    "timestamp": "2026-11-13T16:48:55.745Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "e031e5033ec72c948132c5fafab23b6811b6536e4af5cb9531b816261bdba506",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-OM3Y",
+    "timestamp": "2026-11-13T16:49:03.214Z",
+    "repository": "makecindy/cindy",
+    "learningId": "learn-github-makecindy-cindy",
+    "contentHash": "ea290ce6f3ddb9d729c695145e9d23b2e0100934cc072a28cf09ba9a887b4e82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-ORRU",
+    "timestamp": "2026-11-13T16:49:10.554Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "42251535feba979e0dafdd04df3b3834b5e024562758ffffa76d54a914ce68d7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
