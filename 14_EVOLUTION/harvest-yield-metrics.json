@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T08:22:10.191Z",
-  "total_cycles_completed": 9187,
-  "total_learnings_persisted": 9187,
-  "total_rules_promoted": 8982,
+  "last_updated": "2026-11-13T08:40:40.153Z",
+  "total_cycles_completed": 9189,
+  "total_learnings_persisted": 9189,
+  "total_rules_promoted": 8983,
   "history": [
-    {
-      "timestamp": "2026-11-12T12:33:02.210Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T12:33:05.580Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T12:45:29.823Z",
       "repository": "touchlab/xcode-kotlin",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T08:22:10.191Z",
       "repository": "etcd-io/etcd",
       "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:35:53.798Z",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:40:40.153Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

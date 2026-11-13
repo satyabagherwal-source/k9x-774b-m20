@@ -9412,3 +9412,6 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `5ace19fb` | Multi-dimensional audit evidence | 2026-11-13T08:22:06.383Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `1b969e26` | Multi-dimensional audit evidence | 2026-11-13T08:22:10.073Z |
 | `learn-dom-d-a90e6a82` | `project://hf-baidu-unlimited-ocr-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | 2026-11-13T08:22:31.156Z |
+| `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-13T08:35:53.793Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `0fd0a1f1` | Multi-dimensional audit evidence | 2026-11-13T08:40:40.147Z |
+| `learn-dom-d-0f6d40be` | `project://hf-ccore-qwen3.5-4b-3d-coder` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | 2026-11-13T08:40:58.438Z |

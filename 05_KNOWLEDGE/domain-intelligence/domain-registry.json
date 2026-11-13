@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T08:22:31.153Z",
-  "total_records": 110,
+  "last_updated": "2026-11-13T08:40:58.435Z",
+  "total_records": 111,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 68,
+      "total": 69,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -93,7 +93,8 @@
         "DOM-D-388F29C6",
         "DOM-D-4E597F40",
         "DOM-D-46E94697",
-        "DOM-D-A90E6A82"
+        "DOM-D-A90E6A82",
+        "DOM-D-0F6D40BE"
       ]
     },
     "E": {
@@ -4559,6 +4560,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T08:22:31.151Z"
+    },
+    "DOM-D-0F6D40BE": {
+      "record_id": "DOM-D-0F6D40BE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ccore/Qwen3.5-4B-3D-Coder",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder))  \n> **Source Version**: `hf-ccore-qwe`  \n> **License**: Open-Source",
+      "content_hash": "87044bc987fdc310266e25d17c42e5c61cd375e3ec56a55e495f472fd777864e",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "provenance": {
+        "source_uri": "project://hf-ccore-qwen3.5-4b-3d-coder/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T08:40:44.710Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ccore-qwen3.5-4b-3d-coder)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ccore-qwen3.5-4b-3d-coder"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T08:40:58.433Z"
     }
   }
 }

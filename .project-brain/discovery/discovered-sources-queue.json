@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T08:22:31.231Z",
+  "updated_at": "2026-11-13T08:40:58.447Z",
   "stats": {
-    "total_discovered": 2286,
-    "approved_pending_harvest": 2127,
+    "total_discovered": 2287,
+    "approved_pending_harvest": 2128,
     "harvested_count": 0,
     "rejected_count": 159,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2114,
+      "COMMUNITY_AND_EXPERT": 2115,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 73,
       "ENGINEERING_BLOGS": 1,
@@ -49197,6 +49197,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
         "fileName": "iziz-libphonenumber-ios-learnings.md"
+      }
+    },
+    "SRC-C09E79A65E08": {
+      "id": "SRC-C09E79A65E08",
+      "url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "title": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:40:58.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
+        "fileName": "hf-ccore-qwen3.5-4b-3d-coder-learnings.md"
       }
     }
   }

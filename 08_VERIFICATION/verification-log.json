@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-QO3G",
-    "timestamp": "2026-11-10T02:31:50.140Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "f27ccb9c5b932ded3e636a5ac25a4871d294f0d2b54c191354f14de5fd38bcf0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-QOKD",
-    "timestamp": "2026-11-10T02:31:50.749Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "39f2d45fd17ac83a43ea09502087419de6bca2bc86cdec1b08e51ff5695788ad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-QQJ7",
     "timestamp": "2026-11-10T02:31:53.299Z",
     "repository": "volcengine/OpenViking",
@@ -7490,6 +7460,36 @@
     "repository": "etcd-io/etcd",
     "learningId": "learn-github-etcd-io-etcd",
     "contentHash": "70db2db93254a3f49818303d49bc0eb90195c31d4a450526794960c50f1a086d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-2ERH",
+    "timestamp": "2026-11-13T08:35:53.789Z",
+    "repository": "ccore/Qwen3.5-4B-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+    "contentHash": "7e448dacfaa5b0d4aca30a731199bc3927b01db69f25e4ff6bd72abc175135c9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8JPS",
+    "timestamp": "2026-11-13T08:40:40.144Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "578a7d959b7d3b76eb80410fd81d0b3eb6c7f55089ed4392bf99a9d56c9cdca9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

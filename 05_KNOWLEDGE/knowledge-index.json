@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T08:22:09.878Z",
+  "last_updated": "2026-11-13T08:40:40.019Z",
   "total_verified_learnings": 1262,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -52536,8 +52536,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "ca8ac478",
-      "content_hash": "0422ac875b0a36d147229fb091d7187c98f40dbf867df9f77b2a2111daaf3616",
+      "source_version": "0fd0a1f1",
+      "content_hash": "578a7d959b7d3b76eb80410fd81d0b3eb6c7f55089ed4392bf99a9d56c9cdca9",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -52554,6 +52554,11 @@
         {
           "number": null,
           "title": "snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "NULL vs. empty string handling for MySQL sources and PG destinations (#5057)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52627,7 +52632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T03:49:09.127Z",
+      "verified_at": "2026-11-13T08:40:39.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155222,7 +155227,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
-      "content_hash": "929f3f89395a8d286d152014a9521f16712a5cca75b5205b8649a0d16b06c385",
+      "content_hash": "7e448dacfaa5b0d4aca30a731199bc3927b01db69f25e4ff6bd72abc175135c9",
       "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "promoted_rules": [
@@ -155287,7 +155292,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:50:54.288Z",
+      "verified_at": "2026-11-13T08:35:53.620Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

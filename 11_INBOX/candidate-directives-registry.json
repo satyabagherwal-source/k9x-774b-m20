@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T08:22:31.176Z",
+  "last_updated": "2026-11-13T08:40:58.486Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8471,6 +8471,24 @@
       "source_repo": "iziz-libphonenumber-ios",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-053D4E-merge-pull-request-460-from-heymansmile-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-B9EEF6",
+      "directive_title": "NULL vs. empty string handling for MySQL sources and PG destinations (#5057)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "peerdb-io-peerdb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B9EEF6-null-vs-empty-string-handling-for-mysql-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-BBFE97",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BBFE97-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-13"
     }
   ]

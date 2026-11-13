@@ -9403,3 +9403,6 @@
 | `CYCLE-20261113-KOBU` | `2026-11-13T08:22:06.378Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9114cfef...`) |
 | `CYCLE-20261113-KR4I` | `2026-11-13T08:22:10.002Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`70db2db9...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:22:31.156Z` | `hf-baidu-unlimited-ocr-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A90E6A82` [Domain D] | Yes (`e40554dd...`) |
+| `CYCLE-20261113-2ERH` | `2026-11-13T08:35:53.789Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | Yes (`7e448dac...`) |
+| `CYCLE-20261113-8JPS` | `2026-11-13T08:40:40.144Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`578a7d95...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:40:58.438Z` | `hf-ccore-qwen3.5-4b-3d-coder` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0F6D40BE` [Domain D] | Yes (`87044bc9...`) |

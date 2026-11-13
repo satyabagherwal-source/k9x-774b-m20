@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "ca8ac478",
+    "sourceVersion": "0fd0a1f1",
     "license": "AGPL-3.0",
-    "contentHash": "0422ac875b0a36d147229fb091d7187c98f40dbf867df9f77b2a2111daaf3616",
-    "lastHarvestedAt": "2026-11-12T03:49:09.255Z",
+    "contentHash": "578a7d959b7d3b76eb80410fd81d0b3eb6c7f55089ed4392bf99a9d56c9cdca9",
+    "lastHarvestedAt": "2026-11-13T08:40:40.147Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -11295,8 +11295,8 @@
     "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
     "sourceVersion": "hf-ccore-qwen3.5-4b-3d-coder",
     "license": "Open-Source",
-    "contentHash": "929f3f89395a8d286d152014a9521f16712a5cca75b5205b8649a0d16b06c385",
-    "lastHarvestedAt": "2026-11-08T06:50:54.429Z",
+    "contentHash": "7e448dacfaa5b0d4aca30a731199bc3927b01db69f25e4ff6bd72abc175135c9",
+    "lastHarvestedAt": "2026-11-13T08:35:53.793Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder"
   },
   "agilerl-agilerl": {

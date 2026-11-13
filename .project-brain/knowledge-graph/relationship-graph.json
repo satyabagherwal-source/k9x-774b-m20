@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T08:22:31.155Z",
+  "updated_at": "2026-11-13T08:40:58.438Z",
   "statistics": {
-    "total_nodes": 64,
-    "total_edges": 32,
+    "total_nodes": 65,
+    "total_edges": 33,
     "domain_distribution": {
-      "D": 50,
+      "D": 51,
       "M": 1,
       "H": 8,
       "J": 2,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 32
+      "CONSTRAINED_BY_ARCHITECTURE": 33
     }
   },
   "nodes": {
@@ -1432,6 +1432,29 @@
       ],
       "created_at": "2026-11-13T08:22:31.155Z",
       "updated_at": "2026-11-13T08:22:31.155Z"
+    },
+    "DOM-D-0F6D40BE": {
+      "id": "DOM-D-0F6D40BE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): ccore/Qwen3.5-4B-3D-Coder",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-ccore-qwen3.5-4b-3d-coder/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T08:40:44.710Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ccore-qwen3.5-4b-3d-coder)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T08:40:58.437Z",
+      "updated_at": "2026-11-13T08:40:58.437Z"
     }
   },
   "edges": [
@@ -1754,6 +1777,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-A90E6A82 [D] with Domain M",
       "created_at": "2026-11-13T08:22:31.155Z"
+    },
+    {
+      "id": "EDGE-C0CBA17E2A40",
+      "sourceId": "DOM-D-0F6D40BE",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-0F6D40BE [D] with Domain M",
+      "created_at": "2026-11-13T08:40:58.437Z"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T08:22:10.312Z",
+  "last_updated": "2026-11-13T08:40:40.157Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "0422ac875b0a36d147229fb091d7187c98f40dbf867df9f77b2a2111daaf3616",
-      "verified_at": "2026-11-12T03:49:09.271Z",
+      "content_hash": "578a7d959b7d3b76eb80410fd81d0b3eb6c7f55089ed4392bf99a9d56c9cdca9",
+      "verified_at": "2026-11-13T08:40:40.156Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T03:49:09.271Z"
+      "last_updated": "2026-11-13T08:40:40.156Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -16971,14 +16971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-      "content_hash": "929f3f89395a8d286d152014a9521f16712a5cca75b5205b8649a0d16b06c385",
-      "verified_at": "2026-11-08T06:50:54.437Z",
+      "content_hash": "7e448dacfaa5b0d4aca30a731199bc3927b01db69f25e4ff6bd72abc175135c9",
+      "verified_at": "2026-11-13T08:35:53.802Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T06:50:54.437Z"
+      "last_updated": "2026-11-13T08:35:53.802Z"
     },
     "AgileRL/AgileRL": {
       "repository": "AgileRL/AgileRL",
