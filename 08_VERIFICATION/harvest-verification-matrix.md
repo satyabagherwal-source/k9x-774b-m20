@@ -9527,3 +9527,6 @@
 | `CYCLE-20261113-UQPX` | `2026-11-13T16:25:49.509Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1ea04846...`) |
 | `CYCLE-20261113-UZST` | `2026-11-13T16:26:01.277Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`7bccaede...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T16:26:52.103Z` | `hf-orcarouter-orcasaq-2-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1FD73085` [Domain D] | Yes (`663d70e5...`) |
+| `CYCLE-20261113-CDJO` | `2026-11-13T16:39:32.244Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`929bfc80...`) |
+| `CYCLE-20261113-CLPP` | `2026-11-13T16:39:42.829Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`82d82e2a...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T16:40:23.117Z` | `hf-taichuai-zdtaichu5.0-9b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-21095CB7` [Domain D] | Yes (`1d523c28...`) |

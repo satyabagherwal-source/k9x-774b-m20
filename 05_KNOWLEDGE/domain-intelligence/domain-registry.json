@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T16:26:53.588Z",
-  "total_records": 201,
+  "last_updated": "2026-11-13T16:40:24.379Z",
+  "total_records": 206,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 119,
+      "total": 122,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -146,7 +146,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning",
         "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
         "DOM-D-1FD73085",
-        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
+        "DOM-D-21095CB7",
+        "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari"
       ]
     },
     "E": {
@@ -163,7 +166,7 @@
       ]
     },
     "G": {
-      "total": 15,
+      "total": 17,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -179,7 +182,9 @@
         "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
         "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-core-invariants",
-        "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants",
+        "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva"
       ]
     },
     "H": {
@@ -5971,8 +5976,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "9978605bb773af021a1953331dadb2ec2af08394d4d8010b270b3c89dd1e62e2",
-      "created_at": "2026-11-13T14:55:48.068Z"
+      "content_hash": "1c1da427ff5042fec1c5265b5347ded1d4ae030656bea9f5de09ca56cec122e0",
+      "created_at": "2026-11-13T16:40:24.379Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -6675,6 +6680,84 @@
       "repository": "gocd-gocd-learnings",
       "content_hash": "02b1f933131fdb56132a02032270904a39cb814cfa8506165332c7e931320c38",
       "created_at": "2026-11-13T16:26:53.588Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: TaichuAI/ZDTaichu5.0-9B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-taichuai-zdtaichu5-0-9b-research-knowledge-intelligence-taichuai-zdtaichu5-0-.md",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "content_hash": "143aeba451f9cf342d3244531f9f196b9f493886ff642c060f74105022248158",
+      "created_at": "2026-11-13T16:39:32.409Z"
+    },
+    "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
+      "repository": "microsoft/agent-governance-toolkit",
+      "content_hash": "f9478cfd0bc20a6c019c062e98c01c697ed6cb01d1ba04d21852574a5561eefe",
+      "created_at": "2026-11-13T16:39:43.087Z"
+    },
+    "DOM-D-21095CB7": {
+      "record_id": "DOM-D-21095CB7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): TaichuAI/ZDTaichu5.0-9B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B))  \n> **Source Version**: `hf-taichuai-`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "1d523c288f65e44421bcd12bcdb79c77aec5b5385b1c5700daecf578babbb643",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-taichuai-zdtaichu5.0-9b/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T16:39:45.961Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-taichuai-zdtaichu5.0-9b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-taichuai-zdtaichu5.0-9b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T16:40:23.111Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-taichuai-zdtaichu5.0-9b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-taichuai-zdtaichu5-0-9b-learnings-research-knowledge-intelligence-hf-taichuai.md",
+      "repository": "hf-taichuai-zdtaichu5.0-9b-learnings",
+      "content_hash": "f114c31b9fee24d23228c3c71dc6868da41a334d4308abeb6a4205a9b49ad5db",
+      "created_at": "2026-11-13T16:40:23.297Z"
+    },
+    "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva": {
+      "record_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-learnings-architecture-intelligence-microsoft.md",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "content_hash": "fe71720ea5c71e4c523376e391d9460e056461296817238e3af2411dc7943e80",
+      "created_at": "2026-11-13T16:40:23.782Z"
     }
   }
 }

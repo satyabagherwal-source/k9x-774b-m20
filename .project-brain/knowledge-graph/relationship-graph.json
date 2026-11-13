@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T16:26:52.102Z",
+  "updated_at": "2026-11-13T16:40:23.116Z",
   "statistics": {
-    "total_nodes": 102,
-    "total_edges": 56,
+    "total_nodes": 103,
+    "total_edges": 57,
     "domain_distribution": {
-      "D": 83,
+      "D": 84,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 56
+      "CONSTRAINED_BY_ARCHITECTURE": 57
     }
   },
   "nodes": {
@@ -2274,6 +2274,29 @@
       ],
       "created_at": "2026-11-13T16:26:52.102Z",
       "updated_at": "2026-11-13T16:26:52.102Z"
+    },
+    "DOM-D-21095CB7": {
+      "id": "DOM-D-21095CB7",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): TaichuAI/ZDTaichu5.0-9B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-taichuai-zdtaichu5.0-9b/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T16:39:45.961Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-taichuai-zdtaichu5.0-9b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T16:40:23.116Z",
+      "updated_at": "2026-11-13T16:40:23.116Z"
     }
   },
   "edges": [
@@ -2836,6 +2859,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-1FD73085 [D] with Domain M",
       "created_at": "2026-11-13T16:26:52.102Z"
+    },
+    {
+      "id": "EDGE-0493F2A962BD",
+      "sourceId": "DOM-D-21095CB7",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-21095CB7 [D] with Domain M",
+      "created_at": "2026-11-13T16:40:23.116Z"
     }
   ]
 }

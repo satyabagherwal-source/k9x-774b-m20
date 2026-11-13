@@ -9560,3 +9560,6 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `f8f3d3e7` | Multi-dimensional audit evidence | 2026-11-13T16:25:49.513Z |
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-13T16:26:01.282Z |
 | `learn-dom-d-1fd73085` | `project://hf-orcarouter-orcasaq-2-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | 2026-11-13T16:26:52.103Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-13T16:39:32.248Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `c3342ce2` | Multi-dimensional audit evidence | 2026-11-13T16:39:42.832Z |
+| `learn-dom-d-21095cb7` | `project://hf-taichuai-zdtaichu5.0-9b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | 2026-11-13T16:40:23.117Z |

@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "3a748063bd1a51aac1eed81c8bb00059e84ee1d5832388fe70c56659e697bf9b",
-    "lastHarvestedAt": "2026-11-08T16:01:20.062Z",
+    "contentHash": "929bfc80fe37a9b0834735235b3179515abb05e3bbf25f4d1741022579b4102b",
+    "lastHarvestedAt": "2026-11-13T16:39:32.248Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "c3596c83",
+    "sourceVersion": "c3342ce2",
     "license": "MIT",
-    "contentHash": "7cea22288f14180c8ca1e5e4f6cef03f6fc6bd482358e41204305f190df22dca",
-    "lastHarvestedAt": "2026-11-13T04:31:29.613Z",
+    "contentHash": "82d82e2a89c4da7ed16fcb29a83fb77af647a05c934b8ba71e0f8f177eb5a25c",
+    "lastHarvestedAt": "2026-11-13T16:39:42.832Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {

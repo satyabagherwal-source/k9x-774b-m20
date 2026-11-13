@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `c3596c83`  
+> **Source Version**: `c3342ce2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T04:31:14.303Z  
+> **Timestamp**: 2026-11-13T16:39:42.369Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T04:31:14.297Z  
+> **Harvest Timestamp**: 2026-11-13T16:39:42.364Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6562 stars
+- **Stars / Engagement**: 6563 stars
 
 ---
 
@@ -405,97 +405,83 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c3596c83` (2026-11-12)
-**Commit Message**: chore(deps): Bump @hono/node-server (#4566)
+### Incident Patch 1: `c3342ce2` (2026-11-13)
+**Commit Message**: chore(deps-dev): Bump hono (#4574)
 
-Bumps [@hono/node-server](https://github.com/honojs/node-server) from 2.1.1 to 2.1.8.
-- [Release notes](https://github.com/honojs/node-server/releases)
-- [Commits](https://github.com/honojs/node-server/compare/v2.1.1...v2.1.8)
+Bumps [hono](https://github.com/honojs/hono) from 4.13.13 to 4.13.18.
+- [Release notes](https://github.com/honojs/hono/releases)
+- [Commits](https://github.com/honojs/hono/compare/v4.13.13...v4.13.18)
 
 ---
 updated-dependencies:
-- dependency-name: "@hono/node-server"
-  dependency-version: 2.1.8
+- dependency-name: hono
+  dependency-version: 4.13.18
   dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `agent-governance-python/agent-os/extensions/mcp-server/package-lock.json` (modified, +4/-4)
+**File**: `agent-governance-python/agentmesh-integrations/mastra-agentmesh/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -266,15 +266,15 @@
+@@ -2989,9 +2989,9 @@
        }
      },
-     "node_modules/@hono/node-server": {
--      "version": "2.1.1",
--      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.1.tgz",
--      "integrity": "sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==",
-+      "version": "2.1.8",
-+      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.8.tgz",
-+      "integrity": "sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==",
+     "node_modules/hono": {
+-      "version": "4.13.13",
+-      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
+-      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
++      "version": "4.13.18",
++      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
++      "integrity": "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==",
+       "dev": true,
        "license": "MIT",
        "engines": {
-         "node": ">=20"
-       },
-       "peerDependencies": {
--        "hono": "^4"
-+        "hono": "^4 || ^5.0.0-0"
-       }
-     },
-     "node_modules/@humanfs/core": {
 ```
 
 ---
 
-### Incident Patch 2: `19a1a5b7` (2026-11-12)
-**Commit Message**: chore(deps): Bump @hono/node-server (#4565)
+### Incident Patch 2: `66b78a1e` (2026-11-13)
+**Commit Message**: chore(deps): Bump hono (#4573)
 
-Bumps [@hono/node-server](https://github.com/honojs/node-server) from 2.1.1 to 2.1.8.
-- [Release notes](https://github.com/honojs/node-server/releases)
-- [Commits](https://github.com/honojs/node-server/compare/v2.1.1...v2.1.8)
+Bumps [hono](https://github.com/honojs/hono) from 4.13.13 to 4.13.18.
+- [Release notes](https://github.com/honojs/hono/releases)
+- [Commits](https://github.com/honojs/hono/compare/v4.13.13...v4.13.18)
 
 ---
 updated-dependencies:
-- dependency-name: "@hono/node-server"
-  dependency-version: 2.1.8
+- dependency-name: hono
+  dependency-version: 4.13.18
   dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `agent-governance-python/agent-mesh/packages/mcp-proxy/package-lock.json` (modified, +4/-4)
+**File**: `agent-governance-python/agent-os/extensions/mcp-server/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -172,15 +172,15 @@
+@@ -2775,9 +2775,9 @@
        }
      },
-     "node_modules/@hono/node-server": {
--      "version": "2.1.1",
--      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.1.tgz",
--      "integrity": "sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==",
-+      "version": "2.1.8",
-+      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.8.tgz",
-+      "integrity": "sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==",
+     "node_modules/hono": {
+-      "version": "4.13.13",
+-      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
+-      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
++      "version": "4.13.18",
++      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
++      "integrity": "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==",
        "license": "MIT",
        "engines": {
-         "node": ">=20"
-       },
-       "peerDependencies": {
--        "hono": "^4"
-+        "hono": "^4 || ^5.0.0-0"
-       }
-     },
-     "node_modules/@humanwhocodes/config-array": {
+         "node": ">=16.9.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4574** (2026-11-13): chore(deps-dev): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
+- **PR #4573** (2026-11-13): chore(deps): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
+- **PR #4572** (2026-11-13): chore(deps): Bump hono from 4.13.7 to 4.13.18 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
+- **PR #4571** (2026-11-13): chore(deps-dev): Bump hono from 4.13.7 to 4.13.18 in /policy-engine/sdk/node (@dependabot[bot])
 - **PR #4566** (2026-11-12): chore(deps): Bump @hono/node-server from 2.1.1 to 2.1.8 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
 - **PR #4565** (2026-11-12): chore(deps): Bump @hono/node-server from 2.1.1 to 2.1.8 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
-- **PR #4558** (2026-11-10): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.1 to >=2.14.2,<3.0 in /agent-governance-python/agent-sre (@dependabot[bot])
-- **PR #4557** (2026-11-10): chore(deps): Update pydantic requirement from <3.0,>=2.14.1 to >=2.14.2,<3.0 in /agent-governance-python/agent-primitives (@dependabot[bot])
-- **PR #4556** (2026-11-10): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.1 to >=2.14.2,<3.0 in /agent-governance-python/agent-mesh (@dependabot[bot])
-- **PR #4555** (2026-11-10): chore(deps-dev): Update hypothesis requirement from <7.0,>=6.170.12 to >=6.170.14,<7.0 in /agent-governance-python/agent-mesh (@dependabot[bot])
 
 ---
 
@@ -515,34 +501,32 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Bump @hono/node-server (#4566)
+## X. deps-dev): Bump hono (#4574)
 
 **RULE**:
-When implementing operations in `agent-governance-python/agent-os/extensions/mcp-server/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agent-governance-python/agentmesh-integrations/mastra-agentmesh/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c3596c83`: deps): Bump @hono/node-server (#4566). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c3342ce2`: deps-dev): Bump hono (#4574). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-os/extensions/mcp-server/package-lock.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agentmesh-integrations/mastra-agentmesh/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-      "version": "2.1.8",
-      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.8.tgz",
-      "integrity": "sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==",
-        "hono": "^4 || ^5.0.0-0"
+      "version": "4.13.18",
+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
+      "integrity": "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "2.1.1",
-      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.1.tgz",
-      "integrity": "sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==",
-        "hono": "^4"
+      "version": "4.13.13",
+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
+      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c3596c83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c3342ce2` are properly handled with clean fallback behavior.

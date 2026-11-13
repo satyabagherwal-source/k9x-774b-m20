@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-L6MK",
-    "timestamp": "2026-11-12T21:10:39.308Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "becc569f94f68ef55d7b1edff479fec550dc7262fa5a343558925c5fbc56cd7e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-LANJ",
-    "timestamp": "2026-11-12T21:10:44.527Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "4385fdeace9d5c6475d6f920003e8ee597f3a9e027f563defa369df272565823",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-LDW8",
     "timestamp": "2026-11-12T21:10:48.728Z",
     "repository": "cilium/cilium",
@@ -7492,6 +7462,36 @@
     "contentHash": "7bccaede06ed3cd6aee194f79157de103045c52ef198137ae5c7809ff280620d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-CDJO",
+    "timestamp": "2026-11-13T16:39:32.244Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "929bfc80fe37a9b0834735235b3179515abb05e3bbf25f4d1741022579b4102b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-CLPP",
+    "timestamp": "2026-11-13T16:39:42.829Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "82d82e2a89c4da7ed16fcb29a83fb77af647a05c934b8ba71e0f8f177eb5a25c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T16:26:52.665Z",
+  "updated_at": "2026-11-13T16:40:23.527Z",
   "stats": {
-    "total_discovered": 2664,
-    "approved_pending_harvest": 2493,
+    "total_discovered": 2670,
+    "approved_pending_harvest": 2499,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2483,
+      "COMMUNITY_AND_EXPERT": 2489,
       "OFFICIAL_DOCUMENTATION": 95,
       "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
@@ -57430,6 +57430,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
         "fileName": "gauthierpiarrette-highball-learnings.md"
+      }
+    },
+    "SRC-A5FD23B13539": {
+      "id": "SRC-A5FD23B13539",
+      "url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "title": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:40:23.127Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+        "fileName": "hf-taichuai-zdtaichu5.0-9b-learnings.md"
+      }
+    },
+    "SRC-2BC0F0F249F8": {
+      "id": "SRC-2BC0F0F249F8",
+      "url": "https://github.com/honojs/hono",
+      "title": "https://github.com/honojs/hono",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:40:23.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-320E67F6F5AC": {
+      "id": "SRC-320E67F6F5AC",
+      "url": "https://github.com/honojs/hono/releases",
+      "title": "https://github.com/honojs/hono/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:40:23.472Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-B405317D5C72": {
+      "id": "SRC-B405317D5C72",
+      "url": "https://github.com/honojs/hono/compare/v4.13.13...v4.13.18",
+      "title": "https://github.com/honojs/hono/compare/v4.13.13...v4.13.18",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:40:23.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-91F98D90371D": {
+      "id": "SRC-91F98D90371D",
+      "url": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
+      "title": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:40:23.508Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-7E01970DDB0F": {
+      "id": "SRC-7E01970DDB0F",
+      "url": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
+      "title": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T16:40:23.527Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
       }
     }
   }

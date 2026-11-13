@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T16:26:53.700Z",
+  "last_updated": "2026-11-13T16:40:24.622Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34197,7 +34197,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "3a748063bd1a51aac1eed81c8bb00059e84ee1d5832388fe70c56659e697bf9b",
+      "content_hash": "929bfc80fe37a9b0834735235b3179515abb05e3bbf25f4d1741022579b4102b",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -34457,7 +34457,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-11-08T16:01:19.871Z",
+      "verified_at": "2026-11-13T16:39:32.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45127,8 +45127,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "c3596c83",
-      "content_hash": "7cea22288f14180c8ca1e5e4f6cef03f6fc6bd482358e41204305f190df22dca",
+      "source_version": "c3342ce2",
+      "content_hash": "82d82e2a89c4da7ed16fcb29a83fb77af647a05c934b8ba71e0f8f177eb5a25c",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -45165,6 +45165,11 @@
         {
           "number": null,
           "title": "deps): Bump @hono/node-server (#4566)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps-dev): Bump hono (#4574)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45298,7 +45303,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T04:31:29.428Z",
+      "verified_at": "2026-11-13T16:39:42.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -193047,13 +193052,13 @@
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MYV7-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DHP8-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "title": "engine): restore text fallback for unknown file extensions (#394)",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffd4d0fbe4cd43aec094ec41358426f84f6d7648b8e96a0aeb48d84bb9ddae9c",
+      "content_hash": "13105ea4680c729daf28f7a032c3bebeb6eb75682ca55133bc914cef1f072e0b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T14:55:47.976Z"
+      "persisted_at": "2026-11-13T16:40:24.295Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -193063,9 +193068,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9978605bb773af021a1953331dadb2ec2af08394d4d8010b270b3c89dd1e62e2",
+      "content_hash": "1c1da427ff5042fec1c5265b5347ded1d4ae030656bea9f5de09ca56cec122e0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T14:55:48.068Z"
+      "persisted_at": "2026-11-13T16:40:24.379Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -193075,9 +193080,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a37399713649695b78d2fe99b80371bb76b00edcbbc86d3ac3928aa913c45dd7",
+      "content_hash": "5cccb7240effb2c9f00113ce3e4dcd30df3fd27eb1b0ef9aa994652a0f777e45",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T14:55:48.163Z"
+      "persisted_at": "2026-11-13T16:40:24.473Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -193087,9 +193092,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e87fe129de931b4746e55e33163a14fee4085530c03c22431aa92a97cd22e6b",
+      "content_hash": "a3926243d89d6322c5cb6f51a2cf4202c27a52a1e6d153481b2dbd2d3d0c8f3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T14:55:48.254Z"
+      "persisted_at": "2026-11-13T16:40:24.622Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -194374,6 +194379,102 @@
       "content_hash": "12112e3ddcbfb1bad75e6480a1de189ec27347f67a29eef321b07b2d84d7e4bc",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T16:26:53.700Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-taichuai-zdtaichu5-0-9b-research-knowledge-intelligence-taichuai-zdtaichu5-0-.md",
+      "title": "Research & Knowledge Intelligence: TaichuAI/ZDTaichu5.0-9B Core Invariants",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "content_hash": "143aeba451f9cf342d3244531f9f196b9f493886ff642c060f74105022248158",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:39:32.409Z"
+    },
+    "candidate_directive-deps-dev-bump-hono-4574": {
+      "item_id": "candidate_directive-deps-dev-bump-hono-4574",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DH8N-deps-dev-bump-hono-4574.md",
+      "title": "deps-dev): Bump hono (#4574)",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4597a45901f5b196267d31f276ec2228e6eb8956fd75118f87f52763bc5a280d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:40:23.687Z"
+    },
+    "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
+      "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
+      "repository": "microsoft/agent-governance-toolkit",
+      "source_version": "c3342ce2",
+      "content_hash": "f9478cfd0bc20a6c019c062e98c01c697ed6cb01d1ba04d21852574a5561eefe",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:39:43.087Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-microsoft-agent-governance-toolkit-adr-subsystem-boundary-modular-decoupling-in-.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft/agent-governance-toolkit",
+      "repository": "microsoft/agent-governance-toolkit",
+      "source_version": "c3342ce2",
+      "content_hash": "4a29f61e9bef91660204909266b1f1cb4b73989f2049d331d87642693a04444b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:39:43.168Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/microsoft-agent-governance-toolkit-learnings-verification-protocol-empirical-def.md",
+      "title": "Verification Protocol: Empirical Defect Shield for microsoft-agent-governance-toolkit-learnings",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e5112ab1a3a19b0b61c02887292ff9a0e63a2834a1ee7f698aa87fb479fac2bc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:40:23.968Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-taichuai-zdtaichu5-0-9b-learnings-research-knowledge-intelligence-hf-taichuai.md",
+      "title": "Research & Knowledge Intelligence: hf-taichuai-zdtaichu5.0-9b-learnings Core Invariants",
+      "repository": "hf-taichuai-zdtaichu5.0-9b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f114c31b9fee24d23228c3c71dc6868da41a334d4308abeb6a4205a9b49ad5db",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:40:23.297Z"
+    },
+    "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva": {
+      "item_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-learnings-architecture-intelligence-microsoft.md",
+      "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fe71720ea5c71e4c523376e391d9460e056461296817238e3af2411dc7943e80",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:40:23.782Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-microsoft-agent-governance-toolkit-learnings-adr-subsystem-boundary-modular-deco.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft-agent-governance-toolkit-learnings",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b7b38d51290f4a310021a332de1b85c9d8a7ca5640acd694047baeeb803e1ea2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:40:23.877Z"
     }
   },
   "aliases": {
@@ -200372,5 +200473,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9151
+  "total_items": 9159
 }
