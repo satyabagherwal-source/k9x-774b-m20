@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T02:33:19.453Z",
+  "last_updated": "2026-11-13T03:03:02.254Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5151,14 +5151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seekstorm-seekstorm",
-      "content_hash": "372f6503c3013c156a4ae429fcfb92681982d47de25587f916002dc409628ce3",
-      "verified_at": "2026-11-07T05:28:23.576Z",
+      "content_hash": "b74e262b681734b1b799336f91e158c7933d2fbd59f2c393139d273dc15aa0e7",
+      "verified_at": "2026-11-13T02:58:03.089Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:28:23.576Z"
+      "last_updated": "2026-11-13T02:58:03.089Z"
     },
     "serafimcloud/21st": {
       "repository": "serafimcloud/21st",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
-      "verified_at": "2026-11-11T17:51:35.461Z",
+      "content_hash": "e750dd4a621335b1dc2bb2375cb68620000a8e0507225107c8d8b2b91cbe8455",
+      "verified_at": "2026-11-13T03:03:02.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T17:51:35.461Z"
+      "last_updated": "2026-11-13T03:03:02.253Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -17886,14 +17886,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-      "content_hash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
-      "verified_at": "2026-11-08T03:08:03.723Z",
+      "content_hash": "6f3652a72e8285ee8e78d7cc6a58bd4c191c39d06ed63265113f94f49a430120",
+      "verified_at": "2026-11-13T03:02:37.726Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:08:03.723Z"
+      "last_updated": "2026-11-13T03:02:37.726Z"
     },
     "moonshotai/Kimi-K3.1-Pro": {
       "repository": "moonshotai/Kimi-K3.1-Pro",

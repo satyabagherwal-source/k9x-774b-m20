@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T02:33:32.399Z",
-  "total_records": 83,
+  "last_updated": "2026-11-13T03:03:22.387Z",
+  "total_records": 84,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 43,
+      "total": 44,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -68,7 +68,8 @@
         "DOM-D-3EB7AC49",
         "DOM-D-E9BE8727",
         "DOM-D-DABEAFCE",
-        "DOM-D-FC7E335F"
+        "DOM-D-FC7E335F",
+        "DOM-D-8804A7F5"
       ]
     },
     "E": {
@@ -3392,6 +3393,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T02:33:32.398Z"
+    },
+    "DOM-D-8804A7F5": {
+      "record_id": "DOM-D-8804A7F5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4](https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4))  \n> **Source Version**: `hf-nvidia",
+      "content_hash": "af07d0476478f0b98512dbfba6def21d7b98f5b6c671020524ba3f1223fd2d7f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md`  \n> **Source**: huggingface (",
+      "provenance": {
+        "source_uri": "project://hf-nvidia-deepseek-v4.1-flash-1017-nvfp4/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T03:03:07.524Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-deepseek-v4.1-flash-1017-nvfp4)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nvidia-deepseek-v4.1-flash-1017-nvfp4"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T03:03:22.384Z"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T02:33:33.352Z",
+  "last_updated": "2026-11-13T03:03:22.817Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T01:31:37.311Z",
@@ -458,7 +458,7 @@
       "staged_for_review": 1
     },
     "nats-io-nats-server-learnings.md": {
-      "processed_at": "2026-11-11T17:51:42.086Z",
+      "processed_at": "2026-11-13T03:03:22.414Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1461,9 +1461,19 @@
       "processed_at": "2026-11-13T02:33:32.417Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md": {
+      "processed_at": "2026-11-13T03:03:22.389Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "seekstorm-seekstorm-learnings.md": {
+      "processed_at": "2026-11-13T03:03:22.540Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 426,
-  "total_canonical_promoted": 50,
-  "total_staged_for_review": 374
+  "total_dossiers_evaluated": 429,
+  "total_canonical_promoted": 51,
+  "total_staged_for_review": 376
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `0d4956f3`  
+> **Source Version**: `79d1d2c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T17:51:21.272Z  
+> **Timestamp**: 2026-11-13T03:02:46.569Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T17:46:09.625Z  
+> **Harvest Timestamp**: 2026-11-13T02:57:45.844Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21037 stars
+- **Stars / Engagement**: 21049 stars
 
 ---
 
@@ -2726,689 +2726,893 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89e1f329` (2026-11-11)
-**Commit Message**: [FIXED] Filestore metadata and new directories not crash-safe (#8887)
+### Incident Patch 1: `79d1d2c1` (2026-11-12)
+**Commit Message**: [FIXED] Filtered consumer interest & dangling WorkQueue messages (#8890)
 
-`writeStreamMeta` and `writeConsumerMeta` wrote `meta.inf` and
-`meta.sum` as two separate atomic writes. A crash between them left
-`meta.inf` without a matching `meta.sum`, so recovery skipped the stream
-with `Missing stream checksum file`. Re-creating the stream didn't help:
-`newFileStoreWithCreated` only rewrote the meta files if `meta.inf` was
-missing or empty, so the next restart skipped the stream again, along
-with every message acked since.
+A consumer whose filter equals the stream's subjects was treated as
+unfiltered, so it kept interest in messages stored under other subjects
+(via subject transforms, sources or subject updates) that it would never
+receive. Those messages were never removed on Interest and WorkQueue
+streams after being acked. Consumers with a filter now always check the
+message's subject, looked up at most once per interest check.
 
-This PR fixes that by:
-- Rewriting `meta.inf`/`meta.sum` on stream and consumer create whenever
-the checksum is missing or doesn't match.
-- Staging `meta.inf` as `meta.inf.new` until `meta.sum` is written. On
-recovery, `recoverStagedMeta` renames it into place if it matches
-`meta.sum`, and discards it otherwise. `Delete` removes the staged file
-first, so a deleted stream can't be revived.
-- Staging a newly generated `meta.key` as `meta.key.new` in the same
-way. It's renamed into place before `meta.inf.new`, so a crash while
-encryption is being turned on (or during a consumer cipher conversion)
-can't leave a new key next to the old `meta.inf`.
-- Verifying `meta.sum` on 
+Filtered consumers also no longer lose interest when their state can't
+be loaded, or when the message can't be read (only an actually removed
+message means no interest). Dangling messages are now also cleaned up on
+restart for WorkQueue streams, not just Interest streams.
 
-**File**: `server/filestore.go` (modified, +201/-51)
+**File**: `server/consumer.go` (modified, +11/-55)
 ```diff
-@@ -334,6 +334,8 @@ const (
- 	consumerState = "o.dat"
- 	// The suffix that will be given to a new temporary block for compression or when rewriting the full file.
- 	blkTmpSuffix = ".tmp"
-+	// The suffix of a meta file that is staged until its checksum is written.
-+	metaTmpSuffix = ".new"
- 	// default cache buffer expiration
- 	defaultCacheBufferExpiration = 10 * time.Second
- 	// default sync interval
-@@ -434,10 +436,11 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
- 		fcfg.SyncInterval = defaultSyncInterval
+@@ -4009,57 +4009,10 @@ func (o *consumer) moveAckFloor(dseq, sseq uint64) {
  	}
- 	dios := fcfg.srv.diskIOSemaphore()
-+	syncDirs := fcfg.SyncAlways || fcfg.SyncOnFlush
+ }
  
- 	// Check the directory
- 	if stat, err := os.Stat(fcfg.StoreDir); os.IsNotExist(err) {
--		if err := os.MkdirAll(fcfg.StoreDir, defaultDirPerms); err != nil {
-+		if err := mkdirAllWithOptionalSync(dios, fcfg.StoreDir, defaultDirPerms, syncDirs); err != nil {
- 			return nil, fmt.Errorf("could not create storage directory - %v", err)
- 		}
- 	} else if stat == nil || !stat.IsDir() {
-@@ -488,10 +491,10 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
- 	// Check if this is a new setup.
- 	mdir := filepath.Join(fcfg.StoreDir, msgDir)
- 	odir := filepath.Join(fcfg.StoreDir, consumerDir)
--	if err := os.MkdirAll(mdir, defaultDirPerms); err != nil {
-+	if err := mkdirAllWithOptionalSync(dios, mdir, defaultDirPerms, syncDirs); err != nil {
- 		return nil, fmt.Errorf("could not create message storage directory - %v", err)
- 	}
--	if err := os.MkdirAll(odir, defaultDirPerms); err != nil {
-+	if err := mkdirAllWithOptionalSync(dios, odir, defaultDirPerms, syncDirs); err != nil {
- 		return nil, fmt.Errorf("could not create consumer storage directory - %v", err)
+-// Determine if this is a truly filtered consumer. Modern clients will place filtered subjects
+-// even if the stream only has a single non-wildcard subject designation.
+-// Read lock should be held.
+-func (o *consumer) isFiltered() bool {
+-	if o.subjf == nil {
+-		return false
+-	}
+-	// If we are here we want to check if the filtered subject is
+-	// a direct match for our only listed subject.
+-	mset := o.mset
+-	if mset == nil {
+-		return true
+-	}
+-
+-	// Protect access to mset.cfg with the cfgMu mutex.
+-	mset.cfgMu.RLock()
+-	msetSubjects := mset.cfg.Subjects
+-	mset.cfgMu.RUnlock()
+-
+-	// `isFiltered` need to be performant, so we do
+-	// as any checks as possible to avoid unnecessary work.
+-	// Here we avoid iteration over slices if there is only one subject in stream
+-	// and one filter for the consumer.
+-	if len(msetSubjects) == 1 && len(o.subjf) == 1 {
+-		return msetSubjects[0] != o.subjf[0].subject
+-	}
+-
+-	// if the list is not equal length, we can return early, as this is filtered.
+-	if len(msetSubjects) != len(o.subjf) {
+-		return true
+-	}
+-
+-	// if in rare case scenario that user passed all stream subjects as consumer filters,
+-	// we need to do a more expensive operation.
+-	// reflect.DeepEqual would return false if the filters are the same, but in different order
+-	// so it can't be used here.
+-	cfilters := make(map[string]struct{}, len(o.subjf))
+-	for _, val := range o.subjf {
+-		cfilters[val.subject] = struct{}{}
+-	}
+-	for _, val := range msetSubjects {
+-		if _, ok := cfilters[val]; !ok {
+-			return true
+-		}
+-	}
+-	return false
+-}
+-
+ // Check if we need an ack for this store seq.
+-// This is called for interest based retention streams to remove messages.
+-func (o *consumer) needAck(sseq uint64, subj string) bool {
++// This is called for interest and workqueue retention streams to remove messages.
++// An empty subj is looked up if needed and stored, so callers can share it across consumers.
++func (o *consumer) needAck(sseq uint64, subj *string) bool {
+ 	var needAck bool
+ 	var asflr, osseq uint64
+ 	var pending map[uint64]*Pending
+@@ -4068,20 +4021,23 @@ func (o *consumer) needAck(sseq uint64, subj string) bool {
+ 	o.mu.RLock()
+ 	defer o.mu.RUnlock()
+ 
+-	isFiltered := o.isFiltered()
++	isFiltered := o.subjf != nil
+ 	if isFiltered && o.mset == nil {
+ 		return false
  	}
  
-@@ -636,10 +639,11 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
+ 	// Check if we are filtered, and if so check if this is even applicable to us.
+ 	if isFiltered {
+-		if subj == _EMPTY_ {
++		if *subj == _EMPTY_ {
+ 			var err error
+-			if subj, err = o.mset.store.SubjectForSeq(sseq); err != nil {
++			if *subj, err = o.mset.store.SubjectForSeq(sseq); err == ErrStoreMsgNotFound {
+ 				return false
++			} else if err != nil {
++				// We can't tell if the message matches, so keep it.
++				return true
+ 			}
+ 		}
+-		if !o.isFilteredMatch(subj) {
++		if !o.isFilteredMatch(*subj) {
+ 			return false
  		}
  	}
- 
--	// Write our meta data if it does not exist or is zero'd out.
-+	// Write our meta data if it does not exist, is zero'd out, or doesn't match its checksum.
- 	meta := filepath.Join(fcfg.StoreDir, JetStreamMetaFile)
--	fi, err := os.Stat(meta)
--	if err != nil && os.IsNotExist(err) || fi != nil && fi.Size() == 0 {
-+	if match, err := metaFilesMatch(meta, filepath.Join(fcfg.StoreDir, JetStreamMetaFileSum), key[:]); err != nil {
-+		return nil, err
-+	} else if !match {
- 		if err := fs.writeStreamMeta(); err != nil {
- 			return nil, err
+@@ -4095,7 +4051,7 @@ func (o *consumer) needAck(sseq uint64, subj string) bool {
+ 		state, err := o.store.BorrowState()
+ 		if err != nil || state == nil {
+ 			// Fall back to what we track internally for now.
+-			return sseq > o.asflr && !o.isFiltered()
++			return sseq > o.asflr
  		}
-@@ -1009,34 +1013,9 @@ func (fs *fileStore) recoverAEK() error {
- 	return nil
+ 		// If loading state as here, the osseq is +1.
+ 		asflr, osseq, pending, rdc = state.AckFloor.Stream, state.Delivered.Stream+1, state.Pending, state.Redelivered
+```
+
+**File**: `server/filestore.go` (modified, +5/-1)
+```diff
+@@ -9649,7 +9649,7 @@ func (fs *fileStore) SubjectForSeq(seq uint64) (string, error) {
+ 	fs.mu.RUnlock()
+ 	if mb != nil {
+ 		mb.mu.Lock()
+-		sm, _, _ := mb.fetchMsgNoCopyLocked(seq, &smv)
++		sm, _, err := mb.fetchMsgNoCopyLocked(seq, &smv)
+ 		var subj string
+ 		if sm != nil {
+ 			// Copy the subject, as it's used elsewhere, and the backing cache could be reused in the meantime.
+@@ -9660,6 +9660,10 @@ func (fs *fileStore) SubjectForSeq(seq uint64) (string, error) {
+ 		if sm != nil {
+ 			return subj, nil
+ 		}
++		// A deleted message is not found, other errors mean we couldn't read it.
++		if err != nil && err != errDeletedMsg {
++			return _EMPTY_, err
++		}
+ 	}
+ 	return _EMPTY_, ErrStoreMsgNotFound
+ }
+```
+
+**File**: `server/filestore_test.go` (modified, +10/-0)
+```diff
+@@ -11421,6 +11421,16 @@ func TestFileStoreSubjectForSeq(t *testing.T) {
+ 
+ 	_, err = fs.SubjectForSeq(2)
+ 	require_Error(t, err, ErrStoreMsgNotFound)
++
++	// A deleted message is not found either.
++	_, _, err = fs.StoreMsg("foo.bar", nil, nil, 0)
++	require_NoError(t, err)
++	_, _, err = fs.StoreMsg("foo.baz", nil, nil, 0)
++	require_NoError(t, err)
++	_, err = fs.RemoveMsg(2)
++	require_NoError(t, err)
++	_, err = fs.SubjectForSeq(2)
++	require_Error(t, err, ErrStoreMsgNotFound)
+ }
+ 
+ func BenchmarkFileStoreSubjectAccesses(b *testing.B) {
+```
+
+**File**: `server/jetstream.go` (modified, +1/-1)
+```diff
+@@ -1698,7 +1698,7 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
+ 
+ 		// Collect to check for dangling messages.
+ 		// TODO(dlc) - Can be removed eventually.
+-		if cfg.StreamConfig.Retention == InterestPolicy {
++		if cfg.StreamConfig.Retention != LimitsPolicy {
+ 			mset.checkForOrphanMsgs()
+ 			mset.checkConsumerReplication()
+ 		}
+```
+
+**File**: `server/jetstream_consumer_test.go` (modified, +63/-54)
+```diff
+@@ -8025,65 +8025,74 @@ func TestJetStreamConsumerAckFloorWithExpired(t *testing.T) {
+ 	require_True(t, ci.NumRedelivered == 0)
+ }
+ 
+-func TestJetStreamConsumerIsFiltered(t *testing.T) {
++func TestJetStreamConsumerNeedAckFallbackWithFilter(t *testing.T) {
+ 	s := RunBasicJetStreamServer(t)
+ 	defer s.Shutdown()
+-	acc := s.GlobalAccount()
+ 
+-	tests := []struct {
+-		name           string
+-		streamSubjects []string
+-		filters        []string
+-		isFiltered     bool
+-	}{
+-		{
+-			name:           "single_subject",
+-			streamSubjects: []string{"one"},
+-			filters:        []string{"one"},
+-			isFiltered:     false,
+-		},
+-		{
+-			name:           "single_subject_filtered",
+-			streamSubjects: []string{"one.>"},
+-			filters:        []string{"one.filter"},
+-			isFiltered:     true,
+-		},
+-		{
+-			name:           "multi_subject_non_filtered",
+-			streamSubjects: []string{"multi", "foo", "bar.>"},
+-			filters:        []string{"multi", "bar.>", "foo"},
+-			isFiltered:     false,
+-		},
+-		{
+-			name:           "multi_subject_filtered_wc",
+-			streamSubjects: []string{"events", "data"},
+-			filters:        []string{"data"},
+-			isFiltered:     true,
+-		},
+-		{
+-			name:           "multi_subject_filtered",
+-			streamSubjects: []string{"machines", "floors"},
+-			filters:        []string{"machines"},
+-			isFiltered:     true,
+-		},
+-	}
+-	for _, test := range tests {
+-		t.Run(test.name, func(t *testing.T) {
+-			mset, err := acc.addStream(&StreamConfig{
+-				Name:     test.name,
+-				Subjects: test.streamSubjects,
+-			})
+-			require_NoError(t, err)
++	mset, err := s.globalAccount().addStream(&StreamConfig{
++		Name:      "TEST",
++		Subjects:  []string{"foo", "bar"},
++		Retention: InterestPolicy,
++	})
++	require_NoError(t, err)
++	o, err := mset.addConsumer(&ConsumerConfig{Durable: "CONSUMER", FilterSubject: "foo", AckPolicy: AckExplicit})
++	require_NoError(t, err)
+ 
+-			o, err := mset.addConsumer(&ConsumerConfig{
+-				FilterSubjects: test.filters,
+-				Durable:        test.name,
+-			})
+-			require_NoError(t, err)
++	_, _, err = mset.store.StoreMsg("foo", nil, nil, 0)
++	require_NoError(t, err)
++	_, _, err = mset.store.StoreMsg("bar", nil, nil, 0)
++	require_NoError(t, err)
+ 
+-			require_True(t, o.isFiltered() == test.isFiltered)
+-		})
+-	}
++	// A follower whose consumer state can't be loaded falls back to its in-memory ack floor.
++	require_NoError(t, o.setLeader(false, 0))
++	require_NoError(t, o.store.Stop())
++
++	// The matching message is still needed, the other one isn't.
++	subj := _EMPTY_
++	require_True(t, o.needAck(1, &subj))
++	subj = _EMPTY_
++	require_False(t, o.needAck(2, &subj))
++}
++
++type subjectForSeqErrStore struct {
++	StreamStore
++	err error
++}
++
++func (s *subjectForSeqErrStore) SubjectForSeq(seq uint64) (string, error) {
++	return _EMPTY_, s.err
++}
++
++func TestJetStreamConsumerNeedAckSubjectLookupError(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
++	defer s.Shutdown()
++
++	mset, err := s.globalAccount().addStream(&StreamConfig{
++		Name:      "TEST",
++		Subjects:  []string{"foo"},
++		Retention: InterestPolicy,
++	})
++	require_NoError(t, err)
++	o, err := mset.addConsumer(&ConsumerConfig{Durable: "CONSUMER", FilterSubject: "foo", AckPolicy: AckExplicit})
++	require_NoError(t, err)
++
++	_, _, err = mset.store.StoreMsg("foo", nil, nil, 0)
++	require_NoError(t, err)
++
++	es := &subjectForSeqErrStore{StreamStore: mset.store}
++	mset.mu.Lock()
++	mset.store = es
++	mset.mu.Unlock()
++
++	// The message can't be read, so we can't tell if it matches and must keep it.
++	es.err = errors.New("read failed")
++	subj := _EMPTY_
++	require_True(t, o.needAck(1, &subj))
++
++	// The message is gone, so it's not needed.
++	es.err = ErrStoreMsgNotFound
++	subj = _EMPTY_
++	require_False(t, o.needAck(1, &subj))
+ }
+ 
+ func TestJetStreamConsumerWithFormattingSymbol(t *testing.T) {
+```
+
+**File**: `server/jetstream_test.go` (modified, +108/-48)
+```diff
+@@ -16877,70 +16877,74 @@ func TestJetStreamAccountPurge(t *testing.T) {
+ // For issue https://github.com/nats-io/nats-server/issues/3612
+ // Do auto cleanup.
+ func TestJetStreamDanglingMessageAutoCleanup(t *testing.T) {
+-	s := RunBasicJetStreamServer(t)
+-	defer s.Shutdown()
++	for _, rp := range []nats.RetentionPolicy{nats.InterestPolicy, nats.WorkQueuePolicy} {
++		t.Run(rp.String(), func(t *testing.T) {
++			s := RunBasicJetStreamServer(t)
++			defer s.Shutdown()
+ 
+-	// Client for API requests.
+-	nc, js := jsClientConnect(t, s)
+-	defer nc.Close()
++			// Client for API requests.
++			nc, js := jsClientConnect(t, s)
++			defer nc.Close()
+ 
+-	_, err := js.AddStream(&nats.StreamConfig{
+-		Name:      "TEST",
+-		Subjects:  []string{"foo"},
+-		Retention: nats.InterestPolicy,
+-	})
+-	require_NoError(t, err)
++			_, err := js.AddStream(&nats.StreamConfig{
++				Name:      "TEST",
++				Subjects:  []string{"foo"},
++				Retention: rp,
++			})
++			require_NoError(t, err)
+ 
+-	sub, err := js.PullSubscribe("foo", "dlc", nats.MaxAckPending(10))
+-	require_NoError(t, err)
++			sub, err := js.PullSubscribe("foo", "dlc", nats.MaxAckPending(10))
++			require_NoError(t, err)
+ 
+-	// Send 100 msgs
+-	n := 100
+-	for i := 0; i < n; i++ {
+-		sendStreamMsg(t, nc, "foo", "msg")
+-	}
++			// Send 100 msgs
++			n := 100
++			for i := 0; i < n; i++ {
++				sendStreamMsg(t, nc, "foo", "msg")
++			}
+ 
+-	// Grab and ack 10 messages.
+-	for _, m := range fetchMsgs(t, sub, 10, time.Second) {
+-		m.AckSync()
+-	}
++			// Grab and ack 10 messages.
++			for _, m := range fetchMsgs(t, sub, 10, time.Second) {
++				m.AckSync()
++			}
+ 
+-	ci, err := sub.ConsumerInfo()
+-	require_NoError(t, err)
+-	require_True(t, ci.AckFloor.Stream == 10)
++			ci, err := sub.ConsumerInfo()
++			require_NoError(t, err)
++			require_True(t, ci.AckFloor.Stream == 10)
+ 
+-	// Stop current
+-	sd := s.JetStreamConfig().StoreDir
+-	s.Shutdown()
++			// Stop current
++			sd := s.JetStreamConfig().StoreDir
++			s.Shutdown()
+ 
+-	// We will hand move the ackfloor to simulate dangling message condition.
+-	cstore := filepath.Join(sd, "$G", "streams", "TEST", "obs", "dlc", "o.dat")
++			// We will hand move the ackfloor to simulate dangling message condition.
++			cstore := filepath.Join(sd, "$G", "streams", "TEST", "obs", "dlc", "o.dat")
+ 
+-	buf, err := os.ReadFile(cstore)
+-	require_NoError(t, err)
++			buf, err := os.ReadFile(cstore)
++			require_NoError(t, err)
+ 
+-	state, err := decodeConsumerState(buf)
+-	require_NoError(t, err)
++			state, err := decodeConsumerState(buf)
++			require_NoError(t, err)
+ 
+-	// Update from 10 for delivered and ack to 90.
+-	state.Delivered.Stream, state.Delivered.Consumer = 90, 90
+-	state.AckFloor.Stream, state.AckFloor.Consumer = 90, 90
++			// Update from 10 for delivered and ack to 90.
++			state.Delivered.Stream, state.Delivered.Consumer = 90, 90
++			state.AckFloor.Stream, state.AckFloor.Consumer = 90, 90
+ 
+-	err = os.WriteFile(cstore, encodeConsumerState(state), defaultFilePerms)
+-	require_NoError(t, err)
++			err = os.WriteFile(cstore, encodeConsumerState(state), defaultFilePerms)
++			require_NoError(t, err)
+ 
+-	// Restart.
+-	s = RunJetStreamServerOnPort(-1, sd)
+-	defer s.Shutdown()
++			// Restart.
++			s = RunJetStreamServerOnPort(-1, sd)
++			defer s.Shutdown()
+ 
+-	nc, js = jsClientConnect(t, s)
+-	defer nc.Close()
++			nc, js = jsClientConnect(t, s)
++			defer nc.Close()
+ 
+-	si, err := js.StreamInfo("TEST")
+-	require_NoError(t, err)
++			si, err := js.StreamInfo("TEST")
++			require_NoError(t, err)
+ 
+-	if si.State.Msgs != 10 {
+-		t.Fatalf("Expected auto-cleanup to have worked but got %d msgs vs 10", si.State.Msgs)
++			if si.State.Msgs != 10 {
++				t.Fatalf("Expected auto-cleanup to have worked but got %d msgs vs 10", si.State.Msgs)
++			}
++		})
+ 	}
+ }
+ 
+@@ -21531,6 +21535,62 @@ func TestJetStreamWQMaxDeliveryReached(t *testing.T) {
+ 	require_Equal(t, sm.subj, "foo")
+ }
+ 
++func TestJetStreamInterestAndWorkQueueSubjectsOutsideStream(t *testing.T) {
++	for _, retention := range []nats.RetentionPolicy{nats.InterestPolicy, nats.WorkQueuePolicy} {
++		for _, title := range []string{"transform", "sources", "subject-update"} {
++			t.Run(fmt.Sprintf("%s/%s", retention, title), func(t *testing.T) {
++				s := RunBasicJetStreamServer(t)
++				defer s.Shutdown()
++
++				nc, js := jsClientConnect(t, s)
++				defer nc.Close()
++
++				// The stream has subject "foo", but stores a message under "bar".
++				cfg := &nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}, Retention: retention}
++				pubSubj := "bar"
++				switch title {
++				case "transform":
++					cfg.SubjectTransform = &nats.SubjectTransformConfig{Source: "foo", Destination: "bar"}
++					pubSubj = "foo"
++				case "sources":
++					_, err := js.AddStream(&nats.StreamConfig{Name: "SOURCE", Subjects: []string{"bar"}})
++					require_NoError(t, err)
++					cfg.Sources = []*nats.StreamSource{{Name: "SOURCE"}}
++				case "subject-update":
++					cfg.Subjects = []string{"foo", "bar"}
++				}
++				_, err := js.AddStream(cfg)
++				require_NoError(t, err)
++
++			
+```
+
+**File**: `server/stream.go` (modified, +8/-35)
+```diff
+@@ -9303,18 +9303,6 @@ func (mset *stream) partitionUnique(name string, partitions []string) bool {
+ 	return true
  }
  
 -// Lock should be held.
--func (fs *fileStore) setupAEK() error {
--	if fs.prf != nil && fs.aek == nil {
--		key, _, _, encrypted, err := fs.genEncryptionKeys(fs.cfg.Name)
--		if err != nil {
--			return err
--		}
--		keyFile := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFileKey)
--		if _, err := os.Stat(keyFile); err != nil && !os.IsNotExist(err) {
--			return err
--		}
--		err = fs.writeFileWithOptionalSync(keyFile, encrypted, defaultFilePerms)
--		if err != nil {
--			return err
--		}
--		// Set our aek.
--		fs.aek = key
+-func (mset *stream) potentialFilteredConsumers() bool {
+-	numSubjects := len(mset.cfg.Subjects)
+-	if len(mset.consumers) == 0 || numSubjects == 0 {
+-		return false
 -	}
--	return nil
+-	if numSubjects > 1 || subjectHasWildcard(mset.cfg.Subjects[0]) {
+-		return true
+-	}
+-	return false
 -}
 -
- // Write out meta and the checksum.
- // Lock should be held.
- func (fs *fileStore) writeStreamMeta() error {
--	if err := fs.setupAEK(); err != nil {
--		return err
+ // Check if there is no interest in this sequence number across our consumers.
+ // The consumer passed is optional if we are processing the ack for that consumer.
+ // Write lock should be held.
+@@ -9331,23 +9319,8 @@ func (mset *stream) noInterestWithSubject(seq uint64, subj string, obs *consumer
+ 
+ // Write lock should be held here for the stream to avoid race conditions on state.
+ func (mset *stream) checkForInterest(seq uint64, obs *consumer) bool {
+-	var subj string
+-	if mset.potentialFilteredConsumers() {
+-		pmsg := getJSPubMsgFromPool()
+-		defer pmsg.returnToPool()
+-		sm, err := mset.store.LoadMsg(seq, &pmsg.StoreMsg)
+-		if err != nil {
+-			if err == ErrStoreEOF {
+-				// Register this as a preAck.
+-				mset.registerPreAck(obs, seq)
+-				return true
+-			}
+-			mset.clearAllPreAcks(seq)
+-			return false
+-		}
+-		subj = sm.subj
 -	}
--
- 	meta := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFile)
- 	if _, err := os.Stat(meta); err != nil && !os.IsNotExist(err) {
- 		return err
-@@ -1045,18 +1024,37 @@ func (fs *fileStore) writeStreamMeta() error {
- 	if err != nil {
- 		return err
- 	}
-+
-+	// Generate our key if encrypted and we don't have one yet.
-+	// Stage it like meta.inf, since the current meta.inf may still need the current key.
-+	aek, stagedKey := fs.aek, false
-+	if fs.prf != nil && aek == nil {
-+		key, _, _, encrypted, err := fs.genEncryptionKeys(fs.cfg.Name)
-+		if err != nil {
-+			return err
-+		}
-+		keyFile := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFileKey)
-+		if err = fs.writeFileWithOptionalSync(keyFile+metaTmpSuffix, encrypted, defaultFilePerms); err != nil {
-+			return err
-+		}
-+		aek, stagedKey = key, true
-+	}
-+
- 	// Encrypt if needed.
--	if fs.aek != nil {
--		nonce := make([]byte, fs.aek.NonceSize(), fs.aek.NonceSize()+len(b)+fs.aek.Overhead())
-+	if aek != nil {
-+		nonce := make([]byte, aek.NonceSize(), aek.NonceSize()+len(b)+aek.Overhead())
- 		if n, err := rand.Read(nonce); err != nil {
- 			return err
- 		} else if n != len(nonce) {
- 			return fmt.Errorf("not enough nonce bytes read (%d != %d)", n, len(nonce))
+-	return mset.checkForInterestWithSubject(seq, subj, obs)
++	// Filtered consumers look up the subject when needed.
++	return mset.checkForInterestWithSubject(seq, _EMPTY_, obs)
+ }
+ 
+ // Checks for interest given a sequence and subject.
+@@ -9358,7 +9331,7 @@ func (mset *stream) checkForInterestWithSubject(seq uint64, subj string, obs *co
+ 			continue
  		}
--		b = fs.aek.Seal(nonce, nonce, b, nil)
-+		b = aek.Seal(nonce, nonce, b, nil)
+ 		// Check if we need an ack.
+-		if o.needAck(seq, subj) {
++		if o.needAck(seq, &subj) {
+ 			return true
+ 		}
+ 	}
+@@ -9766,7 +9739,7 @@ func (a *Account) RestoreStream(ncfg *StreamConfig, r io.Reader) (*stream, error
+ 	return mset, nil
+ }
+ 
+-// This is to check for dangling messages on interest retention streams. Only called on account enable.
++// This is to check for dangling messages on interest and workqueue retention streams. Only called on account enable.
+ // Issue https://github.com/nats-io/nats-server/issues/3612
+ func (mset *stream) checkForOrphanMsgs() {
+ 	mset.mu.RLock()
+@@ -9795,12 +9768,12 @@ func (mset *stream) checkForOrphanMsgs() {
+ }
+ 
+ // Check on startup to make sure that consumers replication matches us.
+-// Interest retention requires replication matches.
++// Interest and workqueue retention require replication matches.
+ func (mset *stream) checkConsumerReplication() {
+ 	mset.mu.RLock()
+ 	defer mset.mu.RUnlock()
+ 
+-	if mset.cfg.Retention != InterestPolicy {
++	if mset.cfg.Retention == LimitsPolicy {
+ 		return
  	}
  
--	err = fs.writeFileWithOptionalSync(meta, b, defaultFilePerms)
-+	// Stage meta.inf until meta.sum is written, so a crash can't leave them out of sync.
-+	// After a crash, recoverStagedMeta finishes or discards it.
-+	tmp := meta + metaTmpSuffix
-+	err = fs.writeFileWithOptionalSync(tmp, b, defaultFilePerms)
- 	if err != nil {
- 		return err
+@@ -9810,8 +9783,8 @@ func (mset *stream) checkConsumerReplication() {
+ 		// Consumer replicas 0 can be a legit config for the replicas and we will inherit from the stream
+ 		// when this is the case.
+ 		if mset.cfg.Replicas != o.cfg.Replicas && o.cfg.Replicas != 0 {
+-			s.Errorf("consumer '%s > %s > %s' MUST match replication (%d vs %d) of stream with interest policy",
+-				acc, mset.cfg.Name, o.cfg.Name, mset.cfg.Replicas, o.cfg.Replicas)
++			s.Errorf("consumer '%s > %s > %s' MUST match replication (%d vs %d) of stream with %s policy",
++				acc, mset.cfg.Name, o.cfg.Name, mset.cfg.Replicas, o.cfg.Replicas, strings.ToLower(mset.cfg.Retention.String()))
+ 		}
+ 		o.mu.RUnlock()
  	}
-@@ -1069,7 +1067,75 @@ func (fs *fileStore) writeStreamMeta() error {
- 	if err != nil {
- 		return err
- 	}
--	return nil
-+	// The new key is in use once meta.sum is written,
 ```
 
-**File**: `server/filestore_test.go` (modified, +95/-0)
+---
+
+### Incident Patch 2: `693b1f47` (2026-11-12)
+**Commit Message**: [FIXED] Dangling WorkQueue messages not cleaned up on restart
+
+Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+
+**File**: `server/consumer.go` (modified, +1/-1)
 ```diff
-@@ -1806,6 +1806,48 @@ func TestFileStoreMeta(t *testing.T) {
- 	if mychecksum != string(checksum) {
- 		t.Fatalf("Checksums do not match, got %q vs %q", mychecksum, checksum)
- 	}
-+
-+	// A missing or mismatched checksum must be rewritten when opened again.
-+	skey, okey := sha256.Sum256([]byte(mconfig.Name)), sha256.Sum256([]byte(mconfig.Name+"/"+oname))
-+	for _, corrupt := range []func(sum string){
-+		func(sum string) { require_NoError(t, os.Remove(sum)) },
-+		func(sum string) { require_NoError(t, os.WriteFile(sum, []byte("bad"), defaultFilePerms)) },
-+	} {
-+		require_NoError(t, obs.Stop())
-+		fs.Stop()
-+		corrupt(metasum)
-+		corrupt(ometasum)
-+
-+		fs, err = newFileStore(fcfg, mconfig)
-+		require_NoError(t, err)
-+		obs, err = fs.ConsumerStore(oname, time.Time{}, &oconfig)
-+		require_NoError(t, err)
-+		match, err := metaFilesMatch(metafile, metasum, skey[:])
-+		require_NoError(t, err)
-+		require_True(t, match)
-+		match, err = metaFilesMatch(ometafile, ometasum, okey[:])
-+		require_NoError(t, err)
-+		require_True(t, match)
-+	}
-+
-+	// A plaintext consumer with a mismatched checksum must keep its state when converted to encrypted.
-+	require_NoError(t, obs.UpdateDelivered(1, 1, 1, time.Now().UnixNano()))
-+	state, err := obs.State()
-+	require_NoError(t, err)
-+	require_NoError(t, obs.Stop())
-+	fs.Stop()
-+	require_NoError(t, os.WriteFile(ometasum, []byte("bad"), defaultFilePerms))
-+
-+	fcfg.Cipher = AES
-+	fs, err = newFileStoreWithCreated(fcfg, mconfig, time.Now(), prf(&fcfg), nil)
-+	require_NoError(t, err)
-+	obs, err = fs.ConsumerStore(oname, time.Time{}, &oconfig)
-+	require_NoError(t, err)
-+	nstate, err := obs.State()
-+	require_NoError(t, err)
-+	require_Equal(t, nstate.Delivered, state.Delivered)
-+	require_NoError(t, obs.Stop())
-+	fs.Stop()
+@@ -4010,7 +4010,7 @@ func (o *consumer) moveAckFloor(dseq, sseq uint64) {
  }
  
- func TestFileStoreWriteAndReadSameBlock(t *testing.T) {
-@@ -10575,6 +10617,36 @@ func TestFileStoreStoreRawMessageThrowsPermissionErrorIfFSModeReadOnly(t *testin
- 	require_Error(t, err, os.ErrPermission)
- }
- 
-+func TestFileStoreSyncsNewDirectoriesWithSyncAlways(t *testing.T) {
-+	if !canFsyncDirectories || os.Geteuid() == 0 {
-+		t.Skip("Requires directory syncs and permission checks")
-+	}
-+
-+	// A parent that can't be opened makes syncing the new directory's entry fail.
-+	sd := t.TempDir()
-+	require_NoError(t, os.Chmod(sd, 0o300))
-+	t.Cleanup(func() { os.Chmod(sd, defaultDirPerms) })
-+	fcfg := FileStoreConfig{StoreDir: filepath.Join(sd, "zzz"), SyncAlways: true}
-+	cfg := StreamConfig{Name: "zzz", Storage: FileStorage}
-+	_, err := newFileStore(fcfg, cfg)
-+	require_Error(t, err, os.ErrPermission)
-+	// The new directory is removed, so a retry creates and syncs it again.
-+	_, err = os.Stat(fcfg.StoreDir)
-+	require_True(t, os.IsNotExist(err))
-+	require_NoError(t, os.Chmod(sd, defaultDirPerms))
-+
-+	fs, err := newFileStore(fcfg, cfg)
-+	require_NoError(t, err)
-+	defer fs.Stop()
-+	odir := filepath.Join(fcfg.StoreDir, consumerDir)
-+	require_NoError(t, os.Chmod(odir, 0o300))
-+	t.Cleanup(func() { os.Chmod(odir, defaultDirPerms) })
-+	_, err = fs.ConsumerStore("C", time.Time{}, &ConsumerConfig{AckPolicy: AckExplicit})
-+	require_Error(t, err, os.ErrPermission)
-+	_, err = os.Stat(filepath.Join(odir, "C"))
-+	require_True(t, os.IsNotExist(err))
-+}
-+
- func TestFileStoreWriteFullStateThrowsPermissionErrorIfFSModeReadOnly(t *testing.T) {
- 	// Test fails in Buildkite environment. Skip it.
- 	skipIfBuildkite(t)
-@@ -16700,6 +16772,29 @@ func TestFileStoreUpdateConfigSyncAlwaysRace(t *testing.T) {
- 	wg.Wait()
- }
- 
-+func TestFileStoreSyncsNewBlockWithSyncAlways(t *testing.T) {
-+	if !canFsyncDirectories || os.Geteuid() == 0 {
-+		t.Skip("Requires directory syncs and permission checks")
-+	}
-+
-+	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-+		fcfg.BlockSize, fcfg.SyncAlways = 128, true
-+		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
-+		fs, err := newFileStoreWithCreated(fcfg, cfg, time.Now(), prf(&fcfg), nil)
-+		require_NoError(t, err)
-+		defer fs.Stop()
-+
-+		// A directory that can't be opened makes syncing a new block's entry fail.
-+		mdir := filepath.Join(fcfg.StoreDir, msgDir)
-+		require_NoError(t, os.Chmod(mdir, 0o300))
-+		t.Cleanup(func() { os.Chmod(mdir, defaultDirPerms) })
-+		for i := 0; i < 10 && err == nil; i++ {
-+			_, _, err = fs.StoreMsg("foo", nil, []byte("ok"), 0)
-+		}
-+		require_Error(t, err, os.ErrPermission)
-+	})
-+}
-+
- // Must be run with -race.
- func TestFileStoreStoreRawMsgTTLsRace(t *testing.T) {
- 	sd := t.TempDir()
+ // Check if we need an ack for this store seq.
+-// This is called for interest based retention streams to remove messages.
++// This is called for interest and workqueue retention streams to remove messages.
+ // An empty subj is looked up if needed and stored, so callers can share it across consumers.
+ func (o *consumer) needAck(sseq uint64, subj *string) bool {
+ 	var needAck bool
 ```
 
-**File**: `server/jetstream.go` (modified, +24/-19)
+**File**: `server/jetstream.go` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,6 @@ import (
- 	"crypto/hmac"
- 	"crypto/sha256"
- 	"encoding/binary"
--	"encoding/hex"
- 	"fmt"
- 	"math"
- 	"os"
-@@ -29,7 +28,6 @@ import (
- 	"sync/atomic"
- 	"time"
+@@ -1698,7 +1698,7 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
  
--	"github.com/minio/highwayhash"
- 	"github.com/nats-io/nats-server/v2/server/gsl"
- 	"github.com/nats-io/nats-server/v2/server/sysmem"
- 	"github.com/nats-io/nats-server/v2/server/tpm"
-@@ -445,7 +443,7 @@ func (s *Server) enableJetStream(cfg JetStreamConfig) error {
+ 		// Collect to check for dangling messages.
+ 		// TODO(dlc) - Can be removed eventually.
+-		if cfg.StreamConfig.Retention == InterestPolicy {
++		if cfg.StreamConfig.Retention != LimitsPolicy {
+ 			mset.checkForOrphanMsgs()
+ 			mset.checkConsumerReplication()
+ 		}
+```
+
+**File**: `server/jetstream_test.go` (modified, +52/-48)
+```diff
+@@ -16877,70 +16877,74 @@ func TestJetStreamAccountPurge(t *testing.T) {
+ // For issue https://github.com/nats-io/nats-server/issues/3612
+ // Do auto cleanup.
+ func TestJetStreamDanglingMessageAutoCleanup(t *testing.T) {
+-	s := RunBasicJetStreamServer(t)
+-	defer s.Shutdown()
++	for _, rp := range []nats.RetentionPolicy{nats.InterestPolicy, nats.WorkQueuePolicy} {
++		t.Run(rp.String(), func(t *testing.T) {
++			s := RunBasicJetStreamServer(t)
++			defer s.Shutdown()
  
- 	// FIXME(dlc) - Allow memory only operation?
- 	if stat, err := os.Stat(cfg.StoreDir); os.IsNotExist(err) {
--		if err := os.MkdirAll(cfg.StoreDir, defaultDirPerms); err != nil {
-+		if err := mkdirAllWithOptionalSync(s.diskIOSemaphore(), cfg.StoreDir, defaultDirPerms, cfg.SyncAlways); err != nil {
- 			return fmt.Errorf("could not create storage directory - %v", err)
- 		}
- 	} else {
-@@ -1257,7 +1255,7 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 	if _, err := os.Stat(sdir); err == nil {
- 		hasState = true
- 	} else if os.IsNotExist(err) {
--		if err := os.MkdirAll(sdir, defaultDirPerms); err != nil {
-+		if err := mkdirAllWithOptionalSync(s.diskIOSemaphore(), sdir, defaultDirPerms, js.config.SyncAlways); err != nil {
- 			js.mu.Unlock()
- 			return fmt.Errorf("could not create storage streams directory - %v", err)
- 		}
-@@ -1320,6 +1318,11 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 		for _, ofi := range ofis {
- 			metafile := filepath.Join(odir, ofi.Name(), JetStreamMetaFile)
- 			metasum := filepath.Join(odir, ofi.Name(), JetStreamMetaFileSum)
-+			key := sha256.Sum256([]byte(mset.name() + "/" + ofi.Name()))
-+			if err := recoverStagedMeta(s.diskIOSemaphore(), filepath.Join(odir, ofi.Name()), key[:], js.config.SyncAlways); err != nil {
-+				s.Warnf("    Error recovering consumer metafile %q: %v", metafile, err)
-+				continue
+-	// Client for API requests.
+-	nc, js := jsClientConnect(t, s)
+-	defer nc.Close()
++			// Client for API requests.
++			nc, js := jsClientConnect(t, s)
++			defer nc.Close()
+ 
+-	_, err := js.AddStream(&nats.StreamConfig{
+-		Name:      "TEST",
+-		Subjects:  []string{"foo"},
+-		Retention: nats.InterestPolicy,
+-	})
+-	require_NoError(t, err)
++			_, err := js.AddStream(&nats.StreamConfig{
++				Name:      "TEST",
++				Subjects:  []string{"foo"},
++				Retention: rp,
++			})
++			require_NoError(t, err)
+ 
+-	sub, err := js.PullSubscribe("foo", "dlc", nats.MaxAckPending(10))
+-	require_NoError(t, err)
++			sub, err := js.PullSubscribe("foo", "dlc", nats.MaxAckPending(10))
++			require_NoError(t, err)
+ 
+-	// Send 100 msgs
+-	n := 100
+-	for i := 0; i < n; i++ {
+-		sendStreamMsg(t, nc, "foo", "msg")
+-	}
++			// Send 100 msgs
++			n := 100
++			for i := 0; i < n; i++ {
++				sendStreamMsg(t, nc, "foo", "msg")
 +			}
- 			if _, err := os.Stat(metafile); os.IsNotExist(err) {
- 				s.Warnf("    Missing consumer metafile %q", metafile)
- 				continue
-@@ -1333,13 +1336,20 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 				s.Warnf("    Missing consumer checksum for %q", metasum)
- 				continue
+ 
+-	// Grab and ack 10 messages.
+-	for _, m := range fetchMsgs(t, sub, 10, time.Second) {
+-		m.AckSync()
+-	}
++			// Grab and ack 10 messages.
++			for _, m := range fetchMsgs(t, sub, 10, time.Second) {
++				m.AckSync()
++			}
+ 
+-	ci, err := sub.ConsumerInfo()
+-	require_NoError(t, err)
+-	require_True(t, ci.AckFloor.Stream == 10)
++			ci, err := sub.ConsumerInfo()
++			require_NoError(t, err)
++			require_True(t, ci.AckFloor.Stream == 10)
+ 
+-	// Stop current
+-	sd := s.JetStreamConfig().StoreDir
+-	s.Shutdown()
++			// Stop current
++			sd := s.JetStreamConfig().StoreDir
++			s.Shutdown()
+ 
+-	// We will hand move the ackfloor to simulate dangling message condition.
+-	cstore := filepath.Join(sd, "$G", "streams", "TEST", "obs", "dlc", "o.dat")
++			// We will hand move the ackfloor to simulate dangling message condition.
++			cstore := filepath.Join(sd, "$G", "streams", "TEST", "obs", "dlc", "o.dat")
+ 
+-	buf, err := os.ReadFile(cstore)
+-	require_NoError(t, err)
++			buf, err := os.ReadFile(cstore)
++			require_NoError(t, err)
+ 
+-	state, err := decodeConsumerState(buf)
+-	require_NoError(t, err)
++			state, err := decodeConsumerState(buf)
++			require_NoError(t, err)
+ 
+-	// Update from 10 for delivered and ack to 90.
+-	state.Delivered.Stream, state.Delivered.Consumer = 90, 90
+-	state.AckFloor.Stream, state.AckFloor.Consumer = 90, 90
++			// Update from 10 for delivered and ack to 90.
++			state.Delivered.Stream, state.Delivered.Consumer = 90, 90
++			state.AckFloor.Stream, state.AckFloor.Consumer = 90, 90
+ 
+-	err = os.WriteFile(cstore, encodeConsumerState(state), defaultFilePerms)
+-	require_NoError(t, err)
++			err = os.WriteFile(cstore, encodeConsumerState(state), defaultFilePerms)
++			require_NoError(t, err)
+ 
+-	// Restart.
+-	s = RunJetStreamServerOnPort(-1, sd)
+-	defer s.Shutdown()
++			// Restart.
++			s = RunJetStreamServerOnPort(-1, sd)
++			defer s.Shutdown()
+ 
+-	nc, js = jsClientConnect(t, s)
+-	defer nc.Close()
++			nc, js = jsClientConnect(t, s)
++			defer nc.Close()
+ 
+-	si, err := js.StreamInfo("TEST")
+-	require_NoError(t, err)
++			si, err := js.StreamInfo("TEST")
++			require_NoError(t, err)
+ 
+-	if si.State.Msgs != 10 {
+-		t.Fatalf("Expected auto-cleanup to have worked but got %d msgs vs 10", si.State.Msgs)
++			if si.State.Msgs != 10 {
++				t.Fatalf("Expected auto-cleanup to have worked but got %d msgs vs 10", si.State.Msgs)
++			}
++		})
+ 	}
+ }
+ 
+```
+
+**File**: `server/stream.go` (modified, +5/-5)
+```diff
+@@ -9739,7 +9739,7 @@ func (a *Account) RestoreStream(ncfg *StreamConfig, r io.Reader) (*stream, error
+ 	return mset, nil
+ }
+ 
+-// This is to check for dangling messages on interest retention streams. Only called on account enable.
++// This is to check for dangling messages on interest and workqueue retention streams. Only called on account enable.
+ // Issue https://github.com/nats-io/nats-server/issues/3612
+ func (mset *stream) checkForOrphanMsgs() {
+ 	mset.mu.RLock()
+@@ -9768,12 +9768,12 @@ func (mset *stream) checkForOrphanMsgs() {
+ }
+ 
+ // Check on startup to make sure that consumers replication matches us.
+-// Interest retention requires replication matches.
++// Interest and workqueue retention require replication matches.
+ func (mset *stream) checkConsumerReplication() {
+ 	mset.mu.RLock()
+ 	defer mset.mu.RUnlock()
+ 
+-	if mset.cfg.Retention != InterestPolicy {
++	if mset.cfg.Retention == LimitsPolicy {
+ 		return
+ 	}
+ 
+@@ -9783,8 +9783,8 @@ func (mset *stream) checkConsumerReplication() {
+ 		// Consumer replicas 0 can be a legit config for the replicas and we will inherit from the stream
+ 		// when this is the case.
+ 		if mset.cfg.Replicas != o.cfg.Replicas && o.cfg.Replicas != 0 {
+-			s.Errorf("consumer '%s > %s > %s' MUST match replication (%d vs %d) of stream with interest policy",
+-				acc, mset.cfg.Name, o.cfg.Name, mset.cfg.Replicas, o.cfg.Replicas)
++			s.Errorf("consumer '%s > %s > %s' MUST match replication (%d vs %d) of stream with %s policy",
++				acc, mset.cfg.Name, o.cfg.Name, mset.cfg.Replicas, o.cfg.Replicas, strings.ToLower(mset.cfg.Retention.String()))
+ 		}
+ 		o.mu.RUnlock()
+ 	}
+```
+
+---
+
+### Incident Patch 3: `043ac350` (2026-11-12)
+**Commit Message**: [FIXED] Filtered consumer losing interest when a message can't be read
+
+Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+
+**File**: `server/consumer.go` (modified, +4/-1)
+```diff
+@@ -4030,8 +4030,11 @@ func (o *consumer) needAck(sseq uint64, subj *string) bool {
+ 	if isFiltered {
+ 		if *subj == _EMPTY_ {
+ 			var err error
+-			if *subj, err = o.mset.store.SubjectForSeq(sseq); err != nil {
++			if *subj, err = o.mset.store.SubjectForSeq(sseq); err == ErrStoreMsgNotFound {
+ 				return false
++			} else if err != nil {
++				// We can't tell if the message matches, so keep it.
++				return true
  			}
-+			if match, err := metaFilesMatch(metafile, metasum, key[:]); err != nil {
-+				s.Warnf("    Error checking consumer metafile checksum %q: %v", metasum, err)
-+				continue
-+			} else if !match {
-+				s.Warnf("    Consumer metafile %q: checksums do not match", metafile)
-+				continue
-+			}
- 
- 			// Check if we are encrypted.
--			if key, err := os.ReadFile(filepath.Join(odir, ofi.Name(), JetStreamMetaFileKey)); err == nil {
-+			if keyBuf, err := os.ReadFile(filepath.Join(odir, ofi.Name(), JetStreamMetaFileKey)); err == nil {
- 				s.Debugf("  Consumer metafile is encrypted, reading encrypted keyfile")
- 				// Decode the buffer before proceeding.
- 				ctxName := mset.name() + tsep + ofi.Name()
--				nbuf, _, err := s.decryptMeta(sc, key, buf, a.Name, ctxName)
-+				nbuf, _, err := s.decryptMeta(sc, keyBuf, buf, a.Name, ctxName)
- 				if err != nil {
- 					s.Warnf("  Error decrypting our consumer metafile: %v", err)
- 					continue
-@@ -1444,12 +1454,12 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 			return nil
  		}
- 		key := sha256.Sum256([]byte(fi.Name()))
--		hh, err := highwayhash.NewDigest64(key[:])
--		if err != nil {
--			return err
--		}
- 		metafile := filepath.Join(mdir, JetStreamMetaFile)
- 		metasum := filepath.Join(mdir, JetStreamMetaFileSum)
-+		if err := recoverStagedMeta(s.diskIOSemaphore(), mdir, key[:], js.config.SyncAlways); err != nil {
-+			s.Warnf("  Error recovering stream metafile %q: %v", metafile, err)
-+			return nil
-+		}
- 		if _, err := os.Stat(metafile); os.IsNotExist(err) {
- 			s.Warnf("  Missing stream metafile for %q", metafile)
- 			return nil
-@@ -1463,16 +1473,11 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 			s.Warnf("  Missing stream checksum file %q", metasum)
- 			return nil
- 		}
--		sum, err := os.ReadFile(metasum)
--		if err != nil {
--			s.Warnf("  Error reading Stream metafile checksum %q: %v", metasum, err)
-+		if match, err := metaFilesMatch(metafile, metasum, key[:]); err != nil {
-+			s.Warnf("  Error checking stream metafile checksum %q: %v", metasum, err)
- 			return nil
--		}
--		hh.Write(buf)
--		var hb [highwayhash.Size64]byte
--		checksum := hex.EncodeToString(hh.Sum(hb[:0]))
--		if checksum != string(sum) {
--			s.Warnf("  Stream metafile %q: checksums do not match %q vs %q", metafile, sum, checksum)
-+		} else if !match {
-+			s.Warnf("  Stream metafile %q: checksums do not match", metafile)
- 			return nil
- 		}
- 
+ 		if !o.isFilteredMatch(*subj) {
 ```
 
-**File**: `server/jetstream_test.go` (modified, +106/-1)
+**File**: `server/filestore.go` (modified, +5/-1)
 ```diff
-@@ -8032,28 +8032,41 @@ func TestJetStreamFileStreamCreatedTimePreservedAfterRestartAndUpdate(t *testing
- 	s.Shutdown()
- 	time.Sleep(10 * time.Millisecond)
- 
-+	// A staged meta.inf that meta.sum wasn't written for must be discarded.
-+	metafile := filepath.Join(sd, globalAccountName, streamsDir, "TEST", JetStreamMetaFile)
-+	require_NoError(t, os.WriteFile(metafile+metaTmpSuffix, []byte("{}"), defaultFilePerms))
-+
- 	s = RunJetStreamServerOnPort(-1, sd)
- 	nc, js = jsClientConnect(t, s)
- 	si, err = js.StreamInfo("TEST")
- 	require_NoError(t, err)
- 	if !si.Created.Equal(created) {
- 		t.Fatalf("Expected created time %v after restart, got %v", created, si.Created)
+@@ -9649,7 +9649,7 @@ func (fs *fileStore) SubjectForSeq(seq uint64) (string, error) {
+ 	fs.mu.RUnlock()
+ 	if mb != nil {
+ 		mb.mu.Lock()
+-		sm, _, _ := mb.fetchMsgNoCopyLocked(seq, &smv)
++		sm, _, err := mb.fetchMsgNoCopyLocked(seq, &smv)
+ 		var subj string
+ 		if sm != nil {
+ 			// Copy the subject, as it's used elsewhere, and the backing cache could be reused in the meantime.
+@@ -9660,6 +9660,10 @@ func (fs *fileStore) SubjectForSeq(seq uint64) (string, error) {
+ 		if sm != nil {
+ 			return subj, nil
+ 		}
++		// A deleted message is not found, other errors mean we couldn't read it.
++		if err != nil && err != errDeletedMsg {
++			return _EMPTY_, err
++		}
  	}
-+	_, err = os.Stat(metafile + metaTmpSuffix)
-+	require_True(t, os.IsNotExist(err))
+ 	return _EMPTY_, ErrStoreMsgNotFound
+ }
+```
+
+**File**: `server/filestore_test.go` (modified, +10/-0)
+```diff
+@@ -11421,6 +11421,16 @@ func TestFileStoreSubjectForSeq(t *testing.T) {
  
-+	meta, err := os.ReadFile(metafile)
+ 	_, err = fs.SubjectForSeq(2)
+ 	require_Error(t, err, ErrStoreMsgNotFound)
++
++	// A deleted message is not found either.
++	_, _, err = fs.StoreMsg("foo.bar", nil, nil, 0)
 +	require_NoError(t, err)
- 	cfg := si.Config
- 	cfg.MaxMsgs = 1
- 	_, err = js.UpdateStream(&cfg)
- 	require_NoError(t, err)
- 	nc.Close()
- 	s.Shutdown()
- 
-+	// A staged meta.inf that meta.sum was written for must be finished.
-+	require_NoError(t, os.Rename(metafile, metafile+metaTmpSuffix))
-+	require_NoError(t, os.WriteFile(metafile, meta, defaultFilePerms))
-+
- 	s = RunJetStreamServerOnPort(-1, sd)
- 	nc, js = jsClientConnect(t, s)
- 	si, err = js.StreamInfo("TEST")
- 	require_NoError(t, err)
- 	if !si.Created.Equal(created) {
- 		t.Fatalf("Expected created time %v after restart and update, got %v", created, si.Created)
- 	}
-+	require_Equal(t, si.Config.MaxMsgs, 1)
++	_, _, err = fs.StoreMsg("foo.baz", nil, nil, 0)
++	require_NoError(t, err)
++	_, err = fs.RemoveMsg(2)
++	require_NoError(t, err)
++	_, err = fs.SubjectForSeq(2)
++	require_Error(t, err, ErrStoreMsgNotFound)
  }
  
- func TestJetStreamFileConsumerCreatedTimePreservedAfterRestartAndUpdate(t *testing.T) {
-@@ -8087,20 +8100,108 @@ func TestJetStreamFileConsumerCreatedTimePreservedAfterRestartAndUpdate(t *testi
- 		t.Fatalf("Expected created time %v after restart, got %v", created, ci.Created)
- 	}
+ func BenchmarkFileStoreSubjectAccesses(b *testing.B) {
+```
+
+**File**: `server/jetstream_consumer_test.go` (modified, +41/-0)
+```diff
+@@ -8054,6 +8054,47 @@ func TestJetStreamConsumerNeedAckFallbackWithFilter(t *testing.T) {
+ 	require_False(t, o.needAck(2, &subj))
+ }
  
-+	metafile := filepath.Join(sd, globalAccountName, streamsDir, "TEST", consumerDir, "DUR", JetStreamMetaFile)
-+	meta, err := os.ReadFile(metafile)
-+	require_NoError(t, err)
- 	cfg := ci.Config
- 	cfg.AckWait = 45 * time.Second
- 	_, err = js.UpdateConsumer("TEST", &cfg)
- 	require_NoError(t, err)
- 	nc.Close()
- 	s.Shutdown()
- 
-+	// A staged meta.inf that meta.sum was written for must be finished.
-+	require_NoError(t, os.Rename(metafile, metafile+metaTmpSuffix))
-+	require_NoError(t, os.WriteFile(metafile, meta, defaultFilePerms))
-+
- 	s = RunJetStreamServerOnPort(-1, sd)
- 	nc, js = jsClientConnect(t, s)
- 	ci, err = js.ConsumerInfo("TEST", "DUR")
- 	require_NoError(t, err)
- 	if !ci.Created.Equal(created) {
- 		t.Fatalf("Expected created time %v after restart and update, got %v", created, ci.Created)
- 	}
-+	require_Equal(t, ci.Config.AckWait, 45*time.Second)
-+	nc.Close()
-+	s.Shutdown()
-+
-+	// A consumer whose meta.sum doesn't match must not be recovered.
-+	metasum := filepath.Join(filepath.Dir(metafile), JetStreamMetaFileSum)
-+	require_NoError(t, os.WriteFile(metasum, []byte("bad"), defaultFilePerms))
-+
-+	s = RunJetStreamServerOnPort(-1, sd)
-+	nc, js = jsClientConnect(t, s)
-+	_, err = js.ConsumerInfo("TEST", "DUR")
-+	require_Error(t, err, nats.ErrConsumerNotFound)
++type subjectForSeqErrStore struct {
++	StreamStore
++	err error
 +}
 +
-+func TestJetStreamEncryptedStagedMetaKeyRecovery(t *testing.T) {
-+	storeDir := t.TempDir()
-+	conf := createConfFile(t, []byte(fmt.Sprintf(`
-+		listen: 127.0.0.1:-1
-+		jetstream: {key: "s3cr3t!!", store_dir: '%s'}
-+	`, storeDir)))
++func (s *subjectForSeqErrStore) SubjectForSeq(seq uint64) (string, error) {
++	return _EMPTY_, s.err
++}
 +
-+	s, _ := RunServerWithConfig(conf)
-+	defer func() { s.Shutdown() }()
-+	nc, js := jsClientConnect(t, s)
-+	defer func() { nc.Close() }()
++func TestJetStreamConsumerNeedAckSubjectLookupError(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
++	defer s.Shutdown()
 +
-+	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
-+	require_NoError(t, err)
-+	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "DUR", AckPolicy: nats.AckExplicitPolicy})
-+	require_NoError(t, err)
-+	_, err = js.Publish("foo", nil)
-+	require_NoError(t, err)
-+
-+	sdir := filepath.Join(storeDir, JetStreamStoreDir, globalAccountName, streamsDir, "TEST")
-+	odir := filepath.Join(sdir, consumerDir, "DUR")
-+	bogusKey := make([]byte, minMetaKeySize)
-+	_, err = crand.Read(bogusKey)
-+	require_NoError(t, err)
-+
-+	restartAndCheck := func() {
-+		t.Helper()
-+		nc.Close()
-+		s.Shutdown()
-+		s.WaitForShutdown()
-+		s, _ = RunServerWithConfig(conf)
-+		nc, js = jsClientConnect(t, s)
-+		si, err := js.StreamInfo("TEST")
-+		require_NoError(t, err)
-+		require_Equal(t, si.State.Msgs, 1)
-+		_, err = js.ConsumerInfo("TEST", "DUR")
-+		require_NoError(t, err)
-+		for _, dir := range []string{sdir, odir} {
-+			for _, f := range []string{JetStreamMetaFile, JetStreamMetaFileKey} {
-+				_, err = os.Stat(filepath.Join(dir, f+metaTmpSuffix))
-+				require_True(t, os.IsNotExist(err))
-+			}
-+		}
-+	}
-+
-+	// A staged meta.key that meta.sum wasn't written for must be discarded.
-+	nc.Close()
-+	s.Shutdown()
-+	s.WaitForShutdown()
-+	require_NoError(t, os.WriteFile(filepath.Join(sdir, JetStreamMetaFileKey+metaTmpSuffix), bogusKey, defaultFilePerms))
-+	require_NoError(t, os.WriteFile(filepath.Join(sdir, JetStreamMetaFile+metaTmpSuffix), []byte("{}"), defaultFilePerms))
-+	require_NoError(t, os.WriteFile(filepath.Join(odir, JetStreamMetaFileKey+metaTmpSuffix), bogusKey, defaultFileP
-```
-
----
-
-### Incident Patch 2: `be46ba4f` (2026-11-11)
-**Commit Message**: [FIXED] New message block entry not synced with sync_always
-
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
-
-**File**: `server/filestore.go` (modified, +12/-0)
-```diff
-@@ -5335,6 +5335,18 @@ func (fs *fileStore) newMsgBlockForWrite() (*msgBlock, error) {
- 	}
- 	mb.mfd = mfd
- 
-+	// Sync the new block's entry if writes are synced, otherwise the periodic sync covers it.
-+	// If encrypted, writing the block's key file below already syncs the directory.
-+	if fs.prf == nil && (fs.syncAlways.Load() || fs.syncOnFlush.Load()) && canFsyncDirectories {
-+		fs.dios.acquire()
-+		err = syncDir(filepath.Dir(mb.mfn))
-+		fs.dios.release()
-+		if err != nil {
-+			_ = mb.dirtyCloseWithRemove(true)
-+			return nil, err
-+		}
-+	}
-+
- 	// Check if encryption is enabled.
- 	if fs.prf != nil {
- 		if err := fs.genEncryptionKeysForBlock(mb); err != nil {
-```
-
-**File**: `server/filestore_test.go` (modified, +23/-0)
-```diff
-@@ -16772,6 +16772,29 @@ func TestFileStoreUpdateConfigSyncAlwaysRace(t *testing.T) {
- 	wg.Wait()
- }
- 
-+func TestFileStoreSyncsNewBlockWithSyncAlways(t *testing.T) {
-+	if !canFsyncDirectories || os.Geteuid() == 0 {
-+		t.Skip("Requires directory syncs and permission checks")
-+	}
-+
-+	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-+		fcfg.BlockSize, fcfg.SyncAlways = 128, true
-+		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
-+		fs, err := newFileStoreWithCreated(fcfg, cfg, time.Now(), prf(&fcfg), nil)
-+		require_NoError(t, err)
-+		defer fs.Stop()
-+
-+		// A directory that can't be opened makes syncing a new block's entry fail.
-+		mdir := filepath.Join(fcfg.StoreDir, msgDir)
-+		require_NoError(t, os.Chmod(mdir, 0o300))
-+		t.Cleanup(func() { os.Chmod(mdir, defaultDirPerms) })
-+		for i := 0; i < 10 && err == nil; i++ {
-+			_, _, err = fs.StoreMsg("foo", nil, []byte("ok"), 0)
-+		}
-+		require_Error(t, err, os.ErrPermission)
++	mset, err := s.globalAccount().addStream(&StreamConfig{
++		Name:      "TEST",
++		Subjects:  []string{"foo"},
++		Retention: InterestPolicy,
 +	})
++	require_NoError(t, err)
++	o, err := mset.addConsumer(&ConsumerConfig{Durable: "CONSUMER", FilterSubject: "foo", AckPolicy: AckExplicit})
++	require_NoError(t, err)
++
++	_, _, err = mset.store.StoreMsg("foo", nil, nil, 0)
++	require_NoError(t, err)
++
++	es := &subjectForSeqErrStore{StreamStore: mset.store}
++	mset.mu.Lock()
++	mset.store = es
++	mset.mu.Unlock()
++
++	// The message can't be read, so we can't tell if it matches and must keep it.
++	es.err = errors.New("read failed")
++	subj := _EMPTY_
++	require_True(t, o.needAck(1, &subj))
++
++	// The message is gone, so it's not needed.
++	es.err = ErrStoreMsgNotFound
++	subj = _EMPTY_
++	require_False(t, o.needAck(1, &subj))
 +}
 +
- // Must be run with -race.
- func TestFileStoreStoreRawMsgTTLsRace(t *testing.T) {
- 	sd := t.TempDir()
-```
-
----
-
-### Incident Patch 3: `96e22f7e` (2026-10-29)
-**Commit Message**: [FIXED] Duplicate auth callout replies blocking the sender's read loop
-
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
-
-**File**: `server/auth_callout.go` (modified, +6/-0)
-```diff
-@@ -19,6 +19,7 @@ import (
- 	"encoding/pem"
- 	"errors"
- 	"fmt"
-+	"sync/atomic"
- 	"time"
- 	"unicode"
- 
-@@ -105,6 +106,7 @@ func (s *Server) processClientOrLeafCallout(c *client, opts *Options, proxyRequi
- 	reply := s.newRespInbox()
- 	s.mu.RUnlock()
- 	respCh := make(chan string, 1)
-+	var replied atomic.Bool
- 
- 	decodeResponse := func(rc *client, rmsg []byte, acc *Account) (*jwt.UserClaims, error) {
- 		account := acc.Name
-@@ -272,6 +274,10 @@ func (s *Server) processClientOrLeafCallout(c *client, opts *Options, proxyRequi
- 	}
- 
- 	processReply := func(_ *subscription, rc *client, racc *Account, subject, reply string, rmsg []byte) {
-+		// Only handle the first reply, later ones would block on respCh or override the result.
-+		if !replied.CompareAndSwap(false, true) {
-+			return
-+		}
- 		arc, err := decodeResponse(rc, rmsg, racc)
- 		if err != nil {
- 			c.authViolation()
-```
-
-**File**: `server/auth_callout_test.go` (modified, +37/-0)
-```diff
-@@ -4943,3 +4943,40 @@ func TestAuthCalloutUserLimits(t *testing.T) {
- 	at.srv.UpdateAccountClaims(acc, authClaim)
- 	requireClientLimits(t, at.srv, nc, 64, 2)
- }
-+
-+func TestAuthCalloutOnlyFirstReplyHandled(t *testing.T) {
-+	conf := `
-+		listen: "127.0.0.1:-1"
-+		server_name: A
-+		authorization {
-+			timeout: 1s
-+			users: [ { user: "auth", password: "pwd" } ]
-+			auth_callout {
-+				issuer: "ABJHLOVMPA4CI6R5KLNGOB4GSLNIY7IOUPAJC4YFNDLQVIOBYQGUWVLA"
-+				auth_users: [ auth ]
-+			}
-+		}
-+	`
-+	handler := func(m *nats.Msg) {
-+		user, si, _, _, _ := decodeAuthRequest(t, m.Data)
-+		ujwt := createAuthUser(t, user, _EMPTY_, globalAccountName, _EMPTY_, nil, 10*time.Minute, nil)
-+		m.Respond(serviceResponse(t, user, si.ID, ujwt, _EMPTY_, 0))
-+		// Duplicate replies, like a second service would send, must be ignored.
-+		m.Respond(nil)
-+		m.Respond(nil)
-+	}
-+	at := NewAuthTest(t, conf, handler, nats.UserInfo("auth", "pwd"))
-+	defer at.Cleanup()
-+
-+	for i := range 5 {
-+		nc, err := at.NewClient(nats.UserInfo(fmt.Sprintf("user%d", i), "pwd"))
-+		require_NoError(t, err)
-+		// The duplicate rejects must not close the connection.
-+		time.Sleep(20 * time.Millisecond)
-+		require_True(t, nc.IsConnected())
-+		nc.Close()
-+	}
-+
-+	// The service's connection must not be blocked by its ignored replies.
-+	require_NoError(t, at.authClient.FlushTimeout(time.Second))
-+}
+ func TestJetStreamConsumerWithFormattingSymbol(t *testing.T) {
+ 	s := RunBasicJetStreamServer(t)
+ 	defer s.Shutdown()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8891** (2026-11-12): Switch to GitHub Actions lockfile (@neilalexander)
+- **PR #8890** (2026-11-12): [FIXED] Filtered consumer interest & dangling WorkQueue messages (@MauriceVanVeen)
 - **PR #8888** (closed): Rewrite stream meta.sum when missing on recovery (@amalsaidov)
 - **PR #8887** (2026-11-11): [FIXED] Filestore metadata and new directories not crash-safe (@MauriceVanVeen)
 - **PR #8886** (2026-11-11): [FIXED] Account reserved storage ignores replicas for un-tiered limits (@MauriceVanVeen)
 - **PR #8885** (2026-11-11): Update dependencies (@neilalexander)
-- **PR #8883** (2026-11-11): Update to Go 1.27.4/1.26.11 (@neilalexander)
-- **PR #8882** (2026-11-10): Cherry-picks for 2.14.10-RC.3 (@neilalexander)
 
 ---
 
@@ -3428,86 +3632,72 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Filestore metadata and new directories not crash-safe (#8887)
+## X. [FIXED] Filtered consumer interest & dangling WorkQueue messages (#8890)
 
 **RULE**:
-When implementing operations in `server/filestore.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/consumer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89e1f329`: [FIXED] Filestore metadata and new directories not crash-safe (#8887). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79d1d2c1`: [FIXED] Filtered consumer interest & dangling WorkQueue messages (#8890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/filestore.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/consumer.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The suffix of a meta file that is staged until its checksum is written.
-	metaTmpSuffix = ".new"
-	syncDirs := fcfg.SyncAlways || fcfg.SyncOnFlush
-		if err := mkdirAllWithOptionalSync(dios, fcfg.StoreDir, defaultDirPerms, syncDirs); err != nil {
-	if err := mkdirAllWithOptionalSync(dios, mdir, defaultDirPerms, syncDirs); err != nil {
-	if err := mkdirAllWithOptionalSync(dios, odir, defaultDirPerms, syncDirs); err != nil {
-	// Write our meta data if it does not exist, is zero'd out, or doesn't match its checksum.
-	if match, err := metaFilesMatch(meta, filepath.Join(fcfg.StoreDir, JetStreamMetaFileSum), key[:]); err != nil {
-		return nil, err
-	} else if !match {
-
-	// Generate our key if encrypted and we don't have one yet.
-	// Stage it like meta.inf, since the current meta.inf may still need the current key.
-	aek, stagedKey := fs.aek, false
-	if fs.prf != nil && aek == nil {
-		key, _, _, encrypted, err := fs.genEncryptionKeys(fs.cfg.Name)
-		if err != nil {
-			return err
-		}
-		keyFile := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFileKey)
-		if err = fs.writeFileWithOptionalSync(keyFile+metaTmpSuffix, encrypted, defaultFilePerms); err != nil {
-			return err
-		}
-		aek, stagedKey = key,
+// This is called for interest and workqueue retention streams to remove messages.
+// An empty subj is looked up if needed and stored, so callers can share it across consumers.
+func (o *consumer) needAck(sseq uint64, subj *string) bool {
+	isFiltered := o.subjf != nil
+		if *subj == _EMPTY_ {
+			if *subj, err = o.mset.store.SubjectForSeq(sseq); err == ErrStoreMsgNotFound {
+			} else if err != nil {
+				// We can't tell if the message matches, so keep it.
+				return true
+		if !o.isFilteredMatch(*subj) {
+			return sseq > o.asflr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if err := os.MkdirAll(fcfg.StoreDir, defaultDirPerms); err != nil {
-	if err := os.MkdirAll(mdir, defaultDirPerms); err != nil {
-	if err := os.MkdirAll(odir, defaultDirPerms); err != nil {
-	// Write our meta data if it does not exist or is zero'd out.
-	fi, err := os.Stat(meta)
-	if err != nil && os.IsNotExist(err) || fi != nil && fi.Size() == 0 {
-// Lock should be held.
-func (fs *fileStore) setupAEK() error {
-	if fs.prf != nil && fs.aek == nil {
-		key, _, _, encrypted, err := fs.genEncryptionKeys(fs.cfg.Name)
-		if err != nil {
-			return err
-		}
-		keyFile := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFileKey)
-		if _, err := os.Stat(keyFile); err != nil && !os.IsNotExist(err) {
-			return err
-		}
-		err = fs.writeFileWithOptionalSync(keyFile, encrypted, defaultFilePerms)
-		if err != nil {
-			return err
-		}
-		// Set our aek.
-		fs.aek = key
+// Determine if this is a truly filtered consumer. Modern clients will place filtered subjects
+// even if the stream only has a single non-wildcard subject designation.
+// Read lock should be held.
+func (o *consumer) isFiltered() bool {
+	if o.subjf == nil {
+		return false
 	}
-	return nil
-}
-
-	if err := fs.setupAEK(); err != nil {
-		return err
+	// If we are here we want to check if the filtered subject is
+	// a direct match for our only listed subject.
+	mset := o.mset
+	if mset == nil {
+		return true
 	}
 
-	if fs.aek != nil {
-		nonce := make([]byte, fs.aek.NonceSize(), fs.aek.NonceSize()+len(b)+fs.aek.Overhead())
-		b = fs.aek.Seal(nonce, nonce, b, nil)
-	err = fs.writeFileWithOptionalSync(meta, b, defaultFilePerms)
-	return nil
+	// Protect access to mset.cfg with the cfgMu mutex.
+	mset.cfgMu.RLock()
+	msetSubjects := mset.cfg.Subjects
+	mset.cfgMu.RUnlock()
+
+	// `isFiltered` need to be performant, so we do
+	// as any checks as possible to avoid unnecessary work.
+	// Here we avoid iteration over slices if there is only one subject in stream
+	// and one filter for the consumer.
+	if len(msetSubjects) == 1 && len(o.subjf) == 1 {
+		return msetSubjects[0] != o.subjf[0].subject
+	}
+
+	// if the list is not equal length, we can return early, as this is filtered.
+	if len(msetSubjects) != len(o.subjf) {
+		return true
+	}
+
+	// if in rare case scenario that user passed all stream subjects as consumer filters,
+	// we need to do a more expensive operation.
+	// reflect.DeepEqual would return fa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89e1f329` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79d1d2c1` are properly handled with clean fallback behavior.

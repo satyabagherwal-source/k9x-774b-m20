@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T02:33:33.346Z",
+  "updated_at": "2026-11-13T03:03:22.807Z",
   "stats": {
-    "total_discovered": 2072,
-    "approved_pending_harvest": 1916,
+    "total_discovered": 2090,
+    "approved_pending_harvest": 1934,
     "harvested_count": 0,
     "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1910,
+      "COMMUNITY_AND_EXPERT": 1928,
       "OFFICIAL_DOCUMENTATION": 84,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -44510,6 +44510,402 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
         "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-2789EF84CC11": {
+      "id": "SRC-2789EF84CC11",
+      "url": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "title": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.398Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
+        "fileName": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md"
+      }
+    },
+    "SRC-B94E87CC93A5": {
+      "id": "SRC-B94E87CC93A5",
+      "url": "https://github.com/nats-io/nats-server/issues/3612",
+      "title": "https://github.com/nats-io/nats-server/issues/3612",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.496Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
+        "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-900C1523FF4D": {
+      "id": "SRC-900C1523FF4D",
+      "url": "https://github.com/SeekStorm/SeekStorm",
+      "title": "https://github.com/SeekStorm/SeekStorm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.547Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-6A30A57B567A": {
+      "id": "SRC-6A30A57B567A",
+      "url": "https://www.dropbox.com/s/wwnfnu441w1ec9p/wiki-articles.json.bz2",
+      "title": "https://www.dropbox.com/s/wwnfnu441w1ec9p/wiki-articles.json.bz2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-8C5658C8DEA2": {
+      "id": "SRC-8C5658C8DEA2",
+      "url": "https://github.com/quickwit-oss/search-benchmark-game",
+      "title": "https://github.com/quickwit-oss/search-benchmark-game",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-12161FBFC901": {
+      "id": "SRC-12161FBFC901",
+      "url": "https://github.com/SeekStorm/search-benchmark-game",
+      "title": "https://github.com/SeekStorm/search-benchmark-game",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.595Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-BF9D000B6261": {
+      "id": "SRC-BF9D000B6261",
+      "url": "https://seekstorm.github.io/search-benchmark-game",
+      "title": "https://seekstorm.github.io/search-benchmark-game",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.618Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-D2FCC4EE2C7D": {
+      "id": "SRC-D2FCC4EE2C7D",
+      "url": "https://roaringbitmap.org/about",
+      "title": "https://roaringbitmap.org/about",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.634Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-EEEDC5C3A97F": {
+      "id": "SRC-EEEDC5C3A97F",
+      "url": "https://keepachangelog.com/en/1.1.0",
+      "title": "https://keepachangelog.com/en/1.1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.650Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-044BE177461E": {
+      "id": "SRC-044BE177461E",
+      "url": "https://semver.org/spec/v2.0.0.html",
+      "title": "https://semver.org/spec/v2.0.0.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.667Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-3A497CBEC9CB": {
+      "id": "SRC-3A497CBEC9CB",
+      "url": "https://seekstorm.com/",
+      "title": "https://seekstorm.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.683Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-D5D48F5A7F3A": {
+      "id": "SRC-D5D48F5A7F3A",
+      "url": "https://github.com/SeekStorm/SeekStorm/blob/main/src/seekstorm_server",
+      "title": "https://github.com/SeekStorm/SeekStorm/blob/main/src/seekstorm_server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.699Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-8BD7FEBEC222": {
+      "id": "SRC-8BD7FEBEC222",
+      "url": "https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md",
+      "title": "https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.720Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-A533EE7EF990": {
+      "id": "SRC-A533EE7EF990",
+      "url": "https://en.wikipedia.org/wiki/Comma-separated_values",
+      "title": "https://en.wikipedia.org/wiki/Comma-separated_values",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.743Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-8B43A23B6780": {
+      "id": "SRC-8B43A23B6780",
+      "url": "https://en.wikipedia.org/wiki/JSON",
+      "title": "https://en.wikipedia.org/wiki/JSON",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.759Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-4103EF24C387": {
+      "id": "SRC-4103EF24C387",
+      "url": "https://github.com/ndjson/ndjson-spec",
+      "title": "https://github.com/ndjson/ndjson-spec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-8FEEE5ECFF9E": {
+      "id": "SRC-8FEEE5ECFF9E",
+      "url": "https://en.wikipedia.org/wiki/JSON_streaming",
+      "title": "https://en.wikipedia.org/wiki/JSON_streaming",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.791Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-939EA6A8A1F9": {
+      "id": "SRC-939EA6A8A1F9",
+      "url": "https://seekstorm.com/documentation",
+      "title": "https://seekstorm.com/documentation",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:03:22.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
+        "fileName": "seekstorm-seekstorm-learnings.md"
       }
     }
   }

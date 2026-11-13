@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T02:33:32.416Z",
+  "last_updated": "2026-11-13T03:03:22.538Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7913,6 +7913,24 @@
       "source_repo": "signerlabs-shipswift",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DEAC4F-docs-link-every-component-to-its-page-on.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-AC0394",
+      "directive_title": "[FIXED] Filtered consumer interest & dangling WorkQueue messages (#8890)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC0394--fixed-filtered-consumer-interest-dangli.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-83EDCD",
+      "directive_title": "Dockerfile updated",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "seekstorm-seekstorm",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-83EDCD-dockerfile-updated.md",
       "staged_date": "2026-11-13"
     }
   ]

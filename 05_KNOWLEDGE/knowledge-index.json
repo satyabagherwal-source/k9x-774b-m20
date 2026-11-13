@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T02:33:19.354Z",
+  "last_updated": "2026-11-13T03:03:02.125Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47445,8 +47445,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "0d4956f3",
-      "content_hash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
+      "source_version": "79d1d2c1",
+      "content_hash": "e750dd4a621335b1dc2bb2375cb68620000a8e0507225107c8d8b2b91cbe8455",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -47468,6 +47468,11 @@
         {
           "number": null,
           "title": "[FIXED] Filestore metadata and new directories not crash-safe (#8887)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[FIXED] Filtered consumer interest & dangling WorkQueue messages (#8890)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47531,7 +47536,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T17:51:35.271Z",
+      "verified_at": "2026-11-13T03:03:02.098Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57877,11 +57882,16 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "70c75797",
-      "content_hash": "372f6503c3013c156a4ae429fcfb92681982d47de25587f916002dc409628ce3",
+      "source_version": "35e8e843",
+      "content_hash": "b74e262b681734b1b799336f91e158c7933d2fbd59f2c393139d273dc15aa0e7",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Dockerfile updated",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1828,
           "title": "union_scan_32 overflows past 32 query terms",
@@ -57898,7 +57908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:28:23.461Z",
+      "verified_at": "2026-11-13T02:58:02.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -184231,7 +184241,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
       "source_version": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
-      "content_hash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
+      "content_hash": "6f3652a72e8285ee8e78d7cc6a58bd4c191c39d06ed63265113f94f49a430120",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
       "promoted_rules": [
@@ -184251,7 +184261,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:08:03.585Z",
+      "verified_at": "2026-11-13T03:02:37.571Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

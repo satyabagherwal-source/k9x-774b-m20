@@ -9307,3 +9307,7 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `f305bb22` | Multi-dimensional audit evidence | 2026-11-13T02:32:14.021Z |
 | `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-13T02:33:19.446Z |
 | `learn-dom-d-fc7e335f` | `project://hf-moonshotai-kimi-k3.1-pro` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | 2026-11-13T02:33:32.401Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `35e8e843` | Multi-dimensional audit evidence | 2026-11-13T02:58:03.079Z |
+| `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-13T03:02:37.716Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `79d1d2c1` | Multi-dimensional audit evidence | 2026-11-13T03:03:02.243Z |
+| `learn-dom-d-8804a7f5` | `project://hf-nvidia-deepseek-v4.1-flash-1017-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | 2026-11-13T03:03:22.389Z |

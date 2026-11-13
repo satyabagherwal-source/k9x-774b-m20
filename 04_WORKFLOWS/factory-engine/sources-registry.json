@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T02:33:21.982Z",
-    "lastVerified": "2026-11-13T02:33:21.982Z",
+    "lastChecked": "2026-11-13T03:03:07.405Z",
+    "lastVerified": "2026-11-13T03:03:07.405Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -153,8 +153,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T01:57:30.127Z",
-    "lastVerified": "2026-11-13T01:57:30.127Z",
+    "lastChecked": "2026-11-13T02:57:49.083Z",
+    "lastVerified": "2026-11-13T02:57:49.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1729,14 +1729,14 @@
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T17:46:09.625Z",
-    "lastVerified": "2026-11-11T17:46:09.625Z",
+    "lastChecked": "2026-11-13T02:57:45.844Z",
+    "lastVerified": "2026-11-13T02:57:45.844Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
+    "contentHash": "e750dd4a621335b1dc2bb2375cb68620000a8e0507225107c8d8b2b91cbe8455",
     "promotedRulesCount": 1,
-    "recentFixesCount": 18,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2218,12 +2218,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T21:30:47.001Z",
-    "lastVerified": "2026-11-12T21:30:47.001Z",
+    "lastChecked": "2026-11-13T02:57:44.199Z",
+    "lastVerified": "2026-11-13T02:57:44.199Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2232,7 +2232,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3bd2b588"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -4063,22 +4064,21 @@
     "revisionIdentifier": "5914e90e"
   },
   "seekstorm-seekstorm": {
-    "name": "SeekStorm",
+    "name": "SeekStorm/SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T16:05:04.633Z",
-    "lastVerified": "2026-11-11T16:05:04.633Z",
+    "lastChecked": "2026-11-13T02:57:51.090Z",
+    "lastVerified": "2026-11-13T02:57:51.090Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "372f6503c3013c156a4ae429fcfb92681982d47de25587f916002dc409628ce3",
+    "contentHash": "b74e262b681734b1b799336f91e158c7933d2fbd59f2c393139d273dc15aa0e7",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "70c75797"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -8823,12 +8823,12 @@
     "lastVerified": "2026-11-11T18:54:46.859Z"
   },
   "tokio-rs-tokio": {
-    "name": "tokio-rs/tokio",
+    "name": "tokio",
     "officialUrl": "https://github.com/tokio-rs/tokio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T09:27:31.435Z",
-    "lastVerified": "2026-11-11T09:27:31.435Z",
+    "lastChecked": "2026-11-13T02:57:34.181Z",
+    "lastVerified": "2026-11-13T02:57:34.181Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-tokio",
@@ -8837,7 +8837,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ab0814fc"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
     "name": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -11332,9 +11333,9 @@
   "yannickl-dynamiccolor": {
     "name": "DynamicColor",
     "officialUrl": "https://github.com/yannickl/DynamicColor",
-    "lastChecked": "2026-11-08T20:13:07.246Z",
+    "lastChecked": "2026-11-13T02:57:39.046Z",
     "revisionIdentifier": "cf7c6eed",
-    "lastVerified": "2026-11-08T20:13:07.246Z"
+    "lastVerified": "2026-11-13T02:57:39.046Z"
   },
   "lxml-lxml": {
     "name": "lxml/lxml",
@@ -14118,13 +14119,13 @@
     "officialUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T03:07:45.462Z",
-    "lastVerified": "2026-11-08T03:07:45.462Z",
+    "lastChecked": "2026-11-13T02:57:36.789Z",
+    "lastVerified": "2026-11-13T02:57:36.789Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-    "contentHash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
-    "promotedRulesCount": 2,
+    "contentHash": "6f3652a72e8285ee8e78d7cc6a58bd4c191c39d06ed63265113f94f49a430120",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

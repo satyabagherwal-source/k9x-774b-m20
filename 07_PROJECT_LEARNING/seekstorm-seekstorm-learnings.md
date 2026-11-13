@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source**: github ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
-> **Source Version**: `70c75797`  
+> **Source Version**: `35e8e843`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:28:23.217Z  
+> **Timestamp**: 2026-11-13T02:57:51.349Z  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:28:23.212Z  
+> **Harvest Timestamp**: 2026-11-13T02:57:51.090Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SeekStorm: vector & lexical search - in-process library & multi-tenancy server, in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1935 stars
+- **Stars / Engagement**: 1938 stars
 
 ---
 
@@ -268,13 +268,13 @@ pub fn dir_size(path: impl Into<PathBuf>) -> io::Result<u64> {
 use num_format::Locale;
 use num_format::ToFormattedString;
 use seekstorm::index::{
-    AccessType, Clustering, DocumentCompression, FrequentwordType, IndexMetaObject,
-    LexicalSimilarity, NgramSet, SchemaField, StemmerType, StopwordType, TokenizerType,
-    create_index, open_index,
+    AccessType, Clustering, DocumentCompression, FrequentwordType, IndexConfig, LexicalSimilarity,
+    NgramSet, SchemaField, StemmerType, StopwordType, TokenizerType, create_index, open_index,
 };
 use seekstorm::ingest::IngestJson;
 use seekstorm::search::{
     FacetFilter, QueryFacet, QueryRewriting, QueryType, ResultSort, ResultType, Search, SearchMode,
+    SearchRequest,
 };
 use seekstorm::vector::Inference;
 use std::error::Error;
@@ -450,31 +450,19 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
             let schema: Vec<SchemaField> = serde_json::from_str(wikipedia_schema_json).unwrap();
 
-            let meta = IndexMetaObject {
-                id: 0,
+            let index_config = IndexConfig {
                 name: "wikipedia".to_string(),
                 lexical_similarity: LexicalSimilarity::Bm25f,
                 tokenizer: TokenizerType::AsciiAlphabetic,
-                stemmer: StemmerType::None,
-                stop_words: StopwordType::None,
-                frequent_words: FrequentwordType::English,
-                //ngram_indexing: NgramSet::SingleTerm as u8,
-                //ngram_indexing: NgramSet::NgramFF as u8,
                 ngram_indexing: NgramSet::SingleTerm as u8
                     | NgramSet::NgramFF as u8
                     | NgramSet::NgramFR as u8
                     | NgramSet::NgramRF as u8
                     | NgramSet::NgramFFF as u8,
-                document_compression: DocumentCompression::Snappy,
-                access_type: AccessType::Mmap,
-                spelling_correction: None,
-                query_completion: None,
-                clustering: Clustering::None,
-                inference: Inference::None,
-                segment_number_bits: 11,
+                ..Default::default()
             };
 
-            let mut index_arc = create_index(&index_path, meta, &schema, &Vec::new(), false, None)
+            let mut index_arc = create_index(&index_path, index_config, &schema, &[], false, None)
                 .await
                 .unwrap();
 
@@ -487,6 +475,17 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
             index_arc
         }
     };
+
+    println!(
+        "Indexed documents: {}, Segment number bits: {}",
+        index_arc
+            .read()
+            .await
+            .indexed_doc_count()
+            .await
+            .to_formatted_string(&Locale::en),
+        index_arc.read().await.index_config.segment_number_bits
+    );
 
     // benchmark parameters
 
@@ -531,7 +530,13 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     thread::sleep(cool_time);
 
-    
+    // query and result_type loops
+
+    let query_count = query_vec.len() as i64;
+    let permits = Arc::new(Semaphore::new(thread_number));
+
+    let result_list: Vec<ResultEntry> = Vec::with_capacity(query_count as usize);
+    let result_list_arc = Arc::new(Mutex::new(resul
 ```
 
 ### Core Architecture Module: `seekstorm/src/add_result.rs`
@@ -548,7 +553,7 @@ use crate::{
         SPEEDUP_FLAG, STOP_BIT, Shard, get_document_length_compressed_mmap,
     },
     min_heap,
-    search::{FilterSparse, Ranges, ResultType, SearchResult},
+    search::{FilterSparse, Ranges, ResultType, SearchResultObject},
     utils::{
         read_f32, read_f64, read_i8, read_i16, read_i32, read_i64, read_u8, read_u16, read_u32,
         read_u64,
@@ -634,7 +639,7 @@ pub(crate) fn add_result_singleterm_multifield(
     shard: &Shard,
     docid: usize,
     result_count: &mut i32,
-    search_result: &mut SearchResult,
+    search_result: &mut SearchResultObject,
 
     top_k: usize,
     result_type: &ResultType,
@@ -814,7 +819,7 @@ pub(crate) fn add_result_singleterm_multifield(
                 if field_vec.len() + field_filter_set.len() <= shard.indexed_field_vec.len() {
                     let mut match_flag = false;
                     for field in field_vec.iter() {
-                        if field_filter_set.contains(&fi
+                        if field_filter_set.
 ```
 
 ### Core Architecture Module: `seekstorm/src/clustering.rs`
@@ -1052,7 +1057,7 @@ impl Shard {
 
         let vector_count_block = self.block_vector_buffer.len();
 
-        let cluster_number = match self.meta.clustering {
+        let cluster_number = match self.index_config.clustering {
             Clustering::Auto => (vector_count_block.sqrt() * 2).max(1),
             Clustering::None => 1,
             Clustering::Fixed(n) => n.min(vector_count_block).max(1),
@@ -1104,8 +1109,7 @@ impl Shard {
                 ),
             };
 
-            let query_simd = QuerySimd::new(&sum_vector);
-      
+            let query_simd = QuerySimd::new(&sum_vector)
 ```
 
 ### Core Architecture Module: `seekstorm/src/commit.rs`
@@ -1142,19 +1146,19 @@ use crate::{
 
 /// Commit moves indexed documents from the intermediate uncompressed data structure (array lists/HashMap, queryable by realtime search) in RAM
 /// to the final compressed data structure (roaring bitmap) on Mmap or disk -
-/// which is persistent, more compact, with lower query latency and allows search with realtime=false.
+/// which is persistent, more compact, with lower query latency and allows search with include_uncommitted=false.
 /// Commit is invoked automatically each time 64K documents are newly indexed **per shard** as well as on close_index (e.g. server quit).
 /// There is no way to prevent this automatic commit by not manually invoking it.
 /// But commit can also be invoked manually at any time at any number of newly indexed documents.
 /// commit is a **hard commit** for persistence on disk. A **soft commit** for searchability
 /// is invoked implicitly with every index_doc,
 /// i.e. the document can immediately searched and included in the search results
-/// if it matches the query AND the query parameter realtime=true is enabled.
+/// if it matches the query AND the query parameter include_uncommitted=true is enabled.
 /// **Use commit with caution, as it is an expensive operation**.
 /// **Usually, there is no need to invoke it manually**, as it is invoked automatically every 64k documents **per shard** and when the index is closed with close_index.
 /// Before terminating the program, always call close_index (commit), otherwise all documents indexed since last (manual or automatic) commit are lost.
 /// There are only 2 reasons that justify a manual commit:
-/// 1. if you want to search newly indexed documents without using realtime=true for search performance reasons or
+/// 1. if you want to search newly indexed documents without using include_uncommitted=true for search performance reasons or
 /// 2. if after indexing new documents there won't be more documents indexed (for some time),
 ///    so there won't be (soon) a commit invoked automatically at the next 64k threshold **per shard** or close_index,
 ///    but you still need immediate persistence guarantees on disk to protect against data loss in the event of a crash.
@@ -1162,19 +1166,19 @@ use crate::{
 pub trait Commit {
     /// Commit moves indexed documents from the intermediate uncompressed data structure (array lists/HashMap, queryable by realtime search) in RAM
     /// to the final compressed data structure (roaring bitmap) on Mmap or disk -
-    /// which is persistent, more compact, with lower query latency and allows search with realtime=false.
+    /// which is persistent, more compact, with lower query latency and allows search with include_uncommitted=false.
     /// Commit is invoked automatically each time 64K documents are newly indexed **per shard** as well as on close_index (e.g. server quit).
     /// There is no way to prevent this automatic commit by not manually invoking it.
     /// But commit can also be invoked manually at any time at any number of newly indexed documents.
     /// commit is a **hard commit** for persistence on disk. A **soft commit** for searchability
     /// is invoked implicitly with every index_doc,
     /// i.e. the document can immediately searched and included in the search results
-    /// if it matches the query AND the query parameter realtime=true is enabled.
+    /// if it matches the query AND the query parameter include_uncommitted=true is enabled.
     /// **Use commit with caution, as it is an expensive operation**.
     /// **Usually, there is no need to invoke it manually**, as it is invoked automatically every 64k documents **per shard** and when the index is closed with close_index.
     /// Before terminating the program, always call close_index (commit), otherwise all documents indexed since last (manual or automatic) commit are lost.
     /// There are only 2 reasons that justify a manual commit:
-    /// 1. if you want to search newly indexed documents without using realtime=true for search performance reasons or
+    /// 1. if you want to search newly indexed documents without using include_uncommitted=true for search performance reasons or
     /// 2. if after indexing new documents there won't be more documents indexed (for some time),
     ///    so there won't be (soon) a commit invoked automatically at the next 64k threshold **per shard** or close_index,
     ///    but you still need immediate persistence guarantees on disk to protect against data loss in the event of a crash.
@@ -1183,38 +1187,38 @@ pub trait Commit {
 
 /// Commit moves indexed documents from the intermediate uncompressed data structure (array lists/HashMap, queryable by realtime search) in RAM
 /// to the final compressed data structure (roaring bitmap) on Mmap or disk -
-/// which is persistent, more compact, with lower query latency and allows search with realtime=false.
+/// which is persistent, more compact, with lower query latency and allows search with include_uncommitted=false.
 /// Commit is invoked automatically each time 64K documents are newly indexed **per shard** as well as on close_index (e.g. server quit).
 /// There is no way to prevent this automatic commit by not manually invoking it.
 /// But commit can also be invoked manually at any time at any number of newly indexed documents.
 /// commit is a **hard commit** for persistence on disk. A **soft commit** for searchability
 /// is invoked implicitly with every index_doc,
 /// i.e. the document can immediately searched and included in the search results
-/// if it matches the query AND the query parameter realtime=true is enabled.
+/// if it matches the query AND the query parameter include_uncommitted=true is enabled.
 /// **Use commit with caution, as it is an expensive operation**.
 /// **Usually, there is no need to invoke it manually**, as it is invoked automatically every 64k documents **per shard** and when the index is closed with close_index.
 /// Before terminating the program, always call close_index (commit), otherwise all documents indexed since last (manual or automatic) commit are lost.
 /// There are only 2 reasons that justify a manual commit:
-/// 1. if you want to search newly indexed documents without using realtime=true for search performance reasons or
+/// 1. if you want to search newly indexed documents without using include_uncommitted=true for search performance reasons or
 /// 2. if after indexing new documents there won't be more documents indexed (for some time),
 ///    so there won't be (soon) a commit invoked automatically at the next 64k threshold **per shard** or close_index,
 ///    but you still need immediate persistence guarantees on disk to protect against data loss in the event of a crash.
 impl Commit for IndexArc {
     /// Commit moves indexed documents from the intermediate uncompressed data structure (array lists/HashMap, queryable by realtime search) in RAM
     /// to the final compressed data structure (roaring bitmap) on Mmap or disk -
-    /// which is persistent, more compact, with lower query latency and allows search with realtime=false.
+    /// which is persistent, more compact, with lower query latency and allows search with include_uncommitted=false.
     /// Commit is invoked automatically each time 64K documents are newly indexed **per shard** as well as on close_index (e.g. server quit).
     /// There is no way to prevent this automatic commit by not manually invoking it.
     /// But commit can also be invoked manually at any time at any number of newly indexed documents.
     /// commit is a **hard commit** for persistence on disk. A **soft commit** for searchability
     /// is invoked implicitly with every index_doc,
     /// i.e. the document can immediately searched and included in the search results
-    /// if it matches the query AND the query parameter realtime=true is enabled.
+    /// if it matches the query AND the query parameter include_uncommitted=true is enabled.
     /// **Use commit with caution, as it is an expensive operation**.
     /// **Usually, there is no need to invoke it manually**, as it is invoked automatically every 64k documents **per shard** and when the index is closed with close_index.
     /// Before terminating the program, always call close_index (commit), otherwise all documents indexed since last (manual or automatic) commit are lost.
     /// There are only 2 reasons that justify a manual commit:
-    /// 1. if you want to search newly indexed documents without using realtime=true for search performance reasons or
+    /// 1. if you want to search newly indexed documents without using include_uncommitted=true for search performance reasons or
     /// 2. if after indexing new documents there won't be more documents indexed (for some time),
     ///    so there won't be (soon) a commit invoked automatically at the next 64k threshold **per shard** or close_index,
     ///    but you still need immediate persistence guarantees on disk to protect against data loss in the event of a crash.
@@ -1247,11 +1251,7 @@ impl Commit for IndexArc {
                     }
                 };
 
-                if let Some((indexed_doc_count, doc_delta, vec_delta, is_vector_indexing)) =
-                    shard_stats
-                {
-                    {
-                        let m
+                if let Some((indexed_doc_count, doc_delta, vec
 ```
 
 ### Core Architecture Module: `seekstorm/src/compatible.rs`
@@ -1327,22 +1327,23 @@ pub(crate) fn compress_postinglist(
                     let term_bytes_1 = plo.term_ngram1.as_bytes();
                     let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask;
                     let key_hash_1 = hash64(term_bytes_1);
-                    let mut posting_count_ngram1 = if shard.meta.access_type == AccessType::Mmap {
-                        decode_posting_list_count(
-                            &shard.segments_index[key0_1 as usize],
-                            shard,
-                            key_hash_1,
-                            key0_1 < *key0 as u32,
-                        )
-                        .unwrap_or_default()
-                    } else if let Some(plo) = shard.segments_index[key0_1 as usize]
-                        .segment
-                        .get(&key_hash_1)
-                    {
-                        plo.posting_count
-                    } else {
-                        0
-                    };
+                    let mut posting_count_ngram1 =
+                        if shard.index_config.access_type == AccessType::Mmap {
+                            decode_posting_list_count(
+                                &shard.segments_index[key0_1 as usize],
+                                shard,
+                                key_hash_1,
+                                key0_1 < *key0 as u32,
+                            )
+                            .unwrap_or_default()
+                        } else if let Some(plo) = shard.segments_index[key0_1 as usize]
+                            .segment
+                            .get(&key_hash_1)
+                        {
+                            plo.posting_count
+                        } else {
+                            0
+                        };
 
                     if let Some(x) = shard.segments_level0[key0_1 as usize]
                         .segment
@@ -1360,22 +1361,23 @@ pub(crate) fn compress_postinglist(
                     let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask;
                     let key_hash_2 = hash64(term_bytes_2);
 
-                    let mut posting_count_ngram2 = if shard.meta.access_type == AccessType::Mmap {
-                        decode_posting_list_count(
-                            &shard.segments_index[key0_2 as usize],
-                            shard,
-                            key_hash_2,
-                            key0_2 < *key0 as u32,
-                        )
-                        .unwrap_or_default()
-                    } else if let Some(plo) = shard.segments_index[key0_2 as usize]
-                        .segment
-                        .get(&key_hash_2)
-                    {
-                        plo.posting_count
-                    } else {
-                        0
-                    };
+                    let mut posting_count_ngram2 =
+                        if shard.index_config.access_type == AccessType::Mmap {
+                            decode_posting_list_count(
+                                &shard.segments_index[key0_2 as usize],
+                                shard,
+                                key_hash_2,
+                                key0_2 < *key0 as u32,
+                            )
+                            .unwrap_or_default()
+                        } else if let Some(plo) = shard.segments_index[key0_2 as usize]
+                            .segment
+                            .get(&key_hash_2)
+                        {
+                            plo.posting_count
+                        } else {
+                            0
+                        };
 
                     if let Some(x) = shard.segments_level0[key0_2 as usize]
                         .segment
@@ -1398,22 +1400,23 @@ pub(crate) fn compress_postinglist(
                     let term_bytes_1 = plo.term_ngram1.as_bytes();
                     let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask;
                     let key_hash_1 = hash64(term_bytes_1);
-                    let mut posting_count_ngram1 = if shard.meta.access_type == AccessType::Mmap {
-                        decode_posting_list_count(
-                            &shard.segments_index[key0_1 as usize],
-                            shard,
-                            key_hash_1,
-                            key0_1 < *key0 as u32,
-                        )
-                        .unwrap_or_default()
-                    } else if let Some(plo) = shard.segments_index[key0_1 as usize]
-                        .segment
-                        .get(&key_hash_1)
-                    {
-                        plo.posting_count
-                    } else {
-                        0
-                    };
+                    let mut posting_count_ngram1 =
+                        if shard.index_config.access_type == AccessType::Mmap {
+                            decode_posting_list_count(
+                                &shard.segments_index[key0_1 as usize],
+                                shard,
+                                key_hash_1,
+                                key0_1 < *key0 as u32,
+                            )
+                            .unwrap_or_default()
+                        } else if let Some(plo) = shard.segments_index[key0_1 as usize]
+                            .segment
+                            .get(&key_hash_1)
+                        {
+                            plo.posting_count
+                        } else {
+                            0
+                        };
 
                     if let Some(x) = shard.segments_level0[key0_1 as usize]
                         .segment
@@ -1431,22 +1434,23 @@ pub(crate) fn compress_postinglist(
                     let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask;
                     let key_hash_2 = hash64(term_bytes_2);
 
-                    let mut posting_count_ngram2 = if shard.meta.access_type == AccessType::Mmap {
-                        decode_posting_list_count(
-                            &shard.segments_index[key0_2 as usize],
-                            shard,
-                            key_hash_2,
-                            key0_2 < *key0 as u32,
-                        )
-                        .unwrap_or_default()
-                    } else if let Some(plo) = shard.segments_index[key0_2 as usize]
-                        .segment
-                        .get(&key_hash_2)
-                    {
-                        plo.posting_count
-                    } else {
-                        0
-                    };
+                    let mut posting_count_ngram2 =
+                        if shard.index_config.access_type == AccessType::Mmap {
+                            decode_posting_list_count(
+                                &shard.segments_index[key0_2 as usize],
+                                shard,
+                                key_hash_2,
+                                key0_2 < *key0 as u32,
+                            )
+                            .unwrap_or_default()
+                        } else if let Some(plo) = shard.segments_index[key0_2 as usize]
+                            .segment
+                            .get(&key_hash_2)
+                        {
+                            plo.posting_count
+                        } else {
+                            0
+                        };
 
                     if let Some(x) = shard.segments_level0[key0_2 as usize]
                         .segment
@@ -1464,22 +1468,23 @@ pub(crate) fn compress_postinglist(
                     let key0_3 = hash32(term_bytes_3) & shard.segment_number_mask;
                     let key_hash_3 = hash64(term_bytes_3);
 
-                    let mut posting_count_ngram3 = if shard.meta.access_type == AccessType::Mmap {
-                        decode_posting_list_count(
-                            &shard.segments_index[key0_3 as usize],
-                            shard,
-                            key_hash_3,
-                            key0_3 < *key0 as u32,
-                        )
-                        .unwrap_or_default()
-                    } else if let Some(plo) = shard.segments_index[key0_3 as usize]
-                        .segment
-                        .get(&key_hash_3)
-                    {
-                        plo.posting_count
-                    } else {
-                        0
-                    };
+                    let mut posting_count_ngram3 =
+                        if shard.index_config.access_type == AccessType::Mmap {
+                            decode_posting_list_count(
+                                &shard.segments_index[key0_3 as usize],
+                                shard,
+                                key_hash_3,
+                                key0_3 < *key0 as u32,
+                            )
+                            .unwrap_or_default()
+                        } else if let Some(plo) = shard.segments_index[key0_3 as usize]
+                            .segment
+                            .get(&key_hash_3)
+                        {
+                            plo.posting_count
+                        } else {
+                            0
+                        };
 
                     if let Some(x) = shard.segments_level0[key0_3 as usize]
                         .segment
@@ -1509,20 +1514,7 @@ pub(crate) fn compress_postinglist(
     match plo.ngram_type {
         NgramType::SingleTerm => {}
         NgramType::NgramFF | NgramType::NgramFR | NgramType::NgramRF => {
-            plo.posting_count_ngram_1 = posting_count_ngram_1 as f32;
-            plo.posting_count_ngram_2 = posting_count_ngram_2 as f32;
-        }
-        _ => {
-            plo.posting_count_ngram_1 = posting_count_ngram_1 as f32;
-            plo.posting_count_ngram_2 = posting_count_ngram_2 as f32;
-            plo.posting_count_ngram_3 = posting_count_ngram_3 as f32;
-        }
-    }
-
-    let mut size_compressed_docid_key: usize = 0;
-
-    let enable_rle_compression: bool = true;
-    let enable_
+            plo.posting_count_ngram_1 = pos
 ```
 
 ### Core Architecture Module: `seekstorm/src/doc_store.rs`
@@ -1584,7 +1576,7 @@ impl Shard {
 
         let doc_id_local = doc_id & 0b11111111_11111111;
 
-        let mut doc = if self.meta.access_type == AccessType::Ram || is_uncommitted {
+        let mut doc = if self.index_config.access_type == AccessType::Ram || is_uncommitted {
             let docstore_pointer_docs = if is_uncommitted {
                 &self.compressed_docstore_segment_block_buffer
             } else {
@@ -1606,7 +1598,7 @@ impl Shard {
 
             let compressed_doc = &docstore_pointer_docs[previous_pointer..pointer];
 
-            match self.meta.document_compression {
+            match self.index_config.document_compression {
                 DocumentCompression::None => {
                     let doc: Document = serde_json::from_slice(compressed_doc).unwrap();
                     doc
@@ -1652,7 +1644,7 @@ impl Shard {
 
             let compressed_doc = &self.docstore_file_mmap[start..end];
 
-            match self.meta.document_compression {
+            match self.index_config.document_compression {
                 DocumentCompression::None => {
                     let doc: Document = serde_json::from_slice(compressed_doc).unwrap();
                     doc
@@ -1772,7 +1764,7 @@ impl Shard {
             return;
         }
 
-        let mut compressed = match self.meta.document_compression {
+        let mut compressed = match self.index_config.document_compression {
             DocumentCompression::None => serde_json::to_vec(&document).unwrap(),
             DocumentCompression::Snappy => {
                 let serialized = serde_json::to_vec(&document).unwrap();
@@ -1784,8 +1776,7 @@ impl Shard {
             }
             DocumentCompression::Zstd => {
                 let serialized = serde_json::to_vec(&document).unwrap();
-                zstd::encode_all(serialized.as_slice(), 1).unwrap()
-         
+                zstd::encode_all(serialized.a
 ```
 
 ### Core Architecture Module: `seekstorm/src/geo_search.rs`
@@ -2225,49 +2216,632 @@ pub(crate) fn top_fragments_from_field(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70c75797` (2026-11-06)
-**Commit Message**: Update README.md
+### Incident Patch 1: `35e8e843` (2026-11-12)
+**Commit Message**: Dockerfile updated
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `.dockerignore` (modified, +3/-0)
 ```diff
-@@ -9,11 +9,11 @@ Embed as a library, run as a multi-tenant server, or give your agents search via
+@@ -1,5 +1,8 @@
+ /assets/*.png
+ /target
++/seekstorm/benches
++/seekstorm/seekstorm_client
++/seekstorm/seekstorm_mcp_server
+ .vscode
+ .idea
+ *.md
+\ No newline at end of file
+```
+
+**File**: `Dockerfile` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y g++
  
- <p align="center">
-   <a href="https://github.com/SeekStorm/SeekStorm/stargazers"><img src="https://img.shields.io/github/stars/SeekStorm/SeekStorm?style=flat-square" alt="GitHub stars"></a>
--  <a href="https://news.ycombinator.com/item?id=42295792"><img src="https://img.shields.io/badge/Hacker%20News-245%20points-FF6600?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRkY2NjAwIi8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTUuNSA0aDMuMmwzLjMgNi4yTDE1LjMgNGgzLjJsLTUgOS4zVjIwaC0zdi02Ljd6Ii8+PC9zdmc+Cg==" alt="Hacker News, 245 points"></a>
-+  <a href="https://news.ycombinator.com/item?id=42295792"><img src="https://img.shields.io/badge/Hacker%20News-245%20points-FF6600?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRkY2NjAwIi8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTUuNSA0aDMuMmwzLjMgNi4yTDE1LjMgNGgzLjJsLTUgOS4zVjIwaC0zdi02Ljd6Ii8+PC9zdmc+Cg==" alt="Hacker News, 245"></a>
-   <a href="https://crates.io/crates/seekstorm"><img src="https://img.shields.io/crates/v/seekstorm.svg?style=flat-square" alt="Crates.io"></a>
-   <a href="https://crates.io/crates/seekstorm"><img src="https://img.shields.io/crates/d/seekstorm.svg?style=flat-square" alt="Downloads"></a>
-   <a href="https://docs.rs/seekstorm"><img src="https://docs.rs/seekstorm/badge.svg" alt="docs.rs"></a>
--  <a href="https://hub.docker.com/r/wolfgarbe/seekstorm_server"><img src="https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server?style=flat-square" alt="Docker pulls"></a>
-+  <a href="https://hub.docker.com/r/wolfgarbe/seekstorm_server"><img src="https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server?style=flat-square" alt="Docker"></a>
-   <a href="https://github.com/SeekStorm/SeekStorm?tab=Apache-2.0-1-ov-file#readme"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square" alt="Apache 2.0"></a>
-   <a href="#roadmap"><img src="https://img.shields.io/badge/Roadmap-2026-DA7F07.svg" alt="Roadmap 2026"></a>
- </p>
+ COPY . /seekstorm
+ 
+-RUN cargo build --release
++RUN cargo build --release -p seekstorm_server
+ 
+ FROM debian:bookworm-slim
+ 
 ```
 
 ---
 
-### Incident Patch 2: `a838105c` (2026-11-06)
-**Commit Message**: Add Hacker News badge to README (#88)
+### Incident Patch 2: `8ec2b8a0` (2026-11-12)
+**Commit Message**: simpler, more concise library API
 
-Add a small static Hacker News badge (245 points) after the GitHub stars badge, linking to the Show HN post. Suggested by @murtazayusuf.
+### Breaking changes
 
-Uses shields.io instead of the proposed hackergit.org badge to avoid
-adding a new third-party dependency.
+- **Improved Developer usability:** simpler, more concise library API, lower entry barrier:
+  - **`search()`** takes a single `SearchRequest` struct** with `..Default::default()` and optional **chainable setters** instead of 14 positional parameters.
+  - **`delete_documents_by_query`** takes a single `SearchRequest` struct** with `..Default::default()` and optional **chainable setters** instead of 8 positional parameters.
+  - **`IndexConfig::new(name)`**: formerly `IndexMetaObject`, only the name is required, to create index metadata with **sensible defaults**, and optional **chainable setters**.
+  - **`SchemaField::new(field,field_type)`**: only name and field_type required, to create a schema field with **sensible defaults**, and **optional chainable setters**.
+  - **More concise syntax**: achieve the same API functionality with less and less verbose lines of code.
+- **Improved consistency** between REST and library API
+  - The `SearchRequestObject` (REST) and the 14 positional search() parameters (library) are merged into a **single `SearchRequest`** used by both REST and library.
+  - `similarity` has been changed to `lexi
 
-Refs #88
-
-**File**: `README.md` (modified, +1/-0)
+**File**: `.gitignore` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,7 @@ Embed as a library, run as a multi-tenant server, or give your agents search via
+@@ -11,6 +11,7 @@ seekstorm/tests/index_union_*/
+ seekstorm/tests/index_delete_union*/
+ seekstorm/tests/index_docid3_*/
+ seekstorm/benches/test_data/benchmark_index/
++seekstorm/benches/test_data/wiki-articles.json
+ .vscode/
+ .idea
  
- <p align="center">
-   <a href="https://github.com/SeekStorm/SeekStorm/stargazers"><img src="https://img.shields.io/github/stars/SeekStorm/SeekStorm?style=flat-square" alt="GitHub stars"></a>
-+  <a href="https://news.ycombinator.com/item?id=42295792"><img src="https://img.shields.io/badge/Hacker%20News-245%20points-FF6600?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRkY2NjAwIi8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTUuNSA0aDMuMmwzLjMgNi4yTDE1LjMgNGgzLjJsLTUgOS4zVjIwaC0zdi02Ljd6Ii8+PC9zdmc+Cg==" alt="Hacker News, 245 points"></a>
-   <a href="https://crates.io/crates/seekstorm"><img src="https://img.shields.io/crates/v/seekstorm.svg?style=flat-square" alt="Crates.io"></a>
-   <a href="https://crates.io/crates/seekstorm"><img src="https://img.shields.io/crates/d/seekstorm.svg?style=flat-square" alt="Downloads"></a>
-   <a href="https://docs.rs/seekstorm"><img src="https://docs.rs/seekstorm/badge.svg" alt="docs.rs"></a>
+```
+
+**File**: `CHANGELOG.md` (modified, +163/-0)
+```diff
+@@ -5,6 +5,169 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
++## [5.0.0] - 2026-11-11
++
++### Breaking changes
++
++- **Improved Developer usability:** simpler, more concise library API, lower entry barrier: 
++  - **`search()`** takes a single `SearchRequest` struct** with `..Default::default()` and optional **chainable setters** instead of 14 positional parameters.
++  - **`delete_documents_by_query`** takes a single `SearchRequest` struct** with `..Default::default()` and optional **chainable setters** instead of 8 positional parameters. 
++  - **`IndexConfig::new(name)`**: formerly `IndexMetaObject`, only the name is required, to create index metadata with **sensible defaults**, and optional **chainable setters**.
++  - **`SchemaField::new(field,field_type)`**: only name and field_type required, to create a schema field with **sensible defaults**, and **optional chainable setters**.
++  - **More concise syntax**: achieve the same API functionality with less and less verbose lines of code.
++- **Improved consistency** between REST and library API
++  - The `SearchRequestObject` (REST) and the 14 positional search() parameters (library) are merged into a **single `SearchRequest`** used by both REST and library.
++  - `similarity` has been changed to `lexical_similarity`.
++  - `SearchResultObject` (REST) and `ResultObject` (library) have been merged into a **single `SearchResult`** used by both REST and library.
++  - Previously `SearchResultObject.results` has been Vec<Document> (Json doc wit all fields), and `ResultObject.results` has been `Vec<Result>` (Struct with doc_id and score).  
++    Now we have `SearchResult.results`, a `Vec<Result>` (Struct with doc_id and score) and `SearchResult.documents` with `Vec<Document>` (Json doc wit all fields).
++  - The result document related `SearchRequest` parameters `fields`, `distance_fields`, `highlights` have been moved into `return_documents=option<DocumentOption>`.
++  - This allows now both REST and library to decide via `return_documents=option<DocumentOption>` whether or not to immediately return in `SearchResult.documents` the full result document set, 
++    or only selected documents via separate get_document calls.  
++
++- **`search()` takes a single `SearchRequest` struct** instead of 14 positional parameters. The struct implements `Default` and has optional chainable setters.
++  - Library and REST API now use the same `SearchRequest` struct.
++  - Benefits: better developer experience (IDE autocomplete shows every field with its doc comment), and easy evolution (adding a field doesn't break callers that use `..Default::default()`).
++  - REST API (not breaking, old names remain as aliases): `realtime` is renamed to `include_uncommitted` and `query` to `query_string`, for naming parity between library and REST API.
++  - `query_string` type changed from `String` to `&str`.
++  - `query_vector` type changed from `Option<Embedding>` (old library) and `Option<Value>` (old REST) to `Option<QueryVector>` (new library and REST).
++    - REST: `query_vector` still accepts a **base64 encoded string** or an **array of f32 or i8**. REST behavior is unchanged.
++    - Library: `QueryVector` has the variants `Base64`, `VecF32` and `Embedding`.
++    - Use `encode_bytes_to_base64_string(&embedding_to_bytes_be(&Embedding::F32(fvecs)))` to get a base64 encoded string from an embedding.
++  - Usage examples:
++    ```rust
++    // before
++    let result = index_arc.search(
++        "rust".to_string(), 
++        None, 
++        QueryType::Intersection, 
++        SearchMode::Lexical, 
++        false, 
++        0, 
++        10, 
++        ResultType::TopkCount, 
++        false,
++        Vec::new(), 
++        Vec::new(), 
++        Vec::new(), 
++        Vec::new(), 
++        QueryRewriting::SearchOnly,
++    ).await;
++
++    // with default
++    let result = index.search(SearchRequest { query_string: "rust", include_uncommitted: true, ..Default::default() }).await;
++
++    // minimal
++    let result = index.search(SearchRequest::new("rust")).await;
++
++    // with setter
++    let result = index.search(SearchRequest::new("rust").length(20)).await;
++
++    // hybrid
++    let result = index.search(SearchRequest::new("rust").length(20).query_vector(vec![0.1, 0.2, 0.3]).search_mode(SearchMode::Hybrid { similarity_threshold: Some(0.7), ann_mode: AnnMode::All })).await;
++    ```
++- **`delete_documents_by_query`** takes a single `SearchRequest` struct** with `..Default::default()` and optional **chainable setters** instead of 8 positional parameters. 
++  - Both library and REST API now also support the parameters `query_vector`, `enable_empty_query`, `search_mode`.
++
++  ```rust
++  //before
++  let query="test".into();
++  let offset=0;
++  let length=10;
++  let query_type=QueryType::Intersection; 
++  let include_unco
+```
+
+**File**: `FACETED_SEARCH.md` (modified, +35/-55)
+```diff
+@@ -111,7 +111,7 @@ and set
+ in the schema (see code below).
+ 
+ Faceting can be enabled both for string field type and numerical field types.
+-Both numerical, string and text fields can be indexed (indexed=true) and stored (stored=true) in the json document,
++Both numerical, string and text fields can be indexed (index_lexical=true) and stored (stored=true) in the json document,
+ but with field_facet=true a numerical or string field is additionally stored in a binary format, for fast faceting and sorting without document store access (decompression, deserialization).
+ Setting a numerical field to "facet":true is also the precondition for sorting the search result by this fields value ('score' is treated as a special field to allow sorting by relevancy).
+ 
+@@ -120,7 +120,7 @@ Setting a numerical field to "facet":true is also the precondition for sorting t
+ 
+ use std::path::Path;
+ use std::sync::{Arc, RwLock};
+-use seekstorm::index::{IndexMetaObject, Clustering,LexicalSimilarity,TokenizerType,StopwordType,FrequentwordType,AccessType,StemmerType,NgramSet,DocumentCompression,create_index};
++use seekstorm::index::{IndexConfig, Clustering,LexicalSimilarity,TokenizerType,StopwordType,FrequentwordType,AccessType,StemmerType,NgramSet,DocumentCompression,create_index};
+ use seekstorm::vector::Inference;
+ use seekstorm::vector_similarity::VectorSimilarity;
+ 
+@@ -133,27 +133,14 @@ let schema_json = r#"
+ {"field":"town","field_type":"String16","store":false,"index_lexical":false,"facet":true}]"#;
+ let schema=serde_json::from_str(schema_json).unwrap();
+ 
+-let meta = IndexMetaObject {
+-    id: 0,
++let index_config = IndexConfig {
+     name: "test_index".to_string(),
+     lexical_similarity: LexicalSimilarity::Bm25f,
+     tokenizer: TokenizerType::AsciiAlphabetic,
+-    stemmer: StemmerType::None,
+-    stop_words: StopwordType::None,
+-    frequent_words: FrequentwordType::English,
+-    ngram_indexing: NgramSet::NgramFF as u8,
+-    document_compression: DocumentCompression::Snappy,
+-    access_type: AccessType::Mmap,
+-    spelling_correction: None,
+-    query_completion: None,
+-    clustering: Clustering::None,
+-    inference: Inference::None,
+-    segment_number_bits:11
++    ..Default::default()
+ };
+ 
+-let synonyms=Vec::new();
+-
+-let index_arc=create_index(index_path,meta,&schema,&synonyms,false,None).await.unwrap();
++let index_arc=create_index(index_path,index_config,&schema,&[],false,None).await.unwrap();
+ 
+ # });
+ ```
+@@ -287,54 +274,47 @@ where the ranges can be defined dynamically with different boundaries for each q
+ ```rust ,no_run
+ # tokio_test::block_on(async {
+ 
+-use seekstorm::search::{Search, SearchMode, QueryType, ResultType, QueryFacet, QueryRewriting};
+-use seekstorm::highlighter::{Highlight, highlighter};
++use seekstorm::search::{Search, SearchMode, QueryType, ResultType, QueryFacet, QueryRewriting, SearchRequest, DocumentOption};
++use seekstorm::highlighter::Highlight;
+ use seekstorm::index::open_index;
+ use std::path::Path;
+-use std::collections::HashSet;
+ 
+ let index_path=Path::new("C:/index/");
+ let index_arc=open_index(index_path).await.unwrap();
+ 
+-let query="test".to_string();
+-let query_vector=None;
+-let search_mode=SearchMode::Lexical;
+-let enable_empty_query=false;
+-let offset=0;
+-let length=10;
+-let query_type=QueryType::Intersection; 
+-let result_type=ResultType::TopkCount;
+-let include_uncommitted=false;
+-let field_filter=Vec::new();
+-let query_facets = vec![QueryFacet::String16 {field: "age".into(),prefix: "".into(),length:u16::MAX}];
+-let facet_filter=Vec::new();
+-let result_sort=Vec::new();
+-
+-let result_object = index_arc.search(query, query_vector, query_type, search_mode, enable_empty_query, offset, length, result_type,include_uncommitted,field_filter,query_facets,facet_filter,result_sort,QueryRewriting::SearchOnly).await;
++let highlights: Vec<Highlight> = vec![Highlight {
++    field: "body".to_string(),
++    name: String::new(),
++    fragment_number: 2,
++    fragment_size: 160,
++    highlight_markup: true,
++    ..Default::default()
++}];
+ 
++let result_object = index_arc
++    .search(SearchRequest {
++        query_string: "test",
++        query_type_default: QueryType::Intersection,
++        search_mode: SearchMode::Lexical,
++        offset: 0,
++        length: 10,
++        result_type: ResultType::TopkCount,
++        query_facets: vec![QueryFacet::String16 {field: "age".into(),prefix: "".into(),length:u16::MAX}],
++        query_rewriting: QueryRewriting::SearchOnly,
++        return_documents: Some(DocumentOption { highlights, ..Default::default() }),
++        ..Default::default()
++    })
++    .await;
+ 
+ // **display results**
+ 
+-let highlights:Vec<Highlight>= vec![
+-        Highlight {
+-            field: "body".to_owned(),
+-            name:String::new(),
+-            fragment_number: 2,
+-            fragment_size: 160,
+-            highlight_markup: true,
+-            ..Default::default()
+-        },
+-    ];    
+-
+-let highlighter=Some(highlighter(&index_arc,highlights, result_object.que
+```
+
+**File**: `README.md` (modified, +191/-319)
+```diff
+@@ -147,12 +147,12 @@ In [production](https://seekstorm.com) since 2020. Open source under the [Apache
+ 
+ ### SeekStorm multi-tenancy search server 
+ 
+-* Index and search via [RESTful API](https://github.com/SeekStorm/SeekStorm/blob/main/src/seekstorm_server#rest-api-endpoints) with CORS.
++* Index and search via [RESTful API](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md#rest-api) with CORS.
+ * Ingest local data files in [CSV](https://en.wikipedia.org/wiki/Comma-separated_values), [JSON](https://en.wikipedia.org/wiki/JSON), [Newline-delimited JSON](https://github.com/ndjson/ndjson-spec) (ndjson), and [Concatenated JSON](https://en.wikipedia.org/wiki/JSON_streaming) formats via console command.  
+ * Ingest local PDF files via console command (single file or all files in a directory).
+ * Multi-tenancy index management.
+ * API-key management.
+-* [Embedded web server and web UI](https://github.com/SeekStorm/SeekStorm/blob/main/src/seekstorm_server#open-embedded-web-ui-in-browser) to search and display results from any index without coding.
++* [Embedded web server and web UI](https://github.com/SeekStorm/SeekStorm/blob/main/seekstorm_server/README.md#open-embedded-web-ui-in-browser) to search and display results from any index without coding.
+ * Web UI with query auto correction, query auto-completion, instant search, keyword highlighting, histogram, date filter, faceting, result sorting, document preview (as demo, for testing, as template).
+ * Code first OpenAPI generated [REST API documentation](https://seekstorm.com/documentation/)
+ * Cross-platform: runs on Linux, Windows, and macOS (other OS untested).
+@@ -210,8 +210,8 @@ cargo add tokio --features full
+ ```rust ,no_run
+ use std::path::Path;
+ use seekstorm::commit::Commit;
+-use seekstorm::index::{create_index, AccessType, Clustering, DocumentCompression, FrequentwordType, IndexDocuments, IndexMetaObject, LexicalSimilarity, NgramSet, StemmerType, StopwordType, TokenizerType};
+-use seekstorm::search::{QueryRewriting, QueryType, ResultType, Search, SearchMode};
++use seekstorm::index::{create_index, AccessType, Clustering, DocumentCompression, FrequentwordType, IndexDocuments, IndexConfig, LexicalSimilarity, NgramSet, StemmerType, StopwordType, TokenizerType};
++use seekstorm::search::{QueryRewriting, QueryType, ResultType, Search, SearchMode, SearchRequest};
+ use seekstorm::vector::Inference;
+ 
+ #[tokio::main]
+@@ -223,24 +223,14 @@ async fn main() {
+     ]"#).unwrap();
+ 
+     // 2. Create the index
+-    let meta = IndexMetaObject {
+-        id: 0,
+-        name: "quickstart".into(),
++    let index_config = IndexConfig {
++        name: "quickstart".to_string(),
+         lexical_similarity: LexicalSimilarity::Bm25f,
+         tokenizer: TokenizerType::UnicodeAlphanumeric,
+-        stemmer: StemmerType::None,
+-        stop_words: StopwordType::None,
+-        frequent_words: FrequentwordType::English,
+-        ngram_indexing: NgramSet::NgramFF as u8,
+-        document_compression: DocumentCompression::Snappy,
+-        access_type: AccessType::Mmap,
+-        spelling_correction: None,
+-        query_completion: None,
+-        clustering: Clustering::None,
+-        inference: Inference::None,
+-        segment_number_bits:11
++        ..Default::default()
+     };
+-    let mut index_arc = create_index(Path::new("./seekstorm_index"), meta, &schema, &Vec::new(), false, None).await.unwrap();
++
++    let mut index_arc = create_index(Path::new("./seekstorm_index"), index_config, &schema, &[], false, None).await.unwrap();
+ 
+     // 3. Index documents
+     let docs = r#"[{"title":"title1 test","body":"body1"}, {"title":"title2","body":"body2 test"}]"#;
+@@ -249,14 +239,26 @@ async fn main() {
+ 
+     // 4. Search
+     let result_object = index_arc.search(
+-        "test".to_string(), None, QueryType::Intersection, SearchMode::Lexical, false, 0, 10, ResultType::TopkCount, false,
+-        Vec::new(), Vec::new(), Vec::new(), Vec::new(), QueryRewriting::SearchOnly,
++        SearchRequest {
++            query_string: "test",
++            query_type_default: QueryType::Intersection,
++            offset: 0,
++            length: 10,
++            search_mode: SearchMode::Lexical, 
++            result_type: ResultType::TopkCount,
++            query_rewriting:  QueryRewriting::SearchOnly,
++            return_documents: Some(Default::default()),
++            ..Default::default()
++        }
+     ).await;
+ 
+-    println!("{} hits", result_object.result_count_total);
+-    for r in result_object.results.iter() {
+-        println!("doc {} score {}", r.doc_id, r.score);
++    for doc in result_object.documents.iter() {
++        println!("document {:?}", doc);
+     }
++    println!(
++        "result counts {} {}",
++        result_object.count, result_object.count_total
++    );
+ }
+ ```
+ 
+@@ -680,7 +682,7 @@ Type 'ingest' into the command line of the running SeekStorm server:
+ ingest
+ ```
+ 
+-This creates the demo index  and indexes the local wikipedia file.
++This creates th
+```
+
+**File**: `seekstorm/Cargo.toml` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "seekstorm"
+-version = "4.0.1"
++version = "5.0.0"
+ authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
+ license = "Apache-2.0"
+ categories = ["database-implementations", "data-structures"]
+@@ -51,18 +51,18 @@ url = "2.5.8"
+ sha2 = "0.11.0"
+ itertools = "0.15.0"
+ async-recursion = "1.2.0"
+-zstd = "0.14.2"
++zstd = "0.14.3"
+ rayon = "1.12.0"
+ aho-corasick = "1.1.5"
+-smallvec = "1.16.4"
++smallvec = "1.16.5"
+ memmap2 = "0.9.12"
+ regex-syntax = "0.8.11"
+ indexmap = { version = "2.14.2", features = ["serde"]}
+ unicode-normalization = "0.1.26"
+ finl_unicode = "1.4.0"
+ colored = "3.1.1"
+ walkdir = "2.5.0"
+-pdfium-render = { version ="0.9.4",  features = ["thread_safe"], optional = true}
++pdfium-render = { version ="0.9.5",  features = ["thread_safe"], optional = true}
+ chrono = "0.4.45"
+ utoipa = { version ="6.0.0",  features = ["preserve_order","preserve_path_order","yaml","indexmap"]}
+ num_cpus = "1.17.0"
+```
+
+**File**: `seekstorm/benches/basic.rs` (modified, +26/-36)
+```diff
+@@ -19,13 +19,13 @@
+ use num_format::Locale;
+ use num_format::ToFormattedString;
+ use seekstorm::index::{
+-    AccessType, Clustering, DocumentCompression, FrequentwordType, IndexMetaObject,
+-    LexicalSimilarity, NgramSet, SchemaField, StemmerType, StopwordType, TokenizerType,
+-    create_index, open_index,
++    AccessType, Clustering, DocumentCompression, FrequentwordType, IndexConfig, LexicalSimilarity,
++    NgramSet, SchemaField, StemmerType, StopwordType, TokenizerType, create_index, open_index,
+ };
+ use seekstorm::ingest::IngestJson;
+ use seekstorm::search::{
+     FacetFilter, QueryFacet, QueryRewriting, QueryType, ResultSort, ResultType, Search, SearchMode,
++    SearchRequest,
+ };
+ use seekstorm::vector::Inference;
+ use std::error::Error;
+@@ -201,31 +201,19 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+ 
+             let schema: Vec<SchemaField> = serde_json::from_str(wikipedia_schema_json).unwrap();
+ 
+-            let meta = IndexMetaObject {
+-                id: 0,
++            let index_config = IndexConfig {
+                 name: "wikipedia".to_string(),
+                 lexical_similarity: LexicalSimilarity::Bm25f,
+                 tokenizer: TokenizerType::AsciiAlphabetic,
+-                stemmer: StemmerType::None,
+-                stop_words: StopwordType::None,
+-                frequent_words: FrequentwordType::English,
+-                //ngram_indexing: NgramSet::SingleTerm as u8,
+-                //ngram_indexing: NgramSet::NgramFF as u8,
+                 ngram_indexing: NgramSet::SingleTerm as u8
+                     | NgramSet::NgramFF as u8
+                     | NgramSet::NgramFR as u8
+                     | NgramSet::NgramRF as u8
+                     | NgramSet::NgramFFF as u8,
+-                document_compression: DocumentCompression::Snappy,
+-                access_type: AccessType::Mmap,
+-                spelling_correction: None,
+-                query_completion: None,
+-                clustering: Clustering::None,
+-                inference: Inference::None,
+-                segment_number_bits: 11,
++                ..Default::default()
+             };
+ 
+-            let mut index_arc = create_index(&index_path, meta, &schema, &Vec::new(), false, None)
++            let mut index_arc = create_index(&index_path, index_config, &schema, &[], false, None)
+                 .await
+                 .unwrap();
+ 
+@@ -239,6 +227,17 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+         }
+     };
+ 
++    println!(
++        "Indexed documents: {}, Segment number bits: {}",
++        index_arc
++            .read()
++            .await
++            .indexed_doc_count()
++            .await
++            .to_formatted_string(&Locale::en),
++        index_arc.read().await.index_config.segment_number_bits
++    );
++
+     // benchmark parameters
+ 
+     let cool_time = Duration::from_secs(10);
+@@ -312,7 +311,6 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+                 let result_type_clone2 = result_type.clone();
+                 let search_mode_clone = search_mode.clone();
+                 let result_length_clone = result_length;
+-                let include_uncommitted = false;
+                 let _query_facets_clone = query_facets.clone();
+                 let _facet_filter_clone = facet_filter.clone();
+                 let _result_sort_clone = result_sort.clone();
+@@ -321,22 +319,14 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+                     let start_time = Instant::now();
+ 
+                     let result_object = index_arc_clone
+-                        .search(
+-                            query_clone.0,
+-                            None,
+-                            query_clone.1,
+-                            search_mode_clone,
+-                            false,
+-                            0,
+-                            result_length_clone,
+-                            result_type_clone,
+-                            include_uncommitted,
+-                            Vec::new(),
+-                            Vec::new(),
+-                            Vec::new(),
+-                            Vec::new(),
+-                            QueryRewriting::SearchOnly,
+-                        )
++                        .search(SearchRequest {
++                            query_string: &query_clone.0,
++                            query_type_default: query_clone.1,
++                            search_mode: search_mode_clone,
++                            length: result_length_clone,
++                            result_type: result_type_clone,
++                            ..Default::default()
++                        })
+                         .await;
+ 
+                     let search_time = start_time.elapsed().as_nanos() as i64;
+@@ -348,7 +338,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+                             query_index: query_index_clone,
+                             search_time: [search
+```
+
+**File**: `seekstorm/src/add_result.rs` (modified, +26/-24)
+```diff
+@@ -10,7 +10,7 @@ use crate::{
+         SPEEDUP_FLAG, STOP_BIT, Shard, get_document_length_compressed_mmap,
+     },
+     min_heap,
+-    search::{FilterSparse, Ranges, ResultType, SearchResult},
++    search::{FilterSparse, Ranges, ResultType, SearchResultObject},
+     utils::{
+         read_f32, read_f64, read_i8, read_i16, read_i32, read_i64, read_u8, read_u16, read_u32,
+         read_u64,
+@@ -96,7 +96,7 @@ pub(crate) fn add_result_singleterm_multifield(
+     shard: &Shard,
+     docid: usize,
+     result_count: &mut i32,
+-    search_result: &mut SearchResult,
++    search_result: &mut SearchResultObject,
+ 
+     top_k: usize,
+     result_type: &ResultType,
+@@ -484,7 +484,7 @@ pub(crate) fn is_facet_filter(index: &Shard, facet_filter: &[FilterSparse], doci
+ }
+ 
+ #[inline]
+-pub(crate) fn facet_count(shard: &Shard, search_result: &mut SearchResult, docid: usize) {
++pub(crate) fn facet_count(shard: &Shard, search_result: &mut SearchResultObject, docid: usize) {
+     if !search_result.query_facets.is_empty() && !search_result.skip_facet_count {
+         for (i, facet) in shard.facets.iter().enumerate() {
+             if search_result.query_facets[i].length == 0 {
+@@ -648,7 +648,7 @@ pub(crate) fn add_result_singleterm_singlefield(
+     shard: &Shard,
+     docid: usize,
+     result_count: &mut i32,
+-    search_result: &mut SearchResult,
++    search_result: &mut SearchResultObject,
+     top_k: usize,
+     result_type: &ResultType,
+     field_filter_set: &AHashSet<u16>,
+@@ -879,7 +879,7 @@ pub(crate) fn get_bm25f_singleterm_multifield(
+ 
+     if shard.indexed_field_vec.len() == 1 {
+         let bm25_component =
+-            shard.bm25_component_cache[if shard.meta.access_type == AccessType::Mmap {
++            shard.bm25_component_cache[if shard.index_config.access_type == AccessType::Mmap {
+                 get_document_length_compressed_mmap(shard, 0, block_id, docid & 0b11111111_11111111)
+             } else {
+                 shard.level_index[block_id].document_length_compressed_array[0]
+@@ -915,13 +915,13 @@ pub(crate) fn get_bm25f_singleterm_multifield(
+             }
+         }
+     } else if plo_single.ngram_type == NgramType::SingleTerm
+-        || shard.meta.lexical_similarity == LexicalSimilarity::Bm25fProximity
++        || shard.index_config.lexical_similarity == LexicalSimilarity::Bm25fProximity
+     {
+         for field in field_vec.iter() {
+             let field_id = field.0 as usize;
+ 
+             let bm25_component =
+-                shard.bm25_component_cache[if shard.meta.access_type == AccessType::Mmap {
++                shard.bm25_component_cache[if shard.index_config.access_type == AccessType::Mmap {
+                     get_document_length_compressed_mmap(
+                         shard,
+                         field_id,
+@@ -947,7 +947,7 @@ pub(crate) fn get_bm25f_singleterm_multifield(
+             let field_id = field.0 as usize;
+ 
+             let bm25_component =
+-                shard.bm25_component_cache[if shard.meta.access_type == AccessType::Mmap {
++                shard.bm25_component_cache[if shard.index_config.access_type == AccessType::Mmap {
+                     get_document_length_compressed_mmap(
+                         shard,
+                         field_id,
+@@ -972,7 +972,7 @@ pub(crate) fn get_bm25f_singleterm_multifield(
+             let field_id = field.0 as usize;
+ 
+             let bm25_component =
+-                shard.bm25_component_cache[if shard.meta.access_type == AccessType::Mmap {
++                shard.bm25_component_cache[if shard.index_config.access_type == AccessType::Mmap {
+                     get_document_length_compressed_mmap(
+                         shard,
+                         field_id,
+@@ -997,7 +997,7 @@ pub(crate) fn get_bm25f_singleterm_multifield(
+             let field_id = field.0 as usize;
+ 
+             let bm25_component =
+-                shard.bm25_component_cache[if shard.meta.access_type == AccessType::Mmap {
++                shard.bm25_component_cache[if shard.index_config.access_type == AccessType::Mmap {
+                     get_document_length_compressed_mmap(
+                         shard,
+                         field_id,
+@@ -1022,7 +1022,7 @@ pub(crate) fn get_bm25f_singleterm_multifield(
+             let field_id = field.0 as usize;
+ 
+             let bm25_component =
+-                shard.bm25_component_cache[if shard.meta.access_type == AccessType::Mmap {
++                shard.bm25_component_cache[if shard.index_config.access_type == AccessType::Mmap {
+                     get_document_length_compressed_mmap(
+                         shard,
+                         field_id,
+@@ -1047,7 +1047,7 @@ pub(crate) fn get_bm25f_singleterm_multifield(
+             let field_id = field.0 as usize;
+ 
+             let bm25_component =
+-                shard.bm25_component_cache[if shard.meta.access_type == AccessType::Mmap {
++                shard.bm25_component_cache[if shard.index_config.access_type == AccessType::Mmap {
+   
+```
+
+**File**: `seekstorm/src/clustering.rs` (modified, +1/-1)
+```diff
+@@ -231,7 +231,7 @@ impl Shard {
+ 
+         let vector_count_block = self.block_vector_buffer.len();
+ 
+-        let cluster_number = match self.meta.clustering {
++        let cluster_number = match self.index_config.clustering {
+             Clustering::Auto => (vector_count_block.sqrt() * 2).max(1),
+             Clustering::None => 1,
+             Clustering::Fixed(n) => n.min(vector_count_block).max(1),
 ```
 
 #### Recent Merged Pull Requests:
@@ -2296,30 +2870,30 @@ Refs #88
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update README.md
+## X. Dockerfile updated
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.dockerignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70c75797`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `35e8e843`: Dockerfile updated. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.dockerignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  <a href="https://news.ycombinator.com/item?id=42295792"><img src="https://img.shields.io/badge/Hacker%20News-245%20points-FF6600?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRkY2NjAwIi8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTUuNSA0aDMuMmwzLjMgNi4yTDE1LjMgNGgzLjJsLTUgOS4zVjIwaC0zdi02Ljd6Ii8+PC9zdmc+Cg==" alt="Hacker News, 245"></a>
-  <a href="https://hub.docker.com/r/wolfgarbe/seekstorm_server"><img src="https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server?style=flat-square" alt="Docker"></a>
+/seekstorm/benches
+/seekstorm/seekstorm_client
+/seekstorm/seekstorm_mcp_server
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  <a href="https://news.ycombinator.com/item?id=42295792"><img src="https://img.shields.io/badge/Hacker%20News-245%20points-FF6600?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRkY2NjAwIi8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTUuNSA0aDMuMmwzLjMgNi4yTDE1LjMgNGgzLjJsLTUgOS4zVjIwaC0zdi02Ljd6Ii8+PC9zdmc+Cg==" alt="Hacker News, 245 points"></a>
-  <a href="https://hub.docker.com/r/wolfgarbe/seekstorm_server"><img src="https://img.shields.io/docker/pulls/wolfgarbe/seekstorm_server?style=flat-square" alt="Docker pulls"></a>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70c75797` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `35e8e843` are properly handled with clean fallback behavior.

@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "70c75797",
+    "sourceVersion": "35e8e843",
     "license": "Apache-2.0",
-    "contentHash": "372f6503c3013c156a4ae429fcfb92681982d47de25587f916002dc409628ce3",
-    "lastHarvestedAt": "2026-11-07T05:28:23.564Z",
+    "contentHash": "b74e262b681734b1b799336f91e158c7933d2fbd59f2c393139d273dc15aa0e7",
+    "lastHarvestedAt": "2026-11-13T02:58:03.079Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "0d4956f3",
+    "sourceVersion": "79d1d2c1",
     "license": "Apache-2.0",
-    "contentHash": "8b7ef6f114b60944dc4f051f19fc7554a97174e2f7121d682cad719ad92931f5",
-    "lastHarvestedAt": "2026-11-11T17:51:35.443Z",
+    "contentHash": "e750dd4a621335b1dc2bb2375cb68620000a8e0507225107c8d8b2b91cbe8455",
+    "lastHarvestedAt": "2026-11-13T03:03:02.243Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
@@ -11885,8 +11885,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
     "sourceVersion": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
     "license": "Open-Source",
-    "contentHash": "85e6352a78dfee54d32b1d1d5fc5285053d6d20849e274c65ab73da2ba7d1d12",
-    "lastHarvestedAt": "2026-11-08T03:08:03.703Z",
+    "contentHash": "6f3652a72e8285ee8e78d7cc6a58bd4c191c39d06ed63265113f94f49a430120",
+    "lastHarvestedAt": "2026-11-13T03:02:37.716Z",
     "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4"
   },
   "hf-moonshotai-kimi-k3.1-pro": {

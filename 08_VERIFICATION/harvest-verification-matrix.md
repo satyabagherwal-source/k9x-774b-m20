@@ -9298,3 +9298,7 @@
 | `CYCLE-20261113-2QIQ` | `2026-11-13T02:32:14.018Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`227954cc...`) |
 | `CYCLE-20261113-4503` | `2026-11-13T02:33:19.443Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | Yes (`b7ae7462...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T02:33:32.401Z` | `hf-moonshotai-kimi-k3.1-pro` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FC7E335F` [Domain D] | Yes (`6fdf4972...`) |
+| `CYCLE-20261113-ZXS3` | `2026-11-13T02:58:03.075Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b74e262b...`) |
+| `CYCLE-20261113-5TOW` | `2026-11-13T03:02:37.712Z` | `nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | Yes (`6f3652a7...`) |
+| `CYCLE-20261113-6CM7` | `2026-11-13T03:03:02.239Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e750dd4a...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:03:22.389Z` | `hf-nvidia-deepseek-v4.1-flash-1017-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8804A7F5` [Domain D] | Yes (`af07d047...`) |
