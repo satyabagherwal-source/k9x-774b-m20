@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "fa001f3a",
+    "sourceVersion": "aad59e11",
     "license": "Apache-2.0",
-    "contentHash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
-    "lastHarvestedAt": "2026-11-12T01:12:10.842Z",
+    "contentHash": "d60a676ad0e775d9c7572f2c84b38893fd8728b1ae484a811b6d69b31295db53",
+    "lastHarvestedAt": "2026-11-13T06:07:00.731Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -10605,8 +10605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "81a0497c4e86d0d8a2b24107958a83a3562fe95b1e505adea11992b3be464d06",
-    "lastHarvestedAt": "2026-11-08T05:11:38.658Z",
+    "contentHash": "93acd0c7211a785f554f2c987517f6c3a02286de52632b3187a06328f95142ac",
+    "lastHarvestedAt": "2026-11-13T06:07:02.960Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf"
   },
   "hf-comfy-org-fibo-2.0": {
@@ -12223,10 +12223,10 @@
     "repository": "wquguru/cicada",
     "platform": "github",
     "sourceUrl": "https://github.com/wquguru/cicada",
-    "sourceVersion": "7b143086",
+    "sourceVersion": "f119ba61",
     "license": "Apache-2.0",
-    "contentHash": "c65e2ece084fc9416838af1b675b7f1a73961ab0dd07e8c6d09ee0f5feee8d21",
-    "lastHarvestedAt": "2026-11-08T22:26:15.129Z",
+    "contentHash": "74a9479e6c69960c04dd883781f635cf69973f57f5ff433f50ff9368a7ef7b59",
+    "lastHarvestedAt": "2026-11-13T06:06:58.271Z",
     "learningId": "learn-github-wquguru-cicada"
   },
   "heymrun-heym": {

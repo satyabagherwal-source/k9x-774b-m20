@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:51:35.694Z",
-  "total_cycles_completed": 9153,
-  "total_learnings_persisted": 9153,
-  "total_rules_promoted": 8962,
+  "last_updated": "2026-11-13T06:07:02.968Z",
+  "total_cycles_completed": 9156,
+  "total_learnings_persisted": 9156,
+  "total_rules_promoted": 8964,
   "history": [
-    {
-      "timestamp": "2026-11-12T09:19:34.589Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T09:25:49.144Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T09:46:18.475Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T09:46:20.441Z",
       "repository": "pulumi/pulumi",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T05:51:35.694Z",
       "repository": "typedb/typedb",
       "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:06:58.280Z",
+      "repository": "wquguru/cicada",
+      "learningId": "learn-github-wquguru-cicada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:07:00.752Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:07:02.968Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -9358,3 +9358,6 @@
 | `CYCLE-20261113-7478` | `2026-11-13T05:51:35.684Z` | `typedb/typedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/typedb-typedb-learnings.md` | Yes (`a8866ed6...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T05:51:49.303Z` | `hf-minimaxai-minimax-m3.1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7D4C4039` [Domain D] | Yes (`e06e9f6b...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T05:52:03.014Z` | `typedb-typedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-80F82307` [Domain D] | Yes (`2585d2bf...`) |
+| `CYCLE-20261113-QW2H` | `2026-11-13T06:06:58.265Z` | `wquguru/cicada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`74a9479e...`) |
+| `CYCLE-20261113-QXYV` | `2026-11-13T06:07:00.727Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d60a676a...`) |
+| `CYCLE-20261113-QZO7` | `2026-11-13T06:07:02.935Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md` | Yes (`93acd0c7...`) |

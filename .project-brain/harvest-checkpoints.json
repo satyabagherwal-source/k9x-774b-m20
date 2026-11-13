@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T05:51:35.699Z",
+  "last_updated": "2026-11-13T06:07:02.975Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
-      "verified_at": "2026-11-12T01:12:10.866Z",
+      "content_hash": "d60a676ad0e775d9c7572f2c84b38893fd8728b1ae484a811b6d69b31295db53",
+      "verified_at": "2026-11-13T06:07:00.756Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T01:12:10.866Z"
+      "last_updated": "2026-11-13T06:07:00.756Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -15936,14 +15936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "content_hash": "81a0497c4e86d0d8a2b24107958a83a3562fe95b1e505adea11992b3be464d06",
-      "verified_at": "2026-11-08T05:11:38.678Z",
+      "content_hash": "93acd0c7211a785f554f2c987517f6c3a02286de52632b3187a06328f95142ac",
+      "verified_at": "2026-11-13T06:07:02.974Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T05:11:38.678Z"
+      "last_updated": "2026-11-13T06:07:02.974Z"
     },
     "Comfy-Org/Fibo-2.0": {
       "repository": "Comfy-Org/Fibo-2.0",
@@ -18396,14 +18396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wquguru-cicada",
-      "content_hash": "c65e2ece084fc9416838af1b675b7f1a73961ab0dd07e8c6d09ee0f5feee8d21",
-      "verified_at": "2026-11-08T22:26:15.138Z",
+      "content_hash": "74a9479e6c69960c04dd883781f635cf69973f57f5ff433f50ff9368a7ef7b59",
+      "verified_at": "2026-11-13T06:06:58.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:26:15.138Z"
+      "last_updated": "2026-11-13T06:06:58.286Z"
     },
     "heymrun/heym": {
       "repository": "heymrun/heym",

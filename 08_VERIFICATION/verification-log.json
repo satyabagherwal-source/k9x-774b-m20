@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-T8T6",
-    "timestamp": "2026-11-09T23:17:52.986Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "0c18d8002a85bbd543350297d2b8e4d6e3c1eeea938e47d298ccb9eed19cce41",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-TAKA",
-    "timestamp": "2026-11-09T23:17:55.258Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "34313097b1a1a3583cbdf0dd571cd9f47efee32f0fb20f45d44e360943d16b6f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-MJE8",
-    "timestamp": "2026-11-09T23:40:39.728Z",
-    "repository": "margelo/react-native-mmkv",
-    "learningId": "learn-github-margelo-react-native-mmkv",
-    "contentHash": "1208571917a3fe47c4055540d8499d0c24b69a5ecace46870315f52836c779f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-MSF6",
     "timestamp": "2026-11-09T23:40:51.426Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7445,51 @@
     "repository": "typedb/typedb",
     "learningId": "learn-github-typedb-typedb",
     "contentHash": "a8866ed67004dcfff840c2bc13c614265e78006156da17edee33935621a07baa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QW2H",
+    "timestamp": "2026-11-13T06:06:58.265Z",
+    "repository": "wquguru/cicada",
+    "learningId": "learn-github-wquguru-cicada",
+    "contentHash": "74a9479e6c69960c04dd883781f635cf69973f57f5ff433f50ff9368a7ef7b59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QXYV",
+    "timestamp": "2026-11-13T06:07:00.727Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "d60a676ad0e775d9c7572f2c84b38893fd8728b1ae484a811b6d69b31295db53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QZO7",
+    "timestamp": "2026-11-13T06:07:02.935Z",
+    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+    "contentHash": "93acd0c7211a785f554f2c987517f6c3a02286de52632b3187a06328f95142ac",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

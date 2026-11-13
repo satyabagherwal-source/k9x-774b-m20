@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T05:51:35.574Z",
+  "last_updated": "2026-11-13T06:07:02.770Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38873,8 +38873,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "fa001f3a",
-      "content_hash": "31149f039b89404b449290afca22d160a893b4ad19d458321ee4c59855802930",
+      "source_version": "aad59e11",
+      "content_hash": "d60a676ad0e775d9c7572f2c84b38893fd8728b1ae484a811b6d69b31295db53",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -38891,6 +38891,11 @@
         {
           "number": null,
           "title": "Merge pull request #8029 from lbarrosby/fix-ingress-tls-empty-secretname",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #8044 from Arbaaz123676/update-kubernetes-compatibility-readm",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -38969,7 +38974,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T01:12:10.669Z",
+      "verified_at": "2026-11-13T06:07:00.571Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137913,7 +137918,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
-      "content_hash": "81a0497c4e86d0d8a2b24107958a83a3562fe95b1e505adea11992b3be464d06",
+      "content_hash": "93acd0c7211a785f554f2c987517f6c3a02286de52632b3187a06328f95142ac",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -137993,7 +137998,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:11:38.488Z",
+      "verified_at": "2026-11-13T06:07:02.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -191776,14 +191781,19 @@
       "slug": "wquguru-cicada",
       "platform": "github",
       "source_url": "https://github.com/wquguru/cicada",
-      "source_version": "7b143086",
-      "content_hash": "c65e2ece084fc9416838af1b675b7f1a73961ab0dd07e8c6d09ee0f5feee8d21",
+      "source_version": "f119ba61",
+      "content_hash": "74a9479e6c69960c04dd883781f635cf69973f57f5ff433f50ff9368a7ef7b59",
       "dossier_path": "07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "site): text aimed at the sensitive-content check can't talk a key past it",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Cicada no longer quits after an interpreted sentence when the meeting plays from",
           "status": "WITHHELD_REJECT"
         }
       ],
@@ -191792,7 +191802,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:26:15.036Z",
+      "verified_at": "2026-11-13T06:06:58.031Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

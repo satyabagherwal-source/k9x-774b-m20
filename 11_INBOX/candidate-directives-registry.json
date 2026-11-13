@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:52:03.047Z",
+  "last_updated": "2026-11-13T06:07:07.315Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8219,6 +8219,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C99B78-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-32A293",
+      "directive_title": "Forensic Learning Record (Deep Inspection): ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-32A293-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-2A23A4",
+      "directive_title": "Cicada no longer quits after an interpreted sentence when the meeting plays from",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "wquguru-cicada",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2A23A4-cicada-no-longer-quits-after-an-interpre.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-D3474D",
+      "directive_title": "Merge pull request #8044 from Arbaaz123676/update-kubernetes-compatibility-readm",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "karmada-io-karmada",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D3474D-merge-pull-request-8044-from-arbaaz12367.md",
       "staged_date": "2026-11-13"
     }
   ]

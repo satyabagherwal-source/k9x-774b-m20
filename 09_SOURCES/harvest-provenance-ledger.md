@@ -9367,3 +9367,6 @@ Every entry in this ledger must capture:
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `9395edd0` | Multi-dimensional audit evidence | 2026-11-13T05:51:35.688Z |
 | `learn-dom-d-7d4c4039` | `project://hf-minimaxai-minimax-m3.1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md` | 2026-11-13T05:51:49.303Z |
 | `learn-dom-d-80f82307` | `project://typedb-typedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md` | 2026-11-13T05:52:03.014Z |
+| `learn-github-wquguru-cicada` | `https://github.com/wquguru/cicada` | `f119ba61` | Multi-dimensional audit evidence | 2026-11-13T06:06:58.271Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `aad59e11` | Multi-dimensional audit evidence | 2026-11-13T06:07:00.731Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-13T06:07:02.960Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:52:03.182Z",
+  "last_updated": "2026-11-13T06:07:07.383Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T05:23:59.465Z",
@@ -1571,9 +1571,24 @@
       "processed_at": "2026-11-13T05:51:49.303Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md": {
+      "processed_at": "2026-11-13T06:07:07.221Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "wquguru-cicada-learnings.md": {
+      "processed_at": "2026-11-13T06:07:07.255Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "karmada-io-karmada-learnings.md": {
+      "processed_at": "2026-11-13T06:07:07.317Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 471,
+  "total_dossiers_evaluated": 474,
   "total_canonical_promoted": 66,
-  "total_staged_for_review": 402
+  "total_staged_for_review": 405
 }

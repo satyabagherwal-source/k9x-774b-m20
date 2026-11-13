@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T05:51:49.322Z",
+  "updated_at": "2026-11-13T06:07:07.371Z",
   "stats": {
-    "total_discovered": 2206,
-    "approved_pending_harvest": 2048,
+    "total_discovered": 2213,
+    "approved_pending_harvest": 2055,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2038,
+      "COMMUNITY_AND_EXPERT": 2044,
       "OFFICIAL_DOCUMENTATION": 90,
-      "STANDARDS_AND_SPECIFICATIONS": 69,
+      "STANDARDS_AND_SPECIFICATIONS": 70,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 7,
       "LEGAL_AND_REGULATORY": 1
@@ -47444,6 +47444,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
         "fileName": "hf-minimaxai-minimax-m3.1-flash-learnings.md"
+      }
+    },
+    "SRC-0337F1C85CE8": {
+      "id": "SRC-0337F1C85CE8",
+      "url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "title": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:07:07.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
+        "fileName": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md"
+      }
+    },
+    "SRC-2E3153378C0D": {
+      "id": "SRC-2E3153378C0D",
+      "url": "https://github.com/wquguru/cicada",
+      "title": "https://github.com/wquguru/cicada",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:07:07.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+        "fileName": "wquguru-cicada-learnings.md"
+      }
+    },
+    "SRC-D5D633DC8013": {
+      "id": "SRC-D5D633DC8013",
+      "url": "https://cicada.indaloop.app/download",
+      "title": "https://cicada.indaloop.app/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:07:07.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+        "fileName": "wquguru-cicada-learnings.md"
+      }
+    },
+    "SRC-491369F9EE61": {
+      "id": "SRC-491369F9EE61",
+      "url": "https://www.rfc-editor.org/rfc/rfc8032",
+      "title": "IETF RFC 8032",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:07:07.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
+        "fileName": "wquguru-cicada-learnings.md"
+      }
+    },
+    "SRC-A45E30134BBF": {
+      "id": "SRC-A45E30134BBF",
+      "url": "https://github.com/karmada-io/karmada",
+      "title": "https://github.com/karmada-io/karmada",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:07:07.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-84F0B31FAA31": {
+      "id": "SRC-84F0B31FAA31",
+      "url": "https://github.com/karmada-io/karmada/pull/4885",
+      "title": "https://github.com/karmada-io/karmada/pull/4885",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:07:07.353Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-FFA316C02BB9": {
+      "id": "SRC-FFA316C02BB9",
+      "url": "https://karmada.io/docs/administr",
+      "title": "https://karmada.io/docs/administr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:07:07.371Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
       }
     }
   }
