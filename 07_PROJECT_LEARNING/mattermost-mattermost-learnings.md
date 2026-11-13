@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `95cc6d95`  
+> **Source Version**: `2c67adc2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T10:07:47.672Z  
+> **Timestamp**: 2026-11-13T19:27:24.564Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T10:02:46.600Z  
+> **Harvest Timestamp**: 2026-11-13T19:27:24.558Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39559 stars
+- **Stars / Engagement**: 39602 stars
 
 ---
 
@@ -1630,596 +1630,957 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `276dc653` (2026-11-07)
-**Commit Message**: [MM-71617] Add per-node memory health diagnostics (#39720)
+### Incident Patch 1: `9d59b084` (2026-11-13)
+**Commit Message**: Fix post list height shift for posts with multiple image attachments (#39016)
 
-* [MM-71617] Add per-node memory health diagnostics
+* Fix post list height shift for posts with multiple image attachments
 
-Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+Posts with several images or videos jumped in height shortly after they
+appeared, pushing the rest of the post list around.
 
-* [MM-71617] Use SplitSeq for memory parsing
+MediaGallery packed its tiles into rows in JavaScript based on the
+measured width of its container. On the first render that width is not
+known yet, so it packed against a hardcoded 700px fallback. The
+virtualized post list measures each post's height in a layout effect on
+mount, which runs after the gallery's own layout effect but before the
+gallery can re-render with the real width. The list therefore recorded
+the 700px layout. Once the gallery re-rendered at the real width the row
+count usually changed (for five landscape images in a ~1000px channel:
+three rows of 2+2+1 at 664px became two rows of 3+2 at 440px), and the
+list only picked up the new height via its ResizeObserver, which
+updates offsets without re-rendering, so the correction showed up as a
+visible shift.
 
-Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+No JS-side width measurement can fix this, because the parent always
+measures before the child's corrected render commits. Instead, let the
+b
 
-* [MM-71617] Clarify system resource paths
-
-Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
-
-* [MM-71617] Update mmctl packet health expectations
-
-Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
-
-* [MM-71617] Resolve process cgroup memory stats
-
-Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
-
-* [MM-71617] Use a plain bool for cgroup memory support internally
-
-Only the support packet model needs the tri-state; the collector now
-creates the pointer when cgroup resolution succeeds.
-
-* [MM-71617] Resolve OOM and Go memory limit rules when data does not apply
-
-Drop cgroup_memory_stats_supported from the support packet. Inside a
-collected server_memory section, a missing OOM kill count means cgroup v2
-memory stats do not apply to the process, and a missing Go memory limit
-means none is set; both now resolve instead of reporting Unknown.
-
-Offline packet evaluation cannot yet tell a failed section from a healthy
-one; MM-71665 
-
-**File**: `server/channels/app/health_check_snapshot_test.go` (modified, +4/-0)
+**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss` (modified, +25/-11)
 ```diff
-@@ -310,6 +310,10 @@ func TestHealthSnapshotLiveOfflineParity(t *testing.T) {
- 				require.NotNil(t, evaluations[i].Result.Value)
- 				evaluations[i].Result.Value = nil
- 				evaluations[i].Result.Details = nil
-+			case "NODE_HOST_MEMORY_LOW", "NODE_CONTAINER_MEMORY_PRESSURE":
-+				// These set a value only when they have the numbers to compare, so none is required.
-+				evaluations[i].Result.Value = nil
-+				evaluations[i].Result.Details = nil
- 			}
- 		}
- 		return evaluations
+@@ -4,7 +4,7 @@
+     box-sizing: border-box;
+     margin: 8px 0;
+     clear: both;
+-    container-type: inline-size;
++    container: media-gallery / inline-size;
+ 
+     .post--compact & {
+         display: block;
+@@ -121,6 +121,8 @@
+     }
+ 
+     &__rows {
++        --media-gallery-row-height: 216px;
++
+         display: grid;
+         overflow: hidden;
+         min-width: 0;
+@@ -143,29 +145,41 @@
+         display: flex;
+         overflow: hidden;
+         min-width: 0;
+-        flex-direction: column;
++        flex-flow: row wrap;
++        align-content: flex-start;
+         align-items: flex-start;
+         justify-content: flex-start;
+         gap: 8px;
+     }
+ 
+-    &__row {
+-        display: flex;
+-        width: 100%;
+-        min-width: 0;
+-        flex-direction: row;
+-        align-items: stretch;
+-        justify-content: flex-start;
+-        gap: 8px;
+-        text-align: left;
++    &--compact &__rows {
++        --media-gallery-row-height: 144px;
++    }
++}
++
++// Sized in CSS rather than from a measured width so the post list sees the
++// final height on first render, including in narrow containers like the RHS.
++// CSS has no hysteresis, so the RHS reserves its scrollbar gutter to keep a
++// scrollbar appearing from toggling the row height near 480px.
++@container media-gallery (width < 480px) {
++    .MediaGallery__rows {
++        --media-gallery-row-height: 144px;
+     }
+ }
+ 
+ .MediaGallery__tile {
++    // Scale to the row height by aspect ratio, without upscaling past the
++    // file's native width, clamped to 50-500px.
++    --tile-width: max(50px, min(calc(var(--tile-ratio, 1.5) * var(--media-gallery-row-height)), var(--tile-native-width, 500px), 500px));
++
+     position: relative;
+     display: flex;
+     overflow: hidden;
++    width: var(--tile-width);
++    max-width: 100%;
++    height: var(--media-gallery-row-height);
+     box-sizing: border-box;
++    flex: 0 0 var(--tile-width);
+     align-items: center;
+     justify-content: center;
+     border: 1px solid rgba(var(--center-channel-color-rgb), 0.16);
 ```
 
-**File**: `server/channels/app/platform/container_limits.go` (added, +27/-0)
+**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.test.tsx` (modified, +132/-45)
 ```diff
-@@ -0,0 +1,27 @@
+@@ -10,7 +10,7 @@ import type {FileInfo} from '@mattermost/types/files';
+ import {renderWithContext} from 'tests/react_testing_utils';
+ 
+ import {ArchiveFileError, ArchiveTooLargeError, buildFileArchive} from './file_archive';
+-import MediaGallery, {nextNarrowState} from './media_gallery';
++import MediaGallery from './media_gallery';
+ 
+ jest.mock('./file_archive', () => ({
+     ...jest.requireActual('./file_archive'),
+@@ -39,37 +39,6 @@ function fileInfo(overrides: Partial<FileInfo>): FileInfo {
+     };
+ }
+ 
+-describe('nextNarrowState', () => {
+-    const SCROLLBAR_WIDTH = 15;
+-
+-    it('switches to compact rows below the enter threshold', () => {
+-        expect(nextNarrowState(false, 479)).toBe(true);
+-        expect(nextNarrowState(false, 480)).toBe(false);
+-    });
+-
+-    it('stays compact until well past the enter threshold so a vanishing scrollbar cannot flip it back', () => {
+-        expect(nextNarrowState(true, 479 + SCROLLBAR_WIDTH)).toBe(true);
+-        expect(nextNarrowState(true, 511)).toBe(true);
+-        expect(nextNarrowState(true, 512)).toBe(false);
+-    });
+-
+-    it('settles at every width in the worst case, where tall rows scroll and compact rows do not', () => {
+-        for (let unscrolledWidth = 400; unscrolledWidth <= 600; unscrolledWidth++) {
+-            const scrolledWidth = unscrolledWidth - SCROLLBAR_WIDTH;
+-
+-            // Going compact hides the scrollbar, which widens the container back out.
+-            if (nextNarrowState(false, scrolledWidth)) {
+-                expect(nextNarrowState(true, unscrolledWidth)).toBe(true);
+-            }
+-
+-            // Going tall shows the scrollbar, which narrows the container again.
+-            if (!nextNarrowState(true, unscrolledWidth)) {
+-                expect(nextNarrowState(false, scrolledWidth)).toBe(false);
+-            }
+-        }
+-    });
+-});
+-
+ describe('MediaGallery', () => {
+     const baseState = {
+         entities: {
+@@ -149,28 +118,146 @@ describe('MediaGallery', () => {
+         expect(onToggle).toHaveBeenCalledWith('p1');
+     });
+ 
+-    it('uses compact rows in a narrow container', () => {
+-        const rectSpy = jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+-            width: 400,
+-            height: 144,
+-        } as DOMRect);
++    it('leaves tile sizing to CSS so a narrow container does not need to be measured', () => {
++        renderWithContext(
++            <MediaGallery
++                fileInfos={[
++                    fileInfo({id: 'a', name: 'a.png', width: 800, height: 600}),
++                    fileInfo({id: 'v', name: 'clip.mp4', extension: 'mp4', mime_type: 'video/mp4', width: 0, height: 0}),
++                ]}
++                postId='p1'
++                onItemClick={jest.fn()}
++            />,
++            baseState,
++        );
++
++        const [image, video] = screen.getAllByTestId('media-gallery-tile');
++        expect(image.style.getPropertyValue('--tile-ratio')).toBe(String(800 / 600));
++        expect(image.style.getPropertyValue('--tile-native-width')).toBe('800px');
++        expect(video.style.getPropertyValue('--tile-ratio')).toBe('1.5');
++        expect(video.style.getPropertyValue('--tile-native-width')).toBe('');
++
++        for (const tile of [image, video]) {
++            expect(tile.style.width).toBe('');
++            expect(tile.style.height).toBe('');
++        }
++    });
++
++    describe('layout', () => {
++        const mixedFiles = [
++            fileInfo({id: 'landscape', name: 'landscape.png', width: 1600, height: 900}),
++            fileInfo({id: 'portrait', name: 'portrait.png', width: 600, height: 1200}),
++            fileInfo({id: 'small', name: 'small.png', width: 40, height: 40}),
++            fileInfo({id: 'panorama', name: 'panorama.png', width: 6000, height: 1000}),
++            fileInfo({id: 'clip', name: 'clip.mp4', extension: 'mp4', mime_type: 'video/mp4', width: 0, height: 0}),
++        ];
++
++        // Everything that decides the gallery's height: its row-height classes,
++        // how tiles are grouped into wrapper elements, and each tile's sizing styles.
++        function layoutOf(root: Element) {
++            const gallery = root.querySelector('.MediaGallery')!;
++            const tiles = Array.from(root.querySelectorAll<HTMLElement>('.MediaGallery__tile'));
++            const groupSizes = new Map<Element, number>();
++            for (const tile of tiles) {
++                groupSizes.set(tile.parentElement!, (groupSizes.get(tile.parentElement!) ?? 0) + 1);
++            }
++            return {
++                galleryClassName: gallery.className,
++                tileGroups: Array.from(groupSizes.values()),
++                tiles: tiles.map((tile) => ({
++                    ratio: tile.style.getPropertyValue('--tile-ratio'),
++                    nativeWidth: tile.style.getPropertyValue('--tile-native-width'),
++                    width: tile.style.width,
++                    height: tile.style.height,
++                    flex: t
+```
+
+**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.tsx` (modified, +13/-75)
+```diff
+@@ -21,11 +21,9 @@ import {getFileType} from 'utils/utils';
+ import type {GlobalState} from 'types/store';
+ 
+ import {ArchiveFileError, ArchiveTooLargeError, archiveFilename, buildFileArchive} from './file_archive';
+-import {packRows} from './pack_rows';
+ import ImageTile from './tiles/image_tile';
+ import VideoTile from './tiles/video_tile';
+ import type {ClassifiedFile, TileKind} from './types';
+-import {useContainerDimensions} from './use_container_dimensions';
+ 
+ import './media_gallery.scss';
+ 
+@@ -38,20 +36,6 @@ type Props = {
+     onToggleCollapse?: (postId: string) => void;
+ };
+ 
+-const ROW_HEIGHT = 216;
+-const COMPACT_ROW_HEIGHT = 144;
+-const MIN_TILE_WIDTH = 50;
+-const MAX_TILE_WIDTH = 500;
+-const GAP = 8;
+-const FALLBACK_WIDTH = 700;
+-
+-const NARROW_ENTER_WIDTH = 480;
+-const NARROW_EXIT_WIDTH = 512;
+-
+-export function nextNarrowState(isNarrow: boolean, width: number): boolean {
+-    return isNarrow ? width < NARROW_EXIT_WIDTH : width < NARROW_ENTER_WIDTH;
+-}
+-
+ function tileKindFor(fileInfo: FileInfo): TileKind | null {
+     const type = getFileType(fileInfo.extension);
+     if (type === FileTypes.IMAGE) {
+@@ -75,16 +59,6 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
+ 
+     useEffect(() => () => downloadAbortRef.current?.abort(), []);
+ 
+-    const containerRef = useRef<HTMLDivElement | null>(null);
+-    const {width: containerWidth} = useContainerDimensions(containerRef);
+-
+-    const effectiveWidth = containerWidth > 0 ? containerWidth : FALLBACK_WIDTH;
+-    const [isNarrow, setIsNarrow] = useState(false);
+-
+-    useEffect(() => {
+-        setIsNarrow((prev) => nextNarrowState(prev, effectiveWidth));
+-    }, [effectiveWidth]);
+-
+     const tiles: ClassifiedFile[] = useMemo(() => {
+         const out: ClassifiedFile[] = [];
+         for (const file of fileInfos) {
+@@ -96,16 +70,6 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
+         return out;
+     }, [fileInfos]);
+ 
+-    const rows = useMemo(() => {
+-        return packRows(tiles, {
+-            containerWidth: effectiveWidth,
+-            rowHeight: (compactDisplay || isNarrow) ? COMPACT_ROW_HEIGHT : ROW_HEIGHT,
+-            minTileWidth: MIN_TILE_WIDTH,
+-            maxTileWidth: MAX_TILE_WIDTH,
+-            gap: GAP,
+-        });
+-    }, [tiles, effectiveWidth, isNarrow, compactDisplay]);
+-
+     const handleClick = useCallback((index: number) => {
+         const file = tiles[index]?.file;
+         if (!file) {
+@@ -193,11 +157,8 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
+     // Collapsed single videos need a header, otherwise the tile disappears with no toggle.
+     const showHeader = Boolean(onToggleCollapse) && (!isSingle || !isEmbedVisible);
+ 
+-    let tileIdx = 0;
+-
+     return (
+         <div
+-            ref={containerRef}
+             className={classNames('MediaGallery', {
+                 'MediaGallery--compact': compactDisplay,
+                 'MediaGallery--single': isSingle,
+@@ -269,42 +230,19 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
+                 aria-hidden={!isEmbedVisible}
+             >
+                 <div className='MediaGallery__rows_inner'>
+-                    {rows.map((row, rIdx) => (
+-                        <div
+-                            key={`row-${rIdx}`}
+-                            className='MediaGallery__row'
+-                            style={{height: `${row.height}px`}}
+-                        >
+-                            {row.tiles.map((packed) => {
+-                                const current = tileIdx;
+-                                tileIdx += 1;
+-                                const tile = packed.tile;
+-                                return tile.kind === 'image' ? (
+-                                    <ImageTile
+-                                        key={tile.file.id}
+-                                        fileInfo={tile.file}
+-                                        index={current}
+-                                        total={tiles.length}
+-                                        width={packed.width}
+-                                        height={row.height}
+-                                        enablePublicLink={enablePublicLink}
+-                                        onClick={handleClick}
+-                                    />
+-                                ) : (
+-                                    <VideoTile
+-                                        key={tile.file.id}
+-                                        fileInfo={tile.file}
+-                                        index={current}
+-                                        total={tiles.length}
+-                                        width={packed.width}
+-                                        height={row.height}
+-                                        enablePublicLink={enablePublicLink}
+-                                        onClick={handleClick}
+- 
+```
+
+**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/pack_rows.test.ts` (removed, +0/-97)
+```diff
+@@ -1,97 +0,0 @@
+-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+-// See LICENSE.txt for license information.
+-
+-import type {FileInfo} from '@mattermost/types/files';
+-
+-import {packRows} from './pack_rows';
+-import type {ClassifiedFile} from './types';
+-
+-function tile(width: number, height: number, id = 'f'): ClassifiedFile {
+-    return {
+-        file: {id, width, height} as FileInfo,
+-        kind: 'image',
+-    };
+-}
+-
+-describe('packRows', () => {
+-    const baseOpts = {
+-        containerWidth: 700,
+-        rowHeight: 216,
+-        minTileWidth: 50,
+-        maxTileWidth: 500,
+-        gap: 8,
+-    };
+-
+-    it('returns no rows when there are no tiles', () => {
+-        expect(packRows([], baseOpts)).toEqual([]);
+-    });
+-
+-    it('returns no rows when the container has zero width', () => {
+-        expect(packRows([tile(800, 600)], {...baseOpts, containerWidth: 0})).toEqual([]);
+-    });
+-
+-    it('keeps every row at the configured (predictable) row height', () => {
+-        const tiles = [
+-            tile(800, 600, 'a'),
+-            tile(800, 600, 'b'),
+-            tile(800, 600, 'c'),
+-            tile(800, 600, 'd'),
+-            tile(800, 600, 'e'),
+-        ];
+-        const rows = packRows(tiles, baseOpts);
+-        for (const row of rows) {
+-            expect(row.height).toBe(baseOpts.rowHeight);
+-        }
+-    });
+-
+-    it('leaves the last row ragged on the right rather than scaling tiles to fill', () => {
+-        const tiles = [
+-            tile(800, 600, 'a'),
+-            tile(800, 600, 'b'),
+-            tile(800, 600, 'c'),
+-            tile(800, 600, 'd'),
+-        ];
+-        const rows = packRows(tiles, baseOpts);
+-
+-        const last = rows[rows.length - 1];
+-        const lastWidth = last.tiles.reduce((acc, t) => acc + t.width, 0) +
+-            ((last.tiles.length - 1) * baseOpts.gap);
+-        expect(lastWidth).toBeLessThanOrEqual(baseOpts.containerWidth + 0.5);
+-    });
+-
+-    it('never packs a row wider than the container', () => {
+-        const tiles = [
+-            tile(1600, 600, 'a'),
+-            tile(1600, 600, 'b'),
+-            tile(1600, 600, 'c'),
+-        ];
+-        const rows = packRows(tiles, baseOpts);
+-        for (const row of rows) {
+-            const width = row.tiles.reduce((acc, t) => acc + t.width, 0) +
+-                ((row.tiles.length - 1) * baseOpts.gap);
+-            expect(width).toBeLessThanOrEqual(baseOpts.containerWidth + 0.5);
+-        }
+-    });
+-
+-    it('floors a sub-min tile at minTileWidth (the image inside still renders at native size via inline caps)', () => {
+-        const rows = packRows([tile(40, 40)], baseOpts);
+-        const packed = rows[0].tiles[0];
+-        expect(packed.width).toBe(baseOpts.minTileWidth);
+-    });
+-
+-    it('caps very wide tiles at maxTileWidth', () => {
+-        const rows = packRows([tile(4000, 1000)], baseOpts);
+-        const packed = rows[0].tiles[0];
+-        expect(packed.width).toBeLessThanOrEqual(baseOpts.maxTileWidth);
+-    });
+-
+-    it('uses a 1.5 default aspect ratio when a file is missing dimensions', () => {
+-        const noDimsTile: ClassifiedFile = {
+-            file: {id: 'x'} as FileInfo,
+-            kind: 'image',
+-        };
+-        const rows = packRows([noDimsTile], baseOpts);
+-        expect(rows).toHaveLength(1);
+-        expect(rows[0].tiles[0].width).toBeCloseTo(baseOpts.rowHeight * 1.5);
+-    });
+-});
+```
+
+**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/pack_rows.ts` (removed, +0/-90)
+```diff
+@@ -1,90 +0,0 @@
+-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+-// See LICENSE.txt for license information.
+-
+-import type {FileInfo} from '@mattermost/types/files';
+-
+-import type {ClassifiedFile} from './types';
+-
+-export type PackOptions = {
+-    containerWidth: number;
+-    rowHeight: number;
+-    minTileWidth: number;
+-    maxTileWidth: number;
+-    gap: number;
+-};
+-
+-export type PackedTile = {
+-    tile: ClassifiedFile;
+-    width: number;
+-    height: number;
+-};
+-
+-export type PackedRow = {
+-    tiles: PackedTile[];
+-    height: number;
+-};
+-
+-const DEFAULT_ASPECT_RATIO = 1.5;
+-
+-function ratioOf(file: FileInfo): number {
+-    if (file.width && file.height && file.width > 0 && file.height > 0) {
+-        return file.width / file.height;
+-    }
+-    return DEFAULT_ASPECT_RATIO;
+-}
+-
+-function tileSize(tile: ClassifiedFile, opts: PackOptions): {width: number; height: number} {
+-    const ratio = ratioOf(tile.file);
+-    let width = ratio * opts.rowHeight;
+-    let height = opts.rowHeight;
+-
+-    if (tile.file.width && tile.file.height) {
+-        if (width > tile.file.width) {
+-            width = tile.file.width;
+-            height = tile.file.height;
+-        }
+-    }
+-
+-    const upperBound = Math.min(opts.maxTileWidth, opts.containerWidth);
+-    if (width > upperBound) {
+-        height *= upperBound / width;
+-        width = upperBound;
+-    }
+-    if (width < opts.minTileWidth) {
+-        height *= opts.minTileWidth / width;
+-        width = opts.minTileWidth;
+-    }
+-
+-    return {width, height};
+-}
+-
+-export function packRows(tiles: ClassifiedFile[], opts: PackOptions): PackedRow[] {
+-    const rows: PackedRow[] = [];
+-    if (tiles.length === 0 || opts.containerWidth <= 0 || opts.rowHeight <= 0) {
+-        return rows;
+-    }
+-
+-    let current: PackedTile[] = [];
+-    let currentWidth = 0;
+-
+-    for (const tile of tiles) {
+-        const {width, height} = tileSize(tile, opts);
+-        const addedWidth = current.length === 0 ? width : currentWidth + opts.gap + width;
+-
+-        if (current.length > 0 && addedWidth > opts.containerWidth) {
+-            rows.push({tiles: current, height: opts.rowHeight});
+-            current = [{tile, width, height}];
+-            currentWidth = width;
+-            continue;
+-        }
+-
+-        current.push({tile, width, height});
+-        currentWidth = addedWidth;
+-    }
+-
+-    if (current.length > 0) {
+-        rows.push({tiles: current, height: opts.rowHeight});
+-    }
+-
+-    return rows;
+-}
+```
+
+**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tile_size.test.ts` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
 +// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 +// See LICENSE.txt for license information.
 +
-+package platform
++import type {FileInfo} from '@mattermost/types/files';
 +
-+// ContainerLimits holds the effective CPU limit for the current container. The memory
-+// limit is read with the other memory diagnostics, see memoryDiagnostics.
-+// Zero values indicate no limit is set (fields will be omitted from YAML output).
-+type ContainerLimits struct {
-+	CPULimit float64
++import {tileSizeVars} from './tile_size';
++
++function file(width?: number, height?: number): FileInfo {
++    return {id: 'f', width, height} as FileInfo;
 +}
 +
-+type cgroupV2Info struct {
-+	dir                  string
-+	memoryStatsSupported bool
++describe('tileSizeVars', () => {
++    it('exposes the image aspect ratio and native width', () => {
++        expect(tileSizeVars(file(800, 600))).toEqual({
++            '--tile-ratio': String(800 / 600),
++            '--tile-native-width': '800px',
++        });
++    });
++
++    it('uses a 1.5 default aspect ratio and no native width when a file is missing dimensions', () => {
++        expect(tileSizeVars(file())).toEqual({
++            '--tile-ratio': '1.5',
++        });
++    });
++});
+```
+
+**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tile_size.ts` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++import type {CSSProperties} from 'react';
++
++import type {FileInfo} from '@mattermost/types/files';
++
++const DEFAULT_ASPECT_RATIO = 1.5;
++
++function ratioOf(file: FileInfo): number {
++    if (file.width && file.height && file.width > 0 && file.height > 0) {
++        return file.width / file.height;
++    }
++    return DEFAULT_ASPECT_RATIO;
 +}
 +
-+type memoryDiagnostics struct {
-+	AvailableMemoryMB           *uint64
-+	SwapTotalMB                 *uint64
-+	SwapUsedMB                  *uint64
-+	ProcessRSSMB                *uint64
-+	ContainerMemoryLimitMB      uint64 // zero when no limit is set
-+	ContainerMemoryUsageMB      *uint64
-+	ContainerMemoryWorkingSetMB *uint64
-+	ContainerOOMKills           *uint64
++// Tiles are sized in CSS from these variables against the gallery's row height,
++// which a container query shrinks in narrow containers, and they wrap into rows
++// via CSS flex-wrap. Nothing depends on measuring the container, so the post has
++// its final height on first render.
++export function tileSizeVars(file: FileInfo): CSSProperties {
++    const vars: Record<string, string> = {
++        '--tile-ratio': String(ratioOf(file)),
++    };
++
++    if (file.width && file.width > 0) {
++        vars['--tile-native-width'] = `${file.width}px`;
++    }
++
++    return vars as CSSProperties;
 +}
 ```
 
-**File**: `server/channels/app/platform/container_limits_linux.go` (modified, +240/-32)
+**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx` (modified, +4/-10)
 ```diff
-@@ -7,52 +7,45 @@ package platform
+@@ -13,17 +13,17 @@ import {isGIFImage} from 'utils/utils';
  
- import (
- 	"errors"
-+	"fmt"
- 	"os"
-+	"path/filepath"
-+	"slices"
- 	"strconv"
- 	"strings"
- )
+ import TileUtilityButtons from './tile_utility_buttons';
  
--// cgroupPaths holds the file paths used to read cgroup v2 resource limits.
-+// resourcePaths holds procfs files used to inspect system resources.
- // These are package-level variables so they can be overridden in tests.
--var cgroupPaths = struct {
--	v2MemoryMax string
--	v2CPUMax    string
-+var resourcePaths = struct {
-+	procMeminfo       string
-+	procSelfStatus    string
-+	procSelfCgroup    string
-+	procSelfMountInfo string
- }{
--	v2MemoryMax: "/sys/fs/cgroup/memory.max",
--	v2CPUMax:    "/sys/fs/cgroup/cpu.max",
-+	procMeminfo:       "/proc/meminfo",
-+	procSelfStatus:    "/proc/self/status",
-+	procSelfCgroup:    "/proc/self/cgroup",
-+	procSelfMountInfo: "/proc/self/mountinfo",
- }
++import {tileSizeVars} from '../tile_size';
++
+ type Props = {
+     fileInfo: FileInfo;
+     index: number;
+     total: number;
+-    width: number;
+-    height: number;
+     enablePublicLink: boolean;
+     onClick: (index: number) => void;
+ };
  
--// ContainerLimits holds effective CPU and memory limits for the current container.
--// Zero values indicate no limit is set (fields will be omitted from YAML output).
--type ContainerLimits struct {
--	CPULimit      float64
--	MemoryLimitMB uint64
--}
-+var mountInfoPathReplacer = strings.NewReplacer(
-+	`\040`, " ",
-+	`\011`, "\t",
-+	`\012`, "\n",
-+	`\134`, `\`,
-+)
+-const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onClick}: Props) => {
++const ImageTile = ({fileInfo, index, total, enablePublicLink, onClick}: Props) => {
+     const {formatMessage} = useIntl();
  
--// getContainerLimits reads container resource limits from cgroups v2.
-+// getContainerLimits reads the container CPU limit from cgroups v2.
- // Returns zero values when no limits are detected (bare metal, unlimited, or non-v2 system).
--func getContainerLimits() (ContainerLimits, error) {
-+func getContainerLimits(info cgroupV2Info) (ContainerLimits, error) {
- 	var limits ContainerLimits
+     const handleActivate = useCallback(() => {
+@@ -52,12 +52,6 @@ const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onC
+         {current: index + 1, total, name: fileInfo.name || ''},
+     );
+ 
+-    const tileStyle: CSSProperties = {
+-        width: `${width}px`,
+-        height: `${height}px`,
+-        flex: `0 0 ${width}px`,
+-    };
 -
--	// Memory limit: "max" means unlimited, otherwise bytes
--	memStr, err := readTrimmed(cgroupPaths.v2MemoryMax)
--	if err != nil {
--		if errors.Is(err, os.ErrNotExist) {
--			return limits, nil
--		}
--		return limits, err
--	}
--	if memStr != "max" {
--		var memBytes uint64
--		memBytes, err = strconv.ParseUint(memStr, 10, 64)
--		if err != nil {
--			return limits, err
--		}
--		limits.MemoryLimitMB = (memBytes + 1024*1024 - 1) / (1024 * 1024)
-+	if info.dir == "" {
-+		return limits, nil
- 	}
- 
- 	// CPU limit: format is "quota period"; quota is "max" when unlimited
--	cpuStr, err := readTrimmed(cgroupPaths.v2CPUMax)
-+	cpuStr, err := readTrimmed(filepath.Join(info.dir, "cpu.max"))
- 	if err != nil {
- 		if errors.Is(err, os.ErrNotExist) {
- 			return limits, nil
-@@ -80,10 +73,225 @@ func getContainerLimits() (ContainerLimits, error) {
- 	return limits, nil
- }
- 
-+func getCgroupV2Info() (cgroupV2Info, error) {
-+	cgroup, err := readFile(resourcePaths.procSelfCgroup)
-+	if err != nil {
-+		return cgroupV2Info{}, err
-+	}
-+
-+	membership, found, err := parseCgroupV2Membership(cgroup)
-+	if err != nil {
-+		return cgroupV2Info{}, err
-+	}
-+	if !found {
-+		return cgroupV2Info{}, nil
-+	}
-+
-+	mountInfo, err := readFile(resourcePaths.procSelfMountInfo)
-+	if err != nil {
-+		return cgroupV2Info{}, err
-+	}
-+	dir, err := resolveCgroupV2Dir(membership, mountInfo)
-+	if err != nil {
-+		return cgroupV2Info{}, err
-+	}
-+
-+	_, err = os.Stat(filepath.Join(dir, "memory.max"))
-+	if err != nil && !errors.Is(err, os.ErrNotExist) {
-+		return cgroupV2Info{}, err
-+	}
-+	return cgroupV2Info{dir: dir, memoryStatsSupported: err == nil}, nil
-+}
-+
-+func parseCgroupV2Membership(contents string) (string, bool, error) {
-+	for line := range strings.SplitSeq(contents, "\n") {
-+		parts := strings.SplitN(line, ":", 3)
-+		if len(parts) != 3 || parts[0] != "0" || parts[1] != "" {
-+			continue
-+		}
-+		if !filepath.IsAbs(parts[2]) {
-+			return "", false, fmt.Errorf("invalid cgroup v2 membership path %q", parts[2])
-+		}
-+		return parts[2], true, nil
-+	}
-+	return "", false, nil
-+}
-+
-+// cleanCgroupPath cleans a cgroup path as a path relative to the cgroup
-+// namespace root. Unlike filepath.Clean on the absolute path, it keeps leading
-+// ".." elements, which point above the namespace root.
-+func cleanCgroupPath(path string) string {
-+	return filepath.Clean(strings.TrimLeft(path, "/"))
-+}
-+
-+func resolveCgroupV2Dir(membership, contents string) (string, error) {
-+	var (
-+		bestDir     string
-+		bestRootLen int
-+	)
-+	cleanMembership := cleanCgroupPath(membership)
-+	for line := range strings.SplitSeq(contents, "\n") {
-+		fields := strings.Split(line, " ")
-+		separator := slices.Index(fields, "-")
-+		if separator < 6 || separator+1 >= len(fields) || fields[separator+1] != "cgroup2" {
-+			continue
-+		}
-+
-+		root := mountInfoPathReplacer.Replace(fields[3])
-+		mountPoint := filepath.Clean(mountInfoPathReplacer.Replace(fields[4]))
-+		if !filepath.IsAbs(root) || !filepath.IsAbs(mountPoint) {
-+			continue
-+		}
-+		root = cleanCgroupPath(root)
-+		relative, err := filepath.Rel(root, cleanMembership)
-+		if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
-+			continue
-+		}
-+		if len(root) > bestRootLen {
-+			bestDir = filepath.Join(mountPoint, relative)
-+			bestRootLen = len(root)
-+		}
-+	}
-+	if bestDir == "" {
-+		return "", fmt.Errorf("cgroup v2 membership %q has no matching cgroup2 mount", memb
-```
-
-**File**: `server/channels/app/platform/container_limits_linux_test.go` (modified, +283/-32)
-```diff
-@@ -8,6 +8,7 @@ package platform
- import (
- 	"os"
- 	"path/filepath"
-+	"strings"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -17,71 +18,321 @@ import (
- func writeTempCgroupFile(t *testing.T, dir, name, content string) string {
- 	t.Helper()
- 	path := filepath.Join(dir, name)
-+	require.NoError(t, os.MkdirAll(filepath.Dir(path), 0o755))
- 	require.NoError(t, os.WriteFile(path, []byte(content), 0o644))
- 	return path
- }
- 
-+func setTempCgroupLayout(t *testing.T, dir, membership, mountRoot, mountPoint string) cgroupV2Info {
-+	t.Helper()
-+	resourcePaths.procSelfCgroup = writeTempCgroupFile(t, dir, "proc-self-cgroup", "0::"+membership+"\n")
-+	resourcePaths.procSelfMountInfo = writeTempCgroupFile(t, dir, "proc-self-mountinfo", "31 30 0:28 "+mountRoot+" "+mountPoint+" rw,nosuid,nodev,noexec,relatime - cgroup2 cgroup rw\n")
-+	relative, err := filepath.Rel(mountRoot, membership)
-+	require.NoError(t, err)
-+	writeTempCgroupFile(t, filepath.Join(mountPoint, relative), "memory.max", "max\n")
-+
-+	info, err := getCgroupV2Info()
-+	require.NoError(t, err)
-+	require.True(t, info.memoryStatsSupported)
-+	return info
-+}
-+
- func TestGetContainerLimits(t *testing.T) {
- 	dir := t.TempDir()
-+	info := cgroupV2Info{dir: dir, memoryStatsSupported: true}
- 
--	originalPaths := cgroupPaths
--	t.Cleanup(func() { cgroupPaths = originalPaths })
--
--	t.Run("limited CPU and memory", func(t *testing.T) {
--		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_limited", "536870912\n")  // 512 MB
--		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_limited", "200000 100000\n") // 2 CPUs
-+	t.Run("limited CPU", func(t *testing.T) {
-+		writeTempCgroupFile(t, dir, "cpu.max", "200000 100000\n")
- 
--		limits, err := getContainerLimits()
-+		limits, err := getContainerLimits(info)
- 		require.NoError(t, err)
--		assert.Equal(t, uint64(512), limits.MemoryLimitMB)
- 		assert.InDelta(t, 2.0, limits.CPULimit, 0.001)
- 	})
- 
--	t.Run("unlimited CPU and memory", func(t *testing.T) {
--		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_unlimited", "max\n")
--		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_unlimited", "max 100000\n")
-+	t.Run("unlimited CPU", func(t *testing.T) {
-+		writeTempCgroupFile(t, dir, "cpu.max", "max 100000\n")
- 
--		limits, err := getContainerLimits()
-+		limits, err := getContainerLimits(info)
- 		require.NoError(t, err)
--		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
- 		assert.Equal(t, float64(0), limits.CPULimit)
- 	})
- 
- 	t.Run("fractional CPU limit", func(t *testing.T) {
--		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_frac", "max\n")
--		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_frac", "50000 100000\n") // 0.5 CPUs
-+		writeTempCgroupFile(t, dir, "cpu.max", "50000 100000\n")
- 
--		limits, err := getContainerLimits()
-+		limits, err := getContainerLimits(info)
- 		require.NoError(t, err)
- 		assert.InDelta(t, 0.5, limits.CPULimit, 0.001)
- 	})
- 
--	t.Run("sub-MB memory rounds up to 1MB", func(t *testing.T) {
--		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_tiny", "524288\n") // 0.5 MB
--		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_tiny", "max 100000\n")
-+	t.Run("CPU limit does not depend on memory.max", func(t *testing.T) {
-+		cpuOnlyDir := filepath.Join(dir, "cpu-only")
-+		writeTempCgroupFile(t, cpuOnlyDir, "cpu.max", "100000 100000\n")
- 
--		limits, err := getContainerLimits()
-+		limits, err := getContainerLimits(cgroupV2Info{dir: cpuOnlyDir, memoryStatsSupported: true})
- 		require.NoError(t, err)
--		assert.Equal(t, uint64(1), limits.MemoryLimitMB)
-+		assert.InDelta(t, 1.0, limits.CPULimit, 0.001)
- 	})
- 
--	t.Run("missing cgroup files returns zero values", func(t *testing.T) {
--		cgroupPaths.v2MemoryMax = filepath.Join(dir, "nonexistent_memory")
--		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_present", "max 100000\n")
--
--		limits, err := getContainerLimits()
-+	t.Run("missing cpu.max returns zero values", func(t *testing.T) {
-+		limits, err := getContainerLimits(cgroupV2Info{dir: filepath.Join(dir, "missing"), memoryStatsSupported: true})
- 		require.NoError(t, err)
--		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
- 		assert.Equal(t, float64(0), limits.CPULimit)
- 	})
- 
--	t.Run("missing cpu.max returns zero values", func(t *testing.T) {
--		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_no_cpu", "max\n")
--		cgroupPaths.v2CPUMax = filepath.Join(dir, "nonexistent_cpu")
-+	t.Run("unsupported cgroup returns zero values", func(t *testing.T) {
-+		limits, err := getContainerLimits(cgroupV2Info{})
- 
--		limits, err := getContainerLimits()
- 		require.NoError(t, err)
--		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
- 		assert.Equal(t, float64(0), limits.CPULimit)
- 	})
- }
-+
-+func TestGetCgroupV2Info(t *testing.T) {
-+	dir := t.TempDir()
-+	originalPaths := resourcePaths
-+	t.Cleanup(func() { resourcePaths = originalPaths })
-+
-+	t.Run("root membership in a private namespace", func(t *testing.T) {
-+		mountPoint := filepath.Join(dir, "private")
-+		info := 
-```
-
-**File**: `server/channels/app/platform/container_limits_other.go` (modified, +7/-6)
-```diff
-@@ -5,15 +5,16 @@
- 
- package platform
- 
--// ContainerLimits holds effective CPU and memory limits for the current container.
--// Zero values indicate no limit is set (fields will be omitted from YAML output).
--type ContainerLimits struct {
--	CPULimit      float64
--	MemoryLimitMB uint64
-+func getCgroupV2Info() (cgroupV2Info, error) {
-+	return cgroupV2Info{}, nil
- }
- 
- // getContainerLimits returns zero values on non-Linux platforms.
- // Container limit detection via cgroups is only supported on Linux.
--func getContainerLimits() (ContainerLimits, error) {
-+func getContainerLimits(cgroupV2Info) (ContainerLimits, error) {
- 	return ContainerLimits{}, nil
- }
-+
-+func getMemoryDiagnostics(cgroupV2Info) (memoryDiagnostics, error) {
-+	return memoryDiagnostics{}, nil
-+}
-```
-
-**File**: `server/channels/app/platform/support_packet.go` (modified, +46/-15)
-```diff
-@@ -10,10 +10,12 @@ import (
- 	"encoding/json"
- 	"fmt"
- 	"io"
-+	"math"
- 	"net/http"
- 	"net/url"
- 	"os"
- 	"runtime"
-+	"runtime/debug"
- 	rpprof "runtime/pprof"
- 	"strings"
- 	"time"
-@@ -41,17 +43,25 @@ const (
- // cumulative-vs-point-in-time semantics visible at a glance.
- var diagnosticsYAMLComments = yaml.CommentMap{
- 	// server: — grouped into Machine / Capacity / Process lifecycle / Software
--	"$.server.os":                        {yaml.HeadComment(" Machine")},
--	"$.server.cpu_cores":                 {yaml.HeadComment(" Capacity (hardware → effective quota)"), yaml.LineComment(" logical CPUs visible to the OS")},
--	"$.server.total_memory_mb":           {yaml.LineComment(" host/VM total RAM; may exceed container limit")},
--	"$.server.container_cpu_limit":       {yaml.LineComment(" cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set")},
--	"$.server.container_memory_limit_mb": {yaml.LineComment(" cgroup v2 memory quota in MB; Linux only, omitted if no limit set")},
--	"$.server.process_id":                {yaml.HeadComment(" Process lifecycle")},
--	"$.server.started_at":                {yaml.LineComment(" when Mattermost process started")},
--	"$.server.host_started_at":           {yaml.LineComment(" when the host OS booted; omitted if unavailable")},
--	"$.server.open_file_descriptors":     {yaml.LineComment(" current open FDs for this process")},
--	"$.server.max_file_descriptors":      {yaml.LineComment(" system limit (ulimit -n)")},
--	"$.server.version":                   {yaml.HeadComment(" Software")},
-+	"$.server.os":                              {yaml.HeadComment(" Machine")},
-+	"$.server.cpu_cores":                       {yaml.HeadComment(" Capacity (hardware → effective quota)"), yaml.LineComment(" logical CPUs visible to the OS")},
-+	"$.server.total_memory_mb":                 {yaml.LineComment(" host/VM total RAM; may exceed container limit")},
-+	"$.server.available_memory_mb":             {yaml.LineComment(" host/VM MemAvailable from /proc/meminfo; Linux only")},
-+	"$.server.swap_total_mb":                   {yaml.LineComment(" host/VM total swap; Linux only")},
-+	"$.server.swap_used_mb":                    {yaml.LineComment(" host/VM used swap; Linux only")},
-+	"$.server.container_cpu_limit":             {yaml.LineComment(" cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set")},
-+	"$.server.container_memory_limit_mb":       {yaml.LineComment(" cgroup v2 memory quota in MB; Linux only, omitted if no limit set")},
-+	"$.server.container_memory_usage_mb":       {yaml.LineComment(" cgroup v2 memory.current in MB, including page cache; Linux only")},
-+	"$.server.container_memory_working_set_mb": {yaml.LineComment(" cgroup v2 memory.current minus inactive file cache in MB; Linux only")},
-+	"$.server.container_oom_kills":             {yaml.LineComment(" cgroup v2 OOM kills since the cgroup was created; Linux only")},
-+	"$.server.process_id":                      {yaml.HeadComment(" Process lifecycle")},
-+	"$.server.started_at":                      {yaml.LineComment(" when Mattermost process started")},
-+	"$.server.host_started_at":                 {yaml.LineComment(" when the host OS booted; omitted if unavailable")},
-+	"$.server.process_rss_mb":                  {yaml.LineComment(" resident memory of the Mattermost process only; excludes plugin child processes")},
-+	"$.server.go_memory_limit_mb":              {yaml.LineComment(" Go runtime memory limit in MB; omitted when no limit is set")},
-+	"$.server.open_file_descriptors":           {yaml.LineComment(" current open FDs for this process")},
-+	"$.server.max_file_descriptors":            {yaml.LineComment(" system limit (ulimit -n)")},
-+	"$.server.version":                         {yaml.HeadComment(" Software")},
- 
- 	"$.config.audit_logging_configured": {yaml.LineComment(" this server's audit check of its current config and license; offline health checks use it")},
- 
-@@ -203,12 +213,33 @@ func (ps *PlatformService) GetSupportPacketDiagnostics(rctx request.CTX) (*model
- 	} else {
- 		d.Server.TotalMemoryMB = new(totalMemoryBytes / 1024 / 1024)
- 	}
--	containerLimits, err := getContainerLimits()
-+	cgroupV2, err := getCgroupV2Info()
-+	if err != nil {
-+		fail(model.SectionServerMemory, errors.Wrap(err, "error while resolving cgroup v2"))
-+	}
-+	containerLimits, err := getContainerLimits(cgroupV2)
-+	d.Server.ContainerCPULimit = containerLimits.CPULimit
- 	if err != nil {
- 		rctx.Logger().Debug("Failed to get container limits for Support Packet", mlog.Err(err))
--	} else {
--		d.Server.ContainerCPULimit = containerLimits.CPULimit
--		d.Server.ContainerMemoryLimitMB = containerLimits.MemoryLimitMB
-+	}
-+	memory, memoryErr := getMemoryDiagnostics(cgroupV2)
-+	if memoryErr != nil {
-+		fail(model.SectionServerMemory, errors.Wrap(memoryErr, "error while getting memory diagnostics"))
-+	}
-+	d.Server.AvailableMemoryMB = memory.AvailableMemoryMB
-+	d.Server.SwapTotalMB = memory.SwapTotalMB
-+	d.Server.SwapUsedMB = memory.SwapUsedMB
-+	d.Server.ProcessRSS
-```
-
-**File**: `server/channels/app/platform/support_packet_test.go` (modified, +8/-0)
-```diff
-@@ -1864,11 +1864,19 @@ func TestSupportPacketMarshalGolden(t *testing.T) {
- 	diagnostics.Server.InstallationType = "docker"
- 	diagnostics.Server.CPUCores = 8
- 	diagnostics.Server.TotalMemoryMB = new(uint64(32768))
-+	diagnostics.Server.AvailableMemoryMB = new(uint64(24576))
-+	diagnostics.Server.SwapTotalMB = new(uint64(4096))
-+	diagnostics.Server.SwapUsedMB = new(uint64(1024))
- 	diagnostics.Server.ContainerCPULimit = 6.5
- 	diagnostics.Server.ContainerMemoryLimitMB = 16384
-+	diagnostics.Server.ContainerMemoryUsageMB = new(uint64(12288))
-+	diagnostics.Server.ContainerMemoryWorkingSetMB = new(uint64(10240))
-+	diagnostics.Server.ContainerOOMKills = new(uint64(2))
- 	diagnostics.Server.ProcessID = 90210
- 	diagnostics.Server.StartedAt = time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
- 	diagnostics.Server.HostStartedAt = time.Date(2025, 12, 30, 0, 0, 0, 0, time.UTC)
-+	diagnostics.Server.ProcessRSSMB = new(uint64(2048))
-+	diagnostics.Server.GoMemoryLimitMB = new(uint64(13107))
- 	diagnostics.Server.OpenFileDescriptors = new(int64(512))
- 	diagnostics.Server.MaxFileDescriptors = new(int64(8192))
- 	diagnostics.Server.Version = "11.0.0"
-```
-
-**File**: `server/channels/app/platform/testdata/support_packet/diagnostics.yaml` (modified, +8/-0)
-```diff
-@@ -18,12 +18,20 @@ server:
-   # Capacity (hardware → effective quota)
-   cpu_cores: 8 # logical CPUs visible to the OS
-   total_memory_mb: 32768 # host/VM total RAM; may exceed container limit
-+  available_memory_mb: 24576 # host/VM MemAvailable from /proc/meminfo; Linux only
-+  swap_total_mb: 4096 # host/VM total swap; Linux only
-+  swap_used_mb: 1024 # host/VM used swap; Linux only
-   container_cpu_limit: 6.5 # cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set
-   container_memory_limit_mb: 16384 # cgroup v2 memory quota in MB; Linux only, omitted if no limit set
-+  container_memory_usage_mb: 12288 # cgroup v2 memory.current in MB, including page cache; Linux only
-+  container_memory_working_set_mb: 10240 # cgroup v2 memory.current minus inactive file cache in MB; Linux only
-+  container_oom_kills: 2 # cgroup v2 OOM kills since the cgroup was created; Linux only
-   # Process lifecycle
-   process_id: 90210
-   started_at: 2026-01-02T03:04:05Z # when Mattermost process started
-   host_started_at: 2025-12-30T00:00:00Z # when the host OS booted; omitted if unavailable
-+  process_rss_mb: 2048 # resident memory of the Mattermost process only; excludes plugin child processes
-+  go_memory_limit_mb: 13107 # Go runtime memory limit in MB; omitted when no limit is set
-   open_file_descriptors: 512 # current open FDs for this process
-   max_file_descriptors: 8192 # system limit (ulimit -n)
-   # Software
+     const imgStyle: CSSProperties = {};
+     if (fileInfo.width && fileInfo.height) {
+         imgStyle.maxWidth = `${fileInfo.width}px`;
+@@ -72,7 +66,7 @@ const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onC
+             aria-label={label}
+             data-testid='media-gallery-tile'
+             data-file-name={fileInfo.name || ''}
+-            style={tileStyle}
++            style={tileSizeVars(fileInfo)}
+             onKeyDown={handleKeyDown}
+         >
+             <img
 ```
 
 ---
 
-### Incident Patch 2: `8af02bfe` (2026-11-06)
-**Commit Message**: Fix flaky TestHydratePropertyValues (#39226)
+### Incident Patch 2: `75dd22f3` (2026-11-13)
+**Commit Message**: docs: fix Calls deployment guide links that break the offline docs build (#39990)
 
-* Fix flaky TestHydratePropertyValues
+* docs: fix Calls deployment guide links that break the offline docs build
 
-The orders_values_by_field_creation_time subtest created two property
-fields in the same millisecond. hydrateChannelPropertyValues sorts by
-CreateAt and breaks ties by FieldID, so the assertion on creation order
-flipped whenever the second ID sorted first. Wait until the next
-millisecond before creating the second field so CreateAt actually differs.
+The guide linked to /../../<path>. Under the offline bundle's base URL
+(/_documentation/) those links escape the base URL and fail the build since
+#39953 made broken links throw. That build gates the enterprise image in the
+platform delivery pipeline, so master images stopped being published.
+Use relative .mdx file links, which resolve under any base URL.
 
-Tests-only change. Verified with `go test -run '^TestHydratePropertyValues$/orders_values_by_field_creation_time$' -race
--count=100` locally.
+* ci(docs): build the offline docs shape with BASE_URL=/_documentation/ (#39991)
 
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+The server ships the docs bundle under /_documentation/, and the platform
+delivery pipeline builds it with that base URL. Docs CI rebuilt the offline
+shape with BASE_URL=/, so links that only break under /_documentation/ passed
+here and failed later in delivery, which blocked the enterprise image.
+Use the shipped base URL, and run Docs CI when this workflow changes.
 
-* Address PR feedback: 0 answered, 1 resolved, 0 declined
-
----------
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-Co-authored-by: Mattermost Build <[REDACTED_EMAIL]>
-
-**File**: `server/channels/app/post_property_values_test.go` (modified, +6/-0)
+**File**: `.github/workflows/docs-ci.yaml` (modified, +7/-2)
 ```diff
-@@ -7,6 +7,7 @@ import (
- 	"encoding/json"
- 	"strconv"
- 	"testing"
-+	"time"
+@@ -3,13 +3,15 @@ name: Docs CI
+ on:
+   pull_request:
+     paths:
++      - ".github/workflows/docs-ci.yaml"
+       - "docs/**"
+       - "api/v4/source/**"
+       - "api/playbooks/**"
+   push:
+     branches:
+       - master
+     paths:
++      - ".github/workflows/docs-ci.yaml"
+       - "docs/**"
+       - "api/v4/source/**"
+       - "api/playbooks/**"
+@@ -65,11 +67,14 @@ jobs:
  
- 	"github.com/mattermost/mattermost/server/public/model"
- 	"github.com/mattermost/mattermost/server/public/shared/request"
-@@ -202,7 +203,12 @@ func TestHydratePropertyValues(t *testing.T) {
- 		th := setupPropertyValuesTest(t)
- 		// Names are deliberately reverse-alphabetical relative to creation order.
- 		first := th.createField(t, string(model.PropertyFieldTargetLevelChannel), th.BasicChannel.Id, "zulu")
-+		// CreateAt is millisecond-resolution; same-ms fields fall back to FieldID order.
-+		for model.GetMillis() <= first.CreateAt {
-+			time.Sleep(time.Millisecond)
-+		}
- 		second := th.createField(t, string(model.PropertyFieldTargetLevelChannel), th.BasicChannel.Id, "alpha")
-+		require.Greater(t, second.CreateAt, first.CreateAt)
+       # Hosted Algolia injects SearchBar preconnects; do not scan that artifact.
+       # Rebuild without ALGOLIA_* (prebuild already ran) for the offline shape.
+-      - name: Rebuild without Algolia for egress scan
++      # BASE_URL matches the offline bundle the server ships (mattermost/delivery-platform
++      # builds it with BASE_URL=/_documentation/), so links that only break under that
++      # base URL fail here instead of in the release pipeline.
++      - name: Rebuild offline bundle shape for egress scan
+         working-directory: docs/site
+         run: npx docusaurus build && npm run postbuild
+         env:
+-          BASE_URL: /
++          BASE_URL: /_documentation/
  
- 		post := th.post(t, th.BasicChannel)
- 		// Values written in the opposite order to prove output order tracks the field, not the value.
+       - name: Scan built site for egress
+         working-directory: docs/site
+```
+
+**File**: `docs/main/deployment-guide/calls/calls-deployment-guide.mdx` (modified, +6/-6)
+```diff
+@@ -69,11 +69,11 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
+ 
+ - [ ] Your Mattermost server is configured to use HTTPS.
+ 
+-  _See [Configure TLS](/../../deployment-guide/server/setup-tls) if you need to set up HTTPS._
++  _See [Configure TLS](../server/setup-tls.mdx) if you need to set up HTTPS._
+ 
+ - [ ] You know how many active users you have in your current Mattermost deployment
+ 
+-  _See [Site Statistics](/../../administration-guide/manage/statistics) to access usage metrics._
++  _See [Site Statistics](../../administration-guide/manage/statistics.mdx) to access usage metrics._
+ 
+ - [ ] You can provision at least one dedicated Linux server or VM if you plan to use the RTCD service.
+ 
+@@ -84,7 +84,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
+ 
+   _See [Networking Decisions](#13-networking-decisions) (Step 1.3) if you're unsure if you need a TURN server._
+ 
+-- [ ] You have the appropriate [Mattermost edition and license](/../../product-overview/editions-and-offerings) for the features you need:
++- [ ] You have the appropriate [Mattermost edition and license](../../product-overview/editions-and-offerings.mdx) for the features you need:
+   - **Mattermost Entry or Team Edition**: 1-1 calling and screen sharing (Up to 40 minutes)
+   - **Mattermost Professional**: Group calling and screen sharing (No time limit)
+   - **Mattermost Enterprise or Enterprise Advanced**: Required for:
+@@ -96,7 +96,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
+ - [ ] You are comfortable with basic Linux administration, or you have someone available who is. You will need to connect to servers over SSH, edit configuration files, manage systemd services, inspect logs, and run shell commands.
+ - [ ] You have System Admin access to your Mattermost server.
+ 
+-  _See [Mattermost roles](/../../end-user-guide/collaborate/learn-about-roles) to learn about roles and permissions._
++  _See [Mattermost roles](../../end-user-guide/collaborate/learn-about-roles.mdx) to learn about roles and permissions._
+ 
+ #### Networking Requirements
+ 
+@@ -115,7 +115,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
+ 
+ - [ ] You know how to open a [request](https://support.mattermost.com) with Mattermost support if you encounter issues.
+ 
+-  _Please include the exact **step number** (e.g. 2A.2.1) that failed, along with your [Mattermost support packet](/../../administration-guide/manage/admin/generating-support-packet) and [Calls logs](calls-logging.mdx)._
++  _Please include the exact **step number** (e.g. 2A.2.1) that failed, along with your [Mattermost support packet](../../administration-guide/manage/admin/generating-support-packet.mdx) and [Calls logs](calls-logging.mdx)._
+ 
+ <Note>
+ 
+@@ -157,7 +157,7 @@ To determine if you'll need RTCD, start by answering the following questions abo
+ - **Are you deploying Calls on Kubernetes?**
+   - **Yes:** You'll need to deploy RTCD as it's the only supported way to run Calls. See the [Kubernetes](calls-kubernetes.mdx) Calls deployment guide for details.
+   - **No:** Continue to the next question.
+-- **What is the *Total User* count of your existing Mattermost deployment?** _(Check [Site Statistics](/../../administration-guide/manage/statistics))_
++- **What is the *Total User* count of your existing Mattermost deployment?** _(Check [Site Statistics](../../administration-guide/manage/statistics.mdx))_
+   - **Up to 50:** You can use the **Integrated** deployment model.
+   - **More than 50:** You'll need to deploy RTCD to avoid impacting messaging performance of the Mattermost server.
+ 
+```
+
+---
+
+### Incident Patch 3: `9750d5ac` (2026-11-12)
+**Commit Message**: Fix escaped braces that render literally inside code (#39911)
+
+Many pages escaped curly braces as &#123; and &#125; inside inline code
+spans and fenced code blocks, likely left over from the RST to MDX
+conversion. MDX doesn't decode character references inside code, so
+the pages show the escape sequences verbatim, for example
+`&#123;mattermost-server-IP&#125;`. Replace them with literal braces,
+which are safe inside code. Escapes in regular prose, where MDX needs
+them, are unchanged.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/main/administration-guide/configure/environment-configuration-settings.mdx` (modified, +13/-13)
+```diff
+@@ -1039,17 +1039,17 @@ For more information on Aurora replication stats, see the [AWS Aurora documentai
+ Example
+ 
+ ``` json
+-&#123;
+-  "SqlSettings": &#123;
++{
++  "SqlSettings": {
+       "ReplicaLagSettings": [
+-        &#123;
++        {
+             "DataSource": "replica-1",
+             "QueryAbsoluteLag": "select server_id, highest_lsn_rcvd-durable_lsn as bindiff from aurora_global_db_instance_status() where server_id=<>",
+             "QueryTimeLag": "select server_id, visibility_lag_in_msec from aurora_global_db_instance_status() where server_id=<>"
+-        &#125;
++        }
+       ]
+-  &#125;
+-&#125;
++  }
++}
+ ```
+ 
+ </TabItem>
+@@ -1062,17 +1062,17 @@ For more information on group replication stats, see the [MySQL documentation](h
+ Example
+ 
+ ``` json
+-&#123;
+-  "SqlSettings": &#123;
++{
++  "SqlSettings": {
+       "ReplicaLagSettings": [
+-        &#123;
++        {
+             "DataSource": "replica-1",
+             "QueryAbsoluteLag": "select member_id, count_transactions_remote_in_applier_queue FROM performance_schema.replication_group_member_stats where member_id=<>",
+             "QueryTimeLag": ""
+-        &#125;
++        }
+       ]
+-  &#125;
+-&#125;
++  }
++}
+ ```
+ 
+ </TabItem>
+@@ -1181,7 +1181,7 @@ If indexing is disabled and then re-enabled after an index is created, purge and
+ 
+ Before permanently deleting a large number of channels, turn off **Enable Elasticsearch indexing**. Each permanent delete reindexes every member of that channel, and that indexing work can exhaust Mattermost memory on a delete of about 100,000 memberships.
+ 
+-Leave the Elasticsearch or OpenSearch cluster running. Save and restart, run the deletes with [`mmctl channel delete`](/administration-guide/manage/mmctl-command-line-tool#mmctl-channel-delete) or `DELETE /api/v4/channels/&#123;channel_id&#125;?permanent=true`, then turn indexing back on and run **Index Now** so changes made while indexing was off are included. The System Console clears search queries and autocomplete when indexing is turned off, because the server will not store those while indexing is off. Turn them back on with indexing.
++Leave the Elasticsearch or OpenSearch cluster running. Save and restart, run the deletes with [`mmctl channel delete`](/administration-guide/manage/mmctl-command-line-tool#mmctl-channel-delete) or `DELETE /api/v4/channels/{channel_id}?permanent=true`, then turn indexing back on and run **Index Now** so changes made while indexing was off are included. The System Console clears search queries and autocomplete when indexing is turned off, because the server will not store those while indexing is off. Turn them back on with indexing.
+ 
+ Documents for those channels can remain in the search index, because indexing is off while they are deleted. Post search only queries channels the user currently belongs to, then loads the posts from the database. Channel search also loads its matches from the database, so a permanently deleted channel is left out. A full index purge is not required to restore search results. Retention requirements may require a scoped cleanup of those leftover copies.
+ 
+```
+
+**File**: `docs/main/administration-guide/configure/environment-variables.mdx` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ The name of the environment variable for any setting can be derived from the nam
+ <Note>
+ 
+ - If Mattermost is run from an initialization file, environment variables can be set via `Environment=<>`, or `EnvironmentFile=<path/to/file>`. In the second case, the file specified contains the list of environment variables to set.
+-- From Mattermost v7.5, environment configuration parsing supports JSON for `MM_PLUGINSETTINGS_PLUGINS` and `MM_PLUGINSETTINGS_PLUGINSTATES`. This is especially helpful for Helm configuration files, provided all plugins are configured at the same time. For example, `MM_PLUGINSETTINGS_PLUGINSTATES="&#123;\"com.mattermost.calls\":&#123;\"Enable\":true&#125;,\"com.mattermost.nps\":&#123;\"Enable\":true&#125;&#125;"`.
++- From Mattermost v7.5, environment configuration parsing supports JSON for `MM_PLUGINSETTINGS_PLUGINS` and `MM_PLUGINSETTINGS_PLUGINSTATES`. This is especially helpful for Helm configuration files, provided all plugins are configured at the same time. For example, `MM_PLUGINSETTINGS_PLUGINSTATES="{\"com.mattermost.calls\":{\"Enable\":true},\"com.mattermost.nps\":{\"Enable\":true}}"`.
+ - When settings are configured through an environment variable, system admins can't modify them in the System Console. If a setting is configured through an environment variable, and any other changes are made in the System Console, the value stored of the environment variable will be written back to the `config.json` as that setting's value.
+ - For any setting that's not set in `config.json` or in environment variables, the Mattermost server uses the setting's default value as documented in the sections below on this page.
+ 
+```
+
+**File**: `docs/main/administration-guide/manage/mmctl-command-line-tool.mdx` (modified, +1/-1)
+```diff
+@@ -88,7 +88,7 @@ The mmctl tool comes bundled with Mattermost package. For customers that want to
+ <Tabs>
+ <TabItem value="release-package" label="Release package">
+ 
+-If you're using a release page for Linux, macOS, or Windows, we recommend downloading the mmctl builds through their release URL: `https://releases.mattermost.com/mmctl/$&#123;MATTERMOST_VERSION&#125;/$&#123;PLATFORM&#125;_$&#123;ARCHITECTURE&#125;.tar` (for windows, substitute the `.tar` suffix with `.zip`)
++If you're using a release page for Linux, macOS, or Windows, we recommend downloading the mmctl builds through their release URL: `https://releases.mattermost.com/mmctl/${MATTERMOST_VERSION}/${PLATFORM}_${ARCHITECTURE}.tar` (for windows, substitute the `.tar` suffix with `.zip`)
+ 
+ E.g. to download version `v10.7.0` of the mmctl amd64 build for linux, you can run the following:
+ 
+```
+
+**File**: `docs/main/administration-guide/onboard/sso-gitlab.mdx` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ Follow these steps to configure Mattermost to use GitLab as a Single Sign-on (SS
+ 
+ ### Step 1: Add a Mattermost application to your GitLab account
+ 
+-1.  Log in to your GitLab account, then go to `https://&#123;gitlab-site-name&#125;/profile/applications`. For *&#123;gitlab-site-name&#125;* use the name of your GitLab instance. If you're using GitLab itself as your service provider, use `gitlab.com`.
++1.  Log in to your GitLab account, then go to `https://{gitlab-site-name}/profile/applications`. For *&#123;gitlab-site-name&#125;* use the name of your GitLab instance. If you're using GitLab itself as your service provider, use `gitlab.com`.
+ 2.  Add a new application:
+ 
+ > 1.  In the **Name** field, enter `Mattermost`.
+```
+
+**File**: `docs/main/administration-guide/onboard/sso-google.mdx` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@ The [Google People API](https://developers.google.com/people) has replaced the G
+ 3.  Select **Create Credentials**, then select **OAuth client ID**.
+ 4.  Select the **Web application** as the application type.
+ 5.  Enter `Mattermost-<your-company-name>` as the **Name**, replacing `<your-company-name>` with the name of your organization.
+-6.  Under **Authorized redirect URIs**, select **Add URL**, then enter `&#123;your-mattermost-url&#125;/signup/google/complete`. For example: `http://localhost:8065/signup/google/complete`.
++6.  Under **Authorized redirect URIs**, select **Add URL**, then enter `{your-mattermost-url}/signup/google/complete`. For example: `http://localhost:8065/signup/google/complete`.
+ 7.  Select **Create**.
+ 8.  Copy and paste the **Your Client ID** and **Your Client Secret** values to a temporary location. You will enter these values in the Mattermost System Console.
+ 
+```
+
+**File**: `docs/main/administration-guide/onboard/sso-openidconnect.mdx` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ Follow these steps to configure a service provider using OpenID Connect.
+ ## Step 1: Create an OpenID Connect Application
+ 
+ 1.  Follow service provider documentation for creating an OpenID Connect application. Most OpenID Connect service providers require authorization of all redirect URIs.
+-2.  In the appropriate field, enter `&#123;your-mattermost-url&#125;/signup/openid/complete` For example: `http://domain.com/signup/openid/complete`
++2.  In the appropriate field, enter `{your-mattermost-url}/signup/openid/complete` For example: `http://domain.com/signup/openid/complete`
+ 3.  Copy and paste values for the **Discovery Endpoint**, **Client ID**, and **Client Secret** values to a temporary location. You will enter these values when you configure Mattermost.
+ 
+ ## Step 2: Configure Mattermost for an OpenID Connect SSO
+```
+
+**File**: `docs/main/administration-guide/scale/deploy-grafana-loki-for-centralized-logging.mdx` (modified, +2/-2)
+```diff
+@@ -375,7 +375,7 @@ The PostgreSQL configuration handles common Ubuntu/Debian JSON log paths (`/var/
+ 
+ </Note>
+ 
+-Once running, PostgreSQL logs appear in Grafana under the label `&#123;service_name="postgres"&#125;`:
++Once running, PostgreSQL logs appear in Grafana under the label `{service_name="postgres"}`:
+ 
+ ``` text
+ {service_name="postgres"} | json | detected_level="error"
+@@ -399,7 +399,7 @@ Once running, PostgreSQL logs appear in Grafana under the label `&#123;service_n
+     # Look for export successful messages or lack of errors
+     ```
+ 
+-3.  Logs are visible in Grafana: Go to **Explore**, select the **Loki** data source, and run `&#123;service_name="mattermost"&#125;`. You should see recent log lines.
++3.  Logs are visible in Grafana: Go to **Explore**, select the **Loki** data source, and run `{service_name="mattermost"}`. You should see recent log lines.
+ 
+ 4.  The dashboard loads: Open the **Mattermost Log Aggregation** dashboard and confirm panels are populated. (Note: You may need to update dashboard queries to use <code>service_name</code> and <code>service_instance_id</code>).
+ 
+```
+
+**File**: `docs/main/administration-guide/upgrade/upgrading-mattermost-server.mdx` (modified, +4/-4)
+```diff
+@@ -64,11 +64,11 @@ Make sure that you understand how to [prepare for your upgrade](/administration-
+   - This command won't return anything if `/opt/mattermost/bin` wasn't added to the PATH.
+   - Alternatively, you can use the `find / -executable -type f -iname mattermost 2> /dev/null` command to find the `mattermost` binary.
+   - The output should be similar to `/opt/mattermost/bin/mattermost`.
+-  - The install directory is everything before the first occurrence of the string `/mattermost`. In this example, the `&#123;install-path&#125;` is `/opt`.
++  - The install directory is everything before the first occurrence of the string `/mattermost`. In this example, the `{install-path}` is `/opt`.
+   - If that command doesn't produce any results, it's likely because your version is older; try `whereis platform` instead.
+ - **Location and size of your local storage directory**: The local storage directory contains all the files that users have attached to their messages.
+   - If you don't know its location, open the System Console and go to **Environment \> File Storage**, then read the value in **Local Storage Directory**.
+-  - Paths are relative to the `mattermost` directory. For example, if the local storage directory is `./data/` then the absolute path is `&#123;install-path&#125;/mattermost/data`.
++  - Paths are relative to the `mattermost` directory. For example, if the local storage directory is `./data/` then the absolute path is `{install-path}/mattermost/data`.
+ - **Database disk space**: If you're upgrading a Mattermost deployment on the same server as your database, we recommend a minimum 2GB of free disk space to allow for extraction, copy, and cleanup, and a minimum of twice the size of your Mattermost installation available for the database.
+ 
+ <Tip>
+@@ -228,8 +228,8 @@ wget https://releases.mattermost.com/X.X.X/mattermost-team-X.X.X-linux-amd64.tar
+ 
+     </div>
+ 
+-    - If you didn't use `mattermost` as the owner and group of the install directory, run `sudo chown -hR &#123;owner&#125;:&#123;group&#125; &#123;install-path&#125;/mattermost`.
+-    - If you're uncertain what owner or group was defined, use the `ls -l &#123;install-path&#125;/mattermost/bin/mattermost` command to obtain them.
++    - If you didn't use `mattermost` as the owner and group of the install directory, run `sudo chown -hR {owner}:{group} {install-path}/mattermost`.
++    - If you're uncertain what owner or group was defined, use the `ls -l {install-path}/mattermost/bin/mattermost` command to obtain them.
+ 
+     </div>
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39808** (2026-11-09): Revert "MM-70985: update paging defaults and per-post metadata handli… (@amyblais)
-- **PR #39798** (2026-11-07): Fix flaky TestGetDiagnosticsPostsVacuumInProgress (@hanzei)
-- **PR #39797** (2026-11-07): [MM-71431] Test stopping a running health check; let watcher stop during startup jitter (@hanzei)
-- **PR #39795** (closed): docs: AI draft for Add PUSH_PROXY_UNREACHABLE site health rule (@mattermost-docs-ai[bot])
-- **PR #39794** (closed): docs: AI draft for Add filestore disk capacity health rules (@mattermost-docs-ai[bot])
-- **PR #39792** (2026-11-07): Automated cherry pick of #38809 (@mattermost-code)
+- **PR #40032** (2026-11-13): docs: add Out-of-Band Communications use case page (@esarafianou)
+- **PR #40026** (2026-11-13): [MM-71856] Note Mobile v2.47 requirement for biometric_authenticated (@devinbinnie)
+- **PR #40024** (2026-11-13): Require manage_system to update some environment config settings (@cursor[bot])
+- **PR #40023** (2026-11-13): [MM-71873] Remove translate.mattermost.com links from webapp (@cursor[bot])
+- **PR #40021** (closed): Skip translate.mattermost.com in external link check (@NARSimoes)
+- **PR #40020** (2026-11-13): Automated cherry pick of #38810 (@mattermost-build)
 
 ---
 
@@ -2239,31 +2600,62 @@ Co-authored-by: Mattermost Build <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MM-71617] Add per-node memory health diagnostics (#39720)
+## X. post list height shift for posts with multiple image attachments
 
 **RULE**:
-When implementing operations in `server/channels/app/health_check_snapshot_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `276dc653`: [MM-71617] Add per-node memory health diagnostics (#39720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d59b084`: post list height shift for posts with multiple image attachments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/channels/app/health_check_snapshot_test.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-			case "NODE_HOST_MEMORY_LOW", "NODE_CONTAINER_MEMORY_PRESSURE":
-				// These set a value only when they have the numbers to compare, so none is required.
-				evaluations[i].Result.Value = nil
-				evaluations[i].Result.Details = nil
+    container: media-gallery / inline-size;
+        --media-gallery-row-height: 216px;
+
+        flex-flow: row wrap;
+        align-content: flex-start;
+    &--compact &__rows {
+        --media-gallery-row-height: 144px;
+    }
+}
+
+// Sized in CSS rather than from a measured width so the post list sees the
+// final height on first render, including in narrow containers like the RHS.
+// CSS has no hysteresis, so the RHS reserves its scrollbar gutter to keep a
+// scrollbar appearing from toggling the row height near 480px.
+@container media-gallery (width < 480px) {
+    .MediaGallery__rows {
+        --media-gallery-row-height: 144px;
+    // Scale to the row height by aspect ratio, without upscaling past the
+    // file's native width, clamped to 50-500px.
+    --tile-width: max(50px, min(calc(var(--tile-ratio, 1.5) * var(--media-gallery-row-height)), var(--tile-native-width, 500px), 500px));
+
+    width: var(--tile-width);
+    max-width: 100%;
+    height: var(--media-gallery-row-height);
+    flex: 0 0 var(--tile-width);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    container-type: inline-size;
+        flex-direction: column;
+    &__row {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 8px;
+        text-align: left;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `276dc653` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d59b084` are properly handled with clean fallback behavior.

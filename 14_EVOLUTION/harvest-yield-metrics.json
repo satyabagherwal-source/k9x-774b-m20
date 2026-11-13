@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T19:19:15.563Z",
-  "total_cycles_completed": 9340,
-  "total_learnings_persisted": 9340,
-  "total_rules_promoted": 9078,
+  "last_updated": "2026-11-13T19:27:31.734Z",
+  "total_cycles_completed": 9345,
+  "total_learnings_persisted": 9345,
+  "total_rules_promoted": 9081,
   "history": [
-    {
-      "timestamp": "2026-11-13T04:50:17.376Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T05:07:31.378Z",
-      "repository": "InternScience/Sage-A1.5",
-      "learningId": "learn-huggingface-internscience-sage-a1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T05:07:53.992Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T05:07:57.666Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T05:08:01.634Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T05:15:42.534Z",
       "repository": "Qwen/Qwen3-14B",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-13T19:19:15.563Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:27:16.941Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:27:19.375Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:27:25.306Z",
+      "repository": "mattermost/mattermost",
+      "learningId": "learn-github-mattermost-mattermost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:27:27.026Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T19:27:31.734Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

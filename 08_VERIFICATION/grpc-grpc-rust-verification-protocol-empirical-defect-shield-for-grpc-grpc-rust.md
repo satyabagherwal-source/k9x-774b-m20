@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for grpc/grpc/rust
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for grpc/grpc-rust
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "grpc/grpc/rust",
-  "source_url": "https://github.com/grpc/grpc/rust",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "grpc/grpc-rust",
+  "source_url": "https://github.com/grpc/grpc-rust",
+  "source_version": "eee0da29",
+  "license": "MIT",
+  "timestamp": "2026-11-13T19:27:19.524Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-grpc-grpc-rust",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [grpc/grpc/rust](https://github.com/grpc/grpc/rust) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [grpc/grpc-rust](https://github.com/grpc/grpc-rust) (Revision: `eee0da29`).  
+> **License**: MIT | **Timestamp**: `2026-11-13T19:27:19.524Z`  
+> **Learning ID**: `learn-github-grpc-grpc-rust`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `grpc/grpc/rust` (Commit: `historical`)
+- **Target Repository**: `grpc/grpc-rust` (Commit: `eee0da29`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
-> **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `766683fe`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:15:25.832Z  
-> **Learning ID**: `learn-github-grpc-grpc-rust`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): grpc/grpc-rust
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:15:25.825Z  
+> **Harvest Timestamp**: 2026-11-13T19:27:18.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12543 stars
+- **Stars / Engagement**: 12537 stars
 
 ---
 
@@ -715,6 +701,8 @@ use crate::client::Trailers;
 use crate::client::boxed::BoxRecvStream;
 use crate::client::boxed::BoxSendStream;
 use crate::client::interceptor::Intercept;
+use crate::client::load_balancing::CallOutcome;
+use crate::client::load_balancing::CompletionCallback;
 use crate::core::ConnectionInfo;
 use crate::core::RecvMessage;
 use crate::core::SendMessage;
@@ -894,86 +882,83 @@ impl FailingRecvStream {
     }
 }
 
+/// Wraps a client's [`RecvStream`] and invokes an LB policy's
+/// [`CompletionCallback`] (from [`Pick::on_complete`]) exactly once when the
+/// RPC completes.
+///
+/// The RPC is considered complete when trailers are received, in which case
+/// the callback receives the trailers' status and metadata. If the stream is
+/// closed without trailers, or dropped before completing (e.g. the RPC was
+/// cancelled or abandoned by the application), the callback receives an error
+/// status and no trailing metadata.
+///
+/// Note that an application that drops the stream after reading its last
+/// message but before reading trailers is reported as `CANCELLED`, so LB
+/// policies (e.g. for LRS load reports) count such RPCs as failed. This
+/// matches gRPC C-core, where the call is likewise cancelled if the
+/// application stops before receiving the status.
+///
+/// [`Pick::on_complete`]: crate::client::load_balancing::Pick::on_complete
+pub(crate) struct CompletionRecvStream<R> {
+    recv_stream: R,
+    on_complete: Option<CompletionCallback>,
+}
+
+impl<R> CompletionRecvStream<R> {
+    pub(crate) fn new(recv_stream: R, on_complete: CompletionCallback) -> Self {
+        Self {
+            recv_stream,
+            on_complete: Some(on_complete),
+        }
+    }
+
+    fn complete(&mut self, outcome: CallOutcome<'_>) {
+        if let Some(on_complete) = self.on_complete.take() {
+            on_complete(&outcome);
+        }
+    }
+
+    fn complete_with_error(&mut self, code: StatusCodeError, message: &str) {
+        if self.on_complete.is_some() {
+            let status = Err(StatusError::new(code, message));
+            self.complete(CallOutcome::new(&status));
+        }
+    }
+}
+
+impl<R> RecvStream for CompletionRecvStream<R>
+where
+    R: RecvStream,
+{
+    async fn recv(&mut self, msg: &mut dyn RecvMessage) -> ResponseStreamItem {
+        let item = self.recv_stream.recv(msg).await;
+        match &item {
+            ResponseStreamItem::Trailers(trailers) => self.complete(
+                CallOutcome::new(trailers.status()).with_trailing_metadata(trailers.metadata()),
+            ),
+            ResponseStreamItem::StreamClosed
+            | ResponseStreamItem::Headers(_)
+            | ResponseStreamItem::Message => {}
+        }
+        item
+    }
+}
+
+impl<R> Drop for CompletionRecvStream<R> {
+    fn drop(&mut self) {
+        self.complete_with_error(
+            StatusCodeError::Cancelled,
+            "RPC abandoned before completion",
+        );
+    }
+}
+
 #[cfg(test)]
 mod test {
     use std::mem::discriminant;
     use std::vec;
 
-    use super::*;
-    use crate::client::ResponseHeaders;
-    use crate::client::interceptor::InvokeOnceExt as _;
-    use crate::client::test_util::MockInvoker;
-    use crate::client::test_util::NopRecvMessage;
-
-    // Tests that an error occurs if messages are received before headers.
-    #[tokio::test]
-    async fn test_validator_messages_before_headers() {
-        let scenarios = [vec![ResponseStreamItem::Message]];
-
-        for scenario in scenarios {
-            validate_scenario(
-                &scenario,
-                ResponseStreamItem::Trailers(Trailers::new(Err(StatusError::new(
-                    StatusCodeError::Internal,
-                    "received messages without headers",
-                )))),
-                false,
-            )
-            .await;
-        }
-    }
-
-    // Tests that an error occurs if StreamClosed is received early.
-    #[tokio::test]
-    async fn test_validator_stream_closed_before_trailers() {
-        let scenarios = [
-            vec![ResponseStreamItem::StreamClosed],
-            vec![
-                ResponseStreamItem::Headers(ResponseHeaders::new(
-                    crate::core::test_connection_info(),
-                )),
-                ResponseStreamItem::StreamClosed,
-            ],
-            vec![
-                ResponseStreamItem::Headers(ResponseHeaders::new(
-                    crate::core::test_connection_info(),
-                )),
-                ResponseStreamItem::Message,
-                ResponseStreamItem::StreamClosed,
-            ],
-        ];
-
-        for scenario in &scenarios {
-            validate_scenario(
-                scenario,
-                ResponseStreamItem::Trailers(Trailers::new(Err(StatusError::new(
-                    StatusCodeError::Internal,
-                    "ended without trailers",
-                )))),
-                false,
-            )
-            .await;
-        }
-    }
-
-    // Tests that an error occurs if headers are received twice.
-    #[tokio::test]
-    async fn test_validator_headers_repeated() {
-        let scenarios = [
-            vec![
-                ResponseStreamItem::Headers(ResponseHeaders::new(
-                    crate::core::test_connection_info(),
-                )),
-                ResponseStreamItem::Headers(ResponseHeaders::new(
-                    crate::core::test_connection_info(),
-                )),
-            ],
-            vec![
-                ResponseStreamItem::Headers(ResponseHeaders::new(
-                    crate::core::test_connection_info(),
-                )),
-                ResponseStreamItem::Message,
-         
+    use super::
 ```
 
 ### Core Architecture Module: `grpc/src/core/mod.rs`
@@ -1976,11 +1961,11 @@ enum SubscriptionMode {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3021** (2026-11-10): **grpc-xds: Fix import for new protobuf-generated module**
-  *Symptoms*: 4b61ef94a (adding grpc crate xds-client transport) raced with 950fa06960 (swapping to protobuf-generated module).
+- **Issue #3033** (2026-11-13): **grpc-xds: Rename bootstrap.rs to bootstrap/mod.rs**
+  *Symptoms*: The mod.rs convention is used by the rest of the code.
 
-- **Issue #3019** (2026-11-11): **tonic-xds: stop per-cluster tasks when the channel is dropped**
-  *Symptoms*: ## Motivation  The per-cluster CDS watch (`ClusterConnector`) and EDS diff loop (`EndpointManager`) tasks outlived their channel. The CDS task held an `Arc<XdsCache>` that could keep the cache alive forever, and the diff loop only noticed a dropped receiver on its next send.  ``` runtime ──owns──▶ task ──Arc──▶ XdsCache ──holds──▶ watch::Sender                    ▲                                     │                    └────────── waits on receiver ────────┘ ```  (_The task can't exit until the sender drops, and the sender can't drop until the task releases the cache. Since the runtime owns the task, dropping the channel doesn't break the loop._)  This leak so far manifests only when the `XdsChannel` is dropped, so the impact is memory growth on apps creating and discarding channels. But because we plan to address #2939 cluster removal bug soon, this leak will create a race window that the discovery task may subscribe to orphaned cache entry and wait forever, thus leaking even when channel is still alive. To simplify the upcoming cluster removal PR, I'm addressing it separately first.  ## Solution  - `ClusterConnector` aborts its task on drop and subscribes before spawning, handing the task a `CacheWatch` instead of the cache. - Add `TaskStream<T>`, an mpsc stream that aborts its producer task on drop, and run the EDS diff loop on it.
+- **Issue #3031** (2026-11-12): **grpc/load_balancing: Invoke Pick::on_complete when RPCs complete**
+  *Symptoms*: Change `CompletionCallback` to a `FnOnce` receiving a `CallOutcome` (final status and trailing metadata), and have the channel wrap the `RecvStream` of picked RPCs in a `CompletionRecvStream` that invokes the callback exactly once when trailers are received, the stream closes, or the RPC is abandoned.  This change is extracted out of #3001
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1997,84 +1982,89 @@ enum SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70d1dfd3` (2026-11-11)
-**Commit Message**: grpc/credentials: Canonicalize IPs in security level check. (#3017)
+### Incident Patch 1: `eee0da29` (2026-11-13)
+**Commit Message**: grpc-xds: Rename bootstrap.rs to bootstrap/mod.rs (#3033)
 
-## Motivation
+The mod.rs convention is used by the rest of the code.
 
-IPs should get normalized/canonicalized so that IPv4-mapped IPv6 IPs
-behave the same. The vanilla interop server client also requires this.
 
-## Solution
-
-Add a `to_canonical()` call and tests to ensure it going forward.
-
-**File**: `grpc/src/credentials/local.rs` (modified, +11/-0)
-```diff
-@@ -91,6 +91,7 @@ fn security_level_for_endpoint(
-         && SocketAddr::from_str(peer_addr)
-             .map_err(|e| e.to_string())?
-             .ip()
-+            .to_canonical()
-             .is_loopback()
-     {
-         return Ok(SecurityLevel::NoSecurity);
-@@ -206,6 +207,13 @@ mod test {
-             security_level_for_endpoint("[::1]:8080", TCP_IP_NETWORK_TYPE),
-             Ok(SecurityLevel::NoSecurity)
-         );
-+        // Local TCP credentials assign NoSecurity to loopback connections,
-+        // including IPv4-mapped IPv6 loopback addresses observed on dual-stack
-+        // (`[::]`) listeners.
-+        assert_eq!(
-+            security_level_for_endpoint("[::ffff:127.0.0.1]:8080", TCP_IP_NETWORK_TYPE),
-+            Ok(SecurityLevel::NoSecurity)
-+        );
-         assert_eq!(
-             security_level_for_endpoint("/file/path/name.sock", UNIX_NETWORK_TYPE),
-             Ok(SecurityLevel::PrivacyAndIntegrity)
-@@ -219,6 +227,9 @@ mod test {
-     #[test]
-     fn test_security_level_for_endpoint_failure() {
-         assert!(security_level_for_endpoint("192.168.1.1:8080", TCP_IP_NETWORK_TYPE).is_err());
-+        assert!(
-+            security_level_for_endpoint("[::ffff:192.168.1.1]:8080", TCP_IP_NETWORK_TYPE).is_err()
-+        );
-         assert!(security_level_for_endpoint("invalid", TCP_IP_NETWORK_TYPE).is_err());
-     }
- 
-```
 
 ---
 
-### Incident Patch 2: `224a4c96` (2026-11-10)
-**Commit Message**: grpc-xds: Fix import for new protobuf-generated module (#3021)
+### Incident Patch 2: `c5757bc8` (2026-11-13)
+**Commit Message**: interop: Update server.rs to run in the vanilla interop harness. (#3018)
 
-4b61ef94a (adding grpc crate xds-client transport) raced with 950fa06960
-(swapping to protobuf-generated module).
+## Motivation
 
-**File**: `grpc-xds/src/transport.rs` (modified, +2/-2)
+Achieve vanilla interop server support.
+
+## Solution
+
+Add a port and tls flags.
+
+## Notes
+This is stacked on and requires #3017 to land first.
+
+**File**: `interop/src/bin/server.rs` (modified, +17/-3)
 ```diff
-@@ -224,8 +224,8 @@ mod tests {
-     use xds_test_util::config::build_inline_listener;
+@@ -22,6 +22,9 @@
+  *
+  */
  
-     use super::*;
--    use crate::generated::envoy::service::discovery::v3::DiscoveryRequest;
--    use crate::generated::envoy::service::discovery::v3::DiscoveryResponse;
-+    use crate::generated::envoy_service_discovery_v3_discovery_proto::DiscoveryRequest;
-+    use crate::generated::envoy_service_discovery_v3_discovery_proto::DiscoveryResponse;
-     use crate::resource::ListenerResource;
++use std::ffi::OsString;
++use std::net::Ipv6Addr;
++use std::net::SocketAddr;
+ use std::str::FromStr;
+ use std::sync::Arc;
  
-     #[test]
+@@ -41,6 +44,7 @@ use tonic::transport::ServerTlsConfig as TonicServerTlsConfig;
+ 
+ #[derive(Debug)]
+ struct Opts {
++    port: u16,
+     use_tls: bool,
+     codec: Codec,
+ }
+@@ -65,9 +69,19 @@ impl FromStr for Codec {
+ 
+ impl Opts {
+     fn parse() -> Result<Self, pico_args::Error> {
+-        let mut pargs = pico_args::Arguments::from_env();
++        // interop/test.sh passes `--use_tls` bare; gRPC's interop harness
++        // passes it with a value (`--use_tls=true`).
++        let args: Vec<OsString> = std::env::args_os()
++            .skip(1)
++            .map(|arg| match arg.to_str() {
++                Some("--use_tls") => OsString::from("--use_tls=true"),
++                _ => arg,
++            })
++            .collect();
++        let mut pargs = pico_args::Arguments::from_vec(args);
+         Ok(Self {
+-            use_tls: pargs.contains("--use_tls"),
++            port: pargs.opt_value_from_str("--port")?.unwrap_or(10000),
++            use_tls: pargs.opt_value_from_str("--use_tls")?.unwrap_or(false),
+             codec: pargs.value_from_str("--codec")?,
+         })
+     }
+@@ -79,7 +93,7 @@ async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
+ 
+     let matches = Opts::parse()?;
+ 
+-    let addr = "127.0.0.1:10000".parse().unwrap();
++    let addr = SocketAddr::from((Ipv6Addr::UNSPECIFIED, matches.port));
+ 
+     match matches.codec {
+         Codec::Prost => {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3033** (2026-11-13): grpc-xds: Rename bootstrap.rs to bootstrap/mod.rs (@ejona86)
+- **PR #3031** (2026-11-12): grpc/load_balancing: Invoke Pick::on_complete when RPCs complete (@murgatroid99)
+- **PR #3029** (closed): tonic/codec: Set END_STREAM on a unary request's message frame (@azeemshaik025)
+- **PR #3026** (2026-11-12): grpc/load_balancing: Weighted Target accepts empty target list and fails (@nathanielford)
 - **PR #3021** (2026-11-10): grpc-xds: Fix import for new protobuf-generated module (@ejona86)
 - **PR #3019** (2026-11-11): tonic-xds: stop per-cluster tasks when the channel is dropped (@YutaoMa)
-- **PR #3017** (2026-11-11): grpc/credentials: Canonicalize IPs in security level check. (@nathanielford)
-- **PR #3015** (2026-11-11): grpc: un-pub Dyn* traits; use explicit wrapper types instead (@dfawley)
-- **PR #3012** (2026-11-11): xds-client: add LRS message types, LrsCodec and its prost implementation (@arjan-bal)
-- **PR #3011** (2026-11-11): xds-client: add Runtime::now() (@arjan-bal)
 
 ---
 
@@ -2094,41 +2084,49 @@ Add a `to_canonical()` call and tests to ensure it going forward.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. grpc/credentials: Canonicalize IPs in security level check. (#3017)
+## X. interop: Update server.rs to run in the vanilla interop harness.
 
 **RULE**:
-When implementing operations in `grpc/src/credentials/local.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `interop/src/bin/server.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70d1dfd3`: grpc/credentials: Canonicalize IPs in security level check. (#3017). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5757bc8`: interop: Update server.rs to run in the vanilla interop harness.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/credentials/local.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `interop/src/bin/server.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .to_canonical()
-        // Local TCP credentials assign NoSecurity to loopback connections,
-        // including IPv4-mapped IPv6 loopback addresses observed on dual-stack
-        // (`[::]`) listeners.
-        assert_eq!(
-            security_level_for_endpoint("[::ffff:127.0.0.1]:8080", TCP_IP_NETWORK_TYPE),
-            Ok(SecurityLevel::NoSecurity)
-        );
-        assert!(
-            security_level_for_endpoint("[::ffff:192.168.1.1]:8080", TCP_IP_NETWORK_TYPE).is_err()
-        );
+use std::ffi::OsString;
+use std::net::Ipv6Addr;
+use std::net::SocketAddr;
+    port: u16,
+        // interop/test.sh passes `--use_tls` bare; gRPC's interop harness
+        // passes it with a value (`--use_tls=true`).
+        let args: Vec<OsString> = std::env::args_os()
+            .skip(1)
+            .map(|arg| match arg.to_str() {
+                Some("--use_tls") => OsString::from("--use_tls=true"),
+                _ => arg,
+            })
+            .collect();
+        let mut pargs = pico_args::Arguments::from_vec(args);
+            port: pargs.opt_value_from_str("--port")?.unwrap_or(10000),
+            use_tls: pargs.opt_value_from_str("--use_tls")?.unwrap_or(false),
+    let addr = SocketAddr::from((Ipv6Addr::UNSPECIFIED, matches.port));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+        let mut pargs = pico_args::Arguments::from_env();
+            use_tls: pargs.contains("--use_tls"),
+    let addr = "127.0.0.1:10000".parse().unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70d1dfd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5757bc8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

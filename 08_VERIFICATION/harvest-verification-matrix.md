@@ -9582,3 +9582,8 @@
 | `CYCLE-20261113-1KZY` | `2026-11-13T19:19:06.382Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`ebdc8380...`) |
 | `CYCLE-20261113-1S2R` | `2026-11-13T19:19:15.555Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8360` | Yes (`99b890ae...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T19:19:47.063Z` | `hf-psrben-visionhope` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3A0F1688` [Domain D] | Yes (`3e3373b1...`) |
+| `CYCLE-20261113-C3IC` | `2026-11-13T19:27:16.932Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`d2e1306a...`) |
+| `CYCLE-20261113-C5DZ` | `2026-11-13T19:27:19.367Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8361` | Yes (`1b06bc95...`) |
+| `CYCLE-20261113-C9YQ` | `2026-11-13T19:27:25.298Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8362` | Yes (`b31e046c...`) |
+| `CYCLE-20261113-CBA3` | `2026-11-13T19:27:27.003Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md` | Yes (`884334c4...`) |
+| `CYCLE-20261113-CEXA` | `2026-11-13T19:27:31.726Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8363` | Yes (`3d96506b...`) |

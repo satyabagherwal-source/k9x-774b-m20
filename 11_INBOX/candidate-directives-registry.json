@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T19:19:48.108Z",
+  "last_updated": "2026-11-13T19:27:35.755Z",
   "directives": [
     {
       "id": "CD-001",
@@ -9910,6 +9910,79 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ED05EE-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-C5I9",
+      "directive_title": "Update server.rs to run in the vanilla interop harness.",
+      "source_repo": "grpc/grpc-rust",
+      "source_commit": "eee0da29",
+      "staged_file": "11_INBOX/candidate-directives/CD-C5I9-update-server-rs-to-run-in-the-vanilla-interop-harness.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence (LOCAL_MACHINE_PATH_DETECTED: Contains local workstation or hardcoded developer path)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-CI14",
+      "directive_title": "post list height shift for posts with multiple image attachments",
+      "source_repo": "mattermost-mattermost-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CI14-post-list-height-shift-for-posts-with-multiple-image-attachments.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-CBEZ",
+      "directive_title": "refine contribution guidelines and review skills",
+      "source_repo": "juicedata/juicefs",
+      "source_commit": "f086a159",
+      "staged_file": "11_INBOX/candidate-directives/CD-CBEZ-refine-contribution-guidelines-and-review-skills.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-CF1D",
+      "directive_title": "List S3 under storage and fix its types on SDK 2.12",
+      "source_repo": "clockworklabs/SpacetimeDB",
+      "source_commit": "07e99d13",
+      "staged_file": "11_INBOX/candidate-directives/CD-CF1D-list-s3-under-storage-and-fix-its-types-on-sdk-2-12.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-CHCS",
+      "directive_title": "interop: Update server.rs to run in the vanilla interop harness.",
+      "source_repo": "grpc-grpc-rust-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CHCS-interop-update-server-rs-to-run-in-the-vanilla-interop-harness.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; LOCAL_MACHINE_PATH_DETECTED: Contains local workstation or hardcoded developer path",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-463D40",
+      "directive_title": "Forensic Learning Record (Deep Inspection): ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-463D40-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-24B2BF",
+      "directive_title": "post list height shift for posts with multiple image attachments",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mattermost-mattermost",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-24B2BF-post-list-height-shift-for-posts-with-mu.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T19:19:47.074Z",
+  "updated_at": "2026-11-13T19:27:35.597Z",
   "stats": {
-    "total_discovered": 2819,
-    "approved_pending_harvest": 2637,
+    "total_discovered": 2835,
+    "approved_pending_harvest": 2650,
     "harvested_count": 0,
-    "rejected_count": 182,
+    "rejected_count": 185,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2630,
+      "COMMUNITY_AND_EXPERT": 2646,
       "OFFICIAL_DOCUMENTATION": 97,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -60764,6 +60764,337 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
         "fileName": "hf-psrben-visionhope-learnings.md"
+      }
+    },
+    "SRC-8512ABDB3625": {
+      "id": "SRC-8512ABDB3625",
+      "url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "title": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
+        "fileName": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md"
+      }
+    },
+    "SRC-9B84571B54AE": {
+      "id": "SRC-9B84571B54AE",
+      "url": "https://github.com/mattermost/mattermost",
+      "title": "https://github.com/mattermost/mattermost",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.356Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-97791D0DC269": {
+      "id": "SRC-97791D0DC269",
+      "url": "https://github.com/mattermost/mattermost/issues/28811",
+      "title": "https://github.com/mattermost/mattermost/issues/28811",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.375Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-1945733B68EA": {
+      "id": "SRC-1945733B68EA",
+      "url": "https://github.com/mattermost/chewbacca",
+      "title": "https://github.com/mattermost/chewbacca",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.392Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-82ECAA630838": {
+      "id": "SRC-82ECAA630838",
+      "url": "https://chewbacca.core.cloud.mattermost.com/command-help.html",
+      "title": "https://chewbacca.core.cloud.mattermost.com/command-help.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.409Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-62AF28C08402": {
+      "id": "SRC-62AF28C08402",
+      "url": "https://github.com/mattermost/mattermost/issues/29078",
+      "title": "https://github.com/mattermost/mattermost/issues/29078",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.425Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-BB6105FE3B11": {
+      "id": "SRC-BB6105FE3B11",
+      "url": "https://mattermost.atlassian.net/browse/MM-61463",
+      "title": "https://mattermost.atlassian.net/browse/MM-61463",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-E4FB7E42DE2D": {
+      "id": "SRC-E4FB7E42DE2D",
+      "url": "https://support.mattermost.com/",
+      "title": "https://support.mattermost.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.467Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-B8E9C6069B12": {
+      "id": "SRC-B8E9C6069B12",
+      "url": "https://releases.mattermost.com/mmctl/$&",
+      "title": "https://releases.mattermost.com/mmctl/$&",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.483Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-FA04610C1CA6": {
+      "id": "SRC-FA04610C1CA6",
+      "url": "https://releases.mattermost.com/mmctl/$%7BMATTERMOST_VERSION",
+      "title": "https://releases.mattermost.com/mmctl/$%7BMATTERMOST_VERSION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.499Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-BD9220D714CD": {
+      "id": "SRC-BD9220D714CD",
+      "url": "https://&/",
+      "title": "https://&/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T19:27:35.515Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-7E2BFCD7EB40": {
+      "id": "SRC-7E2BFCD7EB40",
+      "url": "https://{gitlab-site-name/",
+      "title": "https://{gitlab-site-name/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-8F0DC37A75ED": {
+      "id": "SRC-8F0DC37A75ED",
+      "url": "https://developers.google.com/people",
+      "title": "https://developers.google.com/people",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.547Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-D626A0F3133F": {
+      "id": "SRC-D626A0F3133F",
+      "url": "http://localhost:8065/signup/google/complete%60",
+      "title": "http://localhost:8065/signup/google/complete%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T19:27:35.565Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-BE44839A94A9": {
+      "id": "SRC-BE44839A94A9",
+      "url": "http://domain.com/signup/openid/complete%60",
+      "title": "http://domain.com/signup/openid/complete%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T19:27:35.581Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-82EC7635B688": {
+      "id": "SRC-82EC7635B688",
+      "url": "https://releases.mattermost.com/X.X.X/mattermost-team-X.X.X-linux-amd64.tar",
+      "title": "https://releases.mattermost.com/X.X.X/mattermost-team-X.X.X-linux-amd64.tar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:27:35.597Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
       }
     }
   }

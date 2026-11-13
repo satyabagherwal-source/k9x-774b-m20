@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T19:19:15.566Z",
+  "last_updated": "2026-11-13T19:27:31.737Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -755,14 +755,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "8b6f1b94b6ea3f8fd35ecdba1caef3279be8363200462adddab0df52c9007ad6",
-      "verified_at": "2026-11-08T18:18:43.027Z",
+      "content_hash": "d2e1306a6630e3458eb251b2095033bbb2e9380d410d5bd50b95eccefce950b0",
+      "verified_at": "2026-11-13T19:27:16.943Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T18:18:43.027Z"
+      "last_updated": "2026-11-13T19:27:16.943Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -3636,14 +3636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mattermost-mattermost",
-      "content_hash": "0078134c12a8632c7ad10088d2126c9bf3f23836d9fd83fc36ca72acc84d87f2",
-      "verified_at": "2026-11-09T10:07:49.545Z",
+      "content_hash": "b31e046c6bce7a822a50c84ddbb9c2e71a9e2aa2b70468e1c350708d874934b3",
+      "verified_at": "2026-11-13T19:27:25.308Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T10:07:49.545Z"
+      "last_updated": "2026-11-13T19:27:25.308Z"
     },
     "chaos-mesh/chaos-mesh": {
       "repository": "chaos-mesh/chaos-mesh",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "cba6b2c9f69c379e19c8ec156a503ab615a27f1ca1bd623a9848c8caa3b57ea2",
-      "verified_at": "2026-11-12T07:15:39.173Z",
+      "content_hash": "1b06bc95f50cbc0458d2f21b63575d36a1035d8b66925be702b6907c3732daa8",
+      "verified_at": "2026-11-13T19:27:19.377Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T07:15:39.173Z"
+      "last_updated": "2026-11-13T19:27:19.377Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "4385fdeace9d5c6475d6f920003e8ee597f3a9e027f563defa369df272565823",
-      "verified_at": "2026-11-12T21:10:44.565Z",
+      "content_hash": "884334c40d2bf3d1d63182489700e8d1d2bd96d7dea7508c2f11ffea30f487a2",
+      "verified_at": "2026-11-13T19:27:27.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:10:44.565Z"
+      "last_updated": "2026-11-13T19:27:27.029Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "fc748c159be027ef4226654eefb9b9f11f49103d094fbdd77db8a5f7160c237f",
-      "verified_at": "2026-11-12T14:44:54.873Z",
+      "content_hash": "3d96506b5ca0eb3bb2b74b8d3d1ec423fca5fd79a590dba7f2f0745cb667cdfd",
+      "verified_at": "2026-11-13T19:27:31.736Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T14:44:54.873Z"
+      "last_updated": "2026-11-13T19:27:31.736Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

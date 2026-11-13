@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "8b6f1b94b6ea3f8fd35ecdba1caef3279be8363200462adddab0df52c9007ad6",
-    "lastHarvestedAt": "2026-11-08T18:18:43.017Z",
+    "contentHash": "d2e1306a6630e3458eb251b2095033bbb2e9380d410d5bd50b95eccefce950b0",
+    "lastHarvestedAt": "2026-11-13T19:27:16.936Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "95cc6d95",
+    "sourceVersion": "2c67adc2",
     "license": "NOASSERTION",
-    "contentHash": "0078134c12a8632c7ad10088d2126c9bf3f23836d9fd83fc36ca72acc84d87f2",
-    "lastHarvestedAt": "2026-11-09T10:07:49.528Z",
+    "contentHash": "b31e046c6bce7a822a50c84ddbb9c2e71a9e2aa2b70468e1c350708d874934b3",
+    "lastHarvestedAt": "2026-11-13T19:27:25.302Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "766683fe",
+    "sourceVersion": "eee0da29",
     "license": "MIT",
-    "contentHash": "cba6b2c9f69c379e19c8ec156a503ab615a27f1ca1bd623a9848c8caa3b57ea2",
-    "lastHarvestedAt": "2026-11-12T07:15:39.147Z",
+    "contentHash": "1b06bc95f50cbc0458d2f21b63575d36a1035d8b66925be702b6907c3732daa8",
+    "lastHarvestedAt": "2026-11-13T19:27:19.370Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "2fed022a",
+    "sourceVersion": "f086a159",
     "license": "Apache-2.0",
-    "contentHash": "4385fdeace9d5c6475d6f920003e8ee597f3a9e027f563defa369df272565823",
-    "lastHarvestedAt": "2026-11-12T21:10:44.532Z",
+    "contentHash": "884334c40d2bf3d1d63182489700e8d1d2bd96d7dea7508c2f11ffea30f487a2",
+    "lastHarvestedAt": "2026-11-13T19:27:27.007Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "0863eb48",
+    "sourceVersion": "07e99d13",
     "license": "NOASSERTION",
-    "contentHash": "fc748c159be027ef4226654eefb9b9f11f49103d094fbdd77db8a5f7160c237f",
-    "lastHarvestedAt": "2026-11-12T14:44:54.863Z",
+    "contentHash": "3d96506b5ca0eb3bb2b74b8d3d1ec423fca5fd79a590dba7f2f0745cb667cdfd",
+    "lastHarvestedAt": "2026-11-13T19:27:31.729Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

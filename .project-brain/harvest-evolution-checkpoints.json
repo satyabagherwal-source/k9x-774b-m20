@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T19:19:48.399Z",
+  "last_updated": "2026-11-13T19:27:36.070Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T15:11:07.403Z",
@@ -898,7 +898,7 @@
       "staged_for_review": 1
     },
     "grpc-grpc-rust-learnings.md": {
-      "processed_at": "2026-11-12T07:15:44.983Z",
+      "processed_at": "2026-11-13T19:27:34.722Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2086,9 +2086,19 @@
       "processed_at": "2026-11-13T19:19:47.063Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md": {
+      "processed_at": "2026-11-13T19:27:35.122Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "mattermost-mattermost-learnings.md": {
+      "processed_at": "2026-11-13T19:27:35.348Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 654,
+  "total_dossiers_evaluated": 657,
   "total_canonical_promoted": 124,
-  "total_staged_for_review": 524
+  "total_staged_for_review": 527
 }

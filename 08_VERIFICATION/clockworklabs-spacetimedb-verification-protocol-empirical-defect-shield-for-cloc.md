@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for clockworklabs/spacetimedb
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for clockworklabs/SpacetimeDB
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "clockworklabs/spacetimedb",
-  "source_url": "https://github.com/clockworklabs/spacetimedb",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "clockworklabs/SpacetimeDB",
+  "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+  "source_version": "07e99d13",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-13T19:27:31.874Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-clockworklabs-spacetimedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [clockworklabs/spacetimedb](https://github.com/clockworklabs/spacetimedb) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `07e99d13`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-13T19:27:31.874Z`  
+> **Learning ID**: `learn-github-clockworklabs-spacetimedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `clockworklabs/spacetimedb` (Commit: `historical`)
+- **Target Repository**: `clockworklabs/SpacetimeDB` (Commit: `07e99d13`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
-> **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `0863eb48`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:44:41.630Z  
-> **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): clockworklabs/SpacetimeDB
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:44:41.622Z  
+> **Harvest Timestamp**: 2026-11-13T19:27:30.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25543 stars
+- **Stars / Engagement**: 25544 stars
 
 ---
 
@@ -855,97 +841,14 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0863eb48` (2026-11-12)
-**Commit Message**: Fix TypeScript SDK crash on React Native with automatic reconnect (#6511)
-
-Fixes a crash on React Native (reported with Expo) when a connection
-uses `withAutomaticReconnect()`:
-
-```
-TypeError: undefined is not a function
-  win?.addEventListener("focus", onResume);
-```
-
-React Native defines a global `window` without the DOM event API; the
-page-resume listeners from #5927 only checked that it exists.
-
-- Listeners attach only to a `window` or `document` that has both event
-methods.
-- On React Native, reconnect still works via its backoff timer, without
-early retry on foreground.
-
-## Rollback safety impact
-
-n/a
-
-## Testing
-
-- Liveness test with no `document` and an event-less `window`; fails
-without the fix.
-- Not yet tried in a React Native or Expo app.
-
-**File**: `crates/bindings-typescript/src/sdk/db_connection_impl.ts` (modified, +11/-2)
-```diff
-@@ -912,8 +912,17 @@ export class DbConnectionImpl<RemoteModule extends UntypedRemoteModule>
-     if (!this.#automaticReconnect || this.#livenessCleanup) {
-       return;
-     }
--    const doc = typeof document !== 'undefined' ? document : undefined;
--    const win = typeof window !== 'undefined' ? window : undefined;
-+    // React Native defines `window` without the DOM event API.
-+    const hasEvents = (target: unknown): boolean =>
-+      typeof (target as EventTarget | undefined)?.addEventListener ===
-+        'function' &&
-+      typeof (target as EventTarget).removeEventListener === 'function';
-+    const doc =
-+      typeof document !== 'undefined' && hasEvents(document)
-+        ? document
-+        : undefined;
-+    const win =
-+      typeof window !== 'undefined' && hasEvents(window) ? window : undefined;
-     if (!doc && !win) {
-       return;
-     }
-```
-
-**File**: `crates/bindings-typescript/tests/db_connection_liveness.test.ts` (modified, +10/-0)
-```diff
-@@ -162,6 +162,16 @@ describe('liveness listeners', () => {
-     expect(listeners).toEqual({});
-   });
- 
-+  test('are skipped when window lacks the event API (React Native)', async () => {
-+    vi.stubGlobal('document', undefined);
-+    vi.stubGlobal('window', {});
-+    const harness = build();
-+    await establish(harness);
-+
-+    expect(harness.connects).toHaveLength(1);
-+    expect(harness.connection.isActive).toBe(true);
-+  });
-+
-   test('are removed when the connection ends', async () => {
-     const harness = build();
-     await establish(harness);
-```
-
----
-
-### Incident Patch 2: `0247e79f` (2026-11-11)
-**Commit Message**: Expand agent guidance for writing pull requests (#6557)
+### Incident Patch 1: `b3d1ab02` (2026-11-12)
+**Commit Message**: List S3 under storage and fix its types on SDK 2.12 (#6542)
 
 # Description of Changes
 
-Broaden `.agents/testing-sections.md` into `.agents/writing-prs.md` and
-update `AGENTS.md` to require consulting it when creating or updating
-PRs. Narrow the testing guidance to actual automated or manual testing
-and relevant coverage.
-
-Also made these changes:
-- Require verified commits and instruct agents to alert the user if not
-set up
-- Require every template section to be retained and faithfully populated
-- Tweak to PR testing sections
+- S3 is listed under `storage` on the modules page, next to Files
+- S3's types no longer reference `UnitBuilder`, which SDK 2.12 doesn't
+export
 
 # API and ABI breaking changes
 
@@ -957,107 +860,79 @@ n/a
 
 # Expected complexity level and risk
 
-1 — Documentation and agent instructions only. No runtime behavior
-changes.
+1
 
 # Testing
 
-Not tested.
+- [x] Typecheck of a fresh project with the built package on SDK 2.12.0
+and 2.14.1 with `skipLibCheck: false`: no errors from `@spacetimedb/s3`
 
----------
-
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `.agents/writing-prs.md` (renamed, +23/-8)
+**File**: `modules/spacetime-s3-ts/package.json` (modified, +1/-1)
 ```diff
-@@ -1,18 +1,33 @@
--# Writing testing sections
-+# Writing pull requests
- 
--A PR's testing section should explain what verification gives the reviewer confidence that the change works as intended and avoids bugs. The goal is evidence for correctness, not a list of testing activities.
-+Read this guide when creating or updating a PR. Use the repository's [PR template](../.github/pull_request_template.md) and preserve every section when updating an existing PR.
- 
--## Choose the evidence
-+## Verified commits
-+
-+Verified commits are required: a PR cannot be merged without them. Enable commit signing before creating commits for a PR, and ensure GitHub recognizes the commits as **Verified**. A local signature alone does not establish that GitHub can verify it.
-+
-+If you cannot create verified commits, alert the user promptly, explicitly tell them that the PR cannot be merged without verified commits, and help them set up commit signing and GitHub verification. Do not silently proceed with unverified commits or present the PR as ready to merge. After setup, confirm that GitHub marks the PR's commits as **Verified**.
-+
-+## Preserve and complete the template
-+
-+No section of the PR template may be removed. PRs that remove any template section will be rejected. Populate every section faithfully, following its instructions and describing the actual change; do not leave placeholders or invent information. Where a section does not apply, say so explicitly and follow any prescribed wording.
-+
-+## Writing the testing section
-+
-+Describe the automated or manual testing performed and what behavior it covers, including relevant existing test coverage. Include important gaps in that coverage.
-+
-+If no testing was performed, write “Not tested.” Do not justify the absence of testing or pad the section with routine checks. Reviewing the diff or instructions, checking whitespace or links, and verifying commit signatures are not substitutes for testing the change.
-+
-+### Choose the evidence
- 
- - Start from the change's intended outcome and the important ways it could fail. Identify what verification addresses those concerns, including existing coverage.
- - Usually, the strongest evidence is how automated tests were extended or adapted, or why existing tests cover the change. Manual tests, successful use, and other verification can also provide evidence.
- - State what the evidence establishes. A same-client compilation test supports source compatibility; a client/server test supports actual interaction. Neither proves the other.
--- For documentation and instructions, look for evidence that readers can accomplish the intended task. Consistency checks and working links are useful, but don't establish that the content is effective.
- - Include important remaining uncertainty and explain any barriers to testing it. Distinguish "not tested yet" from "cannot be tested"; don't invent a reason or imply impossibility.
- 
- The connection between the evidence and the intended outcome should be clear from the wording. It doesn't need a separate justification after every bullet.
- 
--## Content
-+### Content
- 
- - Distinguish updated tests, added tests, and relevant existing coverage. Use short bullets; omit categories that don't apply.
- - Describe what each test or other check verifies. Name the inputs or API when needed to make the claim clear: incorrect reducer arguments, generated bindings, or the built package.
-@@ -23,7 +38,7 @@ The connection between the evidence and the intended outcome should be clear fro
- - Label manual verification as manual and state what was checked and the result.
- - Keep caveats focused on gaps that affect confidence in the change, not a routine list of what tests don't do.
- 
--## Wording and detail
-+### Wording and detail
- 
- Brevity comes from removing unnecessary detail, not replacing concrete information with vague labels.
- 
-@@ -34,7 +49,7 @@ Brevity comes from removing unnecessary detail, not replacing concrete informati
- - Omit routine mechanics, commands, counts, and assertion details unless they materially help the reviewer.
- - Scale the section to the change. Don't turn it into an inventory of every assertion or an explicit question-and-answer checklist.
- 
--## Wording examples
-+### Wording examples
- 
- | Vague or misleading | Concrete |
- | --- | --- |
-@@ -45,7 +60,7 @@ Brevity comes from removing unnecessary detail, not replacing concrete informati
- | Package and browser checks. | Tests that the new declaration API works with ESM and CommonJS imports and browser builds. |
- | End-to-end coverage. | Existing integration tests connect to a server, subscribe, call reducers, and check received rows. |
- 
--## Example: generated bindings
-+### Example: generated bindings
- 
- Updated:
- 
+@@ -54,7 +54,7 @@
+     "typescript"
+   ],
+   "submodule": {
+-    "category": "integrations"
++    "category": "storage"
+   },
+   "scripts": {
+     "format": "prettier . --write --ignore-path ../../.prettierignore",
 ```
 
-**File**: `AGENTS.md` (modified, +2/-2)
+**File**: `modules/spacetime-s3-ts/src/model.ts` (modified, +16/-8)
 ```diff
-@@ -14,6 +14,6 @@ A path's review tier comes from the nearest `.deep` marker in its directory or a
+@@ -1,4 +1,4 @@
+-import { table, t } from 'spacetimedb/server';
++import { table, t, type SumBuilder } from 'spacetimedb/server';
+ import type { Infer } from 'spacetimedb';
  
- These markers are provisional, and CI does not check any of this yet.
- 
--# PR testing sections
-+# Writing PRs
- 
--When writing or updating a PR's testing section, read [Writing testing sections](.agents/testing-sections.md). Explain what verification supports confidence that the change works as intended, and identify important remaining uncertainty.
-+When creating or updating a PR, read [Writing pull requests](.agents/writing-prs.md). Follow its requirements for verified commits, preserving and faithfully completing every template section, and explaining verification and remaining uncertainty.
+ const fileOptions = {
+@@ -16,6 +16,20 @@ const fileOptions = {
+     } as const,
+   ],
+ };
++type FileStateBuilder = SumBuilder<
++  Record<
++    'Pending' | 'Copying' | 'Ready' | 'Deleting' | 'Deleted',
++    ReturnType<typeof t.unit>
++  >
++>;
++const fileState: FileStateBuilder = t.enum('FileState', {
++  Pending: t.unit(),
++  Copying: t.unit(),
++  Ready: t.unit(),
++  Deleting: t.unit(),
++  Deleted: t.unit(),
++});
++
+ const fileColumns = {
+   id: t.u64().primaryKey().autoInc(),
+   owner: t.string(),
+@@ -24,13 +38,7 @@ const fileColumns = {
+   contentType: t.string(),
+   size: t.u32(),
+   checksum: t.string(),
+-  state: t.enum('FileState', {
+-    Pending: t.unit(),
+-    Copying: t.unit(),
+-    Ready: t.unit(),
+-    Deleting: t.unit(),
+-    Deleted: t.unit(),
+-  }),
++  state: fileState,
+   createdAt: t.timestamp(),
+   uploadExpiresAt: t.timestamp(),
+   nextAttemptAt: t.timestamp(),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6578** (2026-11-13): Support `NoRequirement` cache policy migrations (@joshua-spacetime)
+- **PR #6572** (2026-11-12): Protect V8 module startup from heap exhaustion (@bfops)
+- **PR #6563** (closed): Local tier pinning and reclamation (@kim)
 - **PR #6557** (2026-11-11): Expand agent guidance for writing pull requests (@bfops)
 - **PR #6552** (2026-11-11): Disable Nagle's algorithm in the Rust SDK (@JulienLavocat)
 - **PR #6551** (closed): fix: update pgwire 0.42.2 (@sunng87)
-- **PR #6550** (2026-11-11): Tiered storage metrics (@joshua-spacetime)
-- **PR #6548** (2026-11-10): Bump version to 2.16.0 (@rekhoff)
-- **PR #6547** (2026-11-10): Fix database name publication (@bfops)
 
 ---
 
@@ -1077,42 +952,31 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. TypeScript SDK crash on React Native with automatic reconnect (#6511)
+## X. List S3 under storage and fix its types on SDK 2.12
 
 **RULE**:
-When implementing operations in `crates/bindings-typescript/src/sdk/db_connection_impl.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `modules/spacetime-s3-ts/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0863eb48`: TypeScript SDK crash on React Native with automatic reconnect (#6511). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b3d1ab02`: List S3 under storage and fix its types on SDK 2.12. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/sdk/db_connection_impl.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/spacetime-s3-ts/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // React Native defines `window` without the DOM event API.
-    const hasEvents = (target: unknown): boolean =>
-      typeof (target as EventTarget | undefined)?.addEventListener ===
-        'function' &&
-      typeof (target as EventTarget).removeEventListener === 'function';
-    const doc =
-      typeof document !== 'undefined' && hasEvents(document)
-        ? document
-        : undefined;
-    const win =
-      typeof window !== 'undefined' && hasEvents(window) ? window : undefined;
+    "category": "storage"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    const doc = typeof document !== 'undefined' ? document : undefined;
-    const win = typeof window !== 'undefined' ? window : undefined;
+// Induced defect failure mode:
+    "category": "integrations"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0863eb48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b3d1ab02` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

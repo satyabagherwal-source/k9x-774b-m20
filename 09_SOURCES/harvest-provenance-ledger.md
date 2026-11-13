@@ -9615,3 +9615,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-13T19:19:06.386Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `abd7e05c` | Multi-dimensional audit evidence | 2026-11-13T19:19:15.559Z |
 | `learn-dom-d-3a0f1688` | `project://hf-psrben-visionhope` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | 2026-11-13T19:19:47.063Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-13T19:27:16.936Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `eee0da29` | Multi-dimensional audit evidence | 2026-11-13T19:27:19.370Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `2c67adc2` | Multi-dimensional audit evidence | 2026-11-13T19:27:25.302Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `f086a159` | Multi-dimensional audit evidence | 2026-11-13T19:27:27.007Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `07e99d13` | Multi-dimensional audit evidence | 2026-11-13T19:27:31.729Z |
