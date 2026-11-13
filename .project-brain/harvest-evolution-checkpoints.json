@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:43:51.833Z",
+  "last_updated": "2026-11-13T19:19:48.399Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T15:11:07.403Z",
@@ -98,7 +98,7 @@
       "staged_for_review": 0
     },
     "argoproj-argo-workflows-learnings.md": {
-      "processed_at": "2026-11-12T21:02:40.002Z",
+      "processed_at": "2026-11-13T19:19:47.343Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-13T18:06:49.216Z",
+      "processed_at": "2026-11-13T19:19:47.811Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2081,9 +2081,14 @@
       "processed_at": "2026-11-13T18:43:51.243Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-psrben-visionhope-learnings.md": {
+      "processed_at": "2026-11-13T19:19:47.063Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 651,
-  "total_canonical_promoted": 123,
-  "total_staged_for_review": 522
+  "total_dossiers_evaluated": 654,
+  "total_canonical_promoted": 124,
+  "total_staged_for_review": 524
 }

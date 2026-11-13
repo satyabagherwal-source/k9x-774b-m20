@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T19:02:15.728Z",
+  "updated_at": "2026-11-13T19:19:47.074Z",
   "stats": {
-    "total_discovered": 2818,
-    "approved_pending_harvest": 2636,
+    "total_discovered": 2819,
+    "approved_pending_harvest": 2637,
     "harvested_count": 0,
     "rejected_count": 182,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2629,
+      "COMMUNITY_AND_EXPERT": 2630,
       "OFFICIAL_DOCUMENTATION": 97,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -60742,6 +60742,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
         "fileName": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md"
+      }
+    },
+    "SRC-12F522FD941E": {
+      "id": "SRC-12F522FD941E",
+      "url": "https://huggingface.co/PSRben/VisionHOPE",
+      "title": "https://huggingface.co/PSRben/VisionHOPE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T19:19:47.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+        "fileName": "hf-psrben-visionhope-learnings.md"
       }
     }
   }

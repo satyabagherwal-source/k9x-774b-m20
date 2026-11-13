@@ -595,8 +595,8 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "b1fce58d63ac6ff6444d6b0e7099e6ef5be71c77fb83cf095357c64b7eaa3484",
-    "lastHarvestedAt": "2026-11-08T18:11:28.050Z",
+    "contentHash": "ebdc83804f284c0cd79c1f071eb1a2f6b74166e02075594a097883b65e1669cc",
+    "lastHarvestedAt": "2026-11-13T19:19:06.386Z",
     "learningId": "learn-huggingface-psrben-visionhope"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "3142f33a",
+    "sourceVersion": "abd7e05c",
     "license": "Apache-2.0",
-    "contentHash": "f9033c9f474bbf8cd407885184c85f9c49ed58075c00a0b4fcdbb50a983b5c8f",
-    "lastHarvestedAt": "2026-11-12T21:02:21.417Z",
+    "contentHash": "99b890ae797badb12d86bece8aefd0c8b3b7a8093eccabe614100f981d2f7a0b",
+    "lastHarvestedAt": "2026-11-13T19:19:15.559Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

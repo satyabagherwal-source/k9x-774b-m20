@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `3142f33a`  
+> **Source Version**: `abd7e05c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:02:11.440Z  
+> **Timestamp**: 2026-11-13T19:19:14.779Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:02:11.276Z  
+> **Harvest Timestamp**: 2026-11-13T19:19:14.774Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17093 stars
+- **Stars / Engagement**: 17096 stars
 
 ---
 
@@ -767,14 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17494** (2026-11-11): **ci(stale): clear problem/old draft when an item becomes active**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  A draft that gets new activity keeps `problem/old draft`, so it re-enters the stale flow and can close 28 days later even though it is active again. This was raised in [review feedback on #17493](https://github.com/argoproj/argo-workflows/pull/17493#discussion_r4544383489).  ### Modifications  - Add `problem/old draft` to `labels-to-remove-when-unstale` in `.github/workflows/stale.yaml`.  ### Verification  `actionlint` passes. The [actions/stale v11.0.0 action.yml](https://github.com/actions/stale/blob/v11.0.0/action.yml) documents `labels-to-remove-when-unstale` as a comma-delimited list.  ### Documentation  Not needed. This only changes repository automation.  ### AI  Claude Opus 5.5 drafted the change, commit message, and this description. I reviewed the diff. 
+- **Issue #17498** (2026-11-13): **fix(controller): fail containerSet nodes of a pod rejected by kubelet (cherry-pick #17475 for 4.1)**
+  *Symptoms*: Cherry-picked fix(controller): fail containerSet nodes of a pod rejected by kubelet (#17475)  Signed-off-by: Simon Domke <11619247+usimd@users.noreply.github.com>
 
-- **Issue #17493** (2026-11-11): **ci(stale): allow manual runs and process problem/stale items**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  Maintainers can't run the stale workflow on demand. Items labeled `problem/stale` that no longer carry `problem/more information needed` never get processed, so they stay open indefinitely.  ### Modifications  - Add a `workflow_dispatch` trigger. - Replace `only-labels` with `any-of-labels: 'problem/more information needed,problem/stale,problem/old draft,problem/bot-not-ready'`. `only-labels` requires every listed label, so adding `problem/stale` there would stop new items from ever going stale. - Add the missing `>` on `close-pr-message` to match the other messages. - Grant the job `actions: write`. actions/stale needs it to list and replace its state cache, so runs can resume instead of restarting from the first item.  The first run will close two open PRs that carry `problem/stale` and have been idle since
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/argoproj/argo-workflows/pull/17493?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> <summa
-  > @coderabbitai > Grant `actions: write` so the stale job can read and replace its state cache.  Addressed in https://github.com/argoproj/argo-workflows/pull/17493/commits/eee65a2c4d8ecc03d2bbd6546ec4e6adc2538dd9. The last scheduled run logged "The saved state was not found", so the restore path is broken today. It does no harm yet because the run finishes all 1400 items in 15 of 30 operations. I added the scope anyway so resume works once the backlog outgrows a single run. `actions: read` alone would let the action restore old state while failing to replace it.
+- **Issue #17495** (2026-11-12): **docs: document `argo cron backfill` (cherry-pick #17389 for 4.1)**
+  *Symptoms*: Cherry-picked docs: document `argo cron backfill` (#17389)  Signed-off-by: Alan Clucas <alan@clucas.org>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -791,584 +788,221 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d20aac05` (2026-11-11)
-**Commit Message**: fix(sqldb): refresh offload timestamp on duplicate save (#17471)
+### Incident Patch 1: `abd7e05c` (2026-11-13)
+**Commit Message**: fix(controller): fail containerSet nodes of a pod rejected by kubelet (#17475)
 
-Signed-off-by: somiljain2006 <[REDACTED_EMAIL]>
+Signed-off-by: Simon Domke <[REDACTED_EMAIL]>
 
-**File**: `persist/sqldb/explosive_offload_node_status_repo.go` (modified, +4/-0)
+**File**: `workflow/controller/operator.go` (modified, +37/-0)
 ```diff
-@@ -34,6 +34,10 @@ func (n *explosiveOffloadNodeStatusRepo) Delete(context.Context, string, string)
- 	return ErrOffloadNotSupported
+@@ -1413,6 +1413,40 @@ func (woc *wfOperationCtx) markAllContainersDeleted(ctx context.Context, nodeID
+ 	}
  }
  
-+func (n *explosiveOffloadNodeStatusRepo) DeleteIfOld(context.Context, string, string) error {
-+	return ErrOffloadNotSupported
-+}
-+
- func (n *explosiveOffloadNodeStatusRepo) ListOldOffloads(context.Context, string) (map[string][]string, error) {
- 	return nil, ErrOffloadNotSupported
- }
-```
-
-**File**: `persist/sqldb/mocks/OffloadNodeStatusRepo.go` (modified, +14/-0)
-```diff
-@@ -30,6 +30,20 @@ func (_m *OffloadNodeStatusRepo) Delete(_ context.Context, uid string, version s
- 	return r0
- }
- 
-+// DeleteIfOld provides a mock function with given fields: uid, version
-+func (_m *OffloadNodeStatusRepo) DeleteIfOld(_ context.Context, uid string, version string) error {
-+	ret := _m.Called(uid, version)
-+
-+	var r0 error
-+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
-+		r0 = rf(uid, version)
-+	} else {
-+		r0 = ret.Error(0)
++// failContainersWithoutStatus fails the container nodes of a failed containerSet pod
++// that have no container status, e.g. because kubelet rejected the pod at admission.
++// Otherwise they would stay Pending forever.
++func (woc *wfOperationCtx) failContainersWithoutStatus(ctx context.Context, pod *apiv1.Pod, podNode *wfv1.NodeStatus, message string) {
++	reported := make(map[string]bool, len(pod.Status.ContainerStatuses))
++	for _, c := range pod.Status.ContainerStatuses {
++		reported[fmt.Sprintf("%s.%s", podNode.Name, c.Name)] = true
 +	}
-+
-+	return r0
-+}
-+
- // Get provides a mock function with given fields: uid, version
- func (_m *OffloadNodeStatusRepo) Get(ctx context.Context, uid string, version string) (v1alpha1.Nodes, error) {
- 	ret := _m.Called(uid, version)
-```
-
-**File**: `persist/sqldb/offload_node_status_repo.go` (modified, +77/-6)
-```diff
-@@ -29,6 +29,11 @@ type OffloadNodeStatusRepo interface {
- 	List(ctx context.Context, namespace string) (map[UUIDVersion]wfv1.Nodes, error)
- 	ListOldOffloads(ctx context.Context, namespace string) (map[string][]string, error)
- 	Delete(ctx context.Context, uid, version string) error
-+	// DeleteIfOld deletes the offload record only if its updatedat timestamp is
-+	// still older than the configured TTL at the time the DELETE executes.  This
-+	// prevents GC from removing a record whose timestamp was refreshed by Save()
-+	// between ListOldOffloads() and the deletion.
-+	DeleteIfOld(ctx context.Context, uid, version string) error
- 	IsEnabled() bool
- }
- 
-@@ -91,13 +96,45 @@ func (wdc *nodeOffloadRepo) Save(ctx context.Context, uid, namespace string, nod
- 	logCtx.Debug(ctx, "Offloading nodes")
- 	err = wdc.sessionProxy.With(ctx, func(s db.Session) error {
- 		_, insertErr := s.Collection(wdc.tableName).Insert(record)
--		if insertErr != nil {
--			// if we have a duplicate, then it must have the same clustername+uid+version, which MUST mean that we
--			// have already written this record
--			if !isDuplicateKeyError(insertErr) {
--				return insertErr
-+		if insertErr == nil {
-+			return nil
++	// Walk only the pod's container graph. Leaf containers link to the pod's dependents,
++	// which are outside the pod's boundary.
++	var pending []string
++	visited := make(map[string]bool)
++	queue := append([]string(nil), podNode.Children...)
++	for len(queue) > 0 {
++		id := queue[0]
++		queue = queue[1:]
++		if visited[id] {
++			continue
 +		}
-+
-+		if !isDuplicateKeyError(insertErr) {
-+			return insertErr
++		visited[id] = true
++		node, err := woc.wf.Status.Nodes.Get(id)
++		if err != nil || node.Type != wfv1.NodeTypeContainer || node.BoundaryID != podNode.ID {
++			continue
 +		}
-+
-+		logCtx.WithField("err", insertErr).Debug(ctx, "Refreshing timestamp for duplicate offload")
-+
-+		rs, updateErr := s.SQL().
-+			Update(wdc.tableName).
-+			Set("updatedat", db.Raw("CURRENT_TIMESTAMP")).
-+			Where(db.Cond{"clustername": wdc.clusterName}).
-+			And(db.Cond{"uid": uid}).
-+			And(db.Cond{"version": version}).
-+			Exec()
-+
-+		if updateErr != nil {
-+			return fmt.Errorf("failed to refresh timestamp for existing offload: %w", updateErr)
++		if !reported[node.Name] && !node.Fulfilled() {
++			pending = append(pending, node.Name)
 +		}
-+		rowsAffected, updateErr := rs.RowsAffected()
-+		if updateErr != nil {
-+			return fmt.Errorf("failed to get rows affected after timestamp refresh: %w", updateErr)
-+		}
-+		if rowsAffected == 0 {
-+			// In MySQL (without clientFoundRows=true), an UPDATE that writes the exact same
-+			// timestamp value within the same second reports 0 changed rows even though the
-+			// row matched and exists. Verify whether the row actually exists before concluding
-+			// it disappeared concurrently.
-+			exists, existsErr := s.Collection(wdc.tableName).
-+				Find(db.Cond{"clustername": wdc.clusterName, "uid": uid, "version": version}).
-+				Exists()
-+			if existsErr != nil {
-+				return fmt.Errorf("failed to check offload record existence: %w", existsErr)
-+			}
-+			if !exists {
-+				return fmt.Errorf("offload record (uid=%s, version=%s) disappeared during duplicate-save: concurrent GC may have deleted it", uid, version)
- 			}
--			logCtx.WithField("err", insertErr).Debug(ctx, "Ignoring duplicate key error")
- 		}
- 		return nil
- 	})
-@@ -236,6 +273,40 @@ func (wdc *nodeOffloadRepo) Delete(ctx context.Context, uid, version string) err
- 	})
- }
- 
-+// DeleteIfOld deletes the offload record only when its updatedat timestamp is
-+// still older than the configured TTL at the moment the DELETE executes.  If
-+// Save() refreshed the timestamp between ListOldOffloads() and this call, the
-+// condition will be false and zero rows will be affected – the record is left
-+// intact so that live workflows can still hydrate their node status.
-+func (wdc *nodeOffloadRepo) DeleteIfOld(ctx context.Context, uid, version string) error {
-+	if uid == "" {
-+		return fmt.Errorf("invalid uid")
++		queue = append(queue, node.Children...)
 +	}
-+	if version == "" {
-+		return fmt.Errorf("invalid version")
-+	}
-+	logCtx := wdc.log.WithFields(logging.Fields{"uid": uid, "version": version})
-+	logCtx.Debug(ctx, "Conditionally deleting old offloaded nodes")
-+	return wdc.sessionProxy.With(ctx, func(s db.Session) error {
-+		rs, err := s.SQL().
-+			DeleteFrom(wdc.tableName).
-+			Where(db.Cond{"clustername": wdc.clusterName}).
-+			And(db.Cond{"uid": uid}).
-+			And(db.Cond{"version": version}).
-+			And(wdc.oldOffload()).
-+			Exec()
-+		if err != nil {
-+			return err
-+		}
-+		rowsAffected, err := rs.RowsAffected()
-+		if err != nil {
-+			return err
-+		}
-+		logCtx.WithField("rowsAffected", rowsAffected).Debug(ctx, "Conditionally deleted old offloaded nodes")
-+		return nil
-+	})
-+}
-+
- func (wdc *nodeOffloadRepo) oldOffload() string {
- 	return fmt.Sprintf("updatedat < current_timestamp - interval '%d' second", int(wdc.ttl.Seconds()))
- }
-```
-
-**File**: `persist/sqldb/offload_node_status_repo_mysql_test.go` (added, +160/-0)
-```diff
-@@ -0,0 +1,160 @@
-+//go:build !windows
-+
-+package sqldb
-+
-+import (
-+	"context"
-+	"strconv"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	testcontainers "github.com/testcontainers/testcontainers-go"
-+	testmysql "github.com/testcontainers/testcontainers-go/modules/mysql"
-+	"github.com/testcontainers/testcontainers-go/wait"
-+
-+	"github.com/argoproj/argo-workflows/v4/config"
-+	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
-+	usqldb "github.com/argoproj/argo-workflows/v4/util/sqldb"
-+)
-+
-+func setupMySQLOffloadRepo(ctx context.Context, t *testing.T, v usqldb.MySQLVariant) *nodeOffloadRepo {
-+	t.Helper()
-+
-+	c, err := testmysql.Run(ctx,
-+		v.Image,
-+		testmysql.WithDatabase("argo"),
-+		testmysql.WithUsername("argo"),
-+		testmysql.WithPassword("argo"),
-+		testcontainers.WithWaitStrategy(
-+			wait.ForAll(
-+				wait.ForLog(v.WaitMessage).WithStartupTimeout(60*time.Second),
-+				wait.ForListeningPort("3306/tcp"),
-+			)),
-+	)
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		if termErr := testcontainers.TerminateContainer(c); termErr != nil {
-+			t.Logf("failed to terminate container: %s", termErr)
-+		}
-+	})
-+
-+	host, err := c.Host(ctx)
-+	require.NoError(t, err)
-+	p, err := c.MappedPort(ctx, "3306/tcp")
-+	require.NoError(t, err)
-+	port, err := strconv.Atoi(p.Port())
-+	require.NoError(t, err)
-+
-+	proxy, err := usqldb.NewSessionProxy(ctx, usqldb.SessionProxyConfig{
-+		DBConfig: config.DBConfig{
-+			MySQL: &config.MySQLConfig{
-+				DatabaseConfig: config.DatabaseConfig{
-+					Database: "argo",
-+					Host:     host,
-+					Port:     port,
-+				},
-+			},
-+		},
-+		Username: "argo",
-+		Password: "argo",
-+	})
-+	require.NoError(t, err)
-+
-+	const (
-+		clusterName = "test"
-+		tableName   = "argo_workflows"
-+	)
-+
-+	err = Migrate(ctx, proxy.Session(ctx), clusterName, tableName, proxy.DBType())
-+	require.NoError(t, err)
-+
-+	t.Cleanup(func() { proxy.Close() })
-+
-+	return &nodeOffloadRepo{
-+		sessionProxy: proxy,
-+		clusterName:  clusterName,
-+		tableName:    tableName,
-+		ttl:          5 * time.Minute,
-+		log:          logging.RequireLoggerFromContext(ctx),
++	for _, name := range pending {
++		woc.markNodePhase(ctx, name, wfv1.NodeFailed, message)
 +	}
 +}
 +
-+func TestMySQLOffloadNodeStatusRepo(t *testing.T) {
-+	for name, variant := range usqldb.MySQLVariants {
-+		t.Run(name, func(t *testing.T) {
-+			ctx := logging.TestContext(t.Context())
-+			repo := setupMySQLOffloadRepo(ctx, t, variant)
-+
-+			uid := "mysql-test-wf"
-+			namespace := "default"
-+			nodes := wfv1.Nodes{"node1": wfv1.NodeStatus{Message: "msg1"}}
-+
-+			// 1. Initial save
-+			v1, err := repo.Save(ctx, uid, namespace, nodes)
-+			require.NoError(t, err)
-+
-+			// 2. Duplicate save in the exact same second:
-+			// In MySQL without clientFoundRows, this causes RowsAffected() == 0 because updatedat
-+			// was already CURRENT_TIMESTAMP. The implementation must check Exists() and NOT
-+			// return a false concurrent deletion error.
-+			v1Duplicate, err := repo.Save(ctx, uid, namespace, nodes)
-+			require.NoError(t, err, "duplicate Save in the same second must succeed in MySQL")
-+			assert.Equal(t, v1, v1Duplicate)
-+
-+			// 3. DeleteIfOld preserves refreshed record:
-+			// Backdate the record past the TTL
-+			_, err = repo.sessionProxy.Session(ctx).SQL().Exec(
-+				`UPDATE argo_workflows
-+				 SET updatedat = CURRENT_TIMESTAMP - INTERVAL 10 MINUTE
-+				 WHERE clustername = ? AND uid = ? AND version = ?`,
-+				repo.clusterName, uid, v1,
-+			)
-+			require.NoError(t, err)
-+
-+			// Verify ListOldOffloads finds it
-+			oldOffloads, err := repo.ListOldOffloads(ctx, namespace)
-+			require.NoError(t, err)
-+			require.Contains(t, oldOffloads[uid], v1)
-+
-+			// Refresh timestamp with Save()
-+			reusedVersion, err := repo.Save(ctx, uid, namespace, nodes)
-+			require.NoError(t, err)
-+			assert.Equal(t, v1, reusedVersion)
-+
-+			// DeleteIfOld must NOT delete the refreshed record
-+			err = repo.DeleteIfOld(ctx, uid, v1)
-+			require.NoError(t, err)
-+
-+			// Verify still retrievable
-+			retrieved, err := repo.Get(ctx, uid, v1)
-+			require.NoError(t, err)
-+			assert.Equal(t, nodes, retrieved)
-+
-+			// 4. DeleteIfOld deletes genuinely old record:
-+			_, err = repo.sessionProxy.Session(ctx).SQL().Exec(
-+				`UPDATE argo_workflows
-+				 SET updatedat = CURRENT_TIMESTAMP - INTERVAL 10 MINUTE
-+				 WHERE clustername = ? AND uid = ? AND version = ?`,
-+				repo.clusterName, uid, v1,
-+			)
-+			require.NoError(t, err)
-+
-+			err = repo.DeleteIfOld(ctx, uid, v1)
-+			require.NoError(t, err)
-+
-+			_, err = repo.Get(ctx, uid, v1)
-+			require.Error(t, err)
-+
-+			// 5. Unconditional Delete
-+			v2, err := repo.Save(ctx, uid, namespace, wfv1.Nodes{"node2": wfv1.NodeStatus{Message: "msg2"}})
-+			require.NoError(t, err)
-+			err = repo.Delete(ctx, uid, v2)
-+			require.NoError(t, err)
-+			_, err = repo.Get(ctx, uid, v2)
-+			require.Error(t, err)
-+		})
-+	}
-+}
-```
-
-**File**: `persist/sqldb/offload_node_status_repo_test.go` (modified, +305/-0)
-```diff
-@@ -1,12 +1,22 @@
- package sqldb
- 
- import (
-+	"runtime"
-+	"strconv"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
-+	testcontainers "github.com/testcontainers/testcontainers-go"
-+	testpostgres "github.com/testcontainers/testcontainers-go/modules/postgres"
-+	"github.com/testcontainers/testcontainers-go/wait"
-+
-+	"github.com/argoproj/argo-workflows/v4/config"
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
-+	usqldb "github.com/argoproj/argo-workflows/v4/util/sqldb"
- )
- 
- func Test_nodeStatusVersion(t *testing.T) {
-@@ -23,3 +33,298 @@ func Test_nodeStatusVersion(t *testing.T) {
- 		assert.Equal(t, "fnv:2308444803", version)
- 	})
- }
-+
-+func setupOffloadNodeStatusRepo(t *testing.T) *nodeOffloadRepo {
-+	t.Helper()
-+
-+	ctx := logging.TestContext(t.Context())
-+
-+	postgresContainer, err := testpostgres.Run(ctx,
-+		"postgres:17.4-alpine",
-+		testpostgres.WithDatabase("argo"),
-+		testpostgres.WithUsername("argo"),
-+		testpostgres.WithPassword("argo"),
-+		testcontainers.WithWaitStrategy(
-+			wait.ForLog("database system is ready to accept connections").
-+				WithOccurrence(2).
-+				WithStartupTimeout(60*time.Second),
-+		),
-+	)
-+	require.NoError(t, err)
-+
-+	t.Cleanup(func() {
-+		terminateErr := testcontainers.TerminateContainer(postgresContainer)
-+		if terminateErr != nil {
-+			t.Logf("failed to terminate postgres container: %s", terminateErr)
-+		}
-+	})
-+
-+	host, err := postgresContainer.Host(ctx)
-+	require.NoError(t, err)
-+
-+	mappedPort, err := postgresContainer.MappedPort(ctx, "5432/tcp")
-+	require.NoError(t, err)
-+
-+	port, err := strconv.Atoi(mappedPort.Port())
-+	require.NoError(t, err)
-+
-+	sessionProxy, err := usqldb.NewSessionProxy(ctx, usqldb.SessionProxyConfig{
-+		DBConfig: config.DBConfig{
-+			PostgreSQL: &config.PostgreSQLConfig{
-+				DatabaseConfig: config.DatabaseConfig{
-+					Database: "argo",
-+					Host:     host,
-+					Port:     port,
-+				},
-+			},
-+		},
-+		Username: "argo",
-+		Password: "argo",
-+	})
-+	require.NoError(t, err)
-+
-+	t.Cleanup(func() {
-+		closeErr := sessionProxy.Close()
-+		if closeErr != nil {
-+			t.Logf("failed to close database session: %s", closeErr)
-+		}
-+	})
-+
-+	const (
-+		clusterName = "test"
-+		tableName   = "argo_workflows"
-+	)
-+
-+	err = Migrate(ctx, sessionProxy.Session(ctx), clusterName, tableName, sessionProxy.DBType())
-+	require.NoError(t, err)
-+
-+	return &nodeOffloadRepo{
-+		sessionProxy: sessionProxy,
-+		clusterName:  clusterName,
-+		tableName:    tableName,
-+		ttl:          5 * time.Minute,
-+		log:          logging.RequireLoggerFromContext(ctx),
-+	}
-+}
-+
-+func TestOffloadNodeStatusRepoSaveRefreshesTimestampOnDuplicate(t *testing.T) {
-+	if runtime.GOOS == "windows" {
-+		t.Skip("Testcontainers are not supported on Windows")
-+	}
-+
-+	ctx := logging.TestContext(t.Context())
-+	repo := setupOffloadNodeStatusRepo(t)
-+
-+	uid := "test-workflow-uid"
-+	namespace := "default"
-+
-+	nodesA := wfv1.Nodes{
-+		"my-node": wfv1.NodeStatus{
-+			Message: "ErrImagePull",
-+		},
-+	}
-+
-+	nodesB := wfv1.Nodes{
-+		"my-node": wfv1.NodeStatus{
-+			Message: "ImagePullBackOff",
-+		},
-+	}
-+
-+	// Save version A.
-+	versionA, err := repo.Save(ctx, uid, namespace, nodesA)
-+	require.NoError(t, err)
-+
-+	// Save version B.
-+	versionB, err := repo.Save(ctx, uid, namespace, nodesB)
-+	require.NoError(t, err)
-+
-+	assert.NotEqual(t, versionA, versionB)
-+
-+	// Make version A old by backdating its updatedat timestamp.
-+	_, err = repo.sessionProxy.Session(ctx).SQL().Exec(
-+		`UPDATE argo_workflows
-+         SET updatedat = CURRENT_TIMESTAMP - INTERVAL '10 minutes'
-+         WHERE clustername = ? AND uid = ? AND version = ?`,
-+		repo.clusterName,
-+		uid,
-+		versionA,
-+	)
-+	require.NoError(t, err)
-+
-+	// Verify version A is considered old.
-+	oldOffloads, err := repo.ListOldOffloads(ctx, namespace)
-+	require.NoError(t, err)
-+	assert.Contains(t, oldOffloads[uid], versionA)
-+
-+	// Save version A again. This should refresh updatedat.
-+	reusedVersion, err := repo.Save(ctx, uid, namespace, nodesA)
-+	require.NoError(t, err)
-+
-+	assert.Equal(t, versionA, reusedVersion)
-+
-+	// Verify version A is no longer considered old.
-+	oldOffloads, err = repo.ListOldOffloads(ctx, namespace)
-+	require.NoError(t, err)
-+	assert.NotContains(t, oldOffloads[uid], versionA)
-+
-+	// Verify the existing offloaded nodes are still retrievable.
-+	retrievedNodes, err := repo.Get(ctx, uid, versionA)
-+	require.NoError(t, err)
-+	assert.Equal(t, nodesA, retrievedNodes)
-+}
-+
-+func TestDeleteIfOldPreservesRefreshedRecord(t *testing.T) {
-+	if runtime.GOOS == "windows" {
-+		t.Skip("Testcontainers are not supported on Windows")
-+	}
-+
-+	ctx := logging.TestContext(t.Context())
-+	repo := setupOffloadNodeStatusRepo(t)
-+
-+	uid := "test-wf-preserve"
-+	namespace := "default"
-+	nodes := wfv1.Nodes{"node1": wfv1.NodeStatus{Message: "running"}}
-+
-+	// Save the record.
-+	version, err := repo.Save(ctx, uid, namespace, nodes)
-+	require.NoError(t, 
-```
-
-**File**: `workflow/controller/controller.go` (modified, +1/-1)
-```diff
-@@ -902,7 +902,7 @@ func (wfc *WorkflowController) deleteOffloadedNodesForWorkflow(ctx context.Conte
- 		if wf != nil && wf.Status.OffloadNodeStatusVersion == version {
- 			continue
- 		}
--		if err := wfc.offloadNodeStatusRepo.Delete(ctx, uid, version); err != nil {
-+		if err := wfc.offloadNodeStatusRepo.DeleteIfOld(ctx, uid, version); err != nil {
- 			return err
+ // shouldPrintPodSpec return eligible to print to the pod spec
+ func (woc *wfOperationCtx) shouldPrintPodSpec(node *wfv1.NodeStatus) bool {
+ 	return woc.controller.Config.PodSpecLogStrategy.AllPods ||
+@@ -1659,6 +1693,9 @@ func (woc *wfOperationCtx) assessNodeStatus(ctx context.Context, pod *apiv1.Pod,
+ 			woc.markNodePhase(ctx, ctrNodeName, wfv1.NodeRunning)
  		}
  	}
++	if pod.Status.Phase == apiv1.PodFailed && !stoppedDaemon && updated.Phase != wfv1.NodePending {
++		woc.failContainersWithoutStatus(ctx, pod, old, updated.Message)
++	}
+ 
+ 	// only update Pod IP for daemoned nodes to reduce number of updates
+ 	if !updated.Completed() && updated.IsDaemoned() {
 ```
 
-**File**: `workflow/controller/controller_test.go` (modified, +42/-0)
+**File**: `workflow/controller/operator_test.go` (modified, +151/-0)
 ```diff
-@@ -764,6 +764,48 @@ func TestWorkflowController_archivedWorkflowGarbageCollector(t *testing.T) {
- 	controller.archivedWorkflowGarbageCollector(logging.TestContext(t.Context()))
+@@ -9838,6 +9838,157 @@ func TestContainerSetWithDependenciesWhenPodDeleted(t *testing.T) {
+ 	}
  }
  
-+func TestWorkflowController_deleteOffloadedNodesForWorkflow_InvokesDeleteIfOld(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+
-+	t.Run("MissingWorkflow", func(t *testing.T) {
-+		cancel, controller := newController(ctx)
-+		defer cancel()
-+
-+		mockRepo := &sqldbmocks.OffloadNodeStatusRepo{}
-+		mockRepo.On("DeleteIfOld", "missing-uid", "v1").Return(nil)
-+		mockRepo.On("DeleteIfOld", "missing-uid", "v2").Return(nil)
-+		controller.offloadNodeStatusRepo = mockRepo
-+
-+		err := controller.deleteOffloadedNodesForWorkflow(ctx, "missing-uid", []string{"v1", "v2"})
-+		require.NoError(t, err)
-+		mockRepo.AssertExpectations(t)
-+	})
-+
-+	t.Run("LiveWorkflowSkipsCurrentVersion", func(t *testing.T) {
-+		wf := &wfv1.Workflow{
-+			ObjectMeta: metav1.ObjectMeta{
-+				Name:      "live-wf",
-+				Namespace: "argo",
-+				UID:       "live-uid",
-+			},
-+			Status: wfv1.WorkflowStatus{
-+				OffloadNodeStatusVersion: "v2",
-+			},
-+		}
-+		cancel, controller := newController(ctx, wf)
-+		defer cancel()
-+
-+		mockRepo := &sqldbmocks.OffloadNodeStatusRepo{}
-+		// v2 is live so it must NOT be deleted. Only v1 (old) should be deleted with DeleteIfOld.
-+		mockRepo.On("DeleteIfOld", "live-uid", "v1").Return(nil)
-+		controller.offloadNodeStatusRepo = mockRepo
-+
-+		err := controller.deleteOffloadedNodesForWorkflow(ctx, "live-uid", []string{"v1", "v2"})
-+		require.NoError(t, err)
-+		mockRepo.AssertExpectations(t)
-+	})
++// withRejection makes a pod look like kubelet rejected it at admission: the pod is Failed
++// and has no container statuses, because no container was ever created.
++func withRejection(pod *apiv1.Pod, _ *wfOperationCtx) {
++	pod.Status.Reason = "OutOfmemory"
++	pod.Status.Message = "Pod was rejected: Node didn't have enough resource: memory, requested: 1, used: 2, capacity: 2"
++	pod.Status.ContainerStatuses = nil
 +}
 +
- // TestWorkflowController_archiveWorkflowAux_ArchivesOnce pins that a successfully
- // archived workflow is written to the archive exactly once. archiveWorkflow used
- // to call archiveWorkflowAux a second time on the success path, archiving every
++// TestContainerSetWhenPodRejected tests that the container nodes of a containerSet pod that
++// kubelet rejected (no container statuses) are failed instead of staying Pending.
++func TestContainerSetWhenPodRejected(t *testing.T) {
++	cancel, controller := newController(logging.TestContext(t.Context()))
++	defer cancel()
++	ctx := logging.TestContext(t.Context())
++	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
++	wf := wfv1.MustUnmarshalWorkflow(wfHasContainerSetWithDependencies)
++	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
++	require.NoError(t, err)
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	woc.operate(ctx)
++
++	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
++	woc.operate(ctx)
++
++	assert.Equal(t, wfv1.WorkflowFailed, woc.wf.Status.Phase)
++	containers := 0
++	for _, node := range woc.wf.Status.Nodes {
++		if node.Type == wfv1.NodeTypeContainer {
++			containers++
++			assert.Equal(t, wfv1.NodeFailed, node.Phase, node.Name)
++			assert.Contains(t, node.Message, "Pod was rejected", node.Name)
++		}
++	}
++	assert.Equal(t, 2, containers)
++}
++
++var wfContainerSetParameterizedNameRejected = `
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: wf-containerset-parameterized-rejected
++spec:
++  entrypoint: init
++  arguments:
++    parameters:
++      - name: ctr
++        value: main
++  templates:
++    - name: init
++      dag:
++        tasks:
++          - name: A
++            template: run
++    - name: run
++      containerSet:
++        containers:
++          - name: "{{workflow.parameters.ctr}}"
++            image: alpine:3.23
++            command: [echo]`
++
++// TestContainerSetParameterizedNameWhenPodRejected tests that container nodes are failed
++// when their names come from parameters resolved at runtime.
++func TestContainerSetParameterizedNameWhenPodRejected(t *testing.T) {
++	cancel, controller := newController(logging.TestContext(t.Context()))
++	defer cancel()
++	ctx := logging.TestContext(t.Context())
++	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
++	wf := wfv1.MustUnmarshalWorkflow(wfContainerSetParameterizedNameRejected)
++	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
++	require.NoError(t, err)
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	woc.operate(ctx)
++
++	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
++	woc.operate(ctx)
++
++	assert.Equal(t, wfv1.WorkflowFailed, woc.wf.Status.Phase)
++	node, err := woc.wf.GetNodeByName("wf-containerset-parameterized-rejected.A.main")
++	require.NoError(t, err)
++	assert.Equal(t, wfv1.NodeFailed, node.Phase)
++	assert.Contains(t, node.Message, "Pod was rejected")
++}
++
++var wfContainerSetRetryRejected = `
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: wf-containerset-retry-rejected
++spec:
++  entrypoint: init
++  templates:
++    - name: init
++      dag:
++        tasks:
++          - name: A
++            template: run
++    - name: run
++      retryStrategy:
++        limit: 2
++        retryPolicy: Always
++      containerSet:
++        containers:
++          - name: main
++            image: alpine:3.23
++            command: [echo]
++          - name: main2
++            image: alpine:3.23
++            command: [echo]
++            dependencies:
++              - main`
++
++// TestContainerSetRetryWhenPodRejected tests that a containerSet whose first pod kubelet rejected
++// is retried and that the workflow completes once the retry succeeds.
++func TestContainerSetRetryWhenPodRejected(t *testing.T) {
++	cancel, controller := newController(logging.TestContext(t.Context()))
++	defer cancel()
++	ctx := logging.TestContext(t.Context())
++	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
++	wf := wfv1.MustUnmarshalWorkflow(wfContainerSetRetryRejected)
++	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
++	require.NoError(t, err)
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	woc.operate(ctx)
++
++	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
++	woc.operate(ctx)
++	pods, err := listPods(ctx, woc)
++	require.NoError(t, err)
++	require.Len(t, pods.Items, 2)
++
++	setPodPhases(ctx, woc, func(node *wfv1.NodeStatus) apiv1.PodPhase {
++		if node.Phase == wfv1.NodeFailed {
++			return ""
++		}
++		return apiv1.PodSucceeded
++	}, withExitCode(0))
++	woc = newWorkflowOperat
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17498** (2026-11-13): fix(controller): fail containerSet nodes of a pod rejected by kubelet (cherry-pick #17475 for 4.1) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17495** (2026-11-12): docs: document `argo cron backfill` (cherry-pick #17389 for 4.1) (@argo-cd-cherry-pick-bot[bot])
 - **PR #17494** (2026-11-11): ci(stale): clear problem/old draft when an item becomes active (@jmeridth)
 - **PR #17493** (2026-11-11): ci(stale): allow manual runs and process problem/stale items (@jmeridth)
 - **PR #17490** (2026-11-11): chore(deps): migrate renovate dependencyDashboard config (@eeran-cs)
 - **PR #17484** (2026-11-11): fix(examples): make the ci WorkflowTemplate example work (cherry-pick #17437 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17471** (2026-11-11): fix(sqldb): refresh offload timestamp on duplicate save (@somiljain2006)
-- **PR #17470** (closed): feat: add conditional parameter visibility to workflow submissions (@somiljain2006)
 
 ---
 
@@ -1388,31 +1022,57 @@ Signed-off-by: somiljain2006 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sqldb): refresh offload timestamp on duplicate save (#17471)
+## X. controller): fail containerSet nodes of a pod rejected by kubelet
 
 **RULE**:
-When implementing operations in `persist/sqldb/explosive_offload_node_status_repo.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `workflow/controller/operator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d20aac05`: sqldb): refresh offload timestamp on duplicate save (#17471). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `abd7e05c`: controller): fail containerSet nodes of a pod rejected by kubelet. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `persist/sqldb/explosive_offload_node_status_repo.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/operator.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (n *explosiveOffloadNodeStatusRepo) DeleteIfOld(context.Context, string, string) error {
-	return ErrOffloadNotSupported
-}
-
+// failContainersWithoutStatus fails the container nodes of a failed containerSet pod
+// that have no container status, e.g. because kubelet rejected the pod at admission.
+// Otherwise they would stay Pending forever.
+func (woc *wfOperationCtx) failContainersWithoutStatus(ctx context.Context, pod *apiv1.Pod, podNode *wfv1.NodeStatus, message string) {
+	reported := make(map[string]bool, len(pod.Status.ContainerStatuses))
+	for _, c := range pod.Status.ContainerStatuses {
+		reported[fmt.Sprintf("%s.%s", podNode.Name, c.Name)] = true
+	}
+	// Walk only the pod's container graph. Leaf containers link to the pod's dependents,
+	// which are outside the pod's boundary.
+	var pending []string
+	visited := make(map[string]bool)
+	queue := append([]string(nil), podNode.Children...)
+	for len(queue) > 0 {
+		id := queue[0]
+		queue = queue[1:]
+		if visited[id] {
+			continue
+		}
+		visited[id] = true
+		node, err := woc.wf.Status.Nodes.Get(id)
+		if err != nil || node.Type != wfv1.NodeTypeContainer || node.BoundaryID != podNode.ID {
+			continue
+		}
+		if !reported[node.Name] && !node.Fulfilled() {
+			pending = append(pending, node.Name)
+		}
+		queue = append(queue, node.Children...)
+	}
+	for _, name := range
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d20aac05` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `abd7e05c` are properly handled with clean fallback behavior.

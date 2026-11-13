@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for argoproj/argo/workflows
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "argoproj/argo/workflows",
-  "source_url": "https://github.com/argoproj/argo/workflows",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "argoproj/argo-workflows",
+  "source_url": "https://github.com/argoproj/argo-workflows",
+  "source_version": "abd7e05c",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T19:19:15.714Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-argoproj-argo-workflows",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [argoproj/argo/workflows](https://github.com/argoproj/argo/workflows) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `abd7e05c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T19:19:15.714Z`  
+> **Learning ID**: `learn-github-argoproj-argo-workflows`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `argoproj/argo/workflows` (Commit: `historical`)
+- **Target Repository**: `argoproj/argo-workflows` (Commit: `abd7e05c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
-> **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `d48ec29e`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:49:07.681Z  
-> **Learning ID**: `learn-github-argoproj-argo-workflows`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): argoproj/argo-workflows
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:49:07.664Z  
+> **Harvest Timestamp**: 2026-11-13T19:19:14.774Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17088 stars
+- **Stars / Engagement**: 17096 stars
 
 ---
 
@@ -792,11 +778,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17484** (2026-11-11): **fix(examples): make the ci WorkflowTemplate example work (cherry-pick #17437 for 4.1)**
-  *Symptoms*: Cherry-picked fix(examples): make the ci WorkflowTemplate example work (#17437)  Signed-off-by: Alan Clucas <alan@clucas.org>
+- **Issue #17498** (2026-11-13): **fix(controller): fail containerSet nodes of a pod rejected by kubelet (cherry-pick #17475 for 4.1)**
+  *Symptoms*: Cherry-picked fix(controller): fail containerSet nodes of a pod rejected by kubelet (#17475)  Signed-off-by: Simon Domke <11619247+usimd@users.noreply.github.com>
 
-- **Issue #17470** (2026-11-07): **feat: add conditional parameter visibility to workflow submissions**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [[pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/)](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [ ] Signed-off commits with [[Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/)](https://www.conventionalcommits.org/en/v1.0.0/) messages - [ ] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [ ] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  Fixes #TODO  ### Motivation  Currently, workflow parameters cannot be conditionally displayed based on the values of other workflow or template parameters. This makes submission forms less flexible, particularly for workflows with multiple deployment modes or configuration options.  This change introduces conditional parameter visibility through a `when` field, allowing workflow authors to control which parameters are displayed based on parameter values while preserving existing submission and validation behavior.  ### Modifications  - Added an optional `when` field to the Go `Parameter` API model and TypeScript parameter model. - Updated protobuf definitions and generated code, Ope
+- **Issue #17495** (2026-11-12): **docs: document `argo cron backfill` (cherry-pick #17389 for 4.1)**
+  *Symptoms*: Cherry-picked docs: document `argo cron backfill` (#17389)  Signed-off-by: Alan Clucas <alan@clucas.org>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -813,451 +799,221 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e05902b` (2026-11-10)
-**Commit Message**: fix(controller): keep an ended node's message while it holds its lock (#17391)
+### Incident Patch 1: `abd7e05c` (2026-11-13)
+**Commit Message**: fix(controller): fail containerSet nodes of a pod rejected by kubelet (#17475)
 
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Signed-off-by: Simon Domke <[REDACTED_EMAIL]>
 
-**File**: `workflow/controller/operator.go` (modified, +6/-2)
+**File**: `workflow/controller/operator.go` (modified, +37/-0)
 ```diff
-@@ -3176,9 +3176,13 @@ func (woc *wfOperationCtx) markNodeWaitingForLock(ctx context.Context, nodeName
+@@ -1413,6 +1413,40 @@ func (woc *wfOperationCtx) markAllContainersDeleted(ctx context.Context, nodeID
  	}
+ }
  
- 	if lockName == "" {
--		// If we are no longer waiting for a lock, nil out the sync status
-+		// If we are no longer waiting for a lock, nil out the sync status.
-+		// An ended node, re-entered while it holds its lock until its task
-+		// result arrives, keeps its message: it says how the node ended.
- 		node.SynchronizationStatus = nil
--		node.Message = ""
-+		if !node.Phase.Completed() {
-+			node.Message = ""
++// failContainersWithoutStatus fails the container nodes of a failed containerSet pod
++// that have no container status, e.g. because kubelet rejected the pod at admission.
++// Otherwise they would stay Pending forever.
++func (woc *wfOperationCtx) failContainersWithoutStatus(ctx context.Context, pod *apiv1.Pod, podNode *wfv1.NodeStatus, message string) {
++	reported := make(map[string]bool, len(pod.Status.ContainerStatuses))
++	for _, c := range pod.Status.ContainerStatuses {
++		reported[fmt.Sprintf("%s.%s", podNode.Name, c.Name)] = true
++	}
++	// Walk only the pod's container graph. Leaf containers link to the pod's dependents,
++	// which are outside the pod's boundary.
++	var pending []string
++	visited := make(map[string]bool)
++	queue := append([]string(nil), podNode.Children...)
++	for len(queue) > 0 {
++		id := queue[0]
++		queue = queue[1:]
++		if visited[id] {
++			continue
 +		}
- 	} else {
- 		node.SynchronizationStatus.Waiting = lockName
++		visited[id] = true
++		node, err := woc.wf.Status.Nodes.Get(id)
++		if err != nil || node.Type != wfv1.NodeTypeContainer || node.BoundaryID != podNode.ID {
++			continue
++		}
++		if !reported[node.Name] && !node.Fulfilled() {
++			pending = append(pending, node.Name)
++		}
++		queue = append(queue, node.Children...)
++	}
++	for _, name := range pending {
++		woc.markNodePhase(ctx, name, wfv1.NodeFailed, message)
++	}
++}
++
+ // shouldPrintPodSpec return eligible to print to the pod spec
+ func (woc *wfOperationCtx) shouldPrintPodSpec(node *wfv1.NodeStatus) bool {
+ 	return woc.controller.Config.PodSpecLogStrategy.AllPods ||
+@@ -1659,6 +1693,9 @@ func (woc *wfOperationCtx) assessNodeStatus(ctx context.Context, pod *apiv1.Pod,
+ 			woc.markNodePhase(ctx, ctrNodeName, wfv1.NodeRunning)
+ 		}
  	}
++	if pod.Status.Phase == apiv1.PodFailed && !stoppedDaemon && updated.Phase != wfv1.NodePending {
++		woc.failContainersWithoutStatus(ctx, pod, old, updated.Message)
++	}
+ 
+ 	// only update Pod IP for daemoned nodes to reduce number of updates
+ 	if !updated.Completed() && updated.IsDaemoned() {
 ```
 
-**File**: `workflow/controller/operator_concurrency_test.go` (modified, +48/-0)
+**File**: `workflow/controller/operator_test.go` (modified, +151/-0)
 ```diff
-@@ -1311,3 +1311,51 @@ func TestSynchronizationFailedFirstChildReleasesLock(t *testing.T) {
- 	assert.True(t, nextHolderFound,
- 		"a sibling must have picked up the lock after the holder failed")
+@@ -9838,6 +9838,157 @@ func TestContainerSetWithDependenciesWhenPodDeleted(t *testing.T) {
+ 	}
  }
+ 
++// withRejection makes a pod look like kubelet rejected it at admission: the pod is Failed
++// and has no container statuses, because no container was ever created.
++func withRejection(pod *apiv1.Pod, _ *wfOperationCtx) {
++	pod.Status.Reason = "OutOfmemory"
++	pod.Status.Message = "Pod was rejected: Node didn't have enough resource: memory, requested: 1, used: 2, capacity: 2"
++	pod.Status.ContainerStatuses = nil
++}
 +
-+// TestMutexNodeKeepsItsMessageUntilTaskResult checks that a pod node holding
-+// a mutex, whose pod has failed but whose task result hasn't arrived yet,
-+// keeps the message its pod gave it while it waits: re-entering the node
-+// to check its lock it still holds mustn't clear how it ended.
-+func TestMutexNodeKeepsItsMessageUntilTaskResult(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+	cancel, controller := newController(ctx)
++// TestContainerSetWhenPodRejected tests that the container nodes of a containerSet pod that
++// kubelet rejected (no container statuses) are failed instead of staying Pending.
++func TestContainerSetWhenPodRejected(t *testing.T) {
++	cancel, controller := newController(logging.TestContext(t.Context()))
 +	defer cancel()
-+	wf := wfv1.MustUnmarshalWorkflow(`
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  name: mutex-message
-+  namespace: default
-+spec:
-+  entrypoint: main
-+  templates:
-+  - name: main
-+    synchronization:
-+      mutexes:
-+      - name: test
-+    container:
-+      image: busybox
-+      command: [sh, -c, exit 1]
-+`)
-+	wf, err := controller.wfclientset.ArgoprojV1alpha1().Workflows(wf.Namespace).Create(ctx, wf, metav1.CreateOptions{})
++	ctx := logging.TestContext(t.Context())
++	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
++	wf := wfv1.MustUnmarshalWorkflow(wfHasContainerSetWithDependencies)
++	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
 +	require.NoError(t, err)
 +	woc := newWorkflowOperationCtx(ctx, wf, controller)
 +	woc.operate(ctx)
-+	require.NotNil(t, woc.wf.Status.Synchronization, "the mutex is held")
 +
-+	makePodsPhase(ctx, woc, apiv1.PodFailed)
-+	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
-+	woc.wf.Status.MarkTaskResultIncomplete(ctx, woc.wf.NodeID(wf.Name))
-+	woc.operate(ctx)
-+	node, err := woc.wf.Status.Nodes.Get(woc.wf.NodeID(wf.Name))
-+	require.NoError(t, err)
-+	require.Equal(t, wfv1.NodeFailed, node.Phase)
-+	require.False(t, node.Fulfilled(), "the node waits for its task result")
-+	assert.Equal(t, "Pod failed", node.Message)
-+
++	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
 +	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
 +	woc.operate(ctx)
-+	node, err = woc.wf.Status.Nodes.Get(woc.wf.NodeID(wf.Name))
++
++	assert.Equal(t, wfv1.WorkflowFailed, woc.wf.Status.Phase)
++	containers := 0
++	for _, node := range woc.wf.Status.Nodes {
++		if node.Type == wfv1.NodeTypeContainer {
++			containers++
++			assert.Equal(t, wfv1.NodeFailed, node.Phase, node.Name)
++			assert.Contains(t, node.Message, "Pod was rejected", node.Name)
++		}
++	}
++	assert.Equal(t, 2, containers)
++}
++
++var wfContainerSetParameterizedNameRejected = `
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: wf-containerset-parameterized-rejected
++spec:
++  entrypoint: init
++  arguments:
++    parameters:
++      - name: ctr
++        value: main
++  templates:
++    - name: init
++      dag:
++        tasks:
++          - name: A
++            template: run
++    - name: run
++      containerSet:
++        containers:
++          - name: "{{workflow.parameters.ctr}}"
++            image: alpine:3.23
++            command: [echo]`
++
++// TestContainerSetParameterizedNameWhenPodRejected tests that container nodes are failed
++// when their names come from parameters resolved at runtime.
++func TestContainerSetParameterizedNameWhenPodRejected(t *testing.T) {
++	cancel, controller := newController(logging.TestContext(t.Context()))
++	defer cancel()
++	ctx := logging.TestContext(t.Context())
++	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
++	wf := wfv1.MustUnmarshalWorkflow(wfContainerSetParameterizedNameRejected)
++	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
 +	require.NoError(t, err)
-+	assert.Equal(t, "Pod failed", node.Message, "still, on the next reconcile")
-+}
-```
-
----
-
-### Incident Patch 2: `d48ec29e` (2026-11-11)
-**Commit Message**: fix(executor): retry transient failures when saving HTTP and Artifactory artifacts (#17275)
-
-Signed-off-by: ashunimh <[REDACTED_EMAIL]>
-
-**File**: `docs/environment-variables.md` (modified, +3/-0)
-```diff
-@@ -140,6 +140,9 @@ Gains may vary under load: if the workflow informer is behind the controller's l
- | `REMOVE_LOCAL_ART_PATH`                | `bool`          | `false` | Whether to remove local artifacts.                                                                     |
- | `RESOURCE_STATE_CHECK_INTERVAL`        | `time.Duration` | `5s`    | The time interval between resource status checks against the specified success and failure conditions. |
- 
-+The `EXECUTOR_RETRY_BACKOFF_*` variables also control how the executor retries transient failures when saving S3, HTTP and Artifactory artifacts, including archived logs.
-+For HTTP and Artifactory, the executor retries network errors, `408`, `429` and `5xx` responses, and errors matching `TRANSIENT_ERROR_PATTERN` set in the executor `env`.
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	woc.operate(ctx)
 +
- You can set environment variables for the Executor in your [`workflow-controller-configmap`](workflow-controller-configmap.md) like the following:
- 
- ```yaml
-```
-
-**File**: `workflow/artifacts/http/http.go` (modified, +49/-22)
-```diff
-@@ -10,6 +10,10 @@ import (
- 
- 	"github.com/argoproj/argo-workflows/v4/errors"
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
-+	errutil "github.com/argoproj/argo-workflows/v4/util/errors"
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
-+	"github.com/argoproj/argo-workflows/v4/util/retry"
-+	waitutil "github.com/argoproj/argo-workflows/v4/util/wait"
- 	"github.com/argoproj/argo-workflows/v4/workflow/artifacts/common"
- )
- 
-@@ -129,41 +133,63 @@ func (h *ArtifactDriver) buildPutRequest(ctx context.Context, body io.Reader, ou
- 
- // doPutRequest sends req and fails on a non-2xx response. what describes the
- // operation in error messages, e.g. "saving file /tmp/x" or "saving stream".
--func (h *ArtifactDriver) doPutRequest(req *http.Request, url, what string) error {
-+// The returned status code is 0 if no response was received.
-+func (h *ArtifactDriver) doPutRequest(req *http.Request, url, what string) (int, error) {
- 	res, err := h.Client.Do(req)
- 	if err != nil {
--		return err
-+		return 0, err
- 	}
- 	defer func() {
- 		_ = res.Body.Close()
- 	}()
- 	if res.StatusCode < 200 || res.StatusCode >= 300 {
--		return errors.InternalErrorf("%s to %s failed with reason: %s", what, url, res.Status)
-+		return res.StatusCode, errors.InternalErrorf("%s to %s failed with reason: %s", what, url, res.Status)
- 	}
--	return nil
-+	return res.StatusCode, nil
++	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
++	woc.operate(ctx)
++
++	assert.Equal(t, wfv1.WorkflowFailed, woc.wf.Status.Phase)
++	node, err := woc.wf.GetNodeByName("wf-containerset-parameterized-rejected.A.main")
++	require.NoError(t, err)
++	assert.Equal(t, wfv1.NodeFailed, node.Phase)
++	assert.Contains(t, node.Message, "Pod was rejected")
 +}
 +
-+// isTransientSaveErr reports whether a failed upload is worth retrying: a 408,
-+// 429 or 5xx response, or an error util/errors classifies as transient (network
-+// errors and TRANSIENT_ERROR_PATTERN matches).
-+func isTransientSaveErr(ctx context.Context, statusCode int, err error) bool {
-+	if statusCode == http.StatusRequestTimeout || statusCode == http.StatusTooManyRequests || (statusCode >= 500 && statusCode < 600) {
-+		logging.RequireLoggerFromContext(ctx).WithError(err).Info(ctx, "Transient error")
-+		return true
-+	}
-+	return errutil.IsTransientErr(ctx, err)
- }
- 
--// Save writes the artifact to the URL
-+// Save writes the artifact to the URL, retrying transient failures with the
-+// EXECUTOR_RETRY_BACKOFF_* backoff.
- func (h *ArtifactDriver) Save(ctx context.Context, path string, outputArtifact *wfv1.Artifact) error {
- 	cleanPath := filepath.Clean(path)
--	f, err := os.Open(cleanPath)
--	if err != nil {
--		return err
--	}
--	// http.Client.Do closes f once the request is sent; this covers the paths
--	// where it never is. A second Close is harmless.
--	defer func() {
--		_ = f.Close()
--	}()
--	req, url, err := h.buildPutRequest(ctx, f, outputArtifact)
-+	attempts := 0
-+	err := waitutil.Backoff(retry.ExecutorRetry(ctx), func() (bool, error) {
-+		attempts++
-+		f, err := os.Open(cleanPath)
-+		if err != nil {
-+			return true, err
++var wfContainerSetRetryRejected = `
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: wf-containerset-retry-rejected
++spec:
++  entrypoint: init
++  templates:
++    - name: init
++      dag:
++        tasks:
++          - name: A
++            template: run
++    - name: run
++      retryStrategy:
++        limit: 2
++        retryPolicy: Always
++      containerSet:
++        containers:
++          - name: main
++            image: alpine:3.23
++            command: [echo]
++          - name: main2
++            image: alpine:3.23
++            command: [echo]
++            dependencies:
++              - main`
++
++// TestContainerSetRetryWhenPodRejected tests that a containerSet whose first pod kubelet rejected
++// is retried and that the workflow completes once the retry succeeds.
++func TestContainerSetRetryWhenPodRejected(t *testing.T) {
++	cancel, controller := newController(logging.TestContext(t.Context()))
++	defer cancel()
++	ctx := logging.TestContext(t.Context())
++	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
++	wf := wfv1.MustUnmarshalWorkflow(wfContainerSetRetryRejected)
++	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
++	require.NoError(t, err)
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	woc.operate(ctx)
++
++	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
++	woc.operate(ctx)
++	pods, err := listPods(ctx, woc)
++	require.NoError(t, err)
++	require.Len(t, pods.Items, 2)
++
++	setPodPhases(ctx, woc, func(node *wfv1.NodeStatus) apiv1.PodPhase {
++		if node.Phase == wfv1.NodeFailed {
++			return ""
 +		}
-+		// http.Client.Do closes f once the request is sent; this covers the paths
-+		// where it never is. A second Close is harmless.
-+		defer func() {
-+			_ = f.Close()
-+		}()
-+		req, url, err := h.buildPutRequest(ctx, f, outputArtifact)
-+		if err != nil {
-+			return true, err
-+		}
-+		// we set the GetBody func of the request in order to enable following 307 POST/PUT redirects, needed e.g. for webHDFS
-+		req.GetBody = func() (io.ReadCloser, error) {
-+			return os.Open(cleanPath)
-+		}
-+		statusCode, err := h.doPutRequest(req, url, fmt.Sprintf("saving file %s", path))
-+		return err == nil || !isTransientSaveErr(ctx, statusCode, err), err
-+	})
- 	if err != nil {
--		return err
--	}
--	// we set the GetBody func of the request in order to enable following 307 POST/PUT redirects, needed e.g. for webHDFS
--	req.GetBody = func() (io.ReadCloser, error) {
--		return os.Open(cleanPath)
-+		return fmt.Errorf("failed after %d attempt(s): %w", attempts, err)
- 	}
--	return h.doPutRequest(req, url, fmt.Sprintf("saving file %s", path))
-+	return nil
- }
- 
- // SaveStream saves an artifact from an io.Reader to HTTP URL
-@@ -183,7 +209,8 @@ func (h *ArtifactDriver) SaveStream(ctx context.Context, reader io.Reader, outpu
- 	if err != nil {
- 		return err
- 	}
--	return h.doPutRequest(req, url, "saving stream")
-+	_, err = h.doPutRequest(req, url, "saving stream")
-+	return err
- }
- 
- // Delete is unsupported for the http artifacts
-```
-
-**File**: `workflow/artifacts/http/http_test.go` (modified, +86/-0)
-```diff
-@@ -2,11 +2,13 @@ package http
- 
- import (
- 	"bytes"
-+	"io"
- 	"net/http"
- 	"net/http/httptest"
- 	"os"
- 	"path/filepath"
- 	"strings"
-+	"sync/atomic"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -262,3 +264,87 @@ func TestSaveInvalidArtifactLocation(t *testing.T) {
- 		assert.Contains(t, err.Error(), "Either Artifactory or HTTP artifact needs to be configured")
- 	})
- }
-+
-+// TestSaveRetry checks that Save retries transient upload failures and stops on permanent ones.
-+func TestSaveRetry(t *testing.T) {
-+	t.Setenv("EXECUTOR_RETRY_BACKOFF_DURATION", "1ms")
-+	t.Setenv("EXECUTOR_RETRY_BACKOFF_STEPS", "3")
-+	content := "main container log"
-+	tempFile := filepath.Join(t.TempDir(), "main.log")
-+	require.NoError(t, os.WriteFile(tempFile, []byte(content), 0o600))
-+
-+	save := func(t *testing.T, url string) error {
-+		t.Helper()
-+		driver := &ArtifactDriver{Client: &http.Client{}}
-+		art := &wfv1.Artifact{
-+			ArtifactLocation: wfv1.ArtifactLocation{Artifactory: &wfv1.ArtifactoryArtifact{URL: url}},
-+		}
-+		return driver.Save(logging.TestContext(t.Context()), tempFile, art)
-+	}
-+
-+	tests := []struct {
-+		name             string
-+		statuses         []int // response status per attempt, the last one repeats
-+		transientPattern string
-+		wantAttempts     int32
-+		wantErr          []string
-+	}{
-+		{name: "succeeds after 5xx responses", statuses: []int{http.StatusServiceUnavailable, http.StatusBadGateway, http.StatusCreated}, wantAttempts: 3},
-+		{name: "retries 408 and 429", statuses: []int{http.StatusRequestTimeout, http.StatusTooManyRequests, http.StatusCreated}, wantAttempts: 3},
-+		{name: "gives up after EXECUTOR_RETRY_BACKOFF_STEPS attempts", statuses: []int{http.StatusInternalServerError}, wantAttempts: 3, wantErr: []string{"failed after 3 attempt(s): timed out waiting for the condition: ", "500 Internal Server Error"}},
-+		{name: "does not retry a 4xx", statuses: []int{http.StatusForbidden}, wantAttempts: 1, wantErr: []string{"failed after 1 attempt(s): ", "403 Forbidden"}},
-+		{name: "retries a 4xx matching TRANSIENT_ERROR_PATTERN", statuses: []int{http.StatusUnauthorized, http.StatusCreated}, transientPattern: "401 Unauthorized", wantAttempts: 2},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("TRANSIENT_ERROR_PATTERN", tt.transientPattern)
-+			var attempts atomic.Int32
-+			svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				// every attempt must re-send the whole file
-+				body, err := io.ReadAll(r.Body)
-+				assert.NoError(t, err)
-+				assert.Equal(t, content, string(body))
-+				n := int(attempts.Add(1))
-+				w.WriteHeader(tt.statuses[min(n, len(tt.statuses))-1])
-+			}))
-+			defer svr.Close()
-+
-+			err := save(t, svr.URL)
-+			if len(tt.wantErr) == 0 {
-+				require.NoError(t, err)
-+			} else {
-+				for _, want := range tt.wantErr {
-+					require.ErrorContains(t, err, want)
-+				}
-+			}
-+			assert.Equal(t, tt.wantAttempts, attempts.Load())
-+		})
-+	}
-+
-+	t.Run("retries a dropped connection", func(t *testing.T) {
-+		var attempts atomic.Int32
-+		svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+			if attempts.Add(1) == 1 {
-+				conn, _, err := http.NewResponseController(w).Hijack()
-+				if assert.NoError(t, err) {
-+					_ = conn.Close()
-+				}
-+				return
-+			}
-+			w.WriteHeader(http.StatusCreated)
-+		}))
-+		defer svr.Close()
-+
-+		require.NoError(t, save(t, svr.URL))
-+		assert.Equal(t, int32(2), attempts.Load())
-+	})
-+
-+	t.Run("does not retry when the file cannot be opened", func(t *testing.T) {
-+		driver := &ArtifactDriver{Client: &http.Client{}}
-+		art := &wfv1.Artifact{
-+			ArtifactLocation: wfv1.ArtifactLocation{Artifactory: &wfv1.ArtifactoryArtifact{URL: "http://127.0.0.1:1/missing.log"}},
-+		}
-+		err := driver.Save(logging.TestContext(t.Context()), filepath.Join(t.TempDir(), "missing.log"), art)
-+		require.ErrorIs(t, err, os.ErrNotExist)
-+	})
-+}
-```
-
----
-
-### Incident Patch 3: `621e9dd4` (2026-11-10)
-**Commit Message**: fix(examples): make the ci WorkflowTemplate example work (#17437)
-
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `examples/ci-workflowtemplate.yaml` (modified, +23/-18)
-```diff
-@@ -67,19 +67,17 @@ spec:
-         volumeMounts:
-           - mountPath: /go/pkg/mod
-             name: work
--            subPath: mod
-+            subPath: GOMODCACHE
-           - mountPath: /root/.cache/go-build
-             name: work
--            subPath: cache
--        image: golang:1.18
-+            subPath: GOCACHE
-+        image: golang:1.27.3
-         workingDir: /go/src/github.com/golang/example
-         command: [ sh, -euxc ]
-         args:
-           - |
--            mkdir -p $(go env GOMODCACHE)
--            [ -e /mnt/GOMODCACHE ] && cp -Rf /mnt/GOMODCACHE $(go env GOMODCACHE)
--            mkdir -p $(go env GOCACHE)
--            [ -e /mnt/GOCACHE ] &&  cp -Rf /mnt/GOCACHE $(go env GOCACHE)
-+            if [ -d /mnt/GOMODCACHE ]; then cp -R /mnt/GOMODCACHE/. "$(go env GOMODCACHE)"; fi
-+            if [ -d /mnt/GOCACHE ]; then cp -R /mnt/GOCACHE/. "$(go env GOCACHE)"; fi
- 
-     - name: cache-store
-       container:
-@@ -90,17 +88,23 @@ spec:
-           - mountPath: /root/.cache/go-build
-             name: work
-             subPath: GOCACHE
--        image: golang:1.18
--        workingDir: /go/src/github.com/golang/example
-+        image: golang:1.27.3
-+        command: [ sh, -euxc ]
-+        args:
-+          - |
-+            # Artifacts on a volume mount aren't saved, so copy the caches off the volume.
-+            mkdir -p /tmp/cache
-+            cp -R /go/pkg/mod /tmp/cache/GOMODCACHE
-+            cp -R /root/.cache/go-build /tmp/cache/GOCACHE
-       outputs:
-         artifacts:
-           - name: GOMODCACHE
--            path: /go/pkg/mod
-+            path: /tmp/cache/GOMODCACHE
-             optional: true
-             s3:
-               key: "github.com/golang/examples/{{workflow.parameters.branch}}/GOMODCACHE"
-           - name: GOCACHE
--            path: /root/.cache/go-build
-+            path: /tmp/cache/GOCACHE
-             optional: true
-             s3:
-               key: "github.com/golang/examples/{{workflow.parameters.branch}}/GOCACHE"
-@@ -117,7 +121,7 @@ spec:
-           - mountPath: /root/.cache/go-build
-             name: work
-             subPath: GOCACHE
--        image: golang:1.18
-+        image: golang:1.27.3
-         workingDir: /go/src/github.com/golang/example
-         command: [ sh, -euxc ]
-         args:
-@@ -126,7 +130,7 @@ spec:
- 
-     - name: deps
-       container:
--        image: golang:1.18
-+        image: golang:1.27.3
-         volumeMounts:
-           - mountPath: /go/src/github.com/golang/example
-             name: work
-@@ -145,7 +149,7 @@ spec:
- 
-     - name: build
-       container:
--        image: golang:1.18
-+        image: golang:1.27.3
-         volumeMounts:
-           - mountPath: /go/src/github.com/golang/example
-             name: work
-@@ -164,7 +168,7 @@ spec:
- 
-     - name: test
-       container:
--        image: golang:1.18
-+        image: golang:1.27.3
-         volumeMounts:
-           - mountPath: /go/src/github.com/golang/example
-             name: work
-@@ -182,13 +186,14 @@ spec:
-             go install github.com/jstemmer/go-junit-report@latest
-             go install github.com/alexec/junit2html@v0.0.2
- 
--            trap 'cat test.out | go-junit-report | junit2html > test-report.html' EXIT
-+            # Write the report off the work volume: artifacts on a volume mount aren't saved.
-+            trap 'cat test.out; go-junit-report < test.out | junit2html > /tmp/test-report.html' EXIT
- 
--            go test -v ./... 2>&1 > test.out
-+            go test -v ./... > test.out 2>&1
-       outputs:
-         artifacts:
-           - name: test-report
--            path: /go/src/github.com/golang/example/test-report.html
-+            path: /tmp/test-report.html
-             archive:
-               none: { }
-             s3:
++		return apiv1.PodSucceeded
++	}, withExitCode(0))
++	woc = newWorkflowOperat
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17498** (2026-11-13): fix(controller): fail containerSet nodes of a pod rejected by kubelet (cherry-pick #17475 for 4.1) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17495** (2026-11-12): docs: document `argo cron backfill` (cherry-pick #17389 for 4.1) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17494** (2026-11-11): ci(stale): clear problem/old draft when an item becomes active (@jmeridth)
+- **PR #17493** (2026-11-11): ci(stale): allow manual runs and process problem/stale items (@jmeridth)
+- **PR #17490** (2026-11-11): chore(deps): migrate renovate dependencyDashboard config (@eeran-cs)
 - **PR #17484** (2026-11-11): fix(examples): make the ci WorkflowTemplate example work (cherry-pick #17437 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17470** (closed): feat: add conditional parameter visibility to workflow submissions (@somiljain2006)
-- **PR #17468** (2026-11-08): fix(controller): read the deletion timestamp directly in podOrphaned (cherry-pick #17448 for 4.0) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17467** (2026-11-08): fix(controller): read the deletion timestamp directly in podOrphaned (cherry-pick #17448 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17461** (2026-11-10): docs: update sidecar-injection.md following guidelines (cherry-pick #17405 for 4.1) (@Joibel)
-- **PR #17459** (2026-11-06): fix: skip the LogChanges diff unless the patch is logged at debug (cherry-pick #17449 for 4.1) (@argo-cd-cherry-pick-bot[bot])
 
 ---
 
@@ -1277,13 +1033,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. controller): keep an ended node's message while it holds its lock (#17391)
+## X. controller): fail containerSet nodes of a pod rejected by kubelet
 
 **RULE**:
 When implementing operations in `workflow/controller/operator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e05902b`: controller): keep an ended node's message while it holds its lock (#17391). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `abd7e05c`: controller): fail containerSet nodes of a pod rejected by kubelet. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/operator.go`.
@@ -1291,23 +1047,46 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// If we are no longer waiting for a lock, nil out the sync status.
-		// An ended node, re-entered while it holds its lock until its task
-		// result arrives, keeps its message: it says how the node ended.
-		if !node.Phase.Completed() {
-			node.Message = ""
+// failContainersWithoutStatus fails the container nodes of a failed containerSet pod
+// that have no container status, e.g. because kubelet rejected the pod at admission.
+// Otherwise they would stay Pending forever.
+func (woc *wfOperationCtx) failContainersWithoutStatus(ctx context.Context, pod *apiv1.Pod, podNode *wfv1.NodeStatus, message string) {
+	reported := make(map[string]bool, len(pod.Status.ContainerStatuses))
+	for _, c := range pod.Status.ContainerStatuses {
+		reported[fmt.Sprintf("%s.%s", podNode.Name, c.Name)] = true
+	}
+	// Walk only the pod's container graph. Leaf containers link to the pod's dependents,
+	// which are outside the pod's boundary.
+	var pending []string
+	visited := make(map[string]bool)
+	queue := append([]string(nil), podNode.Children...)
+	for len(queue) > 0 {
+		id := queue[0]
+		queue = queue[1:]
+		if visited[id] {
+			continue
 		}
+		visited[id] = true
+		node, err := woc.wf.Status.Nodes.Get(id)
+		if err != nil || node.Type != wfv1.NodeTypeContainer || node.BoundaryID != podNode.ID {
+			continue
+		}
+		if !reported[node.Name] && !node.Fulfilled() {
+			pending = append(pending, node.Name)
+		}
+		queue = append(queue, node.Children...)
+	}
+	for _, name := range
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-		// If we are no longer waiting for a lock, nil out the sync status
-		node.Message = ""
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e05902b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `abd7e05c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

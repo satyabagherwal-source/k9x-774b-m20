@@ -1,15 +1,17 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T19:02:15.920Z",
-  "total_records": 284,
+  "last_updated": "2026-11-13T19:19:48.199Z",
+  "total_records": 289,
   "domains": {
     "A": {
-      "total": 3,
+      "total": 5,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
-        "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
+        "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants"
       ]
     },
     "B": {
@@ -30,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 158,
+      "total": 161,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -189,7 +191,10 @@
         "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
         "DOM-D-D194A6F7",
-        "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea"
+        "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea",
+        "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants",
+        "DOM-D-3A0F1688",
+        "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants"
       ]
     },
     "E": {
@@ -7017,8 +7022,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "52715bc394c7da67f273e094f41886d699a9973079f998b680162d5b6ee3afab",
-      "created_at": "2026-11-13T18:06:49.663Z"
+      "content_hash": "030511ac52c4c76c3299bb56d43b0e0696a3757947e242237e3363cac10cdcfb",
+      "created_at": "2026-11-13T19:19:48.199Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -7940,6 +7945,84 @@
       "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
       "content_hash": "f24f67c29529ea348fc1c9604517902a90b21dc299207b2a8352bb156f59875a",
       "created_at": "2026-11-13T19:02:15.920Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-research-knowledge-intelligence-psrben-visionhope-core-inva.md",
+      "repository": "PSRben/VisionHOPE",
+      "content_hash": "af1431a8e904443781fa7a18c3abc041d2d64a20ad94d28c119f621755b70ca0",
+      "created_at": "2026-11-13T19:19:06.541Z"
+    },
+    "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
+      "repository": "argoproj/argo-workflows",
+      "content_hash": "2d3cf1f1c01a2142afaf4b0bd629170055a78dbe833a65163b67c467352cc69d",
+      "created_at": "2026-11-13T19:19:15.801Z"
+    },
+    "DOM-D-3A0F1688": {
+      "record_id": "DOM-D-3A0F1688",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): PSRben/VisionHOPE",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/PSRben/VisionHOPE](https://huggingface.co/PSRben/VisionHOPE))  \n> **Source Version**: `hf-psrben-vi`  \n> **License**: Open-Source  \n> **Synthesized By**: ze",
+      "content_hash": "3e3373b1df3c52a5f6fc3aaf9789432b13be770245d172bebf3f97d0978c47fd",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "provenance": {
+        "source_uri": "project://hf-psrben-visionhope/hf-psrben-visionhope-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T19:19:18.627Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-psrben-visionhope)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-psrben-visionhope"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T19:19:47.056Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-learnings-research-knowledge-intelligence-hf-psrben-visionh.md",
+      "repository": "hf-psrben-visionhope-learnings",
+      "content_hash": "dfb973a1de41e112a755e6c100b3f67adb0f9659672848b4c95f216b15092bd4",
+      "created_at": "2026-11-13T19:19:47.236Z"
+    },
+    "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-learnings-human-need-intelligence-argoproj-argo-workflow.md",
+      "repository": "argoproj-argo-workflows-learnings",
+      "content_hash": "f6916d02b330f8648e19253b2ed461348ff76379214b94e44055503e543932bd",
+      "created_at": "2026-11-13T19:19:47.610Z"
     }
   }
 }

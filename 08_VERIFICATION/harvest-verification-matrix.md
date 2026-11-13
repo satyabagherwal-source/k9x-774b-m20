@@ -9579,3 +9579,6 @@
 | `CYCLE-20261113-EQV4` | `2026-11-13T19:01:20.896Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`fe8e36cc...`) |
 | `CYCLE-20261113-EWLV` | `2026-11-13T19:01:28.339Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`07646865...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T19:02:15.716Z` | `hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D194A6F7` [Domain D] | Yes (`415e4bd5...`) |
+| `CYCLE-20261113-1KZY` | `2026-11-13T19:19:06.382Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`ebdc8380...`) |
+| `CYCLE-20261113-1S2R` | `2026-11-13T19:19:15.555Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8360` | Yes (`99b890ae...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T19:19:47.063Z` | `hf-psrben-visionhope` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3A0F1688` [Domain D] | Yes (`3e3373b1...`) |

@@ -9612,3 +9612,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-13T19:01:20.900Z |
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `77f6435d` | Multi-dimensional audit evidence | 2026-11-13T19:01:28.349Z |
 | `learn-dom-d-d194a6f7` | `project://hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | 2026-11-13T19:02:15.716Z |
+| `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-13T19:19:06.386Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `abd7e05c` | Multi-dimensional audit evidence | 2026-11-13T19:19:15.559Z |
+| `learn-dom-d-3a0f1688` | `project://hf-psrben-visionhope` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | 2026-11-13T19:19:47.063Z |

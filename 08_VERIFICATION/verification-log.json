@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-3E00",
-    "timestamp": "2026-11-12T22:48:47.520Z",
-    "repository": "openziti/zrok",
-    "learningId": "learn-github-openziti-zrok",
-    "contentHash": "9eaa04862416bc63c1279cb7f1aeb5902ba52f4e81a45fafb52f5187afa51ec6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-3FVA",
-    "timestamp": "2026-11-12T22:48:49.942Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "00d9c6304f1d0fef825fc7e525f5decbd3893b1249dfa67fd9b58b0ab283b028",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-T1BE",
     "timestamp": "2026-11-12T23:08:44.138Z",
     "repository": "speridlabs/idol",
@@ -7490,6 +7460,36 @@
     "repository": "react-hook-form/react-hook-form",
     "learningId": "learn-github-react-hook-form-react-hook-form",
     "contentHash": "07646865b7ac5285dc55c2b56a91a12ee5acbbde8c072ddec797dc64f9eed00c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-1KZY",
+    "timestamp": "2026-11-13T19:19:06.382Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "ebdc83804f284c0cd79c1f071eb1a2f6b74166e02075594a097883b65e1669cc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-1S2R",
+    "timestamp": "2026-11-13T19:19:15.555Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "99b890ae797badb12d86bece8aefd0c8b3b7a8093eccabe614100f981d2f7a0b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

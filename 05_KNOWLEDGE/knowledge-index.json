@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-13T19:05:36.913Z",
-  "total_verified_learnings": 15648,
+  "last_updated": "2026-11-13T19:19:48.300Z",
+  "total_verified_learnings": 8365,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16393,
+  "total_items": 16404,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GMO6-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2H6O-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cde8ec7dee6a9190005b28ce2eafe54468e90afc763bc0d16c19a7db611ec260",
+      "content_hash": "c9fe87176de07993306caf263e66446b8a42880880233c693631fa68cc35db39",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:06:49.552Z"
+      "persisted_at": "2026-11-13T19:19:48.108Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "52715bc394c7da67f273e094f41886d699a9973079f998b680162d5b6ee3afab",
+      "content_hash": "030511ac52c4c76c3299bb56d43b0e0696a3757947e242237e3363cac10cdcfb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:06:49.663Z"
+      "persisted_at": "2026-11-13T19:19:48.199Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b42653a914436680860bf099f6f2ccb5ae14db095b97ed6887c459b83491f45",
+      "content_hash": "fab0f116986df0e57fb83f1272d8f797ed423e62130eb207f9108094a254982a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:06:49.774Z"
+      "persisted_at": "2026-11-13T19:19:48.300Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -212298,6 +212298,185 @@
       "verification_status": "VERIFIED_LEARNING",
       "verified": true,
       "indexed_at": "2026-11-13T19:05:36.886Z"
+    },
+    "learn-huggingface-psrben-visionhope": {
+      "learning_id": "learn-huggingface-psrben-visionhope",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "PSRben/VisionHOPE",
+      "repository": "PSRben/VisionHOPE",
+      "slug": "hf-psrben-visionhope",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "content_hash": "ebdc83804f284c0cd79c1f071eb1a2f6b74166e02075594a097883b65e1669cc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T19:19:06.252Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-research-knowledge-intelligence-psrben-visionhope-core-inva.md",
+      "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
+      "repository": "PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "content_hash": "af1431a8e904443781fa7a18c3abc041d2d64a20ad94d28c119f621755b70ca0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T19:19:06.541Z"
+    },
+    "learn-github-argoproj-argo-workflows": {
+      "learning_id": "learn-github-argoproj-argo-workflows",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "argoproj/argo-workflows",
+      "repository": "argoproj/argo-workflows",
+      "slug": "argoproj-argo-workflows",
+      "platform": "github",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "abd7e05c",
+      "content_hash": "99b890ae797badb12d86bece8aefd0c8b3b7a8093eccabe614100f981d2f7a0b",
+      "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8360,
+          "title": "fail containerSet nodes of a pod rejected by kubelet",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T19:19:15.435Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8360": {
+      "learning_id": "rule-8360",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8360,
+      "title": "fail containerSet nodes of a pod rejected by kubelet",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "abd7e05c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T19:19:15.435Z"
+    },
+    "candidate_directive-fail-containerset-nodes-of-a-pod-rejected-by-kubelet": {
+      "item_id": "candidate_directive-fail-containerset-nodes-of-a-pod-rejected-by-kubelet",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1S75-fail-containerset-nodes-of-a-pod-rejected-by-kubelet.md",
+      "title": "fail containerSet nodes of a pod rejected by kubelet",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "abd7e05c",
+      "content_hash": "69241949a73af18c6ea751a4373e590b89647ac77a0def851d30bbc44feb761d",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T19:19:15.714Z"
+    },
+    "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
+      "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "abd7e05c",
+      "content_hash": "2d3cf1f1c01a2142afaf4b0bd629170055a78dbe833a65163b67c467352cc69d",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T19:19:15.801Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "abd7e05c",
+      "content_hash": "79d2ed769bbc0a49fa759e03c4d49bd62ae7fc734c31f2a2956a508bff831577",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T19:19:15.884Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-learnings-research-knowledge-intelligence-hf-psrben-visionh.md",
+      "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
+      "repository": "hf-psrben-visionhope-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dfb973a1de41e112a755e6c100b3f67adb0f9659672848b4c95f216b15092bd4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T19:19:47.236Z"
+    },
+    "candidate_directive-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet": {
+      "item_id": "candidate_directive-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2GQA-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet.md",
+      "title": "controller): fail containerSet nodes of a pod rejected by kubelet",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3de7ec94dbf1508f4ab240498374e93c612b0ac806fb001ed1053a4d3c04ad88",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T19:19:47.507Z"
+    },
+    "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-learnings-human-need-intelligence-argoproj-argo-workflow.md",
+      "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f6916d02b330f8648e19253b2ed461348ff76379214b94e44055503e543932bd",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-13T19:19:47.610Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/argoproj-argo-workflows-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e06795206f96a6a49f9c19e037684107fbf9ac99d173415d6ff897b09f94860c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T19:19:47.711Z"
     }
+  },
+  "ai-builder-brain": {
+    "slug": "ai-builder-brain",
+    "title": "AI-Builder-Brain Metasystem & Incident INC-002 Quarantine Invariant",
+    "rules": [
+      "1669"
+    ],
+    "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
+    "updatedAt": "2026-11-13T19:19:18.549Z"
   }
 }
